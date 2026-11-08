@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
  * [sending]; while sending, [onStop] (if given) replaces it with Stop. Keep the person's words on failure: the caller
  * clears [value] only after a successful send.
  *
- * Put an [RrDisclosureLine] under it saying what is sent and where.
+ * Show a quiet status line below only while sending is blocked.
  */
 @Composable
 fun RrAiComposer(
@@ -57,13 +57,14 @@ fun RrAiComposer(
     Column(
         modifier
             .fillMaxWidth()
-            .clip(RrShape.lg)
+            .rrDesignTag(DesignTag(component = "Composer", radius = RrRadius.xl, bgName = "raised"))
+            .clip(RrShape.xl)
             .background(c.raised)
-            .border(1.dp, if (focused) c.accent else c.controlBorder, RrShape.lg)
+            .border(1.dp, if (focused) c.accent else c.controlBorder, RrShape.xl)
             .padding(start = 12.dp, end = 8.dp, top = 10.dp, bottom = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val style = RrType.body.copy(color = c.ink, lineHeight = 22.sp)
+        val style = RrTextDefaults.merge(RrType.body).copy(color = c.ink)
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
@@ -72,7 +73,7 @@ fun RrAiComposer(
             cursorBrush = rrCursorBrush(c.accent),
             interactionSource = interaction,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-            modifier = Modifier.fillMaxWidth().heightIn(min = 22.dp, max = 160.dp).semantics { contentDescription = placeholder },
+            modifier = Modifier.fillMaxWidth().heightIn(min = 22.dp, max = 160.dp).then(if (value.isNotEmpty()) Modifier.rrDesignTag(DesignTag(text = value, style = style, colorName = "ink")) else Modifier).semantics { contentDescription = placeholder },
             decorationBox = { inner ->
                 Box {
                     if (value.isEmpty()) RrText(placeholder, style = style.copy(color = c.ink3))

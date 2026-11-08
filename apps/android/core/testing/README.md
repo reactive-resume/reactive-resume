@@ -35,7 +35,29 @@ class TodayScreenshotTest : RrScreenshotTest() {
 
 The `rr.android.*` convention plugins already set the Robolectric JVM flags and the Roborazzi output directory.
 
-## Storyboard diff
+## Strict storyboard v2.1 fidelity
+
+`captureScreen` also records fresh rendered PNGs and unmerged-semantics JSON under the Android root's
+`build/fidelity/`. These actuals are independent of regression goldens. `DesignTag` supplies component,
+type, icon and color-token metadata; text widths come from measured glyph runs. Insets use the same
+`LocalRrInsets` contract as production, pinned to 47/34 dp in tests. `StoryboardFrame` is available for
+standalone Compose tests.
+
+```sh
+JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew fidelity
+```
+
+Run from `apps/android`. This deletes stale actuals, reruns feature/design-system tests, invokes the
+handoff's unchanged `tools/fidelity.py`, and rejects frames whose real dimensions differ from 780×1688.
+Set `RR_HANDOFF_DIR` to the absolute bundle path in separate worktrees. The task never records over
+storyboard PNGs or regression goldens. Missing screens and failing measurements remain failures.
+
+Vertically scrollable captures also write `-end.png` and `-end.json` after real semantic scroll actions.
+Review these for offscreen content; lazy-list semantic offsets are estimates, not pixel coordinates.
+Kit renders at the same xhdpi density as phone captures and exports at 0.5 scale to its 2240×1400
+reference size. Its JSON retains actual dp measurements; this avoids mdpi-only accumulated glyph rounding.
+
+## Informational legacy diff
 
 When the handoff folder is on the machine, each `captureScreen` also writes `build/reports/storyboard-diff/<ID>-<theme>.png`
 (storyboard | capture | differences in red), a `.txt` with the share of differing pixels, and an `index.html` for the

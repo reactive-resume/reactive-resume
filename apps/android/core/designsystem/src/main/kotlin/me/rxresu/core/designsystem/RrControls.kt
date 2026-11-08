@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
  */
 
 /**
- * Switch, 40×24 with 2 dp corners. Plays `toggle` (on or off) when it changes. The thumb slides in d1 (no movement under
+ * Switch, 40×24 with round corners. Plays `toggle` (on or off) when it changes. The thumb slides in d1 (no movement under
  * reduced motion).
  *
  * @param onCheckedChange null when a parent row handles the toggle; the switch is then drawn only.
@@ -49,23 +49,24 @@ fun RrSwitch(checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?, modifier: 
         Box(
             Modifier
                 .size(40.dp, 24.dp)
-                .clip(RrShape.sm)
+                .rrDesignTag(DesignTag(component = "Switch", radius = RrRadius.full, bgName = if (checked) "accent" else "sunken"))
+                .clip(RrShape.full)
                 .background(if (checked) c.accent else c.sunken)
-                .then(if (checked) Modifier else Modifier.border(1.dp, c.controlBorder, RrShape.sm)),
+                .then(if (checked) Modifier else Modifier.border(1.dp, c.controlBorder, RrShape.full)),
         ) {
             Box(
                 Modifier
                     .offset { androidx.compose.ui.unit.IntOffset(thumb.roundToPx(), 3.dp.roundToPx()) }
-                    .then(if (checked) Modifier.rrShadow(RrElevation.Level1, RrShape.sm) else Modifier)
+                    .then(if (checked) Modifier.rrShadow(RrElevation.Level1, RrShape.full) else Modifier)
                     .size(18.dp)
-                    .clip(RrShape.sm)
+                    .clip(RrShape.full)
                     .background(if (checked) c.onAccent else c.controlBorder),
             )
         }
     }
 }
 
-/** Checkbox, 20 dp with 3 dp corners; accent with a check when on. Plays `toggle`. */
+/** Checkbox, 20 dp with 6 dp corners; accent with a check when on. Plays `toggle`. */
 @Composable
 fun RrCheckbox(checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?, modifier: Modifier = Modifier, enabled: Boolean = true) {
     val c = RrTheme.colors
@@ -80,9 +81,10 @@ fun RrCheckbox(checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?, modifier
         Box(
             Modifier
                 .size(20.dp)
-                .clip(RrShape.md)
+                .rrDesignTag(DesignTag(component = "Checkbox", radius = RrRadius.xs, bgName = if (checked) "accent" else "raised"))
+                .clip(RrShape.xs)
                 .background(if (checked) c.accent else c.raised)
-                .then(if (checked) Modifier else Modifier.border(1.dp, c.controlBorder, RrShape.md)),
+                .then(if (checked) Modifier else Modifier.border(1.dp, c.controlBorder, RrShape.xs)),
             contentAlignment = Alignment.Center,
         ) {
             if (checked) RrIcon(R.drawable.ic_ph_check, null, size = 14.dp, tint = c.onAccent)
@@ -103,7 +105,7 @@ fun RrRadio(selected: Boolean, onClick: (() -> Unit)?, modifier: Modifier = Modi
         }
     Box(modifier.then(select).rrEnabledAlpha(enabled, 0.45f), contentAlignment = Alignment.Center) {
         Box(
-            Modifier.size(20.dp).clip(RrShape.full).background(c.raised).border(1.dp, if (selected) c.accent else c.controlBorder, RrShape.full),
+            Modifier.size(20.dp).rrDesignTag(DesignTag(component = "Radio", radius = RrRadius.full, bgName = "raised")).clip(RrShape.full).background(c.raised).border(1.dp, if (selected) c.accent else c.controlBorder, RrShape.full),
             contentAlignment = Alignment.Center,
         ) {
             if (selected) Box(Modifier.size(10.dp).clip(RrShape.full).background(c.accent))

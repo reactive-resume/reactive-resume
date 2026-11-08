@@ -32,10 +32,11 @@ fun RrText(
     overflow: TextOverflow = TextOverflow.Ellipsis,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
 ) {
-    CssLineBox(style, modifier) { onLayout ->
+    val resolved = resolve(style, color, textAlign, textDecoration)
+    CssLineBox(resolved, modifier.rrDesignTag(DesignTag(text = text, style = resolved, colorName = RrTheme.colors.tokenName(resolved.color)))) { onLayout ->
         BasicText(
             text = text,
-            style = resolve(style, color, textAlign, textDecoration),
+            style = resolved,
             maxLines = maxLines,
             overflow = overflow,
             onTextLayout = { onLayout(it); onTextLayout?.invoke(it) },
@@ -55,10 +56,11 @@ fun RrText(
     overflow: TextOverflow = TextOverflow.Ellipsis,
     inlineContent: Map<String, InlineTextContent> = emptyMap(),
 ) {
-    CssLineBox(style, modifier) { onLayout ->
+    val resolved = resolve(style, color, textAlign, null)
+    CssLineBox(resolved, modifier.rrDesignTag(DesignTag(text = text.text, style = resolved, colorName = RrTheme.colors.tokenName(resolved.color)))) { onLayout ->
         BasicText(
             text = text,
-            style = resolve(style, color, textAlign, null),
+            style = resolved,
             maxLines = maxLines,
             overflow = overflow,
             inlineContent = inlineContent,
@@ -92,5 +94,5 @@ private fun resolve(style: TextStyle, color: Color, align: TextAlign?, decoratio
         style.color.isSpecified -> style.color
         else -> LocalRrContentColor.current
     }
-    return style.merge(TextStyle(color = c, textAlign = align ?: TextAlign.Unspecified, textDecoration = decoration))
+    return RrTextDefaults.merge(style).merge(TextStyle(color = c, textAlign = align ?: TextAlign.Unspecified, textDecoration = decoration))
 }

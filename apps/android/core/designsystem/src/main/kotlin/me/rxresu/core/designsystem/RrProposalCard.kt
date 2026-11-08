@@ -54,16 +54,14 @@ fun RrProposalCard(
     modifier: Modifier = Modifier,
     onEdit: (() -> Unit)? = null,
     acceptPrimary: Boolean = true,
+    focused: Boolean = false,
     badge: (@Composable () -> Unit)? = null,
     details: @Composable ColumnScope.() -> Unit = {},
 ) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
     val numberLabel = stringResource(R.string.ds_proposal_number, number)
-    Column(
-        modifier.fillMaxWidth().clip(RrShape.lg).background(c.raised).border(1.dp, c.line, RrShape.lg).padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
+    RrCard(modifier = modifier, focused = focused) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             ProposalNumber(number, c.accent, c.onAccent, Modifier.semantics { contentDescription = numberLabel })
             RrText(location, style = RrType.mono, color = c.ink3, maxLines = 1, modifier = Modifier.weight(1f))
@@ -84,7 +82,7 @@ fun RrProposalCard(
 fun RrDecidedProposal(number: Int, summary: String, onUndo: () -> Unit, modifier: Modifier = Modifier) {
     val c = RrTheme.colors
     Row(
-        modifier.fillMaxWidth().clip(RrShape.lg).background(c.raised).border(1.dp, c.line, RrShape.lg).padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+        modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "Card", radius = RrRadius.xl, bgName = "raised")).clip(RrShape.xl).background(c.raised).border(1.dp, c.line, RrShape.xl).padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -96,7 +94,7 @@ fun RrDecidedProposal(number: Int, summary: String, onUndo: () -> Unit, modifier
 
 @Composable
 private fun ProposalNumber(number: Int, bg: androidx.compose.ui.graphics.Color, fg: androidx.compose.ui.graphics.Color, modifier: Modifier = Modifier) {
-    Box(modifier.size(20.dp).clip(RrShape.sm).background(bg), contentAlignment = Alignment.Center) {
+    Box(modifier.size(20.dp).rrDesignTag(DesignTag(component = "NumberTag", radius = RrRadius.xs, bgName = RrTheme.colors.tokenName(bg))).clip(RrShape.xs).background(bg), contentAlignment = Alignment.Center) {
         RrText("$number", style = RrType.mono.copy(fontWeight = FontWeight.SemiBold, lineHeight = 20.sp), color = fg, textAlign = TextAlign.Center)
     }
 }

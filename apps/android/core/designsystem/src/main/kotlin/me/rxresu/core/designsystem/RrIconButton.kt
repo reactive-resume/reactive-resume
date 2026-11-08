@@ -50,12 +50,13 @@ fun RrIconButton(
     val interaction = remember { MutableInteractionSource() }
     val box = if (size == RrIconButtonSize.Regular) 44.dp else 36.dp
     val fill = containerColor ?: if (selected) c.accentSoft else Color.Transparent
-    val color = tint ?: if (selected) c.accentText else c.ink2
+    val color = tint ?: if (selected || icon == R.drawable.ic_ph_sparkle) c.accentText else c.ink2
     Box(
         modifier = modifier
             .size(box)
+            .rrDesignTag(DesignTag(component = "IconButton", radius = RrRadius.md, bgName = if (selected) "accent-soft" else c.tokenName(fill)))
             .rrPressScale(interaction)
-            .rrEnabledAlpha(enabled, 0.4f)
+            .rrEnabledAlpha(enabled, 0.45f)
             .clip(RrShape.md)
             .background(fill)
             .clickable(interaction, LocalIndication.current, enabled = enabled, role = Role.Button, onClick = onClick)
@@ -68,7 +69,7 @@ fun RrIconButton(
                 Modifier.align(Alignment.TopEnd)
                     .offset(x = (-9).dp, y = 9.dp)
                     .size(8.dp)
-                    .clip(RrShape.sm)
+                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(2.dp))
                     .background(c.warn),
             )
         }

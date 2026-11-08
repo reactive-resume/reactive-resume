@@ -1,25 +1,10 @@
 package me.rxresu.core.designsystem
 
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 /**
- * Builder mode bar that replaces the tab bar in the resume builder (Write · Design · Check · Share) and letters
- * (Write · Design · Export). A segmented control of 36 dp stacked items on `surface`, with a line on top and the
- * navigation bar inset below. The selected mode uses its filled icon. Plays `selection` on change.
+ * Shared dock for the resume builder (Edit · Design · Check · Share) and letters (Write · Design · Export). The selected mode uses its filled icon. Plays `selection` on change.
  *
  * Give Check `warn = true` and a content description with the count ("Check, 3 issues") while issues are open.
  */
@@ -30,25 +15,14 @@ fun RrModeBar(
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val c = RrTheme.colors
-    Column(modifier.fillMaxWidth().background(c.surface)) {
-        Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
-        // Like the tab bar: four stacked labels share the width, so they grow to 1.3x and no further (200% text cut
-        // them off at the bottom). TalkBack still reads the whole label.
-        val density = LocalDensity.current
-        CompositionLocalProvider(LocalDensity provides Density(density.density, density.fontScale.coerceAtMost(1.3f))) {
-            SegmentTrack(
-                segments = modes,
-                selectedIndex = selectedIndex,
-                onSelect = onSelect,
-                modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, top = 8.dp),
-                itemHeight = 36.dp,
-                stacked = true,
-                fillWidth = true,
-            )
-        }
-        Box(Modifier.windowInsetsPadding(WindowInsets.navigationBars))
-    }
+    val haptics = rememberRrHaptics()
+    RrTabBar(
+        tabs = modes.map { mode -> RrTab(mode.label, mode.icon ?: R.drawable.ic_ph_file_text, mode.selectedIcon ?: mode.icon ?: R.drawable.ic_ph_file_text, mode.count, mode.contentDescription, mode.warn) },
+        selectedIndex = selectedIndex,
+        onSelect = { haptics(RrHaptic.Selection); onSelect(it) },
+        onReselect = onSelect,
+        modifier = modifier,
+    )
 }
 
 /** The builder's four modes with their regular and filled icons. Labels come from the caller's strings. */

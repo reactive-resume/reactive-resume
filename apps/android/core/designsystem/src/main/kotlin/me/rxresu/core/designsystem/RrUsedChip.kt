@@ -23,9 +23,10 @@ fun RrUsedChip(text: String, @DrawableRes icon: Int, modifier: Modifier = Modifi
     val c = RrTheme.colors
     Row(
         modifier
+            .rrDesignTag(DesignTag(component = "UsedChip", radius = RrRadius.xs))
             .defaultMinSize(minHeight = 24.dp)
-            .clip(RrShape.sm)
-            .border(1.dp, c.line2, RrShape.sm)
+            .clip(RrShape.xs)
+            .border(1.dp, c.line2, RrShape.xs)
             .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
             .padding(horizontal = 8.dp, vertical = 2.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),

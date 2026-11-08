@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 private val ChipText = RrType.small.copy(fontWeight = FontWeight.Medium)
-private val ContextChipText = RrType.small.copy(fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 16.sp)
+private val ContextChipText = RrType.small.copy(fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 18.sp)
 
 /**
  * Filter chip (32 dp): line-2 edge, accent-soft fill when selected. Plays `selection` when toggled.
@@ -86,7 +86,7 @@ fun RrAddChip(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, 
 @Composable
 private fun ChipFrame(modifier: Modifier, content: @Composable () -> Unit) {
     Row(
-        modifier.defaultMinSize(minHeight = 32.dp).padding(horizontal = 12.dp, vertical = 4.dp),
+        modifier.rrDesignTag(DesignTag(component = "Chip", radius = RrRadius.sm)).defaultMinSize(minHeight = 32.dp).padding(horizontal = 12.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) { content() }
@@ -111,6 +111,7 @@ fun RrContextChip(
     val leftOutLabel = stringResource(R.string.ds_left_out, text)
     Row(
         modifier
+            .rrDesignTag(DesignTag(component = "Chip", radius = RrRadius.sm, bgName = if (leftOut) null else "sunken"))
             .defaultMinSize(minHeight = 26.dp)
             .clip(RrShape.sm)
             .then(if (leftOut) Modifier.rrDashedBorder(c.line2, RrRadius.sm) else Modifier.background(c.sunken))

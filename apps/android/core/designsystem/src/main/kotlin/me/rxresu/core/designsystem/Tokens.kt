@@ -125,10 +125,10 @@ object RrFixedColors {
     /** Ink of the sample page drawn on paper (both themes). */
     val paperInk = Color(0xFF1D1D1F)
     /** Abstract text lines on page thumbnails. */
-    val thumbHeading = Color(0xFF1F2B3A)
-    val thumbLine = Color(0xFFC8CCD2)
-    val thumbLetterHeading = Color(0xFF444444)
-    val thumbLetterLine = Color(0xFFD0D0D0)
+    val thumbHeading = Color(0xFF2D3A4A)
+    val thumbLine = Color(0xFFD3CFC7)
+    val thumbLetterHeading = Color(0xFF5B5B5B)
+    val thumbLetterLine = Color(0xFFD3CFC7)
     /** Lock mark on a thumbnail: dark glyph on 92% paper. */
     val thumbLockInk = Color(0xFF333333)
 }
@@ -146,39 +146,76 @@ val InstrumentSerif = FontFamily(Font(R.font.instrument_serif_regular, FontWeigh
 /** Upright regular only, as in the app. Use for URLs, slugs, filenames, counts, times. */
 val GeistMono = FontFamily(Font(R.font.geist_mono_regular, FontWeight.Normal))
 
-/** Text centred in its line box with half-leading above and below, as CSS lays it out. */
-private val CssLineHeight = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None)
+/** CSS line boxes: half-leading, no Android font padding. */
+val RrTextDefaults = TextStyle(
+    platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false),
+    lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None),
+    // Preserve fractional glyph advances, matching CSS and avoiding per-glyph hinting accumulation.
+    textMotion = androidx.compose.ui.text.style.TextMotion.Animated,
+)
 
 object RrType {
     /** Large statistics and hero headings inside the app. Instrument Serif has one weight: never set it sem */
-    val display = TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 44.sp, lineHeight = 48.sp, lineHeightStyle = CssLineHeight, letterSpacing = (-0.01).em)
+    val display = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 44.sp, lineHeight = 48.sp, letterSpacing = (-0.01).em))
     /** Page titles (h1). */
-    val title = TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 30.sp, lineHeight = 36.sp, lineHeightStyle = CssLineHeight)
+    val title = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 30.sp, lineHeight = 36.sp))
+    // Mobile v2.1 title sizes
+    val rootTitle = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 34.sp, lineHeight = 40.sp, letterSpacing = (-0.005).em))
+    val pageTitle = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 28.sp, lineHeight = 34.sp))
+    val bigNumber = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 40.sp, lineHeight = 44.sp))
     /** Dialog and sheet titles; empty-state headlines. */
-    val sheetTitle = TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 22.sp, lineHeight = 28.sp, lineHeightStyle = CssLineHeight)
+    val sheetTitle = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 22.sp, lineHeight = 28.sp))
     /** Panel headings. */
-    val heading = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 28.sp, lineHeightStyle = CssLineHeight)
+    val heading = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 28.sp))
     /** Section headings inside panels and settings. */
-    val sectionHeading = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.SemiBold, fontSize = 17.sp, lineHeight = 24.sp, lineHeightStyle = CssLineHeight)
+    val sectionHeading = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.SemiBold, fontSize = 17.sp, lineHeight = 24.sp))
     /** List-item titles and emphasized labels. */
-    val label = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.SemiBold, fontSize = 15.sp, lineHeight = 22.sp, lineHeightStyle = CssLineHeight)
+    val label = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.SemiBold, fontSize = 15.sp, lineHeight = 22.sp))
     /** Reading copy: descriptions, guide text. */
-    val body = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 15.sp, lineHeight = 24.sp, lineHeightStyle = CssLineHeight)
+    val body = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 15.sp, lineHeight = 24.sp))
     /** Default app text: buttons, menu items, inputs, table cells. */
-    val ui = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 14.sp, lineHeight = 20.sp, lineHeightStyle = CssLineHeight)
+    val ui = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 14.sp, lineHeight = 20.sp))
     /** Alerts, small buttons, segment labels, switch descriptions. */
-    val small = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 13.sp, lineHeight = 18.sp, lineHeightStyle = CssLineHeight)
+    val small = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 13.sp, lineHeight = 18.sp))
     /** Badges, tooltips, avatar initials. */
-    val caption = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 16.sp, lineHeightStyle = CssLineHeight)
+    val caption = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 16.sp))
     /** Field labels in ink-2, 6px above their control. */
-    val fieldLabel = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 16.sp, lineHeightStyle = CssLineHeight)
+    val fieldLabel = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 16.sp))
     /** Group eyebrows and menu group labels: sentence case, normal tracking, in ink-3. No all-caps labels. */
-    val eyebrow = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, lineHeight = 16.sp, lineHeightStyle = CssLineHeight)
+    val eyebrow = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, lineHeight = 16.sp))
     /** Geist Mono: shortcuts, URLs, slugs, filenames, counts after tab labels. */
-    val mono = TextStyle(fontFamily = GeistMono, fontWeight = FontWeight.Normal, fontSize = 12.sp, lineHeight = 16.sp, lineHeightStyle = CssLineHeight)
+    val mono = RrTextDefaults.merge(TextStyle(fontFamily = GeistMono, fontWeight = FontWeight.Normal, fontSize = 12.sp, lineHeight = 16.sp))
     /** Text inputs on touch: 16sp. */
-    val input = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 22.sp, lineHeightStyle = CssLineHeight)
+    val input = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 22.sp))
+
+    // ---- Mobile storyboard v2.1 text styles (see design/COMPONENTS.md). Merge each with RrTextDefaults. ----
+    /** List row title. */
+    val rowTitle = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 16.sp, lineHeight = 24.sp))
+    /** Field label above a text field (13/18 medium, ink2). Replaces fieldLabel on mobile. */
+    val formLabel = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 13.sp, lineHeight = 18.sp))
+    /** Long reading text: letters, story paragraphs, drafts, description editor. */
+    val prose = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 26.sp))
+    /** Dock item label. */
+    val dockLabel = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 16.sp))
+    /** Centred top bar title. */
+    val topBarTitle = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.SemiBold, fontSize = 15.sp, lineHeight = 20.sp))
+    val buttonSm = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 13.sp, lineHeight = 18.sp))
+    val buttonMd = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 14.sp, lineHeight = 20.sp))
+    val buttonLg = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 15.sp, lineHeight = 20.sp))
+    /** Segmented control label (large, 40 dp track item). */
+    val segment = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 14.sp, lineHeight = 18.sp))
+    /** Hero key line ("Tuesday 10 Nov · 10:00"). */
+    val keyLine = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 13.sp, lineHeight = 18.sp))
+    /** Text links outside rows ("Start from a template instead"). */
+    val textLink = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 15.sp, lineHeight = 20.sp))
+    /** Trailing links and counts in section headings, text buttons in rows. */
+    val linkSmall = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 14.sp, lineHeight = 20.sp))
+    /** Three-up statistics (Insights). */
+    val statNumber = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 36.sp, lineHeight = 40.sp))
+    /** Chat bubble text (user message). */
+    val bubble = RrTextDefaults.merge(TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Normal, fontSize = 15.sp, lineHeight = 22.sp))
 }
+
 
 object RrSpace {
     val s1 = 4.dp
@@ -189,29 +226,33 @@ object RrSpace {
     val s8 = 32.dp
     val s12 = 48.dp
     val s16 = 64.dp
-    val pageMargin = 16.dp
+    val pageMargin = 24.dp
 }
 
-/** Nothing is rounder than 4dp. radius-full only for true circles (radio, spinner, score ring). */
+/** Storyboard v2.1 soft-corner scale. Paper stays square. */
 object RrRadius {
-    val xs = 2.dp // smallest marks
-    val sm = 2.dp // chips, badges, tags, avatars, switches, stage dots
-    val md = 3.dp // inputs, buttons, checkboxes, menu items
-    val lg = 4.dp // list items, large buttons, alerts, toasts, segmented tracks
-    val xl = 4.dp // cards, menus, popovers
-    val dialog = 4.dp // radius-2xl
-    val sheetTop = 4.dp // radius-3xl: bottom sheets, top corners only
-    val largeSurface = 4.dp // radius-4xl
-    val full = 999.dp // true circles only
+    // Mobile v2.1 "soft corners" scale. Replaces the design system's 2–4 dp radii for the app only; tune here.
+    val xs = 6.dp      // badges, Used chips, issue markers, checkboxes, proposal numbers
+    val sm = 8.dp      // chips, small buttons, colour swatches, avatars
+    val md = 10.dp     // text fields, buttons, icon buttons, 40 dp icon tiles, monograms, segment thumbs
+    val lg = 12.dp     // large buttons, segmented tracks, menus, toasts, list groups, board columns
+    val xl = 16.dp     // cards, hero cards, composer, chat bubbles, 56 dp avatars, notifications
+    val dialog = 20.dp // dialogs
+    val sheetTop = 20.dp // bottom sheets, top corners only
+    val largeSurface = 20.dp // widgets
+    val paper = 2.dp   // resume and letter pages, page thumbnails (paper stays square)
+    val record = 20.dp // W4 record control (72 dp square)
+    val full = 999.dp  // switches, stage dots, radios, tab badges, spinner
 }
 
 
-/** Shapes built from [RrRadius]. Nothing is rounder than 4 dp; [full] only for true circles. */
+/** Shapes built from [RrRadius]. Soft-corner shapes; [full] for round controls. */
 object RrShape {
     val xs = RoundedCornerShape(RrRadius.xs)
     val sm = RoundedCornerShape(RrRadius.sm)
     val md = RoundedCornerShape(RrRadius.md)
     val lg = RoundedCornerShape(RrRadius.lg)
+    val xl = RoundedCornerShape(RrRadius.xl)
     val sheetTop = RoundedCornerShape(topStart = RrRadius.sheetTop, topEnd = RrRadius.sheetTop)
     val full = RoundedCornerShape(50)
 }
@@ -224,7 +265,15 @@ object RrLayout {
     val sheetShare = 440.dp
     val sheetDetail = 480.dp
     val assistant = 400.dp
-    val tabBar = 56.dp
+    val tabBar = 64.dp
+    val dock = 64.dp
+    val screenMargin = 24.dp
+    val listRowMin = 64.dp
+    val iconTile = 40.dp
+    val listThumb = 36.dp
+    val sectionGapTop = 32.dp
+    val heroPadding = 24.dp
+    val rootTitleCollapseAfter = 40.dp
     val topBar = 56.dp
     val minTouch = 44.dp
     const val PAGE_ASPECT = 210f / 297f

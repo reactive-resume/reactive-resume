@@ -1,12 +1,12 @@
 package me.rxresu.core.designsystem
 
 import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 
@@ -30,6 +32,7 @@ fun RrOptionRow(
     modifier: Modifier = Modifier,
     helper: String? = null,
     enabled: Boolean = true,
+    divider: Boolean = false,
     badge: (@Composable () -> Unit)? = null,
 ) {
     val c = RrTheme.colors
@@ -38,22 +41,25 @@ fun RrOptionRow(
         modifier
             .fillMaxWidth()
             .rrEnabledAlpha(enabled, 0.45f)
-            .background(if (selected) c.accentSoft else c.surface)
+
             .selectable(selected, remember { MutableInteractionSource() }, LocalIndication.current, enabled, Role.RadioButton) {
                 if (!selected) haptics(RrHaptic.Selection)
                 onClick()
             }
-            .padding(14.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.Top,
+            .padding(horizontal = 24.dp).rrDesignTag(DesignTag(component = "ListRow")).defaultMinSize(minHeight = 64.dp).drawWithContent {
+                drawContent()
+                if (divider) { val h = 1.dp.toPx(); drawLine(c.line, Offset(0f, size.height - h / 2), Offset(size.width, size.height - h / 2), h) }
+            }.padding(bottom = if (divider) 1.dp else 0.dp).padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         RrRadio(selected, null)
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-                RrText(label, style = RrType.label, color = c.ink)
+                RrText(label, style = RrType.rowTitle, color = c.ink)
                 badge?.invoke()
             }
-            if (helper != null) RrText(helper, style = RrType.small, color = c.ink3)
+            if (helper != null) RrText(helper, style = RrType.ui, color = c.ink3)
         }
     }
 }

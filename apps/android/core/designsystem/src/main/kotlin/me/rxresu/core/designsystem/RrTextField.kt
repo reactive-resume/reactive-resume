@@ -87,7 +87,7 @@ fun RrTextField(
     val focused by interactionSource.collectIsFocusedAsState()
     val multiline = minLines > 1
     val base = if (mono) RrType.mono.copy(fontSize = 16.sp, lineHeight = 22.sp) else RrType.input
-    val style = base.copy(
+    val style = RrTextDefaults.merge(base).copy(
         color = c.ink,
         lineHeight = if (multiline) 24.sp else base.lineHeight,
         textDirection = if (ltr || prefix != null) TextDirection.Ltr else TextDirection.Content,
@@ -118,7 +118,7 @@ fun RrTextField(
                     FieldBox(focused, error != null, multiline) {
                         if (leadingIcon != null) RrIcon(leadingIcon, null, size = 20.dp, tint = c.ink3)
                         val input: @Composable () -> Unit = {
-                            Box(contentAlignment = if (multiline) Alignment.TopStart else Alignment.CenterStart) {
+                            Box(Modifier.then(if (value.isNotEmpty()) Modifier.rrDesignTag(DesignTag(text = visualTransformation.filter(androidx.compose.ui.text.AnnotatedString(value)).text.text, style = style, colorName = "ink")) else Modifier), contentAlignment = if (multiline) Alignment.TopStart else Alignment.CenterStart) {
                                 if (value.isEmpty() && placeholder != null) RrText(placeholder, style = style.copy(color = c.ink3), maxLines = if (multiline) Int.MAX_VALUE else 1)
                                 inner()
                             }
@@ -212,8 +212,8 @@ fun RrSearchField(
 @Composable
 private fun FieldFrame(label: String?, helper: String?, error: String?, modifier: Modifier, enabled: Boolean, field: @Composable () -> Unit) {
     val c = RrTheme.colors
-    Column(modifier.rrEnabledAlpha(enabled, 0.45f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        if (label != null) RrText(label, style = RrType.fieldLabel, color = c.ink2)
+    Column(modifier.rrEnabledAlpha(enabled, 0.45f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (label != null) RrText(label, style = RrType.formLabel, color = c.ink2)
         field()
         when {
             error != null -> Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -255,6 +255,7 @@ private fun FieldBox(focused: Boolean, isError: Boolean, multiline: Boolean, con
                     )
                 }
             }
+            .rrDesignTag(DesignTag(component = "TextField", radius = RrRadius.md, bgName = "raised"))
             .defaultMinSize(minHeight = if (multiline) 96.dp else 44.dp)
             .clip(RrShape.md)
             .background(c.raised)

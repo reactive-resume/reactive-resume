@@ -20,7 +20,7 @@ class RepositoriesTest {
             assertEquals(resume,ApiJson.decodeFromJsonElement(Resume.serializer(),ApiJson.encodeToJsonElement(Resume.serializer(),resume)))
             val app=r.applications.getApplication(StoryboardIds.lumen)
             val interview=app.activity.filterIsInstance<Interview>().single()
-            assertEquals("2026-11-10T10:00:00Z",interview.at);assertEquals("Priya Shah",interview.participants!!.first().name)
+            assertEquals("2026-11-10T10:00:00Z",interview.at);assertEquals("Priya Raman",interview.participants!!.first().name)
             assertEquals(3,r.documents.listDocuments().count { it.type==DocumentType.Resume })
             assertEquals("Lumen cover letter",r.letters.getCoverLetter(StoryboardIds.lumenLetter).name)
             assertTrue(r.career.listCareerSavedItems().any { it.data is Offer })

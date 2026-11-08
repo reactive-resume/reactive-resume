@@ -7,13 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -32,7 +29,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -84,7 +80,7 @@ fun rememberRrLargeTitleState(): RrLargeTitleState {
 /** Shorthand for `nestedScroll(state.nestedScrollConnection)` on the scrolling content. */
 fun Modifier.rrLargeTitleScroll(state: RrLargeTitleState): Modifier = nestedScroll(state.nestedScrollConnection)
 
-private val CollapsedTitle = RrType.label.copy(fontWeight = FontWeight.SemiBold, lineHeight = RrType.ui.lineHeight)
+private val CollapsedTitle = RrType.topBarTitle
 
 /**
  * Root-tab header: Instrument Serif 30/36 title with an optional ink-3 subtitle ("Saturday, 7 November"), trailing
@@ -108,31 +104,23 @@ fun RrLargeTitleHeader(
         RrMotion.spec(RrMotion.D2, reduced),
         label = "collapse",
     )
-    Column(modifier.fillMaxWidth().background(c.bg).then(if (applyStatusBarInset) Modifier.windowInsetsPadding(WindowInsets.statusBars) else Modifier)) {
+    Column(modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "RootHeader", bgName = "bg")).background(c.bg).then(if (applyStatusBarInset) Modifier.rrStatusBarsPadding() else Modifier)) {
         if (collapsed < 1f) {
-            Column(
-                Modifier
-                    .graphicsLayer { alpha = 1f - collapsed }
-                    .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                TitleAndActions(
-                    title = { RrText(title, style = RrType.title, color = c.ink, modifier = Modifier.semantics { heading() }) },
-                    subtitle = subtitle?.let { { RrText(it, style = RrType.small, color = c.ink3) } },
-                    actions = { Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically, content = actions) },
+            Column(Modifier.graphicsLayer { alpha = 1f - collapsed }) {
+                RootTitleAndActions(
+                    title = title,
+                    actions = actions,
                 )
+                if (subtitle != null) RrText(subtitle, style = RrType.ui, color = c.ink3, modifier = Modifier.padding(horizontal = 24.dp))
                 bottom?.invoke()
             }
         }
+
         if (collapsed > 0f) {
             Column(Modifier.graphicsLayer { alpha = collapsed }) {
-                Row(
-                    Modifier.fillMaxWidth().heightIn(min = RrLayout.topBar).padding(start = 16.dp, end = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RrText(title, style = CollapsedTitle, color = c.ink, maxLines = 1, modifier = Modifier.weight(1f).semantics { heading() })
-                    actions()
+                Box(Modifier.fillMaxWidth().heightIn(min = RrLayout.topBar).padding(horizontal = 12.dp)) {
+                    RrText(title, style = CollapsedTitle, color = c.ink, maxLines = 1, modifier = Modifier.align(Alignment.Center).padding(horizontal = 96.dp).semantics { heading() })
+                    Row(Modifier.align(Alignment.CenterEnd), horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically, content = actions)
                 }
                 if (bottom != null) Box(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)) { bottom() }
                 Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
@@ -141,46 +129,26 @@ fun RrLargeTitleHeader(
     }
 }
 
-/**
- * Title beside the actions while the title fits on one line there; otherwise (long titles, large font scales) the
- * actions sit on their own row above, at the end, and the title takes the full width below them, so a word never
- * breaks mid-way ("Applicat/ions"). Traversal order stays title, subtitle, actions.
- */
+/** Long translations and large fonts keep whole words by moving actions above the title. */
 @Composable
-private fun TitleAndActions(title: @Composable () -> Unit, subtitle: (@Composable () -> Unit)?, actions: @Composable () -> Unit) {
+private fun RootTitleAndActions(title: String, actions: @Composable RowScope.() -> Unit) {
     Layout(
-        contents = listOf(title, subtitle ?: {}, actions),
-        modifier = Modifier.fillMaxWidth(),
-    ) { (titleM, subtitleM, actionsM), constraints ->
+        contents = listOf(
+            { RrText(title, style = RrType.rootTitle, modifier = Modifier.semantics { heading() }) },
+            { Row(Modifier.padding(bottom = 2.dp), horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically, content = actions) },
+        ),
+        modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 8.dp),
+    ) { (titleM, actionsM), constraints ->
         val width = constraints.maxWidth
-        val loose = Constraints(maxWidth = width)
-        val gap = 8.dp.roundToPx()
-        val minRow = 44.dp.roundToPx()
-        val actionsP = actionsM.firstOrNull()?.measure(loose)
-        val actionsW = actionsP?.width ?: 0
-        val actionsH = actionsP?.height ?: 0
-        val besideW = (width - actionsW - if (actionsW > 0) gap else 0).coerceAtLeast(0)
-        val titleW = titleM.firstOrNull()?.maxIntrinsicWidth(Constraints.Infinity) ?: 0
-        val stacked = actionsW > 0 && titleW > besideW
-        val textW = if (stacked) width else besideW
-        val titleP = titleM.firstOrNull()?.measure(Constraints(maxWidth = textW))
-        val subtitleP = subtitleM.firstOrNull()?.measure(Constraints(maxWidth = textW))
-        val textH = (titleP?.height ?: 0) + (subtitleP?.height ?: 0)
-        if (stacked) {
-            val actionsRowH = maxOf(actionsH, minRow)
-            layout(width, actionsRowH + textH) {
-                actionsP?.placeRelative(width - actionsW, (actionsRowH - actionsH) / 2)
-                titleP?.placeRelative(0, actionsRowH)
-                subtitleP?.placeRelative(0, actionsRowH + (titleP?.height ?: 0))
-            }
-        } else {
-            val h = maxOf(textH, actionsH, minRow)
-            layout(width, h) {
-                val top = (h - textH) / 2
-                titleP?.placeRelative(0, top)
-                subtitleP?.placeRelative(0, top + (titleP?.height ?: 0))
-                actionsP?.placeRelative(width - actionsW, (h - actionsH) / 2)
-            }
+        val actionsP = actionsM.first().measure(Constraints(maxWidth = width))
+        val beside = (width - actionsP.width).coerceAtLeast(0)
+        val stacked = titleM.first().maxIntrinsicWidth(Constraints.Infinity) > beside
+        val titleP = titleM.first().measure(Constraints(maxWidth = if (stacked) width else beside))
+        val rowHeight = maxOf(44.dp.roundToPx(), actionsP.height)
+        val height = if (stacked) rowHeight + titleP.height else maxOf(rowHeight, titleP.height)
+        layout(width, height) {
+            actionsP.placeRelative(width - actionsP.width, (rowHeight - actionsP.height) / 2)
+            titleP.placeRelative(0, if (stacked) rowHeight else (height - titleP.height) / 2)
         }
     }
 }

@@ -78,5 +78,6 @@ Never change baseline images/layout dumps, raise tolerance, skip assertions or r
 
 ## Direction questions
 
-One bundled question sent: ellipsis edges inconsistently point to B18 preview versus B19 menu;
-Typography/Page described as both sheets and pushed pickers. These dependent edges await the owner's answer.
+Owner resolved both contradictions: every ellipsis opens B19 Document menu, including B6/B9/B10/B11;
+Typography and Page use pushed pickers. Preserve bundle files unchanged and record this interpretation
+in navigation tests and the final report.

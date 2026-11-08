@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -89,7 +88,7 @@ fun RrDatePicker(
             RrIconButton(R.drawable.ic_ph_caret_left, stringResource(R.string.ds_previous_month), { month = month.minusMonths(1) }, mirrorInRtl = true)
             RrIconButton(R.drawable.ic_ph_caret_right, stringResource(R.string.ds_next_month), { month = month.plusMonths(1) }, mirrorInRtl = true)
         }
-        Row(Modifier.fillMaxWidth().clearAndSetSemantics { }) {
+        Row(Modifier.fillMaxWidth().rrClearAndSetSemantics { }) {
             RrCalendarMath.weekdays(firstDayOfWeek).forEach { d ->
                 RrText(
                     d.getDisplayName(TextStyle.NARROW, locale),
@@ -132,7 +131,7 @@ fun RrDatePicker(
                                         isToday -> c.accentText
                                         else -> c.ink
                                     },
-                                    modifier = Modifier.clearAndSetSemantics { },
+                                    modifier = Modifier.rrClearAndSetSemantics { },
                                 )
                             }
                         }

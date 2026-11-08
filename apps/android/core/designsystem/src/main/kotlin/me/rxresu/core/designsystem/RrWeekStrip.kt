@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
@@ -29,7 +30,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
@@ -77,7 +77,8 @@ fun RrWeekStrip(
     var dragged by remember { mutableFloatStateOf(0f) }
     Row(
         modifier
-            .fillMaxWidth()
+            .fillMaxWidth().padding(horizontal = 16.dp).padding(top = 20.dp)
+            .rrDesignTag(DesignTag(component = "WeekStrip"))
             .selectableGroup()
             .then(
                 if (onWeekChange == null) Modifier
@@ -110,20 +111,20 @@ fun RrWeekStrip(
                 Modifier
                     .weight(1f)
                     .heightIn(min = 56.dp)
-                    .clip(RrShape.md)
+                    .clip(RrShape.lg)
                     .background(c.accent.copy(alpha = fill))
                     .selectable(on, role = Role.Tab) {
                         if (!on) haptics(RrHaptic.Selection)
                         onSelect(day.date)
                     }
-                    .then(if (day.contentDescription != null) Modifier.clearAndSetSemantics { contentDescription = day.contentDescription } else Modifier),
+                    .then(if (day.contentDescription != null) Modifier.rrClearAndSetSemantics { contentDescription = day.contentDescription } else Modifier),
                 verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 RrText(day.weekday, style = RrType.caption, color = if (on) c.onAccent else c.ink3, maxLines = 1)
                 RrText(
                     day.date.dayOfMonth.toString(),
-                    style = RrType.ui.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                    style = RrType.sheetTitle.copy(lineHeight = 26.sp),
                     color = when {
                         on -> c.onAccent
                         day.date == today -> c.accentText
@@ -131,9 +132,9 @@ fun RrWeekStrip(
                     },
                     maxLines = 1,
                 )
-                Row(Modifier.height(4.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                Row(Modifier.height(5.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                     day.markers.take(3).forEach { color ->
-                        Box(Modifier.size(4.dp).clip(RrShape.xs).background(if (on) c.onAccent else color))
+                        Box(Modifier.size(5.dp).clip(RrShape.full).background(if (on) c.onAccent else color))
                     }
                 }
             }

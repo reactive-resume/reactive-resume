@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
@@ -31,14 +30,14 @@ fun RrScoreRing(score: Int, modifier: Modifier = Modifier, size: Dp = 64.dp, war
     val arc = if (dangerBelow != null && value < dangerBelow) c.danger else if (value < warnBelow) c.warn else c.accent
     val description = stringResource(R.string.ds_score, value)
     Box(modifier.size(size).semantics { contentDescription = description }, contentAlignment = Alignment.Center) {
-        Canvas(Modifier.size(size).clearAndSetSemantics { }) {
+        Canvas(Modifier.size(size).rrClearAndSetSemantics { }) {
             val w = (6.dp).toPx()
             // Filled conic ring: track, then the score's sweep from 12 o'clock, then the inner disc.
             drawCircle(c.sunken)
             drawArc(arc, startAngle = -90f, sweepAngle = 360f * value / 100f, useCenter = true, topLeft = Offset.Zero, size = Size(this.size.width, this.size.height))
             drawCircle(c.bg, radius = this.size.minDimension / 2 - w)
         }
-        RrText("$value", style = RrType.sheetTitle.copy(fontSize = 26.sp, lineHeight = 28.sp), color = c.ink, modifier = Modifier.clearAndSetSemantics { })
+        RrText("$value", style = RrType.sheetTitle.copy(fontSize = 26.sp, lineHeight = 28.sp), color = c.ink, modifier = Modifier.rrClearAndSetSemantics { })
     }
 }
 

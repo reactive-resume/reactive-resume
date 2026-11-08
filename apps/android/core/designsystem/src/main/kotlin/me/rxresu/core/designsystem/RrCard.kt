@@ -15,11 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 
 /**
- * Card: `surface` (or `raised`), line edge, 4 dp corners, shadow-1, 16 dp padding. Pass [onClick] to make the whole card
+ * Card: `surface` (or `raised`), line edge, 16 dp corners, 20 dp padding. Pass [onClick] to make the whole card
  * one target (press wash and 0.97 press scale).
  */
 @Composable
@@ -27,7 +32,8 @@ fun RrCard(
     modifier: Modifier = Modifier,
     raised: Boolean = false,
     onClick: (() -> Unit)? = null,
-    contentPadding: PaddingValues = PaddingValues(16.dp),
+    contentPadding: PaddingValues = PaddingValues(20.dp),
+    focused: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val c = RrTheme.colors
@@ -35,14 +41,20 @@ fun RrCard(
     Column(
         modifier
             .fillMaxWidth()
+            .rrDesignTag(DesignTag(component = "Card", radius = RrRadius.xl, bgName = if (raised) "raised" else "surface"))
             .then(if (onClick != null) Modifier.rrPressScale(interaction) else Modifier)
-            .rrShadow(RrElevation.Level1, RrShape.lg)
-            .clip(RrShape.lg)
+            .drawBehind {
+                if (focused) {
+                    val ring = 2.dp.toPx()
+                    drawRoundRect(c.accent, Offset(-ring / 2, -ring / 2), Size(size.width + ring, size.height + ring), CornerRadius(RrRadius.xl.toPx() + ring / 2), style = Stroke(ring))
+                }
+            }
+            .clip(RrShape.xl)
             .background(if (raised) c.raised else c.surface)
-            .border(1.dp, c.line, RrShape.lg)
+            .border(1.dp, c.line, RrShape.xl)
             .then(if (onClick != null) Modifier.clickable(interaction, LocalIndication.current, role = Role.Button, onClick = onClick) else Modifier)
             .padding(contentPadding),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
         content = content,
     )
 }
@@ -50,7 +62,7 @@ fun RrCard(
 @RrPreviews
 @Composable
 internal fun RrCardPreview() = RrPreviewSurface {
-    RrCard(onClick = {}) {
+    RrCard(onClick = {}, focused = true) {
         RrText("Senior product designer · Kiln Studio", style = RrType.label)
         RrText("Lisbon · Hybrid · Found today", style = RrType.small, color = RrTheme.colors.ink3)
     }

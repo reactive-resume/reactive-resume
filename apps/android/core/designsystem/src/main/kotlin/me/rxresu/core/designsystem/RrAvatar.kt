@@ -14,7 +14,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -23,7 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * Avatar with 2 dp corners: initials on accent-soft (or a photo). 32 dp in headers inside a 44 dp target; 56 dp in
+ * Avatar with 8 dp corners: initials on accent-soft (or a photo). 32 dp in headers inside a 44 dp target; 56 dp in
  * Settings. With [onClick] it is a button whose [contentDescription] names the destination ("Settings"). Initials keep
  * their size at every font scale. Blank [initials] (an account without a name) show a person icon instead.
  */
@@ -38,7 +37,7 @@ fun RrAvatar(
 ) {
     val c = RrTheme.colors
     val face = @Composable {
-        Box(Modifier.size(size).clip(RrShape.sm).background(c.accentSoft), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(size).rrDesignTag(DesignTag(component = "Avatar", radius = if (size >= 56.dp) RrRadius.xl else RrRadius.sm, bgName = "accent-soft")).clip(if (size >= 56.dp) RrShape.xl else RrShape.sm).background(c.accentSoft), contentAlignment = Alignment.Center) {
             if (image != null) {
                 Image(image, null, Modifier.size(size), contentScale = ContentScale.Crop)
             } else if (initials.isBlank()) {
@@ -58,7 +57,7 @@ fun RrAvatar(
     if (onClick != null) {
         Box(
             modifier.size(44.dp).clip(RrShape.md).clickable(role = Role.Button, onClick = onClick)
-                .clearAndSetSemantics { role = Role.Button; if (contentDescription != null) this.contentDescription = contentDescription },
+                .rrClearAndSetSemantics { role = Role.Button; if (contentDescription != null) this.contentDescription = contentDescription },
             contentAlignment = Alignment.Center,
         ) { face() }
     } else {

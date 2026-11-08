@@ -28,6 +28,11 @@ import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import com.github.takahirom.roborazzi.RoborazziOptions
 import com.github.takahirom.roborazzi.captureRoboImage
 import me.rxresu.core.designsystem.RrTheme
+import me.rxresu.core.designsystem.LocalRrInsets
+import me.rxresu.core.designsystem.StoryboardInsets
+import me.rxresu.core.designsystem.RrInsets
+import me.rxresu.core.designsystem.LocalRrDesignTags
+import com.github.takahirom.roborazzi.RoborazziTaskType
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -96,7 +101,10 @@ fun captureScreen(
 ) {
     val name = "$id-${if (dark) "dark" else "light"}" + if (fontScale != 1f) "-font${(fontScale * 100).toInt()}" else ""
     val file = File(RR_SCREENSHOT_DIR, "$name.png")
-    capture(file, dark, fontScale, wrapHeight = false, safeArea = safeArea) {
+    val fidelity = if (id.matches(Regex("[A-Z][0-9]+-.+"))) {
+        File(System.getProperty("rr.fidelity.dir", "../../build/fidelity"), "$name.png")
+    } else null // Synthetic harness-only captures (for example empty inset frames) have no storyboard elements.
+    capture(file, dark, fontScale, wrapHeight = false, safeArea = safeArea, fidelityFile = fidelity, captureEnd = fontScale == 1f) {
         RrTheme(darkTheme = dark) {
             wrap { Box(Modifier.fillMaxSize().background(RrTheme.colors.bg)) { content() } }
         }
@@ -127,9 +135,12 @@ fun captureComponent(
  * `<handoff>/<reference>` when given, e.g. a whole board: `captureBoard("Kit", "boards/Kit.png") { KitBoard() }`.
  * Size the test with `@Config(qualifiers = "w2240dp-h1400dp-mdpi")` to match the board's pixels.
  */
-fun captureBoard(name: String, reference: String?, content: @Composable () -> Unit) {
+@OptIn(ExperimentalRoborazziApi::class)
+fun captureBoard(name: String, reference: String?, exportScale: Double = 1.0, content: @Composable () -> Unit) {
     val file = File(RR_SCREENSHOT_DIR, "$name.png")
-    capture(file, dark = false, fontScale = 1f, wrapHeight = false, safeArea = false, content = content)
+    val actual = File(System.getProperty("rr.fidelity.dir", "../../build/fidelity"), "$name.png")
+    val options = RrRoborazziOptions.copy(recordOptions = RrRoborazziOptions.recordOptions.copy(resizeScale = exportScale))
+    capture(file, dark = false, fontScale = 1f, wrapHeight = false, safeArea = false, fidelityFile = actual, options = options, content = content)
     if (reference != null) StoryboardDiff.report(file, reference, name)
 }
 
@@ -137,7 +148,8 @@ fun captureBoard(name: String, reference: String?, content: @Composable () -> Un
  * Launches a plain activity in the requested configuration, sets [content] in inspection mode (endless animations such
  * as spinners hold still, so the UI can idle), lets frames run and records the content view with Roborazzi.
  */
-private fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boolean, safeArea: Boolean, content: @Composable () -> Unit) {
+@OptIn(ExperimentalRoborazziApi::class)
+private fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boolean, safeArea: Boolean, fidelityFile: File? = null, captureEnd: Boolean = false, options: RoborazziOptions = RrRoborazziOptions, content: @Composable () -> Unit) {
     val qualifiers = RuntimeEnvironment.getQualifiers()
     val scale = RuntimeEnvironment.getFontScale()
     RuntimeEnvironment.setQualifiers(if (dark) "+night" else "+notnight")
@@ -146,7 +158,14 @@ private fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boo
         ActivityScenario.launch(ComponentActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
                 WindowCompat.setDecorFitsSystemWindows(activity.window, false)
-                activity.setContent { CompositionLocalProvider(LocalInspectionMode provides true, content = content) }
+                activity.setContent {
+                    CompositionLocalProvider(
+                        LocalInspectionMode provides true,
+                        LocalRrDesignTags provides true,
+                        LocalRrInsets provides if (safeArea) StoryboardInsets else RrInsets(0.dp, 0.dp),
+                        content = content,
+                    )
+                }
                 if (wrapHeight) composeView(activity).layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             }
             settle()
@@ -161,7 +180,23 @@ private fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boo
                 }
                 settle()
             }
-            scenario.onActivity { activity -> composeView(activity).captureRoboImage(file, RrRoborazziOptions) }
+            scenario.onActivity { activity ->
+                val view = composeView(activity)
+                fidelityFile?.let { actual ->
+                    actual.parentFile?.mkdirs()
+                    view.captureRoboImage(actual, options.copy(taskType = RoborazziTaskType.Record))
+                    view.writeLayoutDump(File(actual.parentFile, "${actual.nameWithoutExtension}.json"))
+                }
+                if (!java.lang.Boolean.getBoolean("rr.fidelity")) view.captureRoboImage(file, options)
+                if (fidelityFile != null && captureEnd) {
+                    val scroll = view.scrollStoryboardToEnd(::settle)
+                    if (scroll.scrollable) {
+                        val end = File(fidelityFile.parentFile, "${fidelityFile.nameWithoutExtension}-end.png")
+                        view.captureRoboImage(end, options.copy(taskType = RoborazziTaskType.Record))
+                        view.writeLayoutDump(File(end.parentFile, "${end.nameWithoutExtension}.json"))
+                    }
+                }
+            }
         }
     } finally {
         RuntimeEnvironment.setQualifiers(qualifiers)

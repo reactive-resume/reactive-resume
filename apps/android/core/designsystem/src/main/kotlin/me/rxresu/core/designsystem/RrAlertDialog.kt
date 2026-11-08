@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -105,7 +104,7 @@ fun RrAlertDialogLayer(
         )
         Column(
             Modifier
-                .safeDrawingPadding()
+                .padding(top = LocalRrInsets.current.top, bottom = LocalRrInsets.current.bottom)
                 .padding(horizontal = 20.dp)
                 .widthIn(max = 480.dp)
                 .graphicsLayer {
@@ -114,8 +113,9 @@ fun RrAlertDialogLayer(
                     scaleX = s
                     scaleY = s
                 }
-                .rrShadow(RrElevation.Level3, RrShape.lg)
-                .clip(RrShape.lg)
+                .rrDesignTag(DesignTag(component = "Dialog", radius = RrRadius.dialog, bgName = "raised"))
+                .rrShadow(RrElevation.Level3, androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.dialog))
+                .clip(androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.dialog))
                 .background(c.raised)
                 .semantics { paneTitle = title }
                 .padding(24.dp),

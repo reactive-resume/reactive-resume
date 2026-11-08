@@ -36,21 +36,22 @@ fun RrQuestionCard(
 ) {
     val c = RrTheme.colors
     Column(
-        modifier.fillMaxWidth().clip(RrShape.lg).background(c.infoSoft).padding(12.dp),
+        modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "Card", radius = RrRadius.xl, bgName = "info-soft")).clip(RrShape.xl).background(c.infoSoft).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        RrText(question, style = RrType.label, color = c.ink)
+        RrText(question, style = RrType.label.copy(fontSize = RrType.rowTitle.fontSize, lineHeight = RrType.rowTitle.lineHeight), color = c.ink)
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             answers.forEach { answer ->
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 44.dp)
+                        .heightIn(min = 48.dp)
+                        .rrDesignTag(DesignTag(component = "ChoiceButton", radius = RrRadius.md, bgName = "raised"))
                         .clip(RrShape.md)
                         .background(c.raised)
                         .border(1.dp, c.line2, RrShape.md)
                         .clickable(remember { MutableInteractionSource() }, LocalIndication.current, enabled = enabled, role = Role.Button) { onAnswer(answer) }
-                        .padding(horizontal = 12.dp, vertical = 12.dp),
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
                     contentAlignment = Alignment.CenterStart,
                 ) {
                     RrText(answer, style = RrType.ui.copy(fontSize = RrType.body.fontSize), color = c.ink)

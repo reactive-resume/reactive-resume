@@ -9,6 +9,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
@@ -34,13 +36,17 @@ fun RrIcon(
     mirrorInRtl: Boolean = false,
 ) {
     val flip = mirrorInRtl && LocalLayoutDirection.current == LayoutDirection.Rtl
+    val resourceName = LocalContext.current.resources.getResourceEntryName(id)
+    val iconName = resourceName.removePrefix("ic_ph_").removeSuffix("_fill").replace('_', '-')
+    val measured = LocalRrDesignTags.current || LocalInspectionMode.current
     Image(
         painter = painterResource(id),
         contentDescription = contentDescription,
         modifier = modifier
             .size(size)
             .then(if (flip) Modifier.graphicsLayer { scaleX = -1f } else Modifier)
-            .then(if (contentDescription == null) Modifier.clearAndSetSemantics { } else Modifier),
+            .then(if (contentDescription == null && !measured) Modifier.clearAndSetSemantics { } else Modifier)
+            .rrDesignTag(DesignTag(icon = iconName, iconWeight = if (resourceName.endsWith("_fill")) "fill" else "regular", color = tint, colorName = RrTheme.colors.tokenName(tint))),
         colorFilter = ColorFilter.tint(tint),
     )
 }

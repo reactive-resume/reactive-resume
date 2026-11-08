@@ -42,6 +42,7 @@ fun RrPaperPage(
         modifier
             .fillMaxWidth()
             .aspectRatio(RrLayout.PAGE_ASPECT)
+            .rrDesignTag(DesignTag(component = "Page", radius = 0.dp, bgName = "paper"))
             .rrShadow(RrElevation.Page)
             .background(RrFixedColors.paper)
             .semantics { if (contentDescription != null) this.contentDescription = contentDescription },
@@ -66,10 +67,11 @@ fun RrPageThumbnail(
     Box(
         modifier
             .aspectRatio(RrLayout.PAGE_ASPECT)
-            .rrShadow(RrElevation.Level1, RrShape.xs)
-            .clip(RrShape.xs)
+            .rrDesignTag(DesignTag(component = "PageThumbnail", radius = RrRadius.paper, bgName = "paper"))
+            .rrShadow(RrElevation.Level1, androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper))
+            .clip(androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper))
             .background(RrFixedColors.paper)
-            .border(1.dp, RrTheme.colors.line, RrShape.xs)
+            .border(1.dp, RrTheme.colors.line, androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper))
             .semantics { if (contentDescription != null) this.contentDescription = contentDescription },
     ) {
         if (page != null) {
@@ -80,9 +82,21 @@ fun RrPageThumbnail(
         }
         if (locked) {
             Box(
-                Modifier.align(Alignment.TopEnd).padding(6.dp).size(24.dp).clip(RrShape.xs).background(RrFixedColors.paper.copy(alpha = 0.92f)),
+                Modifier.align(Alignment.TopEnd).padding(6.dp).size(24.dp).clip(androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper)).background(RrFixedColors.paper.copy(alpha = 0.92f)),
                 contentAlignment = Alignment.Center,
             ) { RrIcon(R.drawable.ic_ph_lock_simple, null, size = 16.dp, tint = RrFixedColors.thumbLockInk) }
+        }
+    }
+}
+
+/** Compact document mark beside a list row; paper stays white in both themes. */
+@Composable
+fun RrDocumentThumbnail(modifier: Modifier = Modifier, letter: Boolean = false) {
+    val shape = androidx.compose.foundation.shape.RoundedCornerShape(3.dp)
+    Canvas(modifier.size(36.dp, 50.dp).rrDesignTag(DesignTag(component = "DocThumb", radius = 3.dp, bgName = "paper")).clip(shape).background(RrFixedColors.paper).border(1.dp, RrTheme.colors.line2, shape).padding(horizontal = 6.dp, vertical = 7.dp)) {
+        drawRect(if (letter) RrFixedColors.thumbLetterHeading else RrFixedColors.thumbHeading, size = Size(size.width * if (letter) 0.35f else 0.55f, 4.dp.toPx()))
+        listOf(1f, 0.8f, 1f, 0.65f).forEachIndexed { i, width ->
+            drawRect(RrFixedColors.thumbLine, topLeft = Offset(0f, (9 + i * 5).dp.toPx()), size = Size(size.width * width, 2.dp.toPx()))
         }
     }
 }

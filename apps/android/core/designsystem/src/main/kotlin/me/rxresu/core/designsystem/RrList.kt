@@ -35,53 +35,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 
 /**
- * Grouped list: `surface` panel, line edge, 4 dp corners, a 1 dp line between children. Children are usually
- * [RrListRow], [RrSwitchRow] or [RrSwipeRow]; any composable works (its background shows through as `surface`).
+ * Plain list with an optional top divider. Rows own their bottom dividers. Children are usually
+ * [RrListRow], [RrSwitchRow] or [RrSwipeRow].
  */
 @Composable
-fun RrListGroup(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+fun RrListGroup(modifier: Modifier = Modifier, content: @Composable () -> Unit) = RrListGroup(modifier, false, content)
+
+@Composable
+fun RrListGroup(modifier: Modifier = Modifier, topDivider: Boolean, content: @Composable () -> Unit) {
     val c = RrTheme.colors
-    val dividers = remember { IntArray(64) }
-    val count = remember { IntArray(1) }
-    Layout(
-        content = content,
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RrShape.lg)
-            .background(c.surface)
-            .border(1.dp, c.line, RrShape.lg)
-            .padding(1.dp)
-            .drawWithContent {
-                drawContent()
-                val h = 1.dp.toPx()
-                // dividers[] holds the inner y after each 1 dp gap; the 1 dp padding shifts it back onto the gap.
-                for (i in 0 until count[0]) {
-                    val y = dividers[i] + h / 2
-                    drawLine(c.line, Offset(0f, y), Offset(size.width, y), h)
-                }
-            },
-    ) { measurables, constraints ->
-        val gap = 1.dp.roundToPx()
-        val loose = Constraints(minWidth = constraints.maxWidth, maxWidth = constraints.maxWidth)
-        val placeables = measurables.map { it.measure(loose) }
-        val height = placeables.sumOf { it.height } + gap * (placeables.size - 1).coerceAtLeast(0)
-        layout(constraints.maxWidth, height) {
-            var y = 0
-            count[0] = 0
-            placeables.forEachIndexed { i, p ->
-                if (i > 0) {
-                    y += gap
-                    if (count[0] < dividers.size) dividers[count[0]++] = y
-                }
-                p.placeRelative(0, y)
-                y += p.height
-            }
+    Column(modifier.fillMaxWidth().drawWithContent {
+        drawContent()
+        if (topDivider) {
+            val h = 1.dp.toPx()
+            val inset = RrLayout.screenMargin.toPx()
+            drawLine(c.line, Offset(inset, h / 2), Offset(size.width - inset, h / 2), h)
         }
-    }
+    }, content = { content() })
 }
 
 /**
- * Group eyebrow ("Needs you") with an optional trailing count (mono) or action link ("Calendar").
+ * Serif section heading with an inline count or trailing action.
  *
  * @param topPadding space above the eyebrow: 20 dp between groups; 4 dp for the first group under a header (T1),
  *   0 dp right under a sheet or step title.
@@ -93,33 +67,15 @@ fun RrSectionHeader(
     count: String? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
-    topPadding: Dp = 20.dp,
+    topPadding: Dp = 32.dp,
 ) {
-    val c = RrTheme.colors
-    Row(
-        modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = topPadding, bottom = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RrText(title, style = RrType.eyebrow, color = c.ink3, modifier = Modifier.weight(1f, fill = false))
-        when {
-            actionLabel != null && onAction != null -> RrText(
-                actionLabel,
-                style = RrType.ui,
-                color = c.accentText,
-                modifier = Modifier.clip(RrShape.md).combinedClickable(role = Role.Button, onClick = onAction).padding(vertical = 2.dp),
-            )
-            count != null -> RrText(count, style = RrType.mono, color = c.ink3)
-        }
-    }
+    RrSectionHeading(title, modifier, count, actionLabel, onAction, topPadding = topPadding)
 }
 
-private val RowTitle = RrType.label.copy(fontWeight = FontWeight.Medium, lineHeight = RrType.ui.lineHeight)
-
-private val TileTitle = RrType.label
+private val RowTitle = RrType.rowTitle
 
 /**
- * List row (52 dp min): leading icon, title and optional second line, trailing slot. Text wraps rather than clips.
+ * List row (64 dp min): leading icon, title and optional second line, trailing slot. Text wraps at larger font scales.
  *
  * @param trailing value, caret or badge; see [RrRowValue] and [RrRowCaret]. Switch rows use [RrSwitchRow].
  * @param onLongClick opens the row's actions sheet; plays `light`.
@@ -146,10 +102,11 @@ fun RrListRow(
     overline: String? = null,
     titleColor: Color = Color.Unspecified,
     @DrawableRes tile: Int? = null,
+    divider: Boolean = false,
     trailing: (@Composable RowScope.() -> Unit)? = null,
 ) = RrListRow(
     AnnotatedString(title), modifier, subtitle, icon, onClick, onLongClick, onLongClickLabel, selected, danger, enabled, leading,
-    overline, titleColor, tile, trailing,
+    overline, titleColor, tile, divider, trailing,
 )
 
 /**
@@ -172,15 +129,17 @@ fun RrListRow(
     overline: String? = null,
     titleColor: Color = Color.Unspecified,
     @DrawableRes tile: Int? = null,
+    divider: Boolean = false,
     trailing: (@Composable RowScope.() -> Unit)? = null,
 ) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
     val interaction = remember { MutableInteractionSource() }
     RowFrame(
-        tiled = tile != null,
+        divider = divider,
         modifier = modifier
-            .background(if (selected) c.accentSoft else c.surface)
+            .rrEnabledAlpha(enabled, 0.45f)
+            .background(if (selected) c.accentSoft else Color.Transparent)
             .then(
                 if (onClick != null || onLongClick != null) Modifier.combinedClickable(
                     interactionSource = interaction,
@@ -195,23 +154,21 @@ fun RrListRow(
     ) {
         val fg = titleColor.takeOrElse { if (danger) c.dangerText else c.ink }
         when {
-            tile != null -> Box(Modifier.size(40.dp).clip(RrShape.md).background(c.sunken), contentAlignment = Alignment.Center) {
-                RrIcon(tile, null, tint = if (danger) c.dangerText else c.ink2)
-            }
+            tile != null -> RrIconTile(tile, danger = danger)
             leading != null -> leading()
             icon != null -> RrIcon(icon, null, tint = if (danger) c.dangerText else c.ink2)
         }
         RowText(
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(if (tile != null) 2.dp else 0.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     if (overline != null) RrText(overline, style = RrType.caption, color = c.ink3)
-                    RrText(title, style = if (tile != null) TileTitle else RowTitle, color = fg)
-                    if (subtitle != null) RrText(subtitle, style = RrType.small, color = c.ink3)
+                    RrText(title, style = RowTitle, color = fg, maxLines = if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                    if (subtitle != null) RrText(subtitle, style = RrType.ui, color = c.ink3, maxLines = if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 }
             },
             trailing = trailing?.let { { Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically, content = it) } },
-            gap = if (tile != null) 14.dp else 12.dp,
-            top = tile != null,
+            gap = 16.dp,
+            top = false,
             modifier = Modifier.weight(1f),
         )
     }
@@ -260,12 +217,16 @@ internal object RrListRowStack {
 }
 
 @Composable
-private fun RowFrame(modifier: Modifier, tiled: Boolean = false, content: @Composable RowScope.() -> Unit) {
+private fun RowFrame(modifier: Modifier, divider: Boolean = false, content: @Composable RowScope.() -> Unit) {
+    val c = RrTheme.colors
     Row(
-        if (tiled) modifier.fillMaxWidth().padding(14.dp)
-        else modifier.fillMaxWidth().defaultMinSize(minHeight = 52.dp).padding(start = 14.dp, end = 12.dp, top = 10.dp, bottom = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(if (tiled) 14.dp else 12.dp),
-        verticalAlignment = if (tiled) Alignment.Top else Alignment.CenterVertically,
+        modifier.fillMaxWidth().padding(horizontal = RrLayout.screenMargin).rrDesignTag(DesignTag(component = "ListRow")).defaultMinSize(minHeight = RrLayout.listRowMin)
+            .drawWithContent {
+                drawContent()
+                if (divider) { val h = 1.dp.toPx(); drawLine(c.line, Offset(0f, size.height - h / 2), Offset(size.width, size.height - h / 2), h) }
+            }.padding(bottom = if (divider) 1.dp else 0.dp).padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
         content = content,
     )
 }
@@ -273,14 +234,14 @@ private fun RowFrame(modifier: Modifier, tiled: Boolean = false, content: @Compo
 /** Trailing value in ink-3 ("Match system"), optionally with a caret. */
 @Composable
 fun RrRowValue(text: String, caret: Boolean = true) {
-    RrText(text, style = RrType.small, color = RrTheme.colors.ink3)
+    RrText(text, style = RrType.ui, color = RrTheme.colors.ink3)
     if (caret) RrRowCaret()
 }
 
 /** Trailing caret (18 dp), mirrored in RTL. */
 @Composable
 fun RrRowCaret() {
-    RrIcon(R.drawable.ic_ph_caret_right, null, size = 18.dp, tint = RrTheme.colors.ink3, mirrorInRtl = true)
+    RrIcon(R.drawable.ic_ph_caret_right, null, size = 24.dp, tint = RrTheme.colors.ink2, mirrorInRtl = true)
 }
 
 /**
@@ -298,20 +259,22 @@ fun RrSwitchRow(
     subtitle: String? = null,
     @DrawableRes icon: Int? = null,
     enabled: Boolean = true,
-    containerColor: Color = RrTheme.colors.surface,
+    containerColor: Color = Color.Transparent,
+    divider: Boolean = false,
 ) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
     RowFrame(
-        modifier.background(containerColor).toggleable(checked, remember { MutableInteractionSource() }, LocalIndication.current, enabled, Role.Switch) {
+        modifier.rrEnabledAlpha(enabled, 0.45f).background(containerColor).toggleable(checked, remember { MutableInteractionSource() }, LocalIndication.current, enabled, Role.Switch) {
             haptics(if (it) RrHaptic.ToggleOn else RrHaptic.ToggleOff)
             onCheckedChange(it)
         },
+        divider = divider,
     ) {
         if (icon != null) RrIcon(icon, null, tint = c.ink2)
-        Column(Modifier.weight(1f)) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             RrText(title, style = RowTitle, color = c.ink)
-            if (subtitle != null) RrText(subtitle, style = RrType.small, color = c.ink3)
+            if (subtitle != null) RrText(subtitle, style = RrType.ui, color = c.ink3, maxLines = if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
         }
         RrSwitch(checked, null, enabled = enabled)
     }
@@ -321,8 +284,8 @@ fun RrSwitchRow(
 @Composable
 fun RrKeyValue(key: String, value: String, modifier: Modifier = Modifier, mono: Boolean = false) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        RrText(key, style = RrType.caption, color = RrTheme.colors.ink3)
-        RrText(value, style = if (mono) RrType.mono else RrType.ui, color = RrTheme.colors.ink)
+        RrText(key, style = RrType.small, color = RrTheme.colors.ink3)
+        RrText(value, style = if (mono) RrType.mono else RrType.buttonLg, color = RrTheme.colors.ink)
     }
 }
 

@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.*
 import me.rxresu.core.page.*
 
-/** Deterministic paper for previews. Production uses the injected server-PDF PageRenderer. */
+/** Storyboard image crops for previews; the illustrative PDF retains editable fake content for sharing. */
 internal class StoryboardPageRenderer(private val snapshot: ()->JsonObject):PageRenderer {
     private val cached=java.util.concurrent.ConcurrentHashMap<String,RenderedDocument>()
     private fun key(source: PageSource)=when(source) {
@@ -34,10 +34,8 @@ internal class StoryboardPageRenderer(private val snapshot: ()->JsonObject):Page
     }
     override suspend fun lastGood(source: PageSource)=cached[key(source)]
     override suspend fun page(document: RenderedDocument,index: Int,widthPx: Int):Bitmap=withContext(Dispatchers.Default) {
-        require(index==0);require(widthPx>0)
-        Bitmap.createBitmap(widthPx,(widthPx*842f/595f).toInt(),Bitmap.Config.ARGB_8888).also { bitmap ->
-            val canvas=Canvas(bitmap);canvas.scale(widthPx/595f,widthPx/595f);draw(canvas,document.source)
-        }
+        require(index==0)
+        StoryboardPageImages.page(document.source,widthPx)
     }
     private fun draw(canvas: Canvas,source: PageSource) {
         canvas.drawColor(Color.WHITE)

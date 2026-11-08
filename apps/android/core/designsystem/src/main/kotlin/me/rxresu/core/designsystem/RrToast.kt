@@ -219,6 +219,7 @@ fun RrToast(
     Row(
         modifier
             .fillMaxWidth()
+            .rrDesignTag(DesignTag(component = "Toast", radius = RrRadius.lg, bgName = if (tone == RrToastTone.Danger) "danger-soft" else "ink"))
             .rrShadow(RrElevation.Level3, RrShape.lg)
             .clip(RrShape.lg)
             .background(bg)

@@ -97,7 +97,7 @@ fun RrTheme(
         LocalTextSelectionColors provides selection,
         LocalRrContentColor provides colors.ink,
         LocalRrTextStyle provides RrType.ui,
-        content = content,
+        content = { if (LocalRrDesignTags.current || still) content() else ProvideSystemInsets(content) },
     )
 }
 

@@ -35,10 +35,11 @@ fun RrBadge(text: String, modifier: Modifier = Modifier, tone: RrBadgeTone = RrB
     }
     Row(
         modifier
+            .rrDesignTag(DesignTag(component = "Badge", radius = RrRadius.xs, bgName = c.tokenName(containerColor ?: bg)))
             .defaultMinSize(minHeight = 20.dp)
-            .clip(RrShape.sm)
+            .clip(RrShape.xs)
             .background(containerColor ?: bg)
-            .then(if (tone == RrBadgeTone.Outline) Modifier.border(1.dp, c.line2, RrShape.sm) else Modifier)
+            .then(if (tone == RrBadgeTone.Outline) Modifier.border(1.dp, c.line2, RrShape.xs) else Modifier)
             .padding(horizontal = 6.dp, vertical = 2.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically,

@@ -22,10 +22,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 /** Button fills. One [Primary] (accent) per screen: the one primary action. */
 enum class RrButtonVariant {
@@ -59,9 +57,9 @@ enum class RrButtonSize(
     internal val textStyle: TextStyle,
     internal val shape: Shape,
 ) {
-    Small(28.dp, 10.dp, 16.dp, RrType.small.copy(fontWeight = FontWeight.Medium), RrShape.md),
-    Medium(36.dp, 14.dp, 20.dp, RrType.ui.copy(fontWeight = FontWeight.Medium), RrShape.md),
-    Large(44.dp, 16.dp, 20.dp, RrType.ui.copy(fontSize = 15.sp, fontWeight = FontWeight.Medium), RrShape.lg),
+    Small(28.dp, 10.dp, 16.dp, RrType.buttonSm, RrShape.sm),
+    Medium(36.dp, 14.dp, 20.dp, RrType.buttonMd, RrShape.md),
+    Large(44.dp, 16.dp, 20.dp, RrType.buttonLg, RrShape.lg),
 }
 
 internal data class RrButtonColors(val container: Color, val content: Color, val border: Color?)
@@ -105,6 +103,7 @@ fun RrButton(
     val busy = stringResource(R.string.ds_working)
     Row(
         modifier = modifier
+            .rrDesignTag(DesignTag(component = "Button", radius = when (size) { RrButtonSize.Small -> RrRadius.sm; RrButtonSize.Medium -> RrRadius.md; RrButtonSize.Large -> RrRadius.lg }, bgName = when (variant) { RrButtonVariant.Primary -> "accent"; RrButtonVariant.Secondary -> "surface"; RrButtonVariant.Danger -> "danger"; RrButtonVariant.Soft -> "accent-soft"; else -> null }))
             .rrPressScale(interaction)
             // Disabled fades the whole button, fill included. A layer whose alpha changes, never Modifier.alpha: that
             // removes its layer at 1f, and on devices the changed chain could drop the fill once a button was enabled.
@@ -124,7 +123,7 @@ fun RrButton(
                 loading -> RrSpinner(size = if (size == RrButtonSize.Small) 14.dp else 16.dp)
                 icon != null -> RrIcon(icon, null, size = size.iconSize, tint = iconTint ?: colors.content)
             }
-            RrText(text, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+            RrText(text, maxLines = if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else 1, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
         }
     }
 }

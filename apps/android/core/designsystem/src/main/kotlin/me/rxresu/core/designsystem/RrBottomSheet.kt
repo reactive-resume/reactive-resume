@@ -23,11 +23,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -59,6 +56,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
@@ -161,6 +159,7 @@ fun rememberRrBottomSheetState(): RrBottomSheetState = remember { RrBottomSheetS
  * - Back, scrim taps, Close and drag-to-dismiss all go through [confirmDiscard]: when true, "Discard changes?" asks
  *   first (Keep editing · Discard changes).
  *
+ * @param fixedHeight board height including bottom safe area; overrides detents and fitContent, clipped to the window.
  * @param footer pinned under the scrolling content (sheet actions such as "Delete · Save interview").
  * @param docked a sheet that is part of its screen (B1 Design over the live page): no scrim, never dismissed (back,
  *   drags and TalkBack leave it open, [onDismissRequest] is never called), it rests on [detents] (usually two
@@ -187,11 +186,13 @@ fun RrBottomSheet(
     containerColor: Color = RrTheme.colors.raised,
     scrim: Boolean = !docked,
     navigationBarInset: Boolean = true,
+    fixedHeight: Dp? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    require(fixedHeight == null || fixedHeight > 0.dp) { "Sheet height must be positive" }
     val body = @Composable {
         SheetBody(onDismissRequest, modifier, state, detents, initialDetent, fitContent, confirmDiscard, title, showClose,
-            headerActions, footer, docked, containerColor, scrim, navigationBarInset, content)
+            headerActions, footer, docked, containerColor, scrim, navigationBarInset, fixedHeight, content)
     }
     // A sheet lays out over the space it is given: a whole window, or a screen. Inside scrolling content (a picker opened
     // from an entry's fields) that height is unbounded, so the sheet opens in a window of its own instead.
@@ -223,6 +224,7 @@ private fun SheetBody(
     containerColor: Color,
     scrim: Boolean,
     navigationBarInset: Boolean,
+    fixedHeight: Dp?,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val c = RrTheme.colors
@@ -366,13 +368,15 @@ private fun SheetBody(
                     val lowest = state.anchors.firstOrNull() ?: 1f
                     alpha = fade.value * RrSheetMath.scrimAlpha(state.height.value, lowest, state.settled)
                 }
+                .rrDesignTag(DesignTag(component = "Scrim", bgName = "scrim-sheet"))
                 .background(c.scrimSheet)
                 .clickable(remember { MutableInteractionSource() }, null) { requestDismiss() },
         )
         SheetLayout(
             state = state,
             detents = detents,
-            fitContent = fitContent,
+            fitContent = fitContent && fixedHeight == null,
+            fixedHeight = fixedHeight,
             initialDetent = initialDetent,
             onFirstLayout = { to ->
                 scope.launch {
@@ -396,6 +400,7 @@ private fun SheetBody(
                 }
             },
             modifier = Modifier
+                .rrDesignTag(DesignTag(component = "BottomSheet", radius = RrRadius.sheetTop, bgName = c.tokenName(containerColor)))
                 .graphicsLayer { alpha = fade.value }
                 .rrShadow(RrElevation.Level3, RrShape.sheetTop)
                 .clip(RrShape.sheetTop)
@@ -421,9 +426,9 @@ private fun SheetBody(
                     onDragStopped = { velocity -> settle(-velocity) },
                 ),
         ) {
-            Column(Modifier.windowInsetsPadding(if (navigationBarInset) WindowInsets.ime.union(WindowInsets.navigationBars) else WindowInsets.ime)) {
+            Column(Modifier.padding(bottom = maxOf(with(density) { ime.toDp() }, if (navigationBarInset) LocalRrInsets.current.bottom else 0.dp))) {
                 Box(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 4.dp), contentAlignment = Alignment.Center) {
-                    Box(Modifier.size(36.dp, 4.dp).clip(RrShape.sm).background(c.line2))
+                    Box(Modifier.size(36.dp, 4.dp).rrDesignTag(DesignTag(component = "SheetGrabber", radius = 2.dp, bgName = "line-2")).clip(androidx.compose.foundation.shape.RoundedCornerShape(2.dp)).background(c.line2))
                 }
                 if (title != null || headerActions != null || showClose) {
                     RrSheetHeader(title.orEmpty()) {
@@ -431,7 +436,7 @@ private fun SheetBody(
                         if (showClose) RrIconButton(R.drawable.ic_ph_x, closeLabel, { requestDismiss() }, size = RrIconButtonSize.Small)
                     }
                 }
-                Column(Modifier.weight(1f, fill = !fitContent), content = content)
+                Column(Modifier.weight(1f, fill = !fitContent || fixedHeight != null), content = content)
                 if (footer != null) Column(content = footer)
             }
         }
@@ -467,7 +472,7 @@ fun RrSheetHeader(title: String, modifier: Modifier = Modifier, actions: @Compos
             { RrText(title, style = RrType.sheetTitle, color = c.ink, modifier = Modifier.semantics { heading() }) },
             { Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically, content = actions) },
         ),
-        modifier = modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 8.dp),
+        modifier = modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "SheetHeader")).padding(start = 24.dp, end = 12.dp, top = 8.dp, bottom = 4.dp),
     ) { (titleM, actionsM), constraints ->
         val width = constraints.maxWidth
         val gap = 8.dp.roundToPx()
@@ -500,6 +505,7 @@ private fun SheetLayout(
     state: RrBottomSheetState,
     detents: List<Float>,
     fitContent: Boolean,
+    fixedHeight: Dp?,
     initialDetent: Int,
     onFirstLayout: (Float) -> Unit,
     onAnchorsChanged: (Float) -> Unit,
@@ -517,7 +523,7 @@ private fun SheetLayout(
             state.anchors = floatArrayOf(p.height.toFloat())
             p
         } else {
-            state.anchors = detents.map { it * windowH }.toFloatArray()
+            state.anchors = if (fixedHeight != null) floatArrayOf(fixedHeight.toPx().coerceIn(0f, windowH)) else detents.map { it * windowH }.toFloatArray()
             val visible = state.height.value
             val layoutH = max(visible, state.target).coerceIn(0f, windowH).toInt()
             sheet.measure(Constraints.fixed(constraints.maxWidth, layoutH))

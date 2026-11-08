@@ -118,6 +118,7 @@ internal fun HoldToDeleteSurface(progress: Float, text: String, enabled: Boolean
         modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 44.dp)
+            .rrDesignTag(DesignTag(component = "Button", radius = RrRadius.lg, bgName = "danger-soft"))
             .rrEnabledAlpha(enabled, 0.45f)
             .clip(RrShape.lg)
             .background(c.dangerSoft)

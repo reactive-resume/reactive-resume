@@ -9,13 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /** Size of [RrCompanyTile]: 36 dp beside list rows (J1), 28 dp in board cards and compact rows. */
-enum class RrCompanyTileSize(internal val size: Dp, internal val text: Dp) { Regular(36.dp, 14.dp), Small(28.dp, 12.dp) }
+enum class RrCompanyTileSize(internal val size: Dp, internal val text: Dp) { Regular(40.dp, 14.dp), Small(28.dp, 12.dp) }
 
 /**
  * A company's mark: its first letter in 600 ink-2 on a sunken tile with 2 dp corners ("L" for Lumen). Decorative and
@@ -27,10 +26,10 @@ fun RrCompanyTile(company: String, modifier: Modifier = Modifier, size: RrCompan
     val trimmed = company.trim()
     val initial = if (trimmed.isEmpty()) "?" else String(Character.toChars(trimmed.codePointAt(0))).uppercase()
     Box(
-        modifier.size(size.size).clip(RrShape.sm).background(c.sunken).clearAndSetSemantics {},
+        modifier.size(size.size).rrDesignTag(DesignTag(component = "Monogram", radius = RrRadius.md, bgName = "sunken")).clip(RrShape.md).background(c.sunken).rrClearAndSetSemantics {},
         contentAlignment = Alignment.Center,
     ) {
-        RrText(initial, style = fixedSizeText(RrType.ui.copy(fontWeight = FontWeight.SemiBold), size.text, 20.dp), color = c.ink2, maxLines = 1)
+        RrText(initial, style = fixedSizeText(RrType.ui.copy(fontWeight = FontWeight.SemiBold), size.text, 16.dp), color = c.ink2, maxLines = 1)
     }
 }
 

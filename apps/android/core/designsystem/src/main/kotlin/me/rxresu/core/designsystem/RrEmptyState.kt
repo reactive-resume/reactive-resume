@@ -23,13 +23,13 @@ fun RrEmptyState(
 ) {
     val c = RrTheme.colors
     Column(
-        modifier.fillMaxWidth().rrDashedBorder(c.line2, RrRadius.lg).padding(horizontal = 20.dp, vertical = 24.dp),
+        modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "HeroCard", radius = RrRadius.xl)).rrDashedBorder(c.line2, RrRadius.xl).padding(horizontal = 24.dp, vertical = 36.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         RrText(title, style = RrType.sheetTitle, color = c.ink, textAlign = TextAlign.Center)
-        RrText(body, style = RrType.small, color = c.ink2, textAlign = TextAlign.Center)
-        if (actionLabel != null && onAction != null) RrButton(actionLabel, onAction)
+        RrText(body, style = RrType.body, color = c.ink2, textAlign = TextAlign.Center)
+        if (actionLabel != null && onAction != null) RrButton(actionLabel, onAction, size = RrButtonSize.Large)
     }
 }
 

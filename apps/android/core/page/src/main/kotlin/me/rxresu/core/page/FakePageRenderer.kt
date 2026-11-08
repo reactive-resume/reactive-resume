@@ -2,7 +2,6 @@ package me.rxresu.core.page
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,12 +18,7 @@ class FakePageRenderer(private val context: Context) : PageRenderer {
     override suspend fun lastGood(source: PageSource) = render(source)
     /** Caller owns returned bitmap; recycle after it is no longer displayed. White paper in either theme. */
     override suspend fun page(document: RenderedDocument, index: Int, widthPx: Int): Bitmap = withContext(Dispatchers.IO) {
-        require(index == 0 && widthPx in 1..4096)
-        require(widthPx.toLong() * (widthPx * 842.0 / 595).toInt() * 4 <= 32L * 1024 * 1024)
-        val options = BitmapFactory.Options().apply { inScaled = false }
-        val original = BitmapFactory.decodeResource(context.resources, R.drawable.sample_resume, options)
-        val scaled = Bitmap.createScaledBitmap(original, widthPx, (widthPx * 842.0 / 595).toInt(), true)
-        if (scaled !== original) original.recycle()
-        scaled
+        require(index == 0)
+        StoryboardPageImages.page(document.source, widthPx)
     }
 }

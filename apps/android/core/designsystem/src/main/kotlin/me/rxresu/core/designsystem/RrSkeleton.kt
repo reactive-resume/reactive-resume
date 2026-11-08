@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -20,7 +19,7 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun RrSkeleton(modifier: Modifier = Modifier, shape: Shape = RrShape.sm) {
-    Box(modifier.clip(shape).background(RrTheme.colors.sunken).clearAndSetSemantics { })
+    Box(modifier.clip(shape).background(RrTheme.colors.sunken).rrClearAndSetSemantics { })
 }
 
 /** Text-line placeholders: [lines] bars of [lineHeight], the last one shorter. */

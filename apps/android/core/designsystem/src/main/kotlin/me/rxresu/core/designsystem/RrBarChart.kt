@@ -20,7 +20,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.CustomAccessibilityAction
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.unit.LayoutDirection
@@ -71,7 +70,7 @@ fun RrBarChart(
                     }
                 },
             )
-            .clearAndSetSemantics {
+            .rrClearAndSetSemantics {
                 this.contentDescription = contentDescription
                 if (onSelect != null && previousLabel != null && nextLabel != null) {
                     customActions = listOf(

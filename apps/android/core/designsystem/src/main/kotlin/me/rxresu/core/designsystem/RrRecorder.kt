@@ -18,7 +18,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
@@ -34,14 +33,14 @@ import me.rxresu.core.strings.R as S
 fun RrWaveform(levels: List<Float>, modifier: Modifier = Modifier, bars: Int = 20) {
     val c = RrTheme.colors
     if (LocalReducedMotion.current) {
-        Box(modifier.clearAndSetSemantics {}.width(200.dp).height(4.dp).clip(RrShape.xs).background(c.sunken)) {
+        Box(modifier.rrClearAndSetSemantics {}.width(200.dp).height(4.dp).clip(RrShape.xs).background(c.sunken)) {
             Box(Modifier.fillMaxWidth((levels.lastOrNull() ?: 0f).coerceIn(0f, 1f)).height(4.dp).background(c.accent))
         }
         return
     }
     Row(
-        modifier.clearAndSetSemantics {}.height(56.dp),
-        horizontalArrangement = Arrangement.spacedBy(3.dp),
+        modifier.rrClearAndSetSemantics {}.height(56.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         repeat(bars) { i ->
@@ -67,7 +66,7 @@ fun RrRecordButton(recording: Boolean, onClick: () -> Unit, modifier: Modifier =
     val fill by animateColorAsState(if (recording) c.danger else c.accent, RrMotion.spec(RrMotion.D1, reduced), label = "record")
     val label = stringResource(if (recording) S.string.stop_recording else S.string.record_your_answer)
     Box(
-        modifier.size(size.coerceAtLeast(RrLayout.minTouch)).clip(RrShape.lg).background(fill)
+        modifier.size(size.coerceAtLeast(RrLayout.minTouch)).rrDesignTag(DesignTag(component = "RecordButton", radius = RrRadius.record, bgName = if (recording) "danger" else "accent")).clip(androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.record)).background(fill)
             .clickable(role = Role.Button, onClickLabel = label, onClick = onClick)
             .semantics { contentDescription = label },
         contentAlignment = Alignment.Center,

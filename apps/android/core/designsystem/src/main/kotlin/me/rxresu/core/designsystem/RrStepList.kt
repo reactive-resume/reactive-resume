@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 
@@ -34,7 +33,7 @@ fun RrStepList(steps: List<RrStep>, modifier: Modifier = Modifier) {
                 RrStepState.Pending -> step.label
             }
             Row(
-                Modifier.clearAndSetSemantics { contentDescription = description },
+                Modifier.rrClearAndSetSemantics { contentDescription = description },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {

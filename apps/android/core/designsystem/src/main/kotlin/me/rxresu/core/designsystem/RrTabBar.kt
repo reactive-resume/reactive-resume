@@ -1,59 +1,47 @@
 package me.rxresu.core.designsystem
 
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Density
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * One tab of [RrTabBar].
- *
- * @param badge a short count on the icon ("2"); TalkBack reads [badgeDescription] ("2 new") as the state.
- */
 data class RrTab(
     val label: String,
     @DrawableRes val icon: Int,
     @DrawableRes val selectedIcon: Int,
     val badge: String? = null,
     val badgeDescription: String? = null,
+    val warn: Boolean = false,
 )
 
-private val TabLabel = RrType.caption
 private val BadgeText = TextStyle(fontFamily = GeistMono, fontWeight = FontWeight.SemiBold, fontSize = 11.sp, lineHeight = 16.sp)
 
-/**
- * Bottom tab bar (56 dp plus the navigation bar inset): `surface`, line on top, the selected tab in accent text with
- * its filled icon. Only on the four tab roots. Re-tapping the selected tab calls [onReselect] (scroll to top). No
- * haptic: tab switches are navigation.
- */
+/** Shared 64 dp dock; device safe area sits below the visible item row. */
 @Composable
 fun RrTabBar(
     tabs: List<RrTab>,
@@ -63,49 +51,39 @@ fun RrTabBar(
     onReselect: (Int) -> Unit = {},
 ) {
     val c = RrTheme.colors
-    Column(modifier.fillMaxWidth().background(c.surface)) {
+    Column(modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "Dock", bgName = "bg")).background(c.bg)) {
         Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
-        Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).selectableGroup()) {
+        Row(
+            Modifier.fillMaxWidth().height(RrLayout.dock)
+                .padding(horizontal = 8.dp).selectableGroup(),
+        ) {
             tabs.forEachIndexed { i, tab ->
                 val selected = i == selectedIndex
                 val fg = if (selected) c.accentText else c.ink2
-                Column(
-                    Modifier
-                        .weight(1f)
-                        .defaultMinSize(minHeight = 56.dp)
+                Box(
+                    Modifier.weight(1f).height(RrLayout.dock).rrDesignTag(DesignTag(component = "DockItem"))
                         .selectable(selected, role = Role.Tab) { if (selected) onReselect(i) else onSelect(i) }
-                        .then(if (tab.badgeDescription != null) Modifier.semantics { stateDescription = tab.badgeDescription } else Modifier)
-                        .padding(vertical = 6.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+                        .then(if (tab.badgeDescription != null) Modifier.semantics { stateDescription = tab.badgeDescription } else Modifier),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Box {
-                        RrIcon(if (selected) tab.selectedIcon else tab.icon, null, tint = fg)
-                        if (tab.badge != null) {
-                            RrText(
-                                tab.badge,
-                                style = BadgeText,
-                                color = c.warnInk,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                                modifier = Modifier
-                                    .offset(x = 22.dp, y = (-2).dp)
-                                    .defaultMinSize(minWidth = 16.dp, minHeight = 16.dp)
-                                    .clip(RrShape.sm)
-                                    .background(c.warn)
-                                    .padding(horizontal = 4.dp),
-                            )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        RrIcon(if (selected) tab.selectedIcon else tab.icon, null, size = 24.dp, tint = fg)
+                        val density = LocalDensity.current
+                        CompositionLocalProvider(LocalDensity provides Density(density.density, density.fontScale.coerceAtMost(1.3f))) {
+                            RrText(tab.label, style = RrType.dockLabel, color = fg, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
-                    // Four labels share the width: never break a word. Labels grow up to 1.3× and then truncate;
-                    // TalkBack still reads the whole label.
-                    val density = LocalDensity.current
-                    CompositionLocalProvider(LocalDensity provides Density(density.density, density.fontScale.coerceAtMost(1.3f))) {
-                        RrText(tab.label, style = TabLabel, color = fg, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    }
+                    if (tab.badge != null) RrText(
+                        tab.badge, style = BadgeText, color = c.warnInk,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        modifier = Modifier.align(Alignment.TopCenter).offset(x = 14.dp, y = 8.dp)
+                            .defaultMinSize(minWidth = 16.dp, minHeight = 16.dp).clip(RrShape.full).background(c.warn).padding(horizontal = 4.dp),
+                    )
+                    if (tab.warn) Box(Modifier.align(Alignment.TopCenter).offset(x = 13.5.dp, y = 10.dp).size(7.dp).clip(RrShape.full).background(c.warn))
                 }
             }
         }
-        Box(Modifier.windowInsetsPadding(WindowInsets.navigationBars))
+        Box(Modifier.rrNavigationBarsPadding())
     }
 }
 

@@ -70,10 +70,10 @@ fun RrSegmentedControl(
     containerColor: Color = RrTheme.colors.sunken,
     enabled: Boolean = true,
 ) {
-    SegmentTrack(segments, selectedIndex, onSelect, modifier, itemHeight = 32.dp, stacked = false, fillWidth = fillWidth, containerColor = containerColor, enabled = enabled)
+    SegmentTrack(segments, selectedIndex, onSelect, modifier, itemHeight = 40.dp, stacked = false, fillWidth = fillWidth, containerColor = containerColor, enabled = enabled)
 }
 
-private val SegmentText = RrType.small.copy(fontWeight = FontWeight.Medium)
+private val SegmentText = RrType.segment
 private val ModeText = RrType.small.copy(fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 14.sp)
 
 @Composable
@@ -96,7 +96,7 @@ internal fun SegmentTrack(
         position.animateTo(selectedIndex.toFloat(), RrMotion.spec(RrMotion.D2, reduced, RrMotion.easeInOutStrong))
     }
     Layout(
-        modifier = modifier.clip(RrShape.lg).background(containerColor).padding(2.dp).selectableGroup(),
+        modifier = modifier.rrDesignTag(DesignTag(component = "Segmented", radius = RrRadius.lg, bgName = c.tokenName(containerColor))).clip(RrShape.lg).background(containerColor).padding(2.dp).selectableGroup(),
         content = {
             Box(Modifier.rrShadow(RrElevation.Level1, RrShape.md).clip(RrShape.md).background(c.raised))
             segments.forEachIndexed { i, s ->

@@ -1,5 +1,6 @@
 package me.rxresu
 
+import android.content.pm.ApplicationInfo
 import androidx.core.view.WindowCompat
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.Flow
 import me.rxresu.core.auth.SessionState
 import me.rxresu.core.data.AppPreferences
 import me.rxresu.core.data.LocalRepositories
+import me.rxresu.core.designsystem.LocalRrDesignTags
 import me.rxresu.core.data.Resource
 import kotlinx.coroutines.flow.MutableSharedFlow
 import androidx.compose.ui.res.pluralStringResource
@@ -133,6 +135,7 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         }
 
         CompositionLocalProvider(
+            LocalRrDesignTags provides (((activity?.applicationInfo?.flags ?: 0) and ApplicationInfo.FLAG_DEBUGGABLE) != 0),
             LocalRepositories provides graph.repositories,
             LocalToasts provides toasts,
             LocalTabReselects provides reselects,

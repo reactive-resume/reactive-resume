@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
@@ -95,7 +94,7 @@ fun RrMonthPicker(
                             style = RrType.ui.copy(fontWeight = FontWeight.SemiBold),
                             color = if (isSelected) c.onAccent else c.ink,
                             maxLines = 1,
-                            modifier = Modifier.clearAndSetSemantics { },
+                            modifier = Modifier.rrClearAndSetSemantics { },
                         )
                     }
                 }
