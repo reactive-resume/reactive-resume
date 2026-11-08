@@ -111,6 +111,12 @@ internal class BuilderViewModel(
     val openCopyEvents = opened.receiveAsFlow()
     /** The newest rendered page text, sent as the writing review's extracted text. */
     private var pageText: String = ""
+    /**
+     * The entry sheet's visible height in px (B2), written by the sheet destination every frame it moves and read by the
+     * page under it, so the picked block stays above the sheet's current top. Snapshot state, not [state]: it changes per
+     * frame.
+     */
+    val entrySheetHeight = androidx.compose.runtime.mutableFloatStateOf(0f)
 
     private var draft: DocumentDraft<Resume>? = null
     private val editLock = Mutex()
@@ -528,8 +534,13 @@ internal class BuilderViewModel(
             val asked = ImproveRequest(line, action, request, provider.label, provider.model)
             mutable.update { it.copy(improve = ImproveState.Working(asked)) }
             val answer = try {
-                repositories.ai.improveLine(ImproveLineRequest(action = action, aiProviderId = provider.id, context = context, includeProvenance = true, line = line, request = request, where = where))
-            } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(improve = ImproveState.Failed(asked)) }; return@launch }
+                repositories.ai.improveLine(ImproveLineRequest(action = action, aiProviderId = provider.id, context = context, includeProvenance = true, line = line, request = request, where = where), provider.approval)
+            } catch (e: CancellationException) { throw e } catch (e: Exception) {
+                // The connection changed since it was shown: show the renewed destination, keep the line and instructions.
+                val renewed = if (destinationChanged(e)) renewProvider() else null
+                mutable.update { it.copy(improve = ImproveState.Failed(renewed?.let { p -> asked.copy(provider = p.label, model = p.model) } ?: asked, destinationChanged = renewed != null)) }
+                return@launch
+            }
             mutable.update { it.copy(improve = ImproveState.Ready(asked, answer.text, answer.why, answer.addsFacts, answer.aiOperationIds.orEmpty())) }
         }
     }
@@ -555,8 +566,14 @@ internal class BuilderViewModel(
     }
 
     private suspend fun provider(): AiProvider? = try {
-        repositories.ai.listAiProviders().firstOrNull { it.enabled && it.testStatus == "success" }?.let { AiProvider(it.id, it.label, it.fastModel ?: it.model) }
+        repositories.ai.listAiProviders().firstOrNull { it.enabled && it.testStatus == "success" }?.let { AiProvider(it.id, it.label, it.fastModel ?: it.model, it.recipientVersion) }
     } catch (e: CancellationException) { throw e } catch (_: Exception) { null }
+
+    /** The server refuses an AI request whose approved destination changed since the disclosure (409, nothing sent). */
+    private fun destinationChanged(e: Exception) = e is me.rxresu.core.network.ApiException && e.status == 409
+
+    /** Reloads the usable provider after a refused request, so the next disclosure names the current destination. */
+    private suspend fun renewProvider(): AiProvider? = provider().also { p -> mutable.update { it.copy(aiProvider = p) } }
 
     // Photo -------------------------------------------------------------------------------------------------------------
 
@@ -633,10 +650,11 @@ internal class BuilderViewModel(
             if (provider == null) { mutable.update { it.copy(improve = ImproveState.NoProvider) }; return@launch }
             mutable.update { it.copy(reviewing = true, aiProvider = provider) }
             try {
-                repositories.ai.atsReview(me.rxresu.core.network.generated.AtsReviewRequest(aiProviderId = provider.id, extractedText = pageText.take(MAX_REVIEW_CHARS), resumeId = resumeId))
+                repositories.ai.atsReview(me.rxresu.core.network.generated.AtsReviewRequest(aiProviderId = provider.id, extractedText = pageText.take(MAX_REVIEW_CHARS), resumeId = resumeId), provider.approval)
                 loadWritingNotes()
-            } catch (e: CancellationException) { throw e } catch (_: Exception) {
-                toasts.send(BuilderToast(R.string.builder_review_failed, danger = true))
+            } catch (e: CancellationException) { throw e } catch (e: Exception) {
+                if (destinationChanged(e)) { renewProvider(); toasts.send(BuilderToast(me.rxresu.core.designsystem.R.string.ds_ai_destination_changed, danger = true)) }
+                else toasts.send(BuilderToast(R.string.builder_review_failed, danger = true))
             } finally { mutable.update { it.copy(reviewing = false) } }
         }
     }

@@ -86,7 +86,8 @@ import me.rxresu.core.strings.R as CoreR
             }
             if (state.proposals.isNotEmpty()) RrButton(stringResource(R.string.p4_review_1_s_edits, state.proposals.size.toString()), { action("proposals") }, variant = RrButtonVariant.Secondary)
             if (state.historyUnavailable) RrCallout(stringResource(R.string.p4_saved_conversation_content_is_unavailable_your_document_is_unchanged))
-            if (state.failed) RrCallout(stringResource(R.string.p4_couldn_t_send_your_message_is_kept), tone = RrTone.Danger, actionLabel = stringResource(CoreR.string.retry), onAction = send)
+            // A changed connection says so; the disclosure line below already names the renewed destination.
+            if (state.failed) RrCallout(stringResource(if (state.destinationChanged) DsR.string.ds_ai_destination_changed else R.string.p4_couldn_t_send_your_message_is_kept), tone = RrTone.Danger, actionLabel = stringResource(CoreR.string.retry), onAction = send)
             if (state.failed) RrButton(stringResource(CoreR.string.switch_model), { action("providers") }, variant = RrButtonVariant.Secondary)
             if (state.stopped) RrCallout(if (state.proposals.isEmpty()) stringResource(CoreR.string.stopped_no_edits_were_proposed) else stringResource(R.string.p4_stopped), actionLabel = stringResource(CoreR.string.message_continue), onAction = { action("continue") })
         }
@@ -94,22 +95,32 @@ import me.rxresu.core.strings.R as CoreR
     }
 }
 
-@Composable internal fun ProposalsScreen(state: AssistantState, dismiss: () -> Unit, decide: (List<String>, Decision, String?) -> Unit, suggest: () -> Unit, location: (Proposal) -> Unit = {}, saveWording: (Proposal, String) -> Unit = { proposal, text -> decide(listOf(proposal.id), Decision.Pending, text) }) {
+/**
+ * B17. The wording being written lives in [AssistantState.wording] (the view model), so leaving for the edit's location,
+ * closing after a failed save, or a refreshed proposal never loses it; closing with unsaved wording asks first.
+ */
+@Composable internal fun ProposalsScreen(state: AssistantState, dismiss: () -> Unit, decide: (List<String>, Decision, String?) -> Unit, suggest: () -> Unit, location: (Proposal) -> Unit = {}, saveWording: (Proposal, String) -> Unit = { proposal, text -> decide(listOf(proposal.id), Decision.Pending, text) },
+    editWording: (Proposal) -> Unit = {}, onWording: (String) -> Unit = {}, cancelWording: () -> Unit = {}) {
     val c = RrTheme.colors
-    var editing by remember { mutableStateOf<String?>(null) }; var wording by remember { mutableStateOf("") }; var baseline by remember { mutableStateOf<Proposal?>(null) }
+    val draft = state.wording; val editing = draft?.proposal?.id; val wording = draft?.text.orEmpty(); val baseline = draft?.proposal
+    val dirty = draft?.dirty == true
+    var askDiscard by remember { mutableStateOf(false) }
+    val close = { if (dirty) askDiscard = true else dismiss() }
     val haptics = rememberRrHaptics()
     val open = state.proposals.filter { it.decision == Decision.Pending }
-    LaunchedEffect(state.wordingSavedId) { if (state.wordingSavedId == editing) editing = null }
     var previousOpen by remember { mutableIntStateOf(open.size) }
     LaunchedEffect(open.size, state.deciding, state.failed) { if (!state.deciding) { if (!state.failed && previousOpen > 0 && open.isEmpty() && state.proposals.all { it.decision in setOf(Decision.Accepted, Decision.Rejected) } && state.proposals.any { it.decision == Decision.Accepted }) haptics(RrHaptic.Success); previousOpen = open.size } }
-    RrBottomSheet(dismiss, detents = listOf(0.935f), footer = {
+    if (askDiscard) RrAlertDialog(stringResource(DsR.string.ds_discard_changes_title), stringResource(DsR.string.ds_discard_changes_body), stringResource(DsR.string.ds_discard),
+        onConfirm = { askDiscard = false; cancelWording(); dismiss() }, onDismissRequest = { askDiscard = false }, dismissLabel = stringResource(DsR.string.ds_keep_editing), confirm = RrDialogConfirm.Danger)
+    // Discard from the sheet's own guard (Back, swipe, scrim) drops the draft too.
+    RrBottomSheet({ cancelWording(); dismiss() }, detents = listOf(0.935f), confirmDiscard = dirty, footer = {
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             RrButton(stringResource(CoreR.string.reject_all), { decide(open.map { it.id }, Decision.Rejected, null) }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, enabled = !state.deciding && !state.locked)
             RrButton(stringResource(CoreR.string.accept_the_others), { decide(bulkEligible(state.proposals).map { it.id }, Decision.Accepted, null) }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, enabled = !state.deciding && !state.locked)
         }
     }) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-            RrIconButton(DsR.drawable.ic_ph_caret_left, stringResource(CoreR.string.back), dismiss, mirrorInRtl = true)
+            RrIconButton(DsR.drawable.ic_ph_caret_left, stringResource(CoreR.string.back), close, mirrorInRtl = true)
             RrText(stringResource(R.string.p4_proposed_edits), style = RrType.label, modifier = Modifier.weight(1f))
             RrText(stringResource(R.string.p4_1_s_of_2_s_open, open.size.toString(), state.proposals.size.toString()), Modifier.padding(end = 10.dp), style = RrType.mono, color = c.ink3)
         }
@@ -124,16 +135,16 @@ import me.rxresu.core.strings.R as CoreR
                             Decision.Stale -> RrCallout(stringResource(CoreR.string.out_of_date_the_text_has_changed_since), tone = RrTone.Warn, actionLabel = stringResource(R.string.p4_suggest_again), onAction = suggest)
                             Decision.Pending -> if (editing == proposal.id) {
                                 RrCard {
-                                    RrTextField(wording, { wording = it }, label = stringResource(CoreR.string.your_wording), singleLine = false, minLines = 4)
+                                    RrTextField(wording, onWording, label = stringResource(CoreR.string.your_wording), singleLine = false, minLines = 4)
                                     RrButton(stringResource(CoreR.string.save_wording), { baseline?.let { saveWording(it, wording) } }, enabled = wording.isNotBlank() && !state.deciding && !state.locked && baseline?.after == proposal.after)
                                     if (baseline?.after != proposal.after) RrCallout(stringResource(R.string.p4_wording_changed), tone = RrTone.Warn)
-                                    RrButton(stringResource(CoreR.string.cancel), { editing = null }, variant = RrButtonVariant.Secondary)
+                                    RrButton(stringResource(CoreR.string.cancel), cancelWording, variant = RrButtonVariant.Secondary)
                                     if (state.failed) RrCallout(stringResource(CoreR.string.couldn_t_save_your_wording_your_text_is_still_here_try_again), tone = RrTone.Danger)
                                 }
                             } else RrSwipeRow(startAction = RrSwipeAction(stringResource(CoreR.string.reject), DsR.drawable.ic_ph_x, onCommit = { if (!state.deciding && !state.locked) decide(listOf(proposal.id), Decision.Rejected, null) }), endAction = RrSwipeAction(stringResource(CoreR.string.accept), DsR.drawable.ic_ph_check, onCommit = { if (!state.deciding && !state.locked) decide(listOf(proposal.id), Decision.Accepted, null) })) { RrProposalCard(index + 1, proposal.location, editRuns(plain(proposal.before), plain(proposal.after)),
                                 { if (!state.deciding && !state.locked) decide(listOf(proposal.id), Decision.Accepted, null) }, { if (!state.deciding && !state.locked) decide(listOf(proposal.id), Decision.Rejected, null) },
                                 modifier = if (proposal.id == open.firstOrNull()?.id) Modifier.border(2.dp, c.accent, RrShape.lg) else Modifier,
-                                onEdit = { editing = proposal.id; baseline = proposal; wording = plain(proposal.after) }, acceptPrimary = !proposal.newDetail && index == state.proposals.indexOfFirst { it.decision == Decision.Pending },
+                                onEdit = { editWording(proposal) }, acceptPrimary = !proposal.newDetail && index == state.proposals.indexOfFirst { it.decision == Decision.Pending },
                                 badge = if (proposal.newDetail || proposal.unsupported.isNotEmpty()) ({ RrBadge(stringResource(CoreR.string.new_detail_check_it_s_true), tone = RrBadgeTone.Warn) }) else null) {
                                 RrButton(proposal.location, { location(proposal) }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small)
                                 if (proposal.why.isNotBlank()) RrText(proposal.why, style = RrType.caption, color = c.ink2)

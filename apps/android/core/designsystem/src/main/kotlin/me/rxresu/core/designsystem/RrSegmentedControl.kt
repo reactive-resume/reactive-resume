@@ -51,9 +51,14 @@ data class RrSegment(
  * Segmented control: sunken track, the selected segment raised with shadow-1. The selection slides with
  * ease-in-out-strong d2 (instant under reduced motion) and plays `selection`.
  *
+ * Plays `selection` once when a different segment is picked; callers add no haptic of their own. Segments that don't
+ * fit side by side (long translations, 200% text) keep their full labels and wrap onto further rows, so every segment
+ * stays visible and reachable.
+ *
  * @param fillWidth segments share the available width equally; false sizes every segment to the widest label.
  * @param containerColor the track: `sunken` by default; `bg` where the control sits on the sunken page canvas (B1
  *   Page · Outline).
+ * @param enabled false ignores taps (no selection, no haptic), e.g. while the document is locked.
  */
 @Composable
 fun RrSegmentedControl(
@@ -63,8 +68,9 @@ fun RrSegmentedControl(
     modifier: Modifier = Modifier,
     fillWidth: Boolean = true,
     containerColor: Color = RrTheme.colors.sunken,
+    enabled: Boolean = true,
 ) {
-    SegmentTrack(segments, selectedIndex, onSelect, modifier, itemHeight = 32.dp, stacked = false, fillWidth = fillWidth, containerColor = containerColor)
+    SegmentTrack(segments, selectedIndex, onSelect, modifier, itemHeight = 32.dp, stacked = false, fillWidth = fillWidth, containerColor = containerColor, enabled = enabled)
 }
 
 private val SegmentText = RrType.small.copy(fontWeight = FontWeight.Medium)
@@ -80,6 +86,7 @@ internal fun SegmentTrack(
     stacked: Boolean,
     fillWidth: Boolean,
     containerColor: Color = RrTheme.colors.sunken,
+    enabled: Boolean = true,
 ) {
     val c = RrTheme.colors
     val reduced = LocalReducedMotion.current
@@ -110,7 +117,7 @@ internal fun SegmentTrack(
                 }
                 val itemModifier = Modifier
                     .clip(RrShape.md)
-                    .selectable(selected, role = Role.Tab) {
+                    .selectable(selected, enabled = enabled, role = Role.Tab) {
                         if (!selected) haptics(RrHaptic.Selection)
                         onSelect(i)
                     }
@@ -125,32 +132,52 @@ internal fun SegmentTrack(
         },
     ) { measurables, constraints ->
         val gap = 2.dp.roundToPx()
-        val n = segments.size.coerceAtLeast(1)
         val minH = itemHeight.roundToPx()
         val items = measurables.drop(1)
-        val natural = items.map { it.maxIntrinsicWidth(minH) }
-        val widths = if (fillWidth && constraints.hasBoundedWidth) {
-            segmentWidths(natural, constraints.maxWidth - gap * (n - 1))
-        } else {
-            val widest = natural.maxOrNull() ?: 0
-            natural.map { widest }
+        val natural = items.map { it.maxIntrinsicWidth(minH) }.let { n ->
+            if (fillWidth && constraints.hasBoundedWidth) n else (n.maxOrNull() ?: 0).let { widest -> n.map { widest } }
         }
-        val starts = widths.runningFold(0) { x, w -> x + w + gap }
+        val available = if (constraints.hasBoundedWidth) constraints.maxWidth else Int.MAX_VALUE
+        // Rows of segments that fit side by side; one row unless the labels are too wide (200% text, translations).
+        val rows = segmentRows(natural, available, gap)
+        val widths = IntArray(items.size)
+        rows.forEach { row ->
+            val rowNatural = row.map { natural[it] }
+            val rowWidths = if (fillWidth && constraints.hasBoundedWidth) segmentWidths(rowNatural, available - gap * (row.size - 1)) else rowNatural
+            row.forEachIndexed { k, i -> widths[i] = rowWidths[k].coerceAtMost(available) }
+        }
         val h = maxOf(minH, items.indices.maxOfOrNull { items[it].minIntrinsicHeight(widths[it]) } ?: 0)
+        val xs = IntArray(items.size)
+        val ys = IntArray(items.size)
+        rows.forEachIndexed { r, row ->
+            var x = 0
+            row.forEach { i -> xs[i] = x; ys[i] = r * (h + gap); x += widths[i] + gap }
+        }
         val placeables = items.mapIndexed { i, m -> m.measure(Constraints.fixed(widths[i], h)) }
-        // The indicator follows the animated index between neighbouring segments' bounds.
+        // The indicator follows the animated index between neighbouring segments' bounds (across rows when wrapped).
         val pos = position.value.coerceIn(0f, (widths.size - 1).coerceAtLeast(0).toFloat())
         val lo = pos.toInt()
         val hi = minOf(lo + 1, widths.lastIndex.coerceAtLeast(0))
         val t = pos - lo
-        val indicatorX = starts.getOrElse(lo) { 0 } + (starts.getOrElse(hi) { 0 } - starts.getOrElse(lo) { 0 }) * t
-        val indicatorW = widths.getOrElse(lo) { 0 } + (widths.getOrElse(hi) { 0 } - widths.getOrElse(lo) { 0 }) * t
-        val indicator = measurables.first().measure(Constraints.fixed(indicatorW.roundToInt().coerceAtLeast(0), h))
-        layout((starts.lastOrNull() ?: gap) - gap, h) {
-            indicator.placeRelative(indicatorX.roundToInt(), 0)
-            placeables.forEachIndexed { i, p -> p.placeRelative(starts[i], 0) }
+        fun lerp(a: IntArray, i: Int, j: Int) = a.getOrElse(i) { 0 } + (a.getOrElse(j) { 0 } - a.getOrElse(i) { 0 }) * t
+        val indicator = measurables.first().measure(Constraints.fixed(lerp(widths, lo, hi).roundToInt().coerceAtLeast(0), h))
+        val width = rows.maxOfOrNull { row -> row.sumOf { widths[it] } + gap * (row.size - 1) } ?: 0
+        layout(width, rows.size * h + gap * (rows.size - 1).coerceAtLeast(0)) {
+            indicator.placeRelative(lerp(xs, lo, hi).roundToInt(), lerp(ys, lo, hi).roundToInt())
+            placeables.forEachIndexed { i, p -> p.placeRelative(xs[i], ys[i]) }
         }
     }
+}
+
+/** Indices of [natural] widths grouped into rows no wider than [available] with [gap] between neighbours, in order. */
+internal fun segmentRows(natural: List<Int>, available: Int, gap: Int): List<List<Int>> {
+    val rows = mutableListOf<MutableList<Int>>()
+    var x = 0
+    natural.forEachIndexed { i, w ->
+        val row = rows.lastOrNull()
+        if (row == null || x + gap + w > available) { rows += mutableListOf(i); x = w } else { row += i; x += gap + w }
+    }
+    return rows
 }
 
 /**

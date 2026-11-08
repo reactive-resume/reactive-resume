@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -85,6 +86,9 @@ internal fun EntryRoute(route: BuilderEntry, vm: BuilderViewModel, nav: NavContr
     val state by vm.state.collectAsStateWithLifecycle()
     val sheet = rememberRrBottomSheetState()
     val scope = rememberCoroutineScope()
+    // The page under this sheet keeps the picked block above the sheet's live top.
+    LaunchedEffect(sheet) { snapshotFlow { sheet.visibleHeight }.collect { vm.entrySheetHeight.floatValue = it } }
+    DisposableEffect(Unit) { onDispose { vm.entrySheetHeight.floatValue = 0f } }
     EntrySheet(
         state = state,
         section = route.section,

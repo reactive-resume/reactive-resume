@@ -194,12 +194,12 @@ private fun PhotoRow(state: BuilderUiState, doc: ResumeDoc, actions: BuilderActi
             val ratios = listOf(1.0 to S.string.square, 1.5 to S.string.landscape, 0.5 to S.string.portrait)
             RrText(stringResource(S.string.aspect_ratio), style = RrType.fieldLabel, color = c.ink2)
             RrSegmentedControl(ratios.map { RrSegment(stringResource(it.second)) }, ratios.indexOfFirst { it.first == picture["aspectRatio"].num() }.coerceAtLeast(0), {
-                haptics(RrHaptic.Selection); actions.set(listOf("data", "picture", "aspectRatio"), JsonPrimitive(ratios[it].first))
+                actions.set(listOf("data", "picture", "aspectRatio"), JsonPrimitive(ratios[it].first))
             })
             val radii = listOf(0, 10, 100)
             RrText(stringResource(S.string.border_radius), style = RrType.fieldLabel, color = c.ink2)
             RrSegmentedControl(radii.map { RrSegment("$it") }, radii.indexOfFirst { it.toDouble() == picture["borderRadius"].num() }.coerceAtLeast(0), {
-                haptics(RrHaptic.Selection); actions.set(listOf("data", "picture", "borderRadius"), JsonPrimitive(radii[it]))
+                actions.set(listOf("data", "picture", "borderRadius"), JsonPrimitive(radii[it]))
             })
         }
     }

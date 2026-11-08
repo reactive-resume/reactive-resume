@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import me.rxresu.core.database.SaveStatus
 import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.RrEmptyState
-import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrIconButton
 import me.rxresu.core.designsystem.RrModeBar
@@ -36,7 +35,6 @@ import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrTopBar
-import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.designsystem.rrBuilderModes
 import me.rxresu.core.navigation.BuilderMode
 import me.rxresu.core.strings.R as S
@@ -61,7 +59,6 @@ internal fun BuilderScreen(
     onDismissOutsideChange: () -> Unit = {},
     content: @Composable (BuilderMode) -> Unit,
 ) {
-    val haptics = rememberRrHaptics()
     val reduced = LocalReducedMotion.current
     Column(modifier.fillMaxSize().background(RrTheme.colors.bg)) {
         RrTopBar(
@@ -105,7 +102,7 @@ internal fun BuilderScreen(
         RrModeBar(
             rrBuilderModes(stringResource(S.string.write), stringResource(S.string.design), stringResource(S.string.check), stringResource(S.string.share), checkWarn = issues > 0, checkDescription = checkDescription),
             selectedIndex = mode.ordinal,
-            onSelect = { i -> if (i != mode.ordinal) { haptics(RrHaptic.Selection); onMode(BuilderMode.entries[i]) } },
+            onSelect = { i -> if (i != mode.ordinal) onMode(BuilderMode.entries[i]) },
         )
     }
 }

@@ -52,9 +52,11 @@ class LetterViewModelTest {
             assertNull(repositories.letters.getCoverLetter(StoryboardIds.lumenLetter).sourceResumeId)
         } finally { repositories.close() }
     }
-    private fun streamed(base: RrRepositories, fail: Boolean = false, onRequest: (DraftCoverLetterRequest?) -> Unit = {}): RrRepositories {
+    private fun streamed(base: RrRepositories, fail: Boolean = false, ai: AiRepository = base.ai, refuse: () -> Boolean = { false }, onOptions: (RequestOptions) -> Unit = {}, onRequest: (DraftCoverLetterRequest?) -> Unit = {}): RrRepositories {
         val letters = object : LettersRepository by base.letters {
             override fun draftCoverLetter(id: String, body: DraftCoverLetterRequest?, options: RequestOptions): Flow<ServerEvent> = flow {
+                onOptions(options)
+                if (refuse()) throw ApiException(409, "CONFLICT", "Your AI destination changed. Nothing was sent; review the connection and try again.")
                 assertEquals(true, body?.includeProvenance); onRequest(body)
                 emit(ServerEvent(null, "message", "{\"aiOperationId\":\"operation\"}")); delay(100)
                 emit(ServerEvent(null, "message", JsonPrimitive("My draft & ").toString())); delay(100)
@@ -62,7 +64,7 @@ class LetterViewModelTest {
                 emit(ServerEvent(null, "message", JsonPrimitive("my facts").toString())); emit(ServerEvent(null, "done", "null"))
             }
         }
-        return RrRepositories(base.account, base.documents, base.resumes, letters, base.applications, base.checks, base.ai, base.assistant, base.workspace, base.career, base.search, base.publicResume, base.platform, base.preferences, base.today, base.drafts, base.pages, base.authSession, base.time)
+        return RrRepositories(base.account, base.documents, base.resumes, letters, base.applications, base.checks, ai, base.assistant, base.workspace, base.career, base.search, base.publicResume, base.platform, base.preferences, base.today, base.drafts, base.pages, base.authSession, base.time)
     }
     @Test fun generatedDraftNeverAppliesSilentlyAndKeepIsUndoable() = runTest {
         val base = FakeRepositories(coroutineScope = backgroundScope)
@@ -114,6 +116,40 @@ class LetterViewModelTest {
             val vm = LetterViewModel(streamed(base, true) { requests += it?.variant }, StoryboardIds.lumenLetter, io = StandardTestDispatcher(testScheduler)); runCurrent()
             vm.generate(CreateCoverLetterDraftRequestVariant.Personal); advanceTimeBy(201); runCurrent(); vm.retryDraft(); advanceTimeBy(201); runCurrent()
             assertEquals(listOf(CreateCoverLetterDraftRequestVariant.Personal, CreateCoverLetterDraftRequestVariant.Personal), requests)
+        } finally { base.close() }
+    }
+
+    @Test fun draftCarriesTheShownApprovalAndAChangedDestinationRenewsItKeepingTheLetter() = runTest {
+        val base = FakeRepositories(coroutineScope = backgroundScope)
+        try {
+            val shown = base.ai.listAiProviders().first { it.enabled && it.testStatus == "success" }.copy(isDefault = true)
+            var list = listOf(shown); var refuse = false; val sent = mutableListOf<RequestOptions>()
+            val ai = object : AiRepository by base.ai { override suspend fun listAiProviders(limit: Long?, offset: Long?, options: RequestOptions) = list }
+            val vm = LetterViewModel(streamed(base, ai = ai, refuse = { refuse }, onOptions = { sent += it }), StoryboardIds.lumenLetter, io = StandardTestDispatcher(testScheduler)); runCurrent()
+            assertEquals(shown, vm.state.value.provider); val before = vm.state.value.letter!!.content
+            // The connection's address changes elsewhere after the disclosure was shown.
+            list = listOf(shown.copy(recipientVersion = shown.recipientVersion + "-changed")); refuse = true
+            vm.generate(); advanceTimeBy(201); runCurrent()
+            assertEquals(aiApproval(shown), sent.single().headers)
+            assertTrue(vm.state.value.aiDraft!!.failed); assertTrue(vm.state.value.aiDraft!!.destinationChanged)
+            assertEquals(shown.recipientVersion + "-changed", vm.state.value.provider!!.recipientVersion); assertEquals(before, vm.state.value.letter!!.content)
+            refuse = false; vm.retryDraft(); advanceTimeBy(201); runCurrent()
+            assertEquals(aiApproval(vm.state.value.provider!!), sent.last().headers); assertEquals("My draft & my facts", vm.state.value.aiDraft!!.text)
+        } finally { base.close() }
+    }
+
+    /** Two pages, so the letter's second page can be inspected. */
+    private class TwoPages : me.rxresu.core.page.PageRenderer {
+        override suspend fun render(source: me.rxresu.core.page.PageSource) = me.rxresu.core.page.RenderedDocument(source, java.io.File.createTempFile("letter", ".pdf"), 2)
+        override suspend fun lastGood(source: me.rxresu.core.page.PageSource): me.rxresu.core.page.RenderedDocument? = null
+        override suspend fun page(document: me.rxresu.core.page.RenderedDocument, index: Int, widthPx: Int): android.graphics.Bitmap = android.graphics.Bitmap.createBitmap(10, 14, android.graphics.Bitmap.Config.ARGB_8888)
+    }
+    @Test fun everyPageOfALongLetterRenders() = runTest {
+        val base = FakeRepositories(coroutineScope = backgroundScope)
+        try {
+            val repositories = with(base) { RrRepositories(account, documents, resumes, letters, applications, checks, ai, assistant, workspace, career, search, publicResume, platform, preferences, today, drafts, TwoPages(), authSession, time) }
+            val vm = LetterViewModel(repositories, StoryboardIds.lumenLetter, io = StandardTestDispatcher(testScheduler)); runCurrent(); advanceTimeBy(1_000); runCurrent()
+            assertEquals(2, vm.state.value.pages.size); assertEquals(2, vm.state.value.pageCount)
         } finally { base.close() }
     }
 }

@@ -6,15 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.Canvas
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.foundation.border
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -45,24 +41,27 @@ import me.rxresu.core.network.generated.*
         if (state.draft.recoveredCopyId != null) RrCallout(stringResource(R.string.p4_your_changes_were_kept_in_1_s, state.draft.recoveredCopyName.orEmpty()), actionLabel = stringResource(CoreR.string.open), onAction = { action("recovery") })
         if (state.loading) RrSkeletonText(Modifier.weight(1f).padding(16.dp), lines = 8)
         else if (letter != null && mode == LetterMode.Write) Box(Modifier.weight(1f).fillMaxWidth().background(c.sunken)) {
-            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 14.dp)) {
+            Column(Modifier.fillMaxSize()) {
+                // The pages, as in the builder: every page, pinch or double tap to zoom; tap a block to edit it.
                 var selected by remember { mutableStateOf<LetterBlock?>(null) }
-                var pageSize by remember { mutableStateOf(IntSize.Zero) }
-                Box(Modifier.onSizeChanged { pageSize = it }.pointerInput(state.blocks, state.editable) { detectTapGestures { point ->
-                    if (state.editable && pageSize.width > 0 && pageSize.height > 0) {
-                        val block = state.blocks.filter { it.page == 0 && it.contains(point.x / pageSize.width, point.y / pageSize.height) }.minByOrNull { (it.right - it.left) * (it.bottom - it.top) }
+                RrPageCanvas(state.pages, { page, x, y ->
+                    if (state.editable) {
+                        val block = state.blocks.filter { it.page == page && it.contains(x, y) }.minByOrNull { (it.right - it.left) * (it.bottom - it.top) }
                         selected = block
                         action(block?.field ?: "body")
                     }
-                } }) {
-                    RrPaperPage(state.page, stringResource(CoreR.string.letter_page))
-                    selected?.let { block -> Canvas(Modifier.matchParentSize()) { drawRect(c.accent, Offset(block.left * size.width, block.top * size.height), Size((block.right - block.left) * size.width, (block.bottom - block.top) * size.height), style = Stroke(2.dp.toPx())) } }
+                }, Modifier.weight(1f), pageCount = state.pageCount ?: 1) { page ->
+                    selected?.takeIf { it.page == page }?.let { block -> Canvas(Modifier.matchParentSize()) { drawRect(c.accent, Offset(block.left * size.width, block.top * size.height), Size((block.right - block.left) * size.width, (block.bottom - block.top) * size.height), style = Stroke(2.dp.toPx())) } }
                 }
-                state.aiDraft?.let { ai -> LetterAiCard(ai, state, action) }
-                if (state.aiDraft == null) RrButton(stringResource(CoreR.string.draft_from_the_posting), { action("draft") }, variant = RrButtonVariant.Secondary, enabled = state.editable)
-                RrButton(stringResource(R.string.p4_letter_details), { action("details") }, variant = RrButtonVariant.Secondary)
-                RrButton(stringResource(R.string.p4_letter_content), { action("body") }, variant = RrButtonVariant.Secondary, enabled = state.editable)
-                if (state.pageFailed) RrCallout(stringResource(R.string.p4_couldn_t_update_the_preview_your_words_are_kept), actionLabel = stringResource(CoreR.string.try_again), onAction = { action("retry") })
+                Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    state.aiDraft?.let { ai -> LetterAiCard(ai, state, action) }
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if (state.aiDraft == null) RrButton(stringResource(CoreR.string.draft_from_the_posting), { action("draft") }, variant = RrButtonVariant.Secondary, enabled = state.editable)
+                        RrButton(stringResource(R.string.p4_letter_details), { action("details") }, variant = RrButtonVariant.Secondary)
+                        RrButton(stringResource(R.string.p4_letter_content), { action("body") }, variant = RrButtonVariant.Secondary, enabled = state.editable)
+                    }
+                    if (state.pageFailed) RrCallout(stringResource(R.string.p4_couldn_t_update_the_preview_your_words_are_kept), actionLabel = stringResource(CoreR.string.try_again), onAction = { action("retry") })
+                }
             }
             if (details) RrBottomSheet({ action("hide-details") }, modifier = Modifier.consumeWindowInsets(WindowInsets.navigationBars), detents = listOf(0.6f, 0.92f), title = stringResource(R.string.p4_letter_details), showClose = false, headerActions = { RrButton(stringResource(CoreR.string.done), { action("hide-details") }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small) }) { LetterDetails(state, action) }
         } else if (letter != null) Box(Modifier.weight(1f).fillMaxWidth().background(c.sunken)) {
@@ -119,7 +118,7 @@ import me.rxresu.core.network.generated.*
         if (!letter.designLinked) RrListRow(stringResource(CoreR.string.page), onClick = { action("page") }, trailing = { RrRowCaret() }, enabled = state.editable)
         RrText(stringResource(CoreR.string.page), style = RrType.eyebrow, color = RrTheme.colors.ink3)
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-            RrText(stringResource(CoreR.string.paper)); RrSegmentedControl(listOf(RrSegment("A4"), RrSegment(stringResource(CoreR.string.letter))), if (metadata.page.format == CreateCoverLetterResponseStyleMetadataPageFormat.A4) 0 else 1, { if (state.editable && !letter.designLinked) paper(if (it == 0) CreateCoverLetterResponseStyleMetadataPageFormat.A4 else CreateCoverLetterResponseStyleMetadataPageFormat.Letter) })
+            RrText(stringResource(CoreR.string.paper)); RrSegmentedControl(listOf(RrSegment("A4"), RrSegment(stringResource(CoreR.string.letter))), if (metadata.page.format == CreateCoverLetterResponseStyleMetadataPageFormat.A4) 0 else 1, { paper(if (it == 0) CreateCoverLetterResponseStyleMetadataPageFormat.A4 else CreateCoverLetterResponseStyleMetadataPageFormat.Letter) }, enabled = state.editable && !letter.designLinked)
         }
         RrListRow(stringResource(CoreR.string.language), onClick = { action("language") }, enabled = state.editable, trailing = { RrRowValue(java.util.Locale.forLanguageTag(metadata.page.locale).displayName) })
     }
@@ -129,7 +128,9 @@ import me.rxresu.core.network.generated.*
     RrCard {
         if (ai.generating) RrWorkingLabel(listOf(stringResource(R.string.p4_writing_draft)))
         if (ai.text.isNotEmpty()) RrText(ai.text, style = RrType.body)
-        if (ai.failed) RrCallout(stringResource(R.string.p4_draft_failed), tone = RrTone.Danger, actionLabel = stringResource(CoreR.string.try_again), onAction = { action("retry-draft") })
+        if (ai.failed) RrCallout(stringResource(if (ai.destinationChanged) DsR.string.ds_ai_destination_changed else R.string.p4_draft_failed), tone = RrTone.Danger, actionLabel = stringResource(CoreR.string.try_again), onAction = { action("retry-draft") })
+        // Try again goes to the renewed connection, named here first.
+        if (ai.failed && ai.destinationChanged) state.provider?.let { RrDisclosureLine(stringResource(CoreR.string.sends_this_letter_s_resume_to_0_1_to_draft_the_body_your_provider_may_charge, it.label, it.model)) }
         if (ai.generating) RrButton(stringResource(CoreR.string.stop), { action("stop-draft") }, variant = RrButtonVariant.Secondary)
         else {
             val stale = ai.revision != state.letter?.revision || ai.baseContent != state.letter?.content

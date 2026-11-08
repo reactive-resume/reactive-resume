@@ -250,7 +250,7 @@ internal fun DesignMode(
                 DesignPanel.entries.forEach { p ->
                     RrFilterChip(stringResource(p.title), selected = p == panel, onSelectedChange = {
                         if (p != panel) {
-                            haptics(RrHaptic.Selection); panel = p
+                            panel = p
                             when (p) { DesignPanel.Template -> onGroup(DesignGroup.Template); DesignPanel.Type -> onGroup(DesignGroup.Type); DesignPanel.Layout -> onGroup(DesignGroup.Layout); else -> Unit }
                             if (p.raised != raised) scope.launch { sheet.animateTo(if (p.raised) 1 else 0) }
                         }
@@ -298,7 +298,7 @@ private fun TemplatePicker(doc: ResumeDoc, actions: BuilderActions, enabled: Boo
     val shown = TemplateInfo.entries.filter { t -> when (filter) { TemplateFilter.All -> true; TemplateFilter.One -> t.columns == 1; TemplateFilter.Two -> t.columns == 2; TemplateFilter.Ats -> t.atsSafe } }
     Eyebrow(stringResource(S.string.template), trailing = stringResource(S.string.message_0_of_1_shown, "${shown.size}", "${TemplateInfo.entries.size}"))
     Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        TemplateFilter.entries.forEach { f -> RrFilterChip(stringResource(f.label), f == filter, { haptics(RrHaptic.Selection); filter = f }) }
+        TemplateFilter.entries.forEach { f -> RrFilterChip(stringResource(f.label), f == filter, { filter = f }) }
     }
     val pick = { t: TemplateInfo ->
         if (t.id != doc.template) {
@@ -356,7 +356,8 @@ private fun AccentRow(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean)
                     .then(if (selected) Modifier.border(2.dp, c.accent, RrShape.sm).padding(4.dp) else Modifier.padding(4.dp))
                     .clip(RrShape.sm).background(a.color())
                     .clickable(enabled = enabled, role = Role.RadioButton, onClickLabel = null) {
-                        haptics(RrHaptic.Selection); actions.set(listOf("data", "metadata", "design", "colors", "primary"), JsonPrimitive(Rgba.fromHex(a.hex)!!))
+                        if (!selected) haptics(RrHaptic.Selection)
+                        actions.set(listOf("data", "metadata", "design", "colors", "primary"), JsonPrimitive(Rgba.fromHex(a.hex)!!))
                     }
                     .semantics { this.selected = selected; contentDescription = label },
                 contentAlignment = Alignment.Center,
@@ -450,7 +451,7 @@ private fun TypeGroup(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean,
     ControlRow(stringResource(S.string.density)) {
         RrSegmentedControl(
             Density.entries.map { RrSegment(stringResource(when (it) { Density.Compact -> S.string.compact; Density.Normal -> S.string.normal; Density.Roomy -> S.string.roomy })) },
-            density.ordinal, { if (enabled) { haptics(RrHaptic.Selection); actions.edit { j -> Density.entries[it].apply(j) } } },
+            density.ordinal, { actions.edit { j -> Density.entries[it].apply(j) } }, enabled = enabled,
         )
     }
 }
@@ -464,14 +465,14 @@ private fun PageGroup(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean)
     val formats = listOf("a4" to R.string.builder_a4, "letter" to S.string.letter, "free-form" to S.string.free_form)
     ControlRow(stringResource(S.string.paper)) {
         RrSegmentedControl(formats.map { RrSegment(stringResource(it.second)) }, formats.indexOfFirst { it.first == page["format"].str() }.coerceAtLeast(0), {
-            if (enabled) { haptics(RrHaptic.Selection); actions.set(listOf("data", "metadata", "page", "format"), JsonPrimitive(formats[it].first)) }
-        })
+            actions.set(listOf("data", "metadata", "page", "format"), JsonPrimitive(formats[it].first))
+        }, enabled = enabled)
     }
     val margins = Margins.of(doc.json) ?: Margins.Normal
     ControlRow(stringResource(S.string.margins)) {
         RrSegmentedControl(Margins.entries.map { RrSegment(stringResource(when (it) { Margins.Narrow -> S.string.narrow; Margins.Normal -> S.string.normal; Margins.Wide -> S.string.wide })) }, margins.ordinal, {
-            if (enabled) { haptics(RrHaptic.Selection); actions.edit { j -> Margins.entries[it].apply(j) } }
-        })
+            actions.edit { j -> Margins.entries[it].apply(j) }
+        }, enabled = enabled)
     }
     ControlRow(stringResource(S.string.language), stringResource(S.string.sets_section_titles_date_words_and_text_direction_your_content_isn_t_translated), controlWidth = 180.dp) {
         RrPickerField(localeName(doc.locale), { languages = true }, enabled = enabled)
@@ -482,7 +483,7 @@ private fun PageGroup(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean)
             RrSearchField(query, { query = it }, stringResource(S.string.language), Modifier.padding(horizontal = 16.dp))
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 resumeLocales.map { it to localeName(it) }.filter { query.isBlank() || it.second.contains(query, true) || it.first.contains(query, true) }.forEach { (tag, name) ->
-                    me.rxresu.core.designsystem.RrChoiceRow(name, tag == doc.locale, { haptics(RrHaptic.Selection); actions.set(listOf("data", "metadata", "page", "locale"), JsonPrimitive(tag)); languages = false })
+                    me.rxresu.core.designsystem.RrChoiceRow(name, tag == doc.locale, { actions.set(listOf("data", "metadata", "page", "locale"), JsonPrimitive(tag)); languages = false })
                 }
             }
         }
@@ -536,15 +537,15 @@ private fun LayoutGroup(state: BuilderUiState, doc: ResumeDoc, actions: BuilderA
         val oneColumn = pages.all { it.fullWidth }
         ControlRow(stringResource(S.string.columns)) {
             RrSegmentedControl(listOf(RrSegment(stringResource(S.string.one_column)), RrSegment(stringResource(S.string.two_columns))), if (oneColumn) 0 else 1, {
-                if (enabled) { haptics(RrHaptic.Selection); actions.setLayout { p -> if (it == 0) oneColumn(p) else p.map { page -> page.copy(fullWidth = false) } } }
-            })
+                actions.setLayout { p -> if (it == 0) oneColumn(p) else p.map { page -> page.copy(fullWidth = false) } }
+            }, enabled = enabled)
         }
         if (!oneColumn) {
             val left = layout["sidebarSide"].str().ifBlank { "left" } == "left"
             ControlRow(stringResource(S.string.sidebar_side)) {
                 RrSegmentedControl(listOf(RrSegment(stringResource(S.string.left)), RrSegment(stringResource(S.string.right))), if (left) 0 else 1, {
-                    if (enabled) { haptics(RrHaptic.Selection); actions.set(listOf("data", "metadata", "layout", "sidebarSide"), JsonPrimitive(if (it == 0) "left" else "right")) }
-                })
+                    actions.set(listOf("data", "metadata", "layout", "sidebarSide"), JsonPrimitive(if (it == 0) "left" else "right"))
+                }, enabled = enabled)
             }
             val width = (layout["sidebarWidth"].num() ?: 35.0).toFloat()
             ControlRow(stringResource(S.string.sidebar_width)) {
@@ -605,6 +606,8 @@ private fun LayoutGroup(state: BuilderUiState, doc: ResumeDoc, actions: BuilderA
                             haptics(RrHaptic.Rigid)
                             if (target != null && target != zoneKey) actions.placeSection(key, target.first, target.second)
                         },
+                        // A cancelled drag (another app took the pointer, the gesture was interrupted) never moves.
+                        onCancel = { dragging = null },
                     )
                 }
             }
@@ -626,8 +629,9 @@ private fun LayoutGroup(state: BuilderUiState, doc: ResumeDoc, actions: BuilderA
 
 /** A section chip: tap for its menu, long-press to lift (tilts 2° with shadow-2) and drop into another zone. */
 @Composable
-private fun SectionChip(title: String, lifted: Boolean, enabled: Boolean, onClick: () -> Unit, onLift: (Offset) -> Unit, onMove: (Offset) -> Unit, onDrop: () -> Unit) {
+private fun SectionChip(title: String, lifted: Boolean, enabled: Boolean, onClick: () -> Unit, onLift: (Offset) -> Unit, onMove: (Offset) -> Unit, onDrop: () -> Unit, onCancel: () -> Unit) {
     val c = RrTheme.colors
+    val reduced = LocalReducedMotion.current
     var origin by remember { mutableStateOf(Offset.Zero) }
     var start by remember { mutableStateOf(Offset.Zero) }
     var offset by remember { mutableStateOf(Offset.Zero) }
@@ -636,7 +640,8 @@ private fun SectionChip(title: String, lifted: Boolean, enabled: Boolean, onClic
             .zIndex(if (lifted) 1f else 0f)
             .onGloballyPositioned { if (!lifted) origin = it.boundsInRoot().topLeft }
             .offset { androidx.compose.ui.unit.IntOffset(offset.x.roundToInt(), offset.y.roundToInt()) }
-            .then(if (lifted) Modifier.rotate(-2f).rrShadow(RrElevation.Level2, RrShape.md) else Modifier)
+            // Reduced motion lifts without the tilt; the shadow and accent border still mark it.
+            .then(if (lifted) Modifier.rotate(if (reduced) 0f else -2f).rrShadow(RrElevation.Level2, RrShape.md) else Modifier)
             .heightIn(min = 44.dp).clip(RrShape.md).background(c.raised).border(1.dp, if (lifted) c.accent else c.line2, RrShape.md)
             .clickable(enabled = enabled, onClick = onClick)
             .then(if (!enabled) Modifier else Modifier.pointerInput(title) {
@@ -644,7 +649,7 @@ private fun SectionChip(title: String, lifted: Boolean, enabled: Boolean, onClic
                     onDragStart = { at -> offset = Offset.Zero; start = origin + at; onLift(start) },
                     onDrag = { change, amount -> change.consume(); offset += amount; onMove(start + offset) },
                     onDragEnd = { offset = Offset.Zero; onDrop() },
-                    onDragCancel = { offset = Offset.Zero; onDrop() },
+                    onDragCancel = { offset = Offset.Zero; onCancel() },
                 )
             })
             .padding(start = 10.dp, end = 14.dp),

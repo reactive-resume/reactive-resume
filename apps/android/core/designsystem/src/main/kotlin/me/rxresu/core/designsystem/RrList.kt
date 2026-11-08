@@ -201,15 +201,62 @@ fun RrListRow(
             leading != null -> leading()
             icon != null -> RrIcon(icon, null, tint = if (danger) c.dangerText else c.ink2)
         }
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(if (tile != null) 2.dp else 0.dp)) {
-            if (overline != null) RrText(overline, style = RrType.caption, color = c.ink3)
-            RrText(title, style = if (tile != null) TileTitle else RowTitle, color = fg)
-            if (subtitle != null) RrText(subtitle, style = RrType.small, color = c.ink3)
+        RowText(
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(if (tile != null) 2.dp else 0.dp)) {
+                    if (overline != null) RrText(overline, style = RrType.caption, color = c.ink3)
+                    RrText(title, style = if (tile != null) TileTitle else RowTitle, color = fg)
+                    if (subtitle != null) RrText(subtitle, style = RrType.small, color = c.ink3)
+                }
+            },
+            trailing = trailing?.let { { Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically, content = it) } },
+            gap = if (tile != null) 14.dp else 12.dp,
+            top = tile != null,
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+/**
+ * A row's words and its trailing slot. Side by side normally; at large font scales a trailing value (a date, a status)
+ * that would make the words wrap moves under them instead of squeezing them into narrow fragments, and it always does
+ * once the longest word no longer fits beside it. Words that fit on their lines keep their trailing value beside.
+ */
+@Composable
+private fun RowText(text: @Composable () -> Unit, trailing: (@Composable () -> Unit)?, gap: Dp, top: Boolean, modifier: Modifier) {
+    Layout(contents = listOf(text, trailing ?: {}), modifier = modifier) { (textM, trailingM), constraints ->
+        val width = constraints.maxWidth
+        val trailingP = trailingM.firstOrNull()?.measure(Constraints(maxWidth = width))
+        val text = textM.first()
+        if (trailingP == null || trailingP.width == 0) {
+            val p = text.measure(Constraints(minWidth = width, maxWidth = width, maxHeight = constraints.maxHeight))
+            return@Layout layout(width, p.height) { p.placeRelative(0, 0) }
         }
-        if (trailing != null) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically, content = trailing)
+        val gapPx = gap.roundToPx()
+        val beside = (width - trailingP.width - gapPx).coerceAtLeast(0)
+        val stacked = text.minIntrinsicWidth(Constraints.Infinity) > beside ||
+            fontScale >= RrListRowStack.FONT_SCALE && text.maxIntrinsicHeight(beside) > text.maxIntrinsicHeight(width)
+        if (stacked) {
+            val p = text.measure(Constraints(minWidth = width, maxWidth = width))
+            val below = 4.dp.roundToPx()
+            layout(width, p.height + below + trailingP.height) {
+                p.placeRelative(0, 0)
+                trailingP.placeRelative(0, p.height + below)
+            }
+        } else {
+            val p = text.measure(Constraints(minWidth = beside, maxWidth = beside))
+            val h = maxOf(p.height, trailingP.height)
+            layout(width, h) {
+                p.placeRelative(0, if (top) 0 else (h - p.height) / 2)
+                trailingP.placeRelative(beside + gapPx, if (top) 0 else (h - trailingP.height) / 2)
+            }
         }
     }
+}
+
+/** From this font scale [RrListRow] stacks a trailing value under words that would wrap beside it but not alone. */
+internal object RrListRowStack {
+    const val FONT_SCALE = 1.5f
 }
 
 @Composable
