@@ -107,7 +107,7 @@ internal fun CheckMode(
                 RrSegment(stringResource(S.string.writing)),
             ),
             selectedIndex = if (writing) 2 else tab.ordinal,
-            onSelect = { i -> haptics(RrHaptic.Selection); writing = i == 2; if (i < 2) onTab(CheckTab.entries[i]) },
+            onSelect = { i -> writing = i == 2; if (i < 2) onTab(CheckTab.entries[i]) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
         )
         when {
@@ -148,6 +148,7 @@ private fun ScoreHeader(score: Int, fragmented: Boolean) {
 private fun IssuesTab(state: BuilderUiState, doc: ResumeDoc, issues: List<IssueView>, actions: BuilderActions, onShowOnPage: (BlockTarget) -> Unit, onWrite: (BlockTarget) -> Unit) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
+    val reduced = LocalReducedMotion.current
     val resources = LocalResources.current
     val checks = state.checks
     if (checks == null) { Column(Modifier.padding(16.dp)) { repeat(3) { me.rxresu.core.designsystem.RrSkeleton(Modifier.fillMaxWidth().height(96.dp).padding(bottom = 12.dp)) } }; return }
@@ -158,7 +159,7 @@ private fun IssuesTab(state: BuilderUiState, doc: ResumeDoc, issues: List<IssueV
     issues.groupBy { it.category }.toSortedMap(compareBy { it.ordinal }).forEach { (category, list) ->
         RrSectionHeader(stringResource(category.title))
         list.forEach { issue ->
-            RrCard(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).animateContentSize()) {
+            RrCard(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).sizeMotion(reduced)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Box(Modifier.padding(top = 3.dp).size(18.dp).clip(RrShape.sm).background(c.warn), contentAlignment = Alignment.Center) {
                         RrText("${issue.number}", style = RrType.caption, color = c.warnInk)
@@ -228,6 +229,7 @@ private fun JobMatchTab(
     val c = RrTheme.colors
     val resources = LocalResources.current
     val haptics = rememberRrHaptics()
+    val reduced = LocalReducedMotion.current
     val app = state.application
     var pasted by rememberSaveable { mutableStateOf("") }
     var changing by rememberSaveable { mutableStateOf(initiallyChanging) }
@@ -278,7 +280,6 @@ private fun JobMatchTab(
                 picked?.let { CopyOrLink(it, state, actions) { picked = null; changing = false } }
                 RrButton(stringResource(R.string.builder_unlink_application), { changing = false; actions.linkApplication(null) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small, enabled = !state.locked && !state.jobBusy)
             }
-            val reduced = LocalReducedMotion.current
             val share by animateFloatAsState(if (m.total == 0) 0f else m.found.size / m.total.toFloat(), if (reduced) tween(0) else tween(RrMotion.D2, easing = RrMotion.ease), label = "match")
             Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                 RrText(stringResource(R.string.builder_posting_terms), style = RrType.body, modifier = Modifier.weight(1f))
@@ -294,7 +295,7 @@ private fun JobMatchTab(
                 RrListGroup(Modifier.padding(horizontal = 16.dp)) {
                     Column {
                         m.missing.forEach { term ->
-                            if (open == term.term) Column(Modifier.background(c.surface).padding(16.dp).animateContentSize(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            if (open == term.term) Column(Modifier.background(c.surface).padding(16.dp).sizeMotion(reduced), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 RrText(term.label, style = RrType.label)
                                 RrText(CatalogPlurals.get(resources, S.plurals.message_0_plural_one_1_appears_once_in_the_posting_if_it_s_part_of_your_experience_add_it_where_it_belongs_o, term.postingCount, "${term.postingCount}", term.label, term.label), color = c.ink2)
                                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -431,3 +432,6 @@ private fun WritingTab(state: BuilderUiState, actions: BuilderActions, onSetUpAi
         Spacer(Modifier.height(8.dp))
     }
 }
+
+/** Size changes animate, except under reduced motion, where they land at once. */
+internal fun Modifier.sizeMotion(reduced: Boolean) = if (reduced) this else animateContentSize()

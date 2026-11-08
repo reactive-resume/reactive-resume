@@ -9,6 +9,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,16 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
@@ -82,6 +92,22 @@ internal object CropMath {
         val x = ((image.width * s - frame.width) / 2).coerceAtLeast(0f)
         val y = ((image.height * s - frame.height) / 2).coerceAtLeast(0f)
         return Offset(pan.x.coerceIn(-x, x), pan.y.coerceIn(-y, y))
+    }
+
+    /** Share of the frame one keyboard or TalkBack step moves the photo. */
+    const val STEP = 0.1f
+
+    /** [pan] moved by [dx], [dy] steps (+ = right, down), still covering the frame. */
+    fun nudge(pan: Offset, dx: Int, dy: Int, image: Size, frame: Size, zoom: Float) =
+        clamp(pan + Offset(dx * frame.width * STEP, dy * frame.height * STEP), image, frame, zoom)
+
+    /** The step an arrow key moves the photo ([nudge] units), or null for other keys. */
+    fun keyStep(key: Key): Pair<Int, Int>? = when (key) {
+        Key.DirectionLeft -> -1 to 0
+        Key.DirectionRight -> 1 to 0
+        Key.DirectionUp -> 0 to -1
+        Key.DirectionDown -> 0 to 1
+        else -> null
     }
 
     /** The photo pixels inside the frame. */
@@ -153,8 +179,8 @@ internal object PhotoCrops {
 }
 
 /**
- * B5 Crop photo: full screen, the photo under a frame of the picture's aspect ratio. Drag to reposition, pinch or the
- * slider to zoom (1–3×), then Crop and upload.
+ * B5 Crop photo: full screen, the photo under a frame of the picture's aspect ratio. Drag to reposition (or arrow keys
+ * and TalkBack actions), pinch or the slider to zoom (1–3×), then Crop and upload.
  */
 @Composable
 internal fun PhotoCropScreen(crop: PhotoCrop, aspect: Float, onCancel: () -> Unit, onCrop: (Rect) -> Unit) {
@@ -168,13 +194,39 @@ internal fun PhotoCropScreen(crop: PhotoCrop, aspect: Float, onCancel: () -> Uni
     Column(Modifier.fillMaxSize().background(c.bg)) {
         RrTopBar(stringResource(R.string.builder_crop_photo), onBack = onCancel)
         RrText(stringResource(R.string.builder_crop_hint), color = c.ink2, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+        // Dragging has a non-drag path: arrow keys (Home centres) and TalkBack actions move the same clamped pan.
+        fun nudge(dx: Int, dy: Int) { pan = CropMath.nudge(pan, dx, dy, photo, frame, zoom) }
+        val areaLabel = stringResource(R.string.builder_crop_area)
+        val moves = listOf(
+            stringResource(R.string.builder_crop_move_left) to (-1 to 0),
+            stringResource(R.string.builder_crop_move_right) to (1 to 0),
+            stringResource(R.string.builder_crop_move_up) to (0 to -1),
+            stringResource(R.string.builder_crop_move_down) to (0 to 1),
+        )
+        val center = stringResource(R.string.builder_crop_center)
         BoxWithConstraints(
             Modifier.weight(1f).fillMaxWidth().background(c.sunken).pointerInput(crop) {
                 detectTransformGestures { _, move, scaleBy, _ ->
                     zoom = (zoom * scaleBy).coerceIn(1f, CropMath.MAX_ZOOM)
                     pan = CropMath.clamp(pan + move, photo, frame, zoom)
                 }
-            },
+            }
+                .onKeyEvent { e ->
+                    if (e.type != KeyEventType.KeyDown) return@onKeyEvent false
+                    val step = CropMath.keyStep(e.key)
+                    when {
+                        step != null -> nudge(step.first, step.second)
+                        e.key == Key.MoveHome -> pan = Offset.Zero
+                        else -> return@onKeyEvent false
+                    }
+                    true
+                }
+                .focusable()
+                .semantics {
+                    contentDescription = areaLabel
+                    customActions = moves.map { (label, d) -> CustomAccessibilityAction(label) { nudge(d.first, d.second); true } } +
+                        CustomAccessibilityAction(center) { pan = Offset.Zero; true }
+                },
         ) {
             val density = LocalDensity.current
             val area = with(density) { Size(maxWidth.toPx(), maxHeight.toPx()) }

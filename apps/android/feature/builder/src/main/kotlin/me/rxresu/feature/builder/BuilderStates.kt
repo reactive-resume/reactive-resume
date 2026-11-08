@@ -19,7 +19,8 @@ internal sealed interface ImproveState {
     data object NoProvider : ImproveState
     data class Working(val asked: ImproveRequest) : ImproveState
     data class Ready(val asked: ImproveRequest, val text: String, val why: String, val addsFacts: Boolean, val operations: List<String>) : ImproveState
-    data class Failed(val asked: ImproveRequest) : ImproveState
+    /** [destinationChanged]: the connection changed after it was shown; [asked] carries the renewed destination. */
+    data class Failed(val asked: ImproveRequest, val destinationChanged: Boolean = false) : ImproveState
 }
 
 internal data class MatchTerm(val term: String, val label: String, val postingCount: Int) {
@@ -113,4 +114,7 @@ internal sealed interface PdfCheckState {
 internal data class WritingNote(val where: String, val issue: String, val rewrite: String)
 
 /** The AI provider Improve uses: id, label and model for the disclosure line. */
-internal data class AiProvider(val id: String, val label: String, val model: String)
+/** The AI connection shown to the person; [recipientVersion] binds each request to it (`x-ai-destination`). */
+internal data class AiProvider(val id: String, val label: String, val model: String, val recipientVersion: String) {
+    val approval get() = me.rxresu.core.network.RequestOptions(headers = me.rxresu.core.data.aiApproval(id, recipientVersion))
+}

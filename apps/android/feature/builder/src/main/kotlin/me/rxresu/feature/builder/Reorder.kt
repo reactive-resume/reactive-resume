@@ -1,6 +1,8 @@
 package me.rxresu.feature.builder
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -114,7 +116,8 @@ internal fun <T> ReorderColumn(
                 index in slot until dragging -> heights.getOrElse(dragging) { 0 }.toFloat()
                 else -> 0f
             }
-            val animatedShift by animateFloatAsState(shift, label = "reorder-shift")
+            // Under reduced motion neighbours jump to their new slots (no movement).
+            val animatedShift by animateFloatAsState(shift, if (reduced) snap() else spring(), label = "reorder-shift")
             val scale by animateFloatAsState(if (lifted && !reduced) 1.02f else 1f, label = "reorder-lift")
             Box(
                 Modifier

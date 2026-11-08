@@ -82,9 +82,10 @@ class BuilderScreenshotTest : RrScreenshotTest() {
 
     private fun entry(dark: Boolean) = captureScreen("B2-Entry", dark) {
         val state = Fixtures.state(status = SaveStatus.Saving).copy(highlight = BlockTarget.Item("experience", "experience-northwind"), highlightAboveSheet = true)
+        val sheet = me.rxresu.core.designsystem.rememberRrBottomSheetState()
         Box(Modifier.fillMaxSize()) {
-            Shell(state, BuilderMode.Write) { WriteMode(state, WriteView.Page, {}, NoBuilderActions, WriteNav()) }
-            EntrySheet(state, "experience", "experience-northwind", NoBuilderActions, {}, {}, { _, _ -> })
+            Shell(state, BuilderMode.Write) { WriteMode(state, WriteView.Page, {}, NoBuilderActions, WriteNav(), sheetCover = { sheet.visibleHeight }) }
+            EntrySheet(state, "experience", "experience-northwind", NoBuilderActions, {}, {}, { _, _ -> }, sheet)
         }
     }
 
@@ -216,7 +217,7 @@ class BuilderScreenshotTest : RrScreenshotTest() {
     }
 
     @Test fun writingReview() = captureScreen("B9-Writing", false) {
-        val state = Fixtures.state().copy(aiProvider = AiProvider("p", "Work OpenAI", "gpt-5-mini"))
+        val state = Fixtures.state().copy(aiProvider = AiProvider("p", "Work OpenAI", "gpt-5-mini", "1"))
         Shell(state, BuilderMode.Check) { CheckMode(state, CheckTab.Issues, {}, NoBuilderActions, {}, {}, {}, {}, writingTab = true) }
     }
 }

@@ -86,16 +86,17 @@ internal fun WriteMode(
     zoom: PageZoomState = remember { PageZoomState() },
     markers: List<Pair<BlockTarget, Int>> = emptyList(),
     initiallyExpanded: String? = null,
+    /** The entry sheet's live height in px (see [PageCanvas]); the picked block stays clear of it. */
+    sheetCover: () -> Float = { 0f },
 ) {
     val doc = state.doc ?: return
-    val haptics = rememberRrHaptics()
     var scale by remember { mutableFloatStateOf(1f) }
     Column(modifier.fillMaxSize().background(RrTheme.colors.sunken)) {
         if (!(view == WriteView.Page && state.highlightAboveSheet)) Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             RrSegmentedControl(
                 listOf(RrSegment(stringResource(S.string.page), D.drawable.ic_ph_file_text), RrSegment(stringResource(R.string.builder_outline), D.drawable.ic_ph_list_bullets)),
                 selectedIndex = view.ordinal,
-                onSelect = { haptics(RrHaptic.Selection); onView(WriteView.entries[it]) },
+                onSelect = { onView(WriteView.entries[it]) },
                 modifier = Modifier.width(184.dp),
                 containerColor = RrTheme.colors.bg,
             )
@@ -111,7 +112,7 @@ internal fun WriteMode(
                 pageCountHint = doc.pages.size.coerceAtLeast(1),
                 highlight = state.highlight,
                 highlightLabel = state.highlight?.let { highlightLabel(doc, it) },
-                sheetCover = if (state.highlightAboveSheet) 1f - EntryDetents.first() else null,
+                sheetCover = if (state.highlightAboveSheet) sheetCover else null,
                 markers = markers,
                 zoom = zoom,
                 onZoomChange = { scale = it },

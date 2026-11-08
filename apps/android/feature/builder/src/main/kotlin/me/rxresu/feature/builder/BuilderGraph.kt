@@ -160,7 +160,7 @@ private fun BuilderRoute(route: Builder, entry: NavBackStackEntry, nav: NavContr
                 val checks = state.checks
                 // Back from Check's Show on page: issue numbers match the markers on the page.
                 val markers = if (backToCheck && doc != null && checks != null) issueViews(doc, checks.findings).mapNotNull { i -> i.target?.let { it to i.number } } else emptyList()
-                WriteMode(state, view, { view = it }, vm, writeNav, markers = markers)
+                WriteMode(state, view, { view = it }, vm, writeNav, markers = markers, sheetCover = { vm.entrySheetHeight.floatValue })
                 if (backToCheck) {
                     RrButton(
                         stringResource(R.string.builder_back_to_check),

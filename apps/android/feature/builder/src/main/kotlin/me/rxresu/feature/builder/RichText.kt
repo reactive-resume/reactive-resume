@@ -458,7 +458,9 @@ private fun ImproveCard(state: ImproveState, onClose: () -> Unit, onReplace: (Im
         when (state) {
             is ImproveState.Working -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { RrSpinner(); RrText(stringResource(S.string.improving), color = c.ink2) }
             is ImproveState.Failed -> {
-                RrText(stringResource(S.string.couldn_t_get_a_suggestion_nothing_changed), color = c.dangerText)
+                RrText(stringResource(if (state.destinationChanged) D.string.ds_ai_destination_changed else S.string.couldn_t_get_a_suggestion_nothing_changed), color = c.dangerText)
+                // The renewed destination is disclosed before Try again sends anything to it.
+                if (state.destinationChanged) RrDisclosureLine(stringResource(S.string.sends_this_line_surrounding_field_text_and_your_instructions_to_0_1, asked.provider, asked.model))
                 RrButton(stringResource(S.string.try_again), { onTryAnother(asked) }, variant = RrButtonVariant.Secondary)
             }
             is ImproveState.Ready -> {

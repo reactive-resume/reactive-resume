@@ -26,6 +26,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -74,6 +75,16 @@ internal object PageZoom {
         else -> scale
     }
 
+    /**
+     * The page's vertical offset that puts a block ([top], [bottom]: px from the content's top at the current scale)
+     * [clearance] above a sheet covering [cover] px of a [windowHeight] window, for a canvas starting [viewTop] down the
+     * window. The block's top never goes above the [gutter]; the page never moves down past its start.
+     */
+    fun clearOfSheet(top: Float, bottom: Float, viewTop: Float, windowHeight: Float, cover: Float, clearance: Float, gutter: Float): Float {
+        val bottomLimit = windowHeight - cover - viewTop - clearance
+        return (bottomLimit - bottom).coerceAtLeast(gutter - top).coerceAtMost(0f)
+    }
+
     /** Offset that keeps content of [content] px inside [viewport] px (centred when smaller). */
     fun clamp(offset: Float, content: Float, viewport: Float) =
         if (content <= viewport) (viewport - content) / 2f else offset.coerceIn(viewport - content, 0f)
@@ -101,8 +112,11 @@ internal fun PageCanvas(
     highlight: BlockTarget? = null,
     highlightLabel: String? = null,
     markers: List<Pair<BlockTarget, Int>> = emptyList(),
-    /** Share of the window a sheet covers from the bottom; the highlight scrolls into the space above it. */
-    sheetCover: Float? = null,
+    /**
+     * The window height a sheet covers from the bottom, in px, read every frame (the entry sheet's live height, keyboard
+     * included); the highlight stays in the space above it. Null when no sheet covers the page.
+     */
+    sheetCover: (() -> Float)? = null,
     zoom: PageZoomState = remember { PageZoomState() },
     onZoomChange: (Float) -> Unit = {},
     pageCountHint: Int = 1,
@@ -134,16 +148,21 @@ internal fun PageCanvas(
             onZoomChange(s)
         }
 
-        // Keep the picked block in the space above the sheet: its bottom 16 dp above the sheet, its top never hidden.
-        LaunchedEffect(highlight, sheetCover, blocks) {
+        // Keep the picked block in the space above the sheet: its bottom 16 dp above the sheet's current top, its top
+        // never hidden. A newly picked block glides there (d3); while the sheet moves (detent, drag, keyboard) the page
+        // follows it in the same frame.
+        LaunchedEffect(highlight, blocks, sheetCover != null) {
             val block = blocks?.firstOrNull { it.target == highlight } ?: return@LaunchedEffect
             val cover = sheetCover ?: return@LaunchedEffect
-            val bottomLimit = windowHeight * (1 - cover) - topInWindow - with(density) { 16.dp.toPx() }
-            val s = zoom.scale.value
-            val top = (gutter + block.page * (pageH + gap) + block.top * pageH) * s
-            val bottom = (gutter + block.page * (pageH + gap) + block.bottom * pageH) * s
-            val target = (bottomLimit - bottom).coerceAtLeast(gutter - top).coerceAtMost(0f)
-            if (inspection) zoom.y.snapTo(target) else zoom.y.animateTo(target, tween(if (reduced) 0 else RrMotion.D3, easing = RrMotion.ease))
+            var first = true
+            snapshotFlow { cover() }.collect { covered ->
+                val s = zoom.scale.value
+                val top = (gutter + block.page * (pageH + gap) + block.top * pageH) * s
+                val bottom = (gutter + block.page * (pageH + gap) + block.bottom * pageH) * s
+                val target = PageZoom.clearOfSheet(top, bottom, topInWindow, windowHeight, covered, with(density) { 16.dp.toPx() }, gutter)
+                if (first && !inspection && !reduced) zoom.y.animateTo(target, tween(RrMotion.D3, easing = RrMotion.ease)) else zoom.y.snapTo(target)
+                first = false
+            }
         }
 
         Box(
