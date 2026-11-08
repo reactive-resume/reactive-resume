@@ -28,7 +28,9 @@ fun realRepositories(
     val database=RrDatabase.open(app)
     val scope=CoroutineScope(SupervisorJob()+Dispatchers.Default)
     val connectivity=AndroidConnectivity(app)
-    val transport=ApiClient(authSession,authSession,http,time.timezone,{authSession.state.value.scope()},onRejectedRetry)
+    // x-client-timezone is the device's zone, as on the web (the server seeds new accounts from it); dates the app
+    // shows and "today" follow the account's saved timezone through [time].
+    val transport=ApiClient(authSession,authSession,http,{ java.time.ZoneId.systemDefault() },{authSession.state.value.scope()},onRejectedRetry)
     val store=RepositoryStore(transport,authSession,RoomListCache(database.cache(),time),time)
     val remote=JsonDraftRemote(store)
     val queue=DraftQueue(database.drafts(),remote,{authSession.state.value.scope()}, {connectivity.online.value}) { owner -> scheduleDraftSync(app,owner) }

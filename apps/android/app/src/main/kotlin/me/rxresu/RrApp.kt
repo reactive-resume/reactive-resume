@@ -90,7 +90,8 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         ThemePreference.MatchSystem -> isSystemInDarkTheme()
     }
     val systemReduced = rememberSystemReducedMotion()
-    RrTheme(darkTheme = dark, hapticsEnabled = prefs.haptics, reducedMotion = prefs.reducedMotion ?: systemReduced) {
+    // The system "Remove animations" always wins; the in-app setting can only reduce motion further.
+    RrTheme(darkTheme = dark, hapticsEnabled = prefs.haptics, reducedMotion = systemReduced || prefs.reducedMotion == true) {
         val nav = rememberNavController()
         val toasts = remember { RrToastHostState() }
         val motion = RrNavMotion(RrTheme.reducedMotion)
@@ -103,6 +104,13 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         // Chosen once: later session changes move the back stack (SessionRouting), never the graph's start.
         val start = remember { if (signedIn) TodayTab else Welcome }
         SessionRouting(nav, signedIn)
+        // Dates and "today" follow the account's timezone once the profile is known (and after Settings changes it).
+        LaunchedEffect(signedIn) {
+            if (!signedIn) { graph.accountZone = null; return@LaunchedEffect }
+            graph.repositories.account.observeProfile().collect { profile ->
+                profile.data?.timezone?.let { id -> graph.accountZone = runCatching { java.time.ZoneId.of(id) }.getOrNull() }
+            }
+        }
         // Pages belong to one account; the next account starts with an empty cache.
         LaunchedEffect(session) { if (session == SessionState.SignedOut) graph.pagesDir.listFiles()?.forEach { it.deleteRecursively() } }
         LaunchedEffect(nav) {
