@@ -14,6 +14,11 @@ import androidx.navigation.*
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.designsystem.*
 import me.rxresu.core.strings.R as CoreR
+import me.rxresu.core.designsystem.R as DsR
+import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.text.input.TextFieldValue
 import me.rxresu.core.navigation.*
 import me.rxresu.core.network.generated.*
 
@@ -30,7 +35,8 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
         val back = { vm.leave { nav.popBackStack() }; Unit }
         BackHandler(onBack = back)
         Box {
-            LetterScreen(state, mode, details, { action -> when (action) {
+            // The body editor is full screen; the letter screen under it leaves composition (and TalkBack) meanwhile.
+            if (form != "body") LetterScreen(state, mode, details, { action -> when (action) {
                 "undo" -> vm.undo()
                 "draft" -> form = "draft"
                 "generate" -> vm.generate()
@@ -64,8 +70,8 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
                 "rename" -> LetterTextSheet(stringResource(CoreR.string.rename), state.letter?.name.orEmpty(), state, { text -> vm.metadata({ PatchCoverLetterRequest(expectedRevision = it.revision, name = text) }, dismiss) }, dismiss)
                 "recipient" -> RecipientSheet(state, { recipient, date, greeting, signoff -> vm.edit({ it.copy(recipient = recipient, letterDate = date.ifBlank { null }, greeting = greeting, signOff = signoff) }, dismiss) }, dismiss)
                 "greeting", "signoff" -> RecipientSheet(state, { recipient, date, greeting, signoff -> vm.edit({ it.copy(recipient = recipient, letterDate = date.ifBlank { null }, greeting = greeting, signOff = signoff) }, dismiss) }, dismiss)
-                "draft" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.draft_from_the_posting), fitContent = true) { RrDisclosureLine(stringResource(R.string.p4_draft_disclosure)); RrButton(stringResource(CoreR.string.draft_from_the_posting), { vm.generate(); dismiss() }, Modifier.padding(16.dp), enabled = state.editable) }
-                "body" -> LetterBodySheet(state, { content -> vm.edit({ it.copy(content = content) }, dismiss) }, dismiss)
+                "draft" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.draft_from_the_posting), fitContent = true) { RrDisclosureLine(state.provider?.let { stringResource(CoreR.string.sends_this_letter_s_resume_to_0_1_to_draft_the_body_your_provider_may_charge, it.label, it.model) } ?: stringResource(R.string.p4_draft_disclosure)); RrButton(stringResource(CoreR.string.draft_from_the_posting), { vm.generate(); dismiss() }, Modifier.padding(16.dp), enabled = state.editable) }
+                "body" -> LetterBodyEditor(state, { content -> vm.edit({ it.copy(content = content) }, dismiss) }, dismiss)
                 "resume" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.resume), initialDetent = 1) { state.resumes.forEach { resume -> RrListRow(resume.name, onClick = { vm.linkResume(resume.id, dismiss) }) }; RrListRow(stringResource(CoreR.string.entry_header_accent_none), onClick = { vm.edit({ it.copy(sourceResumeId = null, designLinked = false) }, dismiss) }) }
                 "application" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.application), initialDetent = 1) { state.applications.forEach { app -> RrListRow(app.company, subtitle = app.role, onClick = { vm.linkApplication(app.id, dismiss) }) } }
                 "template" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.template), initialDetent = 1) { CreateResumeRequestTemplate.entries.filter { it != CreateResumeRequestTemplate.Unknown }.forEach { template -> RrListRow(template.wireValue.replaceFirstChar(Char::uppercase), selected = state.letter?.style?.metadata?.template == template, onClick = { vm.template(template); dismiss() }) } }
@@ -91,15 +97,36 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) { RrTextField(recipient, { recipient = it }, label = stringResource(CoreR.string.recipient)); RrTextField(date, { date = it }, label = stringResource(CoreR.string.date)); RrTextField(greeting, { greeting = it }, label = stringResource(CoreR.string.greeting)); RrTextField(signoff, { signoff = it }, label = stringResource(CoreR.string.sign_off)); if (state.failed) RrCallout(stringResource(CoreR.string.couldn_t_save_your_wording_your_text_is_still_here_try_again), tone = RrTone.Danger) }
     }
 }
-@Composable private fun LetterBodySheet(state: LetterState, save: (String) -> Unit, dismiss: () -> Unit) {
+/**
+ * L1 body: the full-screen rich-text editor (B4 pattern), shared with the builder. Bold, italic, lists and links write
+ * the HTML the web's editor stores; lines left alone keep their exact markup. A body the editor can't hold without loss
+ * (quotes, tables, nested lists) stays read-only. Leaving with unsaved words asks first; a failed save keeps them here.
+ */
+@Composable internal fun LetterBodyEditor(state: LetterState, save: (String) -> Unit, dismiss: () -> Unit) {
     val letter = state.letter ?: return
-    var text by remember(letter.id) { mutableStateOf(letter.content) }
-    val rich = text.contains(Regex("</?[a-zA-Z][^>]*>"))
-    RrBottomSheet(dismiss, title = stringResource(R.string.p4_letter_content), initialDetent = 1, confirmDiscard = text != letter.content, footer = { RrButton(stringResource(CoreR.string.save), { save(text) }, Modifier.fillMaxWidth().padding(16.dp), enabled = state.editable && !rich, loading = state.busy) }) {
-        if (rich) {
-            RrText(android.text.Html.fromHtml(text, android.text.Html.FROM_HTML_MODE_LEGACY).toString(), Modifier.padding(16.dp), style = RrType.body)
-            RrCallout(stringResource(R.string.p4_rich_text_editing_is_not_available_on_this_device_yet_your_formatting_is_kept), Modifier.padding(16.dp))
-        } else RrTextField(text, { text = it }, Modifier.padding(16.dp), label = stringResource(R.string.p4_letter_content), singleLine = false, minLines = 12)
-        if (state.failed) RrCallout(stringResource(CoreR.string.couldn_t_save_your_wording_your_text_is_still_here_try_again), tone = RrTone.Danger)
+    val c = RrTheme.colors
+    val editable = remember(letter.content) { RrRichDoc.editable(letter.content) }
+    val baseline = remember(letter.id) { RrRichDoc.parse(letter.content).toHtml() }
+    var rich by remember(letter.id) { mutableStateOf(RrRichDoc.parse(letter.content)) }
+    var value by remember(letter.id) { mutableStateOf(TextFieldValue(rich.text)) }
+    var askDiscard by remember { mutableStateOf(false) }
+    val dirty = editable && rich.toHtml() != baseline
+    val close = { if (dirty) askDiscard = true else dismiss() }
+    BackHandler(onBack = close)
+    Column(Modifier.fillMaxSize().background(c.bg)) {
+        RrTopBar(stringResource(R.string.p4_letter_content), onBack = close) {
+            if (editable) RrButton(stringResource(CoreR.string.save), { save(rich.toHtml()) }, Modifier.padding(end = 10.dp), RrButtonVariant.Secondary, loading = state.busy, enabled = state.editable && !state.busy)
+        }
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            if (state.failed) RrCallout(stringResource(CoreR.string.couldn_t_save_your_wording_your_text_is_still_here_try_again), Modifier.padding(16.dp), tone = RrTone.Danger)
+            if (editable) RrRichTextField(value, rich, { next, doc -> rich = doc; value = next }, Modifier.fillMaxWidth().padding(16.dp), readOnly = !state.editable)
+            else {
+                RrText(android.text.Html.fromHtml(letter.content, android.text.Html.FROM_HTML_MODE_LEGACY).toString(), Modifier.padding(16.dp), style = RrType.body)
+                RrCallout(stringResource(R.string.p4_rich_text_editing_is_not_available_on_this_device_yet_your_formatting_is_kept), Modifier.padding(16.dp))
+            }
+        }
+        if (editable) RrRichTextToolbar(rich, value.selection, { rich = it }, Modifier.fillMaxWidth().background(c.surface).imePadding().navigationBarsPadding().padding(horizontal = 6.dp, vertical = 6.dp), enabled = state.editable)
     }
+    if (askDiscard) RrAlertDialog(stringResource(DsR.string.ds_discard_changes_title), stringResource(DsR.string.ds_discard_changes_body), stringResource(DsR.string.ds_discard),
+        onConfirm = { askDiscard = false; dismiss() }, onDismissRequest = { askDiscard = false }, dismissLabel = stringResource(DsR.string.ds_keep_editing), confirm = RrDialogConfirm.Danger)
 }

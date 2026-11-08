@@ -15,9 +15,11 @@ import me.rxresu.core.page.*
 
 internal data class LetterState(
     val aiDraft: LetterAiDraft? = null, val draft: DraftState<CoverLetter> = DraftState(null), val loading: Boolean = true, val failed: Boolean = false, val busy: Boolean = false,
-    val resumePage: ImageBitmap? = null, val resumePageFailed: Boolean = false, val blocks: List<LetterBlock> = emptyList(), val page: ImageBitmap? = null, val pageFailed: Boolean = false, val pageCount: Int? = null,
+    val resumePage: ImageBitmap? = null, val resumePageFailed: Boolean = false, val blocks: List<LetterBlock> = emptyList(), val pages: List<ImageBitmap> = emptyList(), val pageFailed: Boolean = false, val pageCount: Int? = null,
     val resumes: List<ResumeSummary> = emptyList(), val applications: List<Application> = emptyList(), val versions: List<LetterVersionSummary> = emptyList(),
-) { val letter get() = draft.document; val editable get() = letter != null && letter?.isLocked != true && !busy && !draft.locked }
+    /** The connection a draft goes to, named in the disclosure; each draft request carries its approval. */
+    val provider: TestAiProviderResponse? = null,
+) { val page get() = pages.firstOrNull(); val letter get() = draft.document; val editable get() = letter != null && letter?.isLocked != true && !busy && !draft.locked }
 
 internal class LetterViewModel(private val repositories: RrRepositories, private val id: String, private val recovery: LetterDraftRecovery? = null, private val io: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     private val mutable = MutableStateFlow(LetterState())
@@ -56,14 +58,21 @@ internal class LetterViewModel(private val repositories: RrRepositories, private
         launch { attempt { val v = repositories.resumes.listResumes(); mutable.update { it.copy(resumes = v) } } }
         launch { attempt { val v = repositories.applications.listApplications(); mutable.update { it.copy(applications = v) } } }
         launch { attempt { val v = repositories.letters.listCoverLetterVersions(id); mutable.update { it.copy(versions = v) } } }
+        launch { try { loadProvider() } catch (e: CancellationException) { throw e } catch (_: Exception) {} }
+    }
+    /** The connection the server drafts with when none is named: the default usable one (or the first usable). */
+    private suspend fun loadProvider(): TestAiProviderResponse? {
+        val usable = repositories.ai.listAiProviders().filter { it.enabled && it.testStatus == "success" }
+        return (usable.firstOrNull { it.isDefault } ?: usable.firstOrNull()).also { p -> mutable.update { it.copy(provider = p) } }
     }
     private suspend fun page(letter: CoverLetter) {
         val source = PageSource.Letter(id, letter.revision.toString())
         try {
             val document = try { repositories.pages.render(source) } catch (e: CancellationException) { throw e } catch (e: Exception) { repositories.pages.lastGood(source) ?: throw e }
-            val image = repositories.pages.page(document, 0, 716).asImageBitmap()
+            // Every page, so a letter running onto a second page can be read before export.
+            val images = (0 until document.pageCount.coerceAtLeast(1)).map { repositories.pages.page(document, it, 716).asImageBitmap() }
             val blocks = withContext(io) { readLetterRuns(document.file)?.let { letterBlocks(letter, it) }.orEmpty() }
-            if (lastRevision == letter.revision) mutable.update { it.copy(page = image, blocks = if (document.source.revision == source.revision) blocks else emptyList(), pageCount = document.pageCount, pageFailed = document.source.revision != source.revision) }
+            if (lastRevision == letter.revision) mutable.update { it.copy(pages = images, blocks = if (document.source.revision == source.revision) blocks else emptyList(), pageCount = document.pageCount, pageFailed = document.source.revision != source.revision) }
         } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(pageFailed = true) } }
     }
     private suspend fun resumePage(id: String) {
@@ -116,18 +125,22 @@ internal class LetterViewModel(private val repositories: RrRepositories, private
         val old = state.value.aiDraft
         aiJob = viewModelScope.launch {
             try {
+                val provider = state.value.provider ?: requireNotNull(loadProvider())
                 val handle = requireNotNull(draft); handle.flushSaved()
                 val current = requireNotNull(handle.state.value.document)
                 val versions = (old?.versions.orEmpty() + listOfNotNull(old?.takeIf { it.text.isNotBlank() }?.let { LetterAiVersion(it.text, it.operationIds) })).takeLast(4)
                 keepAiState(LetterAiDraft(operationIds = if (variant == CreateCoverLetterDraftRequestVariant.Draft) emptyList() else old?.operationIds.orEmpty(), revision = current.revision, baseContent = current.content, variant = variant, versions = versions, generating = true))
-                repositories.letters.draftCoverLetter(id, DraftCoverLetterRequest(includeProvenance = true, previous = old?.text?.takeIf { variant != CreateCoverLetterDraftRequestVariant.Draft }, variant = variant)).collect { event ->
+                repositories.letters.draftCoverLetter(id, DraftCoverLetterRequest(includeProvenance = true, previous = old?.text?.takeIf { variant != CreateCoverLetterDraftRequestVariant.Draft }, variant = variant), me.rxresu.core.network.RequestOptions().approvedFor(provider)).collect { event ->
                     keepAiState(reduceLetterDraft(requireNotNull(state.value.aiDraft), event))
                 }
                 val ready = requireNotNull(state.value.aiDraft)
                 check(ready.text.isNotBlank())
                 keepAiState(ready.copy(generating = false))
-            } catch (e: CancellationException) { throw e } catch (_: Exception) {
-                if (sameAccount()) { val kept = state.value.aiDraft ?: old ?: LetterAiDraft(); mutable.update { it.copy(aiDraft = kept.copy(generating = false, failed = true), failed = true) } }
+            } catch (e: CancellationException) { throw e } catch (e: Exception) {
+                // A changed connection (409, nothing sent) renews the disclosure; the earlier draft and the letter stay.
+                val changed = e is me.rxresu.core.network.ApiException && e.status == 409
+                if (changed) try { loadProvider() } catch (ce: CancellationException) { throw ce } catch (_: Exception) {}
+                if (sameAccount()) { val kept = state.value.aiDraft ?: old ?: LetterAiDraft(); mutable.update { it.copy(aiDraft = kept.copy(generating = false, failed = true, destinationChanged = changed), failed = true) } }
             }
         }
     }

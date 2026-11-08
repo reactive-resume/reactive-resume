@@ -11,6 +11,8 @@ import me.rxresu.core.network.ServerEvent
     val text: String = "", val operationIds: List<String> = emptyList(), val revision: Long = -1,
     val baseContent: String = "", val variant: me.rxresu.core.network.generated.CreateCoverLetterDraftRequestVariant = me.rxresu.core.network.generated.CreateCoverLetterDraftRequestVariant.Draft, val versions: List<LetterAiVersion> = emptyList(),
     val generating: Boolean = false, val failed: Boolean = false, val copyId: String? = null,
+    /** The draft was refused because the AI connection changed after it was shown; nothing was sent. */
+    val destinationChanged: Boolean = false,
 )
 /** Account/server-scoped, app-private recovery. Never write generated words into the authored letter before Keep. */
 internal class LetterDraftRecovery(context: Context, private val key: String) {
