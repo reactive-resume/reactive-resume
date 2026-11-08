@@ -708,7 +708,7 @@ internal fun ResetScreen(
 internal fun ConsentScreen(s: AuthUiState, choose: (Boolean) -> Unit = {}, close: () -> Unit = {}) {
     var review by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
-        RrTopBar(onClose = close, closeLabel = stringResource(R.string.screen_cancel_connection))
+        RrTopBar(onClose = close, closeLabel = stringResource(CR.string.close))
         Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
             if (s.busy && s.consent == null) {
                 RrSkeletonText(Modifier.padding(24.dp), lines = 3)
@@ -725,11 +725,10 @@ internal fun ConsentScreen(s: AuthUiState, choose: (Boolean) -> Unit = {}, close
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     RrIconTile(
-                        if (RrTheme.colors.isDark) R.drawable.logo_dark else R.drawable.logo_light,
                         Modifier.size(56.dp).semantics {
                             contentDescription = request.clientId + "; " + request.redirectUri
                         },
-                    )
+                    ) { RrLogo(size = 32.dp, contentDescription = null) }
                     RrIcon(R.drawable.ic_ph_arrows_left_right, null, tint = RrTheme.colors.ink3)
                     RrIconTile(D.drawable.ic_ph_sparkle, Modifier.size(56.dp), accent = true)
                 }
@@ -773,6 +772,7 @@ internal fun ConsentScreen(s: AuthUiState, choose: (Boolean) -> Unit = {}, close
                                     else -> D.drawable.ic_ph_check
                                 },
                             divider = i < scopes.lastIndex,
+                            titleMaxLines = 2,
                         )
                     }
                 }

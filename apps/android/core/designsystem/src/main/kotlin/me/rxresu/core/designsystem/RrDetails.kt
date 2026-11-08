@@ -20,8 +20,16 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun RrIconTile(@DrawableRes icon: Int, modifier: Modifier = Modifier, accent: Boolean = false, danger: Boolean = false) {
     val c = RrTheme.colors
-    Box(modifier.size(40.dp).rrDesignTag(DesignTag(component = "IconTile", radius = RrRadius.md, bgName = if (accent) "accent-soft" else "sunken")).clip(RrShape.md).background(if (accent) c.accentSoft else c.sunken), contentAlignment = Alignment.Center) {
+    RrIconTile(modifier, accent) {
         RrIcon(icon, null, size = 22.dp, tint = if (danger) c.dangerText else if (accent) c.accentText else c.ink2)
+    }
+}
+
+@Composable
+fun RrIconTile(modifier: Modifier = Modifier, accent: Boolean = false, content: @Composable () -> Unit) {
+    val c = RrTheme.colors
+    Box(modifier.size(40.dp).rrDesignTag(DesignTag(component = "IconTile", radius = RrRadius.md, bgName = if (accent) "accent-soft" else "sunken")).clip(RrShape.md).background(if (accent) c.accentSoft else c.sunken), contentAlignment = Alignment.Center) {
+        content()
     }
 }
 

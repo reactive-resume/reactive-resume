@@ -81,3 +81,22 @@ Never change baseline images/layout dumps, raise tolerance, skip assertions or r
 Owner resolved both contradictions: every ellipsis opens B19 Document menu, including B6/B9/B10/B11;
 Typography and Page use pushed pickers. Preserve bundle files unchanged and record this interpretation
 in navigation tests and the final report.
+
+### Newly reproduced measurement contradiction
+
+Scaled paper text retains unscaled computed CSS line metrics in the supplied `textBox` data.
+For B1's Alex Morgan, source paper uses `transform:scale(.475)`: outer text box is 11.5 dp tall,
+but `textBox.h` is 24 dp and its y is 220 rather than the scaled line position. B6 repeats this
+with a 10 dp outer box and a 24 dp textBox. App-native measured bounds cannot simultaneously follow
+both those numbers and the PNG's scaled line box. Raster fixtures also need honest PDF/image text
+semantics if their internal text is to participate in node comparisons; pixel matching alone does
+not emit Compose Text nodes.
+
+Owner approved correcting the exporter and regenerating affected measurements while preserving PNGs
+and the 1 dp tolerance. Corrected 24 scaled text records in B1 and 18 in B6. Directly measured boxes,
+glyph x/width, structure, copy and navigation remain unchanged. Original hashes/backups and field-by-field
+changes live in `build/corrected-layout/`; all PNG hashes still match the survey snapshot.
+
+Owner approved the related boundary: use exact raster asset/pixel proof plus measured image bounds
+for text/markers already painted inside required PNG fixtures. Do not invent invisible Compose nodes to satisfy a comparison designed for native text.
+Other screen work continues.

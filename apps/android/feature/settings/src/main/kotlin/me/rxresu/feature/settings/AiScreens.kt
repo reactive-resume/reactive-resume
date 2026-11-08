@@ -112,7 +112,14 @@ internal fun AiScreen(
             Modifier.padding(start = 24.dp, end = 24.dp, top = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            RrIcon(D.drawable.ic_ph_key, null, size = 16.dp, tint = RrTheme.colors.warnText)
+            RrIcon(
+                D.drawable.ic_ph_key,
+                null,
+                size = 16.dp,
+                tint = RrTheme.colors.warnText,
+                slotHeight = 36.dp,
+                alignment = Alignment.TopStart,
+            )
             RrText(
                 stringResource(
                     CR.string

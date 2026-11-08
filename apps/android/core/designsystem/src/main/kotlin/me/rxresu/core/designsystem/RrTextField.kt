@@ -118,7 +118,7 @@ fun RrTextField(
                     FieldBox(focused, error != null, multiline) {
                         if (leadingIcon != null) RrIcon(leadingIcon, null, size = 20.dp, tint = c.ink3)
                         val input: @Composable () -> Unit = {
-                            Box(Modifier.then(if (value.isNotEmpty()) Modifier.rrDesignTag(DesignTag(text = visualTransformation.filter(androidx.compose.ui.text.AnnotatedString(value)).text.text, style = style, colorName = "ink")) else Modifier), contentAlignment = if (multiline) Alignment.TopStart else Alignment.CenterStart) {
+                            Box(Modifier.fillMaxWidth().then(if (value.isNotEmpty()) Modifier.rrDesignTag(DesignTag(text = visualTransformation.filter(androidx.compose.ui.text.AnnotatedString(value)).text.text, style = style, colorName = "ink", textSlot = true)) else Modifier), contentAlignment = if (multiline) Alignment.TopStart else Alignment.CenterStart) {
                                 if (value.isEmpty() && placeholder != null) RrText(placeholder, style = style.copy(color = c.ink3), maxLines = if (multiline) Int.MAX_VALUE else 1)
                                 inner()
                             }
@@ -167,7 +167,7 @@ fun RrPickerField(
             FieldBox(focused = false, isError = error != null, multiline = false) {
                 if (leadingIcon != null) RrIcon(leadingIcon, null, size = 20.dp, tint = c.ink3)
                 // One line like the text field it sits beside; a long value (a language name) ends in an ellipsis.
-                RrText(value.ifEmpty { placeholder.orEmpty() }, style = RrType.input, color = if (value.isEmpty()) c.ink3 else c.ink, modifier = Modifier.weight(1f), maxLines = 1)
+                RrText(value.ifEmpty { placeholder.orEmpty() }, style = RrType.input, color = if (value.isEmpty()) c.ink3 else c.ink, modifier = Modifier.weight(1f), maxLines = 1, measureSlot = true)
                 if (trailingIcon != null) RrIcon(trailingIcon, null, size = 20.dp, tint = c.ink3)
             }
         }

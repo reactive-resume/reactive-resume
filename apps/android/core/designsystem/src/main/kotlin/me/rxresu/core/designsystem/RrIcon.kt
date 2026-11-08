@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
  * @param contentDescription null for decorative icons next to words; required when the icon stands alone.
  * @param tint defaults to the current content colour.
  * @param mirrorInRtl flip horizontally in right-to-left layouts (directional icons such as carets and arrows).
+ * @param slotHeight logical height used to place the glyph with [alignment].
  */
 @Composable
 fun RrIcon(
@@ -34,6 +36,8 @@ fun RrIcon(
     size: Dp = 24.dp,
     tint: Color = LocalRrContentColor.current,
     mirrorInRtl: Boolean = false,
+    slotHeight: Dp = size,
+    alignment: Alignment = Alignment.Center,
 ) {
     val flip = mirrorInRtl && LocalLayoutDirection.current == LayoutDirection.Rtl
     val resourceName = LocalContext.current.resources.getResourceEntryName(id)
@@ -43,11 +47,12 @@ fun RrIcon(
         painter = painterResource(id),
         contentDescription = contentDescription,
         modifier = modifier
-            .size(size)
+            .size(width = size, height = slotHeight)
             .then(if (flip) Modifier.graphicsLayer { scaleX = -1f } else Modifier)
             .then(if (contentDescription == null && !measured) Modifier.clearAndSetSemantics { } else Modifier)
             .rrDesignTag(DesignTag(icon = iconName, iconWeight = if (resourceName.endsWith("_fill")) "fill" else "regular", color = tint, colorName = RrTheme.colors.tokenName(tint))),
         colorFilter = ColorFilter.tint(tint),
+        alignment = alignment,
     )
 }
 

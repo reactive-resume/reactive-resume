@@ -26,7 +26,12 @@ data class DesignTag(
     val radius: Dp? = null,
     val bgName: String? = null,
     val text: String? = null,
+    val raster: RasterInfo? = null,
+    val textSlot: Boolean = false,
+    val textRuns: List<DesignTextRun> = emptyList(),
 )
+
+data class DesignTextRun(val start: Int, val end: Int, val style: TextStyle, val colorName: String)
 
 val DesignTagKey = SemanticsPropertyKey<DesignTag>("RrDesignTag")
 var SemanticsPropertyReceiver.designTag by DesignTagKey

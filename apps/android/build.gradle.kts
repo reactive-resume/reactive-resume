@@ -8,6 +8,11 @@ plugins {
 }
 
 val fidelityRun = gradle.startParameter.taskNames.any { it.substringAfterLast(':') == "fidelity" }
+val handoffBundle = providers.environmentVariable("RR_HANDOFF_DIR")
+    .orElse(rootDir.resolve("../../.agents/handoff/android-app").absolutePath)
+val prepareFidelity by tasks.registering(Exec::class) {
+    commandLine("python3", rootDir.resolve("../../tooling/android/prepare-fidelity.py").absolutePath, handoffBundle.get())
+}
 val fidelityOutput = layout.buildDirectory.dir("fidelity")
 val cleanFidelity by tasks.registering(Delete::class) { delete(fidelityOutput) }
 val fidelityTests = listOf("core:designsystem", "feature:auth", "feature:settings", "feature:today",
@@ -29,8 +34,8 @@ tasks.register<Exec>("fidelity") {
     group = "verification"
     description = "Capture rendered screens and enforce unchanged storyboard layout and pixel tolerances."
     dependsOn(fidelityTests.map { ":$it:testDebugUnitTest" })
-    val bundle = providers.environmentVariable("RR_HANDOFF_DIR")
-        .orElse(rootDir.resolve("../../.agents/handoff/android-app").absolutePath)
+    dependsOn(prepareFidelity)
+    val bundle = handoffBundle
     commandLine("python3", "${bundle.get()}/tools/fidelity.py", fidelityOutput.get().asFile.absolutePath,
         layout.buildDirectory.dir("fidelity-report").get().asFile.absolutePath)
     val captures = fidelityOutput.get().asFile

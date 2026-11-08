@@ -2,6 +2,9 @@ package me.rxresu.core.testing
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.node.RootForTest
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -20,13 +23,20 @@ import java.io.File
 fun View.writeLayoutDump(out: File) {
     val elements = JSONArray()
     val density = resources.displayMetrics.density
+    fun hasTextSlot(node: SemanticsNode): Boolean = node.config.getOrNull(DesignTagKey)?.textSlot == true || node.children.any(::hasTextSlot)
+    fun textLayout(node: SemanticsNode): Pair<SemanticsNode, TextLayoutResult>? {
+        val results = mutableListOf<TextLayoutResult>()
+        node.config.getOrNull(SemanticsActions.GetTextLayoutResult)?.action?.invoke(results)
+        results.firstOrNull()?.let { return node to it }
+        return node.children.firstNotNullOfOrNull(::textLayout)
+    }
     fun walk(node: SemanticsNode, parentHasText: Boolean = false) {
         val tag = node.config.getOrNull(DesignTagKey)
         val text = tag?.text ?: if (!parentHasText) {
             node.config.getOrNull(SemanticsProperties.Text)?.joinToString("") { it.text }
-                ?: node.config.getOrNull(SemanticsProperties.EditableText)?.text
+                ?: if (!hasTextSlot(node)) node.config.getOrNull(SemanticsProperties.EditableText)?.text else null
         } else null
-        val box = node.boundsInRoot
+        val box = Rect(node.positionInRoot, node.size.toSize())
         fun item() = JSONObject().put("x", box.left / density).put("y", box.top / density)
             .put("w", box.width / density).put("h", box.height / density)
         tag?.component?.let {
@@ -36,22 +46,19 @@ fun View.writeLayoutDump(out: File) {
                 component.put("radius", minOf(radius.value, box.width / density / 2, box.height / density / 2))
             }
             tag.bgName?.let { bg -> component.put("bg", bg) }
+            tag.raster?.let { raster -> component.put("raster", JSONObject()
+                .put("width", raster.width).put("height", raster.height).put("rgbaSha256", raster.rgbaSha256)) }
             elements.put(component)
         }
         if (text != null || tag?.icon != null) {
             val value = item()
-            if (text != null) {
-                fun textLayout(n: SemanticsNode): Pair<SemanticsNode, TextLayoutResult>? {
-                    val results = mutableListOf<TextLayoutResult>()
-                    n.config.getOrNull(SemanticsActions.GetTextLayoutResult)?.action?.invoke(results)
-                    results.firstOrNull()?.let { return n to it }
-                    return n.children.firstNotNullOfOrNull { textLayout(it) }
-                }
-                textLayout(node)?.let { (textNode, result) ->
+            val measuredText = if (text != null) textLayout(node) else null
+            if (tag?.textSlot != true) {
+                measuredText?.let { (textNode, result) ->
                     if (result.lineCount > 0) {
                         val left = (0 until result.lineCount).minOf { result.getLineLeft(it) }
                         val right = (0 until result.lineCount).maxOf { result.getLineRight(it) }
-                        value.put("x", (textNode.boundsInRoot.left + left) / density)
+                        value.put("x", (textNode.positionInRoot.x + left) / density)
                         value.put("w", (right - left) / density)
                     }
                 }
@@ -59,21 +66,23 @@ fun View.writeLayoutDump(out: File) {
             text?.let { value.put("text", it) }
             tag?.icon?.let { value.put("icon", it) }
             tag?.iconWeight?.let { value.put("iconWeight", it) }
-            val style = JSONObject()
-            tag?.style?.let { type ->
-                val family = when (type.fontFamily) {
-                    Figtree -> "Figtree"; InstrumentSerif -> "Instrument Serif"; GeistMono -> "Geist Mono"; else -> null
-                }
-                family?.let { style.put("family", it) }
-                if (type.fontSize.isSp) style.put("size", type.fontSize.value)
-                if (type.lineHeight.isSp) style.put("lineHeight", type.lineHeight.value)
-                type.fontWeight?.let { style.put("weight", it.weight) }
-                if (type.letterSpacing.isSp) style.put("letterSpacing", type.letterSpacing.value)
-                if (type.letterSpacing.isEm && type.fontSize.isSp) style.put("letterSpacing", type.letterSpacing.value * type.fontSize.value)
-            }
-            tag?.colorName?.let { style.put("color", it) }
+            val style = dumpStyle(tag?.style, tag?.colorName)
             if (style.length() > 0) value.put("style", style)
             elements.put(value)
+            val runs = tag?.textRuns.orEmpty()
+            if (runs.isNotEmpty() && measuredText != null) {
+                val (textNode, result) = measuredText
+                runs.forEach { run ->
+                    val range = result.getPathForRange(run.start, run.end).getBounds()
+                    val span = JSONObject()
+                        .put("text", result.layoutInput.text.text.substring(run.start, run.end))
+                        .put("x", (textNode.positionInRoot.x + range.left) / density)
+                        .put("y", (textNode.positionInRoot.y + range.top) / density)
+                        .put("w", range.width / density).put("h", range.height / density)
+                        .put("style", dumpStyle(run.style, run.colorName))
+                    elements.put(span)
+                }
+            }
         }
         node.children.forEach { walk(it, parentHasText || text != null) }
     }
@@ -85,4 +94,19 @@ fun View.writeLayoutDump(out: File) {
     check(elements.length() > 0) { "No measured Compose nodes in $out" }
     out.parentFile?.mkdirs()
     out.writeText(JSONObject().put("elements", elements).toString(2))
+}
+
+private fun dumpStyle(type: TextStyle?, colorName: String?): JSONObject = JSONObject().apply {
+    type?.let {
+        val family = when (type.fontFamily) {
+            Figtree -> "Figtree"; InstrumentSerif -> "Instrument Serif"; GeistMono -> "Geist Mono"; else -> null
+        }
+        family?.let { put("family", it) }
+        if (type.fontSize.isSp) put("size", type.fontSize.value)
+        if (type.lineHeight.isSp) put("lineHeight", type.lineHeight.value)
+        type.fontWeight?.let { put("weight", it.weight) }
+        if (type.letterSpacing.isSp) put("letterSpacing", type.letterSpacing.value)
+        if (type.letterSpacing.isEm && type.fontSize.isSp) put("letterSpacing", type.letterSpacing.value * type.fontSize.value)
+    }
+    colorName?.let { put("color", it) }
 }

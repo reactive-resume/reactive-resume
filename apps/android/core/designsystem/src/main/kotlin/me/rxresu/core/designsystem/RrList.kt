@@ -104,9 +104,10 @@ fun RrListRow(
     @DrawableRes tile: Int? = null,
     divider: Boolean = false,
     trailing: (@Composable RowScope.() -> Unit)? = null,
+    titleMaxLines: Int = 1,
 ) = RrListRow(
     AnnotatedString(title), modifier, subtitle, icon, onClick, onLongClick, onLongClickLabel, selected, danger, enabled, leading,
-    overline, titleColor, tile, divider, trailing,
+    overline, titleColor, tile, divider, trailing, titleMaxLines,
 )
 
 /**
@@ -131,6 +132,7 @@ fun RrListRow(
     @DrawableRes tile: Int? = null,
     divider: Boolean = false,
     trailing: (@Composable RowScope.() -> Unit)? = null,
+    titleMaxLines: Int = 1,
 ) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
@@ -162,7 +164,7 @@ fun RrListRow(
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     if (overline != null) RrText(overline, style = RrType.caption, color = c.ink3)
-                    RrText(title, style = RowTitle, color = fg, maxLines = if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                    RrText(title, style = RowTitle, color = fg, maxLines = if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else titleMaxLines, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                     if (subtitle != null) RrText(subtitle, style = RrType.ui, color = c.ink3, maxLines = if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 }
             },
@@ -219,16 +221,18 @@ internal object RrListRowStack {
 @Composable
 private fun RowFrame(modifier: Modifier, divider: Boolean = false, content: @Composable RowScope.() -> Unit) {
     val c = RrTheme.colors
-    Row(
-        modifier.fillMaxWidth().padding(horizontal = RrLayout.screenMargin).rrDesignTag(DesignTag(component = "ListRow")).defaultMinSize(minHeight = RrLayout.listRowMin)
-            .drawWithContent {
-                drawContent()
-                if (divider) { val h = 1.dp.toPx(); drawLine(c.line, Offset(0f, size.height - h / 2), Offset(size.width, size.height - h / 2), h) }
-            }.padding(bottom = if (divider) 1.dp else 0.dp).padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        content = content,
-    )
+    Box(modifier.fillMaxWidth().padding(horizontal = RrLayout.screenMargin)) {
+        Row(
+            Modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "ListRow")).defaultMinSize(minHeight = RrLayout.listRowMin)
+                .drawWithContent {
+                    drawContent()
+                    if (divider) { val h = 1.dp.toPx(); drawLine(c.line, Offset(0f, size.height - h / 2), Offset(size.width, size.height - h / 2), h) }
+                }.padding(bottom = if (divider) 1.dp else 0.dp).padding(vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            content = content,
+        )
+    }
 }
 
 /** Trailing value in ink-3 ("Match system"), optionally with a caret. */

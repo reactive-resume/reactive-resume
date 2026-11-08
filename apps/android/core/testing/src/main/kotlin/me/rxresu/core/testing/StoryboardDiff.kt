@@ -27,8 +27,11 @@ object StoryboardDiff {
     }
 
     /** The handoff root (`…/.agents/handoff/android-app`), or null when this machine has none. */
-    fun handoffDir(start: File = File("").absoluteFile): File? {
-        (System.getenv("RR_HANDOFF_DIR") ?: System.getProperty("rr.handoff.dir"))?.let { return File(it).takeIf(File::isDirectory) }
+    fun handoffDir(
+        start: File = File("").absoluteFile,
+        configuredPath: String? = System.getenv("RR_HANDOFF_DIR") ?: System.getProperty("rr.handoff.dir"),
+    ): File? {
+        configuredPath?.let { return File(it).takeIf(File::isDirectory) }
         var dir: File? = start
         while (dir != null) {
             File(dir, ".agents/handoff/android-app").takeIf(File::isDirectory)?.let { return it }

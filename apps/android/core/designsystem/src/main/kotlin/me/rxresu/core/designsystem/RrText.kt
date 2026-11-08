@@ -31,9 +31,10 @@ fun RrText(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
+    measureSlot: Boolean = false,
 ) {
     val resolved = resolve(style, color, textAlign, textDecoration)
-    CssLineBox(resolved, modifier.rrDesignTag(DesignTag(text = text, style = resolved, colorName = RrTheme.colors.tokenName(resolved.color)))) { onLayout ->
+    CssLineBox(resolved, modifier.rrDesignTag(DesignTag(text = text, style = resolved, colorName = RrTheme.colors.tokenName(resolved.color), textSlot = measureSlot))) { onLayout ->
         BasicText(
             text = text,
             style = resolved,
@@ -57,7 +58,19 @@ fun RrText(
     inlineContent: Map<String, InlineTextContent> = emptyMap(),
 ) {
     val resolved = resolve(style, color, textAlign, null)
-    CssLineBox(resolved, modifier.rrDesignTag(DesignTag(text = text.text, style = resolved, colorName = RrTheme.colors.tokenName(resolved.color)))) { onLayout ->
+    val colors = RrTheme.colors
+    val runs = remember(text, resolved, colors) {
+        if (text.spanStyles.isEmpty()) emptyList() else {
+            val edges = (listOf(0, text.length) + text.spanStyles.flatMap { listOf(it.start, it.end) }).distinct().sorted()
+            edges.zipWithNext { start, end ->
+                val span = text.spanStyles.filter { it.start <= start && it.end >= end }
+                    .fold(resolved.toSpanStyle()) { style, range -> style.merge(range.item) }
+                val runStyle = resolved.copy(color = span.color, fontSize = span.fontSize, fontWeight = span.fontWeight, fontFamily = span.fontFamily, letterSpacing = span.letterSpacing)
+                DesignTextRun(start, end, runStyle, colors.tokenName(runStyle.color))
+            }.filter { run -> run.start < run.end && text.spanStyles.any { it.start <= run.start && it.end >= run.end } }
+        }
+    }
+    CssLineBox(resolved, modifier.rrDesignTag(DesignTag(text = text.text, style = resolved, colorName = colors.tokenName(resolved.color), textRuns = runs))) { onLayout ->
         BasicText(
             text = text,
             style = resolved,

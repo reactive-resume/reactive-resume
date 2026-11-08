@@ -36,7 +36,15 @@ class StoryboardDiffTest {
         val worktree = tmp.newFolder("wt")
         File(worktree, ".git").writeText("gitdir: ${main.absolutePath}/.git/worktrees/wt\n")
         val module = File(worktree, "apps/android/core/designsystem").apply { mkdirs() }
-        assertEquals(File(main, ".agents/handoff/android-app").canonicalFile, StoryboardDiff.handoffDir(module)?.canonicalFile)
+        assertEquals(File(main, ".agents/handoff/android-app").canonicalFile, StoryboardDiff.handoffDir(module, configuredPath = null)?.canonicalFile)
+    }
+
+    @Test fun configuredHandoffTakesPrecedenceOverCheckoutDiscovery() {
+        val checkout = tmp.newFolder("checkout")
+        File(checkout, ".agents/handoff/android-app").mkdirs()
+        val configured = tmp.newFolder("configured")
+        assertEquals(configured, StoryboardDiff.handoffDir(checkout, configuredPath = configured.path))
+        assertNull(StoryboardDiff.handoffDir(checkout, configuredPath = File(tmp.root, "missing").path))
     }
 
     @Test fun reportsNothingWithoutTheHandoff() {

@@ -42,7 +42,7 @@ fun RrPaperPage(
         modifier
             .fillMaxWidth()
             .aspectRatio(RrLayout.PAGE_ASPECT)
-            .rrDesignTag(DesignTag(component = "Page", radius = 0.dp, bgName = "paper"))
+            .rrDesignTag(DesignTag(component = "Page", radius = 0.dp, bgName = "paper", raster = rememberRasterInfo(page)))
             .rrShadow(RrElevation.Page)
             .background(RrFixedColors.paper)
             .semantics { if (contentDescription != null) this.contentDescription = contentDescription },
@@ -67,7 +67,7 @@ fun RrPageThumbnail(
     Box(
         modifier
             .aspectRatio(RrLayout.PAGE_ASPECT)
-            .rrDesignTag(DesignTag(component = "PageThumbnail", radius = RrRadius.paper, bgName = "paper"))
+            .rrDesignTag(DesignTag(component = "PageThumbnail", radius = RrRadius.paper, bgName = "paper", raster = rememberRasterInfo(page)))
             .rrShadow(RrElevation.Level1, androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper))
             .clip(androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper))
             .background(RrFixedColors.paper)

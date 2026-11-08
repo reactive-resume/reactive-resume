@@ -37,7 +37,7 @@ fun RrAvatar(
 ) {
     val c = RrTheme.colors
     val face = @Composable {
-        Box(Modifier.size(size).rrDesignTag(DesignTag(component = "Avatar", radius = if (size >= 56.dp) RrRadius.xl else RrRadius.sm, bgName = "accent-soft")).clip(if (size >= 56.dp) RrShape.xl else RrShape.sm).background(c.accentSoft), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(size).rrDesignTag(DesignTag(component = "Avatar", radius = if (size >= 56.dp) RrRadius.xl else RrRadius.sm, bgName = "accent-soft", raster = rememberRasterInfo(image))).clip(if (size >= 56.dp) RrShape.xl else RrShape.sm).background(c.accentSoft), contentAlignment = Alignment.Center) {
             if (image != null) {
                 Image(image, null, Modifier.size(size), contentScale = ContentScale.Crop)
             } else if (initials.isBlank()) {
