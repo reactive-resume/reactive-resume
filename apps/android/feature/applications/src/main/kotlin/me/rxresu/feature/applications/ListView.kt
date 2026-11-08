@@ -183,7 +183,7 @@ private fun RowTrailing(row: Row, dates: Dates, now: Instant) {
         step.kind == NextStepKind.Offer && step.at != null -> RrBadge(stringResource(S.string.by_0, dates.weekdayDayMonth(step.at!!)), tone = if (step.overdue) RrBadgeTone.Danger else RrBadgeTone.Warn)
         (step.kind == NextStepKind.FollowUp || step.kind == NextStepKind.NoReply) && row.attention -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             WarnDot()
-            RrText(step.note.ifBlank { stringResource(S.string.follow_up) }, style = RrType.small, color = c.ink2, maxLines = 1)
+            RrText(step.note.ifBlank { stringResource(S.string.follow_up) }, style = RrType.small, color = c.ink2)
         }
         step.kind == NextStepKind.Interview && step.at != null -> RrRowValue(
             if (Duration.between(now, step.at).toDays() < 6) "${dates.weekday(step.at!!)} ${dates.time(step.at!!)}" else dates.dayMonth(step.at!!),

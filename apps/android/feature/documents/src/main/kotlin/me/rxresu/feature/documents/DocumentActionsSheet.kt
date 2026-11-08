@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,9 +38,9 @@ import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrIconButton
 import me.rxresu.core.designsystem.RrIconButtonSize
 import me.rxresu.core.designsystem.RrListGroup
-import me.rxresu.core.designsystem.RrQuickActionTile
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrMotion
+import me.rxresu.core.designsystem.RrQuickActionTile
 import me.rxresu.core.designsystem.RrRowValue
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTextField
@@ -87,11 +88,13 @@ fun DocumentActionsSheet(
     // Nothing to show until the document loads. The fit-content Main step and the full-height pushed steps share one
     // sheet: it follows its content's height as the step changes.
     if (doc == null) return
+    var copyDraft by rememberSaveable(doc.id) { mutableStateOf(CopyForJobDraft()) }
+    var confirmBack by remember { mutableStateOf(false) }
     RrBottomSheet(
         onDismissRequest = callbacks.onClose,
         fitContent = step == ActionsStep.Main,
         detents = listOf(0.92f),
-        confirmDiscard = renaming,
+        confirmDiscard = renaming || copyDraft.dirty,
     ) {
         val reduced = RrTheme.reducedMotion
         AnimatedContent(
@@ -123,13 +126,17 @@ fun DocumentActionsSheet(
                         }
                     }
                     ActionsStep.CopyForJob -> {
-                        StepHeader(stringResource(R.string.docs_copy_title)) { step = ActionsStep.Main }
-                        CopyForJobForm(state.library, state.applications, doc.id, busy, callbacks.onCopyForJob)
+                        StepHeader(stringResource(R.string.docs_copy_title)) { if (copyDraft.dirty) confirmBack = true else step = ActionsStep.Main }
+                        CopyForJobForm(state.library, state.applications, doc.id, busy, callbacks.onCopyForJob, draft = copyDraft, onDraft = { copyDraft = it })
                     }
                 }
             }
         }
     }
+    if (confirmBack) CopyDiscardDialog(
+        onKeep = { confirmBack = false },
+        onDiscard = { confirmBack = false; copyDraft = CopyForJobDraft(); step = ActionsStep.Main },
+    )
 }
 
 @Composable

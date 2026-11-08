@@ -48,13 +48,13 @@ import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrRadio
 import me.rxresu.core.designsystem.RrSpinner
+import me.rxresu.core.designsystem.RrStep
+import me.rxresu.core.designsystem.RrStepList
+import me.rxresu.core.designsystem.RrStepState
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrTopBar
-import me.rxresu.core.designsystem.RrStep
-import me.rxresu.core.designsystem.RrStepList
-import me.rxresu.core.designsystem.RrStepState
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.network.generated.ImportResumeFileLocale
 import me.rxresu.core.strings.R as S
@@ -90,6 +90,7 @@ fun ImportScreen(state: ImportUiState, callbacks: ImportCallbacks, modifier: Mod
                 }
                 if (state.readable && state.problem != ImportProblem.WordNeedsAi) Method(state, callbacks)
                 if (state.readable && (state.progress > 0 || state.running)) Steps(state)
+                if (state.problem == ImportProblem.DestinationChanged) RrCallout(stringResource(R.string.import_destination_changed), tone = RrTone.Warn)
                 if (state.problem == ImportProblem.Unreadable) {
                     RrCallout(stringResource(R.string.import_unreadable), tone = RrTone.Danger, actionLabel = stringResource(R.string.import_choose_another), onAction = callbacks.onChangeFile)
                 }
@@ -167,7 +168,7 @@ private fun Method(state: ImportUiState, callbacks: ImportCallbacks) {
         }
         // Nothing is sent to the provider until the person has read where it goes and asked for it.
         if (state.method == ImportMethod.Ai && state.aiProvider != null) {
-            RrDisclosureLine(stringResource(R.string.import_ai_disclosure, state.aiProvider))
+            RrDisclosureLine(stringResource(R.string.import_ai_disclosure, listOfNotNull(state.aiProvider, state.aiDestination).joinToString(" · ")))
             if (state.progress == 0 && !state.running) {
                 RrButton(stringResource(R.string.import_ai), callbacks.onReadWithAi, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small, icon = DS.drawable.ic_ph_sparkle, iconTint = c.accentText)
             }

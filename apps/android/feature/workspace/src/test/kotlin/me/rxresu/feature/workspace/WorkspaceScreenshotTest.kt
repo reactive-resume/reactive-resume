@@ -84,7 +84,7 @@ class WorkspaceScreenshotTest : RrScreenshotTest() {
             )
         }
         return { _, _, _ ->
-            PractiseScreen(state, boardRecording, false, rememberDates(ZoneId.of("Europe/Lisbon")), {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            PractiseScreen(state, boardRecording, false, rememberDates(ZoneId.of("Europe/Lisbon")), {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, now = repos.time.now())
         }
     }
 

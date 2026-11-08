@@ -149,10 +149,23 @@ private val TranscriptionModels = mapOf(
     "vercel-ai-gateway" to "openai/gpt-4o-mini-transcribe",
 )
 
-internal data class Transcriber(val providerId: String, val label: String, val model: String)
+internal data class Transcriber(val provider: TestAiProviderResponse, val model: String) {
+    val providerId get() = provider.id
+    val label get() = provider.label
+
+    fun approval(): me.rxresu.core.network.RequestOptions {
+        val headers = me.rxresu.core.data.aiApproval(provider)
+        val recipient = me.rxresu.core.network.ApiJson.parseToJsonElement(headers.getValue("x-ai-destination")) as kotlinx.serialization.json.JsonArray
+        val voice = kotlinx.serialization.json.JsonObject(mapOf(
+            "kind" to kotlinx.serialization.json.JsonPrimitive("transcription"),
+            "model" to kotlinx.serialization.json.JsonPrimitive(model),
+        ))
+        return me.rxresu.core.network.RequestOptions(headers = headers + ("x-ai-destination" to kotlinx.serialization.json.JsonArray(recipient + voice).toString()))
+    }
+}
 
 /** The connection that transcribes answers: the default one when it can, else the first that can. Null: type instead. */
 internal fun chooseTranscriber(providers: List<TestAiProviderResponse>): Transcriber? =
     providers.sortedByDescending { it.isDefault }.firstNotNullOfOrNull { p ->
-        TranscriptionModels[p.provider.wireValue]?.let { Transcriber(p.id, p.label, it) }
+        TranscriptionModels[p.provider.wireValue]?.let { Transcriber(p, it) }
     }

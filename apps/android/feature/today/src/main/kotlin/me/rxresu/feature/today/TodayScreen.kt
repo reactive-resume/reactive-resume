@@ -1,8 +1,8 @@
 package me.rxresu.feature.today
 
+import android.text.format.DateFormat
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -39,8 +39,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import android.text.format.DateFormat
 import java.time.Instant
 import java.time.ZoneId
 import me.rxresu.core.data.FirstRun
@@ -79,13 +79,13 @@ import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.designsystem.rememberRrLargeTitleState
 import me.rxresu.core.designsystem.rrLargeTitleScroll
+import me.rxresu.core.navigation.WorkspaceTab
 import me.rxresu.core.network.generated.AddApplicationInterviewRequestKind
 import me.rxresu.core.network.generated.ApplicationStage
 import me.rxresu.core.network.generated.CareerSchedule
 import me.rxresu.core.network.generated.DocumentSummary
 import me.rxresu.core.network.generated.DocumentType
 import me.rxresu.core.network.generated.Opportunity
-import me.rxresu.core.navigation.WorkspaceTab
 import me.rxresu.core.strings.R as S
 
 /** Everything the Today screen can ask for. Defaults do nothing, for previews and screenshots. */
@@ -345,6 +345,7 @@ private fun NeedsRow(entry: TodayEntry, accent: Boolean, format: TodayFormat, ac
             @OptIn(ExperimentalLayoutApi::class)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 val first = if (accent) RrButtonVariant.Primary else RrButtonVariant.Secondary
+                RrButton(markRead, { actions.onMarkRead(item) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
                 when (item.kind) {
                     TodayKind.Briefing -> if (appId != null) {
                         RrButton(stringResource(S.string.open_briefing), { actions.onOpenApplication(appId, WorkspaceTab.Prepare) }, variant = first, size = RrButtonSize.Small)

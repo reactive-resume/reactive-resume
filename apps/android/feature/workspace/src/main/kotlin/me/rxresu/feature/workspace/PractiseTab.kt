@@ -64,6 +64,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
+import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
@@ -85,6 +86,7 @@ import me.rxresu.core.designsystem.RrWorkingLabel
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.Application as ApplicationRoute
 import me.rxresu.core.navigation.SettingsAi
+import me.rxresu.core.network.RequestOptions
 import me.rxresu.core.network.UploadPart
 import me.rxresu.core.network.generated.Briefing
 import me.rxresu.core.network.generated.CreateCareerOfferResponseDataPracticeKind
@@ -199,13 +201,21 @@ internal class PractiseViewModel(
         edit { it.copy(phase = AnswerPhase.Transcribing) }
         job = viewModelScope.launch {
             try {
-                val text = repos.workspace.transcribeCareerAnswer(transcriber.providerId, transcriber.model, id, UploadPart("audio", bytes, "answer.m4a", "audio/mp4")).text
+                val text = repos.workspace.transcribeCareerAnswer(transcriber.providerId, transcriber.model, id, UploadPart("audio", bytes, "answer.m4a", "audio/mp4"), transcriber.approval()).text
                 pending = null
                 if (text.isBlank()) edit { it.copy(phase = AnswerPhase.Idle, notice = VoiceNotice.NothingHeard) }
                 else edit { it.copy(phase = AnswerPhase.Review(text, CreateCareerOfferResponseDataPracticeMode.Spoken, spokenMs)) }
             } catch (e: CancellationException) {
                 throw e
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                if (e.destinationChanged()) {
+                    val current = ready()
+                    if (current != null) {
+                        val context = repos.renewAiDisclosure(current.context)
+                        edit { it.copy(context = context, transcriber = chooseTranscriber(context.providers)) }
+                    }
+                }
+
                 edit { it.copy(phase = AnswerPhase.Idle, notice = VoiceNotice.TranscribeFailed) }
             }
         }
@@ -218,6 +228,7 @@ internal class PractiseViewModel(
     fun feedback(locale: Locale) {
         val s = ready() ?: return
         val review = s.phase as? AnswerPhase.Review ?: return
+        val provider = s.context.provider ?: return
         if (review.text.isBlank() || s.sending) return
         edit { it.copy(sending = true, notice = null) }
         job = viewModelScope.launch {
@@ -227,6 +238,7 @@ internal class PractiseViewModel(
                         id, locale.toLanguageTag(),
                         GenerateCareerWorkRequestTaskPractice(review.text, s.interview?.id, review.mode, CreateCareerOfferResponseDataPracticeOrigin.Simulated, s.question, s.storyIds[s.question], CreateCareerOfferResponseDataPracticeKind.Practice),
                     ),
+                    RequestOptions().approvedFor(provider),
                 ).item
                 val attempt = item?.data as? PracticeAttempt ?: error("No feedback")
                 edit { it.copy(sending = false, phase = AnswerPhase.Feedback(attempt), attempts = listOf(Instant.parse(item.createdAt) to attempt) + it.attempts) }
@@ -234,7 +246,15 @@ internal class PractiseViewModel(
             } catch (e: CancellationException) {
                 edit { it.copy(sending = false) }
                 throw e
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                if (e.destinationChanged()) {
+                    val current = ready()
+                    if (current != null) {
+                        val context = repos.renewAiDisclosure(current.context)
+                        edit { it.copy(context = context, transcriber = chooseTranscriber(context.providers)) }
+                    }
+                }
+
                 // Keep the person's words; only the request failed.
                 edit { it.copy(sending = false, notice = VoiceNotice.FeedbackFailed) }
                 outcomes.send(VoiceOutcome.Failed)
@@ -299,6 +319,7 @@ internal fun PractiseTab(applicationId: String, nav: NavController) {
             recording,
             micDenied = mic.denied,
             dates = rememberDates(repos.time.timezone()),
+            now = repos.time.now(),
             onRecord = { if (recording.recording) vm.stopRecording() else mic.request() },
             onType = vm::type,
             onAnswerChange = vm::editAnswer,
@@ -346,10 +367,12 @@ internal fun PractiseScreen(
     onNext: () -> Unit,
     onSetUpAi: () -> Unit,
     onOpenSettings: () -> Unit,
+    now: Instant,
 ) {
     val c = RrTheme.colors
     var attemptsOpen by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize()) {
+        AiDestinationNotice(state.context)
         Column(
             Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -379,7 +402,7 @@ internal fun PractiseScreen(
         Column(Modifier.background(c.surface).windowInsetsPadding(WindowInsets.navigationBars)) {
             RrListRow(
                 stringResource(S.string.your_attempts),
-                subtitle = latest?.let { (at, a) -> attemptLine(at, a, dates) } ?: stringResource(S.string.each_answer_you_get_feedback_on_is_kept_here_newest_first),
+                subtitle = latest?.let { (at, a) -> attemptLine(at, a, dates, now) } ?: stringResource(S.string.each_answer_you_get_feedback_on_is_kept_here_newest_first),
                 icon = DsR.drawable.ic_ph_clock_counter_clockwise,
                 onClick = { attemptsOpen = true },
                 trailing = {
@@ -394,7 +417,7 @@ internal fun PractiseScreen(
             RrText(stringResource(S.string.each_answer_you_get_feedback_on_is_kept_here_newest_first), style = RrType.small, color = c.ink3)
             state.attempts.forEach { (at, a) ->
                 RrCard {
-                    RrText(attemptLine(at, a, dates), style = RrType.caption, color = c.ink3)
+                    RrText(attemptLine(at, a, dates, now), style = RrType.caption, color = c.ink3)
                     RrText(a.question, style = RrType.label, color = c.ink)
                     LabeledText(stringResource(S.string.what_works), a.works)
                     LabeledText(stringResource(S.string.strengthen), a.strengthen)
@@ -405,8 +428,8 @@ internal fun PractiseScreen(
 }
 
 @Composable
-private fun attemptLine(at: Instant, a: PracticeAttempt, dates: Dates): String {
-    val today = dates.date(at) == dates.date(Instant.now())
+private fun attemptLine(at: Instant, a: PracticeAttempt, dates: Dates, now: Instant): String {
+    val today = dates.date(at) == dates.date(now)
     val day = if (today) stringResource(S.string.today_hour, dates.time(at)) else "${dates.day(at)}, ${dates.time(at)}"
     val mode = stringResource(if (a.mode == CreateCareerOfferResponseDataPracticeMode.Typed) S.string.typed else S.string.spoken)
     return listOf(day, mode, a.title.replaceFirstChar { it.lowercase(dates.locale) }).joinToString(" · ")

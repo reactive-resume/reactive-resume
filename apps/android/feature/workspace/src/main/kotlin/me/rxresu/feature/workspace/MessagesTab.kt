@@ -3,7 +3,6 @@ package me.rxresu.feature.workspace
 
 import android.content.Intent
 import android.net.Uri
-import androidx.core.net.toUri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +30,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
+import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrButton
@@ -64,6 +65,7 @@ import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.LocalToasts
 import me.rxresu.core.navigation.Offers
 import me.rxresu.core.navigation.WorkspaceTab
+import me.rxresu.core.network.RequestOptions
 import me.rxresu.core.network.generated.AiDraftApplicationMessageRequest
 import me.rxresu.core.network.generated.AiDraftApplicationMessageRequestKind
 import me.rxresu.core.network.generated.CreateCareerOfferResponseDataReplyKind
@@ -123,17 +125,18 @@ internal class MessagesViewModel(private val repos: RrRepositories, private val 
     /** Drafts again; the previous draft stays in Library. A failure keeps the current words. */
     fun draft(locale: Locale) {
         val s = ready() ?: return
+        val provider = s.context.provider ?: return
         if (s.drafting) return
         edit { it.copy(drafting = true, failed = false) }
         job = viewModelScope.launch {
             try {
                 when (s.kind) {
                     MessageKind.FollowUp -> {
-                        val text = repos.workspace.aiDraftApplicationMessage(id, AiDraftApplicationMessageRequest(AiDraftApplicationMessageRequestKind.FollowUp)).text
+                        val text = repos.workspace.aiDraftApplicationMessage(id, AiDraftApplicationMessageRequest(AiDraftApplicationMessageRequestKind.FollowUp), RequestOptions().approvedFor(provider)).text
                         edit { it.copy(drafting = false, followUp = text) }
                     }
                     MessageKind.Reply -> {
-                        val item = repos.workspace.generateCareerWork(GenerateCareerWorkRequest(id, locale.toLanguageTag(), GenerateCareerWorkRequestTaskReply(s.pasted, locale.toLanguageTag(), CreateCareerOfferResponseDataReplyKind.Reply))).item
+                        val item = repos.workspace.generateCareerWork(GenerateCareerWorkRequest(id, locale.toLanguageTag(), GenerateCareerWorkRequestTaskReply(s.pasted, locale.toLanguageTag(), CreateCareerOfferResponseDataReplyKind.Reply)), RequestOptions().approvedFor(provider)).item
                         val reply = item?.data as? MessageDraft ?: error("No reply")
                         edit { it.copy(drafting = false, reply = reply) }
                     }
@@ -141,7 +144,11 @@ internal class MessagesViewModel(private val repos: RrRepositories, private val 
             } catch (e: CancellationException) {
                 edit { it.copy(drafting = false) }
                 throw e
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                if (e.destinationChanged()) {
+                    val context = repos.renewAiDisclosure(s.context)
+                    edit { it.copy(context = context) }
+                }
                 edit { it.copy(drafting = false, failed = true) }
             }
         }
@@ -241,6 +248,7 @@ internal fun MessagesScreen(
             else -> null
         },
     ) {
+        AiDestinationNotice(state.context)
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 RrFilterChip(stringResource(S.string.follow_up_2a747118b4), state.kind == MessageKind.FollowUp, { onKind(MessageKind.FollowUp) })

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
@@ -99,7 +100,8 @@ internal fun compareTailored(apps: List<Application>, resumes: Map<String, Docum
     return Comparison(tailored.size, tailored.count(::repliedTo), base.size, base.count(::repliedTo))
 }
 
-private enum class Chart { OverTime, Sources }
+private enum class Chart { OverTime, Sources, Pipeline }
+private enum class Statistic { Replies, Median }
 
 @Composable
 internal fun InsightsView(
@@ -112,6 +114,8 @@ internal fun InsightsView(
     val c = RrTheme.colors
     val insights = state.insights
     var chart by remember { mutableStateOf<Chart?>(null) }
+    var statistic by remember { mutableStateOf<Statistic?>(null) }
+    val largeText = androidx.compose.ui.platform.LocalDensity.current.fontScale >= 1.5f
     if (insights == null) return
     val sent = insights.byStage[ApplicationStage.Applied] ?: 0
     if (sent == 0) {
@@ -130,13 +134,14 @@ internal fun InsightsView(
         Modifier.fillMaxSize().rrLargeTitleScroll(title).verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Stat(Modifier.weight(1f), "${Math.round(insights.heardBack * 100.0 / sent)}%", stringResource(S.string.heard_back))
+        @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+        androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp), maxItemsInEachRow = if (largeText) 1 else 2) {
+            Stat(Modifier.weight(1f), "${Math.round(insights.heardBack * 100.0 / sent)}%", stringResource(S.string.heard_back)) { statistic = Statistic.Replies }
             Stat(
                 Modifier.weight(1f),
                 insights.medianDaysToReply?.let { d -> plural(S.plurals.message_0_plural_one_day_other_days, d.toInt(), formatDays(d)) } ?: "—",
                 stringResource(S.string.median_to_first_reply),
-            )
+            ) { statistic = Statistic.Median }
         }
         Funnel(insights, onStage)
         if (comparison.any) RrCard(Modifier.fillMaxWidth()) {
@@ -156,11 +161,20 @@ internal fun InsightsView(
             }
         }
         RrListGroup {
+            RrListRow(stringResource(R.string.app_pipeline_flow), icon = D.drawable.ic_ph_chart_bar, onClick = { chart = Chart.Pipeline }, trailing = { RrRowCaret() })
             RrListRow(stringResource(S.string.applications_over_time), subtitle = stringResource(S.string.applications_sent_per_week_last_8_weeks), icon = D.drawable.ic_ph_chart_bar, onClick = { chart = Chart.OverTime }, trailing = { RrRowCaret() })
             RrListRow(stringResource(S.string.where_applications_come_from), icon = D.drawable.ic_ph_globe_simple, onClick = { chart = Chart.Sources }, trailing = { RrRowCaret() })
         }
     }
+    statistic?.let { selected ->
+        RrBottomSheet(onDismissRequest = { statistic = null }, title = stringResource(if (selected == Statistic.Replies) S.string.heard_back else S.string.median_to_first_reply), fitContent = true) {
+            RrText(stringResource(if (selected == Statistic.Replies) R.string.app_reply_definition else R.string.app_median_definition), Modifier.padding(16.dp), style = RrType.body, color = c.ink2)
+        }
+    }
     when (chart) {
+        Chart.Pipeline -> RrBottomSheet(onDismissRequest = { chart = null }, title = stringResource(R.string.app_pipeline_flow), fitContent = true) {
+            PipelineFlow(insights)
+        }
         Chart.OverTime -> RrBottomSheet(onDismissRequest = { chart = null }, title = stringResource(S.string.applications_over_time), fitContent = true) {
             Column(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 RrText(stringResource(S.string.applications_sent_per_week_last_8_weeks), style = RrType.small, color = c.ink3)
@@ -184,9 +198,9 @@ internal fun InsightsView(
 private fun formatDays(d: Double) = if (d % 1.0 == 0.0) d.toInt().toString() else "%.1f".format(d)
 
 @Composable
-private fun Stat(modifier: Modifier, value: String, label: String) {
+private fun Stat(modifier: Modifier, value: String, label: String, onClick: () -> Unit) {
     val c = RrTheme.colors
-    RrCard(modifier) {
+    RrCard(modifier, onClick = onClick) {
         Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             RrText(value, style = RrType.title.copy(fontSize = 32.sp), color = c.ink)
             RrText(label, style = RrType.small, color = c.ink2)
@@ -200,7 +214,7 @@ private fun Funnel(insights: ApplicationInsights, onStage: (ApplicationStage) ->
     val c = RrTheme.colors
     val reduced = LocalReducedMotion.current
     val grow = remember { Animatable(if (reduced) 1f else 0f) }
-    LaunchedEffect(Unit) { if (!reduced) grow.animateTo(1f, tween(RrMotion.D3, easing = RrMotion.ease)) }
+    LaunchedEffect(reduced) { if (reduced) grow.snapTo(1f) else grow.animateTo(1f, tween(RrMotion.D3, easing = RrMotion.ease)) }
     val stages = Pipeline.drop(1)
     val max = (stages.maxOfOrNull { insights.byStage[it] ?: 0 } ?: 1).coerceAtLeast(1)
     val names = stages.map { stageLabel(it) }
@@ -224,19 +238,25 @@ private fun Funnel(insights: ApplicationInsights, onStage: (ApplicationStage) ->
 @Composable
 private fun BarRow(label: String, count: Int, fraction: Float, color: androidx.compose.ui.graphics.Color, stage: ApplicationStage?, onClick: (() -> Unit)? = null) {
     val c = RrTheme.colors
+    val largeText = androidx.compose.ui.platform.LocalDensity.current.fontScale >= 1.5f
+    Column {
+    if (largeText) {
+        if (stage != null) RrStageLabel(stage.rr(), label, style = RrType.small.copy(color = c.ink2)) else RrText(label, style = RrType.small, color = c.ink2)
+    }
     Row(
         Modifier.fillMaxWidth().heightIn(min = 18.dp)
             .then(if (onClick != null) Modifier.clip(RrShape.sm).selectable(false, role = Role.Button, onClick = onClick) else Modifier),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.width(84.dp)) {
+        if (!largeText) Box(Modifier.width(84.dp)) {
             if (stage != null) RrStageLabel(stage.rr(), label, style = RrType.small.copy(color = c.ink2)) else RrText(label, style = RrType.small, color = c.ink2, maxLines = 2)
         }
         Box(Modifier.weight(1f).height(14.dp)) {
             if (fraction > 0f) Box(Modifier.fillMaxWidth(fraction.coerceIn(0.02f, 1f)).fillMaxHeight().clip(RrShape.sm).background(color))
         }
-        RrText(count.toString(), Modifier.width(28.dp), style = RrType.mono.copy(fontSize = 13.sp, lineHeight = 18.sp), color = c.ink, textAlign = TextAlign.End)
+        RrText(count.toString(), Modifier.widthIn(min = 28.dp), style = RrType.mono.copy(fontSize = 13.sp, lineHeight = 18.sp), color = c.ink, textAlign = TextAlign.End)
+    }
     }
 }
 

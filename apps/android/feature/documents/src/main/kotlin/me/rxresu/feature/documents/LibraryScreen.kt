@@ -208,6 +208,7 @@ private fun LoadingGrid(modifier: Modifier) {
 
 @Composable
 private fun Grid(docs: List<DocumentSummary>, state: LibraryUiState, now: Instant, actions: LibraryActions, modifier: Modifier) {
+    val reduced = RrTheme.reducedMotion
     LazyVerticalGrid(
         GridCells.Fixed(2),
         modifier,
@@ -222,7 +223,7 @@ private fun Grid(docs: List<DocumentSummary>, state: LibraryUiState, now: Instan
                 selecting = state.selecting,
                 selected = doc.id in state.selection,
                 actions = actions,
-                modifier = Modifier.animateItem(
+                modifier = if (reduced) Modifier else Modifier.animateItem(
                     fadeInSpec = null,
                     placementSpec = tween(RrMotion.D2, easing = RrMotion.easeInOutStrong),
                     fadeOutSpec = tween(RrMotion.D2, easing = RrMotion.ease),
