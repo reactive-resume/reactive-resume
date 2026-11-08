@@ -258,10 +258,10 @@ internal fun AccountScreen(
         (s.security as? AccountSecurityInfo.BrowserRequired)?.url
             ?: "$server/dashboard/settings/account"
     val browserHint = stringResource(CR.string.continue_in_browser)
+    val security = s.security as? AccountSecurityInfo.Available
     SettingsFrame(stringResource(R.string.v2_account_security), back) {
         if (s.offline) RrOfflineStrip()
         if (s.error) ErrorCallout()
-        val security = s.security as? AccountSecurityInfo.Available
         RrListGroup(Modifier.padding(top = 20.dp), topDivider = true) {
             RrListRow(
                 stringResource(CR.string.email),
@@ -342,68 +342,6 @@ internal fun AccountScreen(
                 onClick = { browser(securityUrl) },
             )
         }
-        RrSectionHeading(stringResource(R.string.v2_account_details))
-        RrListGroup {
-            RrListRow(
-                stringResource(CR.string.name),
-                subtitle = account?.name,
-                divider = true,
-                onClick = {
-                    value = account?.name.orEmpty()
-                    editor = "name"
-                },
-                trailing = { RrRowCaret() },
-            )
-            RrListRow(
-                stringResource(R.string.screen_sessions),
-                subtitle = security?.sessionCount?.toString() ?: browserHint,
-                divider = true,
-                onClick = { browser(securityUrl) },
-                trailing = { RrRowCaret() },
-            )
-            security?.connectedProviders?.forEach { provider ->
-                RrListRow(
-                    provider,
-                    subtitle = stringResource(R.string.screen_connected),
-                    divider = true,
-                    onClick = { browser(securityUrl) },
-                    trailing = { RrRowCaret() },
-                )
-            }
-            RrListRow(
-                stringResource(CR.string.server),
-                subtitle = server,
-                divider = true,
-                onClick = {
-                    switching = true
-                    leaving = true
-                },
-                trailing = { RrRowCaret() },
-            )
-            RrListRow(
-                stringResource(CR.string.sign_out),
-                danger = true,
-                enabled = !s.busy,
-                onClick = {
-                    switching = false
-                    leaving = true
-                },
-            )
-        }
-        Row(Modifier.padding(24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            RrButton(
-                stringResource(R.string.v2_change_photo),
-                photo,
-                variant = RrButtonVariant.Secondary,
-                enabled = !s.busy,
-            )
-            RrButton(
-                stringResource(R.string.v2_remove_photo),
-                removePhoto,
-                variant = RrButtonVariant.Ghost,
-                enabled = !s.busy,
-            )
-        }
     }
     if (editor != null) {
         val field = editor
@@ -414,49 +352,121 @@ internal fun AccountScreen(
                 else stringResource(CR.string.username),
             confirmDiscard = value != if (field == "name") account?.name else account?.username,
         ) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                val valid =
-                    if (field == "name") value.trim().length in 1..64
-                    else value.trim().matches(Regex("[a-zA-Z0-9._-]{3,64}"))
-                RrTextField(
-                    value,
-                    { value = it },
-                    label =
-                        if (field == "name") stringResource(CR.string.name)
-                        else stringResource(CR.string.username),
-                    enabled = !s.busy,
-                    error =
-                        if (valid || value.isEmpty()) null
-                        else if (field == "name")
-                            stringResource(CR.string.enter_a_name_up_to_64_characters)
-                        else
-                            stringResource(
-                                CR.string
-                                    .use_3_to_64_latin_letters_az_numbers_dots_hyphens_and_underscores
-                            ),
-                )
-                if (field == "username")
-                    RrCallout(
-                        stringResource(
-                            R.string
-                                .screen_your_public_links_will_change_links_you_ve_already_shared_keep_working_for_30_days_then_st
-                        ),
-                        tone = RrTone.Warn,
-                    )
-                if (s.error) ErrorCallout()
-                RrButton(
-                    stringResource(CR.string.save),
-                    {
-                        update(
-                            if (field == "name") UpdateProfileRequest(name = value.trim())
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    val valid =
+                        if (field == "name") value.trim().length in 1..64
+                        else value.trim().matches(Regex("[a-zA-Z0-9._-]{3,64}"))
+                    RrTextField(
+                        value,
+                        { value = it },
+                        label =
+                            if (field == "name") stringResource(CR.string.name)
+                            else stringResource(CR.string.username),
+                        enabled = !s.busy,
+                        error =
+                            if (valid || value.isEmpty()) null
+                            else if (field == "name")
+                                stringResource(CR.string.enter_a_name_up_to_64_characters)
                             else
-                                UpdateProfileRequest(username = value.trim().lowercase(Locale.ROOT))
+                                stringResource(
+                                    CR.string
+                                        .use_3_to_64_latin_letters_az_numbers_dots_hyphens_and_underscores
+                                ),
+                    )
+                    if (field == "username")
+                        RrCallout(
+                            stringResource(
+                                R.string
+                                    .screen_your_public_links_will_change_links_you_ve_already_shared_keep_working_for_30_days_then_st
+                            ),
+                            tone = RrTone.Warn,
                         )
-                    },
-                    Modifier.fillMaxWidth(),
-                    loading = s.busy,
-                    enabled = valid,
-                )
+                    if (s.error) ErrorCallout()
+                    RrButton(
+                        stringResource(CR.string.save),
+                        {
+                            update(
+                                if (field == "name") UpdateProfileRequest(name = value.trim())
+                                else
+                                    UpdateProfileRequest(
+                                        username = value.trim().lowercase(Locale.ROOT)
+                                    )
+                            )
+                        },
+                        Modifier.fillMaxWidth(),
+                        loading = s.busy,
+                        enabled = valid,
+                    )
+                }
+                if (field == "username") {
+                    RrSectionHeading(stringResource(R.string.v2_account_details))
+                    RrListGroup {
+                        RrListRow(
+                            stringResource(CR.string.name),
+                            subtitle = account?.name,
+                            divider = true,
+                            enabled = !s.busy && value == account?.username,
+                            onClick = {
+                                value = account?.name.orEmpty()
+                                editor = "name"
+                            },
+                            trailing = { RrRowCaret() },
+                        )
+                        RrListRow(
+                            stringResource(R.string.screen_sessions),
+                            subtitle = security?.sessionCount?.toString() ?: browserHint,
+                            divider = true,
+                            onClick = { browser(securityUrl) },
+                            trailing = { RrRowCaret() },
+                        )
+                        security?.connectedProviders?.forEach { provider ->
+                            RrListRow(
+                                provider,
+                                subtitle = stringResource(R.string.screen_connected),
+                                divider = true,
+                                onClick = { browser(securityUrl) },
+                                trailing = { RrRowCaret() },
+                            )
+                        }
+                        RrListRow(
+                            stringResource(CR.string.server),
+                            subtitle = server,
+                            divider = true,
+                            onClick = {
+                                switching = true
+                                leaving = true
+                            },
+                            trailing = { RrRowCaret() },
+                        )
+                        RrListRow(
+                            stringResource(CR.string.sign_out),
+                            danger = true,
+                            enabled = !s.busy,
+                            onClick = {
+                                switching = false
+                                leaving = true
+                            },
+                        )
+                    }
+                    Row(
+                        Modifier.padding(24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        RrButton(
+                            stringResource(R.string.v2_change_photo),
+                            photo,
+                            variant = RrButtonVariant.Secondary,
+                            enabled = !s.busy,
+                        )
+                        RrButton(
+                            stringResource(R.string.v2_remove_photo),
+                            removePhoto,
+                            variant = RrButtonVariant.Ghost,
+                            enabled = !s.busy,
+                        )
+                    }
+                }
             }
         }
     }

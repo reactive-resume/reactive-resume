@@ -74,3 +74,26 @@
   preserving notification privacy assertions. Final data24/system30/settings56 rerun passed, zero failures/errors/skips. No tests skipped/weakened to obtain acceptance.
 - Follow-ups and Offer deadlines now independent persisted categories; legacy combined membership expands to both.
   Migration preserves unknown stored categories, and tests prove independent toggles after migration.
+
+## 2026-11-08 — Auth/settings independent review fix round
+
+- Fresh reviewer inspected20 composites,40 originals and8 available scroll ends. Found2 structural extras:
+  account controls after S2 Delete account, and S4 undrawn Manage profile/details row.
+- Removed root additions. Account details retain native controls inside existing Username sheet; profile advanced
+  editor remains accessible from Full name. Two meaningful interaction regressions verify reachable behavior.
+- Serialized settings run:58 tests, zero failures/errors/skips. Initial S2/S4 strict2/2 pass, zero layout failures/bands.
+- Found stale generated end files from earlier scrollable roots; quarantined them. Current roots fit viewport.
+  Shared capture now removes only its own previous artifacts before a targeted run; regression proof is pending.
+- New independent reviewer inspected all4 changed composites,8 originals and current measured JSON, pinned hashes:
+  no remaining findings in S2/S4. Earlier8 assigned screens had no findings. This covers10 screens, not all62.
+- One same-checkout overlapping compile failed with missing AccountAvatarKt.class; serialized rerun passed.
+  Shared-checkout builds are now explicitly scheduled one at a time; separate worktrees continue independently.
+
+## 2026-11-08 — Today/documents/search first integration
+
+- Worker rebuilt8 screens, all16 themes under pixel threshold with zero bands, but0/8 strict on pre-fix core.
+- Shared row/input/unclipped fixes are already integrated; thumbnail and monogram fixes are underway.
+- Targeted inherited reduced-motion regression reproduced unchanged: sheet Open callback0 instead of1.
+  No assertions skipped/weakened. Parent tracing first-layout/animation geometry before retest.
+- D4 desired local PDF read agrees with web. Existing Android quick read uploads raw PDF to server, so truthful
+  server copy remains while actual local parser is implemented. No owner direction question is needed.

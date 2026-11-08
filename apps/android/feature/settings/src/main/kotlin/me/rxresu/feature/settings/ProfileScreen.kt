@@ -208,12 +208,6 @@ internal fun ProfileScreen(
                     },
                 )
             }
-            RrSectionHeading(stringResource(CR.string.manage_profile))
-            RrListRow(
-                stringResource(R.string.v2_more_profile_details),
-                onClick = { details = true },
-                trailing = { RrRowCaret() },
-            )
             if (s.error)
                 RrButton(
                     stringResource(CR.string.save),

@@ -238,4 +238,58 @@ class SettingsInteractionTest {
         compose.onAllNodesWithText("Sign out").onLast().performClick()
         compose.runOnIdle { assertEquals(1, signOuts) }
     }
+
+    @Test
+    fun accountDetailsStayReachableThroughUsernameWithoutFollowingDelete() {
+        val repositories = me.rxresu.core.data.FakeRepositories()
+        val account =
+            try {
+                kotlinx.coroutines.runBlocking { repositories.account.getProfile() }
+            } finally {
+                repositories.close()
+            }
+        var savedName: String? = null
+        var photos = 0
+        compose.setContent {
+            RrTheme(reducedMotion = true) {
+                AccountScreen(
+                    SettingsState(account = account, loading = false),
+                    "https://rxresu.me",
+                    update = { savedName = it.name },
+                    photo = { photos++ },
+                )
+            }
+        }
+        compose.onNodeWithText("Delete account").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Account details").assertDoesNotExist()
+        compose.onNodeWithText("Change photo").assertDoesNotExist()
+        compose.onNodeWithText("Sign out").assertDoesNotExist()
+        compose.onNodeWithText("Username").performScrollTo().performClick()
+        val username = compose.onNode(hasSetTextAction() and hasContentDescription("Username"))
+        username.performTextReplacement("unsaved-username")
+        compose.onNodeWithText("Name").performScrollTo().assertIsNotEnabled()
+        username.performScrollTo().performTextReplacement(account.username)
+        compose.onNodeWithText("Change photo").performScrollTo().performClick()
+        compose.runOnIdle { assertEquals(1, photos) }
+        compose.onNodeWithText("Name").performScrollTo().performClick()
+        val name = compose.onNode(hasSetTextAction() and hasContentDescription("Name"))
+        name.performTextReplacement("")
+        compose.onNodeWithText("Save").assertIsNotEnabled()
+        name.performTextReplacement("Updated name")
+        compose.onNodeWithText("Save").performClick()
+        compose.runOnIdle { assertEquals("Updated name", savedName) }
+    }
+
+    @Test
+    fun profileRootEndsAtPayWhileFullNameRetainsAdvancedManagement() {
+        compose.setContent {
+            RrTheme(reducedMotion = true) { ProfileScreen(ProfileState(loading = false)) }
+        }
+        compose.onNodeWithText("Pay expectations").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Manage profile").assertDoesNotExist()
+        compose.onNodeWithContentDescription("Full name, ").performScrollTo().performClick()
+        compose.onNodeWithText("Address").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Manage profile").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Delete profile").performScrollTo().assertExists()
+    }
 }
