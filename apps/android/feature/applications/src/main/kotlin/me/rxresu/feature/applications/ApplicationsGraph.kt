@@ -21,12 +21,21 @@ import me.rxresu.core.navigation.tabRoot
 
 /** Registers J1–J8: the Applications tab root, Save a job, the Application screen and its sheets. */
 fun NavGraphBuilder.applicationsGraph(nav: NavController, motion: RrNavMotion) {
-    tabRoot<ApplicationsTab>(motion) { entry -> ApplicationsRoute(entry.toRoute<ApplicationsTab>().view, nav) }
+    tabRoot<ApplicationsTab>(motion) { entry ->
+        val route = entry.toRoute<ApplicationsTab>()
+        ApplicationsRoute(if (route.view == ApplicationsView.Insights) ApplicationsView.List else route.view, nav)
+        LaunchedEffect(route) {
+            if (route.view == ApplicationsView.Insights && entry.savedStateHandle.get<Boolean>("insights-forwarded") != true) {
+                entry.savedStateHandle["insights-forwarded"] = true
+                nav.navigate(ApplicationInsights)
+            }
+        }
+    }
     modal<SaveJob>(motion) { entry -> SaveJobRoute(entry.toRoute<SaveJob>().url, nav) }
     screen<ApplicationInsights> { ApplicationsRoute(ApplicationsView.Insights, nav) }
     screen<Application> { entry ->
         val r = entry.toRoute<Application>()
-        ApplicationRoute(r.id, WorkspaceTab.Overview, nav, r.posting)
+        ApplicationRoute(r.id, nav, r.posting)
         // Keep existing external workspace links working while every visible tool becomes a push.
         LaunchedEffect(r) {
             if (r.tab != WorkspaceTab.Overview && entry.savedStateHandle.get<Boolean>("workspace-forwarded") != true) {

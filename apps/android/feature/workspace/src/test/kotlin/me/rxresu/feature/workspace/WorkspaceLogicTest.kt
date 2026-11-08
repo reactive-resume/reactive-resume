@@ -50,6 +50,32 @@ class WorkspaceLogicTest {
     private fun TestScope.recording(recorder: VoiceRecorder, takes: MutableList<Take>) =
         Recording(backgroundScope, recorder, { testScheduler.currentTime }) { takes += it }
 
+    @Test fun sentDocumentsSurviveMissingLiveDraftsAndKeepFrozenRouteIdentity() = runTest(dispatcher) {
+        val controls = FakeControls().apply {
+            set("getResume", me.rxresu.core.data.FakeMode.Error())
+            set("getCoverLetter", me.rxresu.core.data.FakeMode.Error())
+        }
+        val repos = FakeRepositories(controls)
+        val vm = ApplyViewModel(repos, StoryboardIds.lumen)
+        advanceUntilIdle()
+        val state = (vm.state.value as Load.Ready).value
+        assertEquals(state.context.app.resumeId, state.resume!!.id)
+        assertEquals(state.context.app.coverLetterId, state.letter!!.id)
+        val destination = sentResumeDestination(state.context.app)!!
+        assertEquals(me.rxresu.core.navigation.DocumentKind.Resume, destination.kind)
+        assertEquals(state.context.app.sentResumeVersionId, destination.versionId)
+        assertNull(sentResumeDestination(state.context.app.copy(sentResumeVersionId = null)))
+        controls.responses.value = mapOf(
+            "getApplication" to ApiJson.encodeToJsonElement(me.rxresu.core.network.generated.Application.serializer(), state.context.app.copy(status = me.rxresu.core.network.generated.ApplicationStage.Saved)),
+            "getCareerWorkspace" to ApiJson.encodeToJsonElement(me.rxresu.core.network.generated.CareerWorkspace.serializer(), state.workspace.copy(submissionReview = me.rxresu.core.network.generated.DeleteCareerWorkspaceAnswerResponseSubmissionReview(answers = true, at = "2026-11-02T14:20:00Z", checklist = emptyList(), documents = true))),
+        )
+        val reopened = ApplyViewModel(repos, StoryboardIds.lumen)
+        advanceUntilIdle()
+        val reopenedState = (reopened.state.value as Load.Ready).value
+        assertTrue(reopenedState.submitted)
+        assertEquals(state.resume.id, reopenedState.resume!!.id)
+    }
+
     @Test fun recordingStopsItselfAtTwoMinutes() = runTest(dispatcher) {
         val takes = mutableListOf<Take>()
         val r = recording(FakeRecorder(), takes)

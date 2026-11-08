@@ -82,6 +82,20 @@ class ApplicationsLogicTest {
         assertTrue(repos.applications.observe(ApplicationQuery(showClosed = true)).first { r -> r.data?.any { it.id == StoryboardIds.kiln } == true }.data != null)
     }
 
+    @Test fun companyMarksUseWholeNameInitialsAndSkipPunctuation() {
+        assertEquals("LU", companyMonogram("Lumen"))
+        assertEquals("OH", companyMonogram("Orbital Health"))
+        assertEquals("PC", companyMonogram("Parcel & Co."))
+        assertEquals("KS", companyMonogram("Kiln Studio"))
+    }
+
+    @Test fun calendarNavigationRetainsEventSpecificDestination() {
+        val event = CalendarItem("event", StoryboardIds.lumen, "Lumen", "Interview", "2026-11-10T10:00:00Z", "interview")
+        assertEquals(me.rxresu.core.navigation.ApplicationWorkspace(StoryboardIds.lumen, me.rxresu.core.navigation.WorkspaceTab.Prepare), calendarDestination(event))
+        assertEquals(me.rxresu.core.navigation.ApplicationWorkspace(StoryboardIds.lumen, me.rxresu.core.navigation.WorkspaceTab.Messages), calendarDestination(event.copy(kind = "follow-up")))
+        assertEquals(me.rxresu.core.navigation.Offers, calendarDestination(event.copy(kind = "offer")))
+    }
+
     @Test fun calendarGroupsByLocalDayAndOpensOnTodayOrTheNextBusyDay() {
         val items = listOf(
             CalendarItem("a", "x", "Lumen", "technical", "2026-11-10T10:00:00Z", "interview"),

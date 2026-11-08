@@ -40,6 +40,8 @@ import me.rxresu.core.designsystem.RrBottomSheet
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrCallout
+import me.rxresu.core.designsystem.RrRadio
+import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrChoiceRow
 import me.rxresu.core.designsystem.RrDatePicker
 import me.rxresu.core.designsystem.RrHaptic
@@ -164,7 +166,7 @@ internal fun MoveRoute(id: String, nav: NavController) {
                 nav.popBackStack()
                 announceMove(
                     toasts, vm.moves, id, choice, label, before, state.others, texts, res,
-                    onOfferTerms = { nav.navigate(ApplicationRoute(id, WorkspaceTab.Messages)) },
+                    onOfferTerms = { nav.navigate(me.rxresu.core.navigation.Offers) },
                     onSchedule = if (offersScheduling(app, choice.stage, vm.time.now())) ({ nav.navigate(me.rxresu.core.navigation.InterviewSheet(id)) }) else null,
                 )
             }
@@ -252,12 +254,15 @@ internal fun MoveSheet(
     val closing = ClosedReasons.map { reason -> customClosed.firstOrNull { it.closedReason == reason } ?: closedLane }
         .zip(ClosedReasons) { lane, reason -> MoveChoice(lane, ApplicationStage.Closed, reason) }
 
+    var closingOpen by remember { mutableStateOf(false) }
+    val dates = rememberDates(time.timezone())
     val confirm = confirming
     var details by remember(confirm) { mutableStateOf(AppliedDetails(time.today(), app?.resumeId, app?.coverLetterId)) }
     RrBottomSheet(
         onDismissRequest = onDismiss,
         state = sheetState,
-        title = if (confirm != null) stringResource(S.string.mark_as_applied) else stringResource(S.string.move_to_6ffcfca36b),
+        title = if (confirm != null) stringResource(S.string.mark_as_applied) else stringResource(R.string.app_move_company, app?.company.orEmpty()),
+        fixedHeight = if (confirm == null) 560.dp else null,
         fitContent = confirm == null,
         detents = me.rxresu.core.designsystem.RrSheetDetents.Full,
         footer = confirm?.let { (choice, label) ->
@@ -268,7 +273,7 @@ internal fun MoveSheet(
             MarkAsApplied(state, time, details) { details = it }
             return@RrBottomSheet
         }
-        SheetBody {
+        Column {
             when (state.error) {
                 WriteError.StagesChanged -> RrCallout(stringResource(R.string.app_stages_changed), tone = RrTone.Warn)
                 WriteError.Failed -> RrCallout(stringResource(R.string.app_couldnt_update), tone = RrTone.Danger)
@@ -278,7 +283,9 @@ internal fun MoveSheet(
                 open.forEach { choice ->
                     val label = choice.lane?.let { laneLabel(it) } ?: stageLabel(choice.stage)
                     val selected = picked?.let { it == choice } ?: (app?.status != ApplicationStage.Closed && (current?.id == choice.lane?.id && choice.lane != null || choice.lane == null && app?.status == choice.stage))
-                    ChoiceRow(choice, label, selected) {
+                    val entered = app?.activity?.filterIsInstance<me.rxresu.core.network.generated.StageTimelineEntry>()?.filter { it.stage == choice.stage }?.maxByOrNull { it.at }?.at?.let(Instant::parse)
+                    val subtitle = entered?.let { if (choice.stage == ApplicationStage.Applied) dates.dayMonth(it) else if (selected) stringResource(R.string.app_since_date, dates.dayMonth(it)) else null }
+                    ChoiceRow(choice, label, selected, subtitle, divider = choice != open.last()) {
                         if (state.busy) return@ChoiceRow
                         picked = choice
                         if (app?.status == ApplicationStage.Saved && choice.stage == ApplicationStage.Applied) confirming = choice to label
@@ -286,33 +293,29 @@ internal fun MoveSheet(
                     }
                 }
             }
-            Column {
-                RrText(stringResource(S.string.mark_as_closed), Modifier.padding(top = 4.dp, bottom = 8.dp), style = RrType.eyebrow, color = c.ink3)
-                RrListGroup {
-                    closing.forEach { choice ->
-                        val label = closedReasonLabel(choice.reason!!)
-                        val selected = picked?.let { it == choice } ?: (app?.status == ApplicationStage.Closed && app.closedReason == choice.reason)
-                        ChoiceRow(choice, label, selected) {
-                            if (state.busy) return@ChoiceRow
-                            picked = choice
-                            onChoose(choice, null, label)
-                        }
+            RrButton(stringResource(R.string.app_close_application), { closingOpen = true }, Modifier.padding(start = 8.dp, top = 8.dp), variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Large)
+            if (closingOpen) RrBottomSheet({ closingOpen = false }, title = stringResource(S.string.mark_as_closed), fitContent = true) {
+                closing.forEach { choice ->
+                    val label = closedReasonLabel(choice.reason!!)
+                    ChoiceRow(choice, label, app?.status == ApplicationStage.Closed && app.closedReason == choice.reason) {
+                        if (!state.busy) { picked = choice; onChoose(choice, null, label) }
                     }
                 }
+                RrText(stringResource(S.string.the_reason_is_kept_for_insights_linked_documents_aren_t_touched), Modifier.padding(24.dp), style = RrType.small, color = c.ink3)
             }
-            RrText(stringResource(S.string.the_reason_is_kept_for_insights_linked_documents_aren_t_touched), style = RrType.small, color = c.ink3)
         }
     }
 }
 
 @Composable
-private fun ChoiceRow(choice: MoveChoice, label: String, selected: Boolean, onClick: () -> Unit) {
+private fun ChoiceRow(choice: MoveChoice, label: String, selected: Boolean, subtitle: String? = null, divider: Boolean = false, onClick: () -> Unit) {
     RrListRow(
         title = label,
-        selected = selected,
+        subtitle = subtitle,
+        divider = divider,
         onClick = onClick,
-        leading = { Row(Modifier.width(24.dp), horizontalArrangement = Arrangement.Center) { RrStageDot(choice.stage.rr()) } },
-        trailing = if (selected) ({ RrIcon(D.drawable.ic_ph_check, null, size = 20.dp, tint = RrTheme.colors.ink2) }) else null,
+        leading = { RrRadio(selected, null) },
+        trailing = { RrStageDot(choice.stage.rr()) },
     )
 }
 

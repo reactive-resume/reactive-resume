@@ -2,6 +2,8 @@ package me.rxresu.feature.applications
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
@@ -17,9 +19,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -55,6 +54,8 @@ import kotlinx.coroutines.launch
 import me.rxresu.core.data.NextStepKind
 import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as D
+import me.rxresu.core.designsystem.DesignTag
+import me.rxresu.core.designsystem.rrDesignTag
 import me.rxresu.core.designsystem.RrCard
 import me.rxresu.core.designsystem.RrElevation
 import me.rxresu.core.designsystem.RrHaptic
@@ -84,18 +85,18 @@ internal fun boardColumns(state: ApplicationsState): List<BoardColumn> {
         .map { stage -> BoardColumn(null, stage, rows.filter { it.app.status == stage }) }
     return lanes.map { lane ->
         BoardColumn(lane, lane.category, rows.filter { r -> if (lane.category == ApplicationStage.Closed) r.app.status == ApplicationStage.Closed else displayLane(state.lanes, r.app)?.id == lane.id }
-            .sortedWith(compareBy<Row>({ sortKey(it).first }, { sortKey(it).second }, { it.app.id })))
+            )
     }
 }
 
 private data class Drag(val row: Row, val from: Int, val origin: Offset, val delta: Offset, val width: Int, val moved: Float)
 
-private val ColumnWidth = 296.dp
-private val ColumnGap = 10.dp
+private val ColumnWidth = 300.dp
+private val ColumnGap = 16.dp
 private val EdgeZone = 48.dp
 
 /**
- * J2: one 296 dp column at a time with the next peeking; page dots above. Long-press a card to lift it, drag across
+ * J2: horizontally scrolling 300 dp columns with the next peeking. Long-press a card to lift it, drag across
  * columns (hold near an edge for 400 ms to page), drop to move. A long-press released in place opens the card's
  * actions (Move to…), the non-drag path; TalkBack gets "Move to…" as a custom action.
  */
@@ -111,12 +112,8 @@ internal fun BoardView(
 ) {
     val c = RrTheme.colors
     val columns = boardColumns(state)
-    val pager = rememberPagerState { columns.size }
-    // Open on the first stage with something in it, once the columns have loaded.
+    val scroll = rememberScrollState()
     var opened by remember { mutableStateOf(false) }
-    LaunchedEffect(columns.isNotEmpty() && state.rows != null) {
-        if (!opened && columns.isNotEmpty() && state.rows != null) { pager.scrollToPage(initialPage.coerceIn(0, columns.lastIndex)); opened = true }
-    }
     val haptics = rememberRrHaptics()
     val reduced = LocalReducedMotion.current
     val density = LocalDensity.current
@@ -126,14 +123,20 @@ internal fun BoardView(
     var boardOrigin by remember { mutableStateOf(Offset.Zero) }
     var boardWidth by remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
     val colPx = with(density) { (ColumnWidth + ColumnGap).toPx() }
-    val padPx = with(density) { 16.dp.toPx() }
+    val padPx = with(density) { 24.dp.toPx() }
     val edgePx = with(density) { EdgeZone.toPx() }
+    LaunchedEffect(columns.isNotEmpty() && state.rows != null) {
+        if (!opened && columns.isNotEmpty() && state.rows != null) {
+            scroll.scrollTo((initialPage.coerceIn(0, columns.lastIndex) * colPx).roundToInt())
+            opened = true
+        }
+    }
     val moveTo = stringResource(S.string.move_to_6ffcfca36b)
 
     fun fingerX(d: Drag) = d.origin.x + d.delta.x - boardOrigin.x
     fun target(d: Drag): Int {
         val x = fingerX(d).let { if (rtl) boardWidth - it else it }
-        return (pager.currentPage + ((x - padPx) / colPx).toInt().coerceAtLeast(0)).coerceIn(0, columns.lastIndex)
+        return ((scroll.value + x - padPx) / colPx).toInt().coerceIn(0, columns.lastIndex)
     }
     // Holding near an edge pages the board under the card.
     val edge = drag?.let { d -> val x = fingerX(d); when { x > boardWidth - edgePx -> if (rtl) -1 else 1; x < edgePx -> if (rtl) 1 else -1; else -> 0 } } ?: 0
@@ -141,40 +144,32 @@ internal fun BoardView(
         if (edge == 0 || drag == null) return@LaunchedEffect
         while (true) {
             delay(400)
-            val next = (pager.currentPage + edge).coerceIn(0, columns.lastIndex)
-            if (next == pager.currentPage) break
+            val page = (scroll.value / colPx).roundToInt()
+            val next = (page + edge).coerceIn(0, columns.lastIndex)
+            if (next == page) break
             haptics(RrHaptic.Selection)
-            if (reduced) pager.scrollToPage(next) else pager.animateScrollToPage(next, animationSpec = androidx.compose.animation.core.tween(RrMotion.D3, easing = RrMotion.easeInOutStrong))
+            if (reduced) scroll.scrollTo((next * colPx).roundToInt()) else scroll.animateScrollTo((next * colPx).roundToInt(), animationSpec = androidx.compose.animation.core.tween(RrMotion.D3, easing = RrMotion.easeInOutStrong))
         }
     }
 
     Column(Modifier.fillMaxSize()) {
-        PageDots(pager.currentPage, columns.size)
+        androidx.compose.foundation.layout.Spacer(Modifier.height(40.dp))
         Box(
             Modifier.weight(1f).fillMaxWidth().onGloballyPositioned { boardOrigin = it.positionInRoot(); boardWidth = it.size.width.toFloat() },
         ) {
-            HorizontalPager(
-                pager,
-                Modifier.fillMaxSize(),
-                pageSize = PageSize.Fixed(ColumnWidth),
-                pageSpacing = ColumnGap,
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
-                userScrollEnabled = drag == null,
-                key = { columns[it].lane?.id ?: columns[it].stage.wireValue },
-            ) { page ->
-                val column = columns[page]
+            Row(Modifier.fillMaxSize().horizontalScroll(scroll, enabled = drag == null).padding(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(ColumnGap)) {
+                columns.forEachIndexed { page, column ->
                 val over = drag?.let { target(it) == page && it.from != page } == true
                 val label = column.lane?.let { laneLabel(it) } ?: stageLabel(column.stage)
                 Column(
-                    Modifier.fillMaxSize().clip(RrShape.lg).background(if (over) c.accentSoft else c.sunken).padding(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    Modifier.width(ColumnWidth).fillMaxHeight().background(if (over) c.accentSoft else c.bg),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    Row(Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 2.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        RrStageDot(column.stage.rr())
-                        RrText(label, Modifier.weight(1f), style = RrType.ui.copy(fontWeight = FontWeight.SemiBold), color = c.ink)
-                        RrText(column.rows.size.toString(), style = RrType.mono, color = c.ink3)
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        RrText(label, Modifier.alignByBaseline(), style = RrType.sheetTitle, color = c.ink)
+                        RrText(column.rows.size.toString(), Modifier.alignByBaseline(), style = RrType.ui, color = c.ink3)
                     }
-                    Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         column.rows.forEach { row ->
                             val lifted = drag?.row?.app?.id == row.app.id
                             var bounds by remember { mutableStateOf(Offset.Zero) }
@@ -220,6 +215,7 @@ internal fun BoardView(
                         }
                     }
                 }
+                }
             }
             // The lifted card follows the finger: tilted 2°, scaled 1.02, shadow-3 with an accent edge.
             drag?.let { d ->
@@ -243,45 +239,23 @@ internal fun BoardCard(row: Row, state: ApplicationsState, dates: Dates, onClick
     val c = RrTheme.colors
     val app = row.app
     val step = row.step
-    RrCard(Modifier.fillMaxWidth(), raised = true, onClick = onClick, contentPadding = PaddingValues(12.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            RrText(app.company, style = RrType.label, color = c.ink)
-            RrText(app.role, style = RrType.small, color = c.ink2)
-            val applied = runCatching { Instant.parse(app.appliedAt) }.getOrNull()?.let(dates::dayMonth)
-            when {
-                (step.kind == NextStepKind.FollowUp || step.kind == NextStepKind.NoReply) && row.attention -> Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    WarnDot()
-                    RrText(listOfNotNull(step.note.ifBlank { stringResource(S.string.follow_up) }, applied?.let { stringResource(R.string.app_applied_on_lower, it) }).joinToString(" · "), style = RrType.small, color = c.ink)
+    Box(Modifier.rrDesignTag(DesignTag(component = "BoardCard", radius = 16.dp, bgName = "surface"))) {
+        RrCard(Modifier.fillMaxWidth().rrShadow(RrElevation.Level1, RrShape.xl), onClick = onClick, contentPadding = PaddingValues(17.dp)) {
+            Column {
+                RrText(app.company, style = RrType.rowTitle.copy(fontWeight = FontWeight.SemiBold), color = c.ink)
+                RrText(app.role, Modifier.padding(top = 4.dp), style = RrType.ui, color = c.ink3)
+                val line = when {
+                    step.kind == NextStepKind.Interview && step.at != null -> "${dates.weekdayDayMonth(step.at!!)} · ${step.interview?.let { interviewKindLabel(it.kind).lowercase(dates.locale) }.orEmpty()}"
+                    step.kind == NextStepKind.Offer && step.at != null -> stringResource(R.string.app_reply_by, dates.weekdayDayMonth(step.at!!))
+                    step.kind == NextStepKind.FollowUp || step.kind == NextStepKind.NoReply -> stringResource(S.string.follow_up)
+                    step.kind == NextStepKind.NotApplied -> stringResource(S.string.not_applied_yet)
+                    else -> app.appliedAt.let { runCatching { dates.dayMonth(Instant.parse(it)) }.getOrDefault("") }
                 }
-                step.kind == NextStepKind.Interview && step.at != null -> RrText(dates.whenWithTime(step.at!!), style = RrType.small, color = c.ink3)
-                step.kind == NextStepKind.Offer && step.at != null -> RrText(stringResource(S.string.by_0, dates.weekdayDayMonth(step.at!!)), style = RrType.small, color = c.warnText)
-                step.kind == NextStepKind.NotApplied -> RrText(stringResource(S.string.not_applied_yet), style = RrType.small, color = c.ink3)
-                step.kind == NextStepKind.Closed -> RrText(app.closedReason?.let { closedReasonLabel(it) } ?: stringResource(S.string.closed), style = RrType.small, color = c.ink3)
-                applied != null -> RrText(stringResource(S.string.applied_0, applied), style = RrType.small, color = c.ink3)
-            }
-            state.resumes[app.resumeId]?.let { resume ->
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    RrIcon(D.drawable.ic_ph_file_text, null, size = 14.dp, tint = c.ink3)
-                    RrText(resume.name, style = RrType.caption.copy(fontWeight = FontWeight.Normal), color = c.ink3, maxLines = 1)
+                Row(Modifier.padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    RrIcon(D.drawable.ic_ph_calendar_blank, null, size = 16.dp, tint = c.ink2)
+                    RrText(line, style = RrType.keyLine, color = c.ink2)
                 }
             }
         }
-    }
 }
-
-/** Page dots: the current column's dot widens (d2). Decorative; the column header names the stage. */
-@Composable
-private fun PageDots(current: Int, count: Int) {
-    val c = RrTheme.colors
-    val reduced = LocalReducedMotion.current
-    val position = stringResource(R.string.app_page_of, current + 1, count)
-    Row(
-        Modifier.fillMaxWidth().padding(vertical = 10.dp).semantics { contentDescription = position },
-        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-    ) {
-        repeat(count) { i ->
-            val w by animateDpAsState(if (i == current) 16.dp else 6.dp, RrMotion.spec(RrMotion.D2, reduced), label = "dot")
-            Box(Modifier.size(w, 6.dp).clip(RrShape.xs).background(if (i == current) c.ink2 else c.line2))
-        }
-    }
 }

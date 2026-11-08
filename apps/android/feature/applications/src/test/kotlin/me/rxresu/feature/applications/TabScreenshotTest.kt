@@ -1,5 +1,9 @@
 package me.rxresu.feature.applications
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Modifier
+import me.rxresu.core.designsystem.RrTabBar
+import me.rxresu.core.designsystem.rrAppTabs
 import androidx.navigation.compose.rememberNavController
 import me.rxresu.core.data.FakeControls
 import me.rxresu.core.data.FakeMode
@@ -13,7 +17,12 @@ import org.robolectric.annotation.Config
 @Config(qualifiers = GB_SCREEN)
 class TabScreenshotTest : RrScreenshotTest() {
     private fun tab(name: String, view: ApplicationsView, dark: Boolean, controls: FakeControls = FakeControls(), fontScale: Float = 1f) =
-        captureScreen(name, dark, wrap = fakeWrap(FakeRepositories(controls)), fontScale = fontScale) { ApplicationsRoute(view, rememberNavController()) }
+        captureScreen(name, dark, wrap = fakeWrap(if (name != "J1-List-empty") applicationStoryboard(insights = view == ApplicationsView.Insights, calendar = view == ApplicationsView.Calendar) else FakeRepositories(controls)), fontScale = fontScale) {
+            Column {
+                Box(Modifier.weight(1f)) { ApplicationsRoute(view, rememberNavController()) }
+                if (view != ApplicationsView.Insights) RrTabBar(rrAppTabs("Today", "Documents", "Applications", "Career"), 2, {})
+            }
+        }
 
     @Test fun listLight() = tab("J1-List", ApplicationsView.List, false)
     @Test fun listDark() = tab("J1-List", ApplicationsView.List, true)

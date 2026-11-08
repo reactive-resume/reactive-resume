@@ -43,6 +43,7 @@ import me.rxresu.core.designsystem.RrRowValue
 import me.rxresu.core.designsystem.RrShape
 import me.rxresu.core.designsystem.RrSkeleton
 import me.rxresu.core.designsystem.RrSkeletonText
+import me.rxresu.core.designsystem.RrSectionHeader
 import me.rxresu.core.designsystem.RrStageLabel
 import me.rxresu.core.designsystem.RrSwipeAction
 import me.rxresu.core.designsystem.RrSwipeRow
@@ -113,9 +114,9 @@ internal fun ListView(
                         Modifier.animateItem(placementSpec = if (reduced) null else tween(RrMotion.D2, easing = RrMotion.easeInOutStrong))
                             .then(if (reduced) Modifier else Modifier.animateContentSize(tween(RrMotion.D2, easing = RrMotion.easeInOutStrong))),
                     ) {
-                        StageHeader(stage, lane?.let { laneLabel(it) } ?: stageLabel(stage), rs.size)
-                        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                            rs.forEach { row -> ApplicationRow(row, state, dates, selected, actions) }
+                        RrSectionHeader(lane?.let { laneLabel(it) } ?: stageLabel(stage), count = rs.size.toString(), topPadding = if (rs === groups.first().second) 20.dp else 32.dp)
+                        RrListGroup {
+                            rs.forEachIndexed { i, row -> ApplicationRow(row, state, dates, selected, actions, i < rs.lastIndex) }
                         }
                     }
                 }
@@ -143,7 +144,7 @@ internal fun StageHeader(stage: ApplicationStage, label: String, count: Int) {
 }
 
 @Composable
-private fun ApplicationRow(row: Row, state: ApplicationsState, dates: Dates, selected: Set<String>?, actions: RowActions) {
+private fun ApplicationRow(row: Row, state: ApplicationsState, dates: Dates, selected: Set<String>?, actions: RowActions, divider: Boolean = false) {
     val app = row.app
     val current = displayLane(state.lanes, app)
     val next = if (app.status == ApplicationStage.Closed) null else nextLane(state.lanes, current)
@@ -154,16 +155,17 @@ private fun ApplicationRow(row: Row, state: ApplicationsState, dates: Dates, sel
     val content: @Composable () -> Unit = {
         RrListRow(
             title = app.company,
-            subtitle = app.role,
+            subtitle = rowSubtitle(row, dates),
+            divider = divider,
             onClick = { if (selected != null) actions.toggleSelect(app.id) else actions.open(app.id) },
             onLongClick = { actions.actions(row) },
             onLongClickLabel = stringResource(S.string.actions_for_0_at_1, app.role, app.company),
             selected = selected?.contains(app.id) == true,
             leading = {
                 if (selected != null) RrCheckbox(app.id in selected, { actions.toggleSelect(app.id) })
-                else RrCompanyTile(app.company)
+                else RrCompanyTile(app.company, content = companyMonogram(app.company))
             },
-            trailing = { RowTrailing(row, dates, state.now) },
+            trailing = { RrRowCaret() },
         )
     }
     if (selected != null) content()
@@ -207,4 +209,24 @@ private fun ListSkeleton() {
             RrSkeleton(Modifier.fillMaxWidth().height(60.dp))
         }
     }
+}
+
+@Composable
+private fun rowSubtitle(row: Row, dates: Dates): String {
+    val step = row.step
+    return when {
+        step.kind == NextStepKind.Interview && step.interview != null -> stringResource(if (step.interview!!.kind == me.rxresu.core.network.generated.AddApplicationInterviewRequestKind.Screening) R.string.app_screening_day else R.string.app_interview_day, dates.weekdayDayMonth(Instant.parse(step.interview!!.at)))
+        step.kind == NextStepKind.Offer && step.at != null -> stringResource(R.string.app_offer_weekday, step.at!!.atZone(dates.zone).dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, dates.locale))
+        row.app.appliedAt.isNotBlank() && row.app.status != ApplicationStage.Saved -> {
+            val date = runCatching { dates.dayMonth(Instant.parse(row.app.appliedAt)) }.getOrNull()
+            if (date == null) row.app.role else stringResource(if (step.kind == NextStepKind.NoReply || step.kind == NextStepKind.FollowUp) R.string.app_applied_no_reply else R.string.app_applied_date, date)
+        }
+        else -> row.app.role
+    }
+}
+
+/** Multiword companies use initials; a single word uses its opening two letters. */
+internal fun companyMonogram(name: String): String {
+    val words = name.split(Regex("[^\\p{L}\\p{N}]+" )).filter(String::isNotEmpty)
+    return if (words.size > 1) words.take(2).joinToString("") { it.take(1) }.uppercase() else words.firstOrNull()?.take(2)?.uppercase().orEmpty()
 }

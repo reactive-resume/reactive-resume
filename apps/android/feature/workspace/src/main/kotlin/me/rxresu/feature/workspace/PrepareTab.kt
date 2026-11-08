@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -43,6 +44,10 @@ import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrBadge
 import me.rxresu.core.designsystem.RrBadgeTone
+import me.rxresu.core.designsystem.RrListRow
+import me.rxresu.core.designsystem.RrPageTitle
+import me.rxresu.core.designsystem.RrRowCaret
+import me.rxresu.core.designsystem.RrSectionHeader
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
@@ -78,6 +83,7 @@ internal data class PrepareState(
     val briefingAt: Instant?,
     val running: Boolean = false,
     val failed: Boolean = false,
+    val companySourceCount: Int? = null,
 )
 
 internal class PrepareViewModel(private val repos: RrRepositories, private val id: String) : ViewModel() {
@@ -172,24 +178,31 @@ internal fun PrepareTab(applicationId: String, nav: NavController) {
     val toasts = LocalToasts.current
     val scope = rememberCoroutineScope()
     val copied = stringResource(R.string.workspace_question_copied)
-    Loaded(load, vm::load, onResume = vm::refresh) { state ->
-        PrepareScreen(
-            state,
-            dates = rememberDates(repos.time.timezone()),
-            onGenerate = { vm.generate(locale) },
-            onStop = vm::stop,
-            onPractise = { question -> nav.openTab(applicationId, WorkspaceTab.Practise, practiceQuestion = question) },
-            onAddStory = { nav.navigate(Story()) },
-            onCopyQuestion = {
-                context.copyToClipboard(it, it)
-                scope.launch { toasts.show(copied) }
-            },
-            onAddInterview = { nav.navigate(InterviewSheet(applicationId)) },
-            onDebrief = { nav.openTab(applicationId, WorkspaceTab.Debrief) },
-            onSetUpAi = { nav.navigate(SettingsAi) },
-            onRound = vm::selectRound,
-            onSource = { context.openInBrowser(it, colors) },
-        )
+    Loaded(load, vm::load, onBack = { nav.popBackStack() }, onResume = vm::refresh) { state ->
+        WorkspaceFrame(menuItems = { close ->
+            state.interview?.let { interview -> me.rxresu.core.designsystem.RrMenuItem(stringResource(S.string.edit_interview), { close(); nav.navigate(me.rxresu.core.navigation.InterviewSheet(applicationId, interview.id)) }) }
+            state.context.app.sourceUrl?.takeIf(::safeSourceUrl)?.let { posting -> me.rxresu.core.designsystem.RrMenuItem(stringResource(S.string.posting), { close(); context.openInBrowser(posting, colors) }, icon = DsR.drawable.ic_ph_clipboard_text) }
+            me.rxresu.core.designsystem.RrMenuItem(stringResource(S.string.generate_briefing_now), { close(); vm.generate(locale) }, enabled = state.context.provider != null && !state.running)
+            me.rxresu.core.designsystem.RrMenuItem(stringResource(S.string.set_up_ai), { close(); nav.navigate(SettingsAi) })
+        }, onBack = { nav.popBackStack() }, onSettings = { nav.navigate(me.rxresu.core.navigation.SettingsAi) }) {
+            PrepareScreen(
+                state,
+                dates = rememberDates(repos.time.timezone()),
+                onGenerate = { vm.generate(locale) },
+                onStop = vm::stop,
+                onPractise = { question -> nav.openTab(applicationId, WorkspaceTab.Practise, practiceQuestion = question) },
+                onAddStory = { nav.navigate(Story()) },
+                onCopyQuestion = {
+                    context.copyToClipboard(it, it)
+                    scope.launch { toasts.show(copied) }
+                },
+                onAddInterview = { nav.navigate(InterviewSheet(applicationId)) },
+                onDebrief = { nav.openTab(applicationId, WorkspaceTab.Debrief) },
+                onSetUpAi = { nav.navigate(SettingsAi) },
+                onRound = vm::selectRound,
+                onSource = { context.openInBrowser(it, colors) },
+            )
+        }
     }
 }
 
@@ -217,6 +230,15 @@ internal fun PrepareScreen(
             { RrButton(stringResource(R.string.workspace_practice_these_questions), { onPractise(null) }, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_microphone) }
         } else null,
     ) {
+        val at = interview?.at?.let(Instant::parse)
+        val days = at?.let { ChronoUnit.DAYS.between(dates.date(state.now), dates.date(it)) }
+        val whenText = at?.let { java.time.format.DateTimeFormatter.ofPattern("EEEE d MMM, HH:mm", dates.locale).format(it.atZone(dates.zone)) }
+        RrPageTitle(interview?.let { stringResource(S.string.kind_interview, interviewKindLabel(it.kind)) } ?: stringResource(S.string.interview_prep),
+            subtitle = whenText?.let { "$it · ${pluralStringResource(R.plurals.workspace_in_days, (days ?: 0).toInt(), (days ?: 0).toInt()).replaceFirstChar { c -> c.lowercase(dates.locale) }}" }, subtitleColor = c.ink2)
+        state.briefingAt?.let { made ->
+            val day = if (dates.date(made) == dates.date(state.now)) stringResource(S.string.today).lowercase(dates.locale) else dates.day(made)
+            RrText(stringResource(R.string.workspace_briefing_refresh, "$day ${dates.time(made)}"), Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 2.dp).offset(y = 1.5.dp), style = RrType.ui, color = c.ink3)
+        }
         AiDestinationNotice(state.context)
         if (state.context.app.interviews().size > 1) {
             Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -273,57 +295,19 @@ private fun BriefingBody(
 ) {
     val c = RrTheme.colors
     Column {
-        Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            RrText(briefing.headline, style = RrType.sheetTitle, color = c.ink)
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                val days = ChronoUnit.DAYS.between(dates.date(state.now), dates.date(Instant.parse(interview.at)))
-                RrBadge(
-                    when (days) {
-                        0L -> stringResource(S.string.today)
-                        1L -> stringResource(S.string.tomorrow)
-                        else -> pluralStringResource(R.plurals.workspace_in_days, days.toInt(), days.toInt())
-                    },
-                    tone = RrBadgeTone.Accent,
-                )
-                state.briefingAt?.let { at ->
-                    val day = if (dates.date(at) == dates.date(state.now)) stringResource(S.string.today).lowercase(dates.locale) else dates.day(at)
-                    RrText(stringResource(R.string.workspace_briefing_made, "$day ${dates.time(at)}"), style = RrType.small, color = c.ink3)
-                }
-            }
-        }
-        Eyebrow(stringResource(R.string.workspace_company_brief))
-        Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Bullets(briefing.summary.split(Regex("(?<=[.!?])\\s+")).filter { it.isNotBlank() })
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                val posting = state.context.app.sourceUrl?.takeIf(::safeSourceUrl)
-                if (posting != null) RrButton(stringResource(S.string.posting), { onSource(posting) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small, icon = DsR.drawable.ic_ph_clipboard_text)
-                else RrUsedChip(stringResource(S.string.posting), DsR.drawable.ic_ph_clipboard_text)
-            }
-        }
+        RrSectionHeader(stringResource(R.string.workspace_company_brief), count = state.companySourceCount?.let { pluralStringResource(R.plurals.workspace_source_count, it, it) })
+        RrText(briefing.summary, Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 4.dp), style = RrType.prose, color = c.ink)
         val questions = briefing.plan.filter { it.action != CreateCareerOfferResponseDataBriefingPlanItemAction.None && it.action != CreateCareerOfferResponseDataBriefingPlanItemAction.Questions }
         if (questions.isNotEmpty()) {
-            Eyebrow(stringResource(R.string.workspace_likely_questions))
-            Group {
-                questions.forEach { item ->
-                    Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Column(Modifier.weight(1f)) {
-                            RrText(item.title, style = RrType.ui, color = c.ink)
-                            val missing = item.action == CreateCareerOfferResponseDataBriefingPlanItemAction.DraftStory
-                            RrText(
-                                item.detail,
-                                Modifier.then(if (missing) Modifier.clickable(role = Role.Button, onClick = onAddStory) else Modifier),
-                                style = RrType.small,
-                                color = if (missing) c.warnText else c.ink3,
-                            )
-                        }
-                        RrButton(stringResource(S.string.application_workspace_tab_rehearse_interview_answers_practice), { onPractise(item.title) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small, icon = DsR.drawable.ic_ph_microphone)
-                    }
-                }
+            RrSectionHeader(stringResource(R.string.workspace_likely_questions), count = briefing.practiceQuestions.orEmpty().size.toString())
+            questions.forEachIndexed { i, item ->
+                RrListRow(item.title, subtitle = item.detail, titleMaxLines = 2, divider = i < questions.lastIndex,
+                    onClick = { if (item.action == CreateCareerOfferResponseDataBriefingPlanItemAction.DraftStory) onAddStory() else onPractise(item.title) }, trailing = { RrRowCaret() })
             }
         }
         if (briefing.questions.isNotEmpty()) {
-            Eyebrow(stringResource(R.string.workspace_questions_to_ask_them))
-            Column(Modifier.padding(horizontal = 16.dp)) { Bullets(briefing.questions.map { it.text }, onCopyQuestion) }
+            RrSectionHeader(stringResource(R.string.workspace_questions_to_ask_them))
+            briefing.questions.forEach { q -> RrListRow(q.text, subtitle = stringResource(R.string.workspace_tap_copy), onClick = { onCopyQuestion(q.text) }, trailing = { RrRowCaret() }) }
         }
     }
 }

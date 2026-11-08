@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -62,6 +63,10 @@ import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.designsystem.rememberRrLargeTitleState
 import me.rxresu.core.navigation.Application as ApplicationDest
+import me.rxresu.core.navigation.ApplicationWorkspace
+import me.rxresu.core.navigation.ApplicationInsights
+import me.rxresu.core.designsystem.RrTopBar
+import me.rxresu.core.designsystem.RrPageTitle
 import me.rxresu.core.navigation.ApplicationsView
 import me.rxresu.core.navigation.InterviewSheet
 import me.rxresu.core.navigation.LocalToasts
@@ -105,7 +110,7 @@ internal fun ApplicationsRoute(initialView: ApplicationsView, nav: NavController
                     haptics(RrHaptic.Success)
                     announceMove(
                         toasts, vm.moves, row.app.id, MoveChoice(lane, stage), label, before, emptyList(), texts, res,
-                        onOfferTerms = { nav.navigate(ApplicationDest(row.app.id, WorkspaceTab.Messages)) },
+                        onOfferTerms = { nav.navigate(me.rxresu.core.navigation.Offers) },
                         onSchedule = if (offersScheduling(row.app, stage, vm.time.now())) ({ nav.navigate(InterviewSheet(row.app.id)) }) else null,
                     )
                 }
@@ -137,6 +142,9 @@ internal fun ApplicationsRoute(initialView: ApplicationsView, nav: NavController
         state = state,
         view = view,
         onView = { view = it },
+        onInsights = { nav.navigate(ApplicationInsights) },
+        onBack = { nav.popBackStack() },
+        onCalendarEvent = { item -> nav.navigate(calendarDestination(item)) },
         onFilters = vm::setFilters,
         onRefresh = { vm.refresh() },
         onSearch = { nav.navigate(Search("applications")) },
@@ -209,6 +217,9 @@ internal fun ApplicationsScreen(
     state: ApplicationsState,
     view: ApplicationsView,
     onView: (ApplicationsView) -> Unit,
+    onInsights: () -> Unit,
+    onBack: () -> Unit,
+    onCalendarEvent: (me.rxresu.core.data.CalendarItem) -> Unit,
     onFilters: (ApplicationFilters) -> Unit,
     onRefresh: () -> Unit,
     onSearch: () -> Unit,
@@ -231,38 +242,24 @@ internal fun ApplicationsScreen(
     val reduced = LocalReducedMotion.current
     var menu by remember { mutableStateOf(false) }
     val f = state.filters
-    val views = ApplicationsView.entries
+    val views = listOf(ApplicationsView.List, ApplicationsView.Board, ApplicationsView.Calendar)
     Column(Modifier.fillMaxSize().background(c.bg)) {
-        RrLargeTitleHeader(
+        if (view == ApplicationsView.Insights) {
+            RrTopBar(onBack = onBack, actions = { RrButton(stringResource(R.string.app_90_days), onRefresh, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small) })
+            RrPageTitle(stringResource(S.string.insights), subtitle = stringResource(R.string.app_search_90_days), subtitleColor = c.ink3)
+        } else RrLargeTitleHeader(
             title = stringResource(S.string.applications),
             state = title,
             bottom = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    RrSegmentedControl(
-                        segments = listOf(
-                            RrSegment(stringResource(S.string.list), D.drawable.ic_ph_list),
-                            RrSegment(stringResource(S.string.board), D.drawable.ic_ph_kanban),
-                            RrSegment(stringResource(S.string.calendar), D.drawable.ic_ph_calendar_blank),
-                            RrSegment(stringResource(S.string.insights), D.drawable.ic_ph_chart_bar),
-                        ),
-                        selectedIndex = views.indexOf(view),
-                        onSelect = { onView(views[it]) },
-                    )
-                    if (view == ApplicationsView.List || (view == ApplicationsView.Insights && (f.tags.isNotEmpty() || f.stage != null || f.text.isNotBlank()))) FilterChips(state, view == ApplicationsView.List, onFilters)
-                }
+                RrSegmentedControl(
+                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp),
+                    segments = listOf(RrSegment(stringResource(S.string.list)), RrSegment(stringResource(S.string.board)), RrSegment(stringResource(S.string.calendar))),
+                    selectedIndex = views.indexOf(view), onSelect = { onView(views[it]) },
+                )
             },
         ) {
-            RrIconButton(D.drawable.ic_ph_magnifying_glass, stringResource(S.string.search_applications), onSearch)
-            RrButton(stringResource(S.string.save_job), onSaveJob, size = RrButtonSize.Small, icon = D.drawable.ic_ph_plus)
-            if (title.collapsed) Box {
-                RrIconButton(D.drawable.ic_ph_dots_three, stringResource(S.string.more), { menu = true })
-                RrMenu(menu, { menu = false }) {
-                    RrMenuItem(stringResource(R.string.app_import_csv), { menu = false; onSaveJob() }, icon = D.drawable.ic_ph_file_arrow_up, enabled = false)
-                    RrMenuItem(stringResource(R.string.app_manage_stages), { menu = false }, icon = D.drawable.ic_ph_sliders_horizontal, enabled = false)
-                    RrMenuItem(stringResource(S.string.trash), { menu = false; onTrash() }, icon = D.drawable.ic_ph_trash)
-                }
-            }
-            RrAvatar(state.initials.ifEmpty { "·" }, onClick = onSettings, contentDescription = stringResource(S.string.settings))
+            RrIconButton(R.drawable.ic_ph_chart_line_up, stringResource(S.string.insights), onInsights)
+            RrIconButton(D.drawable.ic_ph_plus, stringResource(S.string.save_job), onSaveJob)
         }
         if (state.offline) RrOfflineStrip()
         Box(Modifier.weight(1f).fillMaxWidth()) {
@@ -277,8 +274,8 @@ internal fun ApplicationsScreen(
                 ) { v ->
                     when (v) {
                         ApplicationsView.List -> ListView(state, dates, title, selected, rowActions, onSaveJob, onImport = {}, onShowClosed = { onFilters(f.copy(showClosed = true)) }, onClearFilters = { onFilters(ApplicationFilters(showClosed = f.showClosed)) })
-                        ApplicationsView.Board -> BoardView(state, dates, rowActions, onDrop, onMoveSheet, initialPage = boardColumns(state).indexOfFirst { it.rows.isNotEmpty() && it.stage != ApplicationStage.Saved }.coerceAtLeast(0))
-                        ApplicationsView.Calendar -> CalendarView(state, dates, time.today(), title, rowActions.open, onSchedule, onAddToCalendar)
+                        ApplicationsView.Board -> BoardView(state, dates, rowActions, onDrop, onMoveSheet, initialPage = boardColumns(state).indexOfFirst { it.rows.isNotEmpty() && it.stage == ApplicationStage.Interview }.coerceAtLeast(0))
+                        ApplicationsView.Calendar -> CalendarView(state, dates, time.today(), title, onCalendarEvent, onSchedule, onAddToCalendar)
                         ApplicationsView.Insights -> InsightsView(state, dates, title, onStage = { onFilters(f.copy(stage = it)); onView(ApplicationsView.List) }, onSaveJob)
                     }
                 }
@@ -364,4 +361,11 @@ private fun BulkSheetView(kind: BulkSheet, state: ApplicationsState, onDismiss: 
             }
         }
     }
+}
+
+/** Calendar actions retain the event kind instead of losing it at J6. */
+internal fun calendarDestination(item: me.rxresu.core.data.CalendarItem): Any = when (item.kind) {
+    "interview" -> ApplicationWorkspace(item.applicationId, WorkspaceTab.Prepare)
+    "offer" -> me.rxresu.core.navigation.Offers
+    else -> ApplicationWorkspace(item.applicationId, WorkspaceTab.Messages)
 }

@@ -36,6 +36,12 @@ import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
 import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.R as DsR
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.wrapContentHeight
+import me.rxresu.core.designsystem.RrPageTitle
+import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
@@ -149,22 +155,27 @@ internal fun FitTab(applicationId: String, nav: NavController) {
     LaunchedEffect(vm) { vm.outcome.collect { haptics(if (it == Outcome.Success) RrHaptic.Success else RrHaptic.Error) } }
     val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val res = androidx.compose.ui.platform.LocalResources.current
-    Loaded(load, vm::load, onResume = vm::refresh) { state ->
-        FitScreen(
-            state,
-            onCheck = { vm.check(locale) },
-            onStop = vm::stop,
-            onAddFact = { nav.navigate(Knowledge(KnowledgeTab.Facts)) },
-            onWriteStory = { nav.navigate(Story()) },
-            // W1: the linked resume opens the assistant with the tailoring prompt; without one, copy a resume for this job.
-            onTailor = {
-                val app = state.context.app
-                nav.navigate(app.resumeId?.let { Assistant(it, prompt = res.getString(S.string.tailor_to_the_company_posting, app.company)) } ?: NewDocument(copyForApplicationId = applicationId))
-            },
-            onSetUpAi = { nav.navigate(SettingsAi) },
-            // The posting sheet lives on Overview: replace this entry with Overview and the sheet open.
-            onAddPosting = { nav.navigate(Application(applicationId, posting = true)) { popUpTo<Application> { inclusive = true } } },
-        )
+    Loaded(load, vm::load, onBack = { nav.popBackStack() }, onResume = vm::refresh) { state ->
+        WorkspaceFrame(menuItems = { close ->
+            me.rxresu.core.designsystem.RrMenuItem(stringResource(S.string.check_again), { close(); vm.check(locale) }, enabled = state.context.provider != null && !state.running)
+            me.rxresu.core.designsystem.RrMenuItem(stringResource(S.string.set_up_ai), { close(); nav.navigate(SettingsAi) })
+        }, onBack = { nav.popBackStack() }, onSettings = { nav.navigate(me.rxresu.core.navigation.SettingsAi) }) {
+            FitScreen(
+                state,
+                onCheck = { vm.check(locale) },
+                onStop = vm::stop,
+                onAddFact = { nav.navigate(Knowledge(KnowledgeTab.Facts)) },
+                onWriteStory = { nav.navigate(Story()) },
+                // W1: the linked resume opens the assistant with the tailoring prompt; without one, copy a resume for this job.
+                onTailor = {
+                    val app = state.context.app
+                    nav.navigate(app.resumeId?.let { Assistant(it, prompt = res.getString(S.string.tailor_to_the_company_posting, app.company)) } ?: NewDocument(copyForApplicationId = applicationId))
+                },
+                onSetUpAi = { nav.navigate(SettingsAi) },
+                // The posting sheet lives on Overview: replace this entry with Overview and the sheet open.
+                onAddPosting = { nav.navigate(Application(applicationId, posting = true)) },
+            )
+        }
     }
 }
 
@@ -186,27 +197,25 @@ internal fun FitScreen(
     TabBody(
         footer = if (fit != null) {
             {
-                RrButton(stringResource(S.string.tailor_resume_for_this_job), onTailor, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_sparkle)
+                RrButton(stringResource(R.string.workspace_tailor_to_job), onTailor, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_sparkle)
             }
         } else null,
     ) {
+        RrPageTitle(stringResource(S.string.fit), subtitle = stringResource(R.string.workspace_role_at_company, app.role, app.company), subtitleColor = c.ink3)
         AiDestinationNotice(state.context)
         if (fit != null) {
             FadeUp {
                 Column {
-                    Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        RrText(fit.headline, style = RrType.sheetTitle, color = c.ink)
-                        RrText(fit.summary, style = RrType.small, color = c.ink3)
+                    Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp)) {
+                        RrText(fit.headline.substringBefore(" requirements"), style = RrType.bigNumber, color = c.ink)
+                        RrText(stringResource(R.string.workspace_requirements_evidence), style = RrType.body, color = c.ink2, modifier = Modifier.padding(top = 4.dp))
+                        RrText(fit.summary, style = RrType.ui, color = c.ink3, modifier = Modifier.padding(top = 8.dp))
                     }
                     val groups = fit.requirements.groupBy { it.origin == CreateCareerOfferResponseDataFitRequirementsItemOrigin.Inferred }
-                    groups[false]?.let { Requirements(stringResource(S.string.posting), it, onAddFact, onWriteStory) { r -> sources = r } }
-                    groups[true]?.let { Requirements(stringResource(S.string.inferred), it, onAddFact, onWriteStory) { r -> sources = r } }
-                    // The board's "··· → Check again" lives in the frame's menu on the web; here it closes the list.
-                    Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        if (state.running) Working(FitSteps, onStop)
-                        else if (state.context.provider != null) RrButton(stringResource(S.string.check_again), onCheck, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small, icon = DsR.drawable.ic_ph_arrow_clockwise)
-                        if (state.failed) FitFailed(onCheck)
-                    }
+                    groups[false]?.let { Requirements(stringResource(R.string.workspace_must_have), it, onAddFact, onWriteStory) { r -> sources = r } }
+                    groups[true]?.let { Requirements(stringResource(R.string.workspace_nice_have), it, onAddFact, onWriteStory) { r -> sources = r } }
+                    if (state.running) Working(FitSteps, onStop, Modifier.padding(24.dp))
+                    if (state.failed) FitFailed(onCheck)
                 }
             }
         } else {
@@ -247,25 +256,14 @@ private fun Requirements(
     val c = RrTheme.colors
     Eyebrow(title)
     Group {
-        items.forEach { r ->
-            Column(
-                Modifier.fillMaxWidth().clickable(role = Role.Button, onClickLabel = stringResource(S.string.sources)) { onOpen(r) }
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    RrText(r.text, Modifier.weight(1f), style = RrType.label, color = c.ink)
-                    EvidencePill(r.status)
-                }
-                val quoted = r.status == CreateCareerOfferResponseDataFitRequirementsItemStatus.Supported && !r.factIds.isNullOrEmpty()
-                if (r.evidence.isNotBlank()) RrText(if (quoted) "“${r.evidence}”" else r.evidence, style = RrType.small, color = c.ink2)
-                if (r.status == CreateCareerOfferResponseDataFitRequirementsItemStatus.Missing) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        RrButton(stringResource(S.string.add_a_fact), onAddFact, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
-                        RrButton(stringResource(R.string.workspace_write_a_story), onWriteStory, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
-                    }
-                }
-            }
+        items.forEachIndexed { i, r ->
+            val supported = r.status == CreateCareerOfferResponseDataFitRequirementsItemStatus.Supported
+            val missing = r.status == CreateCareerOfferResponseDataFitRequirementsItemStatus.Missing
+            val status = stringResource(if (supported) S.string.supported else if (missing) S.string.no_evidence_yet else S.string.partly_supported)
+            RrListRow(r.text, subtitle = listOfNotNull(status, r.evidence.takeIf(String::isNotBlank)).joinToString(" · "),
+                leading = { Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) { RrIcon(if (supported) DsR.drawable.ic_ph_check_circle else if (missing) DsR.drawable.ic_ph_question else DsR.drawable.ic_ph_circle_half, null, size = 22.dp, tint = if (supported) c.accentText else if (missing) c.ink3 else c.warnText) } },
+                divider = i < items.lastIndex, onClick = { onOpen(r) },
+                trailing = if (missing) ({ Box(Modifier.defaultMinSize(minHeight = 44.dp).clickable(role = Role.Button, onClick = onAddFact), contentAlignment = Alignment.Center) { RrText(stringResource(S.string.add_a_fact), style = RrType.ui.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Medium), color = c.accentText) } }) else null)
         }
     }
 }

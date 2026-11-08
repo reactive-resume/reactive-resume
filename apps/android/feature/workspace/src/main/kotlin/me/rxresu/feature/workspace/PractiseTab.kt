@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -66,6 +67,7 @@ import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
 import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.R as DsR
+import me.rxresu.core.designsystem.rrNavigationBarsPadding
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
@@ -282,11 +284,10 @@ internal fun PractiseTab(applicationId: String, nav: NavController) {
             res.getString(S.string.why_do_you_want_this_role_at_company, company),
         )
     }
-    // The Application entry hosting this tab carries the question Interview prep handed over, if any.
+    // The pushed entry carries the question Interview prep handed over, if any.
     val entry = LocalViewModelStoreOwner.current as? NavBackStackEntry
     val handed = remember(entry) { entry?.let {
-        runCatching { it.toRoute<me.rxresu.core.navigation.ApplicationWorkspace>().practiceQuestion }
-            .getOrElse { runCatching { entry.toRoute<ApplicationRoute>().practiceQuestion }.getOrNull() }
+        runCatching { it.toRoute<me.rxresu.core.navigation.ApplicationWorkspace>().practiceQuestion }.getOrNull()
     } }
     val vm = viewModel(key = "practise-$applicationId") {
         PractiseViewModel(repos, applicationId, fallback, MediaVoiceRecorder(context.applicationContext), { android.os.SystemClock.elapsedRealtime() }, handed)
@@ -315,24 +316,26 @@ internal fun PractiseTab(applicationId: String, nav: NavController) {
     }
     val mic = rememberMicPermission(onGranted = vm::record)
     val locale = LocalConfiguration.current.locales[0]
-    Loaded(load, vm::load) { state ->
-        PractiseScreen(
-            state,
-            recording,
-            micDenied = mic.denied,
-            dates = rememberDates(repos.time.timezone()),
-            now = repos.time.now(),
-            onRecord = { if (recording.recording) vm.stopRecording() else mic.request() },
-            onType = vm::type,
-            onAnswerChange = vm::editAnswer,
-            onFeedback = { vm.feedback(locale) },
-            onStop = vm::stop,
-            onRetryTranscribe = vm::transcribe,
-            onAgain = vm::again,
-            onNext = vm::next,
-            onSetUpAi = { nav.navigate(SettingsAi) },
-            onOpenSettings = { context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null))) },
-        )
+    Loaded(load, vm::load, onBack = { nav.popBackStack() }) { state ->
+        WorkspaceFrame(onBack = { nav.popBackStack() }, onSettings = { nav.navigate(me.rxresu.core.navigation.SettingsAi) }) {
+            PractiseScreen(
+                state,
+                recording,
+                micDenied = mic.denied,
+                dates = rememberDates(repos.time.timezone()),
+                now = repos.time.now(),
+                onRecord = { if (recording.recording) vm.stopRecording() else mic.request() },
+                onType = vm::type,
+                onAnswerChange = vm::editAnswer,
+                onFeedback = { vm.feedback(locale) },
+                onStop = vm::stop,
+                onRetryTranscribe = vm::transcribe,
+                onAgain = vm::again,
+                onNext = vm::next,
+                onSetUpAi = { nav.navigate(SettingsAi) },
+                onOpenSettings = { context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null))) },
+            )
+        }
     }
 }
 
@@ -376,39 +379,39 @@ internal fun PractiseScreen(
     Column(Modifier.fillMaxSize()) {
         AiDestinationNotice(state.context)
         Column(
-            Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
+            Modifier.weight(1f).fillMaxWidth().then(if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1f) Modifier.verticalScroll(rememberScrollState()) else Modifier).padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 0.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             val kind = state.interview?.let { interviewKindLabel(it.kind) }
             val position = stringResource(S.string.question_position_of_total, (state.index + 1).toString(), state.questions.size.toString())
-            RrText(if (kind == null) position else "$kind · ${position.replaceFirstChar { it.lowercase(dates.locale) }}", style = RrType.eyebrow, color = c.ink3)
-            RrText(state.question, style = RrType.sheetTitle, color = c.ink, modifier = Modifier.semantics { heading() })
-            state.stories[state.question]?.let { RrText(stringResource(R.string.workspace_story_to_use_star, it), style = RrType.small, color = c.ink3) }
+            RrText(if (kind == null) position else "$kind · ${position.replaceFirstChar { it.lowercase(dates.locale) }}", style = RrType.ui, color = c.ink3)
+            RrText(state.question, style = RrType.pageTitle.copy(fontSize = 30.sp, lineHeight = 38.sp), color = c.ink, modifier = Modifier.semantics { heading() })
+            state.stories[state.question]?.let { RrText(stringResource(R.string.workspace_story_to_use_star, it), style = RrType.ui, color = c.ink3) }
+            Spacer(Modifier.weight(1f))
             when (val phase = state.phase) {
                 is AnswerPhase.Feedback -> FeedbackCard(phase.attempt, state.context.app.jobDescription.isNullOrBlank().not(), onAgain, onNext)
                 is AnswerPhase.Review -> ReviewAnswer(state, phase, onAnswerChange, onFeedback, onStop, onRecord, micDenied)
                 else -> {
-                    if (!state.typing && !micDenied && state.transcriber != null) RecorderCard(state, recording, onRecord, onStop)
-                    if (micDenied) RrCallout(stringResource(S.string.allow_microphone_access_in_device_settings_or_type_your_answer), actionLabel = stringResource(S.string.open_device_settings), onAction = onOpenSettings)
-                    if (state.transcriber == null) RrCallout(stringResource(S.string.none_of_your_ai_connections_can_transcribe_speech_openai_google_gemini_mistral_xai_groq_or_vercel_ai), actionLabel = stringResource(S.string.connect_an_ai_provider), onAction = onSetUpAi)
-                    if (phase == AnswerPhase.Idle) {
-                        RrButton(stringResource(S.string.type_instead), onType, Modifier.align(Alignment.CenterHorizontally), variant = RrButtonVariant.Ghost, icon = DsR.drawable.ic_ph_keyboard)
+                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        if (!state.typing && !micDenied && state.transcriber != null) RecorderCard(state, recording, onRecord, onStop)
+                        if (micDenied) RrCallout(stringResource(S.string.allow_microphone_access_in_device_settings_or_type_your_answer), actionLabel = stringResource(S.string.open_device_settings), onAction = onOpenSettings)
+                        if (state.transcriber == null) RrCallout(stringResource(S.string.none_of_your_ai_connections_can_transcribe_speech_openai_google_gemini_mistral_xai_groq_or_vercel_ai), actionLabel = stringResource(S.string.connect_an_ai_provider), onAction = onSetUpAi)
+                        if (phase == AnswerPhase.Idle) RrButton(stringResource(R.string.workspace_type_answer_instead), onType, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_keyboard)
                     }
                 }
             }
             Notice(state.notice, onRetryTranscribe)
         }
-        Spacer(Modifier.fillMaxWidth().height(1.dp).background(c.line))
         val latest = state.attempts.firstOrNull()
-        Column(Modifier.background(c.surface).windowInsetsPadding(WindowInsets.navigationBars)) {
+        Column(Modifier.rrNavigationBarsPadding()) {
             RrListRow(
                 stringResource(S.string.your_attempts),
                 subtitle = latest?.let { (at, a) -> attemptLine(at, a, dates, now) } ?: stringResource(S.string.each_answer_you_get_feedback_on_is_kept_here_newest_first),
-                icon = DsR.drawable.ic_ph_clock_counter_clockwise,
+                tile = DsR.drawable.ic_ph_clock_counter_clockwise,
                 onClick = { attemptsOpen = true },
                 trailing = {
-                    if (state.attempts.isNotEmpty()) RrText(state.attempts.size.toString(), style = RrType.small, color = c.ink3)
-                    RrIcon(DsR.drawable.ic_ph_caret_up, null, size = 18.dp, tint = c.ink3)
+                    if (state.attempts.isNotEmpty()) RrText(state.attempts.size.toString(), Modifier.padding(end = 10.dp), style = RrType.ui, color = c.ink3)
+                    RrIcon(DsR.drawable.ic_ph_caret_up, null, size = 24.dp, tint = c.ink2)
                 },
             )
         }
@@ -439,7 +442,7 @@ private fun attemptLine(at: Instant, a: PracticeAttempt, dates: Dates, now: Inst
 @Composable
 private fun RecorderCard(state: PractiseState, recording: RecordingState, onRecord: () -> Unit, onStop: () -> Unit) {
     val c = RrTheme.colors
-    RrCard(raised = true, contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 20.dp)) {
+    run {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (state.phase == AnswerPhase.Transcribing) {
                 RrWorkingLabel(listOf(stringResource(S.string.transcribing_with_model, state.transcriber?.model.orEmpty())))
@@ -447,13 +450,11 @@ private fun RecorderCard(state: PractiseState, recording: RecordingState, onReco
                 return@Column
             }
             RrWaveform(recording.levels, bars = Recording.BARS)
-            Row(Modifier.semantics(mergeDescendants = true) {}) {
-                RrText(clock(recording.elapsedMs), style = RrType.mono.copy(fontSize = 16.sp, lineHeight = 20.sp, fontWeight = FontWeight.Medium), color = c.ink)
-                RrText(" / ${clock(Recording.MAX_MS)}", style = RrType.mono.copy(fontSize = 16.sp, lineHeight = 20.sp, fontWeight = FontWeight.Medium), color = c.ink3)
-            }
+            RrText("${clock(recording.elapsedMs)} / ${clock(Recording.MAX_MS)}", style = RrType.mono.copy(fontWeight = FontWeight.Medium), color = c.ink2)
             RrRecordButton(recording.recording, onRecord)
             RrText(
                 stringResource(if (recording.recording) R.string.workspace_recording_tap_to_stop else S.string.up_to_2_minutes_2_mb_maximum),
+                modifier = Modifier.offset(y = (-1.5).dp),
                 style = RrType.small,
                 color = c.ink2,
             )

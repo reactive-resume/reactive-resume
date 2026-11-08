@@ -22,9 +22,9 @@ import org.robolectric.annotation.Config
 @Config(qualifiers = GB_SCREEN)
 class SheetScreenshotTest : RrScreenshotTest() {
     private fun overDetail(name: String, dark: Boolean, id: String = StoryboardIds.lumen, sheet: @Composable () -> Unit) =
-        captureScreen(name, dark, wrap = fakeWrap()) {
+        captureScreen(name, dark, wrap = fakeWrap(applicationStoryboard(interview = true))) {
             val nav = rememberNavController()
-            Box { ApplicationRoute(id, WorkspaceTab.Overview, nav); sheet() }
+            Box { ApplicationBackdrop("Lumen", {}); sheet() }
         }
 
     @Test fun moveLight() = overDetail("J7-Stage", false) { MoveRoute(StoryboardIds.lumen, rememberNavController()) }
@@ -48,7 +48,7 @@ class SheetScreenshotTest : RrScreenshotTest() {
 
     private fun saveJob(name: String, dark: Boolean, url: String?) =
         captureScreen(name, dark, wrap = fakeWrap(FakeRepositories(lumenPosting()))) {
-            Box { ApplicationsRoute(ApplicationsView.List, rememberNavController()); SaveJobRoute(url, rememberNavController()) }
+            SaveJobRoute(url, rememberNavController())
         }
 
     @Test fun saveJobLight() = saveJob("J5-SaveJob", false, "https://lumen.jobs/roles/senior-product-designer")

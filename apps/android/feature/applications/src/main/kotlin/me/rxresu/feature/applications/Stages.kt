@@ -42,7 +42,7 @@ internal fun stageLabel(stage: ApplicationStage): String = stringResource(
         ApplicationStage.Saved, ApplicationStage.Unknown -> S.string.saved
         ApplicationStage.Applied -> S.string.applied
         ApplicationStage.Screening -> S.string.screening
-        ApplicationStage.Interview -> S.string.interview
+        ApplicationStage.Interview -> R.string.app_interviewing
         ApplicationStage.Offer -> S.string.offer
         ApplicationStage.Closed -> S.string.closed
     },

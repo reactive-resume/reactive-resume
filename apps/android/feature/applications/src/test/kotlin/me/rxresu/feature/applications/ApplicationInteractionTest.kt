@@ -28,7 +28,7 @@ class ApplicationInteractionTest : RrScreenshotTest() {
                 val nav = rememberNavController()
                 NavHost(nav, startDestination = "list") {
                     composable("list") { RrButton("Open detail", { nav.navigate("detail") }) }
-                    composable("detail") { ApplicationRoute(StoryboardIds.kiln, WorkspaceTab.Overview, nav) }
+                    composable("detail") { ApplicationRoute(StoryboardIds.kiln, nav) }
                 }
                 RrToastHost(toasts)
             }
@@ -44,23 +44,24 @@ class ApplicationInteractionTest : RrScreenshotTest() {
         assertNull(toasts.current)
     }
 
-    @Test fun reducedOverviewShortcutSettlesWithoutAnimation() {
+    @Test fun overviewShortcutPushesApplyWithoutPager() {
+        var destination: WorkspaceTab? = null
         val repos = FakeRepositories()
         val app = runBlocking { repos.applications.getApplication(StoryboardIds.kiln) }.copy(status = ApplicationStage.Saved)
         compose.setContent { RrTheme(reducedMotion = true) {
             ApplicationScreen(
-                ApplicationState(app = app, loading = false), repos.time, WorkspaceTab.Overview,
+                ApplicationState(app = app, loading = false), repos.time,
                 onBack = {}, onCoach = {}, onMove = {}, onInterview = {}, onAddToCalendar = {},
                 onOpenResume = {}, onOpenLetter = {}, onPrepareResume = {}, onOffers = {}, onEmail = {},
                 onOpenLink = {}, onLogFollowUp = {}, onReopen = {}, onTrash = {}, onPatch = { _, _ -> },
-                onAddNote = {}, onRetry = {}, workspaceTab = { RrText("Destination ${it.name}") },
+                onAddNote = {}, onRetry = {}, onTab = { destination = it },
             )
         } }
         compose.mainClock.autoAdvance = false
         compose.onNodeWithText("Confirm applied").performScrollTo().performClick()
         compose.mainClock.advanceTimeByFrame()
         compose.mainClock.advanceTimeByFrame()
-        compose.onNodeWithText("Destination Apply").assertIsDisplayed()
+        assertEquals(WorkspaceTab.Apply, destination)
     }
 
     @Test fun headlineStatisticExplainsItsDenominator() {
@@ -69,7 +70,7 @@ class ApplicationInteractionTest : RrScreenshotTest() {
         compose.setContent { RrTheme {
             InsightsView(ApplicationsState(insights = insights), rememberDates(repos.time.timezone()), rememberRrLargeTitleState(), {}, {})
         } }
-        compose.onNodeWithText("heard back", ignoreCase = true).performClick()
+        compose.onNodeWithText("replied").performClick()
         compose.onNodeWithText("Applications that received a reply divided by applications sent", substring = true).assertIsDisplayed()
     }
 

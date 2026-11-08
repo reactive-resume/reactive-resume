@@ -1,5 +1,4 @@
-// Pieces every workspace tab shares: loading the job's context, the scrolling body with its pinned footer, section
-// eyebrows, AI disclosure lines, working labels, dates and small platform helpers (copy, browser, tab switching).
+// Shared workspace loading, scroll/footer layout, date formatting, and platform actions.
 package me.rxresu.feature.workspace
 
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -53,6 +52,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import me.rxresu.core.data.RrRepositories
 import me.rxresu.core.designsystem.LocalReducedMotion
+import me.rxresu.core.designsystem.RrFooterBar
 import me.rxresu.core.designsystem.RrBottomSheet
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
@@ -172,20 +172,14 @@ internal fun TabBody(
     Column(modifier.fillMaxSize()) {
         Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(bottom = 24.dp), content = content)
         if (footer != null) {
-            Spacer(Modifier.fillMaxWidth().height(1.dp).background(c.line))
-            Column(
-                Modifier.fillMaxWidth().background(c.bg).windowInsetsPadding(WindowInsets.navigationBars)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                content = footer,
-            )
+            RrFooterBar { Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp), content = footer) }
         }
     }
 }
 
 /** Draws [load]: still skeletons while loading, the web's copy with Try again on failure (plus the offline strip). */
 @Composable
-internal fun <T> Loaded(load: Load<T>, onRetry: () -> Unit, onResume: (() -> Unit)? = null, content: @Composable (T) -> Unit) {
+internal fun <T> Loaded(load: Load<T>, onRetry: () -> Unit, onBack: () -> Unit = {}, onResume: (() -> Unit)? = null, content: @Composable (T) -> Unit) {
     // Back from a sheet or screen this tab opened (an interview, a fact): reload quietly, not on the first showing.
     if (onResume != null) {
         val first = remember { booleanArrayOf(true) }
@@ -194,7 +188,7 @@ internal fun <T> Loaded(load: Load<T>, onRetry: () -> Unit, onResume: (() -> Uni
             onPauseOrDispose { }
         }
     }
-    when (load) {
+    val body: @Composable () -> Unit = { when (load) {
         Load.Loading -> Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             RrSkeleton(Modifier.fillMaxWidth(0.7f).height(28.dp))
             RrSkeletonText(lines = 2)
@@ -212,7 +206,8 @@ internal fun <T> Loaded(load: Load<T>, onRetry: () -> Unit, onResume: (() -> Uni
             )
         }
         is Load.Ready -> content(load.value)
-    }
+    } }
+    if (load is Load.Ready) body() else WorkspaceFrame(onBack = onBack) { body() }
 }
 
 @Composable
@@ -220,7 +215,7 @@ internal fun Eyebrow(text: String, modifier: Modifier = Modifier) = RrSectionHea
 
 @Composable
 internal fun Group(modifier: Modifier = Modifier, content: @Composable () -> Unit) =
-    RrListGroup(modifier.padding(horizontal = 16.dp), content)
+    RrListGroup(modifier, content)
 
 /** Working label with Stop beside it, for every AI request while it runs. */
 @Composable

@@ -40,6 +40,10 @@ import kotlinx.coroutines.launch
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
 import me.rxresu.core.designsystem.R as DsR
+import me.rxresu.core.designsystem.RrPageTitle
+import me.rxresu.core.designsystem.RrSectionHeader
+import me.rxresu.core.designsystem.RrDocumentThumbnail
+import me.rxresu.core.designsystem.RrRowValue
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
@@ -59,6 +63,9 @@ import me.rxresu.core.designsystem.RrToastResult
 import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrHaptics
+import me.rxresu.core.navigation.PagePreview
+import me.rxresu.core.navigation.DocumentKind
+import me.rxresu.core.navigation.WorkspaceTab
 import me.rxresu.core.navigation.Builder
 import me.rxresu.core.navigation.Letter
 import me.rxresu.core.navigation.NewDocument
@@ -88,7 +95,7 @@ internal data class ApplyState(
     val busy: Boolean = false,
 ) {
     val answers get() = workspace.answers
-    val submitted get() = workspace.submissionReview != null || context.app.status !in setOf(ApplicationStage.Saved, ApplicationStage.Unknown)
+    val submitted get() = wasSubmitted(context.app, workspace)
 }
 
 internal class ApplyViewModel(private val repos: RrRepositories, private val id: String) : ViewModel() {
@@ -105,10 +112,12 @@ internal class ApplyViewModel(private val repos: RrRepositories, private val id:
     private suspend fun fetch(): ApplyState = coroutineScope {
         val context = repos.workspaceContext(id)
         val app = context.app
-        val resume = async { app.resumeId?.let { runCatching { repos.resumes.getResume(it) }.getOrNull() }?.let { LinkedDocument(it.id, it.name, Instant.parse(it.updatedAt)) } }
-        val letter = async { app.coverLetterId?.let { runCatching { repos.letters.getCoverLetter(it) }.getOrNull() }?.let { LinkedDocument(it.id, it.name, Instant.parse(it.updatedAt)) } }
         val workspace = async { repos.workspace.getCareerWorkspace(id) }
         val library = async { runCatching { repos.workspace.listReviewedAnswers(id) }.getOrDefault(emptyList()) }
+        val submitted = wasSubmitted(app, workspace.await())
+        // Frozen rows survive a missing live document; only pre-submission review reads the editable documents.
+        val resume = async { if (submitted) app.resumeId?.let { LinkedDocument(it, "", Instant.parse(app.appliedAt)) } else app.resumeId?.let { runCatching { repos.resumes.getResume(it) }.getOrNull() }?.let { LinkedDocument(it.id, it.name, Instant.parse(it.updatedAt)) } }
+        val letter = async { if (submitted) app.coverLetterId?.let { LinkedDocument(it, "", Instant.parse(app.appliedAt)) } else app.coverLetterId?.let { runCatching { repos.letters.getCoverLetter(it) }.getOrNull() }?.let { LinkedDocument(it.id, it.name, Instant.parse(it.updatedAt)) } }
         ApplyState(context, resume.await(), letter.await(), workspace.await(), library.await())
     }
 
@@ -206,39 +215,52 @@ internal fun ApplyTab(applicationId: String, nav: NavController) {
     val applied = stringResource(S.string.marked_as_applied_the_versions_you_sent_are_kept)
     val appliedWithFollowUp = R.string.workspace_applied_follow_up
     val res = androidx.compose.ui.platform.LocalResources.current
-    Loaded(load, vm::load) { state ->
-        ApplyScreen(
-            state,
-            dates = dates,
-            now = repos.time.now(),
-            onOpenResume = { nav.navigate(Builder(it)) },
-            onOpenLetter = { nav.navigate(Letter(it)) },
-            onPrepareResume = { nav.navigate(NewDocument(copyForApplicationId = applicationId)) },
-            onCopy = { answer ->
-                context.copyToClipboard(answer.question, answer.answer)
-                haptics(RrHaptic.Success)
-                scope.launch { toasts.show(copied) }
-            },
-            onSave = { answerId, question, answer, library -> scope.launch { if (!vm.saveAnswer(answerId, question, answer, library)) toasts.show(failed) } },
-            onRemove = { answerId -> scope.launch { if (!vm.removeAnswer(answerId)) toasts.show(failed) } },
-            onUseReviewed = { item -> scope.launch { if (!vm.useReviewed(item)) toasts.show(failed) } },
-            onOpenForm = { url ->
-                awaitingReturn = true
-                context.openInBrowser(url, colors)
-            },
-            onMarkApplied = { confirming = true },
-        )
-        if (confirming) {
-            ConfirmApplied(state, onDismiss = { confirming = false }) {
-                scope.launch {
-                    vm.markApplied().fold(
-                        { followUp ->
-                            confirming = false
-                            haptics(RrHaptic.Success)
-                            toasts.show(followUp?.let { res.getString(appliedWithFollowUp, dates.day(it)) } ?: applied)
-                        },
-                        { toasts.show(markFailed) },
-                    )
+    Loaded(load, vm::load, onBack = { nav.popBackStack() }) { state ->
+        WorkspaceFrame(showMore = false, onBack = { nav.popBackStack() }, onSettings = { nav.navigate(me.rxresu.core.navigation.SettingsAi) }) {
+            ApplyScreen(
+                state,
+                dates = dates,
+                now = repos.time.now(),
+                onOpenResume = { id ->
+                    if (!state.submitted) nav.navigate(Builder(id))
+                    else {
+                        val destination = sentResumeDestination(state.context.app)
+                        if (destination != null) nav.navigate(destination)
+                        else scope.launch { toasts.show(res.getString(R.string.workspace_artifact_unavailable)) }
+                    }
+                },
+                onOpenLetter = { id ->
+                    if (!state.submitted) nav.navigate(Letter(id))
+                    else { scope.launch { toasts.show(res.getString(R.string.workspace_artifact_unavailable)) } }
+                },
+                onPrepareResume = { nav.navigate(NewDocument(copyForApplicationId = applicationId)) },
+                onCopy = { answer ->
+                    context.copyToClipboard(answer.question, answer.answer)
+                    haptics(RrHaptic.Success)
+                    scope.launch { toasts.show(copied) }
+                },
+                onSave = { answerId, question, answer, library -> scope.launch { if (!vm.saveAnswer(answerId, question, answer, library)) toasts.show(failed) } },
+                onRemove = { answerId -> scope.launch { if (!vm.removeAnswer(answerId)) toasts.show(failed) } },
+                onUseReviewed = { item -> scope.launch { if (!vm.useReviewed(item)) toasts.show(failed) } },
+                onOpenForm = { url ->
+                    awaitingReturn = true
+                    context.openInBrowser(url, colors)
+                },
+                onMarkApplied = { confirming = true },
+                onFollowUp = { nav.openTab(applicationId, WorkspaceTab.Messages) },
+            )
+            if (confirming) {
+                ConfirmApplied(state, onDismiss = { confirming = false }) {
+                    scope.launch {
+                        vm.markApplied().fold(
+                            { followUp ->
+                                confirming = false
+                                haptics(RrHaptic.Success)
+                                toasts.show(followUp?.let { res.getString(appliedWithFollowUp, dates.day(it)) } ?: applied)
+                            },
+                            { toasts.show(markFailed) },
+                        )
+                    }
                 }
             }
         }
@@ -259,11 +281,13 @@ internal fun ApplyScreen(
     onUseReviewed: (ListReviewedAnswersResponseItem) -> Unit,
     onOpenForm: (String) -> Unit,
     onMarkApplied: () -> Unit,
+    onFollowUp: () -> Unit = {},
 ) {
     val app = state.context.app
     var editing by remember { mutableStateOf<SaveCareerWorkspaceRequestAnswersItem?>(null) }
     var adding by remember { mutableStateOf(false) }
     var library by remember { mutableStateOf(false) }
+    var answersOpen by remember { mutableStateOf(false) }
     val today = dates.date(now)
     fun edited(at: Instant) = dates.date(at).let { if (it == today) null else dates.day(it) }
     TabBody(
@@ -271,38 +295,63 @@ internal fun ApplyScreen(
             { RrButton(stringResource(S.string.mark_as_applied), onMarkApplied, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_check, loading = state.busy) }
         },
     ) {
-        StepHeader(1, state.resume != null, stringResource(S.string.documents), Modifier.padding(top = 0.dp))
-        Group {
-            // The web's sent-documents: an open application without a resume offers a copy made for this job.
-            val canPrepare = app.resumeId == null && app.status != ApplicationStage.Closed && app.status != ApplicationStage.Offer
-            if (state.resume == null && state.letter == null && !canPrepare) RrListRow(stringResource(S.string.no_documents_88069aadea), icon = DsR.drawable.ic_ph_file_text)
-            if (canPrepare) RrListRow(stringResource(S.string.prepare_a_resume), icon = DsR.drawable.ic_ph_copy, onClick = onPrepareResume, trailing = { RrRowCaret() })
+        val sentAt = state.workspace.submissionReview?.at?.let(Instant::parse)
+            ?: app.activity.filterIsInstance<me.rxresu.core.network.generated.StageTimelineEntry>().firstOrNull { it.stage == ApplicationStage.Applied }?.at?.let(Instant::parse)
+        RrPageTitle(stringResource(S.string.apply), subtitle = if (state.submitted && sentAt != null) stringResource(R.string.workspace_sent_date, java.time.format.DateTimeFormatter.ofPattern("EEEE d MMMM", dates.locale).format(sentAt.atZone(dates.zone))) else stringResource(R.string.workspace_role_at_company, app.role, app.company), subtitleColor = me.rxresu.core.designsystem.RrTheme.colors.ink3)
+        if (state.submitted) {
+            RrSectionHeader(stringResource(S.string.what_you_sent))
             state.resume?.let { doc ->
-                RrListRow(doc.name, subtitle = listOfNotNull(stringResource(S.string.resume), edited(doc.updatedAt) ?: stringResource(S.string.today)).joinToString(" · "), icon = DsR.drawable.ic_ph_file_text, onClick = { onOpenResume(doc.id) }, trailing = { RrRowCaret() })
+                RrListRow(stringResource(S.string.resume), subtitle = sentAt?.let { stringResource(R.string.workspace_sent_version, "${java.time.format.DateTimeFormatter.ofPattern("d MMM, HH:mm", dates.locale).format(it.atZone(dates.zone))}") },
+                    leading = { RrDocumentThumbnail() }, divider = true, onClick = { onOpenResume(doc.id) }, trailing = { RrRowCaret() })
             }
             state.letter?.let { doc ->
-                RrListRow(doc.name, subtitle = listOfNotNull(stringResource(S.string.letter), edited(doc.updatedAt) ?: stringResource(S.string.today)).joinToString(" · "), icon = DsR.drawable.ic_ph_note_pencil, onClick = { onOpenLetter(doc.id) }, trailing = { RrRowCaret() })
+                RrListRow(stringResource(S.string.cover_letter_7264deefc0), subtitle = stringResource(R.string.workspace_letter_for_company, app.company), leading = { RrDocumentThumbnail(letter = true) }, divider = true,
+                    onClick = { onOpenLetter(doc.id) }, trailing = { RrRowCaret() })
+            }
+            RrListRow(stringResource(S.string.form_answers), subtitle = pluralStringResource(R.plurals.workspace_saved_answers, state.answers.size, state.answers.size), tile = DsR.drawable.ic_ph_list_checks, divider = true,
+                onClick = { answersOpen = true }, trailing = { RrRowCaret() })
+            app.sourceUrl?.let { url -> RrListRow(stringResource(R.string.workspace_where), subtitle = displayUrl(url), tile = DsR.drawable.ic_ph_globe_simple, onClick = { onOpenForm(url) }, trailing = { me.rxresu.core.designsystem.RrIcon(R.drawable.ic_ph_arrow_up_right, null, tint = me.rxresu.core.designsystem.RrTheme.colors.ink2) }) }
+            RrSectionHeader(stringResource(S.string.next))
+            val followUp = app.followUpAt?.let { Instant.parse(it) } ?: sentAt?.plusSeconds(14 * 86_400)
+            RrListRow(stringResource(S.string.follow_up), subtitle = followUp?.let { stringResource(R.string.workspace_follow_up_suggested, java.time.format.DateTimeFormatter.ofPattern("EEEE d MMM", dates.locale).format(it.atZone(dates.zone))) }, tile = DsR.drawable.ic_ph_envelope_simple,
+                onClick = onFollowUp, trailing = { RrRowCaret() })
+        } else {
+            StepHeader(1, state.resume != null, stringResource(S.string.documents), Modifier.padding(top = 0.dp))
+            Group {
+                // The web's sent-documents: an open application without a resume offers a copy made for this job.
+                val canPrepare = app.resumeId == null && app.status != ApplicationStage.Closed && app.status != ApplicationStage.Offer
+                if (state.resume == null && state.letter == null && !canPrepare) RrListRow(stringResource(S.string.no_documents_88069aadea), icon = DsR.drawable.ic_ph_file_text)
+                if (canPrepare) RrListRow(stringResource(S.string.prepare_a_resume), icon = DsR.drawable.ic_ph_copy, onClick = onPrepareResume, trailing = { RrRowCaret() })
+                state.resume?.let { doc ->
+                    RrListRow(doc.name, subtitle = listOfNotNull(stringResource(S.string.resume), edited(doc.updatedAt) ?: stringResource(S.string.today)).joinToString(" · "), icon = DsR.drawable.ic_ph_file_text, onClick = { onOpenResume(doc.id) }, trailing = { RrRowCaret() })
+                }
+                state.letter?.let { doc ->
+                    RrListRow(doc.name, subtitle = listOfNotNull(stringResource(S.string.letter), edited(doc.updatedAt) ?: stringResource(S.string.today)).joinToString(" · "), icon = DsR.drawable.ic_ph_note_pencil, onClick = { onOpenLetter(doc.id) }, trailing = { RrRowCaret() })
+                }
+            }
+            StepHeader(2, state.submitted && state.answers.isNotEmpty(), stringResource(S.string.form_answers)) {
+                RrButton(stringResource(R.string.workspace_add_a_question), { adding = true }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small, icon = DsR.drawable.ic_ph_plus)
+            }
+            Group {
+                state.answers.forEach { answer -> AnswerRow(answer, onOpen = { editing = answer }, onCopy = { onCopy(answer) }) }
+                RrListRow(
+                    stringResource(S.string.use_a_saved_answer),
+                    subtitle = pluralStringResource(R.plurals.workspace_reviewed_answers, state.library.size, state.library.size),
+                    icon = DsR.drawable.ic_ph_book_bookmark,
+                    onClick = { library = true },
+                    trailing = { RrRowCaret() },
+                )
+            }
+            StepHeader(3, state.submitted, stringResource(R.string.workspace_submit_on_their_site))
+            Group {
+                val url = app.sourceUrl
+                if (url.isNullOrBlank()) RrListRow(stringResource(R.string.workspace_open_employer_form), subtitle = stringResource(R.string.workspace_no_form_link), icon = DsR.drawable.ic_ph_arrow_square_out, enabled = false)
+                else RrListRow(stringResource(R.string.workspace_open_employer_form), subtitle = stringResource(R.string.workspace_in_your_browser, displayUrl(url)), icon = DsR.drawable.ic_ph_arrow_square_out, onClick = { onOpenForm(url) })
             }
         }
-        StepHeader(2, state.submitted && state.answers.isNotEmpty(), stringResource(S.string.form_answers)) {
-            RrButton(stringResource(R.string.workspace_add_a_question), { adding = true }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small, icon = DsR.drawable.ic_ph_plus)
-        }
-        Group {
-            state.answers.forEach { answer -> AnswerRow(answer, onOpen = { editing = answer }, onCopy = { onCopy(answer) }) }
-            RrListRow(
-                stringResource(S.string.use_a_saved_answer),
-                subtitle = pluralStringResource(R.plurals.workspace_reviewed_answers, state.library.size, state.library.size),
-                icon = DsR.drawable.ic_ph_book_bookmark,
-                onClick = { library = true },
-                trailing = { RrRowCaret() },
-            )
-        }
-        StepHeader(3, state.submitted, stringResource(R.string.workspace_submit_on_their_site))
-        Group {
-            val url = app.sourceUrl
-            if (url.isNullOrBlank()) RrListRow(stringResource(R.string.workspace_open_employer_form), subtitle = stringResource(R.string.workspace_no_form_link), icon = DsR.drawable.ic_ph_arrow_square_out, enabled = false)
-            else RrListRow(stringResource(R.string.workspace_open_employer_form), subtitle = stringResource(R.string.workspace_in_your_browser, displayUrl(url)), icon = DsR.drawable.ic_ph_arrow_square_out, onClick = { onOpenForm(url) })
-        }
+    }
+    if (answersOpen) WindowSheet({ answersOpen = false }, stringResource(S.string.form_answers)) {
+        state.answers.forEach { AnswerRow(it, onOpen = { editing = it; answersOpen = false }, onCopy = { onCopy(it) }) }
     }
     val edit = editing
     if (edit != null || adding) {
@@ -399,3 +448,13 @@ private fun ConfirmApplied(state: ApplyState, onDismiss: () -> Unit, onConfirm: 
         RrText(stringResource(S.string.records_records_as_sent_you_submit_on_the_employer_s_site_yourself, (documents + answers).joinToString(" · ")), style = RrType.body, color = RrTheme.colors.ink2)
     }
 }
+
+/** A sent row carries only the immutable approved resume identity. */
+internal fun sentResumeDestination(app: me.rxresu.core.network.generated.Application): PagePreview? {
+    val resume = app.resumeId ?: return null
+    val version = app.sentResumeVersionId ?: return null
+    return PagePreview(resume, kind = DocumentKind.Resume, versionId = version)
+}
+
+private fun wasSubmitted(app: me.rxresu.core.network.generated.Application, workspace: CareerWorkspace) =
+    workspace.submissionReview != null || app.status !in setOf(ApplicationStage.Saved, ApplicationStage.Unknown)

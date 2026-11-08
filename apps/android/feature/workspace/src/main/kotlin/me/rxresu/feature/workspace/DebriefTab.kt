@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,6 +45,9 @@ import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrBadge
 import me.rxresu.core.designsystem.RrBadgeTone
+import me.rxresu.core.designsystem.RrPickerField
+import me.rxresu.core.designsystem.RrListRow
+import me.rxresu.core.designsystem.RrPageTitle
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
@@ -233,25 +239,27 @@ internal fun DebriefTab(applicationId: String, nav: NavController) {
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val toasts = me.rxresu.core.navigation.LocalToasts.current
     val saveFailed = stringResource(S.string.couldn_t_save_that_to_knowledge_try_again)
-    Loaded(load, vm::load) { state ->
-        DebriefScreen(
-            state,
-            recording,
-            micDenied = mic.denied,
-            dates = rememberDates(repos.time.timezone()),
-            onQuestion = vm::setQuestion,
-            onAnswer = vm::setAnswer,
-            onLanded = vm::setLanded,
-            onRecord = { if (recording.recording) vm.stopRecording() else mic.request() },
-            onRetryTranscribe = vm::transcribe,
-            onReview = { vm.review(locale) },
-            onStop = vm::stop,
-            onRemember = { scope.launch { if (!vm.remember()) toasts.show(saveFailed) } },
-            onNotNow = vm::notNow,
-            onStartOver = vm::startOver,
-            onOpenPrepare = { nav.openTab(applicationId, WorkspaceTab.Prepare) },
-            onSetUpAi = { nav.navigate(SettingsAi) },
-        )
+    Loaded(load, vm::load, onBack = { nav.popBackStack() }) { state ->
+        WorkspaceFrame(onBack = { nav.popBackStack() }, onSettings = { nav.navigate(me.rxresu.core.navigation.SettingsAi) }) {
+            DebriefScreen(
+                state,
+                recording,
+                micDenied = mic.denied,
+                dates = rememberDates(repos.time.timezone()),
+                onQuestion = vm::setQuestion,
+                onAnswer = vm::setAnswer,
+                onLanded = vm::setLanded,
+                onRecord = { if (recording.recording) vm.stopRecording() else mic.request() },
+                onRetryTranscribe = vm::transcribe,
+                onReview = { vm.review(locale) },
+                onStop = vm::stop,
+                onRemember = { scope.launch { if (!vm.remember()) toasts.show(saveFailed) } },
+                onNotNow = vm::notNow,
+                onStartOver = vm::startOver,
+                onOpenPrepare = { nav.openTab(applicationId, WorkspaceTab.Prepare) },
+                onSetUpAi = { nav.navigate(SettingsAi) },
+            )
+        }
     }
 }
 
@@ -274,6 +282,7 @@ internal fun DebriefScreen(
     onOpenPrepare: () -> Unit,
     onSetUpAi: () -> Unit = {},
 ) {
+    var landedPicker by remember { mutableStateOf(false) }
     val c = RrTheme.colors
     val interview = state.interview
     val before = interview != null && !interview.ended(state.now) && state.review == null
@@ -286,8 +295,9 @@ internal fun DebriefScreen(
             }
         } else null,
     ) {
+        RrPageTitle(stringResource(S.string.debrief), subtitle = "${state.context.app.company} · ${state.context.app.role}", subtitleColor = c.ink3)
         AiDestinationNotice(state.context)
-        Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             RrText(roundTitle(interview?.kind), style = RrType.sheetTitle, color = c.ink)
             when {
                 before -> {
@@ -312,19 +322,24 @@ internal fun DebriefScreen(
                     }
                     if (micDenied) RrCallout(stringResource(S.string.allow_microphone_access_in_device_settings_or_type_your_answer))
                     Notice(state.notice, onRetryTranscribe)
-                    RrText(stringResource(S.string.how_did_it_land), style = RrType.fieldLabel, color = c.ink2)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf(
-                            CreateCareerOfferResponseDataDebriefLanded.Well to S.string.went_well,
-                            CreateCareerOfferResponseDataDebriefLanded.Mixed to S.string.mixed,
-                            CreateCareerOfferResponseDataDebriefLanded.Not to S.string.didn_t_land,
-                        ).forEach { (value, label) -> RrFilterChip(stringResource(label), state.landed == value, { onLanded(value) }) }
+                    val label = when (state.landed) {
+                        CreateCareerOfferResponseDataDebriefLanded.Well -> S.string.went_well
+                        CreateCareerOfferResponseDataDebriefLanded.Mixed -> S.string.mixed
+                        CreateCareerOfferResponseDataDebriefLanded.Not -> S.string.didn_t_land
+                        else -> S.string.choose
                     }
+                    RrPickerField(stringResource(label), { landedPicker = true }, label = stringResource(S.string.how_did_it_land))
                     if (state.context.provider == null) RrCallout(stringResource(S.string.connect_an_ai_provider), actionLabel = stringResource(S.string.set_up_ai), onAction = onSetUpAi)
                 }
             }
         }
     }
+    if (landedPicker) WindowSheet({ landedPicker = false }, stringResource(S.string.how_did_it_land), fitContent = true) {
+        listOf(CreateCareerOfferResponseDataDebriefLanded.Well to S.string.went_well, CreateCareerOfferResponseDataDebriefLanded.Mixed to S.string.mixed, CreateCareerOfferResponseDataDebriefLanded.Not to S.string.didn_t_land).forEach { (value, label) ->
+            RrListRow(stringResource(label), onClick = { onLanded(value); landedPicker = false })
+        }
+    }
+
 }
 
 @Composable

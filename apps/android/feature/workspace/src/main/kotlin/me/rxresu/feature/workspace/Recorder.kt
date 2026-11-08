@@ -132,7 +132,7 @@ internal class Recording(
         /** `career.voice.transcribe` refuses audio over 2 MB. */
         const val MAX_BYTES = 2 * 1024 * 1024
         const val FRAME_MS = 66L
-        const val BARS = 20
+        const val BARS = 24
     }
 }
 

@@ -52,6 +52,8 @@ import me.rxresu.core.designsystem.R as D
 import me.rxresu.core.designsystem.RrAlertDialog
 import me.rxresu.core.designsystem.RrAvatar
 import me.rxresu.core.designsystem.RrBottomSheet
+import me.rxresu.core.designsystem.RrFooterBar
+import me.rxresu.core.designsystem.RrSwitchRow
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
@@ -101,6 +103,7 @@ internal data class InterviewDraft(
     val location: String = "",
     val people: List<AddApplicationInterviewRequestParticipantsItem> = emptyList(),
     val notes: String = "",
+    val addToCalendar: Boolean = false,
 ) {
     /** The instant in the interview's timezone; null while incomplete or when the clock time doesn't exist there (DST gap). */
     fun at(): Instant? {
@@ -192,7 +195,7 @@ internal class InterviewViewModel(
                 career.listCareerSchedules().firstOrNull { it.interviewId == interviewId && it.enabled && it.kind in setOf("prepare", "briefing") }?.nextRunAt?.let(Instant::parse)
             }.getOrNull()
             _state.value = _state.value.copy(saving = false)
-            InterviewSaved(briefing, interviewId?.let { CalendarEvent(it, title, at, minutes, draft.location, draft.notes) })
+            InterviewSaved(briefing, CalendarEvent(interviewId ?: "new-interview", title, at, minutes, draft.location, draft.notes))
         } catch (e: CancellationException) {
             throw e
         } catch (_: Exception) {
@@ -250,6 +253,7 @@ internal fun InterviewRoute(applicationId: String, interviewId: String?, nav: Na
                 haptics(RrHaptic.Success)
                 sheet.hide()
                 nav.popBackStack()
+                if (draft.addToCalendar) saved.event?.let { event -> addToCalendar(context, event, vm.time.now()) }
                 val message = saved.briefingAt?.let { savedText + " · " + briefingMoves.format(dates.whenWithTime(it)) } ?: savedText
                 toasts.post(message, saved.event?.let { addToCalendar }) {
                     if (it == RrToastResult.ActionPerformed) saved.event?.let { event -> addToCalendar(context, event, vm.time.now()) }
@@ -291,30 +295,31 @@ internal fun InterviewSheet(
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
     var picker by remember { mutableStateOf<Picker?>(null) }
+    var typePicker by remember { mutableStateOf(false) }
+    var peopleEditor by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
     var adding by remember { mutableStateOf<AddApplicationInterviewRequestParticipantsItem?>(null) }
     val gap = draft.timeMissingInZone()
-    val canSave = draft.at() != null && draft.applicationId.isNotBlank() && !state.saving
+    val canSave = draft.at() != null && draft.applicationId.isNotBlank() && !state.saving && (!draft.otherZone || runCatching { ZoneId.of(draft.zoneText.trim()) }.isSuccess) && draft.people.none { !it.profileUrl.isNullOrBlank() && !it.profileUrl!!.startsWith("https://") }
     val zoneName = draft.zone.id.substringAfterLast('/').replace('_', ' ')
 
     Box(Modifier.fillMaxSize()) {
         RrBottomSheet(
             onDismissRequest = onDismiss,
             state = sheetState,
-            title = stringResource(if (editing) S.string.edit_interview else S.string.schedule_an_interview),
+            title = stringResource(R.string.app_add_interview),
+            fixedHeight = 700.dp,
             detents = RrSheetDetents.Full,
             confirmDiscard = state.original != null && draft != state.original,
             footer = {
-                SheetFooter(start = {
-                    if (editing) RrButton(stringResource(S.string.delete), { confirmDelete = true }, variant = RrButtonVariant.DangerGhost, size = RrButtonSize.Large)
-                }) {
-                    RrButton(stringResource(S.string.save_interview), onSave, size = RrButtonSize.Large, enabled = canSave, loading = state.saving)
+                RrFooterBar(inSheet = true) {
+                    RrButton(stringResource(S.string.save_interview), onSave, Modifier.weight(1f), size = RrButtonSize.Large, enabled = canSave, loading = state.saving)
                 }
             },
         ) {
             Column(
-                Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
                 if (state.failed) RrCallout(stringResource(if (editing) S.string.couldn_t_update_the_interview_try_again else R.string.app_couldnt_schedule), tone = RrTone.Danger)
                 if (!editing && draft.applicationId.isBlank()) {
@@ -326,102 +331,39 @@ internal fun InterviewSheet(
                         }
                     }
                 }
-                Field(stringResource(S.string.type)) {
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        InterviewKinds.forEach { kind ->
-                            RrFilterChip(interviewKindLabel(kind), draft.kind == kind, { onDraft(draft.copy(kind = kind)) })
-                        }
+                Column(Modifier.padding(horizontal = 24.dp).padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                    RrPickerField(stringResource(S.string.kind_interview, interviewKindLabel(draft.kind)), { typePicker = true }, label = stringResource(S.string.type), trailingIcon = D.drawable.ic_ph_caret_down)
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        RrPickerField(draft.date?.let { dates.weekdayDayMonth(it.atStartOfDay(dates.zone).toInstant()) }.orEmpty(), { picker = Picker.Date }, Modifier.weight(1f), label = stringResource(S.string.date), trailingIcon = null)
+                        RrPickerField(draft.time?.let { dates.time(LocalDateTime.of(today, it).atZone(dates.zone).toInstant()) }.orEmpty(), { picker = Picker.Time }, Modifier.weight(1f), label = stringResource(S.string.time), trailingIcon = null, error = if (gap) " " else null)
                     }
+                    if (gap) RrText(stringResource(S.string.this_time_does_not_exist_in_the_selected_timezone_choose_another_time), style = RrType.small, color = c.dangerText)
+                    RrTextField(draft.location, { onDraft(draft.copy(location = it)) }, label = stringResource(R.string.app_where))
+                    RrPickerField(draft.people.joinToString(", ") { it.name }, { peopleEditor = true }, label = stringResource(R.string.app_with), trailingIcon = null)
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    RrPickerField(
-                        value = draft.date?.let(dates::fullDate).orEmpty(),
-                        onClick = { picker = Picker.Date },
-                        modifier = Modifier.weight(2f),
-                        label = stringResource(S.string.date),
-                        placeholder = stringResource(S.string.choose_a_date),
-                        trailingIcon = D.drawable.ic_ph_calendar_blank,
-                    )
-                    RrPickerField(
-                        value = draft.time?.let { dates.time(LocalDateTime.of(today, it).atZone(dates.zone).toInstant()) }.orEmpty(),
-                        onClick = { picker = Picker.Time },
-                        modifier = Modifier.weight(1f),
-                        label = stringResource(S.string.time_0, zoneName),
-                        placeholder = stringResource(S.string.time),
-                        trailingIcon = null,
-                        error = if (gap) " " else null,
-                    )
-                }
-                if (gap) RrText(stringResource(S.string.this_time_does_not_exist_in_the_selected_timezone_choose_another_time), style = RrType.small, color = c.dangerText)
-                // The whole row toggles, so the box lines up with the fields above instead of sitting in a 44 dp target.
-                Row(
-                    Modifier.fillMaxWidth().heightIn(min = 44.dp).toggleable(draft.otherZone, role = Role.Checkbox) { on ->
-                        haptics(if (on) RrHaptic.ToggleOn else RrHaptic.ToggleOff)
-                        onDraft(draft.copy(otherZone = on, zone = if (on) draft.zone else home, zoneText = if (on) draft.zone.id else ""))
-                    },
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                ) {
-                    RrCheckbox(draft.otherZone, null)
-                    RrText(stringResource(S.string.interview_is_in_another_timezone), style = RrType.ui)
-                }
-                if (draft.otherZone) {
-                    val valid = runCatching { ZoneId.of(draft.zoneText.trim()) }.getOrNull()
-                    RrTextField(
-                        draft.zoneText,
-                        { text -> onDraft(draft.copy(zoneText = text, zone = runCatching { ZoneId.of(text.trim()) }.getOrNull() ?: draft.zone)) },
-                        label = stringResource(S.string.interview_timezone),
-                        placeholder = "Europe/London",
-                        ltr = true,
-                        mono = true,
-                        error = if (draft.zoneText.isNotBlank() && valid == null) stringResource(S.string.interview_timezone) else null,
-                        helper = draft.at()?.let { at -> stringResource(S.string.shown_in_your_timezone) + " " + Dates(dates.locale, home, true).whenWithTime(at) },
-                    )
-                }
-                RrTextField(
-                    draft.minutes,
-                    { onDraft(draft.copy(minutes = it.filter(Char::isDigit).take(4))) },
-                    label = stringResource(S.string.length_minutes),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                )
-                RrTextField(
-                    draft.location,
-                    { onDraft(draft.copy(location = it)) },
-                    label = stringResource(S.string.location),
-                    leadingIcon = D.drawable.ic_ph_map_pin,
-                    helper = stringResource(S.string.video_link_office_address_or_phone_number),
-                )
-                Field(stringResource(S.string.who_you_ll_meet)) {
-                    if (draft.people.isNotEmpty()) RrListGroup {
-                        draft.people.forEachIndexed { index, person ->
-                            RrListRow(
-                                person.name,
-                                subtitle = person.role?.takeIf(String::isNotBlank),
-                                leading = { RrAvatar(initials(person.name)) },
-                                trailing = { RrIconButton(D.drawable.ic_ph_minus, stringResource(S.string.remove_person_0, (index + 1).toString()), { onDraft(draft.copy(people = draft.people.filterIndexed { i, _ -> i != index })) }, size = RrIconButtonSize.Small) },
-                            )
-                        }
-                    }
-                    val person = adding
-                    if (person != null) {
-                        val url = person.profileUrl.orEmpty()
-                        val badUrl = url.isNotBlank() && !url.startsWith("https://")
-                        RrTextField(person.name, { adding = person.copy(name = it) }, placeholder = stringResource(S.string.name))
-                        RrTextField(person.role.orEmpty(), { adding = person.copy(role = it) }, placeholder = stringResource(S.string.role))
-                        RrTextField(url, { adding = person.copy(profileUrl = it.ifBlank { null }) }, placeholder = stringResource(S.string.profile_link_optional), ltr = true, mono = true, error = if (badUrl) stringResource(S.string.profile_links_must_be_public_https_addresses) else null)
-                        RrButton(stringResource(S.string.add), {
-                            onDraft(draft.copy(people = draft.people + person.copy(name = person.name.trim(), role = person.role?.trim()?.ifEmpty { null })))
-                            adding = null
-                        }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small, enabled = person.name.isNotBlank() && !badUrl)
-                    } else {
-                        RrButton(stringResource(S.string.add_a_person), { adding = AddApplicationInterviewRequestParticipantsItem(name = "") }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small, icon = D.drawable.ic_ph_plus)
-                    }
-                    if (adding != null || draft.people.any { it.profileUrl != null }) RrText(stringResource(R.string.app_profile_links_hint), style = RrType.small, color = c.ink3)
-                }
-                RrTextField(draft.notes, { onDraft(draft.copy(notes = it)) }, label = stringResource(S.string.what_they_asked_you_to_prepare), singleLine = false, minLines = 2)
+                RrSwitchRow(stringResource(R.string.app_remind_day_before), false, {}, Modifier.padding(top = 12.dp), enabled = false, divider = true)
+                RrSwitchRow(stringResource(R.string.app_phone_calendar), draft.addToCalendar, { onDraft(draft.copy(addToCalendar = it)) })
+
             }
         }
 
+        if (typePicker) RrBottomSheet({ typePicker = false }, title = stringResource(S.string.type), fitContent = true) {
+            InterviewKinds.forEach { kind -> RrListRow(stringResource(S.string.kind_interview, interviewKindLabel(kind)), onClick = { onDraft(draft.copy(kind = kind)); typePicker = false }) }
+            if (editing) RrListRow(stringResource(S.string.delete_interview), danger = true, onClick = { typePicker = false; confirmDelete = true })
+        }
+        if (peopleEditor) RrBottomSheet({ peopleEditor = false }, title = stringResource(S.string.who_you_ll_meet), detents = RrSheetDetents.Full) {
+            Column(Modifier.verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                draft.people.forEachIndexed { index, person ->
+                    RrTextField(person.name, { name -> onDraft(draft.copy(people = draft.people.mapIndexed { i, p -> if (i == index) p.copy(name = name) else p })) }, label = stringResource(S.string.name))
+                    RrTextField(person.role.orEmpty(), { role -> onDraft(draft.copy(people = draft.people.mapIndexed { i, p -> if (i == index) p.copy(role = role) else p })) }, label = stringResource(S.string.role))
+                    val url = person.profileUrl.orEmpty()
+                    RrTextField(url, { text -> onDraft(draft.copy(people = draft.people.mapIndexed { i, p -> if (i == index) p.copy(profileUrl = text.ifBlank { null }) else p })) }, label = stringResource(S.string.profile_link_optional), error = if (url.isNotBlank() && !url.startsWith("https://")) stringResource(S.string.profile_links_must_be_public_https_addresses) else null)
+                    RrButton(stringResource(S.string.remove_person_0, (index + 1).toString()), { onDraft(draft.copy(people = draft.people.filterIndexed { i, _ -> i != index })) }, variant = RrButtonVariant.DangerGhost)
+                }
+                RrButton(stringResource(S.string.add_a_person), { onDraft(draft.copy(people = draft.people + AddApplicationInterviewRequestParticipantsItem(name = ""))) }, variant = RrButtonVariant.GhostAccent)
+                RrTextField(draft.notes, { onDraft(draft.copy(notes = it)) }, label = stringResource(S.string.what_they_asked_you_to_prepare), singleLine = false, minLines = 2)
+            }
+        }
         when (picker) {
             Picker.Date -> RrBottomSheet(onDismissRequest = { picker = null }, title = stringResource(S.string.choose_a_date), fitContent = true) {
                 Box(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
@@ -430,7 +372,11 @@ internal fun InterviewSheet(
             }
             Picker.Time -> RrBottomSheet(onDismissRequest = { picker = null }, title = stringResource(S.string.choose_a_time)) {
                 Box(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
-                    RrTimePicker(draft.time, { haptics(RrHaptic.Selection); onDraft(draft.copy(time = it)); picker = null }, stepMinutes = 5)
+                    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                        RrTimePicker(draft.time, { haptics(RrHaptic.Selection); onDraft(draft.copy(time = it)) }, stepMinutes = 5)
+                        RrTextField(draft.minutes, { onDraft(draft.copy(minutes = it.filter(Char::isDigit).take(4))) }, label = stringResource(S.string.length_minutes), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                        RrTextField(draft.zoneText.ifBlank { draft.zone.id }, { text -> onDraft(draft.copy(zoneText = text, otherZone = true, zone = runCatching { ZoneId.of(text.trim()) }.getOrNull() ?: draft.zone)) }, label = stringResource(S.string.interview_timezone), error = if (draft.zoneText.isNotBlank() && runCatching { ZoneId.of(draft.zoneText.trim()) }.isFailure) stringResource(S.string.interview_timezone) else null)
+                    }
                 }
             }
             null -> Unit
@@ -460,8 +406,8 @@ internal val InterviewKinds = listOf(
 /** A field label above its control (6 dp). */
 @Composable
 internal fun Field(label: String, content: @Composable () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        RrText(label, style = RrType.fieldLabel, color = RrTheme.colors.ink2)
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        RrText(label, style = RrType.formLabel, color = RrTheme.colors.ink2)
         content()
     }
 }

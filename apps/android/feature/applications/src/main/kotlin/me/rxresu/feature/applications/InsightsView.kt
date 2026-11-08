@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -42,6 +43,7 @@ import java.time.LocalDate
 import me.rxresu.core.data.ApplicationInsights
 import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as D
+import me.rxresu.core.designsystem.RrSectionHeader
 import me.rxresu.core.designsystem.RrBarChart
 import me.rxresu.core.designsystem.RrBottomSheet
 import me.rxresu.core.designsystem.RrCard
@@ -129,41 +131,32 @@ internal fun InsightsView(
         }
         return
     }
-    val comparison = remember(state.all, state.resumes) { compareTailored(state.all, state.resumes) }
-    Column(
-        Modifier.fillMaxSize().rrLargeTitleScroll(title).verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
-        androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp), maxItemsInEachRow = if (largeText) 1 else 2) {
-            Stat(Modifier.weight(1f), "${Math.round(insights.heardBack * 100.0 / sent)}%", stringResource(S.string.heard_back)) { statistic = Statistic.Replies }
-            Stat(
-                Modifier.weight(1f),
-                insights.medianDaysToReply?.let { d -> plural(S.plurals.message_0_plural_one_day_other_days, d.toInt(), formatDays(d)) } ?: "—",
-                stringResource(S.string.median_to_first_reply),
-            ) { statistic = Statistic.Median }
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 20.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Stat(Modifier.weight(1f), sent.toString(), stringResource(R.string.app_applied_lower)) { statistic = Statistic.Replies }
+            Stat(Modifier.weight(1f), "${Math.round(insights.heardBack * 100.0 / sent)}%", stringResource(R.string.app_replied_lower)) { statistic = Statistic.Replies }
+            Stat(Modifier.weight(1f), insights.medianDaysToReply?.let { "${formatDays(it)} d" } ?: "—", stringResource(R.string.app_to_first_reply)) { statistic = Statistic.Median }
         }
-        Funnel(insights, onStage)
-        if (comparison.any) RrCard(Modifier.fillMaxWidth()) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                RrText(stringResource(S.string.tailored_vs_base_resume), style = RrType.label, color = c.ink)
-                if (comparison.enough) {
-                    RrText(
-                        stringResource(
-                            S.string.message_0_of_1_tailored_applications_got_a_reply_2_of_3_sent_with_another_resume,
-                            comparison.tailoredReplied.toString(), comparison.tailoredSent.toString(), comparison.baseReplied.toString(), comparison.baseSent.toString(),
-                        ),
-                        style = RrType.small,
-                        color = c.ink2,
-                    )
-                    if (comparison.tailoredSent + comparison.baseSent < 10) RrText(stringResource(S.string.small_numbers_but_worth_noticing), style = RrType.small, color = c.ink3)
-                } else RrText(stringResource(S.string.not_enough_applications_to_compare_yet_this_needs_3_of_each), style = RrType.small, color = c.ink3)
+        RrSectionHeader(stringResource(R.string.app_how_far))
+        val rows = listOf(
+            Triple(stringResource(S.string.applied), sent, ApplicationStage.Applied),
+            Triple(stringResource(R.string.app_replied), insights.heardBack, ApplicationStage.Screening),
+            Triple(stringResource(R.string.app_interviewed), insights.byStage[ApplicationStage.Interview] ?: 0, ApplicationStage.Interview),
+            Triple(stringResource(S.string.offer), insights.byStage[ApplicationStage.Offer] ?: 0, ApplicationStage.Offer),
+        )
+        rows.forEachIndexed { i, (label, count, stage) ->
+            Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 4.dp, bottom = if (i == rows.lastIndex) 0.dp else 10.dp).selectable(false, role = Role.Button) { onStage(stage) }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                RrText(label, Modifier.width(96.dp), style = RrType.ui, color = c.ink2)
+                Box(Modifier.weight(1f).height(8.dp)) {
+                    Box(Modifier.fillMaxWidth((count.toFloat() / sent).coerceIn(0f, 1f)).height(8.dp).background(c.accent))
+                }
+                RrText(count.toString(), Modifier.width(28.dp), style = RrType.ui.copy(fontFamily = me.rxresu.core.designsystem.GeistMono, fontWeight = androidx.compose.ui.text.font.FontWeight.Medium), textAlign = TextAlign.End)
             }
         }
-        RrListGroup {
-            RrListRow(stringResource(R.string.app_pipeline_flow), icon = D.drawable.ic_ph_chart_bar, onClick = { chart = Chart.Pipeline }, trailing = { RrRowCaret() })
-            RrListRow(stringResource(S.string.applications_over_time), subtitle = stringResource(S.string.applications_sent_per_week_last_8_weeks), icon = D.drawable.ic_ph_chart_bar, onClick = { chart = Chart.OverTime }, trailing = { RrRowCaret() })
-            RrListRow(stringResource(S.string.where_applications_come_from), icon = D.drawable.ic_ph_globe_simple, onClick = { chart = Chart.Sources }, trailing = { RrRowCaret() })
+        RrSectionHeader(stringResource(R.string.app_where_replies))
+        state.all.filter(::wasSent).groupBy { it.source.orEmpty() }.filterKeys(String::isNotBlank).entries.sortedBy { it.value.size }.forEachIndexed { i, (source, apps) ->
+            RrListRow(source, subtitle = pluralStringResource(R.plurals.app_count_applied, apps.size, apps.size), divider = i < 2,
+                trailing = { RrText(stringResource(R.string.app_count_of_total, apps.count(::repliedTo), apps.size), style = RrType.ui, color = c.ink3) })
         }
     }
     statistic?.let { selected ->
@@ -200,11 +193,9 @@ private fun formatDays(d: Double) = if (d % 1.0 == 0.0) d.toInt().toString() els
 @Composable
 private fun Stat(modifier: Modifier, value: String, label: String, onClick: () -> Unit) {
     val c = RrTheme.colors
-    RrCard(modifier, onClick = onClick) {
-        Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            RrText(value, style = RrType.title.copy(fontSize = 32.sp), color = c.ink)
-            RrText(label, style = RrType.small, color = c.ink2)
-        }
+    Column(modifier.selectable(false, role = Role.Button, onClick = onClick)) {
+        RrText(value, style = RrType.statNumber, color = c.ink)
+        RrText(label, Modifier.padding(top = 2.dp).offset(y = (-1.5).dp), style = RrType.small.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Normal), color = c.ink3)
     }
 }
 

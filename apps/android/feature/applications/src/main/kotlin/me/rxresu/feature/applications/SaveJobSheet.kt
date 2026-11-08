@@ -51,6 +51,10 @@ import me.rxresu.core.data.TimeSource
 import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as D
 import me.rxresu.core.designsystem.RrBottomSheet
+import me.rxresu.core.designsystem.RrTopBar
+import me.rxresu.core.designsystem.RrPageTitle
+import me.rxresu.core.designsystem.RrFooterBar
+import me.rxresu.core.designsystem.RrAlertDialog
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
@@ -235,14 +239,12 @@ internal fun SaveJobRoute(url: String?, nav: NavController) {
     val toasts = LocalToasts.current
     val haptics = rememberRrHaptics()
     val scope = rememberCoroutineScope()
-    val sheet = rememberRrBottomSheetState()
     val added = stringResource(R.string.app_added_at, state.role.trim(), state.company.trim())
     // `error` when the posting can't be read.
     LaunchedEffect(state.outcome) { if (state.outcome == ReadOutcome.Failed) haptics(RrHaptic.Error) }
     SaveJobSheet(
         state = state,
         time = vm.time,
-        sheetState = sheet,
         onDismiss = { nav.popBackStack() },
         onInput = vm::setInput,
         onRead = { vm.read(it) },
@@ -254,7 +256,6 @@ internal fun SaveJobRoute(url: String?, nav: NavController) {
             scope.launch {
                 val id = vm.save() ?: return@launch
                 haptics(RrHaptic.Success)
-                sheet.hide()
                 nav.popBackStack()
                 nav.navigate(if (prepare) NewDocument(copyForApplicationId = id) else ApplicationDest(id))
                 toasts.post(added)
@@ -276,12 +277,16 @@ internal fun SaveJobSheet(
     onOpenTracked: (String) -> Unit,
     onOpenApp: () -> Unit,
     onSave: (prepare: Boolean) -> Unit,
-    sheetState: me.rxresu.core.designsystem.RrBottomSheetState = rememberRrBottomSheetState(),
 ) {
     val c = RrTheme.colors
     val context = LocalContext.current
     var searching by remember { mutableStateOf(false) }
     var requirements by remember { mutableStateOf(false) }
+    var more by remember { mutableStateOf(false) }
+    var discard by remember { mutableStateOf(false) }
+    val dirty = state.role.isNotBlank() || state.company.isNotBlank() || state.input.isNotBlank()
+    val close = { if (dirty) discard = true else onDismiss() }
+    androidx.activity.compose.BackHandler(onBack = close)
     var pickDate by remember { mutableStateOf(false) }
     val dates = rememberDates(time.timezone())
     // Offer the clipboard's link only when it holds text; reading it happens on tap, so Android's paste notice is honest.
@@ -289,34 +294,24 @@ internal fun SaveJobSheet(
     val clipHasText = remember { clip?.primaryClipDescription?.hasMimeType("text/*") == true }
 
     Box(Modifier.fillMaxSize()) {
-        RrBottomSheet(
-            onDismissRequest = onDismiss,
-            state = sheetState,
-            title = stringResource(S.string.save_a_job),
-            detents = RrSheetDetents.Full,
-            confirmDiscard = state.role.isNotBlank() || state.company.isNotBlank() || state.input.isNotBlank(),
-            headerActions = if (state.signedIn) ({ RrButton(stringResource(R.string.app_search_postings), { searching = true }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Medium, icon = D.drawable.ic_ph_magnifying_glass) }) else null,
-            footer = if (state.signedIn) ({
-                Column {
-                    Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
-                    Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        RrButton(stringResource(S.string.save_and_prepare_resume), { onSave(true) }, Modifier.weight(1.4f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, enabled = state.canSave)
-                        RrButton(stringResource(if (state.stage == StartStage.Saved) S.string.save_job else S.string.record_application), { onSave(false) }, Modifier.weight(1f), size = RrButtonSize.Large, enabled = state.canSave, loading = state.saving)
-                    }
-                }
-            }) else null,
-        ) {
+        Column(Modifier.fillMaxSize().background(c.bg)) {
+            RrTopBar(onClose = close, actions = {
+                if (state.signedIn) RrButton(stringResource(R.string.app_search_postings), { searching = true }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small, icon = D.drawable.ic_ph_magnifying_glass)
+            })
+            RrPageTitle(stringResource(S.string.save_a_job))
             if (!state.signedIn) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     RrText(stringResource(R.string.app_sign_in_to_save), style = RrType.body, color = c.ink)
                     RrButton(stringResource(R.string.app_open_app), onOpenApp)
                 }
-                return@RrBottomSheet
+                return@Column
             }
             Column(
-                Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).padding(top = 24.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
+                Column(Modifier.padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 RrTextField(
                     state.input,
                     onInput,
@@ -337,17 +332,15 @@ internal fun SaveJobSheet(
                     RrCallout(stringResource(S.string.already_tracked_0_at_1_open_it_or_update_only_its_posting_details, dup.role, dup.company), tone = RrTone.Warn, actionLabel = stringResource(S.string.open_tracked_job), onAction = { onOpenTracked(dup.id) })
                 }
                 ReadStatus(state, onRead)
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    LoadingField(state.reading, Modifier.weight(1f)) { RrTextField(state.role, { v -> onChange { it.copy(role = v) } }, label = stringResource(S.string.role)) }
-                    LoadingField(state.reading, Modifier.weight(1f)) { RrTextField(state.company, { v -> onChange { it.copy(company = v) } }, label = stringResource(S.string.company)) }
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                LoadingField(state.reading, Modifier.fillMaxWidth()) { RrTextField(state.role, { v -> onChange { it.copy(role = v) } }, label = stringResource(S.string.role)) }
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    LoadingField(state.reading, Modifier.weight(1f)) { RrTextField(state.company, { v -> onChange { it.copy(company = v) } }, label = stringResource(S.string.company)) }
                     LoadingField(state.reading, Modifier.weight(1f)) { RrTextField(state.location, { v -> onChange { it.copy(location = v) } }, label = stringResource(S.string.location)) }
-                    LoadingField(state.reading, Modifier.weight(1f)) { RrTextField(state.salary, { v -> onChange { it.copy(salary = v) } }, label = stringResource(S.string.salary), placeholder = stringResource(S.string.optional_538bc1f07a)) }
                 }
                 Field(stringResource(S.string.stage)) {
                     RrSegmentedControl(
-                        listOf(RrSegment(stringResource(S.string.saved)), RrSegment(stringResource(R.string.app_already_applied)), RrSegment(stringResource(R.string.app_already_interviewing))),
+                        listOf(RrSegment(stringResource(S.string.saved)), RrSegment(stringResource(S.string.applied)), RrSegment(stringResource(R.string.app_interviewing))),
                         selectedIndex = state.stage.ordinal,
                         onSelect = { i -> onChange { it.copy(stage = StartStage.entries[i]) } },
                     )
@@ -358,19 +351,36 @@ internal fun SaveJobSheet(
                     DocumentChoice(stringResource(R.string.app_resume_optional), stringResource(S.string.no_resume_selected), state.documents.filter { it.type == DocumentType.Resume }, state.resumeId) { id -> onChange { it.copy(resumeId = id) } }
                     DocumentChoice(stringResource(S.string.cover_letter_optional), stringResource(S.string.no_cover_letter_selected), state.documents.filter { it.type == DocumentType.Letter }, state.letterId) { id -> onChange { it.copy(letterId = id) } }
                 }
+                }
+                androidx.compose.foundation.layout.Spacer(Modifier.height(12.dp))
                 val count = state.parsed?.requirements?.size ?: 0
                 if (count > 0) Column {
                     RrListRow(
                         stringResource(S.string.what_it_asks_for),
                         subtitle = pluralStringResource(R.plurals.app_requirements_read, count, count),
-                        icon = D.drawable.ic_ph_list_checks,
+                        tile = D.drawable.ic_ph_list_checks,
                         onClick = { requirements = true },
                         trailing = { RrRowCaret() },
+                        modifier = Modifier,
+                        divider = true,
                     )
                 }
+                RrListRow(stringResource(R.string.app_more_details), subtitle = stringResource(R.string.app_salary_application_date), tile = D.drawable.ic_ph_plus, onClick = { more = true }, trailing = { RrRowCaret() }, modifier = Modifier)
                 if (state.saveFailed) RrCallout(stringResource(R.string.app_couldnt_add), tone = RrTone.Danger)
-                // As on the web: only for a shared link, and never after the user chose to read it with AI.
-                if (state.captured && state.outcome != ReadOutcome.Ai) RrDisclosureLine(stringResource(R.string.app_capture_no_ai), icon = D.drawable.ic_ph_info)
+            }
+            if (state.signedIn) RrFooterBar {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    RrButton(stringResource(if (state.stage == StartStage.Saved) S.string.save_job else S.string.record_application), { onSave(false) }, Modifier.fillMaxWidth(), size = RrButtonSize.Large, enabled = state.canSave, loading = state.saving)
+                    RrButton(stringResource(S.string.save_and_prepare_resume), { onSave(true) }, Modifier.fillMaxWidth(), variant = RrButtonVariant.Ghost, size = RrButtonSize.Large, enabled = state.canSave)
+                }
+            }
+        }
+        if (discard) RrAlertDialog(stringResource(S.string.discard_changes_302d315bf9), "", stringResource(S.string.discard), onConfirm = onDismiss, onDismissRequest = { discard = false }, dismissLabel = stringResource(S.string.keep_editing))
+        if (more) RrBottomSheet({ more = false }, title = stringResource(R.string.app_more_details), fitContent = true) {
+            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                RrTextField(state.salary, { v -> onChange { it.copy(salary = v) } }, label = stringResource(S.string.salary))
+                RrPickerField(state.appliedOn?.let(dates::fullDate).orEmpty(), { pickDate = !pickDate }, label = stringResource(S.string.application_date))
+                if (pickDate) RrDatePicker(state.appliedOn, { d -> onChange { it.copy(appliedOn = d) }; pickDate = false }, today = time.today(), max = time.today())
             }
         }
         if (requirements) RrBottomSheet(onDismissRequest = { requirements = false }, title = stringResource(S.string.what_it_asks_for), fitContent = true) {
@@ -413,7 +423,7 @@ private fun ReadStatus(state: SaveJobState, onRead: (Boolean) -> Unit) {
         // As on the web: a read that left the role or company empty says so instead of "Found".
         (state.outcome == ReadOutcome.Page || state.outcome == ReadOutcome.Ai) && (state.parsed?.role.isNullOrBlank() || state.parsed?.company.isNullOrBlank()) ->
             StatusLine(stringResource(R.string.app_some_details_unread), c.warnText, D.drawable.ic_ph_warning_circle)
-        state.outcome == ReadOutcome.Page || state.outcome == ReadOutcome.Ai -> StatusLine(stringResource(R.string.app_found_role_company), c.accentText)
+        state.outcome == ReadOutcome.Page || state.outcome == ReadOutcome.Ai -> StatusLine(stringResource(R.string.app_found_review), c.accentText)
         state.outcome == ReadOutcome.Guessed -> StatusLine(stringResource(R.string.app_filled_first_line), c.ink2)
     }
     if (state.clipped) RrCallout(stringResource(S.string.this_description_is_clipped_or_incomplete_review_it_or_paste_the_full_description_before_preparing), tone = RrTone.Warn)
@@ -421,8 +431,8 @@ private fun ReadStatus(state: SaveJobState, onRead: (Boolean) -> Unit) {
 
 @Composable
 private fun StatusLine(text: String, color: androidx.compose.ui.graphics.Color, icon: Int = D.drawable.ic_ph_check_circle) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        RrIcon(icon, null, size = 18.dp, tint = color)
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        RrIcon(icon, null, Modifier.height(18.dp), size = 16.dp, tint = color)
         RrText(text, style = RrType.small, color = color)
     }
 }

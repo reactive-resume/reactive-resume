@@ -158,7 +158,7 @@ internal fun filterRows(rows: List<Row>, f: ApplicationFilters): List<Row> = row
         (f.text.isBlank() || listOfNotNull(app.company, app.role, app.location, app.notes).any { it.contains(f.text.trim(), ignoreCase = true) })
 }
 
-/** Groups in list order, each lane separately, rows by next step: dated steps soonest first, then the longest wait. */
+/** Stage groups retain the repository's requested application order within each lane. */
 internal fun groupRows(rows: List<Row>, lanes: List<Lane>): List<Pair<Lane?, List<Row>>> {
     val order = activeLanes(lanes)
     return ListOrder.flatMap { stage ->
@@ -166,16 +166,6 @@ internal fun groupRows(rows: List<Row>, lanes: List<Lane>): List<Pair<Lane?, Lis
         val laneGroups = order.filter { it.category == stage }.map { lane -> lane to inStage.filter { displayLane(lanes, it.app)?.id == lane.id } }
         val unplaced = inStage.filter { r -> laneGroups.none { (_, rs) -> r in rs } }
         (laneGroups + listOf<Pair<Lane?, List<Row>>>(null to unplaced)).filter { it.second.isNotEmpty() }
-            .map { (lane, rs) -> lane to rs.sortedWith(compareBy<Row>({ sortKey(it).first }, { sortKey(it).second }, { it.app.id })) }
+            .map { (lane, rs) -> lane to rs }
     }
-}
-
-/** packages/schema nextStepSortKey: rank 0 for dated steps (soonest first), then the longest wait. */
-internal fun sortKey(row: Row): Pair<Int, Long> {
-    val s = row.step
-    if (s.kind == me.rxresu.core.data.NextStepKind.Interview || s.kind == me.rxresu.core.data.NextStepKind.FollowUp) return 0 to (s.at?.toEpochMilli() ?: Long.MAX_VALUE)
-    if (s.kind == me.rxresu.core.data.NextStepKind.Offer && s.at != null) return 0 to s.at!!.toEpochMilli()
-    val since = row.app.activity.filterIsInstance<me.rxresu.core.network.generated.StageTimelineEntry>().filter { it.stage == row.app.status }.maxByOrNull { it.at }?.at
-        ?: row.app.appliedAt
-    return 1 to (runCatching { Instant.parse(since).toEpochMilli() }.getOrDefault(Long.MAX_VALUE))
 }

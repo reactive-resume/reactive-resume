@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -48,6 +48,10 @@ import me.rxresu.core.data.RrRepositories
 import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as DsR
+import me.rxresu.core.designsystem.RrPageTitle
+import me.rxresu.core.designsystem.RrListRow
+import me.rxresu.core.designsystem.RrRowCaret
+import me.rxresu.core.designsystem.RrRowValue
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
@@ -185,41 +189,43 @@ internal fun MessagesTab(applicationId: String, nav: NavController) {
     val logFailed = stringResource(S.string.couldn_t_log_the_follow_up_check_the_timeline_before_trying_again)
     val replyLogged = stringResource(S.string.reply_copied_and_logged_as_replied)
     val replyNotLogged = stringResource(S.string.reply_copied_logging_wasn_t_confirmed_check_the_timeline_before_trying_again)
-    Loaded(load, vm::load) { state ->
-        val subject = state.subject.ifBlank { stringResource(R.string.workspace_application_subject, state.context.app.role) }
-        MessagesScreen(
-            state,
-            subject = subject,
-            onKind = vm::select,
-            onBody = vm::editBody,
-            onPasted = vm::editPasted,
-            onDraft = { vm.draft(locale) },
-            onStop = vm::stop,
-            onCopy = {
-                context.copyToClipboard(subject, state.body)
-                haptics(RrHaptic.Success)
-                scope.launch { toasts.show(copied) }
-            },
-            onMail = {
-                val to = state.contact?.email.orEmpty()
-                val uri = ("mailto:" + Uri.encode(to) + "?subject=" + Uri.encode(subject) + "&body=" + Uri.encode(state.body)).toUri()
-                runCatching { context.startActivity(Intent(Intent.ACTION_SENDTO, uri)) }
-            },
-            onAddContact = { nav.openTab(applicationId, WorkspaceTab.Overview) },
-            onOffers = { nav.navigate(Offers) },
-            onLogFollowUp = {
-                scope.launch {
-                    if (vm.logFollowUp()) { haptics(RrHaptic.Success); toasts.show(followed) } else toasts.show(logFailed)
-                }
-            },
-            onCopyAndLogReply = {
-                context.copyToClipboard(subject, state.body)
-                scope.launch {
-                    if (vm.logReply()) { haptics(RrHaptic.Success); toasts.show(replyLogged) } else toasts.show(replyNotLogged)
-                }
-            },
-            onSetUpAi = { nav.navigate(SettingsAi) },
-        )
+    Loaded(load, vm::load, onBack = { nav.popBackStack() }) { state ->
+        WorkspaceFrame(onCoach = { vm.draft(locale) }, onBack = { nav.popBackStack() }, onSettings = { nav.navigate(me.rxresu.core.navigation.SettingsAi) }) {
+            val subject = state.subject.ifBlank { stringResource(R.string.workspace_application_subject, state.context.app.role) }
+            MessagesScreen(
+                state,
+                subject = subject,
+                onKind = vm::select,
+                onBody = vm::editBody,
+                onPasted = vm::editPasted,
+                onDraft = { vm.draft(locale) },
+                onStop = vm::stop,
+                onCopy = {
+                    context.copyToClipboard(subject, state.body)
+                    haptics(RrHaptic.Success)
+                    scope.launch { toasts.show(copied) }
+                },
+                onMail = {
+                    val to = state.contact?.email.orEmpty()
+                    val uri = ("mailto:" + Uri.encode(to) + "?subject=" + Uri.encode(subject) + "&body=" + Uri.encode(state.body)).toUri()
+                    runCatching { context.startActivity(Intent(Intent.ACTION_SENDTO, uri)) }
+                },
+                onAddContact = { nav.openTab(applicationId, WorkspaceTab.Overview) },
+                onOffers = { nav.navigate(Offers) },
+                onLogFollowUp = {
+                    scope.launch {
+                        if (vm.logFollowUp()) { haptics(RrHaptic.Success); toasts.show(followed) } else toasts.show(logFailed)
+                    }
+                },
+                onCopyAndLogReply = {
+                    context.copyToClipboard(subject, state.body)
+                    scope.launch {
+                        if (vm.logReply()) { haptics(RrHaptic.Success); toasts.show(replyLogged) } else toasts.show(replyNotLogged)
+                    }
+                },
+                onSetUpAi = { nav.navigate(SettingsAi) },
+            )
+        }
     }
 }
 
@@ -243,49 +249,31 @@ internal fun MessagesScreen(
     val c = RrTheme.colors
     val provider = state.context.provider
     val hasDraft = state.body.isNotBlank()
-    TabBody(
-        footer = when {
-            state.kind == MessageKind.FollowUp -> { { RrButton(stringResource(R.string.workspace_log_follow_up), onLogFollowUp, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_check) } }
-            hasDraft -> { { RrButton(stringResource(S.string.copy_and_log_as_replied), onCopyAndLogReply, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_check) } }
-            else -> null
-        },
-    ) {
+    var kinds by remember { mutableStateOf(false) }
+    var editing by remember { mutableStateOf(false) }
+    TabBody(footer = if (hasDraft) ({
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            RrButton(stringResource(S.string.copy), onCopy, Modifier.weight(1f), size = RrButtonSize.Large, variant = RrButtonVariant.Secondary, icon = DsR.drawable.ic_ph_copy)
+            RrButton(stringResource(R.string.workspace_open_in_mail), onMail, Modifier.weight(1f), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_envelope_simple)
+        }
+    }) else null) {
+        RrPageTitle(stringResource(S.string.messages), subtitle = "${state.context.app.company} · ${state.context.app.role}", subtitleColor = c.ink3)
         AiDestinationNotice(state.context)
-        Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                RrFilterChip(stringResource(S.string.follow_up_2a747118b4), state.kind == MessageKind.FollowUp, { onKind(MessageKind.FollowUp) })
-                RrFilterChip(stringResource(S.string.reply), state.kind == MessageKind.Reply, { onKind(MessageKind.Reply) })
-            }
-            if (state.kind == MessageKind.Reply && state.reply == null) {
-                RrTextField(state.pasted, onPasted, label = stringResource(S.string.paste_a_message_from_company, state.context.app.company), helper = stringResource(S.string.paste_the_email_or_message_without_the_signature), singleLine = false, minLines = 5)
-            }
+        RrListRow(stringResource(R.string.workspace_kind), Modifier.padding(top = 16.dp), divider = true, onClick = { kinds = true }, trailing = { Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) { RrText(stringResource(if (state.kind == MessageKind.FollowUp) S.string.follow_up_2a747118b4 else S.string.reply), style = RrType.ui, color = c.ink3); RrRowCaret() } })
+        RrListRow(stringResource(R.string.workspace_to), trailing = {
+            val contact = state.contact
+            if (contact != null) RrText(listOfNotNull(contact.name, contact.role?.takeIf(String::isNotBlank)).joinToString(" · "), style = RrType.ui, color = c.ink3)
+            else RrButton(stringResource(R.string.workspace_add_a_contact), onAddContact, variant = RrButtonVariant.GhostAccent)
+        })
+        Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 12.dp)) {
+            if (state.kind == MessageKind.Reply && state.reply == null) RrTextField(state.pasted, onPasted, label = stringResource(S.string.paste_a_message_from_company, state.context.app.company), singleLine = false, minLines = 5)
             if (hasDraft) {
+                RrText(stringResource(R.string.workspace_subject), style = RrType.rowTitle)
+                RrText(subject, Modifier.padding(top = 2.dp), style = RrType.ui, color = c.ink3)
                 val reduced = LocalReducedMotion.current
-                RrCard(raised = true) {
-                    Field(stringResource(R.string.workspace_to)) {
-                        val contact = state.contact
-                        if (contact == null) RrText(stringResource(R.string.workspace_add_a_contact), Modifier.clickable(role = Role.Button, onClick = onAddContact), style = RrType.ui, color = c.accentText)
-                        else RrText(listOfNotNull(contact.name, contact.role?.takeIf { it.isNotBlank() }).joinToString(" · "), style = RrType.ui, color = c.ink)
-                    }
-                    Spacer(Modifier.fillMaxWidth().height(1.dp).background(c.line))
-                    Field(stringResource(R.string.workspace_subject)) { RrText(subject, style = RrType.ui, color = c.ink) }
-                    Spacer(Modifier.fillMaxWidth().height(1.dp).background(c.line))
-                    if (state.kind == MessageKind.Reply) RrText(stringResource(S.string.suggested_reply_edit_before_sending), style = RrType.caption, color = c.ink3)
-                    // Redraft fades the body out while drafting and the new words in (d2).
-                    val fade by animateFloatAsState(if (state.drafting) 0.4f else 1f, RrMotion.spec(RrMotion.D2, reduced), label = "draft")
-                    val label = stringResource(R.string.workspace_message_body)
-                    BasicTextField(
-                        state.body,
-                        onBody,
-                        Modifier.fillMaxWidth().graphicsLayer { alpha = fade }.semantics { contentDescription = label },
-                        textStyle = RrType.body.copy(color = c.ink),
-                        cursorBrush = SolidColor(c.accent),
-                    )
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    RrButton(stringResource(S.string.copy), onCopy, variant = RrButtonVariant.Secondary, icon = DsR.drawable.ic_ph_copy)
-                    RrButton(stringResource(R.string.workspace_open_in_mail), onMail, variant = RrButtonVariant.Secondary, icon = DsR.drawable.ic_ph_envelope_simple)
-                    if (provider != null && !state.drafting) RrButton(stringResource(R.string.workspace_redraft), onDraft, variant = RrButtonVariant.Ghost, icon = DsR.drawable.ic_ph_sparkle, iconTint = c.accentText)
+                val fade by animateFloatAsState(if (state.drafting) 0.4f else 1f, RrMotion.spec(RrMotion.D2, reduced), label = "draft")
+                Column(Modifier.fillMaxWidth().padding(top = 28.dp).graphicsLayer { alpha = fade }.clickable(role = Role.Button, onClickLabel = stringResource(S.string.edit)) { editing = true }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    state.body.split("\n\n").forEach { paragraph -> RrText(paragraph, style = RrType.prose, color = c.ink) }
                 }
                 state.reply?.offer?.takeIf { state.kind == MessageKind.Reply }?.let {
                     RrCallout(stringResource(S.string.no_terms_were_extracted_opens_in_career_offers), title = stringResource(S.string.save_these_offer_terms_to_compare), actionLabel = stringResource(S.string.open_in_offers), onAction = onOffers)
@@ -294,15 +282,19 @@ internal fun MessagesScreen(
             when {
                 state.drafting -> Working(if (state.kind == MessageKind.Reply) listOf(S.string.reading_the_message, S.string.spotting_what_changed, S.string.drafting_a_reply) else listOf(S.string.drafting), onStop)
                 provider == null -> RrCallout(stringResource(S.string.connect_an_ai_provider), actionLabel = stringResource(S.string.set_up_ai), onAction = onSetUpAi)
-                !hasDraft -> RrButton(
-                    stringResource(if (state.kind == MessageKind.Reply) S.string.read_it_for_me else R.string.workspace_draft_follow_up),
-                    onDraft,
-                    icon = DsR.drawable.ic_ph_sparkle,
-                    enabled = state.kind == MessageKind.FollowUp || state.pasted.isNotBlank(),
-                )
+                !hasDraft -> RrButton(stringResource(if (state.kind == MessageKind.Reply) S.string.read_it_for_me else R.string.workspace_draft_follow_up), onDraft, icon = DsR.drawable.ic_ph_sparkle, enabled = state.kind == MessageKind.FollowUp || state.pasted.isNotBlank())
             }
             if (state.failed) RrCallout(stringResource(S.string.couldn_t_complete_this_action_try_again), tone = RrTone.Danger)
         }
+    }
+    if (editing) WindowSheet({ editing = false }, stringResource(R.string.workspace_message_body)) {
+        RrTextField(state.body, onBody, label = stringResource(R.string.workspace_message_body), singleLine = false, minLines = 8)
+    }
+    if (kinds) WindowSheet({ kinds = false }, stringResource(R.string.workspace_kind), fitContent = true) {
+        RrListRow(stringResource(S.string.follow_up_2a747118b4), onClick = { kinds = false; onKind(MessageKind.FollowUp) })
+        RrListRow(stringResource(S.string.reply), onClick = { kinds = false; onKind(MessageKind.Reply) })
+        if (hasDraft) RrListRow(stringResource(R.string.workspace_redraft), onClick = { kinds = false; onDraft() }, enabled = provider != null && !state.drafting)
+        RrListRow(stringResource(if (state.kind == MessageKind.FollowUp) R.string.workspace_log_follow_up else S.string.copy_and_log_as_replied), onClick = { kinds = false; if (state.kind == MessageKind.FollowUp) onLogFollowUp() else onCopyAndLogReply() })
     }
 }
 

@@ -29,6 +29,8 @@ import kotlinx.coroutines.launch
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
 import me.rxresu.core.designsystem.R as DsR
+import me.rxresu.core.designsystem.RrRowValue
+import me.rxresu.core.designsystem.RrPageTitle
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrEmptyState
@@ -108,15 +110,17 @@ internal fun LibraryTab(applicationId: String, nav: NavController) {
     val scope = rememberCoroutineScope()
     val deleted = stringResource(S.string.deleted_from_library)
     val failed = stringResource(S.string.couldn_t_complete_this_action_try_again)
-    Loaded(load, vm::load) { state ->
-        LibraryScreen(
-            state,
-            dates = rememberDates(repos.time.timezone()),
-            onFilter = vm::filter,
-            onOpenTab = { kind -> if (kind.tab == null) nav.navigate(Offers) else nav.openTab(applicationId, kind.tab) },
-            onDelete = { item -> scope.launch { toasts.show(if (vm.delete(item)) deleted else failed) } },
-            onCheckFit = { nav.openTab(applicationId, WorkspaceTab.Fit) },
-        )
+    Loaded(load, vm::load, onBack = { nav.popBackStack() }) { state ->
+        WorkspaceFrame(onBack = { nav.popBackStack() }, onSettings = { nav.navigate(me.rxresu.core.navigation.SettingsAi) }) {
+            LibraryScreen(
+                state,
+                dates = rememberDates(repos.time.timezone()),
+                onFilter = vm::filter,
+                onOpenTab = { kind -> if (kind.tab == null) nav.navigate(Offers) else nav.openTab(applicationId, kind.tab) },
+                onDelete = { item -> scope.launch { toasts.show(if (vm.delete(item)) deleted else failed) } },
+                onCheckFit = { nav.openTab(applicationId, WorkspaceTab.Fit) },
+            )
+        }
     }
 }
 
@@ -131,7 +135,9 @@ internal fun LibraryScreen(
 ) {
     val c = RrTheme.colors
     var open by remember { mutableStateOf<SavedItem?>(null) }
+    var filterPicker by remember { mutableStateOf(false) }
     TabBody {
+        RrPageTitle(stringResource(S.string.application_workspace_tab_earlier_results_kept_for_this_job_library), subtitle = "${state.context.app.company} · ${state.context.app.role}", subtitleColor = c.ink3)
         if (state.context.saved.none { LibraryKind.of(it.data) != null }) {
             Column(Modifier.padding(16.dp)) {
                 RrEmptyState(
@@ -143,13 +149,7 @@ internal fun LibraryScreen(
             }
             return@TabBody
         }
-        Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            RrText(stringResource(S.string.library_items_for_company_newest_first, state.context.app.company), style = RrType.small, color = c.ink3)
-            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                RrFilterChip(stringResource(S.string.all), state.filter == null, { onFilter(null) })
-                state.kinds.forEach { kind -> RrFilterChip(stringResource(kind.label), state.filter == kind, { onFilter(kind) }) }
-            }
-        }
+        RrListRow(stringResource(R.string.workspace_kind), Modifier.padding(top = 16.dp), divider = true, onClick = { filterPicker = true }, trailing = { RrRowValue(stringResource(state.filter?.label ?: S.string.all)) })
         Column(Modifier.padding(top = 12.dp)) {
             Group {
                 state.items.forEach { item ->
@@ -165,6 +165,10 @@ internal fun LibraryScreen(
                 }
             }
         }
+    }
+    if (filterPicker) WindowSheet({ filterPicker = false }, stringResource(R.string.workspace_kind), fitContent = true) {
+        RrListRow(stringResource(S.string.all), onClick = { onFilter(null); filterPicker = false })
+        state.kinds.forEach { kind -> RrListRow(stringResource(kind.label), onClick = { onFilter(kind); filterPicker = false }) }
     }
     open?.let { item ->
         val kind = LibraryKind.of(item.data)!!

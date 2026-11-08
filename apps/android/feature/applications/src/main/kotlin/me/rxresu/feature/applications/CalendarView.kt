@@ -58,6 +58,8 @@ import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrIconButton
 import me.rxresu.core.designsystem.RrIconButtonSize
 import me.rxresu.core.designsystem.RrLargeTitleState
+import me.rxresu.core.designsystem.RrListRow
+import me.rxresu.core.designsystem.RrRowCaret
 import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrSectionHeader
@@ -98,7 +100,7 @@ internal fun CalendarView(
     dates: Dates,
     today: LocalDate,
     title: RrLargeTitleState,
-    onOpen: (String) -> Unit,
+    onOpen: (CalendarItem) -> Unit,
     onSchedule: () -> Unit,
     onAddToCalendar: (CalendarEvent) -> Unit,
 ) {
@@ -131,18 +133,6 @@ internal fun CalendarView(
 
     LazyColumn(Modifier.fillMaxSize().rrLargeTitleScroll(title), contentPadding = PaddingValues(bottom = 24.dp)) {
         item {
-            Row(Modifier.fillMaxWidth().heightIn(min = 36.dp).padding(start = 16.dp, end = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                RrText(
-                    dates.monthYear(selected),
-                    Modifier.weight(1f).clip(RrShape.md).selectable(false, role = Role.Button) { monthSheet = true }.padding(vertical = 4.dp),
-                    style = RrType.sectionHeading,
-                    color = c.ink,
-                )
-                RrIconButton(D.drawable.ic_ph_caret_left, stringResource(R.string.app_prev_week), { select(selected.minusWeeks(1)) }, size = RrIconButtonSize.Small, mirrorInRtl = true)
-                RrIconButton(D.drawable.ic_ph_caret_right, stringResource(R.string.app_next_week), { select(selected.plusWeeks(1)) }, size = RrIconButtonSize.Small, mirrorInRtl = true)
-            }
-        }
-        item {
             AnimatedContent(
                 week.first(),
                 transitionSpec = {
@@ -158,28 +148,22 @@ internal fun CalendarView(
         }
         item {
             Crossfade(selected, animationSpec = if (reduced) tween(0) else tween(RrMotion.D2), label = "agenda") { day ->
-                Column(Modifier.padding(top = 8.dp)) {
-                    RrSectionHeader(dates.weekdayLong(day))
+                Column {
+                    RrSectionHeader(java.time.format.DateTimeFormatter.ofPattern("EEEE d MMMM", dates.locale).format(day), topPadding = 20.dp)
                     val dayItems = byDay[day].orEmpty()
                     if (dayItems.isEmpty()) RrText(stringResource(S.string.nothing_scheduled_yet_b76ac1b9fc), Modifier.padding(horizontal = 16.dp), style = RrType.small, color = c.ink3)
-                    else RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                        dayItems.forEach { item -> EventRow(item, appsById[item.applicationId], dates, state.briefings, timeLabel = true, onOpen, onAddToCalendar) }
+                    else RrListGroup {
+                        dayItems.forEachIndexed { i, item -> EventRow(item, appsById[item.applicationId], dates, state.briefings, timeLabel = true, onOpen, onAddToCalendar, divider = i < dayItems.lastIndex) }
                     }
                     val upcoming = byDay.filterKeys { it > day }.values.flatten().take(10)
-                    if (upcoming.isNotEmpty()) {
-                        RrSectionHeader(stringResource(R.string.app_upcoming))
-                        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                            upcoming.forEach { item -> EventRow(item, appsById[item.applicationId], dates, state.briefings, timeLabel = false, onOpen, onAddToCalendar, from = day) }
-                        }
+                    upcoming.groupBy { Instant.parse(it.at).atZone(dates.zone).toLocalDate() }.forEach { (nextDay, events) ->
+                        RrSectionHeader(java.time.format.DateTimeFormatter.ofPattern("EEEE d MMMM", dates.locale).format(nextDay))
+                        events.forEachIndexed { i, item -> EventRow(item, appsById[item.applicationId], dates, state.briefings, timeLabel = false, onOpen, onAddToCalendar, from = day, divider = i < events.lastIndex) }
                     }
                 }
             }
         }
-        item {
-            Box(Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp)) {
-                RrButton(stringResource(S.string.schedule_interview), onSchedule, Modifier.fillMaxWidth(), variant = RrButtonVariant.Secondary, icon = D.drawable.ic_ph_calendar_plus)
-            }
-        }
+
     }
 
     if (monthSheet) {
@@ -219,7 +203,7 @@ private fun WeekStrip(
         },
         selected = selected,
         onSelect = onTap,
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier,
         today = today,
         onWeekChange = { onWeek(selected.plusWeeks(it.toLong())) },
     )
@@ -233,17 +217,18 @@ private fun EventRow(
     dates: Dates,
     briefings: Set<String>,
     timeLabel: Boolean,
-    onOpen: (String) -> Unit,
+    onOpen: (CalendarItem) -> Unit,
     onAddToCalendar: (CalendarEvent) -> Unit,
     from: LocalDate? = null,
+    divider: Boolean = false,
 ) {
     val c = RrTheme.colors
     val at = runCatching { Instant.parse(item.at) }.getOrNull() ?: return
     val interview = app?.activity?.filterIsInstance<Interview>()?.firstOrNull { it.id == item.id }
     val day = at.atZone(dates.zone).toLocalDate()
     val left = when {
-        timeLabel && item.kind == "interview" -> dates.time(at)
-        timeLabel -> ""
+        item.kind != "offer" -> dates.time(at)
+        item.kind == "offer" -> stringResource(R.string.app_all_day)
         from != null && day.toEpochDay() - from.toEpochDay() < 7 -> dates.weekday(day)
         else -> dates.dayMonth(at)
     }
@@ -255,37 +240,15 @@ private fun EventRow(
             title = "${item.company} · ${stringResource(S.string.kind_interview, kind)}"
             val zone = item.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() }
             val other = zone?.takeIf { it.rules != dates.zone.rules }?.let { stringResource(R.string.app_shown_in_zone, Dates(dates.locale, it, true).time(at), it.id.substringAfterLast('/').replace('_', ' ')) }
-            sub = listOfNotNull(
-                if (!timeLabel) dates.time(at) else null,
-                item.durationMinutes?.let { stringResource(R.string.app_minutes_length, it.toInt()) },
-                interview?.location?.takeIf(String::isNotBlank),
-                other,
-            ).joinToString(" · ")
+            sub = listOfNotNull(if (interview?.location?.startsWith("http") == true) stringResource(R.string.app_video_call) else interview?.location?.takeIf(String::isNotBlank), interview?.participants?.firstOrNull()?.name?.let { stringResource(R.string.app_with_person, it) }, other).joinToString(" · ")
         }
-        "offer" -> { title = "${stringResource(S.string.reply_to_the_offer)} · ${item.company}"; sub = stringResource(R.string.app_respond_by_day) }
-        else -> { title = "${stringResource(S.string.follow_up)} · ${item.company}"; sub = app?.followUpNote?.takeIf(String::isNotBlank) ?: stringResource(R.string.app_reminder_you_set) }
+        "offer" -> { title = stringResource(R.string.app_offer_deadline, item.company); sub = stringResource(R.string.app_reply_end_day) }
+        else -> { title = stringResource(R.string.app_follow_company, item.company); sub = stringResource(R.string.app_reminder) }
     }
     val largeText = androidx.compose.ui.platform.LocalDensity.current.fontScale >= 1.5f
     val event = if (item.kind == "interview") CalendarEvent(item.id, title, at, item.durationMinutes ?: 60, interview?.location, interview?.notes) else null
-    Row(
-        Modifier.fillMaxWidth()
-            .then(if (app != null) Modifier.combinedClickable(onClick = { onOpen(item.applicationId) }, onLongClick = event?.let { { onAddToCalendar(it) } }, onLongClickLabel = stringResource(S.string.add_to_calendar)) else Modifier)
-            .padding(horizontal = 14.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        if (!largeText) RrText(left, Modifier.width(44.dp), style = RrType.mono.copy(fontSize = 13.sp, lineHeight = 18.sp), color = c.ink2)
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            if (largeText && left.isNotBlank()) RrText(left, style = RrType.mono, color = c.ink2)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                when (item.kind) {
-                    "interview" -> RrStageDot((app?.status ?: ApplicationStage.Interview).rr())
-                    "offer" -> RrStageDot(ApplicationStage.Offer.rr())
-                    else -> WarnDot()
-                }
-                RrText(title, style = if (timeLabel) RrType.label else RrType.ui, color = c.ink)
-            }
-            if (sub.isNotBlank()) RrText(sub, style = RrType.small, color = c.ink3)
-            if (item.kind == "interview" && item.id in briefings && timeLabel) Box(Modifier.padding(top = 4.dp)) { RrBadge(stringResource(S.string.briefing_ready), tone = RrBadgeTone.Accent) }
-        }
-    }
+    RrListRow(title, subtitle = sub, leading = { RrText(left, Modifier.width(60.dp), style = RrType.ui.copy(fontFamily = me.rxresu.core.designsystem.GeistMono, fontWeight = androidx.compose.ui.text.font.FontWeight.Medium), color = c.ink2) },
+        onClick = if (app != null) ({ onOpen(item) }) else null,
+        onLongClick = event?.let { { onAddToCalendar(it) } }, onLongClickLabel = stringResource(S.string.add_to_calendar), divider = divider,
+        trailing = { RrRowCaret() })
 }
