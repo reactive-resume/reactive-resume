@@ -112,6 +112,15 @@ raise "Every main push must trigger release without path filters" unless events.
 raise "Releases must queue rather than cancel pending uploads" unless
   workflow.fetch("concurrency").values_at("group", "cancel-in-progress", "queue") == ["mobile-release", false, "max"]
 jobs = workflow.fetch("jobs")
+%w[build-native preview-native].each do |name|
+  job = jobs.fetch(name)
+  raise "Native CI must override the modest local build heap" unless
+    job.fetch("env").fetch("GRADLE_OPTS").include?('-Dorg.gradle.jvmargs="-Xmx8g ')
+  gradle_commands = job.fetch("steps").filter_map { |step| step["run"] }
+    .flat_map(&:lines).select { |line| line.include?("./gradlew") }
+  raise "Native CI must bound resource/test concurrency" unless
+    gradle_commands.length == 2 && gradle_commands.all? { |line| line.include?("--max-workers=1") }
+end
 push = { event: "push", platform: nil, format: nil, upload: nil }
 dispatch = { event: "workflow_dispatch" }
 raise "Push must build only the Kotlin AAB" unless

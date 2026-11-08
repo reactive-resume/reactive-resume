@@ -230,6 +230,7 @@ jobs:
     env:
       PLATFORM: android-native
       MOBILE_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"'
     defaults:
       run:
         working-directory: apps/android
@@ -270,7 +271,7 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
       - name: Run lint and unit tests (screenshots render; goldens are compared on macOS only)
-        run: ./gradlew lint testDebugUnitTest
+        run: ./gradlew lint testDebugUnitTest --max-workers=1
       - name: Build signed binary
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -283,7 +284,7 @@ jobs:
           trap 'rm -f "$keystore"' EXIT
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$keystore"
           task=$([[ "$FORMAT" == apk ]] && echo assembleRelease || echo bundleRelease)
-          ./gradlew ":app:$task" "-Prr.versionCode=$MOBILE_BUILD_NUMBER" \
+          ./gradlew ":app:$task" --max-workers=1 "-Prr.versionCode=$MOBILE_BUILD_NUMBER" \
             "-Pandroid.injected.signing.store.file=$keystore" \
             "-Pandroid.injected.signing.store.password=$ANDROID_KEYSTORE_PASSWORD" \
             "-Pandroid.injected.signing.key.alias=$ANDROID_KEY_ALIAS" \
@@ -329,6 +330,7 @@ jobs:
     timeout-minutes: 60
     env:
       MOBILE_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"'
     defaults:
       run:
         working-directory: apps/android
@@ -359,11 +361,11 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
       - name: Run unit tests (screenshots render; goldens are compared on macOS only)
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest --max-workers=1
       - name: Build preview APK
         run: |
           set -euo pipefail
-          ./gradlew :app:assemblePreview "-Prr.versionCode=$MOBILE_BUILD_NUMBER"
+          ./gradlew :app:assemblePreview --max-workers=1 "-Prr.versionCode=$MOBILE_BUILD_NUMBER"
           mkdir -p "$RUNNER_TEMP/mobile-release"
           apk="$RUNNER_TEMP/mobile-release/reactive-resume-preview-$MOBILE_BUILD_NUMBER.apk"
           cp app/build/outputs/apk/preview/app-preview.apk "$apk"

@@ -105,6 +105,8 @@ canceled builds do not upload. Internal Testing uses the native Android checks; 
 production submissions retain the exact-source successful main-CI gate below.
 
 Both native store and preview builds install the Node dependencies used by the import reader.
+They override the local Gradle limits with an 8 GiB build heap and one worker: running resource
+merges, lint and Robolectric together with the local 3 GiB/three-worker settings exhausted CI's Java heap.
 No new signing key, package, service account or Actions secret is required.
 
 ### Manual production and artifact builds
