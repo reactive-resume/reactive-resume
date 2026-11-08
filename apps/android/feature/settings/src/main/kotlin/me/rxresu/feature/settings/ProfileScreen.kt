@@ -9,17 +9,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.liveRegion
 import java.util.Locale
 import kotlinx.serialization.json.*
 import me.rxresu.core.designsystem.*
@@ -29,6 +29,223 @@ import me.rxresu.core.strings.R as CR
 
 @Composable
 internal fun ProfileScreen(
+    s: ProfileState,
+    edit: ((ProfileData) -> ProfileData) -> Unit = {},
+    save: () -> Unit = {},
+    reload: () -> Unit = {},
+    delete: () -> Unit = {},
+    back: () -> Unit = {},
+    timezone: String = "UTC",
+    career: CareerProfile? = null,
+    openPreferences: () -> Unit = {},
+) {
+    var details by remember { mutableStateOf(false) }
+    var discard by remember { mutableStateOf(false) }
+    val invalid = if (s.invalid) invalidProfileField(s.draft) else null
+    if (details || (invalid != null && invalid != "email")) {
+        ProfileDetailsScreen(
+            s,
+            edit,
+            save,
+            reload,
+            delete,
+            {
+                details = false
+                if (invalid != null) back()
+            },
+            timezone,
+        )
+        return
+    }
+    val leave = { if (s.dirty) discard = true else back() }
+    BackHandler(s.dirty) { leave() }
+    // Revisions and failed drafts stay owned by ProfileViewModel; debounce only triggers its
+    // guarded save.
+    LaunchedEffect(s.draft, s.dirty, s.busy) {
+        if (s.dirty && !s.busy && !s.error && !s.loading && !s.loadFailed) {
+            kotlinx.coroutines.delay(500)
+            save()
+        }
+    }
+    SettingsFrame(
+        stringResource(R.string.v2_application_profile),
+        leave,
+        subtitle = stringResource(R.string.v2_profile_intro),
+    ) {
+        if (s.loading) RrSkeletonText(Modifier.padding(24.dp), lines = 5)
+        else if (s.loadFailed) {
+            ErrorCallout()
+            RrButton(
+                stringResource(R.string.screen_reload),
+                reload,
+                Modifier.padding(24.dp),
+                variant = RrButtonVariant.Secondary,
+            )
+        } else {
+            if (s.error) ErrorCallout()
+            Column(
+                Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                // Account schema stores given/family names separately; keep that editor rather than
+                // guessing a split.
+                RrPickerField(
+                    listOfNotNull(
+                            s.draft.givenName?.takeIf { it.isNotBlank() },
+                            s.draft.familyName?.takeIf { it.isNotBlank() },
+                        )
+                        .joinToString(" "),
+                    { details = true },
+                    label = stringResource(R.string.v2_full_name),
+                    trailingIcon = null,
+                    enabled = !s.busy,
+                )
+                RrTextField(
+                    emailText(s.draft.email),
+                    { v -> edit { it.copy(email = JsonPrimitive(v)) } },
+                    label = stringResource(CR.string.email),
+                    error =
+                        if (invalid == "email")
+                            stringResource(CR.string.enter_a_valid_email_address)
+                        else null,
+                    ltr = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    enabled = !s.busy,
+                )
+                RrTextField(
+                    s.draft.phone.orEmpty(),
+                    { v -> edit { it.copy(phone = v) } },
+                    label = stringResource(R.string.v2_phone),
+                    ltr = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    enabled = !s.busy,
+                )
+                RrTextField(
+                    s.draft.address?.city.orEmpty(),
+                    { v -> edit { it.copy(address = (it.address ?: Address()).copy(city = v)) } },
+                    label = stringResource(CR.string.city),
+                    enabled = !s.busy,
+                )
+                val linkedIn =
+                    s.draft.links.orEmpty().firstOrNull { it.label.equals("LinkedIn", true) }
+                RrTextField(
+                    linkedIn?.url.orEmpty().removePrefix("https://"),
+                    { v ->
+                        edit { data ->
+                            val links =
+                                data.links.orEmpty().filterNot { it.label.equals("LinkedIn", true) }
+                            data.copy(
+                                links =
+                                    if (v.isBlank()) links
+                                    else
+                                        links +
+                                            ProfileLink(
+                                                "LinkedIn",
+                                                if (
+                                                    v.startsWith("https://") ||
+                                                        v.startsWith("http://")
+                                                )
+                                                    v
+                                                else "https://$v",
+                                            )
+                            )
+                        }
+                    },
+                    label = "LinkedIn",
+                    ltr = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                    enabled = !s.busy,
+                )
+            }
+            RrListGroup(Modifier.padding(top = 16.dp)) {
+                RrListRow(
+                    stringResource(R.string.v2_notice_period),
+                    divider = true,
+                    onClick = openPreferences,
+                    trailing = {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        ) {
+                            RrRowValue(noticeCaption(career?.noticeWeeks), caret = false)
+                            RrRowCaret()
+                        }
+                    },
+                )
+                RrListRow(
+                    stringResource(R.string.v2_pay_expectations),
+                    onClick = openPreferences,
+                    trailing = {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        ) {
+                            RrRowValue(
+                                career?.minBase?.let { min ->
+                                    min.amount?.let {
+                                        stringResource(
+                                            R.string.v2_from_salary,
+                                            salaryCaption(
+                                                Salary(
+                                                    it,
+                                                    min.currency,
+                                                    if (
+                                                        min.period ==
+                                                            CreateCareerOfferRequestPeriod.Year
+                                                    )
+                                                        null
+                                                    else min.period,
+                                                ),
+                                                LocalConfiguration.current.locales[0],
+                                            ),
+                                        )
+                                    }
+                                } ?: "—",
+                                caret = false,
+                            )
+                            RrRowCaret()
+                        }
+                    },
+                )
+            }
+            RrSectionHeading(stringResource(CR.string.manage_profile))
+            RrListRow(
+                stringResource(R.string.v2_more_profile_details),
+                onClick = { details = true },
+                trailing = { RrRowCaret() },
+            )
+            if (s.error)
+                RrButton(
+                    stringResource(CR.string.save),
+                    save,
+                    Modifier.padding(24.dp),
+                    variant = RrButtonVariant.Secondary,
+                )
+        }
+    }
+    if (discard)
+        RrAlertDialog(
+            stringResource(CR.string.discard_changes_302d315bf9),
+            stringResource(R.string.screen_unsaved_changes_will_be_lost),
+            stringResource(CR.string.discard_changes),
+            back,
+            { discard = false },
+            dismissLabel = stringResource(CR.string.keep_editing),
+        )
+}
+
+@Composable
+private fun noticeCaption(weeks: Long?): String =
+    when {
+        weeks == null -> "—"
+        weeks == 4L -> stringResource(R.string.v2_one_month)
+        weeks > 0 && weeks % 4 == 0L ->
+            pluralStringResource(R.plurals.v2_notice_months, (weeks / 4).toInt(), weeks / 4)
+        else -> pluralStringResource(R.plurals.v2_notice_weeks, weeks.toInt(), weeks)
+    }
+
+@Composable
+internal fun ProfileDetailsScreen(
     s: ProfileState,
     edit: ((ProfileData) -> ProfileData) -> Unit = {},
     save: () -> Unit = {},
@@ -51,8 +268,13 @@ internal fun ProfileScreen(
             if (parent != "authorization") section = parent
         }
     }
-    val validationError = stringResource(CR.string.check_email_addresses_links_names_countries_and_salary_a_salary_amount_needs_currency_and_pay_period)
-    @Composable fun target(path: String) = invalidProfileTarget(path == invalidField, scroll, reduced)
+    val validationError =
+        stringResource(
+            CR.string
+                .check_email_addresses_links_names_countries_and_salary_a_salary_amount_needs_currency_and_pay_period
+        )
+    @Composable
+    fun target(path: String) = invalidProfileTarget(path == invalidField, scroll, reduced)
     fun error(path: String): String? = validationError.takeIf { path == invalidField }
     val context = LocalContext.current
     LaunchedEffect(s.saved, s.invalid, s.error) {
@@ -64,11 +286,16 @@ internal fun ProfileScreen(
     val leave = { if (s.dirty) discard = true else back() }
     BackHandler(s.dirty) { leave() }
     val locale = LocalConfiguration.current.locales[0]
-    val is24 = android.text.format.DateFormat.is24HourFormat(androidx.compose.ui.platform.LocalContext.current)
+    val is24 =
+        android.text.format.DateFormat.is24HourFormat(
+            androidx.compose.ui.platform.LocalContext.current
+        )
     val updated =
         remember(s.record, locale, timezone, is24) {
             s.record?.reviewedAt?.let { value ->
-                val zone = runCatching { java.time.ZoneId.of(timezone) }.getOrDefault(java.time.ZoneOffset.UTC)
+                val zone =
+                    runCatching { java.time.ZoneId.of(timezone) }
+                        .getOrDefault(java.time.ZoneOffset.UTC)
                 SettingsDates(locale, zone, is24).dayTime(value) ?: value
             }
         }
@@ -99,7 +326,7 @@ internal fun ProfileScreen(
             )
         } else
             Column(
-                Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                Modifier.padding(horizontal = 24.dp, vertical = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 RrText(
@@ -363,8 +590,13 @@ private fun ProfileSection(
     val scroll = rememberScrollState()
     val invalidField = if (s.invalid) invalidProfileField(s.draft) else null
     val reduced = RrTheme.reducedMotion
-    val validationError = stringResource(CR.string.check_email_addresses_links_names_countries_and_salary_a_salary_amount_needs_currency_and_pay_period)
-    @Composable fun target(path: String) = invalidProfileTarget(path == invalidField, scroll, reduced)
+    val validationError =
+        stringResource(
+            CR.string
+                .check_email_addresses_links_names_countries_and_salary_a_salary_amount_needs_currency_and_pay_period
+        )
+    @Composable
+    fun target(path: String) = invalidProfileTarget(path == invalidField, scroll, reduced)
     fun error(path: String): String? = validationError.takeIf { path == invalidField }
     var countryPicker by remember { mutableStateOf(false) }
     var periodPicker by remember { mutableStateOf(false) }
@@ -685,17 +917,24 @@ private fun salaryCaption(salary: Salary, locale: Locale): String {
 
 /** Scroll the actual invalid control (including its inline error), then focus its editor. */
 @Composable
-private fun invalidProfileTarget(active: Boolean, scroll: androidx.compose.foundation.ScrollState, reduced: Boolean): Modifier {
+private fun invalidProfileTarget(
+    active: Boolean,
+    scroll: androidx.compose.foundation.ScrollState,
+    reduced: Boolean,
+): Modifier {
     val focus = remember { androidx.compose.ui.focus.FocusRequester() }
     var top by remember { mutableStateOf<Float?>(null) }
     LaunchedEffect(active, top) {
         if (active && top != null) {
             val offset = top!!.toInt().coerceAtLeast(0)
-            if (reduced) scroll.scrollTo(offset) else scroll.animateScrollTo(offset, tween(RrMotion.D2))
+            if (reduced) scroll.scrollTo(offset)
+            else scroll.animateScrollTo(offset, tween(RrMotion.D2))
             focus.requestFocus()
         }
     }
     return Modifier.onGloballyPositioned { top = it.positionInParent().y }
         .focusRequester(focus)
-        .semantics { if (active) liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Assertive }
+        .semantics {
+            if (active) liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Assertive
+        }
 }

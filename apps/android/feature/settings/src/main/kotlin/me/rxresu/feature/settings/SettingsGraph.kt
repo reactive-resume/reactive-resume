@@ -6,9 +6,11 @@ import android.os.Build
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -21,8 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.*
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.unit.dp
 import me.rxresu.core.auth.AuthService
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.designsystem.*
@@ -35,7 +35,10 @@ fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth:
         val vm: SettingsViewModel = viewModel(entry) { SettingsViewModel(repositories, auth) }
         val s by vm.state.collectAsStateWithLifecycle()
         val server by auth.origin.collectAsStateWithLifecycle()
-        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.reloadProviders() }
+        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+            vm.reloadProviders()
+            vm.reloadOverview()
+        }
         val browser = rememberBrowser(auth)
         val context = LocalContext.current
         val appVersion = remember {
@@ -43,7 +46,19 @@ fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth:
                 "${it.versionName} (${if (Build.VERSION.SDK_INT >= 28) it.longVersionCode else it.versionCode.toLong()})"
             }
         }
-        SettingsScreen(s, server, appVersion, { nav.popBackStack() }, { nav.navigate(it) }, browser)
+        val toasts = LocalToasts.current
+        val partial =
+            stringResource(CR.string.signed_out_but_some_data_on_this_device_couldn_t_be_removed)
+        val failed = stringResource(CR.string.couldn_t_sign_out_try_again)
+        SettingsScreen(
+            s,
+            server,
+            appVersion,
+            { nav.popBackStack() },
+            { nav.navigate(it) },
+            browser,
+            { vm.signOut { incomplete -> toasts.show(if (incomplete) partial else failed) } },
+        )
     }
     screen<SettingsAccount> { entry ->
         val repositories = LocalRepositories.current
@@ -169,6 +184,7 @@ fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth:
         val owner = remember(entry) { nav.getBackStackEntry<Settings>() }
         val account: SettingsViewModel = viewModel(owner) { SettingsViewModel(repositories, auth) }
         val settings by account.state.collectAsStateWithLifecycle()
+        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { account.reloadOverview() }
         ProfileScreen(
             s,
             vm::edit,
@@ -177,6 +193,8 @@ fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth:
             vm::delete,
             { nav.popBackStack() },
             timezone = settings.account?.timezone ?: "UTC",
+            career = settings.career,
+            openPreferences = { nav.navigate(Knowledge(KnowledgeTab.Preferences)) },
         )
     }
     screen<SettingsAi> { entry ->
@@ -185,7 +203,10 @@ fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth:
         val vm: SettingsViewModel = viewModel(owner) { SettingsViewModel(repositories, auth) }
         val s by vm.state.collectAsStateWithLifecycle()
         val server by auth.origin.collectAsStateWithLifecycle()
-        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.reloadProviders() }
+        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+            vm.reloadProviders()
+            vm.reloadOverview()
+        }
         val developer: DeveloperViewModel = viewModel { DeveloperViewModel(repositories) }
         val detail by developer.state.collectAsStateWithLifecycle()
         var section by remember { mutableStateOf<String?>(null) }
@@ -201,26 +222,44 @@ fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth:
             browser,
             server,
             nextSteps = {
-                if (ready) NextStepsCard({ ready = false }, steps::choose, { nav.navigate(NewDocument()) }, { nav.navigate(Coach()) },
-                    androidx.compose.ui.Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp))
+                if (ready)
+                    NextStepsCard(
+                        { ready = false },
+                        steps::choose,
+                        { nav.navigate(NewDocument()) },
+                        { nav.navigate(Coach()) },
+                        androidx.compose.ui.Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 12.dp,
+                        ),
+                    )
             },
         ) {
             section = it
             developer.load(it)
         }
-        NextStepSheet(step, { steps.choose(null) }, steps::retry, { id ->
-            val chosen = step.step
-            steps.choose(null)
-            nav.navigate(when (chosen) {
-                NextStep.Fit -> Application(id, WorkspaceTab.Fit)
-                NextStep.Writing -> Builder(id, mode = BuilderMode.Check)
-                else -> Builder(id)
-            })
-        }, {
-            val fit = step.step == NextStep.Fit
-            steps.choose(null)
-            if (fit) nav.navigate(SaveJob()) else nav.navigate(NewDocument())
-        })
+        NextStepSheet(
+            step,
+            { steps.choose(null) },
+            steps::retry,
+            { id ->
+                val chosen = step.step
+                steps.choose(null)
+                nav.navigate(
+                    when (chosen) {
+                        NextStep.Fit -> ApplicationWorkspace(id, WorkspaceTab.Fit)
+                        NextStep.Writing -> Builder(id, mode = BuilderMode.Check)
+                        else -> Builder(id)
+                    }
+                )
+            },
+            {
+                val fit = step.step == NextStep.Fit
+                steps.choose(null)
+                if (fit) nav.navigate(SaveJob()) else nav.navigate(NewDocument())
+            },
+        )
         if (section != null)
             DeveloperScreen(
                 detail,

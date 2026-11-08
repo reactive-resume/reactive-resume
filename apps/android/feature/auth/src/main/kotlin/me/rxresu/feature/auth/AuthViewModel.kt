@@ -26,10 +26,15 @@ internal data class AuthUiState(
     val code: String = "",
     val sent: Boolean = false,
     val consent: ConsentRequest? = null,
+    val consentUsername: String? = null,
 )
 
 internal sealed interface AuthEvent {
     data object SignIn : AuthEvent
+
+    data object Register : AuthEvent
+
+    data object Authenticated : AuthEvent
 
     data object TwoStep : AuthEvent
 
@@ -65,11 +70,14 @@ internal class AuthViewModel(private val auth: AuthService) : ViewModel() {
             mutable.value = change(mutable.value).copy(error = null, sent = false)
     }
 
-    fun checkServer(continueToSignIn: Boolean = false) = run {
+    fun checkServer(continueToSignIn: Boolean = false, register: Boolean = false) = run {
         try {
             val info = auth.checkServer(state.value.server)
             mutable.value = state.value.copy(server = info.origin, info = info)
-            if (continueToSignIn) eventsChannel.send(AuthEvent.SignIn)
+            if (continueToSignIn)
+                eventsChannel.send(
+                    if (register && !info.signupsDisabled) AuthEvent.Register else AuthEvent.SignIn
+                )
         } catch (e: CancellationException) {
             throw e
         } catch (_: Exception) {
@@ -185,7 +193,10 @@ internal class AuthViewModel(private val auth: AuthService) : ViewModel() {
 
     private suspend fun result(result: AuthResult) {
         when (result) {
-            AuthResult.Success -> clearSecrets()
+            AuthResult.Success -> {
+                clearSecrets()
+                eventsChannel.send(AuthEvent.Authenticated)
+            }
             AuthResult.TwoStepRequired -> {
                 clearSecrets()
                 eventsChannel.send(AuthEvent.TwoStep)
@@ -210,17 +221,18 @@ internal class AuthViewModel(private val auth: AuthService) : ViewModel() {
     private fun run(block: suspend () -> Unit) {
         if (state.value.busy) return
         mutable.value = state.value.copy(busy = true, error = null)
-        operation = viewModelScope.launch {
-            try {
-                block()
-            } catch (e: CancellationException) {
-                throw e
-            } catch (_: Exception) {
-                mutable.value = state.value.copy(error = ERROR_NETWORK)
-            } finally {
-                mutable.value = state.value.copy(busy = false)
+        operation =
+            viewModelScope.launch {
+                try {
+                    block()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    mutable.value = state.value.copy(error = ERROR_NETWORK)
+                } finally {
+                    mutable.value = state.value.copy(busy = false)
+                }
             }
-        }
     }
 
     companion object {

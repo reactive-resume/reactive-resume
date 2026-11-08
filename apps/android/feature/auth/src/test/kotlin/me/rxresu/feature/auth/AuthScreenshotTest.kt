@@ -15,9 +15,17 @@ class AuthScreenshotTest : RrScreenshotTest() {
                 runBlocking {
                     FakeAuthService(RuntimeEnvironment.getApplication())
                         .checkServer("https://rxresu.me")
+                        .copy(
+                            providers =
+                                linkedMapOf(
+                                    "google" to "Google",
+                                    "github" to "GitHub",
+                                    "apple" to "Apple",
+                                )
+                        )
                 },
             email = "alex@morgan.design",
-            password = "correcthorse",
+            password = "0123456789",
         )
 
     private fun capture(
@@ -49,28 +57,33 @@ class AuthScreenshotTest : RrScreenshotTest() {
     @Test fun signInDark() = capture("A2-SignIn", true) { SignInScreen(sample()) }
 
     @Test
-    fun twoStepLight() = capture("A3-TwoStep", false) { TwoStepScreen(AuthUiState(code = "482")) }
+    fun twoStepLight() = capture("A3-TwoStep", false) { TwoStepScreen(AuthUiState(code = "481")) }
 
     @Test
-    fun twoStepDark() = capture("A3-TwoStep", true) { TwoStepScreen(AuthUiState(code = "482")) }
+    fun twoStepDark() = capture("A3-TwoStep", true) { TwoStepScreen(AuthUiState(code = "481")) }
 
     private val request =
         ConsentRequest(
             "https://rxresu.me",
             "",
             "rr_cli_7f3a9c21",
-            "Claude Desktop",
-            listOf("profile", "email", "api:write", "api:delete", "offline_access"),
-            "https://client.example.invalid/callback",
+            "Claude",
+            listOf("api:read", "api:write", "api:delete"),
+            "https://claude.ai/callback",
             true,
         )
 
     @Test
     fun consentLight() =
-        capture("A4-Allow", false) { ConsentScreen(AuthUiState(consent = request)) }
+        capture("A4-Allow", false) {
+            ConsentScreen(AuthUiState(consent = request, consentUsername = "alex"))
+        }
 
     @Test
-    fun consentDark() = capture("A4-Allow", true) { ConsentScreen(AuthUiState(consent = request)) }
+    fun consentDark() =
+        capture("A4-Allow", true) {
+            ConsentScreen(AuthUiState(consent = request, consentUsername = "alex"))
+        }
 
     @Test
     fun browserConsent() =
@@ -106,4 +119,15 @@ class AuthScreenshotTest : RrScreenshotTest() {
 
     @Test
     fun font200() = captureScreen("A2-SignIn", false, fontScale = 2f) { SignInScreen(sample()) }
+
+    @Test
+    fun rtlSignIn() =
+        capture("A2-SignIn-RTL", false) {
+            CompositionLocalProvider(
+                androidx.compose.ui.platform.LocalLayoutDirection provides
+                    androidx.compose.ui.unit.LayoutDirection.Rtl
+            ) {
+                SignInScreen(sample())
+            }
+        }
 }

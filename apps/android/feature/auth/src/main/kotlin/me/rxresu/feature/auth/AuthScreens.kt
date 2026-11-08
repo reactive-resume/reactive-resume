@@ -3,7 +3,6 @@ package me.rxresu.feature.auth
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -11,10 +10,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -25,45 +23,48 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.rxresu.core.designsystem.*
 import me.rxresu.core.designsystem.R as D
 import me.rxresu.core.strings.R as CR
 
 @Composable
-internal fun AuthFrame(back: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
+internal fun AuthFrame(
+    back: () -> Unit,
+    footer: @Composable () -> Unit = {},
+    content: @Composable ColumnScope.() -> Unit,
+) {
     Column(
-        Modifier.fillMaxSize().background(RrTheme.colors.bg).navigationBarsPadding().imePadding()
+        Modifier.fillMaxSize().background(RrTheme.colors.bg).rrNavigationBarsPadding().imePadding()
     ) {
-        RrTopBar("", onBack = back, flat = true)
-        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-            Column(
-                Modifier.fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .heightIn(min = maxHeight)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                content = content,
-            )
-        }
+        RrTopBar(onBack = back)
+        Column(
+            Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()),
+            content = content,
+        )
+        footer()
     }
 }
 
@@ -73,152 +74,166 @@ internal fun WelcomeScreen(
     edit: ((AuthUiState) -> AuthUiState) -> Unit = {},
     next: () -> Unit = {},
     check: () -> Unit = {},
+    register: () -> Unit = {},
+    checkServer: () -> Unit = {},
 ) {
-    var appeared by remember { mutableStateOf(false) }
+    var serverEditor by remember { mutableStateOf(false) }
     val still = LocalInspectionMode.current || RrTheme.reducedMotion
-    val offset by
-        animateFloatAsState(
-            if (appeared || still) 0f else 6f,
-            tween(RrMotion.D3, easing = RrMotion.ease),
-            label = "paper",
-        )
-    LaunchedEffect(Unit) { appeared = true }
-    BoxWithConstraints(Modifier.fillMaxSize().background(RrTheme.colors.bg).safeDrawingPadding()) {
+    val progress = remember {
+        List(3) { androidx.compose.animation.core.Animatable(if (still) 1f else 0f) }
+    }
+    LaunchedEffect(still) {
+        coroutineScope {
+            progress.forEachIndexed { index, animation ->
+                launch {
+                    if (still) animation.snapTo(1f)
+                    else {
+                        delay(index * 80L)
+                        animation.animateTo(1f, tween(RrMotion.D3, easing = RrMotion.ease))
+                    }
+                }
+            }
+        }
+    }
+    fun entrance(index: Int) =
+        Modifier.graphicsLayer {
+            alpha = progress[index].value
+            translationY = (1f - progress[index].value) * 6.dp.toPx()
+        }
+    BoxWithConstraints(
+        Modifier.fillMaxSize()
+            .background(RrTheme.colors.bg)
+            .rrStatusBarsPadding()
+            .rrNavigationBarsPadding()
+    ) {
         Column(
-            Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight)
+            Modifier.fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .heightIn(min = maxHeight)
+                .padding(start = 24.dp, end = 24.dp, top = 24.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(
-                Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 20.dp),
+                entrance(0).padding(top = 24.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Image(
-                    painterResource(
-                        if (RrTheme.colors == DarkRrColors) R.drawable.logo_dark
-                        else R.drawable.logo_light
-                    ),
-                    null,
-                    Modifier.size(40.dp),
-                )
-                RrText("Reactive Resume", style = RrType.label)
-            }
-            Box(Modifier.fillMaxWidth().height(300.dp).background(RrTheme.colors.sunken)) {
-                RrPageThumbnail(
-                    null,
-                    Modifier.padding(start = 42.dp, top = 34.dp)
-                        .width(150.dp)
-                        .rotate(-4f)
-                        .graphicsLayer { translationY = offset.dp.toPx() },
-                )
-                RrPageThumbnail(
-                    null,
-                    Modifier.padding(start = 170.dp, top = 22.dp)
-                        .width(170.dp)
-                        .rotate(3f)
-                        .graphicsLayer { translationY = offset.dp.toPx() },
-                    letter = true,
-                )
-            }
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                RrLogo(size = 28.dp, contentDescription = null)
                 RrText(
-                    stringResource(R.string.screen_your_resume_on_paper),
-                    style = RrType.display,
+                    "Reactive Resume",
+                    style =
+                        RrType.rowTitle.copy(
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            lineHeight = 20.sp,
+                        ),
+                )
+            }
+            Column(entrance(1)) {
+                RrText(
+                    stringResource(R.string.v2_welcome_title),
+                    style = RrType.bigNumber.copy(letterSpacing = (-0.01).em),
                     modifier = Modifier.semantics { heading() },
                 )
                 RrText(
-                    stringResource(
-                        R.string
-                            .screen_write_design_and_share_resumes_and_cover_letters_and_keep_your_job_search_in_one_place_fre
-                    ),
+                    stringResource(R.string.v2_welcome_body),
+                    Modifier.padding(top = 16.dp),
                     style = RrType.body,
                     color = RrTheme.colors.ink2,
                 )
             }
-            Spacer(Modifier.height(24.dp))
-            Spacer(Modifier.weight(1f))
             Column(
-                Modifier.padding(horizontal = 16.dp),
+                entrance(2).padding(bottom = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                RrText(
-                    stringResource(R.string.screen_where_is_your_account),
-                    style = RrType.fieldLabel,
-                    color = RrTheme.colors.ink2,
+                if (s.error != null) AuthError(s.error)
+                RrButton(
+                    stringResource(R.string.v2_create_account),
+                    register,
+                    Modifier.fillMaxWidth(),
+                    size = RrButtonSize.Large,
+                    loading = s.busy,
                 )
-                RrSegmentedControl(
-                    listOf(
-                        RrSegment("rxresu.me"),
-                        RrSegment(stringResource(R.string.screen_your_own_server)),
-                    ),
-                    if (s.ownServer) 1 else 0,
-                    { index ->
-                        edit {
-                            it.copy(
-                                ownServer = index == 1,
-                                server = if (index == 0) "https://rxresu.me" else "",
-                                info = null,
-                            )
+                RrButton(
+                    stringResource(CR.string.sign_in),
+                    next,
+                    Modifier.fillMaxWidth(),
+                    variant = RrButtonVariant.Secondary,
+                    size = RrButtonSize.Large,
+                    enabled = !s.busy,
+                )
+                Box(
+                    Modifier.fillMaxWidth()
+                        .clickable(
+                            role = androidx.compose.ui.semantics.Role.Button,
+                            onClick = check,
+                        )
+                        .padding(vertical = 4.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    RrText(
+                        stringResource(R.string.v2_check_pdf),
+                        style = RrType.textLink,
+                        color = RrTheme.colors.accentText,
+                    )
+                }
+                RrText(
+                    androidx.compose.ui.text.buildAnnotatedString {
+                        append(
+                            stringResource(CR.string.server) +
+                                ": " +
+                                s.server.removePrefix("https://").removePrefix("http://") +
+                                " · "
+                        )
+                        withStyle(
+                            androidx.compose.ui.text.SpanStyle(color = RrTheme.colors.accentText)
+                        ) {
+                            append(stringResource(R.string.v2_change))
                         }
                     },
+                    Modifier.fillMaxWidth().clickable(
+                        role = androidx.compose.ui.semantics.Role.Button
+                    ) {
+                        serverEditor = true
+                    },
+                    style = RrType.ui,
+                    color = RrTheme.colors.ink3,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 )
-                AnimatedVisibility(
-                    s.ownServer,
-                    enter =
-                        if (RrTheme.reducedMotion) fadeIn(tween(RrMotion.D1))
-                        else
-                            expandVertically(tween(RrMotion.D2, easing = RrMotion.ease)) +
-                                fadeIn(tween(RrMotion.D1)),
-                    exit =
-                        if (RrTheme.reducedMotion) fadeOut(tween(RrMotion.D1))
-                        else
-                            shrinkVertically(
-                                tween(RrMotion.exit(RrMotion.D2), easing = RrMotion.ease)
-                            ) + fadeOut(tween(RrMotion.D1)),
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        RrTextField(
-                            s.server,
-                            { v -> edit { it.copy(server = v, info = null) } },
-                            label = stringResource(CR.string.server),
-                            ltr = true,
-                            mono = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                            enabled = !s.busy,
-                        )
-                        s.info?.let {
-                            RrText(
-                                "${it.version} · ${it.providers.values.joinToString()}",
-                                style = RrType.small,
-                            )
+            }
+        }
+    }
+    if (serverEditor)
+        RrBottomSheet({ serverEditor = false }, title = stringResource(CR.string.server)) {
+            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                RrTextField(
+                    s.server,
+                    { v ->
+                        edit {
+                            it.copy(server = v, ownServer = v != "https://rxresu.me", info = null)
                         }
-                    }
+                    },
+                    label = stringResource(CR.string.server),
+                    ltr = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                    enabled = !s.busy,
+                )
+                s.info?.let {
+                    RrText(
+                        it.origin.removePrefix("https://") + " · " + it.version,
+                        style = RrType.ui,
+                    )
                 }
-                AuthError(s.error)
+                if (s.error != null) AuthError(s.error)
                 RrButton(
-                    stringResource(CR.string.message_continue),
-                    next,
+                    stringResource(R.string.v2_check_server),
+                    checkServer,
                     Modifier.fillMaxWidth(),
                     size = RrButtonSize.Large,
                     loading = s.busy,
                     enabled = s.server.isNotBlank(),
                 )
-                RrButton(
-                    stringResource(R.string.screen_check_a_pdf_without_an_account),
-                    check,
-                    Modifier.fillMaxWidth(),
-                    variant = RrButtonVariant.Ghost,
-                    size = RrButtonSize.Large,
-                )
             }
-            RrText(
-                stringResource(R.string.screen_by_the_community_for_the_community),
-                Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                style = RrType.caption,
-                color = RrTheme.colors.ink3,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            )
         }
-    }
 }
 
 @Composable
@@ -232,98 +247,92 @@ internal fun SignInScreen(
     toggle: () -> Unit = {},
     back: () -> Unit = {},
 ) {
-    AuthFrame(back) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            RrText(
-                if (register) stringResource(R.string.screen_create_account)
-                else stringResource(CR.string.sign_in),
-                style = RrType.title,
-            )
-            RrText(
-                s.server.removePrefix("https://"),
-                style = RrType.mono,
-                color = RrTheme.colors.ink3,
-            )
-        }
-        if (s.info == null && s.busy) RrSkeletonText(lines = 3)
-        if (s.info?.passkey == true && !register)
-            RrButton(
-                stringResource(R.string.screen_continue_with_a_passkey),
-                { provider(null) },
-                Modifier.fillMaxWidth(),
-                variant = RrButtonVariant.Secondary,
-                size = RrButtonSize.Large,
-                icon = D.drawable.ic_ph_fingerprint,
-                enabled = !s.busy,
-            )
-        if (s.info?.providers?.isNotEmpty() == true)
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                s.info?.providers?.entries?.toList()?.chunked(2)?.forEach { row ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        row.forEach { (id, label) ->
-                            RrButton(
-                                label,
-                                { provider(id) },
-                                Modifier.weight(1f),
-                                variant = RrButtonVariant.Secondary,
-                                size = RrButtonSize.Large,
-                                icon = providerIcon(id),
-                                enabled = !s.busy,
-                            )
-                        }
-                        if (row.size == 1) Spacer(Modifier.weight(1f))
-                    }
-                }
-            }
-        if (s.info?.password == true) {
-            if (!register)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+    AuthFrame(
+        back,
+        footer = {
+            if (s.info?.signupsDisabled == false || register)
+                Box(
+                    Modifier.fillMaxWidth()
+                        .clickable(
+                            role = androidx.compose.ui.semantics.Role.Button,
+                            onClick = toggle,
+                        )
+                        .padding(horizontal = 24.dp, vertical = 12.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Box(Modifier.weight(1f).height(1.dp).background(RrTheme.colors.line))
                     RrText(
-                        stringResource(R.string.screen_or_with_your_password),
-                        style = RrType.small,
+                        androidx.compose.ui.text.buildAnnotatedString {
+                            append(
+                                stringResource(
+                                    if (register) R.string.v2_already_account
+                                    else R.string.v2_new_here
+                                ) + " "
+                            )
+                            withStyle(
+                                androidx.compose.ui.text.SpanStyle(
+                                    color = RrTheme.colors.accentText
+                                )
+                            ) {
+                                append(
+                                    stringResource(
+                                        if (register) CR.string.sign_in
+                                        else R.string.v2_create_account
+                                    )
+                                )
+                            }
+                        },
+                        style = RrType.ui,
                         color = RrTheme.colors.ink3,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                     )
-                    Box(Modifier.weight(1f).height(1.dp).background(RrTheme.colors.line))
                 }
-            if (register) {
+        },
+    ) {
+        RrPageTitle(stringResource(if (register) R.string.v2_create_account else CR.string.sign_in))
+        if (s.info == null && s.busy) RrSkeletonText(Modifier.padding(24.dp), lines = 3)
+        val shake = Modifier.authShake(s.error)
+        if (s.info?.password == true) {
+            Column(
+                Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp).then(shake),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                if (register)
+                    RrTextField(
+                        s.name,
+                        { v -> edit { it.copy(name = v) } },
+                        label = stringResource(CR.string.name),
+                        contentType = ContentType.PersonFullName,
+                        enabled = !s.busy,
+                    )
+                val focus = LocalFocusManager.current
                 RrTextField(
-                    s.name,
-                    { v -> edit { it.copy(name = v) } },
-                    label = stringResource(CR.string.name),
-                    contentType = ContentType.PersonFullName,
+                    s.email,
+                    { v -> edit { it.copy(email = v) } },
+                    label =
+                        stringResource(
+                            if (register) CR.string.email else R.string.screen_email_or_username
+                        ),
+                    ltr = true,
+                    contentType =
+                        if (register) ContentType.EmailAddress
+                        else ContentType.Username + ContentType.EmailAddress,
                     enabled = !s.busy,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions =
+                        KeyboardActions(
+                            onNext = {
+                                focus.moveFocus(androidx.compose.ui.focus.FocusDirection.Next)
+                            }
+                        ),
                 )
-                RrTextField(
-                    s.username,
-                    { v -> edit { it.copy(username = v) } },
-                    label = stringResource(CR.string.username),
-                    contentType = ContentType.NewUsername,
-                    enabled = !s.busy,
-                )
-            }
-            val focus = LocalFocusManager.current
-            RrTextField(
-                s.email,
-                { v -> edit { it.copy(email = v) } },
-                label =
-                    if (register) stringResource(CR.string.email)
-                    else stringResource(R.string.screen_email_or_username),
-                ltr = true,
-                contentType =
-                    if (register) ContentType.EmailAddress
-                    else ContentType.Username + ContentType.EmailAddress,
-                enabled = !s.busy,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions =
-                    KeyboardActions(
-                        onNext = { focus.moveFocus(androidx.compose.ui.focus.FocusDirection.Next) }
-                    ),
-            )
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                if (register)
+                    RrTextField(
+                        s.username,
+                        { v -> edit { it.copy(username = v) } },
+                        label = stringResource(CR.string.username),
+                        contentType = ContentType.NewUsername,
+                        enabled = !s.busy,
+                    )
                 PasswordField(
                     s.password,
                     { v -> edit { it.copy(password = v) } },
@@ -331,41 +340,96 @@ internal fun SignInScreen(
                     register,
                     submit,
                 )
-                AuthError(s.error)
-                if (!register)
-                    RrButton(
-                        stringResource(R.string.screen_forgot_password),
-                        forgot,
-                        Modifier.align(Alignment.End),
-                        variant = RrButtonVariant.GhostAccent,
-                        size = RrButtonSize.Small,
-                    )
+                if (s.error != null) AuthError(s.error)
+                RrButton(
+                    stringResource(if (register) R.string.v2_create_account else CR.string.sign_in),
+                    submit,
+                    Modifier.fillMaxWidth(),
+                    size = RrButtonSize.Large,
+                    loading = s.busy,
+                    enabled =
+                        s.email.isNotBlank() &&
+                            s.password.isNotBlank() &&
+                            (!register || (s.name.isNotBlank() && s.username.isNotBlank())),
+                )
             }
-            RrButton(
-                if (s.busy) stringResource(R.string.screen_signing_in)
-                else if (register) stringResource(R.string.screen_create_account)
-                else stringResource(CR.string.sign_in),
-                submit,
-                Modifier.fillMaxWidth(),
-                size = RrButtonSize.Large,
-                loading = s.busy,
-                enabled =
-                    s.email.isNotBlank() &&
-                        s.password.isNotBlank() &&
-                        (!register || (s.name.isNotBlank() && s.username.isNotBlank())),
-            )
-        } else AuthError(s.error)
-        Spacer(Modifier.weight(1f))
-        if (s.info?.signupsDisabled == false || register)
-            RrButton(
-                if (register) stringResource(CR.string.sign_in)
-                else stringResource(R.string.screen_create_account),
-                toggle,
-                Modifier.align(Alignment.CenterHorizontally),
-                variant = RrButtonVariant.GhostAccent,
-            )
-        Spacer(Modifier.height(8.dp))
+            if (!register)
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Box(
+                        Modifier.clickable(
+                                role = androidx.compose.ui.semantics.Role.Button,
+                                onClick = forgot,
+                            )
+                            .padding(vertical = 12.dp)
+                    ) {
+                        RrText(
+                            stringResource(R.string.screen_forgot_password),
+                            style = RrType.textLink,
+                            color = RrTheme.colors.accentText,
+                        )
+                    }
+                }
+        } else if (s.error != null) AuthError(s.error)
+        if (s.info?.passkey == true || s.info?.providers?.isNotEmpty() == true) {
+            Column(
+                Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                RrText(
+                    stringResource(R.string.v2_or),
+                    Modifier.fillMaxWidth(),
+                    style = RrType.ui,
+                    color = RrTheme.colors.ink3,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                )
+                if (s.info?.passkey == true && !register)
+                    RrButton(
+                        stringResource(R.string.v2_passkey),
+                        { provider(null) },
+                        Modifier.fillMaxWidth(),
+                        variant = RrButtonVariant.Secondary,
+                        size = RrButtonSize.Large,
+                        icon = D.drawable.ic_ph_fingerprint,
+                        enabled = !s.busy,
+                    )
+                s.info?.providers?.forEach { (id, name) ->
+                    RrButton(
+                        stringResource(R.string.v2_continue_provider, name),
+                        { provider(id) },
+                        Modifier.fillMaxWidth(),
+                        variant = RrButtonVariant.Secondary,
+                        size = RrButtonSize.Large,
+                        icon = providerIcon(id),
+                        enabled = !s.busy,
+                    )
+                }
+            }
+        }
     }
+}
+
+@Composable
+private fun Modifier.authShake(error: String?, twice: Boolean = true): Modifier {
+    val x = remember { androidx.compose.animation.core.Animatable(0f) }
+    val still = RrTheme.reducedMotion || LocalInspectionMode.current
+    LaunchedEffect(error) {
+        if (error != null && !still)
+            x.animateTo(
+                0f,
+                keyframes {
+                    durationMillis = RrMotion.D2
+                    0f at 0
+                    -4f at 40
+                    4f at 80
+                    if (twice) {
+                        -4f at 120
+                        4f at 160
+                    }
+                    0f at 200
+                },
+            )
+    }
+    return graphicsLayer { translationX = x.value.dp.toPx() }
 }
 
 @Composable
@@ -406,6 +470,9 @@ internal fun PasswordField(
                 if (visible) stringResource(R.string.screen_hide_password)
                 else stringResource(R.string.screen_show_password),
                 { visible = !visible },
+                Modifier.size(20.dp),
+                size = RrIconButtonSize.Small,
+                tint = RrTheme.colors.ink3,
             )
         },
     )
@@ -424,75 +491,81 @@ internal fun TwoStepScreen(
     val inspection = LocalInspectionMode.current
     LaunchedEffect(s.error, backup) { if (!inspection) focus.requestFocus() }
     AuthFrame(back) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            RrText(stringResource(CR.string.two_step_verification), style = RrType.title)
-            RrText(
-                if (backup) stringResource(R.string.screen_enter_a_backup_code)
-                else
-                    stringResource(
-                        R.string.screen_enter_the_6_digit_code_from_your_authenticator_app
-                    ),
-                style = RrType.body,
-                color = RrTheme.colors.ink2,
-            )
-        }
-        if (backup)
-            RrTextField(
-                s.code,
-                change,
-                Modifier.focusRequester(focus),
-                label = stringResource(R.string.screen_enter_a_backup_code),
-                mono = true,
-                enabled = !s.busy,
-            )
-        else {
-            // TODO(lead): move to designsystem. One Rr input owns paste, autofill, editing and
-            // TalkBack for all boxes.
-            val codeLabel = stringResource(R.string.screen_verification_code)
-            Box {
+        RrPageTitle(
+            stringResource(
+                if (backup) R.string.screen_enter_a_backup_code else R.string.v2_enter_code
+            ),
+            subtitle = if (backup) null else stringResource(R.string.v2_authenticator),
+        )
+        Column(
+            Modifier.fillMaxWidth()
+                .padding(start = 24.dp, end = 24.dp, top = 32.dp)
+                .authShake(s.error, twice = false)
+        ) {
+            if (backup)
                 RrTextField(
                     s.code,
-                    { change(it.filter { c -> c in '0'..'9' }.take(6)) },
-                    Modifier.matchParentSize().focusRequester(focus).semantics(
-                        mergeDescendants = true
-                    ) {
-                        contentDescription = codeLabel
-                    },
-                    contentType = ContentType.SmsOtpCode,
+                    change,
+                    Modifier.focusRequester(focus),
+                    label = stringResource(R.string.screen_enter_a_backup_code),
+                    mono = true,
                     enabled = !s.busy,
-                    keyboardOptions =
-                        KeyboardOptions(
-                            keyboardType = KeyboardType.NumberPassword,
-                            imeAction = ImeAction.Done,
-                        ),
-                    keyboardActions = KeyboardActions(onDone = { verify() }),
                 )
-                OtpBoxes(s.code, Modifier.background(RrTheme.colors.bg).clearAndSetSemantics {})
+            else {
+                val codeLabel = stringResource(R.string.screen_verification_code)
+                Box {
+                    RrTextField(
+                        s.code,
+                        { change(it.filter { c -> c in '0'..'9' }.take(6)) },
+                        Modifier.matchParentSize().focusRequester(focus).semantics(
+                            mergeDescendants = true
+                        ) {
+                            contentDescription = codeLabel
+                        },
+                        contentType = ContentType.SmsOtpCode,
+                        enabled = !s.busy,
+                        keyboardOptions =
+                            KeyboardOptions(
+                                keyboardType = KeyboardType.NumberPassword,
+                                imeAction = ImeAction.Done,
+                            ),
+                        keyboardActions = KeyboardActions(onDone = { verify() }),
+                    )
+                    OtpBoxes(s.code, Modifier.background(RrTheme.colors.bg).clearAndSetSemantics {})
+                }
+            }
+            if (s.error != null) AuthError(s.error)
+            if (backup)
+                RrButton(
+                    stringResource(R.string.screen_verify),
+                    verify,
+                    Modifier.fillMaxWidth().padding(top = 20.dp),
+                    size = RrButtonSize.Large,
+                    loading = s.busy,
+                    enabled = s.code.isNotBlank(),
+                )
+            Box(
+                Modifier.padding(top = 20.dp)
+                    .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = toggle)
+                    .padding(vertical = 12.dp)
+            ) {
+                RrText(
+                    stringResource(
+                        if (backup) R.string.screen_use_an_authenticator_app_instead
+                        else R.string.screen_use_a_backup_code_instead
+                    ),
+                    style = RrType.textLink,
+                    color = RrTheme.colors.accentText,
+                )
             }
         }
-        AuthError(s.error)
-        RrButton(
-            stringResource(R.string.screen_verify),
-            verify,
-            Modifier.fillMaxWidth(),
-            size = RrButtonSize.Large,
-            loading = s.busy,
-            enabled = if (backup) s.code.isNotBlank() else s.code.length == 6,
-        )
-        RrButton(
-            if (backup) stringResource(R.string.screen_use_an_authenticator_app_instead)
-            else stringResource(R.string.screen_use_a_backup_code_instead),
-            toggle,
-            Modifier.align(Alignment.CenterHorizontally),
-            variant = RrButtonVariant.GhostAccent,
-        )
     }
 }
 
 // TODO(lead): move to designsystem with the one-time-code input (see the TODO in TwoStepScreen).
 /**
- * Six code boxes in Geist Mono. One accent ring marks the box the next digit goes in and slides to it at `d1`; a caret
- * blinks inside it. Reduced motion and screenshots hold both still.
+ * Six code boxes in Geist Mono. One accent ring marks the box the next digit goes in and slides to
+ * it at `d1`; a caret blinks inside it. Reduced motion and screenshots hold both still.
  */
 @Composable
 private fun OtpBoxes(code: String, modifier: Modifier = Modifier) {
@@ -505,27 +578,67 @@ private fun OtpBoxes(code: String, modifier: Modifier = Modifier) {
         Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
             repeat(6) { i ->
                 Box(
-                    Modifier.weight(1f).height(56.dp).background(c.raised, RrShape.md).border(1.dp, c.controlBorder, RrShape.md),
+                    Modifier.weight(1f)
+                        .height(56.dp)
+                        .background(c.raised, RrShape.md)
+                        .border(1.dp, c.controlBorder, RrShape.md),
                     contentAlignment = Alignment.Center,
                 ) {
-                    RrText(code.getOrNull(i)?.toString().orEmpty(), style = RrType.heading.copy(fontFamily = RrType.mono.fontFamily))
+                    RrText(
+                        code.getOrNull(i)?.toString().orEmpty(),
+                        style = RrType.mono.copy(fontSize = 26.sp, lineHeight = 30.sp),
+                    )
                 }
             }
         }
         if (code.length < 6) {
-            val x by animateDpAsState((box + gap) * current, tween(if (still) 0 else RrMotion.D1, easing = RrMotion.ease), label = "otp-ring")
-            val caret = if (still) 1f else rememberInfiniteTransition(label = "otp-caret").animateFloat(
-                1f, 0f, infiniteRepeatable(keyframes { durationMillis = 1060; 1f at 0; 1f at 529; 0f at 530; 0f at 1060 }), label = "otp-blink",
-            ).value
+            val x by
+                animateDpAsState(
+                    (box + gap) * current,
+                    tween(if (still) 0 else RrMotion.D1, easing = RrMotion.ease),
+                    label = "otp-ring",
+                )
+            val caret =
+                if (still) 0f
+                else
+                    rememberInfiniteTransition(label = "otp-caret")
+                        .animateFloat(
+                            1f,
+                            0f,
+                            infiniteRepeatable(
+                                keyframes {
+                                    durationMillis = 1060
+                                    1f at 0
+                                    1f at 529
+                                    0f at 530
+                                    0f at 1060
+                                }
+                            ),
+                            label = "otp-blink",
+                        )
+                        .value
             Box(
-                Modifier.offset { IntOffset(x.roundToPx(), 0) }.size(box, 56.dp)
+                Modifier.offset { IntOffset(x.roundToPx(), 0) }
+                    .size(box, 56.dp)
                     .drawBehind {
                         val w = 3.dp.toPx()
-                        drawRoundRect(c.accentSoft, Offset(-w / 2, -w / 2), Size(size.width + w, size.height + w), CornerRadius(RrRadius.md.toPx() + w / 2), Stroke(w))
+                        drawRoundRect(
+                            c.accentSoft,
+                            Offset(-w / 2, -w / 2),
+                            Size(size.width + w, size.height + w),
+                            CornerRadius(RrRadius.md.toPx() + w / 2),
+                            Stroke(w),
+                        )
                     }
                     .border(1.dp, c.accent, RrShape.md),
                 contentAlignment = Alignment.Center,
-            ) { Box(Modifier.size(1.5.dp, 24.dp).graphicsLayer { alpha = caret }.background(c.accent)) }
+            ) {
+                Box(
+                    Modifier.size(1.5.dp, 24.dp)
+                        .graphicsLayer { alpha = caret }
+                        .background(c.accent)
+                )
+            }
         }
     }
 }
@@ -555,7 +668,7 @@ internal fun ForgotScreen(
                     contentType = ContentType.EmailAddress,
                     enabled = !s.busy,
                 )
-                AuthError(s.error)
+                if (s.error != null) AuthError(s.error)
                 RrButton(
                     stringResource(R.string.screen_send_link),
                     submit,
@@ -579,7 +692,7 @@ internal fun ResetScreen(
     AuthFrame(back) {
         RrText(stringResource(R.string.screen_create_new_password), style = RrType.title)
         PasswordField(s.password, { v -> edit { it.copy(password = v) } }, !s.busy, true, submit)
-        AuthError(s.error)
+        if (s.error != null) AuthError(s.error)
         RrButton(
             stringResource(R.string.screen_reset_password),
             submit,
@@ -593,82 +706,80 @@ internal fun ResetScreen(
 
 @Composable
 internal fun ConsentScreen(s: AuthUiState, choose: (Boolean) -> Unit = {}, close: () -> Unit = {}) {
-    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).navigationBarsPadding()) {
-        CloseBar(stringResource(R.string.screen_cancel_connection), close)
-        Column(
-            Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            RrText(stringResource(R.string.screen_connect_an_application), style = RrType.title)
+    var review by remember { mutableStateOf(false) }
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
+        RrTopBar(onClose = close, closeLabel = stringResource(R.string.screen_cancel_connection))
+        Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
             if (s.busy && s.consent == null) {
-                RrSkeletonText(lines = 3)
+                RrSkeletonText(Modifier.padding(24.dp), lines = 3)
                 RrText(stringResource(R.string.screen_loading_connection_request))
             }
             s.consent?.let { request ->
-                RrCard {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                Row(
+                    Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp).clickable(
+                        role = androidx.compose.ui.semantics.Role.Button
                     ) {
-                        Box(
-                            Modifier.size(56.dp).background(RrTheme.colors.sunken, RrShape.sm),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            RrIcon(D.drawable.ic_ph_desktop, null)
-                        }
-                        Column(Modifier.weight(1f)) {
-                            RrText(request.clientName, style = RrType.label)
-                            RrText(
-                                stringResource(R.string.screen_client_id) +
-                                    " · " +
-                                    request.clientId,
-                                style = RrType.mono,
-                                color = RrTheme.colors.ink3,
-                            )
-                            RrText(
-                                stringResource(R.string.screen_access_is_sent_to) +
-                                    " " +
-                                    request.redirectUri,
-                                style = RrType.small,
-                            )
-                        }
-                    }
+                        review = true
+                    },
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RrIconTile(
+                        if (RrTheme.colors.isDark) R.drawable.logo_dark else R.drawable.logo_light,
+                        Modifier.size(56.dp).semantics {
+                            contentDescription = request.clientId + "; " + request.redirectUri
+                        },
+                    )
+                    RrIcon(R.drawable.ic_ph_arrows_left_right, null, tint = RrTheme.colors.ink3)
+                    RrIconTile(D.drawable.ic_ph_sparkle, Modifier.size(56.dp), accent = true)
                 }
                 RrText(
-                    stringResource(
-                        R.string
-                            .screen_only_allow_applications_you_trust_this_application_will_be_able_to
-                    ),
-                    color = RrTheme.colors.ink2,
+                    stringResource(R.string.v2_allow_title, request.clientName),
+                    Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp),
+                    style = RrType.pageTitle,
                 )
+                val host = android.net.Uri.parse(request.redirectUri).host ?: request.redirectUri
+                RrText(
+                    if (!s.consentUsername.isNullOrBlank())
+                        stringResource(R.string.v2_signed_in, host, s.consentUsername)
+                    else host,
+                    Modifier.padding(start = 24.dp, end = 24.dp, top = 6.dp),
+                    style = RrType.body,
+                    color = RrTheme.colors.ink3,
+                )
+                RrSectionHeading(stringResource(R.string.v2_able_to))
+                val scopes =
+                    request.scopes.distinct().filter {
+                        it !in setOf("openid", "profile", "email", "offline_access")
+                    }
                 RrListGroup {
-                    request.scopes.distinct().forEach { scope ->
+                    scopes.forEachIndexed { i, scope ->
+                        // Full grants, client ID and redirect are reviewed again before any Allow.
+                        val title =
+                            when (scope) {
+                                "api:read" -> stringResource(R.string.v2_see_documents)
+                                "api:write" -> stringResource(R.string.v2_change_documents)
+                                "api:delete" -> stringResource(R.string.v2_trash_documents)
+                                else -> scopeCopy(scope)
+                            }
                         RrListRow(
-                            scopeCopy(scope),
-                            leading = {
-                                RrIcon(
-                                    when (scope) {
-                                        "profile" -> D.drawable.ic_ph_user
-                                        "email" -> D.drawable.ic_ph_envelope_simple
-                                        "api:write" -> D.drawable.ic_ph_pencil_simple
-                                        "api:delete" -> D.drawable.ic_ph_trash
-                                        "offline_access" -> D.drawable.ic_ph_clock
-                                        else -> D.drawable.ic_ph_check
-                                    },
-                                    null,
-                                    tint =
-                                        if (scope == "api:delete") RrTheme.colors.dangerText
-                                        else RrTheme.colors.ink2,
-                                )
-                            },
+                            title,
+                            onClick = { review = true },
+                            tile =
+                                when (scope) {
+                                    "api:read" -> D.drawable.ic_ph_eye
+                                    "api:write" -> D.drawable.ic_ph_pencil_simple
+                                    "api:delete" -> D.drawable.ic_ph_trash
+                                    else -> D.drawable.ic_ph_check
+                                },
+                            divider = i < scopes.lastIndex,
                         )
                     }
                 }
                 RrText(
-                    stringResource(
-                        R.string.screen_you_can_disconnect_it_anytime_in_settings_ai_developer
-                    ),
-                    style = RrType.small,
+                    stringResource(R.string.v2_disconnect),
+                    Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp),
+                    style = RrType.ui,
                     color = RrTheme.colors.ink3,
                 )
                 if (!request.canGrantNatively)
@@ -676,21 +787,17 @@ internal fun ConsentScreen(s: AuthUiState, choose: (Boolean) -> Unit = {}, close
                         stringResource(
                             R.string
                                 .screen_continue_in_browser_to_review_and_complete_this_connection
-                        )
+                        ),
+                        Modifier.padding(24.dp),
                     )
             }
-            AuthError(s.error)
+            if (s.error != null) AuthError(s.error)
         }
         s.consent?.let { request ->
-            Row(
-                Modifier.fillMaxWidth()
-                    .background(RrTheme.colors.surface)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
+            RrFooterBar {
                 if (request.canGrantNatively)
                     RrButton(
-                        stringResource(R.string.screen_deny_access),
+                        stringResource(R.string.v2_deny),
                         { choose(false) },
                         Modifier.weight(1f),
                         variant = RrButtonVariant.Secondary,
@@ -698,9 +805,11 @@ internal fun ConsentScreen(s: AuthUiState, choose: (Boolean) -> Unit = {}, close
                         enabled = !s.busy,
                     )
                 RrButton(
-                    if (request.canGrantNatively) stringResource(R.string.screen_allow_access)
-                    else stringResource(CR.string.continue_in_browser),
-                    { choose(true) },
+                    stringResource(
+                        if (request.canGrantNatively) R.string.v2_allow
+                        else CR.string.continue_in_browser
+                    ),
+                    { if (request.canGrantNatively) review = true else choose(true) },
                     Modifier.weight(1f),
                     size = RrButtonSize.Large,
                     loading = s.busy,
@@ -708,6 +817,24 @@ internal fun ConsentScreen(s: AuthUiState, choose: (Boolean) -> Unit = {}, close
             }
         }
     }
+    if (review)
+        s.consent?.let { request ->
+            val grants = request.scopes.distinct().map { scopeCopy(it) }
+            RrAlertDialog(
+                request.clientName,
+                request.clientId +
+                    "\n" +
+                    request.redirectUri +
+                    "\n\n" +
+                    grants.joinToString("\n\n"),
+                stringResource(R.string.v2_allow),
+                {
+                    review = false
+                    choose(true)
+                },
+                { review = false },
+            )
+        }
 }
 
 @Composable
@@ -756,19 +883,5 @@ internal fun AuthError(error: String?) {
                 },
                 tone = RrTone.Danger,
             )
-    }
-}
-
-// TODO(lead): move to designsystem; RrTopBar needs a leading close-action slot for modal roots.
-@Composable
-private fun CloseBar(label: String, close: () -> Unit) {
-    Box {
-        RrTopBar("", flat = true)
-        RrIconButton(
-            D.drawable.ic_ph_x,
-            label,
-            close,
-            Modifier.statusBarsPadding().padding(start = 6.dp, top = 6.dp),
-        )
     }
 }

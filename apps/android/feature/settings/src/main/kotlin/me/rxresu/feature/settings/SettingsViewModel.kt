@@ -25,6 +25,13 @@ internal data class SettingsState(
     val busy: Boolean = false,
     val security: AccountSecurityInfo? = null,
     val serverVersion: String? = null,
+    val pendingEdits: Boolean = false,
+    val career: CareerProfile? = null,
+    val passwordChangedMonthsAgo: Int? = null,
+    val web: GetWebAccessStatusResponse? = null,
+    val memory: SaveCareerProfileRequestMemoryMode? = null,
+    val apiKeys: List<ListApiKeysResponseApiKeysItem>? = null,
+    val connections: List<ListConnectedApplicationsResponseConnectionsItem>? = null,
 )
 
 internal class SettingsViewModel(
@@ -74,6 +81,11 @@ internal class SettingsViewModel(
 
     init {
         viewModelScope.launch {
+            repositories.drafts.pending().collect { drafts ->
+                mutable.update { it.copy(pendingEdits = drafts.isNotEmpty()) }
+            }
+        }
+        viewModelScope.launch {
             repositories.preferences.values.collect { p ->
                 mutable.update { it.copy(preferences = p) }
             }
@@ -114,6 +126,43 @@ internal class SettingsViewModel(
                 mutable.update { it.copy(providerError = true) }
             } finally {
                 mutable.update { it.copy(providersLoading = false) }
+            }
+        }
+    }
+
+    fun reloadOverview() {
+        viewModelScope.launch {
+            try {
+                val web = repositories.ai.getWebAccessStatus()
+                mutable.update { it.copy(web = web) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                mutable.update { it.copy(web = null) }
+            }
+            try {
+                val profile = repositories.career.getCareerProfile()
+                mutable.update { it.copy(memory = profile.memoryMode, career = profile) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                mutable.update { it.copy(memory = null) }
+            }
+            try {
+                val keys = repositories.account.listApiKeys().apiKeys
+                mutable.update { it.copy(apiKeys = keys) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                mutable.update { it.copy(apiKeys = null) }
+            }
+            try {
+                val connections = repositories.account.listConnectedApplications().connections
+                mutable.update { it.copy(connections = connections) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                mutable.update { it.copy(connections = null) }
             }
         }
     }
@@ -166,3 +215,10 @@ internal class SettingsViewModel(
 }
 
 internal const val PHOTO_MAX_BYTES = 10 * 1024 * 1024
+
+internal fun newestKeyReadOnly(keys: List<ListApiKeysResponseApiKeysItem>): Boolean =
+    keys
+        .maxByOrNull { it.createdAt }
+        ?.permissions
+        ?.get("api")
+        ?.let { "write" !in it && "delete" !in it } == true

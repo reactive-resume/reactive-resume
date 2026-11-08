@@ -219,4 +219,36 @@ class AuthViewModelTest {
             assertEquals("", vm.state.value.code)
             assertNotNull(vm.state.value.error)
         }
+
+    @Test
+    fun welcomeRegistrationHonorsCheckedServerCapabilities() =
+        runTest(dispatcher) {
+            val base = fake()
+            var disabled = false
+            val vm =
+                AuthViewModel(
+                    object : AuthService by base {
+                        override suspend fun checkServer(input: String) =
+                            base.checkServer(input).copy(signupsDisabled = disabled)
+                    }
+                )
+            vm.checkServer(true, register = true)
+            advanceUntilIdle()
+            assertEquals(AuthEvent.Register, vm.events.first())
+            disabled = true
+            vm.checkServer(true, register = true)
+            advanceUntilIdle()
+            assertEquals(AuthEvent.SignIn, vm.events.first())
+        }
+
+    @Test
+    fun acceptedTwoStepClearsCodeAndEmitsSuccess() =
+        runTest(dispatcher) {
+            val vm = AuthViewModel(fake())
+            vm.edit { it.copy(code = "123456") }
+            vm.verify(false)
+            advanceUntilIdle()
+            assertEquals("", vm.state.value.code)
+            assertEquals(AuthEvent.Authenticated, vm.events.first())
+        }
 }

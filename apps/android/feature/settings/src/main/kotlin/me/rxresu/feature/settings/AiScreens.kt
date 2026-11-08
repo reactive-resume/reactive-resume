@@ -2,26 +2,18 @@ package me.rxresu.feature.settings
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import me.rxresu.core.designsystem.*
 import me.rxresu.core.designsystem.R as D
@@ -39,107 +31,194 @@ internal fun AiScreen(
     nextSteps: @Composable () -> Unit = {},
     developer: (String) -> Unit = {},
 ) {
-    SettingsFrame(stringResource(CR.string.ai_developer), back) {
-        nextSteps()
-        RrSectionHeader(
-            stringResource(CR.string.ai_providers),
-            actionLabel = stringResource(CR.string.add_ai_provider),
-            onAction = { edit(null) },
-        )
-        if (s.providersLoading) RrSkeletonText(Modifier.padding(16.dp), lines = 3)
+    SettingsFrame(
+        stringResource(R.string.v2_ai_developer),
+        back,
+        actions = {
+            RrIconButton(
+                D.drawable.ic_ph_plus,
+                stringResource(CR.string.add_ai_provider),
+                { edit(null) },
+            )
+        },
+    ) {
+        RrSectionHeading(stringResource(R.string.v2_providers), first = true)
+        if (s.providersLoading) RrSkeletonText(Modifier.padding(24.dp), lines = 3)
         if (s.providerError)
             RrCallout(
                 stringResource(CR.string.ai_providers_couldn_t_be_loaded_reload_to_try_again),
-                Modifier.padding(16.dp),
+                Modifier.padding(24.dp),
                 tone = RrTone.Danger,
                 actionLabel = stringResource(R.string.screen_reload),
                 onAction = reload,
             )
         else if (!s.providersLoading && s.providers.isEmpty())
-            RrCallout(
+            RrText(
                 stringResource(R.string.screen_not_set_up),
-                Modifier.padding(horizontal = 16.dp),
+                Modifier.padding(24.dp),
+                style = RrType.ui,
             )
-        if (s.providers.isNotEmpty())
-            RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                s.providers.forEach { p ->
-                    RrListRow(
-                        p.label,
-                        subtitle =
-                            if (p.managed) stringResource(CR.string.managed_by_your_server)
-                            else
-                                p.model +
-                                    if (p.isDefault)
-                                        " · " + stringResource(CR.string.message_default)
-                                    else "",
-                        icon =
+        RrListGroup {
+            s.providers.forEachIndexed { i, p ->
+                RrListRow(
+                    p.label,
+                    subtitle =
+                        if (p.managed) stringResource(CR.string.managed_by_your_server)
+                        else
+                            p.model +
+                                when {
+                                    p.isDefault -> " · " + stringResource(R.string.v2_default)
+                                    p.provider == Provider.Ollama ->
+                                        " · " + stringResource(R.string.v2_local)
+                                    else -> ""
+                                },
+                    leading = {
+                        RrIconTile(
                             if (p.provider == Provider.Ollama) D.drawable.ic_ph_desktop
                             else D.drawable.ic_ph_sparkle,
-                        onClick = { edit(p.id) },
-                        trailing = {
+                            accent = p.isDefault,
+                        )
+                    },
+                    divider = i < s.providers.lastIndex,
+                    onClick = { edit(p.id) },
+                    trailing = {
+                        Crossfade(
+                            p.testStatus,
+                            animationSpec = tween(RrMotion.D1),
+                            label = "provider status",
+                        ) { status ->
                             RrBadge(
-                                when (p.testStatus) {
+                                when (status) {
                                     "success" -> stringResource(R.string.screen_connected)
-                                    "failure" -> stringResource(CR.string.failed)
+                                    "failure" ->
+                                        if (p.testErrorKind == "auth")
+                                            stringResource(R.string.v2_failed_key)
+                                        else stringResource(CR.string.failed)
                                     else -> stringResource(R.string.screen_not_tested)
                                 },
                                 tone =
-                                    when (p.testStatus) {
+                                    when (status) {
                                         "success" -> RrBadgeTone.Accent
                                         "failure" -> RrBadgeTone.Danger
                                         else -> RrBadgeTone.Neutral
                                     },
                             )
-                        },
-                    )
-                }
-            }
-        RrCallout(
-            stringResource(
-                CR.string.your_provider_may_charge_your_account_for_requests_made_with_your_api_key
-            ),
-            Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp),
-            tone = RrTone.Warn,
-            icon = D.drawable.ic_ph_key,
-        )
-        RrSectionHeader(stringResource(R.string.screen_assistant_and_coach))
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-            NavRow(stringResource(CR.string.web_access), null, D.drawable.ic_ph_globe_simple) {
-                developer("web")
-            }
-            NavRow(
-                stringResource(CR.string.remember_facts_from_my_messages),
-                null,
-                D.drawable.ic_ph_book_open,
-            ) {
-                developer("memory")
-            }
-            NavRow(stringResource(R.string.screen_usage), null, D.drawable.ic_ph_chart_bar) {
-                developer("usage")
+                        }
+                    },
+                )
             }
         }
-        RrSectionHeader(stringResource(R.string.screen_developer))
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-            NavRow(
+        Row(
+            Modifier.padding(start = 24.dp, end = 24.dp, top = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            RrIcon(D.drawable.ic_ph_key, null, size = 16.dp, tint = RrTheme.colors.warnText)
+            RrText(
+                stringResource(
+                    CR.string
+                        .your_provider_may_charge_your_account_for_requests_made_with_your_api_key
+                ),
+                style = RrType.small,
+                color = RrTheme.colors.warnText,
+            )
+        }
+        RrSectionHeading(stringResource(R.string.screen_assistant_and_coach))
+        RrListGroup {
+            RrListRow(
+                stringResource(CR.string.web_access),
+                subtitle = stringResource(R.string.v2_web_providers),
+                divider = true,
+                onClick = { developer("web") },
+                trailing = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RrRowValue(
+                            s.web?.let {
+                                if (it.configured) stringResource(R.string.screen_connected)
+                                else stringResource(R.string.screen_not_set_up)
+                            } ?: "—",
+                            caret = false,
+                        )
+                        RrRowCaret()
+                    }
+                },
+            )
+            RrListRow(
+                stringResource(R.string.v2_remember_facts),
+                subtitle = stringResource(R.string.v2_from_messages),
+                divider = true,
+                onClick = { developer("memory") },
+                trailing = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RrRowValue(memorySummary(s.memory), caret = false)
+                        RrRowCaret()
+                    }
+                },
+            )
+            RrListRow(
+                stringResource(R.string.screen_usage),
+                subtitle = stringResource(R.string.v2_usage_summary),
+                onClick = { developer("usage") },
+                trailing = { RrRowCaret() },
+            )
+        }
+        RrSectionHeading(stringResource(R.string.screen_developer))
+        RrListGroup {
+            RrListRow(
                 stringResource(CR.string.mcp_server),
-                stringResource(R.string.screen_sign_in_from_your_ai_client_or_use_an_api_key),
-                D.drawable.ic_ph_plugs_connected,
-            ) {
-                developer("mcp")
-            }
-            NavRow(stringResource(CR.string.api_keys), null, D.drawable.ic_ph_key) {
-                developer("keys")
-            }
-            NavRow(
+                subtitle =
+                    stringResource(R.string.screen_sign_in_from_your_ai_client_or_use_an_api_key),
+                divider = true,
+                onClick = { developer("mcp") },
+                trailing = { RrRowCaret() },
+            )
+            RrListRow(
+                stringResource(CR.string.api_keys),
+                subtitle =
+                    s.apiKeys
+                        ?.takeIf { it.isNotEmpty() }
+                        ?.let { keys ->
+                            pluralStringResource(
+                                R.plurals.v2_keys_summary,
+                                keys.size,
+                                keys.size,
+                                stringResource(
+                                        if (newestKeyReadOnly(keys)) CR.string.read_only
+                                        else CR.string.full_access
+                                    )
+                                    .lowercase(java.util.Locale.ROOT),
+                            )
+                        },
+                divider = true,
+                onClick = { developer("keys") },
+                trailing = { RrRowCaret() },
+            )
+            RrListRow(
                 stringResource(CR.string.connected_applications),
-                null,
-                D.drawable.ic_ph_desktop,
-            ) {
-                developer("applications")
-            }
+                subtitle = s.connections?.joinToString { it.clientName ?: it.clientId },
+                onClick = { developer("applications") },
+                trailing = { RrRowCaret() },
+            )
         }
+        nextSteps()
     }
 }
+
+@Composable
+private fun memorySummary(
+    mode: me.rxresu.core.network.generated.SaveCareerProfileRequestMemoryMode?
+): String =
+    when (mode?.wireValue) {
+        "ask" -> stringResource(R.string.v2_ask_first)
+        "auto" -> stringResource(R.string.v2_automatically)
+        "off" -> stringResource(CR.string.off)
+        else -> "—"
+    }
 
 @Composable
 internal fun ProviderScreen(
@@ -153,250 +232,199 @@ internal fun ProviderScreen(
     close: () -> Unit = {},
     browser: (String) -> Unit = {},
 ) {
-    var more by remember { mutableStateOf(false) }
-    var tasks by remember { mutableStateOf(false) }
+    var providerPicker by remember { mutableStateOf(false) }
     var modelEditor by remember { mutableStateOf(false) }
+    var keyEditor by remember { mutableStateOf(false) }
     var deleting by remember { mutableStateOf(false) }
+    var discard by remember { mutableStateOf(false) }
     val haptic = rememberRrHaptics()
     val managed = s.original?.managed == true
+    val dismiss = { if (s.dirty) discard = true else close() }
+    androidx.activity.compose.BackHandler(s.dirty) { dismiss() }
     LaunchedEffect(s.testCount, s.error) {
         when {
             s.error || (s.testCount > 0 && s.testStatus == "failure") -> haptic(RrHaptic.Error)
             s.testCount > 0 && s.testStatus == "success" -> haptic(RrHaptic.Success)
         }
     }
-    RrBottomSheet(
-        close,
-        title = if (s.original == null) stringResource(CR.string.add_ai_provider) else s.label,
-        detents = RrSheetDetents.Full,
-        confirmDiscard = s.dirty,
-        footer = {
-            if (!managed)
-                Row(
-                    Modifier.fillMaxWidth().padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    RrButton(
-                        if (s.original == null || s.dirty)
-                            stringResource(R.string.screen_save_and_test_connection)
-                        else stringResource(CR.string.test_connection),
-                        test,
-                        Modifier.weight(1f),
-                        variant = RrButtonVariant.Secondary,
-                        size = RrButtonSize.Large,
-                        loading = s.busy,
-                    )
-                    RrButton(
-                        stringResource(R.string.screen_save_provider),
-                        save,
-                        Modifier.weight(1f),
-                        size = RrButtonSize.Large,
-                        enabled =
-                            !s.busy &&
-                                s.original != null &&
-                                (!s.isNew || s.testStatus == "success"),
-                    )
-                }
-        },
-    ) {
-        Column(
-            Modifier.fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-                .imePadding(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            if (s.loading) RrSkeletonText(lines = 5)
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).imePadding()) {
+        RrTopBar(onClose = dismiss)
+        Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
+            RrPageTitle(if (s.isNew) stringResource(CR.string.add_ai_provider) else s.label)
+            if (s.loading) RrSkeletonText(Modifier.padding(24.dp), lines = 5)
             else if (managed) {
-                RrCallout(stringResource(CR.string.managed_by_your_server))
-                RrText(s.model, style = RrType.mono)
+                RrCallout(stringResource(CR.string.managed_by_your_server), Modifier.padding(24.dp))
+                RrText(s.model, Modifier.padding(horizontal = 24.dp), style = RrType.mono)
             } else {
-                val initial =
-                    listOf(
-                        Provider.Openai,
-                        Provider.Anthropic,
-                        Provider.Gemini,
-                        Provider.Openrouter,
-                        Provider.Mistral,
-                        Provider.Ollama,
-                        Provider.Groq,
-                        Provider.Deepseek,
+                Column(
+                    Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    RrPickerField(
+                        providerNames.getValue(s.provider),
+                        { providerPicker = true },
+                        label = stringResource(R.string.v2_provider),
+                        enabled = !s.busy,
                     )
-                val providers = if (more) providerNames.keys.toList() else initial
-                (providers.map { it as Provider? } + if (more) emptyList() else listOf(null))
-                    .chunked(3)
-                    .forEach { row ->
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            row.forEach { provider ->
-                                RrButton(
-                                    provider?.let { providerNames.getValue(it) }
-                                        ?: stringResource(R.string.screen_more),
-                                    {
-                                        if (provider == null) more = true
-                                        else {
-                                            haptic(RrHaptic.Selection)
-                                            choose(provider)
-                                        }
-                                    },
-                                    Modifier.weight(1f)
-                                        .heightIn(min = 44.dp)
-                                        .then(
-                                            if (provider == s.provider)
-                                                Modifier.border(
-                                                    1.dp,
-                                                    RrTheme.colors.accent,
-                                                    RrShape.md,
-                                                )
-                                            else Modifier
-                                        ),
-                                    variant =
-                                        if (provider == s.provider) RrButtonVariant.Soft
-                                        else RrButtonVariant.Secondary,
-                                    size = RrButtonSize.Small,
-                                    enabled = !s.busy,
+                    RrTextField(
+                        s.label,
+                        { v -> edit { it.copy(label = v) } },
+                        label = stringResource(CR.string.name),
+                        enabled = !s.busy,
+                    )
+                    Column {
+                        if (s.original != null && s.key.isEmpty())
+                            RrPickerField(
+                                s.original.apiKeyPreview,
+                                { keyEditor = true },
+                                label = stringResource(CR.string.api_key),
+                                trailingIcon = null,
+                                enabled = !s.busy,
+                            )
+                        else
+                            RrTextField(
+                                s.key,
+                                { v -> edit { it.copy(key = v) } },
+                                label = stringResource(CR.string.api_key),
+                                enabled = !s.busy,
+                                visualTransformation = PasswordVisualTransformation(),
+                                keyboardOptions =
+                                    KeyboardOptions(
+                                        keyboardType = KeyboardType.Password,
+                                        autoCorrectEnabled = false,
+                                    ),
+                            )
+                        Crossfade(
+                            s.testStatus,
+                            animationSpec = tween(RrMotion.D2),
+                            label = "test status",
+                        ) { result ->
+                            if (result == "success" && s.testCount > 0)
+                                RrCallout(
+                                    stringResource(R.string.screen_connected),
+                                    tone = RrTone.Accent,
                                 )
-                            }
-                            repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
+                            else if (result == "failure")
+                                RrCallout(providerError(s.testErrorKind), tone = RrTone.Danger)
                         }
                     }
-                RrTextField(
-                    s.label,
-                    { v -> edit { it.copy(label = v) } },
-                    label = stringResource(CR.string.name),
-                    enabled = !s.busy,
+                    RrPickerField(
+                        s.model,
+                        { modelEditor = true },
+                        label = stringResource(CR.string.model),
+                        enabled = !s.busy,
+                    )
+                    RrTextField(
+                        s.baseURL,
+                        { v -> edit { it.copy(baseURL = v) } },
+                        label = stringResource(CR.string.base_url),
+                        placeholder = stringResource(R.string.v2_optional),
+                        ltr = true,
+                        enabled = !s.busy,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                    )
+                    if (s.error) ErrorCallout()
+                    s.problem?.let { problem ->
+                        RrCallout(
+                            when (problem) {
+                                "name" -> stringResource(R.string.screen_name_is_required)
+                                "url" -> stringResource(CR.string.enter_an_http_or_https_base_url)
+                                "key" ->
+                                    stringResource(CR.string.enter_an_api_key_for_this_provider)
+                                "recipient" ->
+                                    stringResource(
+                                        CR.string
+                                            .the_saved_key_isn_t_sent_to_a_new_base_url_enter_it_again
+                                    )
+                                else -> stringResource(CR.string.enter_a_model_id)
+                            },
+                            tone = RrTone.Danger,
+                        )
+                    }
+                    if (!s.isNew && s.original != null) {
+                        RrButton(
+                            stringResource(CR.string.make_default),
+                            makeDefault,
+                            variant = RrButtonVariant.Secondary,
+                            enabled =
+                                !s.busy &&
+                                    !s.dirty &&
+                                    s.original.testStatus == "success" &&
+                                    !s.original.isDefault,
+                        )
+                        RrButton(
+                            stringResource(CR.string.delete_provider),
+                            { deleting = true },
+                            variant = RrButtonVariant.DangerGhost,
+                            enabled = !s.busy,
+                        )
+                    }
+                }
+            }
+        }
+        if (!managed)
+            RrFooterBar {
+                RrButton(
+                    stringResource(R.string.v2_test),
+                    test,
+                    Modifier.weight(1f),
+                    variant = RrButtonVariant.Secondary,
+                    size = RrButtonSize.Large,
+                    loading = s.busy,
                 )
-                val keyHelper =
-                    if (s.original != null) stringResource(CR.string.leave_empty_to_keep_the_saved_key)
-                    else if (s.provider == Provider.Ollama) stringResource(CR.string.optional_for_local_ollama)
-                    else stringResource(R.string.screen_stored_encrypted_on_your_server)
-                val keyUrl = providerKeyUrls[s.provider]?.takeIf { it.isNotEmpty() }
+                RrButton(
+                    stringResource(CR.string.save),
+                    save,
+                    Modifier.weight(1f),
+                    size = RrButtonSize.Large,
+                    enabled =
+                        !s.busy && s.original != null && (!s.isNew || s.testStatus == "success"),
+                )
+            }
+        else Box(Modifier.rrNavigationBarsPadding())
+    }
+    if (discard)
+        RrAlertDialog(
+            stringResource(CR.string.discard_changes_302d315bf9),
+            stringResource(R.string.screen_unsaved_changes_will_be_lost),
+            stringResource(CR.string.discard_changes),
+            close,
+            { discard = false },
+            dismissLabel = stringResource(CR.string.keep_editing),
+        )
+    if (providerPicker)
+        SearchPicker(
+            stringResource(R.string.v2_provider),
+            providerNames.map { it.key.name to it.value },
+            { providerPicker = false },
+        ) {
+            choose(Provider.valueOf(it))
+            providerPicker = false
+        }
+    if (keyEditor)
+        RrBottomSheet({ keyEditor = false }, title = stringResource(CR.string.api_key)) {
+            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 RrTextField(
                     s.key,
                     { v -> edit { it.copy(key = v) } },
                     label = stringResource(CR.string.api_key),
-                    enabled = !s.busy,
-                    helper = keyHelper.takeIf { keyUrl == null },
+                    helper = stringResource(CR.string.leave_empty_to_keep_the_saved_key),
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions =
                         KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             autoCorrectEnabled = false,
                         ),
-                    leadingIcon = D.drawable.ic_ph_lock_simple,
+                    enabled = !s.busy,
                 )
-                // The helper line ends with the provider's key page, as on S6.
-                if (keyUrl != null) {
-                    val link = stringResource(CR.string.get_an_api_key)
-                    val accent = RrTheme.colors.accentText
-                    RrText(
-                        buildAnnotatedString {
-                            append("$keyHelper ")
-                            withLink(LinkAnnotation.Clickable("key", TextLinkStyles(SpanStyle(color = accent, fontWeight = FontWeight.SemiBold))) { browser(keyUrl) }) { append(link) }
-                        },
-                        Modifier.offset(y = (-6).dp),
-                        style = RrType.caption.copy(fontWeight = FontWeight.Normal),
-                        color = RrTheme.colors.ink3,
-                    )
-                }
-                Crossfade(
-                    s.provider,
-                    animationSpec = tween(if (RrTheme.reducedMotion) RrMotion.D1 else RrMotion.D2),
-                    label = "provider fields",
-                ) { type ->
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        FlatRow(stringResource(CR.string.model), stringResource(R.string.screen_recommended_for_this_provider), { modelEditor = true }) {
-                            RrButton(
-                                stringResource(CR.string.choose_model),
-                                { modelEditor = true },
-                                variant = RrButtonVariant.Secondary,
-                                size = RrButtonSize.Small,
-                            )
-                        }
-                        if (type in listOf(Provider.Ollama, Provider.OpenaiCompatible) || tasks)
-                            RrTextField(
-                                s.baseURL,
-                                { v -> edit { it.copy(baseURL = v) } },
-                                label = stringResource(CR.string.base_url),
-                                mono = true,
-                                ltr = true,
-                                enabled = !s.busy,
-                            )
-                    }
-                }
-                Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
-                FlatRow(stringResource(CR.string.task_models_optional), stringResource(R.string.screen_fast_model_capable_model), { tasks = !tasks }) {
-                    RrIcon(D.drawable.ic_ph_caret_down, null, size = 20.dp, tint = RrTheme.colors.ink2, modifier = Modifier.rotate(if (tasks) 180f else 0f))
-                }
-                if (tasks) {
-                    RrTextField(
-                        s.fastModel,
-                        { v -> edit { it.copy(fastModel = v) } },
-                        label = stringResource(CR.string.fast_model),
-                        enabled = !s.busy,
-                    )
-                    RrTextField(
-                        s.capableModel,
-                        { v -> edit { it.copy(capableModel = v) } },
-                        label = stringResource(CR.string.capable_model),
-                        enabled = !s.busy,
-                    )
-                }
-                RrCallout(
-                    stringResource(
-                        CR.string
-                            .your_provider_may_charge_your_account_for_requests_made_with_your_api_key
-                    ),
-                    tone = RrTone.Warn,
-                    icon = D.drawable.ic_ph_key,
+                RrButton(
+                    stringResource(CR.string.done),
+                    { keyEditor = false },
+                    Modifier.fillMaxWidth(),
+                    size = RrButtonSize.Large,
                 )
-                if (s.error) ErrorCallout()
-                s.problem?.let { problem ->
-                    RrCallout(
-                        when (problem) {
-                            "name" -> stringResource(R.string.screen_name_is_required)
-                            "url" -> stringResource(CR.string.enter_an_http_or_https_base_url)
-                            "key" -> stringResource(CR.string.enter_an_api_key_for_this_provider)
-                            "recipient" ->
-                                stringResource(
-                                    CR.string
-                                        .the_saved_key_isn_t_sent_to_a_new_base_url_enter_it_again
-                                )
-                            else -> stringResource(CR.string.enter_a_model_id)
-                        },
-                        tone = RrTone.Danger,
-                    )
-                }
-                Crossfade(
-                    s.testStatus,
-                    animationSpec = tween(RrMotion.D1),
-                    label = "test status",
-                ) { result ->
-                    if (result == "success")
-                        RrCallout(stringResource(R.string.screen_connected), tone = RrTone.Accent)
-                    else if (result == "failure")
-                        RrCallout(providerError(s.testErrorKind), tone = RrTone.Danger)
-                }
-                if (s.original != null) {
-                    RrButton(
-                        stringResource(CR.string.make_default),
-                        makeDefault,
-                        variant = RrButtonVariant.Secondary,
-                        enabled =
-                            !s.busy &&
-                                !s.dirty &&
-                                s.original.testStatus == "success" &&
-                                !s.original.isDefault,
-                    )
-                    RrButton(
-                        stringResource(CR.string.delete_provider),
-                        { deleting = true },
-                        variant = RrButtonVariant.DangerGhost,
-                        enabled = !s.busy,
-                    )
-                }
             }
         }
-    }
     if (modelEditor)
         RrBottomSheet({ modelEditor = false }, title = stringResource(CR.string.model)) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -410,6 +438,18 @@ internal fun ProviderScreen(
                     stringResource(R.string.screen_recommended_for_this_provider),
                     { edit { it.copy(model = providerDefaults.getValue(s.provider).first) } },
                     variant = RrButtonVariant.Secondary,
+                )
+                RrTextField(
+                    s.fastModel,
+                    { v -> edit { it.copy(fastModel = v) } },
+                    label = stringResource(CR.string.fast_model),
+                    enabled = !s.busy,
+                )
+                RrTextField(
+                    s.capableModel,
+                    { v -> edit { it.copy(capableModel = v) } },
+                    label = stringResource(CR.string.capable_model),
+                    enabled = !s.busy,
                 )
                 RrButton(
                     stringResource(CR.string.done),
@@ -457,19 +497,4 @@ private fun providerError(kind: String?): String =
             stringResource(
                 CR.string.the_connection_test_failed_check_the_key_model_and_address_then_try_again
             )
-    }
-
-/** A setting on the sheet itself, not in a list: title and subtitle on the start side, a control on the end (S6). */
-@Composable
-private fun FlatRow(title: String, subtitle: String, onClick: () -> Unit, trailing: @Composable () -> Unit) =
-    Row(
-        Modifier.fillMaxWidth().heightIn(min = 44.dp).clickable(onClick = onClick).padding(vertical = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            RrText(title, style = RrType.body)
-            RrText(subtitle, style = RrType.small, color = RrTheme.colors.ink3)
-        }
-        trailing()
     }

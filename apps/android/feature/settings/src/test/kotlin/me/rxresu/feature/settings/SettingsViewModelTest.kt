@@ -301,4 +301,25 @@ class SettingsViewModelTest {
             assertTrue(vm.state.value.finished)
             repo.close()
         }
+
+    @Test
+    fun newestKeySummaryUsesGrantsAndCreationTime() =
+        runTest(dispatcher) {
+            val repo = FakeRepositories(coroutineScope = backgroundScope)
+            val key = repo.account.listApiKeys().apiKeys.first()
+            val old =
+                key.copy(
+                    createdAt = "2026-01-01T00:00:00Z",
+                    permissions = mapOf("api" to listOf("read", "write")),
+                )
+            val recent =
+                key.copy(
+                    createdAt = "2026-02-01T00:00:00Z",
+                    permissions = mapOf("api" to listOf("read")),
+                )
+            assertTrue(newestKeyReadOnly(listOf(recent, old)))
+            assertFalse(newestKeyReadOnly(listOf(recent.copy(permissions = null), old)))
+            assertFalse(newestKeyReadOnly(emptyList()))
+            repo.close()
+        }
 }

@@ -1,6 +1,5 @@
 package me.rxresu.feature.auth
 
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.*
@@ -10,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
+import androidx.navigation.NavDestination.Companion.hasRoute
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -21,7 +21,14 @@ fun NavGraphBuilder.authGraph(nav: NavController, motion: RrNavMotion, auth: Aut
     screen<Welcome> {
         AuthRoute(nav, auth) { vm, s ->
             LaunchedEffect(Unit) { vm.cancel() }
-            WelcomeScreen(s, vm::edit, { vm.checkServer(true) }, { nav.navigate(AtsChecker()) })
+            WelcomeScreen(
+                s,
+                vm::edit,
+                { vm.checkServer(true) },
+                { nav.navigate(AtsChecker()) },
+                { vm.checkServer(true, register = true) },
+                { vm.checkServer() },
+            )
         }
     }
     screen<SignIn> { entry ->
@@ -132,6 +139,8 @@ private fun AuthRoute(
             vm.events.collect { event ->
                 when (event) {
                     AuthEvent.SignIn -> nav.navigate(SignIn())
+                    AuthEvent.Register -> nav.navigate(SignIn(register = true))
+                    AuthEvent.Authenticated -> haptic(RrHaptic.Success)
                     AuthEvent.TwoStep -> nav.navigate(TwoStep())
                     is AuthEvent.Consent -> nav.navigate(Consent(event.query))
                     is AuthEvent.Browser -> activity?.let { auth.openBrowser(it, event.uri) }

@@ -11,6 +11,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -42,15 +44,18 @@ internal fun SettingsFrame(
     back: () -> Unit,
     scroll: ScrollState = rememberScrollState(),
     status: (@Composable RowScope.() -> Unit)? = null,
+    subtitle: String? = null,
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).navigationBarsPadding()) {
-        RrTopBar(title, onBack = back, status = status, actions = actions)
-        Column(
-            Modifier.weight(1f).fillMaxWidth().verticalScroll(scroll).padding(bottom = 16.dp),
-            content = content,
-        )
+    Column(
+        Modifier.fillMaxSize().background(RrTheme.colors.bg).rrNavigationBarsPadding().imePadding()
+    ) {
+        RrTopBar(onBack = back, actions = actions)
+        Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(scroll).padding(bottom = 16.dp)) {
+            RrPageTitle(title, subtitle = subtitle)
+            content()
+        }
     }
 }
 
@@ -62,80 +67,134 @@ internal fun SettingsScreen(
     close: () -> Unit = {},
     navigate: (Any) -> Unit = {},
     browser: (String) -> Unit = {},
+    signOut: () -> Unit = {},
 ) {
-    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).navigationBarsPadding()) {
+    var about by remember { mutableStateOf<String?>(null) }
+    var leaving by remember { mutableStateOf(false) }
+    val haptic = rememberRrHaptics()
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).rrNavigationBarsPadding()) {
         CloseBar(stringResource(R.string.screen_close_settings), close)
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 16.dp)) {
-            RrText(
-                stringResource(CR.string.settings),
-                Modifier.padding(horizontal = 16.dp),
-                style = RrType.title,
-            )
-            if (s.loading && s.account == null) RrSkeletonText(Modifier.padding(16.dp), lines = 3)
+        Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
+            RrPageTitle(stringResource(CR.string.settings))
+            if (s.loading && s.account == null) RrSkeletonText(Modifier.padding(24.dp), lines = 3)
             s.account?.let { account ->
-                RrCard(
-                    Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp),
-                    onClick = { navigate(SettingsAccount) },
-                    contentPadding = PaddingValues(14.dp),
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        AccountAvatar(account, size = 56.dp)
-                        Column(Modifier.weight(1f)) {
-                            RrText(account.name, style = RrType.label)
-                            RrText(
-                                "${account.email} · @${account.username}",
-                                style = RrType.small,
-                                color = RrTheme.colors.ink3,
-                            )
-                        }
-                        RrRowCaret()
-                    }
+                RrListGroup(Modifier.padding(top = 16.dp)) {
+                    RrListRow(
+                        account.name,
+                        subtitle = account.email,
+                        leading = { AccountAvatar(account, size = 56.dp) },
+                        onClick = { navigate(SettingsAccount) },
+                        trailing = { RrRowCaret() },
+                    )
                 }
             }
             if (s.offline) RrOfflineStrip()
             if (s.error) ErrorCallout()
-            RrSectionHeader(stringResource(CR.string.settings))
-            RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                NavRow(
-                    stringResource(CR.string.account),
-                    stringResource(R.string.screen_sign_in_security_your_data),
-                    D.drawable.ic_ph_user,
-                ) {
-                    navigate(SettingsAccount)
-                }
-                NavRow(
-                    stringResource(CR.string.profile),
-                    stringResource(R.string.screen_details_applications_ask_for),
-                    D.drawable.ic_ph_identification_card,
-                ) {
-                    navigate(SettingsProfile)
-                }
-                NavRow(
+            RrListGroup(Modifier.padding(top = 12.dp), topDivider = true) {
+                RrListRow(
+                    stringResource(R.string.v2_account_security),
+                    tile = D.drawable.ic_ph_shield_check,
+                    divider = true,
+                    onClick = { navigate(SettingsAccount) },
+                    trailing = { RrRowCaret() },
+                )
+                RrListRow(
                     stringResource(CR.string.preferences),
-                    stringResource(R.string.screen_theme_language_timezone_notifications),
-                    D.drawable.ic_ph_sliders_horizontal,
-                ) {
-                    navigate(SettingsPreferences)
-                }
+                    subtitle = stringResource(R.string.v2_preferences_summary),
+                    tile = D.drawable.ic_ph_sliders_horizontal,
+                    divider = true,
+                    onClick = { navigate(SettingsPreferences) },
+                    trailing = { RrRowCaret() },
+                )
+                RrListRow(
+                    stringResource(R.string.v2_application_profile),
+                    subtitle = stringResource(R.string.v2_profile_summary),
+                    tile = D.drawable.ic_ph_identification_card,
+                    divider = true,
+                    onClick = { navigate(SettingsProfile) },
+                    trailing = { RrRowCaret() },
+                )
                 val provider = s.providers.firstOrNull { it.isDefault }
-                NavRow(
-                    stringResource(CR.string.ai_developer),
-                    when {
-                        s.providerError -> stringResource(CR.string.failed)
-                        provider?.testStatus == "failure" -> stringResource(CR.string.failed)
-                        provider?.testStatus == "success" -> stringResource(CR.string.ai_is_ready)
-                        else -> stringResource(R.string.screen_not_set_up)
-                    },
-                    D.drawable.ic_ph_sparkle,
-                ) {
-                    navigate(SettingsAi)
-                }
+                RrListRow(
+                    stringResource(R.string.v2_ai_developer),
+                    subtitle =
+                        when {
+                            s.providerError || provider?.testStatus == "failure" ->
+                                stringResource(CR.string.failed)
+                            provider != null ->
+                                provider.label + " · " + stringResource(R.string.v2_default)
+                            else -> stringResource(R.string.screen_not_set_up)
+                        },
+                    tile = D.drawable.ic_ph_sparkle,
+                    onClick = { navigate(SettingsAi) },
+                    trailing = { RrRowCaret() },
+                )
             }
-            RrSectionHeader(stringResource(R.string.screen_about_reactive_resume))
-            RrListGroup(Modifier.padding(horizontal = 16.dp)) {
+            RrSectionHeading(stringResource(R.string.v2_about))
+            RrListGroup {
+                RrListRow(
+                    stringResource(R.string.v2_help_feedback),
+                    divider = true,
+                    onClick = { about = "help" },
+                    trailing = { RrRowCaret() },
+                )
+                RrListRow(
+                    stringResource(R.string.v2_privacy_terms),
+                    divider = true,
+                    onClick = { about = "privacy" },
+                    trailing = { RrRowCaret() },
+                )
+                RrListRow(
+                    stringResource(R.string.v2_version),
+                    trailing = {
+                        RrRowValue(
+                            "${s.serverVersion ?: "—"} · ${server.removePrefix("https://").removePrefix("http://")}",
+                            caret = false,
+                        )
+                    },
+                )
+            }
+            Box(
+                Modifier.padding(start = 24.dp, end = 24.dp, top = 12.dp)
+                    .clickable(
+                        enabled = !s.busy,
+                        role = androidx.compose.ui.semantics.Role.Button,
+                    ) {
+                        if (s.pendingEdits) {
+                            haptic(RrHaptic.Warning)
+                            leaving = true
+                        } else signOut()
+                    }
+                    .padding(vertical = 12.dp)
+            ) {
+                RrText(
+                    stringResource(CR.string.sign_out),
+                    style = RrType.textLink,
+                    color = RrTheme.colors.dangerText,
+                )
+            }
+        }
+    }
+    if (leaving)
+        RrAlertDialog(
+            stringResource(R.string.v2_sign_out_server, server.removePrefix("https://")),
+            stringResource(R.string.screen_any_edits_not_yet_synced_from_this_device_will_be_lost),
+            stringResource(CR.string.sign_out),
+            {
+                leaving = false
+                signOut()
+            },
+            { leaving = false },
+        )
+    about?.let { section ->
+        RrBottomSheet(
+            { about = null },
+            title =
+                stringResource(
+                    if (section == "help") R.string.v2_help_feedback else R.string.v2_privacy_terms
+                ),
+        ) {
+            if (section == "help") {
                 ExternalRow(stringResource(R.string.screen_docs), D.drawable.ic_ph_book_open) {
                     browser("https://docs.rxresu.me")
                 }
@@ -149,22 +208,27 @@ internal fun SettingsScreen(
                     stringResource(R.string.screen_report_a_bug),
                     D.drawable.ic_ph_warning_circle,
                 ) {
-                    val body =
-                        "App: $appVersion\nServer: ${s.serverVersion ?: "unknown"}\nAndroid: ${Build.VERSION.RELEASE}"
                     browser(
-                        "https://github.com/reactive-resume/reactive-resume/issues/new?body=${Uri.encode(body)}"
+                        "https://github.com/reactive-resume/reactive-resume/issues/new?body=" +
+                            Uri.encode(
+                                "App: $appVersion\nServer: ${s.serverVersion ?: "unknown"}\nAndroid: ${Build.VERSION.RELEASE}"
+                            )
                     )
                 }
                 ExternalRow(stringResource(R.string.screen_donate), D.drawable.ic_ph_heart) {
                     browser("https://opencollective.com/reactive-resume/donate")
                 }
+            } else {
+                RrListRow(
+                    stringResource(R.string.v2_privacy),
+                    onClick = { browser("$server/privacy-policy") },
+                    divider = true,
+                )
+                RrListRow(
+                    stringResource(R.string.v2_terms),
+                    onClick = { browser("$server/terms-of-service") },
+                )
             }
-            RrText(
-                "${server.removePrefix("https://")} · ${s.serverVersion ?: "—"} · $appVersion",
-                Modifier.padding(16.dp),
-                style = RrType.small,
-                color = RrTheme.colors.ink3,
-            )
         }
     }
 }
@@ -194,45 +258,25 @@ internal fun AccountScreen(
         (s.security as? AccountSecurityInfo.BrowserRequired)?.url
             ?: "$server/dashboard/settings/account"
     val browserHint = stringResource(CR.string.continue_in_browser)
-    SettingsFrame(stringResource(CR.string.account), back) {
-        if (s.loading && account == null) RrSkeletonText(Modifier.padding(16.dp), lines = 4)
+    SettingsFrame(stringResource(R.string.v2_account_security), back) {
         if (s.offline) RrOfflineStrip()
         if (s.error) ErrorCallout()
-        RrSectionHeader(stringResource(CR.string.account_details))
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
+        val security = s.security as? AccountSecurityInfo.Available
+        RrListGroup(Modifier.padding(top = 20.dp), topDivider = true) {
             RrListRow(
-                stringResource(CR.string.photo),
-                leading = { AccountAvatar(account) },
-                onClick = photo,
-                trailing = {
-                    RrButton(
-                        stringResource(CR.string.change_photo),
-                        photo,
-                        variant = RrButtonVariant.Secondary,
-                        size = RrButtonSize.Small,
-                        enabled = !s.busy,
-                    )
-                    if (account?.image != null)
-                        RrIconButton(
-                            D.drawable.ic_ph_trash,
-                            stringResource(CR.string.remove_photo),
-                            removePhoto,
-                            enabled = !s.busy,
-                        )
-                },
-            )
-            RrListRow(
-                account?.name.orEmpty(),
-                subtitle = stringResource(CR.string.name),
-                onClick = {
-                    value = account?.name.orEmpty()
-                    editor = "name"
-                },
+                stringResource(CR.string.email),
+                subtitle =
+                    if (account?.emailVerified == true) account.email
+                    else stringResource(R.string.screen_not_verified_yet_resend_the_link),
+                divider = true,
+                onClick = { browser(securityUrl) },
                 trailing = { RrRowCaret() },
             )
             RrListRow(
-                account?.username.orEmpty(),
-                subtitle = stringResource(CR.string.username),
+                stringResource(CR.string.username),
+                subtitle =
+                    stringResource(R.string.v2_username_summary, account?.username.orEmpty()),
+                divider = true,
                 onClick = {
                     value = account?.username.orEmpty()
                     editor = "username"
@@ -240,82 +284,96 @@ internal fun AccountScreen(
                 trailing = { RrRowCaret() },
             )
             RrListRow(
-                account?.email.orEmpty(),
-                subtitle = stringResource(CR.string.email),
+                stringResource(CR.string.password),
+                subtitle =
+                    s.passwordChangedMonthsAgo?.let {
+                        pluralStringResource(R.plurals.v2_password_changed, it, it)
+                    } ?: browserHint,
+                divider = true,
                 onClick = { browser(securityUrl) },
-                trailing = {
-                    RrBadge(
-                        if (account?.emailVerified == true) stringResource(R.string.screen_verified)
-                        else stringResource(R.string.screen_not_verified_yet_resend_the_link),
-                        tone =
-                            if (account?.emailVerified == true) RrBadgeTone.Accent
-                            else RrBadgeTone.Warn,
-                    )
-                },
-            )
-        }
-        RrSectionHeader(stringResource(R.string.screen_sign_in_and_security))
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-            NavRow(stringResource(CR.string.password), browserHint, D.drawable.ic_ph_password) {
-                browser(securityUrl)
-            }
-            val security = s.security as? AccountSecurityInfo.Available
-            NavRow(
-                stringResource(CR.string.two_step_verification),
-                security?.let {
-                    if (it.twoStepEnabled) stringResource(CR.string.on)
-                    else stringResource(CR.string.off)
-                } ?: browserHint,
-                D.drawable.ic_ph_shield_check,
-            ) {
-                browser(securityUrl)
-            }
-            NavRow(
-                stringResource(CR.string.passkeys),
-                security?.passkeys?.joinToString() ?: browserHint,
-                D.drawable.ic_ph_fingerprint,
-            ) {
-                browser(securityUrl)
-            }
-            security?.connectedProviders?.forEach { provider ->
-                NavRow(
-                    provider,
-                    stringResource(R.string.screen_connected),
-                    D.drawable.ic_ph_plugs_connected,
-                ) {
-                    browser(securityUrl)
-                }
-            }
-            NavRow(
-                stringResource(R.string.screen_sessions),
-                browserHint,
-                D.drawable.ic_ph_device_mobile,
-            ) {
-                browser(securityUrl)
-            }
-        }
-        RrSectionHeader(stringResource(CR.string.your_data))
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-            NavRow(
-                stringResource(CR.string.export_everything),
-                null,
-                D.drawable.ic_ph_download_simple,
-                export,
+                trailing = { RrRowCaret() },
             )
             RrListRow(
-                stringResource(R.string.screen_delete_account),
-                subtitle = browserHint,
-                icon = D.drawable.ic_ph_trash,
+                stringResource(CR.string.two_step_verification),
+                subtitle =
+                    security?.let {
+                        stringResource(
+                            if (it.twoStepEnabled) R.string.v2_two_step_on else CR.string.off
+                        )
+                    } ?: browserHint,
+                divider = true,
+                onClick = { browser(securityUrl) },
+                trailing = { RrRowCaret() },
+            )
+            RrListRow(
+                stringResource(CR.string.passkeys),
+                subtitle =
+                    security?.let {
+                        pluralStringResource(
+                            R.plurals.v2_passkey_count,
+                            it.passkeys.size,
+                            it.passkeys.size,
+                            it.passkeys.joinToString(),
+                        )
+                    } ?: browserHint,
+                divider = true,
+                onClick = { browser(securityUrl) },
+                trailing = { RrRowCaret() },
+            )
+            RrListRow(
+                stringResource(R.string.v2_connected_apps),
+                subtitle = connectionSummary(s),
+                onClick = { browser(securityUrl) },
+                trailing = { RrRowCaret() },
+            )
+        }
+        RrSectionHeading(stringResource(CR.string.your_data))
+        RrListGroup {
+            RrListRow(
+                stringResource(R.string.v2_export_data),
+                subtitle = stringResource(R.string.v2_export_summary),
+                divider = true,
+                onClick = export,
+                trailing = { RrRowCaret() },
+            )
+            RrListRow(
+                stringResource(R.string.v2_delete_account),
                 danger = true,
                 onClick = { browser(securityUrl) },
             )
         }
-        RrListGroup(Modifier.padding(16.dp)) {
+        RrSectionHeading(stringResource(R.string.v2_account_details))
+        RrListGroup {
+            RrListRow(
+                stringResource(CR.string.name),
+                subtitle = account?.name,
+                divider = true,
+                onClick = {
+                    value = account?.name.orEmpty()
+                    editor = "name"
+                },
+                trailing = { RrRowCaret() },
+            )
+            RrListRow(
+                stringResource(R.string.screen_sessions),
+                subtitle = security?.sessionCount?.toString() ?: browserHint,
+                divider = true,
+                onClick = { browser(securityUrl) },
+                trailing = { RrRowCaret() },
+            )
+            security?.connectedProviders?.forEach { provider ->
+                RrListRow(
+                    provider,
+                    subtitle = stringResource(R.string.screen_connected),
+                    divider = true,
+                    onClick = { browser(securityUrl) },
+                    trailing = { RrRowCaret() },
+                )
+            }
             RrListRow(
                 stringResource(CR.string.server),
                 subtitle = server,
-                icon = D.drawable.ic_ph_globe_simple,
-                enabled = !s.busy,
+                divider = true,
                 onClick = {
                     switching = true
                     leaving = true
@@ -324,13 +382,26 @@ internal fun AccountScreen(
             )
             RrListRow(
                 stringResource(CR.string.sign_out),
-                icon = D.drawable.ic_ph_sign_out,
                 danger = true,
                 enabled = !s.busy,
                 onClick = {
                     switching = false
                     leaving = true
                 },
+            )
+        }
+        Row(Modifier.padding(24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            RrButton(
+                stringResource(R.string.v2_change_photo),
+                photo,
+                variant = RrButtonVariant.Secondary,
+                enabled = !s.busy,
+            )
+            RrButton(
+                stringResource(R.string.v2_remove_photo),
+                removePhoto,
+                variant = RrButtonVariant.Ghost,
+                enabled = !s.busy,
             )
         }
     }
@@ -417,8 +488,12 @@ internal fun PreferencesScreen(
     val activity = androidx.activity.compose.LocalActivity.current
     val inspection = androidx.compose.ui.platform.LocalInspectionMode.current
     LaunchedEffect(s.account?.locale) {
-        // The account's interface language: LocaleManager on 13+, the stored choice and a recreate on 8–12.
-        if (!inspection) s.account?.locale?.wireValue?.let { language -> activity?.applyInterfaceLocale(language) }
+        // The account's interface language: LocaleManager on 13+, the stored choice and a recreate
+        // on 8–12.
+        if (!inspection)
+            s.account?.locale?.wireValue?.let { language ->
+                activity?.applyInterfaceLocale(language)
+            }
     }
     var picker by remember { mutableStateOf<String?>(null) }
     var shortcuts by remember { mutableStateOf(false) }
@@ -440,95 +515,42 @@ internal fun PreferencesScreen(
             }
             pendingCategory = null
         }
+    fun notify(category: NotificationCategory, enabled: Boolean) {
+        if (enabled && !permitted && Build.VERSION.SDK_INT >= 33) {
+            pendingCategory = category
+            permission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else if (!enabled || permitted) preference { setNotification(category, enabled) }
+    }
     SettingsFrame(stringResource(CR.string.preferences), back) {
         if (s.error) ErrorCallout()
-        RrSectionHeader(stringResource(CR.string.appearance))
-        Column(
-            Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            RrSegmentedControl(
-                listOf(
-                    RrSegment(stringResource(CR.string.light), D.drawable.ic_ph_sun),
-                    RrSegment(stringResource(CR.string.dark), D.drawable.ic_ph_moon),
-                    RrSegment(
-                        stringResource(R.string.screen_match_system),
-                        D.drawable.ic_ph_device_mobile,
-                    ),
-                ),
-                s.preferences.theme.ordinal,
-                { i -> preference { setTheme(ThemePreference.entries[i]) } },
-            )
-            RrText(
-                stringResource(CR.string.resumes_always_render_on_white_paper_whatever_the_theme),
-                style = RrType.caption,
-                color = RrTheme.colors.ink3,
-            )
-        }
-        RrSectionHeader(stringResource(R.string.screen_language_and_region))
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
+        RrSectionHeading(stringResource(CR.string.appearance), first = true)
+        val themes =
+            listOf(ThemePreference.MatchSystem, ThemePreference.Light, ThemePreference.Dark)
+        RrSegmentedControl(
+            listOf(
+                RrSegment(stringResource(R.string.v2_system)),
+                RrSegment(stringResource(CR.string.light)),
+                RrSegment(stringResource(CR.string.dark)),
+            ),
+            themes.indexOf(s.preferences.theme),
+            { i -> preference { setTheme(themes[i]) } },
+            Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
+        )
+        RrListGroup(Modifier.padding(top = 8.dp)) {
             RrListRow(
-                stringResource(R.string.screen_interface_language),
-                subtitle =
-                    stringResource(
-                        CR.string.interface_only_each_resume_sets_its_own_language_in_design
-                    ),
-                icon = D.drawable.ic_ph_translate,
-                onClick = { picker = "language" },
+                stringResource(CR.string.language),
+                onClick = { picker = "region" },
+                divider = true,
                 trailing = {
-                    RrRowValue(
-                        s.account?.locale?.wireValue?.let {
-                            Locale.forLanguageTag(it)
-                                .getDisplayLanguage(LocalConfiguration.current.locales[0])
-                        } ?: "English"
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RrRowValue(interfaceLanguage(s.account?.locale), caret = false)
+                        RrRowCaret()
+                    }
                 },
             )
-            RrListRow(
-                stringResource(CR.string.timezone),
-                subtitle =
-                    stringResource(
-                        CR.string.interview_times_reminders_and_schedules_in_career_use_it
-                    ),
-                icon = D.drawable.ic_ph_clock,
-                onClick = { picker = "timezone" },
-                trailing = {
-                    RrRowValue(
-                        s.account?.timezone?.substringAfterLast('/')?.replace('_', ' ') ?: "UTC"
-                    )
-                },
-            )
-        }
-        RrSectionHeader(stringResource(R.string.screen_notifications))
-        if (!permitted)
-            RrCallout(
-                stringResource(R.string.screen_off_in_system_settings),
-                Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
-                actionLabel = stringResource(CR.string.open_settings),
-                onAction = {
-                    context.startActivity(
-                        Intent(AndroidSettings.ACTION_APP_NOTIFICATION_SETTINGS)
-                            .putExtra(AndroidSettings.EXTRA_APP_PACKAGE, context.packageName)
-                    )
-                },
-            )
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-            NotificationCategory.entries.forEach { category ->
-                RrSwitchRow(
-                    notificationTitle(category),
-                    category in s.preferences.notifications,
-                    { enabled ->
-                        if (enabled && !permitted && Build.VERSION.SDK_INT >= 33) {
-                            pendingCategory = category
-                            permission.launch(Manifest.permission.POST_NOTIFICATIONS)
-                        } else if (!enabled || permitted)
-                            preference { setNotification(category, enabled) }
-                    },
-                )
-            }
-        }
-        RrSectionHeader(stringResource(R.string.screen_touch))
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
             CompositionLocalProvider(LocalRrHapticsEnabled provides false) {
                 RrSwitchRow(
                     stringResource(R.string.screen_haptics),
@@ -537,50 +559,99 @@ internal fun PreferencesScreen(
                         if (enabled) view.rrHaptic(RrHaptic.ToggleOn)
                         preference { setHaptics(enabled) }
                     },
-                    subtitle = stringResource(R.string.screen_also_follows_your_system_setting),
-                    icon = D.drawable.ic_ph_vibrate,
                 )
             }
         }
-        RrSectionHeader(stringResource(R.string.screen_motion))
-        RrSegmentedControl(
-            listOf(
-                RrSegment(stringResource(R.string.screen_match_system)),
-                RrSegment(stringResource(R.string.screen_reduced)),
-                RrSegment(stringResource(R.string.screen_full)),
-            ),
-            when (s.preferences.reducedMotion) {
-                null -> 0
-                true -> 1
-                false -> 2
+        RrSectionHeading(
+            stringResource(R.string.v2_notify_about),
+            Modifier.clickable(role = androidx.compose.ui.semantics.Role.Button) {
+                picker = "notifications"
             },
-            { i ->
-                preference {
-                    setReducedMotion(
-                        when (i) {
-                            1 -> true
-                            2 -> false
-                            else -> null
-                        }
-                    )
-                }
-            },
-            Modifier.padding(horizontal = 16.dp),
         )
-        RrListRow(
-            stringResource(R.string.screen_help_translate),
-            onClick = { browser("https://crowdin.com/project/reactive-resume") },
-            trailing = { RrRowCaret() },
-        )
-        if (configuration.keyboard != Configuration.KEYBOARD_NOKEYS)
+        RrListGroup {
+            val categories =
+                listOf(
+                    NotificationCategory.InterviewsAndBriefings,
+                    NotificationCategory.FollowUpsAndOfferDeadlines,
+                    NotificationCategory.NewRoles,
+                    NotificationCategory.FollowUpsAndOfferDeadlines,
+                )
+            val labels =
+                listOf(
+                    stringResource(R.string.screen_interviews_and_briefings),
+                    stringResource(R.string.v2_follow_ups),
+                    stringResource(R.string.v2_new_roles),
+                    stringResource(R.string.v2_offer_deadlines),
+                )
+            categories.forEachIndexed { i, category ->
+                RrSwitchRow(
+                    labels[i],
+                    category in s.preferences.notifications,
+                    { notify(category, it) },
+                    divider = i < categories.lastIndex,
+                )
+            }
+        }
+    }
+    if (picker == "region")
+        RrBottomSheet(
+            { picker = null },
+            title = stringResource(R.string.screen_language_and_region),
+        ) {
             RrListRow(
-                stringResource(CR.string.keyboard_shortcuts),
-                onClick = { shortcuts = true },
+                stringResource(CR.string.language),
+                divider = true,
+                onClick = { picker = "language" },
+                trailing = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RrRowValue(interfaceLanguage(s.account?.locale), caret = false)
+                        RrRowCaret()
+                    }
+                },
+            )
+            RrListRow(
+                stringResource(CR.string.timezone),
+                divider = true,
+                onClick = { picker = "timezone" },
+                trailing = { RrRowValue(s.account?.timezone ?: "UTC") },
+            )
+            RrListRow(
+                stringResource(R.string.screen_help_translate),
+                onClick = { browser("https://crowdin.com/project/reactive-resume") },
                 trailing = { RrRowCaret() },
             )
-    }
+            if (configuration.keyboard != Configuration.KEYBOARD_NOKEYS)
+                RrListRow(
+                    stringResource(CR.string.keyboard_shortcuts),
+                    onClick = { shortcuts = true },
+                    trailing = { RrRowCaret() },
+                )
+        }
+    if (picker == "notifications")
+        RrBottomSheet({ picker = null }, title = stringResource(R.string.screen_notifications)) {
+            RrSwitchRow(
+                stringResource(R.string.screen_feedback_comments),
+                NotificationCategory.FeedbackComments in s.preferences.notifications,
+                { notify(NotificationCategory.FeedbackComments, it) },
+            )
+            if (!permitted)
+                RrCallout(
+                    stringResource(R.string.screen_off_in_system_settings),
+                    Modifier.padding(24.dp),
+                    actionLabel = stringResource(CR.string.open_settings),
+                    onAction = {
+                        context.startActivity(
+                            Intent(AndroidSettings.ACTION_APP_NOTIFICATION_SETTINGS)
+                                .putExtra(AndroidSettings.EXTRA_APP_PACKAGE, context.packageName)
+                        )
+                    },
+                )
+        }
     if (shortcuts) ShortcutsSheet { shortcuts = false }
-    if (picker != null) {
+    if (picker == "timezone" || picker == "language") {
         val timezone = picker == "timezone"
         val options =
             if (timezone)
@@ -612,6 +683,27 @@ internal fun PreferencesScreen(
             picker = null
         }
     }
+}
+
+@Composable
+private fun interfaceLanguage(locale: ImportResumeFileLocale?): String {
+    if (locale?.wireValue == "en-GB") return stringResource(R.string.v2_english_uk)
+    return locale?.wireValue?.let {
+        Locale.forLanguageTag(it).getDisplayName(LocalConfiguration.current.locales[0])
+    } ?: "English"
+}
+
+@Composable
+private fun connectionSummary(s: SettingsState): String? {
+    val apps = s.connections ?: return null
+    return if (apps.size > 1)
+        pluralStringResource(
+            R.plurals.v2_connection_summary,
+            apps.size - 1,
+            (apps.first().clientName ?: apps.first().clientId),
+            apps.size - 1,
+        )
+    else apps.firstOrNull()?.let { it.clientName ?: it.clientId }
 }
 
 @Composable
@@ -713,12 +805,6 @@ private fun CloseBar(label: String, close: () -> Unit) {
             )
         }
     ) {
-        RrTopBar("", flat = true)
-        RrIconButton(
-            D.drawable.ic_ph_x,
-            label,
-            close,
-            Modifier.statusBarsPadding().padding(start = 6.dp, top = 6.dp),
-        )
+        RrTopBar(onClose = close, closeLabel = label)
     }
 }
