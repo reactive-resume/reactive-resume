@@ -114,7 +114,7 @@
 		&:where(a:hover) {
 			text-decoration-color: currentColor;
 		}
-		&:where(a:focus-visible) {
+		&:where(a:focus-visible:not([data-pointer] *)) {
 			outline: 2px solid var(--accent, currentColor);
 			outline-offset: 2px;
 			border-radius: 0.125em;
