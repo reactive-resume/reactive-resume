@@ -215,6 +215,61 @@ class CareerModelsTest {
         assertEquals("Words approved for original destination", model.state.value.draft)
         assertTrue(model.state.value.error)
         assertFalse(model.state.value.busy)
+        assertTrue(model.state.value.connectionChanged)
+        model.send(); advanceUntilIdle()
+        assertNull(transport.sent)
+        val reviewed = model.state.value.providers.first { it.id == model.state.value.selected }
+        assertEquals("changed-version", reviewed.recipientVersion)
+        model.provider(reviewed); advanceUntilIdle()
+        assertFalse(model.state.value.connectionChanged)
+        assertFalse(model.state.value.error)
+        model.send(); advanceUntilIdle()
+        assertEquals(aiApproval(reviewed), requireNotNull(transport.sent).options.headers)
+        repositories.close()
+    }
+    @Test fun changedCoachRecipientBlocksQuestionAnswerUntilReviewed() = runTest {
+        val controls = FakeControls()
+        val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
+        val providers = repositories.ai.listAiProviders().map { it.copy(testStatus = "success", recipientVersion = "approved-version") }
+        controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(providers))
+        val transport = RecordingCoachTransport().apply { askQuestion = true }
+        val model = CoachViewModel(repositories, CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler)), null, null, transport)
+        advanceUntilIdle()
+        model.draft("Help me prepare"); model.send(); advanceUntilIdle()
+        val question = requireNotNull(model.state.value.pendingQuestion())
+        transport.sent = null; transport.askQuestion = false
+        controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(providers.map { it.copy(recipientVersion = "changed-version") }))
+        model.answer(question, "Northwind"); advanceUntilIdle()
+        assertNull(transport.sent)
+        assertTrue(model.state.value.connectionChanged)
+        assertFalse(model.state.value.busy)
+        assertEquals(question, model.state.value.pendingQuestion())
+        model.answer(question, "Northwind"); advanceUntilIdle()
+        assertNull(transport.sent)
+        val reviewed = model.state.value.providers.first { it.id == model.state.value.selected }
+        model.provider(reviewed); advanceUntilIdle()
+        model.answer(question, "Northwind"); advanceUntilIdle()
+        val sent = requireNotNull(transport.sent)
+        assertEquals(aiApproval(reviewed), sent.options.headers)
+        assertEquals("Northwind", sent.body!!.jsonObject["message"]!!.jsonObject["parts"]!!.jsonArray.single().jsonObject["output"]!!.jsonPrimitive.content)
+        assertNull(model.state.value.pendingQuestion())
+        repositories.close()
+    }
+    @Test fun disabledCoachConnectionIsRemovedBeforeDispatch() = runTest {
+        val controls = FakeControls()
+        val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
+        val providers = repositories.ai.listAiProviders().map { it.copy(testStatus = "success") }
+        controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(providers))
+        val transport = RecordingCoachTransport()
+        val model = CoachViewModel(repositories, CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler)), null, null, transport)
+        advanceUntilIdle()
+        val selected = model.state.value.selected
+        controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(providers.map { if (it.id == selected) it.copy(enabled = false) else it }))
+        model.draft("Keep these words"); model.send(); advanceUntilIdle()
+        assertNull(transport.sent)
+        assertTrue(model.state.value.connectionChanged)
+        assertFalse(model.state.value.providers.any { it.id == selected })
+        assertEquals("Keep these words", model.state.value.draft)
         repositories.close()
     }
     @Test fun applicationCoachStartsThenReopensThatJobsConversation() = runTest {

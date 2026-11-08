@@ -127,6 +127,7 @@ import kotlinx.coroutines.launch
     answer: (CoachQuestion, String) -> Unit = { _, _ -> }, openSource: (String) -> Unit = {},
 ) {
     val c = RrTheme.colors
+    val connectionReady = state.providers.any { it.id == state.selected }
     val scroll = rememberScrollState()
     val dragging by scroll.interactionSource.collectIsDraggedAsState()
     var follow by remember { mutableStateOf(true) }
@@ -160,6 +161,7 @@ import kotlinx.coroutines.launch
         Column(Modifier.weight(1f).onSizeChanged { viewport = it.height }.verticalScroll(scroll).padding(start = 24.dp, end = 24.dp, top = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             if (state.loading) CareerLoading() else {
                 if (state.error) CareerError(retry)
+                if (state.connectionChanged) RrCallout(stringResource(R.string.career_connection_changed), tone = RrTone.Warn, actionLabel = stringResource(R.string.career_choose_a_connection_428239), onAction = chooseProvider)
                 state.messages.forEachIndexed { index, m ->
                     if (m.mine) RrUserBubble(m.text, Modifier.onGloballyPositioned { tops[m.id] = it.positionInParent().y.toInt() })
                     else {
@@ -184,7 +186,7 @@ import kotlinx.coroutines.launch
                 state.pendingQuestion()?.let { question ->
                     var ownWords by remember(question.toolCallId) { mutableStateOf(false) }
                     var ownAnswer by remember(question.toolCallId) { mutableStateOf("") }
-                    val canAnswer = !state.busy && !state.readOnly
+                    val canAnswer = !state.busy && !state.readOnly && !state.connectionChanged && connectionReady
                     RrQuestionCard(question.text, question.answers, { answer(question, it) },
                         ownWordsLabel = stringResource(CoreStrings.string.or_in_your_own_words), onOwnWords = { ownWords = true }, enabled = canAnswer)
                     if (ownWords) RrTextField(ownAnswer, { ownAnswer = it }, label = stringResource(CoreStrings.string.or_in_your_own_words), enabled = canAnswer,
@@ -201,7 +203,7 @@ import kotlinx.coroutines.launch
             if (room > 0) Spacer(Modifier.height(with(density) { room.toDp() }))
         }
         Column(Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            RrAiComposer(state.draft, onDraft, send, stringResource(R.string.career_ask_about_your_next_career_step_ba2404), enabled = !state.readOnly && state.selected != null && (!state.memory || state.knowledgeReady), sending = state.busy, onStop = stop, contextChips = {
+            RrAiComposer(state.draft, onDraft, send, stringResource(R.string.career_ask_about_your_next_career_step_ba2404), enabled = !state.readOnly && !state.connectionChanged && connectionReady && (!state.memory || state.knowledgeReady), sending = state.busy, onStop = stop, contextChips = {
                 // On: × leaves it out of the next message. Left out: dashed; tap brings it back.
                 if (state.memory) RrContextChip(stringResource(R.string.career_knowledge_on_4bf78f), icon = Icons.drawable.ic_ph_book_open, onRemove = { memory(false) })
                 else RrContextChip(stringResource(R.string.career_knowledge_off_3697f7), icon = Icons.drawable.ic_ph_book_open, leftOut = true, onClick = { memory(true) })
@@ -211,6 +213,7 @@ import kotlinx.coroutines.launch
                 }
             })
             if (state.memory && !state.knowledgeReady) RrText(if (state.loading) stringResource(R.string.career_loading_knowledge_before_you_send_266b01) else stringResource(R.string.career_knowledge_couldn_t_load_try_again_or_switch_knowledge_off_be_38aa66), style = RrType.small, color = c.ink3)
+            if (!state.loading && state.selected != null && !connectionReady) RrText(stringResource(CoreStrings.string.this_conversation_s_connection_is_off_or_was_removed_choose_the_one_it_uses_next), style = RrType.small, color = c.ink3)
             if (!follow) RrButton(stringResource(R.string.career_latest_decd7c), { follow = true; scope.launch { scroll.animateScrollTo(scroll.maxValue) } }, variant = RrButtonVariant.Secondary)
             if (state.busy) RrWorkingLabel(listOf(stringResource(R.string.career_working_13b7bf)))
         }

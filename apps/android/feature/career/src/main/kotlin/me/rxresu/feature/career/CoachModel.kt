@@ -43,7 +43,7 @@ internal data class CoachState(val loading: Boolean = true, val draft: String = 
     val facts: List<CareerFact> = emptyList(), val stories: List<Story> = emptyList(),
     val busy: Boolean = false, val pendingFacts: List<CoachFact> = emptyList(), val sources: List<Pair<String, String>> = emptyList(), val server: String = "",
     /** Scoped to one application: its context always goes with the message, so there is no Applications chip. */
-    val scoped: Boolean = false)
+    val scoped: Boolean = false, val connectionChanged: Boolean = false)
 
 /** UIMessage parts are open JSON in the published contract. The generator currently erases their text/tool fields. */
 internal fun coachMessages(raw: JsonObject): List<CoachMessage> = (raw["messages"] as? JsonArray).orEmpty().mapNotNull { item ->
@@ -125,20 +125,26 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
     }
     fun memory(value: Boolean) { mutable.update { it.copy(memory = value) } }
     fun applications(value: Boolean) { mutable.update { it.copy(applications = value) } }
+    private suspend fun requireCurrentProvider(provider: TestAiProviderResponse) {
+        val providers = repositories.ai.listAiProviders(options = options)
+        checkOwner()
+        val fresh = providers.firstOrNull { it.id == provider.id }
+        val current = fresh?.recipientVersion == provider.recipientVersion && fresh.enabled && fresh.testStatus == "success"
+        if (!current) mutable.update { it.copy(connectionChanged = true, providers = providers.filter { p -> p.enabled && p.testStatus == "success" }) }
+        require(current) { "AI connection changed" }
+    }
     fun provider(provider: TestAiProviderResponse) = run({ mutable.update { it.copy(error = true) } }) {
-        val fresh = repositories.ai.listAiProviders(options = options).firstOrNull { it.id == provider.id }
-        require(fresh?.recipientVersion == provider.recipientVersion)
+        requireCurrentProvider(provider)
         state.value.thread?.let { repositories.assistant.updateAgentThread(it.id, UpdateAgentThreadRequest(aiProviderId = provider.id), options.copy(headers = aiApproval(provider))) }
-        checkOwner(); mutable.update { it.copy(selected = provider.id) }
+        checkOwner(); mutable.update { it.copy(selected = provider.id, connectionChanged = false, error = false) }
     }
     fun send() {
         val before = state.value
         val provider = before.providers.firstOrNull { it.id == before.selected } ?: return
-        if (before.busy || before.readOnly || before.draft.isBlank() || before.memory && !before.knowledgeReady) return
+        if (before.busy || before.readOnly || before.connectionChanged || before.draft.isBlank() || before.memory && !before.knowledgeReady) return
         streaming = run({ mutable.update { it.copy(busy = false, error = true) } }) {
             mutable.update { it.copy(busy = true, error = false) }
-            val fresh = repositories.ai.listAiProviders(options = options).firstOrNull { it.id == provider.id }
-            require(fresh?.recipientVersion == provider.recipientVersion && fresh.enabled && fresh.testStatus == "success")
+            requireCurrentProvider(provider)
             val thread = before.thread ?: repositories.assistant.startAgentThread(
                 if (applicationId != null) StartAgentThreadRequest(aiProviderId = provider.id, applicationId = applicationId, scope = StartAgentThreadRequestScope.Application)
                 else StartAgentThreadRequest(aiProviderId = provider.id, scope = StartAgentThreadRequestScope.Career), options)
@@ -179,9 +185,10 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
         val thread = before.thread ?: return
         val last = before.messages.lastOrNull()?.takeIf { !it.mine && it.id == question.messageId } ?: return
         val raw = last.raw ?: return
-        if (before.busy || before.readOnly || answer.isBlank()) return
+        if (before.busy || before.readOnly || before.connectionChanged || answer.isBlank()) return
         streaming = run({ mutable.update { it.copy(busy = false, error = true) } }) {
             mutable.update { it.copy(busy = true, error = false) }
+            requireCurrentProvider(provider)
             val parts = JsonArray(last.parts.map { part ->
                 if (part["toolCallId"]?.jsonPrimitive?.contentOrNull != question.toolCallId) part
                 else JsonObject(part + mapOf("state" to JsonPrimitive("output-available"), "output" to JsonPrimitive(answer.trim())))
