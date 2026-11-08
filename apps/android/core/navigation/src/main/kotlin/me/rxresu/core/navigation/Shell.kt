@@ -153,7 +153,7 @@ fun NavController.switchTab(route: Any) = navigate(route) {
 }
 
 /** Replaces the whole back stack (sign-in done, sign-out). */
-fun NavController.resetTo(route: Any) = navigate(route) { popUpTo(0) { inclusive = true } }
+fun NavController.resetTo(route: Any) = navigate(route) { popUpTo(graph.id) { inclusive = true } }
 
 /** Used by graphs that open a route only once (e.g. a sheet already on top). */
 fun NavOptionsBuilder.single() { launchSingleTop = true }

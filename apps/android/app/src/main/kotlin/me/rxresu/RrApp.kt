@@ -100,6 +100,8 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
 
         if (session == SessionState.Loading) return@RrTheme
         val signedIn = session is SessionState.SignedIn || session is SessionState.Expired
+        // Chosen once: later session changes move the back stack (SessionRouting), never the graph's start.
+        val start = remember { if (signedIn) TodayTab else Welcome }
         SessionRouting(nav, signedIn)
         // Pages belong to one account; the next account starts with an empty cache.
         LaunchedEffect(session) { if (session == SessionState.SignedOut) graph.pagesDir.listFiles()?.forEach { it.deleteRecursively() } }
@@ -134,7 +136,7 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
                 Box(Modifier.weight(1f)) {
                     NavHost(
                         navController = nav,
-                        startDestination = if (signedIn) TodayTab else Welcome,
+                        startDestination = start,
                         enterTransition = motion.enter,
                         exitTransition = motion.exit,
                         popEnterTransition = motion.popEnter,
