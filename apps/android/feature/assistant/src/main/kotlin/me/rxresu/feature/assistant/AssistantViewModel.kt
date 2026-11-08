@@ -17,7 +17,14 @@ internal data class AssistantState(
     val threads: List<StartAgentThreadResponse> = emptyList(), val content: ConversationContent = ConversationContent(),
     val documentId: String = "", val documentName: String = "", val letterId: String? = null, val locked: Boolean = false, val documentContext: Boolean = true, val postingContext: Boolean = true,
     val facts: Map<String, String> = emptyMap(), val wordingSavedId: String? = null, val attachments: List<CreateAgentAttachmentResponse> = emptyList(), val deciding: Boolean = false, val historyUnavailable: Boolean = false,
+    /** The wording the person is writing for one proposal; kept here so closing or leaving Proposals never loses it. */
+    val wording: WordingDraft? = null,
+    /** The last send was refused because the connection changed after it was shown; the disclosure now names the current one. */
+    val destinationChanged: Boolean = false,
 ) { val provider get() = providers.firstOrNull { it.id == providerId }; val proposals get() = content.proposals }
+
+/** Wording for [proposal] as it was when editing began; a refreshed proposal never replaces [text]. */
+internal data class WordingDraft(val proposal: Proposal, val text: String) { val dirty get() = text != plain(proposal.after) }
 
 @OptIn(FlowPreview::class)
 internal class AssistantViewModel(private val repositories: RrRepositories, private val resumeId: String, threadId: String?) : ViewModel() {
@@ -31,14 +38,34 @@ internal class AssistantViewModel(private val repositories: RrRepositories, priv
     private var retryRequest: SendAgentMessageRequest? = null
     init { viewModelScope.launch {
         suspend fun attempt(block: suspend () -> Unit) { try { block() } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(failed = true) } } }
-        attempt {
-            val providers = repositories.ai.listAiProviders().filter { it.enabled }
-            mutable.update { it.copy(providers = providers, providerId = (providers.firstOrNull { it.isDefault } ?: providers.firstOrNull())?.id) }
-        }
+        attempt { loadProviders() }
         attempt { if (threadId != null) loadThread(threadId) else if (resumeId.isNotEmpty()) openResume(resumeId) }
         attempt { val threads = repositories.assistant.listAgentThreads(); mutable.update { it.copy(threads = threads) } }
         mutable.update { it.copy(loading = false) }
     } }
+    /** Reloads the connections, keeping the chosen one when it still exists (the thread and the draft stay). */
+    private suspend fun loadProviders() {
+        val providers = repositories.ai.listAiProviders().filter { it.enabled }
+        mutable.update { s -> s.copy(providers = providers, providerId = s.providerId?.takeIf { id -> providers.any { it.id == id } } ?: (providers.firstOrNull { it.isDefault } ?: providers.firstOrNull())?.id) }
+    }
+
+    /** Back from connection setup (or any return to the Assistant): pick up added or changed connections. */
+    fun refreshProviders() = viewModelScope.launch { try { loadProviders() } catch (e: CancellationException) { throw e } catch (_: Exception) {} }
+
+    /** The approval of the connection the person was shown, sent with every AI request (`x-ai-destination`). */
+    private fun approval(provider: TestAiProviderResponse? = state.value.provider) = provider?.let { RequestOptions().approvedFor(it) } ?: RequestOptions()
+
+    /** A failed AI request: a changed destination (409, nothing sent) renews the disclosure; the person's words stay. */
+    private suspend fun failed(e: Exception) {
+        val changed = e is ApiException && e.status == 409
+        if (changed) try { loadProviders() } catch (ce: CancellationException) { throw ce } catch (_: Exception) {}
+        mutable.update { it.copy(failed = true, destinationChanged = changed) }
+    }
+
+    fun editWording(proposal: Proposal) = mutable.update { s -> s.copy(wording = s.wording?.takeIf { it.proposal.id == proposal.id } ?: WordingDraft(proposal, plain(proposal.after))) }
+    fun wording(text: String) = mutable.update { s -> s.copy(wording = s.wording?.copy(text = text)) }
+    fun cancelWording() = mutable.update { it.copy(wording = null) }
+
     private suspend fun openResume(id: String) {
         val handle = repositories.resumes.openDraft(id); resume = handle
         documentJob?.cancel()
@@ -62,14 +89,14 @@ internal class AssistantViewModel(private val repositories: RrRepositories, priv
     fun provider(id: String) = viewModelScope.launch {
         if (state.value.streaming || state.value.providers.none { it.id == id }) return@launch
         try {
-            state.value.threadId?.let { repositories.assistant.updateAgentThread(it, UpdateAgentThreadRequest(aiProviderId = id)) }
+            state.value.threadId?.let { repositories.assistant.updateAgentThread(it, UpdateAgentThreadRequest(aiProviderId = id), approval(state.value.providers.first { p -> p.id == id })) }
             mutable.update { it.copy(providerId = id) }
         } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(failed = true) } }
     }
     fun thread(id: String) = viewModelScope.launch { if (state.value.deciding) return@launch; stream?.cancelAndJoin(); mutable.update { it.copy(content = ConversationContent(), loading = true) }; try { loadThread(id) } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(failed = true) } } finally { mutable.update { it.copy(loading = false) } } }
     private suspend fun ensureThread(): String = threadCreation.withLock {
         state.value.threadId ?: repositories.assistant.startAgentThread(StartAgentThreadRequest(aiProviderId = state.value.providerId,
-            coverLetterId = state.value.letterId, resumeId = resumeId.takeIf { state.value.letterId == null }, scope = StartAgentThreadRequestScope.Document)).id.also { id -> mutable.update { it.copy(threadId = id) } }
+            coverLetterId = state.value.letterId, resumeId = resumeId.takeIf { state.value.letterId == null }, scope = StartAgentThreadRequestScope.Document), approval()).id.also { id -> mutable.update { it.copy(threadId = id) } }
     }
     private suspend fun flushDocument() {
         resume?.let { it.flushSaved() }
@@ -80,7 +107,7 @@ internal class AssistantViewModel(private val repositories: RrRepositories, priv
         val current = state.value
         if (current.loading || current.input.isBlank() || current.streaming || current.locked || current.provider == null) return
         current.content.question?.takeIf { it.toolCallId.isNotEmpty() }?.let { answer(it.toolCallId, current.input); return }
-        mutable.update { it.copy(streaming = true, failed = false, stopped = false) }
+        mutable.update { it.copy(streaming = true, failed = false, stopped = false, destinationChanged = false) }
         stream = viewModelScope.launch {
             try {
                 flushDocument()
@@ -93,12 +120,12 @@ internal class AssistantViewModel(private val repositories: RrRepositories, priv
                 retryRequest = request
                 // Same message id on Retry: an uncertain response must not duplicate the person's turn.
                 mutable.update { it.copy(content = conversationContent(it.content.messages.filterNot { old -> old.id == message.id } + message)) }
-                collectStream(repositories.assistant.sendAgentMessage(request))
+                collectStream(repositories.assistant.sendAgentMessage(request, approval(current.provider)))
                 if (!state.value.failed) {
                     retryRequest = null
                     mutable.update { it.copy(input = if (it.input == current.input) "" else it.input, attachments = it.attachments.filterNot { file -> current.attachments.any { used -> used.id == file.id } }) }
                 }
-            } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(failed = true) } }
+            } catch (e: CancellationException) { throw e } catch (e: Exception) { failed(e) }
             finally { mutable.update { it.copy(streaming = false) } }
         }
     }
@@ -144,7 +171,8 @@ internal class AssistantViewModel(private val repositories: RrRepositories, priv
         val last = state.value.content.messages.lastOrNull()?.takeIf { it.role == AiTailorResumeForApplicationResponseConversationMessagesItemRole.Assistant } ?: return
         if (last.parts.none { it.extraFields.text("toolCallId") == toolCallId && it.extraFields.text("state") in setOf("input-available", "approval-requested") }) return
         if ((!state.value.documentContext || !state.value.postingContext) && (last.metadata as? JsonObject)?.text("contextScope") != "[${state.value.documentContext},${state.value.postingContext}]") { mutable.update { it.copy(failed = true) }; return }
-        mutable.update { it.copy(streaming = true, failed = false) }
+        mutable.update { it.copy(streaming = true, failed = false, destinationChanged = false) }
+        val provider = state.value.provider
         stream = viewModelScope.launch {
             try {
                 flushDocument()
@@ -153,10 +181,10 @@ internal class AssistantViewModel(private val repositories: RrRepositories, priv
                 if (message.parts.any { it.extraFields.text("state") == "approval-requested" || (it.type == "tool-ask_user_question" && it.extraFields.text("state") == "input-available") }) return@launch
                 val request = SendAgentMessageRequest(message = message, threadId = requireNotNull(state.value.threadId), context = SendAgentMessageRequestContext(document = state.value.documentContext, posting = state.value.postingContext))
                 retryRequest = request
-                collectStream(repositories.assistant.sendAgentMessage(request))
+                collectStream(repositories.assistant.sendAgentMessage(request, approval(provider)))
                 retryRequest = null
                 mutable.update { it.copy(input = "") }
-            } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(failed = true) } }
+            } catch (e: CancellationException) { throw e } catch (e: Exception) { failed(e) }
             finally { mutable.update { it.copy(streaming = false) } }
         }
     }
@@ -187,7 +215,7 @@ internal class AssistantViewModel(private val repositories: RrRepositories, priv
                     repositories.assistant.setAgentEditStatus(SetAgentEditStatusRequest(listOf(SetAgentEditStatusRequestEditsItem(after = proposal.after, id = id, status = PatchAgentMessageEditsRequestEditsItemStatus.Pending, text = wording)), proposal.messageId, requireNotNull(state.value.threadId), proposal.toolCallId))
                     val saved = refreshReceipts().proposals.single { it.id == id }
                     check(saved.after == reviewedWording(proposal.after, wording, proposal.before) && saved.decision == Decision.Pending)
-                    mutable.update { it.copy(wordingSavedId = id) }
+                    mutable.update { it.copy(wordingSavedId = id, wording = it.wording?.takeUnless { draft -> draft.proposal.id == id }) }
                 } else if (decision == Decision.Accepted) {
                     check(proposal.decision == Decision.Pending)
                     val mark = buildJsonObject { if (proposal.snapshot) put(id, "snapshot:" + id) else put(id, proposal.after) }

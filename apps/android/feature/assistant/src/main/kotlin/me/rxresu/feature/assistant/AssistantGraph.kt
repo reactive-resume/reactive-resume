@@ -26,6 +26,8 @@ fun NavGraphBuilder.assistantGraph(nav: NavController, motion: RrNavMotion) {
             route.threadId?.let { if (it != vm.state.value.threadId) vm.thread(it) }
             route.prompt?.let(vm::input)
         }
+        // Back from connection setup (S6) or anywhere else: the picker and Send see the new connection, the draft stays.
+        androidx.lifecycle.compose.LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_RESUME) { vm.refreshProviders() }
         val resources = androidx.compose.ui.platform.LocalResources.current; val context = LocalContext.current; val scope = rememberCoroutineScope(); val toasts = LocalToasts.current
         var picker by remember { mutableStateOf<String?>(null) }
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if (uri != null) scope.launch {
@@ -72,7 +74,7 @@ fun NavGraphBuilder.assistantGraph(nav: NavController, motion: RrNavMotion) {
             }
             else if (!proposal.snapshot && proposal.role == null) nav.navigate(BuilderRichText(state.documentId.ifEmpty { route.resumeId }, proposal.section, proposal.item.orEmpty(), proposal.field))
             else nav.navigate(Builder(state.documentId.ifEmpty { route.resumeId }, view = WriteView.Outline))
-        }, { proposal, text -> vm.decide(listOf(proposal.id), Decision.Pending, text, proposal.after) })
+        }, { proposal, text -> vm.decide(listOf(proposal.id), Decision.Pending, text, proposal.after) }, vm::editWording, vm::wording, vm::cancelWording)
     }
 }
 
