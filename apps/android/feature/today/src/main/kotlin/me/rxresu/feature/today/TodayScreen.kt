@@ -1,18 +1,11 @@
 package me.rxresu.feature.today
 
-import android.text.format.DateFormat
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,17 +21,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import java.time.Instant
@@ -47,16 +39,18 @@ import me.rxresu.core.data.FirstRun
 import me.rxresu.core.data.TodayItem
 import me.rxresu.core.data.TodayKind
 import me.rxresu.core.designsystem.R as DS
+import me.rxresu.core.designsystem.RrHeroCard
+import me.rxresu.core.designsystem.RrCompanyTile
+import me.rxresu.core.designsystem.RrDocumentThumbnail
+import me.rxresu.core.designsystem.RrBottomSheet
+import androidx.compose.foundation.clickable
+import androidx.compose.animation.Crossfade
 import me.rxresu.core.designsystem.RrAvatar
-import me.rxresu.core.designsystem.RrBadge
-import me.rxresu.core.designsystem.RrBadgeTone
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
-import me.rxresu.core.designsystem.RrCheckbox
 import me.rxresu.core.designsystem.RrEmptyState
-import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrIconButton
 import me.rxresu.core.designsystem.RrIconButtonSize
 import me.rxresu.core.designsystem.RrLargeTitleHeader
@@ -76,7 +70,6 @@ import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
-import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.designsystem.rememberRrLargeTitleState
 import me.rxresu.core.designsystem.rrLargeTitleScroll
 import me.rxresu.core.navigation.WorkspaceTab
@@ -109,6 +102,8 @@ class TodayActions(
     val onOpenSchedule: (id: String?) -> Unit = {},
     val onOpenDocument: (DocumentSummary) -> Unit = {},
     val onNew: () -> Unit = {},
+    val onImport: () -> Unit = {},
+    val onApplications: () -> Unit = {},
     val onSaveJob: () -> Unit = {},
     val onPreferences: () -> Unit = {},
     val onTurnOnReminders: () -> Unit = {},
@@ -133,7 +128,7 @@ fun TodayScreen(
 ) {
     val context = LocalContext.current
     val locale = LocalConfiguration.current.locales[0]
-    val format = remember(locale, zone) { TodayFormat(locale, zone, DateFormat.is24HourFormat(context)) }
+    val format = remember(locale, zone) { TodayFormat(locale, zone, true) }
     val header = rememberRrLargeTitleState()
     val c = RrTheme.colors
     Box(modifier.fillMaxSize().background(c.bg)) {
@@ -141,10 +136,10 @@ fun TodayScreen(
             RrLargeTitleHeader(
                 title = stringResource(S.string.today),
                 state = header,
-                subtitle = if (state.newAccount) null else format.header(now.atZone(zone).toLocalDate()),
+                subtitle = if (state.newAccount) { if (state.firstName.isBlank()) stringResource(R.string.today_welcome_empty) else stringResource(R.string.today_welcome, state.firstName) } else format.header(now.atZone(zone).toLocalDate()),
             ) {
-                RrIconButton(DS.drawable.ic_ph_magnifying_glass, stringResource(S.string.search), actions.onSearch)
-                RrAvatar(state.initials, onClick = actions.onSettings, contentDescription = stringResource(S.string.settings))
+                if (!state.newAccount) RrIconButton(DS.drawable.ic_ph_magnifying_glass, stringResource(S.string.search), actions.onSearch)
+                RrAvatar(state.initials, modifier = Modifier.padding(start = 4.dp), onClick = actions.onSettings, contentDescription = stringResource(S.string.settings))
             }
             if (state.offline) RrOfflineStrip()
             RrPullToRefresh(state.refreshing, actions.onRefresh, Modifier.weight(1f)) {
@@ -174,101 +169,87 @@ fun TodayScreen(
 }
 
 private fun LazyListScope.content(state: TodayUiState, now: Instant, format: TodayFormat, actions: TodayActions, remindersDenied: Boolean) {
-    val firstRun = state.firstRun
-    // One accent per view: "Add your resume" when it shows, otherwise the top Needs-you action.
-    val addResume = state.showChecklist && firstRun?.hasDocument == false
-    if (state.showChecklist && firstRun != null) {
-        if (state.guest) item("guest") {
-            RrCallout(
-                stringResource(R.string.today_guest),
-                Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
-                actionLabel = stringResource(R.string.today_create_account),
-                onAction = actions.onCreateAccount,
-                actionLink = true,
-            )
-        }
-        if (state.newAccount) item("hero") {
-            RrEmptyState(
-                stringResource(S.string.your_job_search_starts_here),
-                stringResource(R.string.today_first_run_body),
-                Modifier.padding(horizontal = 16.dp),
-            )
-        }
-        item("checklist") { Checklist(firstRun, remindersDenied, actions) }
-        if (addResume) item("add-resume") {
-            RrButton(
-                stringResource(R.string.today_add_resume),
-                actions.onNew,
-                Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                size = RrButtonSize.Large,
-                icon = DS.drawable.ic_ph_plus,
-            )
-        }
-        if (state.newAccount) return
+    if (state.newAccount) {
+        item("hero") { FirstResumeHero(actions) }
+        item("steps") { Checklist(requireNotNull(state.firstRun), remindersDenied, actions) }
+        return
     }
-
-    item("needs-header") {
-        // First under the title it sits close; below the setup checklist it takes a section gap.
-        RrSectionHeader(stringResource(S.string.needs_you), topPadding = if (state.showChecklist && state.firstRun != null) 20.dp else 4.dp, count = state.needsYou.size.takeIf { it > 0 }?.toString())
+    val hero = todayHero(state.needsYou, state.comingUp, now)
+    if (hero != null) item("hero") {
+        Crossfade(hero, animationSpec = tween(if (RrTheme.reducedMotion) 0 else RrMotion.D3), label = "hero") { entry ->
+            TodayHero(entry, format, actions)
+        }
     }
+    val needs = state.needsYou.filter { it.item.id != hero?.item?.id }
+    item("needs-header") { RrSectionHeader(stringResource(S.string.needs_you)) }
     item("needs") {
-        if (state.needsYou.isEmpty()) {
-            RrEmptyState(stringResource(S.string.you_re_up_to_date), stringResource(R.string.today_up_to_date_body), Modifier.padding(horizontal = 16.dp))
-        } else {
-            RrListGroup(Modifier.padding(horizontal = 16.dp).animateContentSize(fold())) {
-                state.needsYou.forEachIndexed { i, entry -> NeedsRow(entry, accent = i == 0 && !addResume, format, actions) }
-            }
+        if (needs.isEmpty()) RrEmptyState(stringResource(S.string.you_re_up_to_date), stringResource(R.string.today_up_to_date_body), Modifier.padding(horizontal = 24.dp))
+        else RrListGroup(Modifier.animateContentSize(fold())) {
+            needs.forEachIndexed { index, entry -> NeedsRow(entry, format, actions, divider = index < needs.lastIndex) }
         }
     }
-
-    if (state.comingUp.isNotEmpty()) {
-        item("coming-header") {
-            RrSectionHeader(stringResource(S.string.coming_up), actionLabel = stringResource(S.string.calendar), onAction = actions.onCalendar)
-        }
-        item("coming") {
-            RrListGroup(Modifier.padding(horizontal = 16.dp)) { state.comingUp.forEach { ComingRow(it, format, actions) } }
-        }
+    val coming = (state.comingUp + listOfNotNull(hero).filter { it.item.kind == TodayKind.Briefing || it.item.kind == TodayKind.Interview })
+        .distinctBy { it.item.id }.sortedBy { it.item.at }
+    if (coming.isNotEmpty()) {
+        item("coming-header") { RrSectionHeader(stringResource(S.string.coming_up), actionLabel = stringResource(S.string.calendar), onAction = actions.onCalendar) }
+        item("coming") { RrListGroup { coming.forEachIndexed { index, entry -> ComingRow(entry, format, actions, index < coming.lastIndex) } } }
     }
-
-    item("roles-header") {
-        val today = now.atZone(format.zone).toLocalDate()
-        val foundToday = state.newRoles.count { format.parse(it.firstSeenAt)?.toLocalDate() == today }
-        RrSectionHeader(
-            stringResource(R.string.today_new_roles),
-            count = when {
-                foundToday > 0 -> stringResource(R.string.today_roles_today, foundToday.toString())
-                state.newRoles.isNotEmpty() -> state.newRoles.size.toString()
-                else -> null
-            },
-        )
-    }
+    item("roles-header") { RrSectionHeader(stringResource(R.string.today_new_roles), count = state.newRoles.size.takeIf { it > 0 }?.let { stringResource(R.string.today_roles_today, it.toString()) }) }
     item("roles") {
-        if (state.newRoles.isEmpty()) {
-            NoNewRoles(state.discovery, now, format, actions)
-        } else {
-            RrListGroup(Modifier.padding(horizontal = 16.dp).animateContentSize(fold())) {
-                state.newRoles.forEach { RoleCard(it, it.id in state.selectedRoles, state.selectedRoles.isNotEmpty(), now, format, actions) }
-            }
+        if (state.newRoles.isEmpty()) NoNewRoles(state.discovery, now, format, actions)
+        else RrListGroup(Modifier.animateContentSize(fold())) {
+            state.newRoles.forEachIndexed { index, role -> RoleRow(role, role.id in state.selectedRoles, state.selectedRoles.isNotEmpty(), actions, index < state.newRoles.lastIndex) }
         }
     }
-
     if (state.recent.isNotEmpty()) {
         item("recent-header") { RrSectionHeader(stringResource(R.string.today_recent)) }
-        item("recent") {
-            RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                state.recent.forEach { doc ->
-                    val letter = doc.type == DocumentType.Letter
-                    val when_ = format.relative(doc.editedAt, now)
-                    RrListRow(
-                        doc.name,
-                        subtitle = stringResource(if (letter) R.string.today_letter_meta else R.string.today_resume_meta, when_),
-                        icon = if (letter) DS.drawable.ic_ph_note_pencil else DS.drawable.ic_ph_file_text,
-                        onClick = { actions.onOpenDocument(doc) },
-                        trailing = { RrRowCaret() },
-                    )
-                }
+        item("recent") { RrListGroup {
+            state.recent.take(3).forEachIndexed { index, doc ->
+                RrListRow(doc.name, subtitle = stringResource(if (doc.type == DocumentType.Letter) R.string.today_letter_meta else R.string.today_resume_meta, format.relative(doc.editedAt, now)), leading = { RrDocumentThumbnail(letter = doc.type == DocumentType.Letter) }, onClick = { actions.onOpenDocument(doc) }, divider = index < state.recent.take(3).lastIndex, trailing = { RrRowCaret() })
             }
+        } }
+    }
+}
+
+/** Ready briefings take priority; otherwise earliest interview, offer, then follow-up. */
+internal fun todayHero(needs: List<TodayEntry>, coming: List<TodayEntry>, now: Instant): TodayEntry? =
+    (needs + coming).filter { entry ->
+        when (entry.item.kind) {
+            TodayKind.Notification -> false
+            TodayKind.Interview -> entry.item.at?.let { runCatching { Instant.parse(it) <= now.plusSeconds(48 * 3600) }.getOrDefault(false) } == true
+            else -> true
         }
+    }.minWithOrNull(compareBy<TodayEntry> {
+        when (it.item.kind) { TodayKind.Briefing -> 0; TodayKind.Interview -> 1; TodayKind.Offer -> 2; TodayKind.FollowUp -> 3; else -> 4 }
+    }.thenBy { it.item.at })
+
+@Composable
+private fun FirstResumeHero(actions: TodayActions) {
+    val c = RrTheme.colors
+    RrHeroCard {
+        RrText(stringResource(R.string.today_start_here), style = RrType.keyLine, color = c.ink3)
+        RrText(stringResource(R.string.today_bring_resume), style = RrType.heading)
+        RrText(stringResource(R.string.today_import_body), style = RrType.body, color = c.ink2)
+        RrButton(stringResource(S.string.import_a_resume), actions.onImport, Modifier.fillMaxWidth().padding(top = 8.dp), size = RrButtonSize.Large)
+        Box(Modifier.align(Alignment.CenterHorizontally).height(32.dp).clickable(onClick = actions.onNew), contentAlignment = Alignment.BottomCenter) { RrText(stringResource(R.string.today_template_instead), style = RrType.textLink, color = c.accentText) }
+    }
+}
+
+@Composable
+private fun TodayHero(entry: TodayEntry, format: TodayFormat, actions: TodayActions) {
+    val c = RrTheme.colors
+    val item = entry.item
+    val interview = item.kind == TodayKind.Briefing || item.kind == TodayKind.Interview
+    RrHeroCard {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            RrStageDot(entry.stage.rr())
+            RrText(format.parse(item.at)?.let { "${format.fullDay(it)} · ${format.time(it)}" }.orEmpty(), style = RrType.keyLine, color = c.ink3)
+        }
+        RrText(if (interview) stringResource(R.string.today_interview_at, kindLabel(item.title), item.company) else item.title, style = RrType.heading)
+        RrText(stringResource(if (interview && item.briefingReady) R.string.today_briefing_body else if (interview) R.string.today_prepare_body else R.string.today_offer_hint), style = RrType.body, color = c.ink2)
+        RrButton(stringResource(if (interview) R.string.today_open_briefing else R.string.today_open), {
+            if (item.kind == TodayKind.Offer) actions.onCompareOffers() else item.applicationId?.let { actions.onOpenApplication(it, if (interview) WorkspaceTab.Prepare else WorkspaceTab.Messages) }
+        }, Modifier.fillMaxWidth().padding(top = 8.dp), size = RrButtonSize.Large)
     }
 }
 
@@ -304,161 +285,54 @@ private fun kindLabel(kind: String): String = stringResource(
 @Composable
 private fun fold() = tween<IntSize>(if (RrTheme.reducedMotion) 0 else RrMotion.D2, easing = RrMotion.ease)
 
-/** A Needs-you item: stage dot, company, a status on the end, one line of context and its actions. Swipe = Mark as read. */
 @Composable
-private fun NeedsRow(entry: TodayEntry, accent: Boolean, format: TodayFormat, actions: TodayActions) {
-    val c = RrTheme.colors
+private fun NeedsRow(entry: TodayEntry, format: TodayFormat, actions: TodayActions, divider: Boolean) {
+    var menu by remember { mutableStateOf(false) }
     val item = entry.item
-    val at = format.parse(item.at)
-    val appId = item.applicationId
-    val open = {
-        if (item.kind == TodayKind.Notification) actions.onNotification(entry)
-        else if (appId != null) actions.onOpenApplication(appId, WorkspaceTab.Overview)
+    val offer = item.kind == TodayKind.Offer
+    val title = when (item.kind) {
+        TodayKind.Offer -> stringResource(R.string.today_reply_company, item.company)
+        TodayKind.FollowUp -> stringResource(R.string.today_follow_company, item.company)
+        else -> item.title
     }
-    val markRead = stringResource(S.string.mark_as_read)
-    RrSwipeRow(startAction = RrSwipeAction(markRead, DS.drawable.ic_ph_check, onCommit = { actions.onMarkRead(item) })) {
-        Column(
-            Modifier.fillMaxWidth().background(c.surface).combinedClickable(role = Role.Button, onClick = open).padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            val notification = item.kind == TodayKind.Notification
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (!notification || entry.stage != null) RrStageDot(entry.stage.rr())
-                RrText(item.company.ifBlank { item.title }, style = RrType.label, color = c.ink, modifier = Modifier.weight(1f))
-                when (item.kind) {
-                    TodayKind.Briefing -> RrBadge(stringResource(R.string.today_briefing_ready), tone = RrBadgeTone.Accent)
-                    TodayKind.Offer -> if (at != null) RrBadge(stringResource(R.string.today_by_date, format.shortDay(at)), tone = RrBadgeTone.Warn)
-                    TodayKind.FollowUp -> format.parse(entry.appliedAt)?.let { RrText(stringResource(R.string.today_applied_on, format.dayMonth(it)), style = RrType.small, color = c.ink3) }
-                    else -> {}
-                }
-            }
-            val detail = when (item.kind) {
-                TodayKind.Briefing, TodayKind.Interview -> listOfNotNull(
-                    stringResource(R.string.today_interview_kind, kindLabel(item.title)),
-                    at?.let { "${format.shortDay(it)}, ${format.time(it)}" },
-                    entry.role,
-                ).joinToString(" · ")
-                TodayKind.Offer -> "${stringResource(R.string.today_reply_to_offer)} · ${stringResource(R.string.today_offer_hint)}"
-                TodayKind.FollowUp -> "${stringResource(R.string.today_follow_up)} · ${stringResource(R.string.today_follow_up_hint)}"
-                TodayKind.Notification -> if (item.company.isBlank()) null else item.title
-            }
-            if (detail != null) RrText(detail, style = RrType.small, color = c.ink2)
-            @OptIn(ExperimentalLayoutApi::class)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                val first = if (accent) RrButtonVariant.Primary else RrButtonVariant.Secondary
-                RrButton(markRead, { actions.onMarkRead(item) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
-                when (item.kind) {
-                    TodayKind.Briefing -> if (appId != null) {
-                        RrButton(stringResource(S.string.open_briefing), { actions.onOpenApplication(appId, WorkspaceTab.Prepare) }, variant = first, size = RrButtonSize.Small)
-                        Practice(appId, RrButtonVariant.Secondary, actions)
-                    }
-                    TodayKind.Interview -> if (appId != null) Practice(appId, first, actions)
-                    TodayKind.Offer -> RrButton(stringResource(S.string.compare_offers), actions.onCompareOffers, variant = first, size = RrButtonSize.Small, icon = DS.drawable.ic_ph_scales)
-                    TodayKind.FollowUp -> if (appId != null) {
-                        RrButton(
-                            stringResource(R.string.today_draft_follow_up),
-                            { actions.onOpenApplication(appId, WorkspaceTab.Messages) },
-                            variant = first,
-                            size = RrButtonSize.Small,
-                            icon = DS.drawable.ic_ph_sparkle,
-                            iconTint = if (accent) null else c.accentText,
-                        )
-                        RrButton(stringResource(R.string.today_log_follow_up), { actions.onLogFollowUp(appId) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
-                    }
-                    TodayKind.Notification -> if (appId != null) RrButton(stringResource(R.string.today_open), open, variant = first, size = RrButtonSize.Small)
-                }
-            }
-        }
+    val subtitle = when (item.kind) {
+        TodayKind.Offer -> format.parse(item.at)?.let { stringResource(R.string.today_offer_by, format.deadline(it)) }
+        TodayKind.FollowUp -> format.parse(entry.appliedAt)?.let { stringResource(R.string.today_follow_since, format.dayMonth(it)) }
+        else -> item.company
+    }
+    RrSwipeRow(startAction = RrSwipeAction(stringResource(S.string.done), DS.drawable.ic_ph_check) { actions.onMarkRead(item) }) {
+        RrListRow(title, subtitle = subtitle, leading = { RrStageDot(entry.stage.rr()) }, onLongClick = { menu = true }, onLongClickLabel = stringResource(S.string.actions), onClick = {
+            if (offer) actions.onCompareOffers() else if (item.kind == TodayKind.Notification) actions.onNotification(entry)
+            else item.applicationId?.let { actions.onOpenApplication(it, WorkspaceTab.Messages) }
+        }, divider = divider, trailing = { RrRowCaret() })
+    }
+    if (menu) RrBottomSheet({ menu = false }, fitContent = true, title = title) {
+        RrListRow(stringResource(S.string.mark_as_read), tile = DS.drawable.ic_ph_check, onClick = { actions.onMarkRead(item); menu = false })
     }
 }
 
 @Composable
-private fun Practice(appId: String, variant: RrButtonVariant, actions: TodayActions) = RrButton(
-    stringResource(S.string.application_workspace_tab_rehearse_interview_answers_practice),
-    { actions.onOpenApplication(appId, WorkspaceTab.Practise) },
-    variant = variant,
-    size = RrButtonSize.Small,
-    icon = DS.drawable.ic_ph_microphone,
-)
-
-/** Coming up: weekday and date column, "Company · Kind", "15:30 · Video call with Priya Shah". */
-@Composable
-private fun ComingRow(entry: TodayEntry, format: TodayFormat, actions: TodayActions) {
-    val c = RrTheme.colors
+private fun ComingRow(entry: TodayEntry, format: TodayFormat, actions: TodayActions, divider: Boolean) {
     val item = entry.item
     val at = format.parse(item.at)
-    val interview = entry.interview
-    val title = if (item.kind == TodayKind.FollowUp) "${item.company} · ${stringResource(R.string.today_follow_up)}" else "${item.company} · ${kindLabel(item.title)}"
-    val place = interview?.location?.takeIf { it.isNotBlank() }
-    val person = interview?.participants?.firstOrNull()?.name
-    val where = when {
-        place != null && person != null -> stringResource(R.string.today_with_person, place, person)
-        else -> place ?: person
-    }
-    RrListRow(
-        title,
-        subtitle = listOfNotNull(at?.let(format::time), where).joinToString(" · ").ifEmpty { null },
-        onClick = { item.applicationId?.let { actions.onOpenApplication(it, WorkspaceTab.Overview) } },
-        leading = if (at == null) null else {
-            {
-                Column(Modifier.width(44.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    RrText(format.weekday(at), style = RrType.caption, color = c.ink3)
-                    RrText(at.dayOfMonth.toString(), style = RrType.sectionHeading, color = c.ink)
-                }
-            }
-        },
-        trailing = { RrRowCaret() },
-    )
+    RrListRow(item.company, subtitle = at?.let { "${if (item.title == "screening") stringResource(R.string.today_screening_call) else stringResource(R.string.today_interview_kind, kindLabel(item.title))} · ${format.time(it)}" }, leading = {
+        if (at != null) Column(Modifier.width(40.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            RrText(format.weekday(at), style = RrType.caption, color = RrTheme.colors.ink3)
+            RrText(at.dayOfMonth.toString(), style = RrType.sheetTitle.copy(lineHeight = androidx.compose.ui.unit.TextUnit(26f, androidx.compose.ui.unit.TextUnitType.Sp)))
+        }
+    }, onClick = { item.applicationId?.let { actions.onOpenApplication(it, WorkspaceTab.Overview) } }, divider = divider, trailing = { RrRowCaret() })
 }
 
-/** A new role: role and company, place, when it was found; Track, Not for me and the reasons behind "Why this role". */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
-private fun RoleCard(role: Opportunity, selected: Boolean, selecting: Boolean, now: Instant, format: TodayFormat, actions: TodayActions) {
-    val c = RrTheme.colors
-    val haptics = rememberRrHaptics()
-    var why by rememberSaveable(role.id) { mutableStateOf(false) }
-    val found = format.parse(role.firstSeenAt)?.toLocalDate()
-    val today = now.atZone(format.zone).toLocalDate()
-    val foundLabel = when (found) {
-        today -> stringResource(R.string.today_found_today)
-        today.minusDays(1) -> stringResource(R.string.today_found_yesterday)
-        null -> null
-        else -> stringResource(R.string.today_found_on, format.dayMonth(found.atStartOfDay(format.zone)))
-    }
-    val selectLabel = stringResource(R.string.today_select_role, role.role)
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .background(if (selected) c.accentSoft else c.surface)
-            .combinedClickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = LocalIndication.current,
-                onLongClickLabel = selectLabel,
-                onLongClick = { haptics(RrHaptic.Light); actions.onToggleRole(role.id) },
-                onClick = { if (selecting) actions.onToggleRole(role.id) else why = !why },
-            )
-            .semantics { if (selecting) this.selected = selected }
-            .padding(horizontal = 14.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        RrText("${role.role} · ${role.company}", style = RrType.label, color = c.ink)
-        RrText(listOfNotNull(role.location.ifBlank { null }, foundLabel).joinToString(" · "), style = RrType.small, color = c.ink3)
-        if (why) {
-            RrText(
-                if (role.matches.isEmpty()) stringResource(R.string.today_no_matches) else stringResource(R.string.today_matches, role.matches.joinToString(" · ")),
-                style = RrType.small,
-                color = c.ink2,
-            )
-            runCatching { java.net.URI(role.url).host }.getOrNull()?.let { RrText(stringResource(R.string.today_source, it), style = RrType.small, color = c.ink3) }
-        }
-        if (!selecting) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                RrButton(stringResource(S.string.track_in_applications), { actions.onTrack(role) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
-                RrButton(stringResource(S.string.not_for_me), { actions.onNotForMe(role) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
-                RrButton(stringResource(R.string.today_why_this_role), { why = !why }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
-            }
-        }
+private fun RoleRow(role: Opportunity, selected: Boolean, selecting: Boolean, actions: TodayActions, divider: Boolean) {
+    var open by remember { mutableStateOf(false) }
+    RrListRow(role.role, modifier = Modifier.semantics { if (selecting) this.selected = selected }, subtitle = listOfNotNull(role.company, role.location).joinToString(" · "), leading = { RrCompanyTile(role.company) }, selected = selected,
+        onClick = { if (selecting) actions.onToggleRole(role.id) else open = true }, onLongClick = { actions.onToggleRole(role.id) }, onLongClickLabel = stringResource(R.string.today_select_role, role.role), divider = divider, trailing = { RrRowCaret() })
+    if (open) RrBottomSheet({ open = false }, title = role.role, fitContent = true) {
+        RrListRow(role.company, subtitle = role.location)
+        RrText(role.snippet.orEmpty(), Modifier.padding(24.dp), style = RrType.body)
+        RrButton(stringResource(S.string.track_in_applications), { actions.onTrack(role); open = false }, Modifier.fillMaxWidth().padding(horizontal = 24.dp), size = RrButtonSize.Large)
+        RrButton(stringResource(S.string.not_for_me), { actions.onNotForMe(role); open = false }, Modifier.align(Alignment.CenterHorizontally), variant = RrButtonVariant.Ghost)
     }
 }
 
@@ -488,39 +362,16 @@ private fun NoNewRoles(discovery: CareerSchedule?, now: Instant, format: TodayFo
     }
 }
 
-/** T2 checklist: rows tick themselves when the thing exists. */
 @Composable
 private fun Checklist(firstRun: FirstRun, remindersDenied: Boolean, actions: TodayActions) {
-    val done = listOf(firstRun.hasDocument, firstRun.hasApplication, firstRun.hasPreferences, firstRun.remindersEnabled)
     Column {
-        RrSectionHeader(stringResource(R.string.today_get_set_up), count = stringResource(R.string.today_progress, done.count { it }.toString(), done.size.toString()))
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-            CheckRow(stringResource(S.string.import_or_create_a_resume), stringResource(R.string.today_import_subtitle), firstRun.hasDocument, actions.onNew)
-            CheckRow(stringResource(S.string.save_a_job), stringResource(R.string.today_save_job_subtitle), firstRun.hasApplication, actions.onSaveJob)
-            CheckRow(stringResource(S.string.set_your_preferences), stringResource(R.string.today_preferences_subtitle), firstRun.hasPreferences, actions.onPreferences)
-            val reminders = stringResource(R.string.today_reminders)
-            RrListRow(
-                reminders,
-                subtitle = stringResource(if (remindersDenied && !firstRun.remindersEnabled) R.string.today_reminders_off else R.string.today_reminders_subtitle),
-                leading = { RrCheckbox(firstRun.remindersEnabled, null) },
-                trailing = if (firstRun.remindersEnabled) null else {
-                    {
-                        if (remindersDenied) {
-                            RrButton(stringResource(S.string.open_settings), actions.onOpenSystemSettings, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
-                        } else {
-                            RrButton(stringResource(R.string.today_turn_on), actions.onTurnOnReminders, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small)
-                        }
-                    }
-                },
-                modifier = Modifier.semantics { contentDescription = reminders },
-            )
+        RrSectionHeader(stringResource(R.string.today_how_it_works))
+        RrListGroup {
+            RrListRow(stringResource(R.string.today_step_resume), subtitle = stringResource(R.string.today_step_resume_body), leading = { RrCompanyTile("1") }, divider = true)
+            RrListRow(stringResource(R.string.today_step_job), subtitle = stringResource(R.string.today_step_job_body), leading = { RrCompanyTile("2") }, onClick = if (firstRun.hasDocument) actions.onSaveJob else null, divider = true)
+            RrListRow(stringResource(R.string.today_step_apply), subtitle = stringResource(R.string.today_step_apply_body), leading = { RrCompanyTile("3") }, onClick = if (firstRun.hasApplication) actions.onApplications else null)
         }
     }
-}
-
-@Composable
-private fun CheckRow(title: String, subtitle: String, done: Boolean, onClick: () -> Unit) {
-    RrListRow(title, subtitle = subtitle, onClick = onClick, leading = { RrCheckbox(done, null) }, trailing = { RrRowCaret() })
 }
 
 /** Bottom bar while new roles are selected: Dismiss selected · Track selected. */

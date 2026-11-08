@@ -38,6 +38,7 @@ data class LibraryUiState(
     val error: Boolean = false,
     val refreshing: Boolean = false,
     val initials: String = "",
+    val trashCount: Int = 0,
     /** Every document in the library (before type and tag filters). */
     val all: List<DocumentSummary> = emptyList(),
     /** What the grid shows. */
@@ -66,10 +67,11 @@ class LibraryViewModel(
 
     val state: StateFlow<LibraryUiState> = combine(
         filters.flatMapLatest { f -> documents.observe(DocumentQuery(sort = f.sort.wireValue)) },
-        filters,
+        combine(filters, documents.observe(DocumentQuery(trashed = true))) { f, trash -> f to trash.data.orEmpty().size },
         account.observeProfile().onStart { emit(Resource(loading = true)) },
         combine(selection, refreshing, hidden, ::Triple),
-    ) { docs, f, profile, (selected, refresh, gone) ->
+    ) { docs, filterAndTrash, profile, (selected, refresh, gone) ->
+        val (f, trashCount) = filterAndTrash
         val all = docs.data.orEmpty().filter { it.id !in gone }
         LibraryUiState(
             loading = docs.data == null && docs.error == null,
@@ -78,6 +80,7 @@ class LibraryViewModel(
             refreshing = refresh,
             initials = initials(profile.data?.name.orEmpty()),
             all = all,
+            trashCount = trashCount,
             documents = filter(all, f),
             filters = f,
             selection = selected.filterTo(mutableSetOf()) { id -> all.any { it.id == id } },

@@ -1,6 +1,7 @@
 package me.rxresu.feature.documents
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,13 +32,14 @@ import me.rxresu.core.designsystem.RrIconButtonSize
 import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrOfflineStrip
-import me.rxresu.core.designsystem.RrSegment
-import me.rxresu.core.designsystem.RrSegmentedControl
 import me.rxresu.core.designsystem.RrSkeleton
 import me.rxresu.core.designsystem.RrSwipeAction
 import me.rxresu.core.designsystem.RrSwipeRow
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
+import me.rxresu.core.designsystem.RrPageTitle
+import me.rxresu.core.designsystem.RrDocumentThumbnail
+import me.rxresu.core.designsystem.rrNavigationBarsPadding
 import me.rxresu.core.designsystem.RrTopBar
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.navigation.TrashTab
@@ -85,25 +87,14 @@ fun TrashScreen(
     val documents = tab == TrashTab.Documents
     Box(modifier.fillMaxSize().background(c.bg)) {
         Column(Modifier.fillMaxSize()) {
-            RrTopBar(stringResource(R.string.trash_title), onBack = callbacks.onBack, backLabel = stringResource(S.string.back_to_documents_187273e32d)) {
+            RrTopBar(onBack = callbacks.onBack, backLabel = stringResource(S.string.back_to_documents_187273e32d)) {
                 if (documents && state.documents.isNotEmpty()) {
                     RrButton(stringResource(R.string.trash_empty), { callbacks.onConfirm(TrashConfirm.Empty) }, variant = RrButtonVariant.DangerGhost, size = RrButtonSize.Small)
                 }
             }
             if (state.offline) RrOfflineStrip()
-            RrSegmentedControl(
-                listOf(RrSegment(stringResource(R.string.trash_documents)), RrSegment(stringResource(R.string.trash_applications))),
-                selectedIndex = tab.ordinal,
-                onSelect = { callbacks.onTab(TrashTab.entries[it]) },
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 8.dp),
-            )
-            RrText(
-                stringResource(if (documents) R.string.trash_documents_note else R.string.trash_applications_note),
-                Modifier.padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
-                style = RrType.small,
-                color = c.ink3,
-            )
-            LazyColumn(Modifier.weight(1f), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)) {
+            RrPageTitle(stringResource(R.string.trash_title), subtitle = stringResource(if (documents) R.string.trash_documents_note else R.string.trash_applications_note), subtitleColor = c.ink3)
+            LazyColumn(Modifier.weight(1f).rrNavigationBarsPadding(), contentPadding = PaddingValues(top = 20.dp, bottom = 16.dp)) {
                 item {
                     when {
                         state.loading -> RrSkeleton(Modifier.fillMaxWidth().height(180.dp))
@@ -123,9 +114,9 @@ fun TrashScreen(
 @Composable
 private fun DocumentRows(state: TrashUiState, now: Instant, callbacks: TrashCallbacks) {
     val deleteLabel = stringResource(R.string.trash_delete_permanently)
-    RrListGroup {
-        state.documents.forEach { doc ->
-            val type = stringResource(if (doc.isLetter) S.string.letter else S.string.resume)
+    RrListGroup(topDivider = true) {
+        state.documents.forEachIndexed { index, doc ->
+            val type = stringResource(if (doc.isLetter) R.string.docs_cover_letter else S.string.resume)
             val left = daysLeft(doc.trashedAt, now)
             val subtitle = if (left == 0) stringResource(R.string.trash_deleted_today, type)
             else stringResource(R.string.trash_deleted_in, type, pluralStringResource(R.plurals.trash_days, left, left))
@@ -134,13 +125,15 @@ private fun DocumentRows(state: TrashUiState, now: Instant, callbacks: TrashCall
                 RrListRow(
                     doc.name,
                     subtitle = subtitle,
-                    leading = { SmallThumbnail(doc) },
+                    leading = { RrDocumentThumbnail(letter = doc.isLetter) },
+                    modifier = if (index == 0) Modifier.padding(top = 1.dp) else Modifier,
+                    divider = index < state.documents.lastIndex,
                     selected = doc.id in state.selection,
                     onClick = if (selecting) ({ callbacks.onToggle(doc.id) }) else null,
                     onLongClick = { callbacks.onToggle(doc.id) },
                     onLongClickLabel = stringResource(R.string.docs_select, doc.name),
                     trailing = if (selecting) null else {
-                        { RrButton(stringResource(R.string.trash_restore), { callbacks.onRestore(doc) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small) }
+                        { Box(Modifier.height(36.dp).clickable { callbacks.onRestore(doc) }, contentAlignment = Alignment.Center) { RrText(stringResource(R.string.trash_restore), style = RrType.linkSmall, color = RrTheme.colors.accentText) } }
                     },
                 )
             }
@@ -160,7 +153,7 @@ private fun ApplicationRows(state: TrashUiState, callbacks: TrashCallbacks) {
                     icon = DS.drawable.ic_ph_briefcase,
                     onLongClick = { callbacks.onConfirm(TrashConfirm.Application(app)) },
                     onLongClickLabel = deleteLabel,
-                    trailing = { RrButton(stringResource(R.string.trash_restore), { callbacks.onRestoreApplication(app) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small) },
+                    trailing = { RrButton(stringResource(R.string.trash_restore), { callbacks.onRestoreApplication(app) }, variant = RrButtonVariant.GhostAccent) },
                 )
             }
         }

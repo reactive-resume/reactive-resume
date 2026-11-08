@@ -26,16 +26,16 @@ class SearchViewModelTest {
     @Before fun main() = Dispatchers.setMain(main)
     @After fun reset() = Dispatchers.resetMain()
 
-    @Test fun groupsContentAboveShortcutsAndAddsNextSteps() {
+    @Test fun groupsApplicationsThenDocumentsAboveShortcuts() {
         val hits = listOf(
             SearchHit("settings", "Settings", "", "destination"),
             SearchHit("a", "Lumen", "Senior product designer", "application", applicationId = "a"),
             SearchHit("r", "Lumen · Senior", "", "resume", documentId = "r"),
         )
         val groups = SearchViewModel.group("lumen", hits, recent = listOf("kiln"), docs = emptyList(), apps = emptyList())
-        assertEquals(listOf(SearchGroupKey.Documents, SearchGroupKey.Applications, SearchGroupKey.GoTo, SearchGroupKey.Actions), groups.map { it.key })
-        assertEquals(listOf(PREPARE, ASK), groups.last().rows.map { it.hit.kind })
-        assertEquals("a", groups.last().rows.first().hit.applicationId)
+        assertEquals(listOf(SearchGroupKey.Applications, SearchGroupKey.Documents, SearchGroupKey.GoTo), groups.map { it.key })
+        assertEquals("a", groups.first().rows.first().hit.applicationId)
+        assertTrue(groups.none { it.rows.any { row -> row.hit.kind == PREPARE || row.hit.kind == ASK } })
     }
 
     @Test fun recentSearchesOnlyWithAnEmptyQuery() {
@@ -58,7 +58,7 @@ class SearchViewModelTest {
         assertTrue(vm.state.first { it.query == "lumen" }.loading)
         advanceTimeBy(SearchViewModel.DEBOUNCE_MS + 1)
         val state = vm.state.first { !it.loading }
-        assertEquals(listOf(SearchGroupKey.Documents, SearchGroupKey.Actions), state.groups.map { it.key })
+        assertEquals(listOf(SearchGroupKey.Documents), state.groups.map { it.key })
         assertTrue(state.groups.first().rows.all { it.hit.title.contains("Lumen", ignoreCase = true) })
         assertFalse(state.empty)
         collector.cancel()
@@ -71,6 +71,16 @@ class SearchViewModelTest {
         vm.setQuery("zzzz")
         assertTrue(vm.state.first { !it.loading && it.query == "zzzz" }.empty)
         collector.cancel()
+    }
+
+    @Test fun messageResultsKeepApplicationIdentityAndFollowDocuments() {
+        val hits = listOf(
+            SearchHit("message", "Thank-you note to Priya", "Draft · Lumen", "message", applicationId = "lumen"),
+            SearchHit("resume", "Product designer — Lumen", "", "resume", documentId = "resume"),
+        )
+        val groups = SearchViewModel.group("lumen", hits, emptyList(), emptyList(), emptyList())
+        assertEquals(listOf(SearchGroupKey.Documents, SearchGroupKey.Chats), groups.map { it.key })
+        assertEquals("lumen", groups.last().rows.single().hit.applicationId)
     }
 
     @Test fun scopeStrings() {

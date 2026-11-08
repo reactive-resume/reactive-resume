@@ -66,11 +66,11 @@ internal fun CopyForJobForm(
 
     Column(modifier.verticalScroll(rememberScrollState()).padding(bottom = 16.dp)) {
         RrSectionHeader(stringResource(R.string.docs_start_from), topPadding = 0.dp)
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
+        RrListGroup {
             resumes.forEach { RrChoiceRow(it.name, it.id == resumeId, { onDraft(draft.copy(resumeId = it.id)) }) }
         }
         RrSectionHeader(stringResource(R.string.docs_for_which_job))
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
+        RrListGroup {
             applications.forEach { RrChoiceRow(stringResource(R.string.docs_copy_for_company, it.company, it.role), it.id == job, { onDraft(draft.copy(jobId = it.id)) }) }
             RrChoiceRow(stringResource(R.string.docs_add_a_job), newJob, { onDraft(draft.copy(jobId = NEW_JOB)) })
         }

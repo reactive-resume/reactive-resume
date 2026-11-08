@@ -2,8 +2,6 @@ package me.rxresu.feature.today
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import me.rxresu.core.data.FakeRepositories
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.testing.RrScreenshotTest
@@ -21,6 +19,7 @@ class TodayActionsTest : RrScreenshotTest() {
         compose.setContent {
             RrTheme { TodayScreen(state, repos.time.now(), repos.time.timezone(), TodayActions(onMarkRead = { calls++ })) }
         }
+        compose.onNodeWithText("Ready").performTouchInput { longClick() }
         compose.onAllNodesWithText("Mark as read").onFirst().performClick()
         compose.runOnIdle { assertEquals(1, calls) }
     }

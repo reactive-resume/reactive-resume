@@ -17,6 +17,7 @@ import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.SearchScope
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.navigation.Application
+import me.rxresu.core.navigation.ApplicationWorkspace
 import me.rxresu.core.navigation.Assistant
 import me.rxresu.core.navigation.AtsChecker
 import me.rxresu.core.navigation.Builder
@@ -64,6 +65,7 @@ private fun SearchRoute(nav: NavController, route: Search) {
             "letter" -> hit.documentId?.let { Letter(it) }
             "application" -> hit.applicationId?.let { Application(it) }
             PREPARE -> hit.applicationId?.let { Application(it, WorkspaceTab.Prepare) }
+            "message", "note" -> hit.applicationId?.let { ApplicationWorkspace(it, WorkspaceTab.Messages) }
             "thread" -> if (hit.documentId != null) Assistant(hit.documentId!!, hit.id) else Coach(hit.id)
             "fact" -> Knowledge(KnowledgeTab.Facts)
             "story" -> Story(hit.id)
@@ -91,7 +93,7 @@ private fun SearchRoute(nav: NavController, route: Search) {
             onQuery = vm::setQuery,
             onScope = vm::setScope,
             onOpen = ::open,
-            onSubmit = { state.first?.let(::open) },
+            onSubmit = { scope.launch { runCatching { vm.remember() } } },
             onShowAll = vm::expand,
             onCancel = { nav.popBackStack() },
         ),

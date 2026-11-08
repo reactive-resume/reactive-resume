@@ -1,6 +1,5 @@
 package me.rxresu.feature.documents
 
-import android.text.format.DateUtils
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -13,12 +12,14 @@ internal fun parseInstant(value: String?): Instant? = value?.let { runCatching {
 internal fun relativeTime(value: String, now: Instant, zone: ZoneId = ZoneId.systemDefault()): String {
     val at = parseInstant(value) ?: return value
     val days = ChronoUnit.DAYS.between(at.atZone(zone).toLocalDate(), now.atZone(zone).toLocalDate())
-    return DateUtils.getRelativeTimeSpanString(
-        at.toEpochMilli(),
-        now.toEpochMilli(),
-        if (days == 0L) DateUtils.MINUTE_IN_MILLIS else DateUtils.DAY_IN_MILLIS,
-        DateUtils.FORMAT_ABBREV_RELATIVE or DateUtils.FORMAT_ABBREV_MONTH,
-    ).toString()
+    return when {
+        days == 0L -> {
+            val hours = java.time.Duration.between(at, now).toHours()
+            if (hours > 0) "$hours h ago" else "${java.time.Duration.between(at, now).toMinutes().coerceAtLeast(0)} min ago"
+        }
+        days == 1L -> "yesterday"
+        else -> java.time.format.DateTimeFormatter.ofPattern("d MMM", java.util.Locale.getDefault()).format(at.atZone(zone))
+    }
 }
 
 internal val DocumentSummary.isLetter get() = type == DocumentType.Letter

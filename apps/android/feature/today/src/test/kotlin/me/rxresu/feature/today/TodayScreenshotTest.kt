@@ -23,6 +23,9 @@ import me.rxresu.core.testing.captureScreen
 import org.junit.Test
 
 class TodayScreenshotTest : RrScreenshotTest() {
+    @Test fun rtl() = captureScreen("T1-Today-rtl", false, wrap = provide(FakeRepositories())) {
+        CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Rtl) { Today(reminders = true) }
+    }
     @Test fun todayLight() = today(dark = false)
     @Test fun todayDark() = today(dark = true)
     @Test fun firstRunLight() = firstRun(dark = false)
@@ -39,7 +42,7 @@ class TodayScreenshotTest : RrScreenshotTest() {
 
     // A new guest account: nothing saved yet, so every checklist row is open.
     private fun firstRun(dark: Boolean) = captureScreen("T2-FirstRun", dark, wrap = provide(FakeRepositories(FakeControls(FakeMode.Empty)))) {
-        Today(reminders = false) { it.copy(guest = true) }
+        Today(reminders = false) { it.copy(initials = "AM", firstName = "Alex") }
     }
 }
 

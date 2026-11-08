@@ -39,9 +39,12 @@ import me.rxresu.core.designsystem.RrToastResult
 import me.rxresu.core.designsystem.RrToastTone
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.Builder
+import me.rxresu.core.navigation.BuilderDesign
+import me.rxresu.core.navigation.DesignPicker
+import me.rxresu.core.navigation.Download
+import me.rxresu.core.navigation.DocumentKind
 import me.rxresu.core.navigation.BuilderBasics
 import me.rxresu.core.navigation.DocumentActions
-import me.rxresu.core.navigation.DocumentKind
 import me.rxresu.core.navigation.DocumentsTab
 import me.rxresu.core.navigation.Import
 import me.rxresu.core.navigation.Letter
@@ -53,7 +56,6 @@ import me.rxresu.core.navigation.Search
 import me.rxresu.core.navigation.Settings
 import me.rxresu.core.navigation.SettingsAi
 import me.rxresu.core.navigation.Trash
-import me.rxresu.core.navigation.TrashTab
 import me.rxresu.core.navigation.modal
 import me.rxresu.core.navigation.screen
 import me.rxresu.core.navigation.sheet
@@ -180,6 +182,8 @@ private fun DocumentActionsRoute(nav: NavController, route: DocumentActions) {
         repos.time.now(),
         DocumentActionsCallbacks(
             onClose = { nav.popBackStack() },
+            onOpen = { withDoc { doc -> nav.popBackStack(); nav.navigate(if (doc.isLetter) Letter(doc.id) else Builder(doc.id)) } },
+            onFormats = { withDoc { doc -> nav.navigate(Download(doc.id, if (doc.isLetter) DocumentKind.Letter else DocumentKind.Resume)) } },
             onSharePdf = {
                 withDoc { doc ->
                     preparing = true
@@ -322,7 +326,7 @@ private fun NewDocumentRoute(nav: NavController, route: NewDocument) {
                     nav.popBackStack()
                     // Basics over the builder, so Back from the name lands in the editor ("Opens the editor on your name").
                     nav.navigate(Builder(id))
-                    nav.navigate(BuilderBasics(id))
+                    nav.navigate(BuilderDesign(id, DesignPicker.Template))
                 }
             },
             onSaveJob = { nav.popBackStack(); nav.navigate(SaveJob()) },
@@ -336,6 +340,17 @@ private fun NewDocumentRoute(nav: NavController, route: NewDocument) {
                 }
             },
             onCopyForJob = { resumeId, job, name -> scope.launch { copyForJob(vm, state, resumeId, job, name, nav, toasts, res, haptics) { busy = it } } },
+            onApplicationLetter = { applicationId ->
+                scope.launch {
+                    val id = try { vm.newLetter(res.getString(R.string.docs_untitled_letter), applicationId = applicationId) } catch (e: Exception) {
+                        toasts.post(res.getString(R.string.docs_create_failed), tone = RrToastTone.Danger)
+                        return@launch
+                    }
+                    haptics(RrHaptic.Success)
+                    nav.popBackStack()
+                    nav.navigate(Letter(id))
+                }
+            },
             onLetter = { resumeId, letterId ->
                 scope.launch {
                     val id = try {

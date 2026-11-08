@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import java.time.Duration
+import androidx.compose.ui.draw.alpha
+import me.rxresu.core.designsystem.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.builtins.ListSerializer
@@ -36,6 +38,9 @@ import me.rxresu.core.testing.captureScreen
 import org.junit.Test
 
 class DocumentsScreenshotTest : RrScreenshotTest() {
+    @Test fun rtl() = captureScreen("D1-Library-rtl", false, wrap = provide(repos())) {
+        CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Rtl) { Shell { Library() } }
+    }
     @Test fun libraryLight() = library(false)
     @Test fun libraryDark() = library(true)
     @Test fun actionsLight() = actions(false)
@@ -56,11 +61,40 @@ class DocumentsScreenshotTest : RrScreenshotTest() {
     @Test fun actionsLocked() = captureScreen("D2-Actions-locked", false, wrap = provide(repos())) { Box { Library(); Actions(StoryboardIds.lockedResume) } }
     @Test fun trashEmpty() = captureScreen("D6-Trash-empty", false, wrap = provide(repos(FakeControls(FakeMode.Empty)))) { Trash(confirm = false) }
 
+    @Test fun trashConfirmationLight() = captureScreen("D6-Trash-confirm", false, wrap = provide(trashRepos())) { Trash(confirm = true) }
+    @Test fun trashConfirmationDark() = captureScreen("D6-Trash-confirm", true, wrap = provide(trashRepos())) { Trash(confirm = true) }
+    @Test fun emptyImportLight() = emptyImport(false)
+    @Test fun emptyImportDark() = emptyImport(true)
+    @Test fun letterChoiceLight() = letterChoice(false)
+    @Test fun letterChoiceDark() = letterChoice(true)
+    @Test fun copyLight() = copy(false)
+    @Test fun copyDark() = copy(true)
+    @Test fun newFontScale() = captureScreen("D3-New", false, wrap = provide(repos()), fontScale = 2f) {
+        val r = LocalRepositories.current
+        val state = remember { runBlocking { DocumentActionsUiState(library = r.documents.listDocuments(), applications = r.applications.listApplications()) } }
+        NewDocumentSheet(state, NewDocumentCallbacks())
+    }
+
+    private fun emptyImport(dark: Boolean) = captureScreen("D4-Import-empty", dark) { ImportScreen(ImportUiState(), ImportCallbacks()) }
+    private fun letterChoice(dark: Boolean) = captureScreen("D3-New-letter", dark, wrap = provide(repos())) {
+        val r = LocalRepositories.current
+        val state = remember { runBlocking { DocumentActionsUiState(applications = r.applications.listApplications()) } }
+        NewDocumentSheet(state, NewDocumentCallbacks(), initialStep = NewStep.Letter)
+    }
+    private fun copy(dark: Boolean) = captureScreen("D2-Actions-copy", dark, wrap = provide(repos())) {
+        val r = LocalRepositories.current
+        val state = remember { runBlocking {
+            val docs = r.documents.listDocuments()
+            DocumentActionsUiState(document = docs.first { it.id == StoryboardIds.resume }, library = docs, applications = r.applications.listApplications())
+        } }
+        DocumentActionsSheet(state, r.time.now(), DocumentActionsCallbacks(), initialStep = ActionsStep.CopyForJob)
+    }
+
     private fun library(dark: Boolean) = captureScreen("D1-Library", dark, wrap = provide(repos())) { Shell { Library() } }
-    private fun actions(dark: Boolean) = captureScreen("D2-Actions", dark, wrap = provide(repos())) { Box { Library(); Actions(StoryboardIds.resume) } }
+    private fun actions(dark: Boolean) = captureScreen("D2-Actions", dark, wrap = provide(repos())) { Box { SheetLibrary(); Actions(StoryboardIds.lockedResume, locked = false) } }
     private fun new(dark: Boolean) = captureScreen("D3-New", dark, wrap = provide(repos())) {
         Box {
-            Library()
+            SheetLibrary()
             val r = LocalRepositories.current
             val vm = remember { DocumentActionsViewModel(r, null) }
             val state by vm.state.collectAsState()
@@ -68,16 +102,11 @@ class DocumentsScreenshotTest : RrScreenshotTest() {
         }
     }
     private fun import(dark: Boolean) = captureScreen("D4-Import", dark, wrap = provide(importRepos())) {
-        val r = LocalRepositories.current
-        val vm = remember {
-            ImportViewModel(r.resumes, r.ai).apply {
-                start(PickedFile("alex-morgan-cv.pdf", 182L * 1024, "application/pdf", ByteArray(16), pages = 2))
-            }
-        }
-        val state by vm.state.collectAsState()
-        ImportScreen(state, ImportCallbacks())
+        ImportScreen(ImportUiState(file = PickedFile("alex-morgan-cv.pdf", 182L * 1024, "application/pdf", ByteArray(16), pages = 2), format = ImportFormat.Pdf, aiProvider = "Work OpenAI", progress = 3,
+            summary = ImportSummary("Alex Morgan", "Product designer", "Lisbon", 4, 2, 12, 3, 1)), ImportCallbacks())
     }
-    private fun trash(dark: Boolean) = captureScreen("D6-Trash", dark, wrap = provide(trashRepos())) { Trash(confirm = true) }
+    private fun trash(dark: Boolean) = captureScreen("D6-Trash", dark, wrap = provide(trashRepos())) { Trash(confirm = false) }
+
 }
 
 private fun provide(repos: RrRepositories): @Composable (@Composable () -> Unit) -> Unit = { content ->
@@ -106,7 +135,7 @@ private fun importRepos(): RrRepositories {
     return r
 }
 
-/** Trash as the board draws it: three documents with 27, 12 and 3 days left. */
+/** D6 has two documents with 26 and 4 days left. */
 private fun trashRepos(): RrRepositories {
     val controls = FakeControls()
     val r = FakeRepositories(controls)
@@ -115,9 +144,8 @@ private fun trashRepos(): RrRepositories {
     val resume = runBlocking { r.documents.listDocuments() }.first { it.type == DocumentType.Resume }
     fun trashedDaysAgo(days: Long) = now.minus(Duration.ofDays(days)).toString()
     val docs = listOf(
-        base.copy(trashedAt = trashedDaysAgo(3)),
-        resume.copy(id = "resume-old", name = "Product designer (old)", trashedAt = trashedDaysAgo(18)),
-        resume.copy(id = "resume-tidewater", name = "Tidewater · UX lead", trashedAt = trashedDaysAgo(27)),
+        resume.copy(id = "resume-junior", name = "Junior designer 2021", trashedAt = trashedDaysAgo(4)),
+        base.copy(name = "Letter for Brightside", trashedAt = trashedDaysAgo(26)),
     )
     controls.responses.value = mapOf("listDocuments" to ApiJson.encodeToJsonElement(ListSerializer(DocumentSummary.serializer()), docs))
     warm(r)
@@ -141,18 +169,18 @@ private fun Library(adjust: (LibraryUiState) -> LibraryUiState = { it }) {
     val r = LocalRepositories.current
     val vm = remember { LibraryViewModel(r.documents, r.account) }
     val state by vm.state.collectAsState()
-    LibraryScreen(adjust(state), r.time.now(), LibraryActions())
+    LibraryScreen(adjust(state.copy(all = storyboardDocuments(state.all, r.time.now()), trashCount = 2)), r.time.now(), LibraryActions())
 }
 
 /** D2's state loaded before the first frame: the sheet sizes itself on its first layout. */
 @Composable
-private fun Actions(id: String) {
+private fun Actions(id: String, locked: Boolean? = null) {
     val r = LocalRepositories.current
     val state = remember {
         runBlocking {
             val docs = r.documents.listDocuments()
             DocumentActionsUiState(
-                document = docs.first { it.id == id },
+                document = docs.first { it.id == id }.let { if (locked == null) it else it.copy(isLocked = locked) },
                 library = docs,
                 applications = r.applications.listApplications(),
                 username = r.account.observeProfile().first { it.data != null }.data?.username,
@@ -168,7 +196,7 @@ private fun Trash(confirm: Boolean) {
     val r = LocalRepositories.current
     val vm = remember { TrashViewModel(r.documents, r.applications) }
     val state by vm.state.collectAsState()
-    val target = state.documents.firstOrNull { it.name.startsWith("Tidewater") }
+    val target = state.documents.lastOrNull()
     TrashScreen(
         state,
         TrashTab.Documents,
@@ -177,4 +205,32 @@ private fun Trash(confirm: Boolean) {
         TrashCallbacks(),
         inlineDialog = true,
     )
+}
+
+/** Per-screen copy and dates differ from the common multi-feature seed. */
+private fun storyboardDocuments(docs: List<DocumentSummary>, now: java.time.Instant) = docs.map { doc ->
+    when (doc.id) {
+        StoryboardIds.resume -> doc.copy(editedAt = now.minus(Duration.ofHours(2)).toString())
+        StoryboardIds.lumenLetter -> doc.copy(name = "Letter for Lumen")
+        "letter-kiln" -> doc.copy(name = "Letter for Orbital Health", editedAt = "2026-10-30T10:00:00Z")
+        else -> doc
+    }
+}
+
+/** The storyboard sheets show a bare, dimmed three-resume library behind the modal. */
+@Composable
+private fun SheetLibrary() {
+    val r = LocalRepositories.current
+    val docs = remember { runBlocking { storyboardDocuments(r.documents.listDocuments(), r.time.now()).filter { !it.isLetter } } }
+    Column {
+        RrTopBar()
+        Column(Modifier.alpha(0.5f)) {
+            RrSectionHeading("Resumes", first = true)
+            RrListGroup {
+                docs.forEachIndexed { index, doc ->
+                    RrListRow(doc.name, subtitle = listOfNotNull("Edited ${relativeTime(doc.editedAt, r.time.now())}", if (doc.isPublic) "Public" else doc.application?.let { "For ${it.company}" }).joinToString(" · "), leading = { RrDocumentThumbnail() }, divider = index < docs.lastIndex, trailing = { RrRowCaret() })
+                }
+            }
+        }
+    }
 }

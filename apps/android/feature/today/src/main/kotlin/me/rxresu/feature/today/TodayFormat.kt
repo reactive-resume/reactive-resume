@@ -12,9 +12,9 @@ import java.util.Locale
 /** Dates in the person's locale and account timezone. Skeletons follow Android's best pattern for the locale. */
 internal class TodayFormat(private val locale: Locale, val zone: ZoneId, private val is24Hour: Boolean) {
     private fun pattern(skeleton: String) = DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, skeleton), locale)
-    private val header = pattern("EEEEdMMMM")
+    private val header = DateTimeFormatter.ofPattern("EEEE, d MMMM", locale)
     private val shortDay = pattern("EEEdMMM")
-    private val dayMonth = pattern("dMMM")
+    private val dayMonth = DateTimeFormatter.ofPattern("d MMM", locale)
     private val weekday = pattern("EEE")
     private val clock = pattern(if (is24Hour) "Hm" else "hm")
 
@@ -26,6 +26,8 @@ internal class TodayFormat(private val locale: Locale, val zone: ZoneId, private
     fun shortDay(at: ZonedDateTime): String = shortDay.format(at)
     /** "28 Oct". */
     fun dayMonth(at: ZonedDateTime): String = dayMonth.format(at)
+    fun fullDay(at: ZonedDateTime): String = DateTimeFormatter.ofPattern("EEEE d MMM", locale).format(at)
+    fun deadline(at: ZonedDateTime): String = DateTimeFormatter.ofPattern("EEEE d MMM", locale).format(at)
     fun weekday(at: ZonedDateTime): String = weekday.format(at)
     /** "10:00". */
     fun time(at: ZonedDateTime): String = clock.format(at)

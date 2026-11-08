@@ -24,7 +24,7 @@ import me.rxresu.core.network.generated.Application
 import me.rxresu.core.network.generated.DocumentSummary
 
 /** Result groups, in the order they show. Content ranks above Go to… and Actions. */
-enum class SearchGroupKey { Recent, Documents, Applications, Chats, Career, GoTo, Actions }
+enum class SearchGroupKey { Recent, Applications, Documents, Chats, Career, GoTo, Actions }
 
 /** One result row. Derived rows (Prepare for…, Ask the coach) have no [hit] payload beyond their id and title. */
 data class SearchRow(
@@ -96,7 +96,7 @@ class SearchViewModel(
     suspend fun remember() = search.remember(query.value)
 
     companion object {
-        const val DEBOUNCE_MS = 200L
+        const val DEBOUNCE_MS = 250L
 
         fun group(query: String, hits: List<SearchHit>, recent: List<String>, docs: List<DocumentSummary>, apps: List<Application>): List<SearchGroup> {
             val byDoc = docs.associateBy { it.id }
@@ -108,19 +108,12 @@ class SearchViewModel(
                 val key = when (hit.kind) {
                     "resume", "letter" -> SearchGroupKey.Documents
                     "application" -> SearchGroupKey.Applications
-                    "thread" -> SearchGroupKey.Chats
+                    "thread", "message", "note" -> SearchGroupKey.Chats
                     "fact", "story" -> SearchGroupKey.Career
                     "destination" -> SearchGroupKey.GoTo
                     else -> SearchGroupKey.Actions
                 }
                 add(key, SearchRow(hit, hit.documentId?.let(byDoc::get), hit.applicationId?.let(byApp::get)))
-            }
-            if (query.isNotEmpty()) {
-                // Matching applications offer their next step; any query can go to the coach.
-                hits.filter { it.kind == "application" }.take(1).forEach { app ->
-                    add(SearchGroupKey.Actions, SearchRow(SearchHit("$PREPARE:${app.id}", app.title, "", PREPARE, applicationId = app.applicationId)))
-                }
-                add(SearchGroupKey.Actions, SearchRow(SearchHit(ASK, query, "", ASK)))
             }
             return SearchGroupKey.entries.mapNotNull { key -> buckets[key]?.let { SearchGroup(key, it) } }
         }

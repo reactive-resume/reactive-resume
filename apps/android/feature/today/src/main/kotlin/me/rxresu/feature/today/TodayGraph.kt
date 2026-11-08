@@ -32,6 +32,8 @@ import me.rxresu.core.designsystem.RrToastResult
 import me.rxresu.core.designsystem.RrToastTone
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.Application
+import me.rxresu.core.navigation.ApplicationWorkspace
+import me.rxresu.core.navigation.Import
 import me.rxresu.core.navigation.ApplicationsTab
 import me.rxresu.core.navigation.ApplicationsView
 import me.rxresu.core.navigation.Builder
@@ -51,7 +53,6 @@ import me.rxresu.core.navigation.TodayTab
 import me.rxresu.core.navigation.switchTab
 import me.rxresu.core.navigation.tabRoot
 import me.rxresu.core.network.generated.DocumentType
-import me.rxresu.core.strings.R as S
 
 /** Registers T1/T2 (one destination: the first-run checklist is a state of Today). */
 fun NavGraphBuilder.todayGraph(nav: NavController, motion: RrNavMotion) {
@@ -105,7 +106,7 @@ internal fun TodayRoute(nav: NavController) {
         onSettings = { nav.navigate(Settings) },
         onRefresh = { scope.launch { runCatching { vm.refresh() } } },
         onRetry = { scope.launch { runCatching { vm.refresh() } } },
-        onOpenApplication = { id, tab -> nav.navigate(Application(id, tab)) },
+        onOpenApplication = { id, tab -> nav.navigate(if (tab == me.rxresu.core.navigation.WorkspaceTab.Overview) Application(id) else ApplicationWorkspace(id, tab)) },
         onNotification = { entry ->
             scope.launch { entry.item.notificationId?.let { runCatching { vm.markRead(it) } } }
             entry.item.applicationId?.let { nav.navigate(Application(it)) }
@@ -152,6 +153,8 @@ internal fun TodayRoute(nav: NavController) {
         },
         onOpenSchedule = { id -> nav.navigate(ScheduleSheet(id)) },
         onOpenDocument = { doc -> nav.navigate(if (doc.type == DocumentType.Letter) Letter(doc.id) else Builder(doc.id)) },
+        onImport = { nav.navigate(Import()) },
+        onApplications = { nav.switchTab(ApplicationsTab()) },
         onNew = { nav.navigate(NewDocument()) },
         onSaveJob = { nav.navigate(SaveJob()) },
         onPreferences = { nav.navigate(Knowledge(KnowledgeTab.Preferences)) },

@@ -1,24 +1,17 @@
 package me.rxresu.feature.search
 
-import android.text.format.DateFormat
-import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,18 +32,24 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import me.rxresu.core.data.SearchScope
 import me.rxresu.core.designsystem.R as DS
-import me.rxresu.core.designsystem.RrButton
-import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrEmptyState
-import me.rxresu.core.designsystem.RrFilterChip
-import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrListRow
-import me.rxresu.core.designsystem.RrSearchField
+import me.rxresu.core.designsystem.rrStatusBarsPadding
+import me.rxresu.core.designsystem.rrNavigationBarsPadding
+import me.rxresu.core.designsystem.RrTextField
+import me.rxresu.core.designsystem.RrCompanyTile
+import me.rxresu.core.designsystem.RrDocumentThumbnail
+import me.rxresu.core.designsystem.RrIconTile
+import me.rxresu.core.designsystem.RrRowCaret
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import me.rxresu.core.designsystem.RrSectionHeader
 import me.rxresu.core.designsystem.RrSkeleton
 import me.rxresu.core.designsystem.RrStage
-import me.rxresu.core.designsystem.RrStageDot
 import me.rxresu.core.designsystem.RrStrip
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
@@ -77,25 +76,17 @@ private val Scopes = listOf(SearchScope.All, SearchScope.Documents, SearchScope.
 fun SearchScreen(state: SearchUiState, now: Instant, zone: ZoneId, callbacks: SearchCallbacks, modifier: Modifier = Modifier, autoFocus: Boolean = true) {
     val c = RrTheme.colors
     val focus = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
     if (autoFocus) LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }
-    Column(modifier.fillMaxSize().background(c.bg).windowInsetsPadding(WindowInsets.statusBars).imePadding()) {
+    Column(modifier.fillMaxSize().background(c.bg).rrStatusBarsPadding().rrNavigationBarsPadding().imePadding()) {
         Row(
-            Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 6.dp, bottom = 8.dp),
+            Modifier.fillMaxWidth().height(56.dp).padding(start = 24.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            RrSearchField(
-                state.query,
-                callbacks.onQuery,
-                stringResource(R.string.search_placeholder),
-                Modifier.weight(1f).focusRequester(focus),
-                keyboardActions = KeyboardActions(onSearch = { callbacks.onSubmit() }),
-            )
-            RrButton(stringResource(S.string.cancel), callbacks.onCancel, variant = RrButtonVariant.Ghost)
-        }
-        LazyRow(contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 4.dp)) {
-            items(Scopes) { scope ->
-                RrFilterChip(scopeLabel(scope), state.scope == scope, { on -> callbacks.onScope(if (on) scope else SearchScope.All) })
+            RrTextField(state.query, callbacks.onQuery, Modifier.weight(1f).focusRequester(focus), placeholder = stringResource(R.string.search_placeholder), leadingIcon = DS.drawable.ic_ph_magnifying_glass, keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), keyboardActions = KeyboardActions(onSearch = { keyboard?.hide(); callbacks.onSubmit() }))
+            Box(Modifier.height(44.dp).clickable(onClick = callbacks.onCancel), contentAlignment = Alignment.Center) {
+                RrText(stringResource(S.string.cancel), style = RrType.textLink, color = c.accentText)
             }
         }
         if (state.offline) RrStrip(stringResource(R.string.search_offline), Modifier.padding(top = 8.dp), icon = DS.drawable.ic_ph_cloud_slash)
@@ -116,20 +107,21 @@ fun SearchScreen(state: SearchUiState, now: Instant, zone: ZoneId, callbacks: Se
                     }
                 }
             }
-            state.groups.forEach { group ->
-                if (state.empty && group.key == SearchGroupKey.Actions) return@forEach
+            state.groups.forEachIndexed { groupIndex, group ->
+                if (state.empty && group.key == SearchGroupKey.Actions) return@forEachIndexed
                 val open = group.key in state.expanded || group.key == SearchGroupKey.Recent && state.query.isEmpty()
                 val shown = if (open) group.rows else group.rows.take(3)
                 item {
                     RrSectionHeader(
                         groupLabel(group.key),
-                        actionLabel = if (shown.size < group.rows.size) stringResource(S.string.show_all) else null,
+                        topPadding = if (groupIndex == 0) 20.dp else 32.dp,
+                        actionLabel = if (shown.size < group.rows.size) stringResource(R.string.search_show_all_count, group.rows.size) else null,
                         onAction = { callbacks.onShowAll(group.key) },
                     )
                 }
                 item {
-                    RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                        shown.forEach { row -> ResultRow(row, state.query.trim(), now, zone, callbacks) }
+                    RrListGroup {
+                        shown.forEachIndexed { index, row -> ResultRow(row, state.query.trim(), now, zone, callbacks, index < shown.lastIndex) }
                     }
                 }
             }
@@ -138,20 +130,11 @@ fun SearchScreen(state: SearchUiState, now: Instant, zone: ZoneId, callbacks: Se
 }
 
 @Composable
-private fun scopeLabel(scope: SearchScope) = when (scope) {
-    SearchScope.All -> stringResource(S.string.all)
-    SearchScope.Documents -> stringResource(S.string.documents)
-    SearchScope.Applications -> stringResource(S.string.applications)
-    SearchScope.Career -> stringResource(R.string.search_chats)
-    SearchScope.Settings -> stringResource(S.string.settings)
-}
-
-@Composable
 private fun groupLabel(key: SearchGroupKey) = when (key) {
     SearchGroupKey.Recent -> stringResource(R.string.search_recent)
     SearchGroupKey.Documents -> stringResource(S.string.documents)
     SearchGroupKey.Applications -> stringResource(S.string.applications)
-    SearchGroupKey.Chats -> stringResource(R.string.search_chats)
+    SearchGroupKey.Chats -> stringResource(R.string.search_notes_messages)
     SearchGroupKey.Career -> stringResource(R.string.search_career)
     SearchGroupKey.GoTo -> stringResource(S.string.go_to)
     SearchGroupKey.Actions -> stringResource(S.string.actions)
@@ -171,7 +154,7 @@ internal fun highlight(text: String, query: String): AnnotatedString = buildAnno
 }
 
 @Composable
-private fun ResultRow(row: SearchRow, query: String, now: Instant, zone: ZoneId, callbacks: SearchCallbacks) {
+private fun ResultRow(row: SearchRow, query: String, now: Instant, zone: ZoneId, callbacks: SearchCallbacks, divider: Boolean) {
     val hit = row.hit
     val locale = LocalConfiguration.current.locales[0]
     val title: AnnotatedString = when (hit.kind) {
@@ -181,23 +164,19 @@ private fun ResultRow(row: SearchRow, query: String, now: Instant, zone: ZoneId,
         }
         ASK -> AnnotatedString(stringResource(R.string.search_ask_coach, hit.title))
         "destination", "command" -> highlight(shortcutLabel(hit.id, hit.title), query)
-        "application" -> highlight(listOf(hit.title, hit.subtitle).filter { it.isNotBlank() }.joinToString(" · "), query)
-        else -> highlight(hit.title, query)
+        "application" -> AnnotatedString(hit.title)
+        else -> AnnotatedString(hit.title)
     }
     val subtitle: String? = when (hit.kind) {
         "resume", "letter" -> row.document?.let {
             val ago = relativeTime(it.editedAt, now, zone)
             stringResource(if (hit.kind == "letter") R.string.search_letter_meta else R.string.search_resume_meta, ago)
         } ?: hit.subtitle.ifBlank { null }
-        "application" -> row.application?.let { app ->
-            val next = app.activity.filterIsInstance<Interview>().mapNotNull { runCatching { Instant.parse(it.at) }.getOrNull() }.filter { it > now }.minOrNull()
-            val day = next?.let { DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, "EEEdMMM"), locale).format(it.atZone(zone)) }
-            listOfNotNull(stageLabel(app.status), day).joinToString(" · ")
-        } ?: hit.subtitle.ifBlank { null }
+        "application" -> row.application?.let { app -> "${app.role} · ${stageLabel(app.status)}" } ?: hit.subtitle.ifBlank { null }
         "thread" -> stringResource(R.string.search_conversation)
         else -> hit.subtitle.ifBlank { null }
     }
-    RrListRow(title, subtitle = subtitle, onClick = { callbacks.onOpen(row) }, leading = { Leading(row) })
+    RrListRow(title, subtitle = subtitle, onClick = { callbacks.onOpen(row) }, leading = { Leading(row) }, divider = divider, trailing = { RrRowCaret() })
 }
 
 @Composable
@@ -205,13 +184,14 @@ private fun Leading(row: SearchRow) {
     val c = RrTheme.colors
     val hit = row.hit
     if (hit.kind == "application") {
-        Box(Modifier.width(24.dp), contentAlignment = Alignment.Center) { RrStageDot(row.application?.status.rr()) }
+        RrCompanyTile(hit.title)
         return
     }
+    if (hit.kind in listOf("resume", "letter")) { RrDocumentThumbnail(letter = hit.kind == "letter"); return }
     val icon = when (hit.kind) {
         "resume" -> DS.drawable.ic_ph_file_text
         "letter" -> DS.drawable.ic_ph_note_pencil
-        "thread" -> DS.drawable.ic_ph_chat_circle_text
+        "thread", "message", "note" -> DS.drawable.ic_ph_envelope_simple
         "fact" -> DS.drawable.ic_ph_lightbulb
         "story" -> DS.drawable.ic_ph_book_open
         RECENT -> DS.drawable.ic_ph_clock_counter_clockwise
@@ -230,7 +210,7 @@ private fun Leading(row: SearchRow) {
             else -> DS.drawable.ic_ph_arrow_square_out
         }
     }
-    RrIcon(icon, null, tint = if (hit.kind == PREPARE) c.accentText else c.ink2)
+    RrIconTile(icon, accent = hit.kind == PREPARE)
 }
 
 private fun ApplicationStage?.rr(): RrStage = when (this) {
@@ -246,7 +226,7 @@ private fun ApplicationStage?.rr(): RrStage = when (this) {
 private fun stageLabel(stage: ApplicationStage) = when (stage) {
     ApplicationStage.Applied -> stringResource(R.string.search_applied)
     ApplicationStage.Screening -> stringResource(S.string.screening)
-    ApplicationStage.Interview -> stringResource(S.string.interview)
+    ApplicationStage.Interview -> stringResource(R.string.search_interviewing)
     ApplicationStage.Offer -> stringResource(R.string.search_offer)
     ApplicationStage.Closed -> stringResource(S.string.closed)
     else -> stringResource(R.string.search_saved)
@@ -271,6 +251,9 @@ private fun shortcutLabel(id: String, fallback: String) = when (id) {
 internal fun relativeTime(value: String, now: Instant, zone: ZoneId): String {
     val at = runCatching { Instant.parse(value) }.getOrNull() ?: return value
     val days = java.time.temporal.ChronoUnit.DAYS.between(at.atZone(zone).toLocalDate(), now.atZone(zone).toLocalDate())
-    val resolution = if (days == 0L) DateUtils.MINUTE_IN_MILLIS else DateUtils.DAY_IN_MILLIS
-    return DateUtils.getRelativeTimeSpanString(at.toEpochMilli(), now.toEpochMilli(), resolution, DateUtils.FORMAT_ABBREV_RELATIVE or DateUtils.FORMAT_ABBREV_MONTH).toString()
+    return when {
+        days == 0L -> "${java.time.Duration.between(at, now).toHours()} h ago"
+        days == 1L -> "yesterday"
+        else -> DateTimeFormatter.ofPattern("d MMM", java.util.Locale.getDefault()).format(at.atZone(zone))
+    }
 }

@@ -6,40 +6,30 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import me.rxresu.core.designsystem.R as DS
+import me.rxresu.core.designsystem.RrHaptic
+import me.rxresu.core.designsystem.rememberRrHaptics
+import me.rxresu.core.designsystem.RrIconTile
 import me.rxresu.core.designsystem.RrBottomSheet
-import me.rxresu.core.designsystem.RrButton
-import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrRowCaret
-import me.rxresu.core.designsystem.RrSectionHeader
 import me.rxresu.core.designsystem.RrSheetDetents
-import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
-import me.rxresu.core.designsystem.RrType
-import me.rxresu.core.network.generated.DocumentType
 
 enum class NewStep { Main, CopyForJob, Letter }
 
@@ -48,6 +38,7 @@ class NewDocumentCallbacks(
     val onImport: () -> Unit = {},
     val onBlank: () -> Unit = {},
     val onSaveJob: () -> Unit = {},
+    val onApplicationLetter: (String) -> Unit = {},
     val onSample: () -> Unit = {},
     val onCopyForJob: (resumeId: String, job: JobChoice, name: String) -> Unit = { _, _, _ -> },
     /** A new letter from a resume, from an earlier letter, or blank (both null). */
@@ -55,7 +46,7 @@ class NewDocumentCallbacks(
 )
 
 /**
- * D3 New: import, start blank, copy for a job, new cover letter, save a job; steps push inside the sheet.
+ * D3 New: template, import, letter and save a job. Copy authoring remains available from application flows.
  * [initialApplicationId] preselects that job in "Copy a resume for a job" (open with [NewStep.CopyForJob]).
  */
 @Composable
@@ -76,13 +67,7 @@ fun NewDocumentSheet(
         confirmDiscard = copyDraft.dirty,
         title = if (step == NewStep.Main) stringResource(R.string.docs_new) else null,
         showClose = step == NewStep.Main,
-        footer = if (step == NewStep.Main) {
-            {
-                Box(Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.navigationBars).padding(vertical = 8.dp), contentAlignment = Alignment.Center) {
-                    RrButton(stringResource(R.string.docs_try_sample), callbacks.onSample, variant = RrButtonVariant.GhostAccent)
-                }
-            }
-        } else null,
+        fixedHeight = if (step == NewStep.Main) 470.dp else null,
     ) {
         AnimatedContent(
             step,
@@ -95,7 +80,7 @@ fun NewDocumentSheet(
         ) { current ->
             Column {
                 when (current) {
-                    NewStep.Main -> Main(callbacks) { step = it }
+                    NewStep.Main -> Main(state, callbacks) { step = it }
                     NewStep.CopyForJob -> {
                         StepHeader(stringResource(R.string.docs_copy_title)) { if (copyDraft.dirty) confirmBack = true else step = NewStep.Main }
                         CopyForJobForm(state.library, state.applications, null, busy, callbacks.onCopyForJob, initialApplicationId = initialApplicationId, draft = copyDraft, onDraft = { copyDraft = it })
@@ -115,49 +100,32 @@ fun NewDocumentSheet(
 }
 
 @Composable
-private fun Main(callbacks: NewDocumentCallbacks, onStep: (NewStep) -> Unit) {
-    val c = RrTheme.colors
-    Column(Modifier.fillMaxWidth()) {
-        RrText(stringResource(R.string.docs_new_intro), Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp), style = RrType.small, color = c.ink2)
-        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-            NewRow(DS.drawable.ic_ph_file_arrow_up, stringResource(R.string.docs_import_title), stringResource(R.string.docs_import_subtitle), callbacks.onImport)
-            NewRow(DS.drawable.ic_ph_file_plus, stringResource(R.string.docs_blank_title), stringResource(R.string.docs_blank_subtitle), callbacks.onBlank)
-            NewRow(DS.drawable.ic_ph_copy, stringResource(R.string.docs_copy_title), stringResource(R.string.docs_copy_subtitle)) { onStep(NewStep.CopyForJob) }
-            NewRow(DS.drawable.ic_ph_note_pencil, stringResource(R.string.docs_letter_title), stringResource(R.string.docs_letter_subtitle)) { onStep(NewStep.Letter) }
-            NewRow(DS.drawable.ic_ph_briefcase, stringResource(R.string.docs_save_job_title), stringResource(R.string.docs_save_job_subtitle), callbacks.onSaveJob)
-        }
+private fun Main(state: DocumentActionsUiState, callbacks: NewDocumentCallbacks, onStep: (NewStep) -> Unit) {
+    val haptics = rememberRrHaptics()
+    RrListGroup(Modifier.verticalScroll(rememberScrollState())) {
+        RrListRow(stringResource(R.string.docs_resume), subtitle = stringResource(R.string.docs_template_start), leading = { RrIconTile(DS.drawable.ic_ph_file_text, accent = true) }, onClick = { haptics(RrHaptic.Light); callbacks.onBlank() }, divider = true, trailing = { RrRowCaret() })
+        NewRow(DS.drawable.ic_ph_download_simple, stringResource(R.string.docs_import_title), stringResource(R.string.docs_import_short), callbacks.onImport)
+        NewRow(DS.drawable.ic_ph_envelope_simple, stringResource(R.string.docs_letter_title), stringResource(R.string.docs_letter_short), onClick = {
+            val applications = state.applications.filter { it.status != me.rxresu.core.network.generated.ApplicationStage.Closed && it.trashedAt == null }
+            if (applications.size == 1) callbacks.onApplicationLetter(applications.single().id) else if (applications.isEmpty()) callbacks.onSaveJob() else onStep(NewStep.Letter)
+        })
+        NewRow(DS.drawable.ic_ph_briefcase, stringResource(R.string.docs_save_job_title), stringResource(R.string.docs_save_short), onClick = callbacks.onSaveJob, divider = false)
     }
 }
 
-/** A New sheet row (board `.nw`): the icon on a 40 dp tile, a label and a two-line description. */
 @Composable
-private fun NewRow(@DrawableRes icon: Int, title: String, subtitle: String, onClick: () -> Unit) {
-    RrListRow(title, subtitle = subtitle, tile = icon, onClick = onClick)
+private fun NewRow(@DrawableRes icon: Int, title: String, subtitle: String, onClick: () -> Unit, divider: Boolean = true) {
+    val haptics = rememberRrHaptics()
+    RrListRow(title, subtitle = subtitle, tile = icon, onClick = { haptics(RrHaptic.Light); onClick() }, divider = divider, trailing = { RrRowCaret() })
 }
 
-/** New cover letter: from a resume, from an earlier letter, or blank. */
+/** Choose the application that owns the new letter. */
 @Composable
 private fun LetterStart(state: DocumentActionsUiState, callbacks: NewDocumentCallbacks) {
-    val live = state.library.filter { it.trashedAt == null }
-    Column(Modifier.padding(bottom = 16.dp)) {
-        val resumes = live.filter { it.type == DocumentType.Resume }
-        if (resumes.isNotEmpty()) {
-            RrSectionHeader(stringResource(R.string.docs_letter_resume), topPadding = 0.dp)
-            RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                resumes.forEach { doc -> RrListRow(doc.name, icon = DS.drawable.ic_ph_file_text, onClick = { callbacks.onLetter(doc.id, null) }, trailing = { RrRowCaret() }) }
-            }
-        }
-        val letters = live.filter { it.type == DocumentType.Letter }
-        if (letters.isNotEmpty()) {
-            RrSectionHeader(stringResource(R.string.docs_letter_earlier))
-            RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                letters.forEach { doc ->
-                    RrListRow(doc.name, subtitle = doc.application?.company, icon = DS.drawable.ic_ph_note_pencil, onClick = { callbacks.onLetter(null, doc.id) }, trailing = { RrRowCaret() })
-                }
-            }
-        }
-        RrListGroup(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-            RrListRow(stringResource(R.string.docs_blank_letter), icon = DS.drawable.ic_ph_file_plus, onClick = { callbacks.onLetter(null, null) }, trailing = { RrRowCaret() })
+    val applications = state.applications.filter { it.status != me.rxresu.core.network.generated.ApplicationStage.Closed && it.trashedAt == null }
+    RrListGroup {
+        applications.forEachIndexed { index, app ->
+            RrListRow(app.company, subtitle = app.role, tile = DS.drawable.ic_ph_briefcase, onClick = { callbacks.onApplicationLetter(app.id) }, divider = index < applications.lastIndex, trailing = { RrRowCaret() })
         }
     }
 }
