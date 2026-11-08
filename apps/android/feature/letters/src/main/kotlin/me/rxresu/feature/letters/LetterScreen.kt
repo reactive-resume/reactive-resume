@@ -14,8 +14,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.foundation.border
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import me.rxresu.core.database.SaveStatus
 import me.rxresu.core.designsystem.*
 import me.rxresu.core.designsystem.R as DsR
@@ -23,107 +25,108 @@ import me.rxresu.core.strings.R as CoreR
 import me.rxresu.core.navigation.LetterMode
 import me.rxresu.core.network.generated.*
 
-@Composable internal fun LetterScreen(state: LetterState, mode: LetterMode, details: Boolean, action: (String) -> Unit, match: (Boolean) -> Unit, paper: (CreateCoverLetterResponseStyleMetadataPageFormat) -> Unit, back: () -> Unit) {
+@Composable internal fun LetterScreen(state: LetterState, mode: LetterMode, details: Boolean, action: (String) -> Unit, match: (Boolean) -> Unit, paper: (CreateCoverLetterResponseStyleMetadataPageFormat) -> Unit, back: () -> Unit, onContent: (String) -> Unit = {}) {
     val c = RrTheme.colors; val letter = state.letter
-    Box(Modifier.fillMaxSize()) {
-    Column(Modifier.fillMaxSize().background(c.bg)) {
-        RrTopBar(letter?.name ?: stringResource(CoreR.string.cover_letter_7264deefc0), onBack = back, status = {
-            if (state.draft.status == SaveStatus.Saving) RrSpinner() else RrIcon(DsR.drawable.ic_ph_cloud_check, null, size = 14.dp)
-            RrText(when (state.draft.status) { SaveStatus.Saved -> stringResource(CoreR.string.saved); SaveStatus.Saving -> stringResource(CoreR.string.saving); SaveStatus.Offline -> stringResource(R.string.p4_offline); else -> stringResource(R.string.p4_couldn_t_save) })
-        }) {
-            RrIconButton(DsR.drawable.ic_ph_arrow_counter_clockwise, stringResource(CoreR.string.reconsider_a_rejected_edit_undo), { action("undo") }, enabled = state.draft.canUndo && state.editable)
-            RrIconButton(DsR.drawable.ic_ph_sparkle, stringResource(CoreR.string.assistant), { action("assistant") }, tint = c.accentText)
+    val keyboard = WindowInsets.ime.getBottom(androidx.compose.ui.platform.LocalDensity.current) > 0
+    Column(Modifier.fillMaxSize().background(c.bg).imePadding()) {
+        RrTopBar(onBack = back) {
+            if (state.draft.canUndo) RrIconButton(DsR.drawable.ic_ph_arrow_counter_clockwise, stringResource(CoreR.string.reconsider_a_rejected_edit_undo), { action("undo") }, enabled = state.editable)
+            if (mode == LetterMode.Write) RrIconButton(DsR.drawable.ic_ph_sparkle, stringResource(CoreR.string.assistant), { action("assistant") }, tint = c.accentText)
             RrIconButton(DsR.drawable.ic_ph_dots_three, stringResource(CoreR.string.more), { action("more") })
         }
         if (state.draft.locked) RrStrip(stringResource(R.string.p4_this_letter_is_locked_unlock_editing_to_make_changes), icon = DsR.drawable.ic_ph_lock_simple)
         if (state.draft.status == SaveStatus.Offline) RrOfflineStrip()
         if (state.failed || state.draft.error != null) RrCallout(stringResource(CoreR.string.couldn_t_save_your_wording_your_text_is_still_here_try_again), tone = RrTone.Danger, actionLabel = stringResource(CoreR.string.try_again), onAction = { action("retry") })
         if (state.draft.recoveredCopyId != null) RrCallout(stringResource(R.string.p4_your_changes_were_kept_in_1_s, state.draft.recoveredCopyName.orEmpty()), actionLabel = stringResource(CoreR.string.open), onAction = { action("recovery") })
-        if (state.loading) RrSkeletonText(Modifier.weight(1f).padding(16.dp), lines = 8)
-        else if (letter != null && mode == LetterMode.Write) Box(Modifier.weight(1f).fillMaxWidth().background(c.sunken)) {
-            Column(Modifier.fillMaxSize()) {
-                // The pages, as in the builder: every page, pinch or double tap to zoom; tap a block to edit it.
-                var selected by remember { mutableStateOf<LetterBlock?>(null) }
-                RrPageCanvas(state.pages, { page, x, y ->
-                    if (state.editable) {
-                        val block = state.blocks.filter { it.page == page && it.contains(x, y) }.minByOrNull { (it.right - it.left) * (it.bottom - it.top) }
-                        selected = block
-                        action(block?.field ?: "body")
-                    }
-                }, Modifier.weight(1f), pageCount = state.pageCount ?: 1) { page ->
-                    selected?.takeIf { it.page == page }?.let { block -> Canvas(Modifier.matchParentSize()) { drawRect(c.accent, Offset(block.left * size.width, block.top * size.height), Size((block.right - block.left) * size.width, (block.bottom - block.top) * size.height), style = Stroke(2.dp.toPx())) } }
+        if (state.loading) RrSkeletonText(Modifier.weight(1f).padding(24.dp), lines = 8)
+        else if (letter != null && mode == LetterMode.Write) {
+            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
+                val status = when (state.draft.status) { SaveStatus.Saved -> stringResource(CoreR.string.saved); SaveStatus.Saving -> stringResource(CoreR.string.saving); SaveStatus.Offline -> stringResource(R.string.p4_offline); else -> stringResource(R.string.p4_couldn_t_save) }
+                RrPageTitle(letter.name, subtitle = status + letter.recipientCompany?.let { stringResource(R.string.to_hiring_team, it) }.orEmpty(), subtitleColor = c.ink3)
+                Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 28.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    letter.greeting?.takeIf { it.isNotBlank() }?.let { RrText(it, Modifier.clickable(enabled = state.editable) { action("greeting") }, style = RrType.prose) }
+                    LetterProse(letter, state.editable, action, onContent)
                 }
-                // A toolbar under the page viewport (line, surface), so the page reads as scrolling behind it rather than
-                // cut off, with the actions off the canvas.
-                Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
-                Column(Modifier.weight(1f, fill = false).background(c.surface).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    state.aiDraft?.let { ai -> LetterAiCard(ai, state, action) }
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        if (state.aiDraft == null) RrButton(stringResource(CoreR.string.draft_from_the_posting), { action("draft") }, variant = RrButtonVariant.Secondary, enabled = state.editable)
-                        RrButton(stringResource(R.string.p4_letter_details), { action("details") }, variant = RrButtonVariant.Secondary)
-                        RrButton(stringResource(R.string.p4_letter_content), { action("body") }, variant = RrButtonVariant.Secondary, enabled = state.editable)
-                    }
-                    if (state.pageFailed) RrCallout(stringResource(R.string.p4_couldn_t_update_the_preview_your_words_are_kept), actionLabel = stringResource(CoreR.string.try_again), onAction = { action("retry") })
+                state.aiDraft?.let { ai -> Box(Modifier.padding(24.dp)) { LetterAiCard(ai, state, action) } }
+                RrSectionHeader(stringResource(R.string.details))
+                LetterDetails(state, action)
+                FlowRow(Modifier.padding(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (state.aiDraft == null) RrButton(stringResource(CoreR.string.draft_from_the_posting), { action("draft") }, variant = RrButtonVariant.Secondary, enabled = state.editable)
+                    RrButton(stringResource(R.string.p4_letter_content), { action("body") }, variant = RrButtonVariant.GhostAccent, enabled = state.editable)
+                    RrButton(stringResource(R.string.preview), { action("preview") }, variant = RrButtonVariant.GhostAccent)
                 }
             }
-            if (details) RrBottomSheet({ action("hide-details") }, modifier = Modifier.consumeWindowInsets(WindowInsets.navigationBars), detents = listOf(0.6f, 0.92f), title = stringResource(R.string.p4_letter_details), showClose = false, headerActions = { RrButton(stringResource(CoreR.string.done), { action("hide-details") }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small) }) { LetterDetails(state, action) }
-        } else if (letter != null) Box(Modifier.weight(1f).fillMaxWidth().background(c.sunken)) {
-            Column(Modifier.fillMaxWidth()) {
-                Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.Top) {
-                    if (letter.sourceResumeId != null) RrPageThumbnail(state.resumePage, Modifier.width(120.dp), contentDescription = stringResource(CoreR.string.linked_resume))
-                    RrPageThumbnail(state.page, Modifier.width(120.dp), letter = true, contentDescription = stringResource(CoreR.string.letter_page))
-                }
-                if (state.resumePageFailed) RrText(stringResource(R.string.p4_resume_preview_failed), Modifier.padding(12.dp), style = RrType.caption)
+        } else if (letter != null) {
+            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
+                RrPageTitle(stringResource(CoreR.string.design))
+                RrPageBand(onClick = { action("preview") }) { RrPageThumbnail(state.designPage ?: state.page, Modifier.width(150.dp), letter = true, contentDescription = stringResource(CoreR.string.letter_page)) }
+                LetterDesign(state, action, match, paper, Modifier.padding(top = 8.dp))
             }
-            RrBottomSheet({}, detents = listOf(0.6f, 0.92f), docked = true, containerColor = c.surface, navigationBarInset = false) {
-                LetterDesign(state, action, match, paper, Modifier.weight(1f))
-            }
-        } else RrEmptyState(stringResource(CoreR.string.cover_letter_7264deefc0), stringResource(CoreR.string.couldn_t_load_try_again), Modifier.weight(1f).padding(16.dp), stringResource(CoreR.string.try_again), { action("retry") })
-        RrModeBar(listOf(RrSegment(stringResource(CoreR.string.write), DsR.drawable.ic_ph_pencil_simple, DsR.drawable.ic_ph_pencil_simple_fill), RrSegment(stringResource(CoreR.string.design), DsR.drawable.ic_ph_palette, DsR.drawable.ic_ph_palette_fill), RrSegment(stringResource(R.string.p4_export), DsR.drawable.ic_ph_export)), if (mode == LetterMode.Write) 0 else 1, { action(when (it) { 0 -> "write"; 1 -> "design"; else -> "export" }) })
+        } else RrEmptyState(stringResource(CoreR.string.cover_letter_7264deefc0), stringResource(CoreR.string.couldn_t_load_try_again), Modifier.weight(1f).padding(24.dp), stringResource(CoreR.string.try_again), { action("retry") })
+        if (!keyboard) RrModeBar(listOf(RrSegment(stringResource(CoreR.string.write), DsR.drawable.ic_ph_pencil_simple, DsR.drawable.ic_ph_pencil_simple_fill), RrSegment(stringResource(CoreR.string.design), DsR.drawable.ic_ph_palette, DsR.drawable.ic_ph_palette_fill), RrSegment(stringResource(R.string.p4_export), DsR.drawable.ic_ph_export)), if (mode == LetterMode.Write) 0 else 1, { action(when (it) { 0 -> "write"; 1 -> "design"; else -> "export" }) })
     }
+}
+
+/** Readable prose becomes the same rich document in place; unsupported markup keeps its original HTML. */
+@Composable private fun LetterProse(letter: CoverLetter, editable: Boolean, action: (String) -> Unit, content: (String) -> Unit) {
+    var editing by remember(letter.id) { mutableStateOf(false) }
+    var rich by remember(letter.id) { mutableStateOf(RrRichDoc.parse(letter.content)) }
+    var value by remember(letter.id) { mutableStateOf(androidx.compose.ui.text.input.TextFieldValue(rich.text)) }
+    val supported = RrRichDoc.editable(letter.content)
+    val focus = remember { androidx.compose.ui.focus.FocusRequester() }
+    LaunchedEffect(editing) { if (editing && supported) focus.requestFocus() }
+    LaunchedEffect(letter.content, editing) { if (!editing) { rich = RrRichDoc.parse(letter.content); value = androidx.compose.ui.text.input.TextFieldValue(rich.text) } }
+    if (editing && supported) {
+        RrRichTextField(value, rich, { next, doc ->
+            value = next; rich = doc; content(doc.toHtml())
+        }, Modifier.fillMaxWidth().focusRequester(focus), readOnly = !editable, textStyle = RrType.prose)
+        if (!value.selection.collapsed) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                RrButton(stringResource(CoreR.string.improve), { action("assistant:Improve this selected passage and propose edits for review:\n\n" + value.text.substring(value.selection.min, value.selection.max)) }, variant = RrButtonVariant.GhostAccent)
+                RrButton(stringResource(CoreR.string.shorter), { action("assistant:Shorten this selected passage and propose edits for review:\n\n" + value.text.substring(value.selection.min, value.selection.max)) }, variant = RrButtonVariant.Ghost)
+            }
+        }
+        RrRichTextToolbar(rich, value.selection, { rich = it; content(it.toHtml()) }, enabled = editable)
+        RrButton(stringResource(CoreR.string.done), { editing = false; action("blur") }, variant = RrButtonVariant.GhostAccent)
+    } else {
+        val transformed = RrRichTransformation(rich, 22.sp, RrTheme.colors.accentText).filter(androidx.compose.ui.text.AnnotatedString(rich.text)).text
+        Column(Modifier.fillMaxWidth().clickable(enabled = editable && supported) { editing = true; action("focus") }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            var start = 0
+            transformed.text.split('\n').forEach { line ->
+                RrText(transformed.subSequence(start, start + line.length), style = RrType.prose)
+                start += line.length + 1
+            }
+        }
+        if (!supported) RrCallout(stringResource(R.string.p4_rich_text_editing_is_not_available_on_this_device_yet_your_formatting_is_kept))
     }
 }
 
 @Composable private fun LetterDetails(state: LetterState, action: (String) -> Unit) {
     val letter = state.letter ?: return
-    Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        RrListGroup {
-            RrListRow(state.resumes.firstOrNull { it.id == letter.sourceResumeId }?.name ?: stringResource(CoreR.string.choose_a_resume), subtitle = stringResource(CoreR.string.resume), icon = DsR.drawable.ic_ph_file_text, onClick = { action("resume") }, enabled = state.editable, trailing = { RrRowCaret() })
-            val app = state.applications.firstOrNull { it.id == letter.sourceApplicationId }
-            RrListRow(app?.let { it.company + " · " + it.role } ?: stringResource(CoreR.string.choose_an_application), subtitle = stringResource(CoreR.string.application), icon = DsR.drawable.ic_ph_briefcase, onClick = { action("application") }, enabled = state.editable, trailing = { RrRowCaret() })
-            RrListRow(letter.recipient.ifEmpty { stringResource(CoreR.string.who_is_it_for) }, subtitle = stringResource(CoreR.string.recipient), icon = DsR.drawable.ic_ph_buildings, onClick = { action("recipient") }, enabled = state.editable, trailing = { RrRowCaret() })
-        }
-        val redraft = stringResource(CoreR.string.redraft_from_the_posting)
-        val opening = stringResource(CoreR.string.make_the_opening_stronger)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            RrContextChip(redraft, icon = DsR.drawable.ic_ph_sparkle, onClick = { action("assistant:" + redraft) })
-            RrContextChip(opening, onClick = { action("assistant:" + opening) })
-            val shorter = stringResource(CoreR.string.shorter)
-            val personal = stringResource(CoreR.string.more_personal)
-            RrContextChip(shorter, onClick = { action("assistant:" + shorter) })
-            RrContextChip(personal, onClick = { action("assistant:" + personal) })
-        }
-        RrButton(stringResource(R.string.p4_letter_content), { action("body") }, variant = RrButtonVariant.Secondary, enabled = state.editable)
+    val app = state.applications.firstOrNull { it.id == letter.sourceApplicationId }
+    RrListGroup {
+        RrListRow(stringResource(CoreR.string.resume), subtitle = state.resumes.firstOrNull { it.id == letter.sourceResumeId }?.name ?: stringResource(CoreR.string.choose_a_resume), onClick = { action("resume") }, enabled = state.editable, divider = true, trailing = { RrRowCaret() })
+        RrListRow(stringResource(CoreR.string.application), subtitle = app?.let { it.company + " · " + it.role } ?: stringResource(CoreR.string.choose_an_application), onClick = { action("application") }, enabled = state.editable, divider = true, trailing = { RrRowCaret() })
+        RrListRow(stringResource(CoreR.string.recipient), subtitle = letter.recipient.ifBlank { stringResource(CoreR.string.who_is_it_for) }, onClick = { action("recipient") }, enabled = state.editable, trailing = { RrRowCaret() })
     }
 }
 
 @Composable private fun LetterDesign(state: LetterState, action: (String) -> Unit, match: (Boolean) -> Unit, paper: (CreateCoverLetterResponseStyleMetadataPageFormat) -> Unit, modifier: Modifier = Modifier) {
     val letter = state.letter ?: return; val metadata = letter.style.metadata
-    Column(modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (letter.sourceResumeId != null) RrSwitchRow(stringResource(CoreR.string.matching_the_resume), letter.designLinked, match, subtitle = if (letter.designLinked) stringResource(CoreR.string.template_type_and_colors_follow_the_resume_so_the_pair_always_matches) else stringResource(CoreR.string.the_letter_keeps_a_design_of_its_own), enabled = state.editable, containerColor = RrTheme.colors.surface)
-        else RrText(stringResource(CoreR.string.choose_a_resume_in_write_to_match_its_design_until_then_the_letter_has_its_own), style = RrType.small)
-        RrListGroup(Modifier.rrEnabledAlpha(!letter.designLinked, 0.55f)) {
-            RrListRow(stringResource(CoreR.string.template), enabled = !letter.designLinked && state.editable, onClick = { action("template") }, trailing = { RrRowValue(metadata.template.wireValue.replaceFirstChar(Char::uppercase), caret = !letter.designLinked) })
-            RrListRow(stringResource(CoreR.string.type), enabled = !letter.designLinked && state.editable, onClick = { action("type") }, trailing = { RrRowValue(metadata.typography.body.fontFamily + " · " + metadata.typography.body.fontSize, caret = !letter.designLinked) })
-            RrListRow(stringResource(CoreR.string.color), enabled = !letter.designLinked && state.editable, onClick = { action("color") }, trailing = { RrRowValue(stringResource(R.string.p4_custom_color), caret = !letter.designLinked) })
+    Column(modifier.fillMaxWidth()) {
+        if (letter.sourceResumeId != null) {
+            val color = letterAccents.firstOrNull { letterHex(it.second) == letterHex(metadata.design.colors.primary) }?.first?.let { stringResource(it) }.orEmpty()
+            val type = letterPairings.firstOrNull { it.heading == metadata.typography.heading.fontFamily && it.body == metadata.typography.body.fontFamily }?.label?.let { stringResource(it) }.orEmpty()
+            RrSwitchRow(stringResource(R.string.match_resume), letter.designLinked, match, subtitle = listOf(metadata.template.wireValue.replaceFirstChar(Char::uppercase), color, type.takeIf { it.isNotEmpty() }?.let { stringResource(R.string.type_name, it) }).filterNotNull().filter { it.isNotEmpty() }.joinToString(" · "), enabled = state.editable, divider = true)
+        } else RrListRow(stringResource(R.string.match_resume), subtitle = stringResource(CoreR.string.choose_a_resume), onClick = { action("resume") }, trailing = { RrRowCaret() })
+        if (!letter.designLinked) {
+            RrListRow(stringResource(CoreR.string.template), onClick = { action("template") }, trailing = { RrRowValue(metadata.template.wireValue.replaceFirstChar(Char::uppercase)) }, enabled = state.editable, divider = true)
+            RrListRow(stringResource(CoreR.string.type), onClick = { action("type") }, trailing = { RrRowCaret() }, enabled = state.editable, divider = true)
+            RrListRow(stringResource(CoreR.string.color), onClick = { action("color") }, trailing = { RrRowCaret() }, enabled = state.editable, divider = true)
         }
-        if (letter.designLinked) RrButton(stringResource(CoreR.string.change_the_resume_s_design), { action("resume-design") }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small)
-        if (!letter.designLinked) RrListRow(stringResource(CoreR.string.page), onClick = { action("page") }, trailing = { RrRowCaret() }, enabled = state.editable)
-        RrText(stringResource(CoreR.string.page), style = RrType.eyebrow, color = RrTheme.colors.ink3)
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-            RrText(stringResource(CoreR.string.paper)); RrSegmentedControl(listOf(RrSegment("A4"), RrSegment(stringResource(CoreR.string.letter))), if (metadata.page.format == CreateCoverLetterResponseStyleMetadataPageFormat.A4) 0 else 1, { paper(if (it == 0) CreateCoverLetterResponseStyleMetadataPageFormat.A4 else CreateCoverLetterResponseStyleMetadataPageFormat.Letter) }, enabled = state.editable && !letter.designLinked)
-        }
-        RrListRow(stringResource(CoreR.string.language), onClick = { action("language") }, enabled = state.editable, trailing = { RrRowValue(java.util.Locale.forLanguageTag(metadata.page.locale).displayName) })
+        RrListRow(stringResource(R.string.letterhead), subtitle = stringResource(R.string.letterhead_hint), onClick = { action("letterhead") }, trailing = { RrRowValue(if (letter.senderLinked) stringResource(CoreR.string.resume) else stringResource(R.string.independent)) }, enabled = state.editable, divider = true)
+        RrListRow(stringResource(CoreR.string.page), subtitle = stringResource(R.string.page_summary, metadata.page.format.wireValue.uppercase()), onClick = { action("page") }, trailing = { RrRowCaret() }, enabled = state.editable, divider = true)
+        RrListRow(stringResource(R.string.signature), subtitle = stringResource(R.string.typed_name), onClick = { action("signature") }, trailing = { RrRowCaret() }, enabled = state.editable)
     }
 }
 

@@ -49,7 +49,7 @@ internal fun darkerLetterColor(hex: String): String {
 }
 @Composable internal fun LetterTypeSheet(state: LetterState, design: ((CreateCoverLetterResponseStyleMetadata) -> CreateCoverLetterResponseStyleMetadata) -> Unit, size: (Double) -> Unit, dismiss: () -> Unit) {
     val m = state.letter?.style?.metadata ?: return
-    RrBottomSheet(dismiss, title = stringResource(CoreR.string.type), initialDetent = 1) {
+    LetterPickerScreen(stringResource(CoreR.string.type), dismiss) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(Modifier.horizontalScroll(rememberScrollState()).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 letterPairings.forEach { pairing ->
@@ -80,7 +80,7 @@ internal fun darkerLetterColor(hex: String): String {
 }
 @Composable internal fun LetterPageSheet(state: LetterState, design: ((CreateCoverLetterResponseStyleMetadata) -> CreateCoverLetterResponseStyleMetadata) -> Unit, dismiss: () -> Unit) {
     val m = state.letter?.style?.metadata ?: return
-    RrBottomSheet(dismiss, title = stringResource(CoreR.string.page), initialDetent = 1) {
+    LetterPickerScreen(stringResource(CoreR.string.page), dismiss) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             CreateCoverLetterResponseStyleMetadataPageFormat.entries.filter { it != CreateCoverLetterResponseStyleMetadataPageFormat.Unknown }.forEach { format -> RrListRow(format.wireValue, selected = m.page.format == format, onClick = { design { it.copy(page = it.page.copy(format = format)) } }) }
             RrText(stringResource(CoreR.string.margins), style = RrType.label)
@@ -94,7 +94,7 @@ internal fun darkerLetterColor(hex: String): String {
     val current = state.letter?.style?.metadata?.design?.colors?.primary.orEmpty()
     var text by remember(current) { mutableStateOf(letterHex(current) ?: current) }
     val normalized = letterHex(text)
-    RrBottomSheet(dismiss, title = stringResource(CoreR.string.color), initialDetent = 1) {
+    LetterPickerScreen(stringResource(CoreR.string.color), dismiss) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             letterAccents.forEach { (label, hex) -> RrListRow(stringResource(label), subtitle = hex, selected = letterHex(current) == hex, onClick = { color(hex) }) }
             RrTextField(text, { text = it }, label = stringResource(R.string.p4_custom_color))

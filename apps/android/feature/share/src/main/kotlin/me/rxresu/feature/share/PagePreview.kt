@@ -29,10 +29,11 @@ internal fun PagePreviewRoute(route: PagePreview, nav: NavController) {
             val version = route.versionId
             val source = when {
                 version != null -> PageSource.ResumeVersion(route.documentId, version)
-                route.kind == DocumentKind.Letter -> PageSource.Letter(route.documentId, repositories.letters.getCoverLetter(route.documentId).updatedAt)
+                route.kind == DocumentKind.Letter -> PageSource.Letter(route.documentId, repositories.letters.getCoverLetter(route.documentId).revision.toString())
                 else -> PageSource.Resume(route.documentId, repositories.resumes.getResume(route.documentId).updatedAt)
             }
             val document = try { repositories.pages.render(source) } catch (offline: IOException) {
+                if (offline is me.rxresu.core.page.PageHttpException || offline is me.rxresu.core.page.PageSourceUnavailable || offline is me.rxresu.core.page.PageSessionChanged) throw offline
                 repositories.pages.lastGood(source) ?: throw offline
             }
             value = (0 until document.pageCount).map { repositories.pages.page(document, it, 716).asImageBitmap() }
@@ -46,7 +47,7 @@ internal fun PagePreviewRoute(route: PagePreview, nav: NavController) {
         RrTopBar(onClose = { nav.popBackStack() }, actions = {
             RrIconButton(me.rxresu.core.designsystem.R.drawable.ic_ph_share_network, stringResource(S.string.share), {
                 nav.navigate(Download(route.documentId, route.kind))
-            })
+            }, enabled = route.versionId == null)
         })
         if (failed) RrButton(stringResource(S.string.try_again), { attempt++ })
         else RrPageCanvas(pages, onTap = { _, _, _ -> }, modifier = Modifier.weight(1f))

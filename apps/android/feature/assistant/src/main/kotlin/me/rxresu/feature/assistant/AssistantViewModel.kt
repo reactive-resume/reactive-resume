@@ -16,7 +16,7 @@ internal data class AssistantState(
     val stopped: Boolean = false, val threadId: String? = null, val providers: List<TestAiProviderResponse> = emptyList(), val providerId: String? = null,
     val threads: List<StartAgentThreadResponse> = emptyList(), val content: ConversationContent = ConversationContent(),
     val documentId: String = "", val documentName: String = "", val letterId: String? = null, val locked: Boolean = false, val documentContext: Boolean = true, val postingContext: Boolean = true,
-    val facts: Map<String, String> = emptyMap(), val wordingSavedId: String? = null, val attachments: List<CreateAgentAttachmentResponse> = emptyList(), val deciding: Boolean = false, val historyUnavailable: Boolean = false,
+    val postingLabel: String? = null, val facts: Map<String, String> = emptyMap(), val wordingSavedId: String? = null, val attachments: List<CreateAgentAttachmentResponse> = emptyList(), val deciding: Boolean = false, val historyUnavailable: Boolean = false,
     /** The wording the person is writing for one proposal; kept here so closing or leaving Proposals never loses it. */
     val wording: WordingDraft? = null,
     /** The last send was refused because the connection changed after it was shown; the disclosure now names the current one. */
@@ -81,6 +81,10 @@ internal class AssistantViewModel(private val repositories: RrRepositories, priv
         val letterId = conversation.thread.coverLetterId
         if (letterId != null) { val handle = repositories.letters.openDraft(letterId); letter = handle; documentJob = viewModelScope.launch { handle.state.collect { value -> mutable.update { it.copy(documentId = value.document?.id.orEmpty(), documentName = value.document?.name.orEmpty(), locked = conversation.isReadOnly || value.locked || value.document?.isLocked == true) } } } }
         else openResume(conversation.thread.workingResumeId ?: conversation.thread.sourceResumeId ?: resumeId)
+        conversation.thread.applicationId?.let { application ->
+            val app = repositories.applications.getApplication(application)
+            mutable.update { it.copy(postingLabel = app.company + " posting") }
+        }
         refreshFacts()
         if (conversation.thread.activeRunId != null) resumeStream()
     }

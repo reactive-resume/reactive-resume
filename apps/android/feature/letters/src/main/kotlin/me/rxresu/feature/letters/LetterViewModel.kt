@@ -15,7 +15,7 @@ import me.rxresu.core.page.*
 
 internal data class LetterState(
     val aiDraft: LetterAiDraft? = null, val draft: DraftState<CoverLetter> = DraftState(null), val loading: Boolean = true, val failed: Boolean = false, val busy: Boolean = false,
-    val resumePage: ImageBitmap? = null, val resumePageFailed: Boolean = false, val blocks: List<LetterBlock> = emptyList(), val pages: List<ImageBitmap> = emptyList(), val pageFailed: Boolean = false, val pageCount: Int? = null,
+    val resumePage: ImageBitmap? = null, val designPage: ImageBitmap? = null, val resumePageFailed: Boolean = false, val blocks: List<LetterBlock> = emptyList(), val pages: List<ImageBitmap> = emptyList(), val pageFailed: Boolean = false, val pageCount: Int? = null,
     val resumes: List<ResumeSummary> = emptyList(), val applications: List<Application> = emptyList(), val versions: List<LetterVersionSummary> = emptyList(),
     /** The connection a draft goes to, named in the disclosure; each draft request carries its approval. */
     val provider: TestAiProviderResponse? = null,
@@ -68,11 +68,15 @@ internal class LetterViewModel(private val repositories: RrRepositories, private
     private suspend fun page(letter: CoverLetter) {
         val source = PageSource.Letter(id, letter.revision.toString())
         try {
-            val document = try { repositories.pages.render(source) } catch (e: CancellationException) { throw e } catch (e: Exception) { repositories.pages.lastGood(source) ?: throw e }
+            val document = try { repositories.pages.render(source) } catch (e: CancellationException) { throw e } catch (e: java.io.IOException) {
+                if (e is PageHttpException || e is PageSourceUnavailable || e is PageSessionChanged) throw e
+                repositories.pages.lastGood(source) ?: throw e
+            }
             // Every page, so a letter running onto a second page can be read before export.
             val images = (0 until document.pageCount.coerceAtLeast(1)).map { repositories.pages.page(document, it, 716).asImageBitmap() }
+            val designPage = repositories.pages.page(document, 0, 300).asImageBitmap()
             val blocks = withContext(io) { readLetterRuns(document.file)?.let { letterBlocks(letter, it) }.orEmpty() }
-            if (lastRevision == letter.revision) mutable.update { it.copy(pages = images, blocks = if (document.source.revision == source.revision) blocks else emptyList(), pageCount = document.pageCount, pageFailed = document.source.revision != source.revision) }
+            if (lastRevision == letter.revision) mutable.update { it.copy(pages = images, designPage = designPage, blocks = if (document.source.revision == source.revision) blocks else emptyList(), pageCount = document.pageCount, pageFailed = document.source.revision != source.revision) }
         } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(pageFailed = true) } }
     }
     private suspend fun resumePage(id: String) {
@@ -112,7 +116,39 @@ internal class LetterViewModel(private val repositories: RrRepositories, private
     fun lock(done: () -> Unit) = action {
         draft!!.writeMetadata { before -> repositories.documents.lockDocument(LockDocumentRequest(id, !before.isLocked, DocumentType.Letter)); repositories.letters.getCoverLetter(id) }; draft!!.refresh(); done()
     }
-    fun createVersion(name: String, done: () -> Unit) = action { draft!!.flushSaved(); repositories.letters.createCoverLetterVersion(id, PatchDocumentNameRequest(name)); loadLists(); done() }
+    fun duplicate(done: (String) -> Unit) = action { draft!!.flushSaved(); done(repositories.documents.duplicate(DocumentType.Letter, id)) }
+    fun translateCopy(locale: String, done: (String, String) -> Unit) = action {
+        draft!!.flushSaved()
+        val copy = repositories.documents.duplicate(DocumentType.Letter, id)
+        val before = repositories.letters.getCoverLetter(copy)
+        repositories.letters.updateCoverLetter(copy, PatchCoverLetterRequest(expectedRevision = before.revision, locale = locale))
+        val thread = repositories.assistant.startAgentThread(StartAgentThreadRequest(coverLetterId = copy, applicationId = before.sourceApplicationId, scope = StartAgentThreadRequestScope.Document))
+        done(copy, thread.id)
+    }
+    fun copyForJob(application: String, done: (String) -> Unit) = action {
+        draft!!.flushSaved()
+        val copy = repositories.documents.duplicate(DocumentType.Letter, id)
+        val handle = repositories.letters.openDraft(copy)
+        try { handle.update(requireNotNull(handle.state.value.document).copy(sourceApplicationId = application)); handle.flushSaved() } finally { handle.close() }
+        done(copy)
+    }
+    fun trash(done: () -> Unit) = action {
+        draft!!.flushSaved(); check(state.value.letter?.isLocked == false && !state.value.draft.locked)
+        repositories.documents.trashDocument(PurgeDocumentRequest(id, DocumentType.Letter)); done()
+    }
+    fun untrash() = action { repositories.documents.restoreDocument(PurgeDocumentRequest(id, DocumentType.Letter)) }
+    fun nameVersion(name: String, version: String?, done: () -> Unit) = action {
+        draft!!.flushSaved()
+        if (version == null) repositories.letters.createCoverLetterVersion(id, PatchDocumentNameRequest(name)) else {
+            check(state.value.versions.first { it.id == version }.kind == GetCoverLetterVersionResponseKind.Named)
+            repositories.letters.renameCoverLetterVersion(id, version, PatchDocumentNameRequest(name))
+        }
+        loadLists(); done()
+    }
+    fun deleteVersion(version: String, done: () -> Unit) = action {
+        check(state.value.versions.first { it.id == version }.kind == GetCoverLetterVersionResponseKind.Named)
+        repositories.letters.deleteCoverLetterVersion(id, version); loadLists(); done()
+    }
     fun restore(version: String, done: () -> Unit) = action { draft!!.writeMetadata { repositories.letters.restoreCoverLetterVersion(id, version, RestoreResumeVersionRequest(PatchResumeRequestProposalSafety.V1)) }; draft!!.refresh(); loadLists(); done() }
     private suspend fun keepAiState(value: LetterAiDraft?) {
         check(sameAccount())

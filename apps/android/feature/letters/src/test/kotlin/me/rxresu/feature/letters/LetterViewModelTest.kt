@@ -52,6 +52,22 @@ class LetterViewModelTest {
             assertNull(repositories.letters.getCoverLetter(StoryboardIds.lumenLetter).sourceResumeId)
         } finally { repositories.close() }
     }
+    @Test fun automaticVersionsCannotBeRenamedOrDeleted() = runTest {
+        val base = FakeRepositories(coroutineScope = backgroundScope)
+        try {
+            val version = base.letters.listCoverLetterVersions(StoryboardIds.lumenLetter).first().copy(kind = GetCoverLetterVersionResponseKind.Auto)
+            var renamed = false; var deleted = false
+            val guarded = object : LettersRepository by base.letters {
+                override suspend fun listCoverLetterVersions(id: String, limit: Long?, offset: Long?, options: RequestOptions) = listOf(version)
+                override suspend fun renameCoverLetterVersion(id: String, versionId: String, body: PatchDocumentNameRequest, options: RequestOptions): LetterVersionSummary { renamed = true; return version }
+                override suspend fun deleteCoverLetterVersion(id: String, versionId: String, options: RequestOptions) { deleted = true }
+            }
+            val repositories = with(base) { RrRepositories(account, documents, resumes, guarded, applications, checks, ai, assistant, workspace, career, search, publicResume, platform, preferences, today, drafts, pages, authSession, time) }
+            val vm = LetterViewModel(repositories, StoryboardIds.lumenLetter); runCurrent()
+            vm.nameVersion("Changed", version.id) {}; runCurrent(); assertTrue(vm.state.value.failed); assertFalse(renamed)
+            vm.deleteVersion(version.id) {}; runCurrent(); assertTrue(vm.state.value.failed); assertFalse(deleted)
+        } finally { base.close() }
+    }
     private fun streamed(base: RrRepositories, fail: Boolean = false, ai: AiRepository = base.ai, refuse: () -> Boolean = { false }, onOptions: (RequestOptions) -> Unit = {}, onRequest: (DraftCoverLetterRequest?) -> Unit = {}): RrRepositories {
         val letters = object : LettersRepository by base.letters {
             override fun draftCoverLetter(id: String, body: DraftCoverLetterRequest?, options: RequestOptions): Flow<ServerEvent> = flow {

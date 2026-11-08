@@ -56,17 +56,17 @@ class LetterBodyAndPagesTest {
         assertEquals(true, me.rxresu.core.designsystem.RrRichDoc.editable(html))
     }
 
-    @Test fun everyPageOfALongLetterShows() {
+    @Test fun longLetterKeepsAllBodyParagraphs() {
         val repositories = FakeRepositories()
         try {
             val letter = runBlocking { repositories.letters.openDraft(StoryboardIds.lumenLetter).state.value.document!! }
-            val page = android.graphics.Bitmap.createBitmap(10, 14, android.graphics.Bitmap.Config.ARGB_8888).asImageBitmap()
+            val content = (1..30).joinToString("") { "<p>Paragraph $it remains editable.</p>" }
             compose.setContent {
                 CompositionLocalProvider(LocalInspectionMode provides true) {
-                    RrTheme(darkTheme = false) { LetterScreen(LetterState(draft = DraftState(letter), loading = false, pages = listOf(page, page), pageCount = 2), LetterMode.Write, false, {}, {}, {}, {}) }
+                    RrTheme(darkTheme = false) { LetterScreen(LetterState(draft = DraftState(letter.copy(content = content)), loading = false, pageCount = 2), LetterMode.Write, false, {}, {}, {}, {}) }
                 }
             }
-            compose.onNodeWithContentDescription("Page 2 of 2").assertExists()
+            compose.onNodeWithText("Paragraph 30 remains editable.", useUnmergedTree = true).assertExists()
         } finally { repositories.close() }
     }
 }

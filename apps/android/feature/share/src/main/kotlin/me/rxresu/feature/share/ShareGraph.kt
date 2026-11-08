@@ -12,6 +12,8 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -44,7 +46,7 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
                 } }, { nav.navigate(ResumeDomainSettings(route.resumeId)) }, { form = if (state.resume?.hasPassword == true) "remove-password" else "password" }, { vm.retry() })
             when (form) {
                 "primary" -> ConfirmSheet(stringResource(CoreR.string.make_this_your_primary_resume), state.otherPrimary?.let { stringResource(CoreR.string.message_0_stops_being_your_primary_resume, it.name) } ?: stringResource(R.string.p4_your_short_link_will_open_this_resume), stringResource(CoreR.string.make_primary), { vm.write({ UpdateResumeRequest(isPrimary = true) }) { form = null } }, { form = null })
-                "password" -> PasswordSheet(state, { value -> vm.password(value) { form = null } }, { form = null })
+                "password" -> PasswordScreen(state, { value -> vm.password(value) { form = null } }, { form = null })
                 "remove-password" -> ConfirmSheet(stringResource(CoreR.string.remove_the_password), stringResource(CoreR.string.anyone_with_the_link_will_be_able_to_view_your_resume), stringResource(CoreR.string.remove_password), { vm.password(null) { form = null } }, { form = null })
             }
         }
@@ -98,23 +100,26 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
     screen<Versions> { entry ->
         val vm = shareModel(entry.toRoute<Versions>().resumeId); val state by vm.state.collectAsStateWithLifecycle()
         var selected by remember { mutableStateOf<String?>(null) }; var naming by remember { mutableStateOf(false) }; var rename by remember { mutableStateOf<String?>(null) }; var deleting by remember { mutableStateOf<String?>(null) }; var restoring by remember { mutableStateOf<String?>(null) }
+        val restoreResult by entry.savedStateHandle.getStateFlow<String?>("preview-restore-version", null).collectAsStateWithLifecycle()
+        LaunchedEffect(restoreResult) { restoreResult?.let { restoring = it; entry.savedStateHandle["preview-restore-version"] = null } }
         Box {
-            VersionsScreen(state, selected, { selected = it }, { nav.popBackStack() }, { rename = it; naming = true }, { restoring = it }, { deleting = it })
+            VersionsScreen(state, selected, { version -> selected = version; if (version != null) nav.navigate(PagePreview(entry.toRoute<Versions>().resumeId, versionId = version)) }, { nav.popBackStack() }, { rename = it; naming = true }, { restoring = it }, { deleting = it })
             if (naming) TextSheet(stringResource(CoreR.string.name_this_version), "", stringResource(CoreR.string.save), state.busy, state.failed, { value -> vm.nameVersion(value, rename) { naming = false } }, { naming = false })
             deleting?.let { version -> RrAlertDialog(stringResource(R.string.p4_delete_version), stringResource(CoreR.string.named_versions_are_kept_until_you_delete_them_this_can_t_be_undone), stringResource(CoreR.string.delete), { vm.deleteVersion(version) { deleting = null; if (selected == version) selected = null } }, { deleting = null }, confirm = RrDialogConfirm.HoldToDelete) }
             restoring?.let { version -> ConfirmSheet(stringResource(CoreR.string.restore_this_version_2cef126bc0), stringResource(R.string.p4_your_current_resume_will_be_kept_as_a_version_before_restoring), stringResource(CoreR.string.restore_this_version), { vm.restore(version) { restoring = null; selected = null } }, { restoring = null }) }
         }
     }
-    sheet<BuilderMore> { entry -> MoreRoute(entry.toRoute<BuilderMore>().resumeId, nav) }
+    sheet<BuilderMore> { entry -> ResumeMoreRoute(entry.toRoute<BuilderMore>().resumeId, nav) }
 }
 
 @Composable internal fun shareModel(id: String): ShareViewModel { val repositories = LocalRepositories.current; return viewModel(key = "share-$id") { ShareViewModel(repositories, id) } }
 
-@Composable private fun MoreRoute(id: String, nav: NavController) {
+@Composable fun ResumeMoreRoute(id: String, nav: NavController) {
     val repositories = LocalRepositories.current; val vm = shareModel(id); val state by vm.state.collectAsStateWithLifecycle()
     var form by remember { mutableStateOf<String?>(null) }; val resources = androidx.compose.ui.platform.LocalResources.current; val context = LocalContext.current; val scope = rememberCoroutineScope(); val toasts = LocalToasts.current
+    val notesBaseline = remember(form) { state.resume?.data?.metadata?.notes.orEmpty() }
     Box {
-        RrBottomSheet({ nav.popBackStack() }, detents = listOf(0.82f), title = null) {
+        if (form != "notes") RrBottomSheet({ nav.popBackStack() }, fixedHeight = 790.dp, title = state.resume?.name) {
             MoreContent(state) { action -> when (action) {
                 "lock" -> vm.lock {}
                 "rename", "notes", "tags", "translate", "job" -> form = action
@@ -127,7 +132,7 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
         when (form) {
             "rename" -> TextSheet(stringResource(CoreR.string.rename), state.resume?.name.orEmpty(), stringResource(CoreR.string.save), state.busy, state.failed, { value -> vm.write({ UpdateResumeRequest(name = value) }) { form = null } }, { form = null })
             "tags" -> TextSheet(stringResource(CoreR.string.tags), state.resume?.tags?.joinToString(", ").orEmpty(), stringResource(CoreR.string.save), state.busy, state.failed, { value -> vm.write({ UpdateResumeRequest(tags = value.split(',').map { it.trim() }.filter { it.isNotEmpty() }) }) { form = null } }, { form = null })
-            "notes" -> TextSheet(stringResource(CoreR.string.notes), state.resume?.data?.metadata?.notes.orEmpty(), stringResource(CoreR.string.save), state.busy, state.failed, { value -> vm.notes(value) { form = null } }, { form = null }, multiline = true)
+            "notes" -> PrivateNotesScreen(notesBaseline, state.busy, state.failed, { value -> vm.notes(value, notesBaseline) { form = null } }, { form = null })
             "translate" -> LanguageCopySheet(state, { locale -> vm.languageCopy(locale) { copy, prompt ->
                 nav.navigate(Builder(copy))
                 nav.navigate(Assistant(copy, prompt = prompt))
@@ -152,12 +157,39 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
 @Composable internal fun ConfirmSheet(title: String, message: String, label: String, confirm: () -> Unit, dismiss: () -> Unit) {
     RrBottomSheet(dismiss, title = title, fitContent = true, footer = { Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) { RrButton(stringResource(CoreR.string.cancel), dismiss, variant = RrButtonVariant.Secondary); RrButton(label, confirm) } }) { RrText(message, Modifier.padding(horizontal = 16.dp), style = RrType.body) }
 }
-@Composable private fun PasswordSheet(state: ShareState, save: (String) -> Unit, dismiss: () -> Unit) {
-    var password by remember { mutableStateOf("") }; var confirm by remember { mutableStateOf("") }
-    RrBottomSheet(dismiss, title = stringResource(CoreR.string.set_password), confirmDiscard = password.isNotEmpty(), footer = { RrButton(stringResource(CoreR.string.set_password), { save(password) }, Modifier.fillMaxWidth().padding(16.dp), enabled = password.length >= 6 && password == confirm && !state.busy, loading = state.busy) }) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) { RrTextField(password, { password = it }, label = stringResource(CoreR.string.password), visualTransformation = PasswordVisualTransformation()); RrTextField(confirm, { confirm = it }, label = stringResource(CoreR.string.confirm_password), visualTransformation = PasswordVisualTransformation()); if (state.failed) Failure {} }
+@Composable internal fun PasswordScreen(state: ShareState, save: (String) -> Unit, dismiss: () -> Unit) {
+    var password by rememberSaveable { mutableStateOf("") }; var confirm by rememberSaveable { mutableStateOf("") }; var discard by remember { mutableStateOf(false) }
+    val close = { if (password.isNotEmpty() || confirm.isNotEmpty()) discard = true else dismiss() }
+    BackHandler(onBack = close)
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).imePadding()) {
+        RrTopBar(onBack = close)
+        RrPageTitle(stringResource(CoreR.string.set_password))
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            RrTextField(password, { password = it }, label = stringResource(CoreR.string.password), visualTransformation = PasswordVisualTransformation())
+            RrTextField(confirm, { confirm = it }, label = stringResource(CoreR.string.confirm_password), visualTransformation = PasswordVisualTransformation())
+            if (state.failed) Failure {}
+        }
+        RrFooterBar { RrButton(stringResource(CoreR.string.set_password), { save(password) }, Modifier.weight(1f), enabled = password.length >= 6 && password == confirm && !state.busy, loading = state.busy) }
     }
+    if (discard) RrAlertDialog(stringResource(DsR.string.ds_discard_changes_title), stringResource(DsR.string.ds_discard_changes_body), stringResource(DsR.string.ds_discard), { discard = false; dismiss() }, { discard = false }, dismissLabel = stringResource(DsR.string.ds_keep_editing), confirm = RrDialogConfirm.Danger)
 }
+
+@Composable internal fun PrivateNotesScreen(initial: String, busy: Boolean, failed: Boolean, save: (String) -> Unit, dismiss: () -> Unit) {
+    var text by rememberSaveable { mutableStateOf(initial) }; var discard by remember { mutableStateOf(false) }
+    val close = { if (text != initial) discard = true else dismiss() }
+    BackHandler(onBack = close)
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).imePadding()) {
+        RrTopBar(onBack = close)
+        RrPageTitle(stringResource(CoreR.string.notes), subtitle = stringResource(R.string.p4_only_you_can_see_these))
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(24.dp)) {
+            RrTextField(text, { text = it }, label = stringResource(CoreR.string.notes), singleLine = false, minLines = 10)
+            if (failed) RrCallout(stringResource(CoreR.string.couldn_t_save_your_wording_your_text_is_still_here_try_again), tone = RrTone.Danger)
+        }
+        RrFooterBar { RrButton(stringResource(CoreR.string.save), { save(text) }, Modifier.weight(1f), enabled = !busy, loading = busy) }
+    }
+    if (discard) RrAlertDialog(stringResource(DsR.string.ds_discard_changes_title), stringResource(DsR.string.ds_discard_changes_body), stringResource(DsR.string.ds_discard), { discard = false; dismiss() }, { discard = false }, dismissLabel = stringResource(DsR.string.ds_keep_editing), confirm = RrDialogConfirm.Danger)
+}
+
 @Composable private fun DomainScreen(state: ShareState, vm: ShareViewModel, dismiss: () -> Unit) {
     val resources = androidx.compose.ui.platform.LocalResources.current; val context = LocalContext.current
     val haptics = rememberRrHaptics(); val toasts = LocalToasts.current

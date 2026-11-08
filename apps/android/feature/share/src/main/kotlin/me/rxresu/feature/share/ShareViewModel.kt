@@ -1,5 +1,6 @@
 package me.rxresu.feature.share
 
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
@@ -11,9 +12,10 @@ import me.rxresu.core.data.*
 import me.rxresu.core.network.generated.*
 
 internal data class ShareState(
+    val thumbnail: androidx.compose.ui.graphics.ImageBitmap? = null, val pageCount: Int = 1,
     val draft: DraftState<Resume> = DraftState(null),
     val loading: Boolean = true, val busy: Boolean = false, val failed: Boolean = false,
-    val username: String = "", val origin: String = "", val slug: String = "", val slugTaken: Boolean = false,
+    val username: String = "", val origin: String = "", val aliasUrl: String? = null, val slug: String = "", val slugTaken: Boolean = false,
     val checking: Boolean = false, val slugInvalid: Boolean = false,
     val customDomains: Boolean = false, val olacvSuggestion: Boolean = false, val primaryLoaded: Boolean = false, val otherPrimary: ResumeSummary? = null,
     val daily: List<GetResumeDailyStatisticsResponseItem> = emptyList(),
@@ -23,9 +25,10 @@ internal data class ShareState(
     val link: GetFeedbackLinkResponse? = null,
     val applications: List<Application> = emptyList(),
 ) {
+    val filename get() = listOf(resume?.data?.basics?.name?.takeIf { it.isNotBlank() }, "Resume").filterNotNull().joinToString(" ")
     val resume get() = draft.document
     val url get() = "${origin.trimEnd('/')}/${android.net.Uri.encode(username)}/${android.net.Uri.encode(resume?.slug.orEmpty())}"
-    val shortUrl get() = "${origin.trimEnd('/')}/${android.net.Uri.encode(username)}"
+    val shortUrl get() = "${(aliasUrl ?: origin).trimEnd('/')}/${android.net.Uri.encode(username)}"
     val views get() = daily.takeLast(30).sumOf { it.views }.toLong()
     val downloads get() = daily.takeLast(30).sumOf { it.downloads }.toLong()
     val editable get() = !busy && resume != null && !draft.locked && resume?.isLocked != true
@@ -37,13 +40,26 @@ internal class ShareViewModel(private val repositories: RrRepositories, private 
     private var draft: DocumentDraft<Resume>? = null
     private val writes = Mutex()
     private var slugJob: Job? = null
+    private val render = me.rxresu.core.page.RenderDebouncer(viewModelScope)
+    private var renderedRevision: String? = null
     init {
         viewModelScope.launch {
             try {
                 val handle = repositories.resumes.openDraft(id)
                 draft = handle
                 launch { handle.state.collect { saved -> mutable.update { it.copy(draft = saved, loading = false,
-                    slug = if (it.slug == it.resume?.slug || it.loading) saved.document?.slug.orEmpty() else it.slug) } } }
+                    slug = if (it.slug == it.resume?.slug || it.loading) saved.document?.slug.orEmpty() else it.slug) }
+                    saved.document?.takeIf { saved.status == me.rxresu.core.database.SaveStatus.Saved && it.updatedAt != renderedRevision }?.let { resume ->
+                        renderedRevision = resume.updatedAt
+                        render.submit {
+                            try {
+                                val doc = repositories.pages.render(me.rxresu.core.page.PageSource.Resume(id, resume.updatedAt))
+                                val bitmap = repositories.pages.page(doc, 0, 144)
+                                if (renderedRevision == resume.updatedAt) mutable.update { it.copy(thumbnail = bitmap.asImageBitmap(), pageCount = doc.pageCount) }
+                            } catch (e: CancellationException) { throw e } catch (_: Exception) { /* Sharing remains available when the thumbnail cannot render. */ }
+                        }
+                    }
+                } }
                 launch { repositories.account.observeProfile().collect { profile -> profile.data?.let { value -> mutable.update { it.copy(username = value.username) } } } }
                 val session = repositories.account.session.value
                 val server = when (session) { is me.rxresu.core.auth.SessionState.SignedIn -> session.server; else -> "" }
@@ -58,7 +74,7 @@ internal class ShareViewModel(private val repositories: RrRepositories, private 
         supervisorScope {
             suspend fun attempt(action: suspend () -> Unit) { try { action() } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(failed = true) } } }
             listOf(
-                launch { attempt { val flags = repositories.platform.getFeatureFlags(); mutable.update { it.copy(origin = flags.aliasUrl ?: it.origin, customDomains = flags.customDomains, olacvSuggestion = flags.olacvSuggestion) }; if (flags.customDomains) { val domain = repositories.resumes.getCustomDomain(); mutable.update { it.copy(domain = domain) } } } },
+                launch { attempt { val flags = repositories.platform.getFeatureFlags(); mutable.update { it.copy(aliasUrl = flags.aliasUrl, customDomains = flags.customDomains, olacvSuggestion = flags.olacvSuggestion) }; if (flags.customDomains) { val domain = repositories.resumes.getCustomDomain(); mutable.update { it.copy(domain = domain) } } } },
                 launch { attempt { val resumes = repositories.resumes.listResumes(); mutable.update { it.copy(primaryLoaded = true, otherPrimary = resumes.firstOrNull { other -> other.isPrimary && other.id != id }) } } },
                 launch { attempt { val v = repositories.resumes.getResumeDailyStatistics(id, 30); mutable.update { it.copy(daily = v) } } },
                 launch { attempt { val v = repositories.resumes.listFeedbackLinks(id); mutable.update { it.copy(links = v) } } },
@@ -134,8 +150,9 @@ internal class ShareViewModel(private val repositories: RrRepositories, private 
         draft!!.writeMetadata { before -> before.withWriteResult(repositories.resumes.setResumeLocked(id, PutResumeLockRequest(JsonPrimitive(before.updatedAt), !before.isLocked))) }
         draft!!.refresh(); done()
     }
-    fun notes(value: String, done: () -> Unit) = action {
+    fun notes(value: String, expected: String, done: () -> Unit) = action {
         val handle = requireNotNull(draft); val before = requireNotNull(handle.state.value.document)
+        check(before.data.metadata.notes == expected || before.data.metadata.notes == value)
         handle.update(before.copy(data = before.data.copy(metadata = before.data.metadata.copy(notes = value)))); handle.flush(); done()
     }
     fun duplicate(done: (String) -> Unit) = action { draft!!.flush(); check(draft!!.state.value.status == me.rxresu.core.database.SaveStatus.Saved); done(repositories.resumes.duplicateResume(id)) }

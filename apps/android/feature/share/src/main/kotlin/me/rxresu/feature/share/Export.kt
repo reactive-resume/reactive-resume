@@ -39,7 +39,7 @@ internal class ExportViewModel(private val repositories: RrRepositories, private
     private val channel = Channel<Delivery>(Channel.BUFFERED)
     val deliveries = channel.receiveAsFlow()
     init { viewModelScope.launch { try {
-        val letter = if (kind == DocumentKind.Letter) repositories.letters.openDraft(id).state.value.document else null
+        val letter = if (kind == DocumentKind.Letter) requireNotNull(repositories.letters.openDraft(id).state.value.document) else null
         val name = if (letter != null) letter.style.basics.name + " Cover Letter" else repositories.resumes.openDraft(id).state.value.document?.data?.basics?.name.orEmpty() + " Resume"
         mutable.update { it.copy(name = name, paired = letter?.sourceResumeId != null, format = if (letter?.sourceResumeId != null) FileFormat.Pair else FileFormat.Pdf) }
     } catch (e: CancellationException) { throw e } catch (_: Exception) { mutable.update { it.copy(failed = true) } } } }
@@ -85,7 +85,10 @@ internal class ExportViewModel(private val repositories: RrRepositories, private
     }
     private suspend fun pdf(source: PageSource, status: SaveStatus): ByteArray {
         check(status == SaveStatus.Saved) { "Save your changes before exporting the page." }
-        val rendered = try { repositories.pages.render(source) } catch (e: CancellationException) { throw e } catch (e: Exception) { repositories.pages.lastGood(source)?.takeIf { it.source.revision == source.revision } ?: throw e }
+        val rendered = try { repositories.pages.render(source) } catch (e: CancellationException) { throw e } catch (e: java.io.IOException) {
+            if (e is PageHttpException || e is PageSourceUnavailable || e is PageSessionChanged) throw e
+            repositories.pages.lastGood(source)?.takeIf { it.source.revision == source.revision } ?: throw e
+        }
         return withContext(Dispatchers.IO) { rendered.file.readBytes() }
     }
 }

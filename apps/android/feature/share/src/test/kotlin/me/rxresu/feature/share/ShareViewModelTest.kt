@@ -24,6 +24,11 @@ class ShareViewModelTest {
         val state = ShareState(username = "alex", origin = "https://example.invalid", daily = days)
         assertEquals("https://example.invalid/alex", state.shortUrl); assertEquals(60L, state.views); assertEquals(30L, state.downloads)
     }
+    @Test fun aliasOnlyChangesShortLinkNotFullDocumentAddress() {
+        val state = ShareState(username = "alex", origin = "https://server.example", aliasUrl = "https://rx.cv")
+        assertEquals("https://server.example/alex/", state.url)
+        assertEquals("https://rx.cv/alex", state.shortUrl)
+    }
     @Test fun slugValidation() { assertTrue(validSlug("product-designer")); listOf("a--b", "-a", "a-", "A", "a/b", "", "a".repeat(65)).forEach { assertFalse(it, validSlug(it)) } }
     @Test fun fileNameCannotEscapeExportDirectory() { assertFalse(safeFileName("../../x\\y").contains('/')); assertFalse(safeFileName("../../x\\y").contains('\\')); assertEquals("Document", safeFileName("..")) }
     @Test fun metadataKeepsAuthoredContent() = runTest {
@@ -35,6 +40,16 @@ class ShareViewModelTest {
             vm.write({ UpdateResumeRequest(isPublic = false) }); runCurrent()
             val after = repositories.resumes.getResume(before.id)
             assertEquals("<p>My words</p>", after.data.summary.content); assertFalse(after.isPublic)
+        } finally { repositories.close() }
+    }
+    @Test fun staleNotesCannotOverwriteNewerNotes() = runTest {
+        val repositories = FakeRepositories(coroutineScope = backgroundScope)
+        try {
+            val vm = ShareViewModel(repositories, StoryboardIds.resume); runCurrent()
+            val draft = repositories.resumes.openDraft(StoryboardIds.resume); val before = draft.state.value.document!!
+            draft.update(before.copy(data = before.data.copy(metadata = before.data.metadata.copy(notes = "Newer notes"))))
+            vm.notes("Older editor's text", before.data.metadata.notes) {}; runCurrent()
+            assertTrue(vm.state.value.failed); assertEquals("Newer notes", draft.state.value.document!!.data.metadata.notes)
         } finally { repositories.close() }
     }
     @Test fun failedWriteKeepsSavedSwitchAndWords() = runTest {
@@ -78,6 +93,41 @@ class ShareViewModelTest {
             vm.export(true); runCurrent()
             assertTrue(result!!.files.single().bytes.decodeToString().contains("Kept offline"))
         } finally { repositories.close() }
+    }
+    @Test fun permissionRefusalNeverExportsCachedPdf() = runTest {
+        var fallback = 0
+        val pages = object : me.rxresu.core.page.PageRenderer {
+            override suspend fun render(source: me.rxresu.core.page.PageSource): me.rxresu.core.page.RenderedDocument = throw me.rxresu.core.page.PageHttpException(403)
+            override suspend fun lastGood(source: me.rxresu.core.page.PageSource): me.rxresu.core.page.RenderedDocument? { fallback++; return null }
+            override suspend fun page(document: me.rxresu.core.page.RenderedDocument, index: Int, widthPx: Int): android.graphics.Bitmap = error("Not rasterising")
+        }
+        val repositories = FakeRepositories(pageRenderer = pages, coroutineScope = backgroundScope)
+        try {
+            val vm = ExportViewModel(repositories, StoryboardIds.resume, DocumentKind.Resume); runCurrent()
+            vm.export(false); runCurrent()
+            assertTrue(vm.state.value.failed); assertEquals(0, fallback)
+        } finally { repositories.close() }
+    }
+    @Test fun letterJsonKeepsLocalWordsAndLetterOwnershipOffline() = runTest {
+        val controls = FakeControls(); val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
+        try {
+            val vm = ExportViewModel(repositories, StoryboardIds.lumenLetter, DocumentKind.Letter); runCurrent()
+            val draft = repositories.letters.openDraft(StoryboardIds.lumenLetter)
+            controls.online.value = false
+            draft.update(draft.state.value.document!!.copy(content = "<p>My local letter</p>"))
+            vm.format(FileFormat.Json)
+            var result: Delivery? = null
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.deliveries.collect { result = it } }
+            vm.export(true); runCurrent()
+            val json = result!!.files.single().bytes.decodeToString()
+            assertTrue(json.contains("My local letter")); assertTrue(json.contains("reactive-resume-cover-letter"))
+        } finally { repositories.close() }
+    }
+    @Test fun feedbackExpiryRoundsUpPartialDays() {
+        val now = java.time.Instant.parse("2026-11-08T12:00:00Z")
+        assertEquals(23L, feedbackDaysRemaining(now, now.plusSeconds(22 * 86400 + 1)))
+        assertEquals(22L, feedbackDaysRemaining(now, now.plusSeconds(22 * 86400)))
+        assertEquals(0L, feedbackDaysRemaining(now, now.minusSeconds(1)))
     }
     @Test fun scrubbingClampsAndMirrorsDays() {
         assertEquals(0, visitorDayAt(-20f, 300f, 30, false)); assertEquals(29, visitorDayAt(300f, 300f, 30, false)); assertEquals(0, visitorDayAt(300f, 300f, 30, true)); assertEquals(14, visitorDayAt(150f, 300f, 30, true))

@@ -34,12 +34,16 @@ import me.rxresu.core.navigation.*
         onDispose { manager.unregisterNetworkCallback(callback) }
     }
     val delivering = fileDeliveries(vm.deliveries)
-    RrBottomSheet(dismiss, title = stringResource(CoreR.string.download), initialDetent = 1, footer = {
-        Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            RrButton(stringResource(R.string.p4_save_to_files), { vm.export(true) }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_folder_simple, enabled = !state.busy && !delivering)
-            RrButton(if (state.busy) stringResource(CoreR.string.generating_pdf) else stringResource(CoreR.string.share), { vm.export(false) }, Modifier.weight(1f), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_share_network, loading = state.busy, enabled = !delivering)
+    DownloadSheet(state, route.kind, dismiss, vm::format, vm::name, { vm.export(true) }, { vm.export(false) }, delivering)
+}
+
+@Composable internal fun DownloadSheet(state: ExportState, kind: DocumentKind, dismiss: () -> Unit, format: (FileFormat) -> Unit, name: (String) -> Unit, save: () -> Unit, share: () -> Unit, delivering: Boolean = false) {
+    RrBottomSheet(dismiss, title = stringResource(R.string.other_formats), fixedHeight = 620.dp, footer = {
+        RrFooterBar(inSheet = true) {
+            RrButton(stringResource(R.string.p4_save_to_files), { save() }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, enabled = !state.busy && !delivering)
+            RrButton(if (state.busy) stringResource(CoreR.string.generating_pdf) else stringResource(CoreR.string.share), { share() }, Modifier.weight(1f), size = RrButtonSize.Large, loading = state.busy, enabled = !delivering)
         }
-    }) { DownloadContent(state, route.kind, vm::format, vm::name) }
+    }) { DownloadContent(state, kind, format, name) }
 }
 
 /** One native file-delivery owner for document and QR exports. Cancelling SAF drops only remaining files. */

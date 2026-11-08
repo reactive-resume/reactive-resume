@@ -69,12 +69,7 @@ fun NavGraphBuilder.assistantGraph(nav: NavController, motion: RrNavMotion) {
         val vm: AssistantViewModel = viewModel(viewModelStoreOwner = owner, key = "assistant-${route.resumeId}") { AssistantViewModel(repositories, route.resumeId, route.threadId) }
         val state by vm.state.collectAsStateWithLifecycle()
         ProposalsScreen(state, { nav.popBackStack() }, { ids, decision, wording -> vm.decide(ids, decision, wording) }, { nav.popBackStack() }, { proposal ->
-            if (state.letterId != null) {
-                val existing = runCatching { nav.getBackStackEntry<Letter>() }.getOrNull()
-                if (existing?.toRoute<Letter>()?.letterId == state.letterId) nav.popBackStack<Letter>(inclusive = false) else nav.navigate(Letter(requireNotNull(state.letterId)))
-            }
-            else if (!proposal.snapshot && proposal.role == null) nav.navigate(BuilderRichText(state.documentId.ifEmpty { route.resumeId }, proposal.section, proposal.item.orEmpty(), proposal.field))
-            else nav.navigate(Builder(state.documentId.ifEmpty { route.resumeId }, view = WriteView.Outline))
+            nav.navigate(PagePreview(state.documentId.ifEmpty { route.resumeId }, kind = if (state.letterId != null) DocumentKind.Letter else DocumentKind.Resume, section = proposal.section, itemId = proposal.item))
         }, { proposal, text -> vm.decide(listOf(proposal.id), Decision.Pending, text, proposal.after) }, vm::editWording, vm::wording, vm::cancelWording)
     }
 }
@@ -93,6 +88,9 @@ internal fun readAttachment(input: java.io.InputStream): ByteArray {
 
 /** Floating-window destinations are removed on a screen push; document entry keeps review state alive. */
 private fun assistantOwner(nav: NavController, entry: NavBackStackEntry): NavBackStackEntry {
-    val previous = nav.previousBackStackEntry ?: return entry
-    return if (previous.destination.hasRoute<Builder>() || previous.destination.hasRoute<Letter>()) previous else entry
+    val routeId = when { entry.destination.hasRoute<Assistant>() -> entry.toRoute<Assistant>().resumeId; else -> entry.toRoute<AssistantProposals>().resumeId }
+    val builder = runCatching { nav.getBackStackEntry<Builder>() }.getOrNull()?.takeIf { it.toRoute<Builder>().resumeId == routeId }
+    if (builder != null) return builder
+    runCatching { nav.getBackStackEntry<Letter>() }.getOrNull()?.let { return it }
+    return runCatching { nav.getBackStackEntry<Assistant>() }.getOrNull() ?: entry
 }
