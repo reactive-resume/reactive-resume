@@ -209,7 +209,7 @@ internal class SaveJobViewModel(
                     requirements = s.parsed?.requirements,
                     postingSource = s.parsed?.postingSource,
                     status = s.stage.stage,
-                    stageEnteredAt = if (sent) s.appliedOn?.atStartOfDay(ZoneOffset.UTC)?.toInstant()?.toString() else null,
+                    stageEnteredAt = if (sent) s.appliedOn?.toString() else null,
                     resumeId = if (sent) s.resumeId else null,
                     coverLetterId = if (sent) s.letterId else null,
                 ),

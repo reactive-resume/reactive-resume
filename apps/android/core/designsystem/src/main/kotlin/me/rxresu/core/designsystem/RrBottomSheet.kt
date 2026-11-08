@@ -208,7 +208,7 @@ fun RrBottomSheet(
         if (to > 0f) state.settled = to
     }
 
-    suspend fun close() {
+    suspend fun close(dismissAfter: Boolean = true) {
         state.hiding = true
         if (reduced) {
             withContext(RrMotion.Unscaled) { fade.animateTo(0f, tween(RrMotion.D1)) }
@@ -222,9 +222,10 @@ fun RrBottomSheet(
                 state.height.snapTo(0f)
             }
         }
-        dismiss()
+        if (dismissAfter) dismiss()
     }
-    state.exit = { close() }
+    // hide() only animates out: its caller navigates afterwards (calling onDismissRequest too would pop twice).
+    state.exit = { close(dismissAfter = false) }
     state.mover = { index ->
         state.anchors.getOrNull(index)?.let { to ->
             if (abs(to - state.target) > 1f) haptics(RrHaptic.Selection)

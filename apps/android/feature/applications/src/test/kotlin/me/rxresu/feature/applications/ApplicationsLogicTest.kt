@@ -150,4 +150,9 @@ class ApplicationsLogicTest {
         assertFalse(vm.apply(MoveChoice(null, ApplicationStage.Offer)))
         assertEquals(WriteError.Failed, vm.state.first { it.error != null }.error)
     }
+
+    @Test fun markAsAppliedSendsTheDayNotAnInstant() {
+        val patch = appliedPatch(MoveChoice(null, ApplicationStage.Applied), AppliedDetails(java.time.LocalDate.of(2026, 11, 8), null, null))
+        assertEquals("2026-11-08", patch.stageEnteredAt)
+    }
 }

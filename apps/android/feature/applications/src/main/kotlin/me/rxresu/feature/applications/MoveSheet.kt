@@ -106,7 +106,7 @@ internal class MoveViewModel(private val apps: ApplicationsRepository, private v
             if (applied == null) moves.move(id, choice.lane, choice.stage, choice.reason)
             else apps.patchApplication(
                 id,
-                PatchApplicationRequest(laneId = choice.lane?.id, status = choice.stage, stageEnteredAt = applied.date.atStartOfDay(ZoneOffset.UTC).toInstant().toString(), resumeId = applied.resumeId, coverLetterId = applied.letterId),
+                appliedPatch(choice, applied),
                 RequestOptions(nullFields = setOfNotNull("/resumeId".takeIf { applied.resumeId == null }, "/coverLetterId".takeIf { applied.letterId == null })),
             )
             extra.value = extra.value.copy(busy = false)
@@ -124,6 +124,12 @@ internal class MoveViewModel(private val apps: ApplicationsRepository, private v
 
 /** What "Mark as applied" records: the date and the documents actually sent. */
 internal data class AppliedDetails(val date: LocalDate, val resumeId: String?, val letterId: String?)
+
+/** The server takes the applied date as a calendar day (`YYYY-MM-DD`), not an instant. */
+internal fun appliedPatch(choice: MoveChoice, applied: AppliedDetails) = PatchApplicationRequest(
+    laneId = choice.lane?.id, status = choice.stage, stageEnteredAt = applied.date.toString(),
+    resumeId = applied.resumeId, coverLetterId = applied.letterId,
+)
 
 @Composable
 internal fun MoveRoute(id: String, nav: NavController) {
