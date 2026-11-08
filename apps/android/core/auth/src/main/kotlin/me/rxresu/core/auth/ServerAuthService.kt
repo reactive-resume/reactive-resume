@@ -88,7 +88,12 @@ class ServerAuthService internal constructor(
     private val cookies = MemoryCookies()
     private val http = client.newBuilder().apply { interceptors().clear(); networkInterceptors().clear() }
         .cache(null).cookieJar(cookies).followRedirects(false).followSslRedirects(false)
-        .retryOnConnectionFailure(false).authenticator(okhttp3.Authenticator.NONE).callTimeout(20, TimeUnit.SECONDS).build()
+        .retryOnConnectionFailure(false)
+        // Retries are off (an OAuth request must never replay), so never reuse a connection the server may have
+        // closed: Node drops idle keep-alive connections after 5 s.
+        .connectionPool(okhttp3.ConnectionPool(4, 2, TimeUnit.SECONDS)).authenticator(okhttp3.Authenticator.NONE).callTimeout(20, TimeUnit.SECONDS).build()
+    /** Token and revoke calls: OAuth endpoints never see the sign-in form's session cookies. */
+    private val tokenHttp by lazy { http.newBuilder().cookieJar(okhttp3.CookieJar.NO_COOKIES).build() }
     private val transition = Mutex()
     private val forms = Mutex()
     private val generation = AtomicLong()
@@ -190,8 +195,7 @@ class ServerAuthService internal constructor(
     }
 
     override suspend fun signInWithPassword(server: String, identifier: String, password: String): AuthResult = forms.withLock { result {
-        val start = begin(server, false)
-        val initial = follow(start)
+        val initial = startNative(server)
         if (initial !is AuthResult.Error || nativeQuery == null) return@result initial
         val value = identifier.trim().lowercase(java.util.Locale.ROOT)
         val email = '@' in value
@@ -202,7 +206,7 @@ class ServerAuthService internal constructor(
     } }
 
     override suspend fun register(server: String, name: String, username: String, email: String, password: String): AuthResult = forms.withLock { result {
-        val initial = follow(begin(server, false))
+        val initial = startNative(server)
         if (initial !is AuthResult.Error || nativeQuery == null) return@result initial
         afterForm(post("${pending!!.server}/api/auth/sign-up/email", buildJsonObject {
             put("name", name); put("username", username); put("email", email.trim().lowercase(java.util.Locale.ROOT))
@@ -221,6 +225,18 @@ class ServerAuthService internal constructor(
         }
         afterForm(response)
     } }
+
+    /**
+     * Starts the in-process authorize request. A cached client the server no longer knows (database reset, self-hosted
+     * reinstall) answers `invalid_client`: forget it, register again and retry once.
+     */
+    private suspend fun startNative(server: String): AuthResult = try {
+        follow(begin(server, false))
+    } catch (error: AuthFailure) {
+        if (error.code != "invalid_client") throw error
+        toOrigin(server)?.let { storage.write("client.$it", null) }
+        follow(begin(server, false))
+    }
 
     private suspend fun afterForm(response: JsonObject): AuthResult {
         if (response.flag("twoFactorRedirect")) return AuthResult.TwoStepRequired
@@ -338,7 +354,8 @@ class ServerAuthService internal constructor(
     private suspend fun consentRequest(server: String, query: String, native: Boolean): ConsentRequest {
         val parsed = parseAuthorizationResponse("$server/auth/consent?$query")
         val url = "$server/auth/consent?$query".toHttpUrl()
-        if (url.queryParameterNames.any { url.queryParameterValues(it).size != 1 }) throw AuthFailure("invalid_consent")
+        // Better Auth's signed query repeats `ba_param` (the list of signed keys); every OAuth parameter must appear once.
+        if (url.queryParameterNames.any { it != "ba_param" && url.queryParameterValues(it).size != 1 }) throw AuthFailure("invalid_consent")
         val clientId = parsed["client_id"] ?: throw AuthFailure("invalid_consent")
         if (parsed["sig"].isNullOrBlank()) throw AuthFailure("invalid_consent")
         val client = post("$server/api/auth/oauth2/public-client-prelogin", buildJsonObject { put("client_id", clientId); put("oauth_query", query) })
@@ -465,13 +482,13 @@ class ServerAuthService internal constructor(
             val client = storage.read("client.$server") ?: return
             val request = Request.Builder().url(endpoint).post(FormBody.Builder().add("token", refresh)
                 .add("token_type_hint", "refresh_token").add("client_id", client).build()).build()
-            withContext(Dispatchers.IO) { http.newBuilder().callTimeout(5, TimeUnit.SECONDS).build().newCall(request).execute().close() }
+            withContext(Dispatchers.IO) { tokenHttp.newBuilder().callTimeout(5, TimeUnit.SECONDS).build().newCall(request).execute().close() }
         } catch (error: CancellationException) { throw error } catch (_: Exception) { /* Local sign-out always completes. */ }
     }
 
     private suspend fun token(endpoint: String, form: FormBody): Tokens = withContext(Dispatchers.IO) {
         val response = try {
-            execute(Request.Builder().url(endpoint).header("Accept", "application/json").post(form).build()).use { readJson(it) }
+            tokenHttp.newCall(Request.Builder().url(endpoint).header("Accept", "application/json").post(form).build()).execute().use { readJson(it) }
         } catch (error: AuthFailure) {
             if (error.code == "invalid_client") storage.write("client.${toOrigin(endpoint)}", null)
             throw error
@@ -495,10 +512,15 @@ class ServerAuthService internal constructor(
     }
     private suspend fun result(block: suspend () -> AuthResult): AuthResult = try { withContext(Dispatchers.IO) { block() } }
     catch (error: CancellationException) { throw error }
-    catch (error: AuthFailure) { error(error.code, error.status) }
+    catch (error: AuthFailure) { debugLog(error); error(error.code, error.status) }
     catch (error: ServerError) { AuthResult.Error(error.reason.name.lowercase(), resources.getString(error.messageRes)) }
-    catch (_: IOException) { error("network") }
-    catch (_: Exception) { error("unknown") }
+    catch (error: IOException) { debugLog(error); error("network") }
+    catch (error: Exception) { debugLog(error); error("unknown") }
+
+    /** Debug builds only: the failure's type and code (never request bodies, cookies or tokens). */
+    private fun debugLog(error: Exception) {
+        if (debug) android.util.Log.w("RrAuth", "${error.javaClass.simpleName}: ${(error as? AuthFailure)?.let { "${it.code} ${it.status}" } ?: error.message}")
+    }
 
     private fun error(code: String, status: Int = 0) = authError(code, status, resources)
 }
