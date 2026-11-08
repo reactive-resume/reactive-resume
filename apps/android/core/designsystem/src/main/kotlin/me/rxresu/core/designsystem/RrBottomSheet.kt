@@ -1,5 +1,8 @@
 package me.rxresu.core.designsystem
 
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.isActive
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
@@ -184,6 +187,42 @@ fun RrBottomSheet(
     containerColor: Color = RrTheme.colors.raised,
     scrim: Boolean = !docked,
     navigationBarInset: Boolean = true,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    val body = @Composable {
+        SheetBody(onDismissRequest, modifier, state, detents, initialDetent, fitContent, confirmDiscard, title, showClose,
+            headerActions, footer, docked, containerColor, scrim, navigationBarInset, content)
+    }
+    // A sheet lays out over the space it is given: a whole window, or a screen. Inside scrolling content (a picker opened
+    // from an entry's fields) that height is unbounded, so the sheet opens in a window of its own instead.
+    BoxWithConstraints { if (constraints.hasBoundedHeight) body() else Dialog(onDismissRequest = {}, properties = RrSheetDialogProperties) { body() } }
+}
+
+/** The window a sheet gets: full size, edge to edge; the sheet handles back and outside taps itself. */
+val RrSheetDialogProperties = DialogProperties(
+    usePlatformDefaultWidth = false,
+    decorFitsSystemWindows = false,
+    dismissOnBackPress = false,
+    dismissOnClickOutside = false,
+)
+
+@Composable
+private fun SheetBody(
+    onDismissRequest: () -> Unit,
+    modifier: Modifier,
+    state: RrBottomSheetState,
+    detents: List<Float>,
+    initialDetent: Int,
+    fitContent: Boolean,
+    confirmDiscard: Boolean,
+    title: String?,
+    showClose: Boolean,
+    headerActions: (@Composable RowScope.() -> Unit)?,
+    footer: (@Composable ColumnScope.() -> Unit)?,
+    docked: Boolean,
+    containerColor: Color,
+    scrim: Boolean,
+    navigationBarInset: Boolean,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val c = RrTheme.colors

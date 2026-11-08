@@ -2,6 +2,7 @@
 // read (toasts, the slots other modules fill). :app builds the NavHost; features register into it.
 package me.rxresu.core.navigation
 
+import me.rxresu.core.designsystem.RrSheetDialogProperties
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -27,7 +28,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
-import androidx.compose.ui.window.DialogProperties
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrToastHostState
 
@@ -125,15 +125,7 @@ inline fun <reified T : Any> NavGraphBuilder.modal(
  * `onDismissRequest`.
  */
 inline fun <reified T : Any> NavGraphBuilder.sheet(noinline content: @Composable (NavBackStackEntry) -> Unit) =
-    dialog<T>(
-        dialogProperties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false,
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false,
-        ),
-        content = content,
-    )
+    dialog<T>(dialogProperties = RrSheetDialogProperties, content = content)
 
 private val tabRoutes = listOf(TodayTab::class, DocumentsTab::class, ApplicationsTab::class, CareerTab::class)
 
