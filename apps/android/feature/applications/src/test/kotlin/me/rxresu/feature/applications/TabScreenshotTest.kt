@@ -20,9 +20,19 @@ class TabScreenshotTest : RrScreenshotTest() {
     @Test fun listEmpty() = tab("J1-List-empty", ApplicationsView.List, false, FakeControls(FakeMode.Empty))
     @Test fun listFont200() = tab("J1-List", ApplicationsView.List, false, fontScale = 2f)
     @Test fun boardLight() = tab("J2-Board", ApplicationsView.Board, false)
+    @Test fun boardFont200() = tab("J2-Board", ApplicationsView.Board, false, fontScale = 2f)
     @Test fun boardDark() = tab("J2-Board", ApplicationsView.Board, true)
     @Test fun calendarLight() = tab("J3-Calendar", ApplicationsView.Calendar, false)
+    @Test fun calendarFont200() = tab("J3-Calendar", ApplicationsView.Calendar, false, fontScale = 2f)
     @Test fun calendarDark() = tab("J3-Calendar", ApplicationsView.Calendar, true)
     @Test fun insightsLight() = tab("J4-Insights", ApplicationsView.Insights, false)
+    @Test fun insightsFont200() = tab("J4-Insights", ApplicationsView.Insights, false, fontScale = 2f)
     @Test fun insightsDark() = tab("J4-Insights", ApplicationsView.Insights, true)
+    @Test fun pipelineLight() = pipeline(false)
+    @Test fun pipelineDark() = pipeline(true)
+    private fun pipeline(dark: Boolean) {
+        val repos = FakeRepositories()
+        val insights = kotlinx.coroutines.runBlocking { repos.applications.insights() }
+        captureScreen("J4-Pipeline", dark, wrap = fakeWrap(repos)) { PipelineFlow(insights) }
+    }
 }

@@ -94,6 +94,7 @@ internal data class WorkspaceContext(
     val provider: TestAiProviderResponse?,
     val providers: List<TestAiProviderResponse>,
     val saved: List<SavedItem>,
+    val destinationChanged: Boolean = false,
 )
 
 internal suspend fun RrRepositories.workspaceContext(id: String): WorkspaceContext = coroutineScope {
@@ -266,6 +267,7 @@ internal fun Context.copyToClipboard(label: String, text: String) {
 
 /** The employer's form or a source, in a Custom Tab tinted with the accent (system browser, never an embedded one). */
 internal fun Context.openInBrowser(url: String, colors: RrColors) {
+    if (!safeSourceUrl(url)) return
     CustomTabsIntent.Builder()
         .setDefaultColorSchemeParams(CustomTabColorSchemeParams.Builder().setToolbarColor(colors.bg.toArgb()).setNavigationBarColor(colors.bg.toArgb()).build())
         .setShowTitle(true)
@@ -287,3 +289,26 @@ internal val SmallIcon = 16.dp
 @Composable
 internal fun Dot(color: androidx.compose.ui.graphics.Color, modifier: Modifier = Modifier) =
     Spacer(modifier.size(6.dp).background(color, me.rxresu.core.designsystem.RrShape.xs))
+
+internal fun Throwable.destinationChanged() = this is me.rxresu.core.network.ApiException && status == 409 && message.startsWith("Your AI destination changed")
+
+/** Refresh disclosure only; never replace drafts or retry a rejected send automatically. */
+internal suspend fun RrRepositories.renewAiDisclosure(context: WorkspaceContext): WorkspaceContext {
+    val providers = runCatching { ai.listAiProviders().filter { it.enabled } }.getOrDefault(emptyList())
+    return context.copy(provider = providers.firstOrNull { it.isDefault } ?: providers.firstOrNull(), providers = providers, destinationChanged = true)
+}
+
+@Composable
+internal fun AiDestinationNotice(context: WorkspaceContext) {
+    if (context.destinationChanged) {
+        RrCallout(stringResource(R.string.workspace_destination_changed), Modifier.padding(16.dp), tone = RrTone.Warn)
+        context.provider?.let {
+            me.rxresu.core.designsystem.RrDisclosureLine(listOfNotNull(it.label, it.baseURL).joinToString(" · "), Modifier.padding(horizontal = 16.dp))
+        }
+    }
+}
+
+internal fun safeSourceUrl(url: String): Boolean = runCatching {
+    val uri = java.net.URI(url)
+    uri.scheme?.lowercase(java.util.Locale.ROOT) in setOf("https", "http") && !uri.host.isNullOrBlank() && uri.userInfo == null
+}.getOrDefault(false)

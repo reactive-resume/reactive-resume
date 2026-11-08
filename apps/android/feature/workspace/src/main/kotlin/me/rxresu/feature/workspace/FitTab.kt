@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
+import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
@@ -50,11 +51,12 @@ import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.Assistant
-import me.rxresu.core.navigation.NewDocument
 import me.rxresu.core.navigation.Knowledge
 import me.rxresu.core.navigation.KnowledgeTab
+import me.rxresu.core.navigation.NewDocument
 import me.rxresu.core.navigation.SettingsAi
 import me.rxresu.core.navigation.Story
+import me.rxresu.core.network.RequestOptions
 import me.rxresu.core.network.generated.CreateCareerOfferResponseDataFitKind
 import me.rxresu.core.network.generated.CreateCareerOfferResponseDataFitRequirementsItem
 import me.rxresu.core.network.generated.CreateCareerOfferResponseDataFitRequirementsItemOrigin
@@ -99,12 +101,15 @@ internal class FitViewModel(private val repos: RrRepositories, private val id: S
     }
 
     fun check(locale: Locale) {
+        val before = (state.value as? Load.Ready)?.value ?: return
+        val provider = before.context.provider ?: return
         if (job?.isActive == true) return
         edit { it.copy(running = true, failed = false) }
         job = viewModelScope.launch {
             try {
                 val item = repos.workspace.generateCareerWork(
                     GenerateCareerWorkRequest(id, locale.toLanguageTag(), GenerateCareerWorkRequestTaskFit(CreateCareerOfferResponseDataFitKind.Fit)),
+                    RequestOptions().approvedFor(provider),
                 ).item
                 val fit = item?.data as? FitResult ?: error("No fit result")
                 edit { it.copy(fit = fit, running = false) }
@@ -112,7 +117,11 @@ internal class FitViewModel(private val repos: RrRepositories, private val id: S
             } catch (e: CancellationException) {
                 edit { it.copy(running = false) }
                 throw e
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                if (e.destinationChanged()) {
+                    val context = repos.renewAiDisclosure(before.context)
+                    edit { it.copy(context = context) }
+                }
                 edit { it.copy(running = false, failed = true) }
                 outcomes.send(Outcome.Error)
             }
@@ -172,6 +181,7 @@ internal fun FitScreen(
             }
         } else null,
     ) {
+        AiDestinationNotice(state.context)
         if (fit != null) {
             FadeUp {
                 Column {

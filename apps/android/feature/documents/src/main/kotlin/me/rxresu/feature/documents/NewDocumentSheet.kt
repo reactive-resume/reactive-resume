@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,10 +67,13 @@ fun NewDocumentSheet(
     initialApplicationId: String? = null,
 ) {
     var step by rememberSaveable { mutableStateOf(initialStep) }
+    var copyDraft by rememberSaveable { mutableStateOf(CopyForJobDraft()) }
+    var confirmBack by remember { mutableStateOf(false) }
     val reduced = RrTheme.reducedMotion
     RrBottomSheet(
         onDismissRequest = callbacks.onClose,
         detents = RrSheetDetents.Full,
+        confirmDiscard = copyDraft.dirty,
         title = if (step == NewStep.Main) stringResource(R.string.docs_new) else null,
         showClose = step == NewStep.Main,
         footer = if (step == NewStep.Main) {
@@ -94,8 +97,8 @@ fun NewDocumentSheet(
                 when (current) {
                     NewStep.Main -> Main(callbacks) { step = it }
                     NewStep.CopyForJob -> {
-                        StepHeader(stringResource(R.string.docs_copy_title)) { step = NewStep.Main }
-                        CopyForJobForm(state.library, state.applications, null, busy, callbacks.onCopyForJob, initialApplicationId = initialApplicationId)
+                        StepHeader(stringResource(R.string.docs_copy_title)) { if (copyDraft.dirty) confirmBack = true else step = NewStep.Main }
+                        CopyForJobForm(state.library, state.applications, null, busy, callbacks.onCopyForJob, initialApplicationId = initialApplicationId, draft = copyDraft, onDraft = { copyDraft = it })
                     }
                     NewStep.Letter -> {
                         StepHeader(stringResource(R.string.docs_letter_title)) { step = NewStep.Main }
@@ -105,6 +108,10 @@ fun NewDocumentSheet(
             }
         }
     }
+    if (confirmBack) CopyDiscardDialog(
+        onKeep = { confirmBack = false },
+        onDiscard = { confirmBack = false; copyDraft = CopyForJobDraft(); step = NewStep.Main },
+    )
 }
 
 @Composable

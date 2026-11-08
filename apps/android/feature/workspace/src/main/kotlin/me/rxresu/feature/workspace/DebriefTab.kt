@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
+import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrBadge
 import me.rxresu.core.designsystem.RrBadgeTone
@@ -56,6 +57,7 @@ import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.WorkspaceTab
+import me.rxresu.core.network.RequestOptions
 import me.rxresu.core.network.UploadPart
 import me.rxresu.core.network.generated.AddApplicationInterviewRequestKind
 import me.rxresu.core.network.generated.CreateCareerOfferResponseDataDebriefKind
@@ -137,13 +139,21 @@ internal class DebriefViewModel(private val repos: RrRepositories, private val i
         edit { it.copy(transcribing = true) }
         job = viewModelScope.launch {
             try {
-                val text = repos.workspace.transcribeCareerAnswer(t.providerId, t.model, id, UploadPart("audio", bytes, "answer.m4a", "audio/mp4")).text
+                val text = repos.workspace.transcribeCareerAnswer(t.providerId, t.model, id, UploadPart("audio", bytes, "answer.m4a", "audio/mp4"), t.approval()).text
                 pending = null
                 edit { s -> if (text.isBlank()) s.copy(transcribing = false, notice = VoiceNotice.NothingHeard) else s.copy(transcribing = false, answer = listOf(s.answer, text).filter { it.isNotBlank() }.joinToString("\n\n")) }
             } catch (e: CancellationException) {
                 edit { it.copy(transcribing = false) }
                 throw e
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                if (e.destinationChanged()) {
+                    val current = ready()
+                    if (current != null) {
+                        val context = repos.renewAiDisclosure(current.context)
+                        edit { it.copy(context = context, transcriber = chooseTranscriber(context.providers)) }
+                    }
+                }
+
                 edit { it.copy(transcribing = false, notice = VoiceNotice.TranscribeFailed) }
             }
         }
@@ -152,12 +162,14 @@ internal class DebriefViewModel(private val repos: RrRepositories, private val i
     fun review(locale: Locale) {
         val s = ready() ?: return
         val landed = s.landed ?: return
+        val provider = s.context.provider ?: return
         if (s.question.isBlank() || s.answer.isBlank() || s.sending) return
         edit { it.copy(sending = true, notice = null) }
         job = viewModelScope.launch {
             try {
                 val item = repos.workspace.generateCareerWork(
                     GenerateCareerWorkRequest(id, locale.toLanguageTag(), GenerateCareerWorkRequestTaskDebrief(s.answer, s.interview?.id, landed, s.question, CreateCareerOfferResponseDataDebriefKind.Debrief)),
+                    RequestOptions().approvedFor(provider),
                 ).item
                 val debrief = item?.data as? Debrief ?: error("No debrief")
                 edit { it.copy(sending = false, review = item.id to debrief) }
@@ -165,7 +177,15 @@ internal class DebriefViewModel(private val repos: RrRepositories, private val i
             } catch (e: CancellationException) {
                 edit { it.copy(sending = false) }
                 throw e
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                if (e.destinationChanged()) {
+                    val current = ready()
+                    if (current != null) {
+                        val context = repos.renewAiDisclosure(current.context)
+                        edit { it.copy(context = context, transcriber = chooseTranscriber(context.providers)) }
+                    }
+                }
+
                 edit { it.copy(sending = false, notice = VoiceNotice.FeedbackFailed) }
                 outcomes.send(VoiceOutcome.Failed)
             }
@@ -264,6 +284,7 @@ internal fun DebriefScreen(
             }
         } else null,
     ) {
+        AiDestinationNotice(state.context)
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             RrText(roundTitle(interview?.kind), style = RrType.sheetTitle, color = c.ink)
             when {

@@ -210,6 +210,7 @@ internal fun ApplyTab(applicationId: String, nav: NavController) {
         ApplyScreen(
             state,
             dates = dates,
+            now = repos.time.now(),
             onOpenResume = { nav.navigate(Builder(it)) },
             onOpenLetter = { nav.navigate(Letter(it)) },
             onPrepareResume = { nav.navigate(NewDocument(copyForApplicationId = applicationId)) },
@@ -248,6 +249,7 @@ internal fun ApplyTab(applicationId: String, nav: NavController) {
 internal fun ApplyScreen(
     state: ApplyState,
     dates: Dates,
+    now: Instant,
     onOpenResume: (String) -> Unit,
     onOpenLetter: (String) -> Unit,
     onPrepareResume: () -> Unit,
@@ -262,7 +264,7 @@ internal fun ApplyScreen(
     var editing by remember { mutableStateOf<SaveCareerWorkspaceRequestAnswersItem?>(null) }
     var adding by remember { mutableStateOf(false) }
     var library by remember { mutableStateOf(false) }
-    val today = dates.date(Instant.now())
+    val today = dates.date(now)
     fun edited(at: Instant) = dates.date(at).let { if (it == today) null else dates.day(it) }
     TabBody(
         footer = if (state.submitted) null else {

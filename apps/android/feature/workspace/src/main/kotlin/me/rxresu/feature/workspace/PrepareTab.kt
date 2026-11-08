@@ -2,12 +2,14 @@
 package me.rxresu.feature.workspace
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,6 +39,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.RrRepositories
+import me.rxresu.core.data.approvedFor
 import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrBadge
 import me.rxresu.core.designsystem.RrBadgeTone
@@ -46,6 +49,7 @@ import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCard
 import me.rxresu.core.designsystem.RrDisclosureLine
+import me.rxresu.core.designsystem.RrFilterChip
 import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
@@ -58,6 +62,7 @@ import me.rxresu.core.navigation.LocalToasts
 import me.rxresu.core.navigation.SettingsAi
 import me.rxresu.core.navigation.Story
 import me.rxresu.core.navigation.WorkspaceTab
+import me.rxresu.core.network.RequestOptions
 import me.rxresu.core.network.generated.Briefing
 import me.rxresu.core.network.generated.CreateCareerOfferResponseDataBriefingKind
 import me.rxresu.core.network.generated.CreateCareerOfferResponseDataBriefingPlanItemAction
@@ -82,6 +87,8 @@ internal class PrepareViewModel(private val repos: RrRepositories, private val i
     val outcome = outcomes.receiveAsFlow()
     private var job: Job? = null
 
+    private var selectedRound: String? = null
+
     init { load() }
 
     fun load() {
@@ -89,31 +96,58 @@ internal class PrepareViewModel(private val repos: RrRepositories, private val i
             state.value = runCatching {
                 val context = repos.workspaceContext(id)
                 val now = repos.time.now()
-                val interview = context.app.currentInterview(now) ?: context.app.interviews().lastOrNull()
+                val interview = context.app.interviews().firstOrNull { it.id == selectedRound } ?: context.app.currentInterview(now) ?: context.app.interviews().lastOrNull()
                 val saved = interview?.let { context.saved.latest<Briefing>(it.id) }
                 PrepareState(context, now, interview, saved?.second, saved?.first?.createdAt?.let(Instant::parse))
             }.fold({ Load.Ready(it) }, { Load.Failed(it.isOffline()) })
         }
     }
 
+    fun selectRound(interviewId: String) {
+        val current = (state.value as? Load.Ready)?.value ?: return
+        val interview = current.context.app.interviews().firstOrNull { it.id == interviewId } ?: return
+        if (current.interview?.id == interviewId) return
+        selectedRound = interviewId
+        job?.cancel()
+        val saved = current.context.saved.latest<Briefing>(interviewId)
+        state.value = Load.Ready(current.copy(interview = interview, briefing = saved?.second, briefingAt = saved?.first?.createdAt?.let(Instant::parse), running = false, failed = false))
+    }
+
     fun generate(locale: Locale) {
-        val interview = (state.value as? Load.Ready)?.value?.interview ?: return
+        val before = (state.value as? Load.Ready)?.value ?: return
+        val interview = before.interview ?: return
+        val provider = before.context.provider ?: return
         if (job?.isActive == true) return
         edit { it.copy(running = true, failed = false) }
         job = viewModelScope.launch {
             try {
                 val item = repos.workspace.generateCareerWork(
                     GenerateCareerWorkRequest(id, locale.toLanguageTag(), GenerateCareerWorkRequestTaskBriefing(interview.id, CreateCareerOfferResponseDataBriefingKind.Briefing)),
+                    RequestOptions().approvedFor(provider),
                 ).item
                 val briefing = item?.data as? Briefing ?: error("No briefing")
-                edit { it.copy(briefing = briefing, briefingAt = Instant.parse(item.createdAt), running = false) }
-                outcomes.send(Outcome.Success)
+                edit { current ->
+                    val saved = me.rxresu.core.network.generated.SavedItem(
+                        aiOperationId = item.aiOperationId, aiUsage = item.aiUsage, applicationId = item.applicationId,
+                        createdAt = item.createdAt, data = item.data, evidence = item.evidence, id = item.id,
+                        inputVersion = item.inputVersion, interviewId = interview.id, jobId = item.jobId, outdated = false,
+                        title = item.title, updatedAt = item.updatedAt, userId = item.userId,
+                    )
+                    val context = current.context.copy(saved = listOf(saved) + current.context.saved.filterNot { it.id == item.id })
+                    if (current.interview?.id == interview.id) current.copy(context = context, briefing = briefing, briefingAt = Instant.parse(item.createdAt), running = false)
+                    else current.copy(context = context)
+                }
+                if ((state.value as? Load.Ready)?.value?.interview?.id == interview.id) outcomes.send(Outcome.Success)
             } catch (e: CancellationException) {
-                edit { it.copy(running = false) }
+                edit { if (it.interview?.id == interview.id) it.copy(running = false) else it }
                 throw e
-            } catch (_: Exception) {
-                edit { it.copy(running = false, failed = true) }
-                outcomes.send(Outcome.Error)
+            } catch (e: Exception) {
+                if (e.destinationChanged()) {
+                    val context = repos.renewAiDisclosure(before.context)
+                    edit { it.copy(context = context) }
+                }
+                edit { if (it.interview?.id == interview.id) it.copy(running = false, failed = true) else it }
+                if ((state.value as? Load.Ready)?.value?.interview?.id == interview.id) outcomes.send(Outcome.Error)
             }
         }
     }
@@ -132,6 +166,7 @@ internal fun PrepareTab(applicationId: String, nav: NavController) {
     LaunchedEffect(vm) { vm.outcome.collect { haptics(if (it == Outcome.Success) RrHaptic.Success else RrHaptic.Error) } }
     val locale = LocalConfiguration.current.locales[0]
     val context = LocalContext.current
+    val colors = RrTheme.colors
     val toasts = LocalToasts.current
     val scope = rememberCoroutineScope()
     val copied = stringResource(R.string.workspace_question_copied)
@@ -150,6 +185,8 @@ internal fun PrepareTab(applicationId: String, nav: NavController) {
             onAddInterview = { nav.navigate(InterviewSheet(applicationId)) },
             onDebrief = { nav.openTab(applicationId, WorkspaceTab.Debrief) },
             onSetUpAi = { nav.navigate(SettingsAi) },
+            onRound = vm::selectRound,
+            onSource = { context.openInBrowser(it, colors) },
         )
     }
 }
@@ -166,19 +203,29 @@ internal fun PrepareScreen(
     onAddInterview: () -> Unit,
     onDebrief: () -> Unit,
     onSetUpAi: () -> Unit,
+    onRound: (String) -> Unit = {},
+    onSource: (String) -> Unit = {},
 ) {
     val c = RrTheme.colors
     val interview = state.interview
     val briefing = state.briefing
-    val showBriefing = interview != null && !interview.ended(state.now) && briefing != null
+    val showBriefing = interview != null && briefing != null
     TabBody(
         footer = if (showBriefing) {
             { RrButton(stringResource(R.string.workspace_practice_these_questions), { onPractise(null) }, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_microphone) }
         } else null,
     ) {
+        AiDestinationNotice(state.context)
+        if (state.context.app.interviews().size > 1) {
+            Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                state.context.app.interviews().forEach { round ->
+                    RrFilterChip("${interviewKindLabel(round.kind)} · ${dates.day(Instant.parse(round.at))}", interview?.id == round.id, { if (interview?.id != round.id) onRound(round.id) })
+                }
+            }
+        }
         when {
             interview == null -> Prompt(stringResource(S.string.add_an_interview_to_plan_for_it), stringResource(S.string.once_a_round_is_scheduled_interview_prep_builds_a_timed_plan_your_opening_and_the_questions_to_ask), stringResource(S.string.add_an_interview), onAddInterview)
-            interview.ended(state.now) -> Prompt(stringResource(S.string.how_did_it_go), stringResource(S.string.write_down_what_they_asked_while_it_s_fresh_the_coach_compares_your_answers_with_your_stories), stringResource(S.string.start_a_debrief), onDebrief)
+            interview.ended(state.now) && briefing == null -> Prompt(stringResource(S.string.how_did_it_go), stringResource(S.string.write_down_what_they_asked_while_it_s_fresh_the_coach_compares_your_answers_with_your_stories), stringResource(S.string.start_a_debrief), onDebrief)
             briefing == null -> Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp)) {
                 val provider = state.context.provider
                 RrCard(raised = true) {
@@ -193,7 +240,7 @@ internal fun PrepareScreen(
                     if (state.failed) RrCallout(stringResource(S.string.couldn_t_complete_this_action_try_again), tone = RrTone.Danger, actionLabel = stringResource(S.string.retry), onAction = onGenerate)
                 }
             }
-            else -> FadeUp { BriefingBody(state, interview, briefing, dates, onPractise, onAddStory, onCopyQuestion) }
+            else -> FadeUp { BriefingBody(state, interview, briefing, dates, onPractise, onAddStory, onCopyQuestion, onSource) }
         }
     }
 }
@@ -221,6 +268,7 @@ private fun BriefingBody(
     onPractise: (String?) -> Unit,
     onAddStory: () -> Unit,
     onCopyQuestion: (String) -> Unit,
+    onSource: (String) -> Unit,
 ) {
     val c = RrTheme.colors
     Column {
@@ -246,7 +294,9 @@ private fun BriefingBody(
         Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Bullets(briefing.summary.split(Regex("(?<=[.!?])\\s+")).filter { it.isNotBlank() })
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                RrUsedChip(stringResource(S.string.posting), DsR.drawable.ic_ph_clipboard_text)
+                val posting = state.context.app.sourceUrl?.takeIf(::safeSourceUrl)
+                if (posting != null) RrButton(stringResource(S.string.posting), { onSource(posting) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small, icon = DsR.drawable.ic_ph_clipboard_text)
+                else RrUsedChip(stringResource(S.string.posting), DsR.drawable.ic_ph_clipboard_text)
             }
         }
         val questions = briefing.plan.filter { it.action != CreateCareerOfferResponseDataBriefingPlanItemAction.None && it.action != CreateCareerOfferResponseDataBriefingPlanItemAction.Questions }

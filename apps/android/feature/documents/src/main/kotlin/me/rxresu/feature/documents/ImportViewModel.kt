@@ -19,7 +19,10 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import me.rxresu.core.data.AiRepository
 import me.rxresu.core.data.ResumeRepository
+import me.rxresu.core.data.approvedFor
+import me.rxresu.core.network.ApiException
 import me.rxresu.core.network.ApiJson
+import me.rxresu.core.network.RequestOptions
 import me.rxresu.core.network.UploadPart
 import me.rxresu.core.network.generated.CreateDocxParseRequest
 import me.rxresu.core.network.generated.CreateDocxParseRequestMediaType
@@ -31,6 +34,7 @@ import me.rxresu.core.network.generated.ImportResumeFileFormat
 import me.rxresu.core.network.generated.ImportResumeFileLocale
 import me.rxresu.core.network.generated.ImportResumeRequest
 import me.rxresu.core.network.generated.ResumeData
+import me.rxresu.core.network.generated.TestAiProviderResponse
 
 /** Keeps default values, so a reader's response converts into the import request, which requires them. */
 private val Full = kotlinx.serialization.json.Json(ApiJson) { encodeDefaults = true }
@@ -42,7 +46,7 @@ enum class ImportFormat { Pdf, Word, LinkedIn, ReactiveResume, JsonResume, Unsup
 
 enum class ImportMethod { Server, Ai }
 
-enum class ImportProblem { Unreadable, WordNeedsAi, WrongType, CreateFailed }
+enum class ImportProblem { Unreadable, WordNeedsAi, WrongType, CreateFailed, DestinationChanged }
 
 /** What the reader found, for "Check what was found". */
 data class ImportSummary(
@@ -65,6 +69,7 @@ data class ImportUiState(
     val method: ImportMethod = ImportMethod.Server,
     /** The default AI provider's label ("Work OpenAI"), or null without AI. */
     val aiProvider: String? = null,
+    val aiDestination: String? = null,
     /** Steps done: 0 reading the file, 1 finding sections, 2 filling in entries, 3 all done. */
     val progress: Int = 0,
     val running: Boolean = false,
@@ -87,24 +92,26 @@ class ImportViewModel(private val resumes: ResumeRepository, private val ai: AiR
     private val _state = MutableStateFlow(ImportUiState())
     val state: StateFlow<ImportUiState> = _state.asStateFlow()
     private var data: JsonObject? = null
-    private var providerId: String? = null
+    private var provider: TestAiProviderResponse? = null
+    private var generation = 0L
     private var work: Job? = null
 
-    init {
-        viewModelScope.launch {
-            val provider = runCatching { ai.listAiProviders() }.getOrNull().orEmpty().filter { it.enabled }.let { list -> list.firstOrNull { it.isDefault } ?: list.firstOrNull() }
-            providerId = provider?.id
-            _state.update { it.copy(aiProvider = provider?.label) }
-            // Word waited for the provider list to know whether it can be read at all.
-            _state.value.file?.let { if (_state.value.format == ImportFormat.Word) start(it) }
-        }
+    init { viewModelScope.launch { refreshProvider() } }
+
+    private suspend fun refreshProvider() {
+        val next = runCatching { ai.listAiProviders() }.getOrNull().orEmpty().filter { it.enabled }
+            .let { list -> list.firstOrNull { it.isDefault } ?: list.firstOrNull() }
+        provider = next
+        _state.update { it.copy(aiProvider = next?.label, aiDestination = next?.baseURL, problem = if (it.problem == ImportProblem.WordNeedsAi && next != null) null else it.problem) }
     }
 
     fun start(file: PickedFile) {
+        work?.cancel()
+        generation++
         val format = formatOf(file)
         data = null
         val method = if (format == ImportFormat.Word) ImportMethod.Ai else ImportMethod.Server
-        _state.update { ImportUiState(file = file, format = format, method = method, aiProvider = it.aiProvider, locale = it.locale) }
+        _state.update { ImportUiState(file = file, format = format, method = method, aiProvider = it.aiProvider, aiDestination = it.aiDestination, locale = it.locale) }
         when (format) {
             ImportFormat.Unsupported -> _state.update { it.copy(problem = ImportProblem.WrongType) }
             ImportFormat.Word -> if (_state.value.aiProvider == null) _state.update { it.copy(problem = ImportProblem.WordNeedsAi) }
@@ -123,6 +130,7 @@ class ImportViewModel(private val resumes: ResumeRepository, private val ai: AiR
     fun setMethod(method: ImportMethod) {
         if (_state.value.format != ImportFormat.Pdf || method == _state.value.method) return
         work?.cancel()
+        generation++
         data = null
         _state.update { it.copy(method = method, progress = 0, running = false, summary = null, problem = null) }
         if (method == ImportMethod.Server) read()
@@ -135,6 +143,8 @@ class ImportViewModel(private val resumes: ResumeRepository, private val ai: AiR
         val s = _state.value
         val file = s.file ?: return
         if (!s.readable || s.running) return
+        val disclosed = if (s.method == ImportMethod.Ai) provider ?: return else null
+        val selected = generation
         work = viewModelScope.launch {
             _state.update { it.copy(running = true, progress = 1, summary = null, problem = null) }
             try {
@@ -143,10 +153,11 @@ class ImportViewModel(private val resumes: ResumeRepository, private val ai: AiR
                         ?.let { Full.encodeToJsonElement(ResumeData.serializer(), it) } ?: throw IllegalStateException("No resume data")
                     s.format == ImportFormat.Word -> Full.encodeToJsonElement(
                         CreatePdfParseResponse.serializer(),
-                        ai.parseResumeDocx(CreateDocxParseRequest(file = upload(file), mediaType = wordType(file), aiProviderId = providerId)),
+                        ai.parseResumeDocx(CreateDocxParseRequest(file = upload(file), mediaType = wordType(file), aiProviderId = disclosed!!.id), RequestOptions().approvedFor(disclosed)),
                     )
-                    else -> Full.encodeToJsonElement(CreatePdfParseResponse.serializer(), ai.parseResumePdf(CreatePdfParseRequest(file = upload(file), aiProviderId = providerId)))
+                    else -> Full.encodeToJsonElement(CreatePdfParseResponse.serializer(), ai.parseResumePdf(CreatePdfParseRequest(file = upload(file), aiProviderId = disclosed!!.id), RequestOptions().approvedFor(disclosed)))
                 }
+                if (selected != generation) return@launch
                 _state.update { it.copy(progress = 2) }
                 val json = found.jsonObject
                 data = json
@@ -154,7 +165,11 @@ class ImportViewModel(private val resumes: ResumeRepository, private val ai: AiR
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _state.update { it.copy(running = false, problem = ImportProblem.Unreadable) }
+                if (selected != generation) return@launch
+                if (e is ApiException && e.status == 409 && e.message.startsWith("Your AI destination changed")) {
+                    refreshProvider()
+                    if (selected == generation) _state.update { it.copy(running = false, progress = 0, problem = ImportProblem.DestinationChanged) }
+                } else _state.update { it.copy(running = false, problem = ImportProblem.Unreadable) }
             }
         }
     }
@@ -162,6 +177,8 @@ class ImportViewModel(private val resumes: ResumeRepository, private val ai: AiR
     /** Creates the resume and returns its id. */
     suspend fun create(): String {
         val s = _state.value
+        check(s.canCreate)
+        val selected = generation
         val file = requireNotNull(s.file)
         _state.update { it.copy(creating = true, problem = null) }
         try {
@@ -179,10 +196,10 @@ class ImportViewModel(private val resumes: ResumeRepository, private val ai: AiR
                 resumes.importResumeFile(UploadPart("file", file.bytes, file.name, file.mime ?: "application/octet-stream"), format, ImportResumeFileLocale.entries.firstOrNull { it.wireValue == s.locale })
             }
         } catch (e: Exception) {
-            _state.update { it.copy(problem = ImportProblem.CreateFailed) }
+            if (selected == generation) _state.update { it.copy(problem = ImportProblem.CreateFailed) }
             throw e
         } finally {
-            _state.update { it.copy(creating = false) }
+            if (selected == generation) _state.update { it.copy(creating = false) }
         }
     }
 

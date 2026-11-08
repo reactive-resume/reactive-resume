@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,6 @@ import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,8 +47,10 @@ import me.rxresu.core.data.ApplicationNextStep
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.NextStepKind
 import me.rxresu.core.data.TimeSource
+import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as D
 import me.rxresu.core.designsystem.RrAvatar
+import me.rxresu.core.designsystem.RrBadgeTone
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
@@ -69,26 +71,25 @@ import me.rxresu.core.designsystem.RrRowCaret
 import me.rxresu.core.designsystem.RrSectionHeader
 import me.rxresu.core.designsystem.RrSkeleton
 import me.rxresu.core.designsystem.RrSkeletonText
-import me.rxresu.core.designsystem.RrBadgeTone
 import me.rxresu.core.designsystem.RrStageLabel
 import me.rxresu.core.designsystem.RrStageStepper
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
+import me.rxresu.core.designsystem.RrToastResult
 import me.rxresu.core.designsystem.RrToastTone
 import me.rxresu.core.designsystem.RrTopBar
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.RrUnderlineTab
 import me.rxresu.core.designsystem.RrUnderlineTabs
-import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.Builder
 import me.rxresu.core.navigation.Coach
 import me.rxresu.core.navigation.InterviewSheet
 import me.rxresu.core.navigation.Letter
-import me.rxresu.core.navigation.NewDocument
 import me.rxresu.core.navigation.LocalToasts
 import me.rxresu.core.navigation.LocalWorkspaceTab
 import me.rxresu.core.navigation.MoveApplication
+import me.rxresu.core.navigation.NewDocument
 import me.rxresu.core.navigation.Offers
 import me.rxresu.core.navigation.WorkspaceTab
 import me.rxresu.core.network.generated.Application
@@ -97,7 +98,6 @@ import me.rxresu.core.network.generated.Interview
 import me.rxresu.core.network.generated.NoteTimelineEntry
 import me.rxresu.core.network.generated.PatchApplicationRequest
 import me.rxresu.core.network.generated.StageTimelineEntry
-import me.rxresu.core.designsystem.RrToastResult
 import me.rxresu.core.strings.R as S
 
 /**
@@ -162,7 +162,11 @@ fun ApplicationRoute(id: String, tab: WorkspaceTab, nav: NavController) {
             scope.launch {
                 vm.trash().onSuccess { stamp ->
                     nav.popBackStack()
-                    if (toasts.show(trashedText, undo) == RrToastResult.ActionPerformed) vm.untrash(stamp)
+                    val moves = ApplicationMoves(repos.applications)
+                    toasts.post(trashedText, undo) { result ->
+                        if (result == RrToastResult.ActionPerformed) runCatching { moves.untrash(id, stamp) }
+                            .onFailure { toasts.show(saveFailed, tone = RrToastTone.Danger) }
+                    }
                 }.onFailure { toasts.show(saveFailed, tone = RrToastTone.Danger) }
             }
         },
@@ -276,7 +280,7 @@ internal fun ApplicationScreen(
                             state = state,
                             step = state.nextStep(time),
                             dates = dates,
-                            onTab = { next -> scope.launch { pager.animateScrollToPage(WorkspaceTabs.indexOf(next)) } },
+                            onTab = { next -> scope.launch { if (reduced) pager.scrollToPage(WorkspaceTabs.indexOf(next)) else pager.animateScrollToPage(WorkspaceTabs.indexOf(next), animationSpec = androidx.compose.animation.core.tween(RrMotion.D3, easing = RrMotion.easeInOutStrong)) } },
                             onInterview = onInterview,
                             onAddToCalendar = onAddToCalendar,
                             onOpenResume = onOpenResume,

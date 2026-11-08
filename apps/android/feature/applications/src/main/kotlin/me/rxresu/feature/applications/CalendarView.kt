@@ -265,6 +265,7 @@ private fun EventRow(
         "offer" -> { title = "${stringResource(S.string.reply_to_the_offer)} · ${item.company}"; sub = stringResource(R.string.app_respond_by_day) }
         else -> { title = "${stringResource(S.string.follow_up)} · ${item.company}"; sub = app?.followUpNote?.takeIf(String::isNotBlank) ?: stringResource(R.string.app_reminder_you_set) }
     }
+    val largeText = androidx.compose.ui.platform.LocalDensity.current.fontScale >= 1.5f
     val event = if (item.kind == "interview") CalendarEvent(item.id, title, at, item.durationMinutes ?: 60, interview?.location, interview?.notes) else null
     Row(
         Modifier.fillMaxWidth()
@@ -272,8 +273,9 @@ private fun EventRow(
             .padding(horizontal = 14.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        RrText(left, Modifier.width(44.dp), style = RrType.mono.copy(fontSize = 13.sp, lineHeight = 18.sp), color = c.ink2)
+        if (!largeText) RrText(left, Modifier.width(44.dp), style = RrType.mono.copy(fontSize = 13.sp, lineHeight = 18.sp), color = c.ink2)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            if (largeText && left.isNotBlank()) RrText(left, style = RrType.mono, color = c.ink2)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 when (item.kind) {
                     "interview" -> RrStageDot((app?.status ?: ApplicationStage.Interview).rr())

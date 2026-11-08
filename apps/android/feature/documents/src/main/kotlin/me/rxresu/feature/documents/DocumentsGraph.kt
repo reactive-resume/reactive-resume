@@ -19,8 +19,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
-import androidx.core.net.toUri
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
@@ -384,7 +384,7 @@ private fun ImportRoute(nav: NavController, route: Import) {
         } else {
             runCatching { readFile(context, current.toUri()) }
                 .onSuccess(vm::start)
-                .onFailure { haptics(RrHaptic.Error); toasts.show(res.getString(R.string.import_unreadable), tone = RrToastTone.Danger) }
+                .onFailure { haptics(RrHaptic.Error); toasts.show(res.getString(if (it is ImportTooLarge) R.string.import_too_large else R.string.import_unreadable), tone = RrToastTone.Danger) }
         }
     }
     LaunchedEffect(state.summary != null) { if (state.summary != null) haptics(RrHaptic.Success) }
@@ -420,19 +420,17 @@ private fun ImportRoute(nav: NavController, route: Import) {
 private suspend fun readFile(context: Context, uri: Uri): PickedFile = withContext(Dispatchers.IO) {
     val resolver = context.contentResolver
     var name = uri.lastPathSegment ?: "file"
-    var size = -1L
-    resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null)?.use { c ->
+    resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c ->
         if (c.moveToFirst()) {
             c.getString(0)?.let { name = it }
-            if (!c.isNull(1)) size = c.getLong(1)
         }
     }
     val mime = resolver.getType(uri)
-    val bytes = requireNotNull(resolver.openInputStream(uri)) { "Unreadable" }.use { it.readBytes() }
+    val bytes = requireNotNull(resolver.openInputStream(uri)) { "Unreadable" }.use { it.readImportBytes() }
     val pages = if (mime == "application/pdf" || name.endsWith(".pdf", true)) {
         runCatching { resolver.openFileDescriptor(uri, "r")?.use { fd -> PdfRenderer(fd).use { it.pageCount } } }.getOrNull()
     } else null
-    PickedFile(name, if (size >= 0) size else bytes.size.toLong(), mime, bytes, pages)
+    PickedFile(name, bytes.size.toLong(), mime, bytes, pages)
 }
 
 @Composable
