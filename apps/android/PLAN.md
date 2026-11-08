@@ -67,8 +67,9 @@ reference/Tokens.kt, icons). Branch `feat/android-app`; nothing is pushed.
       NavHost, repositories, preferences and draft-sync wiring (through 3d6dcc099).
 - [x] Phase 2: P1–P6 merged; follow-ups D1 (design system) merged; system intents, tab routing, sign-out cleanup,
       open-object generator fix wired by the lead (through e3cd0a17b).
-- [ ] Phase 2b: D2 (design system round 2), B-R2 (builder completion), P4-R2 (assistant/letters completion) running.
-- [ ] Phase 3: integrate, emulator smoke, independent review, report.
+- [x] Phase 2b: D2, B-R2, B-R3, P4-R2, P4-R3, C-R2 merged.
+- [x] Phase 3: emulator smoke against a local server (`smoke/`), independent review (`REVIEW.md`) and fixes FX-1–3,
+      `HANDOFF-REPORT.md`. Branch not pushed.
 
 ## Known backend gaps (from foundation agents)
 
