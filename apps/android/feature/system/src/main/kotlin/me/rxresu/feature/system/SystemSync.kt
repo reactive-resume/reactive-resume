@@ -131,12 +131,12 @@ internal class NotificationLedger(context: Context, owner: String) {
 }
 
 fun installLauncherShortcuts(context: Context) {
-    fun shortcut(id: String, label: String, action: String, icon: Int) = ShortcutInfoCompat.Builder(context, id).setShortLabel(label)
+    fun shortcut(rank: Int, id: String, label: String, action: String, icon: Int) = ShortcutInfoCompat.Builder(context, id).setShortLabel(label).setRank(rank)
         .setIcon(IconCompat.createWithResource(context, icon)).setIntent(Intent(action).setClassName(context.packageName, "me.rxresu.MainActivity")).build()
     ShortcutManagerCompat.setDynamicShortcuts(context, listOf(
-        shortcut("save-job", context.getString(R.string.system_save_a_job_aacbba), ACTION_SAVE_JOB, Icons.drawable.ic_ph_briefcase),
-        shortcut("new-resume", context.getString(R.string.system_new_resume_8b70e5), ACTION_NEW_RESUME, Icons.drawable.ic_ph_file_plus),
-        shortcut("search", context.getString(R.string.system_search_bce064), ACTION_SEARCH, Icons.drawable.ic_ph_magnifying_glass),
+        shortcut(0, "save-job", context.getString(R.string.system_save_a_job_aacbba), ACTION_SAVE_JOB, Icons.drawable.ic_ph_briefcase),
+        shortcut(1, "new-resume", context.getString(R.string.system_new_resume_8b70e5), ACTION_NEW_RESUME, Icons.drawable.ic_ph_file_plus),
+        shortcut(2, "search", context.getString(R.string.system_search_bce064), ACTION_SEARCH, Icons.drawable.ic_ph_magnifying_glass),
     ))
 }
 

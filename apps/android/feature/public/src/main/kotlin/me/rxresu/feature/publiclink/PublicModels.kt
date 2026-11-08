@@ -117,7 +117,7 @@ internal class PublicViewModel(private val repositories: RrRepositories, private
                     e is ApiException && e.data?.toString()?.contains("expired") == true -> PublicProblem.Expired
                     e is ApiException && e.status == 404 -> PublicProblem.NotShared
                     e is PageSourceUnavailable || e is PageHttpException && e.status == 403 -> PublicProblem.PreviewUnavailable
-                    e is IllegalArgumentException -> PublicProblem.Invalid
+                    e is IllegalArgumentException || e is ApiException || e is PageHttpException -> PublicProblem.Invalid
                     else -> PublicProblem.Offline
                 }
                 mutable.update { it.copy(loading = false, problem = problem) }

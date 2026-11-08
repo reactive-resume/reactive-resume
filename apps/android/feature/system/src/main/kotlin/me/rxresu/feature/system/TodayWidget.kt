@@ -36,6 +36,7 @@ import me.rxresu.core.designsystem.DarkRrColors
 import me.rxresu.core.designsystem.LightRrColors
 import me.rxresu.core.designsystem.RrFixedColors
 import me.rxresu.core.designsystem.RrRadius
+import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.navigation.WorkspaceTab
 
 class TodayWidget : GlanceAppWidget() {
@@ -64,34 +65,34 @@ class NextInterviewWidgetReceiver : GlanceAppWidgetReceiver() { override val gla
     val bg = ColorProvider(LightRrColors.raised, DarkRrColors.raised)
     val ink = ColorProvider(LightRrColors.ink, DarkRrColors.ink)
     val secondary = ColorProvider(LightRrColors.ink3, DarkRrColors.ink3)
-    Column(GlanceModifier.fillMaxSize().background(bg).cornerRadius(RrRadius.lg).padding(14.dp).clickable(actionStartActivity(targetIntent(context, SystemTarget("today"))))) {
+    Column(GlanceModifier.fillMaxSize().background(bg).cornerRadius(RrRadius.largeSurface).padding(14.dp).clickable(actionStartActivity(targetIntent(context, SystemTarget("today"))))) {
         if (!signedIn) {
-            Text(context.getString(R.string.system_sign_in_to_see_today_fca697), style = TextStyle(color = ink, fontSize = 15.sp))
+            Text(context.getString(R.string.system_sign_in_to_see_today_fca697), style = TextStyle(color = ink, fontSize = RrType.body.fontSize))
         } else key(owner) {
             // Remembering by account prevents a new account briefly seeing the previous one's Today data.
             val resource by remember(owner) { repositories.today.observe() }.collectAsState(Resource<TodaySnapshot>(loading = true))
             val snapshot = resource.data
             if (small) {
                 val interview = (snapshot?.needsYou.orEmpty() + snapshot?.comingUp.orEmpty()).filter { it.kind == TodayKind.Interview || it.kind == TodayKind.Briefing }.minByOrNull { it.at.orEmpty() }
-                Text(context.getString(R.string.system_next_interview_363cbe), GlanceModifier.fillMaxWidth(), style = TextStyle(color = secondary, fontSize = 12.sp))
+                Text(context.getString(R.string.system_next_interview_363cbe), GlanceModifier.fillMaxWidth(), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize))
                 Spacer(GlanceModifier.height(8.dp))
                 if (interview != null) LazyColumn(GlanceModifier.fillMaxWidth().defaultWeight()) {
                     item {
                         Column(GlanceModifier.fillMaxWidth().clickable(actionStartActivity(targetIntent(context, SystemTarget("application", interview.applicationId))))) {
                             val time = widgetTime(interview, repositories.time)
-                            Text(if (largeText) time.substringAfter(' ') else time, GlanceModifier.fillMaxWidth(), style = TextStyle(color = ink, fontSize = 22.sp, fontFamily = FontFamily.Serif))
-                            if (largeText) Text(time.substringBefore(' '), GlanceModifier.fillMaxWidth(), style = TextStyle(color = secondary, fontSize = 12.sp))
-                            Text(listOf(interview.company, interview.title).filter(String::isNotBlank).joinToString(" · "), GlanceModifier.fillMaxWidth(), style = TextStyle(color = secondary, fontSize = 13.sp))
+                            Text(if (largeText) time.substringAfter(' ') else time, GlanceModifier.fillMaxWidth(), style = TextStyle(color = ink, fontSize = RrType.sheetTitle.fontSize, fontFamily = FontFamily.Serif))
+                            if (largeText) Text(time.substringBefore(' '), GlanceModifier.fillMaxWidth(), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize))
+                            Text(listOf(interview.company, interview.title).filter(String::isNotBlank).joinToString(" · "), GlanceModifier.fillMaxWidth(), style = TextStyle(color = secondary, fontSize = RrType.small.fontSize))
                         }
                     }
-                } else Text(if (resource.loading) context.getString(R.string.system_loading_33ce41) else context.getString(R.string.system_no_upcoming_interviews_05c76d), style = TextStyle(color = ink, fontSize = 13.sp))
+                } else Text(if (resource.loading) context.getString(R.string.system_loading_33ce41) else context.getString(R.string.system_no_upcoming_interviews_05c76d), style = TextStyle(color = ink, fontSize = RrType.small.fontSize))
             } else {
                 if (largeText) Column(GlanceModifier.fillMaxWidth()) {
-                    Text(context.getString(R.string.system_today_24345a), style = TextStyle(color = ink, fontSize = 22.sp, fontFamily = FontFamily.Serif))
-                    Text(context.getString(R.string.system_1_s_need_you_b08acb, snapshot?.needsYou.orEmpty().size.toString()), style = TextStyle(color = secondary, fontSize = 12.sp))
+                    Text(context.getString(R.string.system_today_24345a), style = TextStyle(color = ink, fontSize = RrType.sheetTitle.fontSize, fontFamily = FontFamily.Serif))
+                    Text(context.getString(R.string.system_1_s_need_you_b08acb, snapshot?.needsYou.orEmpty().size.toString()), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize))
                 } else Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(context.getString(R.string.system_today_24345a), GlanceModifier.defaultWeight(), style = TextStyle(color = ink, fontSize = 22.sp, fontFamily = FontFamily.Serif))
-                    Text(context.getString(R.string.system_1_s_need_you_b08acb, snapshot?.needsYou.orEmpty().size.toString()), style = TextStyle(color = secondary, fontSize = 12.sp))
+                    Text(context.getString(R.string.system_today_24345a), GlanceModifier.defaultWeight(), style = TextStyle(color = ink, fontSize = RrType.sheetTitle.fontSize, fontFamily = FontFamily.Serif))
+                    Text(context.getString(R.string.system_1_s_need_you_b08acb, snapshot?.needsYou.orEmpty().size.toString()), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize))
                 }
                 Spacer(GlanceModifier.height(8.dp))
                 LazyColumn(GlanceModifier.fillMaxWidth().defaultWeight()) {
@@ -101,16 +102,16 @@ class NextInterviewWidgetReceiver : GlanceAppWidgetReceiver() { override val gla
                             Box(GlanceModifier.size(8.dp).cornerRadius(RrRadius.sm).background(ColorProvider(color))) {}
                             Spacer(GlanceModifier.width(8.dp))
                             if (largeText) Column(GlanceModifier.defaultWeight()) {
-                                Text(widgetTime(item, repositories.time), style = TextStyle(color = secondary, fontSize = 12.sp, fontFamily = FontFamily.Monospace))
-                                Text(listOf(item.company, item.title).filter(String::isNotBlank).joinToString(" · "), GlanceModifier.fillMaxWidth(), style = TextStyle(color = ink, fontSize = 14.sp))
+                                Text(widgetTime(item, repositories.time), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize, fontFamily = FontFamily.Monospace))
+                                Text(listOf(item.company, item.title).filter(String::isNotBlank).joinToString(" · "), GlanceModifier.fillMaxWidth(), style = TextStyle(color = ink, fontSize = RrType.ui.fontSize))
                             } else {
-                                Text(listOf(item.company, item.title).filter(String::isNotBlank).joinToString(" · "), GlanceModifier.defaultWeight(), style = TextStyle(color = ink, fontSize = 14.sp), maxLines = 2)
-                                Text(widgetTime(item, repositories.time), style = TextStyle(color = secondary, fontSize = 12.sp, fontFamily = FontFamily.Monospace))
+                                Text(listOf(item.company, item.title).filter(String::isNotBlank).joinToString(" · "), GlanceModifier.defaultWeight(), style = TextStyle(color = ink, fontSize = RrType.ui.fontSize), maxLines = 2)
+                                Text(widgetTime(item, repositories.time), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize, fontFamily = FontFamily.Monospace))
                             }
                         }
                     }
                 }
-                if (snapshot?.needsYou.isNullOrEmpty()) Text(if (resource.loading) context.getString(R.string.system_loading_33ce41) else context.getString(R.string.system_you_re_all_caught_up_65a724), style = TextStyle(color = secondary, fontSize = 13.sp))
+                if (snapshot?.needsYou.isNullOrEmpty()) Text(if (resource.loading) context.getString(R.string.system_loading_33ce41) else context.getString(R.string.system_you_re_all_caught_up_65a724), style = TextStyle(color = secondary, fontSize = RrType.small.fontSize))
             }
         }
     }

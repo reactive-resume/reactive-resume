@@ -3,6 +3,7 @@ package me.rxresu.feature.career
 
 
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import me.rxresu.core.strings.R as CoreStrings
 
 import androidx.compose.animation.Crossfade
@@ -43,36 +44,64 @@ import me.rxresu.core.network.generated.*
     }
 }
 
-@Composable internal fun PreferencesScreen(state: PreferencesState, change: (CareerProfile) -> Unit, back: () -> Unit, retry: () -> Unit, suggest: () -> Unit) {
-    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).windowInsetsPadding(WindowInsets.navigationBars).imePadding()) {
-        RrTopBar(stringResource(R.string.career_job_search_preferences_d56450), onBack = back, status = {
-            if (state.status == SaveState.Saved) { RrIcon(Icons.drawable.ic_ph_cloud_check, null, size = 14.dp); RrText(stringResource(R.string.career_saved_just_now_782509)) } else SaveStatus(state.status)
-        }, actions = { if (state.error) RrButton(stringResource(R.string.career_retry_9f5cd8), retry, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small) })
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            if (state.loading) CareerLoading() else state.profile?.let { p ->
-                if (state.error) RrCallout(stringResource(R.string.career_couldn_t_save_your_preferences_try_again_4d0c00), tone = RrTone.Warn, actionLabel = stringResource(R.string.career_retry_9f5cd8), onAction = retry)
-                ChipList(stringResource(R.string.career_target_roles_6513c7), p.targetRoles, stringResource(R.string.career_add_a_role_a21c9b), { change(p.copy(targetRoles = it)) })
-                RrButton(stringResource(R.string.career_suggest_target_roles_15ef23), suggest, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small, icon = Icons.drawable.ic_ph_sparkle)
-                ChipList(stringResource(R.string.career_where_you_want_to_work_6e7ca5), p.locations, stringResource(R.string.career_add_a_place_29c5ff), { change(p.copy(locations = it)) })
-                CountryList(p.searchRegions.orEmpty(), { change(p.copy(searchRegions = it)) })
-                RrText(stringResource(R.string.career_web_searches_look_for_work_here_up_to_three_countries_ffb993), style = RrType.small, color = RrTheme.colors.ink3)
-                Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
-                RrText(stringResource(R.string.career_requirements_09a428), style = RrType.eyebrow, color = RrTheme.colors.ink3)
-                RequirementStepper(stringResource(R.string.career_office_days_a_week_at_most_d190a3), p.maxOfficeDays, 7, { change(p.copy(maxOfficeDays = it)) })
-                RequirementStepper(stringResource(R.string.career_notice_period_fc421f), p.noticeWeeks, 104, { change(p.copy(noticeWeeks = it)) }, stringResource(R.string.career_wk_13bd1f))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
-                    var amount by remember(p.minBase.amount) { mutableStateOf(p.minBase.amount?.toLong()?.toString().orEmpty()) }
-                    var invalid by remember { mutableStateOf(false) }
-                    RrTextField(amount, { value ->
-                        amount = value; val number = parseWholeAmount(value); invalid = value.isNotBlank() && number == null
-                        if (!invalid) change(p.copy(minBase = p.minBase.copy(amount = number)))
-                    }, Modifier.weight(1f), label = stringResource(R.string.career_minimum_base_salary_173ce2), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), error = if (invalid) stringResource(R.string.career_enter_a_full_amount_such_as_95000_your_previous_amount_is_un_6a700c) else null)
-                    ChoicePicker(periodLabel(p.minBase.period), stringResource(R.string.career_pay_period_830dee), periods(), { key -> change(p.copy(minBase = p.minBase.copy(period = CreateCareerOfferRequestPeriod.entries.first { it.wireValue == key }))) }, Modifier.weight(1f))
+@Composable internal fun PreferencesScreen(state: PreferencesState, change: (CareerProfile) -> Unit, back: () -> Unit, retry: () -> Unit, suggest: () -> Unit, schedule: () -> Unit = {}) {
+    var editor by rememberSaveable { mutableStateOf<String?>(null) }
+    val p = state.profile
+    val time = rememberCareerTime()
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).rrNavigationBarsPadding().imePadding()) {
+        RrTopBar(onBack = { if (editor == null) back() else editor = null }, actions = {
+            if (state.status != SaveState.Saved) SaveStatus(state.status)
+            if (state.error) RrButton(stringResource(R.string.career_retry_9f5cd8), retry, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small)
+        })
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            RrPageTitle(editor ?: stringResource(R.string.career_job_search), subtitle = if (editor == null) stringResource(R.string.career_job_search_intro) else null)
+            if (state.loading) CareerLoading() else if (p == null) CareerError(retry) else {
+                if (state.error) RrCallout(stringResource(R.string.career_couldn_t_save_your_preferences_try_again_4d0c00), Modifier.padding(24.dp), tone = RrTone.Warn, actionLabel = stringResource(R.string.career_retry_9f5cd8), onAction = retry)
+                if (editor == null) {
+                    Spacer(Modifier.height(20.dp))
+                    RrListGroup {
+                        RrListRow(stringResource(R.string.career_roles), subtitle = p.targetRoles.joinToString(", "), divider = true, onClick = { editor = "roles" }, trailing = { RrRowCaret() })
+                        RrListRow(stringResource(R.string.career_places), subtitle = p.locations.joinToString(" · "), divider = true, onClick = { editor = "places" }, trailing = { RrRowCaret() })
+                        RrListRow(stringResource(R.string.career_work), subtitle = p.maxOfficeDays?.let { when (it) { 0L -> stringResource(R.string.career_remote); in 1L..4L -> stringResource(R.string.career_hybrid_or_remote); else -> pluralStringResource(R.plurals.career_office_days_max, it.toInt(), it) } } ?: stringResource(R.string.career_not_set_93039e), divider = true, onClick = { editor = "work" }, trailing = { RrRowCaret() })
+                        RrListRow(stringResource(R.string.career_pay), subtitle = formatMoney(p.minBase.amount, p.minBase.currency)?.let { stringResource(R.string.career_from_amount, it) } ?: stringResource(R.string.career_no_pay_filter), divider = true, onClick = { editor = "pay" }, trailing = { RrRowCaret() })
+                        RrListRow(stringResource(R.string.career_what_matters_to_you_866341), subtitle = p.priorities, onClick = { editor = "priorities" }, trailing = { RrRowCaret() })
+                    }
+                    RrSectionHeading(stringResource(R.string.career_discovery))
+                    val discovery = state.schedules.firstOrNull { it.kind == "discovery" }
+                    RrListGroup {
+                        RrSwitchRow(stringResource(R.string.career_find_new_roles), discovery?.enabled == true, { schedule() }, subtitle = if (!state.scheduling) stringResource(R.string.career_not_available_on_this_server_911d05) else discovery?.let { discoverySummary(it, time) }, divider = true)
+                        RrListRow(stringResource(R.string.career_where_to_look), subtitle = p.searchRegions.orEmpty().joinToString(" · "), onClick = { editor = "countries" }, trailing = { RrRowCaret() })
+                    }
+                } else Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    when (editor) {
+                        "roles" -> {
+                            ChipList(stringResource(R.string.career_target_roles_6513c7), p.targetRoles, stringResource(R.string.career_add_a_role_a21c9b), { change(p.copy(targetRoles = it)) })
+                            RrButton(stringResource(R.string.career_suggest_target_roles_15ef23), suggest, variant = RrButtonVariant.GhostAccent, icon = Icons.drawable.ic_ph_sparkle)
+                        }
+                        "places" -> ChipList(stringResource(R.string.career_where_you_want_to_work_6e7ca5), p.locations, stringResource(R.string.career_add_a_place_29c5ff), { change(p.copy(locations = it)) })
+                        "countries" -> {
+                            CountryList(p.searchRegions.orEmpty(), { change(p.copy(searchRegions = it)) })
+                            RrText(stringResource(R.string.career_web_searches_look_for_work_here_up_to_three_countries_ffb993), style = RrType.small, color = RrTheme.colors.ink3)
+                        }
+                        "work" -> {
+                            RequirementStepper(stringResource(R.string.career_office_days_a_week_at_most_d190a3), p.maxOfficeDays, 5, { change(p.copy(maxOfficeDays = it)) })
+                            RequirementStepper(stringResource(R.string.career_notice_period_fc421f), p.noticeWeeks, 52, { change(p.copy(noticeWeeks = it)) }, stringResource(R.string.career_wk_13bd1f))
+                        }
+                        "pay" -> {
+                            var amount by remember(p.minBase.amount) { mutableStateOf(p.minBase.amount?.toLong()?.toString().orEmpty()) }
+                            var invalid by remember { mutableStateOf(false) }
+                            RrTextField(amount, { value ->
+                                amount = value; val number = parseWholeAmount(value); invalid = value.isNotBlank() && number == null
+                                if (!invalid) change(p.copy(minBase = p.minBase.copy(amount = number)))
+                            }, label = stringResource(R.string.career_minimum_base_salary_173ce2), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), error = if (invalid) stringResource(R.string.career_enter_a_full_amount_such_as_95000_your_previous_amount_is_un_6a700c) else null)
+                            RrButton(stringResource(R.string.career_no_pay_filter), { amount = ""; invalid = false; change(p.copy(minBase = p.minBase.copy(amount = null))) }, variant = RrButtonVariant.Ghost)
+                            ChoicePicker(periodLabel(p.minBase.period), stringResource(R.string.career_pay_period_830dee), periods(), { key -> change(p.copy(minBase = p.minBase.copy(period = CreateCareerOfferRequestPeriod.entries.first { it.wireValue == key }))) })
+                            ChoicePicker(p.minBase.currency, stringResource(R.string.career_currency_e070de), java.util.Currency.getAvailableCurrencies().map { it.currencyCode }.sorted().map { it to it }, { change(p.copy(minBase = p.minBase.copy(currency = it))) })
+                        }
+                        else -> RrTextField(p.priorities, { change(p.copy(priorities = it)) }, label = stringResource(R.string.career_what_matters_to_you_866341), singleLine = false, minLines = 3)
+                    }
                 }
-                ChoicePicker(p.minBase.currency, stringResource(R.string.career_currency_e070de), java.util.Currency.getAvailableCurrencies().map { it.currencyCode }.sorted().map { it to it }, { change(p.copy(minBase = p.minBase.copy(currency = it))) })
-                RrText(stringResource(R.string.career_used_to_check_roles_and_offers_each_is_a_number_so_the_coach_7ce2be), style = RrType.small, color = RrTheme.colors.ink3)
-                RrTextField(p.priorities, { change(p.copy(priorities = it)) }, label = stringResource(R.string.career_what_matters_to_you_866341), singleLine = false, minLines = 3)
-            } ?: CareerError(retry)
+            }
         }
     }
 }

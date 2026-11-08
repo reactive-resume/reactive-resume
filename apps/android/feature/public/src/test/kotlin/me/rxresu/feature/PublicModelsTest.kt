@@ -3,6 +3,7 @@ package me.rxresu.feature.publiclink
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import java.io.File
+import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
@@ -77,6 +78,30 @@ class PublicModelsTest {
         assertEquals("https://self.example/alex/design", result.url)
         assertTrue(requests.all { it.header("Authorization") == null && it.header("Cookie") == null })
     }
+    @Test fun publicPasswordApiNeverUsesSessionBearer() = runTest {
+        val requests = mutableListOf<okhttp3.Request>()
+        var tokenReads = 0
+        val origin = object : ServerOrigin { override val origin = kotlinx.coroutines.flow.MutableStateFlow("https://example.invalid") }
+        val tokens = object : SessionTokens {
+            override suspend fun accessToken(): String? { tokenReads++; return "test-private-token" }
+            override suspend fun refresh(rejected: String): String? = error("Public password failure cannot refresh account auth")
+        }
+        val fakes = FakeRepositories(coroutineScope = backgroundScope)
+        val resume = fakes.publicResume.getResumeBySlug("alex", "product-designer")
+        val http = OkHttpClient.Builder().addInterceptor { chain ->
+            val request = chain.request(); requests += request
+            Response.Builder().request(request).protocol(Protocol.HTTP_1_1).code(200).message("OK")
+                .apply { if (request.method == "POST") header("Set-Cookie", "resume_access_test=granted; Path=/; Secure") }
+                .body((if (request.method == "POST") "true" else ApiJson.encodeToString(GetResumeBySlugResponse.serializer(), resume)).toResponseBody()).build()
+        }.build()
+        val public = ResumeSharingApi(ApiClient(origin, tokens, http, accountScope = { "owner" }))
+        assertTrue(public.verifyResumePassword("alex", "product-designer", VerifyResumePasswordRequest("test-password")))
+        assertEquals(resume.id, public.getResumeBySlug("alex", "product-designer").id)
+        assertEquals(0, tokenReads)
+        assertTrue(requests.all { it.header("Authorization") == null })
+        assertEquals("resume_access_test=granted", requests.last().header("Cookie"))
+        fakes.close()
+    }
     @Test fun publicResumeLoadsSignedOutAndDoesNotPretendOwner() = runTest {
         val session = FakeAuthSession()
         val repositories = FakeRepositories(authSession = session, pageRenderer = FakePageRenderer(context), coroutineScope = backgroundScope)
@@ -96,6 +121,21 @@ class PublicModelsTest {
         model.password("wrong"); model.load(); advanceUntilIdle()
         assertEquals(PublicProblem.WrongPassword, model.state.value.problem); assertEquals("wrong", model.state.value.password)
         assertNull(model.state.value.document); repositories.close()
+    }
+    @Test fun httpRefusalDoesNotMasqueradeAsOffline() = runTest {
+        for ((failure, expected) in listOf(ApiException(403, "FORBIDDEN", "Unavailable") to PublicProblem.Invalid, ApiException(404, "NOT_FOUND", "Unavailable") to PublicProblem.NotShared, IOException("offline") to PublicProblem.Offline)) {
+            val controls = FakeControls().apply { set("getResumeBySlug", FakeMode.Error(failure)) }
+            val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
+            val model = PublicViewModel(repositories, "https://example.invalid/alex/product-designer")
+            advanceUntilIdle()
+            assertEquals(expected, model.state.value.problem)
+            assertNull(model.state.value.document)
+            repositories.close()
+        }
+    }
+    @Test fun pickerReadRejectsUntrustedFileUris() = runTest {
+        try { readPdf(context, "file:///private/resume.pdf"); fail("Only SAF content URIs are trusted") }
+        catch (_: IllegalArgumentException) { }
     }
     @Test fun disabledDownloadsNeverRequestPdf() = runTest {
         val repositories = FakeRepositories(coroutineScope = backgroundScope)

@@ -30,6 +30,36 @@ class CareerModelsTest {
     private val context get() = ApplicationProvider.getApplicationContext<Context>()
     @Before fun setup() { Dispatchers.setMain(StandardTestDispatcher()); java.io.File(context.noBackupFilesDir, "career").deleteRecursively() }
     @After fun cleanup() { Dispatchers.resetMain() }
+    @Test fun coachSourcesOpenOnlyCredentialFreeHttpsUrls() {
+        for (url in listOf("javascript:alert(1)", "file:///private/a", "https://user:secret@example.invalid/a", "http://example.invalid")) assertNull(coachSourceUrl(url))
+        assertEquals("https://example.invalid/a", coachSourceUrl("https://example.invalid/a"))
+        val source = buildJsonObject { put("type", "source-url"); put("url", "https://example.invalid/a") }
+        assertEquals(listOf("example.invalid" to "https://example.invalid/a"), coachSources(listOf(source, source)))
+    }
+    @Test fun briefingCountsUseSavedEvidenceAndIgnoreOtherWork() = runTest {
+        val repositories = FakeRepositories(coroutineScope = backgroundScope)
+        val base = repositories.career.listCareerSavedItems(kind = ListCareerSavedItemsKind.Offer).first()
+        val brief = repositories.career.listCareerSavedItems(kind = ListCareerSavedItemsKind.Briefing).first()
+        val evidence = brief.evidence.copy(storyIds = listOf("one", "one", "two"))
+        assertEquals(mapOf("one" to 2, "two" to 1), storyBriefingUses(listOf(brief.copy(evidence = evidence), brief.copy(id = "second", evidence = evidence.copy(storyIds = listOf("one"))), base.copy(evidence = evidence))))
+        assertEquals("—", bonusValue((base.data as Offer).copy(variable = null, variablePercent = null)))
+        assertEquals("10.5%", bonusValue((base.data as Offer).copy(variablePercent = 10.5)))
+        repositories.close()
+    }
+    @Test fun duplicateSavesSeparateStoryWithoutChangingOriginal() = runTest {
+        val repositories = FakeRepositories(coroutineScope = backgroundScope)
+        val original = repositories.career.listCareerStories().first()
+        val model = StoryViewModel(repositories, CareerDrafts(context, "duplicate", scope = this, io = StandardTestDispatcher(testScheduler)), original.id)
+        advanceUntilIdle()
+        var duplicate: String? = null
+        model.duplicate { duplicate = it }; advanceUntilIdle()
+        assertNotNull(duplicate); assertNotEquals(original.id, duplicate)
+        val stories = repositories.career.listCareerStories()
+        assertEquals(original, stories.first { it.id == original.id })
+        assertEquals(original.applicationId, stories.first { it.id == duplicate }.applicationId)
+        assertEquals(original.data.copy(applicationId = original.applicationId), stories.first { it.id == duplicate }.data)
+        repositories.close()
+    }
     @Test fun preferencesDebounceAndSerializeLatestEdit() = runTest {
         val controls = FakeControls(); val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
         val model = PreferencesViewModel(repositories, CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler))); advanceUntilIdle()

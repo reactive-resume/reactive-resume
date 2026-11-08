@@ -86,6 +86,7 @@ internal data class FactsState(
     val profile: CareerProfile? = null, val resumes: List<DocumentSummary> = emptyList(),
     val proposals: ProposeResumeFactsResponse? = null, val applications: List<ApplicationSummary> = emptyList(),
     val forgotten: List<ListForgottenCareerFactCountsResponseItem> = emptyList(), val pendingForget: Set<String> = emptySet(),
+    val briefingUses: Map<String, Int> = emptyMap(),
 )
 internal class KnowledgeViewModel(repositories: RrRepositories) : CareerModel(repositories) {
     private val mutable = MutableStateFlow(FactsState())
@@ -97,7 +98,8 @@ internal class KnowledgeViewModel(repositories: RrRepositories) : CareerModel(re
         val profile = repositories.career.getCareerProfile(options)
         val applications = repositories.applications.listApplicationSummaries(options = options)
         val forgotten = repositories.career.listForgottenCareerFactCounts(options)
-        checkOwner(); mutable.update { it.copy(loading = false, error = false, busy = false, facts = facts.filter { row -> row.status != "forgotten" }, stories = stories, profile = profile, applications = applications, forgotten = forgotten) }
+        val briefings = repositories.career.listCareerSavedItems(kind = ListCareerSavedItemsKind.Briefing, options = options)
+        checkOwner(); mutable.update { it.copy(loading = false, error = false, busy = false, facts = facts.filter { row -> row.status != "forgotten" }, stories = stories, profile = profile, applications = applications, forgotten = forgotten, briefingUses = storyBriefingUses(briefings)) }
     }
     fun add(text: String, category: SaveCareerFactRequestCategory, applicationId: String? = null, done: () -> Unit) = mutate {
         if (text.isBlank()) return@mutate
@@ -130,8 +132,11 @@ internal class KnowledgeViewModel(repositories: RrRepositories) : CareerModel(re
     }
 }
 
+internal fun storyBriefingUses(items: List<SavedItem>): Map<String, Int> = items.filter { it.data is Briefing }
+    .flatMap { it.evidence.storyIds.distinct() }.groupingBy { it }.eachCount()
+
 internal enum class SaveState { Saved, Saving, KeptOnDevice, Failed }
-internal data class StoryState(val loading: Boolean = true, val draft: SaveCareerStoryRequest? = null, val status: SaveState = SaveState.Saved, val error: Boolean = false, val facts: List<CareerFact> = emptyList(), val usedFor: String? = null)
+internal data class StoryState(val loading: Boolean = true, val draft: SaveCareerStoryRequest? = null, val status: SaveState = SaveState.Saved, val error: Boolean = false, val facts: List<CareerFact> = emptyList(), val usedFor: String? = null, val briefingUses: Int = 0)
 internal class StoryViewModel(repositories: RrRepositories, private val drafts: CareerDrafts, private val id: String?, private val savedState: SavedStateHandle = SavedStateHandle()) : CareerModel(repositories) {
     private val key = "story:${id ?: "new"}"
     private val mutable = MutableStateFlow(StoryState())
@@ -152,10 +157,11 @@ internal class StoryViewModel(repositories: RrRepositories, private val drafts: 
         val draft = recovered ?: story?.let { SaveCareerStoryRequest(it.data.action, it.applicationId, it.data.factIds, it.id, it.data.reflection, it.data.result, it.data.situation, it.data.tags, it.data.task, it.data.title) }
             ?: if (id == null) SaveCareerStoryRequest("", id = UUID.randomUUID().toString(), situation = "", task = "", title = "") else null
         val facts = repositories.career.listCareerFacts(options = options)
+        val briefingUses = storyBriefingUses(repositories.career.listCareerSavedItems(kind = ListCareerSavedItemsKind.Briefing, options = options))[id] ?: 0
         // Where the story is used: the application it is kept with.
         val usedFor = (draft?.applicationId ?: story?.applicationId)?.let { scope -> repositories.applications.listApplicationSummaries(options = options).firstOrNull { it.id == scope }?.company }
         checkOwner(); mutable.update { current -> StoryState(false, if (generation == revision) draft else current.draft,
-            if (generation != revision) current.status else if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, draft == null, facts, usedFor) }
+            if (generation != revision) current.status else if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, draft == null, facts, usedFor, briefingUses) }
     }
     fun change(next: SaveCareerStoryRequest) {
         generation++; mutable.update { it.copy(draft = next, status = SaveState.Saving, error = false) }
@@ -177,6 +183,11 @@ internal class StoryViewModel(repositories: RrRepositories, private val drafts: 
         checkOwner()
         if (revision == generation) { savedState.remove<String>("draft"); mutable.update { it.copy(status = SaveState.Saved, error = false) } }
     } }
+    fun duplicate(done: (String) -> Unit) = run({ mutable.update { it.copy(error = true) } }) {
+        val draft = state.value.draft ?: return@run
+        val copy = repositories.career.saveCareerStory(draft.copy(id = UUID.randomUUID().toString()), options)
+        checkOwner(); done(copy.id)
+    }
     fun delete(done: (SaveCareerStoryRequest) -> Unit) = run({ mutable.update { it.copy(error = true) } }) { saves.withLock {
         pending?.cancel()
         CareerSyncWorker.syncGate.withLock {
@@ -187,7 +198,8 @@ internal class StoryViewModel(repositories: RrRepositories, private val drafts: 
 }
 
 internal data class PreferencesState(val loading: Boolean = true, val profile: CareerProfile? = null, val status: SaveState = SaveState.Saved, val error: Boolean = false,
-    val providers: List<TestAiProviderResponse> = emptyList(), val resumes: List<DocumentSummary> = emptyList(), val suggestions: List<String> = emptyList(), val generating: Boolean = false)
+    val providers: List<TestAiProviderResponse> = emptyList(), val resumes: List<DocumentSummary> = emptyList(), val suggestions: List<String> = emptyList(), val generating: Boolean = false,
+    val schedules: List<CareerSchedule> = emptyList(), val scheduling: Boolean = false)
 internal fun CareerProfile.preferencesRequest() = SaveCareerProfileRequest(locations, maxOfficeDays, minBase = minBase, noticeWeeks = noticeWeeks, priorities = priorities, searchRegions = searchRegions, targetRoles = targetRoles)
 internal fun parseWholeAmount(value: String): Double? = value.takeIf { it.matches(Regex("[0-9]{1,12}")) }?.toDoubleOrNull()?.takeIf { it.isFinite() }
 internal class PreferencesViewModel(repositories: RrRepositories, private val drafts: CareerDrafts, private val savedState: SavedStateHandle = SavedStateHandle()) : CareerModel(repositories) {
@@ -201,12 +213,14 @@ internal class PreferencesViewModel(repositories: RrRepositories, private val dr
             drafts.enqueue("preferences", ApiJson.encodeToString(CareerProfile.serializer(), recovered), "preferences")
             mutable.value = PreferencesState(false, recovered, SaveState.KeptOnDevice)
         }
+        val scheduling = repositories.platform.getFeatureFlags().careerSchedulingEnabled
+        val schedules = if (scheduling) repositories.career.listCareerSchedules(options) else emptyList()
         val profile = repositories.career.getCareerProfile(options)
         val providers = repositories.ai.listAiProviders(options = options).filter { it.enabled && it.testStatus == "success" }
         val resumes = repositories.documents.listDocuments(options = options).filter { it.type == DocumentType.Resume }
         checkOwner(); mutable.update { current -> PreferencesState(false,
             if (generation == revision) recovered?.copy(memoryMode = profile.memoryMode) ?: profile else current.profile,
-            if (generation != revision) current.status else if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, providers = providers, resumes = resumes) }
+            if (generation != revision) current.status else if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, providers = providers, resumes = resumes, schedules = schedules, scheduling = scheduling) }
     }
     fun change(profile: CareerProfile) {
         generation++; mutable.update { it.copy(profile = profile, status = SaveState.Saving, error = false) }

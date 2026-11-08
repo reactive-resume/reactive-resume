@@ -28,6 +28,14 @@ internal fun CoachState.pendingQuestion(): CoachQuestion? {
     val answers = (input["options"] as? JsonArray).orEmpty().mapNotNull { (it as? JsonPrimitive)?.contentOrNull }
     return CoachQuestion(last.id, part["toolCallId"]?.jsonPrimitive?.contentOrNull ?: return null, text, answers)
 }
+internal fun coachSourceUrl(value: String): String? = runCatching {
+    val uri = java.net.URI(value)
+    if (uri.scheme != "https" || uri.host.isNullOrBlank() || uri.userInfo != null) null else uri.toASCIIString()
+}.getOrNull()
+
+internal fun coachSources(parts: List<JsonObject>): List<Pair<String, String>> = parts.filter { (it["type"] as? JsonPrimitive)?.contentOrNull == "source-url" }
+    .mapNotNull { part -> (part["url"] as? JsonPrimitive)?.contentOrNull?.let(::coachSourceUrl)?.let { java.net.URI(it).host to it } }.distinctBy { it.second }
+
 internal data class CoachFact(val callId: String, val fact: SaveCareerFactRequest, val savedId: String? = null)
 internal data class CoachState(val loading: Boolean = true, val draft: String = "", val providers: List<TestAiProviderResponse> = emptyList(),
     val selected: String? = null, val messages: List<CoachMessage> = emptyList(), val memory: Boolean = true, val applications: Boolean = true,

@@ -15,10 +15,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -74,102 +80,95 @@ internal fun saidQuote(priorities: String): String? {
     val first = if (text.length > 160) text.split(Regex("(?<=[.!?])\\s")).first() else text
     return if (first.last() in ".!?") first else "$first."
 }
-@Composable internal fun OffersScreen(state: OffersState, back: () -> Unit, retry: () -> Unit, edit: (SavedItem?) -> Unit, copy: (String) -> Unit, plan: (List<SavedItem>) -> Unit) {
-    var a by rememberSaveable { mutableIntStateOf(0) }; var b by rememberSaveable { mutableIntStateOf(-1) }
+@Composable internal fun OffersScreen(state: OffersState, back: () -> Unit, retry: () -> Unit, edit: (SavedItem?) -> Unit, copy: (String) -> Unit, plan: (List<SavedItem>) -> Unit, counter: (SavedItem) -> Unit = { plan(listOf(it)) }) {
+    var a by rememberSaveable { mutableIntStateOf(0) }; var b by rememberSaveable { mutableIntStateOf(1) }
+    var options by remember { mutableStateOf(false) }
     val offers = state.offers.filter { it.data is Offer }.sortedByDescending { it.createdAt }
-    val left = offers.getOrNull(a) ?: offers.firstOrNull(); val right = offers.getOrNull(b)?.takeIf { it.id != left?.id }
-    val leftData = left?.data as? Offer; val rightData = right?.data as? Offer
+    val left = offers.getOrNull(a) ?: offers.firstOrNull()
+    val right = offers.getOrNull(b)?.takeIf { it.id != left?.id }
     val compared = listOfNotNull(left, right)
     val questions = openQuestions(compared)
     val time = rememberCareerTime()
-    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).windowInsetsPadding(WindowInsets.navigationBars)) {
-        RrTopBar(stringResource(R.string.career_offers_43c943), onBack = back, actions = { RrButton(stringResource(R.string.career_add_offer_0c1811), { edit(null) }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small, icon = Icons.drawable.ic_ph_plus) })
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
+        RrTopBar(onBack = back, actions = { RrIconButton(Icons.drawable.ic_ph_sparkle, stringResource(R.string.career_coach_b32c9a), { plan(compared) }, tint = RrTheme.colors.accentText, enabled = left != null) })
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            RrPageTitle(stringResource(R.string.career_compare_offers), subtitle = stringResource(R.string.career_better_value), subtitleColor = RrTheme.colors.ink3)
             if (state.loading) CareerLoading() else {
                 if (state.error) CareerError(retry)
-                RrText(stringResource(R.string.career_compared_in_their_original_currency_and_pay_period_comparing_bcd5e0), Modifier.padding(horizontal = 16.dp, vertical = 12.dp), style = RrType.small, color = RrTheme.colors.ink3)
-                if (left == null || leftData == null) RrEmptyState(stringResource(R.string.career_no_offers_to_compare_yet_ba8c3b), stringResource(R.string.career_add_each_offer_s_terms_to_compare_it_nothing_is_filled_in_fo_840aa5), Modifier.padding(16.dp), actionLabel = stringResource(R.string.career_add_offer_0c1811), onAction = { edit(null) })
+                if (left == null) RrEmptyState(stringResource(R.string.career_no_offers_to_compare_yet_ba8c3b), stringResource(R.string.career_add_each_offer_s_terms_to_compare_it_nothing_is_filled_in_fo_840aa5), Modifier.padding(24.dp), actionLabel = stringResource(R.string.career_add_offer_0c1811), onAction = { edit(null) })
                 else {
-                    if (offers.size > 1) Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ChoicePicker(left.application?.company ?: left.title, stringResource(R.string.career_first_offer_df9efd), offers.mapIndexed { i, item -> i.toString() to listOfNotNull(item.application?.company ?: item.title, (item.data as? Offer)?.version?.wireValue, time.day(item.createdAt)).joinToString(" · ") }, { a = it.toInt() })
-                        ChoicePicker(right?.application?.company ?: stringResource(R.string.career_your_requirements_b1c02b), stringResource(R.string.career_compare_with_719f56), listOf("-1" to stringResource(R.string.career_your_requirements_b1c02b)) + offers.mapIndexed { i, item -> i.toString() to listOfNotNull(item.application?.company ?: item.title, (item.data as? Offer)?.version?.wireValue, time.day(item.createdAt)).joinToString(" · ") }.filterIndexed { i, _ -> i != a }, { b = it.toInt() })
-                        RrButton(stringResource(R.string.career_swap_210dd6), { if (b >= 0) { val old = a; a = b; b = old } }, variant = RrButtonVariant.Ghost, enabled = right != null)
-                    }
-                    if (right != null && left.applicationId != null && left.applicationId == right.applicationId) {
-                        val earlier = minOf(left, right, compareBy { it.createdAt })
-                        RrSectionHeader(stringResource(R.string.career_changes_since, (earlier.data as Offer).version?.wireValue ?: time.day(earlier.createdAt).orEmpty()))
-                    }
-                    Crossfade(left to right, animationSpec = tween(if (RrTheme.reducedMotion) 0 else RrMotion.D2), label = "offer-pair") { (left, right) ->
-                        val leftData = left.data as Offer
-                        val rightData = right?.data as? Offer
-                        RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                            HeaderRow(left.application?.company ?: left.title, right?.let { it.application?.company ?: it.title }, onLeft = { edit(left) }, onRight = if (right != null) { { edit(right) } } else null)
-                            val salary = state.profile?.minBase?.let { salaryComparison(leftData, it) } ?: SalaryComparison.Unknown
-                            ComparisonRow(stringResource(R.string.career_base_salary_66e706), offerAmount(leftData.base, leftData.currency, leftData.period),
-                                rightData?.let { offerAmount(it.base, it.currency, it.period) } ?: state.profile?.minBase?.let { min ->
-                                    if (salary == SalaryComparison.DifferentUnits) stringResource(R.string.career_different_currency_or_pay_period_not_compared_33b853) else formatMoney(min.amount, min.currency)?.let { amount -> stringResource(R.string.career_1_s_minimum_be4835, amount) }
-                                } ?: stringResource(R.string.career_not_set_93039e), tone = if (rightData == null) when (salary) { SalaryComparison.Meets -> RrTone.Accent; SalaryComparison.Below, SalaryComparison.DifferentUnits -> RrTone.Warn; else -> null } else null, met = rightData == null && salary == SalaryComparison.Meets)
-                            ComparisonRow(stringResource(R.string.career_bonus_4d963c), leftData.variablePercent?.let { stringResource(R.string.career_up_to_1_s_4ec3dc, it.toInt().toString()) } ?: formatMoney(leftData.variable, leftData.currency) ?: stringResource(R.string.career_not_stated_c092c4), rightData?.let { it.variablePercent?.let { n -> stringResource(R.string.career_up_to_1_s_4ec3dc, n.toInt().toString()) } ?: formatMoney(it.variable, it.currency) } ?: stringResource(R.string.career_not_set_93039e))
-                            ComparisonRow(stringResource(R.string.career_equity_0786ff), leftData.equity ?: stringResource(R.string.career_not_stated_c092c4), rightData?.equity ?: stringResource(R.string.career_not_set_93039e))
-                            val office = listOfNotNull(leftData.location, leftData.officeDays?.let { stringResource(R.string.career_1_s_office_days_451bcb, it.toString()) }).joinToString(" · ").ifEmpty { stringResource(R.string.career_not_stated_c092c4) }
-                            ComparisonRow(stringResource(R.string.career_where_you_work_e70df6), office, rightData?.let { listOfNotNull(it.location, it.officeDays?.toString()).joinToString(" · ") } ?: state.profile?.maxOfficeDays?.let { stringResource(R.string.career_1_s_at_most_4aa9a9, it.toString()) } ?: stringResource(R.string.career_not_set_93039e), tone = if (rightData == null && leftData.officeDays != null && state.profile?.maxOfficeDays != null && requireNotNull(leftData.officeDays) > requireNotNull(state.profile.maxOfficeDays)) RrTone.Warn else null)
-                            ComparisonRow(stringResource(R.string.career_leave_7e3520), leftData.leave ?: stringResource(R.string.career_not_stated_c092c4), rightData?.leave ?: stringResource(R.string.career_not_set_93039e))
-                            ComparisonRow(stringResource(R.string.career_learning_1016fc), formatMoney(leftData.learning, leftData.currency)?.let { perPeriod(it, leftData.period) } ?: stringResource(R.string.career_not_stated_c092c4), rightData?.let { r -> formatMoney(r.learning, r.currency)?.let { perPeriod(it, r.period) } } ?: stringResource(R.string.career_not_set_93039e))
-                            ComparisonRow(stringResource(R.string.career_starts_fc612a), time.dateWithYear(leftData.startDate) ?: stringResource(R.string.career_not_stated_c092c4), time.dateWithYear(rightData?.startDate) ?: state.profile?.noticeWeeks?.let { stringResource(R.string.career_1_s_weeks_notice_4b0939, it.toString()) } ?: stringResource(R.string.career_not_set_93039e))
-                            DeadlineRow(stringResource(R.string.career_respond_by_962d5e), leftData.respondBy, rightData?.respondBy, right != null, time)
-                        }
-                    }
-                    RrSectionHeader(if (compared.size > 1) stringResource(R.string.career_not_in_either_offer_yet) else stringResource(R.string.career_open_questions_f30a3e))
-                    if (questions.isEmpty()) RrText(stringResource(R.string.career_no_questions_to_ask), Modifier.padding(horizontal = 16.dp), style = RrType.small, color = RrTheme.colors.ink2)
-                    else {
-                        val said = state.profile?.priorities?.let(::saidQuote)
-                        RrText(when { said == null -> stringResource(R.string.career_ask_before_deciding); compared.size > 1 -> stringResource(R.string.career_you_said_both, said); else -> stringResource(R.string.career_you_said, said) },
-                            Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp), style = RrType.small, color = RrTheme.colors.ink2)
-                        RrListGroup(Modifier.padding(horizontal = 16.dp)) { questions.forEach { RrListRow(it.text, subtitle = it.ask) } }
-                    }
+                    val l = left.data as Offer; val r = right?.data as? Offer
+                    val unitMatch = r != null && l.currency == r.currency && l.period == r.period
+                    val salary = state.profile?.minBase?.let { salaryComparison(l, it) }
+                    OfferComparisonTable(if (offers.size > 2) offers else compared, state.profile, edit)
+                    if (r != null && !unitMatch || r == null && salary == SalaryComparison.DifferentUnits || offers.size > 2 && offers.map { val o = it.data as Offer; o.currency to o.period }.distinct().size > 1) RrCallout(stringResource(R.string.career_different_currency_or_pay_period_not_compared_33b853), Modifier.padding(24.dp), tone = RrTone.Warn)
+                    if (right != null && left.applicationId != null && left.applicationId == right.applicationId) RrSectionHeading(stringResource(R.string.career_changes_since, time.day(minOf(left.createdAt, right.createdAt)).orEmpty()))
                 }
                 val withTerms = offers.map { it.applicationId }.toSet()
                 state.applications.filter { it.status == ApplicationStage.Offer && it.id !in withTerms }.forEach { app -> RrListRow(app.company, subtitle = stringResource(R.string.career_in_the_offer_stage_terms_not_added_234342), onClick = { edit(null) }, trailing = { RrRowCaret() }) }
-                Spacer(Modifier.height(16.dp))
             }
         }
-        Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
-        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            RrButton(stringResource(R.string.career_copy_questions_63abde), { copy(questions.mapIndexed { i, q -> "${i + 1}. ${q.text} · ${q.ask}" }.joinToString("\n")) }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large, icon = Icons.drawable.ic_ph_copy, enabled = questions.isNotEmpty())
-            RrButton(stringResource(R.string.career_plan_what_to_ask_c18f9e), { plan(listOfNotNull(left, right)) }, Modifier.weight(1f), size = RrButtonSize.Large, icon = Icons.drawable.ic_ph_sparkle, enabled = left != null)
+        RrFooterBar {
+            RrButton(stringResource(R.string.career_edit), { if (left == null) edit(null) else options = true }, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large)
+            RrButton(stringResource(R.string.career_draft_counter), { left?.let(counter) }, Modifier.weight(1f), size = RrButtonSize.Large, enabled = left != null)
+        }
+    }
+    if (options) RrBottomSheet({ options = false }, title = stringResource(R.string.career_compare_offers), initialDetent = 1) {
+        Column(Modifier.verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            ChoicePicker(left?.let { it.application?.company ?: it.title }.orEmpty(), stringResource(R.string.career_first_offer_df9efd), offers.mapIndexed { i, item -> i.toString() to (item.application?.company ?: item.title) }, { a = it.toInt() })
+            ChoicePicker(right?.let { it.application?.company ?: it.title } ?: stringResource(R.string.career_your_requirements_b1c02b), stringResource(R.string.career_compare_with_719f56), listOf("-1" to stringResource(R.string.career_your_requirements_b1c02b)) + offers.mapIndexedNotNull { i, item -> if (i == a) null else i.toString() to (item.application?.company ?: item.title) }, { b = it.toInt() })
+            RrButton(stringResource(R.string.career_swap_210dd6), { if (b >= 0) { val old = a; a = b; b = old } }, variant = RrButtonVariant.Ghost, enabled = right != null)
+            compared.forEach { item -> RrListRow(item.application?.company ?: item.title, onClick = { options = false; edit(item) }) }
+            RrButton(stringResource(R.string.career_add_offer_0c1811), { options = false; edit(null) }, variant = RrButtonVariant.GhostAccent)
+            questions.forEach { RrListRow(it.text, subtitle = it.ask, titleMaxLines = Int.MAX_VALUE) }
+            RrButton(stringResource(R.string.career_copy_questions_63abde), { copy(questions.joinToString("\n") { it.text + " · " + it.ask }) }, variant = RrButtonVariant.Secondary)
         }
     }
 }
-private const val LABEL_WEIGHT = .25f
-private const val VALUE_WEIGHT = .375f
-@Composable private fun ComparisonRow(label: String, left: String, right: String, tone: RrTone? = null, met: Boolean = false) = Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
-    RrText(label, Modifier.weight(LABEL_WEIGHT), style = RrType.small, color = RrTheme.colors.ink2)
-    RrText(left, Modifier.weight(VALUE_WEIGHT), style = RrType.ui)
-    Column(Modifier.weight(VALUE_WEIGHT)) {
-        RrText(right, style = RrType.ui, color = when (tone) { RrTone.Accent -> RrTheme.colors.accentText; RrTone.Warn -> RrTheme.colors.warnText; else -> RrTheme.colors.ink3 })
-        if (met) RrIcon(Icons.drawable.ic_ph_check, null, size = 14.dp, tint = RrTheme.colors.accentText)
+internal fun bonusValue(offer: Offer): String = offer.variablePercent?.let { java.math.BigDecimal.valueOf(it).stripTrailingZeros().toPlainString() + "%" } ?: formatMoney(offer.variable, offer.currency) ?: "—"
+
+@Composable private fun OfferComparisonTable(items: List<SavedItem>, profile: CareerProfile?, edit: (SavedItem?) -> Unit) {
+    val time = rememberCareerTime()
+    val scroll = rememberScrollState()
+    val cellWidth = 104.dp * androidx.compose.ui.platform.LocalDensity.current.fontScale.coerceAtLeast(1f)
+    val terms = items.map { it.data as Offer }
+    val comparable = terms.none { it.period == CreateCareerOfferRequestPeriod.Unknown } && terms.map { it.currency to it.period }.distinct().size == 1
+    val highestBase = if (comparable) terms.mapNotNull { it.base }.maxOrNull() else null
+    val fewestOfficeDays = terms.mapNotNull { it.officeDays }.minOrNull()
+    val officeRequirement = profile?.maxOfficeDays?.let { stringResource(R.string.career_1_s_at_most_4aa9a9, it.toString()) } ?: "—"
+    val noticeRequirement = profile?.noticeWeeks?.let { stringResource(R.string.career_1_s_weeks_notice_4b0939, it.toString()) } ?: "—"
+    val work = terms.map { offer ->
+        if (terms.size == 1) listOfNotNull(offer.location?.takeIf(String::isNotBlank), offer.officeDays?.let { stringResource(R.string.career_1_s_office_days_451bcb, it.toString()) }).joinToString(" · ").ifEmpty { "—" }
+        else offer.location?.takeIf(String::isNotBlank) ?: "—"
+    } + if (terms.size == 1) listOf(officeRequirement) else emptyList()
+    @Composable fun row(label: String, values: List<String>, better: List<Boolean> = values.map { false }, header: Boolean = false) {
+        val c = RrTheme.colors
+        val type = RrType.body.copy(lineHeight = 20.sp, textAlign = TextAlign.End)
+        Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min).heightIn(min = if (header) 64.dp else 52.dp).drawBehind {
+            drawLine(if (header) c.line2 else c.line, Offset(0f, size.height - .5.dp.toPx()), Offset(size.width, size.height - .5.dp.toPx()), 1.dp.toPx())
+        }, horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            RrText(label, Modifier.width(110.dp), style = RrType.ui, color = c.ink3)
+            Row(Modifier.weight(1f).horizontalScroll(scroll), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                values.forEachIndexed { i, value ->
+                    Box(Modifier.width(cellWidth).heightIn(min = 44.dp).clickable(enabled = i < items.size) { edit(items[i]) }, contentAlignment = Alignment.CenterEnd) {
+                        RrText(value, style = type.copy(fontWeight = if (header || better[i]) FontWeight.SemiBold else FontWeight.Normal), color = if (better[i]) c.accentText else c.ink)
+                    }
+                }
+            }
+        }
     }
-}
-private val HeaderType = RrType.small.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
-/** Offer names (tap to edit terms); the second column is another offer or Your requirements. */
-@Composable private fun HeaderRow(left: String, right: String?, onLeft: () -> Unit, onRight: (() -> Unit)?) = Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-    Spacer(Modifier.weight(LABEL_WEIGHT))
-    Row(Modifier.weight(VALUE_WEIGHT).heightIn(min = 44.dp).clickable(role = Role.Button, onClick = onLeft), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(8.dp).background(RrTheme.colors.accent, RrShape.xs)); RrText(left, style = HeaderType)
+    fun values(read: (Offer) -> String, requirement: String = "—") = terms.map(read) + if (terms.size == 1) listOf(requirement) else emptyList()
+    fun better(read: (Offer) -> Boolean) = terms.map(read) + if (terms.size == 1) listOf(false) else emptyList()
+    Column(Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 12.dp)) {
+        row("", items.map { it.application?.company ?: it.title } + if (items.size == 1) listOf(stringResource(R.string.career_your_requirements_b1c02b)) else emptyList(), header = true)
+        row(stringResource(R.string.career_base), values({ formatMoney(it.base, it.currency) ?: "—" }, profile?.minBase?.let { formatMoney(it.amount, it.currency) } ?: "—"), better { if (terms.size == 1) profile?.minBase?.let { p -> salaryComparison(it, p) == SalaryComparison.Meets } == true else comparable && it.base != null && it.base == highestBase && terms.mapNotNull { o -> o.base }.distinct().size > 1 })
+        row(stringResource(R.string.career_bonus_4d963c), values(::bonusValue))
+        row(stringResource(R.string.career_equity_0786ff), values({ it.equity?.takeIf(String::isNotBlank) ?: "—" }))
+        row(stringResource(R.string.career_work), work, better { it.officeDays != null && it.officeDays == fewestOfficeDays && terms.mapNotNull { o -> o.officeDays }.distinct().size > 1 })
+        row(stringResource(R.string.career_holidays), values({ it.leave?.takeIf(String::isNotBlank) ?: "—" }))
+        row(stringResource(R.string.career_start), values({ time.shortDate(it.startDate) ?: "—" }, noticeRequirement))
+        row(stringResource(R.string.career_reply_by), terms.mapIndexed { i, offer -> (if (i == 0) time.day(offer.respondBy) else time.shortDate(offer.respondBy)) ?: "—" } + if (terms.size == 1) listOf("—") else emptyList())
     }
-    Row(Modifier.weight(VALUE_WEIGHT).heightIn(min = 44.dp).then(if (onRight != null) Modifier.clickable(role = Role.Button, onClick = onRight) else Modifier), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        if (right != null) Box(Modifier.size(8.dp).background(RrTheme.colors.ink3, RrShape.xs)) else RrIcon(Icons.drawable.ic_ph_target, null, size = 16.dp, tint = RrTheme.colors.ink2)
-        RrText(right ?: stringResource(R.string.career_your_requirements_b1c02b), style = HeaderType)
-    }
-}
-/** Respond by: the day as a badge, warn when under 48 hours are left (web offers.tsx). */
-@Composable private fun DeadlineRow(label: String, left: String?, right: String?, twoOffers: Boolean, time: CareerTime) = Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-    RrText(label, Modifier.weight(LABEL_WEIGHT), style = RrType.small, color = RrTheme.colors.ink2)
-    listOf(left to true, right to twoOffers).forEach { (value, shown) -> Box(Modifier.weight(VALUE_WEIGHT)) {
-        val day = time.dayTime(value)
-        if (day == null) { if (shown) RrText(stringResource(R.string.career_not_stated_c092c4), style = RrType.ui, color = RrTheme.colors.ink3) }
-        else RrBadge(day, tone = if ((time.hoursUntil(value) ?: Long.MAX_VALUE) < 48) RrBadgeTone.Warn else RrBadgeTone.Neutral)
-    } }
 }
 
 @Composable internal fun OfferEntrySheet(state: OffersState, existing: SavedItem?, close: () -> Unit, save: (String, UpdateCareerOfferRequestTerms) -> Unit, delete: () -> Unit) {

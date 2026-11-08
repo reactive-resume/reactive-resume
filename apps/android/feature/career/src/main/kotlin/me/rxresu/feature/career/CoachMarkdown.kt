@@ -122,16 +122,18 @@ private fun AnnotatedString.Builder.appendInline(text: String, code: SpanStyle, 
 internal fun CoachMarkdown(text: String, modifier: Modifier = Modifier) {
     val c = RrTheme.colors
     val blocks = remember(text) { markdownBlocks(text) }
+    val itemIndent = 20.dp * androidx.compose.ui.platform.LocalDensity.current.fontScale.coerceAtLeast(1f)
     val code = SpanStyle(fontFamily = RrType.mono.fontFamily, background = c.sunken)
     val link = TextLinkStyles(SpanStyle(color = c.accentText, textDecoration = TextDecoration.Underline))
     @Composable fun runs(value: String) = remember(value, c) { markdownInline(value, code, link) }
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        blocks.forEach { block ->
+    Column(modifier) {
+        blocks.forEachIndexed { index, block ->
+            if (index > 0) Spacer(Modifier.height(if (block is MdBlock.Item && blocks[index - 1] is MdBlock.Item) 6.dp else if (block is MdBlock.Item || blocks[index - 1] is MdBlock.Item) 8.dp else 12.dp))
             when (block) {
                 is MdBlock.Paragraph -> RrText(runs(block.text), style = RrType.body)
                 is MdBlock.Heading -> RrText(runs(block.text), style = RrType.label)
-                is MdBlock.Item -> Row(Modifier.padding(start = (block.depth * 20).dp)) {
-                    RrText(block.marker ?: "•", Modifier.width(24.dp), style = RrType.body, color = if (block.marker == null) c.ink3 else c.ink)
+                is MdBlock.Item -> Row(Modifier.padding(start = itemIndent * block.depth)) {
+                    RrText(block.marker ?: "•", Modifier.width(itemIndent), style = RrType.body, color = if (block.marker == null) c.ink3 else c.ink)
                     RrText(runs(block.text), Modifier.weight(1f), style = RrType.body)
                 }
                 is MdBlock.Quote -> Row(Modifier.height(IntrinsicSize.Min)) {

@@ -26,6 +26,8 @@ internal class CareerTime(private val locale: Locale, val zone: ZoneId, is24Hour
     private fun pattern(skeleton: String) = DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, skeleton), locale)
     private val day = pattern("EEEdMMM")
     private val dateWithYear = pattern("dMMMy")
+    private val shortDate = pattern("dMMM")
+    private val weekday = pattern("EEEE")
     private val clock = pattern(if (is24Hour) "Hm" else "hm")
     private val relative by lazy {
         RelativeDateTimeFormatter.getInstance(ULocale.forLocale(locale), null, RelativeDateTimeFormatter.Style.LONG, DisplayContext.CAPITALIZATION_FOR_BEGINNING_OF_SENTENCE)
@@ -42,6 +44,8 @@ internal class CareerTime(private val locale: Locale, val zone: ZoneId, is24Hour
     /** "Fri 13 Nov". */
     fun day(value: String?): String? = date(value)?.let(day::format)
     fun day(date: LocalDate): String = day.format(date)
+    fun weekday(value: String?): String? = date(value)?.let(weekday::format)
+    fun shortDate(value: String?): String? = date(value)?.let(shortDate::format)
     /** "4 Jan 2027", for dates that may fall in another year. */
     fun dateWithYear(value: String?): String? = date(value)?.let(dateWithYear::format)
     /** "07:00". */

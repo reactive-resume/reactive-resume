@@ -74,10 +74,10 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
     val repositories = LocalRepositories.current; val context = LocalContext.current; val resources = LocalResources.current
     val scope = rememberCoroutineScope(); val toasts = LocalToasts.current
     val vm = viewModel(key = "career:${accountKey(repositories)}") { CareerViewModel(repositories) }; val state by vm.state.collectAsStateWithLifecycle()
-    var all by remember { mutableStateOf(false) }; var schedules by remember { mutableStateOf(false) }
+    var all by remember { mutableStateOf(false) }
     val openCoach: (String?) -> Unit = { starter -> nav.currentBackStackEntry?.savedStateHandle?.set("coach-starter", starter); nav.navigate(Coach()) }
-    CareerScreen(state, { vm.refresh() }, { nav.navigate(Search()) }, { nav.navigate(Settings) }, openCoach, { nav.navigate(Coach(it)) }, { nav.navigate(Knowledge(it)) }, { nav.navigate(Offers) }, { schedules = true },
-        { nav.navigate(Knowledge(KnowledgeTab.Stories)) }, { nav.navigate(AiProviderSheet()) }, { all = true })
+    CareerScreen(state, { vm.refresh() }, { nav.navigate(Search()) }, { nav.navigate(Settings) }, openCoach, { nav.navigate(Coach(it)) }, { nav.navigate(Knowledge(it)) }, { nav.navigate(Offers) }, { id -> nav.navigate(ScheduleSheet(id)) },
+        { scope.launch { toasts.show(resources.getString(R.string.career_practice_needs_application)) } }, { nav.navigate(AiProviderSheet()) }, { all = true })
     if (all) RrBottomSheet({ all = false }, title = stringResource(R.string.career_conversations_07c59b), initialDetent = 1) {
         state.threads.forEach { thread ->
             RrListRow(thread.title, icon = Icons.drawable.ic_ph_chat_circle, onClick = { all = false; nav.navigate(Coach(thread.id)) }, trailing = {
@@ -92,11 +92,7 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
             })
         }
     }
-    if (schedules) RrBottomSheet({ schedules = false }, title = stringResource(R.string.career_schedules_26d9d0), fitContent = true) {
-        val time = rememberCareerTime()
-        state.schedules.forEach { schedule -> RrListRow(scheduleTitle(schedule.kind) + schedule.query.takeIf { it.isNotBlank() }?.let { " · $it" }.orEmpty(), subtitle = scheduleStatus(schedule, time), onClick = { schedules = false; nav.navigate(ScheduleSheet(schedule.id)) }, trailing = { RrRowCaret() }) }
-        RrButton(stringResource(R.string.career_new_schedule_3e70c3), { schedules = false; nav.navigate(ScheduleSheet()) }, Modifier.fillMaxWidth().padding(16.dp), icon = Icons.drawable.ic_ph_plus)
-    }
+
 }
 @Composable private fun CoachRoute(nav: NavController, id: String?, applicationId: String?, prompt: String?) {
     val repositories = LocalRepositories.current; val context = LocalContext.current; val resources = LocalResources.current; val drafts = recovery(repositories)
@@ -114,7 +110,7 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
     var used by remember { mutableStateOf<JsonObject?>(null) }
     var providers by remember { mutableStateOf(false) }; var approveSend by remember { mutableStateOf(false) }; var menu by remember { mutableStateOf(false) }; var rename by remember { mutableStateOf(false) }
     CoachScreen(state, vm::draft, vm::memory, vm::applications, { nav.popBackStack() }, { providers = true }, { menu = true }, { vm.load() }, { nav.navigate(Knowledge()) }, { nav.navigate(AiProviderSheet()) },
-        { approveSend = true }, { vm.stop() }, { proposal -> vm.remember(proposal) { haptic(RrHaptic.Success) } }, vm::dismiss, { copy(context, it) }, { text -> context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text), null)) }, { used = it }, answer = vm::answer)
+        { approveSend = true }, { vm.stop() }, { proposal -> vm.remember(proposal) { haptic(RrHaptic.Success) } }, vm::dismiss, { copy(context, it) }, { text -> context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text), null)) }, { used = it }, answer = vm::answer, openSource = { url -> coachSourceUrl(url)?.let { CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(it)) } })
     used?.let { shared -> RrBottomSheet({ used = null }, title = stringResource(R.string.career_shared_context), initialDetent = 1) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             (shared["facts"] as? JsonArray).orEmpty().forEach { value ->
@@ -223,6 +219,8 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             RrTextField(text, { text = it }, label = stringResource(R.string.career_fact_e09300), singleLine = false, minLines = 3)
             RrText(stringResource(R.string.career_the_original_stays_in_the_history_38c5ee), style = RrType.small, color = RrTheme.colors.ink3)
+            RrText(sourceLabel(fact.source.kind), style = RrType.small, color = RrTheme.colors.ink3)
+            if (fact.source.quote.isNotBlank()) RrText(fact.source.quote, style = RrType.body, color = RrTheme.colors.ink2)
             ChoicePicker(categoryLabel(category.wireValue), stringResource(R.string.career_type_3deb74), SaveCareerFactRequestCategory.entries.filter { it != SaveCareerFactRequestCategory.Unknown }.map { it.wireValue to categoryLabel(it.wireValue) }, { value -> category = SaveCareerFactRequestCategory.entries.first { it.wireValue == value } })
             ChoicePicker(applications.firstOrNull { it.id == application }?.company ?: stringResource(R.string.career_all_applications_5bba47), stringResource(R.string.career_scope_4651a3), listOf("" to stringResource(R.string.career_all_applications_5bba47)) + applications.map { it.id to it.company }, { application = it.ifEmpty { null } })
 
@@ -244,10 +242,14 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
     val toasts = LocalToasts.current; val scope = rememberCoroutineScope()
     var more by remember { mutableStateOf(false) }; var link by remember { mutableStateOf(false) }
     StoryScreen(state, vm::change, { vm.save(); nav.popBackStack() }, { vm.save() }, { more = true }, {
-        state.draft?.id?.let { browser(context, repositories, "/dashboard/career/knowledge/stories/${Uri.encode(it)}?practice=true") }
+        state.draft?.let { draft ->
+            draft.applicationId?.let { nav.navigate(ApplicationWorkspace(it, WorkspaceTab.Practise, draft.title)) }
+                ?: scope.launch { toasts.show(resources.getString(R.string.career_practice_needs_application)) }
+        }
     }, { link = true })
     if (more) RrBottomSheet({ more = false }, title = stringResource(R.string.career_story_options_89089f), fitContent = true) {
         RrListRow(stringResource(R.string.career_link_facts_d38459), onClick = { more = false; link = true })
+        RrListRow(stringResource(R.string.career_duplicate), onClick = { more = false; vm.duplicate { nav.navigate(me.rxresu.core.navigation.Story(it)) } })
         RrListRow(stringResource(R.string.career_delete_story_5846ec), danger = true, onClick = {
             more = false
             scope.launch { if (toasts.show(resources.getString(R.string.career_story_deleted_7542c6), resources.getString(R.string.career_undo_39fc72)) != RrToastResult.ActionPerformed) vm.delete { nav.popBackStack() } }
@@ -264,7 +266,7 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
     val repositories = LocalRepositories.current; val drafts = recovery(repositories)
     val vm = viewModel(key = "preferences:${accountKey(repositories)}") { PreferencesViewModel(repositories, drafts, savedState = createSavedStateHandle()) }; val state by vm.state.collectAsStateWithLifecycle()
     var suggestions by remember { mutableStateOf(false) }
-    PreferencesScreen(state, vm::change, { vm.save(); nav.popBackStack() }, { vm.save() }, { suggestions = true })
+    PreferencesScreen(state, vm::change, { vm.save(); nav.popBackStack() }, { vm.save() }, { suggestions = true }, { nav.navigate(ScheduleSheet(state.schedules.firstOrNull { it.kind == "discovery" }?.id)) })
     if (suggestions) RoleSuggestionsSheet(state, { suggestions = false }, { provider, resume, knowledge -> vm.suggest(provider, resume, knowledge) }, { roles -> state.profile?.let { vm.change(it.copy(targetRoles = (it.targetRoles + roles).distinct())) }; suggestions = false })
 }
 @Composable private fun OffersRoute(nav: NavController) {
@@ -275,6 +277,10 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
         // Offers are explicit draft context; opening a conversation never sends it.
         val prompt = resources.getString(R.string.career_help_me_weigh_the_offer_i_have_against_what_i_want_bcc192) + "\n\n" + selected.joinToString("\n") { item -> item.application?.company.orEmpty() + ": " + me.rxresu.core.network.ApiJson.encodeToString(Offer.serializer(), item.data as Offer) }
         nav.currentBackStackEntry?.savedStateHandle?.set("coach-starter", prompt); nav.navigate(Coach())
+    }, counter = { item ->
+        val prompt = resources.getString(R.string.career_draft_counter_prompt) + "\n\n" + item.application?.company.orEmpty() + ": " + me.rxresu.core.network.ApiJson.encodeToString(Offer.serializer(), item.data as Offer)
+        nav.currentBackStackEntry?.savedStateHandle?.set("coach-starter", prompt)
+        nav.navigate(Coach(applicationId = item.applicationId))
     })
     if (editing) OfferEntrySheet(state, existing, { editing = false }, { application, terms -> vm.save(application, terms, existing) { editing = false; haptic(RrHaptic.Success) } }, { existing?.let { offer ->
         editing = false

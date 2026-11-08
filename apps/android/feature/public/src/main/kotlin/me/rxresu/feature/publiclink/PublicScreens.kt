@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.unit.dp
 import me.rxresu.core.designsystem.*
 import me.rxresu.core.designsystem.R as Icons
@@ -38,19 +40,22 @@ import me.rxresu.core.page.RenderedDocument
 @Composable internal fun PublicScreen(state: PublicState, link: String, renderer: PageRenderer, password: (String) -> Unit, retry: () -> Unit, back: () -> Unit, share: () -> Unit, download: () -> Unit, word: () -> Unit, edit: () -> Unit, browser: () -> Unit, comments: () -> Unit) {
     // The bottom bar's surface runs under the gesture area; its content stays above it.
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).imePadding()) {
-        RrTopBar(state.feedback?.ownerName ?: state.resume?.data?.basics?.name ?: stringResource(R.string.public_resume_b3bd0b), onBack = back, status = { RrText(link.removePrefix("https://"), style = RrType.small.copy(textDirection = TextDirection.Ltr), maxLines = 1) }, actions = {
+        RrTopBar(link.removePrefix("https://"), actions = {
             if (state.owner) RrButton(stringResource(R.string.public_edit_530164), edit, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small)
             if (state.feedback != null) RrIconButton(Icons.drawable.ic_ph_chat_circle, stringResource(R.string.public_comments_fce06e), comments)
             RrIconButton(Icons.drawable.ic_ph_share_network, stringResource(R.string.public_share_link_3c1362), share)
         })
-        Box(Modifier.weight(1f).fillMaxWidth().background(RrTheme.colors.sunken)) {
+        Box(Modifier.weight(1f).fillMaxWidth()) {
             when {
                 state.loading -> Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) { RrSkeletonText(lines = 3); RrSkeleton(Modifier.fillMaxWidth().aspectRatio(RrLayout.PAGE_ASPECT)) }
                 state.problem == PublicProblem.Password || state.problem == PublicProblem.WrongPassword -> Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     RrTextField(state.password, password, label = stringResource(R.string.public_password_8be3c9), visualTransformation = PasswordVisualTransformation(), error = if (state.problem == PublicProblem.WrongPassword) stringResource(R.string.public_incorrect_password_please_try_again_f6a1b2) else null)
                     RrButton(stringResource(R.string.public_view_resume_e59ef3), retry, Modifier.fillMaxWidth(), enabled = state.password.isNotEmpty(), size = RrButtonSize.Large)
                 }
-                state.document != null -> DocumentPages(requireNotNull(state.document), renderer)
+                state.document != null -> Column {
+                    if (state.owner) RrText(stringResource(R.string.public_visitor_view), Modifier.padding(horizontal = 24.dp), style = RrType.small, color = RrTheme.colors.ink3)
+                    DocumentPages(requireNotNull(state.document), renderer)
+                }
                 else -> Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     val (title, body) = publicProblem(state.problem)
                     RrEmptyState(title, body, actionLabel = if (state.problem == PublicProblem.Offline) stringResource(R.string.public_retry_9f5cd8) else stringResource(R.string.public_open_in_browser_052269), onAction = if (state.problem == PublicProblem.Offline) retry else browser)
@@ -62,12 +67,10 @@ import me.rxresu.core.page.RenderedDocument
                 }
             }
         }
-        Box(Modifier.fillMaxWidth().height(1.dp).background(RrTheme.colors.line))
-        Row(Modifier.fillMaxWidth().background(RrTheme.colors.surface).windowInsetsPadding(WindowInsets.navigationBars).padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            RrText(stringResource(R.string.public_made_with_reactive_resume_21751a), Modifier.weight(1f), style = RrType.small, color = RrTheme.colors.ink3)
-            if (state.resume?.allowWordDownload == true) RrButton(stringResource(R.string.public_word_44363c), word, variant = RrButtonVariant.Secondary, size = RrButtonSize.Large)
-            if (state.resume?.showDownloadButtons == true && state.document != null) RrButton(stringResource(R.string.public_download_pdf_98e5ef), download, size = RrButtonSize.Large, icon = Icons.drawable.ic_ph_download_simple)
-        }
+        if (state.document != null && (state.resume?.showDownloadButtons == true || state.resume?.allowWordDownload == true)) RrFooterBar {
+            if (state.resume?.allowWordDownload == true) RrButton(stringResource(R.string.public_word_44363c), word, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large)
+            if (state.resume?.showDownloadButtons == true) RrButton(stringResource(R.string.public_download_pdf_98e5ef), download, Modifier.weight(1f), size = RrButtonSize.Large, icon = Icons.drawable.ic_ph_download_simple)
+        } else Box(Modifier.rrNavigationBarsPadding())
     }
 }
 @Composable private fun publicProblem(problem: PublicProblem?): Pair<String, String> = when (problem) {
@@ -90,13 +93,15 @@ internal fun pdfMarkers(findings: List<CreatePdfCheckResponseTipsItem>, page: In
     }
 }
 @Composable internal fun DocumentPages(document: RenderedDocument, renderer: PageRenderer, findings: List<CreatePdfCheckResponseTipsItem> = emptyList()) {
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    BoxWithConstraints {
+    val renderWidth = with(androidx.compose.ui.platform.LocalDensity.current) { (maxWidth - 32.dp).roundToPx() }.coerceAtLeast(1)
+    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         items(document.pageCount, key = { it }) { index ->
             var attempt by remember(document, index) { mutableIntStateOf(0) }
             var failed by remember(document, index) { mutableStateOf(false) }
-            val page by produceState<Bitmap?>(null, document, index, attempt) {
+            val page by produceState<Bitmap?>(null, document, index, attempt, renderWidth) {
                 failed = false
-                try { value = renderer.page(document, index, 1080) }
+                try { value = renderer.page(document, index, renderWidth) }
                 catch (e: kotlinx.coroutines.CancellationException) { throw e }
                 catch (_: Exception) { failed = true }
             }
@@ -107,13 +112,21 @@ internal fun pdfMarkers(findings: List<CreatePdfCheckResponseTipsItem>, page: In
                     } }.getOrNull()
                 }
             }
+            val zoomIn = stringResource(R.string.public_zoom_in_4fc05f)
+            val zoomOut = stringResource(R.string.public_zoom_out_a4ae4b)
             var scale by remember { mutableFloatStateOf(1f) }; var pan by remember { mutableStateOf(Offset.Zero) }
             val transform = rememberTransformableState { zoom, offset, _ -> scale = (scale * zoom).coerceIn(1f, 4f); pan = if (scale == 1f) Offset.Zero else pan + offset }
             Column {
                 if (failed) RrCallout(stringResource(R.string.public_couldn_t_load_try_again_b45e5d), tone = RrTone.Warn, actionLabel = stringResource(R.string.public_retry_9f5cd8), onAction = { attempt++ })
                 RrPaperPage(page?.asImageBitmap(), stringResource(R.string.public_page_1_s_6654d7, (index + 1).toString()), Modifier
                     .then(page?.let { Modifier.aspectRatio(it.width.toFloat() / it.height) } ?: Modifier)
-                    .graphicsLayer { scaleX = scale; scaleY = scale; translationX = pan.x; translationY = pan.y }.transformable(transform), overlay = {
+                    .graphicsLayer { scaleX = scale; scaleY = scale; translationX = pan.x; translationY = pan.y }.transformable(transform)
+                    .semantics {
+                        customActions = listOf(
+                            androidx.compose.ui.semantics.CustomAccessibilityAction(zoomIn) { scale = (scale + .5f).coerceAtMost(4f); true },
+                            androidx.compose.ui.semantics.CustomAccessibilityAction(zoomOut) { scale = (scale - .5f).coerceAtLeast(1f); if (scale == 1f) pan = Offset.Zero; true },
+                        )
+                    }, overlay = {
                     dimensions?.let { (width, height) ->
                         BoxWithConstraints(Modifier.fillMaxSize()) {
                             pdfMarkers(findings, index, width, height).forEach { marker ->
@@ -122,13 +135,11 @@ internal fun pdfMarkers(findings: List<CreatePdfCheckResponseTipsItem>, page: In
                         }
                     }
                 })
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    RrIconButton(Icons.drawable.ic_ph_minus, stringResource(R.string.public_zoom_out_a4ae4b), { scale = (scale - .5f).coerceAtLeast(1f); if (scale == 1f) pan = Offset.Zero }, enabled = scale > 1f)
-                    RrIconButton(Icons.drawable.ic_ph_plus, stringResource(R.string.public_zoom_in_4fc05f), { scale = (scale + .5f).coerceAtMost(4f) }, enabled = scale < 4f)
-                }
+
             }
         }
     }
+}
 }
 
 @Composable internal fun FeedbackSheet(state: PublicState, close: () -> Unit, send: (String, String, () -> Unit) -> Unit) {
@@ -151,21 +162,31 @@ internal fun pdfMarkers(findings: List<CreatePdfCheckResponseTipsItem>, page: In
 @Composable internal fun AtsScreen(state: AtsState, renderer: PageRenderer, localDocument: RenderedDocument?, back: () -> Unit, choose: () -> Unit, sample: () -> Unit, posting: (String) -> Unit, check: () -> Unit, edit: () -> Unit, blank: () -> Unit, browser: () -> Unit, wordImport: () -> Unit = edit) {
     var parser by rememberSaveable { mutableStateOf(true) }
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).windowInsetsPadding(WindowInsets.navigationBars).imePadding()) {
-        RrTopBar(stringResource(R.string.public_ats_checker_6eb166), onBack = back, actions = { if (state.selected != null || state.result != null) RrButton(stringResource(R.string.public_check_another_file_020567), choose, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small) })
+        RrTopBar(onBack = back, actions = { if (state.selected != null || state.result != null) RrButton(stringResource(R.string.public_check_another_file_020567), choose, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small) })
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             if (state.working) Column(Modifier.padding(16.dp)) { RrWorkingLabel(listOf(stringResource(R.string.public_opening_the_file_d9f543), stringResource(R.string.public_reading_the_text_da8da4), stringResource(R.string.public_checking_layout_and_content_03e79c))) }
             state.problem?.let { problem -> RrCallout(when (problem) { PdfProblem.TooLarge -> stringResource(R.string.public_that_file_is_too_large_to_check_pdfs_up_to_25_mb_work_9b9382); PdfProblem.Password -> stringResource(R.string.public_this_pdf_is_password_protected_save_an_unprotected_copy_and__18793f); PdfProblem.Unreadable -> stringResource(R.string.public_this_file_could_not_be_read_try_another_pdf_148f35); PdfProblem.Failed -> stringResource(R.string.public_couldn_t_check_this_file_try_again_20af9a) }, Modifier.padding(16.dp), tone = RrTone.Warn) }
             val result = state.result
-            if (result == null) Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                RrText(stringResource(R.string.public_can_software_read_your_resume_09d20e), style = RrType.title)
-                RrButton(stringResource(R.string.public_choose_a_pdf_4d98a4), choose, Modifier.fillMaxWidth(), size = RrButtonSize.Large, enabled = !state.working)
-                RrButton(stringResource(R.string.public_try_a_sample_file_417ea1), sample, variant = RrButtonVariant.GhostAccent, enabled = !state.working)
-                RrTextField(state.posting, posting, label = stringResource(R.string.public_paste_the_posting_to_see_which_of_its_terms_your_resume_alre_43dbfe), singleLine = false, minLines = 3)
-                if (state.selected != null) {
-                    RrText(state.selected.name, style = RrType.mono)
-                    RrDisclosureLine(stringResource(R.string.public_when_you_choose_check_pdf_this_pdf_and_the_optional_posting__37b75e))
-                    RrButton(stringResource(R.string.public_check_pdf_15983a), check, Modifier.fillMaxWidth(), size = RrButtonSize.Large, enabled = !state.working)
+            if (result == null && state.selected == null) {
+                RrPageTitle(stringResource(R.string.public_ats_checker_6eb166), subtitle = stringResource(R.string.public_ats_intro))
+                RrHeroCard {
+                    Column(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        RrIcon(Icons.drawable.ic_ph_file_pdf, null, size = 40.dp, tint = RrTheme.colors.ink3)
+                        RrText(stringResource(R.string.public_choose_a_pdf_4d98a4), style = RrType.heading)
+                        RrButton(stringResource(R.string.public_choose_a_pdf_4d98a4), choose, Modifier.fillMaxWidth().padding(top = 8.dp), size = RrButtonSize.Large, enabled = !state.working)
+                    }
                 }
+                RrSectionHeading(stringResource(R.string.public_what_checks))
+                RrListGroup {
+                    val rows = listOf(Triple(R.string.public_check_text, R.string.public_check_text_detail, Icons.drawable.ic_ph_text_aa), Triple(R.string.public_check_sections, R.string.public_check_sections_detail, R.drawable.ic_ph_list_dashes), Triple(R.string.public_check_dates, R.string.public_check_dates_detail, Icons.drawable.ic_ph_calendar_blank), Triple(R.string.public_check_contact, R.string.public_check_contact_detail, R.drawable.ic_ph_at))
+                    rows.forEachIndexed { index, row -> RrListRow(stringResource(row.first), subtitle = stringResource(row.second), tile = row.third, divider = index != rows.lastIndex) }
+                }
+                RrButton(stringResource(R.string.public_try_a_sample_file_417ea1), sample, Modifier.padding(horizontal = 24.dp), variant = RrButtonVariant.GhostAccent, enabled = !state.working)
+            } else if (result == null) Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                RrText(state.selected?.name.orEmpty(), style = RrType.mono)
+                RrTextField(state.posting, posting, label = stringResource(R.string.public_paste_the_posting_to_see_which_of_its_terms_your_resume_alre_43dbfe), singleLine = false, minLines = 3)
+                RrDisclosureLine(stringResource(R.string.public_when_you_choose_check_pdf_this_pdf_and_the_optional_posting__37b75e))
+                RrButton(stringResource(R.string.public_check_pdf_15983a), check, Modifier.fillMaxWidth(), size = RrButtonSize.Large, enabled = !state.working)
                 RrButton(stringResource(R.string.public_check_locally_in_your_browser_c70c55), browser, variant = RrButtonVariant.Secondary)
                 RrButton(stringResource(R.string.public_start_a_blank_resume_7b6d49), blank, variant = RrButtonVariant.Ghost)
                 RrButton(stringResource(R.string.public_import_word), wordImport, variant = RrButtonVariant.Ghost)
