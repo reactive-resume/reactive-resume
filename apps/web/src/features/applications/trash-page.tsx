@@ -2,11 +2,12 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { PageHeader } from "@/components/layout/page-header";
+import { TrashNav } from "@/components/layout/trash-nav";
 import { LibraryError } from "@/features/documents/library-error";
 import { PageNavigation } from "@/features/documents/page-navigation";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -55,19 +56,12 @@ export function ApplicationTrashPage() {
 	const page = list.data;
 	if (page && offset > 0 && offset >= page.total) setOffset(Math.max(0, Math.floor((page.total - 1) / 100) * 100));
 	return (
-		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4">
+		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5">
 			<PageHeader
 				title={<Trans>Trash</Trans>}
 				description={<Trans>Applications stay in Trash until you delete them permanently.</Trans>}
 			/>
-			<nav aria-label={t`Trash`} className="flex gap-2">
-				<Link to="/dashboard/trash" className={buttonVariants({ variant: "ghost" })}>
-					<Trans>Documents</Trans>
-				</Link>
-				<Button aria-current="page">
-					<Trans>Applications</Trans>
-				</Button>
-			</nav>
+			<TrashNav current="applications" />
 			{list.isError ? (
 				<LibraryError retrying={list.isFetching} onRetry={() => void list.refetch()} />
 			) : list.isPending ? (
@@ -75,9 +69,12 @@ export function ApplicationTrashPage() {
 					<Trans>Loading…</Trans>
 				</p>
 			) : page?.items.length === 0 ? (
-				<p>
-					<Trans>Trash is empty</Trans>
-				</p>
+				<div className="grid justify-items-center gap-2 py-16 text-center">
+					<Icon name="trash" size={28} className="text-ink-3" />
+					<p className="font-display text-[22px] leading-7">
+						<Trans>Trash is empty</Trans>
+					</p>
+				</div>
 			) : (
 				<ul className="divide-y divide-line">
 					{page?.items.map((application) => (

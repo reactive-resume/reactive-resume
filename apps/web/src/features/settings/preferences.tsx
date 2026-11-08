@@ -58,7 +58,8 @@ export function PreferencesSettings() {
 				</p>
 			</SettingsSection>
 
-			<SettingsSection title={<Trans>Keyboard shortcuts</Trans>}>
+			{/* Touch screens have no shortcut help to open, so the setting would only add noise there. */}
+			<SettingsSection title={<Trans>Keyboard shortcuts</Trans>} className="pointer-coarse:hidden">
 				<CharacterShortcutSetting />
 			</SettingsSection>
 

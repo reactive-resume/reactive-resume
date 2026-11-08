@@ -1,4 +1,5 @@
 import type { DocumentSummary } from "./filter";
+import type { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -186,6 +187,33 @@ function PaperBadge({ icon, label }: PaperBadgeProps) {
 	);
 }
 
+const isTouch = (event: Event | undefined) =>
+	!!event && (event.type.startsWith("touch") || ("pointerType" in event && event.pointerType === "touch"));
+
+/**
+ * On touch, a long press selects the document instead of opening its context menu, as in the mobile app; the ⋯ menu
+ * keeps every action. Base UI times the press (500ms, cancelled by a 10px move); the tap that ends it is swallowed so
+ * it doesn't open the document or toggle it straight back.
+ */
+function useLongPressSelect(onSelectedChange: ((selected: boolean) => void) | undefined) {
+	const swallowClick = useRef(false);
+	const onOpenChange = (open: boolean, details: ContextMenuPrimitive.Root.ChangeEventDetails) => {
+		if (!open || !onSelectedChange || !isTouch(details.event)) return;
+		details.cancel();
+		swallowClick.current = true;
+		setTimeout(() => (swallowClick.current = false), 800);
+		navigator.vibrate?.(10);
+		onSelectedChange(true);
+	};
+	const onClickCapture = (event: React.MouseEvent) => {
+		if (!swallowClick.current) return;
+		swallowClick.current = false;
+		event.preventDefault();
+		event.stopPropagation();
+	};
+	return { onOpenChange, onClickCapture };
+}
+
 /** A 204px card: the real first page, title with ⋯, "Resume · Edited 2h ago" and the linked application. */
 export function DocumentCard({
 	document,
@@ -217,10 +245,12 @@ export function DocumentCard({
 		onLink: () => onLink(document),
 		onSelect: onSelectedChange && !selected ? () => onSelectedChange(true) : undefined,
 	};
+	const longPress = useLongPressSelect(onSelectedChange);
 
 	return (
-		<ContextMenu>
+		<ContextMenu onOpenChange={longPress.onOpenChange}>
 			<ContextMenuTrigger
+				onClickCapture={longPress.onClickCapture}
 				render={
 					<article
 						data-document-key={documentKey(document)}
@@ -243,7 +273,7 @@ export function DocumentCard({
 						describedBy={document.type === "letter" ? descriptionId : undefined}
 						onSelect={selecting && onSelectedChange ? () => onSelectedChange(!selected) : undefined}
 						className={cn(
-							"relative block aspect-page overflow-hidden rounded-md shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[translate,scale,box-shadow] duration-quick ease-enter hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)] active:scale-[0.98]",
+							"relative block aspect-page overflow-hidden rounded-md shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[translate,scale,box-shadow] duration-quick ease-enter [-webkit-touch-callout:none] hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)] active:scale-[0.98]",
 							// Only a selection gets the accent ring; a new card says so with its New badge.
 							selected &&
 								"shadow-[0_0_0_2px_var(--accent),var(--shadow-1)] hover:shadow-[0_0_0_2px_var(--accent),var(--shadow-2)] starting:shadow-[0_0_0_2px_transparent,var(--shadow-1)]",
@@ -280,9 +310,8 @@ export function DocumentCard({
 							aria-label={t`Select ${document.name}`}
 							className={cn(
 								"absolute end-2 top-2 shadow-e1 transition-[opacity,background-color,border-color] duration-quick",
-								// Touch has no hover: the box stays visible there, as the list view's does.
-								!selecting &&
-									"opacity-0 group-hover/card:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100",
+								// Touch has no hover: there the box appears once a long press starts selecting.
+								!selecting && "opacity-0 group-hover/card:opacity-100 focus-visible:opacity-100 pointer-coarse:hidden",
 							)}
 						/>
 					)}
@@ -347,6 +376,7 @@ export function DocumentRow({
 	introIndex,
 	selected = false,
 	onSelectedChange,
+	selecting = false,
 	disabled = false,
 }: DocumentItemProps) {
 	const { i18n } = useLingui();
@@ -366,10 +396,12 @@ export function DocumentRow({
 		onTags: () => onTags(document),
 		onLink: () => onLink(document),
 	};
+	const longPress = useLongPressSelect(onSelectedChange);
 
 	return (
-		<ContextMenu>
+		<ContextMenu onOpenChange={longPress.onOpenChange}>
 			<ContextMenuTrigger
+				onClickCapture={longPress.onClickCapture}
 				render={
 					<tr
 						data-document-key={documentKey(document)}
@@ -385,7 +417,8 @@ export function DocumentRow({
 				}
 			>
 				{onSelectedChange && (
-					<td className="w-10 ps-3">
+					// Touch: the column appears once a long press starts selecting, as on cards.
+					<td className={cn("w-10 ps-3", !selecting && "pointer-coarse:hidden")}>
 						<Checkbox
 							disabled={disabled}
 							checked={selected}
@@ -404,6 +437,7 @@ export function DocumentRow({
 								document={document}
 								disabled={disabled}
 								dir="auto"
+								onSelect={selecting && onSelectedChange ? () => onSelectedChange(!selected) : undefined}
 								className="min-w-0 truncate text-start text-sm font-semibold hover:underline"
 							>
 								{document.name}

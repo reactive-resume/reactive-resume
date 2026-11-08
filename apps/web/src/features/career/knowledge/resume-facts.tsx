@@ -6,6 +6,7 @@ import { useRouteContext } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { MAX_RESUME_FACT_CHARACTERS } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { CATEGORIES, categoryLabel } from "./fact-categories";
@@ -20,15 +21,17 @@ export function ResumeFacts() {
 	const { session } = useRouteContext({ strict: false });
 	const [open, setOpen] = useState(false);
 	return (
-		<section className="grid gap-3 rounded-xl border border-line p-3">
-			{open ? (
+		// Closed, it's one button; the bordered panel holds the review only while it's open.
+		open ? (
+			<section className="grid gap-3 rounded-xl border border-line p-3">
 				<ReviewResumeFacts key={session?.user.id} onClose={() => setOpen(false)} />
-			) : (
-				<Button variant="secondary" onClick={() => setOpen(true)}>
-					<Trans>Pull facts from my resume</Trans>
-				</Button>
-			)}
-		</section>
+			</section>
+		) : (
+			<Button variant="secondary" className="justify-self-start" onClick={() => setOpen(true)}>
+				<Icon name="file-text" size={18} />
+				<Trans>Pull facts from my resume</Trans>
+			</Button>
+		)
 	);
 }
 

@@ -15,6 +15,7 @@ import { useState } from "react";
 import { WORKSPACE_TABS } from "@reactive-resume/schema/career";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
@@ -416,13 +417,38 @@ function WorkspaceHeader({ application, onAskCoach }: WorkspaceHeaderProps) {
 	const sent = application.status !== "saved";
 	return (
 		<header className="grid gap-3 border-b border-line px-4 pt-[22px] pb-4 md:px-8">
-			<Link
-				to="/dashboard/applications"
-				className="flex w-fit items-center gap-1 text-[13px] text-ink-3 transition-colors duration-quick hover:text-ink-2"
-			>
-				<Icon name="caret-left" size={16} />
-				<Trans>Applications</Trans>
-			</Link>
+			<div className="flex items-center justify-between gap-3">
+				<Link
+					to="/dashboard/applications"
+					className="flex w-fit items-center gap-1 text-[13px] text-ink-3 transition-colors duration-quick hover:text-ink-2"
+				>
+					<Icon name="caret-left" size={16} />
+					<Trans>Applications</Trans>
+				</Link>
+				{/* Phones: the header actions shrink to icons on this row, so the tabs start higher. */}
+				<div className="-my-2 -me-2 flex items-center gap-1 sm:hidden">
+					<IconButton
+						icon="briefcase"
+						label={t`Stage, details and timeline`}
+						nativeButton={false}
+						render={<Link to="/dashboard/applications" search={{ applicationId: application.id }} />}
+					/>
+					{application.status === "offer" && saved.data && (
+						<IconButton
+							icon="scales"
+							label={t`Compare offers`}
+							nativeButton={false}
+							render={
+								<Link
+									to="/dashboard/career/offers"
+									search={{ a: saved.data.find((item) => item.data.kind === "offer")?.id }}
+								/>
+							}
+						/>
+					)}
+					<IconButton icon="sparkle" label={t`Ask the coach`} className="text-accent-text" onClick={onAskCoach} />
+				</div>
+			</div>
 			<div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
 				<div className="grid min-w-0 gap-1.5">
 					<h1 className="font-display text-2xl leading-8 md:text-[30px] md:leading-9">
@@ -447,7 +473,7 @@ function WorkspaceHeader({ application, onAskCoach }: WorkspaceHeaderProps) {
 						)}
 					</p>
 				</div>
-				<div className="flex flex-wrap items-center gap-4">
+				<div className="flex flex-wrap items-center gap-4 max-sm:hidden">
 					<Link
 						to="/dashboard/applications"
 						search={{ applicationId: application.id }}

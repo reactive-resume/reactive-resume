@@ -178,7 +178,7 @@ Icons inside resumes use Phosphor names stored in resume data, drawn by the Phos
 - **Spacing:** use the 4px scale in the front matter. Cards typically have 16px padding, panels 16–24px, mobile pages 16px margins, and desktop pages 32–40px margins.
 - **Radius:** 2px (`rounded-sm`) for chips, tags, avatars, switches and small marks; 3px (`rounded-md`) for inputs and controls; 4px (`rounded-lg` and up) for cards, menus, dialogs and sheets. Nothing is rounder than 4px; no pills. Only data-viz rings, radio buttons, spinners and landing illustrations stay circular.
 - **Elevation:** `shadow-e1` for cards; `shadow-e2` for menus and popovers; `shadow-e3` for dialogs, sheets, and toasts; `shadow-page` for editor paper.
-- **Controls:** button heights are 28px (`sm`), 36px (`default`), and 44px (`lg`). Icon button sizes range from 28px to 44px. Inputs grow from 36px to 44px on touch devices; `touch-target` expands smaller controls' hit areas to at least 44×44px.
+- **Controls:** button heights are 28px (`sm`), 36px (`default`), and 44px (`lg`). Icon button sizes range from 28px to 44px. Inputs and default buttons grow from 36px to 44px on touch devices (a button that sets its own height keeps it; a control beside an input matches it); `touch-target` expands smaller controls' hit areas to at least 44×44px and needs a positioned host (`relative`), or its overlay covers the nearest positioned ancestor and steals taps. Keyboard-shortcut help entries hide on touch screens.
 - **Layout variables:** `--editor-bar: 56px`, `--editor-panel: 400px`, `--app-sidebar: 240px`, `--sheet-share: 440px`, `--sheet-detail: 480px`, and `--assistant: 400px`.
 
 ## Motion
@@ -219,7 +219,8 @@ Generic primitives live in `packages/ui/src/components`, using Base UI and cmdk 
 
 Target WCAG 2.2 AA:
 
-- Show a 2px accent focus outline with a 2px gap on `:focus-visible`. Inputs use their border and soft ring instead.
+- Show a 2px accent focus outline with a 2px gap on `:focus-visible`, only while navigating by keyboard: after a tap or click `data-pointer` on `<html>` (`apps/web/src/libs/input-modality.ts`) hides rings on focus the app moves itself, and the first Tab, arrow or Escape brings them back. `focus-visible:` utilities follow the same rule. Inputs use their border and soft ring instead.
+- On touch screens a long press on a document card or row selects it, as in the mobile app; selection checkboxes appear only once selecting starts, and the ⋯ menu keeps every action.
 - Provide at least 24px pointer targets and 44px touch targets. Every drag operation needs keyboard and menu alternatives. Each `DndContext` takes `dndContextProps()` (`apps/web/src/libs/dnd.ts`): drags are announced in the UI language by the item's visible name and its page or column, never by an id.
 - Pair color signals with text; add icons where they clarify status.
 - Trap focus in modal sheets and dialogs. Escape closes the top layer; closing returns focus to its trigger.

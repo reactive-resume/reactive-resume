@@ -200,6 +200,7 @@ function LetterMenu() {
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem
+						className="pointer-coarse:hidden"
 						onClick={() => {
 							helpRequested.current = true;
 						}}

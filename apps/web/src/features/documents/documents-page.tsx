@@ -499,7 +499,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							</caption>
 							<thead>
 								<tr className="border-b border-line text-start text-xs font-medium text-ink-3">
-									<th className="w-10 ps-3">
+									<th className={cn("w-10 ps-3", !selecting && "pointer-coarse:hidden")}>
 										<Checkbox
 											disabled={!rowsCurrent}
 											checked={allSelected}
@@ -837,13 +837,14 @@ type TagFilterProps = {
 
 const chipClassName = (isActive: boolean) =>
 	cn(
-		"min-h-7 rounded-sm border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97] pointer-coarse:min-h-11",
+		"touch-target relative min-h-7 shrink-0 rounded-sm border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97] pointer-coarse:min-h-[30px]",
 		isActive ? "border-accent bg-accent-soft text-accent-text" : "border-line-2 text-ink-2 hover:bg-hover",
 	);
 
 function TagFilter({ tags, active, onChange, showPublic, publicOnly, onPublicChange }: TagFilterProps) {
 	return (
-		<fieldset className="m-0 flex flex-wrap gap-1.5 border-0 p-0">
+		// Phones: one row that scrolls sideways, so tags never push the documents down.
+		<fieldset className="m-0 flex min-w-0 flex-wrap gap-1.5 border-0 p-0 max-sm:-mx-4 max-sm:[scrollbar-width:none] max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:px-4 max-sm:py-2">
 			<legend className="sr-only">
 				<Trans>Filter by tag</Trans>
 			</legend>
