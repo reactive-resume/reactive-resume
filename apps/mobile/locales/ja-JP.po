@@ -222,10 +222,8 @@ msgstr "{0, plural, one {# 編集を配置できませんでした。テキス�
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {#件の項目} other {#件の項目}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, other {#件のストーリー}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {確認が必要な項目#件。} other {確認が必要な項目#件。}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {{1} も送信します。} other {# 件のファイルも送信します: {2}。}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, other {#件の回答}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}。この応募とあなたの ナレッジ を送信します。プロバイダーが料金を請求する場合があります。"
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "AI プロバイダーを読み込めませんでした。リロードし
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "AI プロバイダーを読み込めませんでした。再試行するか、詳細を手動で入力してください。"
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "AIは、ユーザーが要求した場合にのみ、貼り付けられたテキストを読み上げます。リンクでは、AI を使用せずに Web ページ自体によって提供される求人詳細を使用できます。"
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "この結果の AI リクエスト履歴は利用できません。"
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "AI 設定"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "AI による提案であり、資格の証明や採用の予測ではありません。以下の情報源はあなた自身の記述です。"
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "常に 今日 に表示されます。電子メールには、検証済�
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "アムハラ語"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "編集を助けるための AI による解釈であり、採用担当者やスクリーニングシステムの反応を予測するものではありません。"
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "応募用メールアドレス"
 msgid "Application phone"
 msgstr "応募用電話番号"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "応募の概要"
@@ -5055,10 +5033,6 @@ msgstr "以前の検出結果です。検索条件と求人情報の確認日時
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "次に送信すると、この会話のこれまでのメッセージと添付ファイルがこの送信先に送られます。"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "このチャットの以前のメッセージ"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "ゴミ箱を空にする"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "ゴミ箱を空にしますか?"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "有効なナレッジ"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "メッセージと添付ファイルは削除されます。受け入れ
 msgid "Its own design ({summary})."
 msgstr "独自のデザイン（{summary}）。"
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "その要件"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "サーバーによって管理される"
 msgid "Managed by your server"
 msgstr "サーバーによって管理される"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "職種や希望の手動入力は AI なしで使えます。提案機能が検索やスケジュール設定を行うことはありません。"
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "多くの箇条書きが同じフレーズで始まっています。"
@@ -7685,11 +7647,6 @@ msgstr "メッセージ"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "ナレッジが変更される前のメッセージは AI に送信されなくなったため、AI はその内容を覚えていません。文脈をまとめて保つには、新しい会話を始めてください。"
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "ナレッジが変更される前のメッセージは送信されません。"
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "ライブラリにはまだ何もありません"
 msgid "Nothing is applied for or created until you choose."
 msgstr "あなたが選ぶまで、応募も作成も行われません。"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "この会話の接続を選ぶまで、何も送信されません。"
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "現在も継続中であることを示す表記がありません。"
@@ -9589,10 +9541,6 @@ msgstr "{company}の面接に向けて練習しましょう。"
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "{company}のワークスペースで練習"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "練習の優先事項であり、採用側がなぜそう判断したかの結論ではありません。"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11542,11 +11490,6 @@ msgstr "検索または実行…"
 msgid "Search saved answers"
 msgstr "保存済みの回答を検索"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "検索語句はあなたのウェブ検索サービスに送信されます。"
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "ウェブを検索"
@@ -11686,87 +11629,9 @@ msgstr "送信者の詳細をレターにコピーしました"
 msgid "Sending…"
 msgstr "送信中…"
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "{0} を {label} に送信します。"
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "この接続に送信されるのは、選択したレジュメと、有効な共有の事実最大 20 件だけです。応募プロフィール、保存済みの回答、応募ごとの非公開の事実は含まれません。プロバイダーから料金が発生する場合があります。"
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "本文の下書きを作成するため、{0} の求人情報を {1} · {2} に送信します。プロバイダーから料金が発生する場合があります。"
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "求人情報のテキストを読み取るため、{0} に送信します。"
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "この応募と有効にしたナレッジをこの接続に送信します。プロバイダーから料金が発生する場合があります。スケジュール作業が自動で別の接続に切り替わることはありません。"
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "本文の下書きを作成するため、このレターのレジュメと {0} の求人情報を {1} · {2} に送信します。プロバイダーから料金が発生する場合があります。"
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "本文の下書きを作成するため、このレターのレジュメを {0} · {1} に送信します。プロバイダーから料金が発生する場合があります。"
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "この行、周囲のフィールドのテキスト、あなたの指示を {0} · {1} に送信します。"
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "この段落、手紙の残りの部分、入力した指示を {0} · {1} に送信します。"
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "この段落、手紙の残りの部分、リンクされた求人情報、入力した指示を {0} · {1} に送信します。"
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "テキスト レイヤーを読み取る代わりに、この PDF を構成済みの AI プロバイダーに送信します。"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "あなたのメッセージと、この応募(求人情報、メモ、書類、フォームの回答、保存済みのオファー、最近のメッセージ)を {label} に送信します。"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "あなたのメッセージ、これまでのメッセージ、この応募(求人情報、メモ、書類、フォームの回答、保存済みのオファー、最近のメッセージ)を {label} に送信します。"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "あなたのメッセージ、ここでの過去のメッセージ、この応募情報（求人情報、メモ、書類、フォームへの回答、保存済みのオファー、最近のメッセージ）、有効なナレッジを{label}に送信します。"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "あなたのメッセージ、この応募情報（求人情報、メモ、書類、フォームへの回答、保存済みのオファー、最近のメッセージ）、有効なナレッジを{label}に送信します。"
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "履歴書のテキストをキーとともに {0} · {1} にのみ送信します。"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -13110,17 +12975,9 @@ msgstr "内蔵リーダーはアクティブなままです。"
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "チェックは機械式です。これにより、読者がリストのエントリにどのように反応するかを言語モデルに尋ね、書き換えを提案します。それはスコアの一部ではありません。"
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "コーチは、あなたが述べた事実を記憶する前に確認します。"
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "コーチはあなたのメッセージから何も記憶しません。"
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "コーチは、あなたが書いた内容を何も記憶しません。"
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13133,10 +12990,6 @@ msgstr "このサーバーではコーチが設定されていません。運営
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "コーチはチャットで事実を1つずつ提案します。あなたが同意するまで何も保存されません。"
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "コーチは、あなたが述べた事実を記憶し、そのことを知らせます。"
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13158,10 +13011,6 @@ msgstr "接続は正常です。使うには「このプロバイダーを使用
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "コピーにはその求人の求人情報が付き、このレジュメはほかの求人のためにそのまま残ります。"
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "この求人のカバーレター"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13179,10 +13028,6 @@ msgstr "エディターは「チェック」で開き、取り込んだレジュ
 msgid "The employer may have changed it since."
 msgstr "雇用主がその後変更した可能性があります。"
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "応募先からのメッセージ"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "終了日が開始日より前になっています。両方の日付を確認してください。"
@@ -13195,10 +13040,6 @@ msgstr "フォローアップが保存されます。リマインダーを取得
 msgid "The greeting follows the name."
 msgstr "名前の後に挨拶が続きます。"
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "面接の詳細"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "面接は保存されます。リマインダーを取得するには、デバイスの設定で通知を許可します。"
@@ -13210,10 +13051,6 @@ msgstr "キーはサーバー上で暗号化され、再度表示されること
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "キーが拒否されました。キーを確認して、もう一度テストしてください。"
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "最近のメッセージ"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13300,14 +13137,6 @@ msgstr "プロバイダーがこのリクエストを制限しました。しば
 msgid "The provider reported a server error. Try again later."
 msgstr "プロバイダーがサーバーエラーを報告しました。後でもう一度お試しください。"
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "質問とあなたの発言"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "質問とあなたの回答"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "理由はインサイトのために保持されます。リンクされたドキュメントは変更されません。"
@@ -13324,10 +13153,6 @@ msgstr "ファイルの残りの部分はこのレポートには含まれてい
 msgid "The resume as it is"
 msgstr "履歴書そのまま"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "この求人用のレジュメ"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "レビュー担当者には、それぞれのステージと日付が表示されます。メモ、連絡先、給与は非公開のままです。"
@@ -13343,10 +13168,6 @@ msgstr "保存されたキーは新しいベース URL には送信されませ�
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "保存されたキーは新しいベース URL には送信されません。再度キーを入力してください。"
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "保存済みのオファー"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13719,10 +13540,6 @@ msgstr "このPDFはスキャンした画像です。読むテキストがあり
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "このPDFはパスワードで保護されています。保護されていないコピーを保存してから、もう一度お試しください。"
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "この求人情報"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14983,10 +14800,6 @@ msgstr "いつフォローアップすべきですか?また、何を伝えれ�
 msgid "When would you start?"
 msgstr "いつから働き始めますか?"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "送信をタップすると、{list} が {connection} に送られます。"
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "完了するとブラウザが閉じて、ここに戻ります。"
@@ -15041,10 +14854,6 @@ msgstr "幅"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "転居可能"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "ナレッジがオフの場合、書いた内容は何も記憶されません。"
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15380,10 +15189,6 @@ msgstr "このデバイスで行った変更は、保存されたバージョン
 msgid "Your contact details are not on the first page."
 msgstr "連絡先情報が1ページ目にありません。"
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "あなたの連絡先"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "あなたのデータ"
@@ -15425,10 +15230,6 @@ msgstr "あなたの事実、ストーリー、好み。 ナレッジ を編集�
 msgid "Your focus"
 msgstr "あなたの注力分野"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "あなたのフォームの回答"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "見出しが本文と同じ見た目になっています。"
@@ -15454,10 +15255,6 @@ msgstr "あなたのラインは非常に密集しています。"
 msgid "Your margins are very narrow."
 msgstr "余白が非常に狭くなっています。"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "あなたのメッセージ"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "メッセージは保持されています。"
@@ -15474,7 +15271,6 @@ msgstr "名前をそのままアドレスに。.cv のレジストリである O
 msgid "Your name is missing"
 msgstr "あなたの名前がありません"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "あなたのメモ"
@@ -15495,9 +15291,7 @@ msgstr "自分で書く本文(以前のレターを使わない)"
 msgid "Your phone number is written in an unusual shape."
 msgstr "電話番号が一般的でない形式で書かれています。"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "あなたの希望条件"
 
@@ -15516,10 +15310,6 @@ msgstr "公開リンクは {server}/ で始まります"
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "パブリックリンクが変わります"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "停止後、録音は {transcriberName} に転送され、文字起こしされます。プロバイダーが料金を請求する場合があります。サーバーは記録を保存するのではなく、トランスクリプトを保存します。"
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15604,10 +15394,6 @@ msgstr "短縮リンクは「{0}」を指していますが、このレジュメ
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "再度公開するまで、短縮リンクではこのレジュメが共有されていないと表示されます。"
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "あなたのストーリー"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

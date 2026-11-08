@@ -197,7 +197,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 				<View style={{ gap: space.s2 }}>
 					<Button label={reviewLabel} disabled={!ready || !provider} loading={generate.isPending} onPress={submit} />
 					<GenerateNotice generate={generate} onRetry={submit} />
-					<AiNotice task="debrief" application={application} interview={Boolean(round)} />
+					<AiNotice />
 				</View>
 			) : null}
 		</Block>
@@ -367,9 +367,6 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 					onPress={() => void addToCalendar()}
 				/>
 			) : null}
-			<Text variant="caption" color="ink3">
-				{t`Practice priorities, not conclusions about why an employer decided anything.`}
-			</Text>
 		</Block>
 	);
 }

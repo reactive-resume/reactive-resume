@@ -222,10 +222,8 @@ msgstr "{0, plural, one {ویرایش # انجام نشد: متن آن تغیی�
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# مورد} other {# مورد}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, one {# داستان} other {# داستان}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# مورد برای مرور.} other {# مورد برای مرور.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {همچنین {1} را ارسال می‌کند.} other {همچنین # فایل ارسال می‌کند: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# پاسخ} other {# پاسخ}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}. این درخواست شغلی و دانسته‌ها شما را ارسال می کند. ممکن است ارائه دهنده شما هزینه کند."
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "ارائه دهندگان هوش مصنوعی بارگیری نشدند.
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "ارائه دهندگان هوش مصنوعی بارگیری نشدند. دوباره امتحان کنید یا جزئیات را دستی پر کنید."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "AI فقط به درخواست شما متن چسبانده‌شده را می‌خواند. برای لینک‌ها می‌توان داده‌های شغلی خود صفحه را بدون AI خواند."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "تاریخچهٔ درخواست هوش مصنوعی برای این نت
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "تنظیمات هوش مصنوعی"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "پیشنهادهای هوش مصنوعی، نه مدارک تأییدشده و نه پیش‌بینی استخدام. منابع پایین، گفته‌های خود شما هستند."
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "همیشه در امروز ظاهر می شود. ایمیل نیاز ب�
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "امهری"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "تحلیل هوش مصنوعی برای کمک به ویرایش شماست، نه پیش‌بینی واکنش کارفرما یا سیستم غربالگری."
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "ایمیل درخواست"
 msgid "Application phone"
 msgstr "تلفن درخواست"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "خلاصهٔ درخواست‌ها"
@@ -5055,10 +5033,6 @@ msgstr "نتیجهٔ کشف قدیمی‌تر. پرس‌وجوی جست‌وجو
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "پیام‌ها و پیوست‌های قبلی این گفت‌وگو، وقتی دوباره پیام بفرستید، به این مقصد ارسال می‌شوند."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "پیام‌های قبلی این گفتگو"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "خالی کردن سطل زباله"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "خالی‌کردن سطل زباله؟"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "دانش فعال"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "پیام ها و پیوست های آن حذف می شوند. ویرای
 msgid "Its own design ({summary})."
 msgstr "طراحی خودش ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "نیازمندی‌های آن"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "توسط سرور مدیریت می شود"
 msgid "Managed by your server"
 msgstr "توسط سرور شما مدیریت می شود"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "موقعیت‌های شغلی و ترجیحات دستی بدون هوش مصنوعی کار می‌کنند. پیشنهادها هرگز چیزی را جست‌وجو یا زمان‌بندی نمی‌کنند."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "بسیاری از موارد فهرست‌وار با عبارت یکسانی شروع می‌شوند."
@@ -7685,11 +7647,6 @@ msgstr "پیام‌ها"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "پیام‌های پیش از تغییر «دانسته‌ها» دیگر به هوش مصنوعی فرستاده نمی‌شوند، پس آن‌ها را به یاد نمی‌آورد. برای یک‌جا ماندن زمینه، گفت‌وگوی جدیدی شروع کنید."
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "پیام‌های پیش از تغییر «دانسته‌ها» فرستاده نمی‌شوند."
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "هنوز چیزی در کتابخانهٔ شما نیست"
 msgid "Nothing is applied for or created until you choose."
 msgstr "تا شما انتخاب نکنید، هیچ درخواستی ارسال و چیزی ساخته نمی‌شود."
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "تا وقتی برای این گفت‌وگو اتصالی انتخاب نکنید چیزی ارسال نمی‌شود."
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "هیچ نشانه‌ای یک نقش را در حال انجام معرفی نمی‌کند."
@@ -9589,10 +9541,6 @@ msgstr "تمرین برای مصاحبه‌های {company}."
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "تمرین در فضای کاری {company}"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "اولویت‌های تمرین، نه نتیجه‌گیری دربارهٔ اینکه چرا کارفرما تصمیمی گرفته است."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11542,11 +11490,6 @@ msgstr "جستجو یا اجرا…"
 msgid "Search saved answers"
 msgstr "جست‌وجوی پاسخ‌های ذخیره‌شده"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "عبارت‌های جستجو به سرویس جستجوی وب شما فرستاده می‌شوند."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "جستجو در وب"
@@ -11686,87 +11629,9 @@ msgstr "جزئیات فرستنده در نامه کپی شده است"
 msgid "Sending…"
 msgstr "در حال ارسال…"
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "{0} را به {label} می‌فرستد."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "فقط رزومهٔ انتخاب‌شدهٔ شما و حداکثر ۲۰ واقعیت هم‌رسانِ فعال را به این اتصال می‌فرستد. نه پروفایل درخواست، نه پاسخ‌های ذخیره‌شده و نه واقعیت‌های خصوصی درخواست. ممکن است ارائه‌دهندهٔ شما هزینه بگیرد."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "آگهی {0} را برای نوشتن پیش‌نویس بدنه به {1} · {2} می‌فرستد. ممکن است ارائه‌دهندهٔ شما هزینه بگیرد."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "متن آگهی را برای خواندن به {0} می‌فرستد."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "این درخواست و «دانسته‌های» روشن‌شده را به این اتصال می‌فرستد. ممکن است ارائه‌دهندهٔ شما هزینه بگیرد. کارهای زمان‌بندی‌شده هرگز خودکار به اتصال دیگری سوییچ نمی‌کنند."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "رزومهٔ این نامه و آگهی {0} را برای نوشتن پیش‌نویس بدنه به {1} · {2} می‌فرستد. ممکن است ارائه‌دهندهٔ شما هزینه بگیرد."
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "رزومهٔ این نامه را برای نوشتن پیش‌نویس بدنه به {0} · {1} می‌فرستد. ممکن است ارائه‌دهندهٔ شما هزینه بگیرد."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "این سطر، متن فیلدهای اطراف و دستورهای شما را به {0} · {1} می‌فرستد."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "این بند، بقیهٔ نامه و دستورهای شما را به {0} · {1} می‌فرستد."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "این بند، بقیهٔ نامه، آگهی شغلی پیوندخورده و دستورهای شما را به {0} · {1} می‌فرستد."
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "این PDF را به جای خواندن لایه متنی آن به ارائه دهنده پیکربندی شده AI شما ارسال می کند."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "پیام شما و این درخواست (آگهی، یادداشت‌ها، اسناد، پاسخ‌های فرم شما، پیشنهاد ذخیره‌شده و پیام‌های اخیر) را به {label} می‌فرستد."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "پیام شما، پیام‌های قبلی و این درخواست (آگهی، یادداشت‌ها، اسناد، پاسخ‌های فرم شما، پیشنهاد ذخیره‌شده و پیام‌های اخیر) را به {label} می‌فرستد."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "پیام شما، پیام‌های قبلی اینجا، این درخواست شغلی (آگهی، یادداشت‌ها، اسناد، پاسخ‌های فرم شما، پیشنهاد ذخیره‌شده و پیام‌های اخیر) و دانش فعال را به {label} می‌فرستد."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "پیام شما، این درخواست شغلی (آگهی، یادداشت‌ها، اسناد، پاسخ‌های فرم شما، پیشنهاد ذخیره‌شده و پیام‌های اخیر) و دانش فعال را به {label} می‌فرستد."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "متن رزومه شما را با کلید شما فقط به {0} · {1} ارسال می کند."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -13110,17 +12975,9 @@ msgstr "خواننده داخلی فعال باقی می ماند."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "چک ها مکانیکی هستند. این از یک مدل زبان می‌پرسد که خواننده چگونه ممکن است به ورودی‌های فهرست شما واکنش نشان دهد و بازنویسی‌هایی را پیشنهاد می‌کند. بخشی از امتیاز نیست"
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "مربی پیش از به‌یادسپردن واقعیت‌هایی که می‌گویید می‌پرسد."
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "مربی چیزی از پیام‌های شما به خاطر نمی‌سپارد."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "مربی چیزی از آنچه می‌نویسید را به یاد نمی‌آورد."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13133,10 +12990,6 @@ msgstr "مربی در این سرور راه‌اندازی نشده است. ک�
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "مربی هر واقعیت را در گفتگو پیشنهاد می‌دهد. تا موافقت نکنید چیزی ذخیره نمی‌شود."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "مربی واقعیت‌هایی که می‌گویید را به یاد می‌آورد و به شما می‌گوید."
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13158,10 +13011,6 @@ msgstr "اتصال کار می‌کند. برای استفاده از آن، «�
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "نسخه، آگهی شغل را می‌گیرد و این رزومه را برای شغل‌های دیگر همین‌طور نگه می‌دارد."
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "نامهٔ پوششی برای این شغل"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13179,10 +13028,6 @@ msgstr "ویرایشگر روی بررسی باز می‌شود که رزومه 
 msgid "The employer may have changed it since."
 msgstr "ممکن است کارفرما از آن زمان آگهی را تغییر داده باشد."
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "پیام کارفرما"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "تاریخ پایان قبل از تاریخ شروع است. هر دو تاریخ را بررسی کنید."
@@ -13195,10 +13040,6 @@ msgstr "پیگیری ذخیره می شود. برای دریافت یادآور�
 msgid "The greeting follows the name."
 msgstr "سلام به دنبال نام است."
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "جزئیات مصاحبه"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "مصاحبه ذخیره شده است. برای دریافت یادآوری، اعلان‌ها را در تنظیمات دستگاه خود مجاز کنید."
@@ -13210,10 +13051,6 @@ msgstr "کلید روی سرور رمزگذاری شده است و دیگر هر
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "کلید رد شد. کلید را بررسی و دوباره بیازمایید."
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "آخرین پیام‌ها"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13300,14 +13137,6 @@ msgstr "ارائه‌دهنده این درخواست را محدود کرد. ص
 msgid "The provider reported a server error. Try again later."
 msgstr "ارائه‌دهنده خطای سرور گزارش کرد. بعداً دوباره تلاش کنید."
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "پرسش و آنچه شما گفتید"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "پرسش و پاسخ شما"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "دلیل برای Insights حفظ شده است. اسناد پیوند داده شده لمس نمی شوند."
@@ -13324,10 +13153,6 @@ msgstr "بقیه فایل در این گزارش نیست."
 msgid "The resume as it is"
 msgstr "رزومه همانطور که هست"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "رزومه برای این شغل"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "بازبین مرحله و تاریخ هر کدام را می‌بیند. یادداشت‌ها، مخاطبین و حقوق خصوصی می‌مانند."
@@ -13343,10 +13168,6 @@ msgstr "کلید ذخیره شده به URL پایه جدید ارسال نمی 
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "کلید ذخیره شده به URL پایه جدید ارسال نمی شود. دوباره کلید را وارد کنید."
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "پیشنهاد ذخیره‌شده"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13719,10 +13540,6 @@ msgstr "این PDF یک تصویر اسکن شده است. متنی برای خ�
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "این PDF با رمز عبور محافظت شده است. یک نسخهٔ بدون محافظت ذخیره کنید و دوباره تلاش کنید."
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "این آگهی"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14983,10 +14800,6 @@ msgstr "کی باید پیگیری کنم و چه باید بگویم؟"
 msgid "When would you start?"
 msgstr "چه زمانی شروع می‌کنید؟"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "وقتی روی ارسال ضربه بزنید، {list} به {connection} فرستاده می‌شود."
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "وقتی کارتان تمام شد، مرورگر بسته می شود و شما به اینجا باز می گردید."
@@ -15041,10 +14854,6 @@ msgstr "عرض"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "آمادگی برای جابه‌جایی"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "با خاموش‌بودن «دانسته‌ها»، چیزی از آنچه می‌نویسید به یاد سپرده نمی‌شود."
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15380,10 +15189,6 @@ msgstr "تغییرات شما در این دستگاه با نسخه ذخیره 
 msgid "Your contact details are not on the first page."
 msgstr "اطلاعات تماس شما در صفحهٔ اول نیست."
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "مخاطبین شما"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "داده های شما"
@@ -15425,10 +15230,6 @@ msgstr "حقایق، داستان ها و ترجیحات شما. ویرایش د
 msgid "Your focus"
 msgstr "تمرکز شما"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "پاسخ‌های فرم شما"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "عنوان‌های شما شبیه متن اصلی به‌نظر می‌رسند."
@@ -15454,10 +15255,6 @@ msgstr "خطوط شما بیش از حد فشرده‌اند."
 msgid "Your margins are very narrow."
 msgstr "حاشیه‌های شما بسیار باریک هستند."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "پیام شما"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "پیام شما نگه داشته شد."
@@ -15474,7 +15271,6 @@ msgstr "نام شما به‌عنوان نشانی‌تان، از OlaCV، اد�
 msgid "Your name is missing"
 msgstr "نام شما گم شده است"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "یادداشت‌های شما"
@@ -15495,9 +15291,7 @@ msgstr "بدنهٔ خودتان، بدون نامهٔ پیشین"
 msgid "Your phone number is written in an unusual shape."
 msgstr "شماره تلفن شما به شکلی غیرمعمول نوشته شده است."
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "ترجیحات شما"
 
@@ -15516,10 +15310,6 @@ msgstr "پیوندهای عمومی شما با {server}/ شروع می شوند
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "لینک‌های عمومی شما تغییر می‌کنند"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "ضبط شما پس از توقف به {transcriberName} می رود تا رونویسی شود. ممکن است ارائه‌دهنده شما هزینه کند. سرور رونوشت ها را نگه می دارد، هرگز ضبط نمی کند."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15604,10 +15394,6 @@ msgstr "لینک کوتاه شما به «{0}» اشاره می‌کند که م
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "لینک کوتاه شما می‌گوید تا دوباره منتشرش نکنید این رزومه هم‌رسان نیست."
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "داستان‌های شما"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

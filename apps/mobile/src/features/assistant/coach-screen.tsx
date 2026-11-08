@@ -8,9 +8,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { coachStarters } from "@reactive-resume/schema/career-starters";
-import { formatList } from "@reactive-resume/utils/locale";
 import { refreshThreads, useThreads } from "./chat";
-import { ChatView, ContextChip, type ChatHistory } from "./chat-view";
+import { ChatView, ContextChip } from "./chat-view";
 import { ChatWelcome } from "./chat-welcome";
 import {
 	ConnectionNotice,
@@ -78,7 +77,7 @@ type CoachScreenProps = {
 };
 
 export function CoachScreen({ offerIds }: CoachScreenProps) {
-	const { t, i18n } = useLingui();
+	const { t } = useLingui();
 	const { colors, space } = useTheme();
 	const queryClient = useQueryClient();
 	const providers = useHasAIProvider();
@@ -96,7 +95,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 	const { provider, stranded, label, choose } = useConversationProvider(providers, summary, threadId);
 	const title = useThreadTitle();
 	const web = useWebSearch(provider);
-	const memory = useMemoryNote(chips.memory);
+	const memory = useMemoryNote();
 
 	const context: MessageContext = {
 		// A career conversation has no document or posting to leave out.
@@ -110,38 +109,13 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 	};
 	const knowledgeBlocks = chips.memory && (knowledge.isPending || knowledge.isError);
 
-	// The privacy line names exactly what goes and what the coach may keep. The chips choose what this message adds;
-	// earlier messages go too, except those written before Knowledge last changed.
-	const privacyFor = ({ earlier, withheld }: ChatHistory) => {
-		const parts = [
-			t`your message`,
-			...(earlier > 0 ? [t`earlier messages in this chat`] : []),
-			...(chips.application ? [t`application summaries`] : []),
-			...(context.offerIds ? [plural(offerIds.length, { one: "# saved offer", other: "# saved offers" })] : []),
-			...(chips.memory
-				? [
-						t`your preferences`,
-						...(knowledge.facts > 0 ? [plural(knowledge.facts, { one: "# fact", other: "# facts" })] : []),
-						...(knowledge.stories > 0 ? [t`your stories`] : []),
-					]
-				: []),
-		];
-		const list = formatList(i18n.locale, parts);
-		return [
-			stranded
-				? t`Nothing is sent until you choose a connection for this conversation.`
-				: chips.memory && knowledge.isError
-					? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
-					: chips.memory && knowledge.isPending
-						? t`Loading Knowledge before you send…`
-						: t`When you tap send, ${list} go to your ${connection}.`,
-			...(withheld > 0 ? [t`Messages from before Knowledge changed aren't sent.`] : []),
-			...(context.web ? [t`Search terms go to your web search service.`] : []),
-			memory.note,
-		]
-			.filter(Boolean)
-			.join(" ");
-	};
+	const status = !chips.memory
+		? undefined
+		: knowledge.isError
+			? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
+			: knowledge.isPending
+				? t`Loading Knowledge before you send…`
+				: undefined;
 	const connection = /connection$/i.test(label) ? label : t`${label} connection`;
 
 	const newConversation = () => {
@@ -239,7 +213,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 						])
 					}
 					connection={connection}
-					privacy={privacyFor}
+					status={status}
 					remember={{ applicationId: null }}
 					facts={knowledge.all}
 					stories={knowledge.allStories}

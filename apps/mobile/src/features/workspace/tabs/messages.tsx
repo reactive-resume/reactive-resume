@@ -150,7 +150,7 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 			<SaveError autosave={autosave} />
 			{!readOnly ? (
 				<View style={{ gap: space.s2 }}>
-					<AiNotice task="reply" application={application} />
+					<AiNotice />
 					<Button
 						variant="secondary"
 						label={t`Save message without AI`}

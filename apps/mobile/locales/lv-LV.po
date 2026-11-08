@@ -222,10 +222,8 @@ msgstr "{0, plural, one {# labojumu nevarēja ievietot: tā teksts ir mainīts. 
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# ieraksts} other {# ieraksti} zero {# ierakstu}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, zero {# stāsti} one {# stāsts} other {# stāsti}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# pārskatāma lieta.} other {# pārskatāmas lietas.} zero {# pārskatāmu lietu.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {Nosūta arī {1}.} other {Nosūta arī # failus: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, zero {# atbildes} one {# atbilde} other {# atbildes}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}. Nosūta šo pieteikumu un jūsu Zināšanas. Pakalpojuma sniedzējs var iekasēt maksu."
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "AI pakalpojumu sniedzējus nevarēja ielādēt. Atkārtoti ielādējiet,
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "AI pakalpojumu sniedzējus nevarēja ielādēt. Mēģiniet vēlreiz vai aizpildiet informāciju manuāli."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "AI nolasa ielīmētu tekstu tikai pēc jūsu pieprasījuma. Saites var izmantot lapā iegultos darba datus bez AI."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "Šī rezultāta MI pieprasījumu vēsture nav pieejama."
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "AI iestatījumi"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "AI ieteikumi, nevis pārbaudītas kvalifikācijas vai darbā pieņemšanas prognozes. Avoti zemāk ir jūsu apgalvojumi."
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "Vienmēr parādīts sadaļā “Šodien”. E-pastam ir nepieciešama ve
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "Amharu"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "AI lasījums, kas palīdz labot, nevis prognoze par to, kā atbildēs darba devējs vai skrīninga sistēma."
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "Pieteikuma e-pasts"
 msgid "Application phone"
 msgstr "Pieteikuma tālrunis"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "pieteikumu kopsavilkumi"
@@ -5055,10 +5033,6 @@ msgstr "Agrāks atklāšanas rezultāts. Meklēšanas vaicājums un sludinājuma
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Iepriekšējās ziņas un pielikumi šajā sarunā tiks nosūtīti uz šo galamērķi, kad sūtīsiet vēlreiz."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "iepriekšējie ziņojumi šajā sarunā"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "Iztukšot atkritni"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "Iztukšot miskasti?"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "ieslēgtās Zināšanas"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "Tās ziņojumi un pielikumi tiek dzēsti. Labojumi, kurus pieņēmāt, p
 msgid "Its own design ({summary})."
 msgstr "Savs dizains ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "tā prasības"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "Pārvalda serveris"
 msgid "Managed by your server"
 msgstr "Pārvalda jūsu serveris"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "Manuālas lomas un preferences darbojas bez AI. Ieteikumi nekad neko nemeklē un neplāno."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "Daudzas aizzīmes sākas ar vienu un to pašu frāzi."
@@ -7685,11 +7647,6 @@ msgstr "Ziņojumi"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Ziņas, kas rakstītas pirms Zināšanu izmaiņām, vairs netiek sūtītas AI, tāpēc tas tās neatcerēsies. Sāciet jaunu sarunu, lai konteksts paliktu kopā."
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Ziņas, kas rakstītas pirms Zināšanu izmaiņām, netiek sūtītas."
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "Jūsu bibliotēkā vēl nekā nav"
 msgid "Nothing is applied for or created until you choose."
 msgstr "Nekas netiek pieteikts vai izveidots, kamēr neizvēlaties."
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "Nekas netiek nosūtīts, līdz izvēlaties savienojumu šai sarunai."
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "Nekas nenorāda, ka amats vēl turpinās."
@@ -9589,10 +9541,6 @@ msgstr "Vingrinieties intervijām uzņēmumā {company}."
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "Trenējieties {company} darbvietā"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "Vingrināšanās prioritātes, nevis secinājumi par to, kāpēc darba devējs kaut ko izlēma."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11542,11 +11490,6 @@ msgstr "Meklēt vai palaist…"
 msgid "Search saved answers"
 msgstr "Meklēt saglabātajās atbildēs"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Meklēšanas vaicājumi tiek sūtīti jūsu tīmekļa meklēšanas pakalpojumam."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Meklēt tīmeklī"
@@ -11686,87 +11629,9 @@ msgstr "Sūtītāja dati ir iekopēti vēstulē"
 msgid "Sending…"
 msgstr "Notiek sūtīšana…"
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "Nosūta {0} uz {label}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Nosūta tikai jūsu atlasīto CV un līdz 20 aktīviem kopīgotiem faktiem uz šo savienojumu. Bez pieteikumu profila, saglabātām atbildēm un privātiem pieteikumu faktiem. Jūsu pakalpojumu sniedzējs var iekasēt maksu."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Nosūta {0} sludinājumu uz {1} · {2}, lai izveidotu pamatteksta melnrakstu. Jūsu pakalpojumu sniedzējs var iekasēt maksu."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Nosūta sludinājuma tekstu uz {0}, lai to izlasītu."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "Nosūta šo pieteikumu un ieslēgtās Zināšanas uz šo savienojumu. Jūsu pakalpojumu sniedzējs var iekasēt maksu. Plānotais darbs nekad automātiski nepārslēdzas uz citu savienojumu."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Nosūta šīs vēstules CV un {0} sludinājumu uz {1} · {2}, lai izveidotu pamatteksta melnrakstu. Jūsu pakalpojumu sniedzējs var iekasēt maksu."
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "Nosūta šīs vēstules CV uz {0} · {1}, lai izveidotu pamatteksta melnrakstu. Jūsu pakalpojumu sniedzējs var iekasēt maksu."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Nosūta šo rindu, apkārtējo lauku tekstu un jūsu norādījumus uz {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Nosūta šo rindkopu, pārējo vēstuli un jūsu norādījumus uz {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Nosūta šo rindkopu, pārējo vēstuli, saistīto darba sludinājumu un jūsu norādījumus uz {0} · {1}."
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "Nosūta šo PDF jūsu konfigurētajam AI nodrošinātājam, nevis nolasa tā teksta slāni."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Nosūta jūsu ziņu un šo pieteikumu (sludinājumu, piezīmes, dokumentus, jūsu formulāra atbildes, saglabāto piedāvājumu un pēdējās ziņas) uz {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Nosūta jūsu ziņu, iepriekšējās ziņas un šo pieteikumu (sludinājumu, piezīmes, dokumentus, jūsu formulāra atbildes, saglabāto piedāvājumu un pēdējās ziņas) uz {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Nosūta jūsu ziņu, iepriekšējās ziņas šeit, šo pieteikumu (darba sludinājumu, piezīmes, dokumentus, jūsu veidlapu atbildes, saglabāto piedāvājumu un jaunākās ziņas) un ieslēgtās Zināšanas uz {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Nosūta jūsu ziņu, šo pieteikumu (darba sludinājumu, piezīmes, dokumentus, jūsu veidlapu atbildes, saglabāto piedāvājumu un jaunākās ziņas) un ieslēgtās Zināšanas uz {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Nosūta jūsu CV tekstu tikai uz {0} · {1} ar jūsu atslēgu."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -13110,17 +12975,9 @@ msgstr "Iebūvētais lasītājs paliek aktīvs."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Pārbaudes ir mehāniskas. Tas jautā valodas modelim, kā lasītājs varētu reaģēt uz jūsu saraksta ierakstiem, un iesaka pārrakstīt. Tā nav daļa no rezultāta."
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "Konsultants pajautā, pirms atceras jūsu teiktos faktus."
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Konsultants neko neatceras no jūsu ziņojumiem."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "Konsultants neatceras neko, ko rakstāt."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13133,10 +12990,6 @@ msgstr "Konsultants šajā serverī nav iestatīts. Servera uzturētājam jāies
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "Konsultants katru faktu piedāvā sarunā. Nekas netiek saglabāts, kamēr nepiekrītat."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "Konsultants atceras jūsu teiktos faktus un paziņo jums."
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13158,10 +13011,6 @@ msgstr "Savienojums darbojas. Ieslēdziet “Izmantot šo pakalpojumu sniedzēju
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "Kopija iegūst darba sludinājumu, un šis CV citiem darbiem paliek tāds, kāds ir."
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "motivācijas vēstule šim darbam"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13179,10 +13028,6 @@ msgstr "Redaktors atver paneli “Pārbaude” un vēlreiz pārbauda importēto 
 msgid "The employer may have changed it since."
 msgstr "Darba devējs kopš tā laika var būt mainījis sludinājumu."
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "darba devēja ziņa"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "Beigu datums ir pirms sākuma datuma. Pārbaudiet abus datumus."
@@ -13195,10 +13040,6 @@ msgstr "Saziņas atgādinājums saglabāts. Lai saņemtu paziņojumu, atļaujiet
 msgid "The greeting follows the name."
 msgstr "Sveiciens seko vārdam."
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "intervijas detaļas"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "Intervija ir saglabāta. Lai saņemtu atgādinājumu, ierīces iestatījumos atļaujiet paziņojumus."
@@ -13210,10 +13051,6 @@ msgstr "Atslēga tiek šifrēta serverī un nekad vairs netiek rādīta. Saglab�
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "Atslēga tika noraidīta. Pārbaudiet atslēgu un testējiet vēlreiz."
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "pēdējās ziņas"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13300,14 +13137,6 @@ msgstr "Pakalpojumu sniedzējs ierobežoja šo pieprasījumu. Pagaidiet un mēģ
 msgid "The provider reported a server error. Try again later."
 msgstr "Pakalpojumu sniedzējs ziņoja par servera kļūdu. Mēģiniet vēlāk."
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "jautājums un tas, ko teicāt"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "jautājums un jūsu atbilde"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Iemesls tiek saglabāts Insights. Saistītie dokumenti netiek aiztikti."
@@ -13324,10 +13153,6 @@ msgstr "Pārējā faila daļa nav iekļauta šajā pārskatā."
 msgid "The resume as it is"
 msgstr "CV tāds, kāds tas ir"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "CV šim darbam"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "Recenzents redz katra posmu un datumus. Piezīmes, kontakti un alga paliek privāti."
@@ -13343,10 +13168,6 @@ msgstr "Saglabātā atslēga netiek nosūtīta uz jaunu bāzes URL. Ievadiet ats
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Saglabātā atslēga netiek nosūtīta uz jaunu bāzes URL. Ievadiet atslēgu vēlreiz."
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "saglabātais piedāvājums"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13719,10 +13540,6 @@ msgstr "Šis PDF ir skenēts attēls. Nav teksta, ko lasīt. Izmēģiniet Word v
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Šis PDF ir aizsargāts ar paroli. Saglabājiet neaizsargātu kopiju un mēģiniet vēlreiz."
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "šis sludinājums"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14983,10 +14800,6 @@ msgstr "Kad man jāsazinās atkārtoti un ko jāsaka?"
 msgid "When would you start?"
 msgstr "Kad jūs varētu sākt?"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "Kad pieskaraties Sūtīt, {list} tiek nosūtīts uz {connection}."
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "Kad esat pabeidzis, pārlūkprogramma tiek aizvērta, un jūs atgriezīsities šeit."
@@ -15041,10 +14854,6 @@ msgstr "Platums"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "Ar mieru pārcelties"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "Kad Zināšanas izslēgtas, nekas, ko rakstāt, netiek atcerēts."
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15380,10 +15189,6 @@ msgstr "Jūsu veiktās izmaiņas šajā ierīcē tiks aizstātas ar saglabāto v
 msgid "Your contact details are not on the first page."
 msgstr "Jūsu kontaktinformācija nav pirmajā lapā."
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "jūsu kontakti"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "Jūsu dati"
@@ -15425,10 +15230,6 @@ msgstr "Jūsu fakti, stāsti un preferences. Rediģējot informāciju “Zināš
 msgid "Your focus"
 msgstr "Jūsu fokuss"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "jūsu formulāra atbildes"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Jūsu virsraksti izskatās tāpat kā pamatteksts."
@@ -15454,10 +15255,6 @@ msgstr "Jūsu rindas ir ļoti cieši iesaiņotas."
 msgid "Your margins are very narrow."
 msgstr "Jūsu malas ir ļoti šauras."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "jūsu ziņojums"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "Jūsu ziņa ir saglabāta."
@@ -15474,7 +15271,6 @@ msgstr "Jūsu vārds kā jūsu adrese no OlaCV, .cv reģistra. Kods {CODE} dod 5
 msgid "Your name is missing"
 msgstr "Trūkst jūsu vārda"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "jūsu piezīmes"
@@ -15495,9 +15291,7 @@ msgstr "Jūsu pats pamatteksts, bez iepriekšējas vēstules"
 msgid "Your phone number is written in an unusual shape."
 msgstr "Jūsu tālruņa numurs ir rakstīts neparastā formā."
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "jūsu preferences"
 
@@ -15516,10 +15310,6 @@ msgstr "Jūsu publiskās saites sākas ar {server}/"
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "Jūsu publiskās saites mainīsies"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "Pēc pārtraukšanas jūsu ieraksts tiek pārsūtīts uz {transcriberName}, lai tas tiktu pārrakstīts. Jūsu pakalpojumu sniedzējs var iekasēt maksu. Serveris saglabā stenogrammas, nevis ierakstus."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15604,10 +15394,6 @@ msgstr "Jūsu īsā saite norāda uz “{0}”, kas nav publicēts."
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "Jūsu īsā saite ziņo, ka šis CV nav kopīgots, līdz to publicējat vēlreiz."
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "jūsu stāsti"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

@@ -269,7 +269,7 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 
 			{!stored ? (
 				<View style={{ gap: space.s2 }}>
-					{shown.length > 0 ? <AiNotice task="answer" application={application} /> : null}
+					{shown.length > 0 ? <AiNotice /> : null}
 					<Button
 						variant="secondary"
 						fullWidth

@@ -222,10 +222,8 @@ msgstr "{0, plural, one {Suntingan # tidak dapat diletakkan: teksnya berubah. Mi
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# entri} other {# entri}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, other {# cerita}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# perkara untuk disemak.} other {# perkara untuk disemak.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {Turut menghantar {1}.} other {Turut menghantar # fail: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, other {# jawapan}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}. Menghantar permohonan ini dan Pengetahuan anda; pembekal anda mungkin mengenakan bayaran."
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "Pembekal AI tidak dapat dimuatkan. Muat semula untuk mencuba lagi."
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "Pembekal AI tidak dapat dimuatkan. Cuba semula atau isi butiran secara manual."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "AI membaca teks yang ditampal hanya apabila anda bertanya. Pautan boleh menggunakan data kerja halaman itu sendiri tanpa AI."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "Sejarah permintaan AI tidak tersedia untuk hasil ini."
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "Tetapan AI"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "Cadangan AI, bukan kelayakan yang disahkan atau ramalan pengambilan pekerja. Sumber di bawah ialah kenyataan anda."
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "Sentiasa muncul di Hari ini. E-mel memerlukan alamat yang disahkan dan p
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "Amharic"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "Bacaan AI untuk membantu anda menyunting, bukan ramalan bagaimana majikan atau sistem saringan akan bertindak balas."
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "E-mel permohonan"
 msgid "Application phone"
 msgstr "Telefon permohonan"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "ringkasan permohonan"
@@ -5055,10 +5033,6 @@ msgstr "Hasil penemuan terdahulu. Pertanyaan carian dan masa semakan siaran tida
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Mesej dan lampiran terdahulu dalam perbualan ini akan dihantar ke destinasi ini apabila anda menghantar semula."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "mesej terdahulu dalam sembang ini"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "Kosongkan Sampah"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "Kosongkan Sampah?"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "Pengetahuan yang diaktifkan"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "Mesej dan lampirannya dipadamkan. Pengeditan yang anda terima kekal dala
 msgid "Its own design ({summary})."
 msgstr "Reka bentuknya sendiri ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "keperluannya"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "Diuruskan oleh pelayan"
 msgid "Managed by your server"
 msgstr "Diuruskan oleh pelayan anda"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "Jawatan dan keutamaan manual berfungsi tanpa AI. Cadangan tidak pernah mencari atau menjadualkan apa-apa."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "Banyak bulet bermula dengan frasa yang sama."
@@ -7685,11 +7647,6 @@ msgstr "Mesej"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Mesej dari sebelum Pengetahuan berubah tidak lagi dihantar kepada AI, jadi ia tidak akan mengingatinya. Mulakan perbualan baharu untuk mengekalkan konteks bersama-sama."
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Mesej dari sebelum Pengetahuan berubah tidak dihantar."
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "Pustaka anda masih kosong"
 msgid "Nothing is applied for or created until you choose."
 msgstr "Tiada apa-apa dimohon atau dicipta sehingga anda memilih."
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "Tiada apa dihantar sehingga anda memilih sambungan untuk perbualan ini."
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "Tiada apa-apa menandakan peranan sebagai sedang berjalan."
@@ -9589,10 +9541,6 @@ msgstr "Berlatih untuk temu duga {company} anda."
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "Berlatih dalam ruang kerja {company}"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "Keutamaan latihan, bukan kesimpulan tentang sebab majikan membuat sebarang keputusan."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11542,11 +11490,6 @@ msgstr "Cari atau jalankan…"
 msgid "Search saved answers"
 msgstr "Cari jawapan tersimpan"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Istilah carian dihantar ke perkhidmatan carian web anda."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Cari di web"
@@ -11686,87 +11629,9 @@ msgstr "Butiran pengirim disalin ke dalam surat"
 msgid "Sending…"
 msgstr "Menghantar…"
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "Menghantar {0} kepada {label}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Menghantar hanya resume pilihan anda dan sehingga 20 fakta berkongsi yang aktif kepada sambungan ini. Tiada profil permohonan, jawapan tersimpan atau fakta permohonan peribadi. Penyedia anda mungkin mengenakan caj."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Menghantar siaran {0} kepada {1} · {2} untuk mendrafkan kandungan. Penyedia anda mungkin mengenakan caj."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Menghantar teks siaran kepada {0} untuk membacanya."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "Menghantar permohonan ini dan Pengetahuan yang diaktifkan kepada sambungan ini. Penyedia anda mungkin mengenakan caj. Kerja berjadual tidak pernah bertukar ke sambungan lain secara automatik."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Menghantar resume surat ini dan siaran {0} kepada {1} · {2} untuk mendrafkan kandungan. Penyedia anda mungkin mengenakan caj."
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "Menghantar resume surat ini kepada {0} · {1} untuk mendrafkan kandungan. Penyedia anda mungkin mengenakan caj."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Menghantar baris ini, teks medan sekeliling dan arahan anda kepada {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Menghantar perenggan ini, baki surat dan arahan anda kepada {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Menghantar perenggan ini, baki surat, iklan kerja yang dipautkan dan arahan anda kepada {0} · {1}."
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "Menghantar PDF ini kepada pembekal AI anda yang dikonfigurasikan dan bukannya membaca lapisan teksnya."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Menghantar mesej anda dan permohonan ini (siaran, nota, dokumen, jawapan borang anda, tawaran tersimpan dan mesej terkini) kepada {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Menghantar mesej anda, mesej terdahulu dan permohonan ini (siaran, nota, dokumen, jawapan borang anda, tawaran tersimpan dan mesej terkini) kepada {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Menghantar mesej anda, mesej terdahulu di sini, permohonan ini (iklan kerja, nota, dokumen, jawapan borang anda, tawaran tersimpan dan mesej terkini) serta Pengetahuan yang diaktifkan kepada {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Menghantar mesej anda, permohonan ini (iklan kerja, nota, dokumen, jawapan borang anda, tawaran tersimpan dan mesej terkini) serta Pengetahuan yang diaktifkan kepada {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Menghantar teks resume anda hanya kepada {0} · {1}, dengan kunci anda."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -13110,17 +12975,9 @@ msgstr "Pembaca terbina dalam kekal aktif."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Pemeriksaan adalah mekanikal. Ini menanyakan model bahasa bagaimana pembaca mungkin bertindak balas terhadap entri senarai anda dan mencadangkan penulisan semula. Ia bukan sebahagian daripada markah."
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "Jurulatih bertanya dahulu sebelum mengingati fakta yang anda nyatakan."
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Jurulatih tidak mengingati apa-apa daripada mesej anda."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "Jurulatih tidak mengingati apa yang anda tulis."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13133,10 +12990,6 @@ msgstr "Jurulatih tidak disediakan pada pelayan ini. Pengendali pelayan perlu me
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "Jurulatih mencadangkan setiap fakta dalam sembang. Tiada apa-apa disimpan sehingga anda bersetuju."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "Jurulatih mengingati fakta yang anda nyatakan, dan memberitahu anda."
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13158,10 +13011,6 @@ msgstr "Sambungan berfungsi. Hidupkan Guna penyedia ini untuk menggunakannya."
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "Salinan itu mendapat siaran kerja itu dan mengekalkan resume ini seperti asal bagi kerja lain."
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "surat iringan untuk kerja ini"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13179,10 +13028,6 @@ msgstr "Editor dibuka pada Semakan, yang menyemak semula resume yang diimport."
 msgid "The employer may have changed it since."
 msgstr "Majikan mungkin telah mengubahnya sejak itu."
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "mesej majikan"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "Tarikh tamat adalah sebelum tarikh mula. Semak kedua-dua tarikh."
@@ -13195,10 +13040,6 @@ msgstr "Susulan disimpan. Untuk mendapatkan peringatan, benarkan pemberitahuan d
 msgid "The greeting follows the name."
 msgstr "Ucapan itu mengikut nama."
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "butiran temu duga"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "Temu bual telah disimpan. Untuk mendapatkan peringatan, benarkan pemberitahuan dalam tetapan peranti anda."
@@ -13210,10 +13051,6 @@ msgstr "Kunci disulitkan pada pelayan dan tidak pernah ditunjukkan lagi. Menyimp
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "Kunci ditolak. Semak kunci dan cuba semula."
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "mesej terakhir"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13300,14 +13137,6 @@ msgstr "Penyedia mengehadkan permintaan ini. Tunggu dan cuba lagi; semak kuota a
 msgid "The provider reported a server error. Try again later."
 msgstr "Penyedia melaporkan ralat pelayan. Cuba lagi kemudian."
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "soalan dan apa yang anda katakan"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "soalan dan jawapan anda"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Sebabnya disimpan untuk Insights. Dokumen yang dipautkan tidak disentuh."
@@ -13324,10 +13153,6 @@ msgstr "Selebihnya fail tiada dalam laporan ini."
 msgid "The resume as it is"
 msgstr "Resume yang ada"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "resume untuk kerja ini"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "Pengulas melihat peringkat dan tarikh setiap satu. Nota, hubungan dan gaji kekal peribadi."
@@ -13343,10 +13168,6 @@ msgstr "Kunci yang disimpan tidak dihantar ke URL asas baharu. Masukkan kunci se
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Kunci yang disimpan tidak dihantar ke URL asas baharu. Masukkan kunci sekali lagi."
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "tawaran tersimpan"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13719,10 +13540,6 @@ msgstr "PDF ini ialah imej yang diimbas. Tiada teks untuk dibaca. Cuba versi Wor
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "PDF ini dilindungi kata laluan. Simpan salinan tidak dilindungi dan cuba lagi."
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "siaran ini"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14983,10 +14800,6 @@ msgstr "Bila patut saya buat susulan, dan apa yang patut saya katakan?"
 msgid "When would you start?"
 msgstr "Bila anda akan mula?"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "Apabila anda mengetik hantar, {list} dihantar ke {connection}."
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "Apabila anda selesai, penyemak imbas ditutup dan anda kembali ke sini."
@@ -15041,10 +14854,6 @@ msgstr "Lebar"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "Bersedia untuk berpindah"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "Dengan Pengetahuan dimatikan, apa yang anda tulis tidak diingati."
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15380,10 +15189,6 @@ msgstr "Perubahan anda pada peranti ini akan digantikan dengan versi yang disimp
 msgid "Your contact details are not on the first page."
 msgstr "Butiran hubungan anda tiada pada halaman pertama."
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "hubungan anda"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "Data anda"
@@ -15425,10 +15230,6 @@ msgstr "Fakta, cerita dan pilihan anda. Mengedit Pengetahuan tidak menghantar ap
 msgid "Your focus"
 msgstr "Fokus anda"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "jawapan borang anda"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Tajuk anda kelihatan sama seperti teks badan anda."
@@ -15454,10 +15255,6 @@ msgstr "Talian anda padat dengan sangat ketat."
 msgid "Your margins are very narrow."
 msgstr "Jidar anda sangat sempit."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "mesej anda"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "Mesej anda disimpan."
@@ -15474,7 +15271,6 @@ msgstr "Nama anda sebagai alamat anda, daripada OlaCV, pengendali domain .cv. Ko
 msgid "Your name is missing"
 msgstr "Nama awak tiada"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "nota anda"
@@ -15495,9 +15291,7 @@ msgstr "Kandungan anda sendiri, tanpa surat terdahulu"
 msgid "Your phone number is written in an unusual shape."
 msgstr "Nombor telefon anda ditulis dalam bentuk yang luar biasa."
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "keutamaan anda"
 
@@ -15516,10 +15310,6 @@ msgstr "Pautan awam anda bermula dengan {server}/"
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "Pautan awam anda akan berubah"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "Selepas anda berhenti, rakaman dihantar ke {transcriberName} untuk ditranskripsi. Pembekal anda mungkin mengenakan bayaran. Pelayan menyimpan transkrip, bukan rakaman."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15604,10 +15394,6 @@ msgstr "Pautan pendek anda merujuk kepada “{0}”, yang tidak diterbitkan."
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "Pautan pendek anda mengatakan resume ini tidak dikongsi sehingga anda menerbitkannya semula."
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "cerita anda"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

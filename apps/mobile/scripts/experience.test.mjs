@@ -2673,10 +2673,6 @@ const preparationView = () =>
 		interviewId: nativeRound.id,
 		now: todayNow,
 	});
-const disclosure = nodes(preparationView()).find((node) => node.type === "AiNotice");
-assert.equal(disclosure.props.application, preparationJob);
-assert.equal(disclosure.props.task, "briefing");
-assert.equal(disclosure.props.interview, true);
 control(preparationView(), "Generate briefing now").onPress();
 control(preparationView(), "Generate briefing now").onPress();
 assert.deepEqual(calls, [{ task: { task: "briefing", interviewId: nativeRound.id } }]);
@@ -3729,65 +3725,6 @@ assert.equal(calls[0].input.priorities, "Recovered preference");
 assert.deepEqual(calls[0].options.context, { scope: JSON.stringify(["test", "owner"]) });
 console.log("PASS native recovered Preferences preserves Facts consent and binds its write to the rendered account");
 
-reset();
-let privacyStranded = false;
-const { CoachSheet: PrivacyCoachSheet } = load("features/workspace/coach-sheet.tsx", {
-	"react-native": { View: "View", useWindowDimensions: () => ({ height: 800 }) },
-	"@tanstack/react-query": { useQuery: () => ({ data: [] }) },
-	"./coach-starters": { coachStarters: () => [] },
-	"./parts": { tabLabel: () => "Fit" },
-	"@/api/client": {
-		client: {},
-		orpc: { career: { facts: { queryOptions: () => ({}) }, stories: { queryOptions: () => ({}) } } },
-	},
-	"@/auth/session": { useSession() {}, getAccountScope: () => "privacy-owner" },
-	"@/features/ai/providers": { useHasAIProvider: () => ({ hasAIProvider: true, usableProviders: [] }) },
-	"@/features/assistant/chat": { useThreads: () => ({ data: [], refetch() {} }) },
-	"@/features/assistant/chat-view": { ChatView: "ChatView", ContextChip: "ContextChip" },
-	"@/features/assistant/chat-welcome": { ChatWelcome: "ChatWelcome" },
-	"@/features/assistant/provider": {
-		ConnectionNotice: "ConnectionNotice",
-		ModelButton: "ModelButton",
-		ModelSheet: "ModelSheet",
-		ProviderGate: "ProviderGate",
-		WebResearchChip: "WebResearchChip",
-		useConversationProvider: () => ({ provider: { id: "provider" }, stranded: privacyStranded, label: "Fictional AI" }),
-		useMemoryNote: () => ({ note: "Memory policy unchanged" }),
-		useWebSearch: () => ({ canSearch: true }),
-	},
-	"@/features/assistant/sent": { usableStories: () => [] },
-	"@/features/assistant/threads": {
-		useDeleteThread: () => ({}),
-		useThreadTime: () => () => "Today",
-		useThreadTitle: () => () => "Conversation",
-	},
-	"@/features/career/stories": { StoryEditor: "StoryEditor" },
-	"@/ui": { ...ui, Sheet: "Sheet", IconButton: "IconButton", ListRow: "ListRow" },
-});
-const privacySheet = render(PrivacyCoachSheet, { open: true, application: nativeJob, tab: "fit" });
-const privacyBody = nodes(privacySheet).find((node) => typeof node.type === "function");
-reset();
-const privacyChat = () =>
-	nodes(render(privacyBody.type, privacyBody.props)).find((node) => node.type === "ChatView").props;
-for (const earlier of [0, 2]) {
-	const line = privacyChat().privacy({ earlier, withheld: 0 });
-	assert.match(line, /Knowledge that's switched on, to Fictional AI\./);
-	assert.equal(line.includes("earlier messages here"), earlier > 0);
-}
-const privacyControls = nodes(privacyChat().chips);
-privacyControls.find((node) => node.props.label === "Knowledge").props.onPress();
-assert.doesNotMatch(privacyChat().privacy({ earlier: 2, withheld: 1 }), /Knowledge that's switched on/);
-assert.match(privacyChat().privacy({ earlier: 2, withheld: 1 }), /Messages from before Knowledge changed aren't sent/);
-nodes(privacyChat().chips)
-	.find((node) => node.type === "WebResearchChip")
-	.props.onPress();
-assert.match(privacyChat().privacy({ earlier: 0, withheld: 0 }), /Search terms go to your web search service/);
-privacyStranded = true;
-assert.match(privacyChat().privacy({ earlier: 2, withheld: 0 }), /^Nothing is sent until you choose a connection/);
-console.log(
-	"PASS native actual CoachSheet privacy names its destination and follows Knowledge, earlier-message, web-search and no-connection states",
-);
-
 // Follow-up controls must work for every owed row, including accounts larger than the old dismissal cap.
 reset();
 applicationSearch = "";
@@ -4751,7 +4688,6 @@ const recoveredProps = {
 	draft: "Review recovered file",
 	disabled: false,
 	streaming: false,
-	privacy: "Explicit Send only",
 	ensureThread: async () => "paste-thread",
 	onSend: (text, files) => {
 		recoveredSend = { text, files };
@@ -4785,7 +4721,6 @@ for (const scenario of ["success", "failure", "changed"]) {
 		draft: original,
 		disabled: false,
 		streaming: false,
-		privacy: "Explicit Send only",
 		ensureThread: async () => "paste-thread",
 		onSend: () => assert.fail("Conversion must not send"),
 		onStop() {},

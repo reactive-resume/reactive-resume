@@ -222,10 +222,8 @@ msgstr "{0, plural, one {无法放置 # 编辑：其文本已更改。再次要�
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {#个条目} other {#个条目}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, other {# 个故事}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {#项待检查。} other {#项待检查。}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {同时发送 {1}。} other {同时发送 # 个文件：{2}。}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, other {# 个回答}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at}·{providerLabel}。发送此申请和您的知识库；您的提供商可能会收费。"
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "无法加载 AI 提供程序。重新加载再试一次。"
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "无法加载 AI 提供商。请重试，或手动填写详情。"
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "仅在您提出请求时，AI才会读取粘贴的文本。链接可直接使用网页自身的职位数据，无需AI。"
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "此结果没有可用的 AI 请求历史。"
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "AI 设置"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "这些是 AI 建议，并非经过验证的资质或招聘预测。下方来源均为您自己的陈述。"
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "始终显示在“今天”中。电子邮件需要已验证的地址及
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "阿姆哈拉语"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "这是帮助您编辑的 AI 解读，并非对雇主或筛选系统反应的预测。"
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "申请用邮箱"
 msgid "Application phone"
 msgstr "申请用电话"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "申请摘要"
@@ -5055,10 +5033,6 @@ msgstr "较早的发现结果。搜索查询和职位公告检查时间未知。
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "再次发送时，此对话中之前的消息和附件将发送到此目标。"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "此聊天中的早前消息"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "清空垃圾箱"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "清空垃圾箱？"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "已启用的知识"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "其消息和附件将被删除。您接受的编辑保留在文档中。
 msgid "Its own design ({summary})."
 msgstr "它自己的设计（{summary}）。"
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "其要求"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "由服务器管理"
 msgid "Managed by your server"
 msgstr "由您的服务器管理"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "手动输入职位和偏好无需 AI。建议功能从不搜索或安排任何内容。"
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "很多要点都以相同的短语开头。"
@@ -7685,11 +7647,6 @@ msgstr "消息"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "知识库更改之前的消息不再发送给 AI，因此它不会记住这些内容。请开始新的对话以保持上下文完整。"
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "知识库更改之前的消息不会发送。"
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "资料库中暂无内容"
 msgid "Nothing is applied for or created until you choose."
 msgstr "在您做出选择之前，不会申请任何职位，也不会创建任何内容。"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "在您为此对话选择连接之前，不会发送任何内容。"
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "没有任何标记表明某段经历仍在进行中。"
@@ -9589,10 +9541,6 @@ msgstr "为您在 {company} 的面试做练习。"
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "在 {company} 的工作区练习"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "这是练习重点，而非对雇主决策原因的结论。"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11542,11 +11490,6 @@ msgstr "搜索或运行..."
 msgid "Search saved answers"
 msgstr "搜索已保存的回答"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "搜索词会发送到您的网络搜索服务。"
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "搜索网页"
@@ -11686,87 +11629,9 @@ msgstr "发件人详细信息复制到信件中"
 msgid "Sending…"
 msgstr "正在发送..."
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "将{0}发送至 {label}。"
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "只会将您所选的简历和最多 20 条有效的共享事实发送到此连接。不包括申请资料、已保存的回答或私有的申请事实。您的服务提供商可能会收费。"
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "将 {0} 的职位公告发送至 {1} · {2} 来起草正文。您的服务提供商可能会收费。"
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "将职位公告文本发送至 {0} 进行读取。"
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "将此申请和已启用的知识库内容发送到此连接。您的服务提供商可能会收费。定时任务绝不会自动切换到其他连接。"
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "将此求职信的简历和 {0} 的职位公告发送至 {1} · {2} 来起草正文。您的服务提供商可能会收费。"
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "将此求职信的简历发送至 {0} · {1} 来起草正文。您的服务提供商可能会收费。"
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "将此行、周围的字段文本和您的指示发送至 {0} · {1}。"
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "将此段落、信件其余内容和您的指示发送至 {0} · {1}。"
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "将此段落、信件其余内容、关联的职位招聘信息和您的指示发送至 {0} · {1}。"
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "将此 PDF 发送到您配置的 AI 提供商，而不是读取其文本层。"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "将您的消息和此申请（职位公告、备注、文档、您的表单回答、已保存的录用通知和最近的消息）发送至 {label}。"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "将您的消息、之前的消息和此申请（职位公告、备注、文档、您的表单回答、已保存的录用通知和最近的消息）发送至 {label}。"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "将你的消息、此处之前的消息、此次申请的信息（职位发布、笔记、文档、你的表单回答、已保存的录用意向及最近的消息）和已启用的知识发送至 {label}。"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "将你的消息、此次申请的信息（职位发布、笔记、文档、你的表单回答、已保存的录用意向及最近的消息）和已启用的知识发送至 {label}。"
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "使用您的密钥将您的简历文本仅发送至 {0} · {1}。"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -13110,17 +12975,9 @@ msgstr "内置阅读器保持活动状态。"
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "检查是机械的。这会询问语言模型读者对您的列表条目有何反应并建议重写。它不是分数的一部分。"
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "教练在记住您陈述的事实前会先征求您的同意。"
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "教练不会从您的消息中记住任何内容。"
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "教练不会记住您写的任何内容。"
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13133,10 +12990,6 @@ msgstr "此服务器尚未设置教练。服务器管理员需要设置 ENCRYPTI
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "教练会在聊天中逐条提出事实。在您同意之前不会保存任何内容。"
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "教练会记住您陈述的事实，并告知您。"
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13158,10 +13011,6 @@ msgstr "连接正常。开启“使用该提供商”即可使用。"
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "副本会获得该职位的公告，而这份简历保持原样用于其他职位。"
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "此职位的求职信"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13179,10 +13028,6 @@ msgstr "编辑器打开“检查”，重新检查导入的简历。"
 msgid "The employer may have changed it since."
 msgstr "雇主可能已在此后修改了招聘信息。"
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "雇主的消息"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "结束日期早于开始日期。请检查这两个日期。"
@@ -13195,10 +13040,6 @@ msgstr "跟进已保存。请在设备设置中允许通知，以便收到提醒
 msgid "The greeting follows the name."
 msgstr "问候语跟在名字之后。"
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "面试详情"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "面试已保存。要获得提醒，请在设备设置中允许通知。"
@@ -13210,10 +13051,6 @@ msgstr "密钥在服务器上加密并且不会再次显示。保存测试连接
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "密钥被拒绝。请检查密钥后再次测试。"
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "最近的消息"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13300,14 +13137,6 @@ msgstr "服务提供商限制了此请求。请稍后重试，并检查您的账
 msgid "The provider reported a server error. Try again later."
 msgstr "服务提供商报告了服务器错误。请稍后重试。"
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "问题及您的发言"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "问题及您的回答"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "原因保留为 Insights。链接的文档不会受到影响。"
@@ -13324,10 +13153,6 @@ msgstr "文件的其余部分不在本报告中。"
 msgid "The resume as it is"
 msgstr "简历原样"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "此职位的简历"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "审阅者可以看到每个申请的阶段和日期。备注、联系人和薪酬保持私密。"
@@ -13343,10 +13168,6 @@ msgstr "保存的密钥不会发送到新的基本 URL。如果该服务器需�
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "保存的密钥不会发送到新的基本 URL。再次输入密钥。"
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "已保存的录用通知"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13719,10 +13540,6 @@ msgstr "此 PDF 是扫描图像。没有文字可读。尝试 Word 版本，或�
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "此 PDF 受密码保护。请保存一份不受保护的副本后重试。"
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "此职位公告"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14983,10 +14800,6 @@ msgstr "我应该什么时候跟进，又该说些什么？"
 msgid "When would you start?"
 msgstr "您什么时候可以入职？"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "点按发送后，{list}将发送至{connection}。"
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "完成后，浏览器将关闭，您将返回此处。"
@@ -15041,10 +14854,6 @@ msgstr "宽度"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "愿意搬迁"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "关闭知识库后，您写的任何内容都不会被记住。"
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15380,10 +15189,6 @@ msgstr "您在此设备上所做的更改将被保存的版本替换。"
 msgid "Your contact details are not on the first page."
 msgstr "你的联系方式不在第一页。"
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "您的联系人"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "您的数据"
@@ -15425,10 +15230,6 @@ msgstr "您的事实、故事和偏好。编辑 知识库 不会向 AI 连接发
 msgid "Your focus"
 msgstr "您的重点"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "您的表单回答"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "你的标题看起来和正文一模一样。"
@@ -15454,10 +15255,6 @@ msgstr "你的线路排得很紧。"
 msgid "Your margins are very narrow."
 msgstr "你的页边距非常窄。"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "您的消息"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "您的消息已保留。"
@@ -15474,7 +15271,6 @@ msgstr "以您的名字作为网址，由 .cv 域名注册局 OlaCV 提供。优
 msgid "Your name is missing"
 msgstr "你的名字不见了"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "您的笔记"
@@ -15495,9 +15291,7 @@ msgstr "使用您自己的正文，不基于以前的求职信"
 msgid "Your phone number is written in an unusual shape."
 msgstr "你的电话号码写法不太常见。"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "您的偏好"
 
@@ -15516,10 +15310,6 @@ msgstr "您的公开链接以 {server}/ 开头"
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "您的公共链接将会改变"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "停止后，您的录音将转到 {transcriberName} 进行转录。您的提供商可能会收费。服务器保留文字记录，而不是录音。"
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15604,10 +15394,6 @@ msgstr "您的短链接指向“{0}”，但它尚未发布。"
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "在您重新发布之前，您的短链接会显示这份简历未分享。"
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "您的故事"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

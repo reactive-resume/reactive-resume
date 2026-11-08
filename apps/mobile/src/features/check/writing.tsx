@@ -191,10 +191,6 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 						}))}
 						onChange={setProviderId}
 					/>
-					<Text
-						variant="callout"
-						color="ink3"
-					>{t`Sends your resume's text only to ${provider?.label} · ${provider?.model}, with your key.`}</Text>
 					{error && (
 						<Banner
 							tone="danger"

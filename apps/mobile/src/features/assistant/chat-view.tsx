@@ -13,8 +13,6 @@ import type { CareerStoryData } from "@reactive-resume/schema/career";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import { LegendList } from "@legendapp/list/react-native";
-import { i18n } from "@lingui/core";
-import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -62,8 +60,8 @@ export type ChatViewProps = {
 	document: AssistantDocument | null;
 	/** The provider, named in the error line: "OpenAI". */
 	connection: string;
-	/** Says what a send shares, under the composer; given how many earlier messages still go and how many don't. */
-	privacy: string | ((history: ChatHistory) => string);
+	/** Under the composer: why Send waits (Knowledge still loading or failed). */
+	status?: string | undefined;
 	/** Above the composer: what needs a decision before the next message (a connection that went away). */
 	notice?: ReactNode;
 	/** The coach: each of the user's messages can be remembered in Knowledge, for this application or all. */
@@ -97,8 +95,6 @@ export type ChatViewProps = {
 };
 
 type Prompt = { threadId: string; text: string; attachments: ChatAttachment[] };
-
-export type ChatHistory = { earlier: number; withheld: number };
 
 /** Why a reply failed, in the reader's language: a lost connection, the provider, or this server's own reason. */
 function replyFailure(error: unknown, fallback: string, t: ReturnType<typeof useLingui>["t"]) {
@@ -215,7 +211,6 @@ function ScopedChatView(props: ScopedChatViewProps) {
 				</ScrollView>
 				<Composer
 					{...props}
-					privacy={typeof props.privacy === "string" ? props.privacy : props.privacy({ earlier: 0, withheld: 0 })}
 					streaming={starting}
 					disabled={props.disabled ?? false}
 					ensureThread={ensureThread}
@@ -884,11 +879,6 @@ function Conversation(props: ConversationProps) {
 
 			<Composer
 				{...props}
-				privacy={
-					typeof props.privacy === "string"
-						? props.privacy
-						: props.privacy({ earlier: messages.length - withheld, withheld })
-				}
 				streaming={busy}
 				disabled={readOnly}
 				ensureThread={() => Promise.resolve(threadId)}
@@ -908,8 +898,7 @@ function errorText(error: unknown, fallback: string) {
 
 type Upload = ChatAttachment & { size: number; busy?: boolean };
 
-type ComposerProps = Pick<ScopedChatViewProps, "chips" | "notice" | "placeholder" | "scope" | "draft"> & {
-	privacy: string;
+type ComposerProps = Pick<ScopedChatViewProps, "chips" | "notice" | "placeholder" | "scope" | "draft" | "status"> & {
 	initialAttachments?: Upload[];
 	streaming: boolean;
 	disabled: boolean;
@@ -928,15 +917,6 @@ function Composer(props: ComposerProps) {
 	// Chips removed while their upload was still running: the finished upload is deleted, not kept.
 	const removedUploads = useRef(new Set<string>());
 	const uploading = attachments.some((attachment) => attachment.busy);
-	// Attached files go with the next message: named, so the user sees exactly what leaves (web conversation.tsx).
-	const names = attachments.map((attachment) => attachment.filename);
-	const files =
-		names.length === 0
-			? ""
-			: plural(names.length, {
-					one: `Also sends ${listFormat(names)}.`,
-					other: `Also sends # files: ${listFormat(names)}.`,
-				});
 	const hasText = text.trim().length > 0;
 
 	const submit = async () => {
@@ -1181,10 +1161,11 @@ function Composer(props: ComposerProps) {
 				</Pressable>
 			</View>
 
-			<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s1 }}>
-				{props.privacy}
-				{files ? ` ${files}` : ""}
-			</Text>
+			{props.status ? (
+				<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s1 }}>
+					{props.status}
+				</Text>
+			) : null}
 		</View>
 	);
 }
@@ -1258,12 +1239,3 @@ export function ContextChip({ icon, label, onRemove, removeLabel, pressed, onPre
 function forJobCopy(document: AssistantDocument, message: UIMessage, part: ToolPart) {
 	return document.kind === "resume" && !tailoringAllows(message, part.output, document.madeFor);
 }
-
-/** "a, b and c" in the reader's language. */
-const listFormat = (items: readonly string[]) => {
-	try {
-		return new Intl.ListFormat(i18n.locale, { type: "conjunction" }).format(items);
-	} catch {
-		return items.join(", ");
-	}
-};

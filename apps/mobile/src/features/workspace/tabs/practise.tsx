@@ -16,7 +16,7 @@ import { Linking, Pressable, View } from "react-native";
 import { canUseCareerStory, threePracticeQuestions } from "@reactive-resume/schema/career-practice";
 import { latest, useDraft, useGenerate, useSavedItems, useStories, useFacts, workspaceError } from "../hooks";
 import { acceptedAudioType, clock, MAX_SECONDS, writeNumbersAsDigits } from "../logic";
-import { Actions, AiNotice, Block, PrivacyLine, Progress, GenerateNotice, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, Progress, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { afterTranscribed, createRequests, playLatest } from "../state";
 import { deleteQuietly, speak, transcribe, usePlayer, useRecorder, useVoiceSettings } from "../voice";
@@ -438,7 +438,6 @@ function Session({
 	const recordingNow = step.name === "recording";
 	const elapsed = clock(recorder.seconds, i18n.locale);
 	const model = transcriber?.model ?? "";
-	const transcriberName = transcriber?.label ?? "";
 	const spokenFor = spoken?.seconds != null ? clock(spoken.seconds, i18n.locale) : t`audio file`;
 	const answerField = (
 		<TextArea
@@ -609,11 +608,6 @@ function Session({
 					</View>
 				)}
 
-				{mode === "spoken" && transcriber ? (
-					<PrivacyLine>
-						{t`Your recording goes to ${transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings.`}
-					</PrivacyLine>
-				) : null}
 				{mode === "spoken" && !voice.providerState.isUnavailable ? (
 					<Button
 						variant="link"
@@ -635,7 +629,7 @@ function Session({
 					<Text variant="caption" color="ink2">
 						{application ? t`Compared with your stories and the posting.` : t`Compared with your stories.`}
 					</Text>
-					<AiNotice task="practice" application={application} interview={interviewId !== null} />
+					<AiNotice />
 				</View>
 			</Block>
 

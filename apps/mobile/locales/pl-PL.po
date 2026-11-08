@@ -222,10 +222,8 @@ msgstr "{0, plural, one {Nie można umieścić edycji #: zmieniono jej tekst. Po
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# wpis} few {# wpisy} many {# wpisów} other {# wpisu}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, one {# historia} few {# historie} many {# historii} other {#
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# rzecz do sprawdzenia.} few {# rzeczy do sprawdzenia.} many {# rzeczy do sprawdzenia.} other {# rzeczy do sprawdzenia.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {Wysyła też {1}.} few {Wysyła też # pliki: {2}.} many {Wysyła też # plików: {2}.} other {Wysyła też # pliku: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# odpowiedź} few {# odpowiedzi} many {# odpowiedzi} other {# odpowiedzi}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}. Wysyła to podanie o pracę i Twoją Wiedzę; dostawca może naliczyć opłatę."
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "Nie udało się wczytać dostawców AI. Załaduj ponownie, aby spróbowa
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "Nie udało się wczytać dostawców AI. Spróbuj ponownie lub uzupełnij dane ręcznie."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "AI czyta wklejony tekst tylko na Twoje żądanie. Linki mogą korzystać z danych o pracy zawartych na stronie bez AI."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "Historia żądań AI jest niedostępna dla tego wyniku."
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "Ustawienia AI"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "Sugestie AI, a nie zweryfikowane kwalifikacje ani prognozy zatrudnienia. Poniższe źródła to Twoje własne stwierdzenia."
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "Zawsze pojawia się w „Dzisiaj”. Poczta e-mail wymaga zweryfikowaneg
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "Amharski"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "Odczyt AI, który pomaga Ci edytować, a nie prognoza tego, jak zareaguje pracodawca lub system selekcji."
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "E-mail do aplikacji"
 msgid "Application phone"
 msgstr "Telefon do aplikacji"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "podsumowania aplikacji"
@@ -5055,10 +5033,6 @@ msgstr "Wcześniejszy wynik wyszukiwania. Zapytanie i czas sprawdzenia ogłoszen
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Wcześniejsze wiadomości i załączniki z tej rozmowy zostaną wysłane do tego miejsca docelowego, gdy ponownie coś wyślesz."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "wcześniejsze wiadomości z tego czatu"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "Opróżnij kosz"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "Opróżnić kosz?"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "włączona Wiedza"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "Jego wiadomości i załączniki zostaną usunięte. Zaakceptowane zmiany
 msgid "Its own design ({summary})."
 msgstr "Własny projekt ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "jego wymagania"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "Zarządzane przez serwer"
 msgid "Managed by your server"
 msgstr "Zarządzane przez Twój serwer"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "Ręczne stanowiska i preferencje działają bez AI. Sugestie nigdy niczego nie wyszukują ani nie planują."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "Wiele punktów zaczyna się od tego samego zwrotu."
@@ -7685,11 +7647,6 @@ msgstr "Wiadomości"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Wiadomości sprzed zmiany Wiedzy nie są już wysyłane do AI, więc ich nie zapamięta. Rozpocznij nową rozmowę, aby zachować spójny kontekst."
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Wiadomości sprzed zmiany Wiedzy nie są wysyłane."
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "Biblioteka jest jeszcze pusta"
 msgid "Nothing is applied for or created until you choose."
 msgstr "Nic nie zostanie złożone ani utworzone, dopóki nie wybierzesz."
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "Nic nie zostanie wysłane, dopóki nie wybierzesz połączenia dla tej rozmowy."
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "Nic nie oznacza roli jako trwającej."
@@ -9589,10 +9541,6 @@ msgstr "Ćwicz przed rozmowami w {company}."
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "Ćwicz w obszarze roboczym firmy {company}"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "Priorytety ćwiczeń, a nie wnioski o tym, dlaczego pracodawca cokolwiek zdecydował."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11542,11 +11490,6 @@ msgstr "Wyszukaj lub uruchom…"
 msgid "Search saved answers"
 msgstr "Szukaj w zapisanych odpowiedziach"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Wyszukiwane hasła trafiają do Twojej usługi wyszukiwania."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Szukaj w sieci"
@@ -11686,87 +11629,9 @@ msgstr "Dane nadawcy skopiowane do listu"
 msgid "Sending…"
 msgstr "Wysyłam…"
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "Wysyła {0} do {label}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Wysyła do tego połączenia tylko wybrane CV i do 20 aktywnych udostępnionych faktów. Bez profilu aplikacyjnego, zapisanych odpowiedzi ani prywatnych faktów z aplikacji. Twój dostawca może pobierać opłaty."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Wysyła ogłoszenie {0} do {1} · {2}, aby napisać treść. Twój dostawca może pobierać opłaty."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Wysyła tekst ogłoszenia do {0}, aby go odczytać."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "Wysyła tę aplikację i włączoną Wiedzę do tego połączenia. Twój dostawca może pobierać opłaty. Zaplanowane zadania nigdy nie przełączają się automatycznie na inne połączenie."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Wysyła CV tego listu i ogłoszenie {0} do {1} · {2}, aby napisać treść. Twój dostawca może pobierać opłaty."
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "Wysyła CV tego listu do {0} · {1}, aby napisać treść. Twój dostawca może pobierać opłaty."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Wysyła ten wiersz, otaczający tekst pola i Twoje instrukcje do {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Wysyła ten akapit, resztę listu i Twoje instrukcje do {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Wysyła ten akapit, resztę listu, powiązane ogłoszenie o pracę i Twoje instrukcje do {0} · {1}."
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "Wysyła to PDF do skonfigurowanego dostawcy AI zamiast czytać jego warstwę tekstową."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Wysyła Twoją wiadomość i tę aplikację (ogłoszenie, notatki, dokumenty, Twoje odpowiedzi do formularza, zapisaną ofertę i ostatnie wiadomości) do {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Wysyła Twoją wiadomość, wcześniejsze wiadomości i tę aplikację (ogłoszenie, notatki, dokumenty, Twoje odpowiedzi do formularza, zapisaną ofertę i ostatnie wiadomości) do {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Wysyła Twoją wiadomość, wcześniejsze wiadomości tutaj, tę aplikację (ogłoszenie, notatki, dokumenty, Twoje odpowiedzi w formularzach, zapisaną ofertę i ostatnie wiadomości) oraz włączoną Wiedzę do {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Wysyła Twoją wiadomość, tę aplikację (ogłoszenie, notatki, dokumenty, Twoje odpowiedzi w formularzach, zapisaną ofertę i ostatnie wiadomości) oraz włączoną Wiedzę do {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Wysyła tekst Twojego CV tylko do {0} · {1}, wraz z Twoim kluczem."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -13110,17 +12975,9 @@ msgstr "Wbudowany czytnik pozostaje aktywny."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Kontrole mają charakter mechaniczny. To pyta model językowy, jak czytelnik może zareagować na Twoje wpisy na liście i sugeruje przepisanie. To nie jest część wyniku."
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "Doradca pyta, zanim zapamięta podane przez Ciebie fakty."
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Doradca nie zapamiętuje niczego z Twoich wiadomości."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "Doradca nie zapamiętuje niczego, co piszesz."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13133,10 +12990,6 @@ msgstr "Doradca nie jest skonfigurowany na tym serwerze. Administrator musi usta
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "Doradca proponuje każdy fakt na czacie. Nic nie zostanie zapisane, dopóki się nie zgodzisz."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "Doradca zapamiętuje podane przez Ciebie fakty i informuje Cię o tym."
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13158,10 +13011,6 @@ msgstr "Połączenie działa. Włącz opcję Używaj tego dostawcy, aby z niego 
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "Kopia otrzymuje ogłoszenie oferty, a to CV pozostaje bez zmian dla innych ofert."
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "list motywacyjny do tej oferty"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13179,10 +13028,6 @@ msgstr "Edytor otwiera się w Kontroli, która ponownie sprawdza zaimportowane C
 msgid "The employer may have changed it since."
 msgstr "Pracodawca mógł od tego czasu zmienić ogłoszenie."
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "wiadomość od pracodawcy"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "Data zakończenia jest wcześniejsza niż data rozpoczęcia. Sprawdź obie daty."
@@ -13195,10 +13040,6 @@ msgstr "Ponowny kontakt zapisany. Aby otrzymać przypomnienie, zezwól na powiad
 msgid "The greeting follows the name."
 msgstr "Powitanie następuje po imieniu."
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "szczegóły rozmowy"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "Rozmowa została zapisana. Aby otrzymać przypomnienie, zezwól na powiadomienia w ustawieniach urządzenia."
@@ -13210,10 +13051,6 @@ msgstr "Klucz jest zaszyfrowany na serwerze i nigdy więcej nie będzie pokazywa
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "Klucz został odrzucony. Sprawdź klucz i przetestuj ponownie."
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "ostatnie wiadomości"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13300,14 +13137,6 @@ msgstr "Dostawca ograniczył to żądanie. Odczekaj i spróbuj ponownie; sprawd�
 msgid "The provider reported a server error. Try again later."
 msgstr "Dostawca zgłosił błąd serwera. Spróbuj ponownie później."
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "pytanie i to, co powiedziałeś"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "pytanie i Twoją odpowiedź"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Powód jest zachowywany dla statystyk. Połączone dokumenty nie są zmieniane."
@@ -13324,10 +13153,6 @@ msgstr "Pozostała część pliku nie jest uwzględniona w tym raporcie."
 msgid "The resume as it is"
 msgstr "CV takie jakie jest"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "CV do tej oferty"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "Osoba oceniająca widzi etap i daty każdej z nich. Notatki, kontakty i wynagrodzenie pozostają prywatne."
@@ -13343,10 +13168,6 @@ msgstr "Zapisany klucz nie jest wysyłany na nowy bazowy adres URL. Wprowadź kl
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Zapisany klucz nie jest wysyłany na nowy bazowy adres URL. Wprowadź klucz ponownie."
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "zapisaną ofertę"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13719,10 +13540,6 @@ msgstr "Ten PDF to zeskanowany obraz. Nie ma tekstu do przeczytania. Wypróbuj w
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Ten PDF jest chroniony hasłem. Zapisz niechronioną kopię i spróbuj ponownie."
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "to ogłoszenie"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14983,10 +14800,6 @@ msgstr "Kiedy powinienem ponowić kontakt i co powiedzieć?"
 msgid "When would you start?"
 msgstr "Kiedy możesz zacząć?"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "Po stuknięciu Wyślij {list} trafiają do {connection}."
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "Kiedy skończysz, przeglądarka zostanie zamknięta i wrócisz tutaj."
@@ -15041,10 +14854,6 @@ msgstr "Szerokość"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "Gotowość do przeprowadzki"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "Gdy Wiedza jest wyłączona, nic, co piszesz, nie jest zapamiętywane."
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15380,10 +15189,6 @@ msgstr "Twoje zmiany na tym urządzeniu zostaną zastąpione zapisaną wersją."
 msgid "Your contact details are not on the first page."
 msgstr "Twoje dane kontaktowe nie znajdują się na pierwszej stronie."
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "Twoje kontakty"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "Twoje dane"
@@ -15425,10 +15230,6 @@ msgstr "Twoje fakty, historie i preferencje. Edycja Wiedzy nie wysyła nic do po
 msgid "Your focus"
 msgstr "Na czym się skupiasz"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "Twoje odpowiedzi do formularza"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Twoje nagłówki wyglądają tak samo jak tekst główny."
@@ -15454,10 +15255,6 @@ msgstr "Wiersze są bardzo ciasno ułożone."
 msgid "Your margins are very narrow."
 msgstr "Twoje marginesy są bardzo wąskie."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "Twoja wiadomość"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "Twoja wiadomość została zachowana."
@@ -15474,7 +15271,6 @@ msgstr "Twoje imię i nazwisko jako Twój adres, od OlaCV, rejestru domeny .cv. 
 msgid "Your name is missing"
 msgstr "Brakuje Twojego imienia"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "Twoje notatki"
@@ -15495,9 +15291,7 @@ msgstr "Własna treść, bez wcześniejszego listu"
 msgid "Your phone number is written in an unusual shape."
 msgstr "Twój numer telefonu jest zapisany w nietypowej formie."
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "Twoje preferencje"
 
@@ -15516,10 +15310,6 @@ msgstr "Twoje linki publiczne zaczynają się od {server}/"
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "Twoje linki publiczne się zmienią"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "Po zatrzymaniu Twoje nagranie trafia do {transcriberName} w celu transkrypcji. Twój dostawca może pobierać opłaty. Serwer przechowuje transkrypcje, nigdy nagrania."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15604,10 +15394,6 @@ msgstr "Twój krótki link wskazuje na „{0}”, które nie jest opublikowane."
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "Twój krótki link informuje, że to CV nie jest udostępnione, dopóki nie opublikujesz go ponownie."
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "Twoje historie"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

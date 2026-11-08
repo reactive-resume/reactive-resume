@@ -521,23 +521,9 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 									)}
 								</>
 							)}
-							{providers.defaultProvider && (
-								<Text color="ink3">{t`Optional AI sends only this posting to ${providers.defaultProvider.label} (${providers.defaultProvider.provider}).`}</Text>
-							)}
 							{providers.hasAIProvider && (
-								<>
-									<Button label={t`Read with AI`} disabled={!!busy || !input.trim()} onPress={() => read(true)} />
-									{providers.defaultProvider ? (
-										<Text variant="caption" color="ink3">
-											{t`Sends the posting text to ${providers.defaultProvider.label} to read it.`}
-										</Text>
-									) : null}
-								</>
+								<Button label={t`Read with AI`} disabled={!!busy || !input.trim()} onPress={() => read(true)} />
 							)}
-							<Text
-								variant="callout"
-								color="ink3"
-							>{t`AI reads pasted text only when you ask. Links can use the page’s own job data without AI.`}</Text>
 							{mode === "link" && (
 								<Button
 									label={t`Read posting`}

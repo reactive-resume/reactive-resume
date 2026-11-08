@@ -222,10 +222,8 @@ msgstr "{0, plural, one {Редакцията на # не можа да бъде
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# запис} other {# записа}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, one {# история} other {# истории}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# нещо за преглед.} other {# неща за преглед.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {Изпраща също {1}.} other {Изпраща също # файла: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# отговор} other {# отговора}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}. Изпраща тази кандидатура и вашите Знания; доставчикът може да начисли такса."
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "Доставчиците на AI не можаха да бъдат за�
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "Доставчиците на AI не можаха да бъдат заредени. Опитайте отново или попълнете данните ръчно."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "AI чете поставен текст само когато поискате. Връзките могат да използват собствените данни за работата на страницата без AI."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "Историята на заявките към ИИ не е налич�
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "AI настройки"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "AI предложения, а не проверени квалификации или прогнози за наемане. Източниците по-долу са ваши твърдения."
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "Винаги се показва в Днес. Имейлът изиск�
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "Амхарски"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "AI прочит, който да ви помогне да редактирате, а не прогноза как ще реагира работодател или система за селекция."
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "Имейл за кандидатстване"
 msgid "Application phone"
 msgstr "Телефон за кандидатстване"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "обобщения на кандидатурите"
@@ -5055,10 +5033,6 @@ msgstr "По-ранен резултат от проучването. Заявк
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "По-ранните съобщения и прикачени файлове в този разговор ще бъдат изпратени до тази дестинация, когато изпратите пак."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "предишните съобщения в този чат"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "Изпразване на кошчето"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "Да изпразните ли кошчето?"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "включените Знания"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "Съобщенията и прикачените файлове в не�
 msgid "Its own design ({summary})."
 msgstr "Собствен дизайн ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "изискванията му"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "Управлява се от сървър"
 msgid "Managed by your server"
 msgstr "Управлява се от вашия сървър"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "Ръчните длъжности и предпочитания работят без AI. Предложенията никога не търсят и не планират нищо."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "Много точки започват с една и съща фраза."
@@ -7685,11 +7647,6 @@ msgstr "Съобщения"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Съобщенията от преди промяната на Знанията вече не се изпращат до AI, така че няма да ги запомни. Започнете нов разговор, за да държите контекста заедно."
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Съобщенията от преди промяната на Знанията не се изпращат."
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "Още няма нищо в библиотеката ви"
 msgid "Nothing is applied for or created until you choose."
 msgstr "Нищо не се подава и не се създава, докато не изберете."
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "Нищо не се изпраща, докато не изберете връзка за този разговор."
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "Нищо не отбелязва ролята като текуща."
@@ -9589,10 +9541,6 @@ msgstr "Упражнения за интервютата ви в {company}."
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "Упражнявайте се в работното пространство на {company}"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "Приоритети за упражнение, а не заключения защо работодателят е решил нещо."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11542,11 +11490,6 @@ msgstr "Търсете или стартирайте..."
 msgid "Search saved answers"
 msgstr "Търсете в запазените отговори"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Термините за търсене се изпращат до вашата услуга за уеб търсене."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Търсене в интернет"
@@ -11686,87 +11629,9 @@ msgstr "Данните за изпращача са копирани в писм
 msgid "Sending…"
 msgstr "Изпращане..."
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "Изпраща {0} до {label}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Изпраща само избраната ви автобиография и до 20 активни споделени факта до тази връзка. Без профил на кандидатура, запазени отговори или лични факти за кандидатури. Доставчикът ви може да начисли такса."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Изпраща обявата за {0} до {1} · {2}, за да напише текста. Доставчикът ви може да начисли такса."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Изпраща текста на обявата до {0}, за да го прочете."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "Изпраща тази кандидатура и включените Знания до тази връзка. Доставчикът ви може да начисли такса. Планираните задачи никога не превключват автоматично на друга връзка."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Изпраща автобиографията на писмото и обявата за {0} до {1} · {2}, за да напише текста. Доставчикът ви може да начисли такса."
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "Изпраща автобиографията на писмото до {0} · {1}, за да напише текста. Доставчикът ви може да начисли такса."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Изпраща този ред, заобикалящия го текст на полето и вашите инструкции до {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Изпраща този абзац, останалата част от писмото и указанията ви до {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Изпраща този абзац, останалата част от писмото, свързаната обява за работа и указанията ви до {0} · {1}."
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "Изпраща този PDF до вашия конфигуриран AI доставчик, вместо да чете неговия текстов слой."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Изпраща съобщението ви и тази кандидатура (обява, бележки, документи, отговорите ви от формуляра, запазената оферта и скорошните съобщения) до {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Изпраща съобщението ви, по-ранните съобщения и тази кандидатура (обява, бележки, документи, отговорите ви от формуляра, запазената оферта и скорошните съобщения) до {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Изпраща съобщението ви, предишните съобщения тук, тази кандидатура (обявата, бележките, документите, отговорите ви във формулярите, запазената оферта и последните съобщения) и включените Знания до {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Изпраща съобщението ви, тази кандидатура (обявата, бележките, документите, отговорите ви във формулярите, запазената оферта и последните съобщения) и включените Знания до {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Изпраща текста на вашето резюме само до {0} · {1}, с вашия ключ."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -13110,17 +12975,9 @@ msgstr "Вграденият четец остава активен."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Проверките са механични. Това пита езиков модел как читателят може да реагира на вашите записи в списъка и предлага пренаписване. Не е част от резултата."
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "Коучът пита, преди да запомни факти, които споделяте."
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Коучът не запомня нищо от съобщенията ви."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "Коучът не помни нищо, което пишете."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13133,10 +12990,6 @@ msgstr "Коучът не е настроен на този сървър. Кой
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "Коучът предлага всеки факт в чата. Нищо не се запазва, докато не се съгласите."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "Коучът запомня фактите, които споделяте, и ви казва."
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13158,10 +13011,6 @@ msgstr "Връзката работи. Включете „Използвайт�
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "Копието получава обявата на работата и запазва автобиографията такава за други работи."
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "мотивационното писмо за тази работа"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13179,10 +13028,6 @@ msgstr "Редакторът се отваря в Проверка, където
 msgid "The employer may have changed it since."
 msgstr "Работодателят може да го е променил оттогава."
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "съобщението на работодателя"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "Крайната дата е преди началната. Проверете двете дати."
@@ -13195,10 +13040,6 @@ msgstr "Проследяването е запазено. За да получи
 msgid "The greeting follows the name."
 msgstr "Поздравът следва името."
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "подробностите за интервюто"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "Интервюто е запазено. За да получите напомняне, разрешете известията в настройките на вашето устройство."
@@ -13210,10 +13051,6 @@ msgstr "Ключът е шифрован на сървъра и никога п�
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "Ключът беше отхвърлен. Проверете ключа и тествайте отново."
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "последните съобщения"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13300,14 +13137,6 @@ msgstr "Доставчикът ограничи тази заявка. Изча�
 msgid "The provider reported a server error. Try again later."
 msgstr "Доставчикът съобщи за сървърна грешка. Опитайте отново по-късно."
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "въпросът и казаното от вас"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "въпросът и вашият отговор"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Причината се запазва за Insights. Свързаните документи не се докосват."
@@ -13324,10 +13153,6 @@ msgstr "Останалата част от файла не е в този отч
 msgid "The resume as it is"
 msgstr "Резюмето такова, каквото е"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "автобиографията за тази работа"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "Рецензентът вижда етапа и датите на всяка. Бележките, контактите и заплатата остават лични."
@@ -13343,10 +13168,6 @@ msgstr "Запазеният ключ не се изпраща до нов ос�
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Запазеният ключ не се изпраща до нов основен URL адрес. Въведете ключа отново."
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "запазената оферта"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13719,10 +13540,6 @@ msgstr "Това PDF е сканирано изображение. Няма те
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Този PDF е защитен с парола. Запазете незащитено копие и опитайте отново."
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "тази обява"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14983,10 +14800,6 @@ msgstr "Кога да пиша пак и какво да кажа?"
 msgid "When would you start?"
 msgstr "Кога бихте започнали?"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "Когато докоснете „Изпрати“, {list} отиват до {connection}."
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "Когато сте готови, браузърът се затваря и се връщате тук."
@@ -15041,10 +14854,6 @@ msgstr "ширина"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "Готовност за преместване"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "При изключени Знания нищо, което напишете, не се запомня."
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15380,10 +15189,6 @@ msgstr "Вашите промени на това устройство ще бъ
 msgid "Your contact details are not on the first page."
 msgstr "Данните ви за контакт не са на първата страница."
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "вашите контакти"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "Вашите данни"
@@ -15425,10 +15230,6 @@ msgstr "Вашите факти, истории и предпочитания. �
 msgid "Your focus"
 msgstr "Вашият фокус"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "вашите отговори от формуляра"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Заглавията ви изглеждат по същия начин като основния текст."
@@ -15454,10 +15255,6 @@ msgstr "Вашите линии са опаковани много плътно.
 msgid "Your margins are very narrow."
 msgstr "Полетата ви са много тесни."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "съобщението ви"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "Съобщението ви е запазено."
@@ -15474,7 +15271,6 @@ msgstr "Вашето име като ваш адрес, от OlaCV, регист
 msgid "Your name is missing"
 msgstr "Вашето име липсва"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "бележките ви"
@@ -15495,9 +15291,7 @@ msgstr "Ваш собствен текст, без по-ранно писмо"
 msgid "Your phone number is written in an unusual shape."
 msgstr "Телефонният ви номер е изписан в необичаен формат."
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "предпочитанията ви"
 
@@ -15516,10 +15310,6 @@ msgstr "Вашите публични връзки започват с {server}/
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "Публичните ви връзки ще се променят"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "Вашият запис отива в {transcriberName}, след като спрете, за да бъде транскрибиран. Вашият доставчик може да таксува. Сървърът съхранява преписи, никога записи."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15604,10 +15394,6 @@ msgstr "Кратката ви връзка сочи към „{0}“, което
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "Кратката ви връзка показва, че тази автобиография не е споделена, докато не я публикувате пак."
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "историите ви"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."
