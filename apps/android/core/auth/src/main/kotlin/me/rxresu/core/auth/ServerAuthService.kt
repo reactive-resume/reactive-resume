@@ -208,10 +208,13 @@ class ServerAuthService internal constructor(
     override suspend fun register(server: String, name: String, username: String, email: String, password: String): AuthResult = forms.withLock { result {
         val initial = startNative(server)
         if (initial !is AuthResult.Error || nativeQuery == null) return@result initial
-        afterForm(post("${pending!!.server}/api/auth/sign-up/email", buildJsonObject {
+        val created = post("${pending!!.server}/api/auth/sign-up/email", buildJsonObject {
             put("name", name); put("username", username); put("email", email.trim().lowercase(java.util.Locale.ROOT))
             put("password", password); put("oauth_query", nativeQuery)
-        }))
+        })
+        // As on the web: a new account without a redirect continues the authorization it was created for.
+        if (created.text("url") != null || created.flag("twoFactorRedirect")) afterForm(created)
+        else afterForm(post("${pending!!.server}/api/auth/oauth2/continue", buildJsonObject { put("created", true); put("oauth_query", nativeQuery) }))
     } }
 
     override suspend fun verifyTwoStep(code: String, backup: Boolean): AuthResult = forms.withLock { result {
