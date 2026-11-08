@@ -1,10 +1,7 @@
 package me.rxresu.feature.builder
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -23,17 +20,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,25 +37,18 @@ import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.RrBottomSheet
-import me.rxresu.core.designsystem.RrBottomSheetState
 import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrContextChip
-import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrIconButton
-import me.rxresu.core.designsystem.RrListRow
-import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrMonthPicker
 import me.rxresu.core.designsystem.RrPickerField
-import me.rxresu.core.designsystem.RrRowCaret
 import me.rxresu.core.designsystem.RrSlider
 import me.rxresu.core.designsystem.RrStrip
 import me.rxresu.core.designsystem.RrSwitchRow
@@ -73,97 +59,75 @@ import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.designsystem.RrTopBar
 import me.rxresu.core.designsystem.RrPageTitle
+import me.rxresu.core.designsystem.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import me.rxresu.core.designsystem.rememberRrBottomSheetState
-import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.BuilderEntry
 import me.rxresu.core.navigation.BuilderRichText
 import me.rxresu.core.strings.R as S
 import me.rxresu.core.designsystem.R as D
 
-/** The sheet's two heights: 55% keeps the picked block visible above, 92% for long entries. */
-internal val EntryDetents = listOf(0.55f, 0.92f)
-
 @Composable
 internal fun EntryRoute(route: BuilderEntry, vm: BuilderViewModel, nav: NavController) {
     val state by vm.state.collectAsStateWithLifecycle()
-    val doc = state.doc ?: return
-    val section = doc.section(route.section) ?: return
-    val item = doc.items(section).firstOrNull { it["id"].str() == route.itemId } ?: return
-    Column(Modifier.fillMaxSize()) {
-        RrTopBar(onBack = { nav.popBackStack() }, actions = {
-            RrButton(stringResource(S.string.done), { vm.flush(); nav.popBackStack() }, variant = RrButtonVariant.GhostAccent)
-        })
-        RrPageTitle(section.kind.itemTitle(item))
-        Column(Modifier.weight(1f)) {
-            EntryFields(doc, section, item, state.locked, vm) { id, field -> nav.navigate(BuilderRichText(route.resumeId, route.section, id, field)) }
-        }
-    }
+    EntryScreen(state, route.section, route.itemId, vm,
+        onBack = { vm.flush(); nav.popBackStack() },
+        onMore = { nav.navigate(me.rxresu.core.navigation.BuilderMore(route.resumeId)) },
+        onDescription = { id, field -> nav.navigate(BuilderRichText(route.resumeId, route.section, id, field)) },
+        onPreview = { nav.navigate(me.rxresu.core.navigation.PagePreview(route.resumeId, section = route.section, itemId = route.itemId)) })
 }
 
-/**
- * B2: an entry's fields in a 55% sheet over the page. Edits apply live and autosave; Done closes. Up and down step
- * through the section's entries; ··· holds the entry options.
- */
 @Composable
-internal fun EntrySheet(
-    state: BuilderUiState,
-    section: String,
-    initialItemId: String?,
-    actions: BuilderActions,
-    onDone: () -> Unit,
-    onDismiss: () -> Unit,
-    onDescription: (itemId: String, field: String) -> Unit,
-    sheet: RrBottomSheetState = rememberRrBottomSheetState(),
-) {
+internal fun EntryScreen(state: BuilderUiState, section: String, itemId: String?, actions: BuilderActions, onBack: () -> Unit, onMore: () -> Unit, onDescription: (String, String) -> Unit, onPreview: () -> Unit) {
+    DisposableEffect(actions) { onDispose { actions.setEditing(false) } }
     val doc = state.doc ?: return
     val ref = doc.section(section) ?: return
-    val haptics = rememberRrHaptics()
-    val reduced = LocalReducedMotion.current
-    val items = doc.items(ref)
-    var itemId by rememberSaveable { mutableStateOf(initialItemId ?: items.lastOrNull()?.get("id").str()) }
-    var menu by remember { mutableStateOf(false) }
-    val index = items.indexOfFirst { it["id"].str() == itemId }
-    val item = items.getOrNull(index)
-    LaunchedEffect(itemId) { actions.highlight(BlockTarget.Item(section, itemId), aboveSheet = true) }
-    DisposableEffect(Unit) { onDispose { actions.highlight(null); actions.setEditing(false) } }
-    // The entry was deleted (from ··· or elsewhere): close.
-    LaunchedEffect(item == null) { if (item == null) onDismiss() }
+    var selectedId by rememberSaveable(itemId) { mutableStateOf(itemId) }
+    val item = doc.items(ref).firstOrNull { it["id"].str() == selectedId }
+    LaunchedEffect(selectedId, item == null) {
+        if (selectedId == null) actions.addItem(section) { selectedId = it } else if (item == null) onBack()
+    }
     if (item == null) return
+    var rename by remember { mutableStateOf(false) }
+    var moreFields by rememberSaveable(itemId) { mutableStateOf(false) }
+    var options by remember { mutableStateOf(false) }
     val title = ref.kind.itemTitle(item).ifBlank { stringResource(S.string.draft) }
-    RrBottomSheet(
-        onDismissRequest = onDismiss,
-        state = sheet,
-        detents = EntryDetents,
-        title = title,
-        showClose = false,
-        headerActions = {
-            RrIconButton(D.drawable.ic_ph_caret_up, stringResource(R.string.builder_previous_entry), { haptics(RrHaptic.Selection); itemId = items[index - 1]["id"].str() }, enabled = index > 0)
-            RrIconButton(D.drawable.ic_ph_caret_down, stringResource(R.string.builder_next_entry), { haptics(RrHaptic.Selection); itemId = items[index + 1]["id"].str() }, enabled = index < items.lastIndex)
-            RrIconButton(D.drawable.ic_ph_dots_three, stringResource(S.string.entry_options), { menu = true })
-            RrButton(stringResource(S.string.done), onDone, variant = RrButtonVariant.Secondary)
-        },
-    ) {
-        if (state.locked) RrStrip(stringResource(S.string.locked_unlock_to_edit), tone = RrTone.Warn, icon = D.drawable.ic_ph_lock_simple)
-        AnimatedContent(itemId, transitionSpec = { fadeIn(tween(if (reduced) RrMotion.D1 else RrMotion.D2)) togetherWith fadeOut(tween(RrMotion.exit(RrMotion.D2))) }, label = "entry") { shownId ->
-            val shown = items.firstOrNull { it["id"].str() == shownId } ?: return@AnimatedContent
-            EntryFields(doc, ref, shown, state.locked, actions, onDescription)
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
+        RrTopBar(onBack = onBack) { RrIconButton(D.drawable.ic_ph_dots_three, stringResource(S.string.more), onMore) }
+        RrPageTitle(title, modifier = Modifier.clickable(enabled = !state.locked) { rename = true }, subtitle = stringResource(R.string.builder_entry_status, doc.displayTitle(ref)), subtitleColor = RrTheme.colors.ink3)
+        if (state.locked) RrStrip(stringResource(S.string.locked_unlock_to_edit), tone = RrTone.Warn)
+        Box(Modifier.weight(1f)) { EntryFields(doc, ref, item, state.locked, actions, onDescription, moreFields) }
+        Row(Modifier.padding(start = 24.dp, bottom = 8.dp).rrNavigationBarsPadding().heightIn(min = 44.dp).clickable(enabled = true, role = androidx.compose.ui.semantics.Role.Button, onClick = onPreview), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            RrIcon(D.drawable.ic_ph_file_text, null, size = 20.dp, tint = RrTheme.colors.accentText)
+            RrText(stringResource(R.string.builder_see_page), style = RrType.textLink, color = RrTheme.colors.accentText)
         }
     }
-    if (menu) EntryMenu(doc, ref, item["id"].str(), actions, WriteNav()) { menu = false }
+    if (rename) RrBottomSheet(onDismissRequest = { rename = false }, title = stringResource(fieldLabel(ref.kind.anchor)), fitContent = true) {
+        Column(Modifier.padding(24.dp)) {
+            TextField(stringResource(fieldLabel(ref.kind.anchor)), item[ref.kind.anchor].str(), state.locked, actions = actions) { text -> actions.editItem(section, selectedId!!) { JsonObject(it + (ref.kind.anchor to JsonPrimitive(text))) } }
+            if (ref.kind.fields().any { it.more }) RrButton(stringResource(R.string.builder_more_fields), { moreFields = true; rename = false }, variant = RrButtonVariant.GhostAccent)
+            RrButton(stringResource(S.string.entry_options), { rename = false; options = true }, variant = RrButtonVariant.GhostAccent)
+            RrButton(stringResource(S.string.done), { rename = false })
+        }
+    }
+    if (options) EntryMenu(doc, ref, selectedId!!, actions, WriteNav()) { options = false }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun EntryFields(doc: ResumeDoc, ref: SectionRef, item: JsonObject, locked: Boolean, actions: BuilderActions, onDescription: (String, String) -> Unit) {
+private fun EntryFields(doc: ResumeDoc, ref: SectionRef, item: JsonObject, locked: Boolean, actions: BuilderActions, onDescription: (String, String) -> Unit, more: Boolean) {
     val id = item["id"].str()
-    var more by rememberSaveable(id) { mutableStateOf(false) }
     val write = { change: (JsonObject) -> JsonObject -> actions.editItem(ref.key, id, change) }
-    val fields = ref.kind.fields()
-    Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    val focus = remember(id) { androidx.compose.ui.focus.FocusRequester() }
+    val fields = ref.kind.fields().filter { it.key != ref.kind.anchor || item[it.key].str().isBlank() }
+    LaunchedEffect(id) { if (!locked && fields.firstOrNull()?.type in listOf(FieldType.Text, FieldType.Phone, FieldType.Email)) focus.requestFocus() }
+    Column(Modifier.verticalScroll(rememberScrollState()).padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
         fields.filter { !it.more || more }.forEach { spec ->
             when (spec.type) {
                 FieldType.Text, FieldType.Phone, FieldType.Email -> TextField(
+                    modifier = if (spec == fields.firstOrNull()) Modifier.focusRequester(focus) else Modifier,
                     label = stringResource(fieldLabel(spec.key)),
                     value = item[spec.key].str(),
                     readOnly = locked,
@@ -182,13 +146,15 @@ private fun EntryFields(doc: ResumeDoc, ref: SectionRef, item: JsonObject, locke
                 FieldType.Dates, FieldType.Date -> DatesField(doc, ref.kind, item, single = spec.type == FieldType.Date, locked = locked, write = write)
                 FieldType.RichText -> {
                     val lines = htmlText(item[spec.key].str())
-                    RrListRow(
-                        stringResource(fieldLabel(spec.key)),
-                        subtitle = lines.firstOrNull()?.let { first -> if (lines.size > 1) pluralStringResource(R.plurals.builder_bullets_summary, lines.size, lines.size, first) else first },
-                        leading = { RrIcon(D.drawable.ic_ph_text_aa, null) },
-                        onClick = { onDescription(id, spec.key) },
-                        trailing = { RrRowCaret() },
-                    )
+                    RrCard(onClick = { onDescription(id, spec.key) }, contentPadding = PaddingValues(21.dp)) {
+                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                            RrText(stringResource(fieldLabel(spec.key)), style = RrType.formLabel, color = RrTheme.colors.ink2, modifier = Modifier.weight(1f))
+                            RrIcon(D.drawable.ic_ph_sparkle, null, size = 16.dp, tint = RrTheme.colors.accentText)
+                            Spacer(Modifier.width(6.dp))
+                            RrText(stringResource(S.string.improve), style = RrType.small.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Medium), color = RrTheme.colors.accentText)
+                        }
+                        RrText(lines.joinToString(" ").let { if (it.length > 123) it.take(123).trimEnd() + "…" else it }, style = RrType.body, color = RrTheme.colors.ink2, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                    }
                 }
                 FieldType.Level -> {
                     val level = item["level"].num()?.toInt() ?: 0
@@ -215,7 +181,6 @@ private fun EntryFields(doc: ResumeDoc, ref: SectionRef, item: JsonObject, locke
                 }
             }
         }
-        if (fields.any { it.more } && !more) RrButton(stringResource(S.string.more_options), { more = true }, variant = RrButtonVariant.Ghost, icon = D.drawable.ic_ph_caret_down)
     }
 }
 
@@ -307,16 +272,16 @@ private fun DatesField(doc: ResumeDoc, kind: SectionKind, item: JsonObject, sing
     val save = { s: YearMonth?, e: YearMonth?, p: Boolean, r: String? -> write { writeDates(it, kind, s, e, p, r, locale, presentLabel) } }
     val reversed = !present && start != null && end != null && end < start
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             RrPickerField(
                 raw ?: start?.format(locale).orEmpty(), { picking = true }, Modifier.weight(1f),
                 label = stringResource(if (single) S.string.date else S.string.start), placeholder = stringResource(S.string.mar_2022),
-                trailingIcon = D.drawable.ic_ph_calendar_blank, enabled = !locked,
+                trailingIcon = null, enabled = !locked,
             )
             if (!single && raw == null) RrPickerField(
                 if (present) presentLabel else end?.format(locale).orEmpty(), { picking = false }, Modifier.weight(1f),
                 label = stringResource(S.string.end), placeholder = stringResource(S.string.mar_2022),
-                trailingIcon = D.drawable.ic_ph_calendar_blank, enabled = !locked,
+                trailingIcon = null, enabled = !locked,
                 error = if (reversed) stringResource(S.string.the_end_date_is_before_the_start_date_check_both_dates) else null,
             )
         }

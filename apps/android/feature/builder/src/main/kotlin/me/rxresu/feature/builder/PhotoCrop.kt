@@ -1,5 +1,7 @@
 package me.rxresu.feature.builder
 
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -18,15 +20,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import me.rxresu.core.designsystem.rrNavigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -246,7 +246,7 @@ internal fun PhotoCropScreen(crop: PhotoCrop, aspect: Float, onCancel: () -> Uni
                 )
             }
         }
-        Column(Modifier.fillMaxWidth().navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.fillMaxWidth().rrNavigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             val zoomText = stringResource(R.string.builder_zoom_value, String.format(LocalLocale.current.platformLocale, "%.1f", zoom))
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 RrText(stringResource(R.string.builder_zoom), style = RrType.fieldLabel, color = c.ink2, modifier = Modifier.weight(1f))

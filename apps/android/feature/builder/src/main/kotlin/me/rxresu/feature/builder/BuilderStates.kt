@@ -34,9 +34,10 @@ internal sealed interface MatchState {
     data object Reading : MatchState
     data class Failed(val pasted: String?) : MatchState
     /** [pasted] is the posting text when it came from a paste ("For this visit only"). */
-    data class Ready(val found: List<MatchTerm>, val missing: List<MatchTerm>, val pasted: String?) : MatchState {
-        val total get() = found.size + missing.size
-    }
+    data class Ready(
+        val found: List<MatchTerm>, val missing: List<MatchTerm>, val pasted: String?,
+        val matched: Int = found.size, val total: Int = found.size + missing.size,
+    ) : MatchState
 }
 
 /** The web's Fit steps (design/presets.ts `nextFitStep`): compact density, narrow margins, then 0.5 pt smaller to 9 pt. */

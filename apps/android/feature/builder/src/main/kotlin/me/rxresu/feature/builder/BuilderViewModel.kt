@@ -328,7 +328,7 @@ internal class BuilderViewModel(
     private fun moveTerm(label: String, covered: Boolean) = mutable.update { s ->
         val m = s.match as? MatchState.Ready ?: return@update s
         val term = m.missing.firstOrNull { it.label == label } ?: return@update s
-        s.copy(match = m.copy(missing = m.missing - term, found = if (covered) m.found + term else m.found))
+        s.copy(match = m.copy(missing = m.missing - term, found = if (covered) m.found + term else m.found, matched = m.matched + if (covered) 1 else 0, total = m.total - if (covered) 0 else 1))
     }
 
     private fun addSkillItem(label: String) = edit(BuilderToast(S.string.message_0_added_to_skills, listOf(label), undo = true)) { json ->

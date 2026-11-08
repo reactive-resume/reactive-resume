@@ -105,6 +105,9 @@ class BuilderLogicTest {
 
     @Test fun fitTightensDensityThenMarginsThenSize() {
         var json = doc.json
+            .set(listOf("data", "metadata", "typography", "body", "fontSize"), JsonPrimitive(10.0))
+            .set(listOf("data", "metadata", "page", "marginX"), JsonPrimitive(16))
+            .set(listOf("data", "metadata", "page", "marginY"), JsonPrimitive(12)) as JsonObject
         val seen = mutableListOf<String>()
         while (true) {
             val step = FitSteps.next(json) ?: break
@@ -119,7 +122,9 @@ class BuilderLogicTest {
     }
 
     @Test fun textSizeKeepsTheHeadingRatio() {
-        val json = TextSize.apply(doc.json, 11.0)
+        val original = doc.json.set(listOf("data", "metadata", "typography", "body", "fontSize"), JsonPrimitive(10.0))
+            .set(listOf("data", "metadata", "typography", "heading", "fontSize"), JsonPrimitive(14.0)) as JsonObject
+        val json = TextSize.apply(original, 11.0)
         assertEquals(15.5, json.at(listOf("data", "metadata", "typography", "heading", "fontSize")).num()!!, 0.0)
     }
 

@@ -113,7 +113,7 @@ internal fun issueViews(doc: ResumeDoc, findings: List<GetResumeChecksResponseIg
         "MISSING_LOCATION" -> { title = stringResource(S.string.no_location); body = stringResource(S.string.a_city_and_country_let_roles_be_matched_to_where_you_are); label = stringResource(S.string.add_a_location); write = BlockTarget.Header }
         "MALFORMED_URL" -> {
             title = stringResource(S.string.a_link_isn_t_a_full_address)
-            body = stringResource(S.string.some_systems_only_recognize_links_that_start_with_https_this_one_reads_as_plain_text_value, value)
+            body = stringResource(R.string.builder_link_plain_text, value)
             if (!Regex("^[a-zA-Z][a-zA-Z0-9+.-]*:").containsMatchIn(value)) {
                 label = stringResource(R.string.builder_fix_use_https, value); fix = CheckFix(stringResource(S.string.link_updated), set(JsonPrimitive("https://$value")))
             } else { label = stringResource(S.string.edit_the_link); write = target }
@@ -147,8 +147,8 @@ internal fun issueViews(doc: ResumeDoc, findings: List<GetResumeChecksResponseIg
             label = stringResource(S.string.use_minimum_pt, minimum); fix = CheckFix(stringResource(S.string.body_text_set_to_minimum_pt, minimum), set(JsonPrimitive(minimum.toDoubleOrNull() ?: 9.0)))
         }
         "TIGHT_LINE_HEIGHT" -> {
-            title = stringResource(S.string.lines_are_packed_tightly); body = stringResource(S.string.lines_this_close_can_run_together_when_read_use_at_least_minimum, minimum)
-            label = stringResource(S.string.use_0, minimum); fix = CheckFix(stringResource(S.string.line_height_set_to_minimum, minimum), set(JsonPrimitive(minimum.toDoubleOrNull() ?: 1.15)))
+            title = stringResource(S.string.lines_are_packed_tightly); body = stringResource(R.string.builder_tight_lines)
+            label = stringResource(R.string.builder_use_line_height, minimum); fix = CheckFix(stringResource(S.string.line_height_set_to_minimum, minimum), set(JsonPrimitive(minimum.toDoubleOrNull() ?: 1.15)))
         }
         "TIGHT_PAGE_MARGINS" -> {
             title = stringResource(S.string.margins_are_very_narrow); body = stringResource(S.string.text_this_close_to_the_edge_can_be_cut_off_use_at_least_minimum_pt, minimum)

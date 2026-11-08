@@ -1,5 +1,7 @@
 package me.rxresu.feature.builder
 
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -14,21 +16,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
+import me.rxresu.core.designsystem.rrNavigationBarsPadding
+import me.rxresu.core.designsystem.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -54,7 +54,6 @@ import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrIconButton
 import me.rxresu.core.designsystem.RrMenuItem
 import me.rxresu.core.designsystem.RrMotion
-import me.rxresu.core.designsystem.RrShape
 import me.rxresu.core.designsystem.RrSpinner
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTextField
@@ -138,14 +137,14 @@ internal fun RichTextScreen(
         RrTopBar(
             stringResource(fieldLabel(field)),
             onBack = done,
-            status = if (title.isNotBlank() && ref.kind != SectionKind.Summary) ({ RrText(title) }) else null,
-        ) { RrButton(stringResource(S.string.done), done, Modifier.padding(end = 10.dp), RrButtonVariant.Secondary) }
+        ) { RrButton(stringResource(S.string.done), done, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small) }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             RrRichTextField(
                 value = value,
                 doc = rich,
                 onValueChange = { next, doc -> if (next.text != value.text) { rich = doc; pending = true }; value = next },
-                modifier = Modifier.fillMaxWidth().padding(16.dp).onFocusChanged { actions.setEditing(it.isFocused) },
+                textStyle = RrType.prose.merge(RrTextDefaults),
+                modifier = Modifier.fillMaxWidth().padding(24.dp).onFocusChanged { actions.setEditing(it.isFocused) },
                 readOnly = state.locked,
                 highlight = askedRange,
                 placeholder = if (ref.kind == SectionKind.Summary) null else stringResource(S.string.describe_the_role),
@@ -171,7 +170,7 @@ internal fun RichTextScreen(
             rich,
             value.selection,
             ::change,
-            Modifier.fillMaxWidth().background(c.surface).imePadding().navigationBarsPadding().padding(horizontal = 6.dp, vertical = 6.dp),
+            Modifier.fillMaxWidth().background(c.surface).imePadding().rrNavigationBarsPadding().padding(horizontal = 6.dp, vertical = 6.dp),
             enabled = !state.locked,
             wholeField = true,
         ) {
@@ -179,7 +178,8 @@ internal fun RichTextScreen(
             RrButton(
                 stringResource(S.string.improve),
                 { if (improve is ImproveState.NoProvider) onSetUpAi() else menu = true },
-                variant = RrButtonVariant.Soft,
+                variant = RrButtonVariant.GhostAccent,
+                size = RrButtonSize.Small,
                 icon = D.drawable.ic_ph_sparkle,
                 enabled = !state.locked && currentLine.isNotBlank(),
             )
@@ -209,39 +209,27 @@ internal fun RichTextScreen(
 private fun ImproveCard(state: ImproveState, onClose: () -> Unit, onReplace: (ImproveState.Ready) -> Unit, onTryAnother: (ImproveRequest) -> Unit) {
     val c = RrTheme.colors
     val asked = when (state) { is ImproveState.Working -> state.asked; is ImproveState.Ready -> state.asked; is ImproveState.Failed -> state.asked; else -> return }
-    Column(
-        Modifier.fillMaxWidth().padding(horizontal = 16.dp).clip(RrShape.lg).background(c.raised).padding(1.dp)
-            .background(c.surface).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
+    RrHeroCard {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            RrIcon(D.drawable.ic_ph_sparkle, null, size = 20.dp, tint = c.accentText)
-            RrText(stringResource(ImproveAction.of(asked.action).label), color = c.ink2, modifier = Modifier.weight(1f))
-            RrIconButton(D.drawable.ic_ph_x, stringResource(S.string.close), onClose)
-        }
-        Column(Modifier.fillMaxWidth().clip(RrShape.md).background(c.sunken).padding(12.dp)) {
-            RrText(stringResource(S.string.original), style = RrType.small, color = c.ink3)
-            RrText(asked.line, style = RrType.ui)
+            RrIcon(D.drawable.ic_ph_sparkle, null, size = 16.dp, tint = c.accentText)
+            RrText(stringResource(R.string.builder_suggestion_action, stringResource(ImproveAction.of(asked.action).label).lowercase()), style = RrType.keyLine, color = c.ink3)
         }
         when (state) {
-            is ImproveState.Working -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { RrSpinner(); RrText(stringResource(S.string.improving), color = c.ink2) }
+            is ImproveState.Working -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { RrSpinner(); RrText(stringResource(S.string.improving), color = c.ink2) }
             is ImproveState.Failed -> {
                 RrText(stringResource(if (state.destinationChanged) D.string.ds_ai_destination_changed else S.string.couldn_t_get_a_suggestion_nothing_changed), color = c.dangerText)
-                // The renewed destination is disclosed before Try again sends anything to it.
                 if (state.destinationChanged) RrDisclosureLine(stringResource(S.string.sends_this_line_surrounding_field_text_and_your_instructions_to_0_1, asked.provider, asked.model))
                 RrButton(stringResource(S.string.try_again), { onTryAnother(asked) }, variant = RrButtonVariant.Secondary)
             }
             is ImproveState.Ready -> {
-                Column(Modifier.fillMaxWidth().clip(RrShape.md).background(c.accentSoft).padding(12.dp)) {
-                    RrText(stringResource(R.string.builder_suggestion), style = RrType.small, color = c.ink2)
-                    RrText(state.text, style = RrType.ui)
-                }
+                RrText(state.text, style = RrType.body)
                 val note = listOfNotNull(state.why.ifBlank { null }, if (state.addsFacts) stringResource(S.string.check_it_s_accurate) else null).joinToString(" ")
-                if (note.isNotEmpty()) RrText(note, color = c.ink2)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    RrButton(stringResource(S.string.replace), { onReplace(state) })
-                    RrButton(stringResource(S.string.keep_mine), onClose, variant = RrButtonVariant.Secondary)
-                    RrButton(stringResource(S.string.try_another), { onTryAnother(asked) }, variant = RrButtonVariant.Ghost)
+                if (note.isNotEmpty()) RrText(note, style = RrType.ui, color = c.ink3)
+                Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
+                    RrButton(stringResource(S.string.replace), { onReplace(state) }, Modifier.padding(top = 4.dp))
+                    RrButton(stringResource(S.string.keep_mine), onClose, Modifier.padding(top = 4.dp), variant = RrButtonVariant.Ghost)
+                    Spacer(Modifier.weight(1f))
+                    RrIconButton(D.drawable.ic_ph_arrow_clockwise, stringResource(S.string.try_another), { onTryAnother(asked) }, size = RrIconButtonSize.Small)
                 }
             }
         }

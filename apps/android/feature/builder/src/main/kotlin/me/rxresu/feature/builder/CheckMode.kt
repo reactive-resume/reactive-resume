@@ -1,12 +1,17 @@
 package me.rxresu.feature.builder
 
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import me.rxresu.core.designsystem.*
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -21,17 +26,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import me.rxresu.core.designsystem.LocalReducedMotion
@@ -40,19 +43,11 @@ import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCard
-import me.rxresu.core.designsystem.RrEmptyState
-import me.rxresu.core.designsystem.RrFilterChip
 import me.rxresu.core.designsystem.RrHaptic
-import me.rxresu.core.designsystem.RrIcon
-import me.rxresu.core.designsystem.RrIconButton
-import me.rxresu.core.designsystem.RrIconButtonSize
-import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrMenuItem
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrRowCaret
-import me.rxresu.core.designsystem.RrScoreRing
-import me.rxresu.core.designsystem.RrSectionHeader
 import me.rxresu.core.designsystem.RrSegment
 import me.rxresu.core.designsystem.RrSegmentedControl
 import me.rxresu.core.designsystem.RrShape
@@ -61,12 +56,9 @@ import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTextField
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrType
-import me.rxresu.core.designsystem.RrStageDot
-import me.rxresu.core.designsystem.RrStage
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.CheckTab
 import me.rxresu.core.network.generated.Application
-import me.rxresu.core.strings.CatalogPlurals
 import me.rxresu.core.strings.R as S
 import me.rxresu.core.designsystem.R as D
 
@@ -99,20 +91,23 @@ internal fun CheckMode(
     val checks = state.checks
     val issues = checks?.let { issueViews(doc, it.findings) }.orEmpty()
     Column(modifier.fillMaxSize().background(RrTheme.colors.bg).verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
-        if (tab == CheckTab.Issues && !writing && checks != null) ScoreHeader(checks.score.toInt(), issues.any { it.key.startsWith("FRAGMENTED_ENTRY") })
+        RrPageTitle(stringResource(S.string.check))
         RrSegmentedControl(
             listOf(
-                RrSegment(stringResource(S.string.issues), count = if (issues.isNotEmpty()) "${issues.size}" else null),
+                RrSegment(stringResource(S.string.issues)),
                 RrSegment(stringResource(S.string.job_match)),
                 RrSegment(stringResource(S.string.writing)),
             ),
             selectedIndex = if (writing) 2 else tab.ordinal,
             onSelect = { i -> writing = i == 2; if (i < 2) onTab(CheckTab.entries[i]) },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = if (tab == CheckTab.JobMatch) 20.dp else 16.dp),
         )
         when {
             writing -> WritingTab(state, actions, onSetUpAi)
-            tab == CheckTab.Issues -> IssuesTab(state, doc, issues, actions, onShowOnPage, onWrite)
+            tab == CheckTab.Issues -> {
+                if (checks != null) ScoreHeader(checks.score.toInt(), issues.any { it.key.startsWith("FRAGMENTED_ENTRY") }, issues.size)
+                IssuesTab(state, doc, issues, actions, onShowOnPage, onWrite)
+            }
             else -> JobMatchTab(state, doc, actions, onShowOnPage, onAskAssistant, jobMatchChanging, saveJobOpen)
         }
     }
@@ -120,28 +115,19 @@ internal fun CheckMode(
 }
 
 @Composable
-private fun ScoreHeader(score: Int, fragmented: Boolean) {
+private fun ScoreHeader(score: Int, fragmented: Boolean, issueCount: Int) {
     val c = RrTheme.colors
     val reduced = LocalReducedMotion.current
     var explain by rememberSaveable { mutableStateOf(false) }
     val shown by animateFloatAsState(score.toFloat(), if (reduced) tween(0) else tween(RrMotion.D3, easing = RrMotion.ease), label = "score")
-    Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            val ringLabel = stringResource(S.string.readability_score_score_out_of_100, "$score")
-            RrScoreRing(shown.toInt(), Modifier.semantics { contentDescription = ringLabel }, size = 64.dp, warnBelow = if (verdict(score, fragmented) == S.string.reads_cleanly) 0 else 101)
-            Column(Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RrText(stringResource(verdict(score, fragmented)), style = RrType.sectionHeading, modifier = Modifier.weight(1f, fill = false))
-                    RrIconButton(D.drawable.ic_ph_info, stringResource(R.string.builder_score_explainer_label), { explain = !explain }, size = RrIconButtonSize.Small, tint = c.ink3)
-                }
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Box(Modifier.size(8.dp).clip(RrShape.sm).background(c.accent))
-                    RrText(stringResource(S.string.live_updates_as_you_edit), color = c.ink3)
-                }
-            }
+    Row(Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp).clickable { explain = !explain }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        RrText("${shown.toInt()}", style = RrType.bigNumber)
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            RrText(stringResource(if (issueCount > 0 && score >= 80) S.string.mostly_readable else verdict(score, fragmented)), style = RrType.label)
+            RrText(if (issueCount == 2) stringResource(R.string.builder_two_fixes) else if (issueCount == 0) stringResource(R.string.builder_nothing_to_review) else pluralStringResource(R.plurals.builder_fixes_count, issueCount, issueCount), style = RrType.ui, color = c.ink3)
         }
-        if (explain) RrText(stringResource(S.string.the_score_counts_how_reliably_software_reads_your_resume_it_doesn_t_predict_whether_you_ll_be_shortl), color = c.ink2, modifier = Modifier.padding(top = 8.dp))
     }
+    if (explain) RrText(stringResource(S.string.the_score_counts_how_reliably_software_reads_your_resume_it_doesn_t_predict_whether_you_ll_be_shortl), color = c.ink2, modifier = Modifier.padding(24.dp))
 }
 
 @Composable
@@ -149,73 +135,34 @@ private fun IssuesTab(state: BuilderUiState, doc: ResumeDoc, issues: List<IssueV
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
     val reduced = LocalReducedMotion.current
-    val resources = LocalResources.current
-    val checks = state.checks
-    if (checks == null) { Column(Modifier.padding(16.dp)) { repeat(3) { me.rxresu.core.designsystem.RrSkeleton(Modifier.fillMaxWidth().height(96.dp).padding(bottom = 12.dp)) } }; return }
-    if (issues.isEmpty()) RrEmptyState(stringResource(R.string.builder_nothing_to_fix), stringResource(S.string.every_check_passes), Modifier.padding(16.dp))
-    val firstFix = issues.firstOrNull { it.fix != null }
+    val checks = state.checks ?: return
+    var menu by remember { mutableStateOf<IssueView?>(null) }
+    var open by rememberSaveable { mutableStateOf(false) }
     var previousCount by remember { androidx.compose.runtime.mutableIntStateOf(issues.size) }
     LaunchedEffect(issues.size) { if (issues.isEmpty() && previousCount > 0) haptics(RrHaptic.Success); previousCount = issues.size }
-    issues.groupBy { it.category }.toSortedMap(compareBy { it.ordinal }).forEach { (category, list) ->
-        RrSectionHeader(stringResource(category.title))
-        list.forEach { issue ->
-            RrCard(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).sizeMotion(reduced)) {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Box(Modifier.padding(top = 3.dp).size(18.dp).clip(RrShape.sm).background(c.warn), contentAlignment = Alignment.Center) {
-                        RrText("${issue.number}", style = RrType.caption, color = c.warnInk)
-                    }
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        RrText(issue.title, style = RrType.label)
-                        if (issue.body.isNotEmpty()) RrText(issue.body, style = RrType.ui.copy(fontSize = RrType.body.fontSize), color = c.ink2)
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            val label = issue.fixLabel
-                            if (label != null) RrButton(
-                                label,
-                                {
-                                    haptics(RrHaptic.Light)
-                                    val fix = issue.fix
-                                    if (fix != null) actions.applyFix(fix) else issue.write?.let(onWrite)
-                                },
-                                variant = if (issue === firstFix) RrButtonVariant.Primary else RrButtonVariant.Secondary,
-                                size = RrButtonSize.Small,
-                                enabled = !state.locked,
-                            )
-                            issue.target?.let { t -> RrButton(stringResource(S.string.show_on_page), { onShowOnPage(t) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small) }
-                            RrButton(stringResource(if (issue.keepLabel) S.string.keep else S.string.ignore), { haptics(RrHaptic.Light); actions.ignoreIssue(issue.key) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small, enabled = !state.locked)
-                        }
-                    }
-                }
+    issues.forEachIndexed { index, issue ->
+        RrCard(Modifier.padding(start = 24.dp, end = 24.dp, top = if (index == 0) 20.dp else 12.dp).combinedClickable(onClick = {}, onLongClick = { menu = issue }).sizeMotion(reduced), contentPadding = PaddingValues(21.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                RrIssueMarker(issue.number)
+                RrText(issue.title, style = RrType.rowTitle.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold))
+            }
+            if (issue.body.isNotEmpty()) RrText(issue.body, style = RrType.body, color = c.ink2)
+            issue.fixLabel?.let { label ->
+                RrButton(label, { haptics(RrHaptic.Light); issue.fix?.let(actions::applyFix) ?: issue.write?.let(onWrite) }, variant = RrButtonVariant.Secondary, enabled = !state.locked)
             }
         }
     }
-    val ignored = checks.ignored.size
-    if (ignored > 0) {
-        RrButton(
-            CatalogPlurals.get(resources, S.plurals.message_0_plural_one_show_ignored_issue_again_other_show_ignored_issues_again, ignored, "$ignored"),
-            actions::showIgnored, Modifier.padding(horizontal = 8.dp, vertical = 8.dp), RrButtonVariant.Ghost,
-        )
+    RrListRow(pluralStringResource(R.plurals.builder_passed_checks, checks.passedRules.toInt(), checks.passedRules.toInt()), modifier = Modifier.padding(top = 12.dp), icon = D.drawable.ic_ph_check_circle, onClick = { open = !open }, trailing = { RrRowCaret() })
+    if (open) {
+        val failing = issues.map { it.category }.toSet()
+        CheckCategory.entries.filterNot { it in failing }.forEach { RrListRow(stringResource(it.title), subtitle = stringResource(it.description)) }
     }
-    RrSectionHeader(stringResource(R.string.builder_checks_by_category))
-    var open by rememberSaveable { mutableStateOf(false) }
-    val failing = issues.map { it.category }.toSet()
-    val passing = CheckCategory.entries.filter { it !in failing && (checks.categories[it.key]?.total ?: 1.0) > 0 }
-    // Each row is the group's own child, so the group draws the divider between them.
-    RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-        if (passing.isNotEmpty()) Column {
-                RrListRow(
-                    passing.map { stringResource(it.title) }.joinToString(" · "),
-                    subtitle = stringResource(R.string.builder_nothing_to_review),
-                    icon = D.drawable.ic_ph_check_circle,
-                    onClick = { open = !open },
-                    trailing = { RrIcon(if (open) D.drawable.ic_ph_caret_up else D.drawable.ic_ph_caret_down, null, size = 20.dp, tint = c.ink2) },
-                )
-                if (open) passing.forEach { RrText(stringResource(it.description), color = c.ink2, modifier = Modifier.padding(start = 52.dp, end = 16.dp, bottom = 12.dp)) }
-        }
-        when (val pdf = state.pdfCheck) {
-            PdfCheckState.Checking -> RrListRow(stringResource(R.string.builder_checking_pdf), icon = D.drawable.ic_ph_file_pdf, trailing = { RrSpinner() })
-            else -> RrListRow(stringResource(S.string.also_check_the_exported_pdf), icon = D.drawable.ic_ph_file_pdf, onClick = actions::checkExportedPdf, trailing = { RrRowCaret() }, subtitle = (pdf as? PdfCheckState.Done)?.let { if (it.findings == 0) stringResource(R.string.builder_pdf_clean) else null })
-        }
-    }
+    if (checks.ignored.isNotEmpty()) RrButton(stringResource(R.string.builder_show_ignored), actions::showIgnored, Modifier.padding(horizontal = 24.dp), variant = RrButtonVariant.GhostAccent)
+    if (open) RrListRow(stringResource(S.string.also_check_the_exported_pdf), icon = D.drawable.ic_ph_file_pdf, onClick = actions::checkExportedPdf, trailing = { RrRowCaret() })
+    menu?.let { issue -> RrBottomSheet(onDismissRequest = { menu = null }, title = issue.title, fitContent = true) {
+        issue.target?.let { target -> RrMenuItem(stringResource(S.string.show_on_page), { onShowOnPage(target); menu = null }) }
+        RrMenuItem(stringResource(S.string.ignore), { if (!state.locked) actions.ignoreIssue(issue.key); menu = null }, enabled = !state.locked)
+    } }
 }
 
 /** B10: posting terms already in the resume and the ones it lacks. Never a percentage. */
@@ -261,57 +208,39 @@ private fun JobMatchTab(
             RrText(stringResource(R.string.builder_pasted_can_be_saved), style = RrType.small, color = c.ink3)
         }
         is MatchState.Ready -> {
-            RrCard(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (m.pasted == null && app != null) RrStageDot(RrStage.Interview)
-                    Column(Modifier.weight(1f)) {
-                        RrText(stringResource(if (m.pasted == null) R.string.builder_posting_linked else R.string.builder_posting_pasted), style = RrType.small, color = c.ink3)
-                        RrText(if (m.pasted == null && app != null) "${app.company} · ${app.role}" else stringResource(S.string.for_this_visit_only), style = RrType.label)
-                    }
-                    if (m.pasted != null) RrButton(stringResource(S.string.clear), { pasted = ""; actions.matchPosting("") }, variant = RrButtonVariant.Ghost)
-                    else if (app != null) RrButton(stringResource(S.string.change), { changing = !changing }, variant = RrButtonVariant.Ghost, enabled = !state.jobBusy)
-                }
-                if (m.pasted != null) SaveAsJob(m.pasted, state, actions, startOpen = saveJobOpen)
-            }
+            RrListRow(if (m.pasted == null && app != null) "${app.company} · ${app.role}" else stringResource(S.string.for_this_visit_only),
+                modifier = Modifier.padding(top = 12.dp), subtitle = stringResource(if (m.pasted == null) R.string.builder_posting_linked else R.string.builder_posting_pasted),
+                onClick = { changing = !changing; actions.loadApplications() }, trailing = { RrText(stringResource(S.string.change), style = RrType.ui, color = c.ink3) })
+            if (m.pasted != null) SaveAsJob(m.pasted, state, actions, startOpen = saveJobOpen)
             if (changing && m.pasted == null && app != null) Column(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 var picked by remember { mutableStateOf<Application?>(null) }
                 ApplicationPicker(state, actions, current = app.id, onPick = { picked = it.takeIf { p -> p.id != app.id } })
                 picked?.let { CopyOrLink(it, state, actions) { picked = null; changing = false } }
                 RrButton(stringResource(R.string.builder_unlink_application), { changing = false; actions.linkApplication(null) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small, enabled = !state.locked && !state.jobBusy)
             }
-            val share by animateFloatAsState(if (m.total == 0) 0f else m.found.size / m.total.toFloat(), if (reduced) tween(0) else tween(RrMotion.D2, easing = RrMotion.ease), label = "match")
-            Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                RrText(stringResource(R.string.builder_posting_terms), style = RrType.body, modifier = Modifier.weight(1f))
-                RrText(stringResource(S.string.done_of_total, "${m.found.size}", "${m.total}"), style = RrType.mono)
+            Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                RrText(stringResource(R.string.builder_terms_count, m.matched, m.total), style = RrType.bigNumber)
+                RrText(stringResource(R.string.builder_terms_already), style = RrType.ui, color = c.ink3)
             }
-            Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(8.dp).clip(RrShape.sm).background(c.sunken)) {
-                Box(Modifier.fillMaxWidth(share).height(8.dp).background(c.accent))
-            }
-            if (m.total == 0) RrText(stringResource(R.string.builder_no_terms), color = c.ink2, modifier = Modifier.padding(16.dp))
+            if (m.total == 0) RrText(stringResource(R.string.builder_no_terms), color = c.ink2, modifier = Modifier.padding(24.dp))
             if (m.missing.isNotEmpty()) {
-                RrSectionHeader(stringResource(S.string.not_in_your_resume_add_only_if_true))
-                var open by rememberSaveable(m.missing.size) { mutableStateOf(m.missing.first().term) }
-                RrListGroup(Modifier.padding(horizontal = 16.dp)) {
-                        m.missing.forEach { term ->
-                            if (open == term.term) Column(Modifier.background(c.surface).padding(16.dp).sizeMotion(reduced), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                RrText(term.label, style = RrType.label)
-                                RrText(CatalogPlurals.get(resources, S.plurals.message_0_plural_one_1_appears_once_in_the_posting_if_it_s_part_of_your_experience_add_it_where_it_belongs_o, term.postingCount, "${term.postingCount}", term.label, term.label), color = c.ink2)
-                                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    RrButton(stringResource(S.string.add_to_skills), { haptics(RrHaptic.Light); actions.addSkill(term.label) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small, enabled = !state.locked)
-                                    RrButton(stringResource(S.string.ask_the_assistant_to_work_it_in), { onAskAssistant(resources.getString(R.string.builder_assistant_term_prompt, term.label)) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small, icon = D.drawable.ic_ph_sparkle, iconTint = c.accentText)
-                                    RrButton(stringResource(S.string.not_true_for_me_hide_it), { haptics(RrHaptic.Light); actions.hideTerm(term.term, term.label) }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small, enabled = !state.locked)
-                                }
-                            } else RrListRow(term.label, onClick = { open = term.term }, trailing = { RrIcon(D.drawable.ic_ph_caret_down, null, size = 20.dp, tint = c.ink2) })
-                        }
+                RrSectionHeading(stringResource(R.string.builder_missing_terms))
+                RrText(stringResource(R.string.builder_terms_hint), style = RrType.ui, color = c.ink3, modifier = Modifier.padding(horizontal = 24.dp))
+                var termMenu by remember { mutableStateOf<MatchTerm?>(null) }
+                m.missing.forEachIndexed { index, term ->
+                    RrListRow(term.label, divider = index < m.missing.lastIndex, onClick = { termMenu = term }, trailing = {
+                        RrText(stringResource(S.string.add), style = RrType.linkSmall, color = c.accentText, modifier = Modifier.padding(vertical = 8.dp))
+                    })
                 }
+                termMenu?.let { term -> RrBottomSheet(onDismissRequest = { termMenu = null }, title = term.label, fitContent = true) {
+                    RrMenuItem(stringResource(S.string.add_to_skills), { haptics(RrHaptic.Light); actions.addSkill(term.label); termMenu = null }, enabled = !state.locked)
+                    RrMenuItem(stringResource(S.string.ask_the_assistant_to_work_it_in), { onAskAssistant(resources.getString(R.string.builder_assistant_term_prompt, term.label)); termMenu = null })
+                    RrMenuItem(stringResource(S.string.not_true_for_me_hide_it), { haptics(RrHaptic.Light); actions.hideTerm(term.term, term.label); termMenu = null }, enabled = !state.locked)
+                } }
             }
             if (m.found.isNotEmpty()) {
-                RrSectionHeader(stringResource(S.string.already_covered_pick_one_to_find_it_on_the_page))
-                FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    m.found.forEach { term ->
-                        RrFilterChip(term.label, selected = false, onSelectedChange = { findTerm(doc, term.label)?.let(onShowOnPage) }, icon = D.drawable.ic_ph_check)
-                    }
-                }
+                RrSectionHeading(stringResource(R.string.builder_covered))
+                m.found.forEach { term -> RrListRow(term.label, onClick = { findTerm(doc, term.label)?.let(onShowOnPage) }) }
             }
             val hidden = doc.metadata["check"].obj()["hiddenTerms"].arr().map { it.str() }
             if (hidden.isNotEmpty()) Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {

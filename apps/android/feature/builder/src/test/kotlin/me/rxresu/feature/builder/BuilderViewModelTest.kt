@@ -79,6 +79,7 @@ class BuilderViewModelTest {
         settle()
         assertEquals("Alex M.", vm.state.value.resume!!.data.basics.name)
         assertEquals(SaveStatus.Saved, vm.state.value.status)
+        assertEquals("Alex M.", repositoriesByVm.getValue(vm).resumes.getResume(StoryboardIds.resume).data.basics.name)
         assertTrue(vm.state.value.canUndo)
         // One debounced render for the saved revision, keyed by the new updatedAt.
         assertEquals(2, renderer.revisions.size)
@@ -160,6 +161,8 @@ class BuilderViewModelTest {
         settle()
         val after = vm.state.value.match as MatchState.Ready
         assertTrue(term in after.found && after.missing.isEmpty())
+        assertEquals(2, after.matched)
+        assertEquals(2, after.total)
         val skills = vm.state.value.doc!!.let { it.items(it.section("skills")!!) }
         assertEquals("Accessibility audits", skills.last()["name"].str())
     }

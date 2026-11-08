@@ -160,3 +160,9 @@ internal fun <T> ReorderColumn(
 }
 
 internal fun <T> List<T>.moved(from: Int, to: Int): List<T> = toMutableList().apply { add(to, removeAt(from)) }
+
+internal fun mergeOrder(existing: List<String>, order: List<String>): List<String> {
+    val shown = order.toSet()
+    val queue = ArrayDeque(order)
+    return existing.map { if (it in shown) queue.removeFirst() else it } + queue
+}

@@ -1,16 +1,16 @@
 package me.rxresu.feature.builder
 
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import android.content.Context
 import android.view.View
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalView
@@ -19,6 +19,9 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
@@ -27,8 +30,6 @@ import androidx.test.core.app.ApplicationProvider
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.navigation.BuilderMode
-import me.rxresu.core.navigation.DesignGroup
-import me.rxresu.core.navigation.WriteView
 import me.rxresu.core.testing.RrScreenshotTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -50,21 +51,16 @@ class BuilderInteractionTest : RrScreenshotTest() {
         RrTheme(darkTheme = false, reducedMotion = reduced) { CompositionLocalProvider(LocalView provides haptics, content = body) }
     }
 
-    @Test fun switchingModeOrViewPlaysOneSelectionAndReselectingNone() {
+    @Test fun switchingModePlaysOneSelectionAndReselectingNone() {
         content {
             var mode by remember { mutableStateOf(BuilderMode.Write) }
-            var view by remember { mutableStateOf(WriteView.Page) }
             val state = Fixtures.state()
-            BuilderScreen(state, mode, { mode = it }, {}, {}, {}, {}, {}, {}) { WriteMode(state, view, { view = it }, NoBuilderActions, WriteNav()) }
+            BuilderScreen(state, mode, { mode = it }, {}, {}, {}, {}, {}, {}) { OverviewScreen(state, NoBuilderActions, WriteNav(), {}, {}) }
         }
-        rule.onNodeWithText("Outline").performClick()
-        assertEquals(1, haptics.count)
-        rule.onNodeWithText("Outline").performClick()
+        rule.onNodeWithText("Design").performClick()
         assertEquals(1, haptics.count)
         rule.onNodeWithText("Design").performClick()
-        assertEquals(2, haptics.count)
-        rule.onNodeWithText("Design").performClick()
-        assertEquals(2, haptics.count)
+        assertEquals(1, haptics.count)
     }
 
     @Test fun lockedDesignChoicesStaySilentAndUnchanged() {
@@ -72,10 +68,65 @@ class BuilderInteractionTest : RrScreenshotTest() {
         val actions = object : BuilderActions {
             override fun edit(toast: BuilderToast?, undoStep: String?, change: (kotlinx.serialization.json.JsonObject) -> kotlinx.serialization.json.JsonObject) { edits++ }
         }
-        content { DesignMode(Fixtures.state().copy(locked = true), DesignGroup.Type, {}, actions) }
+        content { DesignPickerScreen(Fixtures.state().copy(locked = true), me.rxresu.core.navigation.DesignPicker.Typography, actions, {}) }
         rule.onNodeWithText("Compact").performScrollTo().performClick()
         assertEquals(0, edits)
         assertEquals(0, haptics.count)
+    }
+
+    @Test fun photoOptionsRemainReachableFromChangePhoto() {
+        val resume = Fixtures.resume.toJson().set(listOf("data", "picture", "url"), kotlinx.serialization.json.JsonPrimitive("https://example.test/photo.png")) as kotlinx.serialization.json.JsonObject
+        content { BasicsScreen(Fixtures.state(resume.toResume()), NoBuilderActions, {}, photo = Fixtures.photo) }
+        rule.onNodeWithText("Change photo").performClick()
+        rule.onNodeWithText("Options").performClick()
+        rule.onNodeWithText("Aspect ratio").assertExists()
+    }
+
+    @Test fun linkEditorCanRemoveOneLinkWithUndo() {
+        var written: kotlinx.serialization.json.JsonObject? = null
+        var undo = false
+        val actions = object : BuilderActions {
+            override fun edit(toast: BuilderToast?, undoStep: String?, change: (kotlinx.serialization.json.JsonObject) -> kotlinx.serialization.json.JsonObject) {
+                written = change(Fixtures.resume.toJson())
+                undo = toast?.undo == true
+            }
+        }
+        content { BasicsScreen(Fixtures.state(), actions, {}, photo = Fixtures.photo) }
+        rule.onNodeWithText("linkedin.com/in/alexmorgan").performScrollTo().performClick()
+        rule.onNodeWithText("Remove field").performClick()
+        val before = Fixtures.resume.toJson().at(listOf("data", "basics", "customFields")).arr()
+        assertEquals(before.drop(1), written!!.at(listOf("data", "basics", "customFields")).arr())
+        assertEquals(true, undo)
+    }
+
+    @Test fun sectionBlocksOpenTheSectionAndSummaryOpensText() {
+        val destinations = mutableListOf<String>()
+        val nav = WriteNav(
+            entry = { section, item -> destinations += "$section/$item" },
+            section = { destinations += it },
+            richText = { section, item, field -> destinations += "$section/$item/$field" },
+        )
+        val doc = ResumeDoc(Fixtures.resume.toJson())
+        nav.open(doc, BlockTarget.Section("experience")) { error("Unexpected fallback") }
+        nav.open(doc, BlockTarget.Section("summary")) { error("Unexpected fallback") }
+        nav.open(doc, BlockTarget.Item("experience", "experience-northwind")) { error("Unexpected fallback") }
+        assertEquals(listOf("experience", "summary/summary/content", "experience/experience-northwind"), destinations)
+    }
+
+    @Test fun leavingTheEntryClearsTheDraftEditingGuard() {
+        var showing by mutableStateOf(true)
+        val editingEvents = mutableListOf<Boolean>()
+        val actions = object : BuilderActions {
+            override fun setEditing(editing: Boolean) { editingEvents += editing }
+        }
+        content {
+            if (showing) EntryScreen(Fixtures.state(), "experience", "experience-northwind", actions, {}, {}, { _, _ -> }, {})
+        }
+        rule.waitForIdle()
+        assertEquals(true, editingEvents.last())
+        rule.runOnIdle { showing = false }
+        rule.waitForIdle()
+        assertEquals(false, editingEvents.last())
     }
 
     private fun layoutDrag(finish: androidx.compose.ui.test.TouchInjectionScope.() -> Unit): List<Triple<String, Int, Boolean>> {
@@ -83,7 +134,7 @@ class BuilderInteractionTest : RrScreenshotTest() {
         val actions = object : BuilderActions {
             override fun placeSection(key: String, page: Int, sidebar: Boolean) { placed += Triple(key, page, sidebar) }
         }
-        content { DesignMode(Fixtures.state(Fixtures.twoColumns), DesignGroup.Layout, {}, actions) }
+        content { DesignPickerScreen(Fixtures.state(Fixtures.twoColumns), me.rxresu.core.navigation.DesignPicker.Layout, actions, {}) }
         rule.onNodeWithText("Skills").performScrollTo()
         val skills = rule.onNodeWithText("Skills").getUnclippedBoundsInRoot()
         val experience = rule.onNodeWithText("Experience").getUnclippedBoundsInRoot()
@@ -104,6 +155,31 @@ class BuilderInteractionTest : RrScreenshotTest() {
 
     @Test fun releasedLayoutDragMovesOnce() {
         assertEquals(listOf(Triple("skills", 0, false)), layoutDrag { up() })
+    }
+
+    @Test fun replacingAStaleSuggestionKeepsTheManualEdit() {
+        lateinit var focus: androidx.compose.ui.focus.FocusManager
+        var replacements = 0
+        var error: Int? = null
+        val asked = ImproveRequest("Built the design system now used by six product teams; cut interface defects by a third.", me.rxresu.core.network.generated.CreateImprovementRequestAction.Verb, null, "Work OpenAI", "gpt-5-mini")
+        val actions = object : BuilderActions {
+            override fun replaceField(path: Path, html: String, operations: List<String>) { replacements++ }
+            override fun toastError(text: Int) { error = text }
+        }
+        content {
+            focus = androidx.compose.ui.platform.LocalFocusManager.current
+            val state = Fixtures.state().copy(improve = ImproveState.Ready(asked, "Created the design system.", "", false, emptyList()))
+            RichTextScreen(state, "experience", "experience-northwind", "description", actions, {}, {})
+        }
+        rule.onAllNodes(hasSetTextAction()).onFirst().performTextReplacement("Changed by hand")
+        rule.onNodeWithText("Replace").performClick()
+        assertEquals(0, replacements)
+        assertEquals(me.rxresu.core.strings.R.string.the_line_changed_since_you_asked_so_it_wasn_t_replaced, error)
+        rule.onNodeWithText("Changed by hand").assertExists()
+        rule.mainClock.advanceTimeBy(500)
+        rule.waitForIdle()
+        rule.onNodeWithText("Done").performClick()
+        rule.runOnIdle { focus.clearFocus(force = true) }
     }
 
     @Test fun reducedMotionMovesReorderNeighboursWithoutAnimating() {
@@ -129,7 +205,7 @@ class BuilderInteractionTest : RrScreenshotTest() {
         val zoom = me.rxresu.core.designsystem.RrPageZoomState()
         var cover by mutableFloatStateOf(0f)
         val state = Fixtures.state().copy(highlight = BlockTarget.Item("experience", "experience-harbour"), highlightAboveSheet = true)
-        content { Box { WriteMode(state, WriteView.Page, {}, NoBuilderActions, WriteNav(), zoom = zoom, sheetCover = { cover }) } }
+        content { Box { PageCanvas(state.pages, state.blocks, pageCountHint = 1, highlight = state.highlight, sheetCover = { cover }, zoom = zoom, onTap = { _, _, _ -> }) } }
         val windowPx = with(rule.density) { 844.dp.toPx() }
         // Harbour Studio's block ends at 45.3% of the first page; the page fills the 390 dp width less 16 dp gutters.
         val blockBottom = with(rule.density) { (16.dp + (358.dp / me.rxresu.core.designsystem.RrLayout.PAGE_ASPECT) * 0.453f).toPx() }
