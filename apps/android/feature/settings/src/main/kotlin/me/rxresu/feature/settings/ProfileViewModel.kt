@@ -107,34 +107,34 @@ internal class ProfileViewModel(private val account: AccountRepository) : ViewMo
 }
 
 /** Early form feedback only; API remains validator and revision owner. */
-internal fun validProfile(p: ProfileData): Boolean {
-    fun email(v: JsonElement?) = validEmail(v)
+internal fun validProfile(p: ProfileData): Boolean = invalidProfileField(p) == null
+
+internal fun invalidProfileField(p: ProfileData): String? {
     fun country(v: String?) = v.isNullOrBlank() || v in java.util.Locale.getISOCountries()
     fun url(v: String) = runCatching {
         java.net.URI(v).let { it.scheme in listOf("https", "http") && !it.host.isNullOrBlank() }
+    }.getOrDefault(false)
+    if (p.givenName.orEmpty().length > 200) return "givenName"
+    if (p.familyName.orEmpty().length > 200) return "familyName"
+    if (!validEmail(p.email)) return "email"
+    p.workAuthorization.orEmpty().forEachIndexed { i, a ->
+        if (!country(a.countryCode) || a.countryCode.isBlank()) return "authorization:$i"
     }
-        .getOrDefault(false)
-    val salary = p.requestedSalary
-    val amount = salary?.amount
-    return email(p.email) &&
-        p.givenName.orEmpty().length <= 200 &&
-        p.familyName.orEmpty().length <= 200 &&
-        country(p.address?.countryCode) &&
-        p.workAuthorization.orEmpty().all {
-            country(it.countryCode) && it.countryCode.isNotBlank()
-        } &&
-        p.links.orEmpty().all { it.label.isNotBlank() && url(it.url) } &&
-        p.references.orEmpty().all { it.name.isNotBlank() && email(it.email) } &&
-        (amount == null ||
-            (amount.isFinite() &&
-                amount >= 0 &&
-                salary.currency?.matches(Regex("[A-Z]{3}")) == true &&
-                salary.period in
-                    listOf(
-                        CreateCareerOfferRequestPeriod.Hour,
-                        CreateCareerOfferRequestPeriod.Month,
-                        CreateCareerOfferRequestPeriod.Year,
-                    )))
+    p.requestedSalary?.let { salary -> salary.amount?.let { amount ->
+        if (!amount.isFinite() || amount < 0) return "salary:amount"
+        if (salary.currency?.matches(Regex("[A-Z]{3}")) != true) return "salary:currency"
+        if (salary.period !in listOf(CreateCareerOfferRequestPeriod.Hour, CreateCareerOfferRequestPeriod.Month, CreateCareerOfferRequestPeriod.Year)) return "salary:period"
+    } }
+    p.references.orEmpty().forEachIndexed { i, reference ->
+        if (reference.name.isBlank()) return "references:$i:name"
+        if (!validEmail(reference.email)) return "references:$i:email"
+    }
+    if (!country(p.address?.countryCode)) return "address:country"
+    p.links.orEmpty().forEachIndexed { i, link ->
+        if (link.label.isBlank()) return "links:$i:label"
+        if (!url(link.url)) return "links:$i:url"
+    }
+    return null
 }
 
 internal fun emailText(value: JsonElement?): String =

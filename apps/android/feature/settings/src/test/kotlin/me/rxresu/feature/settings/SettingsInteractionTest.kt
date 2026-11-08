@@ -93,6 +93,30 @@ class SettingsInteractionTest {
     }
 
     @Test
+    fun invalidSalaryOpensAndFocusesAmountAt200PercentWithReducedMotion() {
+        org.robolectric.RuntimeEnvironment.setFontScale(2f)
+        try {
+            compose.setContent {
+                RrTheme(reducedMotion = true) {
+                    ProfileScreen(ProfileState(draft = ProfileData(requestedSalary = Salary(amount = -1.0)), loading = false, invalid = true))
+                }
+            }
+            compose.onNode(hasSetTextAction() and hasContentDescription("Amount")).assertIsDisplayed().assertIsFocused()
+            compose.onAllNodes(SemanticsMatcher.keyIsDefined(androidx.compose.ui.semantics.SemanticsProperties.Error)).assertCountEquals(1)
+        } finally { org.robolectric.RuntimeEnvironment.setFontScale(1f) }
+    }
+
+    @Test
+    fun invalidReferenceOpensExactRowInsteadOfContactFields() {
+        compose.setContent {
+            RrTheme(reducedMotion = true) {
+                ProfileScreen(ProfileState(draft = ProfileData(references = listOf(ProfileReference("Company", kotlinx.serialization.json.JsonPrimitive("bad email"), "A mentor", "Lee", ""))), loading = false, invalid = true))
+            }
+        }
+        compose.onNode(hasSetTextAction() and hasContentDescription("Email")).assertIsDisplayed().assertIsFocused()
+    }
+
+    @Test
     fun addressCountryPickerReturnsChosenCountry() {
         var data = ProfileData()
         compose.setContent {

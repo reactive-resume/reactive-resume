@@ -32,6 +32,25 @@ class PublicModelsTest {
     private val context get() = ApplicationProvider.getApplicationContext<android.app.Application>()
     @Before fun setup() { Dispatchers.setMain(StandardTestDispatcher()) }
     @After fun cleanup() { Dispatchers.resetMain() }
+    @Test fun verdictAndCelebrationMatchWeb() = runTest {
+        val controls = FakeControls()
+        val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
+        val base = repositories.checks.createPdfCheck(UploadPart("file", byteArrayOf(), "resume.pdf", "application/pdf"))
+        val finding = CreatePdfCheckResponseTipsItem(CreatePdfCheckResponseChecksItemCategory.Layout, CreatePdfCheckResponseCappedByItem.MULTICOLUMNLAYOUT, severity = CreatePdfCheckResponseChecksItemSeverity.Warning)
+        val cases = listOf(Triple(86.0, listOf(finding), AtsVerdict.Mostly), Triple(86.0, emptyList(), AtsVerdict.Clean), Triple(55.0, emptyList(), AtsVerdict.Mostly), Triple(49.0, emptyList(), AtsVerdict.Hard))
+        val selected = SelectedPdf("content://sample/file", "resume.pdf", byteArrayOf(), File.createTempFile("sample", ".pdf", context.cacheDir))
+        val model = AtsViewModel(context, repositories) { selected }
+        model.choose(selected.uri); advanceUntilIdle()
+        for ((score, findings, verdict) in cases) {
+            val result = base.copy(score = score, findings = findings)
+            assertEquals(verdict, atsVerdict(result))
+            controls.responses.value = mapOf("createPdfCheck" to ApiJson.encodeToJsonElement(result))
+            model.check(); advanceUntilIdle()
+            assertEquals(verdict == AtsVerdict.Clean, model.takeSuccess())
+            assertFalse("Stable result cannot celebrate twice", model.takeSuccess())
+        }
+        repositories.close()
+    }
     @Test fun markersUseOneBasedPagesAndTopLeftPdfPoints() {
         val finding = CreatePdfCheckResponseTipsItem(CreatePdfCheckResponseChecksItemCategory.Layout, CreatePdfCheckResponseCappedByItem.MULTICOLUMNLAYOUT,
             evidence = CreatePdfCheckResponseChecksItemFindingsItemEvidence(CreatePdfCheckResponseChecksItemFindingsItemEvidenceBox(20.0, 40.0, 150.0, 200.0), 2.0), severity = CreatePdfCheckResponseChecksItemSeverity.Warning)

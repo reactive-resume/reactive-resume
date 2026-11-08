@@ -2,6 +2,7 @@ package me.rxresu.feature.career
 
 import me.rxresu.core.data.aiApproval
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.SavedStateHandle
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -49,6 +50,7 @@ internal fun coachChunks(data: String): List<JsonObject> {
 internal class CoachViewModel(repositories: RrRepositories, private val drafts: CareerDrafts, private val id: String?, starter: String?,
     private val transport: ApiTransport = ApiClient(repositories.authSession, repositories.authSession, timezone = repositories.time.timezone, accountScope = { repositories.owner() }),
     private val applicationId: String? = null,
+    private val savedState: SavedStateHandle = SavedStateHandle(),
 ) : CareerModel(repositories) {
     private val key = "coach:${id ?: applicationId?.let { "application:$it" } ?: "new"}"
     private val mutable = MutableStateFlow(CoachState(draft = starter.orEmpty(), server = repositories.authSession.origin.value, scoped = applicationId != null)); val state = mutable.asStateFlow()
@@ -66,7 +68,7 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
             }
             drafts.remove("$key:thread"); drafts.remove("$key:message"); drafts.write(key, starter); starterPending = null
         }
-        drafts.read(key)?.let { recovered -> mutable.update { it.copy(draft = recovered) } }
+        (savedState.get<String>("draft") ?: drafts.read(key))?.let { recovered -> mutable.update { it.copy(draft = recovered) } }
         val providers = repositories.ai.listAiProviders(options = options).filter { it.enabled && it.testStatus == "success" }
         val recoveredId = id ?: drafts.read("$key:thread") ?: applicationId?.let { scope ->
             repositories.assistant.listAgentThreads(options = options).filter { it.scope == StartAgentThreadRequestScope.Application && it.applicationId == scope && it.deletedAt == null }
@@ -86,7 +88,7 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
         val stories = repositories.career.listCareerStories(options = options).filter { (it.applicationId == null || it.applicationId == applicationId) && it.data.factIds.orEmpty().all { id -> facts.any { fact -> fact.id == id } } }
         checkOwner(); mutable.update { it.copy(knowledgeReady = true, error = false, facts = facts, stories = stories) }
     }
-    fun adoptThread(): Boolean {
+    suspend fun adoptThread(): Boolean {
         val thread = state.value.thread ?: return false
         if (id != null) return true
         return try {
@@ -97,7 +99,8 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
     }
     fun draft(text: String) {
         mutable.update { it.copy(draft = text) }
-        try { drafts.write(key, text) } catch (_: Exception) { mutable.update { it.copy(error = true) } }
+        savedState["draft"] = text
+        drafts.enqueue(key, text) { mutable.update { it.copy(error = true) } }
     }
     fun memory(value: Boolean) { mutable.update { it.copy(memory = value) } }
     fun applications(value: Boolean) { mutable.update { it.copy(applications = value) } }
@@ -141,6 +144,7 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
             }
             val raw = history(thread.id); checkOwner()
             mutable.update { it.copy(messages = coachMessages(raw), busy = false, draft = if (it.draft == sentText) "" else it.draft) }
+            savedState["draft"] = state.value.draft
             drafts.write(key, state.value.draft); drafts.remove("$key:message"); refreshProposals()
         }
     }
@@ -168,7 +172,7 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
         state.value.thread?.let { repositories.assistant.stopAgentMessage(StopAgentMessageRequest(threadId = it.id), options) }
         streaming?.cancel(); mutable.update { it.copy(busy = false) }; state.value.thread?.id?.let { threadId -> val raw = history(threadId); checkOwner(); mutable.update { it.copy(messages = coachMessages(raw)) }; refreshProposals() }
     }
-    private fun refreshProposals() {
+    private suspend fun refreshProposals() {
         val notes = state.value.messages.flatMap { it.parts }.filter { it["type"]?.jsonPrimitive?.contentOrNull == "tool-remember_fact" && it["state"]?.jsonPrimitive?.contentOrNull == "output-available" }.mapNotNull { part ->
             val output = part["output"] as? JsonObject ?: return@mapNotNull null
             val callId = part["toolCallId"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
@@ -180,11 +184,11 @@ internal class CoachViewModel(repositories: RrRepositories, private val drafts: 
         mutable.update { it.copy(pendingFacts = notes) }
     }
     fun remember(fact: CoachFact, done: () -> Unit) = run({ mutable.update { it.copy(error = true) } }) {
-        repositories.career.saveCareerFact(fact.fact, options); checkOwner(); dismiss(fact.callId); done()
+        repositories.career.saveCareerFact(fact.fact, options); checkOwner(); hideProposal(fact.callId); done()
     }
-    fun dismiss(callId: String) {
-        try { drafts.write("dismissed:$callId", "true"); mutable.update { it.copy(pendingFacts = it.pendingFacts.filterNot { fact -> fact.callId == callId }) } }
-        catch (_: Exception) { mutable.update { it.copy(error = true) } }
+    fun dismiss(callId: String) = run({ mutable.update { it.copy(error = true) } }) { hideProposal(callId) }
+    private suspend fun hideProposal(callId: String) {
+        drafts.write("dismissed:$callId", "true"); mutable.update { it.copy(pendingFacts = it.pendingFacts.filterNot { fact -> fact.callId == callId }) }
     }
     fun rename(title: String) = run({ mutable.update { it.copy(error = true) } }) {
         state.value.thread?.let { val t = repositories.assistant.updateAgentThread(it.id, UpdateAgentThreadRequest(title = title), options); checkOwner(); mutable.update { s -> s.copy(thread = t) } }
