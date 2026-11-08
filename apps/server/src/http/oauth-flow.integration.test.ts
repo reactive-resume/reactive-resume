@@ -229,6 +229,109 @@ describe.skipIf(!databaseURL)("MCP OAuth flow with PostgreSQL", () => {
 		);
 		expect(refreshed.status).toBe(400);
 	}, 30_000);
+	it("signs the official app in without the consent screen and still records a grant it can disconnect", async () => {
+		if (!databaseURL) return;
+		process.env.DATABASE_URL = databaseURL;
+		process.env.APP_URL = "http://localhost:33920";
+		process.env.AUTH_SECRET = "oauth-integration-test-secret-only";
+		const { handleAuth } = await import("./auth");
+		const { verifyOAuthToken } = await import("@reactive-resume/auth/config");
+		const origin = process.env.APP_URL;
+		const appCallback = "https://rxresu.me/auth/native-callback";
+		const post = (path: string, body: object, cookie = "") =>
+			handleAuth(
+				new Request(`${origin}/api/auth/${path}`, {
+					method: "POST",
+					headers: { "content-type": "application/json", origin, cookie },
+					body: JSON.stringify(body),
+				}),
+			);
+		const register = async (redirect_uris: string[]) => {
+			const response = await post("oauth2/register", {
+				client_name: "Reactive Resume for Android",
+				redirect_uris,
+				token_endpoint_auth_method: "none",
+				application_type: "native",
+			});
+			expect(response.status, await response.clone().text()).toBe(201);
+			return (await response.json()).client_id as string;
+		};
+		const unique = randomBytes(6).toString("hex");
+		const signup = await post("sign-up/email", {
+			name: "App Test",
+			email: `app-${unique}@example.com`,
+			username: `app-${unique}`,
+			password: "password123",
+		});
+		expect(signup.status).toBe(200);
+		const cookie = signup.headers
+			.getSetCookie()
+			.map((value) => value.split(";", 1)[0])
+			.join("; ");
+		const verifier = randomBytes(32).toString("base64url");
+		const authorize = async (clientId: string) =>
+			new URL(
+				(
+					await handleAuth(
+						new Request(
+							`${origin}/api/auth/oauth2/authorize?${new URLSearchParams({
+								client_id: clientId,
+								redirect_uri: appCallback,
+								response_type: "code",
+								scope: "openid offline_access api:read api:write",
+								code_challenge: createHash("sha256").update(verifier).digest("base64url"),
+								code_challenge_method: "S256",
+								resource: origin,
+								state: "app-state",
+							})}`,
+							{ headers: { cookie } },
+						),
+					)
+				).headers.get("location") ?? "",
+				origin,
+			);
+		const consents = async () =>
+			(await handleAuth(new Request(`${origin}/api/auth/oauth2/get-consents`, { headers: { cookie } }))).json();
+
+		// Another callback beside the app's one makes it an ordinary client, which asks for consent.
+		const mixed = await register([appCallback, "https://elsewhere.example/callback"]);
+		expect((await authorize(mixed)).pathname).toBe("/auth/consent");
+
+		const app = await register([appCallback]);
+		const callback = await authorize(app);
+		expect(callback.href.startsWith(`${appCallback}?`), callback.href).toBe(true);
+		const code = callback.searchParams.get("code");
+		expect(code).toBeTruthy();
+		expect(await consents()).toEqual([]);
+
+		const token = (body: Record<string, string>) =>
+			handleAuth(
+				new Request(`${origin}/api/auth/oauth2/token`, {
+					method: "POST",
+					headers: { "content-type": "application/x-www-form-urlencoded" },
+					body: new URLSearchParams({ client_id: app, resource: origin, ...body }),
+				}),
+			);
+		const issued = await token({
+			grant_type: "authorization_code",
+			code: code ?? "",
+			redirect_uri: appCallback,
+			code_verifier: verifier,
+		});
+		expect(issued.status, await issued.clone().text()).toBe(200);
+		const tokens = await issued.json();
+		expect((await verifyOAuthToken(tokens.access_token)).azp).toBe(app);
+		const [grant] = await consents();
+		expect(grant).toMatchObject({ clientId: app, scopes: ["openid", "offline_access", "api:read", "api:write"] });
+
+		const disconnected = await post("oauth2/delete-consent", { id: grant.id }, cookie);
+		expect(disconnected.status).toBe(200);
+		await expect(verifyOAuthToken(tokens.access_token)).rejects.toThrow();
+		const refreshed = await token({ grant_type: "refresh_token", refresh_token: tokens.refresh_token });
+		expect(refreshed.status).toBe(400);
+		expect(await consents()).toEqual([]);
+	}, 30_000);
+
 	it("refuses authorization without a resource, reporting to the registered callback only", async () => {
 		if (!databaseURL) return;
 		process.env.DATABASE_URL = databaseURL;
