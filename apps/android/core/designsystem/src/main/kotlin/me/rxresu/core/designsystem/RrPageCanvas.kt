@@ -1,6 +1,7 @@
 package me.rxresu.core.designsystem
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -133,11 +135,15 @@ fun RrPageCanvas(
         val contentH = gutter * 2 + count * pageH + (count - 1).coerceAtLeast(0) * gap
 
         fun settle(scale: Float = zoom.scale.value, animate: Boolean = true) = scope.launch {
-            val s = scale.coerceIn(RrPageZoom.MIN, RrPageZoom.MAX)
-            val tx = RrPageZoom.clamp(zoom.x.value, viewW * s, viewW)
-            val ty = if (contentH * s <= viewH) 0f else zoom.y.value.coerceIn(viewH - contentH * s, 0f)
+            // Animatable throws on NaN; anything non-finite settles back to fit-to-width at the top.
+            fun Float.finite(fallback: Float) = if (isFinite()) this else fallback
+            val s = scale.finite(1f).coerceIn(RrPageZoom.MIN, RrPageZoom.MAX)
+            val tx = RrPageZoom.clamp(zoom.x.value.finite(0f), viewW * s, viewW)
+            val ty = if (contentH * s <= viewH) 0f else zoom.y.value.finite(0f).coerceIn(viewH - contentH * s, 0f)
             val spec = tween<Float>(if (animate && !reduced) RrMotion.D2 else 0, easing = RrMotion.ease)
-            launch { zoom.scale.animateTo(s, spec) }; launch { zoom.x.animateTo(tx, spec) }; zoom.y.animateTo(ty, spec)
+            // An animation from a non-finite value throws too, so that value jumps straight to its target.
+            suspend fun Animatable<Float, AnimationVector1D>.glide(target: Float) = if (value.isFinite()) animateTo(target, spec) else snapTo(target)
+            launch { zoom.scale.glide(s) }; launch { zoom.x.glide(tx) }; zoom.y.glide(ty)
             onZoomChange(s)
         }
 
@@ -174,14 +180,17 @@ fun RrPageCanvas(
                                 transforming = abs(moved.getDistance()) > slop || abs(zoomChange - 1f) > 0.02f || event.changes.size > 1
                             }
                             if (transforming) {
+                                // Unspecified (NaN) when no finger was down in the previous event, as a finger lands or lifts.
                                 val centroid = event.calculateCentroid(useCurrent = false)
-                                val old = zoom.scale.value
-                                val next = RrPageZoom.rubber((old * zoomChange).coerceIn(RrPageZoom.MIN / 1.5f, RrPageZoom.MAX * 1.3f))
-                                val ratio = next / old
-                                scope.launch {
-                                    zoom.scale.snapTo(next)
-                                    zoom.x.snapTo(centroid.x - (centroid.x - zoom.x.value) * ratio + pan.x)
-                                    zoom.y.snapTo(centroid.y - (centroid.y - zoom.y.value) * ratio + pan.y)
+                                if (centroid.isSpecified) {
+                                    val old = zoom.scale.value
+                                    val next = RrPageZoom.rubber((old * zoomChange).coerceIn(RrPageZoom.MIN / 1.5f, RrPageZoom.MAX * 1.3f))
+                                    val ratio = next / old
+                                    scope.launch {
+                                        zoom.scale.snapTo(next)
+                                        zoom.x.snapTo(centroid.x - (centroid.x - zoom.x.value) * ratio + pan.x)
+                                        zoom.y.snapTo(centroid.y - (centroid.y - zoom.y.value) * ratio + pan.y)
+                                    }
                                 }
                                 event.changes.forEach { if (it.positionChanged()) it.consume() }
                             }
