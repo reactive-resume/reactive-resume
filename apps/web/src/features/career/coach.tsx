@@ -3,7 +3,6 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { UIMessage } from "ai";
 import { plural, t } from "@lingui/core/macro";
-import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -28,7 +27,6 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
-import { formatList } from "@reactive-resume/utils/locale";
 import { buildConversationTitle } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import {
@@ -36,13 +34,11 @@ import {
 	connectionName,
 	copyToClipboard,
 	deleteConversation,
-	MemoryNote,
 	titleFor,
 	useCoachKnowledge,
 	useConversationDate,
 	WebResearchChip,
 	useWebSearch,
-	type ChatHistory,
 } from "./coach-thread";
 import { CareerLoadError } from "./load-state";
 import { PracticeHandoff } from "./prepare-now";
@@ -108,7 +104,6 @@ type CoachPageProps = { conversationId: string | undefined; offerIds: string[] }
 
 /** C7–C11: conversations about the whole search, with what each message shares chosen in the composer. */
 export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPageProps) {
-	const { i18n } = useLingui();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const breakpoint = useBreakpoint();
@@ -265,39 +260,16 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 				}),
 		);
 
-	// The privacy line names exactly what goes and what the coach may keep. The chips choose what this message adds;
-	// earlier messages go too, except those written before Knowledge last changed.
-	const privacy = ({ earlier, withheld, attached }: ChatHistory) => {
-		const parts = [
-			t`your message`,
-			...(attached > 0 ? [plural(attached, { one: "# attached file", other: "# attached files" })] : []),
-			...(earlier > 0 ? [t`earlier messages in this chat`] : []),
-			...(chips.application ? [t`application summaries`] : []),
-			...(context.offerIds ? [plural(offerIds.length, { one: "# saved offer", other: "# saved offers" })] : []),
-			...(chips.memory
-				? [
-						t`your preferences`,
-						...(knowledge.active.length > 0
-							? [plural(knowledge.active.length, { one: "# fact", other: "# facts" })]
-							: []),
-						...(knowledge.stories.length > 0 ? [t`your stories`] : []),
-					]
-				: []),
-		];
-		const shared = formatList(i18n.locale, parts);
-		return (
-			<PrivacyLine>
-				{stranded
-					? t`Nothing is sent until you choose a connection for this conversation.`
-					: chips.memory && knowledge.isError
-						? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
-						: chips.memory && knowledge.isPending
-							? t`Loading Knowledge before you send…`
-							: t`When you press send, ${shared} go to your ${connection}.`}
-				{withheld > 0 && ` ${t`Messages from before Knowledge changed aren't sent.`}`}
-				{context.web && ` ${t`Search terms go to your web search service.`}`} <MemoryNote knowledge={chips.memory} />
-			</PrivacyLine>
-		);
+	// Only states that block or delay sending get a line; what each message shares shows in the chips.
+	const privacy = () => {
+		const note = stranded
+			? t`Nothing is sent until you choose a connection for this conversation.`
+			: chips.memory && knowledge.isError
+				? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
+				: chips.memory && knowledge.isPending
+					? t`Loading Knowledge before you send…`
+					: null;
+		return note && <PrivacyLine>{note}</PrivacyLine>;
 	};
 
 	const contextChips = (

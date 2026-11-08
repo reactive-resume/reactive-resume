@@ -118,7 +118,7 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 				<AiProviderLoadState state={connection} />
 			) : provider ? (
 				<>
-					<AiNotice task="briefing" application={application} interview className="max-w-[360px] text-start" />
+					<AiNotice />
 					<GenerateNotice generate={generate} onRetry={plan} className="max-w-[360px]" />
 				</>
 			) : null}
@@ -366,7 +366,7 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 				: !providerId
 					? t`Connect an AI provider in Settings to refresh it automatically.`
 					: runAt
-						? t`${when(runAt)} · ${providerLabel}. Sends this application and your Knowledge; your provider may charge.`
+						? t`${when(runAt)} · ${providerLabel}`
 						: t`Too close to the interview to schedule a refresh.`;
 
 	return (

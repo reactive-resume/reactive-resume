@@ -10,7 +10,6 @@ import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { useReducedMotion } from "motion/react";
 import { useId, useRef, useState } from "react";
-import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { coverLetterTextToHtml, defaultCoverLetterSignOff, greetingName } from "@reactive-resume/resume/cover-letter";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -656,10 +655,6 @@ type EmptyBodyProps = {
 function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 	const providerState = useHasUsableAiProvider();
 	const { hasUsableProvider } = providerState;
-	const draftProvider = providerState.usableProviders[0];
-	const draft = draftProvider
-		? { label: draftProvider.label, model: aiModelForTask(draftProvider, "capable") }
-		: undefined;
 	const hasResume = Boolean(letter.sourceResumeId);
 	const company = application?.company;
 	const canDraft = hasResume || Boolean(application);
@@ -702,24 +697,7 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 					<Trans>Write it myself</Trans>
 				</Button>
 			</div>
-			{canDraft && hasUsableProvider && (
-				<p className="text-xs text-ink-3">
-					{application && hasResume
-						? t`Sends this letter's resume and the ${application.company} posting to ${providerState.usableProviders[0]?.label ?? t`your AI provider`} to draft the body.`
-						: application
-							? t`Sends the ${application.company} posting to ${providerState.usableProviders[0]?.label ?? t`your AI provider`} to draft the body.`
-							: t`Sends this letter's resume to ${providerState.usableProviders[0]?.label ?? t`your AI provider`} to draft the body.`}
-				</p>
-			)}
 			{canDraft && <AiProviderLoadState state={providerState} />}
-			{canDraft && hasUsableProvider && (
-				<p className="text-xs text-ink-3">
-					<Trans>
-						Sends the linked resume, posting and letter details to {draft?.label} · {draft?.model}. Your provider may
-						charge.
-					</Trans>
-				</p>
-			)}
 			{canDraft && !providerState.isUnavailable && !hasUsableProvider && (
 				<p className="text-xs text-ink-3">
 					<Trans>Drafting needs an AI provider.</Trans> <SetUpAi />

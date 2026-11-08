@@ -467,10 +467,8 @@ export function Conversation(props: ConversationProps) {
 				document={document}
 				context={context}
 				onContextChange={setContext}
-				providerLabel={props.providerLabel}
 				streaming={busy}
 				disabled={readOnly || !!props.notice}
-				hasHistory={messages.length > 0}
 				threadId={threadId}
 				notice={props.notice ?? props.banner}
 				onSend={send}
@@ -1051,7 +1049,6 @@ type ComposerProps = {
 	document: AssistantDocument;
 	context: MessageContext;
 	onContextChange: (context: MessageContext) => void;
-	providerLabel: string;
 	streaming: boolean;
 	disabled: boolean;
 	/** Attachments need a conversation to belong to. */
@@ -1065,8 +1062,6 @@ type ComposerProps = {
 	initialAttachments?: ChatAttachment[];
 	/** Above the box: what needs a decision before the next message. */
 	notice?: ReactNode;
-	/** The conversation already has messages, which are sent again with the next one. */
-	hasHistory?: boolean;
 };
 
 /**
@@ -1159,35 +1154,7 @@ export function Composer(props: ComposerProps) {
 			: []),
 	];
 
-	const provider = props.providerLabel;
 	const sharesPosting = context.posting && document.posting;
-	// Knowledge is opt-in here, per message: the assistant can search shared facts and stories, never change them.
-	const knowledge = context.memory
-		? context.posting && document.posting
-			? t`It can also search Knowledge available to this application (facts and stories) and send what it finds.`
-			: t`It can also search your shared Knowledge (facts and stories) and send what it finds.`
-		: "";
-	const disclosure = context.document
-		? document.kind === "letter"
-			? sharesPosting
-				? t`Sends this letter and the posting to ${provider} with your key, only when you press send.`
-				: t`Sends this letter to ${provider} with your key, only when you press send.`
-			: sharesPosting
-				? t`Sends this resume and the posting to ${provider} with your key, only when you press send.`
-				: t`Sends this resume to ${provider} with your key, only when you press send.`
-		: sharesPosting
-			? t`Sends your message and the posting to ${provider} with your key, only when you press send.`
-			: t`Sends your message to ${provider} with your key, only when you press send.`;
-
-	// Attached files go with the next message: named, so the user sees exactly what leaves.
-	const names = attachments.map((attachment) => attachment.filename);
-	const files =
-		names.length === 0
-			? ""
-			: plural(names.length, {
-					one: `Also sends ${listFormat(names)}.`,
-					other: `Also sends # files: ${listFormat(names)}.`,
-				});
 
 	// Tailoring needs the job's own copy: the server refuses edits that use the posting on a resume other jobs share.
 	const posting = sharesPosting ? document.posting : null;
@@ -1310,20 +1277,6 @@ export function Composer(props: ComposerProps) {
 					</>
 				}
 			/>
-
-			<p className="text-xs leading-4 text-ink-3">
-				{disclosure}
-				{files && ` ${files}`}
-				{knowledge && ` ${knowledge}`}
-				{props.hasHistory && " "}
-				{!props.hasHistory ? null : !context.document || !context.posting ? (
-					<Trans>
-						Each send starts fresh with this message and selected files. Previous conversation history stays here.
-					</Trans>
-				) : (
-					<Trans>Previous messages, including document details, are also sent.</Trans>
-				)}
-			</p>
 		</div>
 	);
 }
@@ -1355,15 +1308,6 @@ function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove, disabled 
 		</span>
 	);
 }
-
-/** "a, b and c" in the reader's language. */
-const listFormat = (items: readonly string[]) => {
-	try {
-		return new Intl.ListFormat(i18n.locale, { type: "conjunction" }).format(items);
-	} catch {
-		return items.join(", ");
-	}
-};
 
 async function copyTranscript(messages: readonly UIMessage[], statuses: ReadonlyMap<string, Receipt>) {
 	try {

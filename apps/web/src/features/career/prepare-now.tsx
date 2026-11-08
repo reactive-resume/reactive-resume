@@ -45,7 +45,7 @@ export function PrepareNow({ applicationId, interviewId, now }: PrepareNowProps)
 			<time dateTime={round.at.toISOString()} className="text-sm text-ink-3">
 				{when(round.at)}
 			</time>
-			<AiNotice task="briefing" application={application.data} interview />
+			<AiNotice />
 			<Button variant="secondary" loading={generate.isPending} disabled={!connection.provider} onClick={plan}>
 				<Trans>Generate briefing now</Trans>
 			</Button>

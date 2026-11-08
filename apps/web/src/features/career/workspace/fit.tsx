@@ -1,7 +1,6 @@
-import type { DisclosureApplication } from "../disclosure";
 import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
-import type { CareerWorkspace, GenerateTask } from "@reactive-resume/schema/career";
+import type { CareerWorkspace } from "@reactive-resume/schema/career";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,7 +13,6 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
-import { DisclosureText } from "../disclosure";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { StatusPill, Swap, GenerateNotice, Working, workingSteps } from "../shared";
 import { useDialogStore } from "@/dialogs/store";
@@ -27,32 +25,12 @@ import { client, orpc } from "@/libs/orpc/client";
 type FitItem = SavedItem & { data: SavedData<"fit"> };
 type Requirement = SavedData<"fit">["requirements"][number];
 
-type AiNoticeProps = {
-	task?: GenerateTask["task"];
-	application?: DisclosureApplication | null;
-	interview?: boolean;
-	className?: string;
-};
-
-/**
- * What an AI button in a workspace tab sends, and where; or, with no usable connection, where to add one. The list
- * comes from the same schema the server builds its prompt from. Tabs show their AI buttons only when a provider is set.
- */
-export function AiNotice({ task, application, interview, className }: AiNoticeProps) {
+/** With no usable AI connection, where to add one; otherwise nothing. Tabs show their AI buttons only when one is set. */
+export function AiNotice() {
 	const connection = useDefaultProvider();
 	if (connection.isUnavailable) return <AiProviderLoadState state={connection} />;
 	if (!connection.provider) return <SetUpAi />;
-	// Without a task there is nothing to name; the provider states above still explain how to connect one.
-	if (!task) return null;
-	return (
-		<DisclosureText
-			task={task}
-			application={application ?? null}
-			interview={Boolean(interview)}
-			providerLabel={connection.provider.label}
-			{...(className ? { className } : {})}
-		/>
-	);
+	return null;
 }
 
 /** W1–W3: each requirement from the posting against the user's evidence, with gaps closed in place. */
@@ -155,7 +133,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 					) : undefined
 				}
 			>
-				<AiNotice task="fit" application={application} className="max-w-[420px] text-start" />
+				<AiNotice />
 				<GenerateNotice generate={generate} onRetry={check} className="max-w-[420px]" />
 				{evidenceState.isError && (
 					<div role="alert">
@@ -284,7 +262,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 					)}
 				</p>
 			</div>
-			{item.outdated && !readOnly && <AiNotice task="fit" application={application} className="-mt-2" />}
+			{item.outdated && !readOnly && <AiNotice />}
 			{!readOnly && <GenerateNotice generate={generate} onRetry={check} className="-mt-2 w-fit" />}
 
 			<div

@@ -318,7 +318,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 
 				{!stored && (
 					<>
-						{shown.length > 0 && <AiNotice task="answer" application={application} />}
+						{shown.length > 0 && <AiNotice />}
 						<button
 							type="button"
 							disabled={submitting || live.length >= 30}

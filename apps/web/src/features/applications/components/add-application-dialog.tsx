@@ -639,11 +639,6 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						<Trans>Read posting</Trans>
 					</Button>
 				)}
-				{readable && hasUsableProvider && (
-					<p className="text-xs text-ink-3">
-						<Trans>Sends the posting text to {providerState.usableProviders[0]?.label} to read it.</Trans>
-					</p>
-				)}
 				{(clipped || parsed?.postingSource.completeness === "incomplete") && (
 					<p className="text-xs text-warn-text" role="alert">
 						<Trans>

@@ -211,12 +211,10 @@ msgstr "{0, plural, one {# संपादन नहीं रखा जा स�
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# प्रविष्टि} other {# प्रविष्टियाँ}}"
 
-#. placeholder {0}: knowledge.active.length
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: used.facts.length
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
-#: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# तथ्य} other {# तथ्य}}"
 
@@ -290,13 +288,6 @@ msgstr "{0, plural, one {# कहानी} other {# कहानियाँ}}"
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {ज्ञानकोश में # तथ्य जोड़ा गया।} other {ज्ञानकोश में # तथ्य जोड़े गए।}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {यह {1} भी भेजता है।} other {यह # फ़ाइलें भी भेजता है: {2}।}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -426,8 +417,8 @@ msgstr "{0} — {1}"
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
-msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{0} · {providerLabel}। यह आवेदन और आपका ज्ञानकोश भेजता है; आपका प्रदाता शुल्क ले सकता है।"
+msgid "{0} · {providerLabel}"
+msgstr "{0} · {providerLabel}"
 
 #. Mode tab tooltip: the mode, then the key that opens it
 #. placeholder {0}: labels[mode]
@@ -637,14 +628,6 @@ msgstr "{added, plural, one {# नई या बदली हुई वाक्
 #: src/features/career/workspace/apply.tsx
 msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# जवाब} other {# जवाब}}"
-
-#: src/features/career/coach.tsx
-msgid "{attached, plural, one {# attached file} other {# attached files}}"
-msgstr "{attached, plural, one {# संलग्न फ़ाइल} other {# संलग्न फ़ाइलें}}"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "{attached, plural, one {The attached file goes too.} other {The # attached files go too.}}"
-msgstr "{attached, plural, one {संलग्न फ़ाइल भी चली जाएगी।} other {# संलग्न फ़ाइलें भी चली जाएँगी।}}"
 
 #: src/features/resume/editor/design/fit.ts
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
@@ -2168,12 +2151,6 @@ msgstr "ENCRYPTION_SECRET सेट होने तक AI प्रदाता
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI प्रदाताओं को लोड नहीं किया जा सका. पुनः प्रयास करने के लिए पुनः लोड करें।"
 
-#. placeholder {0}: read?.label
-#. placeholder {1}: read?.model
-#: src/features/documents/new-document-dialog.tsx
-msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
-msgstr "AI पठन इस फ़ाइल की सामग्री {0} · {1} को भेजता है। आपका प्रोवाइडर शुल्क ले सकता है।"
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -2189,10 +2166,6 @@ msgstr "इस परिणाम के लिए AI अनुरोध इत�
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr "AI सेटिंग्स"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "AI सुझाव हैं, सत्यापित योग्यताएँ या भर्ती की भविष्यवाणियाँ नहीं। नीचे दिए स्रोत आपके कथन हैं।"
 
 #: src/features/settings/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -2337,10 +2310,6 @@ msgstr "कौशल, प्रोफाइल और रुचियों प�
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "अमहारी"
-
-#: src/features/resume/editor/proposals/proposal-list.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "संपादन में मदद के लिए एक AI पठन, यह भविष्यवाणी नहीं कि नियोक्ता या स्क्रीनिंग सिस्टम कैसा जवाब देगा।"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "An edit addresses it"
@@ -2569,10 +2538,6 @@ msgstr "आवेदन की तैयारी"
 #: src/features/feedback/review-page.tsx
 msgid "Application progress"
 msgstr "आवेदन की प्रगति"
-
-#: src/features/career/coach.tsx
-msgid "application summaries"
-msgstr "आवेदन सारांश"
 
 #: src/features/homepage/prepare.tsx
 msgid "Application tabs"
@@ -3353,11 +3318,6 @@ msgstr "प्रमाणपत्र"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Change"
 msgstr "परिवर्तन"
-
-#: src/features/career/coach-thread.tsx
-msgctxt "Change what the coach remembers"
-msgid "Change"
-msgstr "बदलें"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
@@ -6324,10 +6284,6 @@ msgstr "जिस भी जवाब पर आपको फ़ीडबैक 
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "पोस्टिंग की हर आवश्यकता को आपके ज्ञानकोश के तथ्यों और कहानियों से मिलाकर जाँचा जाता है। कमियाँ अनुपलब्ध प्रमाण के रूप में दिखती हैं, कभी भी क्षमता की कमी के रूप में नहीं।"
 
-#: src/features/assistant/conversation.tsx
-msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
-msgstr "प्रत्येक प्रेषण इस संदेश और चयनित फ़ाइलों के साथ नए सिरे से शुरू होता है। पिछली बातचीत का इतिहास यहां रहता है."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Each visitor counts once an hour."
 msgstr "हर विज़िटर की गिनती एक घंटे में एक बार होती है।"
@@ -6339,10 +6295,6 @@ msgstr "पहले का खोज परिणाम। खोज प्र�
 #: src/libs/orpc/ai-consent.ts
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "दोबारा भेजने पर इस बातचीत के पुराने संदेश और अनुलग्नक इस गंतव्य को भेजे जाएँगे।"
-
-#: src/features/career/coach.tsx
-msgid "earlier messages in this chat"
-msgstr "इस चैट के पिछले संदेश"
 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -6595,10 +6547,6 @@ msgstr "ट्रैश खाली करें?"
 #: src/features/documents/trash-page.tsx
 msgid "Empty Trash…"
 msgstr "ट्रैश खाली करें…"
-
-#: src/features/career/disclosure.tsx
-msgid "enabled Knowledge"
-msgstr "चालू किया गया ज्ञान"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -8372,14 +8320,6 @@ msgstr "समस्याएँ"
 msgid "Issues and Job match still work without AI."
 msgstr "मुद्दे और जॉब मैच अभी भी एआई के बिना काम करते हैं।"
 
-#: src/features/assistant/conversation.tsx
-msgid "It can also search Knowledge available to this application (facts and stories) and send what it finds."
-msgstr "यह इस आवेदन के लिए उपलब्ध ज्ञानकोश (तथ्य और कहानियाँ) भी खोज सकता है और जो मिले वह भेज सकता है।"
-
-#: src/features/assistant/conversation.tsx
-msgid "It can also search your shared Knowledge (facts and stories) and send what it finds."
-msgstr "यह आपके साझा ज्ञानकोश (तथ्य और कहानियाँ) भी खोज सकता है और जो मिले वह भेज सकता है।"
-
 #: src/features/resume/editor/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "इसमें प्रविष्टियाँ हैं लेकिन किसी पृष्ठ पर नहीं रखी गई हैं।"
@@ -8435,10 +8375,6 @@ msgstr "इसके संदेश और अनुलग्नक हटा �
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Its own design ({summary})."
 msgstr "इसका अपना डिज़ाइन ({summary}) है।"
-
-#: src/features/career/disclosure.tsx
-msgid "its requirements"
-msgstr "उसकी आवश्यकताएँ"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -9737,11 +9673,6 @@ msgstr "संदेश · Fieldnote में Sam को उत्तर"
 #: src/features/career/coach-chat.tsx
 msgid "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "ऊपर के संदेश अब AI को नहीं भेजे जाते, इसलिए वह उन्हें याद नहीं रखेगा। संदर्भ साथ रखने के लिए नई बातचीत शुरू करें।"
-
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "ज्ञानकोश बद�ने से पहले के संदेश नहीं भेजे जाते।"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Microphone blocked. Allow it in your browser settings, or type your answer."
@@ -12033,7 +11964,6 @@ msgstr "{company} के अपने साक्षात्कारों �
 msgid "Practice in {company}’s workspace"
 msgstr "{company} के कार्यक्षेत्र में अभ्यास करें"
 
-#: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
 msgstr "अभ्यास की प्राथमिकताएँ, न कि इस बारे में निष्कर्ष कि किसी नियोक्ता ने कोई फ़ैसला क्यों लिया।"
@@ -12186,10 +12116,6 @@ msgstr "पिछला नौकरी आवेदन"
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Previous issue"
 msgstr "पिछला अंक"
-
-#: src/features/assistant/conversation.tsx
-msgid "Previous messages, including document details, are also sent."
-msgstr "दस्तावेज़ विवरण सहित पिछले संदेश भी भेजे जाते हैं।"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
@@ -14306,11 +14232,6 @@ msgstr "खोजें या कमांड चलाएँ…"
 msgid "Search saved answers"
 msgstr "सहेजे गए उत्तर खोजें"
 
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "खोज शब्द आपकी वेब खोज सेवा को भेजे जाते हैं।"
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "वेब पर खोजें"
@@ -14527,113 +14448,13 @@ msgstr "प्रेषक का विवरण पत्र में कॉ�
 msgid "Sending password reset email…"
 msgstr "पासवर्ड रीसेट ईमेल भेजा जा रहा है…"
 
-#: src/features/career/disclosure.tsx
-msgid "Sends {list} to {providerLabel}."
-msgstr "{providerLabel} को {list} भेजता है।"
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "इस कनेक्शन को केवल आपका चुना हुआ रेज़्यूमे और 20 तक सक्रिय साझा तथ्य भेजता है। कोई आवेदन प्रोफ़ाइल, सहेजे गए उत्तर या निजी आवेदन तथ्य नहीं। आपका प्रोवाइडर शुल्क ले सकता है।"
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the {0} posting to {1} to draft the body."
-msgstr "मुख्य भाग का ड्राफ़्ट बनाने के लिए {1} को {0} का विज्ञापन भेजता है।"
-
-#. placeholder {0}: draft?.label
-#. placeholder {1}: draft?.model
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
-msgstr "लिंक किया गया रेज़्यूमे, विज्ञापन और कवर लेटर विवरण {0} · {1} को भेजता है। आपका प्रोवाइडर शुल्क ले सकता है।"
-
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "उसे पढ़ने के लिए {0} को विज्ञापन का पाठ भेजता है।"
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
 msgstr "इस आवेदन का विज्ञापन, टिप्पणियाँ, दस्तावेज़ और चालू ज्ञानकोश इस कनेक्शन को भेजता है। आपका प्रोवाइडर इसका शुल्क ले सकता है। नियोजित कार्य कभी अपने आप दूसरे कनेक्शन पर नहीं जाता।"
 
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
-msgstr "यह पत्र और नौकरी की पोस्टिंग आपकी कुंजी के साथ {provider} पर तभी भेजता है, जब आप सेंड दबाते हैं।"
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter to {provider} with your key, only when you press send."
-msgstr "यह पत्र आपकी कुंजी के साथ {provider} पर तभी भेजता है जब आप सेंड दबाते हैं।"
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
-msgstr "मुख्य भाग का ड्राफ़्ट बनाने के लिए {1} को इस कवर लेटर का रेज़्यूमे और {0} का विज्ञापन भेजता है।"
-
-#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume to {0} to draft the body."
-msgstr "मुख्य भाग का ड्राफ़्ट बनाने के लिए {0} को इस कवर लेटर का रेज़्यूमे भेजता है।"
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "यह पंक्ति, आसपास का फ़ील्ड पाठ और आपके निर्देश {0} · {1} को भेजता है।"
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "यह अनुच्छेद, पत्र का बाकी हिस्सा और आपके निर्देश {0} · {1} को भेजता है।"
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "यह अनुच्छेद, पत्र का बाकी हिस्सा, लिंक किया गया नौकरी का विज्ञापन और आपके निर्देश {0} · {1} को भेजता है।"
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
-msgstr "यह बायोडाटा और जॉब पोस्टिंग आपकी कुंजी के साथ {provider} पर तभी भेजता है, जब आप सेंड दबाते हैं।"
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume to {provider} with your key, only when you press send."
-msgstr "यह बायोडाटा आपकी कुंजी के साथ {provider} पर तभी भेजता है, जब आप सेंड दबाते हैं।"
-
 #: src/features/homepage/remember.tsx
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "यह कहानी और चालू तथ्य आपके AI कनेक्शन को भेजता है। कनेक्शन के बिना कुछ भी नहीं भेजा जाता।"
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message and the posting to {provider} with your key, only when you press send."
-msgstr "आपका संदेश और जॉब पोस्टिंग आपकी कुंजी के साथ {provider} पर तभी भेजता है, जब आप सेंड दबाते हैं।"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "आपका संदेश और यह आवेदन (विज्ञापन, टिप्पणियाँ, दस्तावेज़, आपके फ़ॉर्म उत्तर, सहेजा गया ऑफ़र और हाल के संदेश) {label} को भेजता है।"
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message to {provider} with your key, only when you press send."
-msgstr "आपका संदेश आपकी कुंजी के साथ {provider} पर तभी भेजता है, जब आप सेंड दबाते हैं।"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "आपका संदेश, यहाँ के पुराने संदेश और यह आवेदन (विज्ञापन, टिप्पणियाँ, दस्तावेज़, आपके फ़ॉर्म उत्तर, सहेजा गया ऑफ़र और हाल के संदेश) {label} को भेजता है।"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "आपका संदेश, यहाँ के पिछले संदेश, यह आवेदन (नौकरी का विज्ञापन, नोट्स, दस्तावेज़, फ़ॉर्म में आपके जवाब, सहेजा गया प्रस्ताव और हाल के संदेश) और चालू किया गया ज्ञान {label} को भेजता है।"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "आपका संदेश, यह आवेदन (नौकरी का विज्ञापन, नोट्स, दस्तावेज़, फ़ॉर्म में आपके जवाब, सहेजा गया प्रस्ताव और हाल के संदेश) और चालू किया गया ज्ञान {label} को भेजता है।"
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/resume/editor/check/writing-tab.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "आपकी कुंजी के साथ, आपके बायोडाटा का टेक्स्ट केवल {0} · {1} पर भेजता है।"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -16263,17 +16084,9 @@ msgstr "अंतर्निहित रीडर सक्रिय रहत
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "जाँचें यांत्रिक हैं. यह एक भाषा मॉडल से पूछता है कि एक पाठक आपकी सूची प्रविष्टियों पर कैसे प्रतिक्रिया दे सकता है और फिर से लिखने का सुझाव देता है। यह स्कोर का हिस्सा नहीं है."
 
-#: src/features/career/coach-thread.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "कोच आपके बताए तथ्य याद रखने से पहले पूछता है।"
-
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "कोच आपके संदेशों से कुछ भी याद नहीं रखता।"
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "कोच आपकी लिखी किसी भी बात को याद नहीं रखता।"
 
 #: src/features/career/coach.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers and your applications work without it."
@@ -16286,10 +16099,6 @@ msgstr "कोच चैट में हर तथ्य का प्रस्
 #: src/features/career/workspace/shell.tsx
 msgid "The coach reads these for this application only."
 msgstr "कोच इन्हें सिर्फ़ इस आवेदन के लिए पढ़ता है।"
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "कोच आपके बताए तथ्य याद रखता है, और आपको बताता भी है।"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -16315,17 +16124,9 @@ msgstr "प्रतिलिपि को नौकरी का विज्�
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "प्रतिलिपि नौकरी आवेदन से जुड़ी हुई है, इसलिए चेक और सहायक इसकी नौकरी पोस्टिंग का उपयोग करते हैं।"
 
-#: src/features/career/disclosure.tsx
-msgid "the cover letter for this job"
-msgstr "इस नौकरी के लिए कवर लेटर"
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The employer may have changed it since."
 msgstr "नियोक्ता ने उसके बाद विज्ञापन बदल दिया हो सकता है।"
-
-#: src/features/career/disclosure.tsx
-msgid "the employer's message"
-msgstr "नियोक्ता का संदेश"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end date is before the start date. Check both dates."
@@ -16347,10 +16148,6 @@ msgstr "फ़ाइल को बायोडाटा के रूप मे�
 msgid "The greeting follows the name."
 msgstr "अभिवादन नाम के अनुसार होता है।"
 
-#: src/features/career/disclosure.tsx
-msgid "the interview details"
-msgstr "साक्षात्कार के विवरण"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "कुंजी सर्वर पर एन्क्रिप्ट की गई है और दोबारा कभी नहीं दिखाई जाएगी। सहेजा जा रहा है कनेक्शन का परीक्षण करता है."
@@ -16358,10 +16155,6 @@ msgstr "कुंजी सर्वर पर एन्क्रिप्ट �
 #: src/features/settings/ai/test-error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "कुंजी अस्वीकार कर दी गई। कुंजी जाँचकर दोबारा टेस्ट करें।"
-
-#: src/features/career/disclosure.tsx
-msgid "the last messages"
-msgstr "आख़िरी संदेश"
 
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
@@ -16500,14 +16293,6 @@ msgstr "प्रदाता ने एक समीक्षा लौटा�
 msgid "The provider's response couldn't be verified. Try again."
 msgstr "प्रोवाइडर की प्रतिक्रिया सत्यापित नहीं की जा सकी। पुनः प्रयास करें।"
 
-#: src/features/career/disclosure.tsx
-msgid "the question and what you said"
-msgstr "प्रश्न और आपने जो कहा"
-
-#: src/features/career/disclosure.tsx
-msgid "the question and your answer"
-msgstr "प्रश्न और आपका उत्तर"
-
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "इसका कारण इनसाइट्स रखा गया है। लिंक किए गए दस्तावेज़ों को छुआ नहीं गया है."
@@ -16524,10 +16309,6 @@ msgstr "जीवनवृत"
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "बायोडाटा ज्यों का त्यों है"
-
-#: src/features/career/disclosure.tsx
-msgid "the resume for this job"
-msgstr "इस नौकरी के लिए रेज़्यूमे"
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
@@ -16548,10 +16329,6 @@ msgstr "सहेजी गई कुंजी नए आधार URL पर �
 #: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "सहेजी गई कुंजी नए आधार URL पर नहीं भेजी जाती है. कुंजी फिर से दर्ज करें."
-
-#: src/features/career/disclosure.tsx
-msgid "the saved offer"
-msgstr "सहेजा गया ऑफ़र"
 
 #: src/libs/error-message.ts
 msgid "The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer."
@@ -16953,10 +16730,6 @@ msgstr "यह PDF ख़राब लगता है। अपने संप
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr "यह फ़ोटो 10 MB से बड़ी है। उसे छोटा करने के लिए क्रॉप और अपलोड का उपयोग करें।"
-
-#: src/features/career/disclosure.tsx
-msgid "this posting"
-msgstr "यह विज्ञापन"
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -18524,10 +18297,6 @@ msgstr "मुझे कब फिर से संपर्क करना च
 msgid "When would you start?"
 msgstr "आप कब शुरू करेंगे?"
 
-#: src/features/career/coach.tsx
-msgid "When you press send, {shared} go to your {connection}."
-msgstr "जब आप भेजें दबाएँगे, तो {shared} {connection} को जाएँगे।"
-
 #: src/features/applications/components/insights-view.tsx
 msgid "Where applications come from"
 msgstr "आवेदन कहाँ से आते हैं"
@@ -18622,10 +18391,6 @@ msgstr "क्या मेरा बायोडाटा आवेदक ट�
 #: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr "स्थानांतरण के लिए तैयार"
-
-#: src/features/career/coach-thread.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "ज्ञानकोश बंद होने पर आपकी लिखी कोई भी बात याद नहीं रहती।"
 
 #: src/features/homepage/remember.tsx
 msgid "Within a quarter, activation went from 31% to 44%."
@@ -18982,10 +18747,6 @@ msgstr "आपका AI"
 msgid "Your AI connection"
 msgstr "आपका AI कनेक्शन"
 
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "your AI provider"
-msgstr "आपका AI प्रोवाइडर"
-
 #: src/libs/orpc/ai-consent.ts
 msgid "Your AI settings changed. Nothing was sent; try again."
 msgstr "आपकी AI सेटिंग्स बदल गईं। कुछ नहीं भेजा गया; फिर से कोशिश करें।"
@@ -19027,10 +18788,6 @@ msgstr "आपका ब्राउज़र"
 msgid "Your browser can't take dictation here. Type your answer instead."
 msgstr "आपका ब्राउज़र यहाँ डिक्टेशन नहीं ले सकता। इसके बजाय अपना जवाब टाइप करें।"
 
-#: src/features/career/workspace/practise.tsx
-msgid "Your browser turns your speech into text. Depending on the browser, its maker may process the audio (Google in Chrome, Apple in Safari)."
-msgstr "आपका ब्राउज़र आपकी बोली को टेक्स्ट में बदलता है। ब्राउज़र के अनुसार, उसका निर्माता ऑडियो प्रोसेस कर सकता है (Chrome में Google, Safari में Apple)।"
-
 #: src/features/letters/webmcp.ts
 msgid "Your browser's AI agent edited this letter."
 msgstr "आपके ब्राउज़र के एआई एजेंट ने यह कवर लेटर संपादित किया।"
@@ -19063,10 +18820,6 @@ msgstr "आपके बदलाव “{name}” में रखे गए।"
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "आपके संपर्क विवरण पहले पेज पर नहीं हैं।"
-
-#: src/features/career/disclosure.tsx
-msgid "your contacts"
-msgstr "आपके संपर्क"
 
 #: src/features/settings/account/data.tsx
 msgid "Your data"
@@ -19137,10 +18890,6 @@ msgstr "आपकी फाइल"
 msgid "Your focus"
 msgstr "आपका फ़ोकस"
 
-#: src/features/career/disclosure.tsx
-msgid "your form answers"
-msgstr "आपके फ़ॉर्म उत्तर"
-
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your guest documents and applications are in this account."
 msgstr "आपके अतिथि दस्तावेज़ और आवेदन इस खाते में हैं।"
@@ -19181,10 +18930,6 @@ msgstr "बायोडाटा में आपका स्थान बद�
 msgid "Your margins are very narrow."
 msgstr "आपके मार्जिन बहुत संकीर्ण हैं।"
 
-#: src/features/career/coach.tsx
-msgid "your message"
-msgstr "आपका संदेश"
-
 #: src/features/assistant/conversation.tsx
 msgid "Your message is kept."
 msgstr "आपका संदेश रख लिया गया है।"
@@ -19206,7 +18951,6 @@ msgstr "बायोडाटा में आपका नाम बदल ग�
 msgid "Your name is missing"
 msgstr "आपका नाम गायब है"
 
-#: src/features/career/disclosure.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "आपकी टिप्पणियाँ"
@@ -19231,11 +18975,6 @@ msgstr "बायोडाटा में आपका फ़ोन नंब�
 msgid "Your phone number is written in an unusual shape."
 msgstr "आपका फ़ोन नंबर असामान्य रूप में लिखा गया है।"
 
-#: src/features/career/coach.tsx
-#: src/features/career/disclosure.tsx
-msgid "your preferences"
-msgstr "आपकी प्राथमिकताएँ"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "आपका प्रदाता"
@@ -19247,11 +18986,6 @@ msgstr "आपका प्रदाता आपकी API कुंजी स�
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"
 msgstr "आपके सार्वजनिक लिंक बदलेंगे"
-
-#. placeholder {0}: voice.settings.transcribe.label
-#: src/features/career/workspace/practise.tsx
-msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
-msgstr "आपकी रिकॉर्डिंग ट्रांसक्राइब होने के लिए {0} को जाती है, जो उस खाते के टोकन इस्तेमाल कर सकता है।"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
@@ -19352,10 +19086,6 @@ msgstr "आपके शॉर्ट लिंक के अनुसार य�
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."
 msgstr "आपके चरण कहीं और बदल दिए गए हैं। उन्हें रीफ़्रेश कर दिया गया है; फिर से कोशिश करें।"
-
-#: src/features/career/coach.tsx
-msgid "your stories"
-msgstr "आपकी कहानियाँ"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."

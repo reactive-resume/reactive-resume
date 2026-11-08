@@ -122,7 +122,6 @@ it("keeps composition and newlines local, submits Enter, and offers Stop while s
 				document={document}
 				context={{ document: false, posting: false }}
 				onContextChange={() => {}}
-				providerLabel="Local"
 				streaming={streaming}
 				disabled={false}
 				threadId={null}
@@ -157,7 +156,6 @@ it("uploads a file in the initial composer before sending its first message", as
 				document={document}
 				context={{ document: false, posting: false }}
 				onContextChange={() => {}}
-				providerLabel="Local"
 				streaming={false}
 				disabled={false}
 				threadId={null}
@@ -197,7 +195,6 @@ it("attaches a long paste as a file holding the exact text", async () => {
 				document={document}
 				context={{ document: false, posting: false }}
 				onContextChange={() => {}}
-				providerLabel="Local"
 				streaming={false}
 				disabled={false}
 				threadId={null}
@@ -818,7 +815,6 @@ it.each(["success", "failure", "changed"])(
 					streaming={false}
 					disabled={false}
 					threadId="thread-1"
-					providerLabel="Local"
 					onSend={mocks.send}
 					onStop={() => {}}
 					initialText={pasted}
@@ -872,7 +868,6 @@ it("restores owned unsent files as visible chips and waits for explicit Send", (
 				document={document}
 				context={{ document: false, posting: false }}
 				onContextChange={() => {}}
-				providerLabel="Local"
 				streaming={false}
 				disabled={false}
 				threadId="original-thread"

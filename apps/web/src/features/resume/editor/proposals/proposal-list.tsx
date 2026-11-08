@@ -687,11 +687,6 @@ export function Coverage({ requirements, factText }: CoverageProps) {
 					</li>
 				))}
 			</ul>
-			<p className="mt-1.5 text-ink-3">
-				<Trans>
-					An AI reading to help you edit, not a prediction of how an employer or screening system will respond.
-				</Trans>
-			</p>
 		</details>
 	);
 }

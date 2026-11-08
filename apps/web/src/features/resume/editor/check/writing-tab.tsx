@@ -211,9 +211,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 				<div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-ink-3">
 					<Icon name="lock" size={16} />
 					<span>
-						<Trans>
-							Sends your resume's text only to {provider?.label} · {provider?.model}, with your key.
-						</Trans>
+						{provider?.label} · {provider?.model}
 					</span>
 					<button
 						type="button"

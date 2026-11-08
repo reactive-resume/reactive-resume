@@ -211,12 +211,10 @@ msgstr "{0, plural, one {Editarea # nu a putut fi plasată: textul său s-a schi
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# intrare} few {# intrări} other {# de intrări}}"
 
-#. placeholder {0}: knowledge.active.length
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: used.facts.length
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
-#: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# fapt} few {# fapte} other {# de fapte}}"
 
@@ -290,13 +288,6 @@ msgstr "{0, plural, one {# poveste} few {# povești} other {# de povești}}"
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {S-a adăugat # fapt în Cunoștințe.} few {S-au adăugat # fapte în Cunoștințe.} other {S-au adăugat # de fapte în Cunoștințe.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {Trimite și {1}.} few {Trimite și # fișiere: {2}.} other {Trimite și # de fișiere: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -426,8 +417,8 @@ msgstr "{0} — {1}"
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
-msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{0} · {providerLabel}. Trimite această candidatură și Cunoștințele dvs.; furnizorul poate percepe o taxă."
+msgid "{0} · {providerLabel}"
+msgstr "{0} · {providerLabel}"
 
 #. Mode tab tooltip: the mode, then the key that opens it
 #. placeholder {0}: labels[mode]
@@ -637,14 +628,6 @@ msgstr "{added, plural, one {# propoziție nouă sau reformulată} few {# propoz
 #: src/features/career/workspace/apply.tsx
 msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# răspuns} few {# răspunsuri} other {# de răspunsuri}}"
-
-#: src/features/career/coach.tsx
-msgid "{attached, plural, one {# attached file} other {# attached files}}"
-msgstr "{attached, plural, one {# fișier atașat} few {# fișiere atașate} other {# de fișiere atașate}}"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "{attached, plural, one {The attached file goes too.} other {The # attached files go too.}}"
-msgstr "{attached, plural, one {Și fișierul atașat este eliminat.} few {Și cele # fișiere atașate sunt eliminate.} other {Și cele # de fișiere atașate sunt eliminate.}}"
 
 #: src/features/resume/editor/design/fit.ts
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
@@ -2168,12 +2151,6 @@ msgstr "Furnizorii AI nu sunt disponibili pe acest server până când nu este s
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "Furnizorii de inteligență artificială nu au putut fi încărcați. Reîncărcați pentru a încerca din nou."
 
-#. placeholder {0}: read?.label
-#. placeholder {1}: read?.model
-#: src/features/documents/new-document-dialog.tsx
-msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
-msgstr "Citirea cu AI trimite conținutul acestui fișier către {0} · {1}. Furnizorul dvs. poate percepe costuri."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -2189,10 +2166,6 @@ msgstr "Istoricul solicitărilor AI nu este disponibil pentru acest rezultat."
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr "Setări AI"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "Sugestii AI, nu calificări verificate sau predicții de angajare. Sursele de mai jos sunt afirmațiile dvs."
 
 #: src/features/settings/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -2337,10 +2310,6 @@ msgstr "Afișează, de asemenea, pictogramele despre competențe, profiluri și 
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "Amharică"
-
-#: src/features/resume/editor/proposals/proposal-list.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "O interpretare AI care vă ajută să editați, nu o predicție a modului în care va răspunde un angajator sau un sistem de selecție."
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "An edit addresses it"
@@ -2569,10 +2538,6 @@ msgstr "Pregătirea candidaturii"
 #: src/features/feedback/review-page.tsx
 msgid "Application progress"
 msgstr "Progresul candidaturii"
-
-#: src/features/career/coach.tsx
-msgid "application summaries"
-msgstr "rezumatele candidaturilor"
 
 #: src/features/homepage/prepare.tsx
 msgid "Application tabs"
@@ -3353,11 +3318,6 @@ msgstr "Certificări"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Change"
 msgstr "Schimba"
-
-#: src/features/career/coach-thread.tsx
-msgctxt "Change what the coach remembers"
-msgid "Change"
-msgstr "Modificați"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
@@ -6324,10 +6284,6 @@ msgstr "Fiecare răspuns pentru care primiți feedback este păstrat aici, cele 
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "Fiecare cerință din anunț este verificată față de faptele și poveștile din Cunoștințele dvs. Golurile apar ca dovezi lipsă, niciodată ca abilități lipsă."
 
-#: src/features/assistant/conversation.tsx
-msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
-msgstr "Fiecare trimitere începe cu acest mesaj și fișierele selectate. Istoricul conversațiilor anterioare rămâne aici."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Each visitor counts once an hour."
 msgstr "Fiecare vizitator este numărat o dată pe oră."
@@ -6339,10 +6295,6 @@ msgstr "Rezultat anterior al descoperirii. Interogarea de căutare și momentul 
 #: src/libs/orpc/ai-consent.ts
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Mesajele și atașamentele anterioare din această conversație vor fi trimise către această destinație când trimiteți din nou."
-
-#: src/features/career/coach.tsx
-msgid "earlier messages in this chat"
-msgstr "mesajele anterioare din acest chat"
 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -6595,10 +6547,6 @@ msgstr "Goliți Coșul de gunoi?"
 #: src/features/documents/trash-page.tsx
 msgid "Empty Trash…"
 msgstr "Goliți Coșul de gunoi…"
-
-#: src/features/career/disclosure.tsx
-msgid "enabled Knowledge"
-msgstr "Cunoștințele activate"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -8372,14 +8320,6 @@ msgstr "Probleme"
 msgid "Issues and Job match still work without AI."
 msgstr "Problemele și potrivirea jobului încă funcționează fără AI."
 
-#: src/features/assistant/conversation.tsx
-msgid "It can also search Knowledge available to this application (facts and stories) and send what it finds."
-msgstr "Poate căuta și în Cunoștințele disponibile pentru această candidatură (fapte și povești) și poate trimite ce găsește."
-
-#: src/features/assistant/conversation.tsx
-msgid "It can also search your shared Knowledge (facts and stories) and send what it finds."
-msgstr "Poate căuta și în Cunoștințele dvs. partajate (fapte și povești) și poate trimite ce găsește."
-
 #: src/features/resume/editor/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "Are intrări, dar nu este plasat pe o pagină."
@@ -8435,10 +8375,6 @@ msgstr "Mesajele și atașamentele sale sunt șterse. Modificările pe care le-a
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Its own design ({summary})."
 msgstr "Design propriu ({summary})."
-
-#: src/features/career/disclosure.tsx
-msgid "its requirements"
-msgstr "cerințele sale"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -9737,11 +9673,6 @@ msgstr "Mesaje · Răspuns pentru Sam de la Fieldnote"
 #: src/features/career/coach-chat.tsx
 msgid "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Mesajele de mai sus nu mai sunt trimise către AI, așa că nu și le va aminti. Începeți o conversație nouă pentru a păstra contextul împreună."
-
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Mesajele de dinainte de modificarea Cunoștințelor nu sunt trimise."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Microphone blocked. Allow it in your browser settings, or type your answer."
@@ -12033,7 +11964,6 @@ msgstr "Exersați pentru interviurile de la {company}."
 msgid "Practice in {company}’s workspace"
 msgstr "Exersează în spațiul de lucru al companiei {company}"
 
-#: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
 msgstr "Priorități de exersare, nu concluzii despre motivele deciziilor unui angajator."
@@ -12186,10 +12116,6 @@ msgstr "Candidatura anterioară"
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Previous issue"
 msgstr "Problema anterioară"
-
-#: src/features/assistant/conversation.tsx
-msgid "Previous messages, including document details, are also sent."
-msgstr "Mesajele anterioare, inclusiv detaliile documentului, sunt de asemenea trimise."
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
@@ -14306,11 +14232,6 @@ msgstr "Caută sau execută o comandă…"
 msgid "Search saved answers"
 msgstr "Căutați în răspunsurile salvate"
 
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Termenii de căutare ajung la serviciul dvs. de căutare web."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Căutați pe web"
@@ -14527,113 +14448,13 @@ msgstr "Detaliile expeditorului au fost copiate în scrisoare"
 msgid "Sending password reset email…"
 msgstr "Se trimite e-mailul de resetare a parolei…"
 
-#: src/features/career/disclosure.tsx
-msgid "Sends {list} to {providerLabel}."
-msgstr "Trimite {list} către {providerLabel}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Trimite acestei conexiuni doar CV-ul selectat și cel mult 20 de fapte partajate active. Fără profil de candidatură, răspunsuri salvate sau fapte private ale candidaturilor. Furnizorul dvs. poate percepe costuri."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the {0} posting to {1} to draft the body."
-msgstr "Trimite anunțul {0} către {1} pentru a redacta corpul scrisorii."
-
-#. placeholder {0}: draft?.label
-#. placeholder {1}: draft?.model
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
-msgstr "Trimite CV-ul asociat, anunțul și detaliile scrisorii către {0} · {1}. Furnizorul dvs. poate percepe costuri."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Trimite textul anunțului către {0} pentru a-l citi."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
 msgstr "Trimite anunțul, notițele și documentele acestei candidaturi, plus Cunoștințele activate, către această conexiune. Furnizorul dvs. poate percepe costuri. Activitatea programată nu trece niciodată automat la altă conexiune."
 
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
-msgstr "Trimite această scrisoare și anunțul de angajare către {provider} cu cheia dvs., numai când apăsați pe trimitere."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter to {provider} with your key, only when you press send."
-msgstr "Trimite această scrisoare către {provider} cu cheia dvs., numai când apăsați trimitere."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
-msgstr "Trimite CV-ul acestei scrisori și anunțul {0} către {1} pentru a redacta corpul scrisorii."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume to {0} to draft the body."
-msgstr "Trimite CV-ul acestei scrisori către {0} pentru a redacta corpul scrisorii."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Trimite acest rând, textul din jurul câmpului și instrucțiunile dvs. către {0} · {1}."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Trimite acest paragraf, restul scrisorii și instrucțiunile tale către {0} · {1}."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Trimite acest paragraf, restul scrisorii, anunțul de angajare asociat și instrucțiunile tale către {0} · {1}."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
-msgstr "Trimite acest CV și postarea de locuri de muncă către {provider} cu cheia dvs., numai când apăsați pe trimitere."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume to {provider} with your key, only when you press send."
-msgstr "Trimite acest CV către {provider} cu cheia dvs., numai când apăsați pe trimitere."
-
 #: src/features/homepage/remember.tsx
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Trimite această poveste și faptele activate către conexiunea dvs. AI. Fără una, nu se trimite nimic."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message and the posting to {provider} with your key, only when you press send."
-msgstr "Trimite mesajul dvs. și anunțul de angajare către {provider} cu cheia dvs., numai când apăsați trimitere."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Trimite mesajul dvs. și această candidatură (anunțul, notițele, documentele, răspunsurile din formular, oferta salvată și mesajele recente) către {label}."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message to {provider} with your key, only when you press send."
-msgstr "Trimite mesajul dvs. către {provider} cu cheia dvs., numai când apăsați pe trimitere."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Trimite mesajul dvs., mesajele anterioare de aici și această candidatură (anunțul, notițele, documentele, răspunsurile din formular, oferta salvată și mesajele recente) către {label}."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Trimite mesajul tău, mesajele anterioare de aici, această candidatură (anunțul, notițele, documentele, răspunsurile tale din formulare, oferta salvată și mesajele recente) și Cunoștințele activate către {label}."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Trimite mesajul tău, această candidatură (anunțul, notițele, documentele, răspunsurile tale din formulare, oferta salvată și mesajele recente) și Cunoștințele activate către {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/resume/editor/check/writing-tab.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Trimite textul CV-ului dvs. numai către {0} · {1}, cu cheia dvs."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -16263,17 +16084,9 @@ msgstr "Cititorul încorporat rămâne activ."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Verificările sunt mecanice. Aceasta întreabă un model de limbă cum ar putea reacționa un cititor la intrările din listă și sugerează rescrieri. Nu face parte din scor."
 
-#: src/features/career/coach-thread.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "Coach-ul întreabă înainte de a reține faptele pe care le menționați."
-
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Coach-ul nu reține nimic din mesajele dvs."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "Coach-ul nu reține nimic din ce scrieți."
 
 #: src/features/career/coach.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers and your applications work without it."
@@ -16286,10 +16099,6 @@ msgstr "Coach-ul propune fiecare fapt în chat. Nu se salvează nimic până nu 
 #: src/features/career/workspace/shell.tsx
 msgid "The coach reads these for this application only."
 msgstr "Coach-ul le citește doar pentru această candidatură."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "Coach-ul reține faptele pe care le menționați și vă anunță."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -16315,17 +16124,9 @@ msgstr "Copia primește anunțul locului de muncă, iar acest CV rămâne neschi
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "Copia este legată de cererea de angajare, așa că Check și asistentul folosesc postarea de locuri de muncă."
 
-#: src/features/career/disclosure.tsx
-msgid "the cover letter for this job"
-msgstr "scrisoarea de intenție pentru acest loc de muncă"
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The employer may have changed it since."
 msgstr "Angajatorul poate să fi modificat anunțul între timp."
-
-#: src/features/career/disclosure.tsx
-msgid "the employer's message"
-msgstr "mesajul angajatorului"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end date is before the start date. Check both dates."
@@ -16347,10 +16148,6 @@ msgstr "Fișierul nu a putut fi citit ca un CV."
 msgid "The greeting follows the name."
 msgstr "Salutul urmează după nume."
 
-#: src/features/career/disclosure.tsx
-msgid "the interview details"
-msgstr "detaliile interviului"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Cheia este criptată pe server și nu se mai afișează niciodată. Salvarea testează conexiunea."
@@ -16358,10 +16155,6 @@ msgstr "Cheia este criptată pe server și nu se mai afișează niciodată. Salv
 #: src/features/settings/ai/test-error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "Cheia a fost respinsă. Verificați cheia și testați din nou."
-
-#: src/features/career/disclosure.tsx
-msgid "the last messages"
-msgstr "ultimele mesaje"
 
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
@@ -16500,14 +16293,6 @@ msgstr "Furnizorul a returnat o recenzie care nu a putut fi citită. Încearcă 
 msgid "The provider's response couldn't be verified. Try again."
 msgstr "Răspunsul furnizorului nu a putut fi verificat. Încearcă din nou."
 
-#: src/features/career/disclosure.tsx
-msgid "the question and what you said"
-msgstr "întrebarea și ce ați spus"
-
-#: src/features/career/disclosure.tsx
-msgid "the question and your answer"
-msgstr "întrebarea și răspunsul dvs."
-
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Motivul este păstrat pentru Insights. Documentele conectate nu sunt atinse."
@@ -16524,10 +16309,6 @@ msgstr "CV-ul"
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "CV-ul așa cum este"
-
-#: src/features/career/disclosure.tsx
-msgid "the resume for this job"
-msgstr "CV-ul pentru acest loc de muncă"
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
@@ -16548,10 +16329,6 @@ msgstr "Cheia salvată nu este trimisă la o nouă adresă URL de bază. Introdu
 #: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Cheia salvată nu este trimisă la o nouă adresă URL de bază. Introduceți din nou cheia."
-
-#: src/features/career/disclosure.tsx
-msgid "the saved offer"
-msgstr "oferta salvată"
 
 #: src/libs/error-message.ts
 msgid "The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer."
@@ -16953,10 +16730,6 @@ msgstr "Acest PDF pare deteriorat. Exportați-l din nou din editor și alegeți 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr "Această fotografie depășește 10 MB. Folosiți Decupează și încarcă pentru a o micșora."
-
-#: src/features/career/disclosure.tsx
-msgid "this posting"
-msgstr "acest anunț"
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -18524,10 +18297,6 @@ msgstr "Când ar trebui să revin și ce ar trebui să spun?"
 msgid "When would you start?"
 msgstr "Când ați începe?"
 
-#: src/features/career/coach.tsx
-msgid "When you press send, {shared} go to your {connection}."
-msgstr "Când apăsați trimite, {shared} ajung la {connection}."
-
 #: src/features/applications/components/insights-view.tsx
 msgid "Where applications come from"
 msgstr "De unde vin candidaturile"
@@ -18622,10 +18391,6 @@ msgstr "CV-ul meu va trece peste sistemele de urmărire a solicitanților?"
 #: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr "Dispus să mă relochez"
-
-#: src/features/career/coach-thread.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "Cu Cunoștințele dezactivate, nu se reține nimic din ce scrieți."
 
 #: src/features/homepage/remember.tsx
 msgid "Within a quarter, activation went from 31% to 44%."
@@ -18982,10 +18747,6 @@ msgstr "AI-ul dvs."
 msgid "Your AI connection"
 msgstr "Conexiunea dvs. AI"
 
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "your AI provider"
-msgstr "furnizorul dvs. AI"
-
 #: src/libs/orpc/ai-consent.ts
 msgid "Your AI settings changed. Nothing was sent; try again."
 msgstr "Setările AI s-au modificat. Nu s-a trimis nimic; încercați din nou."
@@ -19027,10 +18788,6 @@ msgstr "Browserul dvs."
 msgid "Your browser can't take dictation here. Type your answer instead."
 msgstr "Browserul dvs. nu poate prelua dictarea aici. Scrieți răspunsul."
 
-#: src/features/career/workspace/practise.tsx
-msgid "Your browser turns your speech into text. Depending on the browser, its maker may process the audio (Google in Chrome, Apple in Safari)."
-msgstr "Browserul transformă vorbirea în text. În funcție de browser, producătorul acestuia poate procesa sunetul (Google în Chrome, Apple în Safari)."
-
 #: src/features/letters/webmcp.ts
 msgid "Your browser's AI agent edited this letter."
 msgstr "Agentul AI din browserul dvs. a editat această scrisoare."
@@ -19063,10 +18820,6 @@ msgstr "Modificările dvs. au fost păstrate în „{name}”."
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Datele dvs. de contact nu se află pe prima pagină."
-
-#: src/features/career/disclosure.tsx
-msgid "your contacts"
-msgstr "contactele dvs."
 
 #: src/features/settings/account/data.tsx
 msgid "Your data"
@@ -19137,10 +18890,6 @@ msgstr "Dosarul dvs"
 msgid "Your focus"
 msgstr "Focusul dvs."
 
-#: src/features/career/disclosure.tsx
-msgid "your form answers"
-msgstr "răspunsurile dvs. din formular"
-
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your guest documents and applications are in this account."
 msgstr "Documentele și candidaturile dvs. de invitat se află în acest cont."
@@ -19181,10 +18930,6 @@ msgstr "Locația dvs. s-a schimbat în CV. Scrisoarea a fost actualizată și ea
 msgid "Your margins are very narrow."
 msgstr "Marginile dvs. sunt foarte înguste."
 
-#: src/features/career/coach.tsx
-msgid "your message"
-msgstr "mesajul dvs."
-
 #: src/features/assistant/conversation.tsx
 msgid "Your message is kept."
 msgstr "Mesajul dvs. este păstrat."
@@ -19206,7 +18951,6 @@ msgstr "Numele tău s-a schimbat pe cv. Scrisoarea a fost actualizată și ea."
 msgid "Your name is missing"
 msgstr "Numele tău lipsește"
 
-#: src/features/career/disclosure.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "notițele dvs."
@@ -19231,11 +18975,6 @@ msgstr "Numărul dvs. de telefon s-a schimbat în CV. Scrisoarea a fost actualiz
 msgid "Your phone number is written in an unusual shape."
 msgstr "Numărul dvs. de telefon este scris într-un format neobișnuit."
 
-#: src/features/career/coach.tsx
-#: src/features/career/disclosure.tsx
-msgid "your preferences"
-msgstr "preferințele dvs."
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "furnizorul dvs"
@@ -19247,11 +18986,6 @@ msgstr "Furnizorul tău poate percepe taxe în contul tău pentru solicitările 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"
 msgstr "Linkurile dvs. publice se vor schimba"
-
-#. placeholder {0}: voice.settings.transcribe.label
-#: src/features/career/workspace/practise.tsx
-msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
-msgstr "Înregistrarea ajunge la {0} pentru transcriere, ceea ce poate folosi tokeni din acel cont."
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
@@ -19352,10 +19086,6 @@ msgstr "Linkul dvs. scurt arată că acest CV nu este partajat până nu îl pub
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."
 msgstr "Etapele au fost modificate în altă parte. Au fost reîmprospătate; încercați din nou."
-
-#: src/features/career/coach.tsx
-msgid "your stories"
-msgstr "poveștile dvs."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."
