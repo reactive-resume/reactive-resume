@@ -244,3 +244,198 @@ emulator or physical-device check occurred in this review. Detail sheets, error/
 editing, saving, navigation and live data remain outside this visual verdict; inspected source
 is corroboration, not runtime interaction proof. Capture-generation provenance was inherited,
 not independently reproduced. Only this review section was appended; no commit was made.
+
+## Today, documents and search — independent screen review, 2026-11-08
+
+**Verdict: changes required for T1-Today in both themes. Two findings remain below.
+T2-FirstRun and D1–D6 have no remaining visible finding within the fidelity contract.**
+
+Reviewer wrote none of this UI. Scope: exactly eight screens, 16 current light/dark composites,
+16 original reference PNGs, 16 original actual PNGs and four current scroll-end PNGs
+(T1 and D4, both themes). Every image was opened individually with `view_image`.
+Read REDESIGN.md fidelity contract, design/COMPONENTS.md, assigned SCREENS.md notes,
+all eight board bodies, reference layout JSONs and actual light/dark layout JSONs;
+checked actual end JSONs against the rendered end PNGs.
+This is not a fresh review of the Kit, auth/settings, remaining screens or all 62 screens.
+
+Bundle paths resolve under
+`/Users/amruth/Projects/reactive-resume/.agents/handoff/android-app/`.
+Actuals: `apps/android/build/fidelity/`; composites and inherited numeric evidence:
+`apps/android/build/fidelity-report/`. Coordinates below are dp; original PNG pixels are 2× dp.
+
+### Remaining findings
+
+1. **T1-Today, light and dark: Kiln Studio monogram says KI instead of KS.**
+   Reference `design/layout/T1-Today.json`, element 53, requires text `KS`,
+   text box (35, 873.5, 17.5, 16), inside monogram (24, 862, 40, 40).
+   Board source `design/source/T1-Today.dc.html` also renders `KS`.
+   Actual top JSON records `KI` at (37.5, 874, 12.96, 16); both current end PNGs
+   visibly show `KI` at (37.5, 177, 12.96, 16), inside (24, 165, 40, 40).
+   This violates exact copy, REDESIGN §2.7; glyph-width tolerance cannot excuse changed letters.
+   Numeric pass matches the Monogram component but does not verify its contained text;
+   raw layout report records the actual `KI` as EXTRA.
+
+2. **T1-Today, light and dark: three additional New roles rows.**
+   The reference board body and layout contain one Kiln Studio / Senior product designer row,
+   then end the content. Current end PNGs show three further rows, with extra monograms,
+   carets and dividers. No reference geometry/copy exists for these rows:
+
+   | Additional row                                                 | End row box (x, y, w, h) | Unscrolled y |
+   | -------------------------------------------------------------- | ------------------------ | ------------ |
+   | Senior product designer / Northwind Labs · Lisbon · Hybrid, NO | (24, 221, 342, 71)       | 918          |
+   | Product designer / Harbour Studio · Lisbon · Hybrid, HA        | (24, 292, 342, 71)       | 989          |
+   | Design systems lead / Kiln Studio · Lisbon · Hybrid, KI        | (24, 363, 342, 70)       | 1060         |
+
+   These are visible structural additions under REDESIGN §2.1, despite passing numeric score.
+   Raw layout report records the rows and their contents as EXTRA; extras do not fail that tool.
+   Reference's `4 today` count does not itself draw or specify three additional sample rows.
+   Changed screenshots or an explicit approved exception are needed to clear this finding.
+
+### Inspected boundaries and accepted limits
+
+No top-frame difference exceeds 1 dp geometry / 4 dp glyph-width allowance across these
+eight screens. No further visible fill, border, radius, shadow, icon shape/weight, font weight,
+wrapping, ellipsis or copy discrepancy found in the pinned images.
+Examples inspected against actual JSON and reference textBox:
+T2 title/subtitle/step labels round 0.5 dp down; D1 title and row text round 0.5 dp down,
+Cover letters count starts x130 versus 129.5; D2/D3 sheet titles and row text round 0.5 dp down;
+D4 Experience and Education labels round 0.5 dp down; D6 Empty starts x329 versus 329.5.
+These retain the specified line boxes and wrapping, with glyph-raster differences visible
+in composites. T1 `4 today` actual x110 versus reference textBox x109.5 also stays within tolerance.
+
+T1 end capture shows all four role rows and the final three document rows above the fixed dock.
+`Pick up where you left off` is explicitly required by T1's SCREENS.md Show on mobile note,
+so its existence is not treated as an invented section. It has no drawn reference layout:
+this review establishes its visible shared row treatment and unobstructed end boundary,
+not exact reference geometry or sample-copy equivalence for that undrawn subsection.
+T1's first role, hidden below the dock in the top PNG, was inspected in both end PNGs;
+finding 1 must not be dismissed because the top composite cannot display it.
+
+D4 `More from your file` / `Text we couldn't place, to sort later` / `1`
+is present in the reference layout and board source, although hidden under the footer in the
+top PNG. Both end PNGs reveal it at row (24, 655, 342, 70), matching content translated
+by 79 dp; footer stays fixed. No extra row after it.
+D6 full body ends at y341; remaining frame is blank, with no added sections or actions.
+Current standard `-end.png/.json` pairs are absent for T2/D1/D2/D3/D5/D6; there are no
+stale standard end frames used as current evidence. Other state/font-scale/RTL captures
+and D2 copy subflow captures were outside this review.
+
+Inherited current scoreboard read: **8/8 pass**, zero layout failures, zero solid bands.
+Light/dark differences: T1 .11/.11%, T2 .13/.13%, D1 .14/.13%, D2 .06/.04%,
+D3 .15/.10%, D4 .15/.13%, D5 .13/.13%, D6 .07/.07%.
+No test, build or fidelity command rerun by this reviewer. Numeric success does not clear
+the two visible T1 findings.
+
+### Evidence hashes
+
+SHA256 of full original files. `R` = bundle `screens/<stem>.png`;
+`A` = actual `build/fidelity/<stem>.png`;
+`C` = composite `build/fidelity-report/<stem>-compare.png`.
+
+| Stem              | R                                                                  | A                                                                  | C                                                                  |
+| ----------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| T1-Today-light    | `833d31eaa0702ef2e0556134c73cbcf2be805fa233f3e27ffc48bfb510dd9efc` | `15cee84fe05e7157d9e1ce92403ffbaa56578469bdb0296e77d6f23a88877f03` | `6f8893a3882f179477216f007909fa85f903717e4c1d7ebb9d55da008e332c2c` |
+| T1-Today-dark     | `0668d27707b48514769983aa8d90c0797d4af829794385602f2d4938de5a70cc` | `886541cae21cb7d5062514b377e7ddb5d29d530b9b97bfd6d93a2f32afce3d3c` | `1dc1cde80d7dd1a4f60a7e7655b99f8d51d9a24e194404b90fb6919e279de126` |
+| T2-FirstRun-light | `4ca4cd317bd08bc4bdfddb3422eb126942b04f58e351da7d9abd8e310092a295` | `c9a2622998828de26d5b0bed118321e67c7b4938aa4932951f79ddd3357eb00b` | `377da85a56b377fded878f9b2e885a64616bb0a19f00d717cfdd553aa11a7e06` |
+| T2-FirstRun-dark  | `5a84afe2581abe9bc41d3c8c6a070b69000d9bc1844c91fc99861315b4acbf2f` | `c0a23c1e6889776f3c98b087f28150ff96d3b1147b4e3533d57c1ea68cfa2b14` | `a759001e74d4c5bfecceb301beda34986480b2dfacaf779f7a163d7155e61743` |
+| D1-Library-light  | `845878021d23ca4850aa87ab92c64a419430bc681e7a6e2600b03f933dad5492` | `1d65e17aa0f4ef756ae28bc5d0ce06a278d5cbe7ccc3c6aff8f33acbf69e51ab` | `cb1e7356265e8a0457c84962b5a8ec111d782c68c6c47351e686a6e8e22147c6` |
+| D1-Library-dark   | `7054b6e90eca27bb66efe93d331db7c1aa39894edbad454381355d63144a28f6` | `67f82dd68c4e2115b3fa08d2374aa84992c793afd986f0e0b196a23abeaa567c` | `8f45e7fd0dd4793020b0abae0010f51546583a5a105a34dd32dc96bb05d91868` |
+| D2-Actions-light  | `8a877e6e27bc327ee8c7071144d88321483f94abe02f09a9df76f01c3ab80d87` | `6c3eec7445cd9fc3e2377425b604ae50ef60638e07c8dad94383a65226b78afc` | `ec98b957a601136a6fdf4d50c84c51618c2e3dcc06a9c7f3a623c4c658b8fd07` |
+| D2-Actions-dark   | `382f63d4ad76b95273c9bf785d3109448ef8ebc98dbdc6065aa69e425d3c32ee` | `930def07a127f5a690e9f7bc5aedbace73f36151adc6a56a64cff1b79efabd8b` | `879d2350874412eff7cea485b43fb523cce16d21f53d185dc02071bbf3d8dcc9` |
+| D3-New-light      | `eb74fdef2991cbf24cda4dae9fc4078e25360f2c074305f41da107573131f992` | `a98effadd752dbccdc20fce7a10299c15b0edeb12753230d8d8eacc52f49d38e` | `62a0a37c31e3cdcd8096a34e24357e73ce0955cf553afef8b20c830da4f3a8fd` |
+| D3-New-dark       | `378252bf8c36b5cd69c9e406e44ae5a74d28ef9b85c1fd80beaadc2d12d8af85` | `cdbc04f35b01c0ceefb8ac8d2407d40522e8b7c52505ee61eed06394b6df5489` | `bc179390ca15533a350611390037d9f6ec314ade9cb32ac62b36e073cb11ddf1` |
+| D4-Import-light   | `9f38cf6c32620e9d8b6751ef70a86062b2401183e2dae886ef3562cba932c2ff` | `ebdec038cd3293734bd900fe9af7208a05097084dbea1260b0870ebed96d8199` | `e4abe2d9f9d7f18d14f007baa361ce98ad18e80d1be2fc058edecd4f7fcf2232` |
+| D4-Import-dark    | `d9c320170839123f15ba81f78af8d926ee5b27cd1f05e8c229f81c622fdb4197` | `35d938bed4b5e25cc0700416f625be04aa22cb212c8f942a0b227cc405f0131b` | `82f953980a69f57005c58a26e9e60dac55875ec794ae03187a36b559d3ec5758` |
+| D5-Search-light   | `0e527786ed64e32572ddb967c0b7a2356c47407165e18e7874688584076a94a8` | `cb7733d5f3eca06148fa027c334f182ad6b695f6aad79dbf51f2aed38baca084` | `b99be60a73ba176df4983f49c39eb22e127e7d4237b0fe5400652a9dd76e28bb` |
+| D5-Search-dark    | `f5d17a5af9fe480ff9155d41e354175fe21f73c450310bc6caa53f201e1e3f69` | `54395d25ddbb30b1dc4abc7650f78c0de14865dc61c2e4749f2da24cbf65ca4d` | `baddde04a7d059b23ff375b8b3ff9c313455a2141a3977113f029c8ff4c87b67` |
+| D6-Trash-light    | `2b5c2edae10acb098c62e3bb8d03b71a35605849d313609318f3303530c3a49e` | `18184b260128474358dee970699d6c6fe7604514b561d8ce58ee79c39ccb54aa` | `155bd60953c5d782a7f08a4153c2d036c9774bccedbc45c2e233377762a7a204` |
+| D6-Trash-dark     | `e59a3407a44775623f309888d1ece250c4de736663deac47ca899a552d4ab740` | `92e2702edc1bd1e55232e8f8985c0c12e403fe443dd1c997f8adbdd40a579631` | `67059db2742b4bb173378c43a82db55df0236e2657d11e356e7fbb5fee211deb` |
+
+Actual layout JSONs reviewed (`build/fidelity/<ID>-light.json` and `-dark.json`;
+light/dark hashes identical per screen):
+
+| ID          | SHA256, both theme JSONs                                           |
+| ----------- | ------------------------------------------------------------------ |
+| T1-Today    | `1990a4feecd0082888aa0bdf5a3065099665eb7b3003732855a3436b4f2fbb04` |
+| T2-FirstRun | `060322ef2623bac0e716a608dec2db038ed9f74eb25bd784c05cb56a3a042538` |
+| D1-Library  | `aef836ed6cd1cab7e6898ff2835e30cf7ef9d6b487d27b36b841b172d0b999e9` |
+| D2-Actions  | `7d41cb44d2ab60e47c66d2061639ff139627e854db55dd0696efc61d786543e1` |
+| D3-New      | `4fabe3cf8d8187eae93f8d79c19e050ea40b222dfff7503a1a42d03ca2843279` |
+| D4-Import   | `b0eca22be77fae29ef3d311e68383872c4124dd921fe35bee9a1c280e7da786d` |
+| D5-Search   | `6e03af26a2287db7aada20a661ff06b85c5708b2318eb263a22949c86da165dc` |
+| D6-Trash    | `dce0909f0336f63c9b2f282303bb5ec48133257da7f3cd8de6e9c74270697515` |
+
+Current scroll-end originals and JSONs:
+
+| Stem            | End PNG SHA256                                                     | End JSON SHA256                                                    |
+| --------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| T1-Today-light  | `97ed271e10d4234567807653d61e026745102103ccb6d67017d66e69739ee144` | `f3df8a341f7acb73d7f0be6303cc54d8d6330c63eccd3afc397d35faaf29b151` |
+| T1-Today-dark   | `bc01004e3e0425d2399463c4caf32b0e61b6dc046b65c88883a909a1d012640a` | `f3df8a341f7acb73d7f0be6303cc54d8d6330c63eccd3afc397d35faaf29b151` |
+| D4-Import-light | `1d66758084fc0e5443afdda25959842a9b1d4a4e2e1712d067e77c36f65491a8` | `e46fec0e09cfba2881983a0c54c465b034fc89282fe6fc2a12f88718ce15b03a` |
+| D4-Import-dark  | `9ed2804c18ea2f239b0a7d36b1feb9f13538bead60e0ae66cb701ab2b1adabe6` | `e46fec0e09cfba2881983a0c54c465b034fc89282fe6fc2a12f88718ce15b03a` |
+
+Freshness checked from file existence and UTC mtimes: D5 actuals 14:33:34–35,
+D1–D4/D6 actuals 14:33:54–58, T1/T2 actuals 14:38:48–50; T1 end pairs 14:38:48–50,
+D4 end pairs 14:33:57–58; composites 14:41:39–42 on 2026-11-08.
+Evidence hashes read after individual image inspection and rechecked unchanged at append.
+Changed captures require another review.
+
+Skipped: interactions, navigation, local-import WebView runtime, TalkBack, 200% font scale,
+RTL and device checks. D4's local-reading copy is visually faithful; screenshots do not prove
+the parser, WebView execution or privacy boundary. No source, bundle, baseline, capture,
+layout dump or tolerance edits made; only this review section appended.
+
+## Builder, assistant, sharing and career — independent review round, 2026-11-08
+
+Fresh reviewers wrote none of the reviewed UI. Full findings, exact screenshot hashes and inspected scopes are preserved in:
+
+- `/Users/amruth/.codex/artifacts/android-independent-builder-assistant-review.md`
+- `/Users/amruth/.codex/artifacts/android-independent-share-letter-kit-review.md`
+- `/Users/amruth/.codex/artifacts/android-independent-career-public-review.md`
+
+These reviews found defects despite numerical passes: B4 bullet size/placement; B16 dimmed empty Send appearance;
+B17 highlight height, side padding and word spacing; B10 undrawn save form margins; B15 top divider; B18 missing hint,
+wrong dark marker and shadow cutoff; B11 missing last named-version date; P1 background token; C5 top divider;
+C7 separator and backdrop subtitle opacity; C2 ordered-marker gutter. Implementer corrections and native regression
+checks are in progress or passed, but changed captures require a new independent corrective review. No finding is
+cleared solely because the numeric report passes.
+
+Independent T1 review confirmed KS initials and removal of the three extra root role rows; both original findings
+are resolved at the hashes in the builder/assistant review. Fresh Kit review inspected all components and six paired
+crops: no remaining visual finding; SHA256 `cb786164b1ddfbb8b65396f50e16d1a69a3557a67987d5fb624b1f34ecbb1329`,
+thresholded difference0.11%, zero bands above25%.
+
+### Later owner decisions
+
+Amruth approved correcting C2's exporter to emit real noncontiguous paragraph ranges and W5's explicit HTML line break,
+while preserving PNGs and every tolerance. C2's first re-export exposed fallback font loading; the exporter now loads
+supplied Figtree assets, with a detecting browser regression. Real Chromium first paragraph width312dp agrees with
+native311.94dp; no native tracking or tolerance adjustment was made.
+
+Amruth approved truthful source-aligned C3/C5/C7 copy/behavior departures rather than inventing provenance, Avoid/site
+counts or weekday/push fields absent from the shared contracts. C2 historical application count remains unknown and
+is displayed truthfully. Their dependent chip offsets remain reported raw failures. Amruth also approved separate
+native-system proof for X1; stock platform frames/fonts and launcher hosting are not strict Compose pixel acceptance.
+
+Applications/workspace independent review is running on its pinned 13-screen captures; no final62-screen visual
+acceptance has been issued. Device, TalkBack, real WebView import execution, 200% and RTL device checks remain open.
+
+## Final independent and corrective rounds
+
+The complete independent inventories are preserved in:
+
+- `/Users/amruth/.codex/artifacts/android-final-review-abcd.md`:39 drawn screens,78 composites,45 associated ends and Kit.
+- `/Users/amruth/.codex/artifacts/android-final-review-ef.md`:23 drawn screens,46 composites,28 associated ends and native-system evidence.
+- `/Users/amruth/.codex/artifacts/android-final-corrective-review.md`:a new reviewer checked copy-form margins, the frozen-letter footer,
+  collapsed-header width and Stories dark. All requested visible corrections cleared at the candidate captures.
+
+Final-commit custody is recorded in the corrective report after the clean verification run:prior inventories are rehashed,
+every changed PNG is reopened, and the source pin/report directory are recorded. This separates review of current captures
+from historical source-only fixes. The final verdict is in that report; no exact62/62 claim overrides the five documented
+strict failures. Approved source departures and native/system/device limitations remain listed separately in REDESIGN-REPORT.md.
+
+The last share change moves existing export feedback from root overlays into the actual PDF card/button. Its owner tests
+and six-screen fidelity pass; final independent custody also checks any changed share image against the earlier inventory.
+
+The behavior audit is `/Users/amruth/.codex/artifacts/android-final-behavior-audit.md`. It records source gaps and unverified
+motion/haptic/native behavior separately from visual review. Emulator/default-font/200%/RTL/TalkBack gates remain unverified.

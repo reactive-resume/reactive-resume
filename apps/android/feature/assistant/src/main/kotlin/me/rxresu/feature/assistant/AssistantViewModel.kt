@@ -21,7 +21,10 @@ internal data class AssistantState(
     val wording: WordingDraft? = null,
     /** The last send was refused because the connection changed after it was shown; the disclosure now names the current one. */
     val destinationChanged: Boolean = false,
+    val pageFit: PageFitMeasurement? = null,
 ) { val provider get() = providers.firstOrNull { it.id == providerId }; val proposals get() = content.proposals }
+
+internal data class PageFitMeasurement(val before: Int, val after: Int)
 
 /** Wording for [proposal] as it was when editing began; a refreshed proposal never replaces [text]. */
 internal data class WordingDraft(val proposal: Proposal, val text: String) { val dirty get() = text != plain(proposal.after) }

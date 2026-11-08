@@ -83,9 +83,9 @@ fun Modifier.rrLargeTitleScroll(state: RrLargeTitleState): Modifier = nestedScro
 private val CollapsedTitle = RrType.topBarTitle
 
 /**
- * Root-tab header: Instrument Serif 30/36 title with an optional ink-3 subtitle ("Saturday, 7 November"), trailing
+ * Root-tab header: Instrument Serif title with an optional ink-3 subtitle ("Saturday, 7 November"), trailing
  * actions (search, the tab's one primary action, the avatar), and an optional [bottom] row (filter chips). After 40 dp
- * of scroll it becomes a 56 dp bar with a 15/600 title and a line under it (crossfade d2; instant under reduced motion).
+ * of scroll it becomes a 56 dp bar with a top-bar title and a line under it (crossfade d2; instant under reduced motion).
  */
 @Composable
 fun RrLargeTitleHeader(
@@ -122,7 +122,7 @@ fun RrLargeTitleHeader(
                     RrText(title, style = CollapsedTitle, color = c.ink, maxLines = 1, modifier = Modifier.align(Alignment.Center).padding(horizontal = 96.dp).semantics { heading() })
                     Row(Modifier.align(Alignment.CenterEnd), horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically, content = actions)
                 }
-                if (bottom != null) Box(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)) { bottom() }
+                if (bottom != null) Box(Modifier.padding(bottom = 8.dp)) { bottom() }
                 Box(Modifier.fillMaxWidth().height(1.dp).background(c.line))
             }
         }
@@ -144,7 +144,7 @@ private fun RootTitleAndActions(title: String, actions: @Composable RowScope.() 
         val beside = (width - actionsP.width).coerceAtLeast(0)
         val stacked = titleM.first().maxIntrinsicWidth(Constraints.Infinity) > beside
         val titleP = titleM.first().measure(Constraints(maxWidth = if (stacked) width else beside))
-        val rowHeight = maxOf(44.dp.roundToPx(), actionsP.height)
+        val rowHeight = if (actionsP.width == 0) titleP.height else maxOf(44.dp.roundToPx(), actionsP.height)
         val height = if (stacked) rowHeight + titleP.height else maxOf(rowHeight, titleP.height)
         layout(width, height) {
             actionsP.placeRelative(width - actionsP.width, (rowHeight - actionsP.height) / 2)

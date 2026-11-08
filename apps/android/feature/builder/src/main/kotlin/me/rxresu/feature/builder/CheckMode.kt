@@ -8,6 +8,8 @@ import androidx.compose.animation.core.tween
 import me.rxresu.core.designsystem.*
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -84,6 +86,7 @@ internal fun CheckMode(
     writingTab: Boolean = false,
     jobMatchChanging: Boolean = false,
     saveJobOpen: Boolean = false,
+    onOpenApplication: (String) -> Unit = {},
 ) {
     val doc = state.doc ?: return
     val haptics = rememberRrHaptics()
@@ -108,7 +111,7 @@ internal fun CheckMode(
                 if (checks != null) ScoreHeader(checks.score.toInt(), issues.any { it.key.startsWith("FRAGMENTED_ENTRY") }, issues.size)
                 IssuesTab(state, doc, issues, actions, onShowOnPage, onWrite)
             }
-            else -> JobMatchTab(state, doc, actions, onShowOnPage, onAskAssistant, jobMatchChanging, saveJobOpen)
+            else -> JobMatchTab(state, doc, actions, onShowOnPage, onAskAssistant, jobMatchChanging, saveJobOpen, onOpenApplication)
         }
     }
     LaunchedEffect(tab, state.application) { if (tab == CheckTab.JobMatch && state.match == MatchState.Idle) actions.matchPosting(null) }
@@ -170,7 +173,7 @@ private fun IssuesTab(state: BuilderUiState, doc: ResumeDoc, issues: List<IssueV
 @Composable
 private fun JobMatchTab(
     state: BuilderUiState, doc: ResumeDoc, actions: BuilderActions, onShowOnPage: (BlockTarget) -> Unit, onAskAssistant: (String) -> Unit,
-    initiallyChanging: Boolean = false, saveJobOpen: Boolean = false,
+    initiallyChanging: Boolean = false, saveJobOpen: Boolean = false, onOpenApplication: (String) -> Unit,
 ) {
     val c = RrTheme.colors
     val resources = LocalResources.current
@@ -210,7 +213,11 @@ private fun JobMatchTab(
         is MatchState.Ready -> {
             RrListRow(if (m.pasted == null && app != null) "${app.company} · ${app.role}" else stringResource(S.string.for_this_visit_only),
                 modifier = Modifier.padding(top = 12.dp), subtitle = stringResource(if (m.pasted == null) R.string.builder_posting_linked else R.string.builder_posting_pasted),
-                onClick = { changing = !changing; actions.loadApplications() }, trailing = { RrText(stringResource(S.string.change), style = RrType.ui, color = c.ink3) })
+                onClick = { if (m.pasted == null && app != null) onOpenApplication(app.id) else { changing = !changing; actions.loadApplications() } }, trailing = {
+                    Box(Modifier.heightIn(min = 44.dp).clickable { changing = !changing; actions.loadApplications() }, contentAlignment = Alignment.Center) {
+                        RrText(stringResource(S.string.change), style = RrType.ui, color = c.ink3)
+                    }
+                })
             if (m.pasted != null) SaveAsJob(m.pasted, state, actions, startOpen = saveJobOpen)
             if (changing && m.pasted == null && app != null) Column(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 var picked by remember { mutableStateOf<Application?>(null) }
@@ -296,13 +303,13 @@ private fun SaveAsJob(posting: String, state: BuilderUiState, actions: BuilderAc
     var company by rememberSaveable { mutableStateOf("") }
     var role by rememberSaveable { mutableStateOf("") }
     if (!open) {
-        RrButton(stringResource(S.string.save_as_a_job), { open = true }, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small, icon = D.drawable.ic_ph_briefcase)
+        RrButton(stringResource(S.string.save_as_a_job), { open = true }, Modifier.padding(horizontal = 24.dp), variant = RrButtonVariant.Ghost, size = RrButtonSize.Small, icon = D.drawable.ic_ph_briefcase)
         return
     }
     val job = NewJob(company.trim(), role.trim(), posting.trim())
     val ready = job.company.isNotEmpty() && job.role.isNotEmpty() && !state.jobBusy
-    Column(Modifier.fillMaxWidth().padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             RrTextField(company, { company = it }, Modifier.weight(1f), label = stringResource(S.string.company))
             RrTextField(role, { role = it }, Modifier.weight(1f), label = stringResource(S.string.role))
         }

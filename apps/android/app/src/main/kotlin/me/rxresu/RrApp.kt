@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.toRoute
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -37,6 +38,10 @@ import kotlinx.coroutines.flow.Flow
 import me.rxresu.core.auth.SessionState
 import me.rxresu.core.data.AppPreferences
 import me.rxresu.core.data.LocalRepositories
+import me.rxresu.core.data.RrRepositories
+import androidx.navigation.NavHostController
+import java.io.File
+import java.time.ZoneId
 import me.rxresu.core.designsystem.LocalRrDesignTags
 import me.rxresu.core.data.Resource
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -51,6 +56,9 @@ import me.rxresu.core.designsystem.RrToastHostState
 import me.rxresu.core.designsystem.rrAppTabs
 import me.rxresu.core.navigation.ApplicationsTab
 import me.rxresu.core.navigation.CareerTab
+import me.rxresu.core.navigation.BuilderMore
+import me.rxresu.core.navigation.DocumentKind
+import me.rxresu.core.navigation.sheet
 import me.rxresu.core.navigation.DocumentsTab
 import me.rxresu.core.navigation.LocalBuilderShareMode
 import me.rxresu.core.navigation.LocalNavMotion
@@ -77,6 +85,8 @@ import me.rxresu.feature.builder.builderGraph
 import me.rxresu.feature.career.careerGraph
 import me.rxresu.feature.documents.documentsGraph
 import me.rxresu.feature.letters.lettersGraph
+import me.rxresu.feature.letters.LetterMoreRoute
+import me.rxresu.feature.share.ResumeMoreRoute
 import me.rxresu.feature.publiclink.publicGraph
 import me.rxresu.feature.search.searchGraph
 import me.rxresu.feature.settings.settingsGraph
@@ -89,8 +99,20 @@ private val tabRoutes: List<Any> = listOf(TodayTab, DocumentsTab, ApplicationsTa
 
 @Composable
 fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
-    val session by graph.auth.state.collectAsStateWithLifecycle()
-    val prefs by graph.repositories.preferences.values.collectAsStateWithLifecycle(AppPreferences())
+    RrAppContent(graph.auth, graph.repositories, graph.pagesDir, { graph.accountZone = it }, incoming)
+}
+
+@Composable
+internal fun RrAppContent(
+    auth: AuthService,
+    repositories: RrRepositories,
+    pagesDir: File,
+    onAccountTimezone: (ZoneId?) -> Unit,
+    incoming: Flow<Any>,
+    nav: NavHostController = rememberNavController(),
+) {
+    val session by auth.state.collectAsStateWithLifecycle()
+    val prefs by repositories.preferences.values.collectAsStateWithLifecycle(AppPreferences())
     val dark = when (prefs.theme) {
         ThemePreference.Light -> false
         ThemePreference.Dark -> true
@@ -108,7 +130,6 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
     val systemReduced = rememberSystemReducedMotion()
     // The system "Remove animations" always wins; the in-app setting can only reduce motion further.
     RrTheme(darkTheme = dark, hapticsEnabled = prefs.haptics, reducedMotion = systemReduced || prefs.reducedMotion == true) {
-        val nav = rememberNavController()
         val toasts = remember { RrToastHostState() }
         val motion = RrNavMotion(RrTheme.reducedMotion)
         val entry by nav.currentBackStackEntryAsState()
@@ -122,13 +143,13 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
         SessionRouting(nav, signedIn)
         // Dates and "today" follow the account's timezone once the profile is known (and after Settings changes it).
         LaunchedEffect(signedIn) {
-            if (!signedIn) { graph.accountZone = null; return@LaunchedEffect }
-            graph.repositories.account.observeProfile().collect { profile ->
-                profile.data?.timezone?.let { id -> graph.accountZone = runCatching { java.time.ZoneId.of(id) }.getOrNull() }
+            if (!signedIn) { onAccountTimezone(null); return@LaunchedEffect }
+            repositories.account.observeProfile().collect { profile ->
+                profile.data?.timezone?.let { id -> onAccountTimezone(runCatching { ZoneId.of(id) }.getOrNull()) }
             }
         }
         // Pages belong to one account; the next account starts with an empty cache.
-        LaunchedEffect(session) { if (session == SessionState.SignedOut) graph.pagesDir.listFiles()?.forEach { it.deleteRecursively() } }
+        LaunchedEffect(session) { if (session == SessionState.SignedOut) pagesDir.listFiles()?.forEach { it.deleteRecursively() } }
         LaunchedEffect(nav) {
             incoming.collect { route ->
                 val tab = tabFor(route)
@@ -139,7 +160,7 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
 
         CompositionLocalProvider(
             LocalRrDesignTags provides (((activity?.applicationInfo?.flags ?: 0) and ApplicationInfo.FLAG_DEBUGGABLE) != 0),
-            LocalRepositories provides graph.repositories,
+            LocalRepositories provides repositories,
             LocalToasts provides toasts,
             LocalTabReselects provides reselects,
             LocalNavMotion provides motion,
@@ -167,14 +188,14 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
                         popEnterTransition = motion.popEnter,
                         popExitTransition = motion.popExit,
                     ) {
-                        appDestinations(nav, motion, graph.auth)
+                        appDestinations(nav, motion, auth)
                     }
                     // Toasts sit above the tab bar or a screen's own mode bar; screens with a mode bar pad via insets.
                     RrToastHost(toasts, Modifier.align(Alignment.BottomCenter).padding(bottom = if (tab == null) RrLayout.tabBar else 0.dp))
                 }
                 if (tab != null) {
                     // T1: the Today tab shows the Needs-you count while another tab is open.
-                    val today by remember(signedIn) { graph.repositories.today.observe() }.collectAsStateWithLifecycle(Resource())
+                    val today by remember(signedIn) { repositories.today.observe() }.collectAsStateWithLifecycle(Resource())
                     val needsYou = today.data?.needsYou?.size?.takeIf { it > 0 && tab != 0 }
                     val tabs = rrAppTabs(stringResource(S.string.today), stringResource(S.string.documents), stringResource(S.string.applications), stringResource(S.string.career))
                     RrTabBar(
@@ -199,6 +220,13 @@ internal fun NavGraphBuilder.appDestinations(nav: NavController, motion: RrNavMo
     searchGraph(nav, motion)
     builderGraph(nav, motion)
     shareGraph(nav, motion)
+    sheet<BuilderMore> { entry ->
+        val route = entry.toRoute<BuilderMore>()
+        when (route.kind) {
+            DocumentKind.Resume -> ResumeMoreRoute(route.resumeId, nav)
+            DocumentKind.Letter -> LetterMoreRoute(route.resumeId, nav, entry)
+        }
+    }
     assistantGraph(nav, motion)
     lettersGraph(nav, motion)
     applicationsGraph(nav, motion)

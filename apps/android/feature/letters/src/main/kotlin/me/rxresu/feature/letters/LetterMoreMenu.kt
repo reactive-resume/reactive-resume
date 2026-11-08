@@ -16,7 +16,7 @@ import me.rxresu.core.designsystem.R as D
 @Composable internal fun LetterMoreMenu(state: LetterState, dismiss: () -> Unit, action: (String) -> Unit) {
     val letter = state.letter ?: return
     val haptics = rememberRrHaptics()
-    RrBottomSheet(dismiss, title = letter.name, fixedHeight = 790.dp) {
+    RrBottomSheet(dismiss, title = letter.name, fixedHeight = 790.dp, closeIconSize = 24.dp) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             if (state.failed) RrCallout(stringResource(S.string.couldn_t_save_your_changes_try_again_before_continuing), Modifier.padding(24.dp), tone = RrTone.Danger)
             Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {

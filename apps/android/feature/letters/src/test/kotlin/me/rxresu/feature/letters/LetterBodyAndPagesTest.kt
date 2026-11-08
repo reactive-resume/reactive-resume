@@ -4,6 +4,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -56,6 +58,27 @@ class LetterBodyAndPagesTest {
         assertEquals(true, me.rxresu.core.designsystem.RrRichDoc.editable(html))
     }
 
+    @Test fun detailsKeepDraftEditorAndPreviewReachableWithoutRootButtons() {
+        val repositories = FakeRepositories()
+        try {
+            val letter = runBlocking { repositories.letters.openDraft(StoryboardIds.lumenLetter).state.value.document!! }.copy(content = "<p>Letter body.</p>", isLocked = false)
+            var selected = ""
+            compose.setContent {
+                CompositionLocalProvider(LocalInspectionMode provides true) {
+                    RrTheme(darkTheme = false) { LetterScreen(LetterState(draft = DraftState(letter), loading = false), LetterMode.Write, false, { selected = it }, {}, {}, {}) }
+                }
+            }
+            compose.onNodeWithText("Draft from the posting").assertDoesNotExist()
+            compose.onNodeWithText("Letter content").assertDoesNotExist()
+            compose.onNodeWithText("Preview").assertDoesNotExist()
+            listOf("Draft from the posting" to "draft", "Letter content" to "body", "Preview" to "preview").forEach { (label, action) ->
+                compose.onNodeWithText("Details").performClick()
+                compose.onNodeWithText(label).performClick()
+                compose.runOnIdle { assertEquals(action, selected) }
+            }
+        } finally { repositories.close() }
+    }
+
     @Test fun longLetterKeepsAllBodyParagraphs() {
         val repositories = FakeRepositories()
         try {
@@ -67,6 +90,28 @@ class LetterBodyAndPagesTest {
                 }
             }
             compose.onNodeWithText("Paragraph 30 remains editable.", useUnmergedTree = true).assertExists()
+        } finally { repositories.close() }
+    }
+
+    @Test fun snapshotHasNoWriteDesignHistoryOrExportActions() {
+        val repositories = FakeRepositories()
+        try {
+            val version = runBlocking { repositories.letters.getCoverLetterVersion(StoryboardIds.lumenLetter, "letter-version-lumen") }
+            val actions = mutableListOf<String>()
+            compose.setContent {
+                CompositionLocalProvider(LocalInspectionMode provides true) {
+                    RrTheme(darkTheme = false) {
+                        LetterScreen(LetterState(snapshotVersionId = version.id, snapshotLabel = "Sent to Lumen", draft = DraftState(version.readOnlyLetter()), loading = false), LetterMode.Write, false, { actions += it }, { error("No live design writes") }, { error("No live page writes") }, {}, { error("No live content writes") })
+                    }
+                }
+            }
+            compose.onNodeWithContentDescription("Assistant").assertDoesNotExist()
+            compose.onNodeWithContentDescription("More").assertDoesNotExist()
+            listOf("Write", "Design", "Export", "Restore this version").forEach { compose.onNodeWithText(it).assertDoesNotExist() }
+            compose.onAllNodes(hasSetTextAction()).assertCountEquals(0)
+            compose.onNodeWithText("Details").assertIsNotEnabled()
+            compose.onNodeWithText("Open current").performClick()
+            compose.runOnIdle { assertEquals(listOf("current"), actions) }
         } finally { repositories.close() }
     }
 }

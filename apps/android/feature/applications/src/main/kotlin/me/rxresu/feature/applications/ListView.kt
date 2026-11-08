@@ -3,6 +3,7 @@ package me.rxresu.feature.applications
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,10 +17,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.time.Duration
@@ -105,19 +113,36 @@ internal fun ListView(
             )
         }
         else -> {
+            var expandedGroups by rememberSaveable { mutableStateOf(emptyList<String>()) }
             val groups = groupRows(rows, state.lanes)
             val reduced = LocalReducedMotion.current
             LazyColumn(Modifier.fillMaxSize().rrLargeTitleScroll(title), contentPadding = PaddingValues(bottom = 24.dp)) {
                 items(groups, key = { (lane, rs) -> lane?.id ?: ("stage:" + rs.first().app.status.wireValue) }) { (lane, rs) ->
                     val stage = rs.first().app.status
+                    val key = lane?.id ?: "stage:${stage.wireValue}"
+                    val expanded = key in expandedGroups || selected != null || state.filters.stage != null
+                    val shownRows = if (expanded) rs else rs.take(2)
+                    val expandable = rs.size > 2 && selected == null && state.filters.stage == null
+                    val action = stringResource(if (expanded) S.string.show_less else S.string.show_all)
+                    val description = stringResource(if (expanded) R.string.app_group_expanded else R.string.app_group_collapsed)
                     Column(
                         Modifier.animateItem(placementSpec = if (reduced) null else tween(RrMotion.D2, easing = RrMotion.easeInOutStrong))
                             .then(if (reduced) Modifier else Modifier.animateContentSize(tween(RrMotion.D2, easing = RrMotion.easeInOutStrong))),
                     ) {
-                        RrSectionHeader(lane?.let { laneLabel(it) } ?: stageLabel(stage), count = rs.size.toString(), topPadding = if (rs === groups.first().second) 20.dp else 32.dp)
+                        RrSectionHeader(lane?.let { laneLabel(it) } ?: stageLabel(stage), count = rs.size.toString(),
+                            modifier = if (expandable) Modifier.clickable(role = Role.Button, onClickLabel = action) {
+                                expandedGroups = if (key in expandedGroups) expandedGroups - key else expandedGroups + key
+                            }.semantics { stateDescription = description } else Modifier,
+                            topPadding = if (rs === groups.first().second) 20.dp else 32.dp)
                         RrListGroup {
-                            rs.forEachIndexed { i, row -> ApplicationRow(row, state, dates, selected, actions, i < rs.lastIndex) }
+                            shownRows.forEachIndexed { i, row -> ApplicationRow(row, state, dates, selected, actions, i < shownRows.lastIndex) }
                         }
+                    }
+                }
+                val closedCount = state.all.count { it.status == ApplicationStage.Closed }
+                if (!state.filters.showClosed && state.filters.stage != ApplicationStage.Closed && closedCount > 0) {
+                    item(key = "closed") {
+                        RrListRow("${stageLabel(ApplicationStage.Closed)} · $closedCount", Modifier.padding(top = 32.dp), onClick = onShowClosed, trailing = { RrRowCaret() })
                     }
                 }
             }
@@ -163,7 +188,7 @@ private fun ApplicationRow(row: Row, state: ApplicationsState, dates: Dates, sel
             selected = selected?.contains(app.id) == true,
             leading = {
                 if (selected != null) RrCheckbox(app.id in selected, { actions.toggleSelect(app.id) })
-                else RrCompanyTile(app.company, content = companyMonogram(app.company))
+                else RrCompanyTile(app.company, content = row.companyInitials ?: companyMonogram(app.company))
             },
             trailing = { RrRowCaret() },
         )

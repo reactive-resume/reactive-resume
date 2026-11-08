@@ -93,6 +93,17 @@ fun ImportScreen(state: ImportUiState, callbacks: ImportCallbacks, modifier: Mod
                 if (state.problem == ImportProblem.Unreadable) {
                     RrCallout(stringResource(R.string.import_unreadable), tone = RrTone.Danger, actionLabel = stringResource(R.string.import_choose_another), onAction = callbacks.onChangeFile)
                 }
+                val readingError = when (state.problem) {
+                    ImportProblem.Scanned -> R.string.import_scanned
+                    ImportProblem.Password -> R.string.import_password
+                    ImportProblem.Partial -> R.string.import_partial
+                    ImportProblem.TooLarge -> R.string.import_too_large
+                    ImportProblem.UnsupportedReader -> R.string.import_reader_unsupported
+                    ImportProblem.AccountChanged -> R.string.import_account_changed
+                    ImportProblem.LegacyWord -> R.string.import_legacy_word
+                    else -> null
+                }
+                if (readingError != null) RrCallout(stringResource(readingError), tone = RrTone.Danger, actionLabel = stringResource(R.string.import_choose_another), onAction = callbacks.onChangeFile)
                 if (!state.readable && state.file != null && state.summary == null && state.problem == null) {
                     RrText(stringResource(R.string.import_no_preview), style = RrType.small, color = c.ink2)
                 }
@@ -145,7 +156,7 @@ private fun Method(state: ImportUiState, callbacks: ImportCallbacks) {
         RrSectionHeading(stringResource(R.string.import_how))
         RrListGroup {
             if (state.format == ImportFormat.Pdf) {
-                MethodRow(stringResource(R.string.import_local), stringResource(R.string.import_local_subtitle), state.method == ImportMethod.Server, ai = false, divider = state.aiProvider != null) { callbacks.onMethod(ImportMethod.Server) }
+                MethodRow(stringResource(R.string.import_local), stringResource(R.string.import_local_subtitle), state.method == ImportMethod.Local, ai = false, divider = state.aiProvider != null) { callbacks.onMethod(ImportMethod.Local) }
             }
             if (state.aiProvider != null) {
                 MethodRow(stringResource(R.string.import_ai), stringResource(R.string.import_ai_subtitle), state.method == ImportMethod.Ai, ai = true) { callbacks.onMethod(ImportMethod.Ai) }

@@ -31,7 +31,7 @@ fun RrConnectionChip(label: String, onClick: () -> Unit, modifier: Modifier = Mo
     ) {
         RrIcon(R.drawable.ic_ph_sparkle, null, size = 16.dp, tint = c.accentText)
         RrText(label, style = RrType.small.copy(fontWeight = FontWeight.Medium), color = c.ink2, maxLines = 1)
-        RrIcon(R.drawable.ic_ph_caret_down, null, size = 14.dp, tint = c.ink2)
+        RrIcon(R.drawable.ic_ph_caret_down, null, size = 16.dp, tint = c.ink2)
     }
 }
 

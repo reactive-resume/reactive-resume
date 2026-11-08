@@ -30,6 +30,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
@@ -253,7 +255,7 @@ internal fun ApplicationScreen(
                 app == null -> OverviewSkeleton()
                 else -> Overview(app, state, state.nextStep(time), dates, onTab, onInterview, onAddToCalendar,
                     onOpenResume, onOpenLetter, onPrepareResume, onOffers, onEmail, onLogFollowUp,
-                    onMove = onMove, onSheet = { sheet = it })
+                    onMove = onMove, onReopen = onReopen, onSheet = { sheet = it })
             }
         }
         if (app != null) when (sheet) {
@@ -318,10 +320,11 @@ private fun Overview(
     onEmail: (String) -> Unit,
     onLogFollowUp: () -> Unit,
     onMove: () -> Unit,
+    onReopen: () -> Unit,
     onSheet: (DetailSheet) -> Unit,
 ) {
     val c = RrTheme.colors
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    Column(Modifier.fillMaxSize().rrNavigationBarsPadding().clipToBounds().verticalScroll(rememberScrollState())) {
         RrPageTitle(app.company, subtitle = listOfNotNull(app.role, app.location?.takeIf(String::isNotBlank)).joinToString(" · "), subtitleColor = c.ink3)
         if (step != null) NextStepCard(app, state, step, dates, onTab, onInterview, onAddToCalendar, onOffers, onLogFollowUp)
         RrSectionHeader(stringResource(R.string.app_work_on_it))
@@ -348,9 +351,9 @@ private fun Overview(
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                     me.rxresu.core.designsystem.RrStageDot(app.status.rr())
-                    RrText(stageLabel(app.status), style = RrType.ui, color = c.ink3)
+                    RrText(if (app.status == ApplicationStage.Closed && app.closedReason != null) stringResource(R.string.app_stage_closed_reason, stageLabel(app.status), closedReasonLabel(app.closedReason!!)) else stageLabel(app.status), style = RrType.ui, color = c.ink3)
                 }
-                RrRowCaret()
+                if (app.status == ApplicationStage.Closed) RrButton(stringResource(S.string.reopen), onReopen, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small) else RrRowCaret()
             }
         })
         RrListRow(stringResource(S.string.posting), onClick = { onSheet(DetailSheet.Posting) }, divider = true, trailing = { RrRowCaret() })
@@ -359,7 +362,6 @@ private fun Overview(
         RrListRow(stringResource(S.string.notes), subtitle = pluralStringResource(R.plurals.app_note_count, notes, notes), onClick = { onSheet(DetailSheet.Notes) }, divider = true, trailing = { RrRowCaret() })
         val saved = app.createdAt.let { runCatching { dates.dayMonth(Instant.parse(it)) }.getOrNull() }
         RrListRow(stringResource(R.string.app_timeline), subtitle = listOfNotNull(saved?.let { stringResource(R.string.app_saved_date, it) }, applied?.let { stringResource(R.string.app_applied_date, dates.dayMonth(it)) }).joinToString(" · "), onClick = { onSheet(DetailSheet.Timeline) }, trailing = { RrRowCaret() })
-        Spacer(Modifier.rrNavigationBarsPadding())
     }
 }
 
@@ -433,6 +435,6 @@ private fun NextStepCard(
 internal fun ApplicationBackdrop(company: String, onBack: () -> Unit) {
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
         RrTopBar(onBack = onBack)
-        RrPageTitle(company)
+        RrPageTitle(company, Modifier.alpha(0.5f))
     }
 }

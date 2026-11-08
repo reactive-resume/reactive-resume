@@ -31,7 +31,7 @@ fun NavGraphBuilder.applicationsGraph(nav: NavController, motion: RrNavMotion) {
             }
         }
     }
-    modal<SaveJob>(motion) { entry -> SaveJobRoute(entry.toRoute<SaveJob>().url, nav) }
+    modal<SaveJob>(motion) { entry -> SaveJobRoute(entry.toRoute<SaveJob>(), nav) }
     screen<ApplicationInsights> { ApplicationsRoute(ApplicationsView.Insights, nav) }
     screen<Application> { entry ->
         val r = entry.toRoute<Application>()

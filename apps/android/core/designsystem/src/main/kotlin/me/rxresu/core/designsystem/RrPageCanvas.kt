@@ -113,6 +113,7 @@ fun RrPageCanvas(
     sheetCover: (() -> Float)? = null,
     zoom: RrPageZoomState = remember { RrPageZoomState() },
     onZoomChange: (Float) -> Unit = {},
+    hint: String? = null,
     overlay: @Composable BoxScope.(page: Int) -> Unit = {},
 ) {
     val density = LocalDensity.current
@@ -235,6 +236,9 @@ fun RrPageCanvas(
                     val description = stringResource(S.string.page_0_of_1, "${index + 1}", "$count")
                     RrPaperPage(pages.getOrNull(index), description, Modifier.fillMaxWidth()) { overlay(index) }
                 }
+                if (hint != null && count > 0) RrText(hint, style = RrType.ui, color = RrTheme.colors.ink3,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
             }
         }
     }

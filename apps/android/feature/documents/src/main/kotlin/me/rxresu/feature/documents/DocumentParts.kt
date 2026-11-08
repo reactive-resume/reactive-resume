@@ -85,7 +85,7 @@ internal fun TagsEditor(
         }
         draft = ""
     }
-    Column(modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(modifier.padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             (known + extra).distinct().forEach { tag ->
                 RrFilterChip(tag, tag in chosen, { on -> chosen = if (on) chosen + tag else chosen - tag }, icon = DS.drawable.ic_ph_tag)

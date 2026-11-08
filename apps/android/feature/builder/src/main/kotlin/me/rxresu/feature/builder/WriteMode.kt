@@ -80,7 +80,7 @@ internal fun OverviewScreen(state: BuilderUiState, actions: BuilderActions, nav:
         }
         RrPageTitle(doc.name, modifier = Modifier.clickable(enabled = state.status == me.rxresu.core.database.SaveStatus.CouldntSave, onClick = actions::flush), subtitle = status, subtitleColor = RrTheme.colors.ink3)
         RrPageBand(onClick = onPreview) {
-            RrPaperPage(state.pages.firstOrNull(), stringResource(R.string.builder_preview_page), Modifier.padding(vertical = 1.dp).width(170.dp))
+            RrPaperPage(state.pages.firstOrNull(), stringResource(R.string.builder_preview_page), Modifier.width(170.dp))
         }
         RrSectionHeading(stringResource(S.string.sections))
         RrListRow(stringResource(S.string.basics), subtitle = listOf(doc.basics["name"].str(), doc.basics["headline"].str()).filter(String::isNotBlank).joinToString(" · "), onClick = nav.basics, divider = visible.isNotEmpty(), trailing = { RrRowCaret() })

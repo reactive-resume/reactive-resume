@@ -1,5 +1,8 @@
 package me.rxresu.core.designsystem
 
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextRange
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -27,6 +30,27 @@ class RrRichTextTest {
         // Lists apply to the selected lines only.
         val numbered = edited.withKind(edited.linesOf(TextRange(0)), RrListKind.Numbers)
         assertEquals("<ol><li>Dear <em>hiring team</em>,</li></ol><ul><li>Led the <strong>redesign</strong>.</li><li>Ran 40 interviews.</li><li>Wrote the guide.</li></ul><p>Best, <mark data-color=\"yellow\">Alex</mark></p>", numbered.toHtml())
+    }
+
+    @Test fun paragraphSpacingKeepsNativeOffsetsAndMarkup() {
+        val doc = RrRichDoc.parse(letter)
+        val transformed = RrRichTransformation(doc, 20.sp, Color.Blue, paragraphSpacing = 12.sp, showMarkers = false).filter(AnnotatedString(doc.text))
+        assertEquals(doc.text.replace("\n", "\u200B"), transformed.text.text)
+        for (offset in 0..doc.text.length) {
+            val rendered = transformed.offsetMapping.originalToTransformed(offset)
+            assertEquals(offset, transformed.offsetMapping.transformedToOriginal(rendered))
+        }
+        for (offset in 0..transformed.text.length) assertTrue(transformed.offsetMapping.transformedToOriginal(offset) in 0..doc.text.length)
+        assertEquals(letter, doc.toHtml())
+    }
+
+    @Test fun suggestionMarksAdditionsWithoutChangingWordsOrMarkingInflections() {
+        val original = "Built the design system now used by six product teams; cut interface defects by a third."
+        val suggestion = "Created and scaled the design system adopted by six product teams, cutting interface defects by a third."
+        assertEquals(listOf("Created and scaled", "adopted"), addedWordRanges(original, suggestion).map { suggestion.substring(it) })
+        assertTrue(addedWordRanges(original, original).isEmpty())
+        assertEquals(listOf(0..4), addedWordRanges("", "Added"))
+        assertTrue(addedWordRanges("Deleted", "").isEmpty())
     }
 
     @Test fun onlyLosslessBodiesAreEditable() {

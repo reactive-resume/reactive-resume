@@ -20,6 +20,12 @@ enum class StoryboardImage(val filename: String) {
 object StoryboardPageImages {
     fun page(source: PageSource, widthPx: Int): Bitmap = bitmap(fixture(source, widthPx), widthPx)
 
+    fun rasterIssueMarkers(source: PageSource): List<RasterIssueMarker> =
+        if (source is PageSource.Resume || source is PageSource.ResumeVersion) {
+            // Full-page crop contains marker 1 at (324, 68) on its 358 x 506 dp paper.
+            listOf(RasterIssueMarker(0, 1, 324f / 358f, 68f / 506f))
+        } else emptyList()
+
     // shortcut: dimensions identify the drawn resume surface; use bitmap explicitly if two surfaces request the same width.
     internal fun fixture(source: PageSource, widthPx: Int): StoryboardImage = when (source) {
         is PageSource.Public -> StoryboardImage.PublicFull

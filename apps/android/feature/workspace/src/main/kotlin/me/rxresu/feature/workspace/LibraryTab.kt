@@ -35,6 +35,7 @@ import me.rxresu.core.designsystem.RrButton
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrEmptyState
 import me.rxresu.core.designsystem.RrFilterChip
+import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrRowCaret
 import me.rxresu.core.designsystem.RrText
@@ -139,7 +140,7 @@ internal fun LibraryScreen(
     TabBody {
         RrPageTitle(stringResource(S.string.application_workspace_tab_earlier_results_kept_for_this_job_library), subtitle = "${state.context.app.company} · ${state.context.app.role}", subtitleColor = c.ink3)
         if (state.context.saved.none { LibraryKind.of(it.data) != null }) {
-            Column(Modifier.padding(16.dp)) {
+            Column(Modifier.padding(24.dp)) {
                 RrEmptyState(
                     stringResource(S.string.nothing_in_your_library_yet),
                     stringResource(S.string.fit_checks_briefings_practice_feedback_debriefs_answers_replies_and_offers_land_here_as_you_save_the),
@@ -149,16 +150,19 @@ internal fun LibraryScreen(
             }
             return@TabBody
         }
-        RrListRow(stringResource(R.string.workspace_kind), Modifier.padding(top = 16.dp), divider = true, onClick = { filterPicker = true }, trailing = { RrRowValue(stringResource(state.filter?.label ?: S.string.all)) })
+        RrListGroup(Modifier.padding(top = 16.dp), topDivider = true) {
+            RrListRow(stringResource(R.string.workspace_kind), divider = true, onClick = { filterPicker = true }, trailing = { RrRowValue(stringResource(state.filter?.label ?: S.string.all)) })
+        }
         Column(Modifier.padding(top = 12.dp)) {
             Group {
-                state.items.forEach { item ->
+                state.items.forEachIndexed { index, item ->
                     val kind = LibraryKind.of(item.data)!!
                     val at = Instant.parse(item.createdAt)
                     RrListRow(
                         item.title,
                         subtitle = "${stringResource(kind.label)} · ${dates.day(at)}, ${dates.time(at)}",
                         icon = kind.icon,
+                        divider = index < state.items.lastIndex,
                         onClick = { open = item },
                         trailing = { RrRowCaret() },
                     )

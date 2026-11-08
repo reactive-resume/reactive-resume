@@ -105,9 +105,10 @@ fun RrListRow(
     divider: Boolean = false,
     trailing: (@Composable RowScope.() -> Unit)? = null,
     titleMaxLines: Int = 1,
+    trailingGap: Dp = 6.dp,
 ) = RrListRow(
     AnnotatedString(title), modifier, subtitle, icon, onClick, onLongClick, onLongClickLabel, selected, danger, enabled, leading,
-    overline, titleColor, tile, divider, trailing, titleMaxLines,
+    overline, titleColor, tile, divider, trailing, titleMaxLines, trailingGap,
 )
 
 /**
@@ -133,6 +134,7 @@ fun RrListRow(
     divider: Boolean = false,
     trailing: (@Composable RowScope.() -> Unit)? = null,
     titleMaxLines: Int = 1,
+    trailingGap: Dp = 6.dp,
 ) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
@@ -168,7 +170,7 @@ fun RrListRow(
                     if (subtitle != null) RrText(subtitle, style = RrType.ui, color = c.ink3, maxLines = if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 }
             },
-            trailing = trailing?.let { { Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically, content = it) } },
+            trailing = trailing?.let { { Row(horizontalArrangement = Arrangement.spacedBy(trailingGap), verticalAlignment = Alignment.CenterVertically, content = it) } },
             gap = 16.dp,
             top = false,
             modifier = Modifier.weight(1f),

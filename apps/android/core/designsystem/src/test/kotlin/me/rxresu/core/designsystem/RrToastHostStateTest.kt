@@ -1,11 +1,15 @@
 package me.rxresu.core.designsystem
 
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 /** Toast queue and lifetimes on virtual time. */
@@ -57,4 +61,48 @@ class RrToastHostStateTest {
         advanceTimeBy(RrMotion.D2 + 1L)
         assertEquals(RrToastResult.SecondaryActionPerformed, result)
     }
+    @Test fun operationCoversQueuedUndoAndOutlivesTheCallingScope() = runTest {
+        val state = RrToastHostState(backgroundScope)
+        var held = false
+        var result: RrToastResult? = null
+        state.post("Previous action", actionLabel = "Undo")
+        val caller = launch {
+            state.post("Interview deleted", actionLabel = "Undo", around = { resolve ->
+                held = true
+                try { resolve() } finally { held = false }
+            }) { result = it }
+            awaitCancellation()
+        }
+        runCurrent()
+        caller.cancel()
+        runCurrent()
+        assertTrue(held)
+        assertEquals("Previous action", state.current?.message)
+        state.current!!.performAction()
+        advanceTimeBy(RrMotion.D2 + 1L)
+        runCurrent()
+        assertTrue(held)
+        assertEquals("Interview deleted", state.current?.message)
+        state.current!!.performAction()
+        advanceTimeBy(RrMotion.D2 + 1L)
+        runCurrent()
+        assertEquals(RrToastResult.ActionPerformed, result)
+        assertFalse(held)
+    }
+
+    @Test fun cancellingPostedOperationReleasesItsGuard() = runTest {
+        val state = RrToastHostState(backgroundScope)
+        var held = false
+        val operation = state.post("Interview deleted", actionLabel = "Undo", around = { resolve ->
+            held = true
+            try { resolve() } finally { held = false }
+        })
+        runCurrent()
+        assertTrue(held)
+        operation.cancel()
+        runCurrent()
+        assertFalse(held)
+        assertNull(state.current)
+    }
+
 }

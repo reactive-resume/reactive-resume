@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
@@ -63,6 +64,7 @@ import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrMotion
 import me.rxresu.core.designsystem.RrRadius
 import me.rxresu.core.designsystem.RrShape
+import me.rxresu.core.designsystem.RrStagePageMarks
 import me.rxresu.core.designsystem.RrStageDot
 import me.rxresu.core.designsystem.RrText
 import me.rxresu.core.designsystem.RrTheme
@@ -79,9 +81,8 @@ internal data class BoardColumn(val lane: Lane?, val stage: ApplicationStage, va
 
 internal fun boardColumns(state: ApplicationsState): List<BoardColumn> {
     val rows = state.rows.orEmpty()
-    val lanes = activeLanes(state.lanes).filter { it.category != ApplicationStage.Closed || state.filters.showClosed }
-        .filter { it.category != ApplicationStage.Closed || it == categoryLane(state.lanes, ApplicationStage.Closed) }
-    if (lanes.isEmpty()) return (Pipeline + listOfNotNull(ApplicationStage.Closed.takeIf { state.filters.showClosed }))
+    val lanes = activeLanes(state.lanes).filter { it.category != ApplicationStage.Closed || it == categoryLane(state.lanes, ApplicationStage.Closed) }
+    if (lanes.isEmpty()) return (Pipeline + ApplicationStage.Closed)
         .map { stage -> BoardColumn(null, stage, rows.filter { it.app.status == stage }) }
     return lanes.map { lane ->
         BoardColumn(lane, lane.category, rows.filter { r -> if (lane.category == ApplicationStage.Closed) r.app.status == ApplicationStage.Closed else displayLane(state.lanes, r.app)?.id == lane.id }
@@ -109,6 +110,7 @@ internal fun BoardView(
     onDrop: (Row, Lane?, ApplicationStage) -> Unit,
     onMoveSheet: (Row) -> Unit,
     initialPage: Int = 0,
+    onShowClosed: () -> Unit = {},
 ) {
     val c = RrTheme.colors
     val columns = boardColumns(state)
@@ -130,6 +132,10 @@ internal fun BoardView(
             scroll.scrollTo((initialPage.coerceIn(0, columns.lastIndex) * colPx).roundToInt())
             opened = true
         }
+    }
+    val currentPage = (scroll.value / colPx).roundToInt().coerceIn(0, (columns.size - 1).coerceAtLeast(0))
+    LaunchedEffect(currentPage) {
+        if (columns.getOrNull(currentPage)?.stage == ApplicationStage.Closed) onShowClosed()
     }
     val moveTo = stringResource(S.string.move_to_6ffcfca36b)
 
@@ -153,11 +159,21 @@ internal fun BoardView(
     }
 
     Column(Modifier.fillMaxSize()) {
-        androidx.compose.foundation.layout.Spacer(Modifier.height(40.dp))
+        RrStagePageMarks(
+            count = columns.size,
+            current = currentPage,
+            onSelect = { page ->
+                scope.launch {
+                    if (reduced) scroll.scrollTo((page * colPx).roundToInt())
+                    else scroll.animateScrollTo((page * colPx).roundToInt(), animationSpec = androidx.compose.animation.core.tween(RrMotion.D3, easing = RrMotion.easeInOutStrong))
+                }
+            },
+            modifier = Modifier.padding(start = 24.dp, top = 16.dp, bottom = 20.dp),
+        )
         Box(
             Modifier.weight(1f).fillMaxWidth().onGloballyPositioned { boardOrigin = it.positionInRoot(); boardWidth = it.size.width.toFloat() },
         ) {
-            Row(Modifier.fillMaxSize().horizontalScroll(scroll, enabled = drag == null).padding(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(ColumnGap)) {
+            Row(Modifier.fillMaxSize().padding(start = 24.dp).clipToBounds().horizontalScroll(scroll, enabled = drag == null).padding(end = 24.dp), horizontalArrangement = Arrangement.spacedBy(ColumnGap)) {
                 columns.forEachIndexed { page, column ->
                 val over = drag?.let { target(it) == page && it.from != page } == true
                 val label = column.lane?.let { laneLabel(it) } ?: stageLabel(column.stage)
@@ -240,7 +256,7 @@ internal fun BoardCard(row: Row, state: ApplicationsState, dates: Dates, onClick
     val app = row.app
     val step = row.step
     Box(Modifier.rrDesignTag(DesignTag(component = "BoardCard", radius = 16.dp, bgName = "surface"))) {
-        RrCard(Modifier.fillMaxWidth().rrShadow(RrElevation.Level1, RrShape.xl), onClick = onClick, contentPadding = PaddingValues(17.dp)) {
+        RrCard(Modifier.fillMaxWidth(), onClick = onClick, contentPadding = PaddingValues(17.dp)) {
             Column {
                 RrText(app.company, style = RrType.rowTitle.copy(fontWeight = FontWeight.SemiBold), color = c.ink)
                 RrText(app.role, Modifier.padding(top = 4.dp), style = RrType.ui, color = c.ink3)

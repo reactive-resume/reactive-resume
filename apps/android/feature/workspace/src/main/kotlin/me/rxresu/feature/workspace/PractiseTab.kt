@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -75,6 +76,7 @@ import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCard
 import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrIcon
+import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrListRow
 import me.rxresu.core.designsystem.RrRecordButton
 import me.rxresu.core.designsystem.RrText
@@ -403,9 +405,10 @@ internal fun PractiseScreen(
             Notice(state.notice, onRetryTranscribe)
         }
         val latest = state.attempts.firstOrNull()
-        Column(Modifier.rrNavigationBarsPadding()) {
+        RrListGroup(Modifier.rrNavigationBarsPadding(), topDivider = true) {
             RrListRow(
                 stringResource(S.string.your_attempts),
+                modifier = Modifier.padding(top = 1.dp),
                 subtitle = latest?.let { (at, a) -> attemptLine(at, a, dates, now) } ?: stringResource(S.string.each_answer_you_get_feedback_on_is_kept_here_newest_first),
                 tile = DsR.drawable.ic_ph_clock_counter_clockwise,
                 onClick = { attemptsOpen = true },
@@ -449,7 +452,7 @@ private fun RecorderCard(state: PractiseState, recording: RecordingState, onReco
                 RrButton(stringResource(S.string.stop), onStop, variant = RrButtonVariant.Ghost, size = RrButtonSize.Small)
                 return@Column
             }
-            RrWaveform(recording.levels, bars = Recording.BARS)
+            RrWaveform(recording.levels, Modifier.padding(bottom = 12.dp).alpha(0.85f), bars = Recording.BARS)
             RrText("${clock(recording.elapsedMs)} / ${clock(Recording.MAX_MS)}", style = RrType.mono.copy(fontWeight = FontWeight.Medium), color = c.ink2)
             RrRecordButton(recording.recording, onRecord)
             RrText(

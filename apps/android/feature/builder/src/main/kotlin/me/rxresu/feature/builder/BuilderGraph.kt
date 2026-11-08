@@ -46,6 +46,7 @@ import me.rxresu.core.strings.R as S
 
 /** Registers the dock roots and pushed editors. */
 fun NavGraphBuilder.builderGraph(nav: NavController, motion: RrNavMotion) {
+    pagePreviewGraph(nav, motion)
     screen<Builder> { entry -> BuilderRoute(entry.toRoute(), entry, nav) }
     screen<BuilderEntry> { entry ->
         val route = entry.toRoute<BuilderEntry>()
@@ -129,6 +130,14 @@ private fun BuilderRoute(route: Builder, entry: NavBackStackEntry, nav: NavContr
     val state by vm.state.collectAsStateWithLifecycle()
     var mode by rememberSaveable { mutableStateOf(route.mode) }
     var check by rememberSaveable { mutableStateOf(route.check) }
+    val previewIssue by entry.savedStateHandle.getStateFlow<Int?>("preview-issue-number", null).collectAsStateWithLifecycle()
+    LaunchedEffect(previewIssue) {
+        if (previewIssue != null) {
+            mode = BuilderMode.Check
+            check = CheckTab.Issues
+            entry.savedStateHandle["preview-issue-number"] = null
+        }
+    }
     val share = LocalBuilderShareMode.current
     val toasts = LocalToasts.current
     val resources = LocalResources.current
@@ -176,6 +185,7 @@ private fun BuilderRoute(route: Builder, entry: NavBackStackEntry, nav: NavContr
                 onWrite = { target -> mode = BuilderMode.Write; writeNav.open(state.doc ?: return@CheckMode, target) {} },
                 onAskAssistant = { prompt -> nav.navigate(Assistant(route.resumeId, prompt = prompt)) },
                 onSetUpAi = { nav.navigate(SettingsAi) },
+                onOpenApplication = { nav.navigate(me.rxresu.core.navigation.Application(it)) },
             )
             BuilderMode.Share -> share(route.resumeId, nav)
         }

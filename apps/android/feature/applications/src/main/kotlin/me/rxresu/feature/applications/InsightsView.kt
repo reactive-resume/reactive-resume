@@ -148,7 +148,7 @@ internal fun InsightsView(
             Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 4.dp, bottom = if (i == rows.lastIndex) 0.dp else 10.dp).selectable(false, role = Role.Button) { onStage(stage) }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 RrText(label, Modifier.width(96.dp), style = RrType.ui, color = c.ink2)
                 Box(Modifier.weight(1f).height(8.dp)) {
-                    Box(Modifier.fillMaxWidth((count.toFloat() / sent).coerceIn(0f, 1f)).height(8.dp).background(c.accent))
+                    Box(Modifier.fillMaxWidth((count.toFloat() / sent).coerceIn(0f, 1f)).height(8.dp).clip(androidx.compose.foundation.shape.RoundedCornerShape(1.dp)).background(c.accent))
                 }
                 RrText(count.toString(), Modifier.width(28.dp), style = RrType.ui.copy(fontFamily = me.rxresu.core.designsystem.GeistMono, fontWeight = androidx.compose.ui.text.font.FontWeight.Medium), textAlign = TextAlign.End)
             }

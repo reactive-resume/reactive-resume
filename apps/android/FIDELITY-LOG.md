@@ -116,3 +116,65 @@
   store/cache and account guards. Six owner-path tests passed; no fictional note type or API/schema change.
 - Actual local import engine/browser/native-host tests passed; independent review found mixed scanned/text PDF
   silent partial extraction. That finding is being fixed before local-reader acceptance or device proof.
+
+## 2026-11-08 — Builder, assistant, share and letter shared fix rounds
+
+- Combined serialized verification: **512 tests across 12 modules**, zero failures/errors/skips; debug APK assembled.
+  Designsystem63, data31, testing19, page11, builder108, today18, share44, letters39, assistant53,
+  career67, public27, system32. Detailed XML and log retained under
+  `/Users/amruth/.codex/artifacts/android-ca3a733c-2026-11-08/shared-ui-final-verification.log`.
+- Builder strict sequence: 6/10 → 9/10 → **10/10**, all themes, zero layout failures/bands, maximum0.19%.
+  Final native wrapped-mark regression plus existing DS checks:64 tests; builder108 tests passed.
+  Actual TextLayoutResult proves12dp paragraph gaps and2dp wrapped changed-word inset. Page band border allocation,
+  outside thumbnail rings, toolbar, typography tracking and white paper metadata corrected in shared components.
+- Share/letters strict sequence:0/8 →6/8 → **8/8**, all themes, zero layout failures/bands, maximum0.16%.
+  Corrected native address field metrics, option rows,500-weight format labels, analytics sum128, menu border,
+  letterhead trailing gap and root-only extra letter controls. Existing Details sheet retains those actions.
+- Assistant B16/B17: **2/2**, zero layout failures/bands. Pixel differences .42/.41% and .31/.32%.
+  Native proposal spans retain reconstructed before/after text. Missing production page-fit measurement displays
+  truthful unknown status; only storyboard fake supplies the drawn1→1 result.
+- Capture lifecycle root cause: ActivityScenario with manual looper pulses did not own the Compose frame clock.
+  Supported Compose UI test environment now owns recomposer/frame clock; strict native scroll assertions retained.
+  Wrong-clock mutant makes2/2 new regressions fail; restored harness passes19/19. Assistant53/53 passed.
+- Every failing layout report was read and all changed composites/end captures inspected by implementers.
+  Fresh independent builder/assistant/Today review is running; numerical success is not visual-review approval.
+- Fresh career/public/system selected run: **5/10**. C1/C4/C6/P1/P2 pass. C2 has7 layout failures;
+  C3/C5 two each; C7 five plus4 bands; X1 has31 missing native nodes. Follow-up fixes in progress.
+- All above are selected, mixed-time runs, **not a final clean62-screen run**. Applications/workspace integration,
+  final full checks and device proof remain outstanding. Device install was refused with DEVICE_IN_USE for another
+  workspace; no existing device session was reused or closed.
+
+## 2026-11-08 — Final corrective integration, before clean acceptance run
+
+- Exporter browser regressions:4/4; raster/correction replay regressions:9/9. Explicit W5 newline and C2
+  noncontiguous DOM ranges retain original pixels and all tolerances. Fixture preparation verifies7 immutable fixtures.
+- Native unattached-hierarchy bounds correction:core/testing21 and feature/system40 tests pass, zero failures/errors/skips.
+  Regression covers actual nested FrameLayout margins, ancestor scroll and TextView scroll/padding. Native notification
+  and Glance host JSON now contains actual nonzero coordinates; attached AndroidView regression remains green.
+  Log:`build/native-bounds-check.log`. This is native-host evidence, not emulator/SystemUI proof.
+- Frozen submitted-letter viewer:letters46 tests plus lint pass; L1/L2 strict2/2, zero layout failures/bands,
+  pixels0.10–0.16%. Exact version identity/account/server guards prevent live-draft fallback and writes.
+- Fresh J5/W4/W5 strict3/3, zero layout failures/bands, pixels0.10–0.24%. Latest E selected report13/13 numeric,
+  but J1's approved two-row stage preview source still requires recapture and independent review.
+- Earlier callback batch exposed two compilation errors and one incorrect reopen-stage test expectation; these are
+  being corrected before the full build. No aggregate or final-commit acceptance claimed from selected runs.
+
+## 2026-11-08 — Independent corrections and final-run record
+
+- Full first integration run executed886 tests with3 failures and no skips/errors; debug assembly passed. Lint found
+  the API26 native-weight guard and configuration-aware string lookups. Those causes were fixed; subsequent assembly/lint passed.
+- Root corrective run:designsystem73,career72,today18,documents60 passed. The remaining Apps test used a scroll action on
+  a visible fit-content row; its corrected actual click then passed the focused1-test queued Delete/Undo-worker proof.
+  No timeout, worker assertion, route target or tolerance was weakened.
+- Real app callbacks:45/45 methods passed,238/238 physical links and211/211 approved pairs. Final unfiltered execution
+  is bound to the final commit below; prior selected results alone do not establish it.
+- Export feedback correction:share45 tests and lint passed; selected B11–B15/B19 fidelity6/6, zero layout failures/bands.
+  Original diagnosis of a silent failure was corrected:feedback existed in root overlays; button/card state now owns it.
+- Independent review covered all124 drawn composites and associated ends. New reviewer cleared copy-form24dp margins,
+  shared frozen-letter footer, collapsed root-header width and Stories dark. Candidate aggregate remains57/62; only
+  C2/C3/C5/C7 source departures and X1 native boundary fail strict comparison.
+- Final clean command on the committed source:`./gradlew assembleDebug lint testDebugUnitTest fidelity --continue --max-workers=1`.
+  Its actual source pin, start/end, exit statuses, full JUnit totals, dimensions and hashes are written to
+  `build/final-evidence.json`; full output is `build/redesign-final-clean.log`. The strict fidelity exit remains nonzero
+  for the five documented departures. The final corrective reviewer rehashes prior inventories and opens every changed PNG.
+  Durable copy:`/Users/amruth/.codex/artifacts/android-redesign-final-20261108/`.

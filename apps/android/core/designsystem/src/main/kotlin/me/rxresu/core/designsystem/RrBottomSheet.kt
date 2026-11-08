@@ -187,12 +187,13 @@ fun RrBottomSheet(
     scrim: Boolean = !docked,
     navigationBarInset: Boolean = true,
     fixedHeight: Dp? = null,
+    closeIconSize: Dp = 20.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     require(fixedHeight == null || fixedHeight > 0.dp) { "Sheet height must be positive" }
     val body = @Composable {
         SheetBody(onDismissRequest, modifier, state, detents, initialDetent, fitContent, confirmDiscard, title, showClose,
-            headerActions, footer, docked, containerColor, scrim, navigationBarInset, fixedHeight, content)
+            headerActions, footer, docked, containerColor, scrim, navigationBarInset, fixedHeight, closeIconSize, content)
     }
     // A sheet lays out over the space it is given: a whole window, or a screen. Inside scrolling content (a picker opened
     // from an entry's fields) that height is unbounded, so the sheet opens in a window of its own instead.
@@ -225,6 +226,7 @@ private fun SheetBody(
     scrim: Boolean,
     navigationBarInset: Boolean,
     fixedHeight: Dp?,
+    closeIconSize: Dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val c = RrTheme.colors
@@ -433,7 +435,7 @@ private fun SheetBody(
                 if (title != null || headerActions != null || showClose) {
                     RrSheetHeader(title.orEmpty()) {
                         headerActions?.invoke(this)
-                        if (showClose) RrIconButton(R.drawable.ic_ph_x, closeLabel, { requestDismiss() }, size = RrIconButtonSize.Small)
+                        if (showClose) RrIconButton(R.drawable.ic_ph_x, closeLabel, { requestDismiss() }, size = RrIconButtonSize.Small, iconSize = closeIconSize)
                     }
                 }
                 Column(Modifier.weight(1f, fill = !fitContent || fixedHeight != null), content = content)

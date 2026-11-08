@@ -261,6 +261,7 @@ internal fun MoveSheet(
     RrBottomSheet(
         onDismissRequest = onDismiss,
         state = sheetState,
+        closeIconSize = 24.dp,
         title = if (confirm != null) stringResource(S.string.mark_as_applied) else stringResource(R.string.app_move_company, app?.company.orEmpty()),
         fixedHeight = if (confirm == null) 560.dp else null,
         fitContent = confirm == null,

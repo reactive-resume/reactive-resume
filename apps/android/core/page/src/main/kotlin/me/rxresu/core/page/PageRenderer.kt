@@ -13,8 +13,16 @@ sealed interface PageSource {
     data class Public(val url: String, val password: String? = null, override val revision: String = url) : PageSource
 }
 
-/** A rendered PDF on disk. */
-data class RenderedDocument(val source: PageSource, val file: java.io.File, val pageCount: Int)
+/** An issue already painted into a page image; coordinates are fractions of that page. */
+data class RasterIssueMarker(val page: Int, val number: Int, val x: Float, val y: Float) {
+    init { require(page >= 0 && number > 0 && x in 0f..1f && y in 0f..1f) }
+}
+
+/** A rendered PDF on disk, including interactive content already painted by its renderer. */
+data class RenderedDocument(
+    val source: PageSource, val file: java.io.File, val pageCount: Int,
+    val rasterIssueMarkers: List<RasterIssueMarker> = emptyList(),
+)
 
 interface PageRenderer {
     /** The PDF for `source`, from cache when the revision matches. Throws when offline with nothing cached. */

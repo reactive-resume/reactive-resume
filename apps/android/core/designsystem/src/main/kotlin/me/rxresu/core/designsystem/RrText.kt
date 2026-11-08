@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import kotlin.math.roundToInt
+import kotlin.math.ceil
 
 /**
  * Text in the design-system type. Style defaults to [LocalRrTextStyle] (UI 14/20) and colour to [LocalRrContentColor].
@@ -56,6 +57,8 @@ fun RrText(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     inlineContent: Map<String, InlineTextContent> = emptyMap(),
+    measureUnstyledText: Boolean = false,
+    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
 ) {
     val resolved = resolve(style, color, textAlign, null)
     val colors = RrTheme.colors
@@ -70,14 +73,15 @@ fun RrText(
             }.filter { run -> run.start < run.end && text.spanStyles.any { it.start <= run.start && it.end >= run.end } }
         }
     }
-    CssLineBox(resolved, modifier.rrDesignTag(DesignTag(text = text.text, style = resolved, colorName = colors.tokenName(resolved.color), textRuns = runs))) { onLayout ->
+    val measuredText = if (measureUnstyledText) text.text.filterIndexed { index, char -> char != '\uFFFC' && char != '\u2060' && text.spanStyles.none { index in it.start until it.end } } else text.text
+    CssLineBox(resolved, modifier.rrDesignTag(DesignTag(text = measuredText, style = resolved, colorName = colors.tokenName(resolved.color), textRuns = runs))) { onLayout ->
         BasicText(
             text = text,
             style = resolved,
             maxLines = maxLines,
             overflow = overflow,
             inlineContent = inlineContent,
-            onTextLayout = onLayout,
+            onTextLayout = { onLayout(it); onTextLayout?.invoke(it) },
         )
     }
 }
@@ -96,7 +100,10 @@ private fun CssLineBox(style: TextStyle, modifier: Modifier, text: @Composable (
         val result = last[0]
         val target = if (result != null && style.lineHeight.isSp) (style.lineHeight.toPx() * result.lineCount).roundToInt() else placeable.height
         val height = if (target in 1 until placeable.height) target.coerceIn(constraints.minHeight, constraints.maxHeight) else placeable.height
-        layout(placeable.width, height) { placeable.place(0, (height - placeable.height) / 2) }
+        // Android overestimates a negatively tracked line's intrinsic width; allocate its measured advance.
+        val advance = if (result?.lineCount == 1 && style.letterSpacing.value < 0) ceil(result.getLineRight(0).toDouble()).toInt() else placeable.width
+        val width = advance.coerceIn(constraints.minWidth, placeable.width)
+        layout(width, height) { placeable.place(0, (height - placeable.height) / 2) }
     }
 }
 

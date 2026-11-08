@@ -91,7 +91,7 @@ class WorkspaceScreenshotTest : RrScreenshotTest() {
     private val boardRecording = RecordingState(
         recording = true,
         elapsedMs = 48_000,
-        levels = listOf(20, 35, 60, 45, 80, 55, 30, 65, 90, 50, 35, 70, 40, 25, 55, 75, 45, 30, 20, 40, 15, 10, 8, 6).map { ((56 * it / 100f) - 8) / 48f },
+        levels = listOf(20, 35, 60, 45, 80, 55, 30, 65, 90, 50, 35, 70, 40, 25, 55, 75, 45, 30, 20, 40, 15, 10, 8, 6).map { it / 100f },
     )
 
     private fun recordingSlot(repos: RrRepositories): @Composable (String, WorkspaceTab, androidx.navigation.NavController) -> Unit {

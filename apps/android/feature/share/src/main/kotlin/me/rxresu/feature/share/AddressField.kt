@@ -5,7 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import me.rxresu.core.designsystem.RrTextField
+import me.rxresu.core.designsystem.RrType
 import me.rxresu.core.strings.R as CoreR
 
 @Composable internal fun AddressField(state: ShareState, change: (String) -> Unit) {
@@ -13,5 +16,7 @@ import me.rxresu.core.strings.R as CoreR
     val url = state.url.removePrefix("https://").removePrefix("http://")
     val hint = if (state.checking) stringResource(CoreR.string.checking_copy_is_available_after_saving) else if (state.resume?.isPublic == true) stringResource(R.string.p4_live_at, url) else stringResource(R.string.p4_goes_live_at, url)
     RrTextField(state.slug, change, Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 12.dp), label = stringResource(CoreR.string.address),
-        prefix = state.url.substringBeforeLast('/').removePrefix("https://").removePrefix("http://") + "/", ltr = true, mono = true, enabled = state.editable, helper = if (state.checking) hint else null, error = error)
+        prefix = state.url.substringBeforeLast('/').removePrefix("https://").removePrefix("http://") + "/", ltr = true, mono = true,
+        textStyle = RrType.mono.copy(fontSize = 14.sp, lineHeight = 20.sp, fontWeight = FontWeight.Normal), prefixGap = 8.dp,
+        enabled = state.editable, helper = if (state.checking) hint else null, error = error)
 }

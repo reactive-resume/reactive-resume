@@ -12,7 +12,7 @@ class FakePageRenderer(private val context: Context) : PageRenderer {
     override suspend fun render(source: PageSource): RenderedDocument = withContext(Dispatchers.IO) {
         val file = File(context.cacheDir, "preview-sample-resume.pdf")
         if (!file.exists()) context.resources.openRawResource(R.raw.sample_resume).use { input -> file.outputStream().use { input.copyTo(it) } }
-        RenderedDocument(source, file, 1)
+        RenderedDocument(source, file, 1, StoryboardPageImages.rasterIssueMarkers(source))
     }
     /** Sample is always available, including offline previews. */
     override suspend fun lastGood(source: PageSource) = render(source)

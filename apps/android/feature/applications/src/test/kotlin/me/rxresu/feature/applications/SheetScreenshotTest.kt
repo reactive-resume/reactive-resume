@@ -48,7 +48,7 @@ class SheetScreenshotTest : RrScreenshotTest() {
 
     private fun saveJob(name: String, dark: Boolean, url: String?) =
         captureScreen(name, dark, wrap = fakeWrap(FakeRepositories(lumenPosting()))) {
-            SaveJobRoute(url, rememberNavController())
+            SaveJobRoute(me.rxresu.core.navigation.SaveJob(url), rememberNavController())
         }
 
     @Test fun saveJobLight() = saveJob("J5-SaveJob", false, "https://lumen.jobs/roles/senior-product-designer")

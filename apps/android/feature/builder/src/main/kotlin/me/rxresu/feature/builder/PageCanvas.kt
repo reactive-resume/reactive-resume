@@ -52,13 +52,22 @@ internal fun PageCanvas(
     zoom: RrPageZoomState = remember { RrPageZoomState() },
     onZoomChange: (Float) -> Unit = {},
     pageCountHint: Int = 1,
+    hint: String? = null,
+    rasterIssueMarkers: List<me.rxresu.core.page.RasterIssueMarker> = emptyList(),
 ) {
     val reduced = LocalReducedMotion.current
     val focus = blocks?.firstOrNull { it.target == highlight }?.let { RrPageFocus(it.page, it.top, it.bottom) }
-    RrPageCanvas(pages, onTap, modifier, pageCount = pageCountHint, focus = focus, sheetCover = sheetCover, zoom = zoom, onZoomChange = onZoomChange) { index ->
+    RrPageCanvas(pages, onTap, modifier, pageCount = pageCountHint, focus = focus, sheetCover = sheetCover, zoom = zoom, onZoomChange = onZoomChange, hint = hint) { index ->
         if (highlight != null) blocks?.filter { it.page == index && it.target == highlight }?.forEach { Highlight(it, highlightLabel, reduced) }
         markers.forEach { (target, number) ->
             blocks?.firstOrNull { it.page == index && it.target == target }?.let { Marker(it, number) }
+        }
+        rasterIssueMarkers.filter { it.page == index }.forEach { marker ->
+            // Visible overlay supplies the current theme's token over the renderer's baked marker.
+            BoxWithConstraints(Modifier.matchParentSize()) {
+                me.rxresu.core.designsystem.RrIssueMarker(marker.number,
+                    Modifier.offset(x = maxWidth * marker.x - 8.dp, y = maxHeight * marker.y - 8.dp))
+            }
         }
     }
 }

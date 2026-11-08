@@ -78,6 +78,7 @@ internal data class PagePreviewState(
     val markers: List<Pair<BlockTarget, Int>> = emptyList(), val count: Int = 1,
     val updating: Boolean = true, val offline: Boolean = false, val failed: Boolean = false,
     val locked: Boolean = false,
+    val rasterIssueMarkers: List<RasterIssueMarker> = emptyList(),
 )
 
 /** Frozen requests have their own source, cache identity and metadata; refusal never falls back to the live draft. */
@@ -164,7 +165,7 @@ internal class PagePreviewViewModel(
             val blocks = if (doc == null || offline) null else withContext(io) { PdfTextReader.read(document.file)?.let { PageBlocks.build(doc, it, templateColumns(doc.template) == 2) } }
             val checks = if (doc == null || offline || route.versionId != null) null else runCatching { repositories.checks.getResumeChecks(route.documentId) }.getOrElse { if (it is CancellationException) throw it; null }
             val markers = checks?.findings.orEmpty().mapIndexedNotNull { i, finding -> doc?.let { CheckPointer.target(it, finding.pointer) }?.let { it to i + 1 } }
-            if (sameAccount()) mutable.update { it.copy(pages = images, blocks = blocks, markers = markers, count = document.pageCount, updating = false, offline = offline, failed = false) }
+            if (sameAccount()) mutable.update { it.copy(pages = images, blocks = blocks, markers = markers, rasterIssueMarkers = document.rasterIssueMarkers, count = document.pageCount, updating = false, offline = offline, failed = false) }
         } catch (e: CancellationException) { throw e } catch (_: Exception) {
             if (sameAccount()) mutable.update { it.copy(pages = emptyList(), blocks = null, updating = false, failed = true) }
         }
@@ -204,7 +205,7 @@ internal class PagePreviewViewModel(
         if (state.failed) RrCallout(stringResource(S.string.couldn_t_load_try_again), tone = RrTone.Danger, actionLabel = stringResource(S.string.try_again), onAction = retry)
         Box(Modifier.weight(1f).onSizeChanged { viewportWidth = it.width }) {
             PageCanvas(state.pages, state.blocks, { index, x, y ->
-                if (route.versionId == null && !state.offline) {
+                if (route.versionId == null && !state.offline && !state.updating && !state.failed) {
                     val marker = previewMarkerHit(state, index, x, y, (viewportWidth - 2 * gutter) / density.density)
                     if (marker != null) issue(marker) else edit(PageBlocks.hit(state.blocks.orEmpty(), index, x, y)?.target)
                 }
@@ -220,8 +221,10 @@ internal class PagePreviewViewModel(
                     } while (event.changes.any { it.pressed })
                     if (single && eligible && distance > threshold) close()
                 }
-            }, highlight = highlight, markers = state.markers, sheetCover = if (highlight != null) ({ 0f }) else null, zoom = zoom,
-                onZoomChange = { scale -> if (scale == 1f || scale == RrPageZoom.DOUBLE) haptics(RrHaptic.Selection) }, pageCountHint = state.count)
+            }, highlight = highlight, markers = state.markers.filterNot { (_, number) -> state.rasterIssueMarkers.any { it.number == number } }, sheetCover = if (highlight != null) ({ 0f }) else null, zoom = zoom,
+                onZoomChange = { scale -> if (scale == 1f || scale == RrPageZoom.DOUBLE) haptics(RrHaptic.Selection) }, pageCountHint = state.count,
+                hint = if (route.versionId == null && !state.offline) stringResource(R.string.preview_gesture_hint) else null,
+                rasterIssueMarkers = state.rasterIssueMarkers)
             LaunchedEffect(zoom, viewportWidth, state.count) {
                 val pageHeight = (viewportWidth - 2 * gutter) / RrLayout.PAGE_ASPECT
                 snapshotFlow { zoom.y.value to zoom.scale.value }.collect { (offset, scale) ->
@@ -244,6 +247,10 @@ internal class PagePreviewViewModel(
 internal fun previewMarkerHit(state: PagePreviewState, page: Int, x: Float, y: Float, paperWidthDp: Float): Int? {
     if (paperWidthDp <= 0) return null
     val paperHeightDp = paperWidthDp / RrLayout.PAGE_ASPECT
+    state.rasterIssueMarkers.firstOrNull { marker ->
+        marker.page == page && x in (marker.x - 22f / paperWidthDp)..(marker.x + 22f / paperWidthDp) &&
+            y in (marker.y - 22f / paperHeightDp)..(marker.y + 22f / paperHeightDp)
+    }?.let { return it.number }
     return state.markers.firstOrNull { (target, _) ->
         state.blocks?.firstOrNull { it.target == target && it.page == page }?.let { block ->
             val centerX = block.left - 12f / paperWidthDp

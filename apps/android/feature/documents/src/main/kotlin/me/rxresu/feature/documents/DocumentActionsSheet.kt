@@ -63,6 +63,7 @@ class DocumentActionsCallbacks(
     val onToggleLock: () -> Unit = {},
     val onSelect: () -> Unit = {},
     val onTrash: () -> Unit = {},
+    val onTailor: (() -> Unit)? = null,
     val onCopyForJob: (resumeId: String, job: JobChoice, name: String) -> Unit = { _, _, _ -> },
 )
 
@@ -114,7 +115,7 @@ fun DocumentActionsSheet(
                     }
                     ActionsStep.Link -> {
                         StepHeader(stringResource(R.string.docs_application_title)) { step = ActionsStep.Main }
-                        RrListGroup(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
+                        RrListGroup(Modifier.padding(start = 24.dp, end = 24.dp, bottom = 16.dp)) {
                             RrChoiceRow(stringResource(S.string.not_linked_to_a_job), doc.application == null, { callbacks.onLink(null) })
                             state.applications.forEach { app ->
                                 RrChoiceRow(stringResource(R.string.docs_copy_for_company, app.company, app.role), doc.application?.id == app.id, { callbacks.onLink(app.id) })
@@ -166,7 +167,7 @@ private fun Main(doc: DocumentSummary, state: DocumentActionsUiState, preparing:
     val locked = doc.isLocked
     RrListGroup(Modifier.verticalScroll(rememberScrollState())) {
         RrListRow(stringResource(R.string.docs_open), tile = DS.drawable.ic_ph_pencil_simple, onClick = callbacks.onOpen, onLongClick = callbacks.onSelect, onLongClickLabel = stringResource(R.string.docs_select_action), divider = true)
-        if (!doc.isLetter) RrListRow(stringResource(R.string.docs_tailor), subtitle = stringResource(R.string.docs_tailor_subtitle), leading = { RrIconTile(DS.drawable.ic_ph_sparkle, accent = true) }, onClick = { onStep(ActionsStep.CopyForJob) }, divider = true)
+        if (!doc.isLetter) RrListRow(stringResource(R.string.docs_tailor), subtitle = stringResource(R.string.docs_tailor_subtitle), leading = { RrIconTile(DS.drawable.ic_ph_sparkle, accent = true) }, onClick = { callbacks.onTailor?.invoke() ?: onStep(ActionsStep.CopyForJob) }, divider = true)
         RrListRow(stringResource(R.string.docs_duplicate), tile = DS.drawable.ic_ph_copy, onClick = callbacks.onDuplicate, divider = true)
         RrListRow(stringResource(R.string.docs_rename), tile = DS.drawable.ic_ph_text_aa, onClick = onRename, enabled = !locked, divider = true)
         RrListRow(stringResource(if (preparing) R.string.docs_preparing else R.string.docs_share_pdf), tile = DS.drawable.ic_ph_share_network, onClick = callbacks.onFormats, divider = true)

@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.toRoute
 import java.io.File
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -246,6 +248,20 @@ private fun DocumentActionsRoute(nav: NavController, route: DocumentActions) {
                 // Trash first, then close: a failure keeps the sheet open under its toast.
                 withDoc { doc -> scope.launch { trashWithUndo(doc, toasts, res, { vm.trash(doc); nav.popBackStack() }, { vm.restore(doc) }) } }
             },
+            onTailor = {
+                withDoc { doc -> scope.launch {
+                    try {
+                        val owner = repos.authSession.state.value as? me.rxresu.core.auth.SessionState.SignedIn ?: return@launch
+                        val draft = repos.resumes.openDraft(doc.id)
+                        draft.flush()
+                        val saved = kotlinx.coroutines.withTimeout(10_000) { draft.state.first { it.status != me.rxresu.core.database.SaveStatus.Saving } }
+                        check(saved.status == me.rxresu.core.database.SaveStatus.Saved && saved.document?.id == doc.id)
+                        check(repos.authSession.state.value == owner)
+                        nav.popBackStack()
+                        nav.navigate(SaveJob(sourceResumeId = doc.id, sourceAccountScope = owner.accountScope))
+                    } catch (e: kotlinx.coroutines.CancellationException) { throw e } catch (_: Exception) { failed(R.string.docs_copy_failed) }
+                } }
+            },
             onCopyForJob = { resumeId, job, name -> scope.launch { copyForJob(vm, state, resumeId, job, name, nav, toasts, res, haptics) { busy = it } } },
         ),
         preparing = preparing,
@@ -378,11 +394,16 @@ private suspend fun createResume(repos: RrRepositories, name: String, sample: Bo
 @Composable
 private fun ImportRoute(nav: NavController, route: Import) {
     val repos = LocalRepositories.current
-    val vm = viewModel { ImportViewModel(repos.resumes, repos.ai) }
+    val context = LocalContext.current
+    val resources = LocalResources.current
+    val moreTitle = resources.getString(R.string.import_more)
+    val reader = remember(context, moreTitle) { LocalImportReader(context, moreTitle) }
+    val currentReader = rememberUpdatedState(reader)
+    val vm = viewModel { ImportViewModel(repos.resumes, repos.ai, repos.account.session,
+        { file, progress -> currentReader.value.read(file, progress) }) }
     val state by vm.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val haptics = rememberRrHaptics()
-    val context = LocalContext.current
     val res = LocalResources.current
     val toasts = LocalToasts.current
     var uri by rememberSaveable { mutableStateOf(route.fileUri) }

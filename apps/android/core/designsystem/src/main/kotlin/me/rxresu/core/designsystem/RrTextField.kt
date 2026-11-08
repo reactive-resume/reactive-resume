@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 
 /**
@@ -82,11 +83,13 @@ fun RrTextField(
     contentType: ContentType? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     prefix: String? = null,
+    textStyle: TextStyle? = null,
+    prefixGap: Dp = 0.dp,
 ) {
     val c = RrTheme.colors
     val focused by interactionSource.collectIsFocusedAsState()
     val multiline = minLines > 1
-    val base = if (mono) RrType.mono.copy(fontSize = 16.sp, lineHeight = 22.sp) else RrType.input
+    val base = textStyle ?: if (mono) RrType.mono.copy(fontSize = 16.sp, lineHeight = 22.sp) else RrType.input
     val style = RrTextDefaults.merge(base).copy(
         color = c.ink,
         lineHeight = if (multiline) 24.sp else base.lineHeight,
@@ -110,7 +113,8 @@ fun RrTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .semantics {
-                        if (label != null) contentDescription = label
+                        val accessibleLabel = label ?: placeholder
+                        if (accessibleLabel != null) contentDescription = accessibleLabel
                         if (error != null) error(error)
                         if (contentType != null) this.contentType = contentType
                     },
@@ -127,7 +131,7 @@ fun RrTextField(
                             Box(Modifier.weight(1f)) { input() }
                         } else {
                             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                                Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                                Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(prefixGap), verticalAlignment = Alignment.CenterVertically) {
                                     RrText(prefix, style = style.copy(color = c.ink3), maxLines = 1)
                                     Box(Modifier.weight(1f)) { input() }
                                 }

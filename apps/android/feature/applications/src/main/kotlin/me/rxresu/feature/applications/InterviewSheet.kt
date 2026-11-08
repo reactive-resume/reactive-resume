@@ -48,6 +48,17 @@ import me.rxresu.core.data.ApplicationsRepository
 import me.rxresu.core.data.CareerRepository
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.TimeSource
+import me.rxresu.core.data.PreferencesRepository
+import me.rxresu.core.data.NotificationCategory
+import me.rxresu.core.auth.SessionState
+import me.rxresu.core.network.RequestOptions
+import me.rxresu.feature.system.InterviewReminderResult
+import me.rxresu.feature.system.interviewReminderDevice
+import me.rxresu.feature.system.updateInterviewReminder
+import me.rxresu.feature.system.withInterviewReminderChange
+import me.rxresu.feature.system.rememberNotificationPermissionRequest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import me.rxresu.core.designsystem.R as D
 import me.rxresu.core.designsystem.RrAlertDialog
 import me.rxresu.core.designsystem.RrAvatar
@@ -104,6 +115,7 @@ internal data class InterviewDraft(
     val people: List<AddApplicationInterviewRequestParticipantsItem> = emptyList(),
     val notes: String = "",
     val addToCalendar: Boolean = false,
+    val remind: Boolean = false,
 ) {
     /** The instant in the interview's timezone; null while incomplete or when the clock time doesn't exist there (DST gap). */
     fun at(): Instant? {
@@ -144,10 +156,11 @@ internal data class InterviewState(
     val interview: Interview? = null,
     val saving: Boolean = false,
     val failed: Boolean = false,
+    val uncertain: Boolean = false,
 )
 
 /** What the sheet reports after a save, for its toast. */
-internal data class InterviewSaved(val briefingAt: Instant?, val event: CalendarEvent?)
+internal data class InterviewSaved(val briefingAt: Instant?, val event: CalendarEvent?, val application: Application, val interview: Interview)
 
 internal class InterviewViewModel(
     private val repo: ApplicationsRepository,
@@ -155,13 +168,16 @@ internal class InterviewViewModel(
     val time: TimeSource,
     private val applicationId: String,
     private val interviewId: String?,
+    private val preferences: PreferencesRepository,
+    private val identity: () -> Pair<String, String>?,
+    private val device: String,
 ) : ViewModel() {
     private val _state = MutableStateFlow(InterviewState())
     val state: StateFlow<InterviewState> = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            repo.observe(ApplicationQuery()).collect { res ->
+            combine(repo.observe(ApplicationQuery()), preferences.values) { res, prefs -> res to prefs }.collect { (res, prefs) ->
                 val apps = res.data ?: return@collect
                 val app = apps.firstOrNull { it.id == applicationId }
                 val interview = app?.activity?.filterIsInstance<Interview>()?.firstOrNull { it.id == interviewId }
@@ -169,7 +185,10 @@ internal class InterviewViewModel(
                 _state.value = _state.value.copy(
                     apps = apps.filter { it.status != ApplicationStage.Closed },
                     interview = interview ?: _state.value.interview,
-                    original = if (first) InterviewDraft.from(app, interview, time.timezone(), applicationId) else _state.value.original,
+                    original = if (first) InterviewDraft.from(app, interview, time.timezone(), applicationId).copy(remind = prefs.interviewReminders.any {
+                        val scope = identity()
+                        NotificationCategory.InterviewsAndBriefings in prefs.notifications && it.applicationId == applicationId && it.entryId == interviewId && it.owner == scope?.first && it.origin == scope?.second && it.device == device
+                    }) else _state.value.original,
                 )
             }
         }
@@ -177,46 +196,58 @@ internal class InterviewViewModel(
 
     suspend fun save(draft: InterviewDraft, title: String): InterviewSaved? {
         val at = draft.at() ?: return null
+        if (_state.value.saving || _state.value.uncertain) return null
+        val owner = identity() ?: return null
+        val options = RequestOptions(accountScope = owner.first)
+        val known = _state.value.apps.firstOrNull { it.id == draft.applicationId }?.activity.orEmpty().filterIsInstance<Interview>().map { it.id }.toSet()
         _state.value = _state.value.copy(saving = true, failed = false)
         val minutes = draft.minutes.toLongOrNull()?.coerceIn(5, 24 * 60) ?: 60
         val people = draft.people.filter { it.name.isNotBlank() }
         val zone = draft.zone.id.takeIf { draft.otherZone || draft.zone != time.timezone() }
         return try {
-            if (interviewId == null) repo.addApplicationInterview(
+            val saved = if (interviewId == null) repo.addApplicationInterview(
                 draft.applicationId,
-                AddApplicationInterviewRequest(at = at.toString(), kind = draft.kind, durationMinutes = minutes, location = draft.location.trim(), notes = draft.notes.trim(), participants = people, timezone = zone),
+                AddApplicationInterviewRequest(at = at.toString(), kind = draft.kind, durationMinutes = minutes, location = draft.location.trim(), notes = draft.notes.trim(), participants = people, timezone = zone), options,
             ) else repo.updateApplicationInterview(
                 draft.applicationId,
                 interviewId,
-                PatchApplicationInterviewRequest(at = at.toString(), kind = draft.kind, durationMinutes = minutes, location = draft.location.trim(), notes = draft.notes.trim(), participants = people, timezone = zone),
+                PatchApplicationInterviewRequest(at = at.toString(), kind = draft.kind, durationMinutes = minutes, location = draft.location.trim(), notes = draft.notes.trim(), participants = people, timezone = zone), options,
             )
+            check(identity() == owner)
+            val entry = saved.activity.filterIsInstance<Interview>().singleOrNull { if (interviewId == null) it.id !in known else it.id == interviewId }
+                ?: error("Save confirmed without a unique interview identity")
             // The server moves this interview's briefing schedule with it; say where it went.
             val briefing = if (interviewId == null) null else runCatching {
                 career.listCareerSchedules().firstOrNull { it.interviewId == interviewId && it.enabled && it.kind in setOf("prepare", "briefing") }?.nextRunAt?.let(Instant::parse)
             }.getOrNull()
-            _state.value = _state.value.copy(saving = false)
-            InterviewSaved(briefing, CalendarEvent(interviewId ?: "new-interview", title, at, minutes, draft.location, draft.notes))
+            // Keep Save disabled through reminder confirmation and the sheet exit.
+            InterviewSaved(briefing, CalendarEvent(entry.id, title, Instant.parse(entry.at), entry.durationMinutes ?: minutes, entry.location, entry.notes), saved, entry)
         } catch (e: CancellationException) {
             throw e
         } catch (_: Exception) {
-            _state.value = _state.value.copy(saving = false, failed = true)
+            _state.value = _state.value.copy(saving = false, failed = true, uncertain = interviewId == null)
             null
         }
     }
 
-    suspend fun delete(): Boolean = try {
-        repo.deleteApplicationTimelineEntry(applicationId, interviewId ?: return false); true
+    suspend fun delete(): Boolean { return try {
+        val owner = identity() ?: return false
+        repo.deleteApplicationTimelineEntry(applicationId, interviewId ?: return false, RequestOptions(accountScope = owner.first)); identity() == owner
     } catch (e: CancellationException) {
         throw e
     } catch (_: Exception) {
         false
+    }
     }
 }
 
 @Composable
 internal fun InterviewRoute(applicationId: String, interviewId: String?, nav: NavController) {
     val repos = LocalRepositories.current
-    val vm = viewModel(key = "interview:$applicationId:$interviewId") { InterviewViewModel(repos.applications, repos.career, repos.time, applicationId, interviewId) }
+    val androidContext = LocalContext.current
+    val device = remember { interviewReminderDevice(androidContext) }
+    val identity = { (repos.account.session.value as? SessionState.SignedIn)?.let { it.accountScope to repos.authSession.origin.value } }
+    val vm = viewModel(key = "interview:$applicationId:$interviewId") { InterviewViewModel(repos.applications, repos.career, repos.time, applicationId, interviewId, repos.preferences, identity, device) }
     val state by vm.state.collectAsStateWithLifecycle()
     val toasts = LocalToasts.current
     val haptics = rememberRrHaptics()
@@ -236,11 +267,22 @@ internal fun InterviewRoute(applicationId: String, interviewId: String?, nav: Na
     val draft = loaded ?: InterviewDraft(applicationId, zone = vm.time.timezone())
     val title = stringResource(S.string.kind_interview, interviewKindLabel(draft.kind)) + " · " + company
     val briefingMoves = stringResource(R.string.app_interview_saved_briefing)
+    val reminderDenied = stringResource(S.string.the_interview_is_saved_to_get_a_reminder_allow_notifications_in_your_device_settings)
+    val reminderPassed = stringResource(S.string.interview_saved_the_reminder_time_has_already_passed)
+    val reminderFailed = stringResource(S.string.interview_saved_couldn_t_update_its_reminder_edit_the_interview_to_try_again)
+    var reminderOptIn by remember { mutableStateOf(false) }
+    val undo = stringResource(S.string.undo)
+    val permissionDenied = stringResource(S.string.to_get_a_reminder_allow_notifications_in_your_device_settings)
+    val cancelReminderFailed = stringResource(S.string.interview_deleted_couldn_t_cancel_its_device_reminder)
+    val requestPermission = rememberNotificationPermissionRequest { permitted ->
+        if (permitted) { reminderOptIn = true; loaded = draft.copy(remind = true) }
+        else toasts.post(permissionDenied)
+    }
 
     InterviewSheet(
         state = state,
         draft = draft,
-        onDraft = { loaded = it },
+        onDraft = { next -> if (next.remind && !draft.remind) requestPermission() else loaded = next },
         editing = interviewId != null,
         dates = dates,
         home = vm.time.timezone(),
@@ -249,12 +291,27 @@ internal fun InterviewRoute(applicationId: String, interviewId: String?, nav: Na
         onDismiss = { nav.popBackStack() },
         onSave = {
             scope.launch {
-                val saved = vm.save(draft, title) ?: return@launch haptics(RrHaptic.Error)
+                val owner = identity() ?: return@launch
+                val result = withInterviewReminderChange(owner.first, owner.second, draft.applicationId, interviewId) {
+                    val saved = vm.save(draft, title) ?: return@withInterviewReminderChange null
+                    val reminder = try {
+                        if (draft.remind && reminderOptIn && identity() == owner) repos.preferences.setNotification(NotificationCategory.InterviewsAndBriefings, true)
+                        updateInterviewReminder(context, repos, saved.application, saved.interview, draft.remind, owner.first, owner.second)
+                    } catch (e: CancellationException) { throw e } catch (_: Exception) { null }
+                    saved to reminder
+                } ?: return@launch haptics(RrHaptic.Error)
+                val (saved, reminder) = result
+                if (identity() != owner) return@launch
                 haptics(RrHaptic.Success)
                 sheet.hide()
                 nav.popBackStack()
                 if (draft.addToCalendar) saved.event?.let { event -> addToCalendar(context, event, vm.time.now()) }
-                val message = saved.briefingAt?.let { savedText + " · " + briefingMoves.format(dates.whenWithTime(it)) } ?: savedText
+                val message = when (reminder) {
+                    InterviewReminderResult.Denied -> reminderDenied
+                    InterviewReminderResult.Passed -> reminderPassed
+                    null -> reminderFailed
+                    else -> saved.briefingAt?.let { savedText + " · " + briefingMoves.format(dates.whenWithTime(it)) } ?: savedText
+                }
                 toasts.post(message, saved.event?.let { addToCalendar }) {
                     if (it == RrToastResult.ActionPerformed) saved.event?.let { event -> addToCalendar(context, event, vm.time.now()) }
                 }
@@ -262,13 +319,31 @@ internal fun InterviewRoute(applicationId: String, interviewId: String?, nav: Na
         },
         onDelete = {
             scope.launch {
-                val event = state.interview?.let { CalendarEvent(it.id, title, Instant.parse(it.at), it.durationMinutes ?: 60, it.location, it.notes) }
-                if (!vm.delete()) { toasts.show(deleteFailed, tone = RrToastTone.Danger); return@launch }
-                haptics(RrHaptic.Warning)
-                sheet.hide()
-                nav.popBackStack()
-                toasts.post(deletedText, event?.let { cancellation }) {
-                    if (it == RrToastResult.ActionPerformed) event?.let { e -> shareIcs(context, e, vm.time.now(), cancel = true) }
+                val owner = identity() ?: return@launch
+                val application = state.apps.firstOrNull { it.id == applicationId } ?: return@launch
+                val entry = state.interview ?: return@launch
+                val event = CalendarEvent(entry.id, title, Instant.parse(entry.at), entry.durationMinutes ?: 60, entry.location, entry.notes)
+                // The host owns the hold before closing the sheet, through the whole queued Undo decision.
+                toasts.post(deletedText, undo, secondaryActionLabel = cancellation, around = { resolve ->
+                    withInterviewReminderChange(owner.first, owner.second, applicationId, entry.id) {
+                        if (identity() != owner) return@withInterviewReminderChange
+                        kotlinx.coroutines.withContext(scope.coroutineContext.minusKey(kotlinx.coroutines.Job)) { sheet.hide() }
+                        if (identity() != owner) return@withInterviewReminderChange
+                        nav.popBackStack()
+                        resolve()
+                    }
+                }) { result ->
+                    if (result != RrToastResult.ActionPerformed && identity() == owner) {
+                        val deleted = vm.delete()
+                        if (!deleted) toasts.show(deleteFailed, tone = RrToastTone.Danger)
+                        else {
+                            try { updateInterviewReminder(context, repos, application, entry, false, owner.first, owner.second) }
+                            catch (e: CancellationException) { throw e } catch (_: Exception) {
+                                toasts.post(cancelReminderFailed, tone = RrToastTone.Danger)
+                            }
+                            if (result == RrToastResult.SecondaryActionPerformed) shareIcs(context, event, vm.time.now(), cancel = true)
+                        }
+                    }
                 }
             }
         },
@@ -300,7 +375,7 @@ internal fun InterviewSheet(
     var confirmDelete by remember { mutableStateOf(false) }
     var adding by remember { mutableStateOf<AddApplicationInterviewRequestParticipantsItem?>(null) }
     val gap = draft.timeMissingInZone()
-    val canSave = draft.at() != null && draft.applicationId.isNotBlank() && !state.saving && (!draft.otherZone || runCatching { ZoneId.of(draft.zoneText.trim()) }.isSuccess) && draft.people.none { !it.profileUrl.isNullOrBlank() && !it.profileUrl!!.startsWith("https://") }
+    val canSave = draft.at() != null && draft.applicationId.isNotBlank() && !state.saving && !state.uncertain && (!draft.otherZone || runCatching { ZoneId.of(draft.zoneText.trim()) }.isSuccess) && draft.people.none { !it.profileUrl.isNullOrBlank() && !it.profileUrl!!.startsWith("https://") }
     val zoneName = draft.zone.id.substringAfterLast('/').replace('_', ' ')
 
     Box(Modifier.fillMaxSize()) {
@@ -309,6 +384,7 @@ internal fun InterviewSheet(
             state = sheetState,
             title = stringResource(R.string.app_add_interview),
             fixedHeight = 700.dp,
+            closeIconSize = 24.dp,
             detents = RrSheetDetents.Full,
             confirmDiscard = state.original != null && draft != state.original,
             footer = {
@@ -321,7 +397,7 @@ internal fun InterviewSheet(
                 Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
-                if (state.failed) RrCallout(stringResource(if (editing) S.string.couldn_t_update_the_interview_try_again else R.string.app_couldnt_schedule), tone = RrTone.Danger)
+                if (state.failed) RrCallout(stringResource(if (editing) S.string.couldn_t_update_the_interview_try_again else S.string.couldn_t_confirm_the_save_check_the_application_before_retrying_to_avoid_a_duplicate), tone = RrTone.Danger)
                 if (!editing && draft.applicationId.isBlank()) {
                     Field(stringResource(S.string.application)) {
                         RrListGroup {
@@ -341,7 +417,7 @@ internal fun InterviewSheet(
                     RrTextField(draft.location, { onDraft(draft.copy(location = it)) }, label = stringResource(R.string.app_where))
                     RrPickerField(draft.people.joinToString(", ") { it.name }, { peopleEditor = true }, label = stringResource(R.string.app_with), trailingIcon = null)
                 }
-                RrSwitchRow(stringResource(R.string.app_remind_day_before), false, {}, Modifier.padding(top = 12.dp), enabled = false, divider = true)
+                RrSwitchRow(stringResource(R.string.app_remind_day_before), draft.remind, { onDraft(draft.copy(remind = it)) }, Modifier.padding(top = 12.dp), divider = true)
                 RrSwitchRow(stringResource(R.string.app_phone_calendar), draft.addToCalendar, { onDraft(draft.copy(addToCalendar = it)) })
 
             }

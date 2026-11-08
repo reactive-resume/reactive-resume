@@ -1,5 +1,6 @@
 """Regression proof: raster coverage cannot mask native geometry or changed fixture pixels."""
 import importlib.util
+import copy
 import json
 from pathlib import Path
 import subprocess
@@ -57,6 +58,26 @@ class RasterFidelityTest(unittest.TestCase):
         first = json.dumps(prepare.annotate(layout,1,"fixture.png",image))
         self.assertEqual(first, json.dumps(prepare.annotate(layout,1,"fixture.png",image)))
         self.assertNotIn("rasterParent", layout["elements"][2])
+
+    def test_direct_text_replay_preserves_other_records_and_repeats(self):
+        correction = next(c for c in json.loads((HERE / "scaled-layout-corrections.json").read_text()) if c["id"] == "C2-Coach")
+        change = correction["replacements"][0]
+        unrelated = dict(n=100, depth=4, text="Nested list stays unchanged", rasterParent=99)
+        layout = dict(elements=[copy.deepcopy(change["before"]), unrelated.copy()])
+        prepare.apply_correction(layout, correction)
+        self.assertEqual(layout["elements"], change["after"] + [unrelated])
+        first = copy.deepcopy(layout)
+        prepare.apply_correction(layout, correction)
+        self.assertEqual(first, layout)
+
+    def test_direct_text_replay_rejects_foreign_changes_and_number_conflicts(self):
+        correction = next(c for c in json.loads((HERE / "scaled-layout-corrections.json").read_text()) if c["id"] == "C2-Coach")
+        change = correction["replacements"][0]
+        for records in ([dict(change["before"], text="Foreign text")],
+                        [copy.deepcopy(change["before"]), dict(n=change["after"][1]["n"])],
+                        [change["after"][0], dict(change["after"][1], lines=9)]):
+            with self.subTest(records=records), self.assertRaises(ValueError):
+                prepare.apply_correction(dict(elements=records), correction)
 
 
 if __name__ == "__main__":

@@ -38,6 +38,7 @@ fun RrIcon(
     mirrorInRtl: Boolean = false,
     slotHeight: Dp = size,
     alignment: Alignment = Alignment.Center,
+    colorName: String? = null,
 ) {
     val flip = mirrorInRtl && LocalLayoutDirection.current == LayoutDirection.Rtl
     val resourceName = LocalContext.current.resources.getResourceEntryName(id)
@@ -50,7 +51,7 @@ fun RrIcon(
             .size(width = size, height = slotHeight)
             .then(if (flip) Modifier.graphicsLayer { scaleX = -1f } else Modifier)
             .then(if (contentDescription == null && !measured) Modifier.clearAndSetSemantics { } else Modifier)
-            .rrDesignTag(DesignTag(icon = iconName, iconWeight = if (resourceName.endsWith("_fill")) "fill" else "regular", color = tint, colorName = RrTheme.colors.tokenName(tint))),
+            .rrDesignTag(DesignTag(icon = iconName, iconWeight = if (resourceName.endsWith("_fill")) "fill" else "regular", color = tint, colorName = colorName ?: RrTheme.colors.tokenName(tint))),
         colorFilter = ColorFilter.tint(tint),
         alignment = alignment,
     )

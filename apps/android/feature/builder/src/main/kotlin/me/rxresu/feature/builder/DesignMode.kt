@@ -175,7 +175,7 @@ internal fun DesignOverview(state: BuilderUiState, actions: BuilderActions, onPi
     val color = Rgba.toHex(m["design"].obj()["colors"].obj()["primary"].str())
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         RrPageTitle(stringResource(S.string.design), subtitle = stringResource(R.string.builder_design_subtitle), subtitleColor = RrTheme.colors.ink3)
-        RrPageBand(onClick = onPreview) { RrPaperPage(state.pages.firstOrNull(), stringResource(R.string.builder_preview_page), Modifier.padding(vertical = 1.dp).width(150.dp)) }
+        RrPageBand(onClick = onPreview) { RrPaperPage(state.pages.firstOrNull(), stringResource(R.string.builder_preview_page), Modifier.width(150.dp)) }
         Spacer(Modifier.height(8.dp))
         val choices = listOf(
             me.rxresu.core.navigation.DesignPicker.Template to stringResource(S.string.template),
@@ -223,7 +223,7 @@ internal fun TemplatePicker(doc: ResumeDoc, actions: BuilderActions, enabled: Bo
                     actions.edit(BuilderToast(S.string.template_changed_to_0, listOf(t.label), undo = true)) { it.set(listOf("data", "metadata", "template"), JsonPrimitive(t.id)) as JsonObject }
                 }
             }.semantics { this.selected = selected }, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                RrPageThumbnail(page, Modifier.fillMaxWidth().then(if (selected) Modifier.border(2.dp, RrTheme.colors.accent, androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper)) else Modifier))
+                RrPageThumbnail(if (selected) page else null, Modifier.fillMaxWidth(), sidebar = t.columns == 2, selected = selected)
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     RrText(t.label, style = RrType.buttonLg)
                     if (selected) RrIcon(D.drawable.ic_ph_check_circle, null, size = 16.dp, tint = RrTheme.colors.accentText)
@@ -246,16 +246,10 @@ internal fun AccentRow(doc: ResumeDoc, actions: BuilderActions, enabled: Boolean
         Accent.entries.forEach { a ->
             val label = stringResource(a.label)
             val selected = current.equals(a.hex, ignoreCase = true)
-            Box(Modifier.size(42.dp, 32.dp).clickable(enabled = enabled, role = Role.RadioButton) {
+            RrColourSwatch(a.color(), label, selected, {
                 if (!selected) haptics(RrHaptic.Selection)
                 actions.set(listOf("data", "metadata", "design", "colors", "primary"), JsonPrimitive(Rgba.fromHex(a.hex)!!))
-            }.semantics { this.selected = selected; contentDescription = label }, contentAlignment = Alignment.Center) {
-                Box(Modifier.size(32.dp).then(if (selected) Modifier.drawBehind {
-                    drawRoundRect(c.accent, Offset(-4.dp.toPx(), -4.dp.toPx()), androidx.compose.ui.geometry.Size(size.width + 8.dp.toPx(), size.height + 8.dp.toPx()), androidx.compose.ui.geometry.CornerRadius(12.dp.toPx()), style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
-                } else Modifier).clip(RrShape.sm).background(a.color()), contentAlignment = Alignment.Center) {
-                    if (selected) RrIcon(D.drawable.ic_ph_check, null, size = 16.dp, tint = me.rxresu.core.designsystem.RrFixedColors.paper)
-                }
-            }
+            }, enabled = enabled)
         }
     }
     Row(Modifier.padding(horizontal = 24.dp).heightIn(min = 44.dp).clickable(enabled = true, role = androidx.compose.ui.semantics.Role.Button, onClick = { custom = true }), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {

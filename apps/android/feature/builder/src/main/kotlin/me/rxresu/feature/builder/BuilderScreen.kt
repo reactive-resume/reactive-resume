@@ -52,7 +52,7 @@ internal fun BuilderScreen(
     val reduced = LocalReducedMotion.current
     val haptics = rememberRrHaptics()
     Column(modifier.fillMaxSize().background(RrTheme.colors.bg)) {
-        RrTopBar(onBack = onBack) {
+        RrTopBar(onBack = onBack, backLabel = stringResource(R.string.builder_back_to_documents)) {
             RrIconButton(D.drawable.ic_ph_sparkle, stringResource(S.string.assistant), onAssistant, tint = RrTheme.colors.accentText)
             RrIconButton(D.drawable.ic_ph_dots_three, stringResource(S.string.more), onMore)
         }

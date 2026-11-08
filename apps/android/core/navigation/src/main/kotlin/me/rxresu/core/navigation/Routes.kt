@@ -70,7 +70,7 @@ enum class DesignPicker { Template, Colour, Typography, Page, Layout, Photo, Ent
 @Serializable data class BuilderRichText(val resumeId: String, val section: String, val itemId: String, val field: String = "description")
 /** B5. */
 @Serializable data class BuilderBasics(val resumeId: String)
-/** B18 full-screen page preview (owner: :feature:share). Frozen versions never open the current draft. */
+/** B18 full-screen page preview (owner: :feature:builder). Frozen versions never open the current draft. */
 @Serializable data class PagePreview(
     val documentId: String,
     val kind: DocumentKind = DocumentKind.Resume,
@@ -80,7 +80,7 @@ enum class DesignPicker { Template, Colour, Typography, Page, Layout, Photo, Ent
     val issueNumber: Int? = null,
 )
 /** B19 sheet (owner: :feature:share). Every ellipsis opens this menu. */
-@Serializable data class BuilderMore(val resumeId: String)
+@Serializable data class BuilderMore(val resumeId: String, val kind: DocumentKind = DocumentKind.Resume)
 /** B12 (owner: :feature:share). */
 @Serializable data class WebPageSettings(val resumeId: String)
 /** B13 (owner: :feature:share). */
@@ -97,7 +97,7 @@ enum class DesignPicker { Template, Colour, Typography, Page, Layout, Photo, Ent
 // Letters (owner: :feature:letters)
 enum class LetterMode { Write, Design }
 /** L1, L2. Export opens Download(id, Letter). */
-@Serializable data class Letter(val letterId: String, val mode: LetterMode = LetterMode.Write)
+@Serializable data class Letter(val letterId: String, val mode: LetterMode = LetterMode.Write, val versionId: String? = null)
 
 // Applications (owner: :feature:applications). Workspace tabs (W1–W5) are a slot inside the Application screen,
 // filled by :feature:workspace.
@@ -105,7 +105,7 @@ enum class WorkspaceTab { Overview, Fit, Apply, Prepare, Practise, Debrief, Mess
 /** J4 pushed Insights. */
 @Serializable data object ApplicationInsights
 /** J5 full-screen modal. `url` is set when a link arrives from the share sheet. */
-@Serializable data class SaveJob(val url: String? = null)
+@Serializable data class SaveJob(val url: String? = null, val sourceResumeId: String? = null, val sourceAccountScope: String? = null)
 /** J6, W1–W5. `practiceQuestion` opens the Practice tab on that question (from Interview prep). */
 /** [posting] opens the posting sheet on Overview (the Fit tab's "Add posting"). */
 @Serializable data class Application(val id: String, val tab: WorkspaceTab = WorkspaceTab.Overview, val practiceQuestion: String? = null, val posting: Boolean = false)

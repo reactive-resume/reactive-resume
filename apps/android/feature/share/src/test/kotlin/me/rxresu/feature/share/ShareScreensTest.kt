@@ -44,8 +44,8 @@ class ShareScreensTest : RrScreenshotTest() {
                     "B15-Versions" -> VersionsScreen(state, null, {}, {}, {}, {}, {})
                     "B19-More" -> {
                         val locked = state.copy(draft = DraftState(state.resume!!.copy(isLocked = true, createdAt = "2026-10-28T10:00:00Z", updatedAt = repositories.time.now().minusSeconds(12 * 60).toString(), tags = listOf("Design"), data = state.resume!!.data.copy(metadata = state.resume!!.data.metadata.copy(page = state.resume!!.data.metadata.page.copy(locale = "en-GB")))), locked = true))
-                        Column { RrTopBar(onBack = {}); RrPageTitle("Product designer", subtitle = "Locked · 1 page · Public") }
-                        RrBottomSheet({}, fixedHeight = 790.dp, title = "Product designer") { MoreContent(locked) {} }
+                        Column { RrTopBar(onBack = {}); RrPageTitle("Product designer", subtitle = "Locked · 1 page · Public", subtitleColor = RrTheme.colors.ink3) }
+                        RrBottomSheet({}, fixedHeight = 790.dp, title = "Product designer", closeIconSize = 24.dp) { MoreContent(locked) {} }
                     }
                     else -> Column(Modifier.fillMaxSize()) {
                         RrTopBar(onBack = {}) {

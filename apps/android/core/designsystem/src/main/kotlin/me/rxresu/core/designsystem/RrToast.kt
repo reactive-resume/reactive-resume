@@ -134,14 +134,16 @@ class RrToastHostState(private val scope: CoroutineScope = MainScope()) {
     /**
      * Shows a toast without suspending: queues it in this state's own scope and hands its result to [onResult], which
      * runs in that scope too (it may [show] a follow-up toast). Use it when the caller closes right after.
+     * [around] keeps an operation alive across queued toasts and navigation disposal, including its result.
      */
     fun post(
         message: String,
         actionLabel: String? = null,
         tone: RrToastTone = RrToastTone.Neutral,
         secondaryActionLabel: String? = null,
+        around: suspend (suspend () -> Unit) -> Unit = { it() },
         onResult: suspend (RrToastResult) -> Unit = {},
-    ): Job = scope.launch { onResult(show(message, actionLabel, tone, secondaryActionLabel)) }
+    ): Job = scope.launch { around { onResult(show(message, actionLabel, tone, secondaryActionLabel)) } }
 
     companion object {
         const val PLAIN_MS = 5_000L

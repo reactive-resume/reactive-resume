@@ -51,7 +51,7 @@ import java.time.LocalDate
 data class RrWeekDay(val date: LocalDate, val weekday: String, val markers: List<Color> = emptyList(), val contentDescription: String? = null)
 
 /**
- * Week strip (J3 calendar): seven 56 dp day cells 4 dp apart with the weekday in caption ink-3, the number in 16/600, and
+ * Week strip (J3 calendar): seven contiguous 71 dp day cells with the weekday in caption ink-3, serif number, and
  * 4 dp markers below. Today's number is accent-text; the selected day fills with accent (d2; instant under reduced
  * motion). Plays `selection` when a day is picked.
  *
@@ -102,7 +102,7 @@ fun RrWeekStrip(
                         ) { _, amount -> dragged += amount }
                     },
             ),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(0.dp),
     ) {
         days.forEach { day ->
             val on = day.date == selected
@@ -110,15 +110,16 @@ fun RrWeekStrip(
             Column(
                 Modifier
                     .weight(1f)
-                    .heightIn(min = 56.dp)
+                    .heightIn(min = 71.dp)
                     .clip(RrShape.lg)
                     .background(c.accent.copy(alpha = fill))
                     .selectable(on, role = Role.Tab) {
                         if (!on) haptics(RrHaptic.Selection)
                         onSelect(day.date)
                     }
-                    .then(if (day.contentDescription != null) Modifier.rrClearAndSetSemantics { contentDescription = day.contentDescription } else Modifier),
-                verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+                    .then(if (day.contentDescription != null) Modifier.rrClearAndSetSemantics { contentDescription = day.contentDescription } else Modifier)
+                    .padding(vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 RrText(day.weekday, style = RrType.caption, color = if (on) c.onAccent else c.ink3, maxLines = 1)
@@ -133,9 +134,7 @@ fun RrWeekStrip(
                     maxLines = 1,
                 )
                 Row(Modifier.height(5.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                    day.markers.take(3).forEach { color ->
-                        Box(Modifier.size(5.dp).clip(RrShape.full).background(if (on) c.onAccent else color))
-                    }
+                    if (day.markers.isNotEmpty()) Box(Modifier.size(5.dp).clip(RrShape.full).background(if (on) c.onAccent else c.accent))
                 }
             }
         }

@@ -32,6 +32,76 @@ class LayoutDumpTest : RrScreenshotTest() {
     @Test fun measuredGeometryAndMetadataLight() = assertDump(dark = false)
     @Test fun measuredGeometryAndMetadataDark() = assertDump(dark = true)
 
+    @Test fun nativeTextInsideAndroidViewUsesItsPaintedLayout() {
+        var view: View? = null
+        rule.setContent {
+            view = LocalView.current
+            Box(Modifier.fillMaxSize().padding(start = 24.dp, top = 47.dp)) {
+                androidx.compose.ui.viewinterop.AndroidView(factory = { context ->
+                    android.widget.TextView(context).apply {
+                        text = "Native notification title"
+                        textSize = 16f
+                        includeFontPadding = false
+                        setPadding(16, 8, 0, 0)
+                    }
+                })
+            }
+        }
+        val out = temporary.newFile("native.json")
+        rule.runOnIdle { requireNotNull(view).writeLayoutDump(out) }
+        val element = JSONObject(out.readText()).getJSONArray("elements").single("text", "Native notification title")
+        assertEquals(32.0, element.getDouble("x"), 0.5)
+        assertEquals(51.0, element.getDouble("y"), 0.5)
+        assertEquals("android.widget.TextView", element.getString("nativeView"))
+        assertEquals(16.0, element.getJSONObject("style").getDouble("size"), 0.0)
+        org.junit.Assert.assertTrue(element.getDouble("w") > 100)
+        org.junit.Assert.assertTrue(element.getDouble("h") > 0)
+        org.junit.Assert.assertFalse("Native system fonts must not be labelled Figtree", element.getJSONObject("style").has("family"))
+    }
+
+    @Test fun unattachedNativeTextUsesNestedLayoutAndScrollCoordinates() {
+        val context = androidx.test.core.app.ApplicationProvider.getApplicationContext<android.content.Context>()
+        val root = android.widget.FrameLayout(context)
+        val container = android.widget.FrameLayout(context)
+        val text = android.widget.TextView(context).apply {
+            this.text = "Unattached native title"
+            textSize = 16f
+            includeFontPadding = false
+            setPadding(12, 8, 0, 0)
+        }
+        root.addView(container, android.widget.FrameLayout.LayoutParams(500, 200).apply {
+            leftMargin = 40; topMargin = 60
+        })
+        container.addView(text, android.widget.FrameLayout.LayoutParams(400, 100).apply {
+            leftMargin = 20; topMargin = 30
+        })
+        root.measure(View.MeasureSpec.makeMeasureSpec(780, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(1688, View.MeasureSpec.EXACTLY))
+        root.layout(0, 0, 780, 1688)
+        container.scrollTo(4, 6)
+        text.scrollTo(2, 3)
+        val out = temporary.newFile("unattached-native.json")
+        root.writeLayoutDump(out)
+        val element = JSONObject(out.readText()).getJSONArray("elements").single("text", "Unattached native title")
+        val density = context.resources.displayMetrics.density.toDouble()
+        assertEquals((40 + 20 - 4 + 12 - 2) / density, element.getDouble("x"), 0.5)
+        assertEquals((60 + 30 - 6 + 8 - 3) / density, element.getDouble("y"), 0.5)
+        assertEquals(text.layout.height / density, element.getDouble("h"), 0.0)
+    }
+
+    @Test @org.robolectric.annotation.Config(sdk = [26])
+    fun nativeTextOnApi26DoesNotInventUnavailableTypefaceWeight() {
+        val context = androidx.test.core.app.ApplicationProvider.getApplicationContext<android.content.Context>()
+        val text = android.widget.TextView(context).apply { this.text = "Native API 26"; textSize = 16f }
+        text.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(100, View.MeasureSpec.EXACTLY))
+        text.layout(0, 0, 400, 100)
+        val out = temporary.newFile("native-api26.json")
+        text.writeLayoutDump(out)
+        val element = JSONObject(out.readText()).getJSONArray("elements").single("text", "Native API 26")
+        org.junit.Assert.assertFalse(element.getJSONObject("style").has("weight"))
+        assertEquals(16.0, element.getJSONObject("style").getDouble("size"), 0.0)
+        org.junit.Assert.assertTrue(element.getString("nativeTypeface").isNotEmpty())
+    }
+
     private fun assertDump(dark: Boolean) {
         var view: View? = null
         rule.setContent {

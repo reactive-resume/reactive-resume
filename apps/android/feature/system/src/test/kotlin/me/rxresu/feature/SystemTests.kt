@@ -36,6 +36,19 @@ class RepositoryTestApp : Application(), RepositoriesProvider { override lateini
 class SystemTests {
     private val context get() = ApplicationProvider.getApplicationContext<RepositoryTestApp>()
     @Before fun setup() { File(context.noBackupFilesDir, "notifications").deleteRecursively() }
+    @Test fun undatedNoReplyIsActionableButOtherMissingDatesStayUnknown() = runTest {
+        val repositories = FakeRepositories(coroutineScope = backgroundScope)
+        val application = repositories.applications.getApplication(StoryboardIds.fieldnote).copy(
+            status = ApplicationStage.Applied, followUpAt = null, appliedAt = "2026-10-27T09:00:00Z", activity = emptyList())
+        assertEquals(NextStepKind.NoReply, applicationNextStep(application, repositories.time).kind)
+        val followUp = composeToday(listOf(application), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
+            repositories.career.getCareerProfile(), repositories.time, false).needsYou.single()
+        assertEquals("Now", widgetTime(context, followUp, repositories.time))
+        assertEquals("", widgetTime(context, followUp.copy(kind = TodayKind.Interview), repositories.time))
+        assertEquals("", widgetTime(context, followUp.copy(at = "unknown"), repositories.time))
+        assertEquals("Tue 10:00", widgetTime(context, followUp.copy(at = "2026-11-10T10:00:00Z"), repositories.time))
+        repositories.close()
+    }
     @Test fun textShareFindsFirstUrlAndNeverSavesAnything() {
         assertEquals(SaveJob("https://example.invalid/job"), systemRouteFor(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, "A role https://example.invalid/job). More https://else.invalid")))
         assertNull(systemRouteFor(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, "No link here")))

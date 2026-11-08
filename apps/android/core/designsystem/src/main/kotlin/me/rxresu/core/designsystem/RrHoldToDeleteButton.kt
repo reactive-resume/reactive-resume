@@ -81,7 +81,7 @@ fun RrHoldToDeleteButton(
                 role = Role.Button
                 contentDescription = text
                 progressBarRangeInfo = ProgressBarRangeInfo(progress.value, 0f..1f)
-                if (enabled) onClick(label = deleteLabel) { delete(); true }
+                if (enabled) onClick(label = deleteLabel) { haptics(RrHaptic.Warning); delete(); true }
             }
             .focusable(enabled)
             .then(

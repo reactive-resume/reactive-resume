@@ -48,6 +48,7 @@ fun RrAiComposer(
     enabled: Boolean = true,
     sending: Boolean = false,
     onStop: (() -> Unit)? = null,
+    dimEmptySend: Boolean = true,
     contextChips: @Composable RowScope.() -> Unit = {},
     tools: @Composable RowScope.() -> Unit = {},
 ) {
@@ -96,9 +97,10 @@ fun RrAiComposer(
                 RrIconButton(
                     R.drawable.ic_ph_arrow_up,
                     stringResource(R.string.ds_send),
-                    onSend,
+                    { if (canSend) onSend() },
                     size = RrIconButtonSize.Small,
                     enabled = canSend,
+                    dimWhenDisabled = dimEmptySend || !enabled || sending,
                     containerColor = c.accent,
                     tint = c.onAccent,
                 )

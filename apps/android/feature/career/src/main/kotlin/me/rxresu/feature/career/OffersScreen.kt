@@ -90,7 +90,7 @@ internal fun saidQuote(priorities: String): String? {
     val questions = openQuestions(compared)
     val time = rememberCareerTime()
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
-        RrTopBar(onBack = back, actions = { RrIconButton(Icons.drawable.ic_ph_sparkle, stringResource(R.string.career_coach_b32c9a), { plan(compared) }, tint = RrTheme.colors.accentText, enabled = left != null) })
+        RrTopBar(onBack = back, actions = { RrIconButton(Icons.drawable.ic_ph_sparkle, stringResource(CoreStrings.string.ask_the_coach), { plan(compared) }, tint = RrTheme.colors.accentText, enabled = left != null) })
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             RrPageTitle(stringResource(R.string.career_compare_offers), subtitle = stringResource(R.string.career_better_value), subtitleColor = RrTheme.colors.ink3)
             if (state.loading) CareerLoading() else {

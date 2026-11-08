@@ -83,7 +83,7 @@ import me.rxresu.core.strings.R as S
 
 /** J1–J4: one tab root with List · Board · Calendar · Insights. */
 @Composable
-internal fun ApplicationsRoute(initialView: ApplicationsView, nav: NavController) {
+internal fun ApplicationsRoute(initialView: ApplicationsView, nav: NavController, companyInitials: Map<String, String> = emptyMap()) {
     val repos = LocalRepositories.current
     val vm = viewModel(key = "applications") { ApplicationsViewModel(repos.applications, repos.career, repos.documents, repos.account, repos.time) }
     val state by vm.state.collectAsStateWithLifecycle()
@@ -139,7 +139,7 @@ internal fun ApplicationsRoute(initialView: ApplicationsView, nav: NavController
     )
 
     ApplicationsScreen(
-        state = state,
+        state = if (companyInitials.isEmpty()) state else state.copy(rows = state.rows?.map { it.copy(companyInitials = companyInitials[it.app.id]) }),
         view = view,
         onView = { view = it },
         onInsights = { nav.navigate(ApplicationInsights) },
@@ -259,7 +259,7 @@ internal fun ApplicationsScreen(
             },
         ) {
             RrIconButton(R.drawable.ic_ph_chart_line_up, stringResource(S.string.insights), onInsights)
-            RrIconButton(D.drawable.ic_ph_plus, stringResource(S.string.save_job), onSaveJob)
+            RrIconButton(D.drawable.ic_ph_plus, stringResource(S.string.save_a_job), onSaveJob)
         }
         if (state.offline) RrOfflineStrip()
         Box(Modifier.weight(1f).fillMaxWidth()) {
@@ -273,8 +273,8 @@ internal fun ApplicationsScreen(
                     label = "view",
                 ) { v ->
                     when (v) {
-                        ApplicationsView.List -> ListView(state, dates, title, selected, rowActions, onSaveJob, onImport = {}, onShowClosed = { onFilters(f.copy(showClosed = true)) }, onClearFilters = { onFilters(ApplicationFilters(showClosed = f.showClosed)) })
-                        ApplicationsView.Board -> BoardView(state, dates, rowActions, onDrop, onMoveSheet, initialPage = boardColumns(state).indexOfFirst { it.rows.isNotEmpty() && it.stage == ApplicationStage.Interview }.coerceAtLeast(0))
+                        ApplicationsView.List -> ListView(state, dates, title, selected, rowActions, onSaveJob, onImport = {}, onShowClosed = { onFilters(ApplicationFilters(showClosed = true, stage = ApplicationStage.Closed)) }, onClearFilters = { onFilters(ApplicationFilters(showClosed = f.showClosed)) })
+                        ApplicationsView.Board -> BoardView(state, dates, rowActions, onDrop, onMoveSheet, initialPage = boardColumns(state).indexOfFirst { it.rows.isNotEmpty() && it.stage == ApplicationStage.Interview }.coerceAtLeast(0), onShowClosed = { onFilters(f.copy(showClosed = true)) })
                         ApplicationsView.Calendar -> CalendarView(state, dates, time.today(), title, onCalendarEvent, onSchedule, onAddToCalendar)
                         ApplicationsView.Insights -> InsightsView(state, dates, title, onStage = { onFilters(f.copy(stage = it)); onView(ApplicationsView.List) }, onSaveJob)
                     }
@@ -365,7 +365,7 @@ private fun BulkSheetView(kind: BulkSheet, state: ApplicationsState, onDismiss: 
 
 /** Calendar actions retain the event kind instead of losing it at J6. */
 internal fun calendarDestination(item: me.rxresu.core.data.CalendarItem): Any = when (item.kind) {
-    "interview" -> ApplicationWorkspace(item.applicationId, WorkspaceTab.Prepare)
+    "interview" -> ApplicationDest(item.applicationId)
     "offer" -> me.rxresu.core.navigation.Offers
     else -> ApplicationWorkspace(item.applicationId, WorkspaceTab.Messages)
 }

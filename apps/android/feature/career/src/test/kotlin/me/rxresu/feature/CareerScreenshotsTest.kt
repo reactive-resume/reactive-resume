@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.*
 import me.rxresu.core.data.*
@@ -70,17 +71,19 @@ class CareerScreenshotsTest : RrScreenshotTest() {
         }
         OffersScreen(state, {}, {}, {}, {}, {})
     }
-    private fun schedule(dark: Boolean) = capture("C7-Schedule", dark) { fakes ->
-        val state = runBlocking { ScheduleState(false, available = true, providers = fakes.ai.listAiProviders(), profile = fakes.career.getCareerProfile(), email = "alex@morgan.design", emailVerified = true, web = fakes.ai.getWebAccessStatus()) }
+    private fun schedule(dark: Boolean, searchReady: Boolean = true) = capture(if (searchReady) "C7-Schedule" else "C7-Schedule-unconfigured", dark) { fakes ->
+        val state = runBlocking { ScheduleState(false, available = true, providers = fakes.ai.listAiProviders(), profile = fakes.career.getCareerProfile(), email = "alex@morgan.design", emailVerified = true, web = fakes.ai.getWebAccessStatus().copy(search = searchReady)) }
         Box(Modifier.fillMaxSize()) {
             Column {
                 RrLargeTitleHeader("Career", rememberRrLargeTitleState())
-                RrText("Your coach, and what it knows about you.", Modifier.padding(horizontal = androidx.compose.ui.unit.Dp(24f)), style = RrType.ui, color = RrTheme.colors.ink3)
+                RrText("Your coach, and what it knows about you.", Modifier.padding(horizontal = androidx.compose.ui.unit.Dp(24f)).then(Modifier.graphicsLayer { alpha = 0.5f }), style = RrType.ui, color = RrTheme.colors.ink3)
             }
             ScheduleScreen(state, fakes.time.today(), fakes.time.timezone(), {}, {}, {}, {})
         }
     }
-    @Test fun storiesList() = capture("C3-Stories", false) { fakes ->
+    @Test fun storiesList() = stories(false)
+    @Test fun storiesListDark() = stories(true)
+    private fun stories(dark: Boolean) = capture("C3-Stories", dark) { fakes ->
         val state = runBlocking { FactsState(loading = false, facts = fakes.career.listCareerFacts(), stories = fakes.career.listCareerStories(), briefingUses = storyBriefingUses(fakes.career.listCareerSavedItems(kind = ListCareerSavedItemsKind.Briefing))) }
         KnowledgeScreen(state, KnowledgeTab.Stories, {}, "", {}, null, {}, false, {}, "", {}, {}, {}, {}, {}, {}, {}, {}, {})
     }
@@ -105,6 +108,11 @@ class CareerScreenshotsTest : RrScreenshotTest() {
     @Test fun preferencesFont200() = preferences(false, 2f)
     @Test fun offersLight() = offers(false)
     @Test fun offersDark() = offers(true)
+    @Test fun scheduleSearchUnavailableExplainsDisabledSave() {
+        schedule(false, searchReady = false)
+        val layout = java.io.File(System.getProperty("rr.fidelity.dir", "../../build/fidelity"), "C7-Schedule-unconfigured-light.json").readText()
+        org.junit.Assert.assertTrue(layout.contains("Set up web search in Settings before enabling discovery"))
+    }
     @Test fun scheduleLight() = schedule(false)
     @Test fun scheduleDark() = schedule(true)
     @Test fun careerFont200() { screenshotScale = 2f; career(false) }

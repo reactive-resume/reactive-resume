@@ -43,10 +43,12 @@ fun RrTopBar(
     onClose: (() -> Unit)? = null,
     closeLabel: String = stringResource(R.string.ds_close),
     center: (@Composable () -> Unit)? = null,
+    centerBetweenActions: Boolean = false,
+    containerColor: androidx.compose.ui.graphics.Color = RrTheme.colors.bg,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val c = RrTheme.colors
-    Column(modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "TopBar", bgName = "bg")).background(c.bg).then(if (applyStatusBarInset) Modifier.rrStatusBarsPadding() else Modifier)) {
+    Column(modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "TopBar", bgName = c.tokenName(containerColor))).background(containerColor).then(if (applyStatusBarInset) Modifier.rrStatusBarsPadding() else Modifier)) {
         androidx.compose.ui.layout.Layout(
             contents = listOf(
                 {
@@ -73,11 +75,11 @@ fun RrTopBar(
             val loose = androidx.compose.ui.unit.Constraints(maxWidth = width)
             val start = startM.first().measure(loose)
             val end = endM.first().measure(loose)
-            val middle = centerM.firstOrNull()?.measure(androidx.compose.ui.unit.Constraints(maxWidth = (width - 2 * maxOf(start.width, end.width) - 8.dp.roundToPx()).coerceAtLeast(0)))
+            val middle = centerM.firstOrNull()?.measure(androidx.compose.ui.unit.Constraints(maxWidth = (width - (if (centerBetweenActions) start.width + end.width else 2 * maxOf(start.width, end.width)) - 8.dp.roundToPx()).coerceAtLeast(0)))
             val height = maxOf(constraints.minHeight, start.height, end.height, middle?.height ?: 0)
             layout(width, height) {
                 start.placeRelative(0, (height - start.height) / 2)
-                middle?.placeRelative((width - middle.width) / 2, (height - middle.height) / 2)
+                middle?.placeRelative((width - middle.width + if (centerBetweenActions) start.width - end.width else 0) / 2, (height - middle.height) / 2)
                 end.placeRelative(width - end.width, (height - end.height) / 2)
             }
         }

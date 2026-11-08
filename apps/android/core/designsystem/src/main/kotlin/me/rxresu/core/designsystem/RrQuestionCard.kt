@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 
 /**
  * A question from the assistant or coach (B16 "Did you lead the onboarding redesign?"): info-soft card, the question
- * in semibold ink, then one 44 dp answer button per answer (raised, line-2 edge, 15 sp start-aligned text, 6 dp apart)
- * and an optional "Or in your own words" secondary button. Each answer is its own TalkBack button.
+ * in semibold ink, then 48 dp answer buttons, 10 dp apart, and an optional free-text input.
+ * Each answer is its own TalkBack button.
  */
 @Composable
 fun RrQuestionCard(
@@ -33,32 +33,33 @@ fun RrQuestionCard(
     ownWordsLabel: String? = null,
     onOwnWords: (() -> Unit)? = null,
     enabled: Boolean = true,
+    ownWordsInput: (@Composable () -> Unit)? = null,
 ) {
     val c = RrTheme.colors
     Column(
-        modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "Card", radius = RrRadius.xl, bgName = "info-soft")).clip(RrShape.xl).background(c.infoSoft).padding(20.dp),
+        modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "Card", radius = RrRadius.xl, bgName = "info-soft")).clip(RrShape.xl).background(c.infoSoft).padding(21.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         RrText(question, style = RrType.label.copy(fontSize = RrType.rowTitle.fontSize, lineHeight = RrType.rowTitle.lineHeight), color = c.ink)
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            answers.forEach { answer ->
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 48.dp)
-                        .rrDesignTag(DesignTag(component = "ChoiceButton", radius = RrRadius.md, bgName = "raised"))
-                        .clip(RrShape.md)
-                        .background(c.raised)
-                        .border(1.dp, c.line2, RrShape.md)
-                        .clickable(remember { MutableInteractionSource() }, LocalIndication.current, enabled = enabled, role = Role.Button) { onAnswer(answer) }
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                    contentAlignment = Alignment.CenterStart,
-                ) {
-                    RrText(answer, style = RrType.ui.copy(fontSize = RrType.body.fontSize), color = c.ink)
-                }
+        answers.forEach { answer ->
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp)
+                    .rrDesignTag(DesignTag(component = "ChoiceButton", radius = RrRadius.md, bgName = "raised"))
+                    .clip(RrShape.md)
+                    .background(c.raised)
+                    .border(1.dp, c.line2, RrShape.md)
+                    .clickable(remember { MutableInteractionSource() }, LocalIndication.current, enabled = enabled, role = Role.Button) { onAnswer(answer) }
+                    .padding(horizontal = 14.dp),
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                RrText(answer, style = RrType.ui.copy(fontSize = RrType.body.fontSize), color = c.ink)
             }
         }
-        if (ownWordsLabel != null && onOwnWords != null) {
+        if (ownWordsInput != null) {
+            ownWordsInput()
+        } else if (ownWordsLabel != null && onOwnWords != null) {
             RrButton(ownWordsLabel, onOwnWords, variant = RrButtonVariant.Secondary, enabled = enabled)
         }
     }
@@ -71,7 +72,10 @@ internal fun RrQuestionCardPreview() = RrPreviewSurface {
         "Did you lead the onboarding redesign, or take part in it?",
         listOf("Yes, I led it", "I took part in it", "No"),
         onAnswer = {},
-        ownWordsLabel = "Or in your own words",
-        onOwnWords = {},
+        ownWordsInput = {
+            RrTextField("", {}, placeholder = "Or in your own words…", trailing = {
+                RrIcon(R.drawable.ic_ph_arrow_up, null, size = 20.dp, tint = RrTheme.colors.ink3)
+            })
+        },
     )
 }

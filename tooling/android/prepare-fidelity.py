@@ -39,6 +39,25 @@ def annotate(layout, number, fixture, image):
     return layout
 
 
+def apply_correction(layout, correction):
+    for change in correction["fields"]:
+        element = next(e for e in layout["elements"] if e["n"] == change["n"])
+        current = {key: element[key] for key in change["before"]}
+        if current not in (change["before"], change["after"]):
+            raise ValueError(f"Unknown scaled text change: {correction['id']} n={change['n']}")
+        element.update(change["after"])
+    for change in correction.get("replacements", []):
+        index = next(i for i, e in enumerate(layout["elements"]) if e["n"] == change["n"])
+        current = layout["elements"][index]
+        if current == change["before"]:
+            other_numbers = {e["n"] for i, e in enumerate(layout["elements"]) if i != index}
+            if any(e["n"] in other_numbers for e in change["after"]):
+                raise ValueError(f"Conflicting text range number: {correction['id']} n={change['n']}")
+            layout["elements"][index:index + 1] = change["after"]
+        elif layout["elements"][index:index + len(change["after"])] != change["after"]:
+            raise ValueError(f"Unknown direct text range change: {correction['id']} n={change['n']}")
+
+
 def prepare(bundle):
     root = Path(__file__).resolve().parents[2]
     tool = bundle / "tools/layout_compare.py"
@@ -53,12 +72,7 @@ def prepare(bundle):
     for correction in corrections:
         path = bundle / "design/layout" / f"{correction['id']}.json"
         layout = json.loads(path.read_text())
-        for change in correction["fields"]:
-            element = next(e for e in layout["elements"] if e["n"] == change["n"])
-            current = {key: element[key] for key in change["before"]}
-            if current not in (change["before"], change["after"]):
-                raise ValueError(f"Unknown scaled text change: {correction['id']} n={change['n']}")
-            element.update(change["after"])
+        apply_correction(layout, correction)
         path.write_text(json.dumps(layout, indent=1, ensure_ascii=False) + "\n")
     for screen, (number, fixture) in RASTERS.items():
         source = bundle / "design/fixtures" / fixture

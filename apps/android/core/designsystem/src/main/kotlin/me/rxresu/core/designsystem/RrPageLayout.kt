@@ -62,12 +62,14 @@ fun RrSectionHeading(
 
 /** Root next-step surface. Caller supplies key line, title, paragraph and the single primary action. */
 @Composable
-fun RrHeroCard(modifier: Modifier = Modifier, topMargin: Dp = 20.dp, content: @Composable ColumnScope.() -> Unit) {
+fun RrHeroCard(modifier: Modifier = Modifier, topMargin: Dp = 20.dp, raised: Boolean = false, dashed: Boolean = false, content: @Composable ColumnScope.() -> Unit) {
     val c = RrTheme.colors
     Column(
         modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = topMargin)
-            .rrDesignTag(DesignTag(component = "HeroCard", radius = RrRadius.xl, bgName = "surface"))
-            .rrShadow(RrElevation.Level1, RrShape.xl).clip(RrShape.xl).background(c.surface).border(1.dp, c.line, RrShape.xl).padding(25.dp),
+            .rrDesignTag(DesignTag(component = "HeroCard", radius = RrRadius.xl, bgName = if (raised) "raised" else "surface"))
+            .then(if (dashed) Modifier else Modifier.rrShadow(RrElevation.Level1, RrShape.xl))
+            .clip(RrShape.xl).background(if (raised) c.raised else c.surface)
+            .then(if (dashed) Modifier.rrDashedBorder(c.line, RrRadius.xl) else Modifier.border(1.dp, c.line, RrShape.xl)).padding(25.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp), content = content,
     )
 }
@@ -99,7 +101,7 @@ fun RrPageBand(modifier: Modifier = Modifier, onClick: (() -> Unit)? = null, con
                 drawLine(c.line, Offset(0f, h / 2), Offset(size.width, h / 2), h)
                 drawLine(c.line, Offset(0f, size.height - h / 2), Offset(size.width, size.height - h / 2), h)
             }.then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
-            .padding(vertical = 24.dp),
+            .padding(vertical = 25.dp), // 24 dp content padding plus each 1 dp border.
         contentAlignment = Alignment.Center,
     ) { content() }
 }

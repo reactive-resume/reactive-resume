@@ -58,6 +58,16 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
 
     screen<Letter> { entry ->
         val route = entry.toRoute<Letter>(); val repositories = LocalRepositories.current
+        val versionId = route.versionId
+        if (versionId != null) {
+            val vm: LetterSnapshotViewModel = viewModel { LetterSnapshotViewModel(repositories, route.letterId, versionId) }
+            val state by vm.state.collectAsStateWithLifecycle()
+            LetterScreen(state, LetterMode.Write, false, { action -> when (action) {
+                "retry" -> vm.retry()
+                "current" -> nav.navigate(Letter(route.letterId))
+            } }, {}, {}, { nav.popBackStack() })
+            return@screen
+        }
         val context = LocalContext.current
         val session by repositories.authSession.state.collectAsStateWithLifecycle()
         val account = session as? SessionState.SignedIn
@@ -74,6 +84,7 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
                 "focus" -> vm.focus(true)
                 "blur" -> vm.focus(false)
                 "preview" -> nav.navigate(PagePreview(route.letterId, DocumentKind.Letter))
+                "more" -> nav.navigate(BuilderMore(route.letterId, DocumentKind.Letter))
                 "template", "type", "color", "page", "language", "letterhead", "signature" -> nav.navigate(LetterDesignPicker(route.letterId, action))
                 "undo" -> vm.undo()
                 "draft" -> vm.generate()
@@ -112,7 +123,6 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
             val menuResult by entry.savedStateHandle.getStateFlow<String?>("letter-menu-action", null).collectAsStateWithLifecycle()
             LaunchedEffect(menuResult) { menuResult?.let { menuAction(it); entry.savedStateHandle["letter-menu-action"] = null } }
             when (form) {
-                "more" -> LetterMoreMenu(state, dismiss, menuAction)
                 "copy-job" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.copy_for_a_job), initialDetent = 1) { state.applications.forEach { app -> RrListRow(app.company, subtitle = app.role, onClick = { vm.copyForJob(app.id) { nav.navigate(Letter(it)); dismiss() } }, enabled = state.editable) } }
                 "translate" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.translate_into), initialDetent = 1) { java.util.Locale.getAvailableLocales().filter { it.toLanguageTag() != "und" }.distinctBy { it.toLanguageTag() }.sortedBy { it.displayName }.forEach { locale -> RrListRow(locale.displayName, onClick = { vm.translateCopy(locale.toLanguageTag()) { copy, thread -> nav.navigate(Letter(copy)); nav.navigate(Assistant(state.letter?.sourceResumeId.orEmpty(), thread, prompt = "Translate this letter into " + locale.displayName + ". Propose the translation for review; keep facts and meaning.")); dismiss() } }) } }
                 "rename" -> LetterTextSheet(stringResource(CoreR.string.rename), state.letter?.name.orEmpty(), state, { text -> vm.metadata({ PatchCoverLetterRequest(expectedRevision = it.revision, name = text) }, dismiss) }, dismiss)

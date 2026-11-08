@@ -46,6 +46,17 @@ class ApplicationsLogicTest {
         assertTrue(state.rows!!.none { it.app.status == ApplicationStage.Closed })
     }
 
+    @Test fun boardRetainsClosedNavigationWithoutExposingFilteredRows() = runTest {
+        val model = vm()
+        val state = model.state.first { it.rows != null && it.lanes.isNotEmpty() }
+        val columns = boardColumns(state)
+        assertEquals(6, columns.size)
+        assertEquals(ApplicationStage.Closed, columns.last().stage)
+        assertTrue(columns.last().rows.isEmpty())
+        model.setFilters(ApplicationFilters(showClosed = true))
+        assertEquals(state.all.count { it.status == ApplicationStage.Closed }, boardColumns(model.state.first { it.filters.showClosed }).last().rows.size)
+    }
+
     @Test fun filtersCombine() = runTest {
         val vm = vm()
         vm.setFilters(ApplicationFilters(showClosed = true, stage = ApplicationStage.Closed))
@@ -91,7 +102,7 @@ class ApplicationsLogicTest {
 
     @Test fun calendarNavigationRetainsEventSpecificDestination() {
         val event = CalendarItem("event", StoryboardIds.lumen, "Lumen", "Interview", "2026-11-10T10:00:00Z", "interview")
-        assertEquals(me.rxresu.core.navigation.ApplicationWorkspace(StoryboardIds.lumen, me.rxresu.core.navigation.WorkspaceTab.Prepare), calendarDestination(event))
+        assertEquals(me.rxresu.core.navigation.Application(StoryboardIds.lumen), calendarDestination(event))
         assertEquals(me.rxresu.core.navigation.ApplicationWorkspace(StoryboardIds.lumen, me.rxresu.core.navigation.WorkspaceTab.Messages), calendarDestination(event.copy(kind = "follow-up")))
         assertEquals(me.rxresu.core.navigation.Offers, calendarDestination(event.copy(kind = "offer")))
     }

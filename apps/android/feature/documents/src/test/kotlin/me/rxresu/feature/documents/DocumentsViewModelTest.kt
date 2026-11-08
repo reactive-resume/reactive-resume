@@ -10,6 +10,8 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonArray
 import me.rxresu.core.data.FakeControls
 import me.rxresu.core.data.FakeMode
 import me.rxresu.core.data.FakeRepositories
@@ -110,24 +112,32 @@ class DocumentsViewModelTest {
         assertEquals("", DocumentActionsViewModel.suggestedName(null, null, null))
     }
 
-    @Test fun importReadsAPdfOnTheServerAndSummarises() = runTest {
+    @Test fun importReadsLocallyWithoutPreviewOrAiAndCreatePersistsParsedData() = runTest {
         val controls = FakeControls()
         val r = FakeRepositories(controls)
         val data = ApiJson.encodeToJsonElement(me.rxresu.core.network.generated.ResumeData.serializer(), r.resumes.getResume(StoryboardIds.resume).data)
-        controls.responses.value = mapOf(
-            "previewPdfImport" to kotlinx.serialization.json.JsonObject(mapOf("data" to data, "source" to ApiJson.parseToJsonElement("""{"lines":[],"links":[],"partial":false}"""))),
-        )
-        val vm = ImportViewModel(r.resumes, r.ai)
+        var localReads = 0
+        val resumes = object : me.rxresu.core.data.ResumeRepository by r.resumes {
+            override suspend fun previewPdfImport(file: me.rxresu.core.network.UploadPart, options: me.rxresu.core.network.RequestOptions): me.rxresu.core.network.generated.PreviewPdfImportResponse = error("Local import must never upload a PDF")
+        }
+        val ai = object : me.rxresu.core.data.AiRepository by r.ai {
+            override suspend fun parseResumePdf(body: me.rxresu.core.network.generated.CreatePdfParseRequest, options: me.rxresu.core.network.RequestOptions): me.rxresu.core.network.generated.CreatePdfParseResponse = error("Local import must never use AI")
+        }
+        val vm = ImportViewModel(resumes, ai, r.account.session) { _, stage -> localReads++; stage(1); stage(2); LocalImportResult(importData(r), 2) }
         vm.start(PickedFile("cv.pdf", 10, "application/pdf", ByteArray(10)))
         val done = vm.state.first { it.summary != null || it.problem != null }
         assertEquals(3, done.progress)
         assertEquals(data.jsonObject["basics"]!!.jsonObject["name"]!!.jsonPrimitive.content, done.summary!!.name)
         assertTrue(done.canCreate)
+        assertEquals(1, localReads)
+        assertEquals(2, done.file?.pages)
+        val id = vm.create()
+        assertEquals(done.summary.name, r.resumes.getResume(id).data.basics.name)
     }
 
     @Test fun exportsAreImportedAsTheyAreOnCreate() = runTest {
         val r = FakeRepositories()
-        val vm = ImportViewModel(r.resumes, r.ai)
+        val vm = ImportViewModel(r.resumes, r.ai, r.account.session) { _, _ -> LocalImportResult(importData(r)) }
         vm.start(PickedFile("linkedin.zip", 10, "application/zip", ByteArray(10)))
         assertTrue(vm.state.value.canCreate)
         val id = vm.create()
@@ -138,7 +148,7 @@ class DocumentsViewModelTest {
         val controls = FakeControls()
         val r = FakeRepositories(controls)
         controls.set("previewPdfImport", FakeMode.Error())
-        val vm = ImportViewModel(r.resumes, r.ai)
+        val vm = ImportViewModel(r.resumes, r.ai, r.account.session) { _, _ -> throw LocalImportException("unreadable") }
         vm.start(PickedFile("cv.pdf", 10, "application/pdf", ByteArray(10)))
         assertEquals(ImportProblem.Unreadable, vm.state.first { it.problem != null }.problem)
         vm.setMethod(ImportMethod.Ai)
@@ -152,7 +162,7 @@ class DocumentsViewModelTest {
         val controls = FakeControls()
         controls.set("listAiProviders", FakeMode.Empty)
         val r = FakeRepositories(controls)
-        val vm = ImportViewModel(r.resumes, r.ai)
+        val vm = ImportViewModel(r.resumes, r.ai, r.account.session) { _, _ -> error("Word requires AI") }
         vm.start(PickedFile("cv.docx", 10, null, ByteArray(10)))
         assertEquals(ImportProblem.WordNeedsAi, vm.state.first { it.problem != null }.problem)
     }
@@ -160,10 +170,12 @@ class DocumentsViewModelTest {
     @Test fun formatsAndLocale() {
         fun file(name: String, body: String = "") = PickedFile(name, 1, null, body.toByteArray())
         assertEquals(ImportFormat.Pdf, ImportViewModel.formatOf(file("a.PDF")))
+        assertEquals(ImportFormat.Pdf, ImportViewModel.formatOf(file("untyped", "%PDF-1.7")))
         assertEquals(ImportFormat.Word, ImportViewModel.formatOf(file("a.docx")))
         assertEquals(ImportFormat.LinkedIn, ImportViewModel.formatOf(file("export.zip")))
         assertEquals(ImportFormat.ReactiveResume, ImportViewModel.formatOf(file("a.json", """{"basics":{},"sections":{}}""")))
         assertEquals(ImportFormat.JsonResume, ImportViewModel.formatOf(file("a.json", """{"basics":{},"work":[]}""")))
+        assertEquals(ImportFormat.JsonResume, ImportViewModel.formatOf(file("untyped", """{"basics":{},"work":[]}""")))
         assertEquals(ImportFormat.Unsupported, ImportViewModel.formatOf(file("a.json", "not json")))
         assertEquals(ImportFormat.Unsupported, ImportViewModel.formatOf(file("a.png")))
         val localized = ImportViewModel.withLocale(ApiJson.parseToJsonElement("""{"metadata":{"page":{"locale":"en-US"}}}""").jsonObject, "pt-PT")
@@ -175,4 +187,13 @@ class DocumentsViewModelTest {
         assertEquals(27, daysLeft("2026-11-04T09:00:00Z", now))
         assertEquals(0, daysLeft("2026-09-01T09:00:00Z", now))
     }
+}
+
+/** Complete generated DTO fixture: storyboard skill entries intentionally omit write-only defaults. */
+internal suspend fun importData(r: me.rxresu.core.data.RrRepositories): JsonObject {
+    val full = kotlinx.serialization.json.Json(ApiJson) { encodeDefaults = true }
+    val sample = full.encodeToJsonElement(me.rxresu.core.network.generated.ResumeData.serializer(), r.resumes.getResume(StoryboardIds.resume).data).jsonObject
+    return JsonObject(sample + ("sections" to JsonObject(sample.getValue("sections").jsonObject.mapValues { (_, section) ->
+        JsonObject(section.jsonObject + ("items" to JsonArray(emptyList())))
+    })) + ("customSections" to JsonArray(emptyList())))
 }

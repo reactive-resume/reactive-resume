@@ -36,7 +36,7 @@ import me.rxresu.core.network.generated.TrashApplicationsRequest
 internal data class ApplicationFilters(val text: String = "", val tags: Set<String> = emptySet(), val needsYou: Boolean = false, val showClosed: Boolean = false, val stage: ApplicationStage? = null)
 
 /** One row: the application and its next step, worked out once. */
-internal data class Row(val app: Application, val step: ApplicationNextStep, val attention: Boolean)
+internal data class Row(val app: Application, val step: ApplicationNextStep, val attention: Boolean, val companyInitials: String? = null)
 
 internal data class ApplicationsState(
     val rows: List<Row>? = null,

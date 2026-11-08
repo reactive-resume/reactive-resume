@@ -66,15 +66,15 @@ internal fun CopyForJobForm(
 
     Column(modifier.verticalScroll(rememberScrollState()).padding(bottom = 16.dp)) {
         RrSectionHeader(stringResource(R.string.docs_start_from), topPadding = 0.dp)
-        RrListGroup {
+        RrListGroup(Modifier.padding(horizontal = 24.dp)) {
             resumes.forEach { RrChoiceRow(it.name, it.id == resumeId, { onDraft(draft.copy(resumeId = it.id)) }) }
         }
         RrSectionHeader(stringResource(R.string.docs_for_which_job))
-        RrListGroup {
+        RrListGroup(Modifier.padding(horizontal = 24.dp)) {
             applications.forEach { RrChoiceRow(stringResource(R.string.docs_copy_for_company, it.company, it.role), it.id == job, { onDraft(draft.copy(jobId = it.id)) }) }
             RrChoiceRow(stringResource(R.string.docs_add_a_job), newJob, { onDraft(draft.copy(jobId = NEW_JOB)) })
         }
-        Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (newJob) {
                 RrTextField(company, { onDraft(draft.copy(company = it)) }, Modifier.fillMaxWidth(), label = stringResource(R.string.docs_company))
                 RrTextField(role, { onDraft(draft.copy(role = it)) }, Modifier.fillMaxWidth(), label = stringResource(R.string.docs_role))

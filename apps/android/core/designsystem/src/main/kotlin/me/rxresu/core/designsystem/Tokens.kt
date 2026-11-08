@@ -127,6 +127,8 @@ object RrFixedColors {
     /** Abstract text lines on page thumbnails. */
     val thumbHeading = Color(0xFF2D3A4A)
     val thumbLine = Color(0xFFD3CFC7)
+    val thumbTemplateHeading = Color(0xFF1F2B3A)
+    val thumbTemplateLine = Color(0xFFC8CCD2)
     val thumbLetterHeading = Color(0xFF5B5B5B)
     val thumbLetterLine = Color(0xFFD3CFC7)
     /** Lock mark on a thumbnail: dark glyph on 92% paper. */
@@ -162,7 +164,7 @@ object RrType {
     // Mobile v2.1 title sizes
     val rootTitle = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 34.sp, lineHeight = 40.sp, letterSpacing = (-0.005).em))
     val pageTitle = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 28.sp, lineHeight = 34.sp))
-    val bigNumber = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 40.sp, lineHeight = 44.sp))
+    val bigNumber = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 40.sp, lineHeight = 44.sp, letterSpacing = (-0.4).sp))
     /** Dialog and sheet titles; empty-state headlines. */
     val sheetTitle = RrTextDefaults.merge(TextStyle(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, fontSize = 22.sp, lineHeight = 28.sp))
     /** Panel headings. */

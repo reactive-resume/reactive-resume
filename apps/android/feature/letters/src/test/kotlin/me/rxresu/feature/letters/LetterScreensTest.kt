@@ -30,4 +30,16 @@ class LetterScreensTest : RrScreenshotTest() {
     @Test fun designLight() = capture(LetterMode.Design, false)
     @Test fun designDark() = capture(LetterMode.Design, true)
     @Test fun largeWrite() = capture(LetterMode.Write, false, 2f)
+
+    private fun snapshot(dark: Boolean) {
+        val repositories = FakeRepositories()
+        try {
+            val version = runBlocking { repositories.letters.getCoverLetterVersion(StoryboardIds.lumenLetter, "letter-version-lumen") }
+            val date = java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy").withZone(repositories.time.timezone()).format(java.time.Instant.parse(version.createdAt))
+            val state = LetterState(snapshotVersionId = version.id, snapshotLabel = listOfNotNull(version.name, date).joinToString(" · "), draft = DraftState(version.readOnlyLetter()), loading = false)
+            captureScreen("L1-LetterSnapshot", dark) { LetterScreen(state, LetterMode.Write, false, {}, {}, {}, {}) }
+        } finally { repositories.close() }
+    }
+    @Test fun snapshotLight() = snapshot(false)
+    @Test fun snapshotDark() = snapshot(true)
 }

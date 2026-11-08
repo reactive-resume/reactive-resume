@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import java.time.Instant
@@ -168,7 +166,7 @@ fun TodayScreen(
     }
 }
 
-/** A bounded dashboard page: all section headings keep real layout positions beneath the shared dock. */
+/** A dashboard page: all section headings keep real layout positions beneath the shared dock. */
 @Composable
 private fun TodayContent(state: TodayUiState, now: Instant, format: TodayFormat, actions: TodayActions, remindersDenied: Boolean) {
     if (state.newAccount) {
@@ -194,10 +192,20 @@ private fun TodayContent(state: TodayUiState, now: Instant, format: TodayFormat,
         RrSectionHeader(stringResource(S.string.coming_up), actionLabel = stringResource(S.string.calendar), onAction = actions.onCalendar)
         RrListGroup { coming.forEachIndexed { index, entry -> ComingRow(entry, format, actions, index < coming.lastIndex) } }
     }
-    RrSectionHeader(stringResource(R.string.today_new_roles), count = state.newRoles.size.takeIf { it > 0 }?.let { stringResource(R.string.today_roles_today, it.toString()) })
+    var allRoles by remember { mutableStateOf(false) }
+    RrSectionHeader(stringResource(R.string.today_new_roles),
+        modifier = if (state.newRoles.isNotEmpty()) Modifier.clickable(role = androidx.compose.ui.semantics.Role.Button) { allRoles = true } else Modifier,
+        count = state.newRoles.size.takeIf { it > 0 }?.let { stringResource(R.string.today_roles_today, it.toString()) })
     if (state.newRoles.isEmpty()) NoNewRoles(state.discovery, now, format, actions)
     else RrListGroup(Modifier.animateContentSize(fold())) {
-        state.newRoles.forEachIndexed { index, role -> RoleRow(role, role.id in state.selectedRoles, state.selectedRoles.isNotEmpty(), actions, index < state.newRoles.lastIndex) }
+        state.newRoles.firstOrNull()?.let { role -> RoleRow(role, role.id in state.selectedRoles, state.selectedRoles.isNotEmpty(), actions, divider = false) }
+    }
+    if (allRoles) RrBottomSheet({ allRoles = false }, title = stringResource(R.string.today_new_roles), fitContent = true,
+        footer = if (state.selectedRoles.isEmpty()) null else { { SelectionBar(state.selectedRoles.size, actions, Modifier) } },
+    ) {
+        RrListGroup(Modifier.verticalScroll(rememberScrollState())) {
+            state.newRoles.forEachIndexed { index, role -> RoleRow(role, role.id in state.selectedRoles, state.selectedRoles.isNotEmpty(), actions, index < state.newRoles.lastIndex) }
+        }
     }
     if (state.recent.isNotEmpty()) {
         RrSectionHeader(stringResource(R.string.today_recent))
@@ -324,7 +332,7 @@ private fun ComingRow(entry: TodayEntry, format: TodayFormat, actions: TodayActi
 @Composable
 private fun RoleRow(role: Opportunity, selected: Boolean, selecting: Boolean, actions: TodayActions, divider: Boolean) {
     var open by remember { mutableStateOf(false) }
-    RrListRow(role.role, modifier = Modifier.semantics { if (selecting) this.selected = selected }, subtitle = listOfNotNull(role.company, role.location).joinToString(" · "), leading = { RrCompanyTile(role.company, content = role.company.take(2).uppercase()) }, selected = selected,
+    RrListRow(role.role, modifier = Modifier.semantics { if (selecting) this.selected = selected }, subtitle = listOfNotNull(role.company, role.location).joinToString(" · "), leading = { RrCompanyTile(role.company, content = role.company.split(Regex("\\s+")).mapNotNull { it.firstOrNull(Char::isLetterOrDigit) }.take(2).joinToString("").uppercase()) }, selected = selected,
         onClick = { if (selecting) actions.onToggleRole(role.id) else open = true }, onLongClick = { actions.onToggleRole(role.id) }, onLongClickLabel = stringResource(R.string.today_select_role, role.role), divider = divider, trailing = { RrRowCaret() })
     if (open) RrBottomSheet({ open = false }, title = role.role, fitContent = true) {
         RrListRow(role.company, subtitle = role.location)

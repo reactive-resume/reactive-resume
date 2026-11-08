@@ -10,6 +10,14 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.platform.LocalDensity
 
 /** Elevation levels from the design system. */
 enum class RrElevation {
@@ -50,4 +58,16 @@ fun Modifier.rrShadow(level: RrElevation, shape: Shape = RectangleShape): Modifi
         m = m.dropShadow(shape, Shadow(radius = l.blur, color = l.color, spread = l.spread, offset = DpOffset(0.dp, l.y)))
     }
     return m
+}
+
+/** Unbounded blur preserves the Gaussian tail that dropShadow's finite negative-spread bitmap clips. */
+@Composable
+internal fun BoxScope.RrPageShadow() {
+    val density = LocalDensity.current
+    for (layer in layers(RrElevation.Page, LocalRrColors.current.isDark)) {
+        // CSS blur is twice sigma; Android's Skia blur radius maps to sigma = radius * .57735 + .5px.
+        val radius = with(density) { ((layer.blur.toPx() / 2 - 0.5f) / 0.57735f).coerceAtLeast(0f).toDp() }
+        Box(Modifier.matchParentSize().offset(y = layer.y).padding(-layer.spread)
+            .blur(radius, edgeTreatment = BlurredEdgeTreatment.Unbounded).background(layer.color))
+    }
 }

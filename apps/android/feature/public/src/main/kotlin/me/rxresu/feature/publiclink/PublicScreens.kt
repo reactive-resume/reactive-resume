@@ -38,9 +38,8 @@ import me.rxresu.core.page.PageRenderer
 import me.rxresu.core.page.RenderedDocument
 
 @Composable internal fun PublicScreen(state: PublicState, link: String, renderer: PageRenderer, password: (String) -> Unit, retry: () -> Unit, back: () -> Unit, share: () -> Unit, download: () -> Unit, word: () -> Unit, edit: () -> Unit, browser: () -> Unit, comments: () -> Unit) {
-    // The bottom bar's surface runs under the gesture area; its content stays above it.
-    Column(Modifier.fillMaxSize().background(RrTheme.colors.bg).imePadding()) {
-        RrTopBar(link.removePrefix("https://"), actions = {
+    Column(Modifier.fillMaxSize().background(RrTheme.colors.sunken).imePadding()) {
+        RrTopBar(link.removePrefix("https://"), containerColor = RrTheme.colors.sunken, actions = {
             if (state.owner) RrButton(stringResource(R.string.public_edit_530164), edit, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small)
             if (state.feedback != null) RrIconButton(Icons.drawable.ic_ph_chat_circle, stringResource(R.string.public_comments_fce06e), comments)
             RrIconButton(Icons.drawable.ic_ph_share_network, stringResource(R.string.public_share_link_3c1362), share)
@@ -67,10 +66,11 @@ import me.rxresu.core.page.RenderedDocument
                 }
             }
         }
-        if (state.document != null && (state.resume?.showDownloadButtons == true || state.resume?.allowWordDownload == true)) RrFooterBar {
+        if (state.document != null && (state.resume?.showDownloadButtons == true || state.resume?.allowWordDownload == true)) RrFooterBar(applyBottomInset = false) {
             if (state.resume?.allowWordDownload == true) RrButton(stringResource(R.string.public_word_44363c), word, Modifier.weight(1f), variant = RrButtonVariant.Secondary, size = RrButtonSize.Large)
             if (state.resume?.showDownloadButtons == true) RrButton(stringResource(R.string.public_download_pdf_98e5ef), download, Modifier.weight(1f), size = RrButtonSize.Large, icon = Icons.drawable.ic_ph_download_simple)
-        } else Box(Modifier.rrNavigationBarsPadding())
+        }
+        Box(Modifier.rrNavigationBarsPadding())
     }
 }
 @Composable private fun publicProblem(problem: PublicProblem?): Pair<String, String> = when (problem) {
@@ -169,7 +169,7 @@ internal fun pdfMarkers(findings: List<CreatePdfCheckResponseTipsItem>, page: In
             val result = state.result
             if (result == null && state.selected == null) {
                 RrPageTitle(stringResource(R.string.public_ats_checker_6eb166), subtitle = stringResource(R.string.public_ats_intro))
-                RrHeroCard {
+                RrHeroCard(dashed = true) {
                     Column(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         RrIcon(Icons.drawable.ic_ph_file_pdf, null, size = 40.dp, tint = RrTheme.colors.ink3)
                         RrText(stringResource(R.string.public_choose_a_pdf_4d98a4), style = RrType.heading)

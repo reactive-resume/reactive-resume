@@ -117,17 +117,17 @@ fun RrContextChip(
             .then(if (leftOut) Modifier.rrDashedBorder(c.line2, RrRadius.sm) else Modifier.background(c.sunken))
             .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
             .then(if (leftOut) Modifier.semantics { contentDescription = leftOutLabel } else Modifier)
-            .padding(start = 8.dp, end = if (onRemove != null) 0.dp else 8.dp),
+            .padding(start = 8.dp, end = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (icon != null) RrIcon(icon, null, size = 14.dp, tint = c.ink2)
+        if (icon != null) RrIcon(icon, null, size = 16.dp, tint = c.ink2)
         RrText(text, style = ContextChipText, color = c.ink2, modifier = Modifier.padding(vertical = 4.dp))
         if (onRemove != null) {
             val label = stringResource(R.string.ds_remove_item, text)
             Box(
                 Modifier
-                    .size(26.dp)
+                    .size(16.dp)
                     .clickable(role = Role.Button, onClickLabel = label, onClick = onRemove)
                     .semantics { contentDescription = label },
                 contentAlignment = Alignment.Center,

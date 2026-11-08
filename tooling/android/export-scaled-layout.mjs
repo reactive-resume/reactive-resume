@@ -51,14 +51,58 @@ export function measureTransformedText({ element, frame, lines, original }) {
 	};
 }
 
+/** Direct text separated by a block child cannot share one contiguous line box. */
+export function measureDirectTextRanges({ element, frame }) {
+	const children = [...element.childNodes];
+	const nodes = children.filter((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+	if (nodes.length < 2) return null;
+	const between = children.slice(children.indexOf(nodes[0]) + 1, children.indexOf(nodes.at(-1)));
+	if (
+		!between.some((node) => node.nodeType === Node.ELEMENT_NODE && !getComputedStyle(node).display.startsWith("inline"))
+	)
+		return null;
+	const origin = frame.getBoundingClientRect();
+	const lineHeight = Number.parseFloat(getComputedStyle(element).lineHeight);
+	if (!(lineHeight > 0)) throw new Error("Direct text needs an explicit line height");
+	return nodes.map((node) => {
+		const range = document.createRange();
+		range.setStart(node, node.textContent.search(/\S/));
+		range.setEnd(node, node.textContent.trimEnd().length);
+		const rects = [...range.getClientRects()].filter((rect) => rect.width && rect.height);
+		if (!rects.length) throw new Error("Direct text range has no rendered lines");
+		const glyphs = range.getBoundingClientRect();
+		const first = rects[0];
+		const last = rects.at(-1);
+		return {
+			text: node.textContent.replaceAll("\u00a0", " ").replace(/\s+/g, " ").trim(),
+			lines: rects.length,
+			textBox: {
+				x: glyphs.x - origin.x,
+				y: first.y - origin.y - (lineHeight - first.height) / 2,
+				w: glyphs.width,
+				h: last.y - first.y + lineHeight,
+			},
+		};
+	});
+}
+
 const normalize = (text) => text.replaceAll("\u00a0", " ").replace(/\s+/g, " ").trim();
 const hash = (data) => createHash("sha256").update(data).digest("hex");
 const roundBox = (box) =>
 	Object.fromEntries(Object.entries(box).map(([key, value]) => [key, Math.round(value * 2) / 2]));
 
-async function standaloneHtml(bundle, id) {
+/** Explicit HTML line breaks are visible text separators, even though textContent omits them. */
+export function textWithExplicitBreaks(element) {
+	if (![...element.childNodes].some((node) => node.nodeName === "BR")) return null;
+	return [...element.childNodes].map((node) => (node.nodeName === "BR" ? "\n" : node.textContent)).join("");
+}
+
+export async function standaloneHtml(bundle, id) {
 	let html = await readFile(join(bundle, "design/source", `${id}.dc.html`), "utf8");
-	const css = await readFile(join(bundle, "design/source/rr-mobile.css"), "utf8");
+	const css = (await readFile(join(bundle, "design/source/rr-mobile.css"), "utf8")).replace(
+		/@font-face\s*\{[^}]*font-family:\s*"(?:Figtree Variable|Instrument Serif|Geist Mono Variable)";[^}]*\}/g,
+		"",
+	);
 	html = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "").replace(/<link\b[^>]*>/g, "");
 	html = html.replace(/<sc-for\b[^>]*>([\s\S]*?)<\/sc-for>/g, (_, body) =>
 		[
@@ -98,12 +142,14 @@ export async function exportScaledLayouts(bundle, output) {
 		for (const screen of manifest.filter((entry) => entry.light)) {
 			const source = await readFile(join(bundle, "design/layout", `${screen.id}.json`), "utf8");
 			const layout = JSON.parse(source);
-			const paperBox = layout.elements.find((element) => element.component === "Page")?.box;
-			if (!paperBox) continue;
 			await page.setContent(await standaloneHtml(bundle, screen.id));
 			await page.evaluate(() => document.fonts.ready);
 			const frame = await page.$('.scr[data-theme="light"]');
-			if (!frame) throw new Error(`Missing light frame: ${screen.id}`);
+			if (!frame) {
+				if (layout.elements.some((element) => element.component === "Page"))
+					throw new Error(`Missing light frame: ${screen.id}`);
+				continue;
+			}
 			const candidates = await frame.$$("*");
 			const metadata = await frame.evaluate((root) => {
 				const origin = root.getBoundingClientRect();
@@ -112,6 +158,10 @@ export async function exportScaledLayouts(bundle, output) {
 					return {
 						tag: node.tagName.toLowerCase(),
 						text: node.innerText ?? node.textContent,
+						directText: [...node.childNodes]
+							.filter((child) => child.nodeType === Node.TEXT_NODE)
+							.map((child) => child.textContent)
+							.join(""),
 						inPaper: !!node.closest(".paper, .pg, .mini"),
 						x: rect.x - origin.x,
 						y: rect.y - origin.y,
@@ -120,7 +170,33 @@ export async function exportScaledLayouts(bundle, output) {
 			});
 			const used = new Set();
 			const fields = [];
+			const replacements = [];
+			let nextNumber = Math.max(...layout.elements.map((element) => element.n)) + 1;
 			for (const element of layout.elements.filter((entry) => entry.text && entry.font)) {
+				const directIndex = metadata.findIndex(
+					(candidate) => candidate.tag === element.tag && normalize(candidate.directText) === normalize(element.text),
+				);
+				if (directIndex >= 0) {
+					const brokenText = await candidates[directIndex].evaluate(textWithExplicitBreaks);
+					if (brokenText != null && brokenText !== element.text) {
+						const after = { ...element, text: brokenText };
+						replacements.push({ n: element.n, before: element, after: [after] });
+						layout.elements.splice(layout.elements.indexOf(element), 1, after);
+						continue;
+					}
+					const ranges = await page.evaluate(measureDirectTextRanges, { element: candidates[directIndex], frame });
+					if (ranges) {
+						const after = ranges.map((range, index) => ({
+							...element,
+							...range,
+							n: index ? nextNumber++ : element.n,
+							textBox: roundBox(range.textBox),
+						}));
+						replacements.push({ n: element.n, before: element, after });
+						layout.elements.splice(layout.elements.indexOf(element), 1, ...after);
+						continue;
+					}
+				}
 				const matches = [];
 				for (let index = 0; index < candidates.length; index++) {
 					if (used.has(index)) continue;
@@ -149,10 +225,16 @@ export async function exportScaledLayouts(bundle, output) {
 				if (JSON.stringify(before) !== JSON.stringify(after))
 					fields.push({ n: element.n, text: element.text, scale: measured.scale, before, after });
 			}
-			if (fields.length) {
+			if (fields.length || replacements.length) {
 				const generated = `${JSON.stringify(layout, null, 1)}\n`;
 				await writeFile(join(output, `${screen.id}.json`), generated);
-				changes.push({ id: screen.id, originalSha256: hash(source), generatedSha256: hash(generated), fields });
+				changes.push({
+					id: screen.id,
+					originalSha256: hash(source),
+					generatedSha256: hash(generated),
+					fields,
+					...(replacements.length ? { replacements } : {}),
+				});
 			}
 		}
 	} finally {

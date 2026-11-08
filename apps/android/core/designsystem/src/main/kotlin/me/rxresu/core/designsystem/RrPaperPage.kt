@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -45,13 +46,15 @@ fun RrPaperPage(
         modifier
             .fillMaxWidth()
             .aspectRatio(RrLayout.PAGE_ASPECT)
-            .rrDesignTag(DesignTag(component = "Page", radius = 0.dp, bgName = "paper", raster = rememberRasterInfo(page)))
-            .rrShadow(RrElevation.Page)
-            .background(RrFixedColors.paper)
+            .rrDesignTag(DesignTag(component = "Page", radius = 0.dp, bgName = "#ffffff", raster = rememberRasterInfo(page)))
+            .then(if (android.os.Build.VERSION.SDK_INT < 31) Modifier.rrShadow(RrElevation.Page) else Modifier)
             .semantics { if (contentDescription != null) this.contentDescription = contentDescription },
     ) {
+        if (android.os.Build.VERSION.SDK_INT >= 31) RrPageShadow()
+        Box(Modifier.fillMaxSize().background(RrFixedColors.paper)) {
         if (page != null) Image(page, null, Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds) else placeholder()
         overlay?.invoke(this)
+        }
     }
 }
 
@@ -66,22 +69,30 @@ fun RrPageThumbnail(
     letter: Boolean = false,
     locked: Boolean = false,
     contentDescription: String? = null,
+    sidebar: Boolean = false,
+    selected: Boolean = false,
 ) {
+    val accent = RrTheme.colors.accent
+    val line = RrTheme.colors.line
     Box(
         modifier
             .aspectRatio(RrLayout.PAGE_ASPECT)
-            .rrDesignTag(DesignTag(component = "PageThumbnail", radius = RrRadius.paper, bgName = "paper", raster = rememberRasterInfo(page)))
+            .rrDesignTag(DesignTag(component = "PageThumbnail", radius = RrRadius.paper, bgName = "#ffffff", raster = rememberRasterInfo(page)))
+            .drawWithContent {
+                drawContent()
+                val stroke = if (selected) 2.dp.toPx() else 1.dp.toPx()
+                drawRoundRect(if (selected) accent else line, Offset(-stroke / 2, -stroke / 2), Size(size.width + stroke, size.height + stroke), CornerRadius(RrRadius.paper.toPx() + stroke / 2), style = Stroke(stroke))
+            }
             .rrShadow(RrElevation.Level1, androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper))
             .clip(androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper))
             .background(RrFixedColors.paper)
-            .border(1.dp, RrTheme.colors.line, androidx.compose.foundation.shape.RoundedCornerShape(RrRadius.paper))
             .semantics { if (contentDescription != null) this.contentDescription = contentDescription },
     ) {
         if (page != null) {
             // Full width, top aligned: a Letter page is wider than the A4 frame, and cropping it would cut the margins and text.
             Image(page, null, Modifier.fillMaxSize(), alignment = Alignment.TopCenter, contentScale = ContentScale.FillWidth)
         } else {
-            Canvas(Modifier.fillMaxSize()) { thumbLines(letter) }
+            Canvas(Modifier.fillMaxSize()) { thumbLines(letter, sidebar) }
         }
         if (locked) {
             Box(
@@ -116,21 +127,22 @@ fun PaperLines(modifier: Modifier = Modifier) {
     Canvas(modifier) { thumbLines(letter = false) }
 }
 
-private fun DrawScope.thumbLines(letter: Boolean) {
+private fun DrawScope.thumbLines(letter: Boolean, sidebar: Boolean = false) {
     val w = size.width
     val h = size.height
     if (letter) {
         drawRect(RrFixedColors.thumbLetterHeading, Offset(w * 0.12f, h * 0.10f), Size(w * 0.30f, h * 0.03f))
     } else {
-        drawRect(RrFixedColors.thumbHeading, Offset(w * 0.12f, h * 0.08f), Size(w * 0.46f, h * 0.05f))
+        drawRect(if (sidebar) RrFixedColors.thumbTemplateHeading else RrFixedColors.thumbHeading, Offset(w * 0.12f, h * 0.08f), Size(w * 0.46f, h * 0.05f))
     }
     val top = if (letter) 0.28f else 0.18f
-    val line = if (letter) 0.018f else 0.022f
-    val pitch = if (letter) 0.046f else 0.054f
+    val line = (if (letter) 0.018f else 0.022f) * if (sidebar) 0.74f else 1f
+    val pitch = (if (letter) 0.046f else 0.054f) * if (sidebar) 0.74f else 1f
     var y = h * top
-    val color = if (letter) RrFixedColors.thumbLetterLine else RrFixedColors.thumbLine
+    val left = if (sidebar) 0.40f else 0.12f
+    val color = if (letter) RrFixedColors.thumbLetterLine else if (sidebar) RrFixedColors.thumbTemplateLine.copy(alpha = 0.9f) else RrFixedColors.thumbLine
     while (y < h * 0.92f) {
-        drawRect(color, Offset(w * 0.12f, y), Size(w * 0.76f, h * line))
+        drawRect(color, Offset(w * left, y), Size(w * (0.88f - left), h * line))
         y += h * pitch
     }
 }

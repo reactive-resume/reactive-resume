@@ -14,12 +14,13 @@ import me.rxresu.core.network.generated.*
 import me.rxresu.core.page.*
 
 internal data class LetterState(
+    val snapshotVersionId: String? = null, val snapshotLabel: String? = null,
     val aiDraft: LetterAiDraft? = null, val draft: DraftState<CoverLetter> = DraftState(null), val loading: Boolean = true, val failed: Boolean = false, val busy: Boolean = false,
     val resumePage: ImageBitmap? = null, val designPage: ImageBitmap? = null, val resumePageFailed: Boolean = false, val blocks: List<LetterBlock> = emptyList(), val pages: List<ImageBitmap> = emptyList(), val pageFailed: Boolean = false, val pageCount: Int? = null,
     val resumes: List<ResumeSummary> = emptyList(), val applications: List<Application> = emptyList(), val versions: List<LetterVersionSummary> = emptyList(),
     /** The connection a draft goes to, named in the disclosure; each draft request carries its approval. */
     val provider: TestAiProviderResponse? = null,
-) { val page get() = pages.firstOrNull(); val letter get() = draft.document; val editable get() = letter != null && letter?.isLocked != true && !busy && !draft.locked }
+) { val page get() = pages.firstOrNull(); val letter get() = draft.document; val editable get() = snapshotVersionId == null && letter != null && letter?.isLocked != true && !busy && !draft.locked }
 
 internal class LetterViewModel(private val repositories: RrRepositories, private val id: String, private val recovery: LetterDraftRecovery? = null, private val io: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     private val mutable = MutableStateFlow(LetterState())

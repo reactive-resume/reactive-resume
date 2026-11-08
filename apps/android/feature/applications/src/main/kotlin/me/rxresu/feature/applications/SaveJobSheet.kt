@@ -28,6 +28,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -35,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import java.time.LocalDate
 import java.time.ZoneOffset
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -48,6 +52,15 @@ import me.rxresu.core.data.ApplicationsRepository
 import me.rxresu.core.data.DocumentsRepository
 import me.rxresu.core.data.LocalRepositories
 import me.rxresu.core.data.TimeSource
+import me.rxresu.core.data.ResumeRepository
+import me.rxresu.core.auth.AuthSession
+import me.rxresu.core.database.SaveStatus
+import me.rxresu.core.navigation.SaveJob
+import me.rxresu.core.navigation.Builder
+import me.rxresu.core.network.RequestOptions
+import me.rxresu.core.network.generated.CopyResumeForJobRequest
+import me.rxresu.core.network.generated.CopyResumeForJobRequestApplication
+import me.rxresu.core.network.generated.PatchApplicationRequest
 import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as D
 import me.rxresu.core.designsystem.RrBottomSheet
@@ -138,6 +151,10 @@ internal class SaveJobViewModel(
     val time: TimeSource,
     signedIn: Boolean,
     initialUrl: String?,
+    private val source: SaveJob = SaveJob(),
+    private val resumes: ResumeRepository? = null,
+    private val auth: AuthSession? = null,
+    private val savedState: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
     private val _state = MutableStateFlow(SaveJobState(signedIn = signedIn, appliedOn = time.today()))
     val state: StateFlow<SaveJobState> = _state.asStateFlow()
@@ -197,14 +214,46 @@ internal class SaveJobViewModel(
         _state.update { it.copy(searching = false, results = found ?: it.results, searchFailed = found == null) }
     }
 
-    /** Saves and returns the new application's id, or null (the sheet keeps every field). */
-    suspend fun save(): String? {
+    /** Returns the job ID, or the source resume's new copy ID; failure keeps every field. */
+    suspend fun save(existingApplicationId: String? = null): String? {
         val s = _state.value
-        if (!s.canSave) return null
+        if (s.saving || (existingApplicationId == null && !s.canSave)) return null
         _state.update { it.copy(saving = true, saveFailed = false) }
         val sent = s.stage != StartStage.Saved
         return try {
-            apps.createApplication(
+            if (source.sourceResumeId != null) {
+                checkOwner()
+                val resumeId = requireNotNull(source.sourceResumeId)
+                val draft = requireNotNull(resumes).openDraft(resumeId)
+                draft.flush()
+                val saved = kotlinx.coroutines.withTimeout(10_000) { draft.state.first { it.status != SaveStatus.Saving } }
+                check(saved.status == SaveStatus.Saved && saved.document?.id == resumeId)
+                checkOwner()
+                // Keep the request ID across failed responses and restored screens; the API rejects changed retry inputs.
+                val newId = savedState.get<String>("copy-id") ?: java.util.UUID.randomUUID().toString().also { savedState["copy-id"] = it }
+                val id = documents.copyResumeForJob(CopyResumeForJobRequest(
+                    resumeId = resumeId, newId = newId, applicationId = existingApplicationId,
+                    application = if (existingApplicationId != null) null else CopyResumeForJobRequestApplication(
+                        role = s.role.trim(), company = s.company.trim(), location = s.location.trim().ifEmpty { null },
+                        sourceUrl = s.parsed?.sourceUrl ?: s.input.trim().takeIf { s.isLink },
+                        jobDescription = s.parsed?.jobDescription?.ifBlank { null } ?: s.input.trim().takeIf { !s.isLink && it.isNotEmpty() },
+                        postingSource = s.parsed?.postingSource,
+                    ),
+                ), RequestOptions(accountScope = source.sourceAccountScope))
+                checkOwner()
+                if (existingApplicationId == null) {
+                    val applicationId = requireNotNull(resumes.getResume(id, RequestOptions(accountScope = source.sourceAccountScope)).applicationId)
+                    checkOwner()
+                    apps.patchApplication(applicationId, PatchApplicationRequest(
+                        salary = s.salary.trim().ifEmpty { null }, requirements = s.parsed?.requirements,
+                        status = s.stage.stage, stageEnteredAt = if (sent) s.appliedOn?.toString() else null,
+                        resumeId = if (sent) s.resumeId ?: id else null, coverLetterId = if (sent) s.letterId else null,
+                    ), RequestOptions(accountScope = source.sourceAccountScope))
+                    checkOwner()
+                }
+                _state.update { it.copy(saving = false) }
+                id
+            } else apps.createApplication(
                 CreateApplicationRequest(
                     role = s.role.trim(),
                     company = s.company.trim(),
@@ -227,14 +276,19 @@ internal class SaveJobViewModel(
             null
         }
     }
+
+    private fun checkOwner() {
+        val owner = auth?.state?.value as? SessionState.SignedIn
+        check(owner != null && owner.accountScope == source.sourceAccountScope)
+    }
 }
 
 @Composable
-internal fun SaveJobRoute(url: String?, nav: NavController) {
+internal fun SaveJobRoute(route: SaveJob, nav: NavController) {
     val repos = LocalRepositories.current
     val session by repos.authSession.state.collectAsStateWithLifecycle()
     val signedIn = session is SessionState.SignedIn
-    val vm = viewModel(key = "save-job") { SaveJobViewModel(repos.applications, repos.documents, repos.time, signedIn, url) }
+    val vm = viewModel(key = "save-job") { SaveJobViewModel(repos.applications, repos.documents, repos.time, signedIn, route.url, route, repos.resumes, repos.authSession, createSavedStateHandle()) }
     val state by vm.state.collectAsStateWithLifecycle()
     val toasts = LocalToasts.current
     val haptics = rememberRrHaptics()
@@ -250,14 +304,17 @@ internal fun SaveJobRoute(url: String?, nav: NavController) {
         onRead = { vm.read(it) },
         onChange = vm::update,
         onSearch = vm::search,
-        onOpenTracked = { id -> nav.popBackStack(); nav.navigate(ApplicationDest(id)) },
+        onOpenTracked = { id ->
+            if (route.sourceResumeId == null) { nav.popBackStack(); nav.navigate(ApplicationDest(id)) }
+            else scope.launch { vm.save(id)?.let { copy -> nav.popBackStack(); nav.navigate(Builder(copy)) } }
+        },
         onOpenApp = { nav.popBackStack(); nav.navigate(Welcome) },
         onSave = { prepare ->
             scope.launch {
                 val id = vm.save() ?: return@launch
                 haptics(RrHaptic.Success)
                 nav.popBackStack()
-                nav.navigate(if (prepare) NewDocument(copyForApplicationId = id) else ApplicationDest(id))
+                nav.navigate(if (route.sourceResumeId != null) Builder(id) else if (prepare) NewDocument(copyForApplicationId = id) else ApplicationDest(id))
                 toasts.post(added)
             }
         },
@@ -320,6 +377,7 @@ internal fun SaveJobSheet(
                     leadingIcon = D.drawable.ic_ph_link_simple,
                     ltr = state.isLink,
                     mono = state.isLink,
+                    textStyle = if (state.isLink) RrType.mono.copy(fontSize = 14.sp, lineHeight = 22.sp) else null,
                     singleLine = state.isLink || state.input.isEmpty(),
                     trailing = if (state.input.isNotBlank() && !state.reading && state.outcome == ReadOutcome.None) ({ RrButton(stringResource(S.string.read_posting), { onRead(false) }, variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small) }) else null,
                 )

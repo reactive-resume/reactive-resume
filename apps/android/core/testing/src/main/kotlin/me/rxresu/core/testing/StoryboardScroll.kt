@@ -33,7 +33,12 @@ fun View.scrollStoryboardToEnd(settle: () -> Unit): StoryboardScrollResult {
             ?: error("Vertical scroll viewport has no ScrollBy action")
         check(action(0f, node.boundsInRoot.height)) { "Vertical ScrollBy action was rejected" }
         settle()
-        check(range.value() > offset) { "Vertical ScrollBy did not advance from $offset; settle must finish pending scroll frames" }
+        val updated = verticalScrollNodes().singleOrNull { it.id == id }
+            ?: error("Vertical scroll viewport disappeared after scrolling")
+        val current = requireNotNull(updated.config.getOrNull(SemanticsProperties.VerticalScrollAxisRange))
+        check(current.value() > offset) {
+            "Vertical ScrollBy did not advance from $offset/$maximum to ${current.value()}/${current.maxValue()}; viewport=$id ${updated.boundsInRoot}, reverse=${current.reverseScrolling}"
+        }
     }
 }
 

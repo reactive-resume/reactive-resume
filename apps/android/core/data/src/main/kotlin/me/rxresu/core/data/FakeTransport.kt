@@ -52,7 +52,19 @@ internal class FakeTransport(val controls: FakeControls,private val time: TimeSo
     internal var state: JsonObject=ApiJson.parseToJsonElement(requireNotNull(javaClass.classLoader?.getResourceAsStream("storyboard.json")) { "Storyboard fixture missing." }.bufferedReader().use { it.readText() }).jsonObject
         private set
     private val versions=mutableMapOf<String,MutableList<JsonObject>>()
+    private val jobCopies=mutableMapOf<String,Pair<JsonObject,String>>()
     private val values=(state["responses"] as? JsonObject)?.toMutableMap() ?: mutableMapOf<String,JsonElement>()
+    init {
+        // Sent letters freeze the initial server fixture, before any live draft mutation.
+        rows("applications").forEach { app ->
+            val letterId=app.text("coverLetterId")
+            val versionId=app.text("sentCoverLetterVersionId")
+            if(letterId!=null && versionId!=null) {
+                val letter=find("letters",letterId)
+                versions["letters:$letterId"]=mutableListOf(letter.with("id" to JsonPrimitive(versionId),"name" to JsonPrimitive("Sent to " + app.text("company")),"kind" to JsonPrimitive("sent"),"coverLetterId" to JsonPrimitive(letterId),"snapshot" to letter,"data" to letter,"createdAt" to (app["appliedAt"] ?: letter.getValue("updatedAt"))))
+            }
+        }
+    }
     private fun now()=time.now().plusMillis(++sequence).toString()
     private fun rows(key: String)=(state[key] as? JsonArray).orEmpty().map { it.jsonObject }
     private fun setRows(key: String,rows: List<JsonObject>) { state=state.with(key to JsonArray(rows)) }
@@ -138,7 +150,12 @@ internal class FakeTransport(val controls: FakeControls,private val time: TimeSo
             "setDefaultAiProvider" -> { setRows("providers",rows("providers").map { it.with("isDefault" to JsonPrimitive(it.text("id")==id)) });return find("providers",id!!) }
             "testAiProvider","createAiProviderTest" -> { val provider=find("providers",id!!).with("testStatus" to JsonPrimitive("success"),"testError" to JsonNull);put("providers",provider);return patch(sample(op),provider) }
             "getResumeStatistics" -> return patch(sample(op),buildJsonObject { put("isPublic",true);put("views",128);put("downloads",14) })
-            "getResumeDailyStatistics" -> return JsonArray((0 until 30).map { day -> buildJsonObject { put("date",time.today().minusDays((29-day).toLong()).toString());put("views",if(day<8) 5 else 4);put("downloads",if(day<14) 1 else 0) } })
+            "getResumeDailyStatistics" -> {
+                val heights = listOf(20,15,30,25,10,35,45,30,20,25,55,100,70,40,30,20,15,35,25,45,30,15,20,40)
+                val views = heights.map { it*128.0/heights.sum() }.toMutableList()
+                views[views.lastIndex] = 128.0-views.dropLast(1).sum()
+                return JsonArray(views.mapIndexed { day, count -> buildJsonObject { put("date",time.today().minusDays((views.lastIndex-day).toLong()).toString());put("views",count);put("downloads",if(day<14) 1 else 0) } })
+            }
             "getApplicationStats" -> return buildJsonObject {
                 val apps=rows("applications").filter { it["trashedAt"]==null||it["trashedAt"]==JsonNull }
                 put("total",apps.size)
@@ -168,9 +185,32 @@ internal class FakeTransport(val controls: FakeControls,private val time: TimeSo
             "listResumeTags","listApplicationTags" -> return JsonArray(rows(if(op=="listResumeTags") "resumes" else "applications").flatMap { (it["tags"] as? JsonArray).orEmpty() }.distinct())
             "suggestDuplicateDocumentName" -> return JsonPrimitive(docs().first { it.text("id")==id }.text("name")+" (copy)")
             "copyResumeForJob","createDocumentCopy" -> {
+                val retryId=b.text("newId")
+                val requestedJob=b["application"] as? JsonObject
+                val existingJob=b.text("applicationId")?.let { find("applications",it).also { job ->
+                    if(job["trashedAt"]!=null && job["trashedAt"]!=JsonNull) throw ApiException(404,"NOT_FOUND","This job is unavailable.")
+                } }
+                if(existingJob!=null && requestedJob!=null) throw ApiException(400,"BAD_REQUEST","Choose one job.")
+                retryId?.let { key -> jobCopies[key]?.let { (request,jobId) ->
+                    if(request!=b) throw ApiException(409,"CONFLICT","This copy request changed.")
+                    val copy=find("resumes",key)
+                    val job=find("applications",jobId)
+                    if(copy.text("applicationId")!=jobId || (copy["trashedAt"]!=null && copy["trashedAt"]!=JsonNull) || (job["trashedAt"]!=null && job["trashedAt"]!=JsonNull)) throw ApiException(409,"CONFLICT","The linked job changed.")
+                    return JsonPrimitive(key)
+                } }
                 val original=find("resumes",b.text("resumeId") ?: b.text("id")!!)
-                val copyId="resume-copy-${++sequence}"
-                put("resumes",original.with("id" to JsonPrimitive(copyId),"name" to (b["name"] ?: JsonPrimitive(original.text("name")+" (copy)")),"applicationId" to b["applicationId"],"isLocked" to JsonPrimitive(false),"isPublic" to JsonPrimitive(false)))
+                if(original["trashedAt"]!=null && original["trashedAt"]!=JsonNull) throw ApiException(404,"NOT_FOUND","This resume is unavailable.")
+                if(retryId!=null && (rows("resumes")+rows("applications")).any { it.text("id")==retryId }) throw ApiException(409,"CONFLICT","This ID is already used.")
+                val copyId=retryId ?: "resume-copy-${++sequence}"
+                val jobId=existingJob?.text("id") ?: requestedJob?.let { fields ->
+                    val jobId="application-copy-${++sequence}"
+                    val base=sample("getApplication").jsonObject
+                    put("applications",patch(base,fields.with("id" to JsonPrimitive(jobId),"resumeId" to JsonPrimitive(copyId),"status" to JsonPrimitive("saved"),"trashedAt" to JsonNull,"createdAt" to JsonPrimitive(now()),"updatedAt" to JsonPrimitive(now()),"activity" to JsonArray(emptyList()),"salary" to JsonNull,"coverLetterId" to JsonNull,"sentResumeVersionId" to JsonNull)).jsonObject)
+                    jobId
+                }
+                put("resumes",original.with("id" to JsonPrimitive(copyId),"name" to (b["name"] ?: JsonPrimitive(original.text("name")+" (copy)")),"applicationId" to (jobId?.let(::JsonPrimitive) ?: JsonNull),"isLocked" to JsonPrimitive(false),"isPublic" to JsonPrimitive(false)))
+                if(existingJob!=null && existingJob["sentResumeVersionId"] in listOf(null,JsonNull) && (existingJob.text("resumeId")==null || existingJob.text("status")=="saved")) put("applications",existingJob.with("resumeId" to JsonPrimitive(copyId)))
+                if(retryId!=null && jobId!=null) jobCopies[retryId]=b to jobId
                 return JsonPrimitive(copyId)
             }
             "getApplicationLanes" -> return values["lanes"] ?: buildJsonObject { put("revision",1);put("lanes",JsonArray(listOf("saved","applied","screening","interview","offer","closed").mapIndexed { index,stage -> buildJsonObject { put("id","lane-$stage");put("category",stage);put("label",stage.replaceFirstChar(Char::uppercase));put("systemKey",stage);put("closedReason",JsonNull);put("color","#337344");put("position",index);put("sortOrder",index);put("retiredAt",JsonNull) } })) }
@@ -305,7 +345,7 @@ internal class FakeTransport(val controls: FakeControls,private val time: TimeSo
         val versionId=request.pathParams["versionId"]
         return when {
             op.startsWith("list") -> JsonArray(rows)
-            op.startsWith("create") && !op.contains("Restoration") -> find(table,id).with("id" to JsonPrimitive("version-${++sequence}"),"label" to b["label"],"name" to b["name"],"kind" to JsonPrimitive("named"),"snapshot" to find(table,id),"resumeId" to JsonPrimitive(id),"coverLetterId" to JsonPrimitive(id)).also { rows+=it }
+            op.startsWith("create") && !op.contains("Restoration") -> find(table,id).with("id" to JsonPrimitive("version-${++sequence}"),"label" to b["label"],"name" to b["name"],"kind" to JsonPrimitive("named"),"snapshot" to find(table,id),"data" to (find(table,id)["data"] ?: find(table,id)),"resumeId" to JsonPrimitive(id),"coverLetterId" to JsonPrimitive(id)).also { rows+=it }
             op.startsWith("rename") -> rows.first { it.text("id")==versionId }.with(*b.toList().toTypedArray()).also { next -> rows[rows.indexOfFirst { it.text("id")==versionId }]=next }
             op.startsWith("delete") -> { rows.removeAll { it.text("id")==versionId };JsonNull }
             op.startsWith("restore") || op.contains("Restoration") -> { val version=rows.first { it.text("id")==versionId };val snapshot=(version["snapshot"] as? JsonObject) ?: version;put(table,snapshot.with("id" to JsonPrimitive(id),"updatedAt" to JsonPrimitive(now())));find(table,id) }

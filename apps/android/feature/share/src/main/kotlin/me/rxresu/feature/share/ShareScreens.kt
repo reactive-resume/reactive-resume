@@ -28,7 +28,7 @@ import me.rxresu.core.strings.R as CoreR
 import me.rxresu.core.network.generated.*
 
 internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visitors, Versions, Publish }
-@Composable internal fun ShareContent(state: ShareState, modifier: Modifier = Modifier, action: (ShareAction) -> Unit) {
+@Composable internal fun ShareContent(state: ShareState, modifier: Modifier = Modifier, export: ExportState = ExportState(), action: (ShareAction) -> Unit) {
     val c = RrTheme.colors
     val resume = state.resume
     var linkActions by remember { mutableStateOf(false) }
@@ -44,9 +44,10 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
                         RrText(state.filename + ".pdf", style = RrType.label, maxLines = 1)
                         RrText(pluralStringResource(R.plurals.share_page_format, state.pageCount, state.pageCount, resume.data.metadata.page.format.wireValue.uppercase()), style = RrType.ui, color = c.ink3)
                     }
-                    RrButton(stringResource(CoreR.string.share_pdf), { action(ShareAction.Pdf) }, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_share_network)
+                    RrButton(stringResource(if (export.busy) CoreR.string.preparing else CoreR.string.share_pdf), { action(ShareAction.Pdf) }, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_share_network, loading = export.busy)
                 }
             }
+            if (export.failed) RrCallout(stringResource(CoreR.string.download_failed_try_again), tone = RrTone.Danger, actionLabel = stringResource(CoreR.string.try_again), onAction = { action(ShareAction.Pdf) })
         }
         RrText(stringResource(R.string.other_formats), Modifier.padding(horizontal = 24.dp, vertical = 12.dp).clickable { action(ShareAction.Formats) }, style = RrType.textLink, color = c.accentText)
         RrSectionHeader(stringResource(CoreR.string.web_page), topPadding = 20.dp)
@@ -64,7 +65,8 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
             RrListRow(stringResource(R.string.p4_visitors_and_feedback), subtitle = stringResource(R.string.share_activity, pluralStringResource(R.plurals.views_month, state.views.toInt(), state.views), pluralStringResource(R.plurals.feedback_comments, state.links.sumOf { it.openCommentCount }.toInt(), state.links.sumOf { it.openCommentCount })), onClick = { action(ShareAction.Visitors) }, trailing = { RrRowCaret() })
         }
         RrSectionHeader(stringResource(R.string.p4_versions))
-        RrListRow(stringResource(R.string.p4_versions), subtitle = state.versions.firstOrNull { it.name != null }?.name, onClick = { action(ShareAction.Versions) }, trailing = { RrRowCaret() })
+        val named = state.versions.filter { !it.name.isNullOrBlank() }.maxByOrNull { it.createdAt }
+        RrListRow(stringResource(R.string.p4_versions), subtitle = named?.let { "${it.name} · ${feedbackDate(it.createdAt)}" }, onClick = { action(ShareAction.Versions) }, trailing = { RrRowCaret() })
         if (state.failed) Failure(action = { action(ShareAction.Visitors) })
     }
     if (linkActions) RrBottomSheet({ linkActions = false }, title = state.url, fitContent = true) {
@@ -157,20 +159,24 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
             if (state.format == FileFormat.Pair) RrText(stringResource(R.string.p4_two_pdfs_named_to_match), Modifier.padding(horizontal = 24.dp, vertical = 8.dp), style = RrType.ui, color = RrTheme.colors.ink3)
         }
         RrListGroup(Modifier.selectableGroup()) {
-            val formats = if (state.format == FileFormat.Pair) listOf(FileFormat.Pair) else listOf(FileFormat.Pdf, FileFormat.Word, FileFormat.Text, FileFormat.Json) + listOfNotNull(FileFormat.OpenDocument.takeIf { more })
+            val formats = if (state.format == FileFormat.Pair) listOf(FileFormat.Pair) else listOf(FileFormat.Pdf, if (state.format == FileFormat.OpenDocument) FileFormat.OpenDocument else FileFormat.Word, FileFormat.Text, FileFormat.Json)
             formats.forEach { format ->
                 val label = when (format) { FileFormat.Pair -> stringResource(R.string.p4_resume_letter_2_files); FileFormat.Pdf -> stringResource(R.string.p4_pdf); FileFormat.Word -> stringResource(CoreR.string.word); FileFormat.OpenDocument -> stringResource(CoreR.string.opendocument); FileFormat.Text -> stringResource(R.string.plain_text); FileFormat.Json -> stringResource(R.string.json_backup) }
                 val helper = when (format) { FileFormat.Pair -> stringResource(R.string.p4_two_pdfs_named_to_match); FileFormat.Pdf -> stringResource(R.string.p4_best_for_applying); FileFormat.Word -> stringResource(R.string.word_hint); FileFormat.OpenDocument -> stringResource(R.string.open_document_hint); FileFormat.Text -> stringResource(R.string.text_hint); FileFormat.Json -> stringResource(R.string.json_hint) }
                 val offline = if (state.offline) stringResource(when (format) { FileFormat.Json -> R.string.p4_offline_json; FileFormat.Pdf, FileFormat.Pair -> R.string.p4_offline_pdf; else -> R.string.p4_offline_server_format }) else null
-                RrOptionRow(label, state.format == format, { onFormat(format) }, helper = listOfNotNull(offline, helper).joinToString("\n"), enabled = !state.busy, divider = format != formats.last())
+                RrOptionRow(label, state.format == format, { if (format == FileFormat.Word || format == FileFormat.OpenDocument) more = true else onFormat(format) }, helper = listOfNotNull(offline, helper).joinToString("\n"), enabled = !state.busy, divider = format != formats.last())
             }
         }
-        RrTextField(state.name, onName, Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp), label = stringResource(CoreR.string.file_name), enabled = !state.busy, trailing = { RrText(".${state.format.extension}", style = RrType.mono, color = RrTheme.colors.ink3) })
-        // OpenDocument stays reachable below the primary formats without crowding the fixed sheet.
-        RrButton(stringResource(R.string.more_formats), { more = !more }, Modifier.padding(horizontal = 24.dp), variant = RrButtonVariant.GhostAccent, size = RrButtonSize.Small)
+        RrTextField(state.name, onName, Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp), label = stringResource(CoreR.string.file_name), enabled = !state.busy, trailing = { RrText(".${state.format.extension}", style = RrType.mono.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Medium), color = RrTheme.colors.ink3) })
         if (state.failed) {
             RrCallout(stringResource(CoreR.string.download_failed_try_again), tone = RrTone.Danger)
             if (state.format != FileFormat.Pdf) RrButton(stringResource(CoreR.string.download_pdf_instead), { onFormat(FileFormat.Pdf) }, variant = RrButtonVariant.Secondary)
+        }
+    }
+    if (more) RrBottomSheet({ more = false }, title = stringResource(R.string.more_formats), fitContent = true) {
+        RrListGroup(Modifier.selectableGroup()) {
+            RrOptionRow(stringResource(CoreR.string.word), state.format == FileFormat.Word, { onFormat(FileFormat.Word); more = false }, helper = stringResource(R.string.word_hint), enabled = !state.busy, divider = true)
+            RrOptionRow(stringResource(CoreR.string.opendocument), state.format == FileFormat.OpenDocument, { onFormat(FileFormat.OpenDocument); more = false }, helper = stringResource(R.string.open_document_hint), enabled = !state.busy)
         }
     }
 }
@@ -203,7 +209,9 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
         }
         Column(Modifier.heightIn(min = firstViewport)) {
             RrPageTitle(stringResource(R.string.p4_versions), subtitle = stringResource(R.string.sessions_kept), subtitleColor = c.ink3)
-            RrListRow(stringResource(CoreR.string.now), Modifier.padding(top = 20.dp), subtitle = stringResource(CoreR.string.the_resume_as_it_is), leading = { Box(Modifier.size(8.dp).background(c.accent, RrShape.full)) }, onClick = { onSelect(null) })
+            RrListGroup(Modifier.padding(top = 20.dp), topDivider = true) {
+                RrListRow(stringResource(CoreR.string.now), subtitle = stringResource(CoreR.string.the_resume_as_it_is), leading = { Box(Modifier.size(8.dp).background(c.accent, RrShape.full)) }, onClick = { onSelect(null) })
+            }
             history(recent)
             if (state.versions.size <= 1) RrText(stringResource(CoreR.string.only_one_version_so_far_every_editing_session_adds_one_automatically), Modifier.padding(24.dp), style = RrType.small)
             if (state.failed) RrCallout(stringResource(CoreR.string.couldn_t_save_your_changes_try_again_before_continuing), Modifier.padding(24.dp), tone = RrTone.Danger)
@@ -234,7 +242,8 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) { RrKeyValue(stringResource(CoreR.string.language), if (resume.data.metadata.page.locale == "en-GB") stringResource(R.string.english_uk) else java.util.Locale.forLanguageTag(resume.data.metadata.page.locale).getDisplayName(locale), Modifier.weight(1f)); RrKeyValue(stringResource(CoreR.string.length), pluralStringResource(R.plurals.page_count, state.pageCount, state.pageCount), Modifier.weight(1f)) }
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) { RrKeyValue(stringResource(CoreR.string.sharing), if (resume.isPublic) stringResource(CoreR.string.message_public) else stringResource(R.string.p4_private), Modifier.weight(1f)); RrKeyValue(stringResource(CoreR.string.tags), resume.tags.joinToString(), Modifier.weight(1f).clickable { action("tags") }) }
         }
-        RrListGroup {
+        RrListGroup(topDivider = true) {
+            Column(Modifier.padding(top = 1.dp)) {
             RrListRow(if (resume.isLocked) stringResource(CoreR.string.unlock_editing) else stringResource(CoreR.string.lock_editing), leading = { RrIconTile(DsR.drawable.ic_ph_lock_simple_open, accent = resume.isLocked) }, onClick = { haptics(if (resume.isLocked) RrHaptic.ToggleOff else RrHaptic.ToggleOn); action("lock") }, enabled = !state.busy, divider = true)
             RrListRow(stringResource(R.string.rename_menu), leading = { RrIconTile(DsR.drawable.ic_ph_pencil_simple) }, onClick = { action("rename") }, enabled = !state.busy, divider = true)
             RrListRow(stringResource(CoreR.string.duplicate), leading = { RrIconTile(DsR.drawable.ic_ph_copy) }, onClick = { action("duplicate") }, enabled = !state.busy, divider = true)
@@ -243,6 +252,7 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
             RrListRow(stringResource(CoreR.string.notes), subtitle = stringResource(R.string.p4_only_you_can_see_these), leading = { RrIconTile(DsR.drawable.ic_ph_note) }, onClick = { action("notes") }, enabled = !state.busy, divider = true)
             RrListRow(stringResource(CoreR.string.print), leading = { RrIconTile(DsR.drawable.ic_ph_printer) }, onClick = { action("print") }, divider = true)
             RrListRow(stringResource(R.string.trash_menu), leading = { RrIconTile(DsR.drawable.ic_ph_trash) }, danger = true, enabled = state.editable, onClick = { action("trash") })
+            }
         }
         if (state.failed) Failure { action("retry") }
     }
@@ -280,7 +290,7 @@ internal enum class ShareAction { Pdf, Formats, Copy, ShortLink, Qr, Web, Visito
                 select(visitorDayAt(change.position.x, size.width.toFloat(), days.size, rtl))
             }
         }, selected = selected, onSelect = onSelect,
-        previousLabel = stringResource(R.string.p4_previous_day), nextLabel = stringResource(R.string.p4_next_day))
+        previousLabel = stringResource(R.string.p4_previous_day), nextLabel = stringResource(R.string.p4_next_day), gap = 4.dp)
 }
 
 internal fun visitorDayAt(x: Float, width: Float, count: Int, rtl: Boolean): Int {

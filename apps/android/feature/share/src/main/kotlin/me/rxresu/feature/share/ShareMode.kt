@@ -27,7 +27,7 @@ import me.rxresu.core.network.generated.UpdateResumeRequest
     var publish by remember { mutableStateOf(false) }; var qr by remember { mutableStateOf(false) }
     LaunchedEffect(exporter) { exporter.deliveries.collect { delivery -> try { shareFiles(context, delivery.files, resources.getString(CoreR.string.share_pdf)) } catch (_: Exception) { toasts.show(resources.getString(CoreR.string.download_failed_try_again), tone = RrToastTone.Danger) } } }
     Box {
-        ShareContent(state) { action -> when (action) {
+        ShareContent(state, export = export) { action -> when (action) {
             ShareAction.Pdf -> exporter.export(false)
             ShareAction.Formats -> nav.navigate(Download(resumeId, DocumentKind.Resume))
             ShareAction.Web -> nav.navigate(WebPageSettings(resumeId))
@@ -43,7 +43,5 @@ import me.rxresu.core.network.generated.UpdateResumeRequest
             RrTextField(state.slug, vm::slug, androidx.compose.ui.Modifier.padding(16.dp), label = stringResource(CoreR.string.address), helper = state.url, mono = true, ltr = true, error = if (state.slugTaken || state.slugInvalid) stringResource(CoreR.string.use_latin_letters_az_numbers_and_single_dashes) else null)
         }
         if (qr) QrSheet(state.url) { qr = false }
-        if (export.busy) RrWorkingLabel(listOf(stringResource(CoreR.string.preparing)))
-        if (export.failed) RrCallout(stringResource(CoreR.string.download_failed_try_again), tone = RrTone.Danger, actionLabel = stringResource(CoreR.string.try_again), onAction = { exporter.export(false) })
     }
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 
 /**
  * Daily bars (B13 views over 30 days): 48 dp tall, 3 dp gaps, accent at 85% with 1 dp top corners; oldest at the start
@@ -43,6 +44,7 @@ fun RrBarChart(
     onSelect: ((Int) -> Unit)? = null,
     previousLabel: String? = null,
     nextLabel: String? = null,
+    gap: Dp = 3.dp,
 ) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
@@ -81,7 +83,7 @@ fun RrBarChart(
             },
     ) {
         if (values.isEmpty()) return@Canvas
-        val gap = 3.dp.toPx()
+        val gap = gap.toPx()
         val corner = CornerRadius(1.dp.toPx())
         val w = (size.width - gap * (values.size - 1)) / values.size
         values.forEachIndexed { i, v ->

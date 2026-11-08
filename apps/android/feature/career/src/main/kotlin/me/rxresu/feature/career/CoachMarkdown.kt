@@ -122,6 +122,7 @@ private fun AnnotatedString.Builder.appendInline(text: String, code: SpanStyle, 
 internal fun CoachMarkdown(text: String, modifier: Modifier = Modifier) {
     val c = RrTheme.colors
     val blocks = remember(text) { markdownBlocks(text) }
+    val markerStyle = RrType.body.copy(fontFeatureSettings = "tnum") // Browser list markers use tabular numerals.
     val itemIndent = 20.dp * androidx.compose.ui.platform.LocalDensity.current.fontScale.coerceAtLeast(1f)
     val code = SpanStyle(fontFamily = RrType.mono.fontFamily, background = c.sunken)
     val link = TextLinkStyles(SpanStyle(color = c.accentText, textDecoration = TextDecoration.Underline))
@@ -133,7 +134,7 @@ internal fun CoachMarkdown(text: String, modifier: Modifier = Modifier) {
                 is MdBlock.Paragraph -> RrText(runs(block.text), style = RrType.body)
                 is MdBlock.Heading -> RrText(runs(block.text), style = RrType.label)
                 is MdBlock.Item -> Row(Modifier.padding(start = itemIndent * block.depth)) {
-                    RrText(block.marker ?: "•", Modifier.width(itemIndent), style = RrType.body, color = if (block.marker == null) c.ink3 else c.ink)
+                    RrText(block.marker ?: "•", Modifier.width(itemIndent).then(if (block.marker != null) Modifier.padding(end = 4.dp) else Modifier), style = if (block.marker == null) RrType.body else markerStyle, color = if (block.marker == null) c.ink3 else c.ink, textAlign = if (block.marker == null) null else androidx.compose.ui.text.style.TextAlign.End)
                     RrText(runs(block.text), Modifier.weight(1f), style = RrType.body)
                 }
                 is MdBlock.Quote -> Row(Modifier.height(IntrinsicSize.Min)) {

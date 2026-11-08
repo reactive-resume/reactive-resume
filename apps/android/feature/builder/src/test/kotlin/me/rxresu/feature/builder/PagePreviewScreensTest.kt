@@ -12,15 +12,15 @@ import org.junit.Test
 
 class PagePreviewScreensTest : RrScreenshotTest() {
     private fun capture(dark: Boolean, variant: String = "") {
-        val repositories = FakeRepositories()
+        val repositories = FakeRepositories(pageRenderer = FakePageRenderer(androidx.test.core.app.ApplicationProvider.getApplicationContext()))
         try {
+            val document = runBlocking { repositories.pages.render(PageSource.Resume(StoryboardIds.resume, "fixture")) }
             val page = runBlocking {
                 val source = PageSource.Resume(StoryboardIds.resume, "fixture")
                 repositories.pages.page(RenderedDocument(source, java.io.File("unused-fixture.pdf"), 1), 0, 716).asImageBitmap()
             }
             captureScreen("B18-Preview" + variant, dark, wrap = { content -> CompositionLocalProvider(LocalRepositories provides repositories) { content() } }) {
-                // The supplied full-page raster already paints marker 1. No Compose marker or text metadata is added.
-                PagePreviewScreen(PagePreviewState(pages = listOf(page), updating = variant == "-Updating", offline = variant == "-Offline"), PagePreview(StoryboardIds.resume, versionId = "frozen".takeIf { variant == "-Version" }), {}, {}, {}, {}, {}, if (variant == "-Version") ({}) else null)
+                PagePreviewScreen(PagePreviewState(pages = listOf(page), rasterIssueMarkers = document.rasterIssueMarkers, updating = variant == "-Updating", offline = variant == "-Offline"), PagePreview(StoryboardIds.resume, versionId = "frozen".takeIf { variant == "-Version" }), {}, {}, {}, {}, {}, if (variant == "-Version") ({}) else null)
             }
         } finally { repositories.close() }
     }
@@ -37,5 +37,13 @@ class PagePreviewScreensTest : RrScreenshotTest() {
         assertEquals(1, previewMarkerHit(state, 0, 0.76f, 0.12f, 358f))
         assertNull(previewMarkerHit(state, 1, 0.76f, 0.12f, 358f))
         assertNull(previewMarkerHit(state, 0, 0.9f, 0.12f, 358f))
+    }
+
+    @Test fun paintedRasterMarkerRemainsInteractiveWithoutAnInvisibleComposeNode() {
+        val state = PagePreviewState(rasterIssueMarkers = listOf(RasterIssueMarker(0, 1, 324f / 358f, 68f / 506f)))
+        assertEquals(1, previewMarkerHit(state, 0, 324f / 358f, 68f / 506f, 358f))
+        assertEquals(1, previewMarkerHit(state, 0, 324f / 358f, 68f / 506f, 716f))
+        assertNull(previewMarkerHit(state, 1, 324f / 358f, 68f / 506f, 358f))
+        assertNull(previewMarkerHit(state, 0, 0.5f, 0.5f, 358f))
     }
 }

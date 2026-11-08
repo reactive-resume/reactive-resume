@@ -79,7 +79,7 @@ class NextInterviewWidgetReceiver : GlanceAppWidgetReceiver() { override val gla
                 if (interview != null) LazyColumn(GlanceModifier.fillMaxWidth().defaultWeight()) {
                     item {
                         Column(GlanceModifier.fillMaxWidth().clickable(actionStartActivity(targetIntent(context, SystemTarget("application", interview.applicationId))))) {
-                            val time = widgetTime(interview, repositories.time)
+                            val time = widgetTime(context, interview, repositories.time)
                             Text(if (largeText) time.substringAfter(' ') else time, GlanceModifier.fillMaxWidth(), style = TextStyle(color = ink, fontSize = RrType.sheetTitle.fontSize, fontFamily = FontFamily.Serif))
                             if (largeText) Text(time.substringBefore(' '), GlanceModifier.fillMaxWidth(), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize))
                             Text(listOf(interview.company, interview.title).filter(String::isNotBlank).joinToString(" · "), GlanceModifier.fillMaxWidth(), style = TextStyle(color = secondary, fontSize = RrType.small.fontSize))
@@ -102,11 +102,11 @@ class NextInterviewWidgetReceiver : GlanceAppWidgetReceiver() { override val gla
                             Box(GlanceModifier.size(8.dp).cornerRadius(RrRadius.sm).background(ColorProvider(color))) {}
                             Spacer(GlanceModifier.width(8.dp))
                             if (largeText) Column(GlanceModifier.defaultWeight()) {
-                                Text(widgetTime(item, repositories.time), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize, fontFamily = FontFamily.Monospace))
+                                Text(widgetTime(context, item, repositories.time), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize, fontFamily = FontFamily.Monospace))
                                 Text(listOf(item.company, item.title).filter(String::isNotBlank).joinToString(" · "), GlanceModifier.fillMaxWidth(), style = TextStyle(color = ink, fontSize = RrType.ui.fontSize))
                             } else {
                                 Text(listOf(item.company, item.title).filter(String::isNotBlank).joinToString(" · "), GlanceModifier.defaultWeight(), style = TextStyle(color = ink, fontSize = RrType.ui.fontSize), maxLines = 2)
-                                Text(widgetTime(item, repositories.time), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize, fontFamily = FontFamily.Monospace))
+                                Text(widgetTime(context, item, repositories.time), style = TextStyle(color = secondary, fontSize = RrType.caption.fontSize, fontFamily = FontFamily.Monospace))
                             }
                         }
                     }
@@ -116,7 +116,11 @@ class NextInterviewWidgetReceiver : GlanceAppWidgetReceiver() { override val gla
         }
     }
 }
-internal fun widgetTime(item: TodayItem, time: TimeSource): String = item.at?.let { at -> runCatching {
+internal fun widgetTime(context: Context, item: TodayItem, time: TimeSource): String {
+    // composeToday emits undated follow-ups only for its actionable NoReply next step.
+    if (item.kind == TodayKind.FollowUp && item.at == null) return context.getString(R.string.system_now)
+    return item.at?.let { at -> runCatching {
     val value = Instant.parse(at).atZone(time.timezone())
     value.format(DateTimeFormatter.ofPattern(if (item.kind == TodayKind.Offer) "EEE" else "EEE HH:mm"))
 }.getOrNull() }.orEmpty()
+}

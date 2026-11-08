@@ -30,7 +30,7 @@ import me.rxresu.core.network.RequestOptions
 import me.rxresu.core.designsystem.R as Icons
 
 private const val SYNC_WORK = "rr-system-sync"
-private val notificationGate = Mutex()
+internal val notificationGate = Mutex()
 internal fun RrRepositories.signedInOwner(): String? = (account.session.value as? SessionState.SignedIn)?.accountScope
 
 /** Lead calls once with the application scope. Session/category changes clear old notifications and refresh widgets. */
@@ -58,6 +58,7 @@ fun startSystemIntegrations(context: Context, scope: CoroutineScope): Job = scop
                 OneTimeWorkRequestBuilder<SystemSyncWorker>().setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                     .setInputData(workDataOf("owner" to owner, "origin" to repositories.authSession.origin.value)).build())
         }
+        reconcileInterviewReminderJobs(app, repositories)
         // Widget content reads the current session, including expired guest sessions.
         TodayWidget().updateAll(app)
         NextInterviewWidget().updateAll(app)
@@ -87,6 +88,7 @@ class SystemSyncWorker(context: Context, parameters: WorkerParameters) : Corouti
             repositories.today.refresh()
             val resource = withTimeout(60_000) { repositories.today.observe(prefs.notifications.isNotEmpty()).first { !it.loading } }
             val today = resource.data?.takeIf { !resource.offline && resource.error == null } ?: return Result.retry()
+            syncInterviewReminders(applicationContext, repositories, owner, origin)
             val options = RequestOptions(accountScope = owner)
             val notices = repositories.career.listCareerNotifications(options)
             val feedback = if (NotificationCategory.FeedbackComments in prefs.notifications) repositories.resumes.listFeedbackLinks(options = options)

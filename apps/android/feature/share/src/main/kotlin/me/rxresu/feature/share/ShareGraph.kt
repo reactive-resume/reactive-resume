@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.*
 import me.rxresu.core.data.*
 import me.rxresu.core.designsystem.*
@@ -32,7 +33,6 @@ import me.rxresu.core.navigation.*
 import me.rxresu.core.network.generated.*
 
 fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
-    modal<PagePreview>(motion) { entry -> PagePreviewRoute(entry.toRoute<PagePreview>(), nav) }
     screen<WebPageSettings> { entry ->
         val route = entry.toRoute<WebPageSettings>(); val vm = shareModel(route.resumeId); val state by vm.state.collectAsStateWithLifecycle()
         var form by remember { mutableStateOf<String?>(null) }
@@ -109,7 +109,6 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
             restoring?.let { version -> ConfirmSheet(stringResource(CoreR.string.restore_this_version_2cef126bc0), stringResource(R.string.p4_your_current_resume_will_be_kept_as_a_version_before_restoring), stringResource(CoreR.string.restore_this_version), { vm.restore(version) { restoring = null; selected = null } }, { restoring = null }) }
         }
     }
-    sheet<BuilderMore> { entry -> ResumeMoreRoute(entry.toRoute<BuilderMore>().resumeId, nav) }
 }
 
 @Composable internal fun shareModel(id: String): ShareViewModel { val repositories = LocalRepositories.current; return viewModel(key = "share-$id") { ShareViewModel(repositories, id) } }
@@ -119,10 +118,24 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
     var form by remember { mutableStateOf<String?>(null) }; val resources = androidx.compose.ui.platform.LocalResources.current; val context = LocalContext.current; val scope = rememberCoroutineScope(); val toasts = LocalToasts.current
     val notesBaseline = remember(form) { state.resume?.data?.metadata?.notes.orEmpty() }
     Box {
-        if (form != "notes") RrBottomSheet({ nav.popBackStack() }, fixedHeight = 790.dp, title = state.resume?.name) {
+        if (form != "notes") RrBottomSheet({ nav.popBackStack() }, fixedHeight = 790.dp, title = state.resume?.name, closeIconSize = 24.dp) {
             MoreContent(state) { action -> when (action) {
                 "lock" -> vm.lock {}
-                "rename", "notes", "tags", "translate", "job" -> form = action
+                "rename", "notes", "tags", "translate" -> form = action
+                "job" -> scope.launch {
+                    try {
+                        val owner = repositories.authSession.state.value as? me.rxresu.core.auth.SessionState.SignedIn ?: return@launch
+                        val draft = repositories.resumes.openDraft(id)
+                        draft.flush()
+                        val saved = withTimeout(10_000) { draft.state.first { it.status != me.rxresu.core.database.SaveStatus.Saving } }
+                        check(saved.status == me.rxresu.core.database.SaveStatus.Saved && saved.document?.id == id)
+                        check(repositories.authSession.state.value == owner)
+                        nav.popBackStack()
+                        nav.navigate(SaveJob(sourceResumeId = id, sourceAccountScope = owner.accountScope))
+                    } catch (e: CancellationException) { throw e } catch (_: Exception) {
+                        toasts.show(resources.getString(CoreR.string.couldn_t_save_your_changes_try_again_before_continuing), tone = RrToastTone.Danger)
+                    }
+                }
                 "duplicate" -> vm.duplicate { nav.navigate(Builder(it)) }
                 "print" -> scope.launch { try { val draft = repositories.resumes.openDraft(id); draft.flush(); check(draft.state.value.status == me.rxresu.core.database.SaveStatus.Saved); val value = requireNotNull(draft.state.value.document); val pdf = repositories.pages.render(me.rxresu.core.page.PageSource.Resume(id, value.updatedAt)); printPdf(context, pdf.file, value.name, pdf.pageCount) } catch (e: CancellationException) { throw e } catch (_: Exception) { toasts.show(resources.getString(CoreR.string.download_failed_try_again), tone = RrToastTone.Danger) } }
                 "trash" -> vm.trash { scope.launch { if (toasts.show(resources.getString(CoreR.string.moved_to_trash), resources.getString(CoreR.string.reconsider_a_rejected_edit_undo)) == RrToastResult.ActionPerformed) vm.untrash() else nav.popBackStack() } }
@@ -138,9 +151,7 @@ fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
                 nav.navigate(Assistant(copy, prompt = prompt))
                 form = null
             } }, { form = null })
-            "job" -> RrBottomSheet({ form = null }, title = stringResource(CoreR.string.copy_for_a_job), initialDetent = 1) {
-                state.applications.forEach { app -> RrListRow(app.company, subtitle = app.role, onClick = { scope.launch { try { val draft = repositories.resumes.openDraft(id); draft.flush(); check(draft.state.value.status == me.rxresu.core.database.SaveStatus.Saved); val copy = repositories.documents.copyResumeForJob(CopyResumeForJobRequest(applicationId = app.id, resumeId = id)); nav.navigate(Builder(copy)); form = null } catch (e: CancellationException) { throw e } catch (_: Exception) { toasts.show(resources.getString(CoreR.string.couldn_t_save_your_changes_try_again_before_continuing), tone = RrToastTone.Danger) } } }) }
-            }
+
         }
     }
 }

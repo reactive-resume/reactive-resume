@@ -34,6 +34,7 @@ fun RrCard(
     onClick: (() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(20.dp),
     focused: Boolean = false,
+    infoSoft: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val c = RrTheme.colors
@@ -41,7 +42,7 @@ fun RrCard(
     Column(
         modifier
             .fillMaxWidth()
-            .rrDesignTag(DesignTag(component = "Card", radius = RrRadius.xl, bgName = if (raised) "raised" else "surface"))
+            .rrDesignTag(DesignTag(component = "Card", radius = RrRadius.xl, bgName = if (infoSoft) "info-soft" else if (raised) "raised" else "surface"))
             .then(if (onClick != null) Modifier.rrPressScale(interaction) else Modifier)
             .drawBehind {
                 if (focused) {
@@ -50,8 +51,8 @@ fun RrCard(
                 }
             }
             .clip(RrShape.xl)
-            .background(if (raised) c.raised else c.surface)
-            .border(1.dp, c.line, RrShape.xl)
+            .background(if (infoSoft) c.infoSoft else if (raised) c.raised else c.surface)
+            .then(if (infoSoft) Modifier else Modifier.border(1.dp, c.line, RrShape.xl))
             .then(if (onClick != null) Modifier.clickable(interaction, LocalIndication.current, role = Role.Button, onClick = onClick) else Modifier)
             .padding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(10.dp),

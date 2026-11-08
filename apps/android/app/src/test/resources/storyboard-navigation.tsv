@@ -1,0 +1,212 @@
+# source	design target	approved target	control
+A1-Welcome	A2-SignIn	A2-SignIn	Sign in
+A1-Welcome	P2-ATS	P2-ATS	Check a resume PDF without an account
+A2-SignIn	A1-Welcome	A1-Welcome	Back
+A2-SignIn	A3-TwoStep	A3-TwoStep	Sign in
+A3-TwoStep	A2-SignIn	A2-SignIn	Back
+A4-Allow	A1-Welcome	A1-Welcome	Close
+B1-Overview	D1-Library	D1-Library	Back to documents
+B1-Overview	B16-Assistant	B16-Assistant	Assistant
+B1-Overview	B19-More	B19-More	More
+B1-Overview	B18-Preview	B18-Preview	Preview the page
+B1-Overview	B5-Basics	B5-Basics	ListRow
+B1-Overview	B2-Section	B2-Section	ListRow
+B1-Overview	B1-Overview	B1-Overview	Edit
+B1-Overview	B6-Design	B6-Design	Design
+B1-Overview	B9-Check	B9-Check	Check
+B1-Overview	B11-Share	B11-Share	Share
+B10-JobMatch	D1-Library	D1-Library	Back to documents
+B10-JobMatch	B16-Assistant	B16-Assistant	Assistant
+B10-JobMatch	B18-Preview	B19-More	More
+B10-JobMatch	B9-Check	B9-Check	Issues
+B10-JobMatch	J6-Detail	J6-Detail	ListRow
+B10-JobMatch	B1-Overview	B1-Overview	Edit
+B10-JobMatch	B6-Design	B6-Design	Design
+B10-JobMatch	B11-Share	B11-Share	Share
+B11-Share	D1-Library	D1-Library	Back to documents
+B11-Share	B16-Assistant	B16-Assistant	Assistant
+B11-Share	B18-Preview	B19-More	More
+B11-Share	B14-Download	B14-Download	Other formats
+B11-Share	B12-WebPage	B12-WebPage	ListRow
+B11-Share	B13-Visitors	B13-Visitors	ListRow
+B11-Share	B1-Overview	B1-Overview	Edit
+B11-Share	B6-Design	B6-Design	Design
+B11-Share	B9-Check	B9-Check	Check
+B11-Share	B11-Share	B11-Share	Share
+B12-WebPage	B11-Share	B11-Share	Back to Share
+B12-WebPage	P1-Public	P1-Public	Open the web page
+B13-Visitors	B11-Share	B11-Share	Back to Share
+B14-Download	B11-Share	B11-Share	Close
+B15-Versions	B11-Share	B11-Share	Back to Share
+B16-Assistant	B1-Overview	B1-Overview	Close the assistant
+B16-Assistant	B17-Proposals	B17-Proposals	Review 3 edits
+B17-Proposals	B16-Assistant	B16-Assistant	Back
+B18-Preview	B1-Overview	B1-Overview	Close preview
+B19-More	D1-Library	D1-Library	Back
+B19-More	B1-Overview	B1-Overview	Close
+B19-More	J5-SaveJob	J5-SaveJob	ListRow
+B2-Section	B1-Overview	B1-Overview	Back to Product designer
+B2-Section	B3-Entry	B3-Entry	ListRow
+B3-Entry	B2-Section	B2-Section	Back to Experience
+B3-Entry	B4-Improve	B4-Improve	Card
+B3-Entry	B18-Preview	B18-Preview	See it on the page
+B4-Improve	B3-Entry	B3-Entry	Back to Northwind Labs
+B5-Basics	B1-Overview	B1-Overview	Back to Product designer
+B6-Design	D1-Library	D1-Library	Back to documents
+B6-Design	B16-Assistant	B16-Assistant	Assistant
+B6-Design	B18-Preview	B19-More	More
+B6-Design	B18-Preview	B18-Preview	Preview the page
+B6-Design	B7-Template	B7-Template	ListRow
+B6-Design	B8-Layout	B8-Layout	ListRow
+B6-Design	B1-Overview	B1-Overview	Edit
+B6-Design	B6-Design	B6-Design	Design
+B6-Design	B9-Check	B9-Check	Check
+B6-Design	B11-Share	B11-Share	Share
+B7-Template	B6-Design	B6-Design	Back to Design
+B8-Layout	B6-Design	B6-Design	Back to Design
+B9-Check	D1-Library	D1-Library	Back to documents
+B9-Check	B16-Assistant	B16-Assistant	Assistant
+B9-Check	B18-Preview	B19-More	More
+B9-Check	B10-JobMatch	B10-JobMatch	Job match
+B9-Check	B1-Overview	B1-Overview	Edit
+B9-Check	B6-Design	B6-Design	Design
+B9-Check	B9-Check	B9-Check	Check
+B9-Check	B11-Share	B11-Share	Share
+C1-Career	S1-Settings	S1-Settings	Settings
+C1-Career	C2-Coach	C2-Coach	Start a conversation
+C1-Career	C3-Facts	C3-Facts	ListRow
+C1-Career	C4-Story	C4-Story	ListRow
+C1-Career	C5-Preferences	C5-Preferences	ListRow
+C1-Career	C6-Offers	C6-Offers	ListRow
+C1-Career	C7-Schedule	C7-Schedule	ListRow
+C1-Career	T1-Today	T1-Today	Today
+C1-Career	D1-Library	D1-Library	Documents
+C1-Career	J1-List	J1-List	Applications
+C1-Career	C1-Career	C1-Career	Career
+C2-Coach	C1-Career	C1-Career	Back to Career
+C3-Facts	C1-Career	C1-Career	Back
+C4-Story	C1-Career	C1-Career	Back
+C5-Preferences	C1-Career	C1-Career	Back
+C5-Preferences	C7-Schedule	C7-Schedule	ListRow
+C6-Offers	C1-Career	C1-Career	Back
+C6-Offers	C2-Coach	C2-Coach	Ask the coach
+C7-Schedule	C1-Career	C1-Career	Close
+D1-Library	D5-Search	D5-Search	Search
+D1-Library	D3-New	D3-New	New
+D1-Library	B1-Overview	B1-Overview	ListRow
+D1-Library	D2-Actions	D2-Actions	ListRow
+D1-Library	L1-Letter	L1-Letter	ListRow
+D1-Library	D6-Trash	D6-Trash	Trash · 2
+D1-Library	T1-Today	T1-Today	Today
+D1-Library	D1-Library	D1-Library	Documents
+D1-Library	J1-List	J1-List	Applications
+D1-Library	C1-Career	C1-Career	Career
+D2-Actions	B1-Overview	B1-Overview	ListRow
+D2-Actions	D2-Actions	D2-Actions	ListRow
+D2-Actions	B14-Download	B14-Download	ListRow
+D3-New	B1-Overview	B1-Overview	ListRow
+D3-New	D2-Actions	D2-Actions	ListRow
+D3-New	B7-Template	B7-Template	ListRow
+D3-New	D4-Import	D4-Import	ListRow
+D3-New	L1-Letter	L1-Letter	ListRow
+D3-New	J5-SaveJob	J5-SaveJob	ListRow
+D4-Import	D1-Library	D1-Library	Close
+D4-Import	B1-Overview	B1-Overview	Create resume
+D5-Search	T1-Today	T1-Today	Cancel
+D5-Search	J6-Detail	J6-Detail	ListRow
+D5-Search	B1-Overview	B1-Overview	ListRow
+D5-Search	L1-Letter	L1-Letter	ListRow
+D5-Search	W5-Messages	W5-Messages	ListRow
+D6-Trash	D1-Library	D1-Library	Back
+J1-List	J4-Insights	J4-Insights	Insights
+J1-List	J5-SaveJob	J5-SaveJob	Save a job
+J1-List	J1-List	J1-List	List
+J1-List	J2-Board	J2-Board	Board
+J1-List	J3-Calendar	J3-Calendar	Calendar
+J1-List	J6-Detail	J6-Detail	ListRow
+J1-List	T1-Today	T1-Today	Today
+J1-List	D1-Library	D1-Library	Documents
+J1-List	C1-Career	C1-Career	Career
+J2-Board	J4-Insights	J4-Insights	Insights
+J2-Board	J5-SaveJob	J5-SaveJob	Save a job
+J2-Board	J1-List	J1-List	List
+J2-Board	J2-Board	J2-Board	Board
+J2-Board	J3-Calendar	J3-Calendar	Calendar
+J2-Board	J6-Detail	J6-Detail	BoardCard
+J2-Board	T1-Today	T1-Today	Today
+J2-Board	D1-Library	D1-Library	Documents
+J2-Board	C1-Career	C1-Career	Career
+J3-Calendar	J4-Insights	J4-Insights	Insights
+J3-Calendar	J5-SaveJob	J5-SaveJob	Save a job
+J3-Calendar	J1-List	J1-List	List
+J3-Calendar	J2-Board	J2-Board	Board
+J3-Calendar	J3-Calendar	J3-Calendar	Calendar
+J3-Calendar	J6-Detail	J6-Detail	ListRow
+J3-Calendar	W5-Messages	W5-Messages	ListRow
+J3-Calendar	C6-Offers	C6-Offers	ListRow
+J3-Calendar	T1-Today	T1-Today	Today
+J3-Calendar	D1-Library	D1-Library	Documents
+J3-Calendar	C1-Career	C1-Career	Career
+J4-Insights	J1-List	J1-List	Back
+J5-SaveJob	J1-List	J1-List	Close
+J5-SaveJob	J6-Detail	J6-Detail	Save job
+J6-Detail	J1-List	J1-List	Back
+J6-Detail	W3-Prep	W3-Prep	Open briefing
+J6-Detail	W1-Fit	W1-Fit	ListRow
+J6-Detail	W2-Apply	W2-Apply	ListRow
+J6-Detail	W4-Practice	W4-Practice	ListRow
+J6-Detail	W5-Messages	W5-Messages	ListRow
+J6-Detail	J7-Stage	J7-Stage	ListRow
+J7-Stage	J6-Detail	J6-Detail	Back
+J8-Interview	J6-Detail	J6-Detail	Back
+L1-Letter	D1-Library	D1-Library	Back
+L1-Letter	B16-Assistant	B16-Assistant	Assistant
+L1-Letter	L1-Letter	L1-Letter	Write
+L1-Letter	L2-LetterDesign	L2-LetterDesign	Design
+L1-Letter	B14-Download	B14-Download	Export
+L2-LetterDesign	D1-Library	D1-Library	Back
+L2-LetterDesign	L1-Letter	L1-Letter	Write
+L2-LetterDesign	L2-LetterDesign	L2-LetterDesign	Design
+L2-LetterDesign	B14-Download	B14-Download	Export
+P2-ATS	T1-Today	T1-Today	Back
+S1-Settings	T1-Today	T1-Today	Close
+S1-Settings	S2-Account	S2-Account	ListRow
+S1-Settings	S3-Preferences	S3-Preferences	ListRow
+S1-Settings	S4-Profile	S4-Profile	ListRow
+S1-Settings	S5-AI	S5-AI	ListRow
+S2-Account	S1-Settings	S1-Settings	Back
+S3-Preferences	S1-Settings	S1-Settings	Back
+S4-Profile	S1-Settings	S1-Settings	Back
+S5-AI	S1-Settings	S1-Settings	Back
+S5-AI	S6-Provider	S6-Provider	Add AI provider
+S6-Provider	S5-AI	S5-AI	Close
+T1-Today	D5-Search	D5-Search	Search
+T1-Today	S1-Settings	S1-Settings	Settings
+T1-Today	W3-Prep	W3-Prep	Open briefing
+T1-Today	C6-Offers	C6-Offers	ListRow
+T1-Today	W5-Messages	W5-Messages	ListRow
+T1-Today	J3-Calendar	J3-Calendar	Calendar
+T1-Today	J6-Detail	J6-Detail	ListRow
+T1-Today	T1-Today	T1-Today	Today
+T1-Today	D1-Library	D1-Library	Documents
+T1-Today	J1-List	J1-List	Applications
+T1-Today	C1-Career	C1-Career	Career
+T2-FirstRun	S1-Settings	S1-Settings	Settings
+T2-FirstRun	D4-Import	D4-Import	Import a resume
+T2-FirstRun	D3-New	D3-New	Start from a template instead
+T2-FirstRun	T1-Today	T1-Today	Today
+T2-FirstRun	D1-Library	D1-Library	Documents
+T2-FirstRun	J1-List	J1-List	Applications
+T2-FirstRun	C1-Career	C1-Career	Career
+W1-Fit	J6-Detail	J6-Detail	Back
+W1-Fit	C3-Facts	C3-Facts	ListRow
+W1-Fit	B16-Assistant	B16-Assistant	Tailor the resume to this job
+W2-Apply	J6-Detail	J6-Detail	Back
+W2-Apply	B15-Versions	B18-Preview	ListRow
+W2-Apply	L1-Letter	L1-Letter	ListRow
+W2-Apply	W5-Messages	W5-Messages	ListRow
+W3-Prep	J6-Detail	J6-Detail	Back
+W3-Prep	C4-Story	C4-Story	ListRow
+W3-Prep	W4-Practice	W4-Practice	Practice these questions
+W4-Practice	J6-Detail	J6-Detail	Back
+W5-Messages	J6-Detail	J6-Detail	Back

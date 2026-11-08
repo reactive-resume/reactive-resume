@@ -3,6 +3,7 @@ package me.rxresu.core.designsystem
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -37,7 +38,7 @@ fun RrOptionRow(
 ) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
-    Row(
+    Box(
         modifier
             .fillMaxWidth()
             .rrEnabledAlpha(enabled, 0.45f)
@@ -46,7 +47,10 @@ fun RrOptionRow(
                 if (!selected) haptics(RrHaptic.Selection)
                 onClick()
             }
-            .padding(horizontal = 24.dp).rrDesignTag(DesignTag(component = "ListRow")).defaultMinSize(minHeight = 64.dp).drawWithContent {
+            .padding(horizontal = 24.dp),
+    ) {
+    Row(
+        Modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "ListRow")).defaultMinSize(minHeight = 64.dp).drawWithContent {
                 drawContent()
                 if (divider) { val h = 1.dp.toPx(); drawLine(c.line, Offset(0f, size.height - h / 2), Offset(size.width, size.height - h / 2), h) }
             }.padding(bottom = if (divider) 1.dp else 0.dp).padding(vertical = 12.dp),
@@ -61,6 +65,7 @@ fun RrOptionRow(
             }
             if (helper != null) RrText(helper, style = RrType.ui, color = c.ink3)
         }
+    }
     }
 }
 

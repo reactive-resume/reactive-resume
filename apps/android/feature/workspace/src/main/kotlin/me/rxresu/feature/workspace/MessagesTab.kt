@@ -50,6 +50,7 @@ import me.rxresu.core.designsystem.LocalReducedMotion
 import me.rxresu.core.designsystem.R as DsR
 import me.rxresu.core.designsystem.RrPageTitle
 import me.rxresu.core.designsystem.RrListRow
+import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrRowCaret
 import me.rxresu.core.designsystem.RrRowValue
 import me.rxresu.core.designsystem.RrButton
@@ -259,12 +260,14 @@ internal fun MessagesScreen(
     }) else null) {
         RrPageTitle(stringResource(S.string.messages), subtitle = "${state.context.app.company} · ${state.context.app.role}", subtitleColor = c.ink3)
         AiDestinationNotice(state.context)
-        RrListRow(stringResource(R.string.workspace_kind), Modifier.padding(top = 16.dp), divider = true, onClick = { kinds = true }, trailing = { Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) { RrText(stringResource(if (state.kind == MessageKind.FollowUp) S.string.follow_up_2a747118b4 else S.string.reply), style = RrType.ui, color = c.ink3); RrRowCaret() } })
-        RrListRow(stringResource(R.string.workspace_to), trailing = {
+        RrListGroup(Modifier.padding(top = 16.dp), topDivider = true) {
+        RrListRow(stringResource(R.string.workspace_kind), divider = true, onClick = { kinds = true }, trailing = { Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) { RrText(stringResource(if (state.kind == MessageKind.FollowUp) S.string.follow_up_2a747118b4 else S.string.reply), style = RrType.ui, color = c.ink3); RrRowCaret() } })
+        RrListRow(stringResource(R.string.workspace_to), divider = true, trailing = {
             val contact = state.contact
             if (contact != null) RrText(listOfNotNull(contact.name, contact.role?.takeIf(String::isNotBlank)).joinToString(" · "), style = RrType.ui, color = c.ink3)
             else RrButton(stringResource(R.string.workspace_add_a_contact), onAddContact, variant = RrButtonVariant.GhostAccent)
         })
+        }
         Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 12.dp)) {
             if (state.kind == MessageKind.Reply && state.reply == null) RrTextField(state.pasted, onPasted, label = stringResource(S.string.paste_a_message_from_company, state.context.app.company), singleLine = false, minLines = 5)
             if (hasDraft) {

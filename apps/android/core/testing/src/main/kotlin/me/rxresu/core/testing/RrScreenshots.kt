@@ -1,17 +1,14 @@
 package me.rxresu.core.testing
 
-import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.v2.runAndroidComposeUiTest
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.test.core.app.ActivityScenario
 import org.robolectric.RuntimeEnvironment
-import org.robolectric.Shadows.shadowOf
-import java.time.Duration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -145,11 +142,11 @@ fun captureBoard(name: String, reference: String?, exportScale: Double = 1.0, co
 }
 
 /**
- * Launches a plain activity in the requested configuration, sets [content] in inspection mode (endless animations such
- * as spinners hold still, so the UI can idle), lets frames run and records the content view with Roborazzi.
+ * Owns the Compose clock and recomposer through both captures and scrolling, then disposes them. Inspection mode
+ * holds endless animations still; Compose idling drives actual animation frames and Android layout/draw work.
  */
-@OptIn(ExperimentalRoborazziApi::class)
-private fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boolean, safeArea: Boolean, fidelityFile: File? = null, captureEnd: Boolean = false, options: RoborazziOptions = RrRoborazziOptions, content: @Composable () -> Unit) {
+@OptIn(ExperimentalRoborazziApi::class, ExperimentalTestApi::class)
+internal fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boolean, safeArea: Boolean, fidelityFile: File? = null, captureEnd: Boolean = false, options: RoborazziOptions = RrRoborazziOptions, content: @Composable () -> Unit) {
     val qualifiers = RuntimeEnvironment.getQualifiers()
     val scale = RuntimeEnvironment.getFontScale()
     RuntimeEnvironment.setQualifiers(if (dark) "+night" else "+notnight")
@@ -163,33 +160,34 @@ private fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boo
                 check(!it.exists() || it.delete()) { "Could not remove stale capture $it" }
             }
         }
-        ActivityScenario.launch(ComponentActivity::class.java).use { scenario ->
-            scenario.onActivity { activity ->
-                WindowCompat.setDecorFitsSystemWindows(activity.window, false)
-                activity.setContent {
-                    CompositionLocalProvider(
-                        LocalInspectionMode provides true,
-                        LocalRrDesignTags provides true,
-                        LocalRrInsets provides if (safeArea) StoryboardInsets else RrInsets(0.dp, 0.dp),
-                        content = content,
-                    )
-                }
-                if (wrapHeight) composeView(activity).layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        runAndroidComposeUiTest<ComponentActivity> {
+            val host = checkNotNull(activity)
+            runOnUiThread { WindowCompat.setDecorFitsSystemWindows(host.window, false) }
+            setContent {
+                CompositionLocalProvider(
+                    LocalInspectionMode provides true,
+                    LocalRrDesignTags provides true,
+                    LocalRrInsets provides if (safeArea) StoryboardInsets else RrInsets(0.dp, 0.dp),
+                    content = content,
+                )
             }
-            settle()
+            runOnUiThread {
+                if (wrapHeight) composeView(host).layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            }
+            waitForIdle()
             if (safeArea) {
-                scenario.onActivity { activity ->
-                    val density = activity.resources.displayMetrics.density
+                runOnUiThread {
+                    val density = host.resources.displayMetrics.density
                     val insets = WindowInsetsCompat.Builder()
                         .setInsets(WindowInsetsCompat.Type.statusBars(), Insets.of(0, (RR_STORYBOARD_TOP_INSET.value * density).toInt(), 0, 0))
                         .setInsets(WindowInsetsCompat.Type.navigationBars(), Insets.of(0, 0, 0, (RR_STORYBOARD_BOTTOM_INSET.value * density).toInt()))
                         .build()
-                    ViewCompat.dispatchApplyWindowInsets(composeView(activity), insets)
+                    ViewCompat.dispatchApplyWindowInsets(composeView(host), insets)
                 }
-                settle()
+                waitForIdle()
             }
-            scenario.onActivity { activity ->
-                val view = composeView(activity)
+            runOnUiThread {
+                val view = composeView(host)
                 fidelityFile?.let { actual ->
                     actual.parentFile?.mkdirs()
                     view.captureRoboImage(actual, options.copy(taskType = RoborazziTaskType.Record))
@@ -197,7 +195,7 @@ private fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boo
                 }
                 if (!java.lang.Boolean.getBoolean("rr.fidelity")) view.captureRoboImage(file, options)
                 if (fidelityFile != null && captureEnd) {
-                    val scroll = view.scrollStoryboardToEnd(::settle)
+                    val scroll = view.scrollStoryboardToEnd { waitForIdle() }
                     if (scroll.scrollable) {
                         val end = File(fidelityFile.parentFile, "${fidelityFile.nameWithoutExtension}-end.png")
                         view.captureRoboImage(end, options.copy(taskType = RoborazziTaskType.Record))
@@ -213,6 +211,3 @@ private fun capture(file: File, dark: Boolean, fontScale: Float, wrapHeight: Boo
 }
 
 private fun composeView(activity: ComponentActivity): View = activity.findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
-
-/** Runs pending frames: Robolectric's paused looper only draws frames when its clock moves. */
-private fun settle() = repeat(3) { shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(100)) }

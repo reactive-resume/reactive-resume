@@ -192,6 +192,7 @@ internal fun PrepareTab(applicationId: String, nav: NavController) {
                 onStop = vm::stop,
                 onPractise = { question -> nav.openTab(applicationId, WorkspaceTab.Practise, practiceQuestion = question) },
                 onAddStory = { nav.navigate(Story()) },
+                onOpenStory = { nav.navigate(Story(it)) },
                 onCopyQuestion = {
                     context.copyToClipboard(it, it)
                     scope.launch { toasts.show(copied) }
@@ -220,6 +221,7 @@ internal fun PrepareScreen(
     onSetUpAi: () -> Unit,
     onRound: (String) -> Unit = {},
     onSource: (String) -> Unit = {},
+    onOpenStory: (String) -> Unit = { onAddStory() },
 ) {
     val c = RrTheme.colors
     val interview = state.interview
@@ -263,7 +265,7 @@ internal fun PrepareScreen(
                     if (state.failed) RrCallout(stringResource(S.string.couldn_t_complete_this_action_try_again), tone = RrTone.Danger, actionLabel = stringResource(S.string.retry), onAction = onGenerate)
                 }
             }
-            else -> FadeUp { BriefingBody(state, interview, briefing, dates, onPractise, onAddStory, onCopyQuestion, onSource) }
+            else -> FadeUp { BriefingBody(state, interview, briefing, dates, onPractise, onAddStory, onCopyQuestion, onSource, onOpenStory) }
         }
     }
 }
@@ -292,6 +294,7 @@ private fun BriefingBody(
     onAddStory: () -> Unit,
     onCopyQuestion: (String) -> Unit,
     onSource: (String) -> Unit,
+    onOpenStory: (String) -> Unit,
 ) {
     val c = RrTheme.colors
     Column {
@@ -302,7 +305,10 @@ private fun BriefingBody(
             RrSectionHeader(stringResource(R.string.workspace_likely_questions), count = briefing.practiceQuestions.orEmpty().size.toString())
             questions.forEachIndexed { i, item ->
                 RrListRow(item.title, subtitle = item.detail, titleMaxLines = 2, divider = i < questions.lastIndex,
-                    onClick = { if (item.action == CreateCareerOfferResponseDataBriefingPlanItemAction.DraftStory) onAddStory() else onPractise(item.title) }, trailing = { RrRowCaret() })
+                    onClick = { when (item.action) {
+                        CreateCareerOfferResponseDataBriefingPlanItemAction.Story, CreateCareerOfferResponseDataBriefingPlanItemAction.DraftStory -> item.storyId?.let(onOpenStory) ?: onAddStory()
+                        else -> onPractise(item.title)
+                    } }, trailing = { RrRowCaret() })
             }
         }
         if (briefing.questions.isNotEmpty()) {

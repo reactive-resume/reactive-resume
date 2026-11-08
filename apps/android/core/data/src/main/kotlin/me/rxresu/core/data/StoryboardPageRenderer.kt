@@ -30,7 +30,7 @@ internal class StoryboardPageRenderer(private val snapshot: ()->JsonObject):Page
             val page=pdf.startPage(PdfDocument.PageInfo.Builder(595,842,1).create())
             draw(page.canvas,source);pdf.finishPage(page);file.outputStream().use(pdf::writeTo)
         } finally { pdf.close() }
-        RenderedDocument(source,file,1).also { cached[key(source)]=it }
+        RenderedDocument(source,file,1,StoryboardPageImages.rasterIssueMarkers(source)).also { cached[key(source)]=it }
     }
     override suspend fun lastGood(source: PageSource)=cached[key(source)]
     override suspend fun page(document: RenderedDocument,index: Int,widthPx: Int):Bitmap=withContext(Dispatchers.Default) {

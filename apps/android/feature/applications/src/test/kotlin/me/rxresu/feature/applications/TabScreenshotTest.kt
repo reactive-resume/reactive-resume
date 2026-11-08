@@ -19,7 +19,7 @@ class TabScreenshotTest : RrScreenshotTest() {
     private fun tab(name: String, view: ApplicationsView, dark: Boolean, controls: FakeControls = FakeControls(), fontScale: Float = 1f) =
         captureScreen(name, dark, wrap = fakeWrap(if (name != "J1-List-empty") applicationStoryboard(insights = view == ApplicationsView.Insights, calendar = view == ApplicationsView.Calendar) else FakeRepositories(controls)), fontScale = fontScale) {
             Column {
-                Box(Modifier.weight(1f)) { ApplicationsRoute(view, rememberNavController()) }
+                Box(Modifier.weight(1f)) { ApplicationsRoute(view, rememberNavController(), companyInitials = mapOf(me.rxresu.core.data.StoryboardIds.fieldnote to "FN")) }
                 if (view != ApplicationsView.Insights) RrTabBar(rrAppTabs("Today", "Documents", "Applications", "Career"), 2, {})
             }
         }

@@ -2,6 +2,7 @@ package me.rxresu.core.testing
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.text.TextStyle
@@ -19,7 +20,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 
-/** Read measured, unmerged Compose semantics; never read expected layout data. */
+/** Read real Compose semantics and native TextView layouts; never read expected layout data. */
 fun View.writeLayoutDump(out: File) {
     val elements = JSONArray()
     val density = resources.displayMetrics.density
@@ -86,12 +87,42 @@ fun View.writeLayoutDump(out: File) {
         }
         node.children.forEach { walk(it, parentHasText || text != null) }
     }
+    val rootPosition = IntArray(2).also(::getLocationOnScreen)
     fun visit(view: View) {
+        if (view.visibility != View.VISIBLE) return
         if (view is RootForTest) walk(view.semanticsOwner.unmergedRootSemanticsNode)
-        else if (view is ViewGroup) repeat(view.childCount) { visit(view.getChildAt(it)) }
+        if (view is TextView && view.width > 0 && view.height > 0 && view.text.isNotEmpty()) {
+            view.layout?.takeIf { it.lineCount > 0 }?.let { layout ->
+                val position = IntArray(2).also(view::getLocationOnScreen)
+                if (!isAttachedToWindow && this is ViewGroup && view !== this) {
+                    // Unattached RemoteViews have no screen position; use their real laid-out hierarchy.
+                    val bounds = android.graphics.Rect()
+                    offsetDescendantRectToMyCoords(view, bounds)
+                    position[0] = rootPosition[0] + bounds.left + view.scrollX
+                    position[1] = rootPosition[1] + bounds.top + view.scrollY
+                }
+                val left = (0 until layout.lineCount).minOf(layout::getLineLeft)
+                val right = (0 until layout.lineCount).maxOf(layout::getLineRight)
+                elements.put(JSONObject()
+                    .put("text", view.text.toString())
+                    .put("x", (position[0] - rootPosition[0] + view.totalPaddingLeft + left - view.scrollX) / density)
+                    .put("y", (position[1] - rootPosition[1] + view.totalPaddingTop - view.scrollY) / density)
+                    .put("w", (right - left) / density)
+                    .put("h", layout.height / density)
+                    .put("nativeView", view.javaClass.name)
+                    .put("nativeTypeface", view.typeface.toString())
+                    .put("nativeColor", String.format("#%08x", view.currentTextColor))
+                    .put("style", JSONObject()
+                        .put("size", view.textSize / resources.displayMetrics.scaledDensity)
+                        .put("lineHeight", view.lineHeight / resources.displayMetrics.scaledDensity)
+                        .apply { if (android.os.Build.VERSION.SDK_INT >= 28) put("weight", view.typeface.weight) }))
+            }
+        }
+        // AndroidView descendants sit below the Compose root in the real View hierarchy.
+        if (view is ViewGroup) repeat(view.childCount) { visit(view.getChildAt(it)) }
     }
     visit(this)
-    check(elements.length() > 0) { "No measured Compose nodes in $out" }
+    check(elements.length() > 0) { "No measured Compose or native text nodes in $out" }
     out.parentFile?.mkdirs()
     out.writeText(JSONObject().put("elements", elements).toString(2))
 }

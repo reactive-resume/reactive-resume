@@ -68,6 +68,7 @@ import kotlinx.coroutines.launch
 ) {
     val header = rememberRrLargeTitleState()
     val time = rememberCareerTime()
+    var more by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().background(RrTheme.colors.bg)) {
         RrLargeTitleHeader(stringResource(R.string.career_career_348f0b), header, actions = {
             RrAvatar(state.initials, onClick = settings, contentDescription = stringResource(R.string.career_settings_c7f73b))
@@ -95,23 +96,24 @@ import kotlinx.coroutines.launch
                     RrSectionHeading(stringResource(R.string.career_decide))
                     RrListGroup { RrListRow(stringResource(R.string.career_compare_offers), subtitle = offerSummary(state.offers, time), onClick = offers, trailing = { RrRowCaret() }) }
                     RrSectionHeading(stringResource(R.string.career_routines))
-                    RrListGroup { RrListRow(stringResource(R.string.career_discovery), subtitle = if (!state.scheduling) stringResource(R.string.career_not_available_on_this_server_911d05) else scheduleSummary(state.schedules, time), onClick = { schedules(state.schedules.firstOrNull { it.kind == "discovery" }?.id) }, trailing = { RrRowCaret() }) }
+                    RrListGroup { RrListRow(stringResource(R.string.career_discovery), subtitle = if (!state.scheduling) stringResource(R.string.career_not_available_on_this_server_911d05) else state.schedules.firstOrNull { it.kind == "discovery" }?.let { discoveryRootSummary(it, time) }, onClick = { schedules(state.schedules.firstOrNull { it.kind == "discovery" }?.id) }, trailing = { RrRowCaret() }) }
                     RrListGroup {
                         val primary = state.schedules.firstOrNull { it.kind == "discovery" }?.id
                         state.schedules.filter { it.id != primary }.forEach { row ->
                             RrListRow(scheduleTitle(row.kind), subtitle = listOf(row.query, scheduleStatus(row, time)).filter(String::isNotBlank).joinToString(" · "), onClick = { schedules(row.id) }, trailing = { RrRowCaret() })
                         }
                     }
-                    RrSectionHeading(stringResource(R.string.career_more))
                     RrListGroup {
-                        RrListRow(stringResource(R.string.career_new_schedule_3e70c3), onClick = { schedules(null) }, trailing = { RrRowCaret() })
-                        RrListRow(stringResource(R.string.career_conversations_07c59b), onClick = all, trailing = { RrRowCaret() })
-                        RrListRow(stringResource(R.string.career_practice_without_an_application_bfa55d), onClick = practice, trailing = { RrRowCaret() })
-                        RrListRow(stringResource(R.string.career_search_bce064), onClick = search, trailing = { RrRowCaret() })
+                        RrListRow(stringResource(R.string.career_more), onClick = { more = true }, trailing = { RrRowCaret() })
                     }
                 }
             }
         }
+    }
+    if (more) RrBottomSheet({ more = false }, title = stringResource(R.string.career_more), fitContent = true) {
+        RrListRow(stringResource(R.string.career_new_schedule_3e70c3), onClick = { more = false; schedules(null) }, trailing = { RrRowCaret() })
+        RrListRow(stringResource(R.string.career_conversations_07c59b), onClick = { more = false; all() }, trailing = { RrRowCaret() })
+        RrListRow(stringResource(R.string.career_practice_without_an_application_bfa55d), onClick = { more = false; practice() }, trailing = { RrRowCaret() })
     }
 }
 
@@ -203,7 +205,7 @@ import kotlinx.coroutines.launch
             if (room > 0) Spacer(Modifier.height(with(density) { room.toDp() }))
         }
         Column(Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            RrAiComposer(state.draft, onDraft, send, stringResource(R.string.career_ask_about_your_next_career_step_ba2404), enabled = !state.readOnly && !state.connectionChanged && connectionReady && (!state.memory || state.knowledgeReady), sending = state.busy, onStop = stop, contextChips = {
+            RrAiComposer(state.draft, onDraft, send, stringResource(R.string.career_ask_about_your_next_career_step_ba2404), dimEmptySend = false, enabled = !state.readOnly && !state.connectionChanged && connectionReady && (!state.memory || state.knowledgeReady), sending = state.busy, onStop = stop, contextChips = {
                 // On: × leaves it out of the next message. Left out: dashed; tap brings it back.
                 if (state.memory) RrContextChip(stringResource(R.string.career_knowledge_on_4bf78f), icon = Icons.drawable.ic_ph_book_open, onRemove = { memory(false) })
                 else RrContextChip(stringResource(R.string.career_knowledge_off_3697f7), icon = Icons.drawable.ic_ph_book_open, leftOut = true, onClick = { memory(true) })
@@ -223,11 +225,13 @@ import kotlinx.coroutines.launch
 /** "Remember “…”?" on info-soft with Remember and Not now; once saved it links to the fact. */
 @Composable private fun RememberPrompt(proposal: CoachFact, remember: (CoachFact) -> Unit, dismiss: (String) -> Unit, knowledge: () -> Unit) {
     val c = RrTheme.colors
-    Column(Modifier.fillMaxWidth().background(c.infoSoft, RrShape.xl).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        RrText(stringResource(R.string.career_remember_quoted, proposal.fact.text), style = RrType.body, color = c.ink)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            RrButton(if (proposal.savedId == null) stringResource(R.string.career_remember_281f30) else stringResource(R.string.career_view_fact_b34722), { if (proposal.savedId == null) remember(proposal) else knowledge() }, variant = RrButtonVariant.Secondary)
-            RrButton(stringResource(R.string.career_not_now_e45714), { dismiss(proposal.callId) }, variant = RrButtonVariant.Ghost)
+    RrCard(infoSoft = true, contentPadding = PaddingValues(17.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            RrText(stringResource(R.string.career_remember_quoted, proposal.fact.text), style = RrType.body, color = c.ink)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                RrButton(if (proposal.savedId == null) stringResource(R.string.career_remember_281f30) else stringResource(R.string.career_view_fact_b34722), { if (proposal.savedId == null) remember(proposal) else knowledge() }, variant = RrButtonVariant.Secondary)
+                RrButton(stringResource(R.string.career_not_now_e45714), { dismiss(proposal.callId) }, variant = RrButtonVariant.Ghost)
+            }
         }
     }
 }

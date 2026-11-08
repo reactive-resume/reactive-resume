@@ -59,7 +59,7 @@ import me.rxresu.core.network.generated.*
                 if (state.error) RrCallout(stringResource(R.string.career_couldn_t_save_your_preferences_try_again_4d0c00), Modifier.padding(24.dp), tone = RrTone.Warn, actionLabel = stringResource(R.string.career_retry_9f5cd8), onAction = retry)
                 if (editor == null) {
                     Spacer(Modifier.height(20.dp))
-                    RrListGroup {
+                    RrListGroup(topDivider = true) {
                         RrListRow(stringResource(R.string.career_roles), subtitle = p.targetRoles.joinToString(", "), divider = true, onClick = { editor = "roles" }, trailing = { RrRowCaret() })
                         RrListRow(stringResource(R.string.career_places), subtitle = p.locations.joinToString(" · "), divider = true, onClick = { editor = "places" }, trailing = { RrRowCaret() })
                         RrListRow(stringResource(R.string.career_work), subtitle = p.maxOfficeDays?.let { when (it) { 0L -> stringResource(R.string.career_remote); in 1L..4L -> stringResource(R.string.career_hybrid_or_remote); else -> pluralStringResource(R.plurals.career_office_days_max, it.toInt(), it) } } ?: stringResource(R.string.career_not_set_93039e), divider = true, onClick = { editor = "work" }, trailing = { RrRowCaret() })
@@ -70,7 +70,7 @@ import me.rxresu.core.network.generated.*
                     val discovery = state.schedules.firstOrNull { it.kind == "discovery" }
                     RrListGroup {
                         RrSwitchRow(stringResource(R.string.career_find_new_roles), discovery?.enabled == true, { schedule() }, subtitle = if (!state.scheduling) stringResource(R.string.career_not_available_on_this_server_911d05) else discovery?.let { discoverySummary(it, time) }, divider = true)
-                        RrListRow(stringResource(R.string.career_where_to_look), subtitle = p.searchRegions.orEmpty().joinToString(" · "), onClick = { editor = "countries" }, trailing = { RrRowCaret() })
+                        RrListRow(stringResource(R.string.career_where_to_look), subtitle = p.searchRegions.orEmpty().joinToString(" · "), onClick = schedule, trailing = { RrRowCaret() })
                     }
                 } else Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     when (editor) {
@@ -78,7 +78,10 @@ import me.rxresu.core.network.generated.*
                             ChipList(stringResource(R.string.career_target_roles_6513c7), p.targetRoles, stringResource(R.string.career_add_a_role_a21c9b), { change(p.copy(targetRoles = it)) })
                             RrButton(stringResource(R.string.career_suggest_target_roles_15ef23), suggest, variant = RrButtonVariant.GhostAccent, icon = Icons.drawable.ic_ph_sparkle)
                         }
-                        "places" -> ChipList(stringResource(R.string.career_where_you_want_to_work_6e7ca5), p.locations, stringResource(R.string.career_add_a_place_29c5ff), { change(p.copy(locations = it)) })
+                        "places" -> {
+                            ChipList(stringResource(R.string.career_where_you_want_to_work_6e7ca5), p.locations, stringResource(R.string.career_add_a_place_29c5ff), { change(p.copy(locations = it)) })
+                            RrListRow(stringResource(R.string.career_search_countries_0dac37), subtitle = p.searchRegions.orEmpty().joinToString(" · "), onClick = { editor = "countries" }, trailing = { RrRowCaret() })
+                        }
                         "countries" -> {
                             CountryList(p.searchRegions.orEmpty(), { change(p.copy(searchRegions = it)) })
                             RrText(stringResource(R.string.career_web_searches_look_for_work_here_up_to_three_countries_ffb993), style = RrType.small, color = RrTheme.colors.ink3)

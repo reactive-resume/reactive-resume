@@ -312,7 +312,7 @@ internal fun DebriefScreen(
                     RrTextField(state.answer, onAnswer, label = stringResource(S.string.what_did_you_say_as_close_as_you_remember), singleLine = false, minLines = 5)
                     if (state.transcriber != null && !micDenied) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                            RrRecordButton(recording.recording, onRecord, size = 44.dp)
+                            RrRecordButton(recording.recording, onRecord)
                             when {
                                 state.transcribing -> me.rxresu.core.designsystem.RrWorkingLabel(listOf(stringResource(S.string.transcribing_with_model, state.transcriber.model)))
                                 recording.recording -> RrText(stringResource(S.string.recording_elapsed, clock(recording.elapsedMs)), style = RrType.small, color = c.ink2)

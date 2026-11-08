@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.dp
 import me.rxresu.core.strings.R as S
 
 /**
- * Live mic level while recording (W4): [bars] accent bars, 4 dp wide and 3 dp apart, 8 to 56 dp tall for levels 0 to 1
- * (newest last). Bars not yet recorded sit dim at 8 dp. Feed it the real level about 15 times a second. Reduced motion
+ * Live mic level while recording (W4): [bars] equal-width accent bars fill the row with 4 dp gaps, up to 56 dp tall
+ * for normalized levels 0 to 1 (newest last). Unrecorded bars sit dim at 6%. Feed real levels about 15 times a second. Reduced motion
  * shows one static 200 dp level meter of the newest level instead. Decorative: the timer beside it carries the state.
  */
 @Composable
-fun RrWaveform(levels: List<Float>, modifier: Modifier = Modifier, bars: Int = 20) {
+fun RrWaveform(levels: List<Float>, modifier: Modifier = Modifier, bars: Int = 24) {
     val c = RrTheme.colors
     if (LocalReducedMotion.current) {
         Box(modifier.rrClearAndSetSemantics {}.width(200.dp).height(4.dp).clip(RrShape.xs).background(c.sunken)) {
@@ -39,23 +39,23 @@ fun RrWaveform(levels: List<Float>, modifier: Modifier = Modifier, bars: Int = 2
         return
     }
     Row(
-        modifier.rrClearAndSetSemantics {}.height(56.dp),
+        modifier.rrClearAndSetSemantics {}.fillMaxWidth().height(56.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Bottom,
     ) {
         repeat(bars) { i ->
             val level = levels.getOrNull(i)?.coerceIn(0f, 1f)
             Box(
-                Modifier.width(4.dp).height(if (level == null) 8.dp else 8.dp + 48.dp * level)
+                Modifier.weight(1f).height(if (level == null) 56.dp * 0.06f else 56.dp * level)
                     .then(if (level == null) Modifier.alpha(0.4f) else Modifier)
-                    .clip(RrShape.xs).background(c.accent),
+                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(topStart = 1.dp, topEnd = 1.dp)).background(c.accent),
             )
         }
     }
 }
 
 /**
- * The square record control (W4: 72 dp, 4 dp corners; 44 dp in compact rows such as Debrief). Idle it is accent with a
+ * The record control (W4 and Debrief: 72 dp, 20 dp corners). Idle it is accent with a
  * microphone ("Record your answer"); while [recording] it is danger with stop ("Stop recording"). The fill morphs at d1
  * (instant under reduced motion). The icon is 4/9 of [size] (32 dp at 72).
  */
@@ -71,7 +71,7 @@ fun RrRecordButton(recording: Boolean, onClick: () -> Unit, modifier: Modifier =
             .semantics { contentDescription = label },
         contentAlignment = Alignment.Center,
     ) {
-        if (recording) RrIcon(R.drawable.ic_ph_stop_fill, null, size = size * 4 / 9, tint = RrFixedColors.onDanger)
+        if (recording) RrIcon(R.drawable.ic_ph_stop_fill, null, size = size * 4 / 9, tint = RrFixedColors.onDanger, colorName = "#ffffff")
         else RrIcon(R.drawable.ic_ph_microphone, null, size = size * 4 / 9, tint = c.onAccent)
     }
 }

@@ -1,5 +1,15 @@
 package me.rxresu.core.designsystem
 
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +43,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -273,6 +284,9 @@ class RrRichTransformation(
     private val linkColor: Color,
     private val highlight: IntRange? = null,
     private val highlightColor: Color = Color.Unspecified,
+    private val paragraphSpacing: TextUnit = TextUnit.Unspecified,
+    private val showMarkers: Boolean = true,
+    private val dimHighlight: Boolean = false,
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val lines = text.text.split('\n')
@@ -280,11 +294,12 @@ class RrRichTransformation(
         val prefixes = lines.indices.map { i ->
             val kind = doc.kindAt(i)
             number = if (kind == RrListKind.Numbers) number + 1 else 0
-            when (kind) { RrListKind.Bullets -> "•  "; RrListKind.Numbers -> "$number.  "; RrListKind.Paragraphs -> "" }
+            if (!showMarkers) "" else when (kind) { RrListKind.Bullets -> "•  "; RrListKind.Numbers -> "$number.  "; RrListKind.Paragraphs -> "" }
         }
         val styled = text.text == doc.text
         val starts = lines.runningFold(0) { acc, l -> acc + l.length + 1 }
         val offsets = prefixes.runningFold(0) { acc, p -> acc + p.length }
+        val spaced = paragraphSpacing != TextUnit.Unspecified
         val out = buildAnnotatedString {
             val lineStarts = IntArray(lines.size)
             lines.forEachIndexed { i, line ->
@@ -310,16 +325,24 @@ class RrRichTransformation(
                         base + k, base + k + 1,
                     )
                 }
-                if (i < lines.lastIndex) append('\n')
+                if (spaced) addStyle(ParagraphStyle(), lineStarts[i], length)
+                if (i < lines.lastIndex) {
+                    if (spaced) {
+                        val gap = length
+                        append('\u200B')
+                        addStyle(ParagraphStyle(lineHeight = paragraphSpacing, lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None, LineHeightStyle.Mode.Tight)), gap, length)
+                        addStyle(SpanStyle(fontSize = 1.sp), gap, length)
+                    } else append('\n')
+                }
             }
             if (highlight != null && styled && !highlight.isEmpty()) {
                 val line = starts.indexOfLast { it <= highlight.first }.coerceIn(0, lines.lastIndex)
-                addStyle(SpanStyle(background = highlightColor), highlight.first + offsets[line + 1], highlight.last + 1 + offsets[line + 1])
+                addStyle(if (dimHighlight) SpanStyle(color = highlightColor) else SpanStyle(background = highlightColor), highlight.first + offsets[line + 1], highlight.last + 1 + offsets[line + 1])
             }
             // List lines wrap under their text: one paragraph style over a field that is one list, else per list line.
             val indent = ParagraphStyle(textIndent = TextIndent(firstLine = 0.sp, restLine = hanging))
-            if (doc.kind != RrListKind.Paragraphs) addStyle(indent, 0, length)
-            else if (styled) lines.indices.filter { doc.kindAt(it) != RrListKind.Paragraphs }.forEach { i ->
+            if (showMarkers && doc.kind != RrListKind.Paragraphs) addStyle(indent, 0, length)
+            else if (showMarkers && styled) lines.indices.filter { doc.kindAt(it) != RrListKind.Paragraphs }.forEach { i ->
                 addStyle(indent, lineStarts[i], if (i < lines.lastIndex) lineStarts[i + 1] else length)
             }
         }
@@ -352,17 +375,52 @@ fun RrRichTextField(
     textStyle: TextStyle = RrType.input.copy(fontSize = 17.sp, lineHeight = 24.sp),
     highlight: IntRange? = null,
     placeholder: String? = null,
+    readingLayout: Boolean = false,
 ) {
     val c = RrTheme.colors
+    val style = textStyle.copy(color = c.ink)
+    val transformation = RrRichTransformation(doc, 22.sp, c.accentText, highlight, if (readingLayout) c.ink3 else c.sunken,
+        paragraphSpacing = if (readingLayout) 12.sp else TextUnit.Unspecified, showMarkers = !readingLayout, dimHighlight = readingLayout)
+    val transformed = transformation.filter(AnnotatedString(value.text))
+    val runs = if (readingLayout) doc.lineRanges().map { range ->
+        val runStyle = style.copy(color = if (highlight != null && range.first in highlight) c.ink3 else c.ink)
+        DesignTextRun(transformed.offsetMapping.originalToTransformed(range.first), transformed.offsetMapping.originalToTransformed(range.last + 1), runStyle, c.tokenName(runStyle.color))
+    } else emptyList()
+    var layout by remember { mutableStateOf<androidx.compose.ui.text.TextLayoutResult?>(null) }
+    val measurer = rememberTextMeasurer()
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     CompositionLocalProvider(LocalTextSelectionColors provides TextSelectionColors(handleColor = c.accent, backgroundColor = c.accentSoft)) {
         BasicTextField(
             value = value,
             onValueChange = { next -> onValueChange(next, if (next.text != value.text) doc.withText(next.text) else doc) },
-            modifier = modifier,
+            modifier = modifier.rrDesignTag(DesignTag(text = value.text, style = style, colorName = "ink", textRuns = runs))
+                .drawWithContent {
+                    if (readingLayout) layout?.let { result ->
+                        var number = 0
+                        doc.lineRanges().forEachIndexed { index, range ->
+                            number = if (doc.kindAt(index) == RrListKind.Numbers) number + 1 else 0
+                            val marker = when (doc.kindAt(index)) { RrListKind.Bullets -> "•"; RrListKind.Numbers -> "$number."; RrListKind.Paragraphs -> "" }
+                            if (marker.isNotEmpty()) {
+                                val line = result.getLineForOffset(transformed.offsetMapping.originalToTransformed(range.first))
+                                val markerStyle = style.copy(color = if (highlight != null && range.first in highlight) c.ink3 else c.ink)
+                                if (doc.kindAt(index) == RrListKind.Bullets) {
+                                    drawCircle(markerStyle.color, radius = 2.5.sp.toPx(), center = Offset(
+                                        if (rtl) size.width + 14.5.sp.toPx() else -14.5.sp.toPx(),
+                                        result.getLineTop(line) + style.lineHeight.toPx() / 2 - 0.5.sp.toPx()))
+                                } else {
+                                    val measured = measurer.measure(marker, markerStyle)
+                                    drawText(measured, topLeft = Offset(if (rtl) size.width + 20.sp.toPx() - measured.size.width else -20.sp.toPx(), result.getLineTop(line)))
+                                }
+                            }
+                        }
+                    }
+                    drawContent()
+                },
+            onTextLayout = { layout = it },
             readOnly = readOnly,
-            textStyle = textStyle.copy(color = c.ink),
+            textStyle = style,
             cursorBrush = SolidColor(c.accent),
-            visualTransformation = RrRichTransformation(doc, 22.sp, c.accentText, highlight = highlight, highlightColor = c.sunken),
+            visualTransformation = transformation,
             decorationBox = { field ->
                 // An empty editor otherwise shows nothing at all, not even where to type.
                 if (placeholder != null && value.text.isEmpty()) RrText(placeholder, style = textStyle, color = c.ink3)
@@ -385,6 +443,7 @@ fun RrRichTextToolbar(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     wholeField: Boolean = false,
+    compact: Boolean = false,
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
     val target = doc.target(selection)
@@ -395,13 +454,14 @@ fun RrRichTextToolbar(
         val next = if (on) RrListKind.Paragraphs else kind
         onChange(if (wholeField) doc.copy(kind = next) else doc.withKind(lines, next))
     }
+    val numberedLabel = stringResource(S.string.numbered_list)
     val listed = { kind: RrListKind -> if (wholeField) doc.kind == kind else doc.kindAt(lines.first) == kind }
-    Row(modifier, verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-        RrIconButton(R.drawable.ic_ph_text_b, stringResource(S.string.bold), { onChange(doc.toggle(target, "strong")) }, enabled = enabled, selected = doc.has(target, "strong"))
-        RrIconButton(R.drawable.ic_ph_text_italic, stringResource(S.string.italic), { onChange(doc.toggle(target, "em")) }, enabled = enabled, selected = doc.has(target, "em"))
-        RrIconButton(R.drawable.ic_ph_list_bullets, stringResource(S.string.bulleted_list), { list(RrListKind.Bullets) }, enabled = enabled, selected = listed(RrListKind.Bullets))
-        RrIconButton(R.drawable.ic_ph_list_numbers, stringResource(S.string.numbered_list), { list(RrListKind.Numbers) }, enabled = enabled, selected = listed(RrListKind.Numbers))
-        RrIconButton(R.drawable.ic_ph_link_simple, stringResource(S.string.link), { linking = target }, enabled = enabled && !target.isEmpty(), selected = !target.isEmpty() && doc.marksAt(target.first).href != null)
+    Row(modifier, verticalAlignment = androidx.compose.ui.Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(if (compact) 2.dp else 0.dp)) {
+        RrIconButton(R.drawable.ic_ph_text_b, stringResource(S.string.bold), { onChange(doc.toggle(target, "strong")) }, modifier = Modifier.semantics { selected = doc.has(target, "strong") }, enabled = enabled, selected = !compact && doc.has(target, "strong"), size = if (compact) RrIconButtonSize.Small else RrIconButtonSize.Regular)
+        RrIconButton(R.drawable.ic_ph_text_italic, stringResource(S.string.italic), { onChange(doc.toggle(target, "em")) }, modifier = Modifier.semantics { selected = doc.has(target, "em") }, enabled = enabled, selected = !compact && doc.has(target, "em"), size = if (compact) RrIconButtonSize.Small else RrIconButtonSize.Regular)
+        RrIconButton(R.drawable.ic_ph_list_bullets, stringResource(S.string.bulleted_list), { list(RrListKind.Bullets) }, enabled = enabled, selected = !compact && listed(RrListKind.Bullets), size = if (compact) RrIconButtonSize.Small else RrIconButtonSize.Regular, modifier = Modifier.semantics { selected = listed(RrListKind.Bullets) || (compact && listed(RrListKind.Numbers)); if (compact) customActions = listOf(CustomAccessibilityAction(numberedLabel) { if (enabled) list(RrListKind.Numbers); enabled }) }, onLongClick = if (compact) ({ list(RrListKind.Numbers) }) else null)
+        if (!compact) RrIconButton(R.drawable.ic_ph_list_numbers, stringResource(S.string.numbered_list), { list(RrListKind.Numbers) }, enabled = enabled, selected = listed(RrListKind.Numbers))
+        RrIconButton(R.drawable.ic_ph_link_simple, stringResource(S.string.link), { linking = target }, enabled = enabled && !target.isEmpty(), selected = !compact && !target.isEmpty() && doc.marksAt(target.first).href != null, size = if (compact) RrIconButtonSize.Small else RrIconButtonSize.Regular)
         trailing()
     }
     linking?.let { range -> RrLinkSheet(doc.marksAt(range.first).href, onDismiss = { linking = null }) { url -> linking = null; onChange(doc.link(range, url)) } }

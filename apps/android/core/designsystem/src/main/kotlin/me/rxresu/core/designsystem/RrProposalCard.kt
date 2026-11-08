@@ -1,16 +1,24 @@
 package me.rxresu.core.designsystem
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,6 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -56,25 +67,51 @@ fun RrProposalCard(
     acceptPrimary: Boolean = true,
     focused: Boolean = false,
     badge: (@Composable () -> Unit)? = null,
+    showActions: Boolean = true,
     details: @Composable ColumnScope.() -> Unit = {},
 ) {
     val c = RrTheme.colors
     val haptics = rememberRrHaptics()
     val numberLabel = stringResource(R.string.ds_proposal_number, number)
-    RrCard(modifier = modifier, focused = focused) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+    RrCard(modifier = modifier, focused = focused, contentPadding = PaddingValues(21.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
             ProposalNumber(number, c.accent, c.onAccent, Modifier.semantics { contentDescription = numberLabel })
-            RrText(location, style = RrType.mono, color = c.ink3, maxLines = 1, modifier = Modifier.weight(1f))
+            RrText(location, style = RrType.mono.copy(fontWeight = FontWeight.Medium), color = c.ink3, maxLines = 1, modifier = Modifier.weight(1f))
             badge?.invoke()
         }
-        RrText(proposalText(runs), style = RrType.ui, color = c.ink)
+        var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
+        val text = proposalText(proposalPhraseRuns(runs))
+        val additions = text.spanStyles.filter { it.item.textDecoration != TextDecoration.LineThrough }.map { it.start until it.end }
+        RrText(text, Modifier.rrAddedTextBackground(layout, additions, c.accentSoft), style = RrType.body, color = c.ink,
+            inlineContent = mapOf("padding" to InlineTextContent(Placeholder(2.sp, 18.sp, PlaceholderVerticalAlign.TextCenter)) { Box(Modifier.fillMaxSize()) }),
+            measureUnstyledText = true, onTextLayout = { layout = it })
         details()
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            RrButton(stringResource(R.string.ds_accept), { haptics(RrHaptic.Light); onAccept() }, size = RrButtonSize.Small, variant = if (acceptPrimary) RrButtonVariant.Primary else RrButtonVariant.Secondary)
-            if (onEdit != null) RrButton(stringResource(R.string.ds_edit), onEdit, size = RrButtonSize.Small, variant = RrButtonVariant.Secondary)
-            RrButton(stringResource(R.string.ds_reject), { haptics(RrHaptic.Light); onReject() }, size = RrButtonSize.Small, variant = RrButtonVariant.Ghost)
+        if (showActions) Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            RrButton(stringResource(R.string.ds_accept), { haptics(RrHaptic.Light); onAccept() }, variant = if (acceptPrimary) RrButtonVariant.Primary else RrButtonVariant.Secondary)
+            if (onEdit != null) RrButton(stringResource(R.string.ds_edit), onEdit, variant = RrButtonVariant.Ghost)
+            RrButton(stringResource(R.string.ds_reject), { haptics(RrHaptic.Light); onReject() }, variant = RrButtonVariant.Ghost)
         }
     }
+}
+
+/** Keep a shared connector with both replacement phrases without changing either reconstructed passage. */
+internal fun proposalPhraseRuns(runs: List<RrEditRun>): List<RrEditRun> {
+    val result = runs.toMutableList()
+    for (index in 0 until result.size - 2) {
+        val removed = result[index] as? RrEditRun.Removed ?: continue
+        val added = result[index + 1] as? RrEditRun.Added ?: continue
+        val same = result[index + 2] as? RrEditRun.Same ?: continue
+        if (removed.text.isEmpty() || added.text.isEmpty()) continue
+        val word = same.text.takeWhile { !it.isWhitespace() }
+        if (word !in setOf("by", "with", "for", "from", "to", "in", "on", "at", "of", "as")) continue
+        val length = word.length + same.text.drop(word.length).takeWhile { it.isWhitespace() }.length
+        if (length == word.length) continue
+        val connector = same.text.take(length)
+        result[index] = RrEditRun.Removed(removed.text + connector)
+        result[index + 1] = RrEditRun.Added(added.text + connector)
+        result[index + 2] = RrEditRun.Same(same.text.drop(length))
+    }
+    return result
 }
 
 /** A decided edit, collapsed to one line with Undo ("Skills · Accepted"). */
@@ -82,13 +119,15 @@ fun RrProposalCard(
 fun RrDecidedProposal(number: Int, summary: String, onUndo: () -> Unit, modifier: Modifier = Modifier) {
     val c = RrTheme.colors
     Row(
-        modifier.fillMaxWidth().rrDesignTag(DesignTag(component = "Card", radius = RrRadius.xl, bgName = "raised")).clip(RrShape.xl).background(c.raised).border(1.dp, c.line, RrShape.xl).padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier.fillMaxWidth().heightIn(min = RrLayout.listRowMin).padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ProposalNumber(number, c.sunken, c.ink2)
-        RrText(summary, style = RrType.small, color = c.ink2, modifier = Modifier.weight(1f))
-        RrButton(stringResource(R.string.ds_undo), onUndo, size = RrButtonSize.Small, variant = RrButtonVariant.Ghost)
+        RrText(summary, style = RrType.rowTitle, color = c.ink, modifier = Modifier.weight(1f))
+        Box(Modifier.clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onUndo).padding(vertical = 8.dp)) {
+            RrText(stringResource(R.string.ds_undo), style = RrType.buttonMd, color = c.accentText)
+        }
     }
 }
 
@@ -106,8 +145,17 @@ private fun proposalText(runs: List<RrEditRun>): AnnotatedString {
         runs.forEach { run ->
             when (run) {
                 is RrEditRun.Same -> append(run.text)
-                is RrEditRun.Removed -> withStyle(SpanStyle(color = c.ink2, textDecoration = TextDecoration.LineThrough)) { append(run.text) }
-                is RrEditRun.Added -> withStyle(SpanStyle(background = c.accentSoft, color = c.ink)) { append(run.text) }
+                is RrEditRun.Removed, is RrEditRun.Added -> {
+                    val leading = run.text.takeWhile { it.isWhitespace() }
+                    val words = run.text.trim()
+                    append(leading)
+                    if (words.isNotEmpty()) {
+                        if (run is RrEditRun.Added) { appendInlineContent("padding", "\u2060"); append('\u2060') }
+                        withStyle(if (run is RrEditRun.Removed) SpanStyle(color = c.ink2, textDecoration = TextDecoration.LineThrough) else SpanStyle(color = c.ink)) { append(words) }
+                        if (run is RrEditRun.Added) { append('\u2060'); appendInlineContent("padding", "\u2060") }
+                        append(run.text.takeLastWhile { it.isWhitespace() })
+                    }
+                }
             }
         }
     }

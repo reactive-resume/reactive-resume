@@ -1,8 +1,9 @@
 package me.rxresu.core.designsystem
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 
 /** 44 dp ([Regular]) or 36 dp ([Small], inside composers and sheet headers) icon buttons. */
 enum class RrIconButtonSize { Regular, Small }
@@ -33,6 +35,7 @@ enum class RrIconButtonSize { Regular, Small }
  * @param iconSize 24 dp by default; 20 dp in small buttons.
  */
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 fun RrIconButton(
     @DrawableRes icon: Int,
     contentDescription: String,
@@ -45,6 +48,9 @@ fun RrIconButton(
     tint: Color? = null,
     containerColor: Color? = null,
     mirrorInRtl: Boolean = false,
+    iconSize: Dp = if (size == RrIconButtonSize.Regular) 24.dp else 20.dp,
+    dimWhenDisabled: Boolean = true,
+    onLongClick: (() -> Unit)? = null,
 ) {
     val c = RrTheme.colors
     val interaction = remember { MutableInteractionSource() }
@@ -56,14 +62,14 @@ fun RrIconButton(
             .size(box)
             .rrDesignTag(DesignTag(component = "IconButton", radius = RrRadius.md, bgName = if (selected) "accent-soft" else c.tokenName(fill)))
             .rrPressScale(interaction)
-            .rrEnabledAlpha(enabled, 0.45f)
+            .rrEnabledAlpha(enabled || !dimWhenDisabled, 0.45f)
             .clip(RrShape.md)
             .background(fill)
-            .clickable(interaction, LocalIndication.current, enabled = enabled, role = Role.Button, onClick = onClick)
+            .combinedClickable(interaction, LocalIndication.current, enabled = enabled, role = Role.Button, onLongClick = onLongClick, onClick = onClick)
             .semantics(mergeDescendants = true) { this.contentDescription = contentDescription },
         contentAlignment = Alignment.Center,
     ) {
-        RrIcon(icon, null, size = if (size == RrIconButtonSize.Regular) 24.dp else 20.dp, tint = color, mirrorInRtl = mirrorInRtl)
+        RrIcon(icon, null, size = iconSize, tint = color, mirrorInRtl = mirrorInRtl)
         if (dot) {
             Box(
                 Modifier.align(Alignment.TopEnd)

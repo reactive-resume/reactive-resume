@@ -40,6 +40,7 @@ import me.rxresu.core.network.generated.*
     var enabled by remember(existing) { mutableStateOf(existing?.enabled ?: true) }
     var email by remember(existing) { mutableStateOf(existing?.email ?: false) }
     var dirty by remember { mutableStateOf(false) }; var timePicker by remember { mutableStateOf(false) }
+    var review by remember { mutableStateOf<SaveCareerScheduleRequest?>(null) }
     var details by remember(existing) { mutableStateOf(existing != null && existing.kind != "discovery") }; var pause by remember { mutableStateOf(false) }
     val context = androidx.compose.ui.platform.LocalContext.current
     val chosen = state.providers.firstOrNull { it.id == provider }
@@ -47,14 +48,15 @@ import me.rxresu.core.network.generated.*
     val instant = zonedScheduleInstant(date, time, zone)
     val valid = (kind != SaveCareerScheduleRequestKind.Discovery || !enabled || state.web?.search == true) && instant != null && (!enabled || !needsAi || chosen != null) &&
         (kind == SaveCareerScheduleRequestKind.Discovery && query.isNotBlank() || kind == SaveCareerScheduleRequestKind.FollowUp && application != null || kind == SaveCareerScheduleRequestKind.Prepare && interview != null)
-    RrBottomSheet(close, title = if (kind == SaveCareerScheduleRequestKind.Discovery) stringResource(R.string.career_discovery) else scheduleTitle(kind.wireValue), fixedHeight = 520.dp, confirmDiscard = dirty, footer = { RrFooterBar(inSheet = true, applyBottomInset = false) {
+    RrBottomSheet(close, title = if (kind == SaveCareerScheduleRequestKind.Discovery) stringResource(R.string.career_discovery) else scheduleTitle(kind.wireValue), fixedHeight = 520.dp, closeIconSize = 24.dp, confirmDiscard = dirty, footer = { RrFooterBar(inSheet = true, applyBottomInset = false) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (existing != null) RrButton(stringResource(R.string.career_delete_f6fdbe), delete, variant = RrButtonVariant.DangerGhost, size = RrButtonSize.Large)
             RrButton(stringResource(R.string.career_save_efc007), {
-                save(SaveCareerScheduleRequest(aiProviderId = if (needsAi) provider else null, applicationId = if (kind == SaveCareerScheduleRequestKind.Discovery) null else application,
+                val request = SaveCareerScheduleRequest(aiProviderId = if (needsAi) provider else null, applicationId = if (kind == SaveCareerScheduleRequestKind.Discovery) null else application,
                     email = email && state.emailVerified, enabled = enabled, id = existing?.id, intervalDays = if (kind == SaveCareerScheduleRequestKind.Discovery) interval.toLong() else null,
                     interviewId = if (kind == SaveCareerScheduleRequestKind.Prepare) interview else null, kind = kind, lead = if (kind == SaveCareerScheduleRequestKind.Prepare) lead else null,
-                    locale = interfaceLocale.toLanguageTag(), nextRunAt = requireNotNull(instant), query = query, timezone = zone.id))
+                    locale = interfaceLocale.toLanguageTag(), nextRunAt = requireNotNull(instant), query = query, timezone = zone.id)
+                if (kind == SaveCareerScheduleRequestKind.Discovery && enabled) review = request else save(request)
             }, Modifier.weight(1f), size = RrButtonSize.Large, enabled = valid && state.available && !state.busy, loading = state.busy)
         }
     } }) {
@@ -66,7 +68,7 @@ import me.rxresu.core.network.generated.*
                 Spacer(Modifier.height(12.dp))
                 RrListGroup {
                     RrListRow(stringResource(R.string.career_time_6c82e6), onClick = { timePicker = true }, divider = true, trailing = { RrRowValue(format.time(time), caret = false); Spacer(Modifier.width(4.dp)); RrRowCaret() })
-                    RrSwitchRow(stringResource(R.string.career_turn_this_schedule_on_503930), enabled, { enabled = it; dirty = true })
+                    RrSwitchRow(stringResource(R.string.career_turn_this_schedule_on_503930), enabled, { enabled = it; dirty = true }, divider = true)
                     RrListRow(stringResource(R.string.career_pause), onClick = { pause = true }, trailing = { RrRowValue(if (enabled) stringResource(R.string.career_not_paused) else stringResource(CoreStrings.string.paused), caret = false); Spacer(Modifier.width(4.dp)); RrRowCaret() })
                 }
                 RrButton(stringResource(R.string.career_schedule_details), { details = !details }, Modifier.padding(horizontal = 24.dp), variant = RrButtonVariant.Ghost)
@@ -106,14 +108,24 @@ import me.rxresu.core.network.generated.*
                     RrText(stringResource(R.string.career_paused_schedules_keep_their_settings_292e9a), style = RrType.small, color = RrTheme.colors.ink3)
                     RrSwitchRow(stringResource(R.string.career_also_email_1_s_d635f4, state.email), email, { email = it; dirty = true }, enabled = state.emailVerified, subtitle = if (state.emailVerified) stringResource(R.string.career_you_ll_always_see_it_in_today_985781) else stringResource(R.string.career_verify_your_email_in_settings_first_03abb7))
                 }
-                }
                 if (kind == SaveCareerScheduleRequestKind.Discovery) {
                     RrCallout(stringResource(R.string.career_only_the_search_query_and_search_countries_go_to_your_server_c6f9a8), Modifier.padding(horizontal = 24.dp, vertical = 12.dp), tone = RrTone.Warn, icon = Icons.drawable.ic_ph_key)
-                    if (enabled && state.web?.search != true) RrText(stringResource(R.string.career_set_up_web_search_in_settings_before_enabling_discovery_ai_i_5961d8), style = RrType.small, color = RrTheme.colors.warnText)
                 }
                 if (needsAi) RrCallout(stringResource(R.string.career_each_run_sends_your_preferences_to_1_s_with_your_key_and_you_0c84a2, chosen?.label ?: stringResource(R.string.career_the_connection_you_choose_462a19)), tone = RrTone.Warn, icon = Icons.drawable.ic_ph_key)
+                }
+                if (kind == SaveCareerScheduleRequestKind.Discovery && enabled && state.web?.search != true) RrText(stringResource(R.string.career_set_up_web_search_in_settings_before_enabling_discovery_ai_i_5961d8), Modifier.padding(horizontal = 24.dp), style = RrType.small, color = RrTheme.colors.warnText)
             }
         }
+    }
+    review?.let { request ->
+        RrAlertDialog(
+            title = stringResource(R.string.career_discovery),
+            text = stringResource(R.string.career_only_the_search_query_and_search_countries_go_to_your_server_c6f9a8),
+            confirmLabel = stringResource(R.string.career_save_efc007),
+            onConfirm = { review = null; save(request) },
+            onDismissRequest = { review = null },
+            confirm = RrDialogConfirm.Primary,
+        )
     }
     if (timePicker) DisposableEffect(Unit) {
         val picker = android.app.TimePickerDialog(context, { _, hour, minute -> time = LocalTime.of(hour, minute); dirty = true; timePicker = false }, time.hour, time.minute, android.text.format.DateFormat.is24HourFormat(context))
@@ -169,10 +181,12 @@ import me.rxresu.core.network.generated.*
     return if (row.enabled && row.intervalDays == 1L && at != null && at.hour in 5..11 && row.lastRun?.status != ListCareerSchedulesResponseItemLastRunStatus.Failed) stringResource(R.string.career_every_morning, time.time(row.nextRunAt).orEmpty()) else scheduleStatus(row, time)
 }
 
-/** C1's one-line summary: "Find roles is on · next Mon 9 Nov, 07:00", or "Paused" when none run. */
-@Composable internal fun scheduleSummary(rows: List<CareerSchedule>, time: CareerTime): String? =
-    rows.firstOrNull { it.enabled }?.let { stringResource(R.string.career_schedule_is_on, scheduleTitle(it.kind), time.dayTime(it.nextRunAt).orEmpty()) }
-        ?: rows.firstOrNull()?.let { stringResource(CoreStrings.string.paused) }
+@Composable internal fun discoveryRootSummary(row: CareerSchedule, time: CareerTime): String {
+    val at = time.at(row.nextRunAt)
+    return if (row.enabled && row.intervalDays == 1L && at != null && at.hour in 5..11 && row.lastRun?.status != ListCareerSchedulesResponseItemLastRunStatus.Failed)
+        stringResource(R.string.career_finds_roles_every_morning, time.time(row.nextRunAt).orEmpty())
+    else scheduleStatus(row, time)
+}
 
 /** "Senior product designer, Lisbon" → its terms, for chips. */
 internal fun queryTerms(query: String): List<String> = query.split(',').map { it.trim() }.filter { it.isNotEmpty() }.distinct()

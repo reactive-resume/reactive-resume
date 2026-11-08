@@ -262,7 +262,7 @@ private fun Requirements(
             val status = stringResource(if (supported) S.string.supported else if (missing) S.string.no_evidence_yet else S.string.partly_supported)
             RrListRow(r.text, subtitle = listOfNotNull(status, r.evidence.takeIf(String::isNotBlank)).joinToString(" · "),
                 leading = { Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) { RrIcon(if (supported) DsR.drawable.ic_ph_check_circle else if (missing) DsR.drawable.ic_ph_question else DsR.drawable.ic_ph_circle_half, null, size = 22.dp, tint = if (supported) c.accentText else if (missing) c.ink3 else c.warnText) } },
-                divider = i < items.lastIndex, onClick = { onOpen(r) },
+                divider = i < items.lastIndex, onClick = { if (missing) onAddFact() else onOpen(r) },
                 trailing = if (missing) ({ Box(Modifier.defaultMinSize(minHeight = 44.dp).clickable(role = Role.Button, onClick = onAddFact), contentAlignment = Alignment.Center) { RrText(stringResource(S.string.add_a_fact), style = RrType.ui.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Medium), color = c.accentText) } }) else null)
         }
     }

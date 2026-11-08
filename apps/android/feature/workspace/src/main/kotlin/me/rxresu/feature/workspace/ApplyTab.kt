@@ -231,7 +231,11 @@ internal fun ApplyTab(applicationId: String, nav: NavController) {
                 },
                 onOpenLetter = { id ->
                     if (!state.submitted) nav.navigate(Letter(id))
-                    else { scope.launch { toasts.show(res.getString(R.string.workspace_artifact_unavailable)) } }
+                    else {
+                        val versionId = state.context.app.sentCoverLetterVersionId
+                        if (versionId != null) nav.navigate(Letter(id, versionId = versionId))
+                        else scope.launch { toasts.show(res.getString(R.string.workspace_artifact_unavailable)) }
+                    }
                 },
                 onPrepareResume = { nav.navigate(NewDocument(copyForApplicationId = applicationId)) },
                 onCopy = { answer ->

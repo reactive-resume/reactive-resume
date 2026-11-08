@@ -21,6 +21,20 @@ import org.robolectric.annotation.GraphicsMode
 @Config(sdk = [34])
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class StoryboardFixturesTest {
+    @Test fun visitorChartMatchesTheTwentyFourStoryboardBars() = runTest {
+        FakeRepositories(coroutineScope = backgroundScope).use { repositories ->
+            val daily = repositories.resumes.getResumeDailyStatistics(StoryboardIds.resume, 30)
+            val heights = listOf(20,15,30,25,10,35,45,30,20,25,55,100,70,40,30,20,15,35,25,45,30,15,20,40)
+            assertEquals(24, daily.size)
+            val peak = daily.maxOf { it.views }
+            assertEquals(128.0, daily.sumOf { it.views }, 0.0001)
+            assertEquals(128L, daily.sumOf { it.views }.toLong())
+            heights.zip(daily).forEach { (height, day) -> assertEquals(height.toDouble(), day.views / peak * 100, 0.0001) }
+            assertEquals(24, daily.map { it.date }.distinct().size)
+            assertEquals(repositories.time.today().toString(), daily.last().date)
+        }
+    }
+
     @Test fun commonSeedMatchesDocumentDesignAndLumenHistory() = runTest {
         FakeRepositories(coroutineScope = backgroundScope).use { repositories ->
             val resume = repositories.resumes.getResume(StoryboardIds.resume)
