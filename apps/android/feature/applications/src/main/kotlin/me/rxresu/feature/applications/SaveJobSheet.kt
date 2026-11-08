@@ -409,7 +409,6 @@ private fun ReadStatus(state: SaveJobState, onRead: (Boolean) -> Unit) {
         state.outcome == ReadOutcome.Failed -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             RrCallout(stringResource(R.string.app_posting_unreadable), tone = RrTone.Danger)
             RrButton(stringResource(S.string.read_with_ai), { onRead(true) }, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small, icon = D.drawable.ic_ph_sparkle)
-            RrDisclosureLine(stringResource(R.string.app_read_ai_disclosure))
         }
         // As on the web: a read that left the role or company empty says so instead of "Found".
         (state.outcome == ReadOutcome.Page || state.outcome == ReadOutcome.Ai) && (state.parsed?.role.isNullOrBlank() || state.parsed?.company.isNullOrBlank()) ->

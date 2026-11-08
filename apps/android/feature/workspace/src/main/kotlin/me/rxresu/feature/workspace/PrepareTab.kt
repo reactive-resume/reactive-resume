@@ -48,7 +48,6 @@ import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCard
-import me.rxresu.core.designsystem.RrDisclosureLine
 import me.rxresu.core.designsystem.RrFilterChip
 import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrText
@@ -237,7 +236,6 @@ internal fun PrepareScreen(
                     if (provider == null) {
                         RrButton(stringResource(S.string.set_up_ai), onSetUpAi, variant = RrButtonVariant.Secondary)
                     } else {
-                        RrDisclosureLine(sendsLine(provider, S.string.the_interview_details, S.string.this_posting, S.string.enabled_knowledge))
                         if (state.running) Working(BriefingSteps, onStop) else RrButton(stringResource(S.string.generate_briefing_now), onGenerate, icon = DsR.drawable.ic_ph_sparkle)
                     }
                     if (state.failed) RrCallout(stringResource(S.string.couldn_t_complete_this_action_try_again), tone = RrTone.Danger, actionLabel = stringResource(S.string.retry), onAction = onGenerate)

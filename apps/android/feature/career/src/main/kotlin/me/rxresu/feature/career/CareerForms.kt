@@ -135,7 +135,6 @@ import me.rxresu.core.network.generated.*
             ChoicePicker(state.resumes.firstOrNull { it.id == resume }?.name ?: stringResource(R.string.career_none_6eef66), stringResource(R.string.career_resume_to_share_f54e59), listOf("" to stringResource(R.string.career_none_6eef66)) + state.resumes.map { it.id to it.name }, { resume = it.ifEmpty { null } })
             RrSwitchRow(stringResource(R.string.career_knowledge_on_4bf78f), knowledge, { knowledge = it })
             val chosen = state.providers.firstOrNull { it.id == provider }
-            RrDisclosureLine(stringResource(R.string.career_when_you_generate_suggestions_the_selected_resume_and_knowle_7cf237))
             if (state.error) CareerError { chosen?.let { generate(it, resume, knowledge) } }
             if (state.generating) RrWorkingLabel(listOf(stringResource(R.string.career_working_13b7bf)))
             else RrButton(stringResource(R.string.career_generate_role_suggestions_099288), { chosen?.let { generate(it, resume, knowledge) } }, enabled = chosen != null, variant = if (state.suggestions.isEmpty()) RrButtonVariant.Primary else RrButtonVariant.Secondary)

@@ -213,8 +213,6 @@ import kotlinx.coroutines.launch
             })
             if (!follow) RrButton(stringResource(R.string.career_latest_decd7c), { follow = true; scope.launch { scroll.animateScrollTo(scroll.maxValue) } }, variant = RrButtonVariant.Secondary)
             if (state.busy) RrWorkingLabel(listOf(stringResource(R.string.career_working_13b7bf)))
-            RrDisclosureLine(stringResource(R.string.career_when_you_press_send_your_message_and_conversation_history_go_e24f7e, state.server, state.providers.firstOrNull { it.id == state.selected }?.let { it.label + " · " + it.model } ?: stringResource(R.string.career_the_connection_you_choose_462a19), if (state.applications || state.scoped) stringResource(R.string.career_on_e0049a) else stringResource(R.string.career_off_e3de5a), if (state.memory) stringResource(R.string.career_on_e0049a) else stringResource(R.string.career_off_e3de5a)))
-            if (!state.memory) RrDisclosureLine(stringResource(R.string.career_knowledge_is_off_for_this_message_the_coach_doesn_t_read_it__73f271))
         }
     }
 }

@@ -199,7 +199,6 @@ internal fun RichTextScreen(
                 }
             }, icon = D.drawable.ic_ph_sparkle)
         }
-        state.aiProvider?.let { RrDisclosureLine(stringResource(S.string.sends_this_line_surrounding_field_text_and_your_instructions_to_0_1, it.label, it.model), Modifier.padding(16.dp)) }
     }
     ask?.let { a -> AskSheet(a, onDismiss = { ask = null }) { words -> ask = null; actions.improve(currentLine, rich.text, where, a.wire, words) } }
     LaunchedEffect(Unit) { actions.loadAiProvider() }
@@ -244,7 +243,6 @@ private fun ImproveCard(state: ImproveState, onClose: () -> Unit, onReplace: (Im
                     RrButton(stringResource(S.string.keep_mine), onClose, variant = RrButtonVariant.Secondary)
                     RrButton(stringResource(S.string.try_another), { onTryAnother(asked) }, variant = RrButtonVariant.Ghost)
                 }
-                RrDisclosureLine(stringResource(S.string.sends_this_line_surrounding_field_text_and_your_instructions_to_0_1, asked.provider, asked.model))
             }
         }
     }

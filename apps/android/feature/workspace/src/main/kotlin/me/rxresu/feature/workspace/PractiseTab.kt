@@ -71,7 +71,6 @@ import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCard
-import me.rxresu.core.designsystem.RrDisclosureLine
 import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrListRow
@@ -395,7 +394,6 @@ internal fun PractiseScreen(
                 }
             }
             Notice(state.notice, onRetryTranscribe)
-            state.transcriber?.let { RrDisclosureLine(stringResource(S.string.your_recording_goes_to_transcribername_after_you_stop_to_be_transcribed_your_provider_may_charge_the, it.label)) }
         }
         Spacer(Modifier.fillMaxWidth().height(1.dp).background(c.line))
         val latest = state.attempts.firstOrNull()
@@ -481,7 +479,6 @@ private fun ReviewAnswer(
             if (state.transcriber != null && !micDenied) RrButton(stringResource(if (review.spokenMs != null) S.string.record_again else S.string.record_your_answer), onRecordAgain, variant = RrButtonVariant.Secondary, icon = DsR.drawable.ic_ph_microphone)
         }
     }
-    state.context.provider?.let { RrDisclosureLine(sendsLine(it, S.string.the_question_and_your_answer, S.string.enabled_knowledge)) }
 }
 
 @Composable

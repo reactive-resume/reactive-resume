@@ -39,7 +39,6 @@ import me.rxresu.core.strings.R as CoreR
                 RrContextChip(stringResource(CoreR.string.posting), icon = DsR.drawable.ic_ph_briefcase, leftOut = !state.postingContext,
                     onRemove = if (state.postingContext) ({ context(null, false) }) else null, onClick = if (!state.postingContext) ({ context(null, true) }) else null)
             }, tools = { RrIconButton(DsR.drawable.ic_ph_paperclip, stringResource(CoreR.string.attach_a_file), { action("attach") }, size = RrIconButtonSize.Small, enabled = !state.locked && state.provider != null && state.attachments.size < 10) })
-            RrDisclosureLine(stringResource(R.string.p4_when_you_press_send_selected_context_attachments_and_earlier_messages_go_to_1_s_with_, state.provider?.label ?: stringResource(R.string.p4_your_connection)))
         }
     }) {
         Column(Modifier.weight(1f).verticalScroll(scroll).padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {

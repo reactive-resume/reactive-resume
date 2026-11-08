@@ -41,7 +41,6 @@ import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCard
 import me.rxresu.core.designsystem.RrChoiceRow
-import me.rxresu.core.designsystem.RrDisclosureLine
 import me.rxresu.core.designsystem.RrIcon
 import me.rxresu.core.designsystem.RrListGroup
 import me.rxresu.core.designsystem.RrListRow
@@ -168,7 +167,6 @@ private fun Method(state: ImportUiState, callbacks: ImportCallbacks) {
         }
         // Nothing is sent to the provider until the person has read where it goes and asked for it.
         if (state.method == ImportMethod.Ai && state.aiProvider != null) {
-            RrDisclosureLine(stringResource(R.string.import_ai_disclosure, listOfNotNull(state.aiProvider, state.aiDestination).joinToString(" · ")))
             if (state.progress == 0 && !state.running) {
                 RrButton(stringResource(R.string.import_ai), callbacks.onReadWithAi, variant = RrButtonVariant.Secondary, size = RrButtonSize.Small, icon = DS.drawable.ic_ph_sparkle, iconTint = c.accentText)
             }

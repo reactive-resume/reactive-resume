@@ -41,7 +41,6 @@ import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCard
-import me.rxresu.core.designsystem.RrDisclosureLine
 import me.rxresu.core.designsystem.RrEvidence
 import me.rxresu.core.designsystem.RrEvidencePill
 import me.rxresu.core.designsystem.RrHaptic
@@ -188,7 +187,6 @@ internal fun FitScreen(
         footer = if (fit != null) {
             {
                 RrButton(stringResource(S.string.tailor_resume_for_this_job), onTailor, Modifier.fillMaxWidth(), size = RrButtonSize.Large, icon = DsR.drawable.ic_ph_sparkle)
-                RrDisclosureLine(stringResource(S.string.an_ai_reading_to_help_you_edit_not_a_prediction_of_how_an_employer_or_screening_system_will_respond), icon = DsR.drawable.ic_ph_info)
             }
         } else null,
     ) {
@@ -224,7 +222,6 @@ internal fun FitScreen(
                 RrText(stringResource(S.string.supporting_knowledge_facts_and_stories), style = RrType.eyebrow, color = c.ink3)
                 me.rxresu.core.designsystem.RrListGroup { cited.forEach { RrListRow(it, icon = DsR.drawable.ic_ph_quotes) } }
             }
-            RrDisclosureLine(stringResource(R.string.workspace_check_sources), icon = DsR.drawable.ic_ph_info)
         }
     }
 }
@@ -302,7 +299,6 @@ private fun FirstRun(state: FitState, onCheck: () -> Unit, onStop: () -> Unit, o
             else -> RrCard(raised = true) {
                 RrText(stringResource(S.string.check_this_role_against_your_evidence), style = RrType.label, color = c.ink)
                 RrText(stringResource(S.string.each_requirement_in_the_posting_is_checked_against_the_facts_and_stories_in_your_knowledge_gaps_show), style = RrType.small, color = c.ink2)
-                RrDisclosureLine(sendsLine(provider, S.string.this_posting, S.string.enabled_knowledge, S.string.the_resume_for_this_job))
                 if (state.running) Working(FitSteps, onStop) else RrButton(stringResource(S.string.check_fit), onCheck, icon = DsR.drawable.ic_ph_sparkle)
                 if (state.failed) FitFailed(onCheck)
             }

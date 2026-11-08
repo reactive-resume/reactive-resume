@@ -6,7 +6,6 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.icu.text.ListFormatter
 import android.text.format.DateFormat
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -157,14 +156,6 @@ internal fun rememberDates(zone: ZoneId): Dates {
     val context = androidx.compose.ui.platform.LocalContext.current
     val locale = LocalConfiguration.current.locales[0]
     return remember(zone, locale) { Dates(zone, locale, DateFormat.is24HourFormat(context)) }
-}
-
-/** "Sends this posting, enabled Knowledge and the resume for this job to Work OpenAI." */
-@Composable
-internal fun sendsLine(provider: TestAiProviderResponse, vararg what: Int): String {
-    val locale = LocalConfiguration.current.locales[0]
-    val parts = what.map { stringResource(it) }
-    return stringResource(S.string.sends_0_to_label, ListFormatter.getInstance(locale).format(parts), provider.label)
 }
 
 /**

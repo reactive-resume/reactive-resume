@@ -53,7 +53,6 @@ import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCard
-import me.rxresu.core.designsystem.RrDisclosureLine
 import me.rxresu.core.designsystem.RrFilterChip
 import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrMotion
@@ -303,13 +302,6 @@ internal fun MessagesScreen(
                 )
             }
             if (state.failed) RrCallout(stringResource(S.string.couldn_t_complete_this_action_try_again), tone = RrTone.Danger)
-            if (provider != null) {
-                RrDisclosureLine(
-                    if (hasDraft) stringResource(R.string.workspace_drafted_with, provider.label)
-                    else if (state.kind == MessageKind.Reply) sendsLine(provider, S.string.the_employer_s_message, S.string.this_posting)
-                    else sendsLine(provider, S.string.this_posting, S.string.your_contacts, S.string.the_resume_for_this_job),
-                )
-            }
         }
     }
 }

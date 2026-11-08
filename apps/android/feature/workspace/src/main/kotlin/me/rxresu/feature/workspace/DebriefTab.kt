@@ -47,7 +47,6 @@ import me.rxresu.core.designsystem.RrButtonSize
 import me.rxresu.core.designsystem.RrButtonVariant
 import me.rxresu.core.designsystem.RrCallout
 import me.rxresu.core.designsystem.RrCard
-import me.rxresu.core.designsystem.RrDisclosureLine
 import me.rxresu.core.designsystem.RrFilterChip
 import me.rxresu.core.designsystem.RrHaptic
 import me.rxresu.core.designsystem.RrRecordButton
@@ -310,7 +309,6 @@ internal fun DebriefScreen(
                                 else -> RrText(stringResource(S.string.up_to_2_minutes_2_mb_maximum), style = RrType.small, color = c.ink3)
                             }
                         }
-                        RrDisclosureLine(stringResource(S.string.your_recording_goes_to_transcribername_after_you_stop_to_be_transcribed_your_provider_may_charge_the, state.transcriber.label))
                     }
                     if (micDenied) RrCallout(stringResource(S.string.allow_microphone_access_in_device_settings_or_type_your_answer))
                     Notice(state.notice, onRetryTranscribe)
@@ -322,8 +320,7 @@ internal fun DebriefScreen(
                             CreateCareerOfferResponseDataDebriefLanded.Not to S.string.didn_t_land,
                         ).forEach { (value, label) -> RrFilterChip(stringResource(label), state.landed == value, { onLanded(value) }) }
                     }
-                    state.context.provider?.let { RrDisclosureLine(sendsLine(it, S.string.the_question_and_what_you_said, S.string.enabled_knowledge, S.string.the_interview_details)) }
-                        ?: RrCallout(stringResource(S.string.connect_an_ai_provider), actionLabel = stringResource(S.string.set_up_ai), onAction = onSetUpAi)
+                    if (state.context.provider == null) RrCallout(stringResource(S.string.connect_an_ai_provider), actionLabel = stringResource(S.string.set_up_ai), onAction = onSetUpAi)
                 }
             }
         }
@@ -368,7 +365,6 @@ private fun ReviewResult(state: DebriefState, onRemember: () -> Unit, onNotNow: 
                     }
                 }
             }
-            RrDisclosureLine(icon = DsR.drawable.ic_ph_info, text = stringResource(S.string.practice_priorities_not_conclusions_about_why_an_employer_decided_anything))
             RrButton(stringResource(S.string.start_a_debrief), onStartOver, variant = RrButtonVariant.Secondary)
         }
     }

@@ -38,7 +38,7 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
             // The body editor is full screen; the letter screen under it leaves composition (and TalkBack) meanwhile.
             if (form != "body") LetterScreen(state, mode, details, { action -> when (action) {
                 "undo" -> vm.undo()
-                "draft" -> form = "draft"
+                "draft" -> vm.generate()
                 "generate" -> vm.generate()
                 "retry-draft" -> vm.retryDraft()
                 "shorter" -> vm.generate(CreateCoverLetterDraftRequestVariant.Shorter)
@@ -70,7 +70,6 @@ fun NavGraphBuilder.lettersGraph(nav: NavController, motion: RrNavMotion) {
                 "rename" -> LetterTextSheet(stringResource(CoreR.string.rename), state.letter?.name.orEmpty(), state, { text -> vm.metadata({ PatchCoverLetterRequest(expectedRevision = it.revision, name = text) }, dismiss) }, dismiss)
                 "recipient" -> RecipientSheet(state, { recipient, date, greeting, signoff -> vm.edit({ it.copy(recipient = recipient, letterDate = date.ifBlank { null }, greeting = greeting, signOff = signoff) }, dismiss) }, dismiss)
                 "greeting", "signoff" -> RecipientSheet(state, { recipient, date, greeting, signoff -> vm.edit({ it.copy(recipient = recipient, letterDate = date.ifBlank { null }, greeting = greeting, signOff = signoff) }, dismiss) }, dismiss)
-                "draft" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.draft_from_the_posting), fitContent = true) { RrDisclosureLine(state.provider?.let { stringResource(CoreR.string.sends_this_letter_s_resume_to_0_1_to_draft_the_body_your_provider_may_charge, it.label, it.model) } ?: stringResource(R.string.p4_draft_disclosure)); RrButton(stringResource(CoreR.string.draft_from_the_posting), { vm.generate(); dismiss() }, Modifier.padding(16.dp), enabled = state.editable) }
                 "body" -> LetterBodyEditor(state, { content -> vm.edit({ it.copy(content = content) }, dismiss) }, dismiss)
                 "resume" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.resume), initialDetent = 1) { state.resumes.forEach { resume -> RrListRow(resume.name, onClick = { vm.linkResume(resume.id, dismiss) }) }; RrListRow(stringResource(CoreR.string.entry_header_accent_none), onClick = { vm.edit({ it.copy(sourceResumeId = null, designLinked = false) }, dismiss) }) }
                 "application" -> RrBottomSheet(dismiss, title = stringResource(CoreR.string.application), initialDetent = 1) { state.applications.forEach { app -> RrListRow(app.company, subtitle = app.role, onClick = { vm.linkApplication(app.id, dismiss) }) } }
