@@ -27,7 +27,7 @@ class CareerScreenshotsTest : RrScreenshotTest() {
     }
     private fun career(dark: Boolean, empty: Boolean = false) {
         val fakes = FakeRepositories(); val data = runBlocking {
-            CareerState(loading = false, facts = fakes.career.listCareerFacts(), stories = fakes.career.listCareerStories().let { rows -> List(6) { rows[it % rows.size] } }, threads = fakes.assistant.listAgentThreads().map { it.copy(lastMessageAt = "2026-11-06T18:20:00Z") }, offers = fakes.career.listCareerSavedItems(kind = ListCareerSavedItemsKind.Offer).let { rows -> val offer = rows.first(); listOf(offer.copy(application = offer.application?.copy(company = "Parcel")), offer.copy(id = "meridian-offer", data = (offer.data as Offer).copy(respondBy = "2026-11-20"))) }, schedules = fakes.career.listCareerSchedules(), providers = fakes.ai.listAiProviders(), scheduling = true, initials = "AM", profile = fakes.career.getCareerProfile().copy(targetRoles = listOf("Product design"), locations = listOf("Lisbon or remote")))
+            CareerState(loading = false, facts = fakes.career.listCareerFacts(), stories = fakes.career.listCareerStories().let { rows -> List(6) { rows[it % rows.size].copy(id = "story-$it") } }, threads = fakes.assistant.listAgentThreads().map { it.copy(lastMessageAt = "2026-11-06T18:20:00Z") }, offers = fakes.career.listCareerSavedItems(kind = ListCareerSavedItemsKind.Offer).let { rows -> val offer = rows.first(); listOf(offer.copy(application = offer.application?.copy(company = "Parcel")), offer.copy(id = "meridian-offer", data = (offer.data as Offer).copy(respondBy = "2026-11-20"))) }, schedules = fakes.career.listCareerSchedules(), providers = fakes.ai.listAiProviders(), scheduling = true, initials = "AM", profile = fakes.career.getCareerProfile().copy(targetRoles = listOf("Product design"), locations = listOf("Lisbon or remote")))
         }; fakes.close()
         capture(if (empty) "C1-Career-empty" else "C1-Career", dark) { Column(Modifier.fillMaxSize()) {
             Box(Modifier.weight(1f)) { CareerScreen(if (empty) data.copy(facts = emptyList(), stories = emptyList(), threads = emptyList(), offers = emptyList(), schedules = emptyList()) else data, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) }
@@ -71,7 +71,7 @@ class CareerScreenshotsTest : RrScreenshotTest() {
         OffersScreen(state, {}, {}, {}, {}, {})
     }
     private fun schedule(dark: Boolean) = capture("C7-Schedule", dark) { fakes ->
-        val state = runBlocking { ScheduleState(false, available = true, providers = fakes.ai.listAiProviders(), profile = fakes.career.getCareerProfile(), email = "alex@morgan.design", emailVerified = true) }
+        val state = runBlocking { ScheduleState(false, available = true, providers = fakes.ai.listAiProviders(), profile = fakes.career.getCareerProfile(), email = "alex@morgan.design", emailVerified = true, web = fakes.ai.getWebAccessStatus()) }
         Box(Modifier.fillMaxSize()) {
             Column {
                 RrLargeTitleHeader("Career", rememberRrLargeTitleState())
