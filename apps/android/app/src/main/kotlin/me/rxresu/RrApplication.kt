@@ -5,6 +5,7 @@ import androidx.work.Configuration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import me.rxresu.feature.career.startCareerSync
 import me.rxresu.feature.system.startSystemIntegrations
 import me.rxresu.core.data.RepositoriesProvider
 
@@ -19,6 +20,8 @@ class RrApplication : Application(), Configuration.Provider, RepositoriesProvide
     override fun onCreate() {
         super.onCreate()
         startSystemIntegrations(this, scope)
+        // Career edits saved offline are delivered when the network returns (account-scoped queue).
+        startCareerSync(this, scope)
     }
 
     override val workManagerConfiguration: Configuration
