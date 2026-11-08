@@ -30,6 +30,7 @@ import me.rxresu.core.navigation.*
 import me.rxresu.core.network.generated.*
 
 fun NavGraphBuilder.shareGraph(nav: NavController, motion: RrNavMotion) {
+    modal<PagePreview>(motion) { entry -> PagePreviewRoute(entry.toRoute<PagePreview>(), nav) }
     screen<WebPageSettings> { entry ->
         val route = entry.toRoute<WebPageSettings>(); val vm = shareModel(route.resumeId); val state by vm.state.collectAsStateWithLifecycle()
         var form by remember { mutableStateOf<String?>(null) }

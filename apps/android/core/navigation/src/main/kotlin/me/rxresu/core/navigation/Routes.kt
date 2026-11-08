@@ -59,13 +59,27 @@ enum class CheckTab { Issues, JobMatch }
     val group: DesignGroup = DesignGroup.Template,
     val check: CheckTab = CheckTab.Issues,
 )
-/** B2 sheet. `itemId` null = new item in `section`. */
+/** B2. Section entries, pushed from the builder overview. */
+@Serializable data class BuilderSection(val resumeId: String, val section: String)
+/** B3. Full-screen entry form. `itemId` null = new item in `section`. */
 @Serializable data class BuilderEntry(val resumeId: String, val section: String, val itemId: String? = null)
+enum class DesignPicker { Template, Colour, Typography, Page, Layout, Photo, Entries, Advanced }
+/** B7/B8 and undrawn focused design pickers, pushed from B6. */
+@Serializable data class BuilderDesign(val resumeId: String, val picker: DesignPicker)
 /** B4. `field` is the rich-text field path inside the item (usually "description"). */
 @Serializable data class BuilderRichText(val resumeId: String, val section: String, val itemId: String, val field: String = "description")
 /** B5. */
 @Serializable data class BuilderBasics(val resumeId: String)
-/** B18 sheet (owner: :feature:share). */
+/** B18 full-screen page preview (owner: :feature:share). Frozen versions never open the current draft. */
+@Serializable data class PagePreview(
+    val documentId: String,
+    val kind: DocumentKind = DocumentKind.Resume,
+    val versionId: String? = null,
+    val section: String? = null,
+    val itemId: String? = null,
+    val issueNumber: Int? = null,
+)
+/** B19 sheet (owner: :feature:share). Every ellipsis opens this menu. */
 @Serializable data class BuilderMore(val resumeId: String)
 /** B12 (owner: :feature:share). */
 @Serializable data class WebPageSettings(val resumeId: String)
@@ -75,7 +89,7 @@ enum class CheckTab { Issues, JobMatch }
 @Serializable data class Download(val id: String, val kind: DocumentKind)
 /** B15 (owner: :feature:share). */
 @Serializable data class Versions(val resumeId: String)
-/** B16 full-height sheet (owner: :feature:assistant). `prompt` pre-fills the composer (not sent). */
+/** B16 full-screen modal (owner: :feature:assistant). `prompt` pre-fills the composer (not sent). */
 @Serializable data class Assistant(val resumeId: String, val threadId: String? = null, val prompt: String? = null)
 /** B17 (owner: :feature:assistant). */
 @Serializable data class AssistantProposals(val resumeId: String, val threadId: String)
@@ -88,11 +102,15 @@ enum class LetterMode { Write, Design }
 // Applications (owner: :feature:applications). Workspace tabs (W1–W5) are a slot inside the Application screen,
 // filled by :feature:workspace.
 enum class WorkspaceTab { Overview, Fit, Apply, Prepare, Practise, Debrief, Messages, Saved }
-/** J5 sheet. `url` is set when a link arrives from the share sheet. */
+/** J4 pushed Insights. */
+@Serializable data object ApplicationInsights
+/** J5 full-screen modal. `url` is set when a link arrives from the share sheet. */
 @Serializable data class SaveJob(val url: String? = null)
 /** J6, W1–W5. `practiceQuestion` opens the Practice tab on that question (from Interview prep). */
 /** [posting] opens the posting sheet on Overview (the Fit tab's "Add posting"). */
 @Serializable data class Application(val id: String, val tab: WorkspaceTab = WorkspaceTab.Overview, val practiceQuestion: String? = null, val posting: Boolean = false)
+/** W1–W5, Debrief and Library: pushed from J6, retaining application/question identity. */
+@Serializable data class ApplicationWorkspace(val applicationId: String, val tab: WorkspaceTab, val practiceQuestion: String? = null)
 /** J7 sheet. */
 @Serializable data class MoveApplication(val id: String)
 /** J8 sheet. `interviewId` null = new interview. */
@@ -125,7 +143,7 @@ enum class KnowledgeTab { Facts, Stories, Preferences }
 @Serializable data object SettingsProfile
 /** S5. */
 @Serializable data object SettingsAi
-/** S6 sheet. `providerId` null = add. */
+/** S6 full-screen modal. `providerId` null = add. */
 @Serializable data class AiProviderSheet(val providerId: String? = null)
 
 // Outside the app (owner: :feature:public)

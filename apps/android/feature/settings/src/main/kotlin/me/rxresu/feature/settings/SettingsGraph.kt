@@ -237,7 +237,7 @@ fun NavGraphBuilder.settingsGraph(nav: NavController, motion: RrNavMotion, auth:
                 server,
             )
     }
-    sheet<AiProviderSheet> { entry ->
+    modal<AiProviderSheet>(motion) { entry ->
         val repositories = LocalRepositories.current
         val id = entry.toRoute<AiProviderSheet>().providerId
         val vm: ProviderViewModel = viewModel { ProviderViewModel(repositories.ai, id) }

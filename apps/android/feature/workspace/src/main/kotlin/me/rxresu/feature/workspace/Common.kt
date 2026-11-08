@@ -278,10 +278,11 @@ internal fun Context.openInBrowser(url: String, colors: RrColors) {
 /** "kiln.studio/careers": the host and path, without the scheme or a trailing slash. */
 internal fun displayUrl(url: String) = url.substringAfter("://").removePrefix("www.").trimEnd('/')
 
-/** Switches the Application screen to another workspace tab, replacing the current entry. */
-internal fun NavController.openTab(applicationId: String, tab: WorkspaceTab, practiceQuestion: String? = null) = navigate(ApplicationRoute(applicationId, tab, practiceQuestion)) {
+/** Pushes a workspace tool, retaining J6 underneath for Back. */
+internal fun NavController.openTab(applicationId: String, tab: WorkspaceTab, practiceQuestion: String? = null) = navigate(
+    if (tab == WorkspaceTab.Overview) ApplicationRoute(applicationId) else me.rxresu.core.navigation.ApplicationWorkspace(applicationId, tab, practiceQuestion),
+) {
     launchSingleTop = true
-    popUpTo<ApplicationRoute> { inclusive = true }
 }
 
 internal val SmallIcon = 16.dp

@@ -71,6 +71,9 @@ import me.rxresu.core.designsystem.RrTextField
 import me.rxresu.core.designsystem.RrTheme
 import me.rxresu.core.designsystem.RrTone
 import me.rxresu.core.designsystem.RrType
+import me.rxresu.core.designsystem.RrTopBar
+import me.rxresu.core.designsystem.RrPageTitle
+import androidx.compose.foundation.layout.fillMaxSize
 import me.rxresu.core.designsystem.rememberRrBottomSheetState
 import me.rxresu.core.designsystem.rememberRrHaptics
 import me.rxresu.core.navigation.BuilderEntry
@@ -84,21 +87,18 @@ internal val EntryDetents = listOf(0.55f, 0.92f)
 @Composable
 internal fun EntryRoute(route: BuilderEntry, vm: BuilderViewModel, nav: NavController) {
     val state by vm.state.collectAsStateWithLifecycle()
-    val sheet = rememberRrBottomSheetState()
-    val scope = rememberCoroutineScope()
-    // The page under this sheet keeps the picked block above the sheet's live top.
-    LaunchedEffect(sheet) { snapshotFlow { sheet.visibleHeight }.collect { vm.entrySheetHeight.floatValue = it } }
-    DisposableEffect(Unit) { onDispose { vm.entrySheetHeight.floatValue = 0f } }
-    EntrySheet(
-        state = state,
-        section = route.section,
-        initialItemId = route.itemId,
-        actions = vm,
-        sheet = sheet,
-        onDone = { scope.launch { sheet.hide(); nav.popBackStack() } },
-        onDismiss = { nav.popBackStack() },
-        onDescription = { item, field -> nav.navigate(BuilderRichText(route.resumeId, route.section, item, field)) },
-    )
+    val doc = state.doc ?: return
+    val section = doc.section(route.section) ?: return
+    val item = doc.items(section).firstOrNull { it["id"].str() == route.itemId } ?: return
+    Column(Modifier.fillMaxSize()) {
+        RrTopBar(onBack = { nav.popBackStack() }, actions = {
+            RrButton(stringResource(S.string.done), { vm.flush(); nav.popBackStack() }, variant = RrButtonVariant.GhostAccent)
+        })
+        RrPageTitle(section.kind.itemTitle(item))
+        Column(Modifier.weight(1f)) {
+            EntryFields(doc, section, item, state.locked, vm) { id, field -> nav.navigate(BuilderRichText(route.resumeId, route.section, id, field)) }
+        }
+    }
 }
 
 /**

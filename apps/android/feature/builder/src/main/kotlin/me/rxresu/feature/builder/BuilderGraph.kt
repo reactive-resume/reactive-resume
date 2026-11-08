@@ -38,6 +38,8 @@ import me.rxresu.core.navigation.Assistant
 import me.rxresu.core.navigation.Builder
 import me.rxresu.core.navigation.BuilderBasics
 import me.rxresu.core.navigation.BuilderEntry
+import me.rxresu.core.navigation.BuilderSection
+import me.rxresu.core.navigation.BuilderDesign
 import me.rxresu.core.navigation.BuilderMode
 import me.rxresu.core.navigation.BuilderMore
 import me.rxresu.core.navigation.BuilderRichText
@@ -54,10 +56,20 @@ import me.rxresu.core.strings.R as S
 /** Registers the builder: one screen for all four modes, the entry sheet, rich text and basics. */
 fun NavGraphBuilder.builderGraph(nav: NavController, motion: RrNavMotion) {
     screen<Builder> { entry -> BuilderRoute(entry.toRoute(), entry, nav) }
-    sheet<BuilderEntry> { entry ->
+    screen<BuilderEntry> { entry ->
         val route = entry.toRoute<BuilderEntry>()
         // The builder stays composed under this sheet and shows its toasts, so Undo outlives the sheet.
         EntryRoute(route, builderViewModel(nav, route.resumeId, entry), nav)
+    }
+    screen<BuilderSection> { entry ->
+        val route = entry.toRoute<BuilderSection>()
+        SectionRoute(route, builderViewModel(nav, route.resumeId, entry), nav)
+    }
+    screen<BuilderDesign> { entry ->
+        val route = entry.toRoute<BuilderDesign>()
+        val vm = builderViewModel(nav, route.resumeId, entry)
+        val state by vm.state.collectAsStateWithLifecycle()
+        BuilderDesignRoute(route, state, vm, nav)
     }
     screen<BuilderRichText> { entry ->
         val route = entry.toRoute<BuilderRichText>()

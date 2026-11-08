@@ -1,6 +1,11 @@
 package me.rxresu
 
 import me.rxresu.core.navigation.Application
+import me.rxresu.core.navigation.ApplicationWorkspace
+import me.rxresu.core.navigation.ApplicationInsights
+import me.rxresu.core.navigation.PagePreview
+import me.rxresu.core.navigation.BuilderSection
+import me.rxresu.core.navigation.BuilderDesign
 import me.rxresu.core.navigation.ApplicationsTab
 import me.rxresu.core.navigation.Builder
 import me.rxresu.core.navigation.CareerTab
@@ -25,9 +30,9 @@ import me.rxresu.core.navigation.WebPageSettings
  * lands on that tab's root. Null: open over whatever is on screen (search, public pages, the ATS checker).
  */
 fun tabFor(route: Any): Any? = when (route) {
-    is Application, is MoveApplication, is InterviewSheet, is SaveJob -> ApplicationsTab()
+    is Application, is ApplicationWorkspace, ApplicationInsights, is MoveApplication, is InterviewSheet, is SaveJob -> ApplicationsTab()
     is Offers, is Coach, is Knowledge, is Story -> CareerTab
-    is Builder, is Letter, is Import, is NewDocument, is Visitors, is WebPageSettings, is Versions -> DocumentsTab
+    is Builder, is BuilderSection, is BuilderDesign, is PagePreview, is Letter, is Import, is NewDocument, is Visitors, is WebPageSettings, is Versions -> DocumentsTab
     TodayTab, DocumentsTab, CareerTab, is ApplicationsTab -> route
     else -> null
 }

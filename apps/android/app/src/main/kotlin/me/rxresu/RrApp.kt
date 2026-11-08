@@ -1,6 +1,9 @@
 package me.rxresu
 
 import android.content.pm.ApplicationInfo
+import me.rxresu.feature.workspace.workspaceGraph
+import androidx.navigation.NavGraphBuilder
+import me.rxresu.core.auth.AuthService
 import androidx.core.view.WindowCompat
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
@@ -164,18 +167,7 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
                         popEnterTransition = motion.popEnter,
                         popExitTransition = motion.popExit,
                     ) {
-                        authGraph(nav, motion, graph.auth)
-                        todayGraph(nav, motion)
-                        documentsGraph(nav, motion)
-                        searchGraph(nav, motion)
-                        builderGraph(nav, motion)
-                        shareGraph(nav, motion)
-                        assistantGraph(nav, motion)
-                        lettersGraph(nav, motion)
-                        applicationsGraph(nav, motion)
-                        careerGraph(nav, motion)
-                        settingsGraph(nav, motion, graph.auth)
-                        publicGraph(nav, motion)
+                        appDestinations(nav, motion, graph.auth)
                     }
                     // Toasts sit above the tab bar or a screen's own mode bar; screens with a mode bar pad via insets.
                     RrToastHost(toasts, Modifier.align(Alignment.BottomCenter).padding(bottom = if (tab == null) RrLayout.tabBar else 0.dp))
@@ -197,6 +189,23 @@ fun RrApp(graph: AppGraph, incoming: Flow<Any>) {
             }
         }
     }
+}
+
+/** Production registration boundary, shared with real-graph navigation tests. */
+internal fun NavGraphBuilder.appDestinations(nav: NavController, motion: RrNavMotion, auth: AuthService) {
+    authGraph(nav, motion, auth)
+    todayGraph(nav, motion)
+    documentsGraph(nav, motion)
+    searchGraph(nav, motion)
+    builderGraph(nav, motion)
+    shareGraph(nav, motion)
+    assistantGraph(nav, motion)
+    lettersGraph(nav, motion)
+    applicationsGraph(nav, motion)
+    workspaceGraph(nav)
+    careerGraph(nav, motion)
+    settingsGraph(nav, motion, auth)
+    publicGraph(nav, motion)
 }
 
 /** Sends the person to Welcome when they sign out, and to Today when sign-in completes. */

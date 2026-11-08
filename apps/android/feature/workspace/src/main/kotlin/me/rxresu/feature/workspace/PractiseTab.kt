@@ -284,7 +284,10 @@ internal fun PractiseTab(applicationId: String, nav: NavController) {
     }
     // The Application entry hosting this tab carries the question Interview prep handed over, if any.
     val entry = LocalViewModelStoreOwner.current as? NavBackStackEntry
-    val handed = remember(entry) { entry?.let { runCatching { it.toRoute<ApplicationRoute>().practiceQuestion }.getOrNull() } }
+    val handed = remember(entry) { entry?.let {
+        runCatching { it.toRoute<me.rxresu.core.navigation.ApplicationWorkspace>().practiceQuestion }
+            .getOrElse { runCatching { entry.toRoute<ApplicationRoute>().practiceQuestion }.getOrNull() }
+    } }
     val vm = viewModel(key = "practise-$applicationId") {
         PractiseViewModel(repos, applicationId, fallback, MediaVoiceRecorder(context.applicationContext), { android.os.SystemClock.elapsedRealtime() }, handed)
     }

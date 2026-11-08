@@ -19,7 +19,7 @@ import me.rxresu.core.strings.R as CoreR
 import me.rxresu.core.navigation.*
 
 fun NavGraphBuilder.assistantGraph(nav: NavController, motion: RrNavMotion) {
-    sheet<Assistant> { entry ->
+    modal<Assistant>(motion) { entry ->
         val route = entry.toRoute<Assistant>(); val repositories = LocalRepositories.current
         val owner = remember(entry) { assistantOwner(nav, entry) }
         val vm: AssistantViewModel = viewModel(viewModelStoreOwner = owner, key = "assistant-${route.resumeId}") { AssistantViewModel(repositories, route.resumeId, route.threadId) }; val state by vm.state.collectAsStateWithLifecycle()
