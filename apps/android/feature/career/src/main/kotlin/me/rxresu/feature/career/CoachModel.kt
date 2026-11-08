@@ -1,5 +1,6 @@
 package me.rxresu.feature.career
 
+import me.rxresu.core.data.aiApproval
 import androidx.lifecycle.viewModelScope
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
@@ -40,7 +41,6 @@ internal fun coachChunks(data: String): List<JsonObject> {
     }
     return data.lineSequence().filter { it.startsWith("data:") }.flatMap { coachChunks(it.removePrefix("data:").trim()).asSequence() }.toList()
 }
-internal fun aiApproval(provider: TestAiProviderResponse): Map<String, String> = mapOf("x-ai-destination" to JsonArray(listOf(JsonPrimitive(provider.id), JsonPrimitive(provider.recipientVersion))).toString())
 
 /**
  * One coach conversation. [applicationId] scopes it to a job like the web's workspace coach: it opens that job's newest

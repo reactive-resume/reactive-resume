@@ -1,5 +1,6 @@
 package me.rxresu.feature.career
 
+import me.rxresu.core.data.aiApproval
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import java.io.IOException
