@@ -32,7 +32,7 @@ class CareerModelsTest {
     @After fun cleanup() { Dispatchers.resetMain() }
     @Test fun preferencesDebounceAndSerializeLatestEdit() = runTest {
         val controls = FakeControls(); val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
-        val model = PreferencesViewModel(repositories, CareerDrafts(context, "test")); advanceUntilIdle()
+        val model = PreferencesViewModel(repositories, CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler))); advanceUntilIdle()
         val initial = requireNotNull(model.state.value.profile)
         controls.set("updateCareerProfile", FakeMode.Loading)
         model.change(initial.copy(priorities = "Remote work")); advanceTimeBy(500); runCurrent()
@@ -41,11 +41,11 @@ class CareerModelsTest {
         controls.set("updateCareerProfile", FakeMode.Ready); advanceUntilIdle()
         assertEquals("Remote work and mentoring", repositories.career.getCareerProfile().priorities)
         assertEquals(SaveState.Saved, model.state.value.status)
-        assertNull(CareerDrafts(context, "test").read("preferences")); repositories.close()
+        assertNull(CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler)).read("preferences")); repositories.close()
     }
     @Test fun failedPreferencesKeepWordsAndRecoverWithoutRestoringMemoryChoice() = runTest {
         val controls = FakeControls(); val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
-        val drafts = CareerDrafts(context, "test"); val model = PreferencesViewModel(repositories, drafts); advanceUntilIdle()
+        val drafts = CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler)); val model = PreferencesViewModel(repositories, drafts); advanceUntilIdle()
         controls.set("updateCareerProfile", FakeMode.Error(IOException("Offline")))
         model.change(requireNotNull(model.state.value.profile).copy(priorities = "Keep these words")); advanceUntilIdle()
         assertEquals(SaveState.KeptOnDevice, model.state.value.status)
@@ -60,7 +60,7 @@ class CareerModelsTest {
     }
     @Test fun storyFailurePreservesEveryPartAndBackingFacts() = runTest {
         val controls = FakeControls(); val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
-        val drafts = CareerDrafts(context, "test"); val model = StoryViewModel(repositories, drafts, StoryboardIds.story); advanceUntilIdle()
+        val drafts = CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler)); val model = StoryViewModel(repositories, drafts, StoryboardIds.story); advanceUntilIdle()
         val changed = requireNotNull(model.state.value.draft).copy(reflection = "Start with one team", factIds = listOf("fact-0", "fact-1"))
         controls.set("saveCareerStory", FakeMode.Error(IOException("Offline"))); model.change(changed); advanceUntilIdle()
         assertEquals(SaveState.KeptOnDevice, model.state.value.status)
@@ -83,7 +83,7 @@ class CareerModelsTest {
     }
     @Test fun accountChangePreventsDraftSave() = runTest {
         val session = FakeAuthSession(); val repositories = FakeRepositories(authSession = session, coroutineScope = backgroundScope)
-        val model = PreferencesViewModel(repositories, CareerDrafts(context, "test")); advanceUntilIdle()
+        val model = PreferencesViewModel(repositories, CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler))); advanceUntilIdle()
         model.change(requireNotNull(model.state.value.profile).copy(priorities = "Private draft"))
         session.state.value = SessionState.SignedOut; advanceUntilIdle()
         assertTrue(model.state.value.error); assertEquals("Private draft", model.state.value.profile?.priorities); repositories.close()
@@ -109,7 +109,7 @@ class CareerModelsTest {
     }
     @Test fun newStarterPreservesEarlierConversationsUnsentWords() = runTest {
         val repositories = FakeRepositories(coroutineScope = backgroundScope)
-        val drafts = CareerDrafts(context, "test")
+        val drafts = CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler))
         drafts.write("coach:new", "Earlier unsent words"); drafts.write("coach:new:thread", "earlier-thread")
         drafts.write("coach:new:message", "earlier-message")
         val model = CoachViewModel(repositories, drafts, null, "New starter", RecordingCoachTransport()); advanceUntilIdle()
@@ -131,7 +131,7 @@ class CareerModelsTest {
         // Foundation's storyboard uses "passed"; the published/web provider contract uses "success".
         controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(repositories.ai.listAiProviders().map { it.copy(testStatus = "success") }))
         val transport = RecordingCoachTransport()
-        val model = CoachViewModel(repositories, CareerDrafts(context, "test"), null, null, transport); advanceUntilIdle()
+        val model = CoachViewModel(repositories, CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler)), null, null, transport); advanceUntilIdle()
         val provider = model.state.value.providers.first(); model.provider(provider); advanceUntilIdle()
         model.draft("My actual words"); model.send(); advanceUntilIdle()
         val request = requireNotNull(transport.sent)
@@ -146,11 +146,28 @@ class CareerModelsTest {
         assertEquals("A new unsent thought", model.state.value.draft)
         repositories.close()
     }
+    @Test fun changedCoachRecipientRejectsBeforeDispatchAndRetainsWords() = runTest {
+        val controls = FakeControls()
+        val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
+        val providers = repositories.ai.listAiProviders().map { it.copy(testStatus = "success", recipientVersion = "approved-version") }
+        controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(providers))
+        val transport = RecordingCoachTransport()
+        val model = CoachViewModel(repositories, CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler)), null, null, transport)
+        advanceUntilIdle()
+        model.provider(model.state.value.providers.first()); advanceUntilIdle()
+        controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(providers.map { it.copy(recipientVersion = "changed-version") }))
+        model.draft("Words approved for original destination"); model.send(); advanceUntilIdle()
+        assertNull(transport.sent)
+        assertEquals("Words approved for original destination", model.state.value.draft)
+        assertTrue(model.state.value.error)
+        assertFalse(model.state.value.busy)
+        repositories.close()
+    }
     @Test fun applicationCoachStartsThenReopensThatJobsConversation() = runTest {
         val controls = FakeControls()
         val repositories = FakeRepositories(controls, coroutineScope = backgroundScope)
         controls.responses.value = mapOf("listAiProviders" to ApiJson.encodeToJsonElement(repositories.ai.listAiProviders().map { it.copy(testStatus = "success") }))
-        val drafts = CareerDrafts(context, "test")
+        val drafts = CareerDrafts(context, "test", scope = this, io = StandardTestDispatcher(testScheduler))
         val model = CoachViewModel(repositories, drafts, null, null, RecordingCoachTransport(), applicationId = "application-lumen"); advanceUntilIdle()
         assertNull(model.state.value.thread); assertTrue(model.state.value.scoped)
         model.provider(model.state.value.providers.first()); advanceUntilIdle()
@@ -158,7 +175,7 @@ class CareerModelsTest {
         val started = repositories.assistant.listAgentThreads().first { it.applicationId == "application-lumen" && it.scope == StartAgentThreadRequestScope.Application }
         val transport = RecordingCoachTransport()
         // Another device (no local drafts) finds the job's conversation from the thread list.
-        CoachViewModel(repositories, CareerDrafts(context, "another-device"), null, null, transport, applicationId = "application-lumen"); advanceUntilIdle()
+        CoachViewModel(repositories, CareerDrafts(context, "another-device", scope = this, io = StandardTestDispatcher(testScheduler)), null, null, transport, applicationId = "application-lumen"); advanceUntilIdle()
         assertEquals(started.id, transport.executed.first { it.operation == "getAgentThread" }.pathParams["id"])
         repositories.close()
     }

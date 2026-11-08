@@ -15,6 +15,11 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.liveRegion
 import java.util.Locale
 import kotlinx.serialization.json.*
 import me.rxresu.core.designsystem.*
@@ -39,9 +44,16 @@ internal fun ProfileScreen(
     val haptic = rememberRrHaptics()
     val scroll = rememberScrollState()
     val reduced = RrTheme.reducedMotion
-    LaunchedEffect(s.invalid, s.error) {
-        if (s.invalid || s.error) scroll.animateScrollTo(0, tween(if (reduced) 0 else RrMotion.D2))
+    val invalidField = if (s.invalid) invalidProfileField(s.draft) else null
+    LaunchedEffect(s.invalid) {
+        if (s.invalid && invalidField?.contains(':') == true) {
+            val parent = invalidField.substringBefore(':')
+            if (parent != "authorization") section = parent
+        }
     }
+    val validationError = stringResource(CR.string.check_email_addresses_links_names_countries_and_salary_a_salary_amount_needs_currency_and_pay_period)
+    @Composable fun target(path: String) = invalidProfileTarget(path == invalidField, scroll, reduced)
+    fun error(path: String): String? = validationError.takeIf { path == invalidField }
     val context = LocalContext.current
     LaunchedEffect(s.saved, s.invalid, s.error) {
         when {
@@ -123,14 +135,16 @@ internal fun ProfileScreen(
                     RrTextField(
                         s.draft.givenName.orEmpty(),
                         { v -> edit { it.copy(givenName = v) } },
-                        Modifier.weight(1f),
+                        Modifier.weight(1f).then(target("givenName")),
+                        error = error("givenName"),
                         label = stringResource(CR.string.given_name),
                         enabled = !s.busy,
                     )
                     RrTextField(
                         s.draft.familyName.orEmpty(),
                         { v -> edit { it.copy(familyName = v) } },
-                        Modifier.weight(1f),
+                        Modifier.weight(1f).then(target("familyName")),
+                        error = error("familyName"),
                         label = stringResource(CR.string.family_name),
                         enabled = !s.busy,
                     )
@@ -138,6 +152,7 @@ internal fun ProfileScreen(
                 RrTextField(
                     emailText(s.draft.email),
                     { v -> edit { it.copy(email = JsonPrimitive(v)) } },
+                    modifier = target("email"),
                     label = stringResource(CR.string.application_email),
                     ltr = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -170,6 +185,8 @@ internal fun ProfileScreen(
                                 .getDisplayCountry(LocalConfiguration.current.locales[0])
                         RrListRow(
                             stringResource(R.string.screen_authorized_to_work_in) + " " + name,
+                            modifier = target("authorization:$index"),
+                            subtitle = error("authorization:$index"),
                             onClick = { section = "authorization:$index" },
                             trailing = { RrRowValue(answerText(item.authorized)) },
                         )
@@ -343,6 +360,12 @@ private fun ProfileSection(
     edit: ((ProfileData) -> ProfileData) -> Unit,
     close: () -> Unit,
 ) {
+    val scroll = rememberScrollState()
+    val invalidField = if (s.invalid) invalidProfileField(s.draft) else null
+    val reduced = RrTheme.reducedMotion
+    val validationError = stringResource(CR.string.check_email_addresses_links_names_countries_and_salary_a_salary_amount_needs_currency_and_pay_period)
+    @Composable fun target(path: String) = invalidProfileTarget(path == invalidField, scroll, reduced)
+    fun error(path: String): String? = validationError.takeIf { path == invalidField }
     var countryPicker by remember { mutableStateOf(false) }
     var periodPicker by remember { mutableStateOf(false) }
     val periods =
@@ -366,7 +389,7 @@ private fun ProfileSection(
         }
     RrBottomSheet(close, title = title, detents = RrSheetDetents.Full) {
         Column(
-            Modifier.verticalScroll(rememberScrollState()).padding(16.dp).imePadding(),
+            Modifier.verticalScroll(scroll).padding(16.dp).imePadding(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             when (section) {
@@ -400,6 +423,8 @@ private fun ProfileSection(
                     RrPickerField(
                         a.countryCode.orEmpty(),
                         { countryPicker = true },
+                        modifier = target("address:country"),
+                        error = error("address:country"),
                         label = stringResource(R.string.screen_country),
                     )
                 }
@@ -417,6 +442,8 @@ private fun ProfileSection(
                                     )
                                 }
                             },
+                            modifier = target("links:$i:label"),
+                            error = error("links:$i:label"),
                             label = stringResource(CR.string.name),
                         )
                         RrTextField(
@@ -431,6 +458,8 @@ private fun ProfileSection(
                                     )
                                 }
                             },
+                            modifier = target("links:$i:url"),
+                            error = error("links:$i:url"),
                             label = stringResource(CR.string.url),
                             ltr = true,
                         )
@@ -465,6 +494,8 @@ private fun ProfileSection(
                         RrTextField(
                             reference.name,
                             { v -> change { it.copy(name = v) } },
+                            modifier = target("references:$i:name"),
+                            error = error("references:$i:name"),
                             label = stringResource(CR.string.name),
                         )
                         RrTextField(
@@ -480,6 +511,8 @@ private fun ProfileSection(
                         RrTextField(
                             emailText(reference.email),
                             { v -> change { it.copy(email = JsonPrimitive(v)) } },
+                            modifier = target("references:$i:email"),
+                            error = error("references:$i:email"),
                             label = stringResource(CR.string.email),
                             ltr = true,
                         )
@@ -538,6 +571,8 @@ private fun ProfileSection(
                                 )
                             }
                         },
+                        modifier = target("salary:amount"),
+                        error = error("salary:amount"),
                         label = stringResource(R.string.screen_amount),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     )
@@ -551,12 +586,16 @@ private fun ProfileSection(
                                 )
                             }
                         },
+                        modifier = target("salary:currency"),
+                        error = error("salary:currency"),
                         label = stringResource(CR.string.currency),
                     )
                     val periodLabel = stringResource(R.string.screen_pay_period)
                     RrPickerField(
                         periodLabels.getOrNull(periods.indexOf(salary.period)).orEmpty(),
                         { periodPicker = true },
+                        modifier = target("salary:period"),
+                        error = error("salary:period"),
                         label = periodLabel,
                     )
                     RrButton(
@@ -642,4 +681,21 @@ private fun salaryCaption(salary: Salary, locale: Locale): String {
             stringResource(R.string.screen_salary_per_hour, formatted)
         else -> formatted
     }
+}
+
+/** Scroll the actual invalid control (including its inline error), then focus its editor. */
+@Composable
+private fun invalidProfileTarget(active: Boolean, scroll: androidx.compose.foundation.ScrollState, reduced: Boolean): Modifier {
+    val focus = remember { androidx.compose.ui.focus.FocusRequester() }
+    var top by remember { mutableStateOf<Float?>(null) }
+    LaunchedEffect(active, top) {
+        if (active && top != null) {
+            val offset = top!!.toInt().coerceAtLeast(0)
+            if (reduced) scroll.scrollTo(offset) else scroll.animateScrollTo(offset, tween(RrMotion.D2))
+            focus.requestFocus()
+        }
+    }
+    return Modifier.onGloballyPositioned { top = it.positionInParent().y }
+        .focusRequester(focus)
+        .semantics { if (active) liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Assertive }
 }

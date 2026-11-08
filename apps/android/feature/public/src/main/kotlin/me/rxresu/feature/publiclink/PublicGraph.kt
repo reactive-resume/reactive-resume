@@ -72,7 +72,7 @@ fun NavGraphBuilder.publicGraph(nav: NavController, motion: RrNavMotion) {
     }
     LaunchedEffect(fileUri) { fileUri?.let(vm::choose) }
     LaunchedEffect(state.result, state.problem) {
-        if ((state.result?.score ?: 0.0) >= 80) haptic(RrHaptic.Success)
+        if (vm.takeSuccess()) haptic(RrHaptic.Success)
         if (state.problem == PdfProblem.Unreadable || state.problem == PdfProblem.Password) haptic(RrHaptic.Error)
     }
     var document by remember(state.selected) { mutableStateOf<RenderedDocument?>(null) }

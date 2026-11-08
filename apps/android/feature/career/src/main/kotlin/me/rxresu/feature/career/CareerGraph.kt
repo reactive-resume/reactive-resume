@@ -25,6 +25,7 @@ import me.rxresu.core.auth.SessionState
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.createSavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.toRoute
@@ -61,7 +62,10 @@ fun NavGraphBuilder.careerGraph(nav: NavController, motion: RrNavMotion) {
 @Composable private fun recovery(repositories: RrRepositories): CareerDrafts {
     val context = LocalContext.current; val resources = LocalResources.current
     val owner = accountKey(repositories).orEmpty()
-    return remember(owner) { CareerDrafts(context, owner) }
+    return remember(owner) { CareerDrafts(context.applicationContext, owner, persisted = {
+        val account = repositories.owner()
+        if (account != null && owner == repositories.authSession.origin.value + ":" + account) scheduleCareerSync(context.applicationContext, repositories.authSession.origin.value, account)
+    }) }
 }
 private fun browser(context: Context, repositories: RrRepositories, path: String) = CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(repositories.authSession.origin.value + path))
 private fun copy(context: Context, text: String) { context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText("", text)) }
@@ -98,7 +102,7 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
     val repositories = LocalRepositories.current; val context = LocalContext.current; val resources = LocalResources.current; val drafts = recovery(repositories)
     // Starters arrive as the route's prompt or, from this module's own screens, through the previous entry.
     val starter = remember(id) { prompt ?: nav.previousBackStackEntry?.savedStateHandle?.remove<String>("coach-starter") }
-    val vm = viewModel(key = "coach:${accountKey(repositories)}:$id:$applicationId") { CoachViewModel(repositories, drafts, id, starter, applicationId = applicationId) }; val state by vm.state.collectAsStateWithLifecycle()
+    val vm = viewModel(key = "coach:${accountKey(repositories)}:$id:$applicationId") { CoachViewModel(repositories, drafts, id, starter, applicationId = applicationId, savedState = createSavedStateHandle()) }; val state by vm.state.collectAsStateWithLifecycle()
     val haptic = rememberRrHaptics(); val scope = rememberCoroutineScope(); val toasts = LocalToasts.current
     LaunchedEffect(state.error) { if (state.error) haptic(RrHaptic.Error) }
     LaunchedEffect(state.thread?.id, state.busy, state.error) {
@@ -232,7 +236,7 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
 
 @Composable private fun StoryRoute(nav: NavController, id: String?) {
     val repositories = LocalRepositories.current; val context = LocalContext.current; val resources = LocalResources.current; val drafts = recovery(repositories)
-    val vm = viewModel(key = "story:${accountKey(repositories)}:$id") { StoryViewModel(repositories, drafts, id) }; val state by vm.state.collectAsStateWithLifecycle()
+    val vm = viewModel(key = "story:${accountKey(repositories)}:$id") { StoryViewModel(repositories, drafts, id, savedState = createSavedStateHandle()) }; val state by vm.state.collectAsStateWithLifecycle()
     val toasts = LocalToasts.current; val scope = rememberCoroutineScope()
     var more by remember { mutableStateOf(false) }; var link by remember { mutableStateOf(false) }
     StoryScreen(state, vm::change, { vm.save(); nav.popBackStack() }, { vm.save() }, { more = true }, {
@@ -254,7 +258,7 @@ private fun copy(context: Context, text: String) { context.getSystemService(Clip
 }
 @Composable private fun PreferencesRoute(nav: NavController) {
     val repositories = LocalRepositories.current; val drafts = recovery(repositories)
-    val vm = viewModel(key = "preferences:${accountKey(repositories)}") { PreferencesViewModel(repositories, drafts) }; val state by vm.state.collectAsStateWithLifecycle()
+    val vm = viewModel(key = "preferences:${accountKey(repositories)}") { PreferencesViewModel(repositories, drafts, savedState = createSavedStateHandle()) }; val state by vm.state.collectAsStateWithLifecycle()
     var suggestions by remember { mutableStateOf(false) }
     PreferencesScreen(state, vm::change, { vm.save(); nav.popBackStack() }, { vm.save() }, { suggestions = true })
     if (suggestions) RoleSuggestionsSheet(state, { suggestions = false }, { provider, resume, knowledge -> vm.suggest(provider, resume, knowledge) }, { roles -> state.profile?.let { vm.change(it.copy(targetRoles = (it.targetRoles + roles).distinct())) }; suggestions = false })

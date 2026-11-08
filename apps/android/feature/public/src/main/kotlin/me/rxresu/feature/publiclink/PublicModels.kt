@@ -140,10 +140,23 @@ internal class PublicViewModel(private val repositories: RrRepositories, private
 internal const val MAX_PDF_BYTES = 25_000_000
 internal data class SelectedPdf(val uri: String, val name: String, val bytes: ByteArray, val file: File)
 internal enum class PdfProblem { TooLarge, Password, Unreadable, Failed }
+internal enum class AtsVerdict { Clean, Mostly, Hard }
+internal fun atsVerdict(result: CreatePdfCheckResponse): AtsVerdict = when {
+    result.score >= 80 && result.findings.isEmpty() -> AtsVerdict.Clean
+    result.score >= 50 -> AtsVerdict.Mostly
+    else -> AtsVerdict.Hard
+}
 internal data class AtsState(val selected: SelectedPdf? = null, val posting: String = "", val working: Boolean = false, val result: CreatePdfCheckResponse? = null, val problem: PdfProblem? = null)
 internal class AtsViewModel(application: Application, private val repositories: RrRepositories, private val read: suspend (String) -> SelectedPdf = { readPdf(application, it) }) : AndroidViewModel(application) {
     private val mutable = MutableStateFlow(AtsState()); val state = mutable.asStateFlow()
     private var generation = 0; private var work: Job? = null
+    private var celebrated: CreatePdfCheckResponse? = null
+    fun takeSuccess(): Boolean {
+        val result = state.value.result ?: return false
+        if (atsVerdict(result) != AtsVerdict.Clean || celebrated === result) return false
+        celebrated = result
+        return true
+    }
     fun posting(value: String) { mutable.update { it.copy(posting = value.take(20000)) } }
     fun choose(uri: String) {
         generation++; work?.cancel(); state.value.selected?.file?.delete(); val revision = generation

@@ -1,11 +1,9 @@
 package me.rxresu.feature.career
 
 import me.rxresu.core.data.aiApproval
-import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import java.io.File
-import java.security.MessageDigest
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -34,25 +32,11 @@ internal fun RrRepositories.owner(): String? = when (val s = account.session.val
     else -> null
 }
 
-/** Private, account-separated recovery files, excluded from Android backup. No credentials are stored. */
-internal class CareerDrafts(context: Context, owner: String) {
-    private val directory = File(context.noBackupFilesDir, "career/" + hash(owner)).apply { mkdirs() }
-    private fun file(key: String) = File(directory, hash(key) + ".json")
-    @Synchronized fun read(key: String): String? = file(key).takeIf(File::isFile)?.readText()
-    @Synchronized fun write(key: String, value: String) {
-        val target = file(key)
-        val temp = File(directory, target.name + ".part")
-        temp.outputStream().use { it.write(value.toByteArray()); it.fd.sync() }
-        check(temp.renameTo(target)) { "Could not keep draft" }
-    }
-    @Synchronized fun remove(key: String) { file(key).delete() }
-    private fun hash(value: String) = MessageDigest.getInstance("SHA-256").digest(value.toByteArray()).joinToString("") { "%02x".format(it) }
-}
-
 internal open class CareerModel(protected val repositories: RrRepositories) : ViewModel() {
-    private val owner = repositories.owner()
+    protected val owner = repositories.owner()
+    protected val origin = repositories.authSession.origin.value
     protected val options = RequestOptions(accountScope = owner)
-    protected fun checkOwner() { if (owner == null || repositories.owner() != owner) throw AccountChangedException() }
+    protected fun checkOwner() { if (owner == null || repositories.owner() != owner || repositories.authSession.origin.value != origin) throw AccountChangedException() }
     protected fun run(onError: (Throwable) -> Unit, block: suspend () -> Unit) = viewModelScope.launch {
         try { checkOwner(); block() } catch (e: CancellationException) { throw e } catch (e: Exception) { onError(e) }
     }
@@ -148,7 +132,7 @@ internal class KnowledgeViewModel(repositories: RrRepositories) : CareerModel(re
 
 internal enum class SaveState { Saved, Saving, KeptOnDevice, Failed }
 internal data class StoryState(val loading: Boolean = true, val draft: SaveCareerStoryRequest? = null, val status: SaveState = SaveState.Saved, val error: Boolean = false, val facts: List<CareerFact> = emptyList(), val usedFor: String? = null)
-internal class StoryViewModel(repositories: RrRepositories, private val drafts: CareerDrafts, private val id: String?) : CareerModel(repositories) {
+internal class StoryViewModel(repositories: RrRepositories, private val drafts: CareerDrafts, private val id: String?, private val savedState: SavedStateHandle = SavedStateHandle()) : CareerModel(repositories) {
     private val key = "story:${id ?: "new"}"
     private val mutable = MutableStateFlow(StoryState())
     val state = mutable.asStateFlow()
@@ -157,7 +141,12 @@ internal class StoryViewModel(repositories: RrRepositories, private val drafts: 
     private var pending: Job? = null
     init { load() }
     fun load() = run({ mutable.update { it.copy(loading = false, error = true) } }) {
-        val recovered = drafts.read(key)?.let { ApiJson.decodeFromString(SaveCareerStoryRequest.serializer(), it) }
+        val revision = generation
+        val recovered = (savedState.get<String>("draft") ?: drafts.read(key))?.let { ApiJson.decodeFromString(SaveCareerStoryRequest.serializer(), it) }
+        if (recovered != null) {
+            drafts.enqueue(key, ApiJson.encodeToString(SaveCareerStoryRequest.serializer(), recovered), if (recovered.title.isNotBlank()) "story" else null)
+            mutable.value = StoryState(false, recovered, SaveState.KeptOnDevice)
+        }
         val rows = repositories.career.listCareerStories(options = options)
         val story = rows.firstOrNull { it.id == id }
         val draft = recovered ?: story?.let { SaveCareerStoryRequest(it.data.action, it.applicationId, it.data.factIds, it.id, it.data.reflection, it.data.result, it.data.situation, it.data.tags, it.data.task, it.data.title) }
@@ -165,25 +154,35 @@ internal class StoryViewModel(repositories: RrRepositories, private val drafts: 
         val facts = repositories.career.listCareerFacts(options = options)
         // Where the story is used: the application it is kept with.
         val usedFor = (draft?.applicationId ?: story?.applicationId)?.let { scope -> repositories.applications.listApplicationSummaries(options = options).firstOrNull { it.id == scope }?.company }
-        checkOwner(); mutable.value = StoryState(false, draft, if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, draft == null, facts, usedFor)
+        checkOwner(); mutable.update { current -> StoryState(false, if (generation == revision) draft else current.draft,
+            if (generation != revision) current.status else if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, draft == null, facts, usedFor) }
     }
     fun change(next: SaveCareerStoryRequest) {
         generation++; mutable.update { it.copy(draft = next, status = SaveState.Saving, error = false) }
-        try { drafts.write(key, ApiJson.encodeToString(SaveCareerStoryRequest.serializer(), next)) }
-        catch (_: Exception) { mutable.update { it.copy(status = SaveState.Failed, error = true) }; return }
+        val revision = generation
+        val encoded = ApiJson.encodeToString(SaveCareerStoryRequest.serializer(), next)
+        savedState["draft"] = encoded
+        drafts.enqueue(key, encoded, if (next.title.isNotBlank()) "story" else null) {
+            if (generation == revision) mutable.update { it.copy(status = SaveState.Failed, error = true) }
+        }
         pending?.cancel(); pending = viewModelScope.launch { delay(500); save() }
     }
-    fun save() = run({ mutable.update { it.copy(status = SaveState.KeptOnDevice, error = true) } }) { saves.withLock {
+    fun save() = run({ mutable.update { it.copy(status = if (it.status == SaveState.Failed) SaveState.Failed else SaveState.KeptOnDevice, error = true) } }) { saves.withLock {
         val next = state.value.draft ?: return@withLock
         if (next.title.isBlank()) return@withLock
         val revision = generation
         mutable.update { it.copy(status = SaveState.Saving) }
-        repositories.career.saveCareerStory(next, options); checkOwner()
-        if (revision == generation) { drafts.remove(key); mutable.update { it.copy(status = SaveState.Saved, error = false) } }
+        drafts.flush(key)
+        CareerSyncWorker.syncGate.withLock { deliverCareerEdits(repositories, drafts, origin, requireNotNull(owner)) }
+        checkOwner()
+        if (revision == generation) { savedState.remove<String>("draft"); mutable.update { it.copy(status = SaveState.Saved, error = false) } }
     } }
     fun delete(done: (SaveCareerStoryRequest) -> Unit) = run({ mutable.update { it.copy(error = true) } }) { saves.withLock {
-        pending?.cancel(); val draft = state.value.draft ?: return@withLock
-        draft.id?.let { repositories.career.deleteCareerStory(it, options) }; checkOwner(); drafts.remove(key); done(draft)
+        pending?.cancel()
+        CareerSyncWorker.syncGate.withLock {
+            val draft = state.value.draft ?: return@withLock
+            draft.id?.let { repositories.career.deleteCareerStory(it, options) }; checkOwner(); drafts.remove(key); done(draft)
+        }
     } }
 }
 
@@ -191,30 +190,40 @@ internal data class PreferencesState(val loading: Boolean = true, val profile: C
     val providers: List<TestAiProviderResponse> = emptyList(), val resumes: List<DocumentSummary> = emptyList(), val suggestions: List<String> = emptyList(), val generating: Boolean = false)
 internal fun CareerProfile.preferencesRequest() = SaveCareerProfileRequest(locations, maxOfficeDays, minBase = minBase, noticeWeeks = noticeWeeks, priorities = priorities, searchRegions = searchRegions, targetRoles = targetRoles)
 internal fun parseWholeAmount(value: String): Double? = value.takeIf { it.matches(Regex("[0-9]{1,12}")) }?.toDoubleOrNull()?.takeIf { it.isFinite() }
-internal class PreferencesViewModel(repositories: RrRepositories, private val drafts: CareerDrafts) : CareerModel(repositories) {
+internal class PreferencesViewModel(repositories: RrRepositories, private val drafts: CareerDrafts, private val savedState: SavedStateHandle = SavedStateHandle()) : CareerModel(repositories) {
     private val mutable = MutableStateFlow(PreferencesState()); val state = mutable.asStateFlow()
     private val saves = Mutex(); private var pending: Job? = null; private var generation = 0
     init { load() }
     fun load() = run({ mutable.update { it.copy(loading = false, error = true) } }) {
+        val revision = generation
+        val recovered = (savedState.get<String>("draft") ?: drafts.read("preferences"))?.let { ApiJson.decodeFromString(CareerProfile.serializer(), it) }
+        if (recovered != null) {
+            drafts.enqueue("preferences", ApiJson.encodeToString(CareerProfile.serializer(), recovered), "preferences")
+            mutable.value = PreferencesState(false, recovered, SaveState.KeptOnDevice)
+        }
         val profile = repositories.career.getCareerProfile(options)
-        val recovered = drafts.read("preferences")?.let { ApiJson.decodeFromString(CareerProfile.serializer(), it) }
         val providers = repositories.ai.listAiProviders(options = options).filter { it.enabled && it.testStatus == "success" }
         val resumes = repositories.documents.listDocuments(options = options).filter { it.type == DocumentType.Resume }
-        checkOwner(); mutable.value = PreferencesState(false, recovered?.copy(memoryMode = profile.memoryMode) ?: profile,
-            if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, providers = providers, resumes = resumes)
+        checkOwner(); mutable.update { current -> PreferencesState(false,
+            if (generation == revision) recovered?.copy(memoryMode = profile.memoryMode) ?: profile else current.profile,
+            if (generation != revision) current.status else if (recovered != null) SaveState.KeptOnDevice else SaveState.Saved, providers = providers, resumes = resumes) }
     }
     fun change(profile: CareerProfile) {
         generation++; mutable.update { it.copy(profile = profile, status = SaveState.Saving, error = false) }
-        try { drafts.write("preferences", ApiJson.encodeToString(CareerProfile.serializer(), profile)) }
-        catch (_: Exception) { mutable.update { it.copy(status = SaveState.Failed, error = true) }; return }
+        val revision = generation
+        val encoded = ApiJson.encodeToString(CareerProfile.serializer(), profile)
+        savedState["draft"] = encoded
+        drafts.enqueue("preferences", encoded, "preferences") {
+            if (generation == revision) mutable.update { it.copy(status = SaveState.Failed, error = true) }
+        }
         pending?.cancel(); pending = viewModelScope.launch { delay(500); save() }
     }
-    fun save() = run({ mutable.update { it.copy(status = SaveState.KeptOnDevice, error = true) } }) { saves.withLock {
+    fun save() = run({ mutable.update { it.copy(status = if (it.status == SaveState.Failed) SaveState.Failed else SaveState.KeptOnDevice, error = true) } }) { saves.withLock {
         val profile = state.value.profile ?: return@withLock; val revision = generation
-        repositories.career.updateCareerProfile(profile.preferencesRequest(), options.copy(nullFields = buildSet {
-            if (profile.maxOfficeDays == null) add("/maxOfficeDays"); if (profile.noticeWeeks == null) add("/noticeWeeks"); if (profile.minBase.amount == null) add("/minBase/amount")
-        })); checkOwner()
-        if (generation == revision) { drafts.remove("preferences"); mutable.update { it.copy(status = SaveState.Saved, error = false) } }
+        drafts.flush("preferences")
+        CareerSyncWorker.syncGate.withLock { deliverCareerEdits(repositories, drafts, origin, requireNotNull(owner)) }
+        checkOwner()
+        if (generation == revision) { savedState.remove<String>("draft"); mutable.update { it.copy(status = SaveState.Saved, error = false) } }
     } }
     fun suggest(provider: TestAiProviderResponse, resumeId: String?, knowledge: Boolean) = run({ mutable.update { it.copy(error = true, generating = false) } }) {
         mutable.update { it.copy(generating = true, error = false) }
