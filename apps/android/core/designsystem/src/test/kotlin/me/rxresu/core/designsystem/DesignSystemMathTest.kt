@@ -70,6 +70,13 @@ class DesignSystemMathTest {
         // "Calendar" needs 90 of a 75 share; the others split the remaining 210.
         assertEquals(listOf(70, 70, 90, 70), segmentWidths(listOf(50, 60, 90, 65), 300))
     }
+    @Test fun segmentsWrapOnlyWhenTheirLabelsDontFitSideBySide() {
+        assertEquals(listOf(listOf(0, 1, 2)), segmentRows(listOf(40, 60, 50), 240, 2))
+        assertEquals(listOf(listOf(0, 1), listOf(2, 3)), segmentRows(listOf(100, 120, 140, 110), 300, 2))
+        // A label wider than the track gets a row of its own.
+        assertEquals(listOf(listOf(0), listOf(1), listOf(2)), segmentRows(listOf(80, 400, 80), 300, 2))
+    }
+
 
     @Test fun workingLabelStepsEvery2200msAndHoldsTheLast() {
         assertEquals(0, RrWorkingSteps.indexAt(2_199, 3))
