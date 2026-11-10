@@ -7,7 +7,7 @@ import Animated from "react-native-reanimated";
 import { daysLeft, destructionCounts, documentHref } from "./model";
 import { CollectionState, DocumentPlaceholders } from "./shared";
 import { getAccountScope } from "@/auth/session";
-import { deletePermanently, restore, useTrash, useToday, useDataBackend, type TrashRef } from "@/data";
+import { emptyTrashSnapshot, restore, useTrash, useToday, useDataBackend, type TrashRef } from "@/data";
 import {
 	Button,
 	Dialog,
@@ -42,9 +42,9 @@ function ScopedTrashScreen() {
 	const [selection, setSelection] = useState<TrashItem | null>(null);
 	const [confirmation, setConfirmation] = useState<TrashItem[] | null>(null);
 	const [error, setError] = useState<string>();
-	const documents = query.documents.data ?? [];
-	const applications = query.applications.data?.items ?? [];
-	const allApplicationsLoaded = applications.length === (query.applications.data?.total ?? 0);
+	const documents = query.snapshot.data ? [...query.snapshot.data.resumes, ...query.snapshot.data.letters] : [];
+	const applications = query.snapshot.data?.applications ?? [];
+	const allApplicationsLoaded = query.snapshot.isSuccess;
 	const all: TrashItem[] = [
 		...documents.map((doc) => ({ ref: { id: doc.id, type: doc.type }, name: doc.name })),
 		...applications.map((app) => ({
@@ -90,12 +90,9 @@ function ScopedTrashScreen() {
 		busy.current = true;
 		let removed = 0;
 		try {
-			// Never call emptyTrash here: it could include new items the confirmation did not count.
-			for (const item of confirmation) {
-				if (getAccountScope() !== scope) return;
-				await deletePermanently(item.ref);
-				removed++;
-			}
+			const receipt = await emptyTrashSnapshot(confirmation.map((item) => item.ref));
+			removed = receipt.deleted;
+			if (receipt.failed.length || receipt.skipped) throw new Error("Trash changed or deletion failed.");
 			if (getAccountScope() !== scope) return;
 			setConfirmation(null);
 			showToast({ message: t`Deleted permanently` });
@@ -161,14 +158,7 @@ function ScopedTrashScreen() {
 						label={t`Empty`}
 						size="sm"
 						tone="dangerGhost"
-						disabled={
-							!all.length ||
-							!allApplicationsLoaded ||
-							query.documents.isPending ||
-							query.applications.isPending ||
-							query.documents.isError ||
-							query.applications.isError
-						}
+						disabled={!all.length || !allApplicationsLoaded || query.snapshot.isPending || query.snapshot.isError}
 						onPress={() => setConfirmation(all)}
 					/>
 				}
@@ -176,18 +166,17 @@ function ScopedTrashScreen() {
 				{!allApplicationsLoaded ? (
 					<CollectionState message={t`Empty Trash isn't available until all applications are loaded.`} />
 				) : null}
-				{query.documents.isError || query.applications.isError ? (
+				{query.snapshot.isError ? (
 					<CollectionState
 						message={t`Couldn't load Trash. Try again.`}
 						action={t`Retry`}
 						onPress={() => {
-							void query.documents.refetch();
-							void query.applications.refetch();
+							void query.snapshot.refetch();
 						}}
 					/>
 				) : null}
 				{error ? <CollectionState message={error} action={t`Dismiss`} onPress={() => setError(undefined)} /> : null}
-				{query.documents.isPending || query.applications.isPending ? (
+				{query.snapshot.isPending ? (
 					<DocumentPlaceholders />
 				) : !all.length ? (
 					<CollectionState

@@ -2,7 +2,7 @@
 // two-step, passkeys, connected apps, API keys, web access). Each is a reported gap: real accounts show the rows
 // without a state line until a hook exists. The storyboard account's states are the board's.
 import { t } from "@lingui/core/macro";
-import { useDataBackend } from "@/data";
+import { useDataBackend, useConnectedApps, useAPIKeys } from "@/data";
 
 export type AccountSecurity = {
 	password?: string;
@@ -21,7 +21,9 @@ export type DeveloperAccess = {
 
 export function useAccountSecurity(): AccountSecurity {
 	const { backend } = useDataBackend();
-	if (backend.kind !== "fake") return {};
+	const apps = useConnectedApps();
+	if (backend.kind !== "fake")
+		return apps.data ? { connectedApps: t`${apps.data.connections.length} connected applications` } : {};
 	return {
 		password: t`Changed 3 months ago`,
 		twoStep: t`On · authenticator app`,
@@ -32,7 +34,13 @@ export function useAccountSecurity(): AccountSecurity {
 
 export function useDeveloperAccess(): DeveloperAccess {
 	const { backend } = useDataBackend();
-	if (backend.kind !== "fake") return {};
+	const apps = useConnectedApps();
+	const keys = useAPIKeys();
+	if (backend.kind !== "fake")
+		return {
+			...(apps.data ? { connectedApplications: t`${apps.data.connections.length} connected applications` } : {}),
+			...(keys.data ? { apiKeys: t`${keys.data.total} keys` } : {}),
+		};
 	return {
 		webAccess: t`Not set up`,
 		rememberFacts: t`Ask first`,

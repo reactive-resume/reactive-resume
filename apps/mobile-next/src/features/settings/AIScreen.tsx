@@ -12,7 +12,7 @@ import { isLocal, type Provider, providerHost, shortTestError } from "./provider
 import { useDeveloperAccess } from "./security";
 import { useStoryboardView } from "./storyboard-view";
 import { useSession } from "@/auth/session";
-import { listApprovals, resetApprovals, useAIProviders, useDataBackend } from "@/data";
+import { listApprovals, resetApprovals, useAIProviders, useAIProviderActions } from "@/data";
 import {
 	Badge,
 	Button,
@@ -33,7 +33,7 @@ import {
 export function AIScreen() {
 	const router = useRouter();
 	const { server } = useSession();
-	const { backend } = useDataBackend();
+	const actions = useAIProviderActions();
 	const providers = useAIProviders();
 	const developer = useDeveloperAccess();
 	const view = useStoryboardView();
@@ -42,12 +42,16 @@ export function AIScreen() {
 	const web = (path: string) => () => void WebBrowser.openBrowserAsync(`${server}/dashboard/settings${path}`);
 
 	const testAgain = async (provider: Provider) => {
-		if (backend.kind !== "fake") return web("/ai")();
+		if (testing) return;
 		setTesting(provider.id);
-		// The storyboard's failing provider stays unreachable.
-		await new Promise((resolve) => setTimeout(resolve, motion.d3));
-		setTesting(null);
-		haptic(provider.testStatus === "success" ? "success" : "error");
+		try {
+			const result = await actions.test({ id: provider.id });
+			haptic(result.testStatus === "success" ? "success" : "error");
+		} catch {
+			haptic("error");
+		} finally {
+			setTesting(null);
+		}
 	};
 
 	const list = [...(providers.data ?? []), ...(view?.extraProviders ?? [])];

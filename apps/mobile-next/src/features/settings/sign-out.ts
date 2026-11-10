@@ -26,3 +26,10 @@ export type SignOutStep =
 	| { step: "failed"; failure: SyncFailure }
 	| { step: "exporting" }
 	| { step: "exported" };
+
+export function signOutFirstAction(state: SignOutStep, offline: boolean) {
+	if (state.step !== "failed") return offline ? "keep" : "sync";
+	if (state.failure === "session-expired") return "sign-in";
+	if (state.failure === "conflict") return "review";
+	return state.failure === "no-response" ? "retry" : "keep";
+}

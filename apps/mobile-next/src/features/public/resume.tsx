@@ -1,12 +1,12 @@
 import { t } from "@lingui/core/macro";
 import { Directory, File } from "expo-file-system";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView, Share, View, useWindowDimensions } from "react-native";
 import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { getServer } from "@/auth/session";
-import { usePublicResume, useDataBackend } from "@/data";
+import { usePublicResume, useDataBackend, useAccount } from "@/data";
 import { paperText } from "@/dev/storyboard/paper-text.gen";
 import { pageRenderer, type PageRenderResult } from "@/render/page-renderer";
 import {
@@ -26,8 +26,11 @@ import {
 export function PublicResumeScreen() {
 	const { username, slug } = useLocalSearchParams<{ username: string; slug: string }>();
 	const query = usePublicResume({ username, slug });
+	const account = useAccount();
+	const router = useRouter();
 	const { backend } = useDataBackend();
 	const fake = backend.kind === "fake";
+	const owner = !fake && account.data?.username === username;
 	const zoom = useRef<PageZoomHandle>(null);
 	const [pageState, setPageState] = useState<{ resume: typeof query.data; result: PageRenderResult } | null>(null);
 	const rendered = pageState && pageState.resume === query.data ? pageState.result : null;
@@ -86,11 +89,14 @@ export function PublicResumeScreen() {
 			scroll={false}
 			barCenter={<Text variant="topBarTitle">{fake ? "rx.cv/alex" : `${username}/${resume?.slug ?? slug}`}</Text>}
 			barEnd={
-				<IconButton
-					icon="share-network"
-					label={t`Share`}
-					onPress={() => void Share.share({ url }).catch(() => setFailed(true))}
-				/>
+				<>
+					{owner && resume ? <Button label={t`Edit`} onPress={() => router.push(`/builder/${resume.id}`)} /> : null}
+					<IconButton
+						icon="share-network"
+						label={t`Share`}
+						onPress={() => void Share.share({ url, message: url }).catch(() => setFailed(true))}
+					/>
+				</>
 			}
 			overlay={
 				// COMPONENTS.md §16: P1's zoom bar sits 122 dp above the bottom.
@@ -124,6 +130,7 @@ export function PublicResumeScreen() {
 				) : undefined
 			}
 		>
+			{owner ? <Text variant="body">{t`This is how visitors see it`}</Text> : null}
 			{query.isError ? (
 				<View style={{ padding: 24, gap: 20 }}>
 					<Text variant="body">

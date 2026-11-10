@@ -1,17 +1,41 @@
-import type { OfferTerms } from "@reactive-resume/schema/career";
 import { t } from "@lingui/core/macro";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useWindowDimensions, View } from "react-native";
+import { offerTermsSchema, type OfferTerms } from "@reactive-resume/schema/career";
 import { betterBase, betterLeave } from "./model";
 import { ResourceState } from "./shared";
-import { useCareerOffers, useCareerPreferences } from "@/data";
+import { useDataBackend } from "@/data";
+import { useOfferComparison, useCareerActions } from "@/data";
 import { now } from "@/data/clock";
-import { BottomSheet, Button, Card, FooterBar, IconButton, ListRow, PushScreen, Text, Touch, useTheme } from "@/ui";
+import {
+	BottomSheet,
+	Button,
+	Card,
+	FooterBar,
+	IconButton,
+	ListRow,
+	PushScreen,
+	Text,
+	TextField,
+	Touch,
+	useTheme,
+} from "@/ui";
 
 export function OffersScreen() {
-	const query = useCareerOffers();
-	const profile = useCareerPreferences();
+	const { scope } = useDataBackend();
+	return <ScopedOffersScreen key={scope} />;
+}
+
+function ScopedOffersScreen() {
+	const comparison = useOfferComparison();
+	const query = comparison.offers;
+	const profile = comparison.preferences;
+	const actions = useCareerActions();
+	const [editingId, setEditingId] = useState<string>();
+	const [fields, setFields] = useState<Record<string, string>>({});
+	const [editError, setEditError] = useState(false);
+	const [saving, setSaving] = useState(false);
 	const router = useRouter();
 	const { colors } = useTheme();
 	const { fontScale } = useWindowDimensions();
@@ -58,10 +82,19 @@ export function OffersScreen() {
 			: "—",
 	];
 	const edit = (id: string) => {
-		const applicationId = offers.find((o) => o.id === id)?.applicationId;
-		if (!applicationId) return;
+		const offer = offers.find((item) => item.id === id);
+		if (offer?.data.kind !== "offer") return;
 		setChoosing(null);
-		router.push(`/applications/${applicationId}`);
+		setEditingId(id);
+		const data = offer.data;
+		setFields(
+			Object.fromEntries(
+				["base", "variable", "currency", "period", "equity", "location", "leave", "startDate", "respondBy"].map(
+					(key) => [key, String(data[key as keyof typeof data] ?? "")],
+				),
+			),
+		);
+		setEditError(false);
 	};
 	const counter = (id: string) => {
 		const offer = offers.find((o) => o.id === id);
@@ -210,7 +243,12 @@ export function OffersScreen() {
 														: false);
 										return (
 											<View key={o.id} style={{ flex: 1, alignItems: "flex-end" }}>
-												<Text variant="textLink" weight={winner ? 600 : 400} color={winner ? "accentText" : "ink"}>
+												<Text
+													onPress={() => edit(o.id)}
+													variant="textLink"
+													weight={winner ? 600 : 400}
+													color={winner ? "accentText" : "ink"}
+												>
 													{terms(data)[index]}
 													{index === 0 && mixedPay ? ` / ${data.period}` : ""}
 												</Text>
@@ -224,6 +262,75 @@ export function OffersScreen() {
 					)}
 				</ResourceState>
 			</PushScreen>
+			{editingId ? (
+				<BottomSheet
+					title={t`Edit terms`}
+					height={640}
+					keyboard
+					onClose={() => setEditingId(undefined)}
+					footer={
+						<FooterBar>
+							<Button
+								label={t`Save`}
+								disabled={saving}
+								onPress={() => {
+									const offer = offers.find((item) => item.id === editingId);
+									if (offer?.data.kind !== "offer" || saving) return;
+									const parsed = offerTermsSchema.safeParse({
+										...offer.data,
+										...fields,
+										base: fields.base ? Number(fields.base) : null,
+										variable: fields.variable ? Number(fields.variable) : null,
+										startDate: fields.startDate || null,
+										respondBy: fields.respondBy || null,
+									});
+									if (!parsed.success) {
+										setEditError(true);
+										return;
+									}
+									setSaving(true);
+									void actions
+										.updateOffer({ id: offer.id, terms: parsed.data, expected: offer.data })
+										.then(() => setEditingId(undefined))
+										.catch(() => setEditError(true))
+										.finally(() => setSaving(false));
+								}}
+							/>
+						</FooterBar>
+					}
+				>
+					<View style={{ padding: 24, gap: 12 }}>
+						{Object.entries(fields).map(([key, value]) => (
+							<TextField
+								key={key}
+								label={
+									(
+										{
+											base: t`Base`,
+											variable: t`Bonus`,
+											currency: t`Currency`,
+											period: t`Pay period`,
+											equity: t`Equity`,
+											location: t`Work`,
+											leave: t`Holidays`,
+											startDate: t`Start`,
+											respondBy: t`Reply by`,
+										} as Record<string, string>
+									)[key]
+								}
+								value={value}
+								onChangeText={(next) => setFields((current) => ({ ...current, [key]: next }))}
+							/>
+						))}
+						{editError ? (
+							<Text
+								variant="body"
+								color="dangerText"
+							>{t`Couldn't save the offer. Check its terms and try again.`}</Text>
+						) : null}
+					</View>
+				</BottomSheet>
+			) : null}
 			{choosing ? (
 				<BottomSheet title={t`Which offer?`} height={300} onClose={() => setChoosing(null)}>
 					{offers.map((o) => (
@@ -231,7 +338,7 @@ export function OffersScreen() {
 							key={o.id}
 							title={o.application?.company ?? o.title}
 							trailing="caret"
-							disabled={!o.applicationId}
+							disabled={choosing === "counter" && !o.applicationId}
 							onPress={() => (choosing === "edit" ? edit(o.id) : counter(o.id))}
 						/>
 					))}

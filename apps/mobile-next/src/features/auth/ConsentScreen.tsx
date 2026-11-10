@@ -42,7 +42,7 @@ export function ConsentScreen() {
 	const answer = async (accept: boolean) => {
 		if (!request) return close();
 		if (!fake) await WebBrowser.openBrowserAsync(`${server}/auth/consent?${request.query}`);
-		if (accept) haptic("success");
+		if (accept && fake) haptic("success");
 		close();
 	};
 

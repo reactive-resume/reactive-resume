@@ -3,7 +3,6 @@
 // stay after an error. Save makes it the default when it's the first provider.
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
 import { useRef, useState } from "react";
 import { type HostInstance, ScrollView, View } from "react-native";
 import Animated from "react-native-reanimated";
@@ -14,11 +13,11 @@ import {
 } from "@reactive-resume/ai/defaults";
 import { AI_PROVIDER_DISPLAY_NAMES, type AIProvider } from "@reactive-resume/ai/types";
 import { providerTestError } from "./providers";
-import { useSession } from "@/auth/session";
-import { useAIProviders, useDataBackend } from "@/data";
-import { STORYBOARD } from "@/dev/storyboard/harness";
+import { useAIProviders, useAIProviderActions, useDataBackend } from "@/data";
 import {
 	Button,
+	Skeleton,
+	Dialog,
 	FooterBar,
 	Form,
 	Menu,
@@ -35,13 +34,35 @@ import {
 const providers = Object.keys(AI_PROVIDER_DISPLAY_NAMES).filter((p) => p !== "openai-compatible") as AIProvider[];
 
 export function ProviderScreen() {
+	const { scope } = useDataBackend();
+	const params = useLocalSearchParams<{ id: string }>();
+	const list = useAIProviders();
+	if (list.isPending)
+		return (
+			<PushScreen title={t`AI provider`}>
+				<Skeleton height={480} />
+			</PushScreen>
+		);
+	if (list.isError)
+		return (
+			<PushScreen title={t`AI provider`}>
+				<Button label={t`Retry`} onPress={() => void list.refetch()} />
+			</PushScreen>
+		);
+	return <ScopedProviderScreen key={`${scope}:${params.id}`} />;
+}
+
+function ScopedProviderScreen() {
 	const router = useRouter();
-	const { server } = useSession();
-	const { backend } = useDataBackend();
+	const actions = useAIProviderActions();
+	const [savedId, setSavedId] = useState<string>();
+	const [deleting, setDeleting] = useState(false);
+
 	const list = useAIProviders();
 	const params = useLocalSearchParams<{ id: string; filled?: string }>();
-	const fake = backend.kind === "fake";
-	const existing = list.data?.find((p) => p.id === (params.id === "new" && STORYBOARD ? params.filled : params.id));
+
+	const fake = useDataBackend().backend.kind === "fake";
+	const existing = list.data?.find((p) => p.id === (params.id === "new" && fake ? params.filled : params.id));
 	const [provider, setProvider] = useState<AIProvider>((existing?.provider as AIProvider | undefined) ?? "openai");
 	const [name, setName] = useState(existing?.label ?? "");
 	const [apiKey, setApiKey] = useState("");
@@ -54,7 +75,7 @@ export function ProviderScreen() {
 	const field = useRef<HostInstance>(null);
 	const savedKey = !!existing && !apiKey;
 	// The saved key never goes to a new address.
-	const keyMoved = savedKey && (existing?.baseURL ?? "") !== baseURL.trim();
+	const keyMoved = savedKey && ((existing?.baseURL ?? "") !== baseURL.trim() || existing?.provider !== provider);
 	const host = (() => {
 		try {
 			return new URL(baseURL.trim() || AI_PROVIDER_DEFAULT_BASE_URLS[provider]).host;
@@ -69,21 +90,53 @@ export function ProviderScreen() {
 		return next === null;
 	};
 
-	const test = async () => {
-		if (!check()) return;
-		if (!fake) return void WebBrowser.openBrowserAsync(`${server}/dashboard/settings/ai`);
-		setTesting(true);
-		await new Promise((resolve) => setTimeout(resolve, motion.d3));
-		setTesting(false);
-		const ok = provider !== "ollama";
-		setResult(ok ? { ok, text: t`Connected · 312 ms` } : { ok, text: providerTestError("network") });
-		haptic(ok ? "success" : "error");
+	const persist = async () => {
+		const input = {
+			label: name.trim() || AI_PROVIDER_DISPLAY_NAMES[provider],
+			provider,
+			model: model.trim(),
+			baseURL: baseURL.trim(),
+		};
+		const id = existing?.id ?? savedId;
+		const saved = id
+			? await actions.update({ ...input, id, ...(apiKey ? { apiKey } : {}) })
+			: await actions.create({ ...input, apiKey });
+		setSavedId(saved.id);
+		return saved;
 	};
-
-	const save = () => {
-		if (!check()) return;
-		if (!fake) void WebBrowser.openBrowserAsync(`${server}/dashboard/settings/ai`);
-		router.back();
+	const test = async () => {
+		if (testing || !check()) return;
+		setTesting(true);
+		try {
+			const saved = await persist();
+			const tested = await actions.test({ id: saved.id });
+			const ok = tested.testStatus === "success";
+			setResult({ ok, text: ok ? t`Connected` : providerTestError(tested.testErrorKind ?? "network") });
+			haptic(ok ? "success" : "error");
+		} catch {
+			setResult({ ok: false, text: t`Couldn't test this provider. Check its settings and try again.` });
+			haptic("error");
+		} finally {
+			setTesting(false);
+		}
+	};
+	const save = async () => {
+		if (testing || !check()) return;
+		setTesting(true);
+		try {
+			const saved = await persist();
+			// The server requires a passing test before making a connection the default.
+			if (!list.data?.some((item) => item.isDefault)) {
+				const tested = await actions.test({ id: saved.id });
+				if (tested.testStatus !== "success") throw new Error("Test failed.");
+				await actions.setDefault({ id: saved.id });
+			}
+			router.back();
+		} catch {
+			setResult({ ok: false, text: t`Couldn't save this provider. Test the connection and try again.` });
+		} finally {
+			setTesting(false);
+		}
 	};
 
 	const keyError =
@@ -106,28 +159,51 @@ export function ProviderScreen() {
 						disabled={testing}
 						onPress={() => void test()}
 					/>
-					<Button label={t`Save`} tone="primary" size="lg" grow onPress={save} testID="provider-save" />
+					<Button label={t`Save`} tone="primary" size="lg" grow onPress={() => void save()} testID="provider-save" />
 				</FooterBar>
 			}
 			overlay={
-				picking ? (
-					<Menu open onClose={() => setPicking(null)} anchor={picking} align="start" width={342} height={368}>
-						<ScrollView style={{ maxHeight: 360 }}>
-							{providers.map((p) => (
-								<MenuItem
-									key={p}
-									label={AI_PROVIDER_DISPLAY_NAMES[p]}
-									onPress={() => {
-										setProvider(p);
-										setModel(AI_PROVIDER_DEFAULT_MODELS[p]);
-										setResult(null);
-										setPicking(null);
-									}}
-								/>
-							))}
-						</ScrollView>
-					</Menu>
-				) : null
+				<>
+					<Dialog
+						open={deleting}
+						onClose={() => setDeleting(false)}
+						title={t`Delete “${name}”?`}
+						message={t`Its saved key is deleted.`}
+						actions={[
+							{
+								label: t`Delete`,
+								tone: "danger",
+								onPress: () => {
+									const id = existing?.id ?? savedId;
+									if (id)
+										void actions
+											.delete({ id })
+											.then(() => router.back())
+											.catch(() => setResult({ ok: false, text: t`Couldn't delete this provider. Try again.` }));
+								},
+							},
+							{ label: t`Cancel`, tone: "secondary", onPress: () => setDeleting(false) },
+						]}
+					/>
+					{picking ? (
+						<Menu open onClose={() => setPicking(null)} anchor={picking} align="start" width={342} height={368}>
+							<ScrollView style={{ maxHeight: 360 }}>
+								{providers.map((p) => (
+									<MenuItem
+										key={p}
+										label={AI_PROVIDER_DISPLAY_NAMES[p]}
+										onPress={() => {
+											setProvider(p);
+											setModel(AI_PROVIDER_DEFAULT_MODELS[p]);
+											setResult(null);
+											setPicking(null);
+										}}
+									/>
+								))}
+							</ScrollView>
+						</Menu>
+					) : null}
+				</>
 			}
 		>
 			<Form>
@@ -188,6 +264,21 @@ export function ProviderScreen() {
 					{t`Test sends one short request to ${host} with this key.`}
 				</Text>
 			</View>
+			{existing && params.id !== "new" ? (
+				<View style={{ padding: 24, gap: 12 }}>
+					<Button
+						label={t`Make default`}
+						onPress={() =>
+							void actions
+								.setDefault({ id: existing.id })
+								.catch(() =>
+									setResult({ ok: false, text: t`Test and turn on this provider before making it the default.` }),
+								)
+						}
+					/>
+					<Button label={t`Delete`} tone="dangerGhost" onPress={() => setDeleting(true)} />
+				</View>
+			) : null}
 		</PushScreen>
 	);
 }

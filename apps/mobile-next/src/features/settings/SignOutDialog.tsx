@@ -5,7 +5,7 @@
 // account-level loss is possible), `success` when the sync finishes.
 import { t } from "@lingui/core/macro";
 import { useEffect, useState } from "react";
-import { failureFromError, type PendingCounts, type SignOutStep, totalPending } from "./sign-out";
+import { signOutFirstAction, failureFromError, type PendingCounts, type SignOutStep, totalPending } from "./sign-out";
 import { pendingByKind, pendingTitle, signOutMessage } from "./sign-out-copy";
 import { signIn, signOut, useSession } from "@/auth/session";
 import { saveQueuedBundle, useDataActions } from "@/data";
@@ -73,11 +73,15 @@ export function SignOutDialog({
 	};
 
 	const discard = async () => {
-		await signOut({ discard: true });
-		onSignedOut();
+		try {
+			await signOut({ discard: true });
+			onSignedOut();
+		} catch (error) {
+			setState({ step: "failed", failure: failureFromError(error) });
+		}
 	};
 
-	const keepWorking: DialogAction = { label: t`Keep working`, tone: "secondary", onPress: onClose };
+	const keepWorking: DialogAction = { label: t`Keep working`, tone: "secondary", onPress: guard(onClose) };
 	const exportAction: DialogAction = {
 		label:
 			state.step === "exporting"
@@ -94,23 +98,22 @@ export function SignOutDialog({
 		onPress: guard(() => void discard()),
 	};
 
-	let first: DialogAction;
-	if (state.step === "failed")
-		first =
-			state.failure === "session-expired"
-				? { label: t`Sign in again`, tone: "primary", onPress: () => void signInAgain() }
-				: state.failure === "conflict"
+	const next = signOutFirstAction(state, offline);
+	const first: DialogAction =
+		next === "keep"
+			? { ...keepWorking, tone: "primary" }
+			: next === "sign-in"
+				? { label: t`Sign in again`, tone: "primary", onPress: guard(() => void signInAgain()) }
+				: next === "review"
 					? { label: t`Review`, tone: "primary", onPress: onClose }
-					: state.failure === "no-response"
-						? { label: t`Try again`, tone: "primary", onPress: () => void sync() }
-						: { ...keepWorking, tone: "primary" };
-	else if (offline) first = { ...keepWorking, tone: "primary" };
-	else
-		first = {
-			label: state.step === "syncing" ? t`Syncing…` : t`Sync and sign out`,
-			tone: "primary",
-			onPress: guard(() => void sync()),
-		};
+					: next === "retry"
+						? { label: t`Try again`, tone: "primary", onPress: guard(() => void sync()) }
+						: {
+								label: state.step === "syncing" ? t`Syncing…` : t`Sync and sign out`,
+								tone: "primary",
+								onPress: guard(() => void sync()),
+							};
+
 	const keepFirst = first.label === keepWorking.label;
 
 	return (

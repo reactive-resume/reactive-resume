@@ -5,9 +5,11 @@ import { useState } from "react";
 import { View } from "react-native";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
 import { ResourceState, useCareerLeaveGuard } from "./shared";
-import { useCareerStories, useDataActions, useDataBackend } from "@/data";
+import { useCareerActions, useCareerStories, useDataActions, useDataBackend } from "@/data";
 import {
 	Button,
+	Dialog,
+	haptic,
 	Chip,
 	IconButton,
 	ListRow,
@@ -50,9 +52,12 @@ export function StoriesScreen() {
 const parts = ["situation", "task", "action", "result", "reflection"] as const;
 type Part = (typeof parts)[number];
 export function StoryScreen() {
+	const router = useRouter();
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const query = useCareerStories();
 	const actions = useDataActions();
+	const careerActions = useCareerActions();
+	const [deleting, setDeleting] = useState(false);
 	const { backend } = useDataBackend();
 	const row = query.data?.find((s) => s.id === id);
 	const [draft, setDraft] = useState<CareerStoryData | null>(null);
@@ -104,6 +109,29 @@ export function StoryScreen() {
 			overlay={
 				<>
 					{guard.confirmation}
+					<Dialog
+						open={deleting}
+						onClose={() => setDeleting(false)}
+						title={t`Delete 1 story permanently?`}
+						message={t`It can't be restored.`}
+						actions={[
+							{
+								label: t`Delete permanently`,
+								tone: "danger",
+								onPress: () => {
+									void careerActions
+										.deleteStory({ id })
+										.then(() => {
+											haptic("warning");
+											guard.allowLeave();
+											router.back();
+										})
+										.catch(() => setFailed(true));
+								},
+							},
+							{ label: t`Cancel`, tone: "secondary", onPress: () => setDeleting(false) },
+						]}
+					/>
 					<Menu open={menu} onClose={() => setMenu(false)} anchor={{ x: 334, y: 53, width: 44, height: 44 }}>
 						<MenuItem
 							label={t`Duplicate`}
@@ -113,6 +141,13 @@ export function StoryScreen() {
 									void actions
 										.write("stories-and-facts", "career.saveStory", { ...data, title: t`${data.title} (copy)` })
 										.catch(() => setFailed(true));
+							}}
+						/>
+						<MenuItem
+							label={t`Delete`}
+							onPress={() => {
+								setMenu(false);
+								setDeleting(true);
 							}}
 						/>
 					</Menu>

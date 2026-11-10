@@ -8,7 +8,16 @@ import { editedLabel } from "./display";
 import { documentHref, parseDocumentTags } from "./model";
 import { CollectionState, DocumentPlaceholders, useTrashDocument } from "./shared";
 import { getAccountScope, useSession } from "@/auth/session";
-import { useAccount, useDataActions, useDataBackend, useDocuments, useLetter, useResume, useToday } from "@/data";
+import {
+	useAccount,
+	useDocumentActions,
+	useDataBackend,
+	useDocuments,
+	useLetter,
+	useResume,
+	useToday,
+	queueJobCopy,
+} from "@/data";
 import { pageRenderer } from "@/render/page-renderer";
 import {
 	Button,
@@ -47,10 +56,11 @@ function ScopedDocumentActionsScreen() {
 		}, []),
 	);
 	const router = useRouter();
-	const { now } = useToday();
-	const actions = useDataActions();
+	const { now, applications } = useToday();
+	const actions = useDocumentActions();
 	const trash = useTrashDocument();
 	const [more, setMore] = useState(false);
+	const [choosing, setChoosing] = useState<"copy" | "link" | null>(null);
 	const [editing, setEditing] = useState<"name" | "tags" | null>(null);
 	const [value, setValue] = useState("");
 	const [saving, setSaving] = useState(false);
@@ -99,10 +109,9 @@ function ScopedDocumentActionsScreen() {
 		}
 		setSaving(true);
 		try {
-			if (editing === "name")
-				await actions.write("documents", "documents.rename", { type: document.type, id, name: value.trim() });
+			if (editing === "name") await actions.rename({ type: document.type, id, name: value.trim() });
 			else
-				await actions.write("documents", "documents.setTags", {
+				await actions.setTags({
 					type: document.type,
 					id,
 					tags: tags ?? [],
@@ -160,6 +169,39 @@ function ScopedDocumentActionsScreen() {
 							/>
 							<Button label={t`Cancel`} onPress={() => setEditing(null)} />
 						</View>
+					) : choosing ? (
+						<>
+							{applications.data
+								?.filter((app) => app.status !== "closed")
+								.map((app) => (
+									<ListRow
+										key={app.id}
+										title={app.company}
+										secondary={app.role}
+										trailing="caret"
+										disabled={saving}
+										onPress={() => {
+											setSaving(true);
+											void (async () => {
+												try {
+													if (choosing === "copy") {
+														const copiedId = await queueJobCopy({ resumeId: id, applicationId: app.id });
+														navigate(`/builder/${copiedId}`);
+													} else {
+														await actions.linkApplication({ type: document.type, id, applicationId: app.id });
+														setChoosing(null);
+													}
+												} catch {
+													setError(t`Couldn't save your changes. Try again.`);
+												} finally {
+													setSaving(false);
+												}
+											})();
+										}}
+									/>
+								))}
+							<ListRow title={t`Save a job`} onPress={() => setChoosing("copy")} />
+						</>
 					) : more ? (
 						<>
 							<ListRow
@@ -181,7 +223,7 @@ function ScopedDocumentActionsScreen() {
 								wrapSecondary
 								title={t`Link to an application…`}
 								leading={<IconTile icon="link-simple" />}
-								onPress={() => navigate(`/applications?documentId=${id}`)}
+								onPress={() => setChoosing("link")}
 							/>
 							<ListRow
 								wrapTitle
@@ -214,7 +256,11 @@ function ScopedDocumentActionsScreen() {
 								wrapSecondary
 								title={document.isLocked ? t`Unlock editing` : t`Lock editing`}
 								leading={<IconTile icon="lock-simple" />}
-								onPress={() => setError(t`Lock editing is not available yet.`)}
+								onPress={() => {
+									void actions
+										.setLocked({ type: document.type, id, isLocked: !document.isLocked })
+										.catch(() => setError(t`Couldn't save your changes. Try again.`));
+								}}
 								last
 							/>
 						</>
@@ -240,7 +286,30 @@ function ScopedDocumentActionsScreen() {
 								wrapSecondary
 								title={t`Duplicate`}
 								leading={<IconTile icon="copy" />}
-								onPress={() => setError(t`Duplicate is not available yet.`)}
+								onPress={() => {
+									if (saving) return;
+									setSaving(true);
+									void (async () => {
+										try {
+											const copied =
+												document.type === "resume"
+													? await actions.duplicateResume({ id, name: t`${document.name} (copy)` })
+													: await actions.duplicateLetter({ id, name: t`${document.name} (copy)` });
+											const copiedId = typeof copied === "string" ? copied : copied.id;
+											showToast({
+												message: t`Duplicated “${document.name}”`,
+												action: {
+													label: t`Open`,
+													onPress: () => navigate(documentHref({ type: document.type, id: copiedId })),
+												},
+											});
+										} catch {
+											setError(t`Couldn't duplicate the document. Try again.`);
+										} finally {
+											setSaving(false);
+										}
+									})();
+								}}
 							/>
 							<ListRow
 								wrapTitle
