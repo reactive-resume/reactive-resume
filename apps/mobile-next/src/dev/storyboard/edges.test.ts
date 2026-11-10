@@ -58,6 +58,21 @@ jest.unmock("react-native-reanimated");
 require("react-native-reanimated").setUpTests();
 
 const repoRoot = path.resolve(__dirname, "../../../../..");
+const appDir = path.join(repoRoot, "apps/mobile-next/app");
+/**
+ * The app's route files as the bundler sees them: Metro's route context skips `+native-intent`, the testing
+ * library's file scan doesn't. Modules load on first use, as with a real require context.
+ */
+function appRoutes(overrides: Record<string, unknown>) {
+	const routes: Record<string, unknown> = {};
+	for (const file of readdirSync(appDir, { recursive: true }) as string[]) {
+		if (!/\.[jt]sx?$/.test(file) || /(^|\/)\+native-intent\./.test(file)) continue;
+		const key = file.replace(/\.[jt]sx?$/, "");
+		if (key in overrides) continue;
+		Object.defineProperty(routes, key, { enumerable: true, get: () => require(path.join(appDir, file)) });
+	}
+	return Object.assign(routes, overrides);
+}
 const root = path.resolve(
 	repoRoot,
 	execFileSync("git", ["rev-parse", "--git-common-dir"], { cwd: repoRoot, encoding: "utf8" }).trim(),
@@ -225,10 +240,9 @@ test.each(edges)("$source #$n → $target", async (edge) => {
 	}
 	const first = scenario.hrefs[0] === "/applications" ? "/applications?view=list" : scenario.hrefs[0];
 	const primeView = edge.target === "J1-List" && !first?.startsWith("/applications");
-	const view = await renderRouter(
-		{ appDir: path.join(repoRoot, "apps/mobile-next/app"), overrides: { _layout: Root } },
-		{ initialUrl: primeView ? "/applications?view=list" : first },
-	);
+	const view = await renderRouter(appRoutes({ _layout: Root }) as never, {
+		initialUrl: primeView ? "/applications?view=list" : first,
+	});
 	await act(() => jest.advanceTimersByTimeAsync(100));
 	if (primeView) {
 		await act(() => router.replace(first as never));

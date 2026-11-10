@@ -4,8 +4,8 @@ import type { ThemeName } from "@/ui/tokens";
 // Mounted once in the root layout; inert unless EXPO_PUBLIC_STORYBOARD=1.
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigationContainerRef, useRouter } from "expo-router";
-import { useEffect } from "react";
-import { LogBox } from "react-native";
+import { useEffect, useState } from "react";
+import { LogBox, View } from "react-native";
 import { create } from "zustand";
 import { CAPTURE_SERVER, collectDump, STORYBOARD, STORYBOARD_NOW, settle } from "./harness";
 import { scenarios } from "./scenarios";
@@ -41,16 +41,20 @@ export function registerMainScroll(fn: (() => void) | null) {
  * The dump goes to all of them: a capture only accepts the screen and theme it is waiting for.
  */
 const servers = [0, 1, 2, 3].map((n) => CAPTURE_SERVER.replace(/:\d+$/, `:${8799 + n}`));
+// A port held by something else may never answer; after 2 s the dump counts as sent, so motion always comes back.
 const post = (path: string, body: string, json: boolean) =>
-	Promise.allSettled(
-		servers.map((server) =>
-			fetch(`${server}${path}`, {
-				method: "POST",
-				...(json ? { headers: { "content-type": "application/json" } } : {}),
-				body,
-			}),
+	Promise.race([
+		Promise.allSettled(
+			servers.map((server) =>
+				fetch(`${server}${path}`, {
+					method: "POST",
+					...(json ? { headers: { "content-type": "application/json" } } : {}),
+					body,
+				}),
+			),
 		),
-	);
+		new Promise<void>((resolve) => setTimeout(resolve, 2000)),
+	]);
 
 const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
 
@@ -59,6 +63,8 @@ export function StoryboardController() {
 	const navigation = useNavigationContainerRef();
 	const request = useCaptureStore((s) => s.request);
 	const queryClient = useQueryClient();
+	// The request whose motion is back: Maestro flows wait for `storyboard-ready` before they touch anything.
+	const [ready, setReady] = useState<number | null>(null);
 
 	useEffect(() => {
 		if (STORYBOARD) LogBox.ignoreAllLogs(true);
@@ -114,12 +120,25 @@ export function StoryboardController() {
 			await post("/dump", JSON.stringify({ id, theme, scroll, ...dump }), true);
 			// Give the capture script time to take its screenshot, then let motion run again for hand checks.
 			setTimeout(() => {
-				if (useCaptureStore.getState().request?.nonce === request.nonce) timeScale.value = 1;
+				if (useCaptureStore.getState().request?.nonce !== request.nonce) return;
+				timeScale.value = 1;
+				setReady(request.nonce);
 			}, 4000);
 		})().catch((error) => {
 			void post("/error", JSON.stringify({ id, theme, error: String(error) }), false);
+			timeScale.value = 1;
+			setReady(request.nonce);
 		});
 	}, [request, router, navigation, queryClient]);
 
-	return null;
+	if (!STORYBOARD || !request || ready !== request.nonce) return null;
+	return (
+		<View
+			testID="storyboard-ready"
+			accessible
+			accessibilityLabel="Storyboard ready"
+			pointerEvents="none"
+			style={{ position: "absolute", top: 0, left: 0, width: 1, height: 1 }}
+		/>
+	);
 }

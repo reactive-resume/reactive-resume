@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { DEV_TOOLS } from "@/ui/DevMenu";
 import { clearHapticLog, useMotionDebug } from "@/ui/motion";
 
+// System links never reach this screen (app/+native-intent.tsx applies them in place); in-app pushes still do.
+
 export default function DevHaptics() {
 	const { overlay, clear } = useLocalSearchParams<{ overlay?: string; clear?: string }>();
 	useEffect(() => {
