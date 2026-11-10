@@ -230,12 +230,15 @@ test("Empty Trash consumes server receipts and only captured application generat
 		{ type: "letter", id: "l" },
 		{ type: "application", id: "a", trashedAt: at },
 	]);
-	expect(documents).toHaveBeenCalledWith({
-		documents: [
-			{ type: "resume", id: "r" },
-			{ type: "letter", id: "l" },
-		],
-	});
+	expect(documents).toHaveBeenCalledWith(
+		{
+			documents: [
+				{ type: "resume", id: "r" },
+				{ type: "letter", id: "l" },
+			],
+		},
+		{ context: { scope: "storyboard" } },
+	);
 	expect(applications).toHaveBeenCalledWith({ id: "a", trashedAt: at }, { context: { scope: "storyboard" } });
 	expect(result).toMatchObject({ deleted: 1, skipped: 1, failed: [{ refs: [{ id: "a" }], error: expect.any(Error) }] });
 });
