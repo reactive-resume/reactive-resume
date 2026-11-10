@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { TemplateScreen } from "@/features/builder/design/TemplateScreen";
 
-// B7: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="B7" kind="push" />;
-}
+// B7 · Template and colour.
+export default TemplateScreen;

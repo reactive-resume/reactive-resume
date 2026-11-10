@@ -1,0 +1,13 @@
+# B1: the dock's Edit → Design switch plays `selection`.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/B1-Overview?theme=light
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 15000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn: Design
+- assertVisible:
+    id: haptic-log
+    text: selection
+- assertVisible: Changes show on the page right away.

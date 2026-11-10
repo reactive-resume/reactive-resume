@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { PageScreen } from "@/features/builder/design/PageScreen";
 
-// Page: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="Page" kind="push" />;
-}
+// Page picker (from B6).
+export default PageScreen;

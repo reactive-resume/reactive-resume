@@ -1,6 +1,6 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { EntryScreen } from "@/features/builder/entry/EntryScreen";
 
-// B3: placeholder until its screen agent builds it.
+// B3 · Entry editor.
 export default function Route() {
-	return <RoutePlaceholder ids="B3" kind="push" />;
+	return <EntryScreen />;
 }
