@@ -1,0 +1,17 @@
+# S7: the first file sent to a connection asks once; with "Don't ask again" ticked the next file goes straight on.
+# Triggered from D4's "Read with AI" (screen agent D). Asking again after the key changes needs a provider update,
+# which has no data hook yet: that last step is covered by src/data/consent.test.ts until it does.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://import
+- tapOn: "Read with AI"
+- extendedWaitUntil:
+    visible: "Send to Work OpenAI?"
+    timeout: 5000
+- assertVisible: "Don't ask again for files"
+- tapOn:
+    id: first-send-send
+- assertNotVisible: "Send to Work OpenAI?"
+- openLink: me.rxresu.storyboard://import
+- tapOn: "Read with AI"
+- assertNotVisible: "Send to Work OpenAI?"

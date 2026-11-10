@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+// A1 "Change server" (sheet).
+import { ServerSheet } from "@/features/auth/ServerSheet";
 
-// A1 server: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="A1 server" kind="sheet" />;
-}
+export default ServerSheet;

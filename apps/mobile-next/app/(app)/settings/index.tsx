@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+// S1 · Settings (S8 is its sign-out dialog).
+import { SettingsScreen } from "@/features/settings/SettingsScreen";
 
-// S1: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="S1" kind="modal" />;
-}
+export default SettingsScreen;

@@ -1,0 +1,18 @@
+# S1 → S8: Sign out with three queued changes while offline opens S8 and plays `warning`; Keep working closes it.
+# `queued=offline` is the storyboard build's stand-in for a queue and a dead network (the simulator can't go offline
+# from a flow).
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- openLink: me.rxresu.storyboard://settings?queued=offline
+- tapOn:
+    id: settings-sign-out
+- extendedWaitUntil:
+    visible: "3 changes haven't synced"
+    timeout: 5000
+- assertVisible: "You're offline. Signing out now would remove them from this phone."
+- assertVisible:
+    id: haptic-log
+    text: warning
+- tapOn: "Keep working"
+- assertNotVisible: "3 changes haven't synced"

@@ -1,0 +1,14 @@
+# A3: a wrong two-step code clears the boxes, says so and plays `error` (MOTION.md §5, §12).
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- openLink: me.rxresu.storyboard://two-step
+- tapOn:
+    id: two-step-code
+- inputText: "000000"
+- extendedWaitUntil:
+    visible: "That code doesn't match. Check it and try again."
+    timeout: 5000
+- assertVisible:
+    id: haptic-log
+    text: error
