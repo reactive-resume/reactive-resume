@@ -1,4 +1,3 @@
-import type { InsightsRange } from "./model";
 // Storyboard-only view-model for J1–J9 and W1–W5: what the storyboard draws that the fake backend doesn't carry yet
 // (PLAN.md, "Data model and API mapping"; each entry is a reported fixture gap). `storyboard` is null outside the
 // storyboard build, so the real app never reads any of it.
@@ -17,23 +16,6 @@ export const storyboard = STORYBOARD
 			rowLines: { fieldnote: "Applied 28 Oct · no reply yet" } as Record<string, string>,
 			/** J1: group counts the board draws (it lists two of the four applied). */
 			groupCounts: { applied: 4 } as Record<string, number>,
-			/** J4: the 18 applications with sources the board draws, as their numbers. */
-			insights: (_range: InsightsRange) => ({
-				sent: 18,
-				repliedShare: 39,
-				medianDays: 6,
-				funnel: [
-					{ key: "applied", count: 18 },
-					{ key: "replied", count: 7 },
-					{ key: "interviewed", count: 3 },
-					{ key: "offer", count: 1 },
-				],
-				sources: [
-					{ source: "Referrals", applied: 3, replied: 2 },
-					{ source: "Company sites", applied: 6, replied: 3 },
-					{ source: "Job boards", applied: 9, replied: 2 },
-				],
-			}),
 			/** J5: requirements read from the posting. */
 			postingRequirements: 12,
 			storyNames: { [SHARED_SYSTEM]: "Building the shared system" } as Record<string, string>,

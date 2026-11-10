@@ -4,21 +4,41 @@ import { printAsync } from "expo-print";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { languageCopyRequest } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { getLanguageName, type Locale, supportedLocales } from "@reactive-resume/utils/locale";
 import { prepareExport } from "../download/export-file";
 import { DocumentState, useBuilderDocument, useDocumentId } from "../share/document";
 import { moveToTrash, restore, useDataActions, useDocumentActions, useResumeStore } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
-import { SheetScreen, ListRow, IconTile, Text, TextField, Form, Button, showToast, haptic } from "@/ui";
+import {
+	SheetScreen,
+	SheetScrollView,
+	ListRow,
+	IconTile,
+	Text,
+	TextField,
+	Form,
+	Button,
+	showToast,
+	haptic,
+} from "@/ui";
 
 /** Template ids are lowercase ("onyx"); the details grid shows the name ("Onyx"). */
 const templateName = (template: string) => template.charAt(0).toUpperCase() + template.slice(1);
 
-/** Gap: the fake resume carries no tags; the storyboard's B19 shows the tag "Design". */
-const tagsLine = (tags: string[]) => (STORYBOARD && !tags.length ? "Design" : tags.join(", "));
+const languageName = (locale: string) => {
+	try {
+		return getLanguageName(locale);
+	} catch {
+		return locale;
+	}
+};
 
 export function MenuScreen() {
 	const id = useDocumentId();
 	const router = useRouter();
+	const insets = useSafeAreaInsets();
 	const query = useBuilderDocument(id);
 	const document = query.data;
 	const actions = useDataActions();
@@ -83,6 +103,25 @@ export function MenuScreen() {
 			const copyId = typeof copy === "string" ? copy : copy?.id;
 			if (copyId) router.replace(`/builder/${copyId}`);
 		});
+	// Web parity (translate-resume.tsx): a language copy is made without AI; its assistant opens with an unsent draft.
+	const translate = (locale: Locale) =>
+		run(async () => {
+			if (!document) return;
+			if (draft.document?.id === id) {
+				await draft.flush();
+				if (useResumeStore.getState().status !== "saved") throw new Error("Save changes before copying this document.");
+			}
+			const copy = (await documents.duplicateResume({
+				id,
+				name: `${document.name} — ${languageName(locale)}`,
+				pageLocale: locale,
+			})) as unknown as string | { id: string } | undefined;
+			await cache.invalidateQueries();
+			const copyId = typeof copy === "string" ? copy : copy?.id;
+			if (!copyId) return;
+			router.replace(`/builder/${copyId}`);
+			router.push({ pathname: "/builder/[id]/assistant", params: { id: copyId, ask: languageCopyRequest(locale) } });
+		});
 	const row = (
 		title: string,
 		icon: Parameters<typeof IconTile>[0]["icon"],
@@ -106,14 +145,36 @@ export function MenuScreen() {
 	);
 	return (
 		<SheetScreen
-			title={step === "rename" ? t`Rename…` : (document?.name ?? t`Document`)}
+			title={
+				step === "rename" ? t`Rename…` : step === "translate" ? t`Translate into…` : (document?.name ?? t`Document`)
+			}
 			height={790}
 			step={step}
 			closeIconSize={24}
+			// The menu scrolls under the home indicator, as B19 draws it; its scroll content keeps the inset.
+			bottomPadding={0}
 		>
 			<DocumentState loading={query.isPending} error={query.isError} retry={() => void query.refetch()} />
 			{document &&
-				(step === "rename" ? (
+				(step === "translate" ? (
+					<SheetScrollView contentContainerStyle={{ paddingBottom: insets.bottom }}>
+						<Text variant="small" color="ink2" style={{ marginHorizontal: 24, marginVertical: 12 }}>
+							{t`The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated.`}
+						</Text>
+						{supportedLocales
+							.filter((locale) => locale !== document.data.metadata.page.locale)
+							.map((locale, i, all) => (
+								<ListRow
+									key={locale}
+									title={languageName(locale)}
+									top={i === 0}
+									last={i === all.length - 1}
+									disabled={busy}
+									onPress={() => void translate(locale)}
+								/>
+							))}
+					</SheetScrollView>
+				) : step === "rename" ? (
 					<>
 						<Form>
 							<TextField label={t`Name`} value={value} onChangeText={setValue} maxLength={100} />
@@ -133,7 +194,7 @@ export function MenuScreen() {
 						</View>
 					</>
 				) : (
-					<>
+					<SheetScrollView contentContainerStyle={{ paddingBottom: insets.bottom }}>
 						<View style={{ marginHorizontal: 24, marginTop: 12, gap: 16 }}>
 							{[
 								[
@@ -175,21 +236,15 @@ export function MenuScreen() {
 								undefined,
 								{ top: true, accent: locked },
 							)}
-							{row(
-								t`Rename…`,
-								"pencil-simple",
-								() => {
-									setValue(document.name);
-									setStep("rename");
-								},
-								locked,
-							)}
-							{row(t`Tags`, "tag", undefined, false, tagsLine(document.tags), { caret: true })}
+							{row(t`Rename…`, "pencil-simple", () => {
+								setValue(document.name);
+								setStep("rename");
+							})}
+							{row(t`Tags`, "tag", undefined, false, document.tags.join(", "), { caret: true })}
 							{row(t`Duplicate`, "copy", () => void duplicate(), busy)}
-							{/* Gap: no translate action in the data layer yet. */}
-							{row(t`Translate into…`, "translate", undefined, true)}
+							{row(t`Translate into…`, "translate", () => setStep("translate"), busy)}
 							{row(t`Copy for a job…`, "briefcase", () => router.push(`/applications/new`))}
-							{row(t`Notes`, "note", undefined, true, t`Only you can see these`)}
+							{row(t`Notes`, "note", () => router.push(`/builder/${id}/notes`), false, t`Only you can see these`)}
 							{row(
 								t`Print`,
 								"printer",
@@ -201,7 +256,7 @@ export function MenuScreen() {
 							)}
 							{row(t`Move to trash`, "trash", () => void trash(), locked, undefined, { danger: true, last: true })}
 						</View>
-					</>
+					</SheetScrollView>
 				))}
 			{error && (
 				<Text color="dangerText" accessibilityRole="alert" style={{ margin: 24 }}>
