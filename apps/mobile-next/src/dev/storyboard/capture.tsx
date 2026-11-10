@@ -88,6 +88,10 @@ export function StoryboardController() {
 			}
 			const dump = await collectDump(navigation.getRootState() as never);
 			await post("/dump", JSON.stringify({ id, theme, scroll, ...dump }), true);
+			// Give the capture script time to take its screenshot, then let motion run again for hand checks.
+			setTimeout(() => {
+				if (useCaptureStore.getState().request?.nonce === request.nonce) timeScale.value = 1;
+			}, 4000);
 		})().catch((error) => {
 			void post("/error", JSON.stringify({ id, theme, error: String(error) }), false);
 		});

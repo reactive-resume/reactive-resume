@@ -18,6 +18,7 @@ const maxScale = (family: string) => (family === fonts.display ? 1.5 : 2);
 const glyphShift: Partial<Record<TypeToken, number>> =
 	Platform.select<Partial<Record<TypeToken, number>>>({
 		ios: { rootTitle: 0.5 },
+		android: { rootTitle: -1, pageTitle: -1, sheetTitle: -1, keyLine: -1, ui: -0.5 },
 		default: {},
 	}) ?? {};
 

@@ -295,3 +295,13 @@ Captures on slots 2 to 4 run at the same time as others only with their own dump
 script listens on one fixed port. Run it as
 `RR_CAPTURE_PORT=<port> node --import ./scripts/capture-port.mjs $B/tools/rn_capture.mjs screens …` from the app folder:
 slot 2 → 8800, slot 3 → 8801, slot 4 → 8802 (slot 1 keeps 8799 and needs no preload). The tool itself is unchanged.
+
+### Android
+
+One emulator (`Pixel_10_Pro`), set to 390 x 844 dp with `adb shell wm size 1170x2532 && adb shell wm density 480`.
+Gradle needs JDK 17 (`~/.gradle/jdks/eclipse_adoptium-17-aarch64-os_x.2/jdk-17*/Contents/Home`) and the forme-native
+`.so` files (`pnpm --filter @reactive-resume/forme-native build:native`, or copy
+`packages/forme-native/android/src/main/jniLibs` from a checkout that has them; the folder is git-ignored). A first
+install shows two prompts to dismiss: the dev client's nearby-devices permission and the developer-menu introduction.
+While iOS captures use port 8799, run Android captures on their own port: `adb reverse tcp:8800 tcp:8803`, then
+`RR_CAPTURE_PORT=8803 node --import ./scripts/capture-port.mjs $B/tools/rn_capture.mjs screens --platform android …`.

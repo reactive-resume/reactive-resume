@@ -26,6 +26,8 @@ custom fonts or `lineHeight` quirks. Fix in `src/ui/Text.tsx`: `marginBottom: -1
 Text contributes exactly its line box to layout. The design tag now also reports style overrides (font size, line
 height, family) instead of the variant's.
 
+<<<<<<< HEAD
+
 ## 2026-11-10 · Pass 3 · iOS scoreboard so far (debug build, per-agent captures)
 
 | Group | Screens           | Passing | Notes                                                                                                                |
@@ -36,3 +38,35 @@ height, family) instead of the variant's.
 `rootTitle` glyph offset on iOS reduced from +1 to +0.5 dp: the layout tool measures the translated box, and +1 put
 the title 1.5 dp from the dump's text box (57.5) on every root tab. At +0.5 the box measures 58.5 (within 1 dp) and
 the glyphs sit 1.0 / 0.5 dp high (within 1 dp).
+=======
+
+## 2026-11-10 · Pass 4 · text metrics and first scoreboard, Android (Pixel_10_Pro emulator, API 37, 1170 × 2532 at 480 dpi = 390 × 844 dp, debug storyboard build)
+
+Line boxes: `onLayout` on the metrics probe reports exactly lines × line height for every style on Android (rootTitle 40,
+pageTitle 34, sheetTitle 28, heading 28, body 24 and 48 for two lines, rowTitle 24, ui 20, keyLine 18). No line-box fix
+is needed; `textDefaults` (`includeFontPadding: false`, `textAlignVertical: "center"`) already gives CSS line boxes.
+
+Glyphs, measured with `scripts/text-metrics.py` (dp, capture minus storyboard; 0.5 dp resolution at the PNGs' 2 px/dp):
+
+| Style                  | Sample                       | Top before | Bottom before | Correction (Android) | Top after | Bottom after |
+| ---------------------- | ---------------------------- | ---------- | ------------- | -------------------- | --------- | ------------ |
+| rootTitle 34/40 serif  | Today                        | +0.5       | +1.0          | −1 dp                | −0.5      | 0            |
+| pageTitle 28/34 serif  | Product designer             | +1.0       | +1.0          | −1 dp                | 0         | 0            |
+| sheetTitle 22/28 serif | Needs you, Sections          | +0.5, +1.0 | +0.5, +1.0    | −1 dp                | −0.5, 0   | −0.5, 0      |
+| heading 20/28          | Technical interview at Lumen | 0          | 0             | none                 | 0         | 0            |
+| body 15/24             | hero paragraph, status line  | +0.5       | 0             | none                 | +0.5      | 0            |
+| rowTitle 16/24         | Basics                       | +0.5       | +0.5          | none                 | +0.5      | +0.5         |
+| ui 14/20               | date, row secondary lines    | 0 to +1.0  | +1.0          | −0.5 dp              | 0 to +0.5 | +0.5 to +1.0 |
+| keyLine 13/18          | Tuesday 10 Nov · 10:00       | +1.0       | +0.5          | −1 dp                | 0         | −0.5         |
+
+The corrections live in `glyphShift.android` in `src/ui/Text.tsx`; iOS values are unchanged. The ui style's remaining
++1 bottom is the comma descender in "Northwind Labs, Harbour Studio".
+
+Launch: no Android-specific fixes were needed (edge-to-edge insets, `boxShadow` strings, keyboard-controller and the
+static fonts all work). Native build needs `packages/forme-native/android/src/main/jniLibs` (Rust output, git-ignored;
+`pnpm --filter @reactive-resume/forme-native build:native`, or copy from a checkout that built it).
+
+Scoreboard (`fidelity.py --system-bars`): A1–A4 and S1–S8 pass with 0 layout failures, 0.42–0.71 % differing pixels
+per theme and no bands. The debug build's floating gear accounts for most of the remaining pixels.
+
+> > > > > > > fix/android-mobile-fidelity
