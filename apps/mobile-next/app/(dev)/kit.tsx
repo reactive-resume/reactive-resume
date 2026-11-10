@@ -12,6 +12,7 @@ import {
 	Chip,
 	Composer,
 	Dock,
+	FadeThroughProvider,
 	FooterBar,
 	HeroCard,
 	Icon,
@@ -320,32 +321,34 @@ export default function Kit() {
 				</View>
 			</Group>
 			<Group label="Dock" note="NavDock 64 · tabs, builder, letter">
-				<View style={tile}>
-					<Dock
-						variant="tabs"
-						selected="today"
-						onNavigate={() => {}}
-						items={[
-							{ key: "today", label: "Today", icon: "house-simple" },
-							{ key: "documents", label: "Documents", icon: "files" },
-							{ key: "applications", label: "Applications", icon: "briefcase" },
-							{ key: "career", label: "Career", icon: "compass" },
-						]}
-					/>
-				</View>
-				<View style={tile}>
-					<Dock
-						variant="builder"
-						selected="edit"
-						onNavigate={() => {}}
-						items={[
-							{ key: "edit", label: "Edit", icon: "pencil-simple" },
-							{ key: "design", label: "Design", icon: "palette" },
-							{ key: "check", label: "Check", icon: "seal-check", warn: true },
-							{ key: "share", label: "Share", icon: "share-network" },
-						]}
-					/>
-				</View>
+				<FadeThroughProvider>
+					<View style={tile}>
+						<Dock
+							variant="tabs"
+							selected="today"
+							onNavigate={() => {}}
+							items={[
+								{ key: "today", label: "Today", icon: "house-simple" },
+								{ key: "documents", label: "Documents", icon: "files" },
+								{ key: "applications", label: "Applications", icon: "briefcase" },
+								{ key: "career", label: "Career", icon: "compass" },
+							]}
+						/>
+					</View>
+					<View style={tile}>
+						<Dock
+							variant="builder"
+							selected="edit"
+							onNavigate={() => {}}
+							items={[
+								{ key: "edit", label: "Edit", icon: "pencil-simple" },
+								{ key: "design", label: "Design", icon: "palette" },
+								{ key: "check", label: "Check", icon: "seal-check", warn: true },
+								{ key: "share", label: "Share", icon: "share-network" },
+							]}
+						/>
+					</View>
+				</FadeThroughProvider>
 			</Group>
 			<Group label="Toast" note="Toast · Undo and fuse">
 				<View

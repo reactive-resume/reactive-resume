@@ -232,3 +232,16 @@ from the worktree's repo root. Commit your work in your worktree with a Conventi
 (`feat(mobile-next): …`, no AI attribution, no trailers). Report: your branch name and commit; one scoreboard line per
 screen; each remaining difference with its cause; every request to the lead; behaviour bullets from `SCREENS.md` you
 did not implement and why; questions about direction.
+
+### Simulators (from 2026-11-10)
+
+Four iPhone 14 simulators exist, all with the storyboard debug app installed. A brief that names a simulator UDID gives
+that agent the simulator for itself: use that UDID wherever the guide says `U=…`, and skip the lock. Only slot 1
+(`CD4BE437-2AEC-4FB8-8CB6-5D00E08188AE`) is shared and still needs `/tmp/rr-device.lock`.
+
+| Slot             | UDID                                   |
+| ---------------- | -------------------------------------- |
+| 1 (shared, lock) | `CD4BE437-2AEC-4FB8-8CB6-5D00E08188AE` |
+| 2                | `BA09A98F-9DA9-496B-8315-F09946A54759` |
+| 3                | `2497804D-9672-425A-935E-083CC064C6DC` |
+| 4                | `DB7E3620-BA54-4DB3-8DE6-1681AACE8E64` |

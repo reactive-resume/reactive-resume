@@ -1,8 +1,9 @@
 import SQLiteStorage from "expo-sqlite/kv-store";
 const fixture = new Map<string, string>();
 const isFixtureKey = (key: string) =>
-	/^(queue:|query:|s7:|settings:|linked:|recurring:)storyboard(?:$|:)/.test(key) ||
-	key.startsWith("reactive-resume:unsaved:storyboard:");
+	/^(queue:|query:|s7:|settings:|linked:|recurring:|searches:|first-run:|notification-completion:|job-copy:)storyboard(?:$|:)/.test(
+		key,
+	) || key.startsWith("reactive-resume:unsaved:storyboard:");
 /** Storyboard accounts never write their fake content into the real account store. */
 const Storage = {
 	getItemSync: (key: string) => (isFixtureKey(key) ? (fixture.get(key) ?? null) : SQLiteStorage.getItemSync(key)),

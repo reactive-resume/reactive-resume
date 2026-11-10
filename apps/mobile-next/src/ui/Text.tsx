@@ -71,6 +71,7 @@ export function Text({
 				fontFamily: override?.fontFamily ?? fontFamily,
 				fontSize: override?.fontSize ?? base.fontSize,
 				lineHeight: override?.lineHeight ?? base.lineHeight,
+				fontWeight: override?.fontWeight,
 			},
 			color,
 		},

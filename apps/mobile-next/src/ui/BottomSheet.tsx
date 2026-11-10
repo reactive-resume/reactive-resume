@@ -138,9 +138,9 @@ export function BottomSheet({
 	const [asking, setAsking] = useState(false);
 
 	const h = useSharedValue(height);
-	// With timeScale 0 (storyboard captures) or startOpenAt the sheet is open from its first frame.
-	const instant = timeScale.value === 0 || startOpenAt !== undefined;
-	const ty = useSharedValue(startOpenAt ?? (reduced || instant ? 0 : height)); // 0 = open, h = below the screen
+	// startOpenAt: open from the first frame. (timeScale 0, storyboard captures: the open below lands at once.)
+	const instant = startOpenAt !== undefined;
+	const ty = useSharedValue(startOpenAt ?? (reduced ? 0 : height)); // 0 = open, h = below the screen
 	const fade = useSharedValue(reduced && !instant ? 0 : 1); // the sheet's own opacity (reduced motion, fadeAway)
 	const scrim = useSharedValue(instant ? 1 : 0);
 	const kb = useSharedValue(0);
@@ -161,7 +161,11 @@ export function BottomSheet({
 
 	// Open.
 	useEffect(() => {
-		if (startOpenAt === undefined) {
+		if (startOpenAt === undefined && timeScale.value === 0) {
+			scrim.set(1);
+			fade.set(1);
+			ty.set(0);
+		} else if (startOpenAt === undefined) {
 			scrim.set(withTiming(1, enter(scrimMs)));
 			if (reduced) fade.set(withTiming(1, enter(motion.d1)));
 			else ty.set(withTiming(0, enter(motion.d3)));
@@ -364,8 +368,9 @@ export function SheetScrollView({
 	contentContainerStyle?: object;
 }) {
 	const ctx = useContext(Ctx);
+	const scrollY = ctx?.scrollY; // capture only the shared value: the context also holds the (uncopyable) pan
 	const onScroll = useAnimatedScrollHandler((e) => {
-		if (ctx) ctx.scrollY.set(e.contentOffset.y);
+		if (scrollY) scrollY.set(e.contentOffset.y);
 	});
 	const native = Gesture.Native();
 	if (ctx) native.simultaneousWithExternalGesture(ctx.pan);

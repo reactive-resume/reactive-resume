@@ -16,8 +16,9 @@ export const deletePermanently = (ref: TrashRef) =>
 		: client.documents.purge(ref);
 export const emptyDocumentTrash = () => client.documents.emptyTrash({});
 export async function emptyApplicationTrash() {
-	const rows = await client.applications.listTrash({});
-	for (const row of rows.items) await client.applications.purge({ id: row.id, trashedAt: row.trashedAt });
+	const { allApplicationTrash } = await import("./trash");
+	const rows = await allApplicationTrash();
+	for (const row of rows) await client.applications.purge({ id: row.id, trashedAt: row.trashedAt });
 }
 export async function closeApplication(
 	id: string,

@@ -1,26 +1,36 @@
 // Text fields and forms (COMPONENTS.md §10), the composer and chat pieces (§13), the formatting toolbar (§6).
-import type { ReactNode } from "react";
+import type { ComponentRef, ReactNode, Ref } from "react";
 import type { TextInputProps } from "react-native";
 import { useState } from "react";
 import { TextInput, View } from "react-native";
 import { Box, Ring, Touch } from "./base";
 import { IconButton } from "./buttons";
+import { FocusRing } from "./FocusRing";
 import { Icon, type IconName } from "./Icon";
+import { Stacked, useLargeText, useStacked } from "./large-text";
 import { hitSlopFor } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { fonts, layout, radius, type as typeScale } from "./tokens";
-import { STORYBOARD } from "@/dev/storyboard/harness";
+import { STORYBOARD, useDesignTag } from "@/dev/storyboard/harness";
 
 /** A 24 dp form column: 20 dp between fields. */
 export function Form({ children }: { children: ReactNode }) {
 	return <View style={{ paddingTop: 24, paddingHorizontal: layout.screenMargin, gap: 20 }}>{children}</View>;
 }
 
-/** Two fields side by side, 12 dp apart; they stack at large text (Reach board). */
+/** Two fields side by side, 12 dp apart; they stack 20 dp apart at large text (Reach board). */
 export function FieldRow({ children }: { children: ReactNode }) {
-	return <View style={{ flexDirection: "row", gap: 12 }}>{children}</View>;
+	const stacked = useLargeText();
+	return (
+		<Stacked.Provider value={stacked}>
+			<View style={{ flexDirection: stacked ? "column" : "row", gap: stacked ? 20 : 12 }}>{children}</View>
+		</Stacked.Provider>
+	);
 }
+
+/** The field text: `input` 16/22, or Geist Mono 14/22 for URLs and keys (J5). */
+const monoInput = { fontFamily: fonts.mono, fontSize: 14, lineHeight: 22, fontWeight: "400" as const };
 
 export type TextFieldProps = Omit<TextInputProps, "style"> & {
 	label?: string | undefined;
@@ -37,8 +47,11 @@ export type TextFieldProps = Omit<TextInputProps, "style"> & {
 	forceFocus?: boolean | undefined;
 	/** In a FieldRow: share the width. */
 	grow?: boolean | undefined;
-	/** Taller multi-line field. */
+	/** Minimum height; multi-line fields default to 96 (`.ta`). */
 	minHeight?: number | undefined;
+	/** Geist Mono 14/22 text (links, keys). */
+	mono?: boolean | undefined;
+	ref?: Ref<ComponentRef<typeof TextInput>> | undefined;
 };
 
 export function TextField({
@@ -53,6 +66,8 @@ export function TextField({
 	forceFocus = false,
 	grow = false,
 	minHeight,
+	mono = false,
+	ref,
 	value,
 	placeholder,
 	onFocus,
@@ -62,56 +77,78 @@ export function TextField({
 }: TextFieldProps) {
 	const { colors } = useTheme();
 	const [focused, setFocused] = useState(false);
+	const stacked = useStacked();
 	const active = focused || forceFocus;
-	const ring = error ? "danger" : active ? "accent" : "controlBorder";
-	const outer = error ? colors.dangerSoft : active ? colors.accentSoft : null;
+	// The dumps list the drawn value (masked for passwords) or the placeholder as the field's text, in its line box.
+	const textStyle = mono ? monoInput : { ...typeScale.input, ...(multiline ? { lineHeight: 24 } : null) };
+	const shown = value ? (input.secureTextEntry ? "\u2022".repeat(value.length) : value) : (placeholder ?? "");
+	const textRef = useDesignTag(
+		{
+			kind: "text",
+			text: shown,
+			style: textStyle,
+			color: value ? "ink" : "ink3",
+		},
+		{ hidden: !shown || !!onPress },
+	);
 	const field = (
 		<Box
 			component="TextField"
 			bg="raised"
 			radius={radius.md}
-			style={[
-				{
-					minHeight: minHeight ?? 44,
-					paddingHorizontal: 12,
-					flexDirection: "row",
-					alignItems: multiline ? "flex-start" : "center",
-					gap: 8,
-				},
-				outer ? { boxShadow: `0px 0px 0px 3px ${outer}` } : null,
-			]}
+			style={{
+				minHeight: minHeight ?? (multiline ? 96 : 44),
+				paddingHorizontal: 12,
+				paddingVertical: multiline ? 10 : 0,
+				flexDirection: "row",
+				alignItems: multiline ? "flex-start" : "center",
+				gap: 8,
+			}}
 		>
-			<Ring color={ring} radius={radius.md} />
+			<Ring color="controlBorder" radius={radius.md} />
+			<FocusRing focused={active} error={!!error} radius={radius.md} />
 			{leadingIcon ? <Icon name={leadingIcon} size={20} color="ink3" /> : null}
 			{onPress ? (
-				<Text variant="input" color={value ? "ink" : "ink3"} numberOfLines={1} style={{ flex: 1 }}>
+				<Text
+					variant="input"
+					color={value ? "ink" : "ink3"}
+					numberOfLines={1}
+					style={[{ flex: 1 }, mono ? monoInput : null]}
+				>
 					{value || placeholder || ""}
 				</Text>
 			) : (
-				<TextInput
-					{...input}
-					value={value}
-					placeholder={placeholder}
-					placeholderTextColor={colors.ink3}
-					multiline={multiline}
-					caretHidden={STORYBOARD}
-					selectionColor={colors.accent}
-					maxFontSizeMultiplier={2}
-					accessibilityLabel={label}
-					onFocus={(e) => {
-						setFocused(true);
-						onFocus?.(e);
-					}}
-					onBlur={(e) => {
-						setFocused(false);
-						onBlur?.(e);
-					}}
-					style={[
-						typeScale.input,
-						{ flex: 1, minWidth: 0, padding: 0, color: colors.ink, includeFontPadding: false },
-						multiline ? { paddingVertical: 11, textAlignVertical: "top" } : null,
-					]}
-				/>
+				<View
+					ref={textRef}
+					collapsable={false}
+					style={{ flex: 1, minWidth: 0, minHeight: textStyle.lineHeight, justifyContent: "center" }}
+				>
+					<TextInput
+						{...input}
+						ref={ref}
+						value={value}
+						placeholder={placeholder}
+						placeholderTextColor={colors.ink3}
+						multiline={multiline}
+						caretHidden={STORYBOARD}
+						selectionColor={colors.accent}
+						maxFontSizeMultiplier={2}
+						accessibilityLabel={label}
+						onFocus={(e) => {
+							setFocused(true);
+							onFocus?.(e);
+						}}
+						onBlur={(e) => {
+							setFocused(false);
+							onBlur?.(e);
+						}}
+						style={[
+							textStyle,
+							{ padding: 0, color: colors.ink, includeFontPadding: false },
+							multiline ? { textAlignVertical: "top" } : null,
+						]}
+					/>
+				</View>
 			)}
 			{suffix ? (
 				<Text variant="mono" color="ink3">
@@ -130,7 +167,7 @@ export function TextField({
 		</Box>
 	);
 	return (
-		<View style={[{ gap: 8 }, grow ? { flex: 1, minWidth: 0 } : null]}>
+		<View style={[{ gap: 8 }, grow && !stacked ? { flex: 1, minWidth: 0 } : null]}>
 			{label ? (
 				<Text variant="formLabel" color="ink2">
 					{label}
@@ -167,7 +204,6 @@ export function CodeBoxes({
 	focusedIndex?: number | undefined;
 	error?: boolean | undefined;
 }) {
-	const { colors } = useTheme();
 	return (
 		<View
 			style={{ flexDirection: "row", gap: 8 }}
@@ -182,15 +218,13 @@ export function CodeBoxes({
 						component="CodeBox"
 						bg="raised"
 						radius={radius.md}
-						style={[
-							{ flex: 1, height: 56, alignItems: "center", justifyContent: "center" },
-							focus || error ? { boxShadow: `0px 0px 0px 3px ${error ? colors.dangerSoft : colors.accentSoft}` } : null,
-						]}
+						style={{ flex: 1, height: 56, alignItems: "center", justifyContent: "center" }}
 					>
-						<Ring color={error ? "danger" : focus ? "accent" : "controlBorder"} radius={radius.md} />
+						<Ring color="controlBorder" radius={radius.md} />
+						<FocusRing focused={focus} error={error} radius={radius.md} />
 						<Text
 							variant="mono"
-							style={{ fontFamily: fonts.mono, fontSize: 26, lineHeight: 30 }}
+							style={{ fontFamily: fonts.mono, fontSize: 26, lineHeight: 30, fontWeight: "400" }}
 							maxFontSizeMultiplier={1.3}
 						>
 							{value[i] ?? ""}

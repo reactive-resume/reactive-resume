@@ -4,7 +4,7 @@
 //   SheetScreen  a route presented as the design-system bottom sheet
 import { useFocusEffect, useRouter } from "expo-router";
 import { type ReactNode, useCallback, useRef } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -113,7 +113,7 @@ export type PushScreenProps = {
 	barCenter?: ReactNode;
 	/** Pinned under the content: FooterBar, Composer, a dock. */
 	footer?: ReactNode;
-	/** Over the content, not scrolling (zoom bar). */
+	/** Over the whole screen, bar and footer included, not scrolling (zoom bar, dialogs, menus). */
 	overlay?: ReactNode;
 	bg?: ColorToken;
 	/** False for screens that manage their own scrolling (chat, pagers, page preview). */
@@ -236,8 +236,13 @@ export function PushScreen({
 					{children}
 				</View>
 			)}
-			{overlay}
 			{footer}
+			{overlay ? (
+				// Above the bar (zIndex 1) and the footer: dialogs, menus and scrims cover the whole screen.
+				<View style={[StyleSheet.absoluteFill, { zIndex: 2 }]} pointerEvents="box-none">
+					{overlay}
+				</View>
+			) : null}
 		</Screen>
 	);
 	return docked ? <DockScene>{body}</DockScene> : body;

@@ -8,6 +8,7 @@ import {
 import { careerProfileDataSchema, EMPTY_WORKSPACE, offerTermsSchema } from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { setNow, setTimeZone, now } from "./clock";
+import { extendedSeed, fixtureRead, fixtureWrite } from "./fixture-operations";
 import { resetFixtureStorage } from "./storage";
 import texts from "./storyboard-texts.json";
 
@@ -314,6 +315,7 @@ function makeState(fixture: Fixture) {
 		},
 	];
 	return {
+		...extendedSeed(empty),
 		resumes: empty ? [] : resumes,
 		letters: empty ? [] : letters,
 		documents: empty ? [] : documents,
@@ -486,6 +488,13 @@ export function seed(fixture: Fixture): void {
 	resetFixtureStorage();
 	clock();
 	state = makeState(fixture);
+	for (const version of state.versions)
+		Object.assign(version, {
+			resumeId: "resume-product",
+			data: structuredClone(state.resumes[0]?.data ?? defaultResumeData),
+			aiOperationIds: [],
+			aiUsage: null,
+		});
 	generation++;
 	for (const listener of listeners) listener();
 }
@@ -507,6 +516,8 @@ export const fakeBackend: Backend = {
 			state ??= makeState(selected ?? "storyboard");
 			const fields = (input ?? {}) as Row;
 			let value: unknown;
+			const extra = fixtureRead(resource, fields, state);
+			if (extra) return structuredClone(extra.value) as ResourceOutput<K>;
 			if (resource === "resume") value = state.resumes.find((row) => row.id === fields.id);
 			else if (resource === "letter") value = state.letters.find((row) => row.id === fields.id);
 			else if (resource === "applications") value = state.applications.filter((row) => !row.trashedAt);
@@ -521,10 +532,16 @@ export const fakeBackend: Backend = {
 				);
 			else if (resource === "applicationTrash")
 				value = {
-					items: state.applications.filter((row) => row.trashedAt),
+					items: state.applications
+						.filter((row) => row.trashedAt)
+						.slice(Number(fields.offset ?? 0), Number(fields.offset ?? 0) + Number(fields.limit ?? 100)),
 					total: state.applications.filter((row) => row.trashedAt).length,
 				};
-			else if (resource === "opportunities") value = state.opportunities;
+			else if (resource === "opportunities") value = state.opportunities.filter((row) => !row.dismissedAt);
+			else if (resource === "facts")
+				value = state.facts.filter(
+					(row) => !fields.query || row.text.toLowerCase().includes(String(fields.query).toLowerCase()),
+				);
 			else value = (state as Record<string, unknown>)[resource];
 			if (value === undefined) throw new Error("Fixture resource not found.");
 			// Fixture dispatch is the sole untyped boundary; resource hooks preserve the real router contract.
@@ -534,9 +551,16 @@ export const fakeBackend: Backend = {
 		}
 	},
 	async write(operation, input) {
+		if (operation === "resume.update" || operation === "coverLetters.update") return invokeFake(operation, input);
 		await Promise.resolve();
 		state ??= makeState(selected ?? "storyboard");
-		const fields = input as Row;
+		const fields = (input ?? {}) as Row;
+		const extra = fixtureWrite(operation, fields, state);
+		if (extra) {
+			generation++;
+			for (const listener of listeners) listener();
+			return structuredClone(extra.value);
+		}
 		if (operation === "applicationProfile.save")
 			state.profile = {
 				data: applicationProfileDataSchema.parse(fields.data),
@@ -555,6 +579,8 @@ export const fakeBackend: Backend = {
 			const row = state.documents.find((row) => row.id === fields.id && row.type === fields.type);
 			if (!row) throw new Error("Fixture document not found.");
 			Object.assign(row, fields);
+			const document = (fields.type === "letter" ? state.letters : state.resumes).find((item) => item.id === fields.id);
+			if (document) Object.assign(document, fields);
 		} else if (operation === "career.saveWorkspace") state.workspace = { ...state.workspace, ...fields };
 		else if (operation === "career.saveFact" || operation === "career.updateFact") {
 			const existing = state.facts.find((row) => row.id === fields.id);
@@ -602,6 +628,16 @@ export const fakeBackend: Backend = {
 		} else throw new Error(`Fixture mutation not implemented: ${operation}`);
 		generation++;
 		for (const listener of listeners) listener();
+		if (operation === "applicationProfile.save") return structuredClone(state.profile);
+		if (operation === "career.updateProfile" || operation === "career.saveProfile")
+			return structuredClone(state.preferences);
+		if (operation === "career.saveWorkspace") return structuredClone(state.workspace);
+		if (operation === "applications.update")
+			return structuredClone(state.applications.find((row) => row.id === fields.id));
+		if (operation === "career.saveFact" || operation === "career.updateFact")
+			return structuredClone(state.facts.find((row) => row.id === fields.id) ?? state.facts.at(-1));
+		if (operation === "career.saveStory")
+			return structuredClone(state.stories.find((row) => row.id === fields.id) ?? state.stories.at(-1));
 	},
 };
 
@@ -668,6 +704,8 @@ export async function invokeFake(operation: string, input: unknown): Promise<unk
 		if (!row) throw new Error("Fixture resume not found.");
 		if (row.isLocked) throw new Error("Unlock this document before editing.");
 		Object.assign(row, fields, { updatedAt: now() });
+		const summary = state.documents.find((item) => item.id === row.id);
+		if (summary) Object.assign(summary, fields, { updatedAt: row.updatedAt });
 		return { updatedAt: row.updatedAt };
 	}
 	if (operation === "coverLetters.update") {
@@ -694,7 +732,7 @@ export async function invokeFake(operation: string, input: unknown): Promise<unk
 		for (const listener of listeners) listener();
 		return;
 	}
-	await fakeBackend.write(operation, input, "storyboard");
+	const result = await fakeBackend.write(operation, input, "storyboard");
 	if (operation === "applications.update") {
 		const row = state.applications.find((row) => row.id === fields.id);
 		if (row && fields.status === "applied") {
@@ -703,5 +741,38 @@ export async function invokeFake(operation: string, input: unknown): Promise<unk
 		}
 		return structuredClone(row);
 	}
-	return;
+	return result;
+}
+
+export function recordFixtureMessages(threadId: string, message: unknown, text?: string, proposals?: unknown[]) {
+	state ??= makeState(selected ?? "storyboard");
+	const messages = (state.conversationMessages[threadId] ??= []);
+	if (message && typeof message === "object" && "id" in message && !messages.some((row) => row.id === message.id))
+		messages.push(structuredClone(message) as Row);
+	const user = messages.findLast((row) => row.role === "user");
+	const id = `reply-${String(user?.id ?? threadId)}`;
+	const existing = messages.find((row) => row.id === id);
+	if (text !== undefined) {
+		const reply = {
+			id,
+			role: "assistant",
+			parts: [
+				{ type: "text", text },
+				...(proposals
+					? [
+							{
+								type: "tool-propose_edits",
+								toolCallId: `edits-${id}`,
+								state: "output-available",
+								output: { edits: proposals },
+							},
+						]
+					: []),
+			],
+		};
+		if (existing) Object.assign(existing, reply);
+		else messages.push(reply);
+	}
+	generation++;
+	for (const listener of listeners) listener();
 }

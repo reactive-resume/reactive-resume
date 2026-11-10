@@ -12,6 +12,7 @@ import { DataProvider, isBusy, seed } from "@/data";
 import { setNow } from "@/data/clock";
 import { registerStoryboardDeps, StoryboardController } from "@/dev/storyboard/capture";
 import { StoryboardInsets } from "@/dev/storyboard/harness";
+import { registerFirstSend } from "@/features/settings/first-send";
 import { i18n, initI18n } from "@/i18n";
 import { DevHost } from "@/ui/DevMenu";
 import { HeroOverlay } from "@/ui/Hero";
@@ -21,6 +22,8 @@ import { ToastHost } from "@/ui/Toast";
 import { fonts } from "@/ui/tokens";
 
 registerStoryboardDeps({ seed: (fixture) => seed(fixture as "storyboard" | "empty-account"), setNow, isBusy });
+// S7: the first time a kind of data goes to an AI connection, ask before sending.
+registerFirstSend();
 
 export default function RootLayout() {
 	const [ready, setReady] = useState(false);

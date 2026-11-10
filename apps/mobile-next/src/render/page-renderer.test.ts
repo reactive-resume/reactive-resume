@@ -76,3 +76,16 @@ test("a render completing after account change cannot return old account's PDF",
 		pageRenderer.render({ kind: "resume", id: "owned", revision: 1, data: defaultResumeData }),
 	).rejects.toThrow("account changed");
 });
+test("historical previews never fall back to another version's last good PDF", async () => {
+	mockScope = "alex";
+	const request = {
+		kind: "resume" as const,
+		id: "history",
+		revision: "first",
+		data: defaultResumeData,
+		snapshot: true,
+	};
+	await pageRenderer.render(request);
+	mockRender.mockRejectedValueOnce(new Error("Offline"));
+	await expect(pageRenderer.render({ ...request, revision: "second" })).rejects.toThrow("Offline");
+});

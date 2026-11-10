@@ -476,8 +476,17 @@ export function forReducedMotion({ current }: StackCardInterpolationProps): Stac
 
 type TransitionSpec = NonNullable<StackNavigationOptions["transitionSpec"]>["open"];
 
+/** The duration is read when the transition starts (not while React renders the options), so timeScale is live. */
 function timingSpec(ms: number, easing: (t: number) => number): TransitionSpec {
-	return { animation: "timing", config: { duration: Math.round(ms * timeScale.value), easing } };
+	return {
+		animation: "timing",
+		config: {
+			get duration() {
+				return Math.round(ms * timeScale.value);
+			},
+			easing,
+		},
+	};
 }
 
 /** Screen options for the app's stacks. Spread into screenOptions; per-screen `presentation` picks push or modal. */

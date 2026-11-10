@@ -1,3 +1,4 @@
+import type { HapticToken } from "./tokens";
 // Lists and rows (COMPONENTS.md §5) with their leading and trailing pieces.
 import type { ReactNode } from "react";
 import { View } from "react-native";
@@ -7,24 +8,31 @@ import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { type ColorToken, layout, radius } from "./tokens";
 
-/** 40 × 40 icon tile; `accent` uses accent-soft with an accent-text icon. */
+/**
+ * 40 × 40 icon tile; `accent` uses accent-soft with an accent-text icon. A4's 56 dp tiles keep the 10 dp corners and
+ * the 22 dp icon; `children` replaces the icon (A4's 32 dp logo).
+ */
 export function IconTile({
 	icon,
 	accent = false,
 	color,
+	size = 40,
+	children,
 }: {
-	icon: IconName;
+	icon?: IconName | undefined;
 	accent?: boolean | undefined;
 	color?: ColorToken | undefined;
+	size?: 40 | 56;
+	children?: ReactNode | undefined;
 }) {
 	return (
 		<Box
 			component="IconTile"
 			bg={accent ? "accentSoft" : "sunken"}
 			radius={radius.md}
-			style={{ width: 40, height: 40, alignItems: "center", justifyContent: "center" }}
+			style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
 		>
-			<Icon name={icon} size={22} color={color ?? (accent ? "accentText" : "ink2")} />
+			{children ?? (icon ? <Icon name={icon} size={22} color={color ?? (accent ? "accentText" : "ink2")} /> : null)}
 		</Box>
 	);
 }
@@ -134,10 +142,16 @@ export type ListRowProps = {
 	leading?: ReactNode | undefined;
 	/** "caret": caret-right; "external": arrow-up-right; "up": caret-up; or any node (switch, badge, button). */
 	trailing?: "caret" | "external" | "up" | ReactNode;
-	/** A quiet value before the trailing caret ("Onyx"). */
+	/** A quiet value before the trailing caret ("Onyx"); a separate trailing node sits 16 dp after it. */
 	value?: string | undefined;
+	/** An 18 dp `ink-3` icon inside the value, 6 dp after it (B6's `caret-right`; `.li .v .i`). */
+	valueIcon?: IconName | undefined;
+	/** A small mark inside the value, 6 dp before it (B6's colour swatch). */
+	valueLeading?: ReactNode | undefined;
 	onPress?: (() => void) | undefined;
 	onLongPress?: (() => void) | undefined;
+	/** Haptic when the long-press fires; null for a silent long-press (D6). Default `light`. */
+	longPressHaptic?: HapticToken | null | undefined;
 	/** Dividers: a 1 dp line under every row except the last; `top` adds one above (lists under a title block). */
 	last?: boolean | undefined;
 	top?: boolean | undefined;
@@ -146,7 +160,11 @@ export type ListRowProps = {
 	/** Let the title or the secondary line wrap (questions, facts). */
 	wrapTitle?: boolean | undefined;
 	wrapSecondary?: boolean | undefined;
+	/** Title line limit, then an ellipsis (document names: 2). Overrides `wrapTitle`. */
+	titleLines?: number | undefined;
 	titleColor?: ColorToken | undefined;
+	/** Secondary line colour (S5's failure line in `dangerText`). Default `ink3`. */
+	secondaryColor?: ColorToken | undefined;
 	accessibilityLabel?: string | undefined;
 	accessibilityHint?: string | undefined;
 	accessibilityRole?: "button" | "switch" | "link" | "radio" | "checkbox";
@@ -164,15 +182,20 @@ export function ListRow({
 	leading,
 	trailing,
 	value,
+	valueIcon,
+	valueLeading,
 	onPress,
 	onLongPress,
+	longPressHaptic,
 	last = false,
 	top = false,
 	danger = false,
 	disabled = false,
 	wrapTitle = false,
 	wrapSecondary = false,
+	titleLines,
 	titleColor,
+	secondaryColor = "ink3",
 	accessibilityLabel,
 	accessibilityHint,
 	accessibilityRole = "button",
@@ -213,27 +236,33 @@ export function ListRow({
 				<Text
 					variant="rowTitle"
 					color={titleColor ?? (danger ? "dangerText" : "ink")}
-					{...(wrapTitle ? {} : { numberOfLines: 1 })}
+					{...(titleLines ? { numberOfLines: titleLines } : wrapTitle ? {} : { numberOfLines: 1 })}
 				>
 					{title}
 				</Text>
 				{secondary ? (
-					<Text variant="ui" color="ink3" {...(wrapSecondary ? {} : { numberOfLines: 1 })}>
+					<Text variant="ui" color={secondaryColor} {...(wrapSecondary ? {} : { numberOfLines: 1 })}>
 						{secondary}
 					</Text>
 				) : null}
 				{children}
 			</View>
 			{value ? (
-				<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+				valueIcon || valueLeading ? (
+					<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+						{valueLeading}
+						<Text variant="ui" color="ink3">
+							{value}
+						</Text>
+						{valueIcon ? <Icon name={valueIcon} size={18} color="ink3" /> : null}
+					</View>
+				) : (
 					<Text variant="ui" color="ink3">
 						{value}
 					</Text>
-					{trailingNode}
-				</View>
-			) : (
-				trailingNode
-			)}
+				)
+			) : null}
+			{trailingNode}
 		</Box>
 	);
 	if (!onPress && !onLongPress) return <View style={{ paddingHorizontal: layout.screenMargin }}>{body}</View>;
@@ -241,6 +270,7 @@ export function ListRow({
 		<Touch
 			onPress={onPress}
 			{...(onLongPress ? { onLongPress } : {})}
+			{...(longPressHaptic !== undefined ? { longPressHaptic } : {})}
 			disabled={disabled}
 			feedback="wash"
 			washDelay={washDelay}

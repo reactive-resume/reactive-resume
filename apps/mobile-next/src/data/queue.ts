@@ -1,5 +1,6 @@
 import { now } from "./clock";
 import { encode, decode } from "./codec";
+import { assertStageGate } from "./write-policy";
 import Storage from "@/data/storage";
 
 export const queueKinds = ["documents", "letters", "profile", "stories-and-facts", "applications"] as const;
@@ -29,6 +30,23 @@ export const writableOperations = [
 	"applications.update",
 	"documents.rename",
 	"documents.setTags",
+	"documents.setLocked",
+	"documents.linkApplication",
+	"documents.copyForJob",
+	"applications.bulkUpdate",
+	"career.markNotificationRead",
+	"career.dismissOpportunity",
+	"career.forgetFact",
+	"career.deleteStory",
+	"career.updateOffer",
+	"career.deleteSavedItem",
+	"career.deleteSchedule",
+	"feedback.revoke",
+	"feedback.resolveComment",
+	"resume.renameVersion",
+	"resume.deleteVersion",
+	"coverLetters.renameVersion",
+	"coverLetters.deleteVersion",
 ] as const;
 export type WriteOperation = (typeof writableOperations)[number];
 const keyFor = (scope: string) => `queue:${scope}`;
@@ -53,6 +71,7 @@ export function validateWrites(value: unknown): QueuedWrite[] {
 			!("input" in entry)
 		)
 			throw new Error("Invalid queued change.");
+		assertStageGate(entry.operation, entry.input);
 		ids.add(entry.id);
 	}
 	return value;

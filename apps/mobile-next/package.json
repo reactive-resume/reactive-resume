@@ -109,7 +109,16 @@
 		"testMatch": [
 			"<rootDir>/src/**/*.test.ts",
 			"<rootDir>/src/**/*.test.tsx"
-		]
+		],
+		"transform": {
+			"\\.mjs$": "babel-jest"
+		},
+		"transformIgnorePatterns": [
+			"/node_modules/(?!(.pnpm|react-native|@react-native|@react-native-community|expo|@expo|@expo-google-fonts|react-navigation|@react-navigation|@sentry/react-native|native-base|standard-navigation|@lingui|@messageformat|uuid|@orpc|@sindresorhus|escape-string-regexp|immer))",
+			"/node_modules/react-native-reanimated/plugin/",
+			"/node_modules/@react-native/babel-preset/"
+		],
+		"resolver": "react-native-reanimated/jest/resolver"
 	},
 	"expo": {
 		"install": {

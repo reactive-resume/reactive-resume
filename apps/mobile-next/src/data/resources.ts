@@ -1,4 +1,5 @@
-import type { RouterInput } from "@/api/client";
+import { t } from "@lingui/core/macro";
+import { assertStageGate } from "./write-policy";
 import { client } from "@/api/client";
 
 /** The server router remains the only API contract. Resource hooks keep these exact input/output types. */
@@ -23,6 +24,22 @@ export const readers = {
 	publicResume: client.resume.getBySlug,
 	versions: client.resume.listVersions,
 	letterVersions: client.coverLetters.listVersions,
+	documentPage: client.documents.page,
+	resumeVersion: client.resume.getVersion,
+	letterVersion: client.coverLetters.getVersion,
+	visitorStatistics: client.resume.statistics.getById,
+	dailyVisitors: client.resume.statistics.getDailyById,
+	feedbackLinks: client.feedback.list,
+	feedbackLink: client.feedback.get,
+	customDomain: client.customDomain.get,
+	conversations: client.agent.threads.list,
+	conversation: client.agent.threads.get,
+	applicationStats: client.applications.stats,
+	library: client.career.savedItems,
+	forgottenFacts: client.career.forgottenFacts,
+	transcripts: client.career.voice.transcripts,
+	apiKeys: client.auth.apiKeys.list,
+	connectedApps: client.auth.connections.list,
 };
 export type Resource = keyof typeof readers;
 export type ResourceInput<K extends Resource> = Parameters<(typeof readers)[K]>[0];
@@ -32,19 +49,7 @@ export type Backend = {
 	read<K extends Resource>(resource: K, input: ResourceInput<K>, signal?: AbortSignal): Promise<ResourceOutput<K>>;
 	write(operation: string, input: unknown, scope: string): Promise<unknown>;
 };
-export type MutationInputs = {
-	"applicationProfile.save": RouterInput["applicationProfile"]["save"];
-	"career.saveProfile": RouterInput["career"]["saveProfile"];
-	"career.updateProfile": RouterInput["career"]["updateProfile"];
-	"career.saveFact": RouterInput["career"]["saveFact"];
-	"career.updateFact": RouterInput["career"]["updateFact"];
-	"career.saveStory": RouterInput["career"]["saveStory"];
-	"career.saveWorkspace": RouterInput["career"]["saveWorkspace"];
-	"applications.update": RouterInput["applications"]["update"];
-	"documents.rename": RouterInput["documents"]["rename"];
-	"documents.setTags": RouterInput["documents"]["setTags"];
-};
-const writes = {
+export const writes = {
 	"applicationProfile.save": client.applicationProfile.save,
 	"career.saveProfile": client.career.saveProfile,
 	"career.updateProfile": client.career.updateProfile,
@@ -55,7 +60,71 @@ const writes = {
 	"applications.update": client.applications.update,
 	"documents.rename": client.documents.rename,
 	"documents.setTags": client.documents.setTags,
+	"documents.setLocked": client.documents.setLocked,
+	"documents.linkApplication": client.documents.linkApplication,
+	"documents.copyForJob": client.documents.copyForJob,
+	"resume.create": client.resume.create,
+	"resume.import": client.resume.import,
+	"resume.duplicate": client.resume.duplicate,
+	"resume.update": client.resume.update,
+	"resume.setPassword": client.resume.setPassword,
+	"resume.removePassword": client.resume.removePassword,
+	"resume.createVersion": client.resume.createVersion,
+	"resume.renameVersion": client.resume.renameVersion,
+	"resume.deleteVersion": client.resume.deleteVersion,
+	"resume.restoreVersion": client.resume.restoreVersion,
+	"coverLetters.create": client.coverLetters.create,
+	"coverLetters.duplicate": client.coverLetters.duplicate,
+	"coverLetters.renameVersion": client.coverLetters.renameVersion,
+	"coverLetters.deleteVersion": client.coverLetters.deleteVersion,
+	"coverLetters.createVersion": client.coverLetters.createVersion,
+	"coverLetters.restoreVersion": client.coverLetters.restoreVersion,
+	"applications.create": client.applications.create,
+	"applications.bulkUpdate": client.applications.bulkUpdate,
+	"applications.addNote": client.applications.addNote,
+	"applications.addInterview": client.applications.addInterview,
+	"applications.updateInterview": client.applications.updateInterview,
+	"applications.logFollowUp": client.applications.logFollowUp,
+	"career.markNotificationRead": client.career.markNotificationRead,
+	"career.dismissOpportunity": client.career.dismissOpportunity,
+	"career.trackOpportunity": client.career.trackOpportunity,
+	"career.forgetFact": client.career.forgetFact,
+	"career.deleteStory": client.career.deleteStory,
+	"career.createOffer": client.career.createOffer,
+	"career.updateOffer": client.career.updateOffer,
+	"career.deleteSavedItem": client.career.deleteSavedItem,
+	"career.generate": client.career.generate,
+	"career.applyReply": client.career.applyReply,
+	"career.undoReply": client.career.undoReply,
+	"career.saveSchedule": client.career.saveSchedule,
+	"career.deleteSchedule": client.career.deleteSchedule,
+	"feedback.create": client.feedback.create,
+	"feedback.revoke": client.feedback.revoke,
+	"feedback.resolveComment": client.feedback.resolveComment,
+	"customDomain.set": client.customDomain.set,
+	"customDomain.verify": client.customDomain.verify,
+	"customDomain.remove": client.customDomain.remove,
+	"agent.threads.start": client.agent.threads.start,
+	"agent.threads.update": client.agent.threads.update,
+	"agent.threads.delete": client.agent.threads.delete,
+	"agent.attachments.create": client.agent.attachments.create,
+	"agent.attachments.delete": client.agent.attachments.delete,
+	"agent.messages.setEditStatus": client.agent.messages.setEditStatus,
+	"agent.messages.stop": client.agent.messages.stop,
+	"auth.updateProfile": client.auth.updateProfile,
+	"auth.exportData": client.auth.exportData,
+	"auth.deleteAccount": client.auth.deleteAccount,
+	"auth.createApiKey": client.auth.createApiKey,
+	"auth.apiKeys.delete": client.auth.apiKeys.delete,
+	"aiProviders.create": client.aiProviders.create,
+	"aiProviders.update": client.aiProviders.update,
+	"aiProviders.delete": client.aiProviders.delete,
+	"aiProviders.setDefault": client.aiProviders.setDefault,
+	"aiProviders.test": client.aiProviders.test,
+	"applications.ai.parsePosting": client.applications.ai.parsePosting,
 };
+export type MutationInputs = { [K in keyof typeof writes]: Parameters<(typeof writes)[K]>[0] };
+export type MutationOutput<K extends keyof typeof writes> = Awaited<ReturnType<(typeof writes)[K]>>;
 export const realBackend: Backend = {
 	kind: "real",
 	read: (resource, input, signal) => {
@@ -66,12 +135,16 @@ export const realBackend: Backend = {
 		) => Promise<ResourceOutput<typeof resource>>;
 		return read(input, signal ? { signal } : {});
 	},
-	write: (operation, input, scope) => {
-		if (!(operation in writes)) throw new Error("Unsupported queued operation.");
+	write: async (operation, input, scope) => {
+		assertStageGate(operation, input);
+		if (!(operation in writes)) throw new Error(t`Unsupported queued operation.`);
 		const write = writes[operation as keyof typeof writes] as (
 			input: unknown,
 			options: { context: { scope: string } },
 		) => Promise<unknown>;
-		return write(input, { context: { scope } });
+		const result = await write(input, { context: { scope } });
+		if (operation === "documents.copyForJob" && result !== (input as MutationInputs["documents.copyForJob"]).newId)
+			throw Object.assign(new Error(t`Update your server before copying for a job.`), { code: "CONFLICT" });
+		return result;
 	},
 };

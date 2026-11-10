@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Touch } from "./base";
 import { IconButton } from "./buttons";
 import { Icon } from "./Icon";
+import { Stacked, useLargeText } from "./large-text";
 import { hitSlopFor } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
@@ -44,7 +45,7 @@ export function Avatar({ initials, size = 32 }: { initials: string; size?: 32 | 
 				variant="caption"
 				weight={600}
 				color="accentText"
-				style={size === 56 ? { fontSize: 18, lineHeight: 24 } : null}
+				style={size === 56 ? { fontSize: 18, lineHeight: 16 } : null}
 				maxFontSizeMultiplier={1.3}
 			>
 				{initials}
@@ -88,9 +89,11 @@ export function RootHeader({
 				</View>
 			</View>
 			{subtitle ? (
-				<Text variant="ui" color="ink3" style={{ paddingHorizontal: layout.screenMargin }}>
-					{subtitle}
-				</Text>
+				<View style={{ paddingHorizontal: layout.screenMargin }}>
+					<Text variant="ui" color="ink3">
+						{subtitle}
+					</Text>
+				</View>
 			) : null}
 		</View>
 	);
@@ -166,9 +169,11 @@ export function TopBar({
 /** A quiet text in the top bar's end slot ("2 of 3 open"). */
 export function TopBarNote({ children }: { children: string }) {
 	return (
-		<Text variant="ui" color="ink3" style={{ paddingEnd: 12 }}>
-			{children}
-		</Text>
+		<View style={{ paddingEnd: 12 }}>
+			<Text variant="ui" color="ink3">
+				{children}
+			</Text>
+		</View>
 	);
 }
 
@@ -210,13 +215,11 @@ export function PageTitle({
 /** One 15/24 line under the page title: `ink-2` for a description, `ink-3` for a status line. */
 export function PageSubtitle({ children, status = false }: { children: ReactNode; status?: boolean | undefined }) {
 	return (
-		<Text
-			variant="body"
-			color={status ? "ink3" : "ink2"}
-			style={{ paddingTop: 6, paddingHorizontal: layout.screenMargin }}
-		>
-			{children}
-		</Text>
+		<View style={{ paddingTop: 6, paddingHorizontal: layout.screenMargin }}>
+			<Text variant="body" color={status ? "ink3" : "ink2"}>
+				{children}
+			</Text>
+		</View>
 	);
 }
 
@@ -336,7 +339,8 @@ export function SectionHeading({
 }
 
 /**
- * One or two Large buttons in thumb reach. `stacked` puts the primary above the others (J5, dialogs, large text).
+ * One or two Large buttons in thumb reach. `stacked` puts the primary above the others (J5, dialogs); buttons also
+ * stack above 130% system text (COMPONENTS.md §20).
  * Sits above the bottom safe area; `raised` inside sheets.
  */
 export function FooterBar({
@@ -356,6 +360,7 @@ export function FooterBar({
 }) {
 	const { colors } = useTheme();
 	const insets = useSafeAreaInsets();
+	const column = useLargeText() || stacked;
 	return (
 		<View
 			style={{
@@ -365,17 +370,19 @@ export function FooterBar({
 				borderTopColor: colors.line,
 			}}
 		>
-			<Box
-				component="FooterBar"
-				style={{
-					paddingVertical: 12,
-					paddingHorizontal: layout.screenMargin,
-					flexDirection: stacked ? "column" : "row",
-					gap: gap ?? (stacked ? 8 : 12),
-				}}
-			>
-				{children}
-			</Box>
+			<Stacked.Provider value={column}>
+				<Box
+					component="FooterBar"
+					style={{
+						paddingVertical: 12,
+						paddingHorizontal: layout.screenMargin,
+						flexDirection: column ? "column" : "row",
+						gap: gap ?? (column ? 8 : 12),
+					}}
+				>
+					{children}
+				</Box>
+			</Stacked.Provider>
 		</View>
 	);
 }

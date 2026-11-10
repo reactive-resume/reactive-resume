@@ -1,9 +1,11 @@
 import type { RenderedPage } from "./types";
+import type { PageMap } from "@reactive-resume/pdf/native";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { Asset } from "expo-asset";
 import { CryptoDigestAlgorithm, digestStringAsync } from "expo-crypto";
 import { Directory, File, Paths } from "expo-file-system";
 import { Image } from "react-native";
+import { fixturePageMap, fixtureIssueMarkers } from "./fixture-map";
 import { rest } from "@/api/client";
 import { getAccountScope, getServer } from "@/auth/session";
 import { dataClient as client } from "@/data/client";
@@ -17,6 +19,8 @@ export type PageRenderRequest = {
 	fixture?: keyof typeof fixtureImages;
 	/** Public resume data is already redacted by getBySlug; renders without an account. */
 	public?: boolean;
+	/** Historical previews cannot fall back to another version. */
+	snapshot?: boolean;
 };
 export type PageRenderResult = {
 	pdfFile: string;
@@ -24,6 +28,9 @@ export type PageRenderResult = {
 	pageCount: number;
 	revision: string | number;
 	stale: boolean;
+	/** Undefined for server PDFs, which carry no semantic hit map. */
+	pageMap?: PageMap;
+	issueMarkers?: ReturnType<typeof fixtureIssueMarkers>;
 };
 export interface PageRenderer {
 	render(request: PageRenderRequest): Promise<PageRenderResult>;
@@ -65,8 +72,20 @@ export const pageRenderer: PageRenderer = {
 		const current = () => fake || (getAccountScope() === account && getServer() === server);
 		const root = await rootFor(scope);
 		root.create({ intermediates: true, idempotent: true });
-		const documentKey = await hash(JSON.stringify([request.kind, request.id]));
-		const key = await hash(JSON.stringify([scope, request.kind, request.id, request.revision, request.fixture]));
+		const documentKey = await hash(
+			JSON.stringify([request.kind, request.id, request.snapshot ? request.revision : null]),
+		);
+		const key = await hash(
+			JSON.stringify([
+				scope,
+				request.kind,
+				request.id,
+				request.revision,
+				request.fixture,
+				request.data,
+				request.snapshot,
+			]),
+		);
 		const directory = new Directory(root, key);
 		const manifest = new File(directory, "render.json");
 		const latest = new File(root, `${documentKey}.json`);
@@ -79,6 +98,7 @@ export const pageRenderer: PageRenderer = {
 			directory.create({ intermediates: true, idempotent: true });
 			const pdf = new File(directory, "document.pdf");
 			let pages: RenderedPage[];
+			let pageMap: PageMap | undefined;
 			if (fake) {
 				const source =
 					fixtureImages[request.fixture ?? (request.kind === "letter" ? "thumb-letter-L2" : "page-resume-full")];
@@ -95,6 +115,7 @@ export const pageRenderer: PageRenderer = {
 				});
 				new File(output.uri).copy(pdf);
 				pages = [{ index: 0, uri, width: size.width, height: size.height }];
+				pageMap = fixturePageMap(size.width, size.height);
 			} else {
 				let bytes: Uint8Array;
 				try {
@@ -130,6 +151,7 @@ export const pageRenderer: PageRenderer = {
 							...(request.kind === "letter" ? { renderOptions: { includeCoverLetterHeader: true } } : {}),
 						});
 						bytes = result.pdf;
+						pageMap = result.pageMap;
 						pages = result.pages.map((page) => {
 							const image = new File(directory, `${page.index}.png`);
 							new File(page.uri).copy(image);
@@ -171,7 +193,15 @@ export const pageRenderer: PageRenderer = {
 				if (!current()) throw new Error("The account changed. Try again.");
 				pdf.write(bytes);
 			}
-			const result = { pdfFile: pdf.uri, pages, pageCount: pages.length, revision: request.revision, stale: false };
+			const result = {
+				pdfFile: pdf.uri,
+				pages,
+				pageCount: pages.length,
+				revision: request.revision,
+				stale: false,
+				...(pageMap ? { pageMap } : {}),
+				...(fake && pages[0] ? { issueMarkers: fixtureIssueMarkers(pages[0].width, pages[0].height) } : {}),
+			};
 			manifest.write(JSON.stringify(result));
 			latest.write(JSON.stringify(result));
 			return result;

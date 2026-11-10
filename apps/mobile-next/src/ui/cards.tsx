@@ -205,6 +205,7 @@ export function BoardCard({
 export function Chip({
 	label,
 	icon,
+	trailingIcon,
 	onPress,
 	dashed = false,
 	on = false,
@@ -212,6 +213,8 @@ export function Chip({
 }: {
 	label: string;
 	icon?: IconName | undefined;
+	/** A 16 dp icon after the label (D5's filter chips: `caret-down`). */
+	trailingIcon?: IconName | undefined;
 	onPress?: (() => void) | undefined;
 	dashed?: boolean | undefined;
 	on?: boolean | undefined;
@@ -237,6 +240,7 @@ export function Chip({
 				<Text variant="chip" color={fg} numberOfLines={1}>
 					{label}
 				</Text>
+				{trailingIcon ? <Icon name={trailingIcon} size={16} color={fg} /> : null}
 			</Box>
 		</Touch>
 	);

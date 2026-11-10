@@ -47,7 +47,13 @@ type Measurable = { measureInWindow(cb: (x: number, y: number, w: number, h: num
 
 export type DesignMeta =
 	/** `style` is the RN text style actually applied (from reference/tokens.ts `type`); `color` the token key. */
-	| { kind: "text"; text: string; style: { fontFamily: string; fontSize: number; lineHeight: number }; color: string }
+	| {
+			kind: "text";
+			text: string;
+			/** `fontWeight` only when the style sets one (the mono face ships Regular; the boards draw it at 400 or 500). */
+			style: { fontFamily: string; fontSize: number; lineHeight: number; fontWeight?: string | number | undefined };
+			color: string;
+	  }
 	| { kind: "icon"; icon: string; size: number; color: string }
 	/** Text inside a page fixture image (the page is a render, not app text): reported by position only. */
 	| { kind: "paper"; text: string }
@@ -187,7 +193,7 @@ export async function collectDump(navState: NavState | undefined) {
 								...box,
 								style: {
 									family: f.family,
-									weight: f.weight,
+									weight: m.style.fontWeight != null ? Number(m.style.fontWeight) : f.weight,
 									size: m.style.fontSize,
 									lineHeight: m.style.lineHeight,
 									color: cssName(m.color),

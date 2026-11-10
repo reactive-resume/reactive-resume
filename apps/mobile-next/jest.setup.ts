@@ -58,3 +58,7 @@ jest.mock("expo-haptics", () => ({
 	NotificationFeedbackType: { Success: "success", Warning: "warning", Error: "error" },
 	AndroidHaptics: new Proxy({}, { get: (_t, k) => k }),
 }));
+
+// Lingui (agent U). Files that use the `t` / `Trans` macros need an active locale; with no catalog loaded the
+// macros fall back to their source strings, so tests read the English copy.
+require("@lingui/core").i18n.loadAndActivate({ locale: "en", messages: {} });

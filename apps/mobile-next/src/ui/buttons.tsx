@@ -3,10 +3,12 @@ import type { StyleProp, ViewStyle } from "react-native";
 import { View } from "react-native";
 import { Box, Ring, Touch } from "./base";
 import { Icon, type IconName } from "./Icon";
+import { useStacked } from "./large-text";
 import { hitSlopFor } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
-import { type ColorToken, radius, type TypeToken } from "./tokens";
+import { type ColorToken, radius, type as typeScale, type TypeToken } from "./tokens";
+import { useDesignTag } from "@/dev/storyboard/harness";
 
 export type ButtonTone = "primary" | "secondary" | "ghost" | "accentGhost" | "dangerGhost" | "danger" | "soft";
 export type ButtonSize = "sm" | "md" | "lg";
@@ -63,6 +65,7 @@ export function Button({
 }: ButtonProps) {
 	const s = sizes[size];
 	const t = tones[tone];
+	const stacked = useStacked();
 	return (
 		<Touch
 			onPress={onPress}
@@ -72,7 +75,7 @@ export function Button({
 			{...(testID ? { testID } : {})}
 			hitSlop={hitSlopFor(48, s.height)}
 			style={[
-				block ? { alignSelf: "stretch" } : grow ? { flex: 1 } : { alignSelf: "flex-start" },
+				block || (grow && stacked) ? { alignSelf: "stretch" } : grow ? { flex: 1 } : { alignSelf: "flex-start" },
 				disabled ? { opacity: 0.45 } : null,
 				style,
 			]}
@@ -206,6 +209,67 @@ export function TextLink({
 				{icon ? <Icon name={icon} size={20} color={color} /> : null}
 				<Text variant={variant} color={color}>
 					{label}
+				</Text>
+			</View>
+		</Touch>
+	);
+}
+
+/**
+ * A quiet line that ends in an accent link ("Server: rxresu.me · Change", "New here? Create an account"), or a link
+ * alone inside running text or a row. The whole line is the target, with a 48 dp tall hit area. The line registers
+ * as one text in the layout dump (the boards measure the lead and the link separately), the link as its own.
+ */
+export function InlineLink({
+	lead,
+	link,
+	onPress,
+	hint,
+	variant = "ui",
+	align = "center",
+	paddingVertical = 0,
+	testID,
+}: {
+	/** The quiet words before the link, `ui` `ink-3`. */
+	lead?: string | undefined;
+	link: string;
+	onPress?: (() => void) | undefined;
+	hint?: string | undefined;
+	/** The link's style: `ui` inside a quiet line (A1, A2), `textLink` or `linkSmall` on its own. */
+	variant?: "ui" | "textLink" | "linkSmall";
+	align?: "start" | "center";
+	paddingVertical?: number | undefined;
+	testID?: string | undefined;
+}) {
+	const style = typeScale.ui;
+	const ref = useDesignTag(
+		{
+			kind: "text",
+			text: lead ?? "",
+			style: { fontFamily: style.fontFamily, fontSize: style.fontSize, lineHeight: style.lineHeight },
+			color: "ink3",
+		},
+		{ hidden: !lead },
+	);
+	return (
+		<Touch
+			onPress={onPress}
+			feedback="none"
+			accessibilityRole="link"
+			accessibilityLabel={lead ? `${lead} ${link}` : link}
+			{...(hint ? { accessibilityHint: hint } : {})}
+			{...(testID ? { testID } : {})}
+			hitSlop={hitSlopFor(48, typeScale[variant].lineHeight + paddingVertical * 2)}
+			style={{ alignSelf: align === "center" ? "center" : "flex-start", paddingVertical }}
+		>
+			<View ref={ref} collapsable={false} style={{ flexDirection: "row", flexWrap: "wrap" }}>
+				{lead ? (
+					<Text variant="ui" color="ink3" tag={false}>
+						{`${lead} `}
+					</Text>
+				) : null}
+				<Text variant={variant} color="accentText">
+					{link}
 				</Text>
 			</View>
 		</Touch>

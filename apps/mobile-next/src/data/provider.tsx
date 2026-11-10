@@ -4,7 +4,7 @@ import { generateId } from "@reactive-resume/utils/string";
 import { fakeBackend, fixtureGeneration, isFake, subscribeFixture, seed, selectRealData } from "./fixtures";
 import { guestBackend } from "./guest";
 import { createAccountQueryClient } from "./query-client";
-import { writeQueue, type QueueKind, type QueuedWrite } from "./queue";
+import { writeQueue, writableOperations, type QueueKind, type QueuedWrite } from "./queue";
 import {
 	realBackend,
 	type Backend,
@@ -14,6 +14,7 @@ import {
 	type ResourceOutput,
 } from "./resources";
 import { watchQueue, syncQueued } from "./sync";
+import { assertStageGate } from "./write-policy";
 import { getAccountScope, useSession } from "@/auth/session";
 
 type DataContext = { backend: Backend; scope: string | null; generation: number };
@@ -57,7 +58,7 @@ export function useDataBackend() {
 	if (!value) throw new Error("Mount DataProvider before resource hooks.");
 	return value;
 }
-function useResource<K extends Resource>(resource: K, input: ResourceInput<K>, enabled = true) {
+export function useResource<K extends Resource>(resource: K, input: ResourceInput<K>, enabled = true) {
 	const { backend, scope, generation } = useDataBackend();
 	return useQuery<ResourceOutput<K>>({
 		queryKey: [scope, resource, input, backend.kind === "fake" ? generation : 0],
@@ -115,8 +116,9 @@ export function useDataActions() {
 	return {
 		async write<K extends keyof MutationInputs>(kind: QueueKind, operation: K, input: MutationInputs[K]) {
 			if (!scope || (backend.kind === "real" && getAccountScope() !== scope)) throw new Error("Sign in again.");
-			if (operation === "applications.update" && "status" in input && input.status === "applied")
-				throw new Error("Confirm what you sent before marking as applied.");
+			assertStageGate(operation, input);
+			if (!(writableOperations as readonly string[]).includes(operation))
+				throw new Error("This action requires an online request.");
 			if (backend.kind !== "guest") writeQueue.enqueue(scope, { id: generateId(), kind, operation, input });
 			if (backend.kind === "guest") {
 				await backend.write(operation, input, scope);
