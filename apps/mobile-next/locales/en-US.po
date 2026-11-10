@@ -158,11 +158,6 @@ msgstr "{0} (mine)"
 msgid "{0} added to Skills"
 msgstr "{0} added to Skills"
 
-#. placeholder {0}: answers.length
-#: src/features/workspace/ApplyScreen.tsx
-msgid "{0} answers saved"
-msgstr "{0} answers saved"
-
 #. placeholder {0}: app.role
 #: src/features/workspace/MessagesScreen.tsx
 msgid "{0} application"
@@ -275,6 +270,11 @@ msgstr "{0} pt"
 msgid "{0} schedules"
 msgstr "{0} schedules"
 
+#. placeholder {0}: storyboard.briefSources
+#: src/features/workspace/PrepScreen.tsx
+msgid "{0} sources"
+msgstr "{0} sources"
+
 #. placeholder {0}: stories.data?.length ?? 0
 #: src/features/career/home.tsx
 msgid "{0} stories for interviews"
@@ -284,6 +284,11 @@ msgstr "{0} stories for interviews"
 #: src/features/applications/InterviewSheet.tsx
 msgid "{0} time"
 msgstr "{0} time"
+
+#. placeholder {0}: preferences.data.noticeWeeks
+#: src/data/career-tools.ts
+msgid "{0} weeks"
+msgstr "{0} weeks"
 
 #. placeholder {0}: longWeekday(refreshAt, ws.zone)
 #. placeholder {1}: clockTime(refreshAt, ws.zone)
@@ -305,6 +310,10 @@ msgstr "{0}, selected"
 #: src/features/workspace/PracticeScreen.tsx
 msgid "{0}{1} · question {2} of {3}"
 msgstr "{0}{1} · question {2} of {3}"
+
+#: src/features/workspace/ApplyScreen.tsx
+msgid "{answerCount} answers saved"
+msgstr "{answerCount} answers saved"
 
 #: src/features/applications/model.ts
 msgid "{applied} · no reply yet"
@@ -451,6 +460,10 @@ msgstr "{percent} of base"
 msgid "{percent} of base ({value})"
 msgstr "{percent} of base ({value})"
 
+#: src/features/applications/SaveJobScreen.tsx
+msgid "{requirementCount} requirements read from the posting"
+msgstr "{requirementCount} requirements read from the posting"
+
 #: src/features/settings/sign-out-copy.ts
 msgid "{total, plural, one {# change hasn't synced} other {# changes haven't synced}}"
 msgstr "{total, plural, one {# change hasn't synced} other {# changes haven't synced}}"
@@ -467,6 +480,10 @@ msgstr "07:00 Berlin · Work OpenAI · may charge"
 #: src/features/workspace/ApplyScreen.tsx
 msgid "1 answer saved"
 msgstr "1 answer saved"
+
+#: src/data/career-tools.ts
+msgid "1 month"
+msgstr "1 month"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "1 note"
@@ -999,6 +1016,10 @@ msgid "Application"
 msgstr "Application"
 
 #: src/data/lifecycle.ts
+msgid "Application changed. Review it again."
+msgstr "Application changed. Review it again."
+
+#: src/data/lifecycle.ts
 msgid "Application closed, but the note wasn't saved. Try saving the note again."
 msgstr "Application closed, but the note wasn't saved. Try saving the note again."
 
@@ -1023,6 +1044,7 @@ msgstr "Applications"
 msgid "applied"
 msgstr "applied"
 
+#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Applied"
@@ -1166,6 +1188,10 @@ msgstr "Back to Design"
 #: src/features/builder/shared/document.tsx
 msgid "Back to documents"
 msgstr "Back to documents"
+
+#: src/features/applications/StageSheet.tsx
+msgid "Back to Move"
+msgstr "Back to Move"
 
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Back to now"
@@ -1481,13 +1507,21 @@ msgstr "Choose a connection before sending."
 msgid "Choose a file"
 msgstr "Choose a file"
 
+#: src/data/intake.ts
+msgid "Choose a file up to 10 MB."
+msgstr "Choose a file up to 10 MB."
+
 #: src/features/public/ats.tsx
 msgid "Choose a PDF"
 msgstr "Choose a PDF"
 
 #: src/data/import.ts
-msgid "Choose a PDF, Word or JSON file. Your file is kept."
-msgstr "Choose a PDF, Word or JSON file. Your file is kept."
+msgid "Choose a PDF, Word, JSON or LinkedIn ZIP file. Your file is kept."
+msgstr "Choose a PDF, Word, JSON or LinkedIn ZIP file. Your file is kept."
+
+#: src/data/builder.ts
+msgid "Choose a photo up to 10 MB."
+msgstr "Choose a photo up to 10 MB."
 
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
@@ -1612,6 +1646,7 @@ msgstr "Compact"
 msgid "Company"
 msgstr "Company"
 
+#: src/data/career-tools.ts
 #: src/features/workspace/PrepScreen.tsx
 msgid "Company brief"
 msgstr "Company brief"
@@ -1643,6 +1678,7 @@ msgstr "Confirm"
 msgid "Confirm it's you"
 msgstr "Confirm it's you"
 
+#: src/data/lifecycle.ts
 #: src/data/write-policy.ts
 msgid "Confirm what you sent before marking as applied."
 msgstr "Confirm what you sent before marking as applied."
@@ -2851,6 +2887,10 @@ msgstr "Follow-ups"
 msgid "Follow-ups, thank-you notes and replies"
 msgstr "Follow-ups, thank-you notes and replies"
 
+#: src/features/workspace/MessagesScreen.tsx
+msgid "Followed up"
+msgstr "Followed up"
+
 #: src/features/builder/design/TypographyScreen.tsx
 msgid "Font pairing"
 msgstr "Font pairing"
@@ -2923,9 +2963,10 @@ msgstr "Free-form"
 
 #. placeholder {0}: app?.company ?? ""
 #. placeholder {1}: app?.role ?? ""
+#. placeholder {2}: fit.evidence.factIds.length
 #: src/features/workspace/FitScreen.tsx
-msgid "From “{0} · {1}” and your Knowledge facts · {checkedLine}"
-msgstr "From “{0} · {1}” and your Knowledge facts · {checkedLine}"
+msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
+msgstr "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -2950,10 +2991,6 @@ msgstr "From a document you attached"
 msgid "From my messages"
 msgstr "From my messages"
 
-#: src/features/workspace/FitScreen.tsx
-msgid "From the posting"
-msgstr "From the posting"
-
 #: src/features/auth/TwoStepScreen.tsx
 msgid "From your authenticator app."
 msgstr "From your authenticator app."
@@ -2962,6 +2999,7 @@ msgstr "From your authenticator app."
 msgid "From your cover letter"
 msgstr "From your cover letter"
 
+#: src/data/career-tools.ts
 #: src/features/career/model.ts
 msgid "From your resume"
 msgstr "From your resume"
@@ -3219,10 +3257,6 @@ msgstr "in {days} days"
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Increase line spacing so two lines are not merged into one."
 
-#: src/features/workspace/FitScreen.tsx
-msgid "Inferred from the role"
-msgstr "Inferred from the role"
-
 #: src/features/builder/design/presets.ts
 msgid "Ink blue"
 msgstr "Ink blue"
@@ -3254,6 +3288,11 @@ msgstr "Interview prep"
 msgid "Interview preparation"
 msgstr "Interview preparation"
 
+#: src/data/application-tools.ts
+msgid "Interview unavailable."
+msgstr "Interview unavailable."
+
+#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 msgid "Interviewed"
 msgstr "Interviewed"
@@ -3279,6 +3318,10 @@ msgstr "Invalid assistant stream."
 #: src/data/import.ts
 msgid "Invalid resume JSON."
 msgstr "Invalid resume JSON."
+
+#: src/data/schedules.ts
+msgid "Invalid schedule frequency."
+msgstr "Invalid schedule frequency."
 
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
@@ -3857,6 +3900,7 @@ msgstr "Most entries have no dates."
 msgid "Most systems file candidates by email address."
 msgstr "Most systems file candidates by email address."
 
+#: src/data/builder.ts
 #: src/features/builder/check/issues.ts
 #: src/features/builder/check/report.ts
 #: src/features/public/ats.tsx
@@ -3959,6 +4003,10 @@ msgstr "Moved to {0}."
 #: src/features/builder/menu/menu-screen.tsx
 msgid "Moved to Trash"
 msgstr "Moved to Trash"
+
+#: src/features/workspace/FitScreen.tsx
+msgid "Must have"
+msgstr "Must have"
 
 #: src/features/auth/SignInScreen.tsx
 #: src/features/builder/menu/menu-screen.tsx
@@ -4132,6 +4180,10 @@ msgstr "Next run: {0} {1} {zone} · {2} here"
 #: src/features/applications/ApplicationsScreen.tsx
 msgid "Next week"
 msgstr "Next week"
+
+#: src/features/workspace/FitScreen.tsx
+msgid "Nice to have"
+msgstr "Nice to have"
 
 #: src/features/builder/assistant/assistant-screen.tsx
 msgid "No"
@@ -4459,6 +4511,7 @@ msgstr "Ochre"
 msgid "Off"
 msgstr "Off"
 
+#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 msgid "Offer"
 msgstr "Offer"
@@ -4830,6 +4883,7 @@ msgstr "Plum"
 msgid "Position"
 msgstr "Position"
 
+#: src/data/career-tools.ts
 #: src/features/applications/DetailScreen.tsx
 msgid "Posting"
 msgstr "Posting"
@@ -5300,6 +5354,7 @@ msgstr "Replace tables with plain paragraphs and lists. Cells extract in storage
 msgid "replied"
 msgstr "replied"
 
+#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 msgid "Replied"
 msgstr "Replied"
@@ -5459,6 +5514,10 @@ msgstr "Review and resume"
 msgid "Review it"
 msgstr "Review it"
 
+#: src/data/career-tools.ts
+msgid "Review the offer first."
+msgstr "Review the offer first."
+
 #: src/features/builder/check/CheckScreen.tsx
 msgid "Review the writing"
 msgstr "Review the writing"
@@ -5470,6 +5529,10 @@ msgstr "Review the writing in my resume."
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Review this issue"
 msgstr "Review this issue"
+
+#: src/data/career-tools.ts
+msgid "Review what happened first."
+msgstr "Review what happened first."
 
 #: src/data/import.ts
 msgid "Review your file first."
@@ -5764,6 +5827,11 @@ msgstr "Server"
 msgid "Server address"
 msgstr "Server address"
 
+#: src/data/auth-options.ts
+#: src/data/public.ts
+msgid "Server changed."
+msgstr "Server changed."
+
 #. placeholder {0}: hostOf(server)
 #: src/features/auth/WelcomeScreen.tsx
 msgid "Server: {0} ·"
@@ -5816,6 +5884,10 @@ msgstr "Share data with {0}?"
 #: src/features/documents/actions.tsx
 msgid "Share PDF"
 msgstr "Share PDF"
+
+#: src/data/intake.ts
+msgid "Shared item changed."
+msgstr "Shared item changed."
 
 #: src/api/ai-consent.ts
 msgid "Shares only resume and posting. Knowledge, private notes and web access are excluded. Review proposals before accepting; the original stays unchanged."
@@ -5936,6 +6008,8 @@ msgid "Sign in again"
 msgstr "Sign in again"
 
 #: src/data/actions.ts
+#: src/data/builder.ts
+#: src/data/local-state.ts
 #: src/data/scope.ts
 #: src/data/search.ts
 #: src/data/security.ts
@@ -6096,6 +6170,10 @@ msgstr "Starts"
 msgid "Status check"
 msgstr "Status check"
 
+#: src/data/application-tools.ts
+msgid "Step changed. Review again."
+msgstr "Step changed. Review again."
+
 #: src/features/builder/assistant/assistant-screen.tsx
 #: src/features/builder/description/DescriptionScreen.tsx
 #: src/features/career/coach.tsx
@@ -6120,6 +6198,10 @@ msgstr "Stories"
 #: src/features/workspace/PrepScreen.tsx
 msgid "Story to use: {story}"
 msgstr "Story to use: {story}"
+
+#: src/features/workspace/PracticeScreen.tsx
+msgid "Story to use: {story} · Situation, Task, Action, Result, Reflection"
+msgstr "Story to use: {story} · Situation, Task, Action, Result, Reflection"
 
 #: src/ui/DevMenu.tsx
 msgid "Stress JS"
@@ -6415,6 +6497,7 @@ msgid "The account changed."
 msgstr "The account changed."
 
 #: src/api/ai-consent.ts
+#: src/data/schedules.ts
 msgid "The account changed. Try again."
 msgstr "The account changed. Try again."
 
@@ -6905,9 +6988,17 @@ msgstr "Unlock editing"
 msgid "Unsupported audio format."
 msgstr "Unsupported audio format."
 
+#: src/data/builder.ts
+msgid "Unsupported photo format."
+msgstr "Unsupported photo format."
+
 #: src/data/resources.ts
 msgid "Unsupported queued operation."
 msgstr "Unsupported queued operation."
+
+#: src/data/intake.ts
+msgid "Unsupported shared URL."
+msgstr "Unsupported shared URL."
 
 #: src/features/career/schedules.tsx
 msgid "Until I turn it back on"
@@ -7122,8 +7213,8 @@ msgstr "Verify"
 msgid "Version"
 msgstr "Version"
 
-#. placeholder {0}: dayMonth(new Date(sentVersion.createdAt), ws.zone)
-#. placeholder {1}: clockTime(new Date(sentVersion.createdAt), ws.zone)
+#. placeholder {0}: dayMonth(sentAt, ws.zone)
+#. placeholder {1}: clockTime(sentAt, ws.zone)
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Version sent {0}, {1}"
 msgstr "Version sent {0}, {1}"
@@ -7320,7 +7411,7 @@ msgstr "Wider"
 msgid "With"
 msgstr "With"
 
-#. placeholder {0}: people.join(", ")
+#. placeholder {0}: people[0]
 #: src/features/applications/model.ts
 msgid "with {0}"
 msgstr "with {0}"
@@ -7426,6 +7517,14 @@ msgstr "Year"
 msgid "Yes, I led it"
 msgstr "Yes, I led it"
 
+#: src/data/career-tools.ts
+msgid "You added this"
+msgstr "You added this"
+
+#: src/data/career-tools.ts
+msgid "You answered the assistant · today"
+msgstr "You answered the assistant · today"
+
 #: src/features/auth/ConsentScreen.tsx
 msgid "You can disconnect it at any time in Settings › Account › Connected apps."
 msgstr "You can disconnect it at any time in Settings › Account › Connected apps."
@@ -7434,9 +7533,17 @@ msgstr "You can disconnect it at any time in Settings › Account › Connected 
 msgid "You canceled the sign-in before it finished."
 msgstr "You canceled the sign-in before it finished."
 
+#: src/data/career-tools.ts
+msgid "You said"
+msgstr "You said"
+
 #: src/features/career/model.ts
 msgid "You told the coach"
 msgstr "You told the coach"
+
+#: src/data/career-tools.ts
+msgid "You told the coach · 2 Nov"
+msgstr "You told the coach · 2 Nov"
 
 #: src/data/ats-check.ts
 msgid "You're offline. Connect to check a file."
