@@ -10,6 +10,7 @@ import { useWorkspace } from "./shared";
 import { useApplicationWorkspace, useLetter, useResumeVersions } from "@/data";
 import { sentStepHref } from "@/features/applications/actions";
 import { clockTime, dayMonth, longDay, longWeekday, stageDate } from "@/features/applications/model";
+import { storyboard } from "@/features/applications/storyboard";
 import {
 	BottomSheet,
 	Button,
@@ -43,11 +44,14 @@ export function ApplyScreen() {
 
 	const sent = app.status !== "saved";
 	const sentOn = stageDate(app, "applied");
-	const sentVersion = versions.data?.find((v) => v.kind === "sent");
+	const sentVersion =
+		versions.data?.find((v) => v.id === app.sentResumeVersionId) ?? versions.data?.find((v) => v.kind === "sent");
+	const sentAt = storyboard?.sentVersionAt[app.id] ?? (sentVersion ? new Date(sentVersion.createdAt) : null);
+	const answerCount = storyboard?.answerCount[app.id] ?? answers.length;
 	const followUp = sentOn ? new Date(sentOn.getTime() + 14 * DAY_MS) : null;
 	const where = app.sourceUrl ?? "";
 	const answersLine =
-		answers.length === 1 ? t`1 answer saved` : answers.length ? t`${answers.length} answers saved` : t`No answers yet`;
+		answerCount === 1 ? t`1 answer saved` : answerCount ? t`${answerCount} answers saved` : t`No answers yet`;
 	const copy = async (text: string) => {
 		await Clipboard.setStringAsync(text);
 		showToast({ message: t`Copied` });
@@ -88,8 +92,8 @@ export function ApplyScreen() {
 				title={t`Resume`}
 				secondary={
 					sent
-						? sentVersion
-							? t`Version sent ${dayMonth(new Date(sentVersion.createdAt), ws.zone)}, ${clockTime(new Date(sentVersion.createdAt), ws.zone)}`
+						? sentAt
+							? t`Version sent ${dayMonth(sentAt, ws.zone)}, ${clockTime(sentAt, ws.zone)}`
 							: t`No resume recorded`
 						: app.resumeId
 							? t`Ready`
@@ -121,6 +125,7 @@ export function ApplyScreen() {
 				leading={<IconTile icon="globe-simple" />}
 				trailing="external"
 				last
+				boxHidden
 				onPress={where ? () => void openBrowserAsync(where) : undefined}
 			/>
 			{sent && followUp ? (

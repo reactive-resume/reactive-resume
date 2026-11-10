@@ -90,7 +90,7 @@ export function ShareScreen() {
 		}
 	};
 	return (
-		<PushScreen title={t`Share`} docked barEnd={<BuilderActions id={id} />}>
+		<PushScreen title={t`Share`} docked clipDump barEnd={<BuilderActions id={id} />}>
 			<DocumentState loading={query.isPending} error={query.isError} retry={() => void query.refetch()} />
 			{document && (
 				<>

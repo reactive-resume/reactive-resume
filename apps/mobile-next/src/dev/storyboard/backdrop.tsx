@@ -9,12 +9,59 @@ import { View } from "react-native";
 import { STORYBOARD } from "./harness";
 import { SignOutDialog } from "@/features/settings/SignOutDialog";
 import { storyboardSignOut } from "@/features/settings/storyboard";
-import { DocThumb, ListRow, PushScreen, Screen, SectionHeading, Text, layout } from "@/ui";
+import {
+	DocThumb,
+	Icon,
+	IconButton,
+	ListRow,
+	PageSubtitle,
+	PushScreen,
+	Screen,
+	SectionHeading,
+	Text,
+	layout,
+} from "@/ui";
+
+/** The boards draw the body of the screen under a sheet or dialog at 50% opacity (`.body` style="opacity:.5"). */
+const BODY = 0.5;
 
 /** A modal's bar (close) and page title, nothing else: S7 over D4, S8 over S1. */
 const titled = (title: string, overlay?: ReactNode) => (
-	<PushScreen title={title} back="close" overlay={overlay}>
+	<PushScreen title={title} back="close" overlay={overlay} bodyOpacity={BODY}>
 		{null}
+	</PushScreen>
+);
+
+/** J6's bar (back) and page title, with its subtitle when the board draws one: J7 and J8 over Lumen, J9 over Parcel. */
+const detailStub = (title: string, subtitle?: string) => (
+	<PushScreen
+		title={title}
+		bodyOpacity={BODY}
+		{...(subtitle ? { subtitle: <PageSubtitle status>{subtitle}</PageSubtitle> } : {})}
+	>
+		{null}
+	</PushScreen>
+);
+
+/** B11's bar as the board draws it under B14: the back caret alone, no button, title or body. */
+const caretOnly = () => (
+	<Screen>
+		<Icon name="caret-left" size={24} color="ink2" style={{ position: "absolute", top: 63, start: 22 }} />
+	</Screen>
+);
+
+/** B2's bar, title, status and its two entries, without Add or the swipe hint (B21 over Experience). */
+const sectionStub = () => (
+	<PushScreen
+		title="Experience"
+		backLabel="Back to Product designer"
+		subtitle={<PageSubtitle status>2 entries · on page 1</PageSubtitle>}
+		barEnd={<IconButton icon="dots-three" label="Section options" />}
+	>
+		<View style={{ paddingTop: 20 }}>
+			<ListRow top title="Northwind Labs" secondary="Senior product designer · 2022 – now" trailing="caret" />
+			<ListRow last boxHidden title="Harbour Studio" secondary="Product designer · 2019 – 2022" trailing="caret" />
+		</View>
 	</PushScreen>
 );
 
@@ -27,7 +74,7 @@ const resumes = [
 const libraryStub = () => (
 	<Screen>
 		{/* The heading's line box at 122.5: 47 status area + 55.5, less the first heading's 20 dp top padding. */}
-		<View style={{ paddingTop: 122.5 - layout.sectionGapTopFirst }}>
+		<View style={{ paddingTop: 122.5 - layout.sectionGapTopFirst, opacity: BODY }}>
 			<SectionHeading title="Resumes" first />
 			{resumes.map((row, index) => (
 				<ListRow
@@ -48,12 +95,14 @@ const libraryStub = () => (
 /** C1's title and subtitle, 3 and 6 dp higher than C1 draws them, no avatar (C7). */
 const careerStub = () => (
 	<Screen>
-		<Text variant="rootTitle" style={{ position: "absolute", top: 54.5, start: layout.screenMargin }}>
-			Career
-		</Text>
-		<Text variant="ui" color="ink3" style={{ position: "absolute", top: 94.5, start: layout.screenMargin }}>
-			Your coach, and what it knows about you.
-		</Text>
+		<View style={{ flex: 1, opacity: BODY }}>
+			<Text variant="rootTitle" style={{ position: "absolute", top: 54.5, start: layout.screenMargin }}>
+				Career
+			</Text>
+			<Text variant="ui" color="ink3" style={{ position: "absolute", top: 94.5, start: layout.screenMargin }}>
+				Your coach, and what it knows about you.
+			</Text>
+		</View>
 	</Screen>
 );
 
@@ -76,9 +125,15 @@ const signOut = (variant: string) => {
 const backdrops: Record<string, (variant: string | undefined) => ReactNode> = {
 	"S7-FirstSend": () => titled("Import a resume"),
 	"S8-SignOut": (variant) => signOut(variant ?? "offline"),
+	"B14-Download": caretOnly,
+	"B19-More": () => detailStub("Product designer", "Locked · 1 page · Public"),
+	"B21-EntryActions": sectionStub,
 	"D2-Actions": libraryStub,
 	"D3-New": libraryStub,
 	"C7-Schedule": careerStub,
+	"J7-Stage": () => detailStub("Lumen"),
+	"J8-Interview": () => detailStub("Lumen"),
+	"J9-Close": () => detailStub("Parcel & Co.", "Product designer · Lisbon"),
 };
 
 /** `/storyboard-backdrop/<ID>[?variant=…]`; scenarios push the sheet's route after it. */

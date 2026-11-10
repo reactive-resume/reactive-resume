@@ -61,6 +61,7 @@ export function ActivityScreen() {
 					secondary={feedbackLinkLine(link)}
 					trailing="caret"
 					last={index === active.length - 1}
+					boxHidden={index === active.length - 1}
 				/>
 			))}
 		</PushScreen>

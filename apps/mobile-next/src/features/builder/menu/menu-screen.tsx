@@ -89,7 +89,7 @@ export function MenuScreen() {
 		onPress?: () => void,
 		disabled = false,
 		secondary?: string,
-		extra: { top?: boolean; caret?: boolean; accent?: boolean; danger?: boolean } = {},
+		extra: { top?: boolean; caret?: boolean; accent?: boolean; danger?: boolean; last?: boolean } = {},
 	) => (
 		<ListRow
 			title={title}
@@ -100,6 +100,8 @@ export function MenuScreen() {
 			top={!!extra.top}
 			danger={!!extra.danger}
 			disabled={disabled}
+			last={!!extra.last}
+			boxHidden={!!extra.last}
 		/>
 	);
 	return (
@@ -197,7 +199,7 @@ export function MenuScreen() {
 										await printAsync({ uri: file.uri });
 									}),
 							)}
-							{row(t`Move to trash`, "trash", () => void trash(), locked, undefined, { danger: true })}
+							{row(t`Move to trash`, "trash", () => void trash(), locked, undefined, { danger: true, last: true })}
 						</View>
 					</>
 				))}

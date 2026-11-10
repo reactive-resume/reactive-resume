@@ -1,4 +1,5 @@
 import type { Scenario } from "../harness";
+import { overBackdrop } from "../backdrop";
 import { useResumeStore, useLetterStore } from "@/data";
 const resume = "/builder/resume-product";
 const letter = "/letter/letter-0";
@@ -12,7 +13,7 @@ export const scenarios: Record<string, Scenario> = {
 	"B11-Share": { hrefs: ["/documents", `${resume}/share`], prepare: openResume },
 	"B12-WebPage": { hrefs: ["/documents", `${resume}/share`, `${resume}/share/web-page`], prepare: openResume },
 	"B13-Visitors": { hrefs: ["/documents", `${resume}/share`, `${resume}/share/activity`] },
-	"B14-Download": { hrefs: ["/documents", `${resume}/share`, `${resume}/download`], prepare: openResume },
+	"B14-Download": { hrefs: ["/documents", ...overBackdrop("B14-Download", `${resume}/download`)], prepare: openResume },
 	"B15-Versions": { hrefs: ["/documents", `${resume}/share`, `${resume}/versions`] },
 	"B16-Assistant": { hrefs: ["/documents", resume, `${resume}/assistant`], prepare: openResume },
 	"B17-Proposals": {
@@ -21,7 +22,7 @@ export const scenarios: Record<string, Scenario> = {
 	},
 	"B18-Preview": { hrefs: ["/documents", resume, `${resume}/preview`], prepare: openResume },
 	"B19-More": {
-		hrefs: ["/documents", resume, `${resume}/menu`],
+		hrefs: ["/documents", ...overBackdrop("B19-More", `${resume}/menu`)],
 		prepare: async () => {
 			await openResume();
 			const document = useResumeStore.getState().document;

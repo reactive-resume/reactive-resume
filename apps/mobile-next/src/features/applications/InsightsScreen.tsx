@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { View } from "react-native";
 import { insights, type InsightsRange } from "./model";
 import { RowPlaceholders, useBarMenu } from "./parts";
+import { storyboard } from "./storyboard";
 import { useApplications } from "@/data";
 import { now } from "@/data/clock";
 import {
@@ -21,13 +22,28 @@ import {
 const RANGES: InsightsRange[] = ["30", "90", "all"];
 const rangeLabel = (range: InsightsRange) => (range === "all" ? t`All time` : range === "30" ? t`30 days` : t`90 days`);
 
+/** The storyboard's numbers (its 18 applications with sources aren't in the fixture yet). */
+function storyboardInsights(range: InsightsRange) {
+	const data = storyboard?.insights(range);
+	if (!data) return null;
+	const labels = { applied: t`Applied`, replied: t`Replied`, interviewed: t`Interviewed`, offer: t`Offer` };
+	return {
+		...data,
+		funnel: data.funnel.map((row) => ({ label: labels[row.key as keyof typeof labels], count: row.count })),
+	};
+}
+
 export function InsightsScreen() {
 	const params = useLocalSearchParams<{ range?: string }>();
 	const router = useRouter();
 	const range: InsightsRange = RANGES.includes(params.range as InsightsRange) ? (params.range as InsightsRange) : "90";
 	const applications = useApplications();
 	const menu = useBarMenu();
-	const data = applications.data ? insights(applications.data, range, now()) : null;
+	const data = storyboard
+		? storyboardInsights(range)
+		: applications.data
+			? insights(applications.data, range, now())
+			: null;
 	const max = Math.max(1, ...(data?.funnel.map((row) => row.count) ?? [1]));
 
 	return (
@@ -94,6 +110,7 @@ export function InsightsScreen() {
 								secondary={t`${row.applied} applied`}
 								value={t`${row.replied} of ${row.applied}`}
 								last={i === data.sources.length - 1}
+								boxHidden={i === data.sources.length - 1}
 							/>
 						))
 					)}

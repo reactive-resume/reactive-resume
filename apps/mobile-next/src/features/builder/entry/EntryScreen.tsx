@@ -285,7 +285,7 @@ export function EntryScreen({ isNew = false }: { isNew?: boolean }) {
 								</Touch>
 							</View>
 							{plain ? (
-								<Text variant="body" color="ink2" numberOfLines={3}>
+								<Text variant="body" color="ink2" numberOfLines={3} wordEllipsis>
 									{plain}
 								</Text>
 							) : null}

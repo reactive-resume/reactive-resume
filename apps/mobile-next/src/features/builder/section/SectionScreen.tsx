@@ -42,11 +42,14 @@ function EntryRow({
 	locked,
 	onOpen,
 	onHold,
+	last,
 }: {
 	data: ResumeData;
 	section: BuilderSection;
 	entry: Entry;
 	locked: boolean;
+	/** The list's last entry: no rule under it, and nothing of its own in the dump (the boards' borderless rows). */
+	last: boolean;
 	onOpen: () => void;
 	onHold: () => void;
 }) {
@@ -61,6 +64,8 @@ function EntryRow({
 				titleColor={title ? undefined : "ink3"}
 				secondary={empty ? t`Empty · not on the page` : entry.hidden ? t`Not on the page` : details || undefined}
 				trailing="caret"
+				last={last}
+				boxHidden={last}
 				onPress={onOpen}
 				{...(locked ? {} : { onLongPress: onHold })}
 			/>
@@ -206,11 +211,12 @@ export function SectionScreen() {
 								if (moved) list.splice(to, 0, moved);
 							})
 						}
-						renderItem={(entry) => (
+						renderItem={(entry, { index }) => (
 							<EntryRow
 								data={data}
 								section={section}
 								entry={entry}
+								last={index === entries.length - 1}
 								locked={locked}
 								onOpen={() => router.push(`${base}/${entry.id}`)}
 								onHold={() => router.push(`${base}/${entry.id}/actions?from=hold`)}

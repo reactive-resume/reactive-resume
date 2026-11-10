@@ -43,7 +43,13 @@ export function StageSheet() {
 	const title =
 		step === "sent" ? t`What did you send?` : step === "close" ? t`How did it end?` : app ? t`Move ${app.company}` : "";
 	return (
-		<SheetScreen title={title} height={HEIGHT[step]} step={step}>
+		<SheetScreen
+			title={title}
+			height={HEIGHT[step]}
+			step={step}
+			closeIconSize={24}
+			back={step === "close" ? { label: t`Back to Move`, onPress: () => setStep("stages") } : undefined}
+		>
 			{!app ? (
 				<View style={{ paddingTop: 4, paddingHorizontal: layout.screenMargin, gap: 12 }}>
 					{[0, 1, 2, 3, 4].map((i) => (
@@ -94,6 +100,7 @@ function StagesStep({ app, onStep }: { app: Application; onStep: (step: Step) =>
 					accessibilityRole="radio"
 					accessibilityState={{ selected: status === app.status }}
 					last={i === PIPELINE.length - 1}
+					boxHidden={i === PIPELINE.length - 1}
 					onPress={() => selectRadio(status === app.status, () => void choose(status))}
 					testID={`stage-${status}`}
 				/>
@@ -246,6 +253,7 @@ function CloseStep({ app }: { app: Application }) {
 						key={key}
 						top={i === 0}
 						last={i === CLOSED_REASONS.length - 1}
+						boxHidden={i === CLOSED_REASONS.length - 1}
 						title={outcomeLabel(key)}
 						secondary={key === "accepted" && offerSince ? t`Offer since ${dayMonth(offerSince, zone)}` : undefined}
 						leading={<Radio selected={reason === key} interactive={false} />}

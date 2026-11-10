@@ -142,6 +142,7 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 					title={item.label}
 					secondary={item.reason}
 					last={item.id === (more ? "odt" : "json")}
+					boxHidden={item.id === (more ? "odt" : "json")}
 					leading={<Radio selected={format === item.id} interactive={false} />}
 					onPress={() => {
 						if (format !== item.id) {

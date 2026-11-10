@@ -323,6 +323,7 @@ export function CheckScreen() {
 									key={term.term}
 									title={term.label}
 									last={i === result.missing.length - 1}
+									boxHidden={i === result.missing.length - 1}
 									trailing={locked ? undefined : <RowLink label={t`Add`} onPress={() => setTermSheet(term)} />}
 								/>
 							))}
@@ -364,6 +365,7 @@ export function CheckScreen() {
 	return (
 		<BuilderScreen
 			docked
+			clipDump
 			title={t`Check`}
 			status={word}
 			subtitle={null}

@@ -128,3 +128,111 @@ Scoreboard (`fidelity.py --system-bars`): 30 of 30 (A1–A4, S1–S8, T1, T2, D1
 0 EXTRA, 0.38–0.91 % differing pixels per theme except D3 dark 2.02 % (the backdrop's document thumbnails are brighter
 than the boards under the dark scrim, the same on iOS). Backdrops, sheet and dialog shadows, rings, the 47/34 insets, the
 dock, `TextBlock` on C2, P1's page and the text fields needed no Android change.
+
+## 2026-11-10 · Pass 6 · all 67 screens on one tree, iOS (iPhone 14 simulators 2 and 4, debug storyboard build)
+
+Applications and workspace merged onto builder, letters and the behaviour wiring. Baseline after the merge: 50 of 67
+passing. Final: 67 of 67 passing `fidelity.py`; five screens still carry EXTRA lines (below).
+
+Causes fixed:
+
+- Scroll-viewport dump clip (applications branch) dropped elements the boards list behind footers and docks (B1, D4,
+  B17 regressions). Boards disagree here: B1, D4, B17 list what sits behind the footer or dock; W1, W3, B5, B6, B9,
+  B10, B11 end their content at the viewport. The clip is now opt-in (`PushScreen clipDump`) on those screens, and
+  for screens without a footer or dock it also leaves out the home-indicator strip.
+- Backdrop text above the scrim: the boards draw the backdrop's `.body` (title down) at `opacity:.5` under the
+  scrim; the bar stays full. Storyboard backdrops now do the same (`PushScreen bodyOpacity`); real screens keep the
+  spec's scrim only. New stubs where the boards draw one: B14 (back caret only), B19 (bar, title, status at 50%),
+  B21 (B2 without Add and the swipe hint).
+- Borderless last rows: the boards tag a ListRow only when it draws (a rule) or is a link; plain borderless last rows
+  have no component entry. `last` + `boxHidden` on those rows (B2, B5, B8, B10, B12, B13, B14, B15, B19, L1, L2).
+- C4: a Chip's label sits below the frame while its box is in it; the boards dump the label as the chip.
+  `Box ownsText` lets the owner's box decide (`FrameOwnerContext`).
+- B3: `Text wordEllipsis` cuts a clamped text at a whole word and "…" (measured by a hidden copy), so the screen draws
+  and the dump reports "…used by six…". iOS `onTextLayout` puts the whole remainder in the last line, so it cannot
+  say what a tail-truncated text shows.
+- Blank captures (builder group) and the dev client's "Refreshing…" banner (top 40–80 dp band) are capture noise;
+  recaptured in batches of three to five with a cold relaunch.
+
+EXTRA lines left (contract issues for the lead, not tool failures):
+
+- B1: Skills ListRow at 829. The board has its texts but no component entry (n 70–71 absent), though the row is in
+  the frame.
+- B3: "More fields" at 717. SCREENS B3 puts rare fields under "More fields" at the end; the board omits it.
+- B9: "Check the exported PDF" at 737 (8 dp above the dock). SCREENS B9 puts it at the end of the list; the board
+  omits it.
+- B10: "Already covered" and its first row above the dock. SCREENS B10 says below the fold; with three missing terms
+  it lands above it. The board leaves the space empty.
+- W1: Payments experience row tagged (it has a rule, more rows follow) and Research synthesis peeking 15 dp above the
+  footer. The board draws 4 of the 10 requirements its own headline counts and ends the list after row four; no link,
+  row or fold is drawn, and the web app lists them all. Kept the ten.
+
+| Screen           | Layout            | Light % | Dark % | Bands | EXTRA | Result |
+| ---------------- | ----------------- | ------- | ------ | ----- | ----- | ------ |
+| A1-Welcome       | 0 failing / 10 ok | 1.07    | 1.03   | 0     | 0     | pass   |
+| A2-SignIn        | 0 failing / 28 ok | 0.65    | 0.6    | 0     | 0     | pass   |
+| A3-TwoStep       | 0 failing / 8 ok  | 0.54    | 0.49   | 0     | 0     | pass   |
+| A4-Allow         | 0 failing / 26 ok | 0.64    | 0.59   | 0     | 0     | pass   |
+| T1-Today         | 0 failing / 51 ok | 0.61    | 0.54   | 0     | 0     | pass   |
+| T2-FirstRun      | 0 failing / 39 ok | 0.62    | 0.56   | 0     | 0     | pass   |
+| D1-Library       | 0 failing / 53 ok | 0.88    | 0.88   | 0     | 0     | pass   |
+| D2-Actions       | 0 failing / 52 ok | 0.64    | 0.57   | 0     | 0     | pass   |
+| D3-New           | 0 failing / 46 ok | 0.67    | 0.61   | 0     | 0     | pass   |
+| D4-Import        | 0 failing / 38 ok | 0.68    | 0.62   | 0     | 0     | pass   |
+| D5-Search        | 0 failing / 38 ok | 0.72    | 0.68   | 0     | 0     | pass   |
+| D6-Trash         | 0 failing / 24 ok | 0.72    | 0.67   | 0     | 0     | pass   |
+| B1-Overview      | 0 failing / 65 ok | 0.61    | 0.56   | 0     | 1     | pass   |
+| B2-Section       | 0 failing / 16 ok | 0.65    | 0.59   | 0     | 0     | pass   |
+| B3-Entry         | 0 failing / 31 ok | 0.71    | 0.66   | 0     | 2     | pass   |
+| B4-Improve       | 0 failing / 32 ok | 0.84    | 0.76   | 0     | 0     | pass   |
+| B5-Basics        | 0 failing / 23 ok | 0.81    | 0.75   | 0     | 0     | pass   |
+| B20-NewEntry     | 0 failing / 16 ok | 0.59    | 0.53   | 0     | 0     | pass   |
+| B21-EntryActions | 0 failing / 39 ok | 0.64    | 0.55   | 0     | 0     | pass   |
+| B6-Design        | 0 failing / 61 ok | 0.54    | 0.48   | 0     | 0     | pass   |
+| B7-Template      | 0 failing / 17 ok | 2.43    | 2.38   | 0     | 0     | pass   |
+| B8-Layout        | 0 failing / 25 ok | 0.54    | 0.49   | 0     | 0     | pass   |
+| B9-Check         | 0 failing / 44 ok | 0.69    | 0.63   | 0     | 1     | pass   |
+| B10-JobMatch     | 0 failing / 40 ok | 0.84    | 0.79   | 0     | 3     | pass   |
+| B11-Share        | 0 failing / 46 ok | 0.6     | 0.54   | 0     | 0     | pass   |
+| B12-WebPage      | 0 failing / 26 ok | 0.61    | 0.54   | 0     | 0     | pass   |
+| B13-Visitors     | 0 failing / 15 ok | 0.71    | 0.65   | 0     | 0     | pass   |
+| B14-Download     | 0 failing / 33 ok | 0.75    | 0.67   | 0     | 0     | pass   |
+| B15-Versions     | 0 failing / 21 ok | 0.5     | 0.53   | 0     | 0     | pass   |
+| B16-Assistant    | 0 failing / 43 ok | 0.7     | 0.59   | 0     | 0     | pass   |
+| B17-Proposals    | 0 failing / 38 ok | 0.69    | 0.6    | 0     | 0     | pass   |
+| B18-Preview      | 0 failing / 46 ok | 0.61    | 0.6    | 0     | 0     | pass   |
+| B19-More         | 0 failing / 58 ok | 0.72    | 0.69   | 0     | 0     | pass   |
+| L1-Letter        | 0 failing / 33 ok | 0.97    | 0.9    | 0     | 0     | pass   |
+| L2-LetterDesign  | 0 failing / 33 ok | 0.61    | 0.55   | 0     | 0     | pass   |
+| J1-List          | 0 failing / 66 ok | 0.66    | 0.6    | 0     | 0     | pass   |
+| J2-Board         | 0 failing / 46 ok | 0.6     | 0.53   | 0     | 0     | pass   |
+| J3-Calendar      | 0 failing / 63 ok | 0.62    | 0.56   | 0     | 0     | pass   |
+| J4-Insights      | 0 failing / 33 ok | 0.66    | 0.58   | 0     | 0     | pass   |
+| J5-SaveJob       | 0 failing / 42 ok | 0.88    | 0.81   | 0     | 0     | pass   |
+| J6-Detail        | 0 failing / 44 ok | 0.61    | 0.55   | 0     | 0     | pass   |
+| J7-Stage         | 0 failing / 26 ok | 0.59    | 0.53   | 0     | 0     | pass   |
+| J8-Interview     | 0 failing / 39 ok | 0.82    | 0.79   | 0     | 0     | pass   |
+| J9-Close         | 0 failing / 33 ok | 0.68    | 0.61   | 0     | 0     | pass   |
+| W1-Fit           | 0 failing / 31 ok | 0.82    | 0.76   | 0     | 3     | pass   |
+| W2-Apply         | 0 failing / 33 ok | 0.71    | 0.68   | 0     | 0     | pass   |
+| W3-Prep          | 0 failing / 28 ok | 0.84    | 0.78   | 0     | 0     | pass   |
+| W4-Practice      | 0 failing / 20 ok | 0.66    | 0.61   | 0     | 0     | pass   |
+| W5-Messages      | 0 failing / 28 ok | 0.75    | 0.69   | 0     | 0     | pass   |
+| C1-Career        | 0 failing / 43 ok | 0.61    | 0.55   | 0     | 0     | pass   |
+| C2-Coach         | 0 failing / 42 ok | 0.59    | 0.52   | 0     | 0     | pass   |
+| C3-Facts         | 0 failing / 22 ok | 0.65    | 0.58   | 0     | 0     | pass   |
+| C4-Story         | 0 failing / 23 ok | 0.73    | 0.67   | 0     | 0     | pass   |
+| C5-Preferences   | 0 failing / 36 ok | 0.73    | 0.68   | 0     | 0     | pass   |
+| C6-Offers        | 0 failing / 38 ok | 0.81    | 1.49   | 0     | 0     | pass   |
+| C7-Schedule      | 0 failing / 31 ok | 0.79    | 0.7    | 0     | 0     | pass   |
+| S1-Settings      | 0 failing / 42 ok | 0.67    | 0.62   | 0     | 0     | pass   |
+| S2-Account       | 0 failing / 32 ok | 0.7     | 0.65   | 0     | 0     | pass   |
+| S3-Preferences   | 0 failing / 33 ok | 0.57    | 0.52   | 0     | 0     | pass   |
+| S4-Profile       | 0 failing / 26 ok | 0.85    | 0.8    | 0     | 0     | pass   |
+| S5-AI            | 0 failing / 45 ok | 0.78    | 0.72   | 0     | 0     | pass   |
+| S6-Provider      | 0 failing / 26 ok | 0.74    | 0.68   | 0     | 0     | pass   |
+| S7-FirstSend     | 0 failing / 27 ok | 0.61    | 0.55   | 0     | 0     | pass   |
+| S8-SignOut       | 0 failing / 15 ok | 0.51    | 0.54   | 0     | 0     | pass   |
+| P1-Public        | 0 failing / 37 ok | 0.5     | 0.44   | 0     | 0     | pass   |
+| P2-ATS           | 0 failing / 29 ok | 0.62    | 0.57   | 0     | 0     | pass   |
+| X1-Notify        | 0 failing / 36 ok | 0.92    | 0.8    | 0     | 0     | pass   |

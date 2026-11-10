@@ -56,6 +56,7 @@ export function DesignScreen() {
 	);
 	return (
 		<BuilderScreen
+			clipDump
 			docked
 			title={t`Design`}
 			status={word}

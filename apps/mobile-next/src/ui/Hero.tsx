@@ -8,7 +8,7 @@
 //   source: <HeroSource id="page">…</HeroSource>; onPress: await prepareHero("page", renderPage); router.push(…)
 //   destination: <HeroTarget id="page">…</HeroTarget>
 import { type ReactNode, type RefObject, useEffect, useRef } from "react";
-import { type HostInstance, StyleSheet, View } from "react-native";
+import { type HostInstance, I18nManager, type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 import Animated, { interpolate, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { create } from "zustand";
 import { curve, enter, leave, useMotionPolicy } from "./motion";
@@ -64,7 +64,9 @@ function useHidden(id: string) {
 	return useHero((s) => s.flight?.id === id || s.pending?.id === id);
 }
 
-export function HeroSource({ id, children }: { id: string; children: ReactNode }) {
+type HeroProps = { id: string; style?: StyleProp<ViewStyle>; children: ReactNode };
+
+export function HeroSource({ id, style, children }: HeroProps) {
 	const ref = useRef<HostInstance>(null);
 	const flying = useHero((s) => s.flight?.id === id);
 	useEffect(() => {
@@ -74,13 +76,13 @@ export function HeroSource({ id, children }: { id: string; children: ReactNode }
 		};
 	}, [id]);
 	return (
-		<View ref={ref} collapsable={false} style={flying ? styles.hidden : null}>
+		<View ref={ref} collapsable={false} style={[style, flying ? styles.hidden : null]}>
 			{children}
 		</View>
 	);
 }
 
-export function HeroTarget({ id, children }: { id: string; children: ReactNode }) {
+export function HeroTarget({ id, style, children }: HeroProps) {
 	const ref = useRef<HostInstance>(null);
 	const hidden = useHidden(id);
 	useEffect(() => {
@@ -110,7 +112,7 @@ export function HeroTarget({ id, children }: { id: string; children: ReactNode }
 		});
 	};
 	return (
-		<View ref={ref} collapsable={false} onLayout={onLayout} style={hidden ? styles.hidden : null}>
+		<View ref={ref} collapsable={false} onLayout={onLayout} style={[style, hidden ? styles.hidden : null]}>
 			{children}
 		</View>
 	);
@@ -146,7 +148,26 @@ function FlightView({ flight }: { flight: Flight }) {
 	// The big rect is the destination of the forward flight.
 	const big = back ? from : to;
 	const small = back ? to : from;
+	// Text pairs scale by the line height alone, anchored at the start edge: glyphs never stretch, and the two
+	// texts start where both titles start.
+	const pair = !!flight.renderFrom;
+	const rtl = I18nManager.isRTL;
 	const move = useAnimatedStyle(() => {
+		if (pair) {
+			const s = interpolate(p.value, [0, 1], [small.height / big.height, 1]);
+			const edge = rtl
+				? interpolate(p.value, [0, 1], [small.x + small.width, big.x + big.width])
+				: interpolate(p.value, [0, 1], [small.x, big.x]);
+			const top = interpolate(p.value, [0, 1], [small.y, big.y]);
+			const half = (s * big.width) / 2;
+			return {
+				transform: [
+					{ translateX: edge - (big.x + big.width / 2) + (rtl ? -half : half) },
+					{ translateY: top - (big.y + big.height / 2) + (s * big.height) / 2 },
+					{ scale: s },
+				],
+			};
+		}
 		const w = interpolate(p.value, [0, 1], [small.width, big.width]);
 		const h = interpolate(p.value, [0, 1], [small.height, big.height]);
 		const cx = interpolate(p.value, [0, 1], [small.x + small.width / 2, big.x + big.width / 2]);
@@ -161,7 +182,6 @@ function FlightView({ flight }: { flight: Flight }) {
 		};
 	});
 	// Text pairs crossfade over the first 60% of the travel (measured from the start of the flight).
-	const pair = !!flight.renderFrom;
 	const toStyle = useAnimatedStyle(() => {
 		if (!pair) return { opacity: 1 };
 		const k = back ? 1 - p.value : p.value;

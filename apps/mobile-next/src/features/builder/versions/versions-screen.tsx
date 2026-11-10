@@ -108,6 +108,7 @@ export function VersionsScreen() {
 						}
 						trailing="caret"
 						last={!sameDay(index, index + 1)}
+						boxHidden={!sameDay(index, index + 1)}
 						onPress={() => router.push(`/builder/${id}/versions/${version.id}`)}
 					/>
 				</View>

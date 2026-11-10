@@ -76,7 +76,7 @@ export function LetterDesignScreen() {
 								trailing="caret"
 							/>
 							<ListRow title={t`Page`} secondary={t`A4 · normal margins`} trailing="caret" />
-							<ListRow title={t`Signature`} secondary={t`Typed name`} trailing="caret" last />
+							<ListRow title={t`Signature`} secondary={t`Typed name`} trailing="caret" last boxHidden />
 						</View>
 					</>
 				)}

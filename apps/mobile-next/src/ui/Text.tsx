@@ -1,5 +1,5 @@
 import type { HostInstance, TextProps as RNTextProps, TextStyle } from "react-native";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { Platform, StyleSheet, Text as RNText, View } from "react-native";
 import { useTheme } from "./theme";
 import { type ColorToken, fonts, textDefaults, type as typeScale, type TypeToken } from "./tokens";
@@ -61,6 +61,16 @@ export type TextProps = Omit<RNTextProps, "style"> & {
 	style?: RNTextProps["style"];
 	/** False for text nested inside another Text (the outer one carries the tag). */
 	tag?: boolean;
+	/**
+	 * A run drawn right after this text on the same line and reported on its own, as the boards nest a span in a
+	 * label (J3's "9–15 Nov · Berlin time"): this text's tag keeps its own words and takes the box of both.
+	 */
+	after?: ReactNode;
+	/**
+	 * With `numberOfLines`: a cut text ends at a whole word and "…" (a preview, as B3's description card), measured by
+	 * a hidden copy. What is drawn is the shortened string, so the layout dump reports exactly that.
+	 */
+	wordEllipsis?: boolean;
 };
 
 export function Text({
@@ -70,10 +80,14 @@ export function Text({
 	align,
 	style,
 	tag = true,
+	after,
+	wordEllipsis = false,
 	children,
 	...rest
 }: TextProps) {
 	const { colors } = useTheme();
+	const full = flatten(children);
+	const clamp = useWordClamp(full, wordEllipsis ? (rest.numberOfLines ?? 0) : 0);
 	const base = typeScale[variant];
 	// The tag reports the style actually drawn, overrides included.
 	const own = StyleSheet.flatten(style) ?? {};
@@ -86,7 +100,7 @@ export function Text({
 	const ref = useDesignTag(
 		{
 			kind: "text",
-			text: flatten(children),
+			text: clamp.shown,
 			style: {
 				fontFamily,
 				fontSize: own.fontSize ?? base.fontSize,
@@ -99,27 +113,94 @@ export function Text({
 		{ hidden: !tag, box: shift ? () => untranslatedBox(ref, shift)() : undefined },
 	);
 	const ink = inkOffset[variant];
-	return (
+	const textStyle = [
+		textDefaults,
+		topAligned,
+		base,
+		{ fontFamily, color: colors[color] },
+		align ? { textAlign: align } : null,
+		shift ? { transform: [{ translateY: shift }] } : null,
+		ink ? { paddingTop: ink, marginBottom: -ink } : null,
+		style,
+		iosLineBox(own.lineHeight ?? base.lineHeight),
+	];
+	const text = (
 		<RNText
-			ref={ref}
+			ref={after ? undefined : ref}
 			maxFontSizeMultiplier={maxScale(fontFamily)}
 			{...rest}
-			style={[
-				textDefaults,
-				topAligned,
-				base,
-				{ fontFamily, color: colors[color] },
-				align ? { textAlign: align } : null,
-				shift ? { transform: [{ translateY: shift }] } : null,
-				ink ? { paddingTop: ink, marginBottom: -ink } : null,
-				style,
-				iosLineBox(own.lineHeight ?? base.lineHeight),
-			]}
+			{...(clamp.active ? { accessibilityLabel: rest.accessibilityLabel ?? full } : {})}
+			style={textStyle}
 		>
-			{children}
+			{clamp.active ? clamp.shown : children}
 		</RNText>
 	);
+	if (clamp.measuring)
+		return (
+			<View onLayout={(e) => clamp.setWidth(e.nativeEvent.layout.width)}>
+				{text}
+				{clamp.width > 0 ? (
+					<RNText
+						maxFontSizeMultiplier={maxScale(fontFamily)}
+						style={[textStyle, { position: "absolute", top: 0, start: 0, width: clamp.width, opacity: 0 }]}
+						onTextLayout={(e) => clamp.result(e.nativeEvent.lines.length)}
+						accessibilityElementsHidden
+						importantForAccessibility="no-hide-descendants"
+					>
+						{clamp.candidate}
+					</RNText>
+				) : null}
+			</View>
+		);
+	if (!after) return text;
+	return (
+		<View ref={ref} collapsable={false} style={styles.runs}>
+			{text}
+			{after}
+		</View>
+	);
 }
+
+/** The first `n` words of `full` and "…"; all of them is the whole text. */
+export const wordCut = (words: readonly string[], n: number) =>
+	n >= words.length
+		? words.join(" ")
+		: `${words
+				.slice(0, n)
+				.join(" ")
+				.replace(/[\s,;:.–—-]+$/, "")}…`;
+
+/**
+ * Word-boundary ellipsis: a binary search over word counts, each candidate laid out once by a hidden copy at the
+ * text's width, for the most words that fit in `max` lines. `max` 0 turns it off.
+ */
+function useWordClamp(full: string, max: number) {
+	const words = full.split(/\s+/);
+	const [width, setWidth] = useState(0);
+	const [state, setState] = useState<{ key: string; lo: number; hi: number; test: number; done: boolean } | null>(null);
+	const key = `${full}|${width}|${max}`;
+	const current = state?.key === key ? state : { key, lo: 0, hi: words.length, test: words.length, done: false };
+	const result = (lines: number) => {
+		const fits = lines <= max;
+		const lo = fits ? current.test : current.lo;
+		const hi = fits ? current.hi : current.test - 1;
+		setState(
+			lo >= hi ? { key, lo, hi, test: lo, done: true } : { key, lo, hi, test: Math.ceil((lo + hi) / 2), done: false },
+		);
+	};
+	const shown = max && current.done ? wordCut(words, current.lo) : full;
+	return {
+		active: max > 0 && current.done && current.lo < words.length,
+		measuring: max > 0,
+		shown,
+		candidate: wordCut(words, current.test),
+		width,
+		setWidth,
+		result,
+	};
+}
+
+const styles = StyleSheet.create({ runs: { flexDirection: "row", flexWrap: "wrap" } });
 
 /**
  * One paragraph block whose own text is `before` and `after`, with other elements (a list) between them: the coach's

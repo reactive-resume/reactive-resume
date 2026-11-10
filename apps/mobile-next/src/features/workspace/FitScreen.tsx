@@ -5,7 +5,7 @@ import { t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
-import { sendUnavailable, STEPS, useAIRun, useWorkspace, Working } from "./shared";
+import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
 import { clockTime, isoDay } from "@/features/applications/model";
 import { FadeIn, QuietLine, useBarMenu } from "@/features/applications/parts";
 import {
@@ -50,15 +50,17 @@ export function FitScreen() {
 	const [open, setOpen] = useState<Requirement | null>(null);
 	const app = ws.app;
 	const fit = ws.latest("fit")[0];
-	const check = () => void ai.run("resume-and-facts", sendUnavailable);
+	const check = () => void ai.run("resume-and-facts", () => ws.actions.generate({ task: "fit" }));
 
 	const requirements: Requirement[] = fit
 		? fit.data.requirements
 		: (app?.requirements ?? []).map((text) => ({ text, origin: "posting", status: "missing", evidence: "" }));
 	const withEvidence = requirements.filter((r) => r.status !== "missing").length;
 	const groups = [
-		{ title: t`From the posting`, rows: requirements.filter((r) => r.origin === "posting") },
-		{ title: t`Inferred from the role`, rows: requirements.filter((r) => r.origin === "inferred") },
+		// ponytail: the posting's requirements are its must-haves and inferred ones the nice-to-haves; the fit schema
+		// has no priority of its own yet.
+		{ title: t`Must have`, rows: requirements.filter((r) => r.origin === "posting") },
+		{ title: t`Nice to have`, rows: requirements.filter((r) => r.origin === "inferred") },
 	].filter((g) => g.rows.length > 0);
 	const tailor = () =>
 		router.push(
@@ -76,6 +78,7 @@ export function FitScreen() {
 
 	return (
 		<PushScreen
+			clipDump
 			title={t`Fit`}
 			subtitle={app ? <PageSubtitle status>{t`${app.role} at ${app.company}`}</PageSubtitle> : undefined}
 			barEnd={more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
@@ -142,7 +145,7 @@ export function FitScreen() {
 						</View>
 						<View style={{ paddingTop: 8 }}>
 							<Text variant="ui" color="ink3">
-								{t`From “${app?.company ?? ""} · ${app?.role ?? ""}” and your Knowledge facts · ${checkedLine}`}
+								{t`From “${app?.company ?? ""} · ${app?.role ?? ""}” and ${fit.evidence.factIds.length} Knowledge facts · ${checkedLine}`}
 							</Text>
 						</View>
 					</View>

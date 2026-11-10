@@ -3,6 +3,7 @@ import type { Scenario } from "../harness";
 // `prepare` fills in what the storyboard draws and the shared fixture lacks (accent, type, languages, a profile, the
 // B9 findings, the B10 link) straight into the open draft, so no undo step or save comes of it.
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { overBackdrop } from "../backdrop";
 import { useResumeStore } from "@/data";
 import { useBuilderStoryboard } from "@/features/builder/shared/storyboard";
 
@@ -99,7 +100,7 @@ export const scenarios: Record<string, Scenario> = {
 		},
 	},
 	"B21-EntryActions": {
-		hrefs: [...base, `${doc}/section/experience`, `${doc}/section/experience/northwind/actions?from=hold`],
+		hrefs: [...base, ...overBackdrop("B21-EntryActions", `${doc}/section/experience/northwind/actions?from=hold`)],
 		prepare: prepared(),
 	},
 	"B6-Design": { hrefs: [...base, `${doc}/design`], prepare: prepared() },
