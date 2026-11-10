@@ -15,16 +15,12 @@ import {
 } from "@/data";
 import { now, timeZone } from "@/data/clock";
 import { nextInterview, type SavedItem } from "@/features/applications/model";
-import { storyboard } from "@/features/applications/storyboard";
 import { Button, haptic, layout, WorkingLabel } from "@/ui";
 
-/** Work saved for one application (fit results, briefings, attempts, drafts), plus the storyboard's in its build. */
+/** Work saved for one application (fit results, briefings, attempts, drafts). */
 export function useSavedItems(applicationId: string) {
 	const saved = useCareerOffers({ applicationId });
-	return [
-		...(saved.data ?? []).filter((item) => item.applicationId === applicationId),
-		...(storyboard?.savedItems(applicationId) ?? []),
-	];
+	return (saved.data ?? []).filter((item) => item.applicationId === applicationId);
 }
 
 export function useWorkspace(applicationId: string) {

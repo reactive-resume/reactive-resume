@@ -10,7 +10,6 @@ import Animated from "react-native-reanimated";
 import { kindNoun } from "./first-send";
 import { isLocal, type Provider, providerHost, shortTestError } from "./providers";
 import { useDeveloperAccess } from "./security";
-import { useStoryboardView } from "./storyboard-view";
 import { useSession } from "@/auth/session";
 import { listApprovals, resetApprovals, useAIProviders, useAIProviderActions } from "@/data";
 import {
@@ -36,7 +35,6 @@ export function AIScreen() {
 	const actions = useAIProviderActions();
 	const providers = useAIProviders();
 	const developer = useDeveloperAccess();
-	const view = useStoryboardView();
 	const [testing, setTesting] = useState<string | null>(null);
 	const [approvals, setApprovals] = useState(() => listApprovals());
 	const web = (path: string) => () => void WebBrowser.openBrowserAsync(`${server}/dashboard/settings${path}`);
@@ -54,7 +52,7 @@ export function AIScreen() {
 		}
 	};
 
-	const list = [...(providers.data ?? []), ...(view?.extraProviders ?? [])];
+	const list = providers.data ?? [];
 	const failed = providers.isError;
 	const sent = Object.entries(approvals).filter(([, entry]) => entry.kinds.length > 0);
 

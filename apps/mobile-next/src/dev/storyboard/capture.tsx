@@ -2,6 +2,7 @@ import type { ThemeName } from "@/ui/tokens";
 // Runs one storyboard capture (BUILD.md §8.1): pin theme and clock, seed the fakes, replay the scenario's hrefs so
 // the real stack, sheets and docks are on screen, settle, measure, and post the dump to tools/rn_capture.mjs.
 // Mounted once in the root layout; inert unless EXPO_PUBLIC_STORYBOARD=1.
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigationContainerRef, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { LogBox } from "react-native";
@@ -57,6 +58,7 @@ export function StoryboardController() {
 	const router = useRouter();
 	const navigation = useNavigationContainerRef();
 	const request = useCaptureStore((s) => s.request);
+	const queryClient = useQueryClient();
 
 	useEffect(() => {
 		if (STORYBOARD) LogBox.ignoreAllLogs(true);
@@ -65,6 +67,8 @@ export function StoryboardController() {
 	useEffect(() => {
 		if (!STORYBOARD || !request) return;
 		const { id, theme, scroll } = request;
+		// Busy while the fakes answer or any query or mutation is in flight (a page render, a scenario's refetch).
+		const busy = () => deps.isBusy() || queryClient.isFetching() > 0 || queryClient.isMutating() > 0;
 		(async () => {
 			const scenario = scenarios[id];
 			if (!scenario) throw new Error(`No storyboard scenario for ${id}`);
@@ -86,16 +90,22 @@ export function StoryboardController() {
 				await frame();
 			}
 			await scenario.prepare?.();
-			await settle(deps.isBusy);
+			await settle(busy);
 			if (scroll === "end") {
 				scrollToEnd?.();
-				await settle(deps.isBusy);
+				await settle(busy);
 			}
-			// Measure until two dumps in a row agree: anything still moving (an entrance that began before the time
-			// scale reached zero, a sheet settling) has then landed.
+			// Measure until two dumps in a row agree with nothing in flight: anything still moving (an entrance that began
+			// before the time scale reached zero, a sheet settling) has then landed, and a query a screen started late
+			// has answered.
 			let dump = await collectDump(navigation.getRootState() as never);
 			for (let attempt = 0; attempt < 20; attempt += 1) {
 				await new Promise<void>((resolve) => setTimeout(resolve, 150));
+				if (busy()) {
+					await settle(busy);
+					dump = await collectDump(navigation.getRootState() as never);
+					continue;
+				}
 				const next = await collectDump(navigation.getRootState() as never);
 				const same = JSON.stringify(next.elements) === JSON.stringify(dump.elements);
 				dump = next;
@@ -109,7 +119,7 @@ export function StoryboardController() {
 		})().catch((error) => {
 			void post("/error", JSON.stringify({ id, theme, error: String(error) }), false);
 		});
-	}, [request, router, navigation]);
+	}, [request, router, navigation, queryClient]);
 
 	return null;
 }

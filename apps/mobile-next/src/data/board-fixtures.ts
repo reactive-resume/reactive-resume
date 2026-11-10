@@ -131,10 +131,6 @@ export function completeBoardSeed(state: Row, empty: boolean) {
 				: id === "fieldnote"
 					? [{ id: "joana", name: "Joana Reis", role: "Recruiter", email: "", phone: "", linkedinUrl: "" }]
 					: [];
-		if (id === "fieldnote") {
-			app.followUpAt = new Date("2026-11-09T08:00:00Z");
-			app.followUpNote = "Follow up with Joana Reis";
-		}
 		(state.workspaces as Row)[id] = structuredClone(EMPTY_WORKSPACE);
 	}
 	Object.assign(base, {
@@ -195,45 +191,82 @@ export function completeBoardSeed(state: Row, empty: boolean) {
 			updatedAt: at,
 		});
 	};
-	const fit = fixtureArtifact({ task: "fit" });
-	if (fit.kind === "fit") {
-		fit.requirements.push(
-			...["Prototyping", "User research", "Interaction design", "Product strategy", "Design tokens", "Healthcare"].map(
-				(text, i) => ({
-					text,
-					origin: "posting" as const,
-					status: i < 4 ? ("supported" as const) : ("missing" as const),
-					evidence: i < 4 ? "From your resume" : "",
-					factIds: i < 4 ? [`fact-${i}`] : [],
-				}),
-			),
-		);
-		add("lumen-fit", "lumen", fit, new Date("2026-11-07T07:40:00Z"));
-	}
-	const briefing = fixtureArtifact({ task: "briefing" });
-	if (briefing.kind === "briefing") {
-		briefing.storyIds = ["story-shared-system"];
-		briefing.plan = [
-			{
-				minutes: 10,
-				title: "Building the shared system",
-				detail: texts["W3-Prep"][8] ?? "",
-				action: "story",
-				storyId: "story-shared-system",
-			},
-		];
-		add("lumen-briefing", "lumen", briefing, new Date("2026-11-07T06:00:00Z"));
-	}
-	for (let i = 0; i < 2; i++)
+	// W1–W4's saved work for Lumen, as the boards draw it.
+	const requirement = (text: string, origin: "posting" | "inferred", status: string, evidence = "") => ({
+		text,
+		origin,
+		status,
+		evidence,
+		factIds: [],
+	});
+	add(
+		"lumen-fit",
+		"lumen",
+		{
+			kind: "fit",
+			headline: "",
+			summary: "",
+			requirements: [
+				requirement("Design systems at scale", "posting", "supported", "Northwind Labs entry"),
+				requirement("Accessibility", "posting", "partial", "in Skills only"),
+				requirement("Workshop facilitation", "posting", "missing"),
+				requirement("Payments experience", "inferred", "supported", "Harbour Studio entry"),
+				requirement("Research synthesis", "inferred", "supported", "Northwind Labs entry"),
+				requirement("Prototyping", "inferred", "supported", "Harbour Studio entry"),
+				requirement("Mentoring", "inferred", "partial", "in Summary only"),
+				requirement("Design tokens", "inferred", "supported", "Northwind Labs entry"),
+				requirement("Clinical software", "inferred", "missing"),
+				requirement("Stakeholder reviews", "inferred", "missing"),
+			],
+			checks: [],
+			ask: null,
+		},
+		new Date("2026-11-07T08:40:00+01:00"),
+	);
+	const likely = [
+		"Walk me through a design system decision and its trade-offs.",
+		"How do you make accessibility part of the process?",
+	];
+	add(
+		"lumen-briefing",
+		"lumen",
+		{
+			kind: "briefing",
+			headline: "",
+			summary:
+				"Lumen builds scheduling software for clinics; 140 people, design team of 9. Their design system is being rebuilt this year; the posting mentions it twice.",
+			plan: [],
+			questions: likely.map((text) => ({ text, origin: "Posting" })),
+			focus: "",
+			opening: "",
+			stories: [],
+			honesty: "",
+			storyIds: ["story-shared-system"],
+			practiceQuestions: [
+				...likely,
+				"Tell me about a time a component didn't work for a team.",
+				"How do you measure whether a design system is working?",
+			],
+		},
+		new Date("2026-11-07T07:00:00+01:00"),
+	);
+	for (const [i, when] of ["2026-11-05T19:30:00+01:00", "2026-11-07T08:12:00+01:00"].entries())
 		add(
 			`lumen-practice-${i}`,
 			"lumen",
-			fixtureArtifact({
-				task: "practice",
-				mode: i === 0 ? "spoken" : "typed",
-				answer: "Built and scaled a shared design system.",
-			}),
-			new Date(i === 0 ? "2026-11-07T07:12:00Z" : "2026-11-05T07:12:00Z"),
+			{
+				kind: "practice",
+				question: likely[0],
+				origin: "simulated",
+				mode: "spoken",
+				answer: "",
+				title: "",
+				works: "",
+				strengthen: "",
+				opening: "",
+				note: "clear structure, add the result",
+			},
+			new Date(when),
 		);
 	add(
 		"fieldnote-followup",

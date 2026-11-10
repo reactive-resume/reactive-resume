@@ -21,8 +21,9 @@ function termAsWritten(forms: readonly string[], posting: string): string | unde
 }
 
 /**
- * The fake backend's applications carry no posting text, so storyboard captures draw the board's match (B10: 9 of
- * 14, three missing terms; two more are hidden as "Not true for me"). A term added to the resume moves to found.
+ * The fake backend's posting is a list of the board's terms, not a posting the engine can read, so storyboard captures
+ * draw the board's match (B10: 9 of 14, three missing terms; two more are hidden as "Not true for me"). A term added
+ * to the resume moves to found.
  */
 const boardFound = [
 	"Design systems",
@@ -60,15 +61,15 @@ export function useJobMatch(data: ResumeData | null, applicationId: string | nul
 	const application = useApplication(applicationId ?? "");
 	const app = applicationId ? (application.data ?? null) : null;
 	const posting = applicationId ? (app?.jobDescription ?? "").trim() : pasted.trim();
+	const board = useDataBackend().backend.kind === "fake" && !!applicationId;
 	const engine = useQuery({
 		queryKey: ["ats-pdf-engine"],
 		queryFn: loadEngine,
 		staleTime: Number.POSITIVE_INFINITY,
-		enabled: !!posting,
+		enabled: !!posting && !board,
 	});
 	const hidden = data?.metadata.check?.hiddenTerms;
 	const resumeText = useMemo(() => (data ? buildMarkdown(data) : ""), [data]);
-	const board = useDataBackend().backend.kind === "fake" && !!applicationId && !posting;
 	const result = useMemo(() => {
 		if (board) return boardMatch(resumeText, hidden ?? []);
 		const e = engine.data;
@@ -94,7 +95,7 @@ export function useJobMatch(data: ResumeData | null, applicationId: string | nul
 		application: app,
 		posting,
 		result,
-		reading: !!posting && engine.isPending,
+		reading: !!posting && !board && engine.isPending,
 		loading: !!applicationId && application.isPending,
 	};
 }

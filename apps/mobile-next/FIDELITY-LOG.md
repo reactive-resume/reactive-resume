@@ -236,3 +236,22 @@ EXTRA lines left (contract issues for the lead, not tool failures):
 | P1-Public        | 0 failing / 37 ok | 0.5     | 0.44   | 0     | 0     | pass   |
 | P2-ATS           | 0 failing / 29 ok | 0.62    | 0.57   | 0     | 0     | pass   |
 | X1-Notify        | 0 failing / 36 ok | 0.92    | 0.8    | 0     | 0     | pass   |
+
+## 2026-11-10 · Pass 7 · cold Release, iOS (iPhone 14 simulators 2 and 4, Release storyboard build, app relaunched per screen)
+
+Start: 58 of 67 at `4340b1bb0`. The nine failures were not cold-start or Release effects. The 67/67 debug run was on
+`151f58816`, before the data-layer merge (`79a26abd6`) enriched the fake seed (`src/data/board-fixtures.ts`) with data
+that screens still drew from their own storyboard overlays, so both showed.
+
+| Screen     | Cause                                                                                                                                        | Fix                                                                                             |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| W1, W3, W4 | Seed's Lumen fit, briefing and two attempts added to the overlay's (`storyboard.savedItems`); the seed's briefing (2 questions) won the sort | Overlay's items moved into the seed; overlay removed                                            |
+| S5         | Seed's Ollama provider plus the overlay's (`extraProviders`)                                                                                 | Overlay removed                                                                                 |
+| B10        | Seed now has a Lumen posting, so the board match (`!posting`) was skipped and the engine ran (10 of 14)                                      | Board match for any fake linked application; engine not loaded for it                           |
+| T1         | Seed's Fieldnote `followUpAt` (9 Nov, future) and applied entry at 12:00Z (9.9 days, under the no-reply threshold)                           | Follow-up date removed (boards draw an undated no-reply step); applied 08:00Z, as E's scenarios |
+| J1         | Seed's 13 closed applications (J4's outcomes) add a "Closed · 13" row                                                                        | J1 scenario trashes the closed ones                                                             |
+| C3         | Seed's 8 posting-term facts (W1's 12 facts)                                                                                                  | C3 scenario forgets the facts its board doesn't draw                                            |
+| B18        | Page render query (fixture PDF via expo-print, seconds in Release) still pending at dump time; `isBusy` counted only fake reads              | Harness waits for in-flight queries and mutations, also inside the stable-dump loop             |
+
+`platform-third.test.ts` dates its own follow-up now that the seed has none. Result: 67 of 67 cold on Release, both
+themes, 0.1–0.4% differing pixels.

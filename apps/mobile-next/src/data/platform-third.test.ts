@@ -135,7 +135,10 @@ test("calendar is portable ICS, escapes fields, and requires no calendar permiss
 	expect(() => interviewCalendar(app, "missing")).toThrow("unavailable");
 });
 test("scheduler covers Settings categories with stable identities and honors switches", async () => {
-	const apps = await fakeBackend.read("applications", {});
+	// The storyboard's follow-up (Fieldnote) is undated: no reply in ten days. Date one for the plan.
+	const apps = (await fakeBackend.read("applications", {})).map((row) =>
+		row.id === "fieldnote" ? { ...row, followUpAt: new Date("2026-11-09T08:00:00Z"), followUpNote: "Joana" } : row,
+	);
 	const input = {
 		applications: apps,
 		offers: await fakeBackend.read("offers", { kind: "offer" }),

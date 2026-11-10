@@ -220,7 +220,7 @@ function makeState(fixture: Fixture) {
 		tags: [],
 		contacts: [],
 		activity: [] as ApplicationTimelineEntry[],
-		appliedAt: new Date(id === "fieldnote" ? "2026-10-28T12:00:00Z" : "2026-11-02T11:00:00Z"),
+		appliedAt: new Date(id === "fieldnote" ? "2026-10-28T08:00:00Z" : "2026-11-02T11:00:00Z"),
 		createdAt: new Date("2026-10-24T10:00:00Z"),
 		updatedAt: yesterday,
 		trashedAt: null as Date | null,

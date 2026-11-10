@@ -1,7 +1,8 @@
 import type { Scenario } from "../harness";
 import { router } from "expo-router";
 import { overBackdrop } from "../backdrop";
-import { providerConnection, recordRecurringApproval } from "@/data";
+import { providerConnection, recordRecurringApproval, screenTexts } from "@/data";
+import { invokeFake } from "@/data/fixtures";
 
 // The board shows Discovery approved for the fixture's Work OpenAI key, so its sheet offers Save, not "Review and
 // resume". Approve before the sheet renders: its paused state is read when it mounts.
@@ -13,10 +14,17 @@ const approveDiscovery = async () => {
 	router.push("/career/schedules/discovery");
 	await new Promise((resolve) => requestAnimationFrame(resolve));
 };
+// C3 draws four facts; the seed also carries the posting terms W1 counts as evidence. Forget those here.
+const boardFacts = async () => {
+	const drawn = screenTexts("C3-Facts");
+	const facts = (await invokeFake("career.facts", {})) as { id: string; text: string }[];
+	for (const fact of facts.filter((row) => !drawn.includes(row.text)))
+		await invokeFake("career.forgetFact", { id: fact.id });
+};
 export const scenarios: Record<string, Scenario> = {
 	"C1-Career": { hrefs: ["/career"] },
 	"C2-Coach": { hrefs: ["/career", "/career/coach"] },
-	"C3-Facts": { hrefs: ["/career", "/career/knowledge/facts"] },
+	"C3-Facts": { hrefs: ["/career", "/career/knowledge/facts"], prepare: boardFacts },
 	"C4-Story": { hrefs: ["/career", "/career/knowledge/stories", "/career/knowledge/stories/story-onboarding"] },
 	"C5-Preferences": { hrefs: ["/career", "/career/knowledge/preferences"] },
 	"C6-Offers": { hrefs: ["/career", "/career/offers"] },

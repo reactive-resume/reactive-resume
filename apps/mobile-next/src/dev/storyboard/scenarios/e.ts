@@ -99,11 +99,19 @@ async function seedApplications(overrides: Record<string, Fields> = {}) {
 	});
 }
 
+/** J1 draws only the five open applications; the seed's closed ones (J4's outcomes) are not on its board. */
+async function onlyOpenApplications() {
+	await seedApplications();
+	const apps = (await invokeFake("applications.list", {})) as { id: string; status: string }[];
+	for (const app of apps.filter((row) => row.status === "closed"))
+		await update(app.id, { trashedAt: new Date("2026-11-06T10:00:00Z") });
+}
+
 const tab = "/applications";
 const lumen = "/applications/lumen";
 
 export const scenarios: Record<string, Scenario> = {
-	"J1-List": { hrefs: [`${tab}?view=list`], prepare: () => seedApplications() },
+	"J1-List": { hrefs: [`${tab}?view=list`], prepare: onlyOpenApplications },
 	"J2-Board": { hrefs: [`${tab}?view=board&stage=interview`], prepare: () => seedApplications() },
 	"J3-Calendar": { hrefs: [`${tab}?view=calendar&day=2026-11-10`], prepare: () => seedApplications() },
 	"J4-Insights": { hrefs: [tab, "/applications/insights?range=90"], prepare: () => seedApplications() },
