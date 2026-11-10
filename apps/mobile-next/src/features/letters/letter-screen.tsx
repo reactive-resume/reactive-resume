@@ -129,7 +129,7 @@ export function LetterScreen() {
 									: undefined
 							}
 						/>
-						<ListRow title={t`Recipient`} secondary={document.recipient ?? undefined} trailing="caret" last />
+						<ListRow title={t`Recipient`} secondary={document.recipient ?? undefined} trailing="caret" last boxHidden />
 					</>
 				)}
 			</PushScreen>

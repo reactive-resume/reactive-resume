@@ -122,6 +122,7 @@ export function BasicsScreen() {
 
 	return (
 		<BuilderScreen
+			clipDump
 			title={t`Basics`}
 			backLabel={back}
 			status={word}
@@ -191,6 +192,7 @@ export function BasicsScreen() {
 					leading={<Icon name={link.icon} size={24} color="ink2" />}
 					trailing="caret"
 					last={i === links.length - 1}
+					boxHidden={i === links.length - 1}
 					onPress={() => router.push(link.href as never)}
 				/>
 			))}

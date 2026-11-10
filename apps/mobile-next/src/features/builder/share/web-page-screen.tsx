@@ -77,6 +77,7 @@ export function WebPageScreen() {
 							{...primary}
 							trailing={<Switch value={document.isPrimary} interactive={false} />}
 							last
+							boxHidden
 						/>
 					</View>
 					<SectionHeading title={t`Privacy`} />
@@ -95,7 +96,13 @@ export function WebPageScreen() {
 						secondary={document.showDownloadButtons ? t`PDF` : t`Off`}
 						trailing="caret"
 					/>
-					<ListRow title={t`Password`} secondary={document.hasPassword ? t`On` : t`Off`} trailing="caret" last />
+					<ListRow
+						title={t`Password`}
+						secondary={document.hasPassword ? t`On` : t`Off`}
+						trailing="caret"
+						last
+						boxHidden
+					/>
 					{error ? (
 						<Text accessibilityRole="alert" color="dangerText" style={{ margin: 24 }}>
 							{error}

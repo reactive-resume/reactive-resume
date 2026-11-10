@@ -37,10 +37,13 @@ function SectionRow({
 	locked,
 	handle,
 	onMenu,
+	last,
 }: {
 	data: ResumeData;
 	id: string;
 	locked: boolean;
+	/** The column's last row: no rule under it, and nothing of its own in the dump (the boards' borderless rows). */
+	last: boolean;
 	handle: (children: React.ReactNode) => React.ReactNode;
 	onMenu: (ref: ReturnType<typeof useAnchorRef>) => void;
 }) {
@@ -64,6 +67,8 @@ function SectionRow({
 								)
 					}
 					onPress={locked ? undefined : () => onMenu(ref)}
+					last={last}
+					boxHidden={last}
 				/>
 			</View>
 		</Anchor>
@@ -295,10 +300,11 @@ export function LayoutScreen() {
 									return s ? sectionName(data, s) : sid;
 								}}
 								onReorder={(from, to) => reorder(page, column, ids, from, to)}
-								renderItem={(sid, { handle }) => (
+								renderItem={(sid, { index, handle }) => (
 									<SectionRow
 										data={data}
 										id={sid}
+										last={index === ids.length - 1}
 										locked={locked}
 										handle={handle}
 										onMenu={(ref) => openMenu(page, column, ids, sid, ref)}

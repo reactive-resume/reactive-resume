@@ -71,6 +71,7 @@ export function PrepScreen() {
 
 	return (
 		<PushScreen
+			clipDump
 			title={round ? interviewTitle(round.kind) : t`Interview prep`}
 			subtitle={
 				when ? (

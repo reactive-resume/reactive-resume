@@ -66,6 +66,7 @@ type Entry = {
 	hidden: boolean;
 	box: (() => Promise<Box | null>) | undefined;
 	clip: React.RefObject<Measurable | null> | null;
+	owner: React.RefObject<Measurable | null> | null;
 };
 
 type Box = { x: number; y: number; w: number; h: number };
@@ -93,14 +94,37 @@ export const runsBox =
 const ClipContext = createContext<React.RefObject<HostInstance | null> | null>(null);
 
 /**
+ * A component whose label the boards dump as part of the component itself (a Chip): its texts are on screen while
+ * the component's box is, even when the text's own box starts below the frame (C4's tag chips at the bottom edge).
+ */
+export const FrameOwnerContext = createContext<React.RefObject<HostInstance | null> | null>(null);
+
+/**
  * The visible part of a scroll view (a pushed screen's content above its footer). Elements laid out entirely outside
  * it are clipped, not drawn, and stay out of the dump, as the boards end their content where the viewport ends.
  */
-export function DesignClip({ style, children }: { style?: StyleProp<ViewStyle>; children: React.ReactNode }) {
+export function DesignClip({
+	enabled = true,
+	bottomInset = 0,
+	style,
+	children,
+}: {
+	enabled?: boolean;
+	/** Content under the home indicator is outside the viewport the boards draw (B5's fields after Links). */
+	bottomInset?: number;
+	style?: StyleProp<ViewStyle>;
+	children: React.ReactNode;
+}) {
 	const ref = useRef<HostInstance | null>(null);
 	return (
-		<View ref={ref} collapsable={false} style={style}>
-			<ClipContext.Provider value={ref}>{children}</ClipContext.Provider>
+		<View style={style}>
+			<View
+				ref={ref}
+				collapsable={false}
+				pointerEvents="none"
+				style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: bottomInset }}
+			/>
+			<ClipContext.Provider value={enabled ? ref : null}>{children}</ClipContext.Provider>
 		</View>
 	);
 }
@@ -147,11 +171,20 @@ export function useDesignTag(
 	const ref = useRef<HostInstance | null>(null);
 	const screenKey = useContext(ScreenKeyContext);
 	const clip = useContext(ClipContext);
+	const owner = useContext(FrameOwnerContext);
 	const id = useRef(0);
 	useEffect(() => {
 		if (!STORYBOARD) return;
 		if (!id.current) id.current = nextId++;
-		registry.set(id.current, { ref, meta, screenKey, hidden: !!opts.hidden, box: opts.box, clip });
+		registry.set(id.current, {
+			ref,
+			meta,
+			screenKey,
+			hidden: !!opts.hidden,
+			box: opts.box,
+			clip,
+			owner: owner === ref ? null : owner,
+		});
 	});
 	useEffect(
 		() => () => {
@@ -235,10 +268,13 @@ export async function collectDump(navState: NavState | undefined) {
 						// that clips it (rows under a footer): not on screen, like the storyboard dumps' `offscreen`
 						// elements, which the comparison skips.
 						const frame = Dimensions.get("window");
-						if (x + w <= 0 || x >= frame.width || y + h <= 0 || y >= frame.height) return resolve(null);
-						void measureBox(e.clip?.current ?? null).then((c) => {
-							if (c && (x + w <= c.x || x >= c.x + c.w || y + h <= c.y || y >= c.y + c.h)) return resolve(null);
-							report(x, y, w, h);
+						const outside = (b: Box) => b.x + b.w <= 0 || b.x >= frame.width || b.y + b.h <= 0 || b.y >= frame.height;
+						void measureBox(e.owner?.current ?? null).then((o) => {
+							if (outside(o ?? { x, y, w, h })) return resolve(null);
+							return measureBox(e.clip?.current ?? null).then((c) => {
+								if (c && (x + w <= c.x || x >= c.x + c.w || y + h <= c.y || y >= c.y + c.h)) return resolve(null);
+								report(x, y, w, h);
+							});
 						});
 					});
 					const report = (x: number, y: number, w: number, h: number) => {

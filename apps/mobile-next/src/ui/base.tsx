@@ -6,7 +6,7 @@ import { useRoute } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Touchable, type TouchableProps } from "./motion";
 import { useTheme, useThemeName } from "./theme";
-import { DesignScreen, useDesignTag } from "@/dev/storyboard/harness";
+import { DesignScreen, FrameOwnerContext, useDesignTag } from "@/dev/storyboard/harness";
 
 /** `Touchable` with the theme filled in. Every tap in the app goes through this or a design-system control. */
 export function Touch(props: Omit<TouchableProps, "theme">) {
@@ -52,6 +52,7 @@ export function Box({
 	radius,
 	bg,
 	hidden = false,
+	ownsText = false,
 	style,
 	children,
 	...rest
@@ -64,6 +65,8 @@ export function Box({
 	 * the boards draw it without a component name (A3's code boxes are plain spans).
 	 */
 	hidden?: boolean;
+	/** Its texts count as on screen while this box is (FrameOwnerContext): the boards dump them as the component. */
+	ownsText?: boolean;
 	style?: StyleProp<ViewStyle>;
 	children?: ReactNode;
 	pointerEvents?: "none" | "auto" | "box-none" | "box-only";
@@ -86,7 +89,7 @@ export function Box({
 			{...rest}
 			style={[bg ? { backgroundColor: colors[bg] } : null, radius != null ? { borderRadius: radius } : null, style]}
 		>
-			{children}
+			{ownsText ? <FrameOwnerContext.Provider value={ref}>{children}</FrameOwnerContext.Provider> : children}
 		</View>
 	);
 }

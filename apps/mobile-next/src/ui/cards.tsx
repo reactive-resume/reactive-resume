@@ -245,6 +245,7 @@ export function Chip({
 		>
 			<Box
 				component="Chip"
+				ownsText
 				radius={radius.sm}
 				{...(on ? { bg: "accentSoft" as const } : {})}
 				style={{ height: 32, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 6 }}

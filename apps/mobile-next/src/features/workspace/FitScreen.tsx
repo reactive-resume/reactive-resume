@@ -78,6 +78,7 @@ export function FitScreen() {
 
 	return (
 		<PushScreen
+			clipDump
 			title={t`Fit`}
 			subtitle={app ? <PageSubtitle status>{t`${app.role} at ${app.company}`}</PageSubtitle> : undefined}
 			barEnd={more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}

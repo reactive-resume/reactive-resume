@@ -131,6 +131,13 @@ export type PushScreenProps = {
 	docked?: boolean;
 	presentation?: "screen" | "modal";
 	bottomPadding?: number;
+	/**
+	 * Storyboard dump only: leave out elements laid out entirely below the scroll view (under the footer), for the
+	 * boards that end their content there (W1, W3). Other boards list what sits behind the footer or dock (B1, D4, B17).
+	 */
+	clipDump?: boolean;
+	/** Storyboard backdrops only: the boards draw the body (title down) of a screen under a sheet at 50% opacity. */
+	bodyOpacity?: number;
 	children: ReactNode;
 };
 
@@ -153,6 +160,8 @@ export function PushScreen({
 	docked = false,
 	presentation = "screen",
 	bottomPadding = 24,
+	clipDump = false,
+	bodyOpacity,
 	children,
 }: PushScreenProps) {
 	const router = useRouter();
@@ -228,7 +237,11 @@ export function PushScreen({
 				/>
 			</View>
 			{scroll ? (
-				<DesignClip style={{ flex: 1 }}>
+				<DesignClip
+					enabled={clipDump}
+					bottomInset={footer || docked ? 0 : insets.bottom}
+					style={{ flex: 1, opacity: bodyOpacity }}
+				>
 					<KeyboardAwareScrollView
 						ref={ref as never}
 						onScroll={collapse.onScroll as never}
@@ -244,7 +257,7 @@ export function PushScreen({
 					</KeyboardAwareScrollView>
 				</DesignClip>
 			) : (
-				<View style={{ flex: 1 }}>
+				<View style={{ flex: 1, opacity: bodyOpacity }}>
 					{heading}
 					{children}
 				</View>
