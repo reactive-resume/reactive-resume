@@ -6,10 +6,11 @@ import * as Clipboard from "expo-clipboard";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Linking, TextInput, View } from "react-native";
-import { sendUnavailable, STEPS, useAIRun, useWorkspace, Working } from "./shared";
+import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
 import { useAccount } from "@/data";
 import { dayMonth, stageDate } from "@/features/applications/model";
 import { ChoiceSheet, FadeIn, useBarMenu } from "@/features/applications/parts";
+import { storyboard } from "@/features/applications/storyboard";
 import {
 	Button,
 	FooterBar,
@@ -68,6 +69,7 @@ export function MessagesScreen() {
 	];
 	const draft =
 		edited[kind] ??
+		(kind === "follow-up" ? storyboard?.drafts[app.id] : undefined) ??
 		template(kind, {
 			firstName,
 			me,
@@ -77,10 +79,14 @@ export function MessagesScreen() {
 		});
 	const paragraphs = draft.split(/\n{2,}/);
 
-	const logFollowUp = () => {
-		// Logging goes through the data layer's follow-up action (requested from the lead).
-		showToast({ message: t`Couldn't log the follow-up. Check the timeline before trying again.` });
-	};
+	const logFollowUp = () =>
+		void ws.actions
+			.logFollowUp({})
+			.then(() => {
+				haptic("success");
+				showToast({ message: t`Followed up` });
+			})
+			.catch(() => showToast({ message: t`Couldn't log the follow-up. Check the timeline before trying again.` }));
 	const offerLog = (message: string) =>
 		showToast({ message, action: { label: t`Log follow-up`, onPress: logFollowUp } });
 	const copy = async () => {
@@ -102,7 +108,11 @@ export function MessagesScreen() {
 			subtitle={<PageSubtitle status>{`${app.company} · ${app.role}`}</PageSubtitle>}
 			barEnd={
 				<>
-					<IconButton icon="sparkle" label={t`Redraft`} onPress={() => void ai.run("posting", sendUnavailable)} />
+					<IconButton
+						icon="sparkle"
+						label={t`Redraft`}
+						onPress={() => void ai.run("posting", () => ws.actions.redraftMessage(draft))}
+					/>
 					{more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
 				</>
 			}

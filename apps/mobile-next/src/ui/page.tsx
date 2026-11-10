@@ -6,6 +6,7 @@ import { Image, View } from "react-native";
 import { Box, Ring, Touch } from "./base";
 import { Icon } from "./Icon";
 import { hitSlopFor } from "./motion";
+import { type Stage, StageDot } from "./rows";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { layout, radius } from "./tokens";
@@ -161,7 +162,12 @@ export function ThreeUpStats({ items }: { items: { value: string; label: string 
 	return (
 		<View style={{ flexDirection: "row", gap: 12, paddingTop: 20, paddingHorizontal: layout.screenMargin }}>
 			{items.map((item) => (
-				<View key={item.label} style={{ flex: 1 }} accessible accessibilityLabel={`${item.value} ${item.label}`}>
+				<View
+					key={item.label}
+					style={{ flex: 1, alignItems: "flex-start", paddingBottom: 2 }}
+					accessible
+					accessibilityLabel={`${item.value} ${item.label}`}
+				>
 					<Text variant="statNumber">{item.value}</Text>
 					<Text variant="small" color="ink3">
 						{item.label}
@@ -185,7 +191,7 @@ export function FunnelBars({
 }) {
 	const { colors } = useTheme();
 	return (
-		<View style={{ gap: 14, paddingHorizontal: layout.screenMargin }}>
+		<View style={{ gap: 14, paddingTop: 4, paddingHorizontal: layout.screenMargin }}>
 			{rows.map((row, i) => (
 				<View
 					key={row.label}
@@ -205,7 +211,7 @@ export function FunnelBars({
 							/>
 						)}
 					</View>
-					<Text variant="monoUi" color="ink2" align="right" style={{ width: 28 }}>
+					<Text variant="monoUi" color="ink" align="right" style={{ width: 28 }}>
 						{row.count}
 					</Text>
 				</View>
@@ -274,14 +280,18 @@ export function RecordButton({ recording, onPress }: { recording: boolean; onPre
 	);
 }
 
-/** J2's stage button: "Interviewing · 4 of 6" with a caret; opens the list of stages (the visible way to change column). */
+/** J2's stage button: stage dot, "Interviewing", "4 of 6" and a 16 dp caret; opens the list of stages (the visible way
+ * to change column). */
 export function StageButton({
 	stage,
 	count,
+	dot,
 	onPress,
 }: {
 	stage: string;
 	count: string;
+	/** The stage's dot before the name. */
+	dot?: Stage | undefined;
 	onPress?: (() => void) | undefined;
 }) {
 	return (
@@ -295,13 +305,14 @@ export function StageButton({
 			testID="stage-button"
 		>
 			<View style={{ height: 44, flexDirection: "row", alignItems: "center", gap: 8 }}>
+				{dot ? <StageDot stage={dot} /> : null}
 				<Text variant="textLink" color="ink">
 					{stage}
-					<Text variant="textLink" weight={400} color="ink3" tag={false}>
-						{` · ${count}`}
-					</Text>
 				</Text>
-				<Icon name="caret-down" size={18} color="ink2" />
+				<Text variant="textLink" weight={400} color="ink3">
+					{count}
+				</Text>
+				<Icon name="caret-down" size={16} color="ink3" />
 			</View>
 		</Touch>
 	);

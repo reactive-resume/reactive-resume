@@ -44,6 +44,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Touch } from "./base";
+import { IconButton } from "./buttons";
 import { DiscardDialog } from "./Dialog";
 import { Icon } from "./Icon";
 import {
@@ -109,8 +110,12 @@ export type BottomSheetProps = {
 	 * the token), and a 24 × 24 marker 4 dp below the sheet's top edge.
 	 */
 	labMarker?: { scrim?: string; top?: string };
-	/** The close button's `x`: 20 dp (B14, D2, D3) or 24 dp (S7, J7, B19, B21, C7, J8, J9), as each dump draws it. */
+	/** A leading back button for a second step (J9 "Back to Move"): 16 dp from the edge, the title 8 dp after it. */
+	back?: { label: string; onPress: () => void } | undefined;
+	/** The close icon's size: 20 (default, D2, B14) or 24 (J7–J9). */
 	closeIconSize?: 20 | 24;
+	/** Space under the content and footer; the bottom safe area unless a dump draws otherwise (J8: 3). */
+	bottomPadding?: number | undefined;
 };
 
 type SheetContext = { scrollY: SharedValue<number>; pan: GestureType };
@@ -129,7 +134,9 @@ export function BottomSheet({
 	ref,
 	labMarker,
 	startOpenAt,
+	back,
 	closeIconSize = 20,
+	bottomPadding,
 }: BottomSheetProps) {
 	const { colors, shadows } = useTheme();
 	const { reduced, overlayFade } = useMotionPolicy();
@@ -311,12 +318,13 @@ export function BottomSheet({
 					accessibilityViewIsModal
 					style={[
 						styles.sheet,
-						{ backgroundColor: colors.raised, boxShadow: shadows.sh3, paddingBottom: insets.bottom },
+						{ backgroundColor: colors.raised, boxShadow: shadows.sh3, paddingBottom: bottomPadding ?? insets.bottom },
 						sheetStyle,
 					]}
 				>
 					<View ref={grabRef} collapsable={false} style={[styles.grabber, { backgroundColor: colors.line2 }]} />
-					<View style={styles.header}>
+					<View style={[styles.header, back ? styles.headerBack : null]}>
+						{back ? <IconButton icon="caret-left" label={back.label} onPress={back.onPress} /> : null}
 						<View ref={titleRef} accessible accessibilityRole="header" style={styles.title}>
 							<Text variant="sheetTitle">{title}</Text>
 						</View>
@@ -427,7 +435,8 @@ const styles = StyleSheet.create({
 		// 8 dp before the close button: every sheet dump measures the title slot 302 dp wide.
 		gap: 8,
 	},
-	title: { flex: 1 },
+	headerBack: { paddingStart: 16 },
+	title: { flex: 1, alignItems: "flex-start" },
 	close: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
 	content: { flex: 1, overflow: "hidden" },
 	labTop: { position: "absolute", top: 4, left: 183, width: 24, height: 24 },

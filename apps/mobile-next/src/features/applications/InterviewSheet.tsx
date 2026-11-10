@@ -11,7 +11,8 @@ import { useState } from "react";
 import { Platform, View } from "react-native";
 import { clockTime, interviewTitle, shortDay, zoneAbbreviation, zoneCity } from "./model";
 import { ChoiceSheet } from "./parts";
-import { approveRecurring, providerConnection, useAIProviders, useApplication } from "@/data";
+import { storyboard } from "./storyboard";
+import { approveRecurring, providerConnection, useAIProviders, useApplication, useApplicationActions } from "@/data";
 import { now, timeZone, wallTimeChoices, zonedParts } from "@/data/clock";
 import {
 	BottomSheet,
@@ -77,6 +78,7 @@ function InterviewForm({
 }) {
 	const router = useRouter();
 	const providers = useAIProviders();
+	const actions = useApplicationActions();
 	const home = timeZone();
 	const zone = interview?.timezone ?? home;
 
@@ -133,10 +135,34 @@ function InterviewForm({
 
 	const save = () => {
 		if (!starts) return setTimeError(t`Choose when it starts.`);
-		// Saving goes through the data layer's interview action (requested from the lead): the exact instant, `zone`,
-		// the kind, length, place and people. Until it exists the sheet keeps every field.
-		haptic("error");
-		showToast({ message: t`Couldn't schedule the interview. Try again.` });
+		const id = application.data?.id;
+		if (!id) return;
+		// The exact instant plus the zone it was entered in.
+		const details = {
+			at: starts.toISOString(),
+			kind: kind as (typeof KINDS)[number],
+			durationMinutes: length,
+			location: where.trim(),
+			participants: people
+				.split(",")
+				.map((name) => name.trim())
+				.filter(Boolean)
+				.map((name) => ({ name, role: "" })),
+			timezone: zone,
+		};
+		void (
+			interview
+				? actions.updateInterview({ id, entryId: interview.id, ...details })
+				: actions.addInterview({ id, ...details })
+		)
+			.then(() => {
+				haptic("success");
+				router.back();
+			})
+			.catch(() => {
+				haptic("error");
+				showToast({ message: t`Couldn't schedule the interview. Try again.` });
+			});
 	};
 
 	const startsLabel = starts ? `${shortDay(starts, zone)}, ${clockTime(starts, zone)}` : "";
@@ -148,8 +174,10 @@ function InterviewForm({
 
 	return (
 		<SheetScreen
-			title={interview ? t`Edit interview` : t`Add interview`}
+			title={interview && !storyboard ? t`Edit interview` : t`Add interview`}
 			height={786}
+			closeIconSize={24}
+			bottomPadding={3}
 			keyboard
 			dirty={touched}
 			footer={
@@ -184,6 +212,7 @@ function InterviewForm({
 							flexDirection: "row",
 							flexWrap: "wrap",
 							alignItems: "center",
+							alignContent: "center",
 							gap: 4,
 						}}
 					>
@@ -212,7 +241,7 @@ function InterviewForm({
 					}}
 					placeholder={application.data?.contacts.map((c) => c.name).join(", ") || t`Who you'll meet`}
 				/>
-				<View style={{ marginHorizontal: -layout.screenMargin }}>
+				<View style={{ marginHorizontal: -layout.screenMargin, marginTop: -8 }}>
 					<ListRow
 						title={t`Remind me the day before`}
 						trailing={<Switch value={remind} interactive={false} />}

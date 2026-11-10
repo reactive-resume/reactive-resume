@@ -254,7 +254,7 @@ export function agendaItems(apps: readonly ApplicationRow[], { zone, offers }: L
 			const at = new Date(interview.at);
 			const people = interview.participants.map((person) => person.name);
 			const where = interview.location ? whereLabel(interview.location) : "";
-			const line = [where, people[0] ? t`with ${people.join(", ")}` : ""].filter(Boolean).join(" · ");
+			const line = [where, people[0] ? t`with ${people[0]}` : ""].filter(Boolean).join(" · ");
 			items.push({
 				key: interview.id,
 				day: isoDay(at, zone),

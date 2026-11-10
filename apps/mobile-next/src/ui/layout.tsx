@@ -317,7 +317,7 @@ export function SectionHeading({
 				{title}
 			</Text>
 			{count ? (
-				<View style={{ flex: 1, paddingStart: 2 }}>
+				<View style={{ flex: 1, paddingStart: 2, alignItems: "flex-start" }}>
 					<Text variant="ui" color="ink3">
 						{count}
 					</Text>

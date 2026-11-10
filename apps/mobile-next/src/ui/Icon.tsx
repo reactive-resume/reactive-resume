@@ -14,7 +14,7 @@ export type IconProps = {
 	color?: ColorToken;
 	/** Fill weight: only the selected dock item and the recording stop (BUILD.md §3.10). */
 	fill?: boolean;
-	/** A literal colour for paper surfaces (white checks on swatches). The tag still reports `color`. */
+	/** A literal colour for paper surfaces (white checks on swatches). The tag reports it as a lowercase hex, as the dumps do. */
 	tint?: string;
 	style?: StyleProp<ViewStyle>;
 	/** False when the boards draw the glyph as part of its control (the Checkbox's check): no entry in the dump. */
@@ -23,7 +23,11 @@ export type IconProps = {
 
 export function Icon({ name, size = 24, color = "ink2", fill = false, tint, style, tag = true }: IconProps) {
 	const { colors } = useTheme();
-	const ref = useDesignTag({ kind: "icon", icon: name, size, color }, { hidden: !tag });
+	// A literal tint (white on a filled control) is what the dumps name, as a lowercase hex.
+	const ref = useDesignTag(
+		{ kind: "icon", icon: name, size, color: tint ? (tint.toLowerCase() as typeof color) : color },
+		{ hidden: !tag },
+	);
 	const glyph = icons[name] as { regular?: string; fill?: string };
 	const d = (fill ? glyph.fill : glyph.regular) ?? glyph.regular ?? glyph.fill ?? "";
 	return (
