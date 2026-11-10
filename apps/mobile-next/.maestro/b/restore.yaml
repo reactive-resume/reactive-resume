@@ -1,0 +1,15 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- assertVisible: Product designer
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- longPressOn:
+    id: document-resume-lead
+- tapOn: Move to Trash
+- assertVisible: “Design lead” moved to Trash
+- tapOn: Trash · 3
+- tapOn:
+    text: Restore
+    index: 2
+- assertVisible: Restored “Design lead”
+- tapOn: Open

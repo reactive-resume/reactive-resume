@@ -1,0 +1,12 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/T1-Today?theme=light
+- assertVisible: Open briefing
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- swipe:
+    start: "50%,25%"
+    end: "50%,60%"
+    duration: 500
+- assertVisible:
+    id: haptic-log
+    text: soft

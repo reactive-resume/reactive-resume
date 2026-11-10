@@ -1,0 +1,17 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/D6-Trash?theme=light
+- assertVisible: Junior designer 2021
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn:
+    id: trash-resume-junior
+- tapOn: Delete permanently…
+- assertVisible: Delete 1 document permanently?
+- assertVisible:
+    id: haptic-log
+    text: ""
+- tapOn: Delete permanently
+- assertNotVisible: Junior designer 2021
+- assertVisible:
+    id: haptic-log
+    text: warning
