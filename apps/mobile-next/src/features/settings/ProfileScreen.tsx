@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { emptyProfile, fromFields, type ProfileData, type ProfileFields, toFields } from "./profile-fields";
+import { useStoryboardView } from "./storyboard-view";
 import { useDataActions, useProfile } from "@/data";
 import { Dialog, Form, ListRow, PageSubtitle, PushScreen, TextField } from "@/ui";
 
@@ -19,6 +20,7 @@ export function ProfileScreen() {
 	const router = useRouter();
 	const profile = useProfile();
 	const actions = useDataActions();
+	const view = useStoryboardView();
 	const saved = profile.data ?? null;
 	const [fields, setFields] = useState<ProfileFields | null>(null);
 	const [state, setState] = useState<SaveState>("saved");
@@ -143,12 +145,13 @@ export function ProfileScreen() {
 						/>
 					</Form>
 					<View style={{ marginTop: 16 }}>
-						<ListRow title={t`Notice period`} trailing="caret" />
+						<ListRow title={t`Notice period`} value={view?.noticePeriod} trailing="caret" />
 						<ListRow
 							title={t`Pay expectations`}
 							value={pay}
 							trailing="caret"
 							last
+							boxHidden
 							onPress={() => router.push("/career/knowledge/preferences")}
 						/>
 					</View>

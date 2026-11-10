@@ -10,17 +10,17 @@ import { View } from "react-native";
 import { type ConsentRequest, parseConsentRequest } from "./consent-request";
 import { useSession } from "@/auth/session";
 import { useAccount, useDataBackend } from "@/data";
+import { useStoryboardView } from "@/features/settings/storyboard-view";
 import {
-	Box,
 	Button,
 	FooterBar,
 	Icon,
 	IconTile,
 	ListRow,
+	Logo,
 	PageSubtitle,
 	PageTitle,
 	PushScreen,
-	radius,
 	SectionHeading,
 	Spinner,
 	Text,
@@ -33,6 +33,7 @@ export function ConsentScreen() {
 	const { server } = useSession();
 	const { backend } = useDataBackend();
 	const account = useAccount();
+	const view = useStoryboardView();
 	const params = useLocalSearchParams<Record<string, string>>();
 	const fake = backend.kind === "fake";
 	const request: ConsentRequest | null = parseConsentRequest(params, fake);
@@ -66,7 +67,7 @@ export function ConsentScreen() {
 			</PushScreen>
 		);
 
-	const who = account.data?.username ?? account.data?.email ?? "";
+	const who = view?.username ?? account.data?.username ?? account.data?.email ?? "";
 	const rows = [
 		request.scopes.has("api:read")
 			? { icon: "eye" as const, text: t`See your resumes, letters and applications` }
@@ -99,22 +100,13 @@ export function ConsentScreen() {
 			}
 		>
 			<View style={{ paddingTop: 16, paddingHorizontal: 24, flexDirection: "row", alignItems: "center", gap: 12 }}>
-				{/* 56 dp icon tiles: IconTile has no size yet (lead request); the logo mark is a lead request too. */}
-				<Box
-					component="IconTile"
-					bg="sunken"
-					radius={radius.md}
-					style={{ width: 56, height: 56, alignItems: "center", justifyContent: "center" }}
-				/>
+				<IconTile size={56}>
+					<Logo size={32} />
+				</IconTile>
 				<Icon name="arrows-left-right" size={24} color="ink3" />
-				<Box
-					component="IconTile"
-					bg="accentSoft"
-					radius={radius.md}
-					style={{ width: 56, height: 56, alignItems: "center", justifyContent: "center" }}
-				>
+				<IconTile size={56} accent>
 					<Icon name="sparkle" size={22} color="accentText" />
-				</Box>
+				</IconTile>
 			</View>
 			<View style={{ paddingTop: 20 }}>
 				<PageTitle>{t`Allow ${request.clientName} to use your Reactive Resume?`}</PageTitle>
@@ -128,6 +120,7 @@ export function ConsentScreen() {
 					wrapTitle
 					leading={<IconTile icon={row.icon} />}
 					last={i === rows.length - 1}
+					boxHidden={i === rows.length - 1}
 				/>
 			))}
 			<View style={{ paddingTop: 16, paddingHorizontal: 24 }}>

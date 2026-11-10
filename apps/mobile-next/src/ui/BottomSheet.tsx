@@ -43,7 +43,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Touch } from "./base";
+import { Box, Touch } from "./base";
 import { DiscardDialog } from "./Dialog";
 import { Icon } from "./Icon";
 import {
@@ -109,6 +109,8 @@ export type BottomSheetProps = {
 	 * the token), and a 24 × 24 marker 4 dp below the sheet's top edge.
 	 */
 	labMarker?: { scrim?: string; top?: string };
+	/** The close button's `x`: 20 dp (B14, D2, D3) or 24 dp (S7, J7, B19, B21, C7, J8, J9), as each dump draws it. */
+	closeIconSize?: 20 | 24;
 };
 
 type SheetContext = { scrollY: SharedValue<number>; pan: GestureType };
@@ -127,6 +129,7 @@ export function BottomSheet({
 	ref,
 	labMarker,
 	startOpenAt,
+	closeIconSize = 20,
 }: BottomSheetProps) {
 	const { colors, shadows } = useTheme();
 	const { reduced, overlayFade } = useMotionPolicy();
@@ -317,14 +320,10 @@ export function BottomSheet({
 						<View ref={titleRef} accessible accessibilityRole="header" style={styles.title}>
 							<Text variant="sheetTitle">{title}</Text>
 						</View>
-						<Touch
-							feedback="scale"
-							onPress={requestClose}
-							accessibilityLabel={t`Close`}
-							hitSlop={hitSlopFor(44, 44)}
-							style={styles.close}
-						>
-							<Icon name="x" size={20} color="ink2" />
+						<Touch feedback="scale" onPress={requestClose} accessibilityLabel={t`Close`} hitSlop={hitSlopFor(44, 44)}>
+							<Box component="IconButton" style={styles.close}>
+								<Icon name="x" size={closeIconSize} color="ink2" />
+							</Box>
 						</Touch>
 					</View>
 					<Ctx.Provider value={{ scrollY, pan }}>
@@ -426,7 +425,8 @@ const styles = StyleSheet.create({
 		paddingBottom: 4,
 		paddingStart: 24,
 	},
-	title: { flex: 1 },
+	// 8 dp before the close button: every sheet dump measures the title slot 302 dp wide.
+	title: { flex: 1, marginEnd: 8 },
 	close: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
 	content: { flex: 1, overflow: "hidden" },
 	labTop: { position: "absolute", top: 4, left: 183, width: 24, height: 24 },

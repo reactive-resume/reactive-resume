@@ -10,6 +10,7 @@ import Animated from "react-native-reanimated";
 import { kindNoun } from "./first-send";
 import { isLocal, type Provider, providerHost, shortTestError } from "./providers";
 import { useDeveloperAccess } from "./security";
+import { useStoryboardView } from "./storyboard-view";
 import { useSession } from "@/auth/session";
 import { listApprovals, resetApprovals, useAIProviders, useDataBackend } from "@/data";
 import {
@@ -35,6 +36,7 @@ export function AIScreen() {
 	const { backend } = useDataBackend();
 	const providers = useAIProviders();
 	const developer = useDeveloperAccess();
+	const view = useStoryboardView();
 	const [testing, setTesting] = useState<string | null>(null);
 	const [approvals, setApprovals] = useState(() => listApprovals());
 	const web = (path: string) => () => void WebBrowser.openBrowserAsync(`${server}/dashboard/settings${path}`);
@@ -48,7 +50,7 @@ export function AIScreen() {
 		haptic(provider.testStatus === "success" ? "success" : "error");
 	};
 
-	const list = providers.data ?? [];
+	const list = [...(providers.data ?? []), ...(view?.extraProviders ?? [])];
 	const failed = providers.isError;
 	const sent = Object.entries(approvals).filter(([, entry]) => entry.kinds.length > 0);
 
@@ -82,6 +84,7 @@ export function AIScreen() {
 						key={provider.id}
 						title={provider.label}
 						secondary={secondary}
+						secondaryColor={!ok && provider.testStatus !== "untested" ? "dangerText" : "ink3"}
 						leading={<IconTile icon={isLocal(host) ? "desktop" : "sparkle"} accent={ok && !isLocal(host)} />}
 						trailing={
 							<SwapIn key={isTesting ? "testing" : provider.testStatus}>
@@ -100,7 +103,8 @@ export function AIScreen() {
 				);
 			})}
 			<View style={{ marginTop: 4, paddingHorizontal: 24, flexDirection: "row", gap: 6 }}>
-				<Icon name="key" size={16} color="warnText" style={{ marginTop: 1 }} />
+				{/* The board stretches the icon box to the note's two lines (16 × 36), glyph at the top. */}
+				<Icon name="key" size={16} color="warnText" style={{ height: 36 }} />
 				<Text variant="small" color="warnText" style={{ flex: 1 }}>
 					{t`Your provider may charge your account for requests made with your API key.`}
 				</Text>
@@ -125,6 +129,7 @@ export function AIScreen() {
 				secondary={t`Requests by feature, last 30 days`}
 				trailing="caret"
 				last
+				boxHidden
 				onPress={web("/ai")}
 			/>
 			<SectionHeading title={t`Developer`} />
@@ -140,6 +145,7 @@ export function AIScreen() {
 				secondary={developer.connectedApplications}
 				trailing="caret"
 				last
+				boxHidden
 				onPress={web("/integrations")}
 			/>
 			{sent.length > 0 ? (

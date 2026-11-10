@@ -174,6 +174,11 @@ export type ListRowProps = {
 	washDelay?: number | undefined;
 	/** Extra content under the text block, inside the row. */
 	children?: ReactNode | undefined;
+	/**
+	 * A last row with no top divider that isn't a link draws no box of its own, and the boards never register one
+	 * (no borderless `div.li` in any layout dump): true leaves the row's box out of the dump, its contents stay.
+	 */
+	boxHidden?: boolean | undefined;
 };
 
 export function ListRow({
@@ -203,6 +208,7 @@ export function ListRow({
 	testID,
 	washDelay = 50,
 	children,
+	boxHidden = false,
 }: ListRowProps) {
 	const { colors } = useTheme();
 	const trailingNode =
@@ -218,6 +224,7 @@ export function ListRow({
 	const body = (
 		<Box
 			component="ListRow"
+			hidden={boxHidden}
 			style={{
 				minHeight: layout.listRowMin,
 				paddingVertical: 12,

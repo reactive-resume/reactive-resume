@@ -12,7 +12,6 @@ import { useState } from "react";
 import { View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { InlineLink } from "./InlineLink";
 import { type SignInMethod, signInMethods, useAuthOptions } from "./options";
 import { signInErrorMessage } from "@/auth/messages";
 import { signIn, useSession } from "@/auth/session";
@@ -21,6 +20,7 @@ import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	Button,
 	Form,
+	InlineLink,
 	type IconName,
 	PushScreen,
 	Spinner,

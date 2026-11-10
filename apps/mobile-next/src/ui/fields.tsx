@@ -51,6 +51,8 @@ export type TextFieldProps = Omit<TextInputProps, "style"> & {
 	minHeight?: number | undefined;
 	/** Geist Mono 14/22 text (links, keys). */
 	mono?: boolean | undefined;
+	/** A saved secret's preview ("sk-•••4f2a"), drawn in `ink` like a value while the field is empty (S6). */
+	savedValue?: string | undefined;
 	ref?: Ref<ComponentRef<typeof TextInput>> | undefined;
 };
 
@@ -67,6 +69,7 @@ export function TextField({
 	grow = false,
 	minHeight,
 	mono = false,
+	savedValue,
 	ref,
 	value,
 	placeholder,
@@ -79,18 +82,21 @@ export function TextField({
 	const [focused, setFocused] = useState(false);
 	const stacked = useStacked();
 	const active = focused || forceFocus;
-	// The dumps list the drawn value (masked for passwords) or the placeholder as the field's text, in its line box.
+	// The dumps list the drawn value (masked for passwords) across the input's width, or a placeholder hugging its
+	// words (S6 "Optional"), in its line box.
 	const textStyle = mono ? monoInput : { ...typeScale.input, ...(multiline ? { lineHeight: 24 } : null) };
-	const shown = value ? (input.secureTextEntry ? "\u2022".repeat(value.length) : value) : (placeholder ?? "");
+	const hint = savedValue ?? placeholder;
+	const shown = value ? (input.secureTextEntry ? "\u2022".repeat(value.length) : value) : (savedValue ?? "");
 	const textRef = useDesignTag(
 		{
 			kind: "text",
 			text: shown,
 			style: textStyle,
-			color: value ? "ink" : "ink3",
+			color: "ink",
 		},
 		{ hidden: !shown || !!onPress },
 	);
+	const placeholderTag = !value && !savedValue && placeholder && !onPress;
 	const field = (
 		<Box
 			component="TextField"
@@ -127,8 +133,8 @@ export function TextField({
 						{...input}
 						ref={ref}
 						value={value}
-						placeholder={placeholder}
-						placeholderTextColor={colors.ink3}
+						placeholder={hint}
+						placeholderTextColor={savedValue ? colors.ink : colors.ink3}
 						multiline={multiline}
 						caretHidden={STORYBOARD}
 						selectionColor={colors.accent}
@@ -148,6 +154,20 @@ export function TextField({
 							multiline ? { textAlignVertical: "top" } : null,
 						]}
 					/>
+					{placeholderTag ? (
+						// Measures the placeholder TextInput draws at this spot; draws nothing itself.
+						<Text
+							variant="input"
+							color="ink3"
+							numberOfLines={multiline ? undefined : 1}
+							accessible={false}
+							importantForAccessibility="no-hide-descendants"
+							pointerEvents="none"
+							style={[{ position: "absolute", top: 0, left: 0, opacity: 0 }, textStyle]}
+						>
+							{placeholder}
+						</Text>
+					) : null}
 				</View>
 			)}
 			{suffix ? (
@@ -216,6 +236,7 @@ export function CodeBoxes({
 					<Box
 						key={i}
 						component="CodeBox"
+						hidden
 						bg="raised"
 						radius={radius.md}
 						style={{ flex: 1, height: 56, alignItems: "center", justifyContent: "center" }}

@@ -66,6 +66,7 @@ export function FirstSendSheet() {
 		<SheetScreen
 			title={t`Send to ${label}?`}
 			height={560}
+			closeIconSize={24}
 			ref={sheet}
 			onClose={closed}
 			footer={
