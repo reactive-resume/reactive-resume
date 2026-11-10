@@ -1,10 +1,10 @@
 // Zoom bar (COMPONENTS.md §16): the visible alternative to pinch and double-tap. Centred, `raised`, 12 dp corners,
 // `sh2`, padding 2 × 6, gap 2; items 48 × 48 (− and + icon buttons, Fit as a 48 dp tall small button with 12 dp
-// padding); 1 × 24 `line` separators with 4 dp margins. Drive a PageZoom through its handle.
+// padding); a 1 × 24 `line` separator with 4 dp margins before the optional trailing button (B18 and P1 dumps). Drive a PageZoom through its handle.
 import { t } from "@lingui/core/macro";
 import { StyleSheet, View } from "react-native";
-import { Touch } from "./base";
-import { Icon } from "./Icon";
+import { Box, Touch } from "./base";
+import { Icon, type IconName } from "./Icon";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { radius } from "./tokens";
@@ -14,39 +14,55 @@ export function ZoomBar({
 	onZoomOut,
 	onFit,
 	onZoomIn,
+	trailing,
+	compact = false,
 }: {
 	onZoomOut: () => void;
 	onFit: () => void;
 	onZoomIn: () => void;
+	/** A small ghost button after a separator, inside the bar ("Read as text" on B18 and P1). */
+	trailing?: { label: string; icon?: IconName | undefined; onPress: () => void } | undefined;
+	/** P1: no vertical padding and no gap between items (48 dp tall bar). */
+	compact?: boolean | undefined;
 }) {
 	const { colors, shadows } = useTheme();
 	const ref = useDesignTag({ kind: "component", component: "ZoomBar", radius: radius.lg, bg: "raised" });
-	const sep = <View style={[styles.sep, { backgroundColor: colors.line }]} />;
 	return (
 		<View
 			ref={ref}
 			collapsable={false}
-			style={[styles.bar, { backgroundColor: colors.raised, boxShadow: shadows.sh2 }]}
+			style={[styles.bar, compact ? styles.compact : null, { backgroundColor: colors.raised, boxShadow: shadows.sh2 }]}
 		>
-			<Touch
-				feedback="scale"
-				onPress={onZoomOut}
-				accessibilityLabel={t`Zoom out`}
-				style={styles.icon}
-				radius={radius.md}
-			>
-				<Icon name="minus" size={24} color="ink2" />
+			<Touch feedback="scale" onPress={onZoomOut} accessibilityLabel={t`Zoom out`} radius={radius.md}>
+				<Box component="IconButton" radius={radius.md} style={styles.icon}>
+					<Icon name="minus" size={24} color="ink2" />
+				</Box>
 			</Touch>
-			{sep}
-			<Touch feedback="scale" onPress={onFit} accessibilityLabel={t`Fit`} style={styles.fit}>
-				<Text variant="buttonSm" color="ink2">
-					{t`Fit`}
-				</Text>
+			<Touch feedback="scale" onPress={onFit} accessibilityLabel={t`Fit`}>
+				<Box component="Button" radius={radius.sm} style={styles.fit}>
+					<Text variant="buttonSm" color="ink2">
+						{t`Fit`}
+					</Text>
+				</Box>
 			</Touch>
-			{sep}
-			<Touch feedback="scale" onPress={onZoomIn} accessibilityLabel={t`Zoom in`} style={styles.icon} radius={radius.md}>
-				<Icon name="plus" size={24} color="ink2" />
+			<Touch feedback="scale" onPress={onZoomIn} accessibilityLabel={t`Zoom in`} radius={radius.md}>
+				<Box component="IconButton" radius={radius.md} style={styles.icon}>
+					<Icon name="plus" size={24} color="ink2" />
+				</Box>
 			</Touch>
+			{trailing ? (
+				<>
+					<View style={[styles.sep, { backgroundColor: colors.line }]} />
+					<Touch feedback="scale" onPress={trailing.onPress} accessibilityLabel={trailing.label}>
+						<Box component="Button" radius={radius.sm} style={styles.fit}>
+							{trailing.icon ? <Icon name={trailing.icon} size={16} color="ink2" /> : null}
+							<Text variant="buttonSm" color="ink2">
+								{trailing.label}
+							</Text>
+						</Box>
+					</Touch>
+				</>
+			) : null}
 		</View>
 	);
 }
@@ -61,7 +77,16 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 6,
 		borderRadius: radius.lg,
 	},
-	icon: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderRadius: radius.md },
-	fit: { height: 48, paddingHorizontal: 12, alignItems: "center", justifyContent: "center", borderRadius: radius.sm },
+	compact: { gap: 0, paddingVertical: 0 },
+	icon: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
+	fit: {
+		height: 48,
+		minWidth: 48,
+		paddingHorizontal: 12,
+		flexDirection: "row",
+		gap: 8,
+		alignItems: "center",
+		justifyContent: "center",
+	},
 	sep: { width: 1, height: 24, marginHorizontal: 4 },
 });

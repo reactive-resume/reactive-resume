@@ -256,7 +256,7 @@ export function SendButton({
 			testID="composer-send"
 		>
 			<Box
-				component="SendButton"
+				component="IconButton"
 				bg="accent"
 				radius={radius.md}
 				style={{ width: 40, height: 40, alignItems: "center", justifyContent: "center" }}
@@ -293,6 +293,11 @@ export function Composer({
 	autoFocus?: boolean | undefined;
 }) {
 	const { colors } = useTheme();
+	// Like TextField: the dump lists the drawn value or the placeholder, in its line box.
+	const textRef = useDesignTag(
+		{ kind: "text", text: value || placeholder, style: typeScale.body, color: value ? "ink" : "ink3" },
+		{ hidden: !(value || placeholder) },
+	);
 	return (
 		<View style={{ paddingTop: 12, paddingBottom: 8, paddingHorizontal: layout.screenMargin, gap: 8 }}>
 			<Box
@@ -302,18 +307,20 @@ export function Composer({
 				style={{ paddingTop: 10, paddingEnd: 8, paddingBottom: 8, paddingStart: 12, gap: 8 }}
 			>
 				<Ring color="controlBorder" radius={radius.xl} />
-				<TextInput
-					value={value}
-					onChangeText={onChangeText}
-					placeholder={placeholder}
-					placeholderTextColor={colors.ink3}
-					multiline
-					autoFocus={!!autoFocus}
-					caretHidden={STORYBOARD}
-					selectionColor={colors.accent}
-					accessibilityLabel={placeholder}
-					style={[typeScale.body, { padding: 0, color: colors.ink, maxHeight: 120, includeFontPadding: false }]}
-				/>
+				<View ref={textRef} collapsable={false}>
+					<TextInput
+						value={value}
+						onChangeText={onChangeText}
+						placeholder={placeholder}
+						placeholderTextColor={colors.ink3}
+						multiline
+						autoFocus={!!autoFocus}
+						caretHidden={STORYBOARD}
+						selectionColor={colors.accent}
+						accessibilityLabel={placeholder}
+						style={[typeScale.body, { padding: 0, color: colors.ink, maxHeight: 120, includeFontPadding: false }]}
+					/>
+				</View>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
 					<View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6 }}>{chips}</View>
 					<SendButton
@@ -367,7 +374,7 @@ export function ConnectionChip({ label, onPress }: { label: string; onPress?: ((
 			hitSlop={hitSlopFor(48, 32)}
 		>
 			<Box
-				component="ConnectionChip"
+				component="Chip"
 				bg="sunken"
 				radius={radius.sm}
 				style={{ height: 32, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", gap: 6 }}
@@ -376,7 +383,7 @@ export function ConnectionChip({ label, onPress }: { label: string; onPress?: ((
 				<Text variant="chip" color="ink2" numberOfLines={1}>
 					{label}
 				</Text>
-				<Icon name="caret-down" size={14} color="ink2" />
+				<Icon name="caret-down" size={16} color="ink2" />
 			</Box>
 		</Touch>
 	);

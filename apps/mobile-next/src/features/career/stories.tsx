@@ -13,10 +13,12 @@ import {
 	ListRow,
 	Menu,
 	MenuItem,
+	PageSubtitle,
 	PushScreen,
 	SectionHeading,
 	Text,
 	TextField,
+	TextLink,
 	Touch,
 } from "@/ui";
 
@@ -89,7 +91,9 @@ export function StoryScreen() {
 	return (
 		<PushScreen
 			title={data?.title}
-			subtitle={backend.kind === "fake" ? t`Used in 2 interview briefings` : undefined}
+			subtitle={
+				backend.kind === "fake" ? <PageSubtitle status>{t`Used in 2 interview briefings`}</PageSubtitle> : undefined
+			}
 			barEnd={
 				editing ? (
 					<Button label={t`Done`} tone="accentGhost" disabled={saving} onPress={() => void save()} />
@@ -134,7 +138,13 @@ export function StoryScreen() {
 						{parts.map((part) => (
 							<View key={part}>
 								<SectionHeading title={names[part]} />
-								<View style={{ paddingHorizontal: 24, paddingTop: 4 }}>
+								<View
+									style={{
+										paddingHorizontal: 24,
+										paddingTop: editing === part || data[part] ? 4 : 12,
+										paddingBottom: editing === part || data[part] ? 0 : 12,
+									}}
+								>
 									{editing === part ? (
 										<TextField
 											accessibilityLabel={names[part]}
@@ -155,11 +165,9 @@ export function StoryScreen() {
 											<Text variant="prose">{data[part]}</Text>
 										</Touch>
 									) : (
-										<Button
+										<TextLink
 											label={part === "reflection" ? t`Add what you'd do differently` : t`Add ${names[part]}`}
 											icon="plus"
-											tone="accentGhost"
-											size="lg"
 											onPress={() => {
 												setDraft(data);
 												setEditing(part);

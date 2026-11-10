@@ -126,27 +126,9 @@ export function CoachScreen() {
 					<Bubble>{copy[1] ?? ""}</Bubble>
 					<View style={{ gap: 8 }}>
 						<Text variant="body">{t`Two of your open roles meet your must-haves:`}</Text>
-						<View style={{ flexDirection: "row" }}>
-							<Text variant="body" style={{ width: 20 }}>
-								1.
-							</Text>
-							<Text variant="body" style={{ flex: 1 }}>
-								<Text variant="body" weight={600} tag={false}>
-									{copy[4]}
-								</Text>
-								{copy[3]}
-							</Text>
-						</View>
-						<View style={{ flexDirection: "row" }}>
-							<Text variant="body" style={{ width: 20 }}>
-								2.
-							</Text>
-							<Text variant="body" style={{ flex: 1 }}>
-								<Text variant="body" weight={600} tag={false}>
-									{copy[6]}
-								</Text>
-								{copy[5]}
-							</Text>
+						<View style={{ gap: 6 }}>
+							<ReplyItem number="1." lead={copy[4] ?? ""} rest={copy[3] ?? ""} />
+							<ReplyItem number="2." lead={copy[6] ?? ""} rest={copy[5] ?? ""} />
 						</View>
 						<Text variant="body">{t`Parcel & Co. asks for 3 office days, above your limit of 2.`}</Text>
 					</View>
@@ -156,7 +138,7 @@ export function CoachScreen() {
 						<UsedChip label="kiln.studio" icon="globe-simple" />
 					</View>
 					{remember ? (
-						<Card padding={16} gap={12}>
+						<Card tone="infoSoft" padding={16} gap={12}>
 							<Text variant="body">{t`Remember “At most 2 office days a week”?`}</Text>
 							<View style={{ flexDirection: "row", gap: 12 }}>
 								<Button label={t`Remember`} onPress={() => void save()} />
@@ -182,5 +164,34 @@ export function ConversationsScreen() {
 		<PushScreen title={t`Conversations`}>
 			<ListRow title={t`Conversations are unavailable in this build.`} wrapTitle last />
 		</PushScreen>
+	);
+}
+
+/** A numbered reply item with its bold lead word. The bold run is drawn on top so the dump can measure it. */
+function ReplyItem({ number, lead, rest }: { number: string; lead: string; rest: string }) {
+	return (
+		<View style={{ flexDirection: "row" }}>
+			{/* An outside list marker, right-aligned against the text as the board draws it. */}
+			<Text variant="body" align="right" style={{ width: 20, paddingEnd: 5 }}>
+				{number}
+			</Text>
+			<View style={{ flex: 1 }}>
+				<Text variant="body">
+					<Text variant="body" weight={600} tag={false} style={{ color: "transparent" }}>
+						{lead}
+					</Text>
+					{rest}
+				</Text>
+				<Text
+					variant="body"
+					weight={600}
+					accessibilityElementsHidden
+					importantForAccessibility="no-hide-descendants"
+					style={{ position: "absolute", top: 0, start: 0 }}
+				>
+					{lead}
+				</Text>
+			</View>
+		</View>
 	);
 }

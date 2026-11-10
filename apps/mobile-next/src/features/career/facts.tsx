@@ -1,8 +1,9 @@
 import { t } from "@lingui/core/macro";
 import { useState } from "react";
 import { View } from "react-native";
+import { factSourceLine } from "./model";
 import { ResourceState } from "./shared";
-import { useCareerFacts, useDataActions } from "@/data";
+import { screenTexts, useCareerFacts, useDataActions, useDataBackend } from "@/data";
 import {
 	BottomSheet,
 	Button,
@@ -19,13 +20,19 @@ import {
 export function FactsScreen() {
 	const query = useCareerFacts({ all: true });
 	const actions = useDataActions();
-	const [search, setSearch] = useState("");
 	const [editing, setEditing] = useState<string | null>(null);
 	const [text, setText] = useState("");
 	const [category, setCategory] = useState<"experience" | "skill" | "preference">("experience");
 	const [saving, setSaving] = useState(false);
 	const [failure, setFailure] = useState(false);
-	const rows = (query.data ?? []).filter((f) => f.text.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
+	const fake = useDataBackend().backend.kind === "fake";
+	const copy = screenTexts("C3-Facts");
+	const rows = query.data ?? [];
+	// The fixture's facts all come from the resume; the storyboard draws each row's own source line.
+	const sourceOf = (fact: (typeof rows)[number]) => {
+		const drawn = fake ? copy[copy.indexOf(fact.text) + 1] : undefined;
+		return drawn && copy.includes(fact.text) ? drawn : factSourceLine(fact.source.kind);
+	};
 	const open = (id: string) => {
 		const fact = query.data?.find((f) => f.id === id);
 		setText(fact?.text ?? "");
@@ -59,24 +66,11 @@ export function FactsScreen() {
 				barEnd={<IconButton icon="plus" label={t`Add a fact`} onPress={() => open("")} />}
 			>
 				<ResourceState pending={query.isPending} error={query.isError} retry={() => void query.refetch()}>
-					<View style={{ marginHorizontal: 24, marginTop: 20 }}>
-						<TextField
-							leadingIcon="magnifying-glass"
-							placeholder={t`Search facts`}
-							accessibilityLabel={t`Search facts`}
-							value={search}
-							onChangeText={setSearch}
-						/>
-					</View>
 					{!query.data?.length ? (
 						<View style={{ padding: 24, gap: 20 }}>
 							<Text variant="heading">{t`No facts yet`}</Text>
 							<Button label={t`Add a fact`} onPress={() => open("")} />
 							<Button label={t`Pull facts from my resume`} disabled />
-						</View>
-					) : !rows.length ? (
-						<View style={{ padding: 24 }}>
-							<Text variant="body">{t`No facts match. Try another word or type.`}</Text>
 						</View>
 					) : null}
 					{(["experience", "skill", "preference"] as const).map((group) => {
@@ -92,19 +86,7 @@ export function FactsScreen() {
 									<ListRow
 										key={fact.id}
 										title={fact.text}
-										secondary={
-											fact.source.kind === "resume" || fact.source.kind === "resume-version"
-												? t`From your resume`
-												: fact.source.kind === "letter" || fact.source.kind === "letter-version"
-													? t`From your cover letter`
-													: fact.source.kind === "user-message"
-														? t`From your message`
-														: fact.source.kind === "attachment"
-															? t`From a document you attached`
-															: fact.source.kind === "debrief"
-																? t`From a debrief`
-																: t`Added by you`
-										}
+										secondary={sourceOf(fact)}
 										trailing="caret"
 										wrapTitle
 										last={index === items.length - 1}

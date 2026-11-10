@@ -81,10 +81,13 @@ export function Card({
 	focused = false,
 	padding = 20,
 	gap = 10,
+	tone = "surface",
 	style,
 }: {
 	children: ReactNode;
 	focused?: boolean | undefined;
+	/** `infoSoft`: the question and remember cards (B16, C2): info-soft fill, the 1 dp border transparent. */
+	tone?: "surface" | "infoSoft" | undefined;
 	padding?: number | undefined;
 	gap?: number | undefined;
 	style?: StyleProp<ViewStyle>;
@@ -93,10 +96,10 @@ export function Card({
 	return (
 		<Box
 			component="Card"
-			bg="surface"
+			bg={tone}
 			radius={radius.xl}
 			style={[
-				{ borderWidth: 1, borderColor: colors.line, padding, gap },
+				{ borderWidth: 1, borderColor: tone === "infoSoft" ? "transparent" : colors.line, padding, gap },
 				focused ? { boxShadow: `0px 0px 0px 2px ${colors.accent}` } : null,
 				style,
 			]}
@@ -259,16 +262,17 @@ export function ContextChip({
 	return (
 		<Touch onPress={onRemove} accessibilityLabel={`Remove ${label}`} hitSlop={hitSlopFor(48, 32)}>
 			<Box
-				component="ContextChip"
+				component="Chip"
 				bg="sunken"
 				radius={radius.sm}
 				style={{ height: 32, paddingStart: 10, paddingEnd: 6, flexDirection: "row", alignItems: "center", gap: 6 }}
 			>
-				{icon ? <Icon name={icon} size={14} color="ink2" /> : null}
-				<Text variant="caption" color="ink2" numberOfLines={1}>
+				{/* B16 and C2 dumps: tagged Chip, 16 dp icons, 12/18 text. */}
+				{icon ? <Icon name={icon} size={16} color="ink2" /> : null}
+				<Text variant="caption" color="ink2" numberOfLines={1} style={{ lineHeight: 18 }}>
 					{label}
 				</Text>
-				<Icon name="x" size={14} color="ink2" />
+				<Icon name="x" size={16} color="ink2" />
 			</Box>
 		</Touch>
 	);

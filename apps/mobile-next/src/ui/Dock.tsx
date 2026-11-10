@@ -1,5 +1,5 @@
 import type { BottomTabBarProps } from "expo-router/js-tabs";
-import { useIsFocused } from "expo-router";
+import { useNavigation, useRoute } from "expo-router";
 // Dock (COMPONENTS.md §15, MOTION.md §5, §6.3): root tabs, builder modes, letter modes. 1 dp `line` on top, `bg`,
 // 64 dp plus the bottom safe area, 8 dp sides, items share the width. The selection changes at once on tap (fill
 // icon swap, ink-2 → accent-text crossfade d1); content switches by fade-through (FadeThroughProvider). Builder and
@@ -229,9 +229,19 @@ export function DockTabBar({
 }
 
 /** A dock screen's root: fades out and up through the provider. */
+const isSelected = (state: { index: number; routes: { key: string }[] } | undefined, key: string) =>
+	state ? state.routes[state.index]?.key === key : true;
+
 export function DockScene({ children }: { children: ReactNode }) {
-	const focused = useIsFocused();
-	return <FadeThroughScene focused={focused}>{children}</FadeThroughScene>;
+	// Selected in its own dock, not "focused": a sheet or dialog route over the tab must leave it visible (C7, D2…).
+	const route = useRoute();
+	const navigation = useNavigation();
+	const [selected, setSelected] = useState(() => isSelected(navigation.getState(), route.key));
+	useEffect(
+		() => navigation.addListener("state", () => setSelected(isSelected(navigation.getState(), route.key))),
+		[navigation, route.key],
+	);
+	return <FadeThroughScene focused={selected}>{children}</FadeThroughScene>;
 }
 
 const styles = StyleSheet.create({

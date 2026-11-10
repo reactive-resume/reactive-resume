@@ -43,7 +43,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Touch } from "./base";
+import { Box, Touch } from "./base";
 import { DiscardDialog } from "./Dialog";
 import { Icon } from "./Icon";
 import {
@@ -109,6 +109,8 @@ export type BottomSheetProps = {
 	 * the token), and a 24 × 24 marker 4 dp below the sheet's top edge.
 	 */
 	labMarker?: { scrim?: string; top?: string };
+	/** The close glyph: 20 dp (D2, D3, B14) or 24 dp (B19, B21, C7, J7, J8, S7), as each sheet's dump draws it. */
+	closeIconSize?: 20 | 24;
 };
 
 type SheetContext = { scrollY: SharedValue<number>; pan: GestureType };
@@ -127,6 +129,7 @@ export function BottomSheet({
 	ref,
 	labMarker,
 	startOpenAt,
+	closeIconSize = 20,
 }: BottomSheetProps) {
 	const { colors, shadows } = useTheme();
 	const { reduced, overlayFade } = useMotionPolicy();
@@ -317,14 +320,10 @@ export function BottomSheet({
 						<View ref={titleRef} accessible accessibilityRole="header" style={styles.title}>
 							<Text variant="sheetTitle">{title}</Text>
 						</View>
-						<Touch
-							feedback="scale"
-							onPress={requestClose}
-							accessibilityLabel={t`Close`}
-							hitSlop={hitSlopFor(44, 44)}
-							style={styles.close}
-						>
-							<Icon name="x" size={20} color="ink2" />
+						<Touch feedback="scale" onPress={requestClose} accessibilityLabel={t`Close`} hitSlop={hitSlopFor(44, 44)}>
+							<Box component="IconButton" radius={radius.md} style={styles.close}>
+								<Icon name="x" size={closeIconSize} color="ink2" />
+							</Box>
 						</Touch>
 					</View>
 					<Ctx.Provider value={{ scrollY, pan }}>
@@ -425,6 +424,7 @@ const styles = StyleSheet.create({
 		paddingEnd: 12,
 		paddingBottom: 4,
 		paddingStart: 24,
+		gap: 8,
 	},
 	title: { flex: 1 },
 	close: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
