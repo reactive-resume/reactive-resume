@@ -34,18 +34,18 @@ export function SettingsScreen() {
 	const queued = useQueuedWrites();
 	const network = useNetworkState();
 	const view = useStoryboardView();
-	const params = useLocalSearchParams<{ signout?: string; queued?: string }>();
-	// Storyboard: `signout` opens S8 at once, `queued` makes the Sign out link find three queued changes.
-	const preset = STORYBOARD && params.signout ? storyboardSignOut(params.signout) : null;
+	const params = useLocalSearchParams<{ queued?: string }>();
+	// Storyboard: `queued` makes the Sign out link find three queued changes (S8 itself: src/dev/storyboard/backdrop.tsx).
 	const queuedPreset = STORYBOARD && params.queued ? storyboardSignOut(params.queued) : null;
 	const [dialog, setDialog] = useState<{
 		counts: PendingCounts;
 		initial: SignOutStep;
 		open: boolean;
 		key: number;
-	} | null>(preset ? { counts: preset.counts, initial: preset.initial, open: true, key: 0 } : null);
-	const stage = preset ?? queuedPreset;
-	const offline = stage ? stage.offline : network.isConnected === false || network.isInternetReachable === false;
+	} | null>(null);
+	const offline = queuedPreset
+		? queuedPreset.offline
+		: network.isConnected === false || network.isInternetReachable === false;
 	const guest = session.status === "guest";
 
 	const defaultProvider = providers.data?.find((p) => p.isDefault) ?? providers.data?.[0];
@@ -92,78 +92,73 @@ export function SettingsScreen() {
 				) : null
 			}
 		>
-			{/* S8 draws only the bar and title under its scrim. */}
-			{preset ? null : (
-				<>
-					<View style={{ marginTop: 16 }}>
-						<ListRow
-							title={name}
-							secondary={guest ? t`Create account` : account.data?.email}
-							leading={<Avatar initials={guest ? "?" : initialsOf(account.data?.name)} size={56} />}
-							trailing="caret"
-							last
-							onPress={() => router.push(guest ? "/register" : "/settings/account")}
-						/>
-					</View>
-					<View style={{ marginTop: 12 }}>
-						<ListRow
-							title={t`Account and security`}
-							leading={<IconTile icon="shield-check" />}
-							trailing="caret"
-							top
-							onPress={() => router.push("/settings/account")}
-						/>
-						<ListRow
-							title={t`Preferences`}
-							secondary={t`Appearance, language, notifications`}
-							leading={<IconTile icon="sliders-horizontal" />}
-							trailing="caret"
-							onPress={() => router.push("/settings/preferences")}
-						/>
-						<ListRow
-							title={t`Application profile`}
-							secondary={t`Details for job forms`}
-							leading={<IconTile icon="identification-card" />}
-							trailing="caret"
-							onPress={() => router.push("/settings/profile")}
-						/>
-						<ListRow
-							title={t`AI and developer`}
-							secondary={aiLine}
-							leading={<IconTile icon="sparkle" />}
-							trailing="caret"
-							last
-							onPress={() => router.push("/settings/ai")}
-						/>
-					</View>
-					<SectionHeading title={t`About`} />
-					<ListRow title={t`Help and feedback`} trailing="caret" onPress={() => open("https://docs.rxresu.me")} />
-					<ListRow
-						title={t`Privacy and terms`}
-						trailing="caret"
-						onPress={() => open("https://docs.rxresu.me/legal/privacy-policy")}
-					/>
-					<ListRow
-						title={t`Version`}
-						value={`${view?.version ?? Constants.expoConfig?.version ?? ""} · ${hostOf(session.server)}`}
-						last
-						boxHidden
-					/>
-					{guest ? null : (
-						<Touch
-							onPress={() => void startSignOut()}
-							accessibilityRole="button"
-							accessibilityLabel={t`Sign out`}
-							hitSlop={hitSlopFor(57, 44)}
-							style={{ alignSelf: "flex-start", marginTop: 12, marginHorizontal: 24, paddingVertical: 12 }}
-							testID="settings-sign-out"
-						>
-							<Text variant="textLink" color="dangerText">
-								{t`Sign out`}
-							</Text>
-						</Touch>
-					)}
-				</>
+			<View style={{ marginTop: 16 }}>
+				<ListRow
+					title={name}
+					secondary={guest ? t`Create account` : account.data?.email}
+					leading={<Avatar initials={guest ? "?" : initialsOf(account.data?.name)} size={56} />}
+					trailing="caret"
+					last
+					onPress={() => router.push(guest ? "/register" : "/settings/account")}
+				/>
+			</View>
+			<View style={{ marginTop: 12 }}>
+				<ListRow
+					title={t`Account and security`}
+					leading={<IconTile icon="shield-check" />}
+					trailing="caret"
+					top
+					onPress={() => router.push("/settings/account")}
+				/>
+				<ListRow
+					title={t`Preferences`}
+					secondary={t`Appearance, language, notifications`}
+					leading={<IconTile icon="sliders-horizontal" />}
+					trailing="caret"
+					onPress={() => router.push("/settings/preferences")}
+				/>
+				<ListRow
+					title={t`Application profile`}
+					secondary={t`Details for job forms`}
+					leading={<IconTile icon="identification-card" />}
+					trailing="caret"
+					onPress={() => router.push("/settings/profile")}
+				/>
+				<ListRow
+					title={t`AI and developer`}
+					secondary={aiLine}
+					leading={<IconTile icon="sparkle" />}
+					trailing="caret"
+					last
+					onPress={() => router.push("/settings/ai")}
+				/>
+			</View>
+			<SectionHeading title={t`About`} />
+			<ListRow title={t`Help and feedback`} trailing="caret" onPress={() => open("https://docs.rxresu.me")} />
+			<ListRow
+				title={t`Privacy and terms`}
+				trailing="caret"
+				onPress={() => open("https://docs.rxresu.me/legal/privacy-policy")}
+			/>
+			<ListRow
+				title={t`Version`}
+				value={`${view?.version ?? Constants.expoConfig?.version ?? ""} · ${hostOf(session.server)}`}
+				last
+				boxHidden
+			/>
+			{guest ? null : (
+				<Touch
+					onPress={() => void startSignOut()}
+					accessibilityRole="button"
+					accessibilityLabel={t`Sign out`}
+					hitSlop={hitSlopFor(57, 44)}
+					style={{ alignSelf: "flex-start", marginTop: 12, marginHorizontal: 24, paddingVertical: 12 }}
+					testID="settings-sign-out"
+				>
+					<Text variant="textLink" color="dangerText">
+						{t`Sign out`}
+					</Text>
+				</Touch>
 			)}
 		</PushScreen>
 	);

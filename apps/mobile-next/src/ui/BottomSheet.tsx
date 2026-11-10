@@ -424,10 +424,10 @@ const styles = StyleSheet.create({
 		paddingEnd: 12,
 		paddingBottom: 4,
 		paddingStart: 24,
+		// 8 dp before the close button: every sheet dump measures the title slot 302 dp wide.
 		gap: 8,
 	},
-	// 8 dp before the close button: every sheet dump measures the title slot 302 dp wide.
-	title: { flex: 1, marginEnd: 8 },
+	title: { flex: 1 },
 	close: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
 	content: { flex: 1, overflow: "hidden" },
 	labTop: { position: "absolute", top: 4, left: 183, width: 24, height: 24 },

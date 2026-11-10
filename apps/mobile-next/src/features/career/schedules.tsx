@@ -208,6 +208,8 @@ function ScheduleEditor({ schedule }: ScheduleEditorProps) {
 						}
 						secondary={t`Your provider may charge for each run`}
 						last
+						// The board's last row (no divider) registers no ListRow box of its own.
+						boxHidden
 						trailing="caret"
 						onPress={() => setChoosingProvider(true)}
 					/>

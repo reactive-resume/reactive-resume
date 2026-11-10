@@ -169,6 +169,7 @@ export function TodayScreen() {
 							secondary={t`Match the resume, write the letter, track it`}
 							leading={<Monogram letters="3" numeral />}
 							last
+							boxHidden
 						/>
 					</FirstRunPart>
 				</>

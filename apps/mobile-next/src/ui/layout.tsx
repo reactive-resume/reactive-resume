@@ -80,13 +80,7 @@ export function RootHeader({
 					minHeight: 54,
 				}}
 			>
-				{/* 2 dp under the title puts its line box at the board's 57.5; Text's iOS glyph shift then lands the ink. */}
-				<Text
-					variant="rootTitle"
-					accessibilityRole="header"
-					numberOfLines={1}
-					style={{ flexShrink: 1, marginBottom: 2 }}
-				>
+				<Text variant="rootTitle" accessibilityRole="header" numberOfLines={1} style={{ flexShrink: 1 }}>
 					{title}
 				</Text>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingBottom: 2 }}>

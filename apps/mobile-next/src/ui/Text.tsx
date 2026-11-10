@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
-import type { TextProps as RNTextProps, TextStyle } from "react-native";
-import { PixelRatio, Platform, StyleSheet, Text as RNText } from "react-native";
+import type { HostInstance, TextProps as RNTextProps, TextStyle } from "react-native";
+import { type ReactNode, useRef } from "react";
+import { Platform, StyleSheet, Text as RNText, View } from "react-native";
 import { useTheme } from "./theme";
 import { type ColorToken, fonts, textDefaults, type as typeScale, type TypeToken } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
+import { runsBox, useDesignTag } from "@/dev/storyboard/harness";
 
 const uiFamily = { 400: fonts.ui400, 500: fonts.ui500, 600: fonts.ui600, 700: fonts.ui700 } as const;
 
@@ -17,16 +17,25 @@ const maxScale = (family: string) => (family === fonts.display ? 1.5 : 2);
  */
 const glyphShift: Partial<Record<TypeToken, number>> =
 	Platform.select<Partial<Record<TypeToken, number>>>({
-		ios: { rootTitle: 0.5 },
+		ios: {},
 		android: { rootTitle: -1, pageTitle: -1, sheetTitle: -1, keyLine: -1, ui: -0.5 },
 		default: {},
 	}) ?? {};
 
 /**
- * iOS lays every Text out one device pixel taller than lines × line height (24.33 for a 24 pt line at 3x; measured,
- * FIDELITY-LOG.md). The extra pixel is taken back so stacked text never drifts from the storyboard's line boxes.
+ * iOS rounds a text's measured height up to the next device pixel, and an exact line height measures a hair over, so
+ * every Text laid out one device pixel taller than lines × line height (24.33 at 3x) and stacked rows drifted. A line
+ * height a hundredth under the token measures exactly lines × line height (onLayout, every style, one and two lines;
+ * FIDELITY-LOG.md); the glyphs don't move.
  */
-const lineBoxFix = Platform.OS === "ios" ? { marginBottom: -1 / PixelRatio.get() } : null;
+const iosLineBox = (lineHeight: number) => (Platform.OS === "ios" ? { lineHeight: lineHeight - 0.01 } : null);
+
+/**
+ * iOS rootTitle: Instrument Serif's ink sits higher in the line box than in the storyboard's CSS. The box is measured
+ * with any transform, so a translate moves box and ink together; this moves the ink only (padding inside the box, the
+ * same amount taken back below so the layout flow is unchanged). FIDELITY-LOG.md has the measurements.
+ */
+const inkOffset: Partial<Record<TypeToken, number>> = Platform.OS === "ios" ? { rootTitle: 2 / 3 } : {};
 
 const flatten = (children: ReactNode): string => {
 	if (children == null || typeof children === "boolean") return "";
@@ -60,25 +69,29 @@ export function Text({
 }: TextProps) {
 	const { colors } = useTheme();
 	const base = typeScale[variant];
-	const fontFamily =
-		weight && base.fontFamily !== fonts.display && base.fontFamily !== fonts.mono ? uiFamily[weight] : base.fontFamily;
 	// The tag reports the style actually drawn, overrides included.
-	const override = style ? StyleSheet.flatten(style) : undefined;
+	const own = StyleSheet.flatten(style) ?? {};
+	const fontFamily =
+		own.fontFamily ??
+		(weight && base.fontFamily !== fonts.display && base.fontFamily !== fonts.mono
+			? uiFamily[weight]
+			: base.fontFamily);
 	const ref = useDesignTag(
 		{
 			kind: "text",
 			text: flatten(children),
 			style: {
-				fontFamily: override?.fontFamily ?? fontFamily,
-				fontSize: override?.fontSize ?? base.fontSize,
-				lineHeight: override?.lineHeight ?? base.lineHeight,
-				fontWeight: override?.fontWeight,
+				fontFamily,
+				fontSize: own.fontSize ?? base.fontSize,
+				lineHeight: own.lineHeight ?? base.lineHeight,
+				fontWeight: own.fontWeight,
 			},
 			color,
 		},
 		{ hidden: !tag },
 	);
 	const shift = glyphShift[variant];
+	const ink = inkOffset[variant];
 	return (
 		<RNText
 			ref={ref}
@@ -86,15 +99,64 @@ export function Text({
 			{...rest}
 			style={[
 				textDefaults,
-				lineBoxFix,
 				base,
 				{ fontFamily, color: colors[color] },
 				align ? { textAlign: align } : null,
 				shift ? { transform: [{ translateY: shift }] } : null,
+				ink ? { paddingTop: ink, marginBottom: -ink } : null,
 				style,
+				iosLineBox(own.lineHeight ?? base.lineHeight),
 			]}
 		>
 			{children}
 		</RNText>
+	);
+}
+
+/**
+ * One paragraph block whose own text is `before` and `after`, with other elements (a list) between them: the coach's
+ * reply (C2). Reads as one accessible group and reports one text, the two runs joined, as the boards measure it.
+ */
+export function TextBlock({
+	before,
+	after,
+	variant = "body",
+	color = "ink",
+	gap = 8,
+	children,
+}: {
+	before: string;
+	after: string;
+	variant?: TypeToken;
+	color?: ColorToken;
+	gap?: number;
+	children: ReactNode;
+}) {
+	const first = useRef<HostInstance>(null);
+	const last = useRef<HostInstance>(null);
+	const base = typeScale[variant];
+	const ref = useDesignTag(
+		{
+			kind: "text",
+			text: before + after,
+			style: { fontFamily: base.fontFamily, fontSize: base.fontSize, lineHeight: base.lineHeight },
+			color,
+		},
+		{ box: () => runsBox(ref, [first, last])() },
+	);
+	return (
+		<View ref={ref} accessible style={{ gap }}>
+			<View ref={first}>
+				<Text variant={variant} color={color} tag={false}>
+					{before}
+				</Text>
+			</View>
+			{children}
+			<View ref={last}>
+				<Text variant={variant} color={color} tag={false}>
+					{after}
+				</Text>
+			</View>
+		</View>
 	);
 }

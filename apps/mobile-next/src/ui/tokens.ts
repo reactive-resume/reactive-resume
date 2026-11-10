@@ -129,11 +129,13 @@ const ui = (w: 400 | 500 | 600 | 700, size: number, lh: number): TextToken => ({
 	fontSize: size,
 	lineHeight: lh,
 });
+// No letterSpacing when it is 0: React Native on iOS passes any letterSpacing as NSKern, and an explicit 0 turns off
+// the font's kerning (Instrument Serif's GPOS pairs), which drew "Cover letters" 1.2 dp wider than the boards.
 const serif = (size: number, lh: number, ls = 0): TextToken => ({
 	fontFamily: fonts.display,
 	fontSize: size,
 	lineHeight: lh,
-	letterSpacing: ls,
+	...(ls ? { letterSpacing: ls } : {}),
 });
 const mono = (size: number, lh: number): TextToken => ({ fontFamily: fonts.mono, fontSize: size, lineHeight: lh });
 

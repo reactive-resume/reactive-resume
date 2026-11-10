@@ -143,6 +143,7 @@ function ScopedTrashScreen() {
 					trailing={restoreButton(item)}
 					onPress={() => setSelection(item)}
 					last={last}
+					boxHidden={last}
 					testID={`trash-${item.ref.id}`}
 				/>
 			</SwipeRow>

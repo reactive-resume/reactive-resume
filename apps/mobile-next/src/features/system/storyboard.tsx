@@ -40,6 +40,7 @@ export function NotificationContentScreen() {
 					<Box
 						key={item.head}
 						component="NotificationContent"
+						hidden
 						bg="raised"
 						radius={radius.xl}
 						style={{ paddingHorizontal: 13, paddingVertical: 11, gap: 4 }}
@@ -71,7 +72,7 @@ export function NotificationContentScreen() {
 						{copy[14]}
 					</Text>
 				</View>
-				<Box component="TodayWidget" bg="raised" radius={radius.dialog} style={{ padding: 15, gap: 8 }}>
+				<Box component="TodayWidget" hidden bg="raised" radius={radius.dialog} style={{ padding: 15, gap: 8 }}>
 					<Ring color="line" radius={radius.dialog} />
 					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
 						<Text variant="sheetTitle">{copy[15]}</Text>
@@ -102,6 +103,7 @@ export function NotificationContentScreen() {
 				<View style={{ flexDirection: "row", gap: 12 }}>
 					<Box
 						component="NextInterviewWidget"
+						hidden
 						bg="raised"
 						radius={radius.dialog}
 						style={{ width: 150, height: 150, padding: 15, justifyContent: "space-between" }}
@@ -119,6 +121,7 @@ export function NotificationContentScreen() {
 					</Box>
 					<Box
 						component="QuickActions"
+						hidden
 						bg="raised"
 						radius={radius.lg}
 						style={{ flex: 1, alignSelf: "flex-start", padding: 1, boxShadow: shadows.sh2 }}
