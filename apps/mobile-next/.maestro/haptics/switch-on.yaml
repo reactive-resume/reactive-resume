@@ -1,11 +1,10 @@
-# MOTION.md §10.3 "Turn on B11 Publish" → toggleOn, proved on the design-system Switch in the motion lab
-# (a real tap on the drawn switch). The B11 flow replaces the lab once the screen exists.
 appId: me.rxresu.storyboard
 ---
+- openLink: me.rxresu.storyboard://storyboard/B11-Share?theme=light
+- assertVisible: Public link
+- tapOn: Public link
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
-- openLink: me.rxresu.storyboard://motion-lab/switch
-- tapOn:
-    label: Publish
+- tapOn: Public link
 - assertVisible:
     id: haptic-log
     text: toggleOn

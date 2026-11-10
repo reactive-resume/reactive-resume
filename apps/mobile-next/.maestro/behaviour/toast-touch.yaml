@@ -1,0 +1,13 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- longPressOn:
+    id: document-resume-lead
+- tapOn: Move to Trash
+- assertVisible: “Design lead” moved to Trash
+- longPressOn:
+    text: “Design lead” moved to Trash
+    duration: 10000
+- assertVisible: “Design lead” moved to Trash
+- tapOn: Undo
+- assertVisible: Design lead

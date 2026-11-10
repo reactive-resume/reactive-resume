@@ -1,0 +1,16 @@
+# Blocked: real board drag missing. Lead must calibrate edge hold when BoardDrag is integrated.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J2-Board?theme=light
+- tapOn: Interviewing · 4 of 6
+- tapOn: Saved
+- assertVisible: Kiln Studio
+- swipe:
+    start: 50%, 44%
+    end: 96%, 44%
+    duration: 1600
+- assertVisible: What did you send?
+- tapOn: Close
+- assertNotVisible: What did you send?
+- assertVisible: Kiln Studio
+- assertVisible: Saved

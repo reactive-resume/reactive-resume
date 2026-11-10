@@ -1,0 +1,14 @@
+# Blocked on native Files destination selection; opening a picker is not a successful export.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/S1-Settings?theme=light
+- openLink: me.rxresu.storyboard://settings?queued=offline
+- tapOn:
+    id: settings-sign-out
+- tapOn: Export a copy first
+# Native Files picker: lead supplies platform-specific destination selection before this assertion.
+- assertVisible: Saved to Files
+- assertVisible: 3 changes haven't synced
+- tapOn: Keep working
+- assertVisible:
+    id: settings-sign-out

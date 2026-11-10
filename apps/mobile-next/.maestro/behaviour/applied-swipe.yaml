@@ -1,0 +1,15 @@
+# Kiln is Saved; lead must calibrate swipe to its row. Cancellation must retain Saved.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J1-List?theme=light
+- scrollUntilVisible:
+    element: Kiln Studio
+- swipe:
+    start: 15%, 75%
+    end: 85%, 75%
+    duration: 600
+- assertVisible: What did you send?
+- tapOn: Close
+- assertNotVisible: What did you send?
+- assertVisible: Kiln Studio
+- assertVisible: Saved

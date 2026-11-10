@@ -1,0 +1,13 @@
+# BLOCKED draft: native date/time picker setup missing. Save interview currently always reports an error.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J8-Interview?theme=light
+- tapOn: Starts
+# Lead: select 25 October 2026, 02:30 in the native picker (Berlin zone) before Done.
+# Native picker has no app-owned testID; do not treat this draft as automated DST proof.
+- tapOn: Done
+- assertVisible: Which 02:30?
+- assertVisible: 02:30 CEST, UTC+02 (first)
+- assertVisible: 02:30 CET, UTC+01 (second)
+- tapOn: 02:30 CET, UTC+01 (second)
+- assertNotVisible: Which 02:30?

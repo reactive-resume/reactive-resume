@@ -1,9 +1,12 @@
-# MOTION.md §10.3 "Tap a root tab" → (empty): root tabs are navigation, the Dock plays nothing.
 appId: me.rxresu.storyboard
 ---
+- openLink: me.rxresu.storyboard://storyboard/T1-Today?theme=light
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
-- openLink: me.rxresu.storyboard://motion-lab/tab
 - tapOn: Documents
+- tapOn:
+    id: document-resume-lead
+- tapOn:
+    id: top-bar-back
 - assertVisible:
     id: haptic-log
     text: ""

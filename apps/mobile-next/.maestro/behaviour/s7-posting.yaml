@@ -1,0 +1,25 @@
+# Clean storyboard sandbox required. Uses real request guard, repeats same kind, changes fake key, requests again. File/audio also need native picker/microphone setup; see README.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/W5-Messages?theme=light
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/W5-Messages?theme=light
+- tapOn: Redraft
+- assertVisible: Send to Work OpenAI?
+- assertVisible: "Don't ask again for postings"
+- tapOn:
+    id: first-send-send
+- assertNotVisible: Send to Work OpenAI?
+- openLink: me.rxresu.storyboard://applications/fieldnote/messages
+- tapOn: Redraft
+- assertNotVisible: Send to Work OpenAI?
+- openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
+- tapOn: API key
+- inputText: storyboard-replacement-key
+- hideKeyboard
+- tapOn:
+    id: provider-save
+- openLink: me.rxresu.storyboard://applications/fieldnote/messages
+- tapOn: Redraft
+- assertVisible: Send to Work OpenAI?

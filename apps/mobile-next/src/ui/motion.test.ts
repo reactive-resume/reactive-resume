@@ -16,6 +16,7 @@ import {
 	sheetShouldDismiss,
 	toastLifetime,
 } from "./motion";
+import { motion } from "./tokens";
 
 type Timing = { to: unknown; config: { duration: number }; callback?: (finished: boolean) => void };
 const timings = () => (globalThis as unknown as { __timings: Timing[] }).__timings;
@@ -34,6 +35,14 @@ afterEach(() => {
 });
 
 describe("timings", () => {
+	test("curve control points match the four specified cubic beziers", () => {
+		expect(motion.curves).toEqual({
+			ease: [0.2, 0.8, 0.2, 1],
+			easeInOutStrong: [0.77, 0, 0.175, 1],
+			easeOutStrong: [0.23, 1, 0.32, 1],
+			easeDrawer: [0.32, 0.72, 0, 1],
+		});
+	});
 	test("enter, leave and linear use the token durations and curves", () => {
 		expect(enter(120)).toMatchObject({ duration: 120, easing: curve.ease });
 		expect(enter(200, curve.easeInOutStrong)).toMatchObject({ duration: 200, easing: curve.easeInOutStrong });
@@ -101,12 +110,21 @@ describe("haptic()", () => {
 		expect(Haptics.notificationAsync).not.toHaveBeenCalled();
 	});
 
-	test("the in-app switch off plays nothing but still logs", () => {
-		setPlatform("ios");
+	test.each([
+		["ios", 17],
+		["android", 29],
+		["android", 30],
+		["android", 33],
+		["android", 34],
+	] as const)("the in-app switch off on %s %s plays nothing but logs every token", (os, version) => {
+		setPlatform(os, version);
 		setHapticsEnabled(false);
-		haptic("success");
+		for (const token of Object.keys(android)) haptic(token as never);
+		expect(Haptics.selectionAsync).not.toHaveBeenCalled();
+		expect(Haptics.impactAsync).not.toHaveBeenCalled();
 		expect(Haptics.notificationAsync).not.toHaveBeenCalled();
-		expect(hapticLog().map((e) => [e.token, e.played])).toEqual([["success", false]]);
+		expect(Haptics.performAndroidHapticsAsync).not.toHaveBeenCalled();
+		expect(hapticLog().map((e) => [e.token, e.played])).toEqual(Object.keys(android).map((token) => [token, false]));
 	});
 });
 

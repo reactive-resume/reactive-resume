@@ -1,0 +1,10 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/S1-Settings?theme=light
+- openLink: me.rxresu.storyboard://settings?queued=offline
+- tapOn:
+    id: settings-sign-out
+- tapOn: Sign out and discard
+- assertNotVisible: 3 changes haven't synced
+- assertNotVisible:
+    id: settings-sign-out

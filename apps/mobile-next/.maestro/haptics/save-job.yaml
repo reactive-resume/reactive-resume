@@ -1,0 +1,11 @@
+# Expected to fail until SaveJobScreen persists the job and emits success.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J5-SaveJob?theme=light
+- assertVisible: Save a job
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn:
+    id: save-job
+- assertVisible:
+    id: haptic-log
+    text: "success"

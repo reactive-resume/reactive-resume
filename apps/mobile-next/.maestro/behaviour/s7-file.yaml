@@ -1,0 +1,34 @@
+# Clean storyboard sandbox required. Uses real request guard, repeats same kind, changes fake key, requests again. File/audio also need native picker/microphone setup; see README.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- openLink: me.rxresu.storyboard://import
+- tapOn: Choose a file
+- tapOn: "${IMPORT_FIXTURE_NAME}"
+- tapOn: Read with AI
+- assertVisible: Send to Work OpenAI?
+- assertVisible: "Don't ask again for files"
+- tapOn:
+    id: first-send-send
+- assertNotVisible: Send to Work OpenAI?
+- openLink: me.rxresu.storyboard://import
+- openLink: me.rxresu.storyboard://import
+- tapOn: Choose a file
+- tapOn: "${IMPORT_FIXTURE_NAME}"
+- tapOn: Read with AI
+- assertNotVisible: Send to Work OpenAI?
+- openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
+- tapOn: API key
+- inputText: storyboard-replacement-key
+- hideKeyboard
+- tapOn:
+    id: provider-save
+- openLink: me.rxresu.storyboard://import
+- openLink: me.rxresu.storyboard://import
+- tapOn: Choose a file
+- tapOn: "${IMPORT_FIXTURE_NAME}"
+- tapOn: Read with AI
+- assertVisible: Send to Work OpenAI?

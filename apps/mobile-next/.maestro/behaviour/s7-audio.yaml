@@ -1,0 +1,40 @@
+# Clean storyboard sandbox required. Uses real request guard, repeats same kind, changes fake key, requests again. File/audio also need native picker/microphone setup; see README.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/W4-Practice?theme=light
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/W4-Practice?theme=light
+- tapOn: Start recording
+- extendedWaitUntil:
+    visible: 00:02 / 02:00
+    timeout: 10000
+- tapOn: Stop recording
+- tapOn: Finish
+- assertVisible: Send to Work OpenAI?
+- assertVisible: "Don't ask again for recordings"
+- tapOn:
+    id: first-send-send
+- assertNotVisible: Send to Work OpenAI?
+- openLink: me.rxresu.storyboard://applications/lumen/practise
+- tapOn: Start recording
+- extendedWaitUntil:
+    visible: 00:02 / 02:00
+    timeout: 10000
+- tapOn: Stop recording
+- tapOn: Finish
+- assertNotVisible: Send to Work OpenAI?
+- openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
+- tapOn: API key
+- inputText: storyboard-replacement-key
+- hideKeyboard
+- tapOn:
+    id: provider-save
+- openLink: me.rxresu.storyboard://applications/lumen/practise
+- tapOn: Start recording
+- extendedWaitUntil:
+    visible: 00:02 / 02:00
+    timeout: 10000
+- tapOn: Stop recording
+- tapOn: Finish
+- assertVisible: Send to Work OpenAI?

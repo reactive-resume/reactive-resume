@@ -1,0 +1,11 @@
+# Expected to fail until SaveJobScreen creates an application and opens the shared sent-documents gate.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J5-SaveJob?theme=light
+- tapOn: Applied
+- tapOn:
+    id: save-job
+- assertVisible: What did you send?
+- tapOn: Close
+- assertNotVisible: What did you send?
+- assertVisible: Save a job

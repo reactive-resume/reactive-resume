@@ -1,0 +1,12 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/S1-Settings?theme=light
+- openLink: me.rxresu.storyboard://settings?queued=offline
+- tapOn:
+    id: settings-sign-out
+- assertVisible: 3 changes haven't synced
+- assertVisible: You're offline. Signing out now would remove them from this phone.
+- tapOn: Keep working
+- assertNotVisible: 3 changes haven't synced
+- assertVisible:
+    id: settings-sign-out
