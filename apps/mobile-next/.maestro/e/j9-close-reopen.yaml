@@ -1,0 +1,20 @@
+# J9: close with an outcome (`success` for "I accepted this offer"), then Reopen from J6.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J9-Close?theme=light
+- extendedWaitUntil:
+    visible: How did it end?
+    timeout: 20000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn:
+    id: outcome-not-selected
+- tapOn:
+    id: outcome-accepted
+- tapOn:
+    id: close-confirm
+- assertVisible:
+    id: haptic-log
+    text: selection selection success
+- assertVisible: This application is closed
+- tapOn: Reopen
+- assertVisible: Decide on the offer

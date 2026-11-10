@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { PracticeScreen } from "@/features/workspace/PracticeScreen";
 
-// W4: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="W4" kind="push" />;
-}
+// W4.
+export default PracticeScreen;

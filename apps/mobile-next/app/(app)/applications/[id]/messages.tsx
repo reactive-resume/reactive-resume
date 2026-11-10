@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { MessagesScreen } from "@/features/workspace/MessagesScreen";
 
-// W5: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="W5" kind="push" />;
-}
+// W5.
+export default MessagesScreen;

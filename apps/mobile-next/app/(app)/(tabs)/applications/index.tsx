@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { ApplicationsScreen } from "@/features/applications/ApplicationsScreen";
 
-// J1 J2 J3: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="J1 J2 J3" kind="tab" />;
-}
+// J1 List, J2 Board, J3 Calendar (`?view=list|board|calendar`).
+export default ApplicationsScreen;

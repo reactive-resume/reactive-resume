@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { SaveJobScreen } from "@/features/applications/SaveJobScreen";
 
-// J5: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="J5" kind="modal" />;
-}
+// J5: Save a job (full-screen modal; the share-sheet target opens it with `?url=…&shared=1`).
+export default SaveJobScreen;

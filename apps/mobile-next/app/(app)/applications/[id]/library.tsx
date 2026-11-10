@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { LibraryScreen } from "@/features/workspace/DebriefScreen";
 
-// Library: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="Library" kind="push" />;
-}
+// Library: W5 layout.
+export default LibraryScreen;

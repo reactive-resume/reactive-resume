@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { DetailScreen } from "@/features/applications/DetailScreen";
 
-// J6: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="J6" kind="hero" />;
-}
+// J6: one application.
+export default DetailScreen;

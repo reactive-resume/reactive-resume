@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { DebriefScreen } from "@/features/workspace/DebriefScreen";
 
-// Debrief: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="Debrief" kind="push" />;
-}
+// Debrief: W5 layout with W4's recorder.
+export default DebriefScreen;
