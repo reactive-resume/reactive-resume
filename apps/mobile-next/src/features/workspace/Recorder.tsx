@@ -36,9 +36,11 @@ export type RecorderProps = {
 	recorded: boolean;
 	/** The message under the control when the screen has one (limit reached, nothing heard). */
 	notice?: string | undefined;
+	/** Storyboard only: draw a take in progress (levels 0…1, elapsed time) without recording anything. */
+	seeded?: { levels: number[]; elapsedMs: number } | undefined;
 };
 
-export function Recorder({ onFinish, onTypeInstead, recorded, notice }: RecorderProps) {
+export function Recorder({ onFinish, onTypeInstead, recorded, notice, seeded }: RecorderProps) {
 	const recorder = useAudioRecorder({ ...RecordingPresets.HIGH_QUALITY, isMeteringEnabled: true });
 	const state = useAudioRecorderState(recorder, POLL_MS);
 	const { reduced } = useMotionPolicy();
@@ -115,8 +117,10 @@ export function Recorder({ onFinish, onTypeInstead, recorded, notice }: Recorder
 		setStatus("idle");
 	};
 
-	const recording = status === "recording";
-	const level = levels[levels.length - 1] ?? 0;
+	const recording = status === "recording" || (!!seeded && status === "idle");
+	const shown = seeded && status === "idle" ? seeded.levels : levels;
+	const elapsed = seeded && status === "idle" ? seeded.elapsedMs : state.durationMillis;
+	const level = shown[shown.length - 1] ?? 0;
 	const label =
 		status === "paused"
 			? t`Paused at ${clockOf(state.durationMillis)}`
@@ -129,26 +133,32 @@ export function Recorder({ onFinish, onTypeInstead, recorded, notice }: Recorder
 	return (
 		<View style={{ gap: 0 }}>
 			<View style={{ paddingHorizontal: layout.screenMargin }}>
-				{reduced ? <Waveform levels={[level]} /> : <Waveform levels={levels} />}
+				{reduced ? <Waveform levels={[level]} /> : <Waveform levels={shown} />}
 			</View>
-			<Text variant="mono" color="ink2" align="center" style={{ paddingTop: 24 }}>
-				{`${clockOf(state.durationMillis)} / ${clockOf(LIMIT_MS)}`}
-			</Text>
+			<View style={{ paddingTop: 24, alignItems: "center" }}>
+				<Text variant="mono" color="ink2">
+					{`${clockOf(elapsed)} / ${clockOf(LIMIT_MS)}`}
+				</Text>
+			</View>
 			<View style={{ paddingTop: 12, alignItems: "center" }}>
 				{status === "denied" ? null : (
 					<RecordButton
 						recording={recording}
-						onPress={recording ? stop : status === "paused" ? resume : () => void start()}
+						onPress={
+							status === "recording" ? stop : status === "paused" ? resume : recording ? undefined : () => void start()
+						}
 					/>
 				)}
 			</View>
-			<Text variant="small" color="ink2" align="center" style={{ paddingTop: 12 }} accessibilityLiveRegion="polite">
-				{status === "denied"
-					? t`The microphone is off for Reactive Resume. Type your answer, or turn it on in Settings.`
-					: limitHit
-						? t`Recording stopped at the 2-minute limit. Transcribing what you said.`
-						: (notice ?? label)}
-			</Text>
+			<View style={{ paddingTop: 12, paddingHorizontal: layout.screenMargin, alignItems: "center" }}>
+				<Text variant="small" color="ink2" align="center" accessibilityLiveRegion="polite">
+					{status === "denied"
+						? t`The microphone is off for Reactive Resume. Type your answer, or turn it on in Settings.`
+						: limitHit
+							? t`Recording stopped at the 2-minute limit. Transcribing what you said.`
+							: (notice ?? label)}
+				</Text>
+			</View>
 			{status === "paused" ? (
 				<View style={{ paddingTop: 12, flexDirection: "row", justifyContent: "center", gap: 12 }}>
 					<Button label={t`Resume`} tone="secondary" size="md" onPress={resume} />

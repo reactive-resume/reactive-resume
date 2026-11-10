@@ -9,11 +9,18 @@ import { View } from "react-native";
 import { STORYBOARD } from "./harness";
 import { SignOutDialog } from "@/features/settings/SignOutDialog";
 import { storyboardSignOut } from "@/features/settings/storyboard";
-import { DocThumb, ListRow, PushScreen, Screen, SectionHeading, Text, layout } from "@/ui";
+import { DocThumb, ListRow, PageSubtitle, PushScreen, Screen, SectionHeading, Text, layout } from "@/ui";
 
 /** A modal's bar (close) and page title, nothing else: S7 over D4, S8 over S1. */
 const titled = (title: string, overlay?: ReactNode) => (
 	<PushScreen title={title} back="close" overlay={overlay}>
+		{null}
+	</PushScreen>
+);
+
+/** J6's bar (back) and page title, with its subtitle when the board draws one: J7 and J8 over Lumen, J9 over Parcel. */
+const detailStub = (title: string, subtitle?: string) => (
+	<PushScreen title={title} {...(subtitle ? { subtitle: <PageSubtitle status>{subtitle}</PageSubtitle> } : {})}>
 		{null}
 	</PushScreen>
 );
@@ -79,6 +86,9 @@ const backdrops: Record<string, (variant: string | undefined) => ReactNode> = {
 	"D2-Actions": libraryStub,
 	"D3-New": libraryStub,
 	"C7-Schedule": careerStub,
+	"J7-Stage": () => detailStub("Lumen"),
+	"J8-Interview": () => detailStub("Lumen"),
+	"J9-Close": () => detailStub("Parcel & Co.", "Product designer · Lisbon"),
 };
 
 /** `/storyboard-backdrop/<ID>[?variant=…]`; scenarios push the sheet's route after it. */

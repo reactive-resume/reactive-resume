@@ -1,7 +1,8 @@
+import type { Scenario } from "../harness";
 // Storyboard scenarios owned by screen agent E (see PLAN.md): Applications (J1–J9) and the application workspace
 // (W1–W5). `prepare` fills in what the shared storyboard fixture doesn't carry yet (contacts, interview details,
 // stage history, follow-ups), through the fake backend's own write path.
-import type { Scenario } from "../harness";
+import { overBackdrop } from "../backdrop";
 import { invokeFake } from "@/data/fixtures";
 
 type Fields = Record<string, unknown>;
@@ -113,18 +114,27 @@ export const scenarios: Record<string, Scenario> = {
 		],
 	},
 	"J6-Detail": { hrefs: [tab, lumen], prepare: () => seedApplications() },
-	"J7-Stage": { hrefs: [tab, lumen, `${lumen}/stage`], prepare: () => seedApplications() },
+	"J7-Stage": { hrefs: [tab, ...overBackdrop("J7-Stage", `${lumen}/stage`)], prepare: () => seedApplications() },
 	"J8-Interview": {
-		hrefs: [tab, lumen, `${lumen}/interview?interview=lumen-interview`],
+		hrefs: [tab, ...overBackdrop("J8-Interview", `${lumen}/interview?interview=lumen-interview`)],
 		prepare: () => seedApplications(),
 	},
 	"J9-Close": {
-		hrefs: [tab, "/applications/parcel", "/applications/parcel/stage?step=close"],
+		hrefs: [tab, ...overBackdrop("J9-Close", "/applications/parcel/stage?step=close")],
 		prepare: () => seedApplications({ parcel: { role: "Product designer", location: "Lisbon" } }),
 	},
 	"W1-Fit": { hrefs: [tab, lumen, `${lumen}/fit`], prepare: () => seedApplications() },
 	"W2-Apply": { hrefs: [tab, lumen, `${lumen}/apply`], prepare: () => seedApplications() },
-	"W3-Prep": { hrefs: [tab, lumen, `${lumen}/prepare`], prepare: () => seedApplications() },
+	"W3-Prep": {
+		hrefs: [tab, lumen, `${lumen}/prepare`],
+		prepare: async () => {
+			await seedApplications();
+			await invokeFake("career.saveWorkspace", {
+				applicationId: "lumen",
+				questions: [{ text: "Who owns the design system day to day?", origin: "From Fit" }],
+			});
+		},
+	},
 	"W4-Practice": { hrefs: [tab, lumen, `${lumen}/practise`], prepare: () => seedApplications() },
 	"W5-Messages": {
 		hrefs: [tab, "/applications/fieldnote", "/applications/fieldnote/messages"],

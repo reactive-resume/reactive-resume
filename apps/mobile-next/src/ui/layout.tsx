@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Touch } from "./base";
 import { IconButton } from "./buttons";
+import { HeroTarget } from "./Hero";
 import { Icon } from "./Icon";
 import { Stacked, useLargeText } from "./large-text";
 import { hitSlopFor } from "./motion";
@@ -183,22 +184,34 @@ export function PageTitle({
 	editCue = false,
 	onPress,
 	numberOfLines,
+	heroId,
 }: {
 	children: string;
 	editCue?: boolean | undefined;
 	onPress?: (() => void) | undefined;
 	numberOfLines?: number | undefined;
+	/** A shared-element landing place around the text only (PushScreen's `titleHeroId`). */
+	heroId?: string | undefined;
 }) {
+	const text = (
+		<Text
+			variant="pageTitle"
+			accessibilityRole="header"
+			{...(numberOfLines ? { numberOfLines } : {})}
+			style={{ flexShrink: 1 }}
+		>
+			{children}
+		</Text>
+	);
 	const title = (
 		<View style={{ paddingTop: 4, paddingHorizontal: layout.screenMargin, flexDirection: "row", alignItems: "center" }}>
-			<Text
-				variant="pageTitle"
-				accessibilityRole="header"
-				{...(numberOfLines ? { numberOfLines } : {})}
-				style={{ flexShrink: 1 }}
-			>
-				{children}
-			</Text>
+			{heroId ? (
+				<HeroTarget id={heroId} style={{ flexShrink: 1 }}>
+					{text}
+				</HeroTarget>
+			) : (
+				text
+			)}
 			{editCue ? (
 				<Icon name="pencil-simple" size={18} color="ink3" style={{ marginStart: 6, marginBottom: 2 }} />
 			) : null}
@@ -321,7 +334,7 @@ export function SectionHeading({
 				{title}
 			</Text>
 			{count ? (
-				<View style={{ flex: 1, paddingStart: 2 }}>
+				<View style={{ flex: 1, paddingStart: 2, alignItems: "flex-start" }}>
 					<Text variant="ui" color="ink3">
 						{count}
 					</Text>

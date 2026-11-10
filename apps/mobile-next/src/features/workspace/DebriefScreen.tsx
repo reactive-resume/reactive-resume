@@ -6,7 +6,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { MAX_BYTES, Recorder, type Take } from "./Recorder";
-import { sendUnavailable, STEPS, useAIRun, useWorkspace, Working } from "./shared";
+import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
 import { useDataActions } from "@/data";
 import { dayMonth, interviewTitle, type SavedItem } from "@/features/applications/model";
 import {
@@ -44,8 +44,19 @@ export function DebriefScreen() {
 		if (take.bytes === 0 || take.bytes > MAX_BYTES)
 			return setNotice(t`That recording was empty or over 2 MB. Try a shorter answer.`);
 		setNotice(undefined);
-		void ai.run("audio", sendUnavailable);
+		void ai.run("audio", async (signal) => {
+			const transcript = await ws.transcribe(take.uri, signal);
+			await review(transcript.text);
+		});
 	};
+	const review = (text: string) =>
+		ws.actions.generate({
+			task: "debrief",
+			interviewId: past?.id ?? null,
+			question: t`What happened?`,
+			answer: text,
+			landed: "mixed",
+		});
 	const remember = async (text: string) => {
 		try {
 			await write("stories-and-facts", "career.saveFact", {
@@ -100,7 +111,7 @@ export function DebriefScreen() {
 							size="lg"
 							block
 							disabled={!answer.trim()}
-							onPress={() => void ai.run("chat", sendUnavailable)}
+							onPress={() => void ai.run("chat", () => review(answer))}
 						/>
 					</View>
 				) : (

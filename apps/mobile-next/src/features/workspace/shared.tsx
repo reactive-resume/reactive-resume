@@ -4,29 +4,59 @@ import type { DataKind } from "@/data";
 import { t } from "@lingui/core/macro";
 import { useRef, useState } from "react";
 import { View } from "react-native";
-import { ensureApproved, providerConnection, useAIProviders, useApplication, useCareerOffers } from "@/data";
+import {
+	ensureApproved,
+	providerConnection,
+	uploadPracticeAudio,
+	useAIProviders,
+	useApplication,
+	useCareerOffers,
+	useWorkspaceActions,
+} from "@/data";
 import { now, timeZone } from "@/data/clock";
 import { nextInterview, type SavedItem } from "@/features/applications/model";
+import { storyboard } from "@/features/applications/storyboard";
 import { Button, haptic, layout, WorkingLabel } from "@/ui";
+
+/** Work saved for one application (fit results, briefings, attempts, drafts), plus the storyboard's in its build. */
+export function useSavedItems(applicationId: string) {
+	const saved = useCareerOffers({ applicationId });
+	return [
+		...(saved.data ?? []).filter((item) => item.applicationId === applicationId),
+		...(storyboard?.savedItems(applicationId) ?? []),
+	];
+}
 
 export function useWorkspace(applicationId: string) {
 	const application = useApplication(applicationId);
-	const saved = useCareerOffers({ applicationId });
+	const items = useSavedItems(applicationId);
 	const providers = useAIProviders();
 	const provider = providers.data?.find((p) => p.isDefault && p.enabled) ?? providers.data?.find((p) => p.enabled);
-	const items = (saved.data ?? []).filter((item) => item.applicationId === applicationId);
 	const latest = <K extends SavedItem["data"]["kind"]>(kind: K) =>
 		items
 			.filter((item): item is SavedItem & { data: Extract<SavedItem["data"], { kind: K }> } => item.data.kind === kind)
 			.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 	const app = application.data;
+	const actions = useWorkspaceActions(applicationId);
+	const connection = provider ? providerConnection(provider) : null;
+	/** Upload a take and get its transcript (W4, Debrief). */
+	const transcribe = (uri: string, signal: AbortSignal) => {
+		if (!connection || !provider) return Promise.reject(new Error("No AI connection"));
+		const name = uri.split("/").pop() ?? "take.m4a";
+		return uploadPracticeAudio(
+			{ uri, name, mediaType: "audio/mp4", applicationId, connection, model: provider.model },
+			signal,
+		);
+	};
 	return {
 		application,
+		actions,
+		transcribe,
 		app,
 		items,
 		latest,
 		provider,
-		connection: provider ? providerConnection(provider) : null,
+		connection,
 		zone: timeZone(),
 		at: now(),
 		interview: app ? nextInterview(app, now()) : undefined,
@@ -42,14 +72,13 @@ export const STEPS = {
 
 /**
  * One AI request at a time for a screen. `run` asks S7 first (once per kind and connection), then sends; Stop
- * cancels. The sending itself is the data layer's generate action, requested from the lead: until it exists a run
- * ends with the screen's failure message and nothing the person wrote is lost.
+ * cancels. The sending is the data layer's generate action; on failure nothing the person wrote is lost.
  */
 export function useAIRun(connection: ReturnType<typeof useWorkspace>["connection"]) {
 	const [running, setRunning] = useState(false);
 	const [failed, setFailed] = useState(false);
 	const controller = useRef<AbortController | null>(null);
-	async function run(kind: DataKind, send: (signal: AbortSignal) => Promise<void>) {
+	async function run(kind: DataKind, send: (signal: AbortSignal) => Promise<unknown>) {
 		if (!connection) return;
 		if (!(await ensureApproved(kind, connection))) return;
 		controller.current = new AbortController();
@@ -74,9 +103,6 @@ export function useAIRun(connection: ReturnType<typeof useWorkspace>["connection
 	};
 	return { running, failed, run, stop };
 }
-
-/** The data layer has no generate action yet (requested); a send fails as an unreachable provider would. */
-export const sendUnavailable = (_signal: AbortSignal) => Promise.reject(new Error("generate is not available"));
 
 /** Working label with Stop beside it. */
 export function Working({ steps, onStop }: { steps: readonly string[]; onStop: () => void }) {

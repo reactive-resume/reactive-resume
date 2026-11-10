@@ -10,7 +10,7 @@
 //      POSTs the layout dump to http://localhost:8799/dump. The script then takes the screenshot.
 
 import React, { createContext, useContext, useEffect, useRef } from "react";
-import { Dimensions, Platform, type HostInstance } from "react-native";
+import { Dimensions, Platform, View, type HostInstance, type StyleProp, type ViewStyle } from "react-native";
 import { SafeAreaFrameContext, SafeAreaInsetsContext } from "react-native-safe-area-context";
 import { timeScale } from "@/ui/motion";
 import { cssName, fonts, type ThemeName } from "@/ui/tokens";
@@ -65,6 +65,7 @@ type Entry = {
 	screenKey: string | undefined;
 	hidden: boolean;
 	box: (() => Promise<Box | null>) | undefined;
+	clip: React.RefObject<Measurable | null> | null;
 };
 
 type Box = { x: number; y: number; w: number; h: number };
@@ -88,6 +89,21 @@ export const runsBox =
 		if (!outer || !first) return null;
 		return { x: outer.x, y: first.y, w: outer.w, h: drawn.reduce((sum, p) => sum + p.h, 0) };
 	};
+
+const ClipContext = createContext<React.RefObject<HostInstance | null> | null>(null);
+
+/**
+ * The visible part of a scroll view (a pushed screen's content above its footer). Elements laid out entirely outside
+ * it are clipped, not drawn, and stay out of the dump, as the boards end their content where the viewport ends.
+ */
+export function DesignClip({ style, children }: { style?: StyleProp<ViewStyle>; children: React.ReactNode }) {
+	const ref = useRef<HostInstance | null>(null);
+	return (
+		<View ref={ref} collapsable={false} style={style}>
+			<ClipContext.Provider value={ref}>{children}</ClipContext.Provider>
+		</View>
+	);
+}
 
 const registry = new Map<number, Entry>();
 let nextId = 1;
@@ -130,11 +146,12 @@ export function useDesignTag(
 ) {
 	const ref = useRef<HostInstance | null>(null);
 	const screenKey = useContext(ScreenKeyContext);
+	const clip = useContext(ClipContext);
 	const id = useRef(0);
 	useEffect(() => {
 		if (!STORYBOARD) return;
 		if (!id.current) id.current = nextId++;
-		registry.set(id.current, { ref, meta, screenKey, hidden: !!opts.hidden, box: opts.box });
+		registry.set(id.current, { ref, meta, screenKey, hidden: !!opts.hidden, box: opts.box, clip });
 	});
 	useEffect(
 		() => () => {
@@ -214,10 +231,17 @@ export async function collectDump(navState: NavState | undefined) {
 						: (cb: (x: number, y: number, w: number, h: number) => void) => node.measureInWindow(cb);
 					measure((x, y, w, h) => {
 						if (!w && !h) return resolve(null); // detached or not laid out
-						// Entirely outside the frame (other carousel pages, rows below the fold): not on screen, like the
-						// storyboard dumps' `offscreen` elements, which the comparison skips.
+						// Entirely outside the frame (other carousel pages, rows below the fold) or outside the scroll view
+						// that clips it (rows under a footer): not on screen, like the storyboard dumps' `offscreen`
+						// elements, which the comparison skips.
 						const frame = Dimensions.get("window");
 						if (x + w <= 0 || x >= frame.width || y + h <= 0 || y >= frame.height) return resolve(null);
+						void measureBox(e.clip?.current ?? null).then((c) => {
+							if (c && (x + w <= c.x || x >= c.x + c.w || y + h <= c.y || y >= c.y + c.h)) return resolve(null);
+							report(x, y, w, h);
+						});
+					});
+					const report = (x: number, y: number, w: number, h: number) => {
 						const box = { x: r1(x), y: r1(y), w: r1(w), h: r1(h) };
 						const m = e.meta;
 						if (m.kind === "text") {
@@ -243,7 +267,7 @@ export async function collectDump(navState: NavState | undefined) {
 							if (m.bg) out.bg = cssName(m.bg);
 							resolve(out);
 						}
-					});
+					};
 				}),
 		),
 	);
