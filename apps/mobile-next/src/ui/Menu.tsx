@@ -78,17 +78,18 @@ function MenuView({
 		return () => sub.remove();
 	}, [open, onClose]);
 
-	// Entry travels and scales; the exit only fades.
-	const travel = () => {
+	// Entry travels and scales; the exit only fades. Each style reads p.value itself: Reanimated re-runs a style only
+	// for the shared values its own worklet reads, not those read inside a helper it calls.
+	const travel = (v: number) => {
 		"worklet";
 		const move = !reduced && open;
 		return [
-			{ translateY: move ? interpolate(p.value, [0, 1], [toward, 0]) : 0 },
-			{ scale: move ? interpolate(p.value, [0, 1], [motion.popupStartScale, 1]) : 1 },
+			{ translateY: move ? interpolate(v, [0, 1], [toward, 0]) : 0 },
+			{ scale: move ? interpolate(v, [0, 1], [motion.popupStartScale, 1]) : 1 },
 		];
 	};
-	const style = useAnimatedStyle(() => ({ opacity: p.value, transform: travel() }));
-	const travelOnly = useAnimatedStyle(() => ({ transform: travel() }));
+	const style = useAnimatedStyle(() => ({ opacity: p.value, transform: travel(p.value) }));
+	const travelOnly = useAnimatedStyle(() => ({ transform: travel(p.value) }));
 
 	const left = align === "start" ? anchor.x : anchor.x + anchor.width - width;
 	const position = below ? { top: anchor.y + anchor.height + GAP } : { bottom: win.height - anchor.y + GAP };

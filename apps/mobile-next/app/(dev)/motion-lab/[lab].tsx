@@ -95,7 +95,7 @@ export default function MotionLab() {
 	return (
 		// A deep link to another lab (or the same lab with ?run=1) re-uses this screen with new params: a new key
 		// starts a new run over identical still content.
-		<Frame key={`${lab}:${go}`} lab={lab}>
+		<Frame key={`${lab}:${go}`} lab={lab} go={go}>
 			{Scene ? <Scene run={go} /> : <Text variant="body">{`Unknown lab ${lab}`}</Text>}
 		</Frame>
 	);
@@ -109,8 +109,12 @@ export default function MotionLab() {
  */
 const useRuns = create<{ active: number; cleared: boolean }>(() => ({ active: 0, cleared: false }));
 let runs = 0;
-/** After its recording: rn_capture records 5 s from the deep link; the next recording starts about 1.2 s later. */
-const CLEAR_AFTER = 4900;
+/**
+ * After its recording: rn_capture stops recording 5 s after the deep link and starts the next recording at once, so
+ * the switch has to land in the short gap between the two. On the Release build the lab mounts within a frame of the
+ * link, and a switch at 4.9 s landed inside the recording (the title probe then measured the next scene).
+ */
+const CLEAR_AFTER = 5100;
 /** The order rn_capture records the labs in (first appearance in design/motion-probes.json). */
 const ORDER = [
 	"press",
@@ -133,7 +137,7 @@ const ORDER = [
 	"page-hero",
 ];
 
-function Frame({ lab, children }: { lab: string; children: ReactNode }) {
+function Frame({ lab, go, children }: { lab: string; go: boolean; children: ReactNode }) {
 	const { colors } = useTheme();
 	const pushed = lab.endsWith("-b");
 	const [run] = useState(() => (pushed ? useRuns.getState().active : ++runs));
@@ -144,11 +148,13 @@ function Frame({ lab, children }: { lab: string; children: ReactNode }) {
 	useEffect(() => {
 		if (pushed) return;
 		useRuns.setState({ active: run, cleared: false });
+		// A lab opened without ?run=1 (the still scene before the first recording) stays as it is.
+		if (!go) return;
 		const id = setTimeout(() => {
 			if (useRuns.getState().active === run) useRuns.setState({ cleared: true });
 		}, CLEAR_AFTER);
 		return () => clearTimeout(id);
-	}, [pushed, run]);
+	}, [pushed, run, go]);
 	return (
 		<View style={[StyleSheet.absoluteFill, { backgroundColor: lab === "push-b" ? "transparent" : colors.bg }]}>
 			{visible ? children : cleared && Next ? <Next run={false} /> : null}

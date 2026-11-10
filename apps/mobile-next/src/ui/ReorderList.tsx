@@ -88,6 +88,10 @@ export function ReorderList<T>({
 	const keys = data.map(keyOf);
 	const slots = useSharedValue<Record<string, number>>(Object.fromEntries(keys.map((k, i) => [k, i])));
 	const drag = useSharedValue<Drag>(null);
+	// Lift scale and shadow (0..1) of the row in `lifted`: started in lift() and drop() themselves, in the frame the
+	// gesture lands (a reaction in the row would start it a frame later). Only one row is lifted at a time.
+	const liftedKey = useSharedValue<string | null>(null);
+	const liftProgress = useSharedValue(0);
 	const n = keys.length;
 
 	// A new order from the parent (after onReorder) already matches the slots; anything else resets them.
@@ -100,6 +104,8 @@ export function ReorderList<T>({
 		"worklet";
 		const slot = slots.value[key] ?? 0;
 		drag.set({ key, startSlot: slot, startTop: slot * itemHeight, dy: 0, scrolled: 0, fingerY: -1 });
+		liftedKey.set(key);
+		liftProgress.set(withTiming(1, enter(motion.d1)));
 		hapticOnUI("medium");
 	};
 
@@ -124,6 +130,7 @@ export function ReorderList<T>({
 		const d = drag.value;
 		if (!d || d.key !== key) return;
 		drag.set(null);
+		liftProgress.set(withTiming(0, enter(motion.d1)));
 		const to = slots.value[key] ?? d.startSlot;
 		if (to !== d.startSlot) runOnJS(onReorder)(d.startSlot, to);
 	};
@@ -173,6 +180,8 @@ export function ReorderList<T>({
 						itemHeight={itemHeight}
 						slots={slots}
 						drag={drag}
+						liftedKey={liftedKey}
+						liftProgress={liftProgress}
 						lift={lift}
 						dragBy={dragBy}
 						drop={drop}
@@ -193,6 +202,8 @@ function Row({
 	itemHeight,
 	slots,
 	drag,
+	liftedKey,
+	liftProgress,
 	lift,
 	dragBy,
 	drop,
@@ -206,6 +217,8 @@ function Row({
 	itemHeight: number;
 	slots: SharedValue<Record<string, number>>;
 	drag: SharedValue<Drag>;
+	liftedKey: SharedValue<string | null>;
+	liftProgress: SharedValue<number>;
 	lift: (key: string) => void;
 	dragBy: (key: string, dy: number) => void;
 	drop: (key: string) => void;
@@ -215,7 +228,6 @@ function Row({
 }) {
 	const { colors, shadows } = useTheme();
 	const top = useSharedValue(index * itemHeight);
-	const lifted = useSharedValue(0);
 
 	// Neighbours slide to their new slot; the dragged row follows the finger instead.
 	useAnimatedReaction(
@@ -226,18 +238,13 @@ function Row({
 			top.set(withTiming(slot * itemHeight, enter(motion.d2, curve.easeInOutStrong)));
 		},
 	);
-	// Lift and drop.
+	// Drop: settle into the slot (the lift itself animates in the list's lift() and drop()).
 	useAnimatedReaction(
 		() => drag.value?.key === id,
 		(isDragged, was) => {
-			if (isDragged === was || was === null) return;
-			if (isDragged) {
-				lifted.set(withTiming(1, enter(motion.d1)));
-				return;
-			}
+			if (isDragged === was || was === null || isDragged) return;
 			const target = (slots.value[id] ?? index) * itemHeight;
 			const remaining = target - top.value;
-			lifted.set(withTiming(0, enter(motion.d1)));
 			top.set(
 				withTiming(target, release(remaining, itemHeight), (done) => {
 					if (done) hapticOnUI("rigid");
@@ -268,9 +275,9 @@ function Row({
 	const style = useAnimatedStyle(() => ({
 		top: top.value,
 		zIndex: drag.value?.key === id ? 10 : 0,
-		transform: [{ scale: 1 + (motion.liftScale - 1) * lifted.value }],
+		transform: [{ scale: 1 + (motion.liftScale - 1) * (liftedKey.value === id ? liftProgress.value : 0) }],
 	}));
-	const shadow = useAnimatedStyle(() => ({ opacity: lifted.value }));
+	const shadow = useAnimatedStyle(() => ({ opacity: liftedKey.value === id ? liftProgress.value : 0 }));
 
 	const slot = index; // accessibility actions use the data order
 	return (
