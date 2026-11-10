@@ -171,3 +171,64 @@ if that guarantee is required (current client logs the note separately and repor
 For signed-out P1, supply the redacted getBySlug data and `public: true` to pageRenderer.render. Public cache ownership
 is bound to the server, and an account/server change invalidates an in-flight result. Private rendering still requires
 an account. The public/letter paths do not invent a protected server PDF fallback when no matching endpoint exists.
+
+## Screen agent guide
+
+Screen agents (A–F) each work in their own git worktree and commit there; the lead merges. This section replaces rule 1's
+"never commit" and rule 4's Metro note for them; everything else in "Rules for every sub-agent" holds.
+
+**Setup (once).** In your worktree's `apps/mobile-next`: if `node_modules` is missing run
+`mise exec node@24 -- pnpm install --offline --frozen-lockfile` from the repo root of the worktree. Start your own Metro
+on your port: `APP_VARIANT=storyboard EXPO_PUBLIC_STORYBOARD=1 mise exec node@24 -- npx expo start --dev-client --port <port> > build/metro.log 2>&1 &`
+(create `build/` first; it is git-ignored). Ports: A 8082, B 8083, C 8084, D 8085, E 8086, F 8087. Stop it when you finish.
+
+**What to build with.**
+
+- `src/ui/index.ts` exports every component, scaffold and motion primitive; read `src/ui/scaffold.tsx` first. Root tabs
+  use `TabScreen`; pushed screens and full-screen modals use `PushScreen` (`back="close"` for modals, `docked` for builder
+  and letter modes, `footer`, `barEnd`, `status` for the document status line with Undo · Redo); sheets use `SheetScreen`
+  with the `height` from the screen's `BottomSheet` box in its layout dump; dialogs use `Dialog`. Rows are `ListRow`,
+  headings `SectionHeading`, and so on, as named by `component` in the layout dumps and in `design/COMPONENTS.md`.
+- Data: only the hooks exported from `src/data/index.ts` (table above). In storyboard captures they return the fakes,
+  seeded with the storyboard's data; `screenTexts("<ID>")` lists a screen's exact strings. If the fake lacks something
+  a screen draws, add a typed view-model in your feature folder that derives it from the hooks, and report the gap.
+- Strings: Lingui macros (`t` from `@lingui/core/macro`, `Trans` from `@lingui/react/macro`), copy exactly as the layout
+  dump has it (· – ’ included). Never run `lingui extract`; the lead does.
+- Navigation: `useRouter()` from `expo-router`; every `navigatesTo` in your dumps must work. Route files and their
+  presentation (push, modal, sheet, hero) already exist in `app/`; replace the placeholder body, keep the file path.
+  Layout files (`_layout.tsx`) belong to the lead.
+- Scenarios: add yours to `src/dev/storyboard/scenarios/<your letter>.ts` (hrefs to replay so the real stack, sheets and
+  docks are on screen, fixture, `prepare`).
+- Never edit `src/ui`, `src/data`, `src/api`, `src/auth`, `src/render`, layouts, `package.json` or another agent's
+  folder. A missing component, variant, prop, motion primitive or data hook goes in your report as an exact request
+  (name, props, measurements from the dump); until the lead adds it, leave that element out rather than drawing a
+  local look-alike. Tokens only: no hex colours, font names, durations or curves in your files.
+
+**Capture and measure (iOS; the lead runs Android).** One simulator serves everyone: take the lock
+(`mkdir /tmp/rr-device.lock && echo <letter> > /tmp/rr-device.lock/owner`; retry every 20 s while it exists), then:
+
+```sh
+U=CD4BE437-2AEC-4FB8-8CB6-5D00E08188AE
+B=/Users/amruth/Projects/reactive-resume/.agents/handoff/mobile-final
+xcrun simctl terminate $U me.rxresu.storyboard
+xcrun simctl openurl $U "me.rxresu.storyboard://expo-development-client/?url=http%3A%2F%2Flocalhost%3A<port>"
+sleep 30   # first bundle; check build/metro.log for "Bundled"
+node $B/tools/rn_capture.mjs screens --platform ios --scheme me.rxresu.storyboard --bundle-id me.rxresu.storyboard \
+  --udid $U --warm --only <ID,ID,…> --out build/fidelity/ios
+rmdir /tmp/rr-device.lock 2>/dev/null || rm -rf /tmp/rr-device.lock
+python3 $B/tools/fidelity.py build/fidelity/ios build/fidelity-report/ios --only <ID,ID,…> --system-bars
+```
+
+Release the lock right after the capture and before analysing; batch your screens into one capture run; never hold it
+longer than five minutes. Read `build/fidelity-report/ios/<ID>-layout.txt` and open `<ID>-light-compare.png` and
+`<ID>-dark-compare.png` (storyboard | app | difference). Fix causes, never the tools, dumps, baselines or tolerances.
+A screen passes with 0 layout failures, at most 3.0% differing pixels in each theme and no solid band. The debug build
+draws a floating gear button at the top end; differences from it alone are expected until the lead's Release run, so
+say so in your report instead of working around it.
+
+**Finish.** `mise exec node@24 -- pnpm typecheck`, `mise exec node@24 -- pnpm test` and `sh scripts/check-motion.sh`
+(prints nothing) pass; `mise exec node@24 -- pnpm exec vp lint --fix <your paths>` and `pnpm exec vp fmt <your paths>`
+from the worktree's repo root. Commit your work in your worktree with a Conventional Commit message
+(`feat(mobile-next): …`, no AI attribution, no trailers). Report: your branch name and commit; one scoreboard line per
+screen; each remaining difference with its cause; every request to the lead; behaviour bullets from `SCREENS.md` you
+did not implement and why; questions about direction.
