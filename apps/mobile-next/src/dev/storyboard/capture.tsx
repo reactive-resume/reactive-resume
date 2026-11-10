@@ -91,7 +91,16 @@ export function StoryboardController() {
 				scrollToEnd?.();
 				await settle(deps.isBusy);
 			}
-			const dump = await collectDump(navigation.getRootState() as never);
+			// Measure until two dumps in a row agree: anything still moving (an entrance that began before the time
+			// scale reached zero, a sheet settling) has then landed.
+			let dump = await collectDump(navigation.getRootState() as never);
+			for (let attempt = 0; attempt < 20; attempt += 1) {
+				await new Promise<void>((resolve) => setTimeout(resolve, 150));
+				const next = await collectDump(navigation.getRootState() as never);
+				const same = JSON.stringify(next.elements) === JSON.stringify(dump.elements);
+				dump = next;
+				if (same) break;
+			}
 			await post("/dump", JSON.stringify({ id, theme, scroll, ...dump }), true);
 			// Give the capture script time to take its screenshot, then let motion run again for hand checks.
 			setTimeout(() => {
