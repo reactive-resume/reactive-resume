@@ -1,0 +1,24 @@
+# Applied means sent: a bulk move to Applied asks for each application in turn; cancelling changes nothing.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J1-List?theme=light
+- extendedWaitUntil:
+    visible: Kiln Studio
+    timeout: 20000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- scrollUntilVisible:
+    element: Select
+- tapOn: Select
+- assertVisible:
+    id: haptic-log
+    text: light
+- tapOn:
+    id: application-row-lumen
+- tapOn:
+    id: application-row-orbital-health
+- tapOn: Move…
+- tapOn: Applied
+- assertVisible: What did you send?
+- tapOn: Close
+- assertVisible: Lumen
+- assertVisible: Technical interview · Tue 10 Nov

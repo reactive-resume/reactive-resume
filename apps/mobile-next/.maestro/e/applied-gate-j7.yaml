@@ -1,0 +1,17 @@
+# Applied means sent: J7's Applied opens "What did you send?"; closing it changes nothing.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J7-Stage?theme=light
+- extendedWaitUntil:
+    visible: Move Lumen
+    timeout: 20000
+- tapOn:
+    id: stage-applied
+- assertVisible: What did you send?
+- assertVisible:
+    id: sent-confirm
+- tapOn: Close
+- assertNotVisible: What did you send?
+- scrollUntilVisible:
+    element: Stage
+- assertVisible: Interviewing

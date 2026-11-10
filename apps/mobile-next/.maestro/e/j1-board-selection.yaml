@@ -1,0 +1,13 @@
+# J1 List → Board: the view switch plays `selection` (MOTION.md §12, J1).
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J1-List?theme=light
+- extendedWaitUntil:
+    visible: Kiln Studio
+    timeout: 20000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn: Board
+- assertVisible:
+    id: haptic-log
+    text: selection
+- assertVisible: Interviewing

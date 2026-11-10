@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { InsightsScreen } from "@/features/applications/InsightsScreen";
 
-// J4: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="J4" kind="push" />;
-}
+// J4: Insights (`?range=30|90|all`).
+export default InsightsScreen;

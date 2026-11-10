@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { FitScreen } from "@/features/workspace/FitScreen";
 
-// W1: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="W1" kind="push" />;
-}
+// W1.
+export default FitScreen;

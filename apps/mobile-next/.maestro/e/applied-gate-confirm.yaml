@@ -1,0 +1,16 @@
+# Confirming "What did you send?" freezes what was ticked and moves the application to Applied (`success`).
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/J7-Stage?theme=light
+- extendedWaitUntil:
+    visible: Move Lumen
+    timeout: 20000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn:
+    id: stage-applied
+- tapOn:
+    id: sent-confirm
+- assertVisible: Marked as applied. The versions you sent are kept.
+- assertVisible:
+    id: haptic-log
+    text: selection success

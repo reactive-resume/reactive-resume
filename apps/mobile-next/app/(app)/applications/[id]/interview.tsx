@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { InterviewSheet } from "@/features/applications/InterviewSheet";
 
-// J8: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="J8" kind="sheet" />;
-}
+// J8: add or edit an interview (`?interview=<entry id>` edits one).
+export default InterviewSheet;
