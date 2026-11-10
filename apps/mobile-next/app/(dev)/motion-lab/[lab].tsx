@@ -110,11 +110,12 @@ export default function MotionLab() {
 const useRuns = create<{ active: number; cleared: boolean }>(() => ({ active: 0, cleared: false }));
 let runs = 0;
 /**
- * After its recording: rn_capture stops recording 5 s after the deep link and starts the next recording at once, so
- * the switch has to land in the short gap between the two. On the Release build the lab mounts within a frame of the
- * link, and a switch at 4.9 s landed inside the recording (the title probe then measured the next scene).
+ * When a lab switches to the next lab's still scene: rn_capture stops recording 5 s after the deep link and starts
+ * the next recording at once, so there is no safe gap. At 4.9 s the switch lands at the end of this lab's own
+ * recording, where it changes nothing a probe measures. The title lab is the exception: page-hero's larger magenta
+ * page in its last frames becomes the opacity reference, so it switches just after its recording ends.
  */
-const CLEAR_AFTER = 5100;
+const clearAfter = (lab: string) => (lab === "title" ? 5100 : 4900);
 /** The order rn_capture records the labs in (first appearance in design/motion-probes.json). */
 const ORDER = [
 	"press",
@@ -152,9 +153,9 @@ function Frame({ lab, go, children }: { lab: string; go: boolean; children: Reac
 		if (!go) return;
 		const id = setTimeout(() => {
 			if (useRuns.getState().active === run) useRuns.setState({ cleared: true });
-		}, CLEAR_AFTER);
+		}, clearAfter(lab));
 		return () => clearTimeout(id);
-	}, [pushed, run, go]);
+	}, [pushed, run, go, lab]);
 	return (
 		<View style={[StyleSheet.absoluteFill, { backgroundColor: lab === "push-b" ? "transparent" : colors.bg }]}>
 			{visible ? children : cleared && Next ? <Next run={false} /> : null}
