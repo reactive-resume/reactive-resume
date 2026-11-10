@@ -8,6 +8,7 @@ import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { prepareExport, deliverExport } from "../download/export-file";
 import { useBuilderDocument, useDocumentId, useRenderedPage, DocumentState } from "../share/document";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import { paperText } from "@/dev/storyboard/paper-text.gen";
 import {
 	PushScreen,
@@ -17,6 +18,7 @@ import {
 	Page,
 	Button,
 	IconButton,
+	IssueMarker,
 	Text,
 	FooterBar,
 	Spinner,
@@ -79,11 +81,11 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 			back="close"
 			onBack={close}
 			bg="sunken"
-			barCenter={<Text variant="topBarTitle">{t`Page ${index + 1} of ${page.data?.pageCount ?? 1}`}</Text>}
+			barCenter={<Text variant="topBarTitle" weight={500}>{t`Page ${index + 1} of ${page.data?.pageCount ?? 1}`}</Text>}
 			barEnd={
 				<IconButton
 					icon="share-network"
-					label={t`Share`}
+					label={t`Share PDF`}
 					onPress={() => {
 						if (document.data)
 							void prepareExport(document.data, "resume", "pdf", `${document.data.data.basics.name} Resume`)
@@ -100,7 +102,7 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 				<View
 					style={{
 						position: "absolute",
-						bottom: footer ? 120 : 52,
+						bottom: footer ? 120 : 50,
 						left: 0,
 						right: 0,
 						flexDirection: "row",
@@ -113,12 +115,11 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 						onZoomIn={() => zoom.current?.zoomIn()}
 						onZoomOut={() => zoom.current?.zoomOut()}
 						onFit={() => zoom.current?.fit()}
-					/>
-					<Button
-						label={asText ? t`Show page` : t`Read as text`}
-						size="lg"
-						tone="ghost"
-						onPress={() => setAsText(!asText)}
+						trailing={{
+							label: asText ? t`Show page` : t`Read as text`,
+							icon: "text-aa",
+							onPress: () => setAsText(!asText),
+						}}
 					/>
 				</View>
 			}
@@ -151,9 +152,34 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 										width={pageWidth}
 										height={pageHeight}
 										fixtureText={paperText["B18-Preview"]}
-									/>
+									>
+										{page.data?.issueMarkers?.map((marker, n) => {
+											const size = page.data?.pages[marker.page];
+											if (marker.page !== index || !size) return null;
+											return (
+												<View
+													key={marker.key}
+													style={{
+														position: "absolute",
+														left: (marker.x / size.width) * pageWidth,
+														top: (marker.y / size.height) * pageHeight,
+													}}
+												>
+													<IssueMarker
+														// The storyboard page image already draws the marker; this is its tap target.
+														targetOnly={STORYBOARD}
+														n={n + 1}
+														label={t`Issue ${n + 1}`}
+														onPress={() => router.push(`/builder/${id}/check`)}
+													/>
+												</View>
+											);
+										})}
+									</Page>
 								</HeroTarget>
-								<Text variant="small" color="ink3" style={{ paddingVertical: 10 }}>{t`Tap a section to edit it`}</Text>
+								<View style={{ paddingTop: 20 }}>
+									<Text color="ink3">{t`Tap a section to edit it`}</Text>
+								</View>
 							</>
 						) : (
 							<DocumentState

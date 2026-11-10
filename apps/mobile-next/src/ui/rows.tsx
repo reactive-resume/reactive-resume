@@ -6,7 +6,7 @@ import { Box, Ring, Touch } from "./base";
 import { Icon, type IconName } from "./Icon";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
-import { type ColorToken, layout, radius } from "./tokens";
+import { type ColorToken, layout, radius, type TypeToken } from "./tokens";
 
 /**
  * 40 × 40 icon tile; `accent` uses accent-soft with an accent-text icon. A4's 56 dp tiles keep the 10 dp corners and
@@ -169,6 +169,8 @@ export type ListRowProps = {
 	/** Title line limit, then an ellipsis (document names: 2). Overrides `wrapTitle`. */
 	titleLines?: number | undefined;
 	titleColor?: ColorToken | undefined;
+	/** Title style; B11's link row uses Geist Mono 14/20 (`monoUi`, `.t-mono`). Default `rowTitle`. */
+	titleVariant?: TypeToken | undefined;
 	/** Secondary line colour (S5's failure line in `dangerText`). Default `ink3`. */
 	secondaryColor?: ColorToken | undefined;
 	accessibilityLabel?: string | undefined;
@@ -206,6 +208,7 @@ export function ListRow({
 	wrapSecondary = false,
 	titleLines,
 	titleColor,
+	titleVariant = "rowTitle",
 	secondaryColor = "ink3",
 	accessibilityLabel,
 	accessibilityHint,
@@ -247,7 +250,7 @@ export function ListRow({
 			{leading}
 			<View style={{ flex: 1, minWidth: 0, gap: 2 }}>
 				<Text
-					variant="rowTitle"
+					variant={titleVariant}
 					color={titleColor ?? (danger ? "dangerText" : "ink")}
 					{...(titleLines ? { numberOfLines: titleLines } : wrapTitle ? {} : { numberOfLines: 1 })}
 				>

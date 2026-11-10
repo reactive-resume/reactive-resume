@@ -17,7 +17,8 @@ export type IconProps = {
 	/** A literal colour for paper surfaces (white checks on swatches). The tag still reports `color`. */
 	tint?: string;
 	style?: StyleProp<ViewStyle>;
-	/** False when the boards draw the glyph as part of its control (the Checkbox's check): no entry in the dump. */
+	/** False when the dump has no entry for this glyph: drawn as part of its control (the Checkbox's check) or an
+	 * invisible layer (a crossfade's hidden side). */
 	tag?: boolean;
 };
 

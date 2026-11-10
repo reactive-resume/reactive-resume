@@ -5,6 +5,7 @@ import { View } from "react-native";
 import { useBuilderDocument, useDocumentId, useLetterDocument, DocumentState } from "../share/document";
 import { deliverExport, deliverExports, prepareExport, type ExportFormat } from "./export-file";
 import { useLetterStore, useResumeStore, useResume } from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	Button,
 	FooterBar,
@@ -16,9 +17,16 @@ import {
 	PushScreen,
 	Text,
 	Spinner,
+	TextLink,
 	haptic,
 	showToast,
 } from "@/ui";
+
+/**
+ * The text format's row title. The app exports Markdown, as the web app does; the storyboard names that row "Plain
+ * text", so storyboard captures show the drawn word while real use says what the file is.
+ */
+const textFormatLabel = () => (STORYBOARD ? t`Plain text` : t`Markdown`);
 
 function ExportContent({ letter = false }: { letter?: boolean }) {
 	const id = useDocumentId();
@@ -76,7 +84,7 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 		}
 	};
 	const footer = (
-		<FooterBar bg={letter ? "bg" : "raised"} divider={false}>
+		<FooterBar bg={letter ? "bg" : "raised"} divider={false} inset={letter}>
 			<Button
 				label={busy ? t`Preparing…` : t`Save to Files`}
 				size="lg"
@@ -96,7 +104,7 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 		</FooterBar>
 	);
 	const body = (
-		<>
+		<View style={letter ? null : { paddingTop: 8 }}>
 			<DocumentState loading={query.isPending} error={query.isError} retry={() => void query.refetch()} />
 			{letter && (
 				<>
@@ -124,7 +132,7 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 				[
 					{ id: "pdf", label: t`PDF`, reason: t`Best for applying` },
 					{ id: "docx", label: t`Word`, reason: t`For portals that ask for it` },
-					{ id: "md", label: t`Markdown`, reason: t`For pasting into forms` },
+					{ id: "md", label: textFormatLabel(), reason: t`For pasting into forms` },
 					{ id: "json", label: t`JSON backup`, reason: t`Imports back into Reactive Resume` },
 					...(more ? [{ id: "odt", label: t`OpenDocument`, reason: t`For editable documents` }] : []),
 				] as const
@@ -147,25 +155,21 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 				/>
 			))}
 			<View style={{ paddingHorizontal: 24, height: 44, justifyContent: "center" }}>
-				<Button
-					label={t`More formats`}
-					tone="accentGhost"
-					size="lg"
-					style={{ marginStart: -16 }}
-					icon="caret-down"
-					onPress={() => setMore(!more)}
-				/>
+				<TextLink label={t`More formats`} icon={more ? "caret-up" : "caret-down"} onPress={() => setMore(!more)} />
 			</View>
-			<Form>
-				<TextField label={t`File name`} value={fileName} onChangeText={setName} suffix={`.${format}`} />
-			</Form>
+			{/* The file name sits 16 dp under More formats (B14), not a form's usual 24. */}
+			<View style={{ marginTop: -8 }}>
+				<Form>
+					<TextField label={t`File name`} value={fileName} onChangeText={setName} suffix={`.${format}`} />
+				</Form>
+			</View>
 			{error && (
 				<View accessibilityRole="alert" style={{ margin: 24, gap: 8 }}>
 					<Text color="dangerText">{error}</Text>
 					{format !== "pdf" && <Button label={t`Download PDF instead`} onPress={() => setFormat("pdf")} />}
 				</View>
 			)}
-		</>
+		</View>
 	);
 	return letter ? (
 		<PushScreen title={t`Export`} docked footer={footer}>

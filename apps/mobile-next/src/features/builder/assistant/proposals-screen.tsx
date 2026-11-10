@@ -6,11 +6,13 @@ import Animated from "react-native-reanimated";
 import { blockText, withEditedText, type Proposal } from "@reactive-resume/resume/proposals";
 import { wordDiff } from "@reactive-resume/resume/word-diff";
 import { useDocumentId, useBuilderDocument } from "../share/document";
-import { storyboardProposals, applyResumeProposals, getProposalState } from "./proposal-model";
+import { storyboardProposals, storyboardDecided, applyResumeProposals, getProposalState } from "./proposal-model";
 import { useResumeStore } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	PushScreen,
+	PageSubtitle,
+	Icon,
 	TopBarNote,
 	FooterBar,
 	Button,
@@ -41,6 +43,8 @@ export function ProposalsScreen() {
 	}
 
 	const [rejected, setRejected] = useState<string[]>([]);
+	// Edits decided before this visit (the storyboard's third edit); Undo brings them back to the list.
+	const [decidedEarlier, setDecidedEarlier] = useState(() => (STORYBOARD ? storyboardDecided : []));
 	const [focus, setFocus] = useState(0);
 	const [editing, setEditing] = useState<string>();
 	const [wording, setWording] = useState("");
@@ -75,15 +79,19 @@ export function ProposalsScreen() {
 	return (
 		<PushScreen
 			title={t`Proposed edits`}
-			subtitle={t`Posting asks for: design systems at scale · accessibility · page fit 1 → 1`}
-			barEnd={<TopBarNote>{t`${pending.length} of ${proposals.length + (STORYBOARD ? 1 : 0)} open`}</TopBarNote>}
+			subtitle={
+				<PageSubtitle
+					status
+				>{t`Posting asks for: design systems at scale · accessibility · page fit 1 → 1`}</PageSubtitle>
+			}
+			barEnd={<TopBarNote>{t`${pending.length} of ${proposals.length + decidedEarlier.length} open`}</TopBarNote>}
 			bottomPadding={96}
 			footer={
 				pending.length > 1 ? (
 					<FooterBar>
 						<Button
 							label={t`Reject all`}
-							block
+							grow
 							size="lg"
 							onPress={() => {
 								setRejected(proposals.map((p) => p.id));
@@ -98,18 +106,23 @@ export function ProposalsScreen() {
 				{proposals.map((p, index) =>
 					status(p) === "accepted" || status(p) === "rejected" ? (
 						<Animated.View key={p.id} {...(rowMotion.layoutShift ? { layout: rowMotion.layoutShift } : {})}>
-							<View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
-								<NumberTag n={index + 1} />
-								<Text variant="rowTitle" style={{ flex: 1 }}>
+							<View style={{ height: 48, flexDirection: "row", gap: 16, alignItems: "center" }}>
+								<NumberTag n={index + 1} decided />
+								<Text variant="rowTitle" numberOfLines={1} style={{ flex: 1 }}>
 									{p.location} · {status(p) === "accepted" ? t`Accepted` : t`Rejected`}
 								</Text>
-								<Button
-									label={t`Undo`}
-									tone="accentGhost"
+								<Touch
+									feedback="none"
+									accessibilityRole="button"
+									accessibilityLabel={t`Undo`}
 									onPress={() =>
 										status(p) === "accepted" ? store.undo() : setRejected(rejected.filter((id) => id !== p.id))
 									}
-								/>
+									style={{ paddingVertical: 8 }}
+									hitSlop={{ top: 6, bottom: 6, left: 8, right: 8 }}
+								>
+									<Text variant="linkSmall" color="accentText">{t`Undo`}</Text>
+								</Touch>
 							</View>
 						</Animated.View>
 					) : (
@@ -141,7 +154,7 @@ export function ProposalsScreen() {
 											accessibilityLabel={p.location}
 											style={{ flex: 1 }}
 										>
-											<Text variant="mono" color="ink3">
+											<Text variant="mono" color="ink3" numberOfLines={1} style={{ alignSelf: "flex-start" }}>
 												{p.location}
 											</Text>
 										</Touch>
@@ -188,8 +201,20 @@ export function ProposalsScreen() {
 									)}
 									{status(p) === "stale" ? (
 										<Text color="dangerText">{t`Out of date: the text has changed since.`}</Text>
+									) : p.unsupported?.length ? (
+										<View style={{ flexDirection: "row", gap: 6 }}>
+											<Icon
+												name="warning"
+												size={16}
+												color="warnText"
+												style={{ height: 18, justifyContent: "center" }}
+											/>
+											<Text variant="small" color="warnText" style={{ flexShrink: 1 }}>
+												{p.why}
+											</Text>
+										</View>
 									) : (
-										<Text color={p.unsupported?.length ? "warnText" : "ink3"}>{p.why}</Text>
+										<Text color="ink3">{p.why}</Text>
 									)}
 									{index === focus ? (
 										<View style={{ flexDirection: "row", gap: 12 }}>
@@ -211,14 +236,32 @@ export function ProposalsScreen() {
 											<Button label={t`Reject`} tone="ghost" onPress={() => decide(p, false)} />
 										</View>
 									) : (
-										<Button label={t`Review`} tone="accentGhost" onPress={() => setFocus(index)} />
+										<Button label={t`Review`} tone="accentGhost" padding={4} onPress={() => setFocus(index)} />
 									)}
 								</Card>
 							</SwipeRow>
 						</Animated.View>
 					),
 				)}
-				{!proposals.length && <Text>{t`No proposed edits yet.`}</Text>}
+				{decidedEarlier.map((item, index) => (
+					<View key={item.id} style={{ height: 48, flexDirection: "row", gap: 16, alignItems: "center" }}>
+						<NumberTag n={proposals.length + index + 1} decided />
+						<Text variant="rowTitle" numberOfLines={1} style={{ flex: 1 }}>
+							{item.location} · {item.decision === "accepted" ? t`Accepted` : t`Rejected`}
+						</Text>
+						<Touch
+							feedback="none"
+							accessibilityRole="button"
+							accessibilityLabel={t`Undo`}
+							onPress={() => setDecidedEarlier((list) => list.filter((d) => d.id !== item.id))}
+							style={{ paddingVertical: 8 }}
+							hitSlop={{ top: 6, bottom: 6, left: 8, right: 8 }}
+						>
+							<Text variant="linkSmall" color="accentText">{t`Undo`}</Text>
+						</Touch>
+					</View>
+				))}
+				{!proposals.length && !decidedEarlier.length && <Text>{t`No proposed edits yet.`}</Text>}
 				{error && (
 					<Text color="dangerText" accessibilityRole="alert">
 						{error}

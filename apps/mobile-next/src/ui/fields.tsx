@@ -41,6 +41,8 @@ export type TextFieldProps = Omit<TextInputProps, "style"> & {
 	trailingLabel?: string | undefined;
 	/** A mono suffix inside the field (".pdf"). */
 	suffix?: string | undefined;
+	/** A fixed mono `ink-3` prefix before the value (B12's "rxresu.me/alex/"); mono text then sits at 14/20. */
+	prefix?: string | undefined;
 	/** Picker fields: the field is a button showing its value (dates, zones, choices). */
 	onPress?: (() => void) | undefined;
 	/** Draw the focus rings without focus (storyboard captures of a focused field). */
@@ -64,6 +66,7 @@ export function TextField({
 	onTrailingPress,
 	trailingLabel,
 	suffix,
+	prefix,
 	onPress,
 	forceFocus = false,
 	grow = false,
@@ -84,7 +87,11 @@ export function TextField({
 	const active = focused || forceFocus;
 	// The dumps list the drawn value (masked for passwords) across the input's width, or a placeholder hugging its
 	// words (S6 "Optional"), in its line box.
-	const textStyle = mono ? monoInput : { ...typeScale.input, ...(multiline ? { lineHeight: 24 } : null) };
+	const textStyle = mono
+		? prefix
+			? { ...monoInput, lineHeight: 20 }
+			: monoInput
+		: { ...typeScale.input, ...(multiline ? { lineHeight: 24 } : null) };
 	const hint = savedValue ?? placeholder;
 	const shown = value ? (input.secureTextEntry ? "\u2022".repeat(value.length) : value) : (savedValue ?? "");
 	const textRef = useDesignTag(
@@ -114,6 +121,11 @@ export function TextField({
 			<Ring color="controlBorder" radius={radius.md} />
 			<FocusRing focused={active} error={!!error} radius={radius.md} />
 			{leadingIcon ? <Icon name={leadingIcon} size={20} color="ink3" /> : null}
+			{prefix ? (
+				<Text variant="monoUi" color="ink3" numberOfLines={1} style={{ fontWeight: "400" }}>
+					{prefix}
+				</Text>
+			) : null}
 			{onPress ? (
 				<Text
 					variant="input"
@@ -344,11 +356,14 @@ export function Composer({
 				</View>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
 					<View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6 }}>{chips}</View>
-					<SendButton
-						onPress={sending ? onStop : onSend}
-						stop={sending}
-						disabled={!sending && (!value.trim() || !!blocked)}
-					/>
+					{/* B16 and C2 draw the send button 1 dp into the composer's end padding (x 319 to 319.5). */}
+					<View style={{ marginEnd: -1 }}>
+						<SendButton
+							onPress={sending ? onStop : onSend}
+							stop={sending}
+							disabled={!sending && (!value.trim() || !!blocked)}
+						/>
+					</View>
 				</View>
 			</Box>
 			{blocked ? (

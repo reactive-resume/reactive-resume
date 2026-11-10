@@ -46,6 +46,8 @@ export type ButtonProps = {
 	accessibilityHint?: string | undefined;
 	testID?: string | undefined;
 	style?: StyleProp<ViewStyle>;
+	/** Horizontal padding override: B17's "Review" ghost link sits at 4 dp (`.btn ghost acc`, padding 0 4). */
+	padding?: number | undefined;
 };
 
 export function Button({
@@ -62,6 +64,7 @@ export function Button({
 	accessibilityHint,
 	testID,
 	style,
+	padding,
 }: ButtonProps) {
 	const s = sizes[size];
 	const t = tones[tone];
@@ -86,7 +89,7 @@ export function Button({
 				{...(t.bg ? { bg: t.bg } : {})}
 				style={{
 					height: s.height,
-					paddingHorizontal: s.pad,
+					paddingHorizontal: padding ?? s.pad,
 					flexDirection: "row",
 					alignItems: "center",
 					justifyContent: "center",
