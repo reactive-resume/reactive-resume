@@ -13,8 +13,7 @@ import { storyboardRoutes } from "./routes";
 import { scenarios } from "./scenarios";
 import { DataProvider, seed, useResumeStore } from "@/data";
 import { setNow } from "@/data/clock";
-import { fakeBackend, invokeFake } from "@/data/fixtures";
-import { storyboard } from "@/features/applications/storyboard";
+import { fakeBackend } from "@/data/fixtures";
 import { pageRenderer } from "@/render/page-renderer";
 
 jest.mock("@/dev/storyboard/harness", () => {
@@ -214,28 +213,6 @@ test.each(edges)("$source #$n → $target", async (edge) => {
 		throw new Error(`Unknown fixture ${scenario.fixture}`);
 	seed(scenario.fixture === "empty-account" ? "empty-account" : "storyboard");
 	setNow(STORYBOARD_NOW);
-	if (edge.source === "T1-Today") {
-		// T1 draws a due follow-up; the shared seed's next follow-up is Monday.
-		await invokeFake("applications.update", { id: "fieldnote", followUpAt: STORYBOARD_NOW });
-	}
-	if (edge.source === "W3-Prep") {
-		// The screen-owned capture fixture and shared seed have tied timestamps. Supply the drawn briefing.
-		const read = fakeBackend.read.bind(fakeBackend);
-		const items = storyboard?.savedItems("lumen");
-		if (!items) throw new Error("Missing captured workspace fixture");
-		jest.spyOn(fakeBackend, "read").mockImplementation(async (resource, input) => {
-			const value = await read(resource, input);
-			if (resource === "offers" && (input as { applicationId?: string }).applicationId === "lumen") {
-				return [...items, ...(value as unknown[])].filter((item, i, items) => {
-					const row = item as { data: { kind: string } };
-					return (
-						row.data.kind !== "briefing" || i === items.findIndex((x) => (x as typeof row).data.kind === "briefing")
-					);
-				}) as typeof value;
-			}
-			return value;
-		});
-	}
 	if (key === "D2-Actions #70") {
 		jest.spyOn(pageRenderer, "render").mockResolvedValue({
 			pdfFile: "file:///storyboard.pdf",
