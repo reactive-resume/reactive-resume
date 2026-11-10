@@ -1,12 +1,26 @@
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
+import { resumeFactProposals } from "@reactive-resume/resume/markdown";
 import { applicationTimelineEntrySchema } from "@reactive-resume/schema/applications/data";
+import { applicationPipelineSchema } from "@reactive-resume/schema/applications/lanes";
+import { EMPTY_WORKSPACE, careerFactCorrectionSchema } from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { visitorShape } from "./board-fixtures";
 import { now } from "./clock";
 import { fixtureArtifact } from "./fixture-artifacts";
 
 type Row = Record<string, unknown>;
 export type FixtureState = Record<string, unknown>;
 let sequence = 0;
+const passwords = new Map<string, string>();
+const unlocked = new Set<string>();
+export function fixturePublicAccess(id: string) {
+	return !passwords.has(id) || unlocked.has(id);
+}
+export function fixtureUnlock(id: string, password: string) {
+	const accepted = passwords.get(id) === password;
+	if (accepted) unlocked.add(id);
+	return accepted;
+}
 const id = () => `fixture-${++sequence}`;
 const rows = (state: FixtureState, key: string) => (state[key] ??= []) as Row[];
 const find = (state: FixtureState, key: string, value: unknown) => {
@@ -16,6 +30,8 @@ const find = (state: FixtureState, key: string, value: unknown) => {
 };
 export function extendedSeed(empty: boolean) {
 	sequence = 0;
+	passwords.clear();
+	unlocked.clear();
 	return {
 		conversations: [] as Row[],
 		conversationMessages: {} as Record<string, Row[]>,
@@ -41,6 +57,19 @@ export function extendedSeed(empty: boolean) {
 					events: [],
 				})),
 		customDomain: null,
+		webAccess: {
+			revision: "fixture-web",
+			builtInReader: true,
+			configured: false,
+			testResult: null,
+			lastTestedAt: null,
+			provider: null,
+			managed: false,
+			canSave: true,
+			search: false,
+			searxng: false,
+			read: true,
+		},
 		forgottenFacts: [] as Row[],
 		transcripts: [] as Row[],
 		apiKeys: { apiKeys: [], total: 0 },
@@ -48,6 +77,11 @@ export function extendedSeed(empty: boolean) {
 	};
 }
 export function fixtureRead(resource: string, input: Row, state: FixtureState): { value: unknown } | undefined {
+	if (resource === "workspace")
+		return {
+			value:
+				(state.workspaces as Record<string, unknown>)[String(input.applicationId)] ?? structuredClone(EMPTY_WORKSPACE),
+		};
 	if (resource === "documentPage") {
 		const all = rows(state, "documents").filter((row) => Boolean(row.trashedAt) === Boolean(input.trashed));
 		const filtered = all.filter(
@@ -82,9 +116,11 @@ export function fixtureRead(resource: string, input: Row, state: FixtureState): 
 		};
 	if (resource === "dailyVisitors")
 		return {
-			value: Array.from({ length: Number(input.days ?? 30) }, (_, index) => ({
-				date: new Date(now().getTime() - (Number(input.days ?? 30) - index - 1) * 86400000).toISOString().slice(0, 10),
-				views: index < 28 ? 4 : 8,
+			value: Array.from({ length: Math.min(Number(input.days ?? 30), 24) }, (_, index) => ({
+				date: new Date(now().getTime() - (Math.min(Number(input.days ?? 30), 24) - index - 1) * 86400000)
+					.toISOString()
+					.slice(0, 10),
+				views: (visitorShape[index] ?? 0) * 2,
 				downloads: index < 14 ? 1 : 0,
 			})),
 		};
@@ -112,7 +148,8 @@ export function fixtureRead(resource: string, input: Row, state: FixtureState): 
 			value: rows(state, "offers").filter(
 				(row) =>
 					(!input.applicationId || row.applicationId === input.applicationId) &&
-					(!input.kind || (row.data as Row).kind === input.kind),
+					(!input.kind || (row.data as Row).kind === input.kind) &&
+					(input.scope !== "shared" || row.applicationId === null),
 			),
 		};
 	if (resource === "applicationStats") {
@@ -124,7 +161,9 @@ export function fixtureRead(resource: string, input: Row, state: FixtureState): 
 					status,
 					count: applications.filter((row) => row.status === status).length,
 				})),
-				bySource: [],
+				bySource: [...new Set(applications.map((row) => row.source))]
+					.filter(Boolean)
+					.map((source) => ({ source, count: applications.filter((row) => row.source === source).length })),
 			},
 		};
 	}
@@ -133,6 +172,137 @@ export function fixtureRead(resource: string, input: Row, state: FixtureState): 
 /** Only fixture dispatch is untyped; public hooks use the router's exact input/output contracts. */
 export function fixtureWrite(operation: string, input: Row, state: FixtureState): { value: unknown } | undefined {
 	const [area, action] = operation.split(".");
+	if (operation.startsWith("applications.lanes.")) {
+		const pipeline = applicationPipelineSchema.parse(state.lanes);
+		if (pipeline.revision !== input.expectedRevision)
+			throw Object.assign(new Error("Lanes changed."), { code: "CONFLICT" });
+		const command = operation.split(".")[2];
+		const target = pipeline.lanes.find((row) => row.id === input.id && !row.retiredAt);
+		if (command === "create") {
+			if (pipeline.lanes.filter((row) => !row.retiredAt).length >= 40) throw new Error("Too many lanes.");
+			pipeline.lanes.push({
+				id: id(),
+				category: input.category as (typeof pipeline.lanes)[number]["category"],
+				label: String(input.label),
+				color: String(input.color),
+				position: pipeline.lanes.length,
+				systemKey: null,
+				closedReason: (input.closedReason as null) ?? null,
+				retiredAt: null,
+			});
+		} else if (command === "reorder") {
+			const ids = input.ids as string[];
+			const active = pipeline.lanes.filter((row) => !row.retiredAt);
+			if (
+				new Set(ids).size !== active.length ||
+				ids.length !== active.length ||
+				active.some((row) => !ids.includes(row.id))
+			)
+				throw new Error("Include every active lane once.");
+			for (const lane of active) lane.position = ids.indexOf(lane.id);
+		} else {
+			if (!target) throw new Error("Lane unavailable.");
+			if (command === "update") {
+				if (input.label !== undefined) target.label = String(input.label);
+				if (input.color !== undefined) target.color = String(input.color);
+			} else if (command === "retire") {
+				const replacement = pipeline.lanes.find((row) => row.id === input.replacementId && !row.retiredAt);
+				if (
+					target.systemKey ||
+					!replacement ||
+					replacement.id === target.id ||
+					replacement.category !== target.category ||
+					replacement.closedReason !== target.closedReason
+				)
+					throw new Error("Choose a matching replacement lane.");
+				target.retiredAt = now();
+				for (const app of rows(state, "applications")) if (app.laneId === target.id) app.laneId = replacement.id;
+			}
+		}
+		pipeline.revision++;
+		state.lanes = applicationPipelineSchema.parse(pipeline);
+		return { value: state.lanes };
+	}
+	if (operation === "career.correctFact") {
+		const correction = careerFactCorrectionSchema.parse(input);
+		const row = find(state, "facts", correction.id);
+		if (Object.entries(correction.before).some(([key, value]) => row[key] !== value))
+			throw Object.assign(new Error("Fact changed. Review again."), { code: "CONFLICT" });
+		if (
+			correction.applicationId &&
+			!rows(state, "applications").some((app) => app.id === correction.applicationId && !app.trashedAt)
+		)
+			throw new Error("Application unavailable.");
+		(row.revisions as Row[]).push({
+			text: row.text,
+			category: row.category,
+			applicationId: row.applicationId,
+			at: now().toISOString(),
+		});
+		const { before: _before, ...changes } = correction;
+		Object.assign(row, changes, { updatedAt: now() });
+		return { value: undefined };
+	}
+	if (operation === "ai.improve")
+		return {
+			value: {
+				text: "Built and scaled a design system adopted by six product teams; cut interface defects by a third.",
+				why: "",
+				addsFacts: false,
+				aiOperationIds: [],
+			},
+		};
+	if (operation === "career.proposeResumeFacts") {
+		const resume = find(state, "resumes", input.resumeId);
+		return {
+			value: {
+				id: resume.id,
+				name: resume.name,
+				updatedAt: resume.updatedAt,
+				...resumeFactProposals(resume.data as typeof defaultResumeData),
+			},
+		};
+	}
+	if (operation === "career.saveResumeFacts") {
+		const resume = find(state, "resumes", input.resumeId);
+		if (new Date(String(input.updatedAt)).getTime() !== new Date(resume.updatedAt as Date).getTime())
+			throw Object.assign(new Error("Resume changed."), { code: "CONFLICT" });
+		const quotes = new Set(
+			resumeFactProposals(resume.data as typeof defaultResumeData).proposals.map((row) => row.quote),
+		);
+		if ((input.proposals as Row[]).some((row) => !quotes.has(String(row.quote))))
+			throw new Error("Source quotation changed.");
+		let saved = 0;
+		let skipped = 0;
+		for (const proposal of input.proposals as Row[]) {
+			if (rows(state, "facts").some((row) => row.text === proposal.text)) {
+				skipped++;
+				continue;
+			}
+			rows(state, "facts").push({
+				...structuredClone(rows(state, "facts")[0]),
+				...proposal,
+				id: id(),
+				applicationId: null,
+				revisions: [],
+				source: { kind: "resume", id: resume.id, quote: proposal.quote },
+				createdAt: now(),
+				updatedAt: now(),
+			});
+			saved++;
+		}
+		return { value: { saved, skipped } };
+	}
+	if (operation === "career.suggestTargetRoles")
+		return {
+			value: {
+				suggestions: [
+					{ role: "Senior product designer", facts: [], resumeQuote: "Senior product designer" },
+					{ role: "Design lead", facts: [], resumeQuote: null },
+				],
+			},
+		};
+
 	if (["resume", "coverLetters"].includes(area ?? "") && ["create", "import", "duplicate"].includes(action ?? "")) {
 		const letter = area === "coverLetters";
 		const source = action === "duplicate" ? find(state, letter ? "letters" : "resumes", input.id) : undefined;
@@ -297,6 +467,9 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 	if (operation === "resume.setPassword" || operation === "resume.removePassword") {
 		const row = find(state, "resumes", input.id);
 		row.hasPassword = action === "setPassword";
+		unlocked.delete(String(row.id));
+		if (action === "setPassword") passwords.set(String(row.id), String(input.password));
+		else passwords.delete(String(row.id));
 		return { value: undefined };
 	}
 	if (operation === "applications.create") {
@@ -530,7 +703,12 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 	}
 	if (operation === "aiProviders.test") {
 		const row = find(state, "aiProviders", input.id);
-		Object.assign(row, { testStatus: "success", lastTestedAt: now(), testError: null, testErrorKind: null });
+		Object.assign(row, {
+			testStatus: row.provider === "ollama" ? "failure" : "success",
+			lastTestedAt: now(),
+			testError: row.provider === "ollama" ? "fetch failed" : null,
+			testErrorKind: row.provider === "ollama" ? "network" : null,
+		});
 		return { value: row };
 	}
 	if (operation === "aiProviders.setDefault") {

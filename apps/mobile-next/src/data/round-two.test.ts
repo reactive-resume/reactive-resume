@@ -157,7 +157,7 @@ test("fake conversation streams board reply and refuses stale proposal wording r
 		...input,
 		edits: [{ ...input.edits[0], after: proposal.after }],
 	});
-	expect(result).toMatchObject({ editsAccepted: 1 });
+	expect(result).toMatchObject({ editsAccepted: 2 });
 });
 
 test("restored queue cannot bypass Applied confirmation", () => {

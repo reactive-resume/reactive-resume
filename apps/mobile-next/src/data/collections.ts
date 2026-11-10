@@ -2,10 +2,13 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
+import { isStepComplete } from "./application-tools";
 import { now, timeZone } from "./clock";
 import { useConnectivity } from "./connectivity";
+import { useLocalValue } from "./local-state";
 import { useConversations, useCareerLibrary } from "./platform";
 import { useApplications, useCareerOffers, useDataBackend, useDocuments, useNotifications } from "./provider";
+import { assertDataScope } from "./scope";
 import { matching, useRecentSearches, type SearchCommand } from "./search";
 import { useFirstRun, rankToday, useNotificationCompletion } from "./today";
 import { allApplicationTrash, loadTrashSnapshot } from "./trash";
@@ -40,7 +43,14 @@ export function useSearch(query: string, commands: readonly SearchCommand[] = []
 			...conversations,
 			data: matching(query, conversations.data ?? [], (row) => `${row.title} ${row.firstMessage ?? ""}`),
 		},
-		notes: { ...notes, data: matching(query, notes.data ?? [], (row) => row.title) },
+		notes: {
+			...notes,
+			data: matching(
+				query,
+				notes.data ?? [],
+				(row) => `${row.title} ${row.application?.company ?? ""} ${row.application?.role ?? ""}`,
+			),
+		},
 		applicationNotes: matching(
 			query,
 			applications.data ?? [],
@@ -74,16 +84,20 @@ export function useToday() {
 	const connectivity = useConnectivity();
 	const firstRun = useFirstRun();
 	const completion = useNotificationCompletion();
-	const model = useMemo(
-		() => ({
-			...rankToday(applications.data ?? [], offers.data ?? [], now(), timeZone()),
-			newRoles: opportunities.data ?? [],
-			notifications: (notifications.data ?? []).filter(
-				(notice) => completion.data?.[notice.id] === "undone" || (!notice.readAt && !completion.data?.[notice.id]),
-			),
-		}),
-		[applications.data, offers.data, opportunities.data, notifications.data, completion.data],
-	);
+	useLocalValue("step-revision", 0);
+	const model = {
+		...rankToday(
+			applications.data ?? [],
+			offers.data ?? [],
+			now(),
+			timeZone(),
+			(applicationId, kind) => !!scope && isStepComplete({ applicationId, kind }, scope),
+		),
+		newRoles: opportunities.data ?? [],
+		notifications: (notifications.data ?? []).filter(
+			(notice) => completion.data?.[notice.id] === "undone" || (!notice.readAt && !completion.data?.[notice.id]),
+		),
+	};
 	return {
 		applications,
 		notifications,
@@ -111,23 +125,44 @@ export type Settings = {
 	haptics: boolean;
 	notificationCategories: Record<string, boolean>;
 	lastTimeZone: string;
+	automaticTimeZone: boolean;
+	homeTimeZone: string;
+	lastNotifiedTimeZone: string | null;
+	applicationView: "list" | "board" | "calendar";
 };
 const defaults = (): Settings => ({
 	theme: "system",
 	haptics: true,
 	notificationCategories: {},
 	lastTimeZone: timeZone(),
+	automaticTimeZone: true,
+	homeTimeZone: timeZone(),
+	lastNotifiedTimeZone: null,
+	applicationView: "list",
 });
 export function useSettings() {
 	const { scope } = useDataBackend();
 	const query = useQuery({
 		queryKey: [scope, "settings"],
-		queryFn: () => ({ ...defaults(), ...JSON.parse(Storage.getItemSync(`settings:${scope}`) ?? "{}") }) as Settings,
+		enabled: !!scope,
+		queryFn: () => {
+			const saved = JSON.parse(Storage.getItemSync(`settings:${scope}`) ?? "{}") as Partial<Settings>;
+			const value = { ...defaults(), ...saved, homeTimeZone: saved.homeTimeZone ?? saved.lastTimeZone ?? timeZone() };
+			Storage.setItemSync(`settings:${scope}`, JSON.stringify(value));
+			return value;
+		},
 	});
 	return {
 		...query,
 		async save(changes: Partial<Settings>) {
-			const next = { ...defaults(), ...query.data, ...changes };
+			if (!scope) throw new Error("Sign in again.");
+			assertDataScope(scope);
+			const next = {
+				...defaults(),
+				...query.data,
+				...JSON.parse(Storage.getItemSync(`settings:${scope}`) ?? "{}"),
+				...changes,
+			};
 			Storage.setItemSync(`settings:${scope}`, JSON.stringify(next));
 			await query.refetch();
 		},

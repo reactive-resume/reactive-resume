@@ -17,6 +17,7 @@ export function rankToday(
 	offers: ResourceOutput<"offers">,
 	at: Date,
 	zone: string,
+	isComplete: (applicationId: string, kind: string) => boolean = () => false,
 ) {
 	const hints = latestOfferHints(offers);
 	const steps = applications
@@ -25,6 +26,7 @@ export function rankToday(
 			step: getNextStep(application, at, zone, hints.get(application.id)),
 			key: nextStepSortKey(application, at, zone, hints.get(application.id)),
 		}))
+		.filter(({ application, step }) => !isComplete(application.id, step.kind))
 		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.application.id, b.application.id));
 	const attention = steps.filter(({ step }) => needsAttention(step, at));
 	const hero =
