@@ -175,10 +175,16 @@ export function useAssistantStream(threadId: string) {
 		},
 		addAttachment: (
 			input: Omit<RouterInput["agent"]["attachments"]["create"], "threadId">,
-		): Promise<RouterOutput["agent"]["attachments"]["create"]> =>
-			dataClient.agent.attachments.create({ ...input, threadId }, { context: { scope: scope ?? undefined } }),
-		removeAttachment: (id: string) =>
-			dataClient.agent.attachments.delete({ id }, { context: { scope: scope ?? undefined } }),
+		): Promise<RouterOutput["agent"]["attachments"]["create"]> => {
+			if (!scope) throw new Error(t`Sign in again.`);
+			assertDataScope(scope);
+			return dataClient.agent.attachments.create({ ...input, threadId }, { context: { scope } });
+		},
+		removeAttachment: (id: string) => {
+			if (!scope) throw new Error(t`Sign in again.`);
+			assertDataScope(scope);
+			return dataClient.agent.attachments.delete({ id }, { context: { scope } });
+		},
 	};
 }
 export const useCoachStream = useAssistantStream;

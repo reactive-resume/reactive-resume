@@ -78,8 +78,11 @@ export function useToday() {
 		() => ({
 			...rankToday(applications.data ?? [], offers.data ?? [], now(), timeZone()),
 			newRoles: opportunities.data ?? [],
+			notifications: (notifications.data ?? []).filter(
+				(notice) => completion.data?.[notice.id] === "undone" || (!notice.readAt && !completion.data?.[notice.id]),
+			),
 		}),
-		[applications.data, offers.data, opportunities.data],
+		[applications.data, offers.data, opportunities.data, notifications.data, completion.data],
 	);
 	return {
 		applications,
@@ -90,7 +93,13 @@ export function useToday() {
 		timeZone: timeZone(),
 		model,
 		connectivity,
-		firstRun,
+		firstRun: {
+			...firstRun,
+			data:
+				firstRun.data === undefined || !applications.data || !notifications.data
+					? undefined
+					: firstRun.data && applications.data.length === 0 && notifications.data.length === 0,
+		},
 		completion,
 	};
 }

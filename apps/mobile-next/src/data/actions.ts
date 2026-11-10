@@ -12,12 +12,18 @@ export function usePlatformActions() {
 	const queued = useDataActions();
 	return {
 		/** Online-only commands include secrets, AI requests, and creates without server idempotency keys. */
-		async run<K extends keyof MutationInputs>(operation: K, input: MutationInputs[K]): Promise<MutationOutput<K>> {
-			if (!scope || (backend.kind === "real" && getAccountScope() !== scope)) throw new Error(t`Sign in again.`);
+		async run<K extends keyof MutationInputs>(
+			operation: K,
+			input: MutationInputs[K],
+			signal?: AbortSignal,
+		): Promise<MutationOutput<K>> {
+			if (!scope || (backend.kind !== "fake" && getAccountScope() !== scope)) throw new Error(t`Sign in again.`);
+			signal?.throwIfAborted();
 			assertStageGate(operation, input);
-			const result = await backend.write(operation, input, scope);
-			if (backend.kind === "real" && getAccountScope() !== scope) throw new Error(t`The account changed.`);
+			const result = await backend.write(operation, input, scope, signal);
+			if (backend.kind !== "fake" && getAccountScope() !== scope) throw new Error(t`The account changed.`);
 			await query.invalidateQueries({ queryKey: [scope] });
+			signal?.throwIfAborted();
 			return result as MutationOutput<K>;
 		},
 		write: queued.write,
@@ -34,23 +40,31 @@ export function useDocumentActions() {
 		createLetter: (input: MutationInputs["coverLetters.create"]) => actions.run("coverLetters.create", input),
 		duplicateResume: (input: MutationInputs["resume.duplicate"]) => actions.run("resume.duplicate", input),
 		duplicateLetter: (input: MutationInputs["coverLetters.duplicate"]) => actions.run("coverLetters.duplicate", input),
-		rename: (input: MutationInputs["documents.rename"]) => actions.write("documents", "documents.rename", input),
-		setTags: (input: MutationInputs["documents.setTags"]) => actions.write("documents", "documents.setTags", input),
+		rename: (input: MutationInputs["documents.rename"]) =>
+			actions.write(input.type === "letter" ? "letters" : "documents", "documents.rename", input),
+		setTags: (input: MutationInputs["documents.setTags"]) =>
+			actions.write(input.type === "letter" ? "letters" : "documents", "documents.setTags", input),
 		setLocked: (input: MutationInputs["documents.setLocked"]) =>
-			actions.write("documents", "documents.setLocked", input),
+			actions.write(input.type === "letter" ? "letters" : "documents", "documents.setLocked", input),
 		linkApplication: (input: MutationInputs["documents.linkApplication"]) =>
-			actions.write("documents", "documents.linkApplication", input),
+			actions.write(input.type === "letter" ? "letters" : "documents", "documents.linkApplication", input),
 		async batchTags(documents: MutationInputs["documents.setTags"][]) {
 			// Enqueue the whole selection before trying network, including while offline.
 			const { writeQueue } = await import("./queue");
 			const { activeDataScope } = await import("./scope");
 			const scope = activeDataScope();
+			if (scope !== context.scope) throw new Error(t`The account changed.`);
 			if (context.backend.kind === "guest") {
 				for (const input of documents) await actions.run("documents.setTags", input);
 				return;
 			}
 			for (const input of documents)
-				writeQueue.enqueue(scope, { id: generateId(), kind: "documents", operation: "documents.setTags", input });
+				writeQueue.enqueue(scope, {
+					id: generateId(),
+					kind: input.type === "letter" ? "letters" : "documents",
+					operation: "documents.setTags",
+					input,
+				});
 			await actions.flush();
 		},
 	};

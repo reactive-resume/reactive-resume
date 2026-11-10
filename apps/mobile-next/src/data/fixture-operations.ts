@@ -1,4 +1,5 @@
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
+import { applicationTimelineEntrySchema } from "@reactive-resume/schema/applications/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { now } from "./clock";
 import { fixtureArtifact } from "./fixture-artifacts";
@@ -106,7 +107,7 @@ export function fixtureRead(resource: string, input: Row, state: FixtureState): 
 			},
 		};
 	}
-	if (resource === "library")
+	if (resource === "library" || resource === "offers")
 		return {
 			value: rows(state, "offers").filter(
 				(row) =>
@@ -345,8 +346,23 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 	) {
 		const application = find(state, "applications", input.id);
 		const activity = application.activity as Row[];
-		if (action === "updateInterview") Object.assign(activity.find((row) => row.id === input.interviewId) ?? {}, input);
-		else activity.push({ ...input, id: id(), type: action === "logFollowUp" ? "follow_up" : "interview" });
+		if (action === "updateInterview") {
+			const entry = activity.find((row) => row.id === input.entryId && row.type === "interview");
+			if (!entry) throw new Error("Interview not found.");
+			Object.assign(entry, applicationTimelineEntrySchema.parse({ ...entry, ...input, id: entry.id }));
+		} else if (action === "logFollowUp") {
+			if (application.status === "saved" || application.status === "closed")
+				throw new Error("Follow-ups require an open, sent application.");
+			activity.push(
+				applicationTimelineEntrySchema.parse({
+					id: id(),
+					type: "note",
+					at: now().toISOString(),
+					text: "Followed up",
+					followedUp: { stageEntryId: activity.findLast((row) => row.type === "stage")?.id ?? null },
+				}),
+			);
+		} else activity.push(applicationTimelineEntrySchema.parse({ ...input, id: id(), type: "interview" }));
 		return { value: application };
 	}
 	if (operation === "applications.ai.parsePosting")
@@ -519,18 +535,44 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 	}
 	if (operation === "aiProviders.setDefault") {
 		for (const row of rows(state, "aiProviders")) row.isDefault = row.id === input.id;
-		return { value: undefined };
+		return { value: find(state, "aiProviders", input.id) };
 	}
-	if (operation === "aiProviders.update") {
-		const row = find(state, "aiProviders", input.id);
-		Object.assign(row, input);
+	if (operation === "aiProviders.update" || operation === "aiProviders.create") {
+		const safe = { ...input };
+		delete safe.apiKey;
+		const row =
+			operation === "aiProviders.update"
+				? find(state, "aiProviders", input.id)
+				: {
+						id: id(),
+						managed: false,
+						fastModel: null,
+						capableModel: null,
+						baseURL: null,
+						enabled: true,
+						isDefault: rows(state, "aiProviders").length === 0,
+						testStatus: "untested",
+						testError: null,
+						testErrorKind: null,
+						apiKeyPreview: "••••fixture",
+						apiKeyFingerprint: `fixture-key-${sequence}`,
+						recipientVersion: "0".repeat(64),
+						lastTestedAt: null,
+						lastUsedAt: null,
+						createdAt: now(),
+						updatedAt: now(),
+					};
+		if (operation === "aiProviders.create") rows(state, "aiProviders").push(row);
+		else if (["provider", "model", "baseURL", "apiKey"].some((key) => key in input)) {
+			for (const schedule of rows(state, "schedules")) if (schedule.aiProviderId === row.id) schedule.enabled = false;
+			row.apiKeyFingerprint = `fixture-key-${++sequence}`;
+			row.recipientVersion = String(sequence % 10).repeat(64);
+			row.testStatus = "untested";
+		}
+		Object.assign(row, safe);
 		return { value: row };
 	}
-	if (operation === "aiProviders.create") {
-		const row = { ...input, id: id(), createdAt: now(), updatedAt: now() };
-		rows(state, "aiProviders").push(row);
-		return { value: row };
-	}
+
 	if (operation === "career.generate") {
 		const task = input.task as Row;
 		if (task.task === "answer")
@@ -554,6 +596,43 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 		rows(state, "offers").unshift(item);
 		return { value: { item, answer: null } };
 	}
+	if (operation === "career.applyReply" || operation === "career.undoReply") {
+		const item = find(state, "offers", input.id);
+		const data = item.data as Row;
+		if (data.kind !== "reply" || !item.applicationId) throw new Error("Choose a message linked to an application.");
+		const application = find(state, "applications", item.applicationId);
+		const keys = ["status", "laneId", "closedReason", "followUpAt", "followUpNote"];
+		if (operation === "career.undoReply") {
+			const receipt = data.applied as { undo?: { before: Row; after: Row } } | null;
+			if (!receipt?.undo) throw new Error("No changes to undo.");
+			if (keys.some((key) => application[key] !== receipt.undo?.after[key]))
+				throw new Error("Application changed. Review again.");
+			Object.assign(application, receipt.undo.before);
+			data.applied = null;
+			return { value: { stages: [] } };
+		}
+		if (data.applied) return { value: { stages: [] } };
+		// shortcut: composite fixture submissions and offer changes need the separate Applied/offer flows; extend when those inline storyboards are added.
+		if (input.submission) throw new Error("Fixture inline submission is not implemented. Use the Applied gate.");
+		const before = Object.fromEntries(keys.map((key) => [key, application[key]]));
+		const changes = data.changes as Row[];
+		for (const index of input.changes as number[])
+			if (!changes[index] || changes[index]?.type === "offer")
+				throw new Error("Fixture offer changes are not implemented. Save offer terms explicitly.");
+		for (const index of input.changes as number[]) {
+			const change = changes[index];
+			if (!change) continue;
+			if (change.type === "stage") application.status = change.stage;
+			if (change.type === "follow-up") {
+				application.followUpAt = change.at;
+				application.followUpNote = change.note;
+			}
+		}
+		const after = Object.fromEntries(keys.map((key) => [key, application[key]]));
+		data.applied = { at: now().toISOString(), changes: input.changes, undo: { before, after, offerId: null } };
+		return { value: { stages: [] } };
+	}
+
 	if (operation === "career.createOffer") {
 		const item = {
 			id: input.id ?? id(),
@@ -604,6 +683,23 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 		const all = rows(state, "aiProviders");
 		all.splice(all.indexOf(find(state, "aiProviders", input.id)), 1);
 		return { value: undefined };
+	}
+	if (operation === "auth.createApiKey") {
+		const keys = state.apiKeys as { apiKeys: Row[]; total: number };
+		keys.apiKeys.push({
+			id: id(),
+			name: input.name,
+			start: "storyboard",
+			prefix: null,
+			enabled: true,
+			createdAt: now(),
+			updatedAt: now(),
+			expiresAt: null,
+			lastRequest: null,
+			permissions: { api: input.access === "read" ? ["read"] : ["read", "write", "delete"] },
+		});
+		keys.total = keys.apiKeys.length;
+		return { value: { key: "storyboard-only-key" } };
 	}
 	if (operation === "auth.apiKeys.delete") {
 		const keys = state.apiKeys as { apiKeys: Row[]; total: number };

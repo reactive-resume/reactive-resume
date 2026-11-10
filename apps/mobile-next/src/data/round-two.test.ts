@@ -3,7 +3,9 @@ jest.mock("@reactive-resume/utils/string", () => ({
 	generateId: () => "00000000-0000-4000-8000-000000000001",
 }));
 jest.mock("@/api/client", () => ({ streamClient: {} }));
-jest.mock("./client", () => ({ dataClient: { applications: { listTrash: jest.fn() } } }));
+jest.mock("./client", () => ({
+	dataClient: { applications: { listTrash: jest.fn(), purge: jest.fn() }, documents: { purgeMany: jest.fn() } },
+}));
 jest.mock("./provider", () => ({}));
 jest.mock("./actions", () => ({}));
 jest.mock("./applied", () => ({}));
@@ -13,13 +15,18 @@ jest.mock("expo-sqlite/kv-store", () => ({
 	__esModule: true,
 	default: { getItemSync: () => null, setItemSync: jest.fn(), removeItemSync: jest.fn(), getAllKeysSync: () => [] },
 }));
+import { dataClient } from "./client";
 import { connectivityState } from "./connectivity";
 import { fixtureArtifact } from "./fixture-artifacts";
 import { fixtureProposals } from "./fixture-proposals";
+import { fakeReplyStream, setFakeStreamFailure } from "./fixture-stream";
 import { seed, fakeBackend, invokeFake, recordFixtureMessages } from "./fixtures";
+import { moneyDifference } from "./offer-compare";
+import { validateWrites } from "./queue";
 import { matching, updateRecentSearches } from "./search";
 import { createFrameDecoder, consumeAgentStream, emptyStream, reduceStream } from "./stream";
-import { allApplicationTrash, TRASH_RETENTION_DAYS } from "./trash";
+import { rankToday } from "./today";
+import { allApplicationTrash, emptyTrashSnapshot, TRASH_RETENTION_DAYS } from "./trash";
 import { validatePracticeAudio } from "./workspace";
 import { assertStageGate } from "./write-policy";
 
@@ -151,4 +158,111 @@ test("fake conversation streams board reply and refuses stale proposal wording r
 		edits: [{ ...input.edits[0], after: proposal.after }],
 	});
 	expect(result).toMatchObject({ editsAccepted: 1 });
+});
+
+test("restored queue cannot bypass Applied confirmation", () => {
+	expect(() =>
+		validateWrites([
+			{
+				id: "unsafe",
+				kind: "applications",
+				operation: "applications.bulkUpdate",
+				input: { ids: ["a"], status: "applied" },
+				createdAt: new Date().toISOString(),
+			},
+		]),
+	).toThrow("Confirm");
+});
+test("Today ranking is deterministic and never duplicates its hero in Needs you", async () => {
+	seed("storyboard");
+	const applications = await fakeBackend.read("applications", {});
+	const offers = await fakeBackend.read("offers", {});
+	const at = new Date("2026-11-07T08:41:00Z");
+	const a = rankToday(applications, offers, at, "Europe/Berlin");
+	const b = rankToday([...applications].reverse(), offers, at, "Europe/Berlin");
+	expect(a.hero?.application.id).toBe(b.hero?.application.id);
+	expect(a.needsYou.some((row) => row.application.id === a.hero?.application.id)).toBe(false);
+	expect(a.comingUp.every((row) => row.step.kind === "interview")).toBe(true);
+	const data = offers[0]?.data;
+	if (!data || data.kind !== "offer") throw new Error("Missing offer");
+	expect(moneyDifference(data, { ...data, currency: "USD" }, "base")).toBeNull();
+	expect(moneyDifference(data, { ...data, period: "month" }, "base")).toBeNull();
+});
+test("fake streaming yields several chunks, saves history and exposes a controlled failure", async () => {
+	seed("storyboard");
+	const frame = jest.spyOn(global, "requestAnimationFrame").mockImplementation((callback) => {
+		queueMicrotask(() => callback(0));
+		return 1;
+	});
+	try {
+		const thread = (await invokeFake("agent.threads.start", { resumeId: "resume-product", scope: "document" })) as {
+			id: string;
+		};
+		const input = {
+			threadId: thread.id,
+			message: { id: "stream-user", role: "user" as const, parts: [{ type: "text" as const, text: "Tailor" }] },
+		};
+		const signal = new AbortController().signal;
+		const chunks: { type: string }[] = [];
+		await consumeAgentStream(await fakeReplyStream(thread.id, input, signal, false), signal, (chunk) =>
+			chunks.push(chunk),
+		);
+		expect(chunks.filter((chunk) => chunk.type === "text-delta")).toHaveLength(3);
+		expect((await fakeBackend.read("conversation", { id: thread.id })).messages).toHaveLength(2);
+		setFakeStreamFailure(2);
+		await expect(
+			consumeAgentStream(await fakeReplyStream(thread.id, undefined, signal, true), signal, () => {}),
+		).rejects.toThrow("failed");
+	} finally {
+		setFakeStreamFailure();
+		frame.mockRestore();
+	}
+});
+
+test("Empty Trash consumes server receipts and only captured application generations", async () => {
+	const documents = jest.mocked(dataClient.documents.purgeMany);
+	const applications = jest.mocked(dataClient.applications.purge);
+	documents.mockResolvedValueOnce({ deleted: 1, skipped: 1 });
+	applications.mockRejectedValueOnce(new Error("Trash generation changed"));
+	const at = new Date("2026-11-01T08:41:00Z");
+	const result = await emptyTrashSnapshot([
+		{ type: "resume", id: "r" },
+		{ type: "letter", id: "l" },
+		{ type: "application", id: "a", trashedAt: at },
+	]);
+	expect(documents).toHaveBeenCalledWith({
+		documents: [
+			{ type: "resume", id: "r" },
+			{ type: "letter", id: "l" },
+		],
+	});
+	expect(applications).toHaveBeenCalledWith({ id: "a", trashedAt: at }, { context: { scope: "storyboard" } });
+	expect(result).toMatchObject({ deleted: 1, skipped: 1, failed: [{ refs: [{ id: "a" }], error: expect.any(Error) }] });
+});
+test("provider changes pause bound schedules and never store supplied key material in fake state", async () => {
+	seed("storyboard");
+	await fakeBackend.write(
+		"aiProviders.update",
+		{ id: "work-openai", model: "new-model", apiKey: "private-test-value" },
+		"storyboard",
+	);
+	const providers = await fakeBackend.read("aiProviders", {});
+	expect(providers[0]).not.toHaveProperty("apiKey");
+	expect((await fakeBackend.read("schedules", {}))[0]?.enabled).toBe(false);
+});
+
+test("fake reply decisions record Undo receipts and refuse Undo after later changes", async () => {
+	seed("storyboard");
+	const result = (await fakeBackend.write(
+		"career.generate",
+		{ applicationId: "lumen", locale: "en-US", task: { task: "reply", message: "Employer message" } },
+		"storyboard",
+	)) as { item: { id: string } };
+	expect(await fakeBackend.write("career.applyReply", { id: result.item.id, changes: [] }, "storyboard")).toEqual({
+		stages: [],
+	});
+	expect(await fakeBackend.write("career.undoReply", { id: result.item.id }, "storyboard")).toEqual({ stages: [] });
+	await fakeBackend.write("career.applyReply", { id: result.item.id, changes: [] }, "storyboard");
+	await fakeBackend.write("applications.update", { id: "lumen", status: "offer" }, "storyboard");
+	await expect(fakeBackend.write("career.undoReply", { id: result.item.id }, "storyboard")).rejects.toThrow("changed");
 });

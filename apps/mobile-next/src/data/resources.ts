@@ -47,7 +47,7 @@ export type ResourceOutput<K extends Resource> = Awaited<ReturnType<(typeof read
 export type Backend = {
 	kind: "real" | "fake" | "guest";
 	read<K extends Resource>(resource: K, input: ResourceInput<K>, signal?: AbortSignal): Promise<ResourceOutput<K>>;
-	write(operation: string, input: unknown, scope: string): Promise<unknown>;
+	write(operation: string, input: unknown, scope: string, signal?: AbortSignal): Promise<unknown>;
 };
 export const writes = {
 	"applicationProfile.save": client.applicationProfile.save,
@@ -135,14 +135,15 @@ export const realBackend: Backend = {
 		) => Promise<ResourceOutput<typeof resource>>;
 		return read(input, signal ? { signal } : {});
 	},
-	write: async (operation, input, scope) => {
+	write: async (operation, input, scope, signal) => {
+		signal?.throwIfAborted();
 		assertStageGate(operation, input);
 		if (!(operation in writes)) throw new Error(t`Unsupported queued operation.`);
 		const write = writes[operation as keyof typeof writes] as (
 			input: unknown,
-			options: { context: { scope: string } },
+			options: { context: { scope: string }; signal?: AbortSignal },
 		) => Promise<unknown>;
-		const result = await write(input, { context: { scope } });
+		const result = await write(input, { context: { scope }, ...(signal ? { signal } : {}) });
 		if (operation === "documents.copyForJob" && result !== (input as MutationInputs["documents.copyForJob"]).newId)
 			throw Object.assign(new Error(t`Update your server before copying for a job.`), { code: "CONFLICT" });
 		return result;

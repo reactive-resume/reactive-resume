@@ -115,7 +115,7 @@ export function useDataActions() {
 	};
 	return {
 		async write<K extends keyof MutationInputs>(kind: QueueKind, operation: K, input: MutationInputs[K]) {
-			if (!scope || (backend.kind === "real" && getAccountScope() !== scope)) throw new Error("Sign in again.");
+			if (!scope || (backend.kind !== "fake" && getAccountScope() !== scope)) throw new Error("Sign in again.");
 			assertStageGate(operation, input);
 			if (!(writableOperations as readonly string[]).includes(operation))
 				throw new Error("This action requires an online request.");

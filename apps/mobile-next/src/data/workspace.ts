@@ -63,10 +63,10 @@ export function useWorkspaceActions(applicationId: string) {
 		progress,
 		save: (input: Omit<RouterInput["career"]["saveWorkspace"], "applicationId">) =>
 			actions.write("applications", "career.saveWorkspace", { ...input, applicationId }),
-		async generate(task: Input["task"], locale = "en-US") {
+		async generate(task: Input["task"], locale = "en-US", signal?: AbortSignal) {
 			setProgress("generating");
 			try {
-				const result = await actions.run("career.generate", { applicationId, task, locale });
+				const result = await actions.run("career.generate", { applicationId, task, locale }, signal);
 				setProgress("complete");
 				return result;
 			} catch (error) {
@@ -74,8 +74,8 @@ export function useWorkspaceActions(applicationId: string) {
 				throw error;
 			}
 		},
-		redraftMessage: (message: string, locale = "en-US") =>
-			actions.run("career.generate", { applicationId, task: { task: "reply", message }, locale }),
+		redraftMessage: (message: string, locale = "en-US", signal?: AbortSignal) =>
+			actions.run("career.generate", { applicationId, task: { task: "reply", message }, locale }, signal),
 		logFollowUp: (input: Omit<RouterInput["applications"]["logFollowUp"], "id">) =>
 			actions.run("applications.logFollowUp", { ...input, id: applicationId }),
 		applyReply: (input: RouterInput["career"]["applyReply"]) => actions.run("career.applyReply", input),
@@ -101,10 +101,10 @@ export function useApplicationActions() {
 			actions.run("applications.addInterview", input),
 		updateInterview: (input: RouterInput["applications"]["updateInterview"]) =>
 			actions.run("applications.updateInterview", input),
-		async parsePosting(input: string, useAI = false) {
+		async parsePosting(input: string, useAI = false, signal?: AbortSignal) {
 			setProgress("reading");
 			try {
-				const result = await actions.run("applications.ai.parsePosting", { input, useAI });
+				const result = await actions.run("applications.ai.parsePosting", { input, useAI }, signal);
 				setProgress("review");
 				return result;
 			} catch (error) {

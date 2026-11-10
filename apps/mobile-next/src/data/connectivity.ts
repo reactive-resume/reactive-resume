@@ -1,5 +1,4 @@
 import { useNetworkState } from "expo-network";
-import { useDataBackend } from "./provider";
 export function connectivityState(state: { isConnected?: boolean; isInternetReachable?: boolean }) {
 	return state.isConnected === false || state.isInternetReachable === false
 		? "offline"
@@ -9,7 +8,6 @@ export function connectivityState(state: { isConnected?: boolean; isInternetReac
 }
 export function useConnectivity() {
 	const network = useNetworkState();
-	const { backend } = useDataBackend();
-	const status = backend.kind === "fake" ? "online" : connectivityState(network);
+	const status = connectivityState(network);
 	return { ...network, status, offline: status === "offline", online: status === "online" };
 }

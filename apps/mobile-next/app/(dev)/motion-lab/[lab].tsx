@@ -5,7 +5,6 @@
 // "push-b" and "modal-b" are the pushed and presented screens of the push, pop and modal labs.
 import { i18n } from "@lingui/core";
 import { router, useLocalSearchParams } from "expo-router";
-import { Stack } from "expo-router/js-stack";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { StyleSheet, type TurboModule, TurboModuleRegistry, View } from "react-native";
 import Animated, { runOnUI, scrollTo, useAnimatedRef, useSharedValue } from "react-native-reanimated";
@@ -25,8 +24,6 @@ import {
 	timeScale,
 	Touchable,
 	useFadeUp,
-	useStackOptions,
-	withInstantOpen,
 } from "@/ui/motion";
 import { ReorderList, type ReorderHandle } from "@/ui/ReorderList";
 import { Segmented } from "@/ui/Segmented";
@@ -54,21 +51,17 @@ function setFastRefresh(on: boolean) {
 	if (__DEV__) TurboModuleRegistry.get<DevSettingsSpec>("DevSettings")?.setHotLoadingEnabled(on);
 }
 
-/** Bumped when the lab restores timeScale, so pushed screens rebuild their stack options. */
-const useEpoch = create<{ n: number; bump: () => void }>((set) => ({ n: 0, bump: () => set((s) => ({ n: s.n + 1 })) }));
-
 const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 /** Land a setup at once (timeScale 0), then restore normal speed. */
-async function instantly(setup: () => void) {
+async function instantly(setup: () => void, hold = 100) {
 	timeScale.value = 0;
 	setup();
 	await frame();
 	await frame();
-	await sleep(100);
+	await sleep(hold); // a navigation reads its duration when it starts, a few frames after setup()
 	timeScale.value = 1;
-	useEpoch.getState().bump();
 }
 
 /** Runs `go` once, 600 ms after the scene appears, when ?run=1. */
@@ -142,7 +135,6 @@ const ORDER = [
 
 function Frame({ lab, children }: { lab: string; children: ReactNode }) {
 	const { colors } = useTheme();
-	useEpoch((s) => s.n);
 	const pushed = lab.endsWith("-b");
 	const [run] = useState(() => (pushed ? useRuns.getState().active : ++runs));
 	const visible = useRuns((s) => s.active === run && !s.cleared);
@@ -157,11 +149,8 @@ function Frame({ lab, children }: { lab: string; children: ReactNode }) {
 		}, CLEAR_AFTER);
 		return () => clearTimeout(id);
 	}, [pushed, run]);
-	const base = useStackOptions("light", lab === "modal-b" ? "modal" : "push");
-	const options = pushed ? (lab === "push-b" ? { ...base, ...SEE_THROUGH } : base) : withInstantOpen(base);
 	return (
 		<View style={[StyleSheet.absoluteFill, { backgroundColor: lab === "push-b" ? "transparent" : colors.bg }]}>
-			<Stack.Screen options={options} />
 			{visible ? children : cleared && Next ? <Next run={false} /> : null}
 		</View>
 	);
@@ -206,16 +195,20 @@ function PushA({ run }: SceneProps) {
 function PushB() {
 	return <Mark x={12} y={300} />;
 }
-/** push-b's card is see-through (lab only), so screen A's marker stays measurable while it is covered. */
-const SEE_THROUGH = { cardStyle: { backgroundColor: "transparent" } };
 
 function Pop({ run }: SceneProps) {
+	// B is pushed at once before the run; A's marker is drawn only once it rests under B (at 83), so the setup
+	// itself is not measured as motion.
+	const [ready, setReady] = useState(false);
 	useRun(
 		run,
 		() => router.back(),
-		() => instantly(() => router.push("/motion-lab/push-b")),
+		async () => {
+			await instantly(() => router.push("/motion-lab/push-b"), 400);
+			setReady(true);
+		},
 	);
-	return <Mark x={188} y={300} color={CYAN} />;
+	return ready || !run ? <Mark x={188} y={300} color={CYAN} /> : null;
 }
 
 function ModalA({ run }: SceneProps) {

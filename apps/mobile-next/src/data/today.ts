@@ -26,9 +26,14 @@ export function rankToday(
 			key: nextStepSortKey(application, at, zone, hints.get(application.id)),
 		}))
 		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.application.id, b.application.id));
+	const attention = steps.filter(({ step }) => needsAttention(step, at));
+	const hero =
+		attention.find(({ step }) => step.kind === "interview" && step.at.getTime() - at.getTime() <= 48 * 3600000) ??
+		attention[0];
 	return {
-		needsYou: steps.filter(({ step }) => needsAttention(step, at)),
-		comingUp: steps.filter(({ step }) => !needsAttention(step, at) && step.kind !== "closed"),
+		hero,
+		needsYou: attention.filter((entry) => entry !== hero && entry.step.kind !== "interview"),
+		comingUp: attention.filter(({ step }) => step.kind === "interview"),
 		recent: [...applications].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()).slice(0, 10),
 	};
 }
@@ -68,10 +73,11 @@ export function useNotificationCompletion() {
 		...query,
 		async complete(id: string) {
 			await save({ ...query.data, [id]: now().toISOString() });
+			await actions.write("stories-and-facts", "career.markNotificationRead", { id });
 		},
 		async undo(id: string) {
 			const values = { ...query.data };
-			delete values[id];
+			values[id] = "undone";
 			await save(values);
 		},
 		markRead: (id: string) => actions.write("stories-and-facts", "career.markNotificationRead", { id }),

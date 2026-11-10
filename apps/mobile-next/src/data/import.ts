@@ -28,7 +28,16 @@ export class DocumentImportError extends Error {
 		readonly file: DocumentPickerAsset,
 		options?: ErrorOptions,
 	) {
-		super(`Import ${code}. Your file is kept.`, options);
+		const messages = {
+			unsupported: t`Choose a PDF, Word or JSON file. Your file is kept.`,
+			"too-large": t`File is too large. Choose a file up to 10 MB.`,
+			invalid: t`This file couldn't be read. Your file is kept.`,
+			consent: t`File sharing wasn't approved. Your file is kept.`,
+			unreadable: t`Couldn't read the file. Your file is kept.`,
+			canceled: t`Import canceled. Your file is kept.`,
+			server: t`Couldn't import the file. Your file is kept. Try again.`,
+		};
+		super(messages[code], options);
 		this.name = "DocumentImportError";
 	}
 }

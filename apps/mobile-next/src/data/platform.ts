@@ -1,11 +1,12 @@
 import type { ResourceInput } from "./resources";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { publicResumeUrl } from "@reactive-resume/resume/sharing";
 import { computeOutcomes } from "@reactive-resume/schema/applications/outcomes";
 import { selectOfferPair } from "@reactive-resume/schema/career-offer";
 import { usePlatformActions } from "./actions";
 import { moneyDifference } from "./offer-compare";
-import { useResource, useResume, useAccount, useDataBackend, useDocuments, useApplications } from "./provider";
+import { useResource, useResume, useAccount, useDataBackend, useApplications } from "./provider";
 import { getServer } from "@/auth/session";
 import { pageRenderer } from "@/render/page-renderer";
 
@@ -54,7 +55,13 @@ export function useSharing(id: string) {
 	const actions = usePlatformActions();
 	const address =
 		resume.data && account.data
-			? `${getServer()}/${encodeURIComponent(account.data.username)}/${encodeURIComponent(resume.data.slug)}`
+			? resume.data.isPrimary && domain.data?.verified
+				? `https://${domain.data.hostname}`
+				: publicResumeUrl(getServer(), {
+						username: account.data.username,
+						slug: resume.data.slug,
+						isPrimary: resume.data.isPrimary,
+					})
 			: undefined;
 	return {
 		resume,
@@ -95,22 +102,6 @@ export function useApplicationInsights() {
 		};
 	}, [applications.data]);
 	return { applications, stats, model };
-}
-export function useDocumentListModel(input: ResourceInput<"documents"> = {}) {
-	const query = useDocuments(input);
-	return {
-		...query,
-		data: query.data?.map((row) => ({
-			...row,
-			editedDate: row.editedAt,
-			publicState: row.isPublic
-				? row.hasPassword
-					? ("password" as const)
-					: ("public" as const)
-				: ("private" as const),
-			linkedJobLabel: row.application ? `${row.application.company} · ${row.application.role}` : null,
-		})),
-	};
 }
 
 export function useOfferComparison(requested: { a?: string; b?: string } = {}) {

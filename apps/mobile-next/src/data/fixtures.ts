@@ -215,7 +215,7 @@ function makeState(fixture: Fixture) {
 		tags: [],
 		contacts: [],
 		activity: [] as ApplicationTimelineEntry[],
-		appliedAt: new Date("2026-11-02T11:00:00Z"),
+		appliedAt: new Date(id === "fieldnote" ? "2026-10-28T12:00:00Z" : "2026-11-02T11:00:00Z"),
 		createdAt: new Date("2026-10-24T10:00:00Z"),
 		updatedAt: yesterday,
 		trashedAt: null as Date | null,
@@ -703,7 +703,9 @@ export async function invokeFake(operation: string, input: unknown): Promise<unk
 		const row = state.resumes.find((row) => row.id === fields.id);
 		if (!row) throw new Error("Fixture resume not found.");
 		if (row.isLocked) throw new Error("Unlock this document before editing.");
-		Object.assign(row, fields, { updatedAt: now() });
+		if (fields.expectedUpdatedAt && new Date(String(fields.expectedUpdatedAt)).getTime() !== row.updatedAt.getTime())
+			throw Object.assign(new Error("Resume changed."), { code: "RESUME_VERSION_CONFLICT" });
+		Object.assign(row, fields, { updatedAt: new Date(Math.max(now().getTime(), row.updatedAt.getTime() + 1)) });
 		const summary = state.documents.find((item) => item.id === row.id);
 		if (summary) Object.assign(summary, fields, { updatedAt: row.updatedAt });
 		return { updatedAt: row.updatedAt };
@@ -712,8 +714,24 @@ export async function invokeFake(operation: string, input: unknown): Promise<unk
 		const row = state.letters.find((row) => row.id === fields.id);
 		if (!row) throw new Error("Fixture letter not found.");
 		if (row.isLocked) throw new Error("Unlock this document before editing.");
+		if (fields.expectedRevision !== undefined && fields.expectedRevision !== row.revision)
+			throw Object.assign(new Error("Letter changed."), { code: "CONFLICT" });
 		Object.assign(row, fields, { revision: row.revision + 1, updatedAt: now() });
 		return structuredClone(row);
+	}
+	if (operation === "documents.purgeMany") {
+		const refs = fields.documents as Row[];
+		let deleted = 0;
+		for (const ref of refs) {
+			const index = state.documents.findIndex((row) => row.id === ref.id && row.type === ref.type && row.trashedAt);
+			if (index >= 0) {
+				state.documents.splice(index, 1);
+				deleted++;
+			}
+		}
+		generation++;
+		for (const listener of listeners) listener();
+		return { deleted, skipped: refs.length - deleted };
 	}
 	if (/^(documents|applications)\.(trash|restore|purge|emptyTrash)$/.test(operation)) {
 		const [kind, action] = operation.split(".");

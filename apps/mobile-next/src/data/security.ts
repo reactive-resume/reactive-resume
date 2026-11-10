@@ -1,16 +1,23 @@
+import { t } from "@lingui/core/macro";
 import { Directory } from "expo-file-system";
 import { openBrowserAsync } from "expo-web-browser";
 import { usePlatformActions } from "./actions";
 import { isFake } from "./fixtures";
 import { activeDataScope, assertDataScope } from "./scope";
-import { getServer } from "@/auth/session";
-export type AccountSettingsSection = "passkeys" | "sessions" | "two-step" | "password" | "delete-account";
+import { getServer, getSession } from "@/auth/session";
+export type AccountSettingsSection = "passkeys" | "sessions" | "two-step" | "password" | "delete-account" | "api-keys";
 /** Cookie-session-only security operations keep re-verification inside the server's account flow. */
 export async function openAccountSecurity(section: AccountSettingsSection) {
 	const scope = activeDataScope();
 	if (isFake()) return { state: "storyboard" as const };
-	const url = new URL("/dashboard/settings/account", getServer());
-	if (section === "delete-account") url.searchParams.set("deleteAccount", "true");
+	if (getSession().status !== "signed-in") throw new Error(t`Sign in again.`);
+	const [, userId] = JSON.parse(scope) as [string, string];
+	const url = new URL(section === "api-keys" ? "/dashboard/settings/ai" : "/dashboard/settings/account", getServer());
+	url.searchParams.set("forAccount", userId);
+	if (section === "api-keys") {
+		url.searchParams.set("newKey", "true");
+		url.hash = "api-keys";
+	} else if (section === "delete-account") url.searchParams.set("deleteAccount", "true");
 	else url.hash = section;
 	const result = await openBrowserAsync(url.href);
 	assertDataScope(scope);

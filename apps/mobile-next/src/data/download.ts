@@ -2,6 +2,7 @@ import type { DocumentRef } from "./lifecycle";
 import type { Directory } from "expo-file-system";
 import { t } from "@lingui/core/macro";
 import { File } from "expo-file-system";
+import { sanitizeFileName } from "@reactive-resume/utils/file";
 import { dataClient } from "./client";
 import { isFake } from "./fixtures";
 import { activeDataScope, assertDataScope } from "./scope";
@@ -25,7 +26,7 @@ export async function downloadDocuments(
 				? await dataClient.resume.getById({ id: ref.id }, { signal, context: { scope } })
 				: await dataClient.coverLetters.getById({ id: ref.id }, { signal, context: { scope } });
 		assertDataScope(scope);
-		const name = safeFileName(document.name).slice(0, 80) || "document";
+		const name = sanitizeFileName(document.name).slice(0, 80) || "document";
 		const file = new File(directory, `${name}-${saved.length + 1}.${format}`);
 		if (format === "pdf") {
 			const result = await pageRenderer.render({
