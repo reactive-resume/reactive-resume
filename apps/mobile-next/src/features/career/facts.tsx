@@ -1,9 +1,11 @@
 import { t } from "@lingui/core/macro";
-import { useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { View } from "react-native";
+import { createForgetHold } from "./forget-hold";
 import { factSourceLine } from "./model";
 import { ResourceState } from "./shared";
-import { screenTexts, useCareerFacts, useDataActions, useDataBackend } from "@/data";
+import { screenTexts, useCareerFacts, useCareerActions, useForgottenFacts, useDataBackend } from "@/data";
 import {
 	BottomSheet,
 	Button,
@@ -15,11 +17,49 @@ import {
 	Segmented,
 	Text,
 	TextField,
+	haptic,
+	showToast,
 } from "@/ui";
 
 export function FactsScreen() {
+	const { scope } = useDataBackend();
+	return <ScopedFactsScreen key={scope} />;
+}
+
+function ScopedFactsScreen() {
 	const query = useCareerFacts({ all: true });
-	const actions = useDataActions();
+	const actions = useCareerActions();
+	const forgotten = useForgottenFacts();
+	const visible = useRef(false);
+	const [hold] = useState(() =>
+		createForgetHold<NonNullable<typeof query.data>[number]>((fact) => actions.forgetFact({ id: fact.id })),
+	);
+	const [held, setHeld] = useState(hold.values());
+	const [showForgotten, setShowForgotten] = useState(false);
+	useFocusEffect(
+		useCallback(() => {
+			visible.current = true;
+			setHeld(hold.values());
+			return () => {
+				visible.current = false;
+				void hold.flush().catch(() => showToast({ message: t`Couldn't forget the fact. Try again.` }));
+			};
+		}, [hold]),
+	);
+	const restore = (id: string) => {
+		if (!visible.current) return;
+		hold.restore(id);
+		setHeld(hold.values());
+	};
+	const forget = () => {
+		const fact = query.data?.find((item) => item.id === editing);
+		if (!fact) return;
+		hold.hold(fact);
+		setHeld(hold.values());
+		setEditing(null);
+		haptic("light");
+		showToast({ message: t`Fact forgotten`, action: { label: t`Undo`, onPress: () => restore(fact.id) } });
+	};
 	const [editing, setEditing] = useState<string | null>(null);
 	const [text, setText] = useState("");
 	const [category, setCategory] = useState<"experience" | "skill" | "preference">("experience");
@@ -27,7 +67,7 @@ export function FactsScreen() {
 	const [failure, setFailure] = useState(false);
 	const fake = useDataBackend().backend.kind === "fake";
 	const copy = screenTexts("C3-Facts");
-	const rows = query.data ?? [];
+	const rows = (query.data ?? []).filter((fact) => !held.some((item) => item.id === fact.id));
 	// The fixture's facts all come from the resume; the storyboard draws each row's own source line.
 	const sourceOf = (fact: (typeof rows)[number]) => {
 		const drawn = fake ? copy[copy.indexOf(fact.text) + 1] : undefined;
@@ -44,9 +84,9 @@ export function FactsScreen() {
 		setSaving(true);
 		setFailure(false);
 		try {
-			if (editing) await actions.write("stories-and-facts", "career.updateFact", { id: editing, text: text.trim() });
+			if (editing) await actions.updateFact({ id: editing, text: text.trim() });
 			else
-				await actions.write("stories-and-facts", "career.saveFact", {
+				await actions.saveFact({
 					text: text.trim(),
 					category,
 					source: { kind: "manual", id: "", quote: "" },
@@ -97,8 +137,26 @@ export function FactsScreen() {
 							</View>
 						) : null;
 					})}
+					{held.length || (!fake && forgotten.data?.length) ? (
+						<View style={{ padding: 24 }}>
+							<Button label={t`Show forgotten`} onPress={() => setShowForgotten(true)} />
+						</View>
+					) : null}
 				</ResourceState>
 			</PushScreen>
+			{showForgotten ? (
+				<BottomSheet title={t`Forgotten facts`} height={480} onClose={() => setShowForgotten(false)}>
+					{held.map((fact) => (
+						<ListRow
+							key={fact.id}
+							title={fact.text}
+							wrapTitle
+							trailing={<Button label={t`Restore`} onPress={() => restore(fact.id)} />}
+						/>
+					))}
+					<Text variant="body">{t`${forgotten.data?.reduce((sum, row) => sum + row.count, 0) ?? 0} facts permanently forgotten`}</Text>
+				</BottomSheet>
+			) : null}
 			{editing !== null ? (
 				<BottomSheet
 					title={editing ? t`Correct a fact` : t`Add a fact`}
@@ -131,7 +189,16 @@ export function FactsScreen() {
 								]}
 							/>
 						) : (
-							<Button label={t`Forget`} tone="dangerGhost" disabled />
+							<>
+								<Button label={t`Forget`} tone="dangerGhost" onPress={forget} />
+								<Button
+									label={t`Show forgotten`}
+									onPress={() => {
+										setEditing(null);
+										setShowForgotten(true);
+									}}
+								/>
+							</>
 						)}
 						{failure ? (
 							<Text

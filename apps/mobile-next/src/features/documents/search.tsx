@@ -5,6 +5,7 @@ import { Keyboard, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { editedLabel } from "./display";
 import { documentHref } from "./model";
+import { searchGroup } from "./search-model";
 import { CollectionState, DocumentPlaceholders } from "./shared";
 import { useDataBackend, useSearch, useToday } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
@@ -23,6 +24,11 @@ import {
 } from "@/ui";
 
 export function SearchScreen() {
+	const { scope } = useDataBackend();
+	return <ScopedSearchScreen key={scope} />;
+}
+
+function ScopedSearchScreen() {
 	const params = useLocalSearchParams<{ q?: string }>();
 	const [query, setQuery] = useState(params.q ?? "");
 	const [debounced, setDebounced] = useState(query);
@@ -32,8 +38,21 @@ export function SearchScreen() {
 	const [picker, setPicker] = useState<"kind" | "tag" | "sort" | null>(null);
 	const [allDocuments, setAllDocuments] = useState(false);
 	const [allApplications, setAllApplications] = useState(false);
-	const [recent, setRecent] = useState<string[]>([]);
-	const search = useSearch(debounced);
+	const [expanded, setExpanded] = useState<string[]>([]);
+	const search = useSearch(debounced, [
+		{ id: "settings", label: t`Settings`, href: "/settings" },
+		{ id: "account", label: t`Account and security`, href: "/settings/account" },
+		{ id: "preferences", label: t`Preferences`, href: "/settings/preferences" },
+		{ id: "profile", label: t`Application profile`, href: "/settings/profile" },
+		{ id: "ai", label: t`AI and developer`, href: "/settings/ai" },
+		{ id: "facts", label: t`Knowledge`, href: "/career/knowledge/facts" },
+		{ id: "offers", label: t`Compare offers`, href: "/career/offers" },
+		{ id: "ats", label: t`ATS checker`, href: "/ats-checker" },
+		{ id: "trash", label: t`Trash`, href: "/trash" },
+		{ id: "letter", label: t`New cover letter`, href: "/new?kind=letter" },
+		{ id: "job", label: t`Save a job`, href: "/applications/new" },
+	]);
+	const recent = search.recent.data ?? [];
 	const { now } = useToday();
 	const router = useRouter();
 	const insets = useSafeAreaInsets();
@@ -42,8 +61,7 @@ export function SearchScreen() {
 		return () => clearTimeout(timer);
 	}, [query]);
 	const remember = () => {
-		if (query.trim())
-			setRecent((items) => [query.trim(), ...items.filter((item) => item !== query.trim())].slice(0, 10));
+		if (query.trim()) void search.recent.add(query.trim());
 		Keyboard.dismiss();
 	};
 	const documents = (search.documents.data ?? [])
@@ -58,6 +76,39 @@ export function SearchScreen() {
 	const applications = kind === "all" || kind === "application" ? (search.applications.data ?? []) : [];
 	// No hook searches drafted messages yet; the fixture's one draft stands in until the data layer exposes them.
 	const { backend } = useDataBackend();
+	const extraGroups =
+		backend.kind === "fake"
+			? []
+			: [
+					{
+						id: "conversations",
+						title: t`Conversations`,
+						rows: search.conversations.data
+							.filter((thread) => thread.scope === "career")
+							.map((thread) => ({ id: thread.id, title: thread.title, href: `/career/coach/${thread.id}` })),
+					},
+					{
+						id: "notes",
+						title: t`Notes and messages`,
+						rows: search.notes.data
+							.filter((note) => note.applicationId)
+							.map((note) => ({ id: note.id, title: note.title, href: `/applications/${note.applicationId}/library` })),
+					},
+					{
+						id: "application-notes",
+						title: t`Application notes`,
+						rows: search.applicationNotes.map((app) => ({
+							id: app.id,
+							title: app.company,
+							href: `/applications/${app.id}/messages`,
+						})),
+					},
+					{
+						id: "commands",
+						title: t`Go to…`,
+						rows: search.commands.map((command) => ({ id: command.id, title: command.label, href: command.href })),
+					},
+				];
 	const messages = (
 		backend.kind === "fake"
 			? [{ id: "lumen-thanks", title: t`Thank-you note to Priya`, detail: t`Draft · Lumen`, applicationId: "lumen" }]
@@ -146,7 +197,7 @@ export function SearchScreen() {
 									<TextLink
 										label={t`Remove`}
 										onPress={() => {
-											setRecent((items) => items.filter((item) => item !== term));
+											void search.recent.remove(term);
 											haptic("selection");
 										}}
 									/>
@@ -273,7 +324,35 @@ export function SearchScreen() {
 								))}
 							</>
 						) : null}
-						{!applications.length && !documents.length && !messages.length ? (
+						{extraGroups.map((group) => {
+							const result = searchGroup(group.rows, expanded.includes(group.id));
+							return group.rows.length ? (
+								<View key={group.id}>
+									<SectionHeading title={group.title} />
+									{result.visible.map((row) => (
+										<ListRow
+											key={row.id}
+											title={row.title}
+											trailing="caret"
+											onPress={() => {
+												remember();
+												router.push(row.href);
+											}}
+										/>
+									))}
+									{result.remaining ? (
+										<ListRow
+											title={t`Show all ${group.rows.length}`}
+											onPress={() => setExpanded((ids) => [...ids, group.id])}
+										/>
+									) : null}
+								</View>
+							) : null;
+						})}
+						{!applications.length &&
+						!documents.length &&
+						!messages.length &&
+						!extraGroups.some((group) => group.rows.length) ? (
 							<CollectionState message={t`No matches for “${debounced}”. Try different words.`} />
 						) : null}
 					</>

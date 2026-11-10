@@ -10,7 +10,7 @@ import { DeleteAccountDialog } from "./DeleteAccountDialog";
 import { useAccountSecurity } from "./security";
 import { useStoryboardView } from "./storyboard-view";
 import { useSession } from "@/auth/session";
-import { useAccount, useDataBackend } from "@/data";
+import { useAccount, useDataBackend, useAccountActions } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import { useAuthOptions } from "@/features/auth/options";
 import { ListRow, PushScreen, SectionHeading, Text, showToast } from "@/ui";
@@ -19,6 +19,8 @@ export function AccountScreen() {
 	const router = useRouter();
 	const { server } = useSession();
 	const account = useAccount();
+	const actions = useAccountActions();
+	const [exporting, setExporting] = useState(false);
 	const fake = useDataBackend().backend.kind === "fake";
 	const security = useAccountSecurity();
 	const view = useStoryboardView();
@@ -68,19 +70,19 @@ export function AccountScreen() {
 					title={t`Password`}
 					secondary={security.password}
 					trailing="caret"
-					onPress={web("/dashboard/settings/authentication")}
+					onPress={() => void actions.openSecurity("password")}
 				/>
 				<ListRow
 					title={t`Two-step verification`}
 					secondary={security.twoStep}
 					trailing="caret"
-					onPress={web("/dashboard/settings/authentication")}
+					onPress={() => void actions.openSecurity("two-step")}
 				/>
 				<ListRow
 					title={t`Passkeys`}
 					secondary={security.passkeys}
 					trailing="caret"
-					onPress={web("/dashboard/settings/authentication")}
+					onPress={() => void actions.openSecurity("passkeys")}
 				/>
 				<ListRow
 					title={t`Connected apps`}
@@ -96,16 +98,22 @@ export function AccountScreen() {
 				title={t`Export my data`}
 				secondary={t`A JSON file of everything`}
 				trailing="caret"
-				onPress={
-					fake ? () => showToast({ message: t`We'll email you when it's ready` }) : web("/dashboard/settings/account")
-				}
+				onPress={() => {
+					if (exporting) return;
+					setExporting(true);
+					void actions
+						.exportEverything()
+						.then(() => showToast({ message: t`Saved to Files` }))
+						.catch(() => showToast({ message: t`Couldn't export your data. Try again.` }))
+						.finally(() => setExporting(false));
+				}}
 			/>
 			<ListRow
 				title={t`Delete account`}
 				danger
 				last
 				boxHidden
-				onPress={fake ? () => setDeleting(true) : web("/dashboard/settings/account")}
+				onPress={fake ? () => setDeleting(true) : () => void actions.openSecurity("delete-account")}
 			/>
 		</PushScreen>
 	);

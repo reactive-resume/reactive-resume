@@ -26,6 +26,6 @@ export function noticeCategory(notice: Notice) {
 }
 export const quickActions = () => [
 	{ id: "save-job", title: t`Save a job`, href: "/applications/new", icon: "briefcase" as const },
-	{ id: "new-resume", title: t`New resume`, href: "/documents/new", icon: "file-plus" as const },
-	{ id: "search", title: t`Search`, href: "/documents/search", icon: "magnifying-glass" as const },
+	{ id: "new-resume", title: t`New resume`, href: "/new", icon: "file-plus" as const },
+	{ id: "search", title: t`Search`, href: "/search", icon: "magnifying-glass" as const },
 ];

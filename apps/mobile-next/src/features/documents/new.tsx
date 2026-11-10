@@ -1,15 +1,45 @@
 import { t } from "@lingui/core/macro";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { CollectionState } from "./shared";
-import { useApplications } from "@/data";
+import { useDataBackend } from "@/data";
+import { useApplications, useDocumentActions } from "@/data";
 import { IconTile, ListRow, SheetScreen, SheetScrollView } from "@/ui";
 
 export function NewDocumentScreen() {
+	const { scope } = useDataBackend();
+	return <ScopedNewDocumentScreen key={scope} />;
+}
+
+function ScopedNewDocumentScreen() {
 	const router = useRouter();
+	const params = useLocalSearchParams<{ kind?: string; resumeId?: string }>();
 	const applications = useApplications();
+	const actions = useDocumentActions();
+	const [busy, setBusy] = useState(false);
+	const create = async (applicationId?: string) => {
+		if (busy) return;
+		setBusy(true);
+		try {
+			if (applicationId) {
+				const letter = await actions.createLetter({
+					name: t`Untitled cover letter`,
+					applicationId,
+					...(params.resumeId ? { resumeId: params.resumeId } : {}),
+				});
+				router.replace(`/letter/${letter.id}`);
+			} else {
+				const id = await actions.createResume({ name: t`Untitled resume`, tags: [] });
+				router.replace(`/builder/${id}/design/template`);
+			}
+		} catch {
+			setError(t`Couldn't create the document. Try again.`);
+		} finally {
+			setBusy(false);
+		}
+	};
 	const [error, setError] = useState<string>();
-	const [chooseApplication, setChooseApplication] = useState(false);
+	const [chooseApplication, setChooseApplication] = useState(params.kind === "letter");
 	const openApplications = applications.data?.filter((app) => app.status !== "closed") ?? [];
 	return (
 		<SheetScreen
@@ -30,7 +60,8 @@ export function NewDocumentScreen() {
 									title={app.company}
 									secondary={app.role}
 									trailing="caret"
-									onPress={() => setError(t`Cover letter creation is not available yet.`)}
+									disabled={busy}
+									onPress={() => void create(app.id)}
 								/>
 							))
 						) : (
@@ -52,7 +83,8 @@ export function NewDocumentScreen() {
 							secondary={t`Start from a template`}
 							leading={<IconTile icon="file-text" accent />}
 							trailing="caret"
-							onPress={() => setError(t`Resume creation is not available yet.`)}
+							disabled={busy}
+							onPress={() => void create()}
 						/>
 						<ListRow
 							wrapTitle

@@ -23,9 +23,9 @@ import { setHapticsEnabled } from "@/ui/motion";
 
 const channels = [
 	{ key: "interviews", label: () => t`Interviews and briefings` },
-	{ key: "follow-ups", label: () => t`Follow-ups` },
-	{ key: "new-roles", label: () => t`New roles` },
-	{ key: "offer-deadlines", label: () => t`Offer deadlines` },
+	{ key: "followUps", label: () => t`Follow-ups` },
+	{ key: "newRoles", label: () => t`New roles` },
+	{ key: "offers", label: () => t`Offer deadlines` },
 	{ key: "feedback", label: () => t`Feedback comments` },
 ] as const;
 

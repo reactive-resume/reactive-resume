@@ -104,7 +104,10 @@ export function SignInScreen({ mode }: { mode: SignInMode }) {
 	const sendReset = async () => {
 		if (!/^\S+@\S+\.\S+$/.test(email.trim())) return fail(t`Enter a valid email address.`);
 		setError(undefined);
-		if (backend.kind !== "fake") await WebBrowser.openBrowserAsync(`${server}/auth/forgot-password`);
+		if (backend.kind !== "fake") {
+			await WebBrowser.openBrowserAsync(`${server}/auth/forgot-password`);
+			return;
+		}
 		setSent(true);
 	};
 
