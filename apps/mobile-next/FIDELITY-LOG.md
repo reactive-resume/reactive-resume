@@ -17,3 +17,11 @@ compares the ink bounding box of each with the storyboard PNG (dp, capture minus
 | keyLine 13/18          | Tuesday 10 Nov · 10:00       | +1        | +0.5      | none (within 1 dp)    |
 
 Line boxes: every style lays out at exactly lines × line height (checked through the layout dump once the harness runs).
+
+## 2026-11-10 · Pass 3 · iOS line boxes
+
+Agent A's first scoreboard showed lists drifting about 1.3 dp per two-line row. Probe (`onLayout` on bare `Text`):
+every iOS Text measures lines × line height + 1 device pixel (24.33, 20.33, 28.33, two lines 48.33), with or without
+custom fonts or `lineHeight` quirks. Fix in `src/ui/Text.tsx`: `marginBottom: -1 / PixelRatio.get()` on iOS, so each
+Text contributes exactly its line box to layout. The design tag now also reports style overrides (font size, line
+height, family) instead of the variant's.

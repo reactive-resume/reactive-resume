@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { TextProps as RNTextProps, TextStyle } from "react-native";
-import { Platform, Text as RNText } from "react-native";
+import { PixelRatio, Platform, StyleSheet, Text as RNText } from "react-native";
 import { useTheme } from "./theme";
 import { type ColorToken, fonts, textDefaults, type as typeScale, type TypeToken } from "./tokens";
 import { useDesignTag } from "@/dev/storyboard/harness";
@@ -20,6 +20,12 @@ const glyphShift: Partial<Record<TypeToken, number>> =
 		ios: { rootTitle: 1 },
 		default: {},
 	}) ?? {};
+
+/**
+ * iOS lays every Text out one device pixel taller than lines × line height (24.33 for a 24 pt line at 3x; measured,
+ * FIDELITY-LOG.md). The extra pixel is taken back so stacked text never drifts from the storyboard's line boxes.
+ */
+const lineBoxFix = Platform.OS === "ios" ? { marginBottom: -1 / PixelRatio.get() } : null;
 
 const flatten = (children: ReactNode): string => {
 	if (children == null || typeof children === "boolean") return "";
@@ -55,11 +61,17 @@ export function Text({
 	const base = typeScale[variant];
 	const fontFamily =
 		weight && base.fontFamily !== fonts.display && base.fontFamily !== fonts.mono ? uiFamily[weight] : base.fontFamily;
+	// The tag reports the style actually drawn, overrides included.
+	const override = style ? StyleSheet.flatten(style) : undefined;
 	const ref = useDesignTag(
 		{
 			kind: "text",
 			text: flatten(children),
-			style: { fontFamily, fontSize: base.fontSize, lineHeight: base.lineHeight },
+			style: {
+				fontFamily: override?.fontFamily ?? fontFamily,
+				fontSize: override?.fontSize ?? base.fontSize,
+				lineHeight: override?.lineHeight ?? base.lineHeight,
+			},
 			color,
 		},
 		{ hidden: !tag },
@@ -72,6 +84,7 @@ export function Text({
 			{...rest}
 			style={[
 				textDefaults,
+				lineBoxFix,
 				base,
 				{ fontFamily, color: colors[color] },
 				align ? { textAlign: align } : null,
