@@ -10,6 +10,7 @@
 		"ios": "expo run:ios",
 		"android": "expo run:android",
 		"typecheck": "tsrs --noEmit",
+		"lingui:extract": "lingui extract --clean",
 		"test": "jest",
 		"check:motion": "sh scripts/check-motion.sh",
 		"check:bundle": "dir=$(mktemp -d) && trap 'rm -rf \"$dir\"' EXIT && TMPDIR=\"$dir\" expo export --output-dir \"$dir/dist\"",
