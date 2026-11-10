@@ -3,7 +3,7 @@ import { type ReactNode, useRef } from "react";
 import { Platform, StyleSheet, Text as RNText, View } from "react-native";
 import { useTheme } from "./theme";
 import { type ColorToken, fonts, textDefaults, type as typeScale, type TypeToken } from "./tokens";
-import { runsBox, useDesignTag } from "@/dev/storyboard/harness";
+import { runsBox, untranslatedBox, useDesignTag } from "@/dev/storyboard/harness";
 
 const uiFamily = { 400: fonts.ui400, 500: fonts.ui500, 600: fonts.ui600, 700: fonts.ui700 } as const;
 
@@ -36,6 +36,12 @@ const iosLineBox = (lineHeight: number) => (Platform.OS === "ios" ? { lineHeight
  * same amount taken back below so the layout flow is unchanged). FIDELITY-LOG.md has the measurements.
  */
 const inkOffset: Partial<Record<TypeToken, number>> = Platform.OS === "ios" ? { rootTitle: 2 / 3 } : {};
+
+/**
+ * A Text taller than its lines (stretched by a row, like C2's list markers) keeps its lines at the top, as CSS does.
+ * `textDefaults` centres for text inputs; `textAlignVertical` only exists on Android.
+ */
+const topAligned = { textAlignVertical: "top" } as const;
 
 const flatten = (children: ReactNode): string => {
 	if (children == null || typeof children === "boolean") return "";
@@ -76,6 +82,7 @@ export function Text({
 		(weight && base.fontFamily !== fonts.display && base.fontFamily !== fonts.mono
 			? uiFamily[weight]
 			: base.fontFamily);
+	const shift = glyphShift[variant];
 	const ref = useDesignTag(
 		{
 			kind: "text",
@@ -88,9 +95,9 @@ export function Text({
 			},
 			color,
 		},
-		{ hidden: !tag },
+		// The glyph shift moves ink only; the line box stays where layout put it (Android only: iOS has no shifts).
+		{ hidden: !tag, box: shift ? () => untranslatedBox(ref, shift)() : undefined },
 	);
-	const shift = glyphShift[variant];
 	const ink = inkOffset[variant];
 	return (
 		<RNText
@@ -99,6 +106,7 @@ export function Text({
 			{...rest}
 			style={[
 				textDefaults,
+				topAligned,
 				base,
 				{ fontFamily, color: colors[color] },
 				align ? { textAlign: align } : null,
