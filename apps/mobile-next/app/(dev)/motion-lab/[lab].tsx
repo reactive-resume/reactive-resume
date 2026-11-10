@@ -4,19 +4,18 @@
 //   <scheme>://motion-lab/<lab>?run=1   (recorded by tools/rn_capture.mjs record, measured by tools/motion_probe.py)
 // "push-b" and "modal-b" are the pushed and presented screens of the push, pop and modal labs.
 import { i18n } from "@lingui/core";
-import { router, useIsFocused, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Stack } from "expo-router/js-stack";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, type TurboModule, TurboModuleRegistry, View } from "react-native";
 import Animated, { runOnUI, scrollTo, useAnimatedRef, useSharedValue } from "react-native-reanimated";
 import { create } from "zustand";
 import { BottomSheet, type BottomSheetHandle } from "@/ui/BottomSheet";
 import { CollapsedBar, useTitleCollapse } from "@/ui/CollapsingHeader";
 import { Dialog } from "@/ui/Dialog";
 import { Dock, type DockItemSpec } from "@/ui/Dock";
-import { foldOut, layoutShift } from "@/ui/Fold";
-import { HapticOverlay } from "@/ui/HapticOverlay";
-import { HeroOverlay, HeroSource, HeroTarget, prepareHero } from "@/ui/Hero";
+import { FoldRow } from "@/ui/Fold";
+import { HeroSource, HeroTarget, prepareHero } from "@/ui/Hero";
 import { Menu, MenuItem } from "@/ui/Menu";
 import {
 	FadeThroughProvider,
@@ -34,7 +33,7 @@ import { Segmented } from "@/ui/Segmented";
 import { Switch, toggleValue } from "@/ui/Switch";
 import { Text } from "@/ui/Text";
 import { useTheme, useThemeStore } from "@/ui/theme";
-import { ToastHost, showToast, useToastOffset } from "@/ui/Toast";
+import { pauseToast, resumeToast, showToast, useToastOffset } from "@/ui/Toast";
 import { motion } from "@/ui/tokens";
 
 // The two marker colours, allowed only in this file.
@@ -45,6 +44,15 @@ const MARK = 24;
 
 // The lab runs before the app's i18n may be set up (a cold deep link).
 if (!i18n.locale) i18n.loadAndActivate({ locale: "en", messages: {} });
+
+/**
+ * Fast Refresh off while the lab records: a save anywhere in the checkout would otherwise draw Metro's banner over
+ * the scene mid-recording. The setting persists in the app, so `?hot=1` turns it back on for the next person.
+ */
+type DevSettingsSpec = TurboModule & { setHotLoadingEnabled: (on: boolean) => void };
+function setFastRefresh(on: boolean) {
+	if (__DEV__) TurboModuleRegistry.get<DevSettingsSpec>("DevSettings")?.setHotLoadingEnabled(on);
+}
 
 /** Bumped when the lab restores timeScale, so pushed screens rebuild their stack options. */
 const useEpoch = create<{ n: number; bump: () => void }>((set) => ({ n: 0, bump: () => set((s) => ({ n: s.n + 1 })) }));
@@ -81,29 +89,21 @@ function useRun(run: boolean, go: () => void | Promise<void>, before?: () => Pro
 }
 
 export default function MotionLab() {
-	const { lab = "", run } = useLocalSearchParams<{ lab: string; run?: string }>();
+	const { lab = "", run, hot } = useLocalSearchParams<{ lab: string; run?: string; hot?: string }>();
 	const setOverride = useThemeStore((s) => s.setOverride);
 	useEffect(() => {
 		setOverride("light");
 		timeScale.value = 1;
 		return () => setOverride(null);
 	}, [setOverride]);
+	useEffect(() => setFastRefresh(hot === "1"), [hot]);
 	const go = run === "1";
-	const focused = useIsFocused();
 	const Scene = scenes[lab];
 	return (
 		// A deep link to another lab (or the same lab with ?run=1) re-uses this screen with new params: a new key
 		// starts a new run over identical still content.
 		<Frame key={`${lab}:${go}`} lab={lab}>
 			{Scene ? <Scene run={go} /> : <Text variant="body">{`Unknown lab ${lab}`}</Text>}
-			{/* Until the root layout mounts these hosts (lead); only the focused lab draws them. */}
-			{focused && (
-				<>
-					<ToastHost />
-					<HeroOverlay />
-					<HapticOverlay />
-				</>
-			)}
 		</Frame>
 	);
 }
@@ -158,9 +158,9 @@ function Frame({ lab, children }: { lab: string; children: ReactNode }) {
 		return () => clearTimeout(id);
 	}, [pushed, run]);
 	const base = useStackOptions("light", lab === "modal-b" ? "modal" : "push");
-	const options = pushed ? base : withInstantOpen(base);
+	const options = pushed ? (lab === "push-b" ? { ...base, ...SEE_THROUGH } : base) : withInstantOpen(base);
 	return (
-		<View style={[StyleSheet.absoluteFill, { backgroundColor: colors.bg }]}>
+		<View style={[StyleSheet.absoluteFill, { backgroundColor: lab === "push-b" ? "transparent" : colors.bg }]}>
 			<Stack.Screen options={options} />
 			{visible ? children : cleared && Next ? <Next run={false} /> : null}
 		</View>
@@ -206,6 +206,8 @@ function PushA({ run }: SceneProps) {
 function PushB() {
 	return <Mark x={12} y={300} />;
 }
+/** push-b's card is see-through (lab only), so screen A's marker stays measurable while it is covered. */
+const SEE_THROUGH = { cardStyle: { backgroundColor: "transparent" } };
 
 function Pop({ run }: SceneProps) {
 	useRun(
@@ -226,23 +228,13 @@ function ModalB() {
 }
 
 function SheetScene({ run, mode }: SceneProps & { mode: "rise" | "close" | "release" }) {
-	// close and release start from an open sheet: it mounts with every duration at 0 (set before the sheet's own
-	// effects run), then normal speed returns.
-	const [open, setOpen] = useState(() => {
-		if (mode !== "rise") timeScale.value = 0;
-		return mode !== "rise";
-	});
+	// close and release start from an open sheet (release: held 188 dp down, 40%, as a pan holds it).
+	const [open, setOpen] = useState(mode !== "rise");
 	const ref = useRef<BottomSheetHandle>(null);
-	useEffect(() => {
-		if (mode !== "rise") instantly(() => {});
-	}, [mode]);
 	useRun(run, () => {
 		if (mode === "rise") setOpen(true);
 		else if (mode === "close") ref.current?.close();
-		else {
-			ref.current?.drag(188);
-			ref.current?.release(0);
-		}
+		else ref.current?.release(0);
 	});
 	if (!open) return null;
 	return (
@@ -251,6 +243,7 @@ function SheetScene({ run, mode }: SceneProps & { mode: "rise" | "close" | "rele
 			title="New"
 			height={470}
 			onClose={() => setOpen(false)}
+			{...(mode === "rise" ? {} : { startOpenAt: mode === "release" ? 188 : 0 })}
 			labMarker={{ scrim: CYAN, top: MAGENTA }}
 		>
 			<View />
@@ -281,7 +274,7 @@ function TabInner({ run }: SceneProps) {
 		<View style={StyleSheet.absoluteFill}>
 			{tabs.map((t) => (
 				<View key={t.key} style={StyleSheet.absoluteFill} pointerEvents={t.key === tab ? "auto" : "none"}>
-					<FadeThroughScene focused={t.key === tab}>
+					<FadeThroughScene focused={t.key === tab} sceneKey={t.key}>
 						{t.key === "today" ? <Block color={MAGENTA} /> : t.key === "documents" ? <Block color={CYAN} /> : null}
 					</FadeThroughScene>
 				</View>
@@ -326,23 +319,36 @@ function SwitchScene({ run }: SceneProps) {
 	);
 }
 
+const LAB_FUSE_TOAST = {
+	message: "Moved to Trash",
+	action: { label: "Undo", onPress: () => {} },
+	lifetime: 1500,
+	labMarker: { fuse: MAGENTA, fuseHeight: 8, height: 48 },
+};
+let fuseToastId = 0;
+
 function ToastScene({ run, fuse }: SceneProps & { fuse: boolean }) {
 	useToastOffset(44); // the scene's settled bottom edge: y 788
+	// toast-fuse: the toast is already up with its fuse held (as a touch holds it) when the scene appears, so the
+	// recording starts on a full, still fuse; the run lets go and the fuse runs out its 1.5 s lifetime.
+	useEffect(() => {
+		if (!fuse || fuseToastId) return;
+		instantly(() => {
+			fuseToastId = showToast(LAB_FUSE_TOAST);
+			pauseToast();
+		});
+	}, [fuse]);
 	useRun(run, () => {
-		showToast(
-			fuse
-				? {
-						message: "Moved to Trash",
-						action: { label: "Undo", onPress: () => {} },
-						lifetime: 1500,
-						labMarker: { fuse: MAGENTA, fuseHeight: 8, height: 48 },
-					}
-				: {
-						message: "Moved to Trash",
-						action: { label: "Undo", onPress: () => {} },
-						labMarker: { fill: MAGENTA, hideText: true, height: 48 },
-					},
-		);
+		if (fuse) {
+			fuseToastId = 0;
+			resumeToast();
+			return;
+		}
+		showToast({
+			message: "Moved to Trash",
+			action: { label: "Undo", onPress: () => {} },
+			labMarker: { fill: MAGENTA, fuse: MAGENTA, hideText: true, height: 48, centre: MAGENTA },
+		});
 	});
 	return null;
 }
@@ -396,23 +402,19 @@ function MenuScene({ run }: SceneProps) {
 function RowFold({ run }: SceneProps) {
 	const [rows, setRows] = useState(["a", "b", "c"]);
 	useRun(run, () => setRows(["a", "c"]));
+	// The leaving row's fill is the marker: FoldRow folds its clip (the fill) and fades its content.
 	return (
 		<View style={{ position: "absolute", top: 300, left: 0, right: 0 }}>
 			{rows.map((r) => (
-				<Animated.View
-					key={r}
-					exiting={foldOut}
-					layout={layoutShift}
-					style={{ height: 64, overflow: "hidden", backgroundColor: r === "b" ? MAGENTA : undefined }}
-				>
-					<View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 24 }}>
+				<FoldRow key={r} style={{ height: 64, backgroundColor: r === "b" ? MAGENTA : undefined }}>
+					<View style={{ height: 64, justifyContent: "center", paddingHorizontal: 24 }}>
 						{r === "c" ? (
 							<View style={{ width: MARK, height: MARK, backgroundColor: CYAN }} />
 						) : (
 							<Text variant="rowTitle">{`Row ${r}`}</Text>
 						)}
 					</View>
-				</Animated.View>
+				</FoldRow>
 			))}
 		</View>
 	);
@@ -431,7 +433,9 @@ function Reorder({ run }: SceneProps) {
 		ref.current?.drop("Experience");
 	});
 	return (
-		<View style={{ position: "absolute", top: 200, left: 0, right: 0 }}>
+		// Rows inset 48 dp: the lifted row (1.02×) spans x 45–345, so the neighbour's marker, drawn just past its row's
+		// end, is never under it while the two trade places.
+		<View style={{ position: "absolute", top: 200, left: 48, right: 48 }}>
 			<ReorderList
 				ref={ref}
 				data={order}
@@ -455,11 +459,12 @@ function Reorder({ run }: SceneProps) {
 							backgroundColor: s === "Experience" ? MAGENTA : undefined,
 						}}
 					>
+						<Text variant="rowTitle">{s === "Experience" ? "" : s}</Text>
 						{s === "Education" ? (
-							<View style={{ width: MARK, height: MARK, backgroundColor: CYAN }} />
-						) : (
-							<Text variant="rowTitle">{s}</Text>
-						)}
+							<View
+								style={{ position: "absolute", right: -40, top: 20, width: MARK, height: MARK, backgroundColor: CYAN }}
+							/>
+						) : null}
 					</View>
 				)}
 			/>

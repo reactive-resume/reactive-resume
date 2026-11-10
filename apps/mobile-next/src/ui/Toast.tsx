@@ -3,8 +3,10 @@
 // useToastOffset). Enter: rise 8 dp with a fade, d3 `ease`. A 2 dp `accent` fuse runs linearly for the lifetime
 // (toastLifetime: 5 s, 8 s with an action; null with a screen reader and an action) and pauses while touched.
 // Exit: fade and drop 8 dp over d2. A new toast replaces the old one with a d2 crossfade. Every toast is announced.
+// With a screen reader running (also when it starts while the toast is up), a toast with an action stays until used
+// or dismissed (the escape gesture dismisses it); pauseToast()/resumeToast() hold the fuse as a touch does.
 // Nothing exists only in a toast: every action is also where its item lives.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AccessibilityInfo, StyleSheet, View } from "react-native";
 import Animated, {
 	cancelAnimation,
@@ -27,14 +29,26 @@ export type ToastSpec = {
 	action?: { label: string; onPress: () => void };
 	/** Overrides toastLifetime() (motion lab only). */
 	lifetime?: number;
-	/** Motion lab only: literal colours for the fill and the fuse, a taller fuse, hidden text, a fixed height. */
-	labMarker?: { fill?: string; fuse?: string; fuseHeight?: number; hideText?: boolean; height?: number };
+	/**
+	 * Motion lab only: literal colours for the fill and the fuse, a taller fuse, hidden text, a fixed height, and a
+	 * 12 × 12 `centre` square in a layer that rises with the toast but is not faded by it (position probes).
+	 */
+	labMarker?: {
+		fill?: string;
+		fuse?: string;
+		fuseHeight?: number;
+		hideText?: boolean;
+		height?: number;
+		centre?: string;
+	};
 };
 
 type Shown = ToastSpec & { id: number };
 
 type ToastState = {
 	current: Shown | null;
+	/** The fuse is held (pauseToast); a new toast starts unheld. */
+	held: boolean;
 	offsets: { id: number; bottom: number }[];
 	show: (t: ToastSpec) => number;
 	dismiss: (id?: number) => void;
@@ -43,10 +57,11 @@ type ToastState = {
 let nextId = 1;
 const useToasts = create<ToastState>((set, get) => ({
 	current: null,
+	held: false,
 	offsets: [],
 	show: (t) => {
 		const id = nextId++;
-		set({ current: { ...t, id } });
+		set({ current: { ...t, id }, held: false });
 		return id;
 	},
 	dismiss: (id) => {
@@ -61,6 +76,13 @@ export function showToast(t: ToastSpec): number {
 }
 export function dismissToast(id?: number) {
 	useToasts.getState().dismiss(id);
+}
+/** Hold the current toast's fuse, as touching it does; resumeToast() lets it run out the rest of its lifetime. */
+export function pauseToast() {
+	useToasts.setState({ held: true });
+}
+export function resumeToast() {
+	useToasts.setState({ held: false });
 }
 
 /** Docks and footers register the height they cover at the bottom of the screen, safe area included. */
@@ -120,7 +142,11 @@ function ToastView({
 	const ref = useDesignTag({ kind: "component", component: "Toast", radius: radius.lg, bg: "ink" });
 	const shown = useSharedValue(0);
 	const fuse = useSharedValue(1);
-	const lifetime = useRef<number | null>(null);
+	const held = useToasts((s) => s.held);
+	const [touched, setTouched] = useState(false);
+	const [screenReader, setScreenReader] = useState<boolean | null>(null);
+	/** undefined while it is being worked out; null: stays until used or dismissed. */
+	const [lifetime, setLifetime] = useState<number | null | undefined>(undefined);
 	const lab = toast.labMarker;
 	const rise = crossfade ? 0 : distance(motion.fadeUpFirstRun);
 
@@ -136,70 +162,96 @@ function ToastView({
 		}
 		shown.set(withTiming(1, enter(overlayFade(crossfade ? motion.d2 : motion.d3))));
 		AccessibilityInfo.announceForAccessibility(toast.action ? `${toast.message} ${toast.action.label}` : toast.message);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [leaving]);
+
+	// A screen reader starting or stopping while the toast is up changes its lifetime.
+	useEffect(() => {
+		const sub = AccessibilityInfo.addEventListener("screenReaderChanged", setScreenReader);
+		return () => sub.remove();
+	}, []);
+	useEffect(() => {
 		let live = true;
 		(toast.lifetime != null ? Promise.resolve(toast.lifetime) : toastLifetime(!!toast.action)).then((ms) => {
-			if (!live) return;
-			lifetime.current = ms;
-			if (ms != null) startFuse(fuse, ms, () => dismissToast(toast.id));
+			if (live) setLifetime(ms);
 		});
 		return () => {
 			live = false;
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [leaving]);
+	}, [toast.lifetime, toast.action, screenReader]);
 
-	const pause = () => cancelAnimation(fuse);
-	const resume = () => {
-		if (lifetime.current != null) startFuse(fuse, lifetime.current, () => dismissToast(toast.id));
-	};
+	// The fuse runs while nothing holds it, from where it stopped.
+	useEffect(() => {
+		if (leaving || lifetime === undefined) return;
+		if (lifetime === null || held || touched) {
+			cancelAnimation(fuse);
+			return;
+		}
+		startFuse(fuse, lifetime, () => dismissToast(toast.id));
+	}, [leaving, lifetime, held, touched, fuse, toast.id]);
 
 	const style = useAnimatedStyle(() => ({
 		opacity: shown.value,
-		transform: [{ translateY: (1 - shown.value) * rise }],
+		transform: [{ translateY: toastRise(shown.value, rise) }],
 	}));
+	const riseOnly = useAnimatedStyle(() => ({ transform: [{ translateY: toastRise(shown.value, rise) }] }));
 	const fuseStyle = useAnimatedStyle(() => ({ width: `${fuse.value * 100}%` }));
+	const place = [{ bottom }, lab?.height ? { height: lab.height } : null];
 
 	return (
-		<Animated.View
-			ref={ref as never}
-			accessibilityLiveRegion="polite"
-			onTouchStart={pause}
-			onTouchEnd={resume}
-			onTouchCancel={resume}
-			pointerEvents={leaving ? "none" : "auto"}
-			style={[
-				styles.toast,
-				{ bottom, backgroundColor: lab?.fill ?? colors.ink, boxShadow: shadows.sh3 },
-				lab?.height ? { height: lab.height } : null,
-				style,
-			]}
-		>
-			<View style={[styles.message, lab?.hideText ? { opacity: 0 } : null]}>
-				<Text variant="ui" color="bg">
-					{toast.message}
-				</Text>
-			</View>
-			{toast.action && (
-				<Touch
-					feedback="scale"
-					style={[styles.action, lab?.hideText ? { opacity: 0 } : null]}
-					accessibilityLabel={toast.action.label}
-					onPress={() => {
-						toast.action?.onPress();
-						dismissToast(toast.id);
-					}}
-				>
-					<Text variant="ui" color="bg" weight={600}>
-						{toast.action.label}
-					</Text>
-				</Touch>
-			)}
+		<>
 			<Animated.View
-				pointerEvents="none"
-				style={[styles.fuse, { backgroundColor: lab?.fuse ?? colors.accent, height: lab?.fuseHeight ?? 2 }, fuseStyle]}
-			/>
-		</Animated.View>
+				ref={ref as never}
+				accessibilityLiveRegion="polite"
+				onTouchStart={() => setTouched(true)}
+				onTouchEnd={() => setTouched(false)}
+				onTouchCancel={() => setTouched(false)}
+				onAccessibilityEscape={() => dismissToast(toast.id)}
+				pointerEvents={leaving ? "none" : "auto"}
+				style={[styles.toast, ...place, { backgroundColor: lab?.fill ?? colors.ink, boxShadow: shadows.sh3 }, style]}
+			>
+				<View style={[styles.message, lab?.hideText ? { opacity: 0 } : null]}>
+					<Text variant="ui" color="bg">
+						{toast.message}
+					</Text>
+				</View>
+				{toast.action && (
+					<Touch
+						feedback="scale"
+						style={[styles.action, lab?.hideText ? { opacity: 0 } : null]}
+						accessibilityLabel={toast.action.label}
+						onPress={() => {
+							toast.action?.onPress();
+							dismissToast(toast.id);
+						}}
+					>
+						<Text variant="ui" color="bg" weight={600}>
+							{toast.action.label}
+						</Text>
+					</Touch>
+				)}
+				<Animated.View
+					pointerEvents="none"
+					style={[
+						styles.fuse,
+						{ backgroundColor: lab?.fuse ?? colors.accent, height: lab?.fuseHeight ?? 2 },
+						fuseStyle,
+					]}
+				/>
+			</Animated.View>
+			{lab?.centre ? (
+				<Animated.View pointerEvents="none" style={[styles.labCentre, ...place, riseOnly]}>
+					<View style={{ width: 12, height: 12, backgroundColor: lab.centre }} />
+				</Animated.View>
+			) : null}
+		</>
 	);
+}
+
+/** How far below its place the toast is at entry progress `shown` (0 → 1): the rise, and the drop on exit. */
+export function toastRise(shown: number, distance: number) {
+	"worklet";
+	return (1 - shown) * distance;
 }
 
 const styles = StyleSheet.create({
@@ -220,4 +272,5 @@ const styles = StyleSheet.create({
 	message: { flex: 1 },
 	action: { height: 44, marginVertical: -12, paddingHorizontal: 12, justifyContent: "center" },
 	fuse: { position: "absolute", start: 0, bottom: 0 },
+	labCentre: { position: "absolute", left: space.s3, right: space.s3, alignItems: "center", justifyContent: "center" },
 });

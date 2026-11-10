@@ -1,9 +1,12 @@
 // MOTION.md §5, §7 and §10.2: each control plays exactly its haptics for one interaction, through the same
 // functions the components call.
+import { edgeZone } from "./BoardDrag";
+import { stripShouldOpen } from "./ExpandingStrip";
 import { clearHapticLog, hapticLog } from "./motion";
 import { selectRadio } from "./Radio";
 import { reorderSlots } from "./ReorderList";
 import { selectSegment } from "./Segmented";
+import { snapTarget } from "./SnapCarousel";
 import { swipeArm } from "./SwipeRow";
 import { toggleValue } from "./Switch";
 
@@ -72,4 +75,31 @@ test("ReorderList: dragging down two slots passes two slots (one selection each)
 	expect(reorderSlots(slots, "a", 31, 64, 4).passed).toBe(0);
 	// Clamped to the list.
 	expect(reorderSlots(slots, "d", 900, 64, 4).passed).toBe(0);
+});
+
+describe("SnapCarousel release (316 dp pitch, 6 columns)", () => {
+	test("snaps to the nearest item below 500 dp/s", () => {
+		expect(snapTarget(316 * 0.4, 499, 316, 6)).toBe(0);
+		expect(snapTarget(316 * 0.6, 0, 316, 6)).toBe(1);
+	});
+	test("a fling past 500 dp/s goes to the next item in its direction", () => {
+		expect(snapTarget(316 * 0.2, 501, 316, 6)).toBe(1);
+		expect(snapTarget(316 * 1.8, -501, 316, 6)).toBe(1);
+	});
+	test("clamped to the first and last item", () => {
+		expect(snapTarget(-80, -900, 316, 6)).toBe(0);
+		expect(snapTarget(316 * 5 + 60, 900, 316, 6)).toBe(5);
+	});
+});
+
+test("BoardDrag pages only from the outer 48 dp, mirrored in RTL", () => {
+	expect([edgeZone(20, 390), edgeZone(200, 390), edgeZone(370, 390)]).toEqual([-1, 0, 1]);
+	expect(edgeZone(20, 390, true)).toBe(1);
+});
+
+test("ExpandingStrip opens past half way or on a downward fling", () => {
+	expect(stripShouldOpen(90, 64, 304, 0)).toBe(false);
+	expect(stripShouldOpen(190, 64, 304, 0)).toBe(true);
+	expect(stripShouldOpen(70, 64, 304, 600)).toBe(true);
+	expect(stripShouldOpen(290, 64, 304, -600)).toBe(false);
 });

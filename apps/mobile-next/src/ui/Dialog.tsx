@@ -1,22 +1,23 @@
 // Dialog (COMPONENTS.md §17, MOTION.md §6.5): S8, D6, S2 Delete account, Discard changes?. The `scrim` fades in d2;
 // the dialog fades in while scaling 0.98 → 1, d2 `ease`; exit: fade 140 ms. 20 dp from the sides, vertically centred,
-// `raised`, 20 dp corners, `sh3`, padding 24, gap 12. Buttons stack full width in order of safety (primary on top).
+// `raised`, 20 dp corners, `sh3`, padding 24, gap 12. Buttons are Large design-system Buttons, full width, stacked
+// in the order given (order of safety, primary on top) with 8 dp gaps and 8 dp extra top margin (COMPONENTS.md §17).
 // Plays no haptic: Delete permanently plays `warning` when the delete lands, S8 plays it when it opens (its screen).
 import { t } from "@lingui/core/macro";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { AccessibilityInfo, BackHandler, findNodeHandle, type HostInstance, StyleSheet, View } from "react-native";
 import Animated, { interpolate, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { Touch } from "./base";
+import { Button, type ButtonTone } from "./buttons";
 import { Icon, type IconName } from "./Icon";
 import { enter, leave, useMotionPolicy } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
-import { type ColorToken, motion, radius } from "./tokens";
+import { motion, radius } from "./tokens";
 import { useDesignTag } from "@/dev/storyboard/harness";
 
 export type DialogAction = {
 	label: string;
-	tone: "primary" | "secondary" | "danger" | "ghostDanger";
+	tone: "primary" | "secondary" | "danger" | "dangerGhost" | "ghost" | "ghostDanger";
 	onPress: () => void;
 };
 
@@ -147,7 +148,7 @@ function DialogView({
 					{children}
 					<View style={[styles.actions, hide]}>
 						{actions.map((a) => (
-							<DialogButton key={a.label} action={a} />
+							<Button key={a.label} label={a.label} tone={buttonTone[a.tone]} size="lg" block onPress={a.onPress} />
 						))}
 					</View>
 				</Animated.View>
@@ -156,34 +157,15 @@ function DialogView({
 	);
 }
 
-const tones: Record<DialogAction["tone"], { bg?: ColorToken; text: ColorToken; ring?: ColorToken }> = {
-	primary: { bg: "accent", text: "onAccent" },
-	secondary: { bg: "surface", text: "ink", ring: "line2" },
-	danger: { bg: "dangerFill", text: "paper" }, // white in both themes
-	ghostDanger: { text: "dangerText" },
+/** Dialog tones map onto the design-system Button's; "ghostDanger" is the older name of "dangerGhost". */
+const buttonTone: Record<DialogAction["tone"], ButtonTone> = {
+	primary: "primary",
+	secondary: "secondary",
+	danger: "danger",
+	dangerGhost: "dangerGhost",
+	ghostDanger: "dangerGhost",
+	ghost: "ghost",
 };
-
-// ponytail: a private Large button so dialogs work before the design-system Button exists; swap to <Button size="lg">.
-function DialogButton({ action }: { action: DialogAction }) {
-	const { colors } = useTheme();
-	const tone = tones[action.tone];
-	return (
-		<Touch
-			feedback="scale"
-			onPress={action.onPress}
-			accessibilityLabel={action.label}
-			style={[
-				styles.button,
-				tone.bg ? { backgroundColor: colors[tone.bg] } : null,
-				tone.ring ? { boxShadow: `inset 0 0 0 1px ${colors[tone.ring]}` } : null,
-			]}
-		>
-			<Text variant="buttonLg" color={tone.text}>
-				{action.label}
-			</Text>
-		</Touch>
-	);
-}
 
 /** "Discard changes?" for dirty sheets and forms (MOTION.md §6.1, §6.4). */
 export function DiscardDialog({
@@ -202,7 +184,7 @@ export function DiscardDialog({
 			title={t`Discard changes?`}
 			actions={[
 				{ label: t`Keep editing`, tone: "primary", onPress: onKeep },
-				{ label: t`Discard`, tone: "ghostDanger", onPress: onDiscard },
+				{ label: t`Discard`, tone: "dangerGhost", onPress: onDiscard },
 			]}
 		/>
 	);
@@ -213,11 +195,4 @@ const styles = StyleSheet.create({
 	dialog: { borderRadius: radius.dialog, padding: 24, gap: 12 },
 	count: { flexDirection: "row", alignItems: "center", gap: 8 },
 	actions: { gap: 8, marginTop: 8 },
-	button: {
-		height: 44,
-		paddingHorizontal: 16,
-		borderRadius: radius.lg,
-		alignItems: "center",
-		justifyContent: "center",
-	},
 });

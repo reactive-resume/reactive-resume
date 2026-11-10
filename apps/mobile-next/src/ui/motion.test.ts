@@ -169,3 +169,19 @@ test("fade-through under reduced motion navigates at once", () => {
 	api.switchTo(navigate);
 	expect(navigate).toHaveBeenCalledTimes(1);
 });
+
+test("fade-through with keyed scenes: the new scene rises the moment the old is gone, then navigation follows", () => {
+	const target = { value: null as string | null };
+	const api = createFadeThrough({ value: 1 } as never, false, target as never);
+	api.keyed.current = true;
+	const navigate = jest.fn(() => expect(timings().at(-1)).toMatchObject({ to: 1, config: { duration: 200 } }));
+	api.switchTo(navigate, "documents");
+	expect(timings().at(-1)).toMatchObject({ to: 0, config: { duration: 140 } });
+	timings().at(-1)?.callback?.(true);
+	expect(target.value).toBe("documents");
+	expect(navigate).toHaveBeenCalledTimes(1);
+	// The focused scene's own reveal does not restart the rise.
+	const before = timings().length;
+	api.revealFocused("documents");
+	expect(timings()).toHaveLength(before);
+});

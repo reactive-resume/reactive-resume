@@ -3,10 +3,13 @@
 // and holds the content 44 dp down while refreshing; when done the content returns in d2 `ease`. A Gesture Handler
 // pan runs only while the list is at its top, simultaneously with the list's own scroll. Screen readers get a
 // Refresh action. Pulling is a shortcut: lists also refresh on their own.
+// Lists: pass `renderList` and spread the props it receives onto your own Animated.FlatList (or another animated
+// list) instead of passing children; the pull then moves the whole list. Never nest a list in the ScrollView.
 // ponytail: iOS top bounce is off inside this view (the pan owns the pull); bottom overscroll stays native on Android.
+// The title collapse is unaffected: it reads offsets past 40 dp, and bounce only ever produced negative ones.
 import { t } from "@lingui/core/macro";
-import { type ReactNode, type Ref, useEffect } from "react";
-import { Platform, type ScrollViewProps, StyleSheet, View } from "react-native";
+import { type ReactElement, type ReactNode, type Ref, useEffect } from "react";
+import { type AccessibilityActionEvent, Platform, type ScrollViewProps, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
 	runOnJS,
@@ -26,10 +29,22 @@ const ARM = 64;
 const HOLD = 44;
 const RESIST = 0.5; // the pull moves half as far as the finger
 
-export type PullToRefreshProps = Omit<ScrollViewProps, "onScroll" | "refreshControl"> & {
+/** What a list rendered through `renderList` must receive (spread them onto it). */
+export type PullListProps = {
+	onScroll: ReturnType<typeof useAnimatedScrollHandler>;
+	scrollEventThrottle: number;
+	bounces: boolean | undefined;
+	style: ReturnType<typeof useAnimatedStyle>;
+	accessibilityActions: { name: string; label: string }[];
+	onAccessibilityAction: (e: AccessibilityActionEvent) => void;
+};
+
+export type PullToRefreshProps = Omit<ScrollViewProps, "onScroll" | "refreshControl" | "children"> & {
 	refreshing: boolean;
 	onRefresh: () => void;
-	children: ReactNode;
+	children?: ReactNode;
+	/** A list instead of children: spread the given props onto your Animated.FlatList. */
+	renderList?: (props: PullListProps) => ReactElement;
 	/** Also feed this scroll offset (the title collapse reads it). */
 	scrollOffset?: SharedValue<number> | undefined;
 	scrollRef?: Ref<Animated.ScrollView> | undefined;
@@ -41,6 +56,7 @@ export function PullToRefresh({
 	children,
 	scrollOffset,
 	scrollRef,
+	renderList,
 	...scrollProps
 }: PullToRefreshProps) {
 	const scrollY = useSharedValue(0);
@@ -99,6 +115,16 @@ export function PullToRefresh({
 	const content = useAnimatedStyle(() => ({ transform: [{ translateY: pull.value }] }));
 	const indicator = useAnimatedStyle(() => ({ opacity: Math.min(1, pull.value / HOLD) }));
 
+	const shared = {
+		onScroll,
+		scrollEventThrottle: 16,
+		bounces: Platform.OS === "ios" ? false : scrollProps.bounces,
+		accessibilityActions: [{ name: "refresh", label: t`Refresh` }],
+		onAccessibilityAction: (e: AccessibilityActionEvent) => {
+			if (e.nativeEvent.actionName === "refresh") onRefresh();
+		},
+	};
+
 	return (
 		<View style={styles.root}>
 			<Animated.View
@@ -113,19 +139,13 @@ export function PullToRefresh({
 			</Animated.View>
 			<GestureDetector gesture={pan}>
 				<GestureDetector gesture={native}>
-					<Animated.ScrollView
-						{...scrollProps}
-						ref={scrollRef}
-						bounces={Platform.OS === "ios" ? false : scrollProps.bounces}
-						onScroll={onScroll}
-						scrollEventThrottle={16}
-						accessibilityActions={[{ name: "refresh", label: t`Refresh` }]}
-						onAccessibilityAction={(e) => {
-							if (e.nativeEvent.actionName === "refresh") onRefresh();
-						}}
-					>
-						<Animated.View style={content}>{children}</Animated.View>
-					</Animated.ScrollView>
+					{renderList ? (
+						renderList({ ...shared, style: content })
+					) : (
+						<Animated.ScrollView {...scrollProps} {...shared} ref={scrollRef}>
+							<Animated.View style={content}>{children}</Animated.View>
+						</Animated.ScrollView>
+					)}
 				</GestureDetector>
 			</GestureDetector>
 		</View>

@@ -25,7 +25,10 @@ export type MenuProps = {
 	/** The menu's height when known: decides whether it fits below the trigger. */
 	height?: number;
 	children: ReactNode;
-	/** Motion lab only: a literal surface colour. */
+	/**
+	 * Motion lab only: a literal surface colour, plus a 24 × 24 square of it at the menu's centre in a layer that
+	 * travels and scales with the menu but is not faded by it (position probes).
+	 */
 	labMarker?: string;
 };
 
@@ -76,19 +79,20 @@ function MenuView({
 	}, [open, onClose]);
 
 	// Entry travels and scales; the exit only fades.
-	const style = useAnimatedStyle(() => {
+	const travel = () => {
+		"worklet";
 		const move = !reduced && open;
-		return {
-			opacity: p.value,
-			transform: [
-				{ translateY: move ? interpolate(p.value, [0, 1], [toward, 0]) : 0 },
-				{ scale: move ? interpolate(p.value, [0, 1], [motion.popupStartScale, 1]) : 1 },
-			],
-		};
-	});
+		return [
+			{ translateY: move ? interpolate(p.value, [0, 1], [toward, 0]) : 0 },
+			{ scale: move ? interpolate(p.value, [0, 1], [motion.popupStartScale, 1]) : 1 },
+		];
+	};
+	const style = useAnimatedStyle(() => ({ opacity: p.value, transform: travel() }));
+	const travelOnly = useAnimatedStyle(() => ({ transform: travel() }));
 
 	const left = align === "start" ? anchor.x : anchor.x + anchor.width - width;
 	const position = below ? { top: anchor.y + anchor.height + GAP } : { bottom: win.height - anchor.y + GAP };
+	const frame = [styles.menu, position, { left: Math.max(space.s3, left), width }, height ? { height } : null];
 	return (
 		<View style={StyleSheet.absoluteFill} pointerEvents={open ? "box-none" : "none"}>
 			<View
@@ -101,21 +105,15 @@ function MenuView({
 				ref={ref as never}
 				accessibilityViewIsModal
 				accessibilityRole="menu"
-				style={[
-					styles.menu,
-					position,
-					{
-						left: Math.max(space.s3, left),
-						width,
-						backgroundColor: labMarker ?? colors.raised,
-						boxShadow: shadows.sh2,
-					},
-					height ? { height } : null,
-					style,
-				]}
+				style={[...frame, { backgroundColor: labMarker ?? colors.raised, boxShadow: shadows.sh2 }, style]}
 			>
 				<View style={labMarker ? { opacity: 0 } : null}>{children}</View>
 			</Animated.View>
+			{labMarker ? (
+				<Animated.View pointerEvents="none" style={[...frame, styles.labCentre, travelOnly]}>
+					<View style={{ width: 24, height: 24, backgroundColor: labMarker }} />
+				</Animated.View>
+			) : null}
 		</View>
 	);
 }
@@ -149,5 +147,6 @@ export function MenuItem({
 
 const styles = StyleSheet.create({
 	menu: { position: "absolute", borderRadius: radius.lg, paddingVertical: 4 },
+	labCentre: { alignItems: "center", justifyContent: "center" },
 	item: { minHeight: 48, flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16 },
 });

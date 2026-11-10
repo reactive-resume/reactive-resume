@@ -517,10 +517,20 @@ export function stackOptions(
 
 type FadeThroughApi = {
 	progress: SharedValue<number>; // 1 = content visible, 0 = faded out
-	/** Called by the dock: fade the current content out (140 ms), then navigate, then the new content fades up. */
-	switchTo: (navigate: () => void) => void;
+	/** The scene being shown, when scenes carry a `sceneKey` (null until the first switch). */
+	target: SharedValue<string | null>;
+	/**
+	 * Called by the dock: fade the current content out (140 ms), then navigate, then the new content fades up. With
+	 * `key` (and scenes that carry `sceneKey`), the new scene starts rising on the UI thread the frame the old one is
+	 * gone, without waiting for the navigation to render.
+	 */
+	switchTo: (navigate: () => void, key?: string) => void;
 	/** Called by a scene when it gains focus. */
-	revealFocused: () => void;
+	revealFocused: (key?: string) => void;
+	/** Scenes report that they carry keys (FadeThroughScene with sceneKey). */
+	keyed: { current: boolean };
+	/** A scene with a key has mounted: switches can target it on the UI thread. */
+	markKeyed: () => void;
 };
 
 const FadeThroughContext = createContext<FadeThroughApi | null>(null);
@@ -528,34 +538,58 @@ const FadeThroughContext = createContext<FadeThroughApi | null>(null);
 /**
  * Fade-through, never both at once: the old content fades out over 140 ms, then the new one fades up 6 px over d2.
  * The dock's selected state changes on tap, at once. Wrap the tab layout's scenes in <FadeThroughProvider> and each
- * tab screen's root in <FadeThroughScene>. Re-tapping the selected tab scrolls to top instead (useScrollToTop).
+ * tab screen's root in <FadeThroughScene focused sceneKey>. Re-tapping the selected tab scrolls to top instead.
+ *
+ * The state machine lives outside React so it can be tested: switchTo fades the content out over 140 ms and
+ * navigates only when that finishes (a second call during the fade retargets); the new content fades up over d2.
+ * Reduced motion navigates at once.
  */
-/**
- * The fade-through state machine, outside React so it can be tested: switchTo fades the content out over 140 ms and
- * navigates only when that finishes (a second call during the fade retargets); revealFocused fades the new content
- * up over d2. Reduced motion navigates at once.
- */
-export function createFadeThrough(progress: SharedValue<number>, reduced: boolean): FadeThroughApi {
+export function createFadeThrough(
+	progress: SharedValue<number>,
+	reduced: boolean,
+	target: SharedValue<string | null> = makeMutable<string | null>(null),
+): FadeThroughApi {
 	let pending: (() => void) | null = null;
-	const flush = () => {
+	let handedOff: string | null = null;
+	const keyed = { current: false };
+	const flush = (key: string | null) => {
+		handedOff = key;
 		const go = pending;
 		pending = null;
 		go?.();
 	};
 	return {
 		progress,
-		switchTo: (navigate) => {
+		target,
+		keyed,
+		markKeyed: () => {
+			keyed.current = true;
+		},
+		switchTo: (navigate, key) => {
+			const k = keyed.current ? (key ?? null) : null;
 			if (reduced) {
+				if (k !== null) target.value = k;
 				navigate();
 				return;
 			}
 			pending = navigate;
 			cancelAnimation(progress);
 			progress.value = withTiming(0, enter(motion.fadeThroughOut), (finished) => {
-				if (finished) runOnJS(flush)();
+				"worklet";
+				if (!finished) return;
+				if (k !== null) {
+					target.value = k;
+					progress.value = withTiming(1, enter(motion.d2));
+				}
+				runOnJS(flush)(k);
 			});
 		},
-		revealFocused: () => {
+		revealFocused: (key) => {
+			if (key !== undefined && key === handedOff) {
+				handedOff = null;
+				return; // already rising since the old content left
+			}
+			if (key !== undefined) target.value = key;
 			progress.value = withTiming(1, enter(motion.d2));
 		},
 	};
@@ -563,8 +597,9 @@ export function createFadeThrough(progress: SharedValue<number>, reduced: boolea
 
 export function FadeThroughProvider({ children }: { children: React.ReactNode }) {
 	const progress = useSharedValue(1);
+	const target = useSharedValue<string | null>(null);
 	const { reduced } = useMotionPolicy();
-	const api = useMemo(() => createFadeThrough(progress, reduced), [progress, reduced]);
+	const api = useMemo(() => createFadeThrough(progress, reduced, target), [progress, reduced, target]);
 	return <FadeThroughContext.Provider value={api}>{children}</FadeThroughContext.Provider>;
 }
 
@@ -574,17 +609,30 @@ export function useFadeThrough() {
 	return api;
 }
 
-export function FadeThroughScene({ focused, children }: { focused: boolean; children: React.ReactNode }) {
-	const { progress, revealFocused } = useFadeThrough();
+export function FadeThroughScene({
+	focused,
+	sceneKey,
+	children,
+}: {
+	focused: boolean;
+	/** The dock key of this scene: lets the incoming scene start on the UI thread (see createFadeThrough). */
+	sceneKey?: string;
+	children: React.ReactNode;
+}) {
+	const { progress, target, revealFocused, markKeyed } = useFadeThrough();
 	const { distance } = useMotionPolicy();
 	const rise = distance(motion.fadeUp);
 	useEffect(() => {
-		if (focused) revealFocused();
-	}, [focused, revealFocused]);
-	const style = useAnimatedStyle(() => ({
-		opacity: focused ? progress.value : 0,
-		transform: [{ translateY: focused ? interpolate(progress.value, [0, 1], [rise, 0]) : 0 }],
-	}));
+		if (sceneKey !== undefined) markKeyed();
+		if (focused) revealFocused(sceneKey);
+	}, [focused, revealFocused, sceneKey, markKeyed]);
+	const style = useAnimatedStyle(() => {
+		const on = sceneKey !== undefined && target.value !== null ? target.value === sceneKey : focused;
+		return {
+			opacity: on ? progress.value : 0,
+			transform: [{ translateY: on ? interpolate(progress.value, [0, 1], [rise, 0]) : 0 }],
+		};
+	});
 	return <Animated.View style={[{ flex: 1 }, style]}>{children}</Animated.View>;
 }
 

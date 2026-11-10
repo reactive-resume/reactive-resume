@@ -32,3 +32,6 @@ export * from "./scaffold";
 export * from "./navigation";
 export { haptic, hitSlopFor, minHit, useFadeUp, useMotionPolicy, shake, FadeThroughProvider } from "./motion";
 export * from "./tokens";
+export * from "./SnapCarousel";
+export * from "./BoardDrag";
+export * from "./ExpandingStrip";

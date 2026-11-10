@@ -99,7 +99,15 @@ export type BottomSheetProps = {
 	step?: string;
 	returnFocusTo?: RefObject<HostInstance | null>;
 	ref?: Ref<BottomSheetHandle>;
-	/** Motion lab only: literal colours for the scrim and a 24 × 24 marker 4 dp below the sheet's top edge. */
+	/**
+	 * Start open, held at this drag translation (dp, 0 = fully open), with no rise: a sheet restored on screen, and
+	 * the motion lab's close and release scenes (a pan holding it 188 dp down).
+	 */
+	startOpenAt?: number;
+	/**
+	 * Motion lab only: the scrim's colour over the part of the screen the open sheet never covers (the rest keeps
+	 * the token), and a 24 × 24 marker 4 dp below the sheet's top edge.
+	 */
 	labMarker?: { scrim?: string; top?: string };
 };
 
@@ -118,6 +126,7 @@ export function BottomSheet({
 	returnFocusTo,
 	ref,
 	labMarker,
+	startOpenAt,
 }: BottomSheetProps) {
 	const { colors, shadows } = useTheme();
 	const { reduced, overlayFade } = useMotionPolicy();
@@ -129,9 +138,9 @@ export function BottomSheet({
 	const [asking, setAsking] = useState(false);
 
 	const h = useSharedValue(height);
-	// With timeScale 0 (storyboard captures) the sheet is open from its first frame.
-	const instant = timeScale.value === 0;
-	const ty = useSharedValue(reduced || instant ? 0 : height); // 0 = open, h = below the screen
+	// With timeScale 0 (storyboard captures) or startOpenAt the sheet is open from its first frame.
+	const instant = timeScale.value === 0 || startOpenAt !== undefined;
+	const ty = useSharedValue(startOpenAt ?? (reduced || instant ? 0 : height)); // 0 = open, h = below the screen
 	const fade = useSharedValue(reduced && !instant ? 0 : 1); // the sheet's own opacity (reduced motion, fadeAway)
 	const scrim = useSharedValue(instant ? 1 : 0);
 	const kb = useSharedValue(0);
@@ -152,9 +161,11 @@ export function BottomSheet({
 
 	// Open.
 	useEffect(() => {
-		scrim.set(withTiming(1, enter(scrimMs)));
-		if (reduced) fade.set(withTiming(1, enter(motion.d1)));
-		else ty.set(withTiming(0, enter(motion.d3)));
+		if (startOpenAt === undefined) {
+			scrim.set(withTiming(1, enter(scrimMs)));
+			if (reduced) fade.set(withTiming(1, enter(motion.d1)));
+			else ty.set(withTiming(0, enter(motion.d3)));
+		}
 		const node = findNodeHandle(titleRef.current);
 		if (node) setTimeout(() => AccessibilityInfo.setAccessibilityFocus(node), 50);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -269,11 +280,24 @@ export function BottomSheet({
 			{keyboard && <KeyboardFollower into={kb} bottomInset={insets.bottom} />}
 			<Animated.View
 				ref={scrimRef as never}
-				style={[StyleSheet.absoluteFill, { backgroundColor: labMarker?.scrim ?? colors.scrimSheet }, scrimStyle]}
+				style={[StyleSheet.absoluteFill, { backgroundColor: colors.scrimSheet }, scrimStyle]}
 				accessibilityElementsHidden
 				importantForAccessibility="no"
 				onTouchEnd={requestClose}
-			/>
+			>
+				{labMarker?.scrim ? (
+					<View
+						style={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: height,
+							backgroundColor: labMarker.scrim,
+						}}
+					/>
+				) : null}
+			</Animated.View>
 			<GestureDetector gesture={pan}>
 				<Animated.View
 					ref={sheetRef as never}

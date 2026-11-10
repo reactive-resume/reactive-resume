@@ -72,7 +72,7 @@ export function Dock({ variant, items, selected, onNavigate, onReselect, onWillS
 		if (onWillSwitch && !onWillSwitch(key)) return;
 		setShown(key);
 		if (variant !== "tabs") haptic("selection");
-		switchTo(() => onNavigate(key));
+		switchTo(() => onNavigate(key), key);
 	};
 	useImperativeHandle(handle, () => ({ select: press }));
 
