@@ -35,6 +35,22 @@ export function registerMainScroll(fn: (() => void) | null) {
 	scrollToEnd = fn;
 }
 
+/**
+ * The capture script listens on 8799; with one capture per simulator each uses its own port (scripts/capture-port.mjs).
+ * The dump goes to all of them: a capture only accepts the screen and theme it is waiting for.
+ */
+const servers = [0, 1, 2, 3].map((n) => CAPTURE_SERVER.replace(/:\d+$/, `:${8799 + n}`));
+const post = (path: string, body: string, json: boolean) =>
+	Promise.allSettled(
+		servers.map((server) =>
+			fetch(`${server}${path}`, {
+				method: "POST",
+				...(json ? { headers: { "content-type": "application/json" } } : {}),
+				body,
+			}),
+		),
+	);
+
 const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
 
 export function StoryboardController() {
@@ -71,16 +87,9 @@ export function StoryboardController() {
 				await settle(deps.isBusy);
 			}
 			const dump = await collectDump(navigation.getRootState() as never);
-			await fetch(`${CAPTURE_SERVER}/dump`, {
-				method: "POST",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({ id, theme, scroll, ...dump }),
-			});
+			await post("/dump", JSON.stringify({ id, theme, scroll, ...dump }), true);
 		})().catch((error) => {
-			fetch(`${CAPTURE_SERVER}/error`, {
-				method: "POST",
-				body: JSON.stringify({ id, theme, error: String(error) }),
-			}).catch(() => {});
+			void post("/error", JSON.stringify({ id, theme, error: String(error) }), false);
 		});
 	}, [request, router, navigation]);
 
