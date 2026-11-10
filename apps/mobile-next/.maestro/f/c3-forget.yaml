@@ -1,0 +1,13 @@
+# Contract flow: blocked until the data owner provides reversible Forget and Show forgotten.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- openLink: me.rxresu.storyboard://storyboard/C3-Facts?theme=light
+- tapOn: "Led the onboarding redesign at Northwind Labs"
+- tapOn: "Forget"
+- assertVisible:
+    id: "haptic-log"
+    text: "light"
+- tapOn: "Show forgotten"
+- tapOn: "Restore"
+- assertVisible: "Led the onboarding redesign at Northwind Labs"

@@ -1,0 +1,205 @@
+import type { CareerStoryData } from "@reactive-resume/schema/career";
+import { t } from "@lingui/core/macro";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import { View } from "react-native";
+import { careerStoryInputSchema } from "@reactive-resume/schema/career";
+import { ResourceState, useCareerLeaveGuard } from "./shared";
+import { useCareerStories, useDataActions, useDataBackend } from "@/data";
+import {
+	Button,
+	Chip,
+	IconButton,
+	ListRow,
+	Menu,
+	MenuItem,
+	PushScreen,
+	SectionHeading,
+	Text,
+	TextField,
+	Touch,
+} from "@/ui";
+
+export function StoriesScreen() {
+	const query = useCareerStories();
+	const router = useRouter();
+	return (
+		<PushScreen title={t`Stories`}>
+			<ResourceState pending={query.isPending} error={query.isError} retry={() => void query.refetch()}>
+				{query.data?.length ? (
+					query.data.map((s, i) => (
+						<ListRow
+							key={s.id}
+							title={s.data.title}
+							trailing="caret"
+							last={i === query.data.length - 1}
+							onPress={() => router.push(`/career/knowledge/stories/${s.id}`)}
+						/>
+					))
+				) : (
+					<View style={{ padding: 24 }}>
+						<Text variant="body">{t`No stories yet`}</Text>
+					</View>
+				)}
+			</ResourceState>
+		</PushScreen>
+	);
+}
+const parts = ["situation", "task", "action", "result", "reflection"] as const;
+type Part = (typeof parts)[number];
+export function StoryScreen() {
+	const { id } = useLocalSearchParams<{ id: string }>();
+	const query = useCareerStories();
+	const actions = useDataActions();
+	const { backend } = useDataBackend();
+	const row = query.data?.find((s) => s.id === id);
+	const [draft, setDraft] = useState<CareerStoryData | null>(null);
+	const [editing, setEditing] = useState<Part | "tags" | null>(null);
+	const [menu, setMenu] = useState(false);
+	const [failed, setFailed] = useState(false);
+	const [saving, setSaving] = useState(false);
+	const data = draft ?? row?.data;
+	const guard = useCareerLeaveGuard(draft !== null && JSON.stringify(draft) !== JSON.stringify(row?.data));
+	const names = {
+		situation: t`Situation`,
+		task: t`Task`,
+		action: t`What I did`,
+		result: t`Result`,
+		reflection: t`Reflection`,
+	};
+	const save = async () => {
+		if (!draft || saving) return;
+		const parsed = careerStoryInputSchema.safeParse(draft);
+		if (!parsed.success) {
+			setFailed(true);
+			return;
+		}
+		setSaving(true);
+		try {
+			await actions.write("stories-and-facts", "career.saveStory", { ...parsed.data, id });
+			setEditing(null);
+			setDraft(null);
+			setFailed(false);
+		} catch {
+			setFailed(true);
+		} finally {
+			setSaving(false);
+		}
+	};
+	return (
+		<PushScreen
+			title={data?.title}
+			subtitle={backend.kind === "fake" ? t`Used in 2 interview briefings` : undefined}
+			barEnd={
+				editing ? (
+					<Button label={t`Done`} tone="accentGhost" disabled={saving} onPress={() => void save()} />
+				) : (
+					<IconButton icon="dots-three" label={t`More`} onPress={() => setMenu(true)} />
+				)
+			}
+			overlay={
+				<>
+					{guard.confirmation}
+					<Menu open={menu} onClose={() => setMenu(false)} anchor={{ x: 334, y: 53, width: 44, height: 44 }}>
+						<MenuItem
+							label={t`Duplicate`}
+							onPress={() => {
+								setMenu(false);
+								if (data)
+									void actions
+										.write("stories-and-facts", "career.saveStory", { ...data, title: t`${data.title} (copy)` })
+										.catch(() => setFailed(true));
+							}}
+						/>
+					</Menu>
+				</>
+			}
+		>
+			<ResourceState pending={query.isPending} error={query.isError} retry={() => void query.refetch()}>
+				{!data ? (
+					<View style={{ padding: 24 }}>
+						<Text variant="body">{t`This story is unavailable or uses facts that are switched off.`}</Text>
+					</View>
+				) : (
+					<>
+						{failed ? (
+							<View style={{ padding: 24 }}>
+								<Text
+									variant="body"
+									color="dangerText"
+								>{t`Couldn't save your story. Your edits are kept on this device. Try again.`}</Text>
+								<Button label={t`Retry`} onPress={() => void save()} />
+							</View>
+						) : null}
+						{parts.map((part) => (
+							<View key={part}>
+								<SectionHeading title={names[part]} />
+								<View style={{ paddingHorizontal: 24, paddingTop: 4 }}>
+									{editing === part ? (
+										<TextField
+											accessibilityLabel={names[part]}
+											multiline
+											forceFocus
+											value={data[part]}
+											onChangeText={(value) => setDraft({ ...data, [part]: value })}
+											maxLength={part === "action" ? 6000 : 4000}
+										/>
+									) : data[part] ? (
+										<Touch
+											onPress={() => {
+												setDraft(data);
+												setEditing(part);
+											}}
+											accessibilityLabel={t`Edit ${names[part]}`}
+										>
+											<Text variant="prose">{data[part]}</Text>
+										</Touch>
+									) : (
+										<Button
+											label={part === "reflection" ? t`Add what you'd do differently` : t`Add ${names[part]}`}
+											icon="plus"
+											tone="accentGhost"
+											size="lg"
+											onPress={() => {
+												setDraft(data);
+												setEditing(part);
+											}}
+										/>
+									)}
+								</View>
+							</View>
+						))}
+						<View style={{ paddingHorizontal: 24, paddingTop: 20, flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+							{editing === "tags" ? (
+								<TextField
+									label={t`Tags, separated by commas`}
+									value={data.tags.join(", ")}
+									onChangeText={(value) =>
+										setDraft({
+											...data,
+											tags: value
+												.split(",")
+												.map((v) => v.trim())
+												.filter(Boolean),
+										})
+									}
+								/>
+							) : (
+								data.tags.map((tag) => (
+									<Chip
+										key={tag}
+										label={tag}
+										onPress={() => {
+											setDraft(data);
+											setEditing("tags");
+										}}
+									/>
+								))
+							)}
+						</View>
+					</>
+				)}
+			</ResourceState>
+		</PushScreen>
+	);
+}
