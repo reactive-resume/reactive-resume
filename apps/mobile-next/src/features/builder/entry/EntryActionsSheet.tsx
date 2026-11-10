@@ -4,6 +4,7 @@ import { t } from "@lingui/core/macro";
 import { useRouter } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { useRef } from "react";
+import { View } from "react-native";
 import { BuilderDocument, useBuilderParams, useLocked, useResumeData } from "../shared/document";
 import { deleteEntry, duplicateEntry, moveEntry, toggleEntryHidden } from "../shared/entries";
 import { entryTitle, getEntries, resolveSection, sectionMeta } from "../shared/model";
@@ -65,6 +66,7 @@ export function EntryActionsSheet() {
 				ref={sheet}
 				title={title}
 				height={440}
+				closeIconSize={24}
 				onClose={() => {
 					router.back();
 					const action = after.current;
@@ -72,6 +74,8 @@ export function EntryActionsSheet() {
 					action?.();
 				}}
 			>
+				{/* B21: the first row starts 8 dp under the header. */}
+				<View style={{ height: 4 }} />
 				{locked ? <PageSubtitle status>{t`Locked. Unlock it from ··· on the resume.`}</PageSubtitle> : null}
 				{rows.map((row, i) => (
 					<ListRow

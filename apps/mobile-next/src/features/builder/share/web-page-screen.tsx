@@ -40,6 +40,7 @@ export function WebPageScreen() {
 	return (
 		<PushScreen
 			title={t`Web page`}
+			backLabel={t`Back to Share`}
 			barEnd={
 				<IconButton
 					icon="arrow-square-out"

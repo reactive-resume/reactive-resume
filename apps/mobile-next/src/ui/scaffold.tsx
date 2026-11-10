@@ -2,6 +2,7 @@
 //   TabScreen    root tabs: serif title that collapses into a bar, pull to refresh, inside a dock scene
 //   PushScreen   pushed screens and full-screen modals: bare 56 dp bar, 28/34 title, one line, optional footer
 //   SheetScreen  a route presented as the design-system bottom sheet
+import { t } from "@lingui/core/macro";
 import { useFocusEffect, useRouter } from "expo-router";
 import { type ReactNode, useCallback, useRef } from "react";
 import { StyleSheet, View } from "react-native";
@@ -106,6 +107,8 @@ export type PushScreenProps = {
 		  }
 		| undefined;
 	back?: "back" | "close" | "none";
+	/** The back button's label: "Back to <the screen under this one>" (the builder dumps). Default Back or Close. */
+	backLabel?: string | undefined;
 	onBack?: (() => void) | undefined;
 	/** At most two icon buttons, one small ghost button or a quiet note. */
 	barEnd?: ReactNode;
@@ -132,6 +135,7 @@ export function PushScreen({
 	subtitle,
 	status,
 	back = "back",
+	backLabel,
 	onBack,
 	barEnd,
 	barCenter,
@@ -186,7 +190,7 @@ export function PushScreen({
 						{back === "none" ? null : (
 							<IconButton
 								icon={back === "close" ? "x" : "caret-left"}
-								label={back === "close" ? "Close" : "Back"}
+								label={backLabel ?? (back === "close" ? t`Close` : t`Back`)}
 								onPress={goBack}
 								testID="top-bar-back"
 							/>

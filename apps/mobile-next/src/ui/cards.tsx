@@ -16,15 +16,21 @@ export function HeroCard({
 	keyLine,
 	stage,
 	keyIcon,
+	keyIconSize = 18,
 	title,
 	body,
 	children,
 	dashed = false,
+	bg = "surface",
 	style,
 }: {
 	keyLine?: string | undefined;
 	stage?: Stage | undefined;
 	keyIcon?: IconName | undefined;
+	/** B4's suggestion card draws its sparkle at 16 dp. */
+	keyIconSize?: number | undefined;
+	/** B4's suggestion card sits on `raised` (the root-tab heroes on `surface`). */
+	bg?: "surface" | "raised" | undefined;
 	title?: string | undefined;
 	body?: string | undefined;
 	/** The button (8 dp extra top margin is added) and an optional centred link under it. */
@@ -37,7 +43,7 @@ export function HeroCard({
 	return (
 		<Box
 			component="HeroCard"
-			bg="surface"
+			bg={bg}
 			radius={radius.xl}
 			style={[
 				{ marginTop: 20, marginHorizontal: layout.screenMargin, padding: layout.heroPadding, gap: 12 },
@@ -55,7 +61,11 @@ export function HeroCard({
 		>
 			{keyLine ? (
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-					{stage ? <StageDot stage={stage} /> : keyIcon ? <Icon name={keyIcon} size={18} color="accentText" /> : null}
+					{stage ? (
+						<StageDot stage={stage} />
+					) : keyIcon ? (
+						<Icon name={keyIcon} size={keyIconSize} color="accentText" />
+					) : null}
 					<Text variant="keyLine" color="ink3">
 						{keyLine}
 					</Text>
@@ -431,51 +441,60 @@ export function Skeleton({
 }
 
 /**
- * Proposal text: removed words struck through in ink-2, added words on accent-soft (COMPONENTS.md §13). The layout
- * dump lists the unchanged words as the paragraph's text and each removed or added run as its own text, with the
- * run's line box (one line: from where it starts; several: the full lines it covers).
+ * Proposal text: removed words struck through in ink-2, added words on accent-soft with 2 dp padding at each end
+ * (`.add`, COMPONENTS.md §13). The layout dump lists the unchanged words as the paragraph's text and each removed or
+ * added run as its own text, with the run's line box (one line: its glyphs; several: the full lines it covers).
  */
-export function ProposalText({ parts }: { parts: { text: string; kind?: "same" | "removed" | "added" }[] }) {
-	const { colors } = useTheme();
-	const body = typeScale.body;
+export function ProposalText({ parts }: { parts: ProposalPart[] }) {
 	const plain = parts
 		.filter((p) => !p.kind || p.kind === "same")
 		.map((p) => p.text)
 		.join("");
-	const ref = useDesignTag({ kind: "text", text: plain, style: body, color: "ink" });
+	const ref = useDesignTag({ kind: "text", text: plain, style: typeScale.body, color: "ink" });
 	return (
 		<View ref={ref} collapsable={false}>
 			<Text variant="body" tag={false}>
-				{parts.map((p, i) =>
-					p.kind === "removed" ? (
-						<Text key={i} variant="body" color="ink2" tag={false} style={{ textDecorationLine: "line-through" }}>
-							{p.text}
-						</Text>
-					) : p.kind === "added" ? (
-						<Text key={i} variant="body" tag={false} style={{ backgroundColor: colors.accentSoft }}>
-							{p.text}
-						</Text>
-					) : (
-						p.text
-					),
-				)}
+				<Runs parts={parts} />
 			</Text>
 			{STORYBOARD
 				? parts.map((p, i) =>
 						p.kind === "removed" || p.kind === "added" ? (
-							<RunTag
-								key={i}
-								before={parts
-									.slice(0, i)
-									.map((q) => q.text)
-									.join("")}
-								text={p.text}
-								color={p.kind === "removed" ? "ink2" : "ink"}
-							/>
+							<RunTag key={i} parts={parts} index={i} color={p.kind === "removed" ? "ink2" : "ink"} />
 						) : null,
 					)
 				: null}
 		</View>
+	);
+}
+
+type ProposalPart = { text: string; kind?: "same" | "removed" | "added" };
+
+/** 2 dp of inline padding: a zero-width space with 2 dp letter spacing (nested Text takes no padding). */
+const pad = <RNText style={{ letterSpacing: 2 }}>{"\u200B"}</RNText>;
+
+/** The parts as nested runs; `upto` stops before that part, `lead` adds the start of the next one. */
+function Runs({ parts, upto, lead }: { parts: ProposalPart[]; upto?: number; lead?: string }) {
+	const { colors } = useTheme();
+	const shown = upto === undefined ? parts : parts.slice(0, upto);
+	return (
+		<>
+			{shown.map((p, i) =>
+				p.kind === "removed" ? (
+					<RNText key={i} style={{ color: colors.ink2, textDecorationLine: "line-through" }}>
+						{p.text}
+					</RNText>
+				) : p.kind === "added" ? (
+					<RNText key={i} style={{ backgroundColor: colors.accentSoft }}>
+						{pad}
+						{p.text}
+						{pad}
+					</RNText>
+				) : (
+					p.text
+				),
+			)}
+			{lead}
+		</>
 	);
 }
 
@@ -485,11 +504,16 @@ const lastLine = (lines: { x: number; width: number }[]): LineEnd => {
 	return { line: Math.max(0, lines.length - 1), x: last ? last.x + last.width : 0 };
 };
 
-/** Storyboard only: measures where a run starts and ends inside its paragraph and tags that box. */
-function RunTag({ before, text, color }: { before: string; text: string; color: ColorToken }) {
+/** Storyboard only: measures where a run's glyphs start and end inside its paragraph and tags that box. */
+function RunTag({ parts, index, color }: { parts: ProposalPart[]; index: number; color: ColorToken }) {
 	const body = typeScale.body;
-	const [start, setStart] = useState<LineEnd | null>(before ? null : { line: 0, x: 0 });
+	const part = parts[index];
+	const text = part?.text ?? "";
+	const padded = part?.kind === "added";
+	const [measured, setStart] = useState<LineEnd | null>(null);
 	const [end, setEnd] = useState<LineEnd | null>(null);
+	const [wrapLine, setWrapLine] = useState(0);
+	const start = measured && wrapLine > measured.line ? { line: wrapLine, x: padded ? 2 : 0 } : measured;
 	const box =
 		start && end
 			? start.line === end.line
@@ -502,16 +526,23 @@ function RunTag({ before, text, color }: { before: string; text: string; color: 
 					}
 			: null;
 	const ref = useDesignTag({ kind: "text", text, style: body, color }, { hidden: !box });
-	const probe = { position: "absolute" as const, left: 0, right: 0, top: 0, opacity: 0 };
+	const probe = [textDefaults, body, { position: "absolute" as const, left: 0, right: 0, top: 0, opacity: 0 }];
+	const firstWord = text.split(/\s/)[0] ?? "";
+	const lead = padded ? "\u200B" : "";
 	return (
 		<>
-			{before ? (
-				<RNText style={[textDefaults, body, probe]} onTextLayout={(e) => setStart(lastLine(e.nativeEvent.lines))}>
-					{before}
-				</RNText>
-			) : null}
-			<RNText style={[textDefaults, body, probe]} onTextLayout={(e) => setEnd(lastLine(e.nativeEvent.lines))}>
-				{before + text}
+			<RNText style={probe} onTextLayout={(e) => setStart(lastLine(e.nativeEvent.lines))}>
+				<Runs parts={parts} upto={index} />
+				{padded ? pad : null}
+			</RNText>
+			{/* With the run's first word: a run that wraps whole starts at the next line's edge. */}
+			<RNText style={probe} onTextLayout={(e) => setWrapLine(lastLine(e.nativeEvent.lines).line)}>
+				<Runs parts={parts} upto={index} lead={lead + firstWord} />
+			</RNText>
+			<RNText style={probe} onTextLayout={(e) => setEnd(lastLine(e.nativeEvent.lines))}>
+				<Runs parts={parts} upto={index} />
+				{padded ? pad : null}
+				{text}
 			</RNText>
 			<View
 				ref={ref}

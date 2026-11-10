@@ -7,8 +7,9 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { View } from "react-native";
 import { create } from "zustand";
-import { useDocumentHistory, useResumeDraftOwner, useResumeStore } from "@/data";
-import { PushScreen, type PushScreenProps, Text, Touch, hitSlopFor } from "@/ui";
+import { useDocumentHistory, useLetterDraftOwner, useResumeDraftOwner, useResumeStore } from "@/data";
+import { useDesignTag } from "@/dev/storyboard/harness";
+import { PushScreen, type PushScreenProps, Text, Touch, hitSlopFor, type as typeScale } from "@/ui";
 
 type History = ReturnType<typeof useDocumentHistory>;
 type DraftState = ReturnType<typeof useResumeStore.getState>;
@@ -26,28 +27,43 @@ function Owner({ id }: { id: string }) {
 	return null;
 }
 
+function LetterOwner({ id }: { id: string }) {
+	useLetterDraftOwner(id);
+	return null;
+}
+
 const useLeads = create<Record<string, symbol>>(() => ({}));
 
-/**
- * Mount in every builder screen: the first one mounted for a document owns its draft and history, the rest share
- * them. Pushed screens unmount before the screen under them, so ownership never moves mid-visit.
- * ponytail: if the owning screen unmounted while a later one stayed, the draft would close; the dock layout owning
- * it (requested from the lead) removes the case.
- */
-export function BuilderDocument({ id }: { id: string }) {
-	const [token] = useState(() => Symbol(id));
-	const lead = useLeads((s) => s[id] === token);
+/** The first caller mounted for a key leads; the rest wait. Pushed screens unmount before the screen under them. */
+function useLead(key: string) {
+	const [token] = useState(() => Symbol(key));
+	const lead = useLeads((s) => s[key] === token);
 	useEffect(() => {
-		if (useLeads.getState()[id]) return;
-		useLeads.setState({ [id]: token });
+		if (useLeads.getState()[key]) return;
+		useLeads.setState({ [key]: token });
 		return () =>
 			useLeads.setState((s) => {
-				if (s[id] !== token) return s;
-				const { [id]: _, ...rest } = s;
+				if (s[key] !== token) return s;
+				const { [key]: _, ...rest } = s;
 				return rest;
 			}, true);
-	}, [id, token]);
-	return lead ? <Owner id={id} /> : null;
+	}, [key, token]);
+	return lead;
+}
+
+/**
+ * The open resume's draft and history, once per document visit. Mount it where every builder route sits under it
+ * (the builder dock layout); until then each builder screen mounts it too and the first one mounted owns them.
+ * ponytail: if the owning screen unmounted while a later one stayed, the draft would close; the layout mount
+ * removes the case.
+ */
+export function BuilderDocument({ id }: { id: string }) {
+	return useLead(`resume:${id}`) ? <Owner id={id} /> : null;
+}
+
+/** The open letter's draft, once per letter visit: the same rules as `BuilderDocument`. */
+export function LetterDocument({ id }: { id: string }) {
+	return useLead(`letter:${id}`) ? <LetterOwner id={id} /> : null;
 }
 
 /** The route's document, section and entry ids. */
@@ -59,6 +75,8 @@ export function useBuilderParams() {
 export const useResumeData = () => useResumeStore((s) => s.data);
 export const useResumeDocument = () => useResumeStore((s) => s.document);
 export const useLocked = () => useResumeStore((s) => s.locked);
+/** "Back to Product designer": the back label of screens opened from the overview. */
+export const useBackToResume = () => t`Back to ${useResumeStore((s) => s.document?.name ?? "")}`;
 
 /** Applies a change to the resume data: one undo step unless `coalesceKey` merges consecutive edits of a field. */
 export function editResume(recipe: (draft: WritableDraft<ResumeData>) => void, options?: UpdateOptions) {
@@ -123,12 +141,24 @@ export function DocumentStatusLine({ text }: { text: string }) {
 		</Touch>
 	);
 	const both = history.canUndo && history.canRedo;
+	const words = history.canUndo || history.canRedo ? `${text} · ` : text;
+	// The boards' status line is one paragraph with Undo · Redo inline (B3): its text box spans the whole line.
+	const ref = useDesignTag({ kind: "text", text: words, style: typeScale.body, color: "ink3" });
 	return (
 		<View
-			style={{ paddingTop: 6, paddingHorizontal: 24, flexDirection: "row", flexWrap: "wrap", alignItems: "center" }}
+			ref={ref}
+			collapsable={false}
+			style={{
+				marginTop: 6,
+				marginHorizontal: 24,
+				alignSelf: "flex-start",
+				flexDirection: "row",
+				flexWrap: "wrap",
+				alignItems: "center",
+			}}
 		>
-			<Text variant="body" color="ink3">
-				{history.canUndo || history.canRedo ? `${text} · ` : text}
+			<Text variant="body" color="ink3" tag={false}>
+				{words}
 			</Text>
 			{history.canUndo ? action(t`Undo`, history.undo) : null}
 			{both ? (
@@ -161,6 +191,7 @@ export function BuilderScreen({ status, subtitle, ...props }: BuilderScreenProps
 		<>
 			<BuilderDocument id={id} />
 			<PushScreen
+				{...(props.docked ? { backLabel: t`Back to documents` } : {})}
 				{...props}
 				subtitle={
 					line ? (

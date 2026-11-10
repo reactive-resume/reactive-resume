@@ -18,7 +18,7 @@ export function ActivityScreen() {
 	const levels = STORYBOARD ? storyboardBars.map((h) => h / CHART) : days.map((day) => day.views / top);
 	const active = ((links.data ?? []) as FeedbackLinkRow[]).filter((link) => link.status === "active");
 	return (
-		<PushScreen title={t`Visitors and feedback`}>
+		<PushScreen title={t`Visitors and feedback`} backLabel={t`Back to Share`}>
 			{totals.isPending ? (
 				<View style={{ margin: 24 }}>
 					<Skeleton height={140} />

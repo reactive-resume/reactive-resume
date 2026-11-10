@@ -205,6 +205,8 @@ export function DescriptionScreen() {
 			<HeroCard
 				keyLine={ask.status === "ready" ? t`Suggestion · ${actionName(ask.proposal.action)}` : undefined}
 				keyIcon="sparkle"
+				keyIconSize={16}
+				bg="raised"
 			>
 				<View style={{ marginTop: -8, gap: 12 }}>
 					{ask.status === "working" ? (
@@ -235,14 +237,12 @@ export function DescriptionScreen() {
 							<Text variant="ui" color="ink3">
 								{ask.changed ? t`The line changed since you asked, so it wasn't replaced.` : t`Check it's accurate.`}
 							</Text>
-							<View style={{ marginTop: 4, flexDirection: "row", alignItems: "center", gap: 12 }}>
-								<Button label={t`Replace`} tone="primary" onPress={replace} style={{ alignSelf: "center" }} />
-								<Button
-									label={t`Keep mine`}
-									tone="ghost"
-									onPress={() => setAsk({ status: "idle" })}
-									style={{ alignSelf: "center" }}
-								/>
+							<View style={{ marginTop: 4, flexDirection: "row", gap: 12 }}>
+								{/* B4: the 36 dp buttons sit on the 44 dp icon button's bottom edge. */}
+								<View style={{ paddingTop: 8, flexDirection: "row", gap: 12 }}>
+									<Button label={t`Replace`} tone="primary" onPress={replace} />
+									<Button label={t`Keep mine`} tone="ghost" onPress={() => setAsk({ status: "idle" })} />
+								</View>
 								<View style={{ flex: 1 }} />
 								<IconButton
 									icon="arrows-clockwise"
@@ -314,9 +314,9 @@ export function DescriptionScreen() {
 			}
 			footer={
 				<View style={{ backgroundColor: colors.raised, paddingBottom: insets.bottom }}>
-					<View>
-						<FormattingToolbar items={toolbar} />
-						<View style={{ position: "absolute", top: 1, bottom: 0, end: 12, justifyContent: "center" }}>
+					<FormattingToolbar
+						items={toolbar}
+						end={
 							<Anchor anchorRef={improveRef}>
 								<Button
 									label={t`Improve`}
@@ -327,8 +327,8 @@ export function DescriptionScreen() {
 									disabled={locked}
 								/>
 							</Anchor>
-						</View>
-					</View>
+						}
+					/>
 				</View>
 			}
 		>

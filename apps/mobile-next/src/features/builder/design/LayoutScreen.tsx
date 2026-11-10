@@ -204,7 +204,7 @@ export function LayoutScreen() {
 	};
 
 	return (
-		<BuilderScreen title={t`Layout`} status={word} subtitle={null} overlay={menu.menu}>
+		<BuilderScreen title={t`Layout`} backLabel={t`Back to Design`} status={word} subtitle={null} overlay={menu.menu}>
 			<FieldLabel first>{t`Columns`}</FieldLabel>
 			<View style={{ paddingHorizontal: 24 }}>
 				<Segmented<"one" | "two">

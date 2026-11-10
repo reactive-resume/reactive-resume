@@ -53,6 +53,11 @@ export type TextFieldProps = Omit<TextInputProps, "style"> & {
 	minHeight?: number | undefined;
 	/** Geist Mono 14/22 text (links, keys). */
 	mono?: boolean | undefined;
+	/**
+	 * Tag the placeholder as an HTML input's (B20): across the input's width in the input's `ink`, like a value. The
+	 * default tags it hugging its words in `ink-3`, as the boards' placeholder spans (S6 "Optional").
+	 */
+	inputPlaceholder?: boolean | undefined;
 	/** A saved secret's preview ("sk-•••4f2a"), drawn in `ink` like a value while the field is empty (S6). */
 	savedValue?: string | undefined;
 	ref?: Ref<ComponentRef<typeof TextInput>> | undefined;
@@ -73,6 +78,7 @@ export function TextField({
 	minHeight,
 	mono = false,
 	savedValue,
+	inputPlaceholder = false,
 	ref,
 	value,
 	placeholder,
@@ -93,7 +99,11 @@ export function TextField({
 			: monoInput
 		: { ...typeScale.input, ...(multiline ? { lineHeight: 24 } : null) };
 	const hint = savedValue ?? placeholder;
-	const shown = value ? (input.secureTextEntry ? "\u2022".repeat(value.length) : value) : (savedValue ?? "");
+	const shown = value
+		? input.secureTextEntry
+			? "\u2022".repeat(value.length)
+			: value
+		: (savedValue ?? (inputPlaceholder ? (placeholder ?? "") : ""));
 	const textRef = useDesignTag(
 		{
 			kind: "text",
@@ -103,7 +113,7 @@ export function TextField({
 		},
 		{ hidden: !shown || !!onPress },
 	);
-	const placeholderTag = !value && !savedValue && placeholder && !onPress;
+	const placeholderTag = !value && !savedValue && placeholder && !onPress && !inputPlaceholder;
 	const field = (
 		<Box
 			component="TextField"
@@ -358,10 +368,11 @@ export function Composer({
 					<View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6 }}>{chips}</View>
 					{/* B16 and C2 draw the send button 1 dp into the composer's end padding (x 319 to 319.5). */}
 					<View style={{ marginEnd: -1 }}>
+						{/* B16 and C2 draw it in full colour over an empty composer: empty sends nothing, only "blocked" dims it. */}
 						<SendButton
-							onPress={sending ? onStop : onSend}
+							onPress={sending ? onStop : value.trim() ? onSend : undefined}
 							stop={sending}
-							disabled={!sending && (!value.trim() || !!blocked)}
+							disabled={!sending && !!blocked}
 						/>
 					</View>
 				</View>
@@ -428,8 +439,11 @@ export function ConnectionChip({ label, onPress }: { label: string; onPress?: ((
 /** The formatting toolbar above the keyboard (B4, L1): 52 dp, 44 dp icon buttons on a 52 dp pitch. */
 export function FormattingToolbar({
 	items,
+	end,
 }: {
 	items: { icon: IconName; label: string; onPress?: (() => void) | undefined; on?: boolean | undefined }[];
+	/** Pushed to the trailing edge (B4's Improve button). */
+	end?: ReactNode | undefined;
 }) {
 	const { colors } = useTheme();
 	return (
@@ -447,8 +461,17 @@ export function FormattingToolbar({
 			}}
 		>
 			{items.map((item) => (
-				<IconButton key={item.label} icon={item.icon} label={item.label} onPress={item.onPress} on={!!item.on} />
+				// B4 draws the toolbar's glyphs at 20 dp in 44 dp buttons.
+				<IconButton
+					key={item.label}
+					icon={item.icon}
+					label={item.label}
+					onPress={item.onPress}
+					on={!!item.on}
+					iconSize={20}
+				/>
 			))}
+			{end ? <View style={{ marginStart: "auto" }}>{end}</View> : null}
 		</View>
 	);
 }

@@ -1,14 +1,15 @@
 import type { PaperText } from "@/dev/storyboard/paper-text.gen";
-// The page band, pages and thumbnails (COMPONENTS.md §16), and the small data pieces of §18.
-import type { ReactNode } from "react";
 import type { ImageSourcePropType, StyleProp, ViewStyle } from "react-native";
+// The page band, pages and thumbnails (COMPONENTS.md §16), and the small data pieces of §18.
+import { type ReactNode, useEffect, useState } from "react";
 import { Image, View } from "react-native";
+import { runOnJS, useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
 import { Box, Ring, Touch } from "./base";
 import { Icon } from "./Icon";
-import { hitSlopFor } from "./motion";
+import { enter, hitSlopFor, timeScale, useMotionPolicy } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
-import { layout, radius } from "./tokens";
+import { layout, motion, radius } from "./tokens";
 import { STORYBOARD, trackImage, useDesignTag } from "@/dev/storyboard/harness";
 
 /** One text of a page fixture, reported to the layout dump at the place the image shows it (storyboard captures only). */
@@ -152,8 +153,30 @@ export function PageThumbnail({
 }
 
 /** Big serif number (score, count). */
-export function BigNumber({ children }: { children: string }) {
-	return <Text variant="bigNumber">{children}</Text>;
+export function BigNumber({ children, count = false }: { children: string; count?: boolean | undefined }) {
+	const target = Number(children);
+	const counts = count && Number.isFinite(target);
+	const shown = useCountUp(counts ? target : 0, counts);
+	return <Text variant="bigNumber">{counts ? String(shown) : children}</Text>;
+}
+
+/** Counts up to `target` over d3 when it appears or changes (B9's score); jumps under reduced motion. */
+function useCountUp(target: number, active: boolean) {
+	const { reduced } = useMotionPolicy();
+	const instant = reduced || timeScale.value === 0;
+	const [shown, setShown] = useState(instant ? target : 0);
+	const value = useSharedValue(instant ? target : 0);
+	useEffect(() => {
+		if (!active) return;
+		value.set(reduced ? target : withTiming(target, enter(motion.d3)));
+	}, [active, reduced, target, value]);
+	useAnimatedReaction(
+		() => Math.round(value.value),
+		(next, previous) => {
+			if (next !== previous) runOnJS(setShown)(next);
+		},
+	);
+	return shown;
 }
 
 /** J4's three-up stats: a 36/40 serif number over a 13/18 label. */
@@ -324,8 +347,10 @@ export function ColourSwatch({
 	const { colors } = useTheme();
 	return (
 		<Touch onPress={onPress} accessibilityLabel={label} accessibilityState={{ selected }} hitSlop={hitSlopFor(40, 40)}>
+			{/* Hidden from the dump: B7 draws swatches as plain boxes, without a component name. */}
 			<Box
 				component="ColourSwatch"
+				hidden
 				radius={radius.md}
 				style={[
 					{
@@ -342,7 +367,7 @@ export function ColourSwatch({
 				{custom ? (
 					<Icon name="plus" size={20} color="ink2" />
 				) : selected ? (
-					<Icon name="check" size={20} color="onAccent" tint="#FFFFFF" />
+					<Icon name="check" size={16} color="onAccent" tint="#FFFFFF" />
 				) : null}
 			</Box>
 		</Touch>

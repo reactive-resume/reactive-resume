@@ -175,7 +175,7 @@ export const sectionMeta: Record<CustomSectionType, SectionMeta> = {
 		untitled: () => t`Untitled language`,
 		primary: "language",
 		fields: [
-			text("language", () => t`Language`),
+			text("language", () => t`Language`, { placeholder: () => t`German` }),
 			text("fluency", () => t`Fluency`, { placeholder: () => t`Native, fluent, conversational…` }),
 			{ kind: "level" },
 		],

@@ -51,6 +51,7 @@ export function VersionsScreen() {
 	return (
 		<PushScreen
 			title={t`Versions`}
+			backLabel={t`Back to Share`}
 			subtitle={<PageSubtitle status>{t`Every editing session is kept.`}</PageSubtitle>}
 			barEnd={<Button label={t`Name this version`} tone="accentGhost" size="sm" onPress={() => setNaming(true)} />}
 			overlay={
