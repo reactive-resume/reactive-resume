@@ -1,0 +1,15 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/B18-Preview?theme=light
+- assertVisible: Page 1 of 1
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- doubleTapOn:
+    point: 50%, 40%
+- assertVisible:
+    id: haptic-log
+    text: selection
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn: Fit
+- assertVisible:
+    id: haptic-log
+    text: selection

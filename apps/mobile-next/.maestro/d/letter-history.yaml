@@ -1,0 +1,13 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/L1-Letter?theme=light
+- tapOn: ".*Your posting asks for.*"
+- tapOn: Letter paragraph 1
+- inputText: " New wording."
+- hideKeyboard
+- tapOn:
+    id: status-undo
+- assertNotVisible: ".*New wording.*"
+- tapOn:
+    id: status-redo
+- assertVisible: ".*New wording.*"

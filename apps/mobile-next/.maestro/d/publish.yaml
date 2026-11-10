@@ -1,0 +1,10 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/B11-Share?theme=light
+- assertVisible: Public link
+- tapOn: Public link
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn: Public link
+- assertVisible:
+    id: haptic-log
+    text: toggleOn

@@ -1,6 +1,1 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
-
-// B19: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="B19" kind="sheet" />;
-}
+export { MenuScreen as default } from "@/features/builder/menu/menu-screen";
