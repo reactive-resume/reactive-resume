@@ -166,8 +166,8 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 													}}
 												>
 													<IssueMarker
-														// The storyboard page image already draws the marker; this is its tap target.
-														targetOnly={STORYBOARD}
+														// The storyboard page's text already reports the number.
+														numberTagged={!STORYBOARD}
 														n={n + 1}
 														label={t`Issue ${n + 1}`}
 														onPress={() => router.push(`/builder/${id}/check`)}

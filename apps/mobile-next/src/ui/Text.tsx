@@ -17,7 +17,9 @@ const maxScale = (family: string) => (family === fonts.display ? 1.5 : 2);
  */
 const glyphShift: Partial<Record<TypeToken, number>> =
 	Platform.select<Partial<Record<TypeToken, number>>>({
-		ios: {},
+		// Instrument Serif's ink sits higher than CSS puts it when the line height is under its own line (A1, B10, B13,
+		// J4, W1).
+		ios: { statNumber: 3, bigNumber: 4.5 },
 		android: { rootTitle: -1, pageTitle: -1, sheetTitle: -1, keyLine: -1, ui: -0.5 },
 		default: {},
 	}) ?? {};
@@ -71,6 +73,8 @@ export type TextProps = Omit<RNTextProps, "style"> & {
 	 * a hidden copy. What is drawn is the shortened string, so the layout dump reports exactly that.
 	 */
 	wordEllipsis?: boolean;
+	/** A measured glyph offset for a one-off style (dp, down), moved like the per-style `glyphShift`. */
+	inkShift?: number | undefined;
 };
 
 export function Text({
@@ -82,6 +86,7 @@ export function Text({
 	tag = true,
 	after,
 	wordEllipsis = false,
+	inkShift,
 	children,
 	...rest
 }: TextProps) {
@@ -96,7 +101,7 @@ export function Text({
 		(weight && base.fontFamily !== fonts.display && base.fontFamily !== fonts.mono
 			? uiFamily[weight]
 			: base.fontFamily);
-	const shift = glyphShift[variant];
+	const shift = inkShift ?? glyphShift[variant];
 	const ref = useDesignTag(
 		{
 			kind: "text",
@@ -109,7 +114,7 @@ export function Text({
 			},
 			color,
 		},
-		// The glyph shift moves ink only; the line box stays where layout put it (Android only: iOS has no shifts).
+		// The glyph shift moves ink only; the line box stays where layout put it.
 		{ hidden: !tag, box: shift ? () => untranslatedBox(ref, shift)() : undefined },
 	);
 	const ink = inkOffset[variant];

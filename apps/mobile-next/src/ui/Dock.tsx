@@ -174,7 +174,10 @@ function DockItem({
 					</Text>
 				</View>
 			) : null}
-			{item.warn ? <View style={[styles.warn, { backgroundColor: colors.warnMark }]} pointerEvents="none" /> : null}
+			{/* The open mode shows its own findings, so its tab drops the dot (B9). */}
+			{item.warn && !selected ? (
+				<View style={[styles.warn, { backgroundColor: colors.warnMark }]} pointerEvents="none" />
+			) : null}
 		</Touch>
 	);
 }

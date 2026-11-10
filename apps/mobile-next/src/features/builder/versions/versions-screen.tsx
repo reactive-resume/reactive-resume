@@ -19,8 +19,13 @@ import {
 	type ColorToken,
 } from "@/ui";
 
-/** The dot before a version: what made it (B15). */
-const dotColor: Partial<Record<string, ColorToken>> = { auto: "stSaved", ai: "infoText", sent: "stApplied" };
+/** The dot before a version: what made it (B15). Named and sent versions stand out alike ("Sent to Lumen · named"). */
+const dotColor: Partial<Record<string, ColorToken>> = {
+	auto: "stSaved",
+	ai: "infoText",
+	named: "stApplied",
+	sent: "stApplied",
+};
 
 export function VersionsScreen() {
 	const { colors } = useTheme();

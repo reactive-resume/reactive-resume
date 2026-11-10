@@ -1,5 +1,5 @@
 import { t } from "@lingui/core/macro";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { useDocumentId } from "../share/document";
@@ -28,7 +28,9 @@ export function AssistantScreen() {
 	const router = useRouter();
 	const providers = useAIProviders();
 	const provider = providers.data?.[0];
-	const [message, setMessage] = useState("");
+	// A request handed over unsent (B19's Translate into…): the person reviews it before sending.
+	const { ask } = useLocalSearchParams<{ ask?: string }>();
+	const [message, setMessage] = useState(ask ?? "");
 	const [answer, setAnswer] = useState("");
 	const [resume, setResume] = useState(true);
 	const [posting, setPosting] = useState(true);

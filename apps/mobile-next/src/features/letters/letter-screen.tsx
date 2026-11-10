@@ -43,15 +43,18 @@ export function LetterScreen() {
 				docked
 				barEnd={
 					<>
-						{/* Preserve the approved icon opacity while enabling its navigation. */}
 						<IconButton
 							icon="sparkle"
 							label={t`Assistant`}
-							style={{ opacity: 0.45 }}
 							disabled={!document?.sourceResumeId}
 							onPress={() => document?.sourceResumeId && router.push(`/builder/${document.sourceResumeId}/assistant`)}
 						/>
-						<IconButton icon="dots-three" label={t`More`} disabled />
+						{/* The document menu: the library's actions sheet handles letters (D2). */}
+						<IconButton
+							icon="dots-three"
+							label={t`More`}
+							onPress={() => router.push(`/documents/${id}/actions?type=letter`)}
+						/>
 					</>
 				}
 			>

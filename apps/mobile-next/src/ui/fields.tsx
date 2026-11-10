@@ -2,7 +2,7 @@
 import type { ComponentRef, ReactNode, Ref } from "react";
 import type { TextInputProps } from "react-native";
 import { useState } from "react";
-import { TextInput, View } from "react-native";
+import { Platform, TextInput, View } from "react-native";
 import { Box, Ring, Touch } from "./base";
 import { IconButton } from "./buttons";
 import { FocusRing } from "./FocusRing";
@@ -28,6 +28,23 @@ export function FieldRow({ children }: { children: ReactNode }) {
 		</Stacked.Provider>
 	);
 }
+
+/**
+ * A one-line UITextField draws a line height's extra leading above the glyphs, so values and placeholders sat 3 to 4 dp
+ * under the boards' centred text. On iOS the one-line input drops its line height and takes it as its height instead
+ * (UITextField centres its text); Android centres the line box itself.
+ */
+const singleLine = ({ lineHeight, ...style }: { lineHeight: number } & Record<string, unknown>) =>
+	Platform.OS === "ios" ? { ...style, height: lineHeight } : { ...style, lineHeight };
+
+/**
+ * A multi-line UITextView puts each line's extra leading above its glyphs too; CSS splits it above and below. Figtree's
+ * own line is 1.2 em, so the text moves up by half the extra (the composer's 15/24 by 3 dp); the box doesn't move.
+ */
+const multiLine = (style: { fontSize: number; lineHeight: number }) => {
+	const shift = Platform.OS === "ios" ? (style.lineHeight - style.fontSize * 1.2) / 2 : 0;
+	return shift > 0 ? [style, { marginTop: -shift, marginBottom: shift }] : style;
+};
 
 /** The field text: `input` 16/22, or Geist Mono 14/22 for URLs and keys (J5). */
 const monoInput = { fontFamily: fonts.mono, fontSize: 14, lineHeight: 22, fontWeight: "400" as const };
@@ -171,7 +188,7 @@ export function TextField({
 							onBlur?.(e);
 						}}
 						style={[
-							textStyle,
+							multiline ? (mono ? textStyle : multiLine(textStyle)) : singleLine(textStyle),
 							{ padding: 0, color: colors.ink, includeFontPadding: false },
 							multiline ? { textAlignVertical: "top" } : null,
 						]}
@@ -268,6 +285,8 @@ export function CodeBoxes({
 						<Text
 							variant="mono"
 							style={{ fontFamily: fonts.mono, fontSize: 26, lineHeight: 30, fontWeight: "400" }}
+							// Geist Mono's own line (1.3 em) is taller than 30, and iOS draws the digits 1.5 dp high (A3).
+							inkShift={Platform.OS === "ios" ? 1.5 : undefined}
 							maxFontSizeMultiplier={1.3}
 						>
 							{value[i] ?? ""}
@@ -361,7 +380,10 @@ export function Composer({
 						caretHidden={STORYBOARD}
 						selectionColor={colors.accent}
 						accessibilityLabel={placeholder}
-						style={[typeScale.body, { padding: 0, color: colors.ink, maxHeight: 120, includeFontPadding: false }]}
+						style={[
+							multiLine(typeScale.body),
+							{ padding: 0, color: colors.ink, maxHeight: 120, includeFontPadding: false },
+						]}
 					/>
 				</View>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>

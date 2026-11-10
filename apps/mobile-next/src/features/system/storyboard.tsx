@@ -3,7 +3,7 @@ import { ScrollView, View } from "react-native";
 import { quickActions } from "./content";
 import { screenTexts } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
-import { Box, Button, Icon, Ring, Screen, StageDot, Text, Touch, WarnDot, radius, useTheme } from "@/ui";
+import { Box, Button, Icon, Logo, Ring, Screen, StageDot, Text, Touch, WarnDot, radius, useTheme } from "@/ui";
 
 export function NotificationContentScreen() {
 	const router = useRouter();
@@ -46,9 +46,15 @@ export function NotificationContentScreen() {
 						style={{ paddingHorizontal: 13, paddingVertical: 11, gap: 4 }}
 					>
 						<Ring color="line" radius={radius.xl} />
-						<Text variant="caption" color="ink3">
-							{copy[item.head]}
-						</Text>
+						<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+							{/* The header already names the app. */}
+							<View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+								<Logo size={16} />
+							</View>
+							<Text variant="caption" color="ink3" style={{ flexShrink: 1 }}>
+								{copy[item.head]}
+							</Text>
+						</View>
 						<Text variant="label">{copy[item.title]}</Text>
 						<Text variant="small" color="ink2">
 							{copy[item.body]}

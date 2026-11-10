@@ -255,3 +255,15 @@ that screens still drew from their own storyboard overlays, so both showed.
 
 `platform-third.test.ts` dates its own follow-up now that the seed has none. Result: 67 of 67 cold on Release, both
 themes, 0.1–0.4% differing pixels.
+
+## 2026-11-10 · Pass 8 · review fixes, cold Release, iOS (iPhone 14 simulator 2)
+
+Fixes for the independent review (REVIEW.md): one-line `TextField` values drop their line height on iOS (UITextField put
+the extra leading above the glyphs, 3–4 dp low); multi-line inputs and the composer move up by half the extra over
+Figtree's 1.2 em line; `bigNumber` (+4.5 dp) and `statNumber` (+3 dp) join `glyphShift` on iOS; T2's step numerals draw
+at 18/22 inside a 16 dp tagged box (the 16 dp line box clipped their tops); A3's code digits move 1.5 dp down.
+
+All 67 cold on the Release build, both themes, `--system-bars`: 65 pass on the first run; A1 passed on a re-run (its dump
+landed mid-entrance once); J4 fails only on another agent's uncommitted removal of the J4 storyboard overlay
+(`InsightsScreen.tsx`, `applications/storyboard.ts`). Sum of differing pixels over the 134 captures: 30.5% → 21.6%
+against `b36015d33`; B7 1.93 → 0.10, A1 0.58 → 0.04, C6 dark 1.08 → 0.02.

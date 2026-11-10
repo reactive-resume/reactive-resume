@@ -196,9 +196,9 @@ function ScopedOffersScreen() {
 								style={{
 									flexDirection: "row",
 									alignItems: "center",
-									height: 63,
+									height: 64,
 									borderBottomWidth: 1,
-									borderBottomColor: colors.line,
+									borderBottomColor: colors.line2,
 									gap: 12,
 								}}
 							>

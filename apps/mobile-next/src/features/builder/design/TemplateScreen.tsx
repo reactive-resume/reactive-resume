@@ -10,6 +10,7 @@ import { BuilderScreen, editResume, useBuilderParams, useResumeData, useSaveWord
 import { usePageImage } from "../shared/page-band";
 import { templateName } from "./DesignScreen";
 import { ACCENTS, contrastOnWhite, darkenForWhite, hexToRgba, normalizeHex, rgbaToHex } from "./presets";
+import { useSession } from "@/auth/session";
 import { useResumeStore } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
@@ -30,7 +31,10 @@ import {
 	Touch,
 } from "@/ui";
 
-const onyxFixture = require("../../../../assets/fixtures/thumb-template-onyx.png");
+const fixtures: Partial<Record<string, number>> = {
+	onyx: require("../../../../assets/fixtures/thumb-template-onyx.png"),
+	azurill: require("../../../../assets/fixtures/thumb-template-azurill.png"),
+};
 type Filter = "all" | "one" | "two";
 
 const undo = () => ({ label: t`Undo`, onPress: () => useResumeStore.getState().undo() });
@@ -43,6 +47,7 @@ export function TemplateScreen() {
 	const data = useResumeData();
 	const word = useSaveWord();
 	const { source } = usePageImage(id);
+	const { server } = useSession();
 	const [filter, setFilter] = useState<Filter>("all");
 	const [atsOnly, setAtsOnly] = useState(false);
 	const [custom, setCustom] = useState<string | null>(null);
@@ -161,7 +166,12 @@ export function TemplateScreen() {
 						);
 					const layout = templateLayouts[tpl];
 					const selected = tpl === current;
-					const image = selected ? (STORYBOARD && tpl === "onyx" ? onyxFixture : source) : undefined;
+					// The selected template shows this resume; the others show the template's own preview (web parity).
+					const image = STORYBOARD
+						? (fixtures[tpl] ?? (selected ? source : undefined))
+						: selected
+							? source
+							: { uri: `${server}/templates/jpg/${tpl}.jpg` };
 					return (
 						<Touch
 							key={tpl}

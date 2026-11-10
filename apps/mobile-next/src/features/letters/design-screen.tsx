@@ -1,4 +1,5 @@
 import { t } from "@lingui/core/macro";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
@@ -19,6 +20,7 @@ import {
 
 export function LetterDesignScreen() {
 	const id = useDocumentId();
+	const router = useRouter();
 	const query = useLetterDocument(id);
 	const document = query.data;
 	const store = useLetterStore();
@@ -43,7 +45,17 @@ export function LetterDesignScreen() {
 	return (
 		<>
 			<LetterDocument id={id} />
-			<PushScreen title={t`Design`} docked barEnd={<IconButton icon="dots-three" label={t`More`} disabled />}>
+			<PushScreen
+				title={t`Design`}
+				docked
+				barEnd={
+					<IconButton
+						icon="dots-three"
+						label={t`More`}
+						onPress={() => router.push(`/documents/${id}/actions?type=letter`)}
+					/>
+				}
+			>
 				<DocumentState
 					loading={query.isPending}
 					error={query.isError}

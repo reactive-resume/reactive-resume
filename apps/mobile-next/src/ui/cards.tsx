@@ -385,27 +385,27 @@ export function IssueMarker({
 	n,
 	onPress,
 	label,
-	targetOnly = false,
+	numberTagged = true,
 }: {
 	n: number;
 	onPress?: (() => void) | undefined;
 	label?: string | undefined;
-	/** The page image already draws this marker (B18's storyboard page): keep only the invisible tap target. */
-	targetOnly?: boolean | undefined;
+	/** False where the page's own text already reports the number (B18's storyboard page). */
+	numberTagged?: boolean | undefined;
 }) {
 	const body = (
 		<Box
 			component="IssueMarker"
 			bg="warn"
 			radius={radius.xs}
-			style={{ width: 24, height: 24, alignItems: "center", justifyContent: "center", opacity: targetOnly ? 0 : 1 }}
+			style={{ width: 24, height: 24, alignItems: "center", justifyContent: "center" }}
 		>
 			<Text
 				variant="mono"
 				color="warnInk"
 				style={{ lineHeight: 24, fontWeight: "600" }}
 				maxFontSizeMultiplier={1.3}
-				tag={!targetOnly}
+				tag={numberTagged}
 			>
 				{n}
 			</Text>
@@ -470,8 +470,11 @@ export function ProposalText({ parts }: { parts: ProposalPart[] }) {
 
 type ProposalPart = { text: string; kind?: "same" | "removed" | "added" };
 
-/** 2 dp of inline padding: a zero-width space with 2 dp letter spacing (nested Text takes no padding). */
-const pad = <RNText style={{ letterSpacing: 2 }}>{"\u200B"}</RNText>;
+/**
+ * 2 dp of inline padding: an invisible separator (U+2063, breaks like a letter) with 2 dp letter spacing (nested Text
+ * takes no padding). A zero-width space let the line break after it, leaving an empty highlight at a line's end (B4).
+ */
+const pad = <RNText style={{ letterSpacing: 2 }}>{"\u2063"}</RNText>;
 
 /** The parts as nested runs; `upto` stops before that part, `lead` adds the start of the next one. */
 function Runs({ parts, upto, lead }: { parts: ProposalPart[]; upto?: number; lead?: string }) {
@@ -529,7 +532,7 @@ function RunTag({ parts, index, color }: { parts: ProposalPart[]; index: number;
 	const ref = useDesignTag({ kind: "text", text, style: body, color }, { hidden: !box });
 	const probe = [textDefaults, body, { position: "absolute" as const, left: 0, right: 0, top: 0, opacity: 0 }];
 	const firstWord = text.split(/\s/)[0] ?? "";
-	const lead = padded ? "\u200B" : "";
+	const lead = padded ? "\u2063" : "";
 	return (
 		<>
 			<RNText style={probe} onTextLayout={(e) => setStart(lastLine(e.nativeEvent.lines))}>

@@ -61,15 +61,18 @@ export function RootHeader({
 	subtitle,
 	actions,
 	avatar,
+	inset = true,
 }: {
 	title: string;
 	subtitle?: string | undefined;
 	actions?: ReactNode | undefined;
 	avatar?: ReactNode | undefined;
+	/** False inside a frame that isn't at the top of the screen (the Kit). */
+	inset?: boolean | undefined;
 }) {
 	const insets = useSafeAreaInsets();
 	return (
-		<View style={{ paddingTop: insets.top }}>
+		<View style={{ paddingTop: inset ? insets.top : 0 }}>
 			<View
 				style={{
 					paddingTop: 8,
@@ -381,9 +384,9 @@ export function FooterBar({
 	const insets = useSafeAreaInsets();
 	const column = useLargeText() || stacked;
 	return (
+		// The fill stops at the bar: the screen's own background runs under the home indicator (P1's sunken page).
 		<View
 			style={{
-				backgroundColor: colors[bg],
 				paddingBottom: inset ? insets.bottom : 0,
 				borderTopWidth: divider ? 1 : 0,
 				borderTopColor: colors.line,
@@ -393,6 +396,7 @@ export function FooterBar({
 				<Box
 					component="FooterBar"
 					style={{
+						backgroundColor: colors[bg],
 						paddingVertical: 12,
 						paddingHorizontal: layout.screenMargin,
 						flexDirection: column ? "column" : "row",
