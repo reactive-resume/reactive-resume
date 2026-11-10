@@ -1,0 +1,10 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/B17-Proposals?theme=light
+- assertVisible: Proposed edits
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn:
+    id: proposal-accept-1
+- assertVisible:
+    id: haptic-log
+    text: light

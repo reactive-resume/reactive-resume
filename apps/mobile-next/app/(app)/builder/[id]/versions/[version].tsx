@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
-
-// B15 viewer: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="B15 viewer" kind="push" />;
+import { PreviewScreen } from "@/features/builder/preview/preview-screen";
+export default function VersionRoute() {
+	return <PreviewScreen version />;
 }

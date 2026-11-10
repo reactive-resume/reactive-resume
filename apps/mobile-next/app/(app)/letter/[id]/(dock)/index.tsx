@@ -1,6 +1,1 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
-
-// L1: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="L1" kind="tab" docked />;
-}
+export { LetterScreen as default } from "@/features/letters/letter-screen";

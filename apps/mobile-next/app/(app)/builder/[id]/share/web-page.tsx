@@ -1,6 +1,1 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
-
-// B12: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="B12" kind="push" />;
-}
+export { WebPageScreen as default } from "@/features/builder/share/web-page-screen";
