@@ -69,6 +69,11 @@ export function StoryboardController() {
 			const scenario = scenarios[id];
 			if (!scenario) throw new Error(`No storyboard scenario for ${id}`);
 			timeScale.value = 0;
+			// The shared value reaches the UI thread a frame later: on a cold start the first screen's entrance would still
+			// read 1 and run at full length. Wait for it to land before anything mounts.
+			await frame();
+			await frame();
+			await new Promise<void>((resolve) => setTimeout(resolve, 60));
 			deps.setNow(STORYBOARD_NOW);
 			useThemeStore.getState().setOverride(theme);
 			await deps.seed(scenario.fixture ?? "storyboard");
