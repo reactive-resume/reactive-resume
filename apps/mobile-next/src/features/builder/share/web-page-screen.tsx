@@ -1,8 +1,8 @@
 import { t } from "@lingui/core/macro";
-import { openBrowserAsync } from "expo-web-browser";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
-import { isValidSlug, publicResumeUrl } from "@reactive-resume/resume/sharing";
+import { isValidSlug } from "@reactive-resume/resume/sharing";
 import { DocumentState, useDocumentId, useBuilderDocument } from "./document";
 import { useSession } from "@/auth/session";
 import { useAccount, useResumeStore } from "@/data";
@@ -11,6 +11,7 @@ import { PushScreen, IconButton, TextField, Form, ListRow, Switch, SectionHeadin
 
 export function WebPageScreen() {
 	const id = useDocumentId();
+	const router = useRouter();
 	const query = useBuilderDocument(id);
 	const document = query.data;
 	const { server } = useSession();
@@ -45,7 +46,7 @@ export function WebPageScreen() {
 				<IconButton
 					icon="arrow-square-out"
 					label={t`Open the web page`}
-					onPress={() => void openBrowserAsync(publicResumeUrl(server, { username, slug: document?.slug ?? "" }))}
+					onPress={() => router.push(`/r/${encodeURIComponent(username)}/${encodeURIComponent(document?.slug ?? "")}`)}
 				/>
 			}
 		>

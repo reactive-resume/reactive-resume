@@ -167,7 +167,7 @@ export function PrepScreen() {
 								last={i === likely.length - 1}
 								onPress={() =>
 									router.push(
-										story ? `/career/knowledge/stories/${briefing.data.storyIds[i]}` : "/career/knowledge/stories",
+										story ? `/career/knowledge/stories/${briefing.data.storyIds[i]}` : "/career/knowledge/stories/new",
 									)
 								}
 							/>

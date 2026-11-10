@@ -3,9 +3,10 @@
 // exported-PDF check. Job match: which posting, one count (never a percentage), missing terms with one Add each, then
 // "Already covered".
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { BottomTabNavigationProp } from "expo-router/js-tabs";
 import { plural, t } from "@lingui/core/macro";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { createEntry } from "@reactive-resume/resume/entries";
 import {
@@ -98,6 +99,15 @@ export function CheckScreen() {
 	const applications = useApplications();
 	const [view, setView] = useState<View3>(
 		params.view === "job" ? "job" : params.view === "writing" ? "writing" : "issues",
+	);
+	const navigation = useNavigation<BottomTabNavigationProp<{ check: undefined }>>();
+	useEffect(
+		() =>
+			navigation.addListener("tabPress", () => {
+				setView("issues");
+				router.setParams({ view: undefined });
+			}),
+		[navigation, router],
 	);
 	const [sheet, setSheet] = useState<CheckIssue | null>(null);
 	const [explain, setExplain] = useState(false);

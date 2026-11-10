@@ -210,7 +210,7 @@ function PreferencesContent() {
 							secondary={backend.kind === "fake" ? t`Job boards and 12 company sites` : profile.locations.join(" · ")}
 							trailing="caret"
 							last
-							onPress={() => open("places", profile.locations.join(", "))}
+							onPress={() => router.push(`/career/schedules/${discovery?.id ?? "new"}`)}
 						/>
 					</>
 				) : null}
