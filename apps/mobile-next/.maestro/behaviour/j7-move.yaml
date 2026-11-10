@@ -1,0 +1,24 @@
+# J7 · Tap a stage: the sheet closes, J6 shows the new stage and the toast "Moved to Offer." offers Undo.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J6-Detail?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- scrollUntilVisible:
+    element: "Stage, .*"
+- tapOn: "Stage, .*"
+- extendedWaitUntil:
+    visible: Move Lumen
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: stage-offer
+- assertVisible: Moved to Offer\.
+- assertNotVisible: Move Lumen
+- assertVisible: Undo
+- scrollUntilVisible:
+    element: "Stage, Offer"

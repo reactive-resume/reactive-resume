@@ -1,9 +1,16 @@
 # Expected to fail until SaveJobScreen persists the job and emits success.
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/J5-SaveJob?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - assertVisible: Save a job
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
 - tapOn:
     id: save-job
 - assertVisible:

@@ -1,13 +1,28 @@
-# C3 Forget emits one light; Show forgotten and Restore retain the reversible action.
+# C3 Forget emits one light; while its Undo toast is up, Show forgotten and Restore bring the fact back.
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
 - openLink: me.rxresu.storyboard://storyboard/C3-Facts?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - tapOn: "Led the onboarding redesign at Northwind Labs"
-- tapOn: "Forget"
+- tapOn:
+    text: "Forget"
+    waitToSettleTimeoutMs: 1
+# While the Undo toast is up the fact is still restorable; once it runs out the forget is final.
+- tapOn:
+    text: "Show forgotten"
+    waitToSettleTimeoutMs: 1
+- tapOn:
+    text: "Restore"
+    waitToSettleTimeoutMs: 1
+- tapOn: Close
+- assertVisible: "Led the onboarding redesign at Northwind Labs"
 - assertVisible:
     id: "haptic-log"
     text: "light"
-- tapOn: "Show forgotten"
-- tapOn: "Restore"
-- assertVisible: "Led the onboarding redesign at Northwind Labs"

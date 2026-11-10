@@ -1,0 +1,32 @@
+# D6 · Trash: Empty counts exactly what it destroys by kind; tapping a row offers Restore or Delete permanently;
+# Restore puts the item back with an Open toast.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D6-Trash?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn: Empty
+- assertVisible: Delete 2 documents and 1 application permanently?
+- assertVisible: They can't be restored.
+- tapOn: Cancel
+- assertNotVisible: Delete 2 documents and 1 application permanently?
+- tapOn:
+    id: trash-resume-junior
+- assertVisible: Delete permanently…
+- tapOn:
+    text: Restore
+    waitToSettleTimeoutMs: 1
+- assertVisible: Restored “Junior designer 2021”
+- assertVisible: Open
+- assertNotVisible:
+    id: trash-resume-junior
+- tapOn:
+    text: Open
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Junior designer 2021
+    timeout: 10000

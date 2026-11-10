@@ -2,9 +2,17 @@
 appId: me.rxresu.storyboard
 ---
 - openLink: me.rxresu.storyboard://storyboard/B16-Assistant?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - launchApp:
     clearState: true
 - openLink: me.rxresu.storyboard://storyboard/B16-Assistant?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - tapOn: Ask about this resume…
 - inputText: Help improve this summary
 - tapOn: Send

@@ -1,7 +1,13 @@
 # Expected to fail until SaveJobScreen creates an application and opens the shared sent-documents gate.
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/J5-SaveJob?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - tapOn: Applied
 - tapOn:
     id: save-job

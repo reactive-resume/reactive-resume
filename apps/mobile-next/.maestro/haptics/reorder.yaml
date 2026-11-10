@@ -1,11 +1,19 @@
 # B8: drag a section down two slots by its handle → "medium selection selection rigid".
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/B8-Layout?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - extendedWaitUntil:
     visible: Fit to one page
     timeout: 15000
+- waitForAnimationToEnd
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
 # Summary's handle (24, 322) to two rows (64 dp each) lower.
 - swipe:
     start: 36, 335
@@ -16,3 +24,4 @@ appId: me.rxresu.storyboard
       id: haptic-log
       text: medium selection selection rigid
     timeout: 5000
+- waitForAnimationToEnd

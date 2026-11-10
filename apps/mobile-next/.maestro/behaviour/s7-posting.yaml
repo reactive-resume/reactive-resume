@@ -2,9 +2,17 @@
 appId: me.rxresu.storyboard
 ---
 - openLink: me.rxresu.storyboard://storyboard/W5-Messages?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - launchApp:
     clearState: true
 - openLink: me.rxresu.storyboard://storyboard/W5-Messages?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - tapOn: Redraft
 - assertVisible: Send to Work OpenAI?
 - assertVisible: "Don't ask again for postings"

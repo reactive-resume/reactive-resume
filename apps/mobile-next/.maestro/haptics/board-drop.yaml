@@ -1,9 +1,16 @@
 # Blocked: ApplicationsScreen BoardView renders static BoardCard; BoardDrag is not wired. Coordinates require lead calibration.
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/J2-Board?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - assertVisible: Interviewing
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
 - swipe:
     start: 50%, 44%
     end: 96%, 44%

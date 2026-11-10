@@ -2,9 +2,17 @@
 appId: me.rxresu.storyboard
 ---
 - openLink: me.rxresu.storyboard://storyboard/W1-Fit?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - launchApp:
     clearState: true
 - openLink: me.rxresu.storyboard://storyboard/W1-Fit?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - tapOn: More
 - tapOn: Check again
 - assertVisible: Send to Work OpenAI?

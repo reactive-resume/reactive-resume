@@ -1,11 +1,19 @@
 # B3: typing plays no haptic (MOTION.md §4.2).
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/B3-Entry?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - extendedWaitUntil:
     visible: Company
     timeout: 15000
+- waitForAnimationToEnd
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
 - tapOn: Northwind Labs
 - inputText: " Co"
 - tapOn: Location

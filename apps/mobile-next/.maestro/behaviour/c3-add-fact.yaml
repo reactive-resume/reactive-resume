@@ -1,0 +1,22 @@
+# C3 · + opens Add a fact: one text field and a group picker; Save adds the fact under its group.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C3-Facts?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn: Add a fact
+- assertVisible: Work
+- assertVisible: Skills
+- assertVisible: Preferences
+- tapOn:
+    text: Fact
+    index: 1
+- inputText: Ran weekly design critiques
+- tapOn: Skills
+- tapOn: Save
+- assertNotVisible: Correct a fact
+- assertVisible: Ran weekly design critiques

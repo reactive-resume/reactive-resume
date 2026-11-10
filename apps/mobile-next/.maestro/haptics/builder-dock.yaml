@@ -1,11 +1,19 @@
 # B1: the dock's Edit → Design switch plays `selection`.
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/B1-Overview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - extendedWaitUntil:
     visible: Sections
     timeout: 15000
+- waitForAnimationToEnd
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
 - tapOn: Design
 - assertVisible:
     id: haptic-log

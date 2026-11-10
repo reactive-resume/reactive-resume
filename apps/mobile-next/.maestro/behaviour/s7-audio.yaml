@@ -2,13 +2,22 @@
 appId: me.rxresu.storyboard
 ---
 - openLink: me.rxresu.storyboard://storyboard/W4-Practice?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - launchApp:
     clearState: true
 - openLink: me.rxresu.storyboard://storyboard/W4-Practice?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - tapOn: Start recording
 - extendedWaitUntil:
     visible: 00:02 / 02:00
     timeout: 10000
+- waitForAnimationToEnd
 - tapOn: Stop recording
 - tapOn: Finish
 - assertVisible: Send to Work OpenAI?
@@ -21,6 +30,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: 00:02 / 02:00
     timeout: 10000
+- waitForAnimationToEnd
 - tapOn: Stop recording
 - tapOn: Finish
 - assertNotVisible: Send to Work OpenAI?
@@ -35,6 +45,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: 00:02 / 02:00
     timeout: 10000
+- waitForAnimationToEnd
 - tapOn: Stop recording
 - tapOn: Finish
 - assertVisible: Send to Work OpenAI?

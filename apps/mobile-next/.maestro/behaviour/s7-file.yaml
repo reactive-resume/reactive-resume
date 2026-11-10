@@ -2,9 +2,17 @@
 appId: me.rxresu.storyboard
 ---
 - openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - launchApp:
     clearState: true
 - openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - openLink: me.rxresu.storyboard://import
 - tapOn: Choose a file
 - tapOn: "${IMPORT_FIXTURE_NAME}"

@@ -107,11 +107,28 @@ async function onlyOpenApplications() {
 		await update(app.id, { trashedAt: new Date("2026-11-06T10:00:00Z") });
 }
 
+/** Maestro flows only: Kiln Studio not yet sent, so every route to Applied (swipe, board drop) can be tried. */
+const kilnSaved = { kiln: { status: "saved", laneId: "saved", appliedAt: null, activity: [] } };
+
 const tab = "/applications";
 const lumen = "/applications/lumen";
 
 export const scenarios: Record<string, Scenario> = {
 	"J1-List": { hrefs: [`${tab}?view=list`], prepare: onlyOpenApplications },
+	// Not storyboard screens: the J1 list and J2 board with Kiln Studio Saved (behaviour/applied-swipe, applied-board).
+	"J1-KilnSaved": {
+		hrefs: [`${tab}?view=list`],
+		prepare: async () => {
+			await onlyOpenApplications();
+			await update("kiln", kilnSaved.kiln);
+		},
+	},
+	"J2-KilnSaved": {
+		hrefs: [`${tab}?view=board&stage=saved`],
+		prepare: async () => {
+			await seedApplications(kilnSaved);
+		},
+	},
 	"J2-Board": { hrefs: [`${tab}?view=board&stage=interview`], prepare: () => seedApplications() },
 	"J3-Calendar": { hrefs: [`${tab}?view=calendar&day=2026-11-10`], prepare: () => seedApplications() },
 	"J4-Insights": { hrefs: [tab, "/applications/insights?range=90"], prepare: () => seedApplications() },
@@ -126,6 +143,31 @@ export const scenarios: Record<string, Scenario> = {
 	"J8-Interview": {
 		hrefs: [tab, ...overBackdrop("J8-Interview", `${lumen}/interview?interview=lumen-interview`)],
 		prepare: () => seedApplications(),
+	},
+	// Not a storyboard screen: the Maestro flow for J8's repeated hour (behaviour/j8-repeated-hour.yaml). An interview
+	// on the night clocks go back in Berlin, so the system picker opens at 25 Oct 02:30, the hour that happens twice.
+	"J8-RepeatedHour": {
+		hrefs: [tab, ...overBackdrop("J8-Interview", `${lumen}/interview?interview=lumen-dst`)],
+		prepare: async () => {
+			await seedApplications();
+			const app = (await invokeFake("applications.getById", { id: "lumen" })) as { activity: Fields[] };
+			await update("lumen", {
+				activity: [
+					...app.activity,
+					{
+						id: "lumen-dst",
+						type: "interview",
+						at: new Date("2026-10-25T02:30:00+02:00"),
+						kind: "screening",
+						durationMinutes: 30,
+						location: "",
+						notes: "",
+						participants: [],
+						timezone: "Europe/Berlin",
+					},
+				],
+			});
+		},
 	},
 	"J9-Close": {
 		hrefs: [tab, ...overBackdrop("J9-Close", "/applications/parcel/stage?step=close")],

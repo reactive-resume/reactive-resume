@@ -1,0 +1,20 @@
+# C3 · Forget stays reversible while its Undo toast is up; when the toast runs out the forget is final: the fact
+# stays gone and there is nothing left to restore.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C3-Facts?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn: Led the onboarding redesign at Northwind Labs
+- tapOn: Forget
+- assertVisible: Fact forgotten
+- assertVisible: Show forgotten
+- extendedWaitUntil:
+    notVisible: Fact forgotten
+    timeout: 15000
+- assertNotVisible: Show forgotten
+- assertNotVisible: Led the onboarding redesign at Northwind Labs

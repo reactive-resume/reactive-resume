@@ -1,6 +1,8 @@
 # Storyboard Maestro contracts
 
-Authoring only: none of these flows has been run on a device in this work. They are contracts, not a green device gate.
+Run on iOS (iPhone 14 simulator, Release storyboard build) in Pass 8; the scoreboard and the bullet coverage are in `build/behaviour-coverage.md`, written by that run (not committed).
+
+Every flow starts with `launchApp: clearState: true` and waits for `storyboard-ready` after each storyboard link: the capture harness holds motion at time scale 0 for about 4 s after a scenario loads, and toasts would run out instantly. Maestro waits for the screen to settle after each command, and a toast's running fuse keeps it busy, so taps that raise a 5 s toast use `waitToSettleTimeoutMs`. `dev/haptics` links switch the haptic log in place (`app/+native-intent.tsx`) and never move the screen.
 
 Run from `apps/mobile-next` with a storyboard development build (`APP_VARIANT=storyboard`, `EXPO_PUBLIC_STORYBOARD=1`, app ID and scheme `me.rxresu.storyboard`). Metro and the native app must already be available. Never point these flows at a production account. S7 flows clear the storyboard sandbox with `launchApp.clearState`; install a dedicated test variant.
 
@@ -12,7 +14,7 @@ maestro test .maestro/behaviour
 
 The retained `f/c7-connection-changed.yaml` is a separate legacy real-server flow for `me.rxresu.dev`, requiring `SCHEDULE_ID` and `OTHER_CONNECTION_LABEL`. It is not part of the storyboard folders above. For `behaviour/s7-file.yaml`, preload a nonpersonal PDF in Files and supply `-e IMPORT_FIXTURE_NAME=<visible filename>`. Microphone permission must be granted for `s7-audio.yaml`.
 
-Each haptic flow clears the visible `haptic-log` pill and asserts an exact sequence, including an empty string for silent actions. The four former motion-lab placeholders now use actual screens. Existing screen flows were relocated without removing their assertions. The sign-out preset currently supplies **three** queued changes, not the specification row’s two; both must open S8 once with `warning`, but exact two-change fixture coverage is missing.
+Each haptic flow clears the visible `haptic-log` pill and asserts an exact sequence, including an empty string for silent actions. The four former motion-lab placeholders now use actual screens. Existing screen flows were relocated without removing their assertions. `settings?queued=offline-two` supplies the specification row’s two queued changes; `queued=offline` keeps S8's drawn three.
 
 Storyboard capture temporarily sets `timeScale=0`, restoring 1 four seconds after capture completion. Wait for that restoration before measuring motion. `waitForAnimationToEnd` alone does not prove the scale has reset. The tour contains no frame-pacing instrumentation; the lead records gfxinfo/xctrace, real pinch and busy-JS evidence separately. No supported pinch syntax was established by the fetched Maestro documentation, so no invented command is included.
 

@@ -1,7 +1,13 @@
 # Authoring only. Pinch and end-to-end scroll verification need lead completion; see README. No performance claim from this YAML alone.
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 # Storyboard capture temporarily sets timeScale=0; lead must wait for capture completion + 4 s before measurements.
 - repeat:
     times: 5
@@ -36,18 +42,30 @@ appId: me.rxresu.storyboard
     direction: UP
 - tapOn: Career
 - openLink: me.rxresu.storyboard://storyboard/B8-Layout?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - assertVisible: Fit to one page
 - swipe:
     start: 36, 335
     end: 36, 463
     duration: 1500
 - openLink: me.rxresu.storyboard://storyboard/B18-Preview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - assertVisible: Page 1 of 1
 # No two-finger pinch command authored; the fetched command docs did not establish supported syntax. Lead must pinch here during manual recording.
 - doubleTapOn:
     point: 50%, 40%
 - tapOn: Fit
 - openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - swipe:
     start: 85%, 22%
     end: 25%, 22%

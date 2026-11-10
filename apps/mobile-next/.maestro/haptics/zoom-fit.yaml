@@ -1,10 +1,17 @@
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/B18-Preview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - assertVisible: Page 1 of 1
 - doubleTapOn:
     point: 50%, 40%
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
 - tapOn: Fit
 - assertVisible:
     id: haptic-log

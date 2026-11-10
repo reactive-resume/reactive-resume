@@ -1,13 +1,37 @@
-# BLOCKED draft: native date/time picker setup missing. Save interview currently always reports an error.
+# J8 · Time has a zone: an hour that happens twice (Berlin, 25 Oct 2026, clocks go back at 03:00) asks which one,
+# and the interview saves at the chosen instant (`success`).
+# The flow-only scenario opens an interview already at 25 Oct 02:30, so the system picker starts on that wall time;
+# Done reads the picker's value as the app always does.
 appId: me.rxresu.storyboard
 ---
-- openLink: me.rxresu.storyboard://storyboard/J8-Interview?theme=light
-- tapOn: Starts
-# Lead: select 25 October 2026, 02:30 in the native picker (Berlin zone) before Done.
-# Native picker has no app-owned testID; do not treat this draft as automated DST proof.
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- openLink: me.rxresu.storyboard://storyboard/J8-RepeatedHour?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Add interview
+    timeout: 20000
+- waitForAnimationToEnd
+- assertVisible: "Berlin time \\(CEST\\).*"
+- tapOn:
+    text: Starts
+    index: 1
+- waitForAnimationToEnd
 - tapOn: Done
 - assertVisible: Which 02:30?
 - assertVisible: 02:30 CEST, UTC+02 (first)
 - assertVisible: 02:30 CET, UTC+01 (second)
 - tapOn: 02:30 CET, UTC+01 (second)
 - assertNotVisible: Which 02:30?
+- assertVisible: "Berlin time \\(CET\\).*"
+- tapOn:
+    id: interview-save
+# `selection` from choosing the hour, then `success` from the save.
+- assertVisible:
+    id: haptic-log
+    text: selection success
+- assertNotVisible: Add interview

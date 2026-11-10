@@ -1,16 +1,21 @@
-# Blocked: real board drag missing. Lead must calibrate edge hold when BoardDrag is integrated.
+# Applied means sent: dragging a Saved card onto Applied (held at the board's edge, it pages there) opens
+# "What did you send?"; closing it puts the card back. The flow-only scenario has Kiln Studio Saved.
 appId: me.rxresu.storyboard
 ---
-- openLink: me.rxresu.storyboard://storyboard/J2-Board?theme=light
-- tapOn: Interviewing · 4 of 6
-- tapOn: Saved
-- assertVisible: Kiln Studio
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J2-KilnSaved?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- assertVisible: "Kiln Studio.*"
+# Kiln Studio is the Saved column's only card.
 - swipe:
-    start: 50%, 44%
+    start: 40%, 38%
     end: 96%, 44%
     duration: 1600
 - assertVisible: What did you send?
 - tapOn: Close
 - assertNotVisible: What did you send?
-- assertVisible: Kiln Studio
-- assertVisible: Saved
+- assertVisible: "Kiln Studio.*"

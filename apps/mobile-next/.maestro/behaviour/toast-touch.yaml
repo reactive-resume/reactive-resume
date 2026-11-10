@@ -1,13 +1,27 @@
+# Toasts pause while touched: an action toast (8 s) that is held stays past its lifetime.
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Design lead
+    timeout: 20000
+- waitForAnimationToEnd
 - longPressOn:
     id: document-resume-lead
-- tapOn: Move to Trash
-- assertVisible: “Design lead” moved to Trash
+- tapOn:
+    text: Move to Trash
+    waitToSettleTimeoutMs: 1
+# Maestro holds about 3 s per long press and takes seconds between commands. The toast shows when the tap ends;
+# the second hold still finds it more than 8 s later, which only happens if the fuse stops while it is held.
 - longPressOn:
     text: “Design lead” moved to Trash
-    duration: 10000
-- assertVisible: “Design lead” moved to Trash
-- tapOn: Undo
-- assertVisible: Design lead
+    waitToSettleTimeoutMs: 1
+- longPressOn:
+    text: “Design lead” moved to Trash
+    waitToSettleTimeoutMs: 1

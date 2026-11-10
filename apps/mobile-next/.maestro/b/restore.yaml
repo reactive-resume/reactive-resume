@@ -1,8 +1,15 @@
 appId: me.rxresu.storyboard
 ---
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
 - assertVisible: Product designer
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
 - longPressOn:
     id: document-resume-lead
 - tapOn: Move to Trash
@@ -10,6 +17,6 @@ appId: me.rxresu.storyboard
 - tapOn: Trash · 3
 - tapOn:
     text: Restore
-    index: 2
+    index: 0
 - assertVisible: Restored “Design lead”
 - tapOn: Open
