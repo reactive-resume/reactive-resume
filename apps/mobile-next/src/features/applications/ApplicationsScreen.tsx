@@ -3,8 +3,8 @@
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo, useState } from "react";
-import { View } from "react-native";
+import { useMemo, useRef, useState } from "react";
+import { useWindowDimensions, View } from "react-native";
 import { nextStage, useApplicationActions } from "./actions";
 import {
 	addDays,
@@ -33,14 +33,18 @@ import {
 	zoneCity,
 } from "./model";
 import { ApplicationsActions, ChoiceSheet, FadeIn, LoadError, RowPlaceholders, SettingsAvatar } from "./parts";
+import { storyboard } from "./storyboard";
 import { useApplications, useCareerOffers } from "@/data";
 import { now, timeZone } from "@/data/clock";
 import {
 	BoardCard,
+	BoardDrag,
+	BoardDragCard,
 	Box,
 	BottomSheet,
 	Button,
 	Checkbox,
+	ExpandingStrip,
 	haptic,
 	HeroCard,
 	IconButton,
@@ -51,6 +55,8 @@ import {
 	Ring,
 	SectionHeading,
 	Segmented,
+	SnapCarousel,
+	type SnapCarouselHandle,
 	StageButton,
 	StageDot,
 	SwipeRow,
@@ -60,6 +66,7 @@ import {
 	Text,
 	TextLink,
 	Touch,
+	useTheme,
 } from "@/ui";
 
 export type ApplicationsView = "list" | "board" | "calendar";
@@ -144,6 +151,7 @@ function ListView({ rows, context }: { rows: ApplicationRow[]; context: ListCont
 	const [showClosed, setShowClosed] = useState(false);
 	const [sheet, setSheet] = useState<Sheet>(null);
 	const { groups, closed } = groupByStage(rows, context);
+	if (storyboard) for (const group of groups) group.rows.sort((a, b) => order(a.id) - order(b.id));
 	const titles = rowTitles(rows.filter((row) => row.status !== "closed"));
 	const picked = rows.filter((row) => selected.has(row.id));
 
@@ -179,12 +187,12 @@ function ListView({ rows, context }: { rows: ApplicationRow[]; context: ListCont
 		const row = (
 			<ListRow
 				title={titles.get(app.id) ?? app.company}
-				secondary={rowLine(app, context)}
+				secondary={storyboard?.rowLines[app.id] ?? rowLine(app, context)}
 				leading={
 					selecting ? (
 						<Checkbox value={selected.has(app.id)} interactive={false} saves={false} />
 					) : (
-						<Monogram letters={monogram(app.company)} />
+						<Monogram letters={storyboard?.monograms[app.id] ?? monogram(app.company)} />
 					)
 				}
 				trailing={selecting ? undefined : "caret"}
@@ -241,7 +249,11 @@ function ListView({ rows, context }: { rows: ApplicationRow[]; context: ListCont
 			) : null}
 			{groups.map((group, index) => (
 				<View key={group.status}>
-					<SectionHeading title={stageLabel(group.status)} count={String(group.rows.length)} first={index === 0} />
+					<SectionHeading
+						title={stageLabel(group.status)}
+						count={String(storyboard?.groupCounts[group.status] ?? group.rows.length)}
+						first={index === 0}
+					/>
 					{group.rows.map((app, i) => renderRow(app, i === group.rows.length - 1))}
 				</View>
 			))}
@@ -361,6 +373,12 @@ function ListView({ rows, context }: { rows: ApplicationRow[]; context: ListCont
 	);
 }
 
+/** Storyboard order inside a group; unlisted rows keep the app's order after the listed ones. */
+const order = (id: string) => {
+	const i = storyboard?.listOrder.indexOf(id) ?? -1;
+	return i < 0 ? Number.MAX_SAFE_INTEGER : i;
+};
+
 function ToolLink({ label, icon, onPress }: { label: string; icon: IconName; onPress?: () => void }) {
 	return (
 		<View style={{ paddingVertical: 12 }}>
@@ -414,6 +432,8 @@ function BoardView({
 	initialStage?: string | undefined;
 }) {
 	const router = useRouter();
+	const actions = useApplicationActions();
+	const carousel = useRef<SnapCarouselHandle>(null);
 	const busiest = LIST_ORDER.find((status) => rows.some((row) => row.status === status)) ?? "saved";
 	const firstBusy = BOARD_ORDER.indexOf(busiest);
 	const start = BOARD_ORDER.findIndex((status) => status === initialStage);
@@ -422,27 +442,35 @@ function BoardView({
 	const columns = BOARD_ORDER.map((status) => ({ status, rows: rows.filter((row) => row.status === status) }));
 	const current = columns[index] ?? columns[0];
 	if (!current) return null;
+	const columnOf = (id: string) => BOARD_ORDER.indexOf(rows.find((row) => row.id === id)?.status ?? "saved");
+	const onDrop = (id: string, _from: number, to: number) => {
+		const app = rows.find((row) => row.id === id);
+		const status = BOARD_ORDER[to];
+		return app && status ? actions.moveTo(app, status) : false;
+	};
 	return (
 		<View>
 			<View style={{ paddingTop: 8, paddingHorizontal: layout.screenMargin }}>
 				<StageButton
 					stage={stageLabel(current.status)}
+					dot={current.status}
 					count={t`${index + 1} of ${columns.length}`}
 					onPress={() => setChoosing(true)}
 				/>
 			</View>
-			{/* ponytail: a static row until src/ui has SnapCarousel; the stage button changes the column. */}
-			<View style={{ overflow: "hidden", paddingTop: 20 }}>
-				<View
-					style={{
-						flexDirection: "row",
-						gap: COLUMN_GAP,
-						paddingStart: layout.screenMargin,
-						transform: [{ translateX: -index * (COLUMN + COLUMN_GAP) }],
-					}}
-				>
-					{columns.map((column) => (
-						<View key={column.status} style={{ width: COLUMN }}>
+			<BoardDrag carousel={carousel} columnOf={columnOf} onDrop={onDrop}>
+				<SnapCarousel
+					ref={carousel}
+					data={columns}
+					keyOf={(column) => column.status}
+					itemWidth={COLUMN}
+					gap={COLUMN_GAP}
+					inset={layout.screenMargin}
+					index={index}
+					onIndexChange={setIndex}
+					style={{ paddingTop: 20 }}
+					renderItem={(column) => (
+						<View>
 							<View style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}>
 								<Text variant="sheetTitle" accessibilityRole="header">
 									{stageLabel(column.status)}
@@ -461,20 +489,21 @@ function BoardView({
 									</Box>
 								) : (
 									column.rows.map((app) => (
-										<BoardCard
-											key={app.id}
-											company={app.company}
-											role={app.role}
-											next={cardLine(app, context)}
-											onPress={() => router.push(`/applications/${app.id}`)}
-										/>
+										<BoardDragCard key={app.id} id={app.id}>
+											<BoardCard
+												company={app.company}
+												role={app.role}
+												next={cardLine(app, context)}
+												onPress={() => router.push(`/applications/${app.id}`)}
+											/>
+										</BoardDragCard>
 									))
 								)}
 							</View>
 						</View>
-					))}
-				</View>
-			</View>
+					)}
+				/>
+			</BoardDrag>
 			{choosing ? (
 				<ChoiceSheet<ApplicationStatus>
 					title={t`Stages`}
@@ -489,7 +518,7 @@ function BoardView({
 					onClose={() => setChoosing(false)}
 					onChoose={(status) => {
 						setChoosing(false);
-						setIndex(Math.max(0, BOARD_ORDER.indexOf(status)));
+						carousel.current?.scrollToIndex(Math.max(0, BOARD_ORDER.indexOf(status)));
 					}}
 				/>
 			) : null}
@@ -516,7 +545,12 @@ function CalendarView({
 	const [month, setMonth] = useState(false);
 	const items = agendaItems(rows, context);
 	const marked = new Set(items.map((item) => item.day));
-	const days = month ? monthGrid(day) : weekOf(day);
+	const { width } = useWindowDimensions();
+	const weeks = useRef<SnapCarouselHandle>(null);
+	// Weeks page around the week first shown; the arrows page the same carousel (same motion and haptic).
+	const [anchor] = useState(() => weekOf(day)[0] ?? day);
+	const weekIndex =
+		WEEK_SPAN + Math.round((dayDate(weekOf(day)[0] ?? day).getTime() - dayDate(anchor).getTime()) / (7 * 86_400_000));
 	const agenda = items.filter((item) => item.day >= day);
 	const byDay = [...new Set(agenda.map((item) => item.day))];
 
@@ -526,8 +560,10 @@ function CalendarView({
 		setDay(next);
 	};
 	const page = (step: number) => {
-		haptic("selection");
-		setDay(addDays(day, step * 7));
+		if (month) {
+			haptic("selection");
+			setDay(addDays(day, step * 7));
+		} else weeks.current?.scrollToIndex(weekIndex + step);
 	};
 
 	return (
@@ -543,10 +579,10 @@ function CalendarView({
 			>
 				<View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 4 }}>
 					<Text variant="textLink" weight={600}>
-						{month ? monthLabel(day) : weekRange(weekOf(day))}
-					</Text>
-					<Text variant="textLink" weight={400} color="ink3">
-						{t`· ${zoneCity(context.zone)} time`}
+						{month ? monthLabel(day) : weekRange(weekOf(day))}{" "}
+						<Text variant="textLink" weight={400} color="ink3">
+							{t`· ${zoneCity(context.zone)} time`}
+						</Text>
 					</Text>
 				</View>
 				<IconButton
@@ -568,10 +604,51 @@ function CalendarView({
 					style={{ marginStart: 12, alignSelf: "center" }}
 				/>
 			</View>
-			<View style={{ paddingTop: 20, paddingHorizontal: 16, flexDirection: "row", flexWrap: "wrap" }}>
-				{days.map((d) => (
-					<DayCell key={d} day={d} selected={d === day} marked={marked.has(d)} onPress={() => pick(d)} />
-				))}
+			<View style={{ paddingTop: 20, paddingHorizontal: 16 }}>
+				<ExpandingStrip
+					collapsedHeight={DAY_CELL}
+					expandedHeight={(monthGrid(day).length / 7) * DAY_CELL}
+					expanded={month}
+					onExpandedChange={setMonth}
+				>
+					{() =>
+						month ? (
+							<View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+								{monthGrid(day).map((d) => (
+									<DayCell key={d} day={d} selected={d === day} marked={marked.has(d)} onPress={() => pick(d)} />
+								))}
+							</View>
+						) : (
+							<SnapCarousel
+								ref={weeks}
+								data={WEEKS}
+								keyOf={(offset) => String(offset)}
+								itemWidth={width - 32}
+								index={weekIndex}
+								onIndexChange={(i) => setDay(addDays(anchor, (i - WEEK_SPAN) * 7 + dayOfWeek(day)))}
+								renderItem={(offset) =>
+									// Only the shown week and its neighbours draw; the neighbours sit off screen until paged.
+									Math.abs(offset - weekIndex) > 1 ? (
+										<View style={{ height: DAY_CELL }} />
+									) : (
+										<View style={{ flexDirection: "row" }}>
+											{weekOf(addDays(anchor, (offset - WEEK_SPAN) * 7)).map((d) => (
+												<DayCell
+													key={d}
+													day={d}
+													selected={d === day}
+													marked={marked.has(d)}
+													onPress={() => pick(d)}
+													offscreen={offset !== weekIndex}
+												/>
+											))}
+										</View>
+									)
+								}
+							/>
+						)
+					}
+				</ExpandingStrip>
 			</View>
 			{items.length === 0 ? (
 				<HeroCard
@@ -615,6 +692,12 @@ function CalendarView({
 	);
 }
 
+const DAY_CELL = 71;
+/** Weeks either side of the first one shown. */
+const WEEK_SPAN = 26;
+const WEEKS = Array.from({ length: WEEK_SPAN * 2 + 1 }, (_, i) => i);
+const dayOfWeek = (day: string) => (dayDate(day).getUTCDay() + 6) % 7;
+
 const monthLabel = (day: string) =>
 	new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(dayDate(day));
 
@@ -623,12 +706,16 @@ function DayCell({
 	selected,
 	marked,
 	onPress,
+	offscreen = false,
 }: {
 	day: string;
 	selected: boolean;
 	marked: boolean;
 	onPress: () => void;
+	/** A neighbouring week's cell, off screen until paged: not in the layout dump. */
+	offscreen?: boolean;
 }) {
+	const { colors } = useTheme();
 	const date = dayDate(day);
 	const label = new Intl.DateTimeFormat("en-GB", { weekday: "short", timeZone: "UTC" }).format(date);
 	return (
@@ -640,27 +727,38 @@ function DayCell({
 			accessibilityState={{ selected }}
 			style={{ width: `${100 / 7}%` }}
 		>
-			<Box
-				component="DayCell"
-				{...(selected ? { bg: "accent" as const } : {})}
-				radius={radius.lg}
-				style={{ height: 71, paddingVertical: 8, alignItems: "center" }}
+			<View
+				style={{
+					height: DAY_CELL,
+					paddingVertical: 8,
+					alignItems: "center",
+					borderRadius: radius.lg,
+					backgroundColor: selected ? colors.accent : undefined,
+				}}
 			>
-				<Text variant="caption" color={selected ? "onAccent" : "ink3"}>
+				<Text variant="caption" color={selected ? "onAccent" : "ink3"} tag={!offscreen}>
 					{label}
 				</Text>
-				<Text variant="sheetTitle" color={selected ? "onAccent" : "ink"} style={{ lineHeight: 26, marginTop: 4 }}>
+				<Text
+					variant="sheetTitle"
+					color={selected ? "onAccent" : "ink"}
+					style={{ lineHeight: 26, marginTop: 4 }}
+					tag={!offscreen}
+				>
 					{String(date.getUTCDate())}
 				</Text>
 				{marked ? (
-					<Box
-						component="DayMark"
-						bg={selected ? "onAccent" : "accent"}
-						radius={radius.full}
-						style={{ width: 5, height: 5, marginTop: 4 }}
+					<View
+						style={{
+							width: 5,
+							height: 5,
+							marginTop: 4,
+							borderRadius: radius.full,
+							backgroundColor: selected ? colors.onAccent : colors.accent,
+						}}
 					/>
 				) : null}
-			</Box>
+			</View>
 		</Touch>
 	);
 }

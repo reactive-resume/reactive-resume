@@ -21,7 +21,13 @@ export type IconProps = {
 
 export function Icon({ name, size = 24, color = "ink2", fill = false, tint, style }: IconProps) {
 	const { colors } = useTheme();
-	const ref = useDesignTag({ kind: "icon", icon: name, size, color });
+	// A literal tint (white on a filled control) is what the dumps name, as a lowercase hex.
+	const ref = useDesignTag({
+		kind: "icon",
+		icon: name,
+		size,
+		color: tint ? (tint.toLowerCase() as typeof color) : color,
+	});
 	const glyph = icons[name] as { regular?: string; fill?: string };
 	const d = (fill ? glyph.fill : glyph.regular) ?? glyph.regular ?? glyph.fill ?? "";
 	return (

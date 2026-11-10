@@ -2,10 +2,14 @@ import { t } from "@lingui/core/macro";
 // J5 · Save a job (a full-screen modal; also the share-sheet target, which opens it with the link filled in).
 // Fields fill with a d2 crossfade once the posting is read; Applied reveals the application date and what was sent.
 import * as Clipboard from "expo-clipboard";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Platform, View } from "react-native";
+import { sentStepHref } from "./actions";
+import { isLink } from "./model";
 import { FadeIn } from "./parts";
+import { storyboard } from "./storyboard";
+import { useApplicationActions } from "@/data";
 import {
 	Button,
 	FieldRow,
@@ -44,6 +48,10 @@ export function SaveJobScreen() {
 	const [clipboardLink, setClipboardLink] = useState(false);
 	const read = !!params.url && !!(params.role || params.company);
 	const missing = read && (!role.trim() || !company.trim());
+	// ponytail: the count is known once the posting is parsed; until J5 parses on open, only the storyboard has one.
+	const requirementCount = storyboard?.postingRequirements ?? 0;
+	const actions = useApplicationActions();
+	const router = useRouter();
 
 	useEffect(() => {
 		if (link) return;
@@ -63,9 +71,25 @@ export function SaveJobScreen() {
 			showToast({ message: t`Fill in the role and company before saving.` });
 			return;
 		}
-		// Creating the application goes through the data layer's create action (requested from the lead); Applied then
-		// runs the "What did you send?" step for the new application, and prepare opens D3's Copy a resume for a job.
-		showToast({ message: t`Couldn't save the job. Try again.` });
+		void (async () => {
+			try {
+				// Applied means sent: the new application starts Saved and Applied runs the "What did you send?" step.
+				const id = await actions.saveJob({
+					company: company.trim(),
+					role: role.trim(),
+					location: location.trim() || undefined,
+					salary: salary.trim() || undefined,
+					sourceUrl: isLink(link) ? link.trim() : undefined,
+					jobDescription: isLink(link) ? undefined : link.trim() || undefined,
+					status: stage === "interview" ? "interview" : "saved",
+				});
+				haptic("success");
+				router.replace(stage === "applied" ? sentStepHref(id) : `/applications/${id}`);
+			} catch {
+				haptic("error");
+				showToast({ message: t`Couldn't save the job. Try again.` });
+			}
+		})();
 	};
 
 	return (
@@ -93,6 +117,7 @@ export function SaveJobScreen() {
 						autoCorrect={false}
 						keyboardType="url"
 						testID="save-job-link"
+						mono
 					/>
 					{read ? (
 						<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }} accessibilityRole="alert">
@@ -100,8 +125,9 @@ export function SaveJobScreen() {
 								name={missing ? "warning-circle" : "check-circle"}
 								size={16}
 								color={missing ? "warnText" : "accentText"}
+								style={{ height: 18, justifyContent: "center" }}
 							/>
-							<Text variant="small" color={missing ? "warnText" : "accentText"} style={{ flex: 1 }}>
+							<Text variant="small" color={missing ? "warnText" : "accentText"} style={{ flexShrink: 1 }}>
 								{missing
 									? t`Some job details couldn't be read. Fill in the role and company, or paste one job's posting text.`
 									: t`Found the role and company. Review before saving.`}
@@ -144,7 +170,13 @@ export function SaveJobScreen() {
 			<View style={{ paddingTop: 12 }}>
 				<ListRow
 					title={t`What it asks for`}
-					secondary={read ? t`Read from the posting when it's saved` : t`Paste the posting to read its requirements`}
+					secondary={
+						read && requirementCount
+							? t`${requirementCount} requirements read from the posting`
+							: read
+								? t`Read from the posting when it's saved`
+								: t`Paste the posting to read its requirements`
+					}
 					leading={<IconTile icon="list-checks" />}
 					trailing="caret"
 				/>

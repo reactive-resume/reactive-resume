@@ -43,19 +43,9 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Touch } from "./base";
+import { IconButton } from "./buttons";
 import { DiscardDialog } from "./Dialog";
-import { Icon } from "./Icon";
-import {
-	enter,
-	hitSlopFor,
-	leave,
-	release,
-	rubberBand,
-	sheetShouldDismiss,
-	timeScale,
-	useMotionPolicy,
-} from "./motion";
+import { enter, leave, release, rubberBand, sheetShouldDismiss, timeScale, useMotionPolicy } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { motion, radius } from "./tokens";
@@ -109,6 +99,12 @@ export type BottomSheetProps = {
 	 * the token), and a 24 × 24 marker 4 dp below the sheet's top edge.
 	 */
 	labMarker?: { scrim?: string; top?: string };
+	/** A leading back button for a second step (J9 "Back to Move"): 16 dp from the edge, the title 8 dp after it. */
+	back?: { label: string; onPress: () => void } | undefined;
+	/** The close icon's size: 20 (default, D2, B14) or 24 (J7–J9). */
+	closeIconSize?: 20 | 24;
+	/** Space under the content and footer; the bottom safe area unless a dump draws otherwise (J8: 3). */
+	bottomPadding?: number | undefined;
 };
 
 type SheetContext = { scrollY: SharedValue<number>; pan: GestureType };
@@ -127,6 +123,9 @@ export function BottomSheet({
 	ref,
 	labMarker,
 	startOpenAt,
+	back,
+	closeIconSize = 20,
+	bottomPadding,
 }: BottomSheetProps) {
 	const { colors, shadows } = useTheme();
 	const { reduced, overlayFade } = useMotionPolicy();
@@ -308,24 +307,17 @@ export function BottomSheet({
 					accessibilityViewIsModal
 					style={[
 						styles.sheet,
-						{ backgroundColor: colors.raised, boxShadow: shadows.sh3, paddingBottom: insets.bottom },
+						{ backgroundColor: colors.raised, boxShadow: shadows.sh3, paddingBottom: bottomPadding ?? insets.bottom },
 						sheetStyle,
 					]}
 				>
 					<View ref={grabRef} collapsable={false} style={[styles.grabber, { backgroundColor: colors.line2 }]} />
-					<View style={styles.header}>
+					<View style={[styles.header, back ? styles.headerBack : null]}>
+						{back ? <IconButton icon="caret-left" label={back.label} onPress={back.onPress} /> : null}
 						<View ref={titleRef} accessible accessibilityRole="header" style={styles.title}>
 							<Text variant="sheetTitle">{title}</Text>
 						</View>
-						<Touch
-							feedback="scale"
-							onPress={requestClose}
-							accessibilityLabel={t`Close`}
-							hitSlop={hitSlopFor(44, 44)}
-							style={styles.close}
-						>
-							<Icon name="x" size={20} color="ink2" />
-						</Touch>
+						<IconButton icon="x" label={t`Close`} onPress={requestClose} iconSize={closeIconSize} />
 					</View>
 					<Ctx.Provider value={{ scrollY, pan }}>
 						<View style={styles.content}>
@@ -426,8 +418,8 @@ const styles = StyleSheet.create({
 		paddingBottom: 4,
 		paddingStart: 24,
 	},
-	title: { flex: 1 },
-	close: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
+	headerBack: { paddingStart: 16, gap: 8 },
+	title: { flex: 1, alignItems: "flex-start" },
 	content: { flex: 1, overflow: "hidden" },
 	labTop: { position: "absolute", top: 4, left: 183, width: 24, height: 24 },
 });

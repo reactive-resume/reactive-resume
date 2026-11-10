@@ -5,10 +5,11 @@ import * as Clipboard from "expo-clipboard";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
-import { sendUnavailable, STEPS, useAIRun, useWorkspace, Working } from "./shared";
+import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
 import { approveRecurring, useApplicationWorkspace, useCareerStories } from "@/data";
 import { clockTime, interviewTitle, isoDay, longWeekday, zoneCity } from "@/features/applications/model";
 import { FadeIn, useBarMenu } from "@/features/applications/parts";
+import { storyboard } from "@/features/applications/storyboard";
 import {
 	Button,
 	Card,
@@ -43,16 +44,21 @@ export function PrepScreen() {
 		.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 	const [roundId, setRoundId] = useState<string | undefined>(ws.interview?.id);
 	const round = rounds.find((r) => r.id === roundId) ?? ws.interview ?? rounds.at(-1);
-	const [refresh, setRefresh] = useState(false);
+	const [refresh, setRefresh] = useState(storyboard?.refreshOn ?? false);
 	const briefing = ws.latest("briefing")[0];
-	const generate = () => void ai.run("resume-and-facts", sendUnavailable);
+	const generate = () =>
+		round && void ai.run("resume-and-facts", () => ws.actions.generate({ task: "briefing", interviewId: round.id }));
 
 	if (!app) return <PushScreen title={t`Interview prep`}>{null}</PushScreen>;
 	const when = round ? new Date(round.at) : null;
-	const days = when ? Math.ceil((when.getTime() - ws.at.getTime()) / DAY_MS) : null;
+	// Calendar days in the zone: Saturday to Tuesday is "in 3 days" whatever the hour.
+	const days = when
+		? Math.round((Date.parse(isoDay(when, ws.zone)) - Date.parse(isoDay(ws.at, ws.zone))) / DAY_MS)
+		: null;
 	const countdown = days === null ? "" : days <= 0 ? t`today` : days === 1 ? t`tomorrow` : t`in ${days} days`;
 	const storyName = (storyId: string | null | undefined) =>
-		stories.data?.find((story) => story.id === storyId)?.data.title;
+		stories.data?.find((story) => story.id === storyId)?.data.title ??
+		(storyId ? storyboard?.storyNames[storyId] : undefined);
 	const madeAt = briefing ? new Date(briefing.createdAt) : null;
 	const madeLine = madeAt
 		? isoDay(madeAt, ws.zone) === isoDay(ws.at, ws.zone)
@@ -140,11 +146,14 @@ export function PrepScreen() {
 			) : null}
 			{briefing ? (
 				<FadeIn px={6}>
-					<SectionHeading title={t`Company brief`} />
-					<View style={{ paddingHorizontal: layout.screenMargin }}>
+					<SectionHeading
+						title={t`Company brief`}
+						count={storyboard ? t`${storyboard.briefSources} sources` : undefined}
+					/>
+					<View style={{ paddingTop: 4, paddingHorizontal: layout.screenMargin }}>
 						<Text variant="prose">{briefing.data.summary}</Text>
 					</View>
-					<SectionHeading title={t`Likely questions`} count={String(likely.length)} />
+					<SectionHeading title={t`Likely questions`} count={String(storyboard?.likelyCount ?? likely.length)} />
 					{likely.map((q, i) => {
 						const story = storyName(briefing.data.storyIds[i]);
 						return (

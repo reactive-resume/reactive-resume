@@ -124,7 +124,16 @@ export const scenarios: Record<string, Scenario> = {
 	},
 	"W1-Fit": { hrefs: [tab, lumen, `${lumen}/fit`], prepare: () => seedApplications() },
 	"W2-Apply": { hrefs: [tab, lumen, `${lumen}/apply`], prepare: () => seedApplications() },
-	"W3-Prep": { hrefs: [tab, lumen, `${lumen}/prepare`], prepare: () => seedApplications() },
+	"W3-Prep": {
+		hrefs: [tab, lumen, `${lumen}/prepare`],
+		prepare: async () => {
+			await seedApplications();
+			await invokeFake("career.saveWorkspace", {
+				applicationId: "lumen",
+				questions: [{ text: "Who owns the design system day to day?", origin: "From Fit" }],
+			});
+		},
+	},
 	"W4-Practice": { hrefs: [tab, lumen, `${lumen}/practise`], prepare: () => seedApplications() },
 	"W5-Messages": {
 		hrefs: [tab, "/applications/fieldnote", "/applications/fieldnote/messages"],

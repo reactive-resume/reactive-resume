@@ -6,9 +6,11 @@ import { useState } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MAX_BYTES, Recorder, type Take } from "./Recorder";
-import { sendUnavailable, STEPS, useAIRun, useWorkspace, Working } from "./shared";
+import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
+import { useCareerStories } from "@/data";
 import { clockTime, interviewKindWord, isoDay } from "@/features/applications/model";
 import { useBarMenu } from "@/features/applications/parts";
+import { storyboard } from "@/features/applications/storyboard";
 import {
 	BottomSheet,
 	Button,
@@ -27,6 +29,7 @@ export function PracticeScreen() {
 	const { id = "" } = useLocalSearchParams<{ id: string }>();
 	const insets = useSafeAreaInsets();
 	const ws = useWorkspace(id);
+	const stories = useCareerStories();
 	const ai = useAIRun(ws.connection);
 	const more = useBarMenu();
 	const [index, setIndex] = useState(0);
@@ -47,6 +50,10 @@ export function PracticeScreen() {
 				t`Why do you want this role at ${company}?`,
 			];
 	const question = questions[index % questions.length] ?? "";
+	const storyId = simulated.length ? briefing?.data.storyIds[index % questions.length] : undefined;
+	const story = storyId
+		? (stories.data?.find((s) => s.id === storyId)?.data.title ?? storyboard?.storyNames[storyId])
+		: undefined;
 	const round = ws.interview ? interviewKindWord(ws.interview.kind) : t`practice`;
 	const heading = t`${round.charAt(0).toLocaleUpperCase()}${round.slice(1)} · question ${index + 1} of ${questions.length}`;
 
@@ -54,8 +61,20 @@ export function PracticeScreen() {
 		if (take.bytes === 0 || take.bytes > MAX_BYTES)
 			return setNotice(t`That recording was empty or over 2 MB. Try a shorter answer.`);
 		setNotice(undefined);
-		void ai.run("audio", sendUnavailable);
+		void ai.run("audio", async (signal) => {
+			const transcript = await ws.transcribe(take.uri, signal);
+			await practise(transcript.text, "spoken");
+		});
 	};
+	const practise = (text: string, mode: "spoken" | "typed") =>
+		ws.actions.generate({
+			task: "practice",
+			interviewId: ws.interview?.id ?? null,
+			question,
+			origin: "simulated",
+			mode,
+			answer: text,
+		});
 	const latest = attempts[0];
 	const latestLine = latest
 		? `${isoDay(new Date(latest.createdAt), ws.zone) === isoDay(ws.at, ws.zone) ? t`Today, ${clockTime(new Date(latest.createdAt), ws.zone)}` : isoDay(new Date(latest.createdAt), ws.zone)} · ${latest.data.mode === "spoken" ? t`spoken` : t`typed`} · ${latest.data.note}`
@@ -95,9 +114,14 @@ export function PracticeScreen() {
 					<Text variant="ui" color="ink3">
 						{heading}
 					</Text>
-					<Text variant="title" accessibilityRole="header">
+					<Text variant="title" accessibilityRole="header" style={{ lineHeight: 38 }}>
 						{question}
 					</Text>
+					{story ? (
+						<Text variant="ui" color="ink3">
+							{t`Story to use: ${story} · Situation, Task, Action, Result, Reflection`}
+						</Text>
+					) : null}
 				</View>
 				<View style={{ flex: 1 }} />
 				{ai.running ? <Working steps={STEPS.feedback()} onStop={ai.stop} /> : null}
@@ -117,13 +141,14 @@ export function PracticeScreen() {
 							size="lg"
 							block
 							disabled={answer.trim().length < 10}
-							onPress={() => void ai.run("chat", sendUnavailable)}
+							onPress={() => void ai.run("chat", () => practise(answer, "typed"))}
 						/>
 					</View>
 				) : (
 					<View style={{ paddingBottom: 8 }}>
 						<Recorder
 							recorded={attempts.length > 0}
+							seeded={storyboard?.recording}
 							onFinish={send}
 							onTypeInstead={() => setTyping(true)}
 							notice={ai.failed ? t`Nothing was heard. Try again, or type your answer.` : notice}

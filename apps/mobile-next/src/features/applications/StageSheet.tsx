@@ -43,7 +43,13 @@ export function StageSheet() {
 	const title =
 		step === "sent" ? t`What did you send?` : step === "close" ? t`How did it end?` : app ? t`Move ${app.company}` : "";
 	return (
-		<SheetScreen title={title} height={HEIGHT[step]} step={step}>
+		<SheetScreen
+			title={title}
+			height={HEIGHT[step]}
+			step={step}
+			closeIconSize={24}
+			back={step === "close" ? { label: t`Back to Move`, onPress: () => setStep("stages") } : undefined}
+		>
 			{!app ? (
 				<View style={{ paddingTop: 4, paddingHorizontal: layout.screenMargin, gap: 12 }}>
 					{[0, 1, 2, 3, 4].map((i) => (

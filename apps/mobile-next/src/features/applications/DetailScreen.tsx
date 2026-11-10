@@ -22,8 +22,10 @@ import {
 	weekday,
 } from "./model";
 import { FadeIn, LoadError, useBarMenu } from "./parts";
-import { useApplication, useCareerOffers } from "@/data";
+import { storyboard } from "./storyboard";
+import { useApplication } from "@/data";
 import { now, timeZone } from "@/data/clock";
+import { useSavedItems } from "@/features/workspace/shared";
 import {
 	Button,
 	HeroCard,
@@ -90,7 +92,7 @@ export function DetailScreen() {
 	const { id = "" } = useLocalSearchParams<{ id: string }>();
 	const router = useRouter();
 	const application = useApplication(id);
-	const saved = useCareerOffers({ applicationId: id });
+	const saved = useSavedItems(id);
 	const actions = useApplicationActions();
 	const more = useBarMenu();
 	const app = application.data;
@@ -117,7 +119,7 @@ export function DetailScreen() {
 			</PushScreen>
 		);
 
-	const status = workStatus(app, saved.data ?? [], at, zone);
+	const status = workStatus(app, saved, at, zone);
 	const people = app.contacts.map((contact) => contact.name);
 	const notes = app.activity.filter((entry) => entry.type === "note").length;
 	const savedOn = new Date(app.createdAt);
@@ -132,7 +134,12 @@ export function DetailScreen() {
 		{ icon: "target", title: t`Fit`, line: status.fitLine, path: "fit" },
 		{ icon: "paper-plane-tilt", title: t`Apply`, line: status.applyLine, path: "apply" },
 		{ icon: "chalkboard-teacher", title: t`Interview prep`, line: status.prepLine, path: "prepare" },
-		{ icon: "microphone", title: t`Practice`, line: status.practiceLine, path: "practise" },
+		{
+			icon: "microphone",
+			title: t`Practice`,
+			line: storyboard?.practiceLines[app.id] ?? status.practiceLine,
+			path: "practise",
+		},
 		{ icon: "note-pencil", title: t`Debrief`, line: status.debriefLine, path: "debrief" },
 		{ icon: "envelope-simple", title: t`Messages`, line: status.messagesLine, path: "messages" },
 		{ icon: "books", title: t`Library`, line: t`Saved briefings, fit results and drafts`, path: "library" },

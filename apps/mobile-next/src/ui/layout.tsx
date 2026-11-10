@@ -317,9 +317,11 @@ export function SectionHeading({
 				{title}
 			</Text>
 			{count ? (
-				<Text variant="ui" color="ink3" style={{ flex: 1, paddingStart: 2 }}>
-					{count}
-				</Text>
+				<View style={{ flex: 1, paddingStart: 2, alignItems: "flex-start" }}>
+					<Text variant="ui" color="ink3">
+						{count}
+					</Text>
+				</View>
 			) : null}
 			{action ? (
 				<Touch
