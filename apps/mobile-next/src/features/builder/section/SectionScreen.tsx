@@ -7,7 +7,14 @@ import { useRef } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAnchoredMenu, useAnchorRef, Anchor } from "../shared/anchored-menu";
-import { BuilderScreen, editResume, useBuilderParams, useLocked, useResumeData } from "../shared/document";
+import {
+	BuilderScreen,
+	editResume,
+	useBuilderParams,
+	useLocked,
+	useResumeData,
+	useBackToResume,
+} from "../shared/document";
 import { deleteEntry } from "../shared/entries";
 import {
 	type BuilderSection,
@@ -79,6 +86,7 @@ export function SectionScreen() {
 	const { id, section: sectionId } = useBuilderParams();
 	const router = useRouter();
 	const data = useResumeData();
+	const back = useBackToResume();
 	const locked = useLocked();
 	const insets = useSafeAreaInsets();
 	const { colors } = useTheme();
@@ -152,6 +160,7 @@ export function SectionScreen() {
 	return (
 		<BuilderScreen
 			title={sectionName(data, section)}
+			backLabel={back}
 			status={status}
 			barEnd={
 				locked ? null : (

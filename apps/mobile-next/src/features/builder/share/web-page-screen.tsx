@@ -40,6 +40,7 @@ export function WebPageScreen() {
 	return (
 		<PushScreen
 			title={t`Web page`}
+			backLabel={t`Back to Share`}
 			barEnd={
 				<IconButton
 					icon="arrow-square-out"
@@ -55,6 +56,8 @@ export function WebPageScreen() {
 						<TextField
 							label={t`Address`}
 							value={slug ?? document.slug}
+							prefix={`${server.replace(/^https?:\/\//, "")}/${username}/`}
+							mono
 							onChangeText={setSlug}
 							onBlur={saveSlug}
 							autoCapitalize="none"

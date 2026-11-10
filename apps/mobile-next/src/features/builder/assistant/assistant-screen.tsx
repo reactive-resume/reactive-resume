@@ -61,7 +61,13 @@ export function AssistantScreen() {
 					onPress={() => router.push("/settings/ai")}
 				/>
 			}
-			barEnd={<IconButton icon="clock-counter-clockwise" label={t`Conversations`} disabled />}
+			barEnd={
+				<IconButton
+					icon="clock-counter-clockwise"
+					label={t`Past conversations`}
+					onPress={() => router.push("/career/conversations")}
+				/>
+			}
 			footer={
 				<View style={{ paddingBottom: 34 }}>
 					<Composer
@@ -95,7 +101,7 @@ export function AssistantScreen() {
 						<Bubble>{t`Tailor this to the Lumen posting`}</Bubble>
 						<Text color="ink3">{t`Read the posting · matched your facts · measured page fit`}</Text>
 						<Text variant="body">{t`Three edits lean this resume toward Lumen's focus on design systems and accessibility. One needs a fact from you first.`}</Text>
-						<QuestionCard question={t`Did you lead the accessibility audit at Northwind Labs?`} padding={20} gap={10}>
+						<QuestionCard question={t`Did you lead the accessibility audit at Northwind Labs?`} padding={21} gap={10}>
 							<ChoiceButton label={t`Yes, I led it`} onPress={() => setMessage(t`Yes, I led it`)} />
 							<ChoiceButton label={t`I took part in it`} onPress={() => setMessage(t`I took part in it`)} />
 							<ChoiceButton label={t`No`} onPress={() => setMessage(t`No`)} />
@@ -109,8 +115,10 @@ export function AssistantScreen() {
 							/>
 						</QuestionCard>
 						<View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-							<UsedChip label={t`Lumen posting`} icon="briefcase" />
-							<UsedChip label={t`3 facts`} icon="book-open" />
+							<View style={{ flexDirection: "row", gap: 8 }}>
+								<UsedChip label={t`Lumen posting`} icon="briefcase" />
+								<UsedChip label={t`3 facts`} icon="book-open" />
+							</View>
 							<View style={{ flex: 1 }} />
 							<Button label={t`Review 3 edits`} onPress={() => router.push(`/builder/${id}/assistant/proposals`)} />
 						</View>

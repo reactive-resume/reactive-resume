@@ -162,7 +162,7 @@ export const type = {
 	// mobile storyboard
 	rootTitle: serif(34, 40, -0.17),
 	pageTitle: serif(28, 34),
-	bigNumber: serif(40, 44),
+	bigNumber: serif(40, 44, -0.4), // every 40/44 serif number in the dumps: A1, B9, B10, B13, W1
 	statNumber: serif(36, 40),
 	rowTitle: ui(500, 16, 24),
 	formLabel: ui(500, 13, 18),

@@ -14,16 +14,20 @@ export type IconProps = {
 	color?: ColorToken;
 	/** Fill weight: only the selected dock item and the recording stop (BUILD.md §3.10). */
 	fill?: boolean;
-	/** A literal colour for paper surfaces (white checks on swatches). The tag still reports `color`. */
+	/** A literal colour for paper surfaces (white checks on swatches); the tag reports it, as B7 and W4 dump it. */
 	tint?: string;
 	style?: StyleProp<ViewStyle>;
-	/** False when the boards draw the glyph as part of its control (the Checkbox's check): no entry in the dump. */
+	/** False when the dump has no entry for this glyph: drawn as part of its control (the Checkbox's check) or an
+	 * invisible layer (a crossfade's hidden side). */
 	tag?: boolean;
 };
 
 export function Icon({ name, size = 24, color = "ink2", fill = false, tint, style, tag = true }: IconProps) {
 	const { colors } = useTheme();
-	const ref = useDesignTag({ kind: "icon", icon: name, size, color }, { hidden: !tag });
+	const ref = useDesignTag(
+		{ kind: "icon", icon: name, size, color: tint ? tint.toLowerCase() : color },
+		{ hidden: !tag },
+	);
 	const glyph = icons[name] as { regular?: string; fill?: string };
 	const d = (fill ? glyph.fill : glyph.regular) ?? glyph.regular ?? glyph.fill ?? "";
 	return (

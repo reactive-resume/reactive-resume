@@ -225,7 +225,8 @@ export function PageSubtitle({ children, status = false }: { children: ReactNode
 
 /**
  * The document's status line with Undo · Redo (BUILD.md §3.3): "Saved · 1 page · Public" then the two text
- * buttons in `accent-text`, each with a 48 dp tall hit area.
+ * buttons in `accent-text`, each with a 48 dp tall hit area. They appear once there is something to undo or redo
+ * (SCREENS.md, builder rules); at rest the line is the status alone, as B1 and L1 draw it.
  */
 export function StatusLine({
 	status,
@@ -268,7 +269,7 @@ export function StatusLine({
 			<Text variant="body" color="ink3">
 				{status}
 			</Text>
-			{onUndo || onRedo ? (
+			{(onUndo || onRedo) && (canUndo || canRedo) ? (
 				<>
 					<Text variant="body" color="ink3">
 						{" · "}
@@ -294,19 +295,22 @@ export function SectionHeading({
 	action,
 	onAction,
 	first = false,
+	paddingBottom,
 }: {
 	title: string;
 	count?: string | undefined;
 	action?: string | undefined;
 	onAction?: (() => void) | undefined;
 	first?: boolean | undefined;
+	/** Space under the heading. Default 12 with an action (T1), else 4; B8 and B13 keep 4 beside their link. */
+	paddingBottom?: number | undefined;
 }) {
 	return (
 		<View
 			style={{
 				paddingTop: first ? layout.sectionGapTopFirst : layout.sectionGapTop,
 				paddingHorizontal: layout.screenMargin,
-				paddingBottom: action ? 12 : 4,
+				paddingBottom: paddingBottom ?? (action ? 12 : 4),
 				flexDirection: "row",
 				alignItems: "baseline",
 				justifyContent: "space-between",

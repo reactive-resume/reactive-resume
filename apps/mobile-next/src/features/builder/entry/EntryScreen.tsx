@@ -27,6 +27,7 @@ import {
 import { useBuilderStoryboard } from "../shared/storyboard";
 import { MonthPickerSheet } from "./MonthPickerSheet";
 import { resumeFieldFocus, useResumeStore } from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	BottomSheet,
 	Card,
@@ -141,7 +142,9 @@ export function EntryScreen({ isNew = false }: { isNew?: boolean }) {
 			placeholder={spec.placeholder?.() ?? (spec.key === meta.primary && isNew ? placeholderFor(section) : undefined)}
 			editable={!locked}
 			forceFocus={focus === spec.key}
-			autoFocus={isNew && index === 0}
+			// Storyboard captures draw the focused field without the system keyboard (B20).
+			autoFocus={isNew && index === 0 && !STORYBOARD}
+			inputPlaceholder={isNew}
 			returnKeyType="next"
 			submitBehavior="submit"
 			onSubmitEditing={() => inputs.current[index + 1]?.focus()}
@@ -344,6 +347,7 @@ export function EntryScreen({ isNew = false }: { isNew?: boolean }) {
 	return (
 		<BuilderScreen
 			{...(created ? { title: title || meta.untitled() } : {})}
+			backLabel={t`Back to ${sectionName(data, section)}`}
 			status={created ? statusFor(word, sectionName(data, section), locked) : undefined}
 			subtitle={
 				created ? undefined : (

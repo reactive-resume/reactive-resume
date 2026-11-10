@@ -264,8 +264,10 @@ export function trackImage() {
 		onLoadStart: () => {
 			pendingImages += 1;
 		},
+		// No clamp at 0: iOS fires onLoadEnd before onLoadStart for cached images, and a clamp left the count at 1 for
+		// good, so every later capture waited out settle's timeout.
 		onLoadEnd: () => {
-			pendingImages = Math.max(0, pendingImages - 1);
+			pendingImages -= 1;
 		},
 	};
 }

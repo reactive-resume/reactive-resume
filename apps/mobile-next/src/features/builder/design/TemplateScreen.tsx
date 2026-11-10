@@ -1,11 +1,10 @@
 // B7 · Template and colour: big template cards (180 dp) with name, columns and ATS-safe under each, one and a peek
 // visible; filters All · One column · Two columns and an "ATS-safe only" switch at the end of the carousel; then the
 // accent swatches (40 pt on a 52 pt pitch, two rows) and Custom colour.
-// ponytail: the cards sit in a plain horizontal ScrollView until `SnapCarousel` (MOTION.md §7, requested) lands.
 import type { Template } from "@reactive-resume/schema/templates";
 import { t } from "@lingui/core/macro";
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { templateLayouts, templateSchema } from "@reactive-resume/schema/templates";
 import { BuilderScreen, editResume, useBuilderParams, useResumeData, useSaveWord } from "../shared/document";
 import { usePageImage } from "../shared/page-band";
@@ -23,6 +22,7 @@ import {
 	PageThumbnail,
 	SectionHeading,
 	Segmented,
+	SnapCarousel,
 	showToast,
 	Switch,
 	Text,
@@ -34,6 +34,9 @@ const onyxFixture = require("../../../../assets/fixtures/thumb-template-onyx.png
 type Filter = "all" | "one" | "two";
 
 const undo = () => ({ label: t`Undo`, onPress: () => useResumeStore.getState().undo() });
+
+/** The carousel's last item: the ATS-safe only switch. */
+const ATS = "ats-only";
 
 export function TemplateScreen() {
 	const { id } = useBuilderParams();
@@ -74,6 +77,7 @@ export function TemplateScreen() {
 	return (
 		<BuilderScreen
 			title={t`Template`}
+			backLabel={t`Back to Design`}
 			status={word}
 			subtitle={null}
 			overlay={
@@ -140,12 +144,21 @@ export function TemplateScreen() {
 					accessibilityLabel={t`Filter templates`}
 				/>
 			</View>
-			<ScrollView
-				horizontal
-				showsHorizontalScrollIndicator={false}
-				contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 24, gap: 16 }}
-			>
-				{ordered.map((tpl) => {
+			<SnapCarousel
+				data={[...ordered, ATS] as const}
+				keyOf={(item) => item}
+				itemWidth={180}
+				gap={16}
+				inset={24}
+				style={{ marginTop: 20 }}
+				renderItem={(tpl) => {
+					if (tpl === ATS)
+						return (
+							<View style={{ flex: 1, justifyContent: "center", alignItems: "flex-start", gap: 12 }}>
+								<Text variant="label">{t`ATS-safe only`}</Text>
+								<Switch value={atsOnly} onValueChange={setAtsOnly} accessibilityLabel={t`ATS-safe only`} />
+							</View>
+						);
 					const layout = templateLayouts[tpl];
 					const selected = tpl === current;
 					const image = selected ? (STORYBOARD && tpl === "onyx" ? onyxFixture : source) : undefined;
@@ -171,12 +184,8 @@ export function TemplateScreen() {
 							</Text>
 						</Touch>
 					);
-				})}
-				<View style={{ width: 180, justifyContent: "center", alignItems: "flex-start", gap: 12 }}>
-					<Text variant="label">{t`ATS-safe only`}</Text>
-					<Switch value={atsOnly} onValueChange={setAtsOnly} accessibilityLabel={t`ATS-safe only`} />
-				</View>
-			</ScrollView>
+				}}
+			/>
 			<SectionHeading title={t`Colour`} />
 			<View
 				style={{

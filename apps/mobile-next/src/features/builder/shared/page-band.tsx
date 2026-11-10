@@ -9,7 +9,7 @@ import { useResumeData, useResumeDocument } from "./document";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import { paperText } from "@/dev/storyboard/paper-text.gen";
 import { pageRenderer } from "@/render/page-renderer";
-import { HeroSource, HeroTarget, Page, PageBand, prepareHero } from "@/ui";
+import { Crossfade, HeroSource, HeroTarget, Page, PageBand, prepareHero } from "@/ui";
 
 const fixtures = {
 	overview: require("../../../../assets/fixtures/page-resume-B1.png"),
@@ -69,7 +69,12 @@ export function BuilderPageBand({ id, variant }: { id: string; variant: "overvie
 	return (
 		<HeroTarget id={`page-${id}`}>
 			<PageBand onPress={() => void open()}>
-				<HeroSource id={previewHeroId(id)}>{page}</HeroSource>
+				<HeroSource id={previewHeroId(id)}>
+					{/* A new render fades in over the previous one (d2). */}
+					<Crossfade contentKey={source && typeof source === "object" && "uri" in source ? String(source.uri) : "none"}>
+						{page}
+					</Crossfade>
+				</HeroSource>
 			</PageBand>
 		</HeroTarget>
 	);

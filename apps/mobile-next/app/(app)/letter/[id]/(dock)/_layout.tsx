@@ -1,5 +1,7 @@
 // Letter modes: Write, Design, Export.
+import { useLocalSearchParams } from "expo-router";
 import { Tabs } from "expo-router/js-tabs";
+import { LetterDocument } from "@/features/builder/shared/document";
 import { DockTabBar, type DockItemSpec } from "@/ui/Dock";
 import { FadeThroughProvider } from "@/ui/motion";
 
@@ -10,8 +12,10 @@ const items: DockItemSpec[] = [
 ];
 
 export default function Layout() {
+	const { id } = useLocalSearchParams<{ id: string }>();
 	return (
 		<FadeThroughProvider>
+			<LetterDocument id={id} />
 			<Tabs
 				screenOptions={{ headerShown: false, animation: "none" }}
 				tabBar={(props) => <DockTabBar {...props} variant="letter" items={items} />}

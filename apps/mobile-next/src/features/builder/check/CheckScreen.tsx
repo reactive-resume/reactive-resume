@@ -19,7 +19,8 @@ import {
 } from "../shared/document";
 import { type CheckIssue, buildIssues, categoryName, openLine, verdictLabel } from "./issues";
 import { type MatchedTerm, useJobMatch } from "./job-match";
-import { useApplications, useATSCheck, usePDFATSCheck, useResumeStore } from "@/data";
+import { useCheckReport } from "./report";
+import { useApplications, usePDFATSCheck, useResumeStore } from "@/data";
 import { pageRenderer } from "@/render/page-renderer";
 import {
 	BigNumber,
@@ -69,7 +70,7 @@ function IssueCard({
 			<Card>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
 					<IssueMarker n={issue.number} />
-					<Text variant="rowTitle" weight={600} style={{ flex: 1 }}>
+					<Text variant="rowTitle" weight={600} style={{ flexShrink: 1 }}>
 						{issue.title}
 					</Text>
 				</View>
@@ -92,7 +93,7 @@ export function CheckScreen() {
 	const document = useResumeDocument();
 	const locked = useLocked();
 	const word = useSaveWord();
-	const report = useATSCheck(data ?? undefined);
+	const { report, verdict } = useCheckReport(data ?? undefined);
 	const pdfCheck = usePDFATSCheck();
 	const applications = useApplications();
 	const [view, setView] = useState<View3>(
@@ -187,10 +188,10 @@ export function CheckScreen() {
 					feedback="none"
 					accessibilityLabel={t`Readability score: ${report.score} out of 100`}
 				>
-					<BigNumber>{String(report.score)}</BigNumber>
+					<BigNumber count>{String(report.score)}</BigNumber>
 				</Touch>
 				<View style={{ gap: 2 }}>
-					<Text variant="label">{verdictLabel(report)}</Text>
+					<Text variant="label">{verdict ?? verdictLabel(report)}</Text>
 					<Text variant="ui" color="ink3">
 						{openLine(issues.length)}
 					</Text>
@@ -212,6 +213,8 @@ export function CheckScreen() {
 					title={plural(report.passedRules, { one: "# check passed", other: "# checks passed" })}
 					leading={<Icon name="check-circle" size={24} color="ink2" />}
 					trailing={passing ? "up" : "caret"}
+					// B9 draws this row as a plain line, not a list row.
+					boxHidden
 					last={!passing}
 					onPress={() => setPassing((p) => !p)}
 				/>
@@ -242,7 +245,7 @@ export function CheckScreen() {
 			<View style={{ paddingHorizontal: 24, paddingTop: 20, flexDirection: "row", alignItems: "center", gap: 8 }}>
 				{pdfCheck.isPending ? <Spinner /> : null}
 				<TextLink
-					label={pdfCheck.isPending ? t`Checking the exported PDF…` : t`Also check the exported PDF`}
+					label={pdfCheck.isPending ? t`Checking the exported PDF…` : t`Check the exported PDF`}
 					onPress={pdfCheck.isPending ? undefined : () => void checkPdf()}
 				/>
 			</View>
@@ -310,9 +313,11 @@ export function CheckScreen() {
 					{result.missing.length > 0 ? (
 						<>
 							<SectionHeading title={t`Not in your resume yet`} />
-							<Text variant="ui" color="ink3" style={{ paddingHorizontal: 24 }}>
-								{t`Add a term only if it's true for you.`}
-							</Text>
+							<View style={{ paddingHorizontal: 24 }}>
+								<Text variant="ui" color="ink3">
+									{t`Add a term only if it's true for you.`}
+								</Text>
+							</View>
 							{result.missing.map((term, i) => (
 								<ListRow
 									key={term.term}
@@ -373,7 +378,7 @@ export function CheckScreen() {
 					<Dialog
 						open={explain}
 						onClose={() => setExplain(false)}
-						title={verdictLabel(report)}
+						title={verdict ?? verdictLabel(report)}
 						message={t`The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted.`}
 						actions={[{ label: t`Close`, tone: "secondary", onPress: () => setExplain(false) }]}
 					/>

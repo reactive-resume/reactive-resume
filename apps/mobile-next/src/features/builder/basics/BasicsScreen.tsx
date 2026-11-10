@@ -6,7 +6,15 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Image, View } from "react-native";
-import { BuilderScreen, editResume, useBuilderParams, useLocked, useResumeData, useSaveWord } from "../shared/document";
+import {
+	BuilderScreen,
+	editResume,
+	useBuilderParams,
+	useLocked,
+	useResumeData,
+	useSaveWord,
+	useBackToResume,
+} from "../shared/document";
 import { entryTitle } from "../shared/model";
 import { resumeFieldFocus } from "@/data";
 import { STORYBOARD, trackImage } from "@/dev/storyboard/harness";
@@ -50,6 +58,7 @@ export function BasicsScreen() {
 	const { id } = useBuilderParams();
 	const router = useRouter();
 	const data = useResumeData();
+	const back = useBackToResume();
 	const locked = useLocked();
 	const word = useSaveWord();
 	const visit = useRef(0);
@@ -114,6 +123,7 @@ export function BasicsScreen() {
 	return (
 		<BuilderScreen
 			title={t`Basics`}
+			backLabel={back}
 			status={word}
 			subtitle={null}
 			overlay={

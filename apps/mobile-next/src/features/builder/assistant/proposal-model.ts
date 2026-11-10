@@ -30,4 +30,11 @@ export function storyboardProposals(data: ResumeData): Proposal[] {
 		},
 	];
 }
+/**
+ * The storyboard's third edit, decided before the capture (B17 draws it folded to "Skills · Accepted" with Undo).
+ * Gap: the fake conversation carries only the two open edits.
+ */
+export const storyboardDecided: { id: string; location: string; decision: "accepted" | "rejected" }[] = [
+	{ id: "storyboard-skills", location: "Skills", decision: "accepted" },
+];
 export { applyResumeProposals, getProposalState };

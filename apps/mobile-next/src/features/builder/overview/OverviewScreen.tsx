@@ -118,11 +118,10 @@ export function OverviewScreen() {
 	const rename = useRenameSection(data);
 	const addRef = useAnchorRef();
 
-	const status = locked
-		? t`Locked. Unlock it from ···`
-		: [word, plural(pageCount, { one: "# page", other: "# pages" }), document?.isPublic ? t`Public` : null]
-				.filter(Boolean)
-				.join(" · ");
+	// Locked reads "Locked · 1 page · Public", as B19 draws the locked overview (`word` is "Locked").
+	const status = [word, plural(pageCount, { one: "# page", other: "# pages" }), document?.isPublic ? t`Public` : null]
+		.filter(Boolean)
+		.join(" · ");
 	const rows = data ? getOutlineRows(data) : [];
 	const open = (section: BuilderSection) => router.push(`/builder/${id}/section/${section.id}`);
 
