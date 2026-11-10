@@ -134,7 +134,7 @@ export function LibraryScreen() {
 					{resumes.map((doc, index) => row(doc, index, resumes.length))}
 					<SectionHeading title={t`Cover letters`} count={String(letters.length)} />
 					{letters.map((doc, index) => row(doc, index, letters.length))}
-					<View style={{ paddingHorizontal: 24, paddingTop: 32, flexDirection: "row", gap: 28, alignItems: "center" }}>
+					<View style={{ paddingHorizontal: 24, paddingTop: 24, flexDirection: "row", gap: 28, alignItems: "center" }}>
 						<TextLink
 							label={selecting ? t`Done` : t`Select`}
 							icon="check-square"

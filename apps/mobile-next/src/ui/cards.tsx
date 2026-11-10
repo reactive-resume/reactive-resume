@@ -208,10 +208,13 @@ export function Chip({
 	onPress,
 	dashed = false,
 	on = false,
+	trailingIcon,
 	testID,
 }: {
 	label: string;
 	icon?: IconName | undefined;
+	/** A 16 dp icon after the label (filter chips' caret-down). */
+	trailingIcon?: IconName | undefined;
 	onPress?: (() => void) | undefined;
 	dashed?: boolean | undefined;
 	on?: boolean | undefined;
@@ -237,6 +240,7 @@ export function Chip({
 				<Text variant="chip" color={fg} numberOfLines={1}>
 					{label}
 				</Text>
+				{trailingIcon ? <Icon name={trailingIcon} size={16} color={fg} /> : null}
 			</Box>
 		</Touch>
 	);

@@ -27,6 +27,12 @@ import {
 } from "@/ui";
 import { curve } from "@/ui/motion";
 
+/** Two-letter company mark: first letters of the first two words, or the first two letters of one word. */
+const monogram = (company: string) => {
+	const words = company.split(/\s+/).filter(Boolean);
+	return (words.length > 1 ? `${words[0]?.[0] ?? ""}${words[1]?.[0] ?? ""}` : company.slice(0, 2)).toUpperCase();
+};
+
 type FirstRunPartProps = { index: number; children: ReactNode };
 function FirstRunPart({ index, children }: FirstRunPartProps) {
 	const style = useFadeUp({
@@ -49,7 +55,7 @@ export function TodayScreen() {
 	const openDocument = useOpenDocument();
 	const fake = backend.kind === "fake";
 	const applications = (today.applications.data ?? []).map((app) =>
-		fake && app.id === "fieldnote" ? { ...app, appliedAt: new Date("2026-10-28T12:00:00Z") } : app,
+		fake && app.id === "fieldnote" ? { ...app, appliedAt: new Date("2026-10-28T08:00:00Z") } : app,
 	);
 	const steps = todaySteps(applications, today.offers.data ?? [], today.now, today.timeZone);
 	const notifications = today.notifications.data?.filter((notice) => !notice.readAt) ?? [];
@@ -85,7 +91,7 @@ export function TodayScreen() {
 			subtitle={
 				firstRun
 					? t`Welcome, ${account.data?.name.split(" ")[0] ?? ""}.`
-					: format(today.now, { weekday: "long", day: "numeric", month: "long" })
+					: `${format(today.now, { weekday: "long" })}, ${format(today.now, { day: "numeric", month: "long" })}`
 			}
 			avatar={<AccountAvatar />}
 			actions={
@@ -132,7 +138,7 @@ export function TodayScreen() {
 								block
 								onPress={() => router.push("/import")}
 							/>
-							<View style={{ alignItems: "center", paddingVertical: 6 }}>
+							<View style={{ flexDirection: "row", justifyContent: "center", paddingTop: 12 }}>
 								<TextLink label={t`Start from a template instead`} onPress={() => router.push("/new?kind=resume")} />
 							</View>
 						</HeroCard>
@@ -144,14 +150,16 @@ export function TodayScreen() {
 							wrapSecondary
 							title={t`Bring your resume`}
 							secondary={t`Import a file or start from a template`}
-							leading={hasResume ? <Icon name="check-circle" size={40} color="accentText" /> : <Monogram letters="1" />}
+							leading={
+								hasResume ? <Icon name="check-circle" size={40} color="accentText" /> : <Monogram letters="1" numeral />
+							}
 						/>
 						<ListRow
 							wrapTitle
 							wrapSecondary
 							title={t`Save a job you want`}
 							secondary={t`Paste a link or share it from the browser`}
-							leading={<Monogram letters="2" />}
+							leading={<Monogram letters="2" numeral />}
 							onPress={hasResume ? () => router.push("/applications/new") : undefined}
 						/>
 						<ListRow
@@ -159,7 +167,7 @@ export function TodayScreen() {
 							wrapSecondary
 							title={t`Tailor and apply`}
 							secondary={t`Match the resume, write the letter, track it`}
-							leading={<Monogram letters="3" />}
+							leading={<Monogram letters="3" numeral />}
 							last
 						/>
 					</FirstRunPart>
@@ -279,6 +287,7 @@ export function TodayScreen() {
 					<SectionHeading
 						title={t`New roles`}
 						count={fake ? t`4 today` : String(today.opportunities.data?.length ?? 0)}
+						action={t`Select`}
 					/>
 					{today.opportunities.data?.length ? (
 						today.opportunities.data.map((role) => (
@@ -288,7 +297,7 @@ export function TodayScreen() {
 								key={role.id}
 								title={role.role}
 								secondary={[role.company, role.location, role.snippet].filter(Boolean).join(" · ")}
-								leading={<Monogram letters={role.company.slice(0, 2).toUpperCase()} />}
+								leading={<Monogram letters={monogram(role.company)} />}
 								trailing="caret"
 								onPress={() => router.push(`/applications/new?opportunityId=${role.id}`)}
 								last

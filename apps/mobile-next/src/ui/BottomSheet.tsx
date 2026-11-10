@@ -43,7 +43,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Touch } from "./base";
+import { Box, Touch } from "./base";
 import { DiscardDialog } from "./Dialog";
 import { Icon } from "./Icon";
 import {
@@ -320,7 +320,9 @@ export function BottomSheet({
 							hitSlop={hitSlopFor(44, 44)}
 							style={styles.close}
 						>
-							<Icon name="x" size={20} color="ink2" />
+							<Box component="IconButton" radius={radius.md} style={styles.close}>
+								<Icon name="x" size={20} color="ink2" />
+							</Box>
 						</Touch>
 					</View>
 					<Ctx.Provider value={{ scrollY, pan }}>
@@ -420,6 +422,7 @@ const styles = StyleSheet.create({
 		paddingEnd: 12,
 		paddingBottom: 4,
 		paddingStart: 24,
+		gap: 8,
 	},
 	title: { flex: 1 },
 	close: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },

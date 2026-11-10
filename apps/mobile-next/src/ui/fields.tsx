@@ -10,7 +10,7 @@ import { hitSlopFor } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { fonts, layout, radius, type as typeScale } from "./tokens";
-import { STORYBOARD } from "@/dev/storyboard/harness";
+import { STORYBOARD, useDesignTag } from "@/dev/storyboard/harness";
 
 /** A 24 dp form column: 20 dp between fields. */
 export function Form({ children }: { children: ReactNode }) {
@@ -65,6 +65,11 @@ export function TextField({
 	const active = focused || forceFocus;
 	const ring = error ? "danger" : active ? "accent" : "controlBorder";
 	const outer = error ? colors.dangerSoft : active ? colors.accentSoft : null;
+	// The typed value is design text too (D5's "lumen"); an empty field reports nothing.
+	const inputRef = useDesignTag(
+		{ kind: "text", text: value ?? "", style: typeScale.input, color: "ink" },
+		{ hidden: !value || !!onPress },
+	);
 	const field = (
 		<Box
 			component="TextField"
@@ -90,6 +95,7 @@ export function TextField({
 			) : (
 				<TextInput
 					{...input}
+					ref={inputRef as never}
 					value={value}
 					placeholder={placeholder}
 					placeholderTextColor={colors.ink3}

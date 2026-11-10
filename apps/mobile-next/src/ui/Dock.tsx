@@ -1,11 +1,19 @@
 import type { BottomTabBarProps } from "expo-router/js-tabs";
-import { useIsFocused } from "expo-router";
+import { useNavigation, useRoute } from "expo-router";
 // Dock (COMPONENTS.md §15, MOTION.md §5, §6.3): root tabs, builder modes, letter modes. 1 dp `line` on top, `bg`,
 // 64 dp plus the bottom safe area, 8 dp sides, items share the width. The selection changes at once on tap (fill
 // icon swap, ink-2 → accent-text crossfade d1); content switches by fade-through (FadeThroughProvider). Builder and
 // letter docks play `selection`; root tabs play none. Re-tapping the selected item scrolls its list to the top.
 // Large text (≥ 150%): 80 dp, 30 dp icons, 18 sp labels; past 150% the short labels, full names read out.
-import { type ReactNode, type Ref, useEffect, useImperativeHandle, useState } from "react";
+import {
+	type ReactNode,
+	type Ref,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useState,
+	useSyncExternalStore,
+} from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, { type SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -135,10 +143,10 @@ function DockItem({
 			<View style={{ width: iconSize, height: iconSize }}>
 				{/* Regular → fill swaps at once; the colour crossfades d1. */}
 				<Fade s={s} on={false} absolute>
-					<Icon name={item.icon} size={iconSize} color={selected ? "accentText" : "ink2"} />
+					<Icon name={item.icon} size={iconSize} color={selected ? "accentText" : "ink2"} tag={!selected} />
 				</Fade>
 				<Fade s={s} on absolute>
-					<Icon name={item.icon} size={iconSize} color="accentText" fill />
+					<Icon name={item.icon} size={iconSize} color="accentText" fill tag={selected} />
 				</Fade>
 			</View>
 			<View>
@@ -228,10 +236,23 @@ export function DockTabBar({
 	);
 }
 
-/** A dock screen's root: fades out and up through the provider. */
+/**
+ * A dock screen's root: fades out and up through the provider. It follows the dock's own selection, not screen
+ * focus: a sheet or a pushed screen over the tabs takes focus, and the tab under it must stay drawn.
+ */
 export function DockScene({ children }: { children: ReactNode }) {
-	const focused = useIsFocused();
-	return <FadeThroughScene focused={focused}>{children}</FadeThroughScene>;
+	const selected = useDockSelected();
+	return <FadeThroughScene focused={selected}>{children}</FadeThroughScene>;
+}
+
+function useDockSelected() {
+	const navigation = useNavigation();
+	const route = useRoute();
+	const subscribe = useCallback((change: () => void) => navigation.addListener("state", change), [navigation]);
+	return useSyncExternalStore(subscribe, () => {
+		const state = navigation.getState();
+		return !state || state.routes[state.index ?? 0]?.key === route.key;
+	});
 }
 
 const styles = StyleSheet.create({

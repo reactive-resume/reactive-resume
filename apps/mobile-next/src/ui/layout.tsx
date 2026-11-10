@@ -79,7 +79,13 @@ export function RootHeader({
 					minHeight: 54,
 				}}
 			>
-				<Text variant="rootTitle" accessibilityRole="header" numberOfLines={1} style={{ flexShrink: 1 }}>
+				{/* 2 dp under the title puts its line box at the board's 57.5; Text's iOS glyph shift then lands the ink. */}
+				<Text
+					variant="rootTitle"
+					accessibilityRole="header"
+					numberOfLines={1}
+					style={{ flexShrink: 1, marginBottom: 2 }}
+				>
 					{title}
 				</Text>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingBottom: 2 }}>
@@ -88,9 +94,11 @@ export function RootHeader({
 				</View>
 			</View>
 			{subtitle ? (
-				<Text variant="ui" color="ink3" style={{ paddingHorizontal: layout.screenMargin }}>
-					{subtitle}
-				</Text>
+				<View style={{ paddingHorizontal: layout.screenMargin, flexDirection: "row" }}>
+					<Text variant="ui" color="ink3">
+						{subtitle}
+					</Text>
+				</View>
 			) : null}
 		</View>
 	);
@@ -210,13 +218,11 @@ export function PageTitle({
 /** One 15/24 line under the page title: `ink-2` for a description, `ink-3` for a status line. */
 export function PageSubtitle({ children, status = false }: { children: ReactNode; status?: boolean | undefined }) {
 	return (
-		<Text
-			variant="body"
-			color={status ? "ink3" : "ink2"}
-			style={{ paddingTop: 6, paddingHorizontal: layout.screenMargin }}
-		>
-			{children}
-		</Text>
+		<View style={{ paddingTop: 6, paddingHorizontal: layout.screenMargin }}>
+			<Text variant="body" color={status ? "ink3" : "ink2"}>
+				{children}
+			</Text>
+		</View>
 	);
 }
 
@@ -314,9 +320,11 @@ export function SectionHeading({
 				{title}
 			</Text>
 			{count ? (
-				<Text variant="ui" color="ink3" style={{ flex: 1, paddingStart: 2 }}>
-					{count}
-				</Text>
+				<View style={{ flex: 1, paddingStart: 2 }}>
+					<Text variant="ui" color="ink3">
+						{count}
+					</Text>
+				</View>
 			) : null}
 			{action ? (
 				<Touch

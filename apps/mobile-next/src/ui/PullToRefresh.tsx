@@ -133,7 +133,7 @@ export function PullToRefresh({
 				accessibilityElementsHidden={!refreshing}
 			>
 				{refreshing ? <Spinner /> : <Spinner turns={turns} />}
-				<Text variant="ui" color="ink3">
+				<Text variant="ui" color="ink3" tag={refreshing}>
 					{t`Refreshing`}
 				</Text>
 			</Animated.View>

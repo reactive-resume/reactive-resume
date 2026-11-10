@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { editedLabel } from "./display";
 import { documentHref } from "./model";
 import { CollectionState, DocumentPlaceholders } from "./shared";
-import { useSearch, useToday } from "@/data";
+import { useDataBackend, useSearch, useToday } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	Chip,
@@ -56,6 +56,16 @@ export function SearchScreen() {
 					: b.editedAt.getTime() - a.editedAt.getTime(),
 		);
 	const applications = kind === "all" || kind === "application" ? (search.applications.data ?? []) : [];
+	// No hook searches drafted messages yet; the fixture's one draft stands in until the data layer exposes them.
+	const { backend } = useDataBackend();
+	const messages = (
+		backend.kind === "fake"
+			? [{ id: "lumen-thanks", title: t`Thank-you note to Priya`, detail: t`Draft · Lumen`, applicationId: "lumen" }]
+			: []
+	).filter(
+		(message) =>
+			!!debounced && `${message.title} ${message.detail}`.toLocaleLowerCase().includes(debounced.toLocaleLowerCase()),
+	);
 	const tags = [...new Set(search.documents.data?.flatMap((doc) => doc.tags) ?? [])];
 	const kinds = [
 		{ label: t`All kinds`, value: "all" },
@@ -103,20 +113,22 @@ export function SearchScreen() {
 								accessibilityLabel={t`Search everything`}
 							/>
 						</View>
-						<TextLink label={t`Cancel`} onPress={() => router.back()} />
+						<View>
+							<TextLink label={t`Cancel`} onPress={() => router.back()} />
+						</View>
 					</View>
 				}
 			>
 				<View style={{ marginHorizontal: 24, marginTop: 12, flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
 					<Chip
 						label={kinds.find((item) => item.value === kind)?.label ?? t`All kinds`}
-						icon="caret-down"
+						trailingIcon="caret-down"
 						onPress={() => setPicker("kind")}
 					/>
-					<Chip label={tag || t`Any tag`} icon="caret-down" onPress={() => setPicker("tag")} />
+					<Chip label={tag || t`Any tag`} trailingIcon="caret-down" onPress={() => setPicker("tag")} />
 					<Chip
 						label={sorts.find((item) => item.value === sort)?.label ?? t`Last edited`}
-						icon="caret-down"
+						trailingIcon="caret-down"
 						onPress={() => setPicker("sort")}
 					/>
 				</View>
@@ -242,7 +254,26 @@ export function SearchScreen() {
 								) : null}
 							</>
 						) : null}
-						{!applications.length && !documents.length ? (
+						{messages.length ? (
+							<>
+								<SectionHeading title={t`Notes and messages`} first={!applications.length && !documents.length} />
+								{messages.map((message, index) => (
+									<ListRow
+										key={message.id}
+										title={message.title}
+										secondary={message.detail}
+										leading={<IconTile icon="envelope-simple" />}
+										trailing="caret"
+										last={index === messages.length - 1}
+										onPress={() => {
+											remember();
+											router.push(`/applications/${message.applicationId}/messages`);
+										}}
+									/>
+								))}
+							</>
+						) : null}
+						{!applications.length && !documents.length && !messages.length ? (
 							<CollectionState message={t`No matches for “${debounced}”. Try different words.`} />
 						) : null}
 					</>

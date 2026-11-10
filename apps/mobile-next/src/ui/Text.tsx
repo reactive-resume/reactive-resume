@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { TextProps as RNTextProps, TextStyle } from "react-native";
-import { Platform, Text as RNText } from "react-native";
+import { Platform, Text as RNText, StyleSheet } from "react-native";
 import { useTheme } from "./theme";
 import { type ColorToken, fonts, textDefaults, type as typeScale, type TypeToken } from "./tokens";
 import { useDesignTag } from "@/dev/storyboard/harness";
@@ -20,6 +20,13 @@ const glyphShift: Partial<Record<TypeToken, number>> =
 		ios: { rootTitle: 1 },
 		default: {},
 	}) ?? {};
+
+/**
+ * iOS rounds a text's measured height up to the next device pixel, and an exact line height measures a hair over, so
+ * every text laid out 1/3 dp taller than lines × line height and rows drifted down the screen. A line height a
+ * hundredth under the token keeps the box at exactly lines × line height; the glyphs don't move.
+ */
+const iosLineBox = (lineHeight: number) => (Platform.OS === "ios" ? { lineHeight: lineHeight - 0.01 } : null);
 
 const flatten = (children: ReactNode): string => {
 	if (children == null || typeof children === "boolean") return "";
@@ -53,13 +60,19 @@ export function Text({
 }: TextProps) {
 	const { colors } = useTheme();
 	const base = typeScale[variant];
+	const own = StyleSheet.flatten(style) ?? {};
 	const fontFamily =
-		weight && base.fontFamily !== fonts.display && base.fontFamily !== fonts.mono ? uiFamily[weight] : base.fontFamily;
+		own.fontFamily ??
+		(weight && base.fontFamily !== fonts.display && base.fontFamily !== fonts.mono
+			? uiFamily[weight]
+			: base.fontFamily);
+	const fontSize = own.fontSize ?? base.fontSize;
+	const lineHeight = own.lineHeight ?? base.lineHeight;
 	const ref = useDesignTag(
 		{
 			kind: "text",
 			text: flatten(children),
-			style: { fontFamily, fontSize: base.fontSize, lineHeight: base.lineHeight },
+			style: { fontFamily, fontSize, lineHeight },
 			color,
 		},
 		{ hidden: !tag },
@@ -77,6 +90,7 @@ export function Text({
 				align ? { textAlign: align } : null,
 				shift ? { transform: [{ translateY: shift }] } : null,
 				style,
+				iosLineBox(lineHeight),
 			]}
 		>
 			{children}
