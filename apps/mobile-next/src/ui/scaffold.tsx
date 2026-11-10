@@ -250,6 +250,8 @@ export function PushScreen({
 						scrollEventThrottle={16}
 						bottomOffset={24}
 						keyboardShouldPersistTaps="handled"
+						// Dragging the form down puts the keyboard away, as system forms do.
+						keyboardDismissMode="interactive"
 						showsVerticalScrollIndicator={!STORYBOARD}
 						contentContainerStyle={{ paddingBottom: bottomPadding + (footer ? 0 : insets.bottom) }}
 						style={{ flex: 1 }}
