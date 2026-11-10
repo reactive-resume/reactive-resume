@@ -1,9 +1,10 @@
 import "@/polyfills";
 import { I18nProvider } from "@lingui/react";
 import { useFonts } from "expo-font";
+import { DefaultTheme, ThemeProvider } from "expo-router";
 import { Stack } from "expo-router/js-stack";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -40,6 +41,22 @@ export default function RootLayout() {
 	});
 	const { name, colors } = useTheme();
 	const options = useScreenOptions();
+	// Navigators paint their own background behind screens (visible under transparent sheet routes): use the token.
+	const navigationTheme = useMemo(
+		() => ({
+			...DefaultTheme,
+			dark: name === "dark",
+			colors: {
+				...DefaultTheme.colors,
+				background: colors.bg,
+				card: colors.bg,
+				text: colors.ink,
+				border: colors.line,
+				primary: colors.accent,
+			},
+		}),
+		[name, colors],
+	);
 	if (!loaded || !ready) return null;
 	return (
 		<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -49,7 +66,9 @@ export default function RootLayout() {
 						<StatusBar style={name === "dark" ? "light" : "dark"} />
 						<I18nProvider i18n={i18n}>
 							<DataProvider>
-								<Stack screenOptions={options.push} />
+								<ThemeProvider value={navigationTheme}>
+									<Stack screenOptions={options.push} />
+								</ThemeProvider>
 								<ToastHost />
 								<HeroOverlay />
 								<DevHost />

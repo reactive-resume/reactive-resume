@@ -60,7 +60,6 @@ export function Text({
 }: TextProps) {
 	const { colors } = useTheme();
 	const base = typeScale[variant];
-	const own = StyleSheet.flatten(style) ?? {};
 	const fontFamily =
 		weight && base.fontFamily !== fonts.display && base.fontFamily !== fonts.mono ? uiFamily[weight] : base.fontFamily;
 	// The tag reports the style actually drawn, overrides included.
@@ -93,7 +92,6 @@ export function Text({
 				align ? { textAlign: align } : null,
 				shift ? { transform: [{ translateY: shift }] } : null,
 				style,
-				iosLineBox(lineHeight),
 			]}
 		>
 			{children}
