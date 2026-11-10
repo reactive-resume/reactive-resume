@@ -3,6 +3,8 @@ import { Directory } from "expo-file-system";
 import { openBrowserAsync } from "expo-web-browser";
 import { usePlatformActions } from "./actions";
 import { isFake } from "./fixtures";
+import { useConnectedApps, useAPIKeys } from "./platform";
+import { useDataBackend, useResource } from "./provider";
 import { activeDataScope, assertDataScope } from "./scope";
 import { getServer, getSession } from "@/auth/session";
 export type AccountSettingsSection = "passkeys" | "sessions" | "two-step" | "password" | "delete-account" | "api-keys";
@@ -37,5 +39,29 @@ export function useAccountActions() {
 			file.write(JSON.stringify(data));
 			return { uri: file.uri, data };
 		},
+	};
+}
+
+/** Bearer clients can enumerate keys/apps; cookie-only security state stays explicitly unknown. */
+export function useSecurityState() {
+	const { backend } = useDataBackend();
+	const apps = useConnectedApps();
+	const keys = useAPIKeys();
+	const webAccess = useResource("webAccess", {});
+	const browser = { availability: "open-in-browser" as const };
+	return {
+		password:
+			backend.kind === "fake"
+				? { availability: "available" as const, changedAt: new Date("2026-08-07T08:41:00Z") }
+				: browser,
+		twoStep:
+			backend.kind === "fake"
+				? { availability: "available" as const, enabled: true, method: "authenticator" }
+				: browser,
+		passkeys: backend.kind === "fake" ? { availability: "available" as const, count: 1, thisPhone: true } : browser,
+		sessions: browser,
+		webAccess,
+		connectedApps: apps,
+		apiKeys: keys,
 	};
 }

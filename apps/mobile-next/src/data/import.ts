@@ -29,7 +29,7 @@ export class DocumentImportError extends Error {
 		options?: ErrorOptions,
 	) {
 		const messages = {
-			unsupported: t`Choose a PDF, Word or JSON file. Your file is kept.`,
+			unsupported: t`Choose a PDF, Word, JSON or LinkedIn ZIP file. Your file is kept.`,
 			"too-large": t`File is too large. Choose a file up to 10 MB.`,
 			invalid: t`This file couldn't be read. Your file is kept.`,
 			consent: t`File sharing wasn't approved. Your file is kept.`,
@@ -98,6 +98,10 @@ export async function readImportFile(file: DocumentPickerAsset, options: ImportO
 			}
 			onStep?.("parsing");
 			data = parseResumeFileJSON(value);
+		} else if (extension === "zip") {
+			onStep?.("parsing");
+			const { parseLinkedInExport } = await import("@reactive-resume/import/linkedin");
+			data = parseLinkedInExport(await source.bytes());
 		} else if (extension === "pdf" || extension === "docx") {
 			if (options.ai || extension === "docx") {
 				if (!options.connection || !(await ensureApproved("file", options.connection)))

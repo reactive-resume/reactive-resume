@@ -40,6 +40,8 @@ export const readers = {
 	transcripts: client.career.voice.transcripts,
 	apiKeys: client.auth.apiKeys.list,
 	connectedApps: client.auth.connections.list,
+	lanes: client.applications.lanes.get,
+	webAccess: client.webAccess.status,
 };
 export type Resource = keyof typeof readers;
 export type ResourceInput<K extends Resource> = Parameters<(typeof readers)[K]>[0];
@@ -50,6 +52,15 @@ export type Backend = {
 	write(operation: string, input: unknown, scope: string, signal?: AbortSignal): Promise<unknown>;
 };
 export const writes = {
+	"applications.lanes.create": client.applications.lanes.create,
+	"applications.lanes.update": client.applications.lanes.update,
+	"applications.lanes.reorder": client.applications.lanes.reorder,
+	"applications.lanes.retire": client.applications.lanes.retire,
+	"career.correctFact": client.career.correctFact,
+	"career.proposeResumeFacts": client.career.proposeResumeFacts,
+	"career.saveResumeFacts": client.career.saveResumeFacts,
+	"career.suggestTargetRoles": client.career.suggestTargetRoles,
+	"ai.improve": client.ai.improve,
 	"applicationProfile.save": client.applicationProfile.save,
 	"career.saveProfile": client.career.saveProfile,
 	"career.updateProfile": client.career.updateProfile,

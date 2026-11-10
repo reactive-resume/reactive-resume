@@ -28,5 +28,15 @@ export function fixtureProposals(data: ResumeData): Proposal[] {
 			source: "assistant",
 			unsupported: [{ kind: "term", text: "I lead accessibility audits" }],
 		},
+		{
+			id: "storyboard-skills",
+			target: { sectionId: "skills", itemId: data.sections.skills.items[0]?.id ?? "", field: "name" },
+			location: "Skills",
+			before: "Product strategy",
+			after: "Product strategy",
+			why: "",
+			status: "accepted",
+			source: "assistant",
+		},
 	];
 }

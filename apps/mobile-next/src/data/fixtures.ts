@@ -7,8 +7,9 @@ import {
 } from "@reactive-resume/schema/applications/data";
 import { careerProfileDataSchema, EMPTY_WORKSPACE, offerTermsSchema } from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { completeBoardSeed } from "./board-fixtures";
 import { setNow, setTimeZone, now } from "./clock";
-import { extendedSeed, fixtureRead, fixtureWrite } from "./fixture-operations";
+import { extendedSeed, fixtureRead, fixtureWrite, fixturePublicAccess, fixtureUnlock } from "./fixture-operations";
 import { resetFixtureStorage } from "./storage";
 import texts from "./storyboard-texts.json";
 
@@ -51,6 +52,7 @@ function makeState(fixture: Fixture) {
 		email: "alex@morgan.design",
 		phone: "+351 912 345 678",
 	};
+	data.metadata.check = { ignored: [], ...data.metadata.check, hiddenTerms: ["healthcare", "service design"] };
 	const b1 = texts["B1-Overview"];
 	data.summary.content = `<p>${b1[8]}</p>`;
 	data.sections.education.items = [
@@ -73,6 +75,9 @@ function makeState(fixture: Fixture) {
 		"Prototyping",
 		"Design systems",
 		"User research",
+		"Figma",
+		"Accessibility",
+		"Visual design",
 	].map((name, index) => ({
 		id: `skill-${index}`,
 		hidden: false,
@@ -117,7 +122,7 @@ function makeState(fixture: Fixture) {
 		id: ["resume-product", "resume-lumen", "resume-lead"][index] ?? "resume-product",
 		name,
 		slug: `product-designer${index || ""}`,
-		tags: [],
+		tags: ["Design"],
 		isLocked: false,
 		isPublic: index === 0,
 		showDownloadButtons: true,
@@ -314,7 +319,7 @@ function makeState(fixture: Fixture) {
 			updatedAt: yesterday,
 		},
 	];
-	return {
+	const result = {
 		...extendedSeed(empty),
 		resumes: empty ? [] : resumes,
 		letters: empty ? [] : letters,
@@ -329,6 +334,7 @@ function makeState(fixture: Fixture) {
 						targetRoles: ["Senior product designer", "design lead"],
 						locations: ["Lisbon", "remote in the EU"],
 						priorities: "Pay, then remote, then holidays",
+						noticeWeeks: 4,
 						minBase: { amount: 65000, currency: "EUR", period: "year" },
 					},
 		),
@@ -466,7 +472,12 @@ function makeState(fixture: Fixture) {
 			: [
 					{ id: "version-session", kind: "auto", name: null, createdAt: new Date("2026-11-07T18:02:00+01:00") },
 					{ id: "version-ai", kind: "ai", name: null, createdAt: new Date("2026-11-07T09:14:00+01:00") },
-					{ id: "version-sent", kind: "sent", name: "Sent to Lumen", createdAt: new Date("2026-11-03T14:20:00+01:00") },
+					{
+						id: "version-sent",
+						kind: "named",
+						name: "Sent to Lumen",
+						createdAt: new Date("2026-11-03T14:20:00+01:00"),
+					},
 				],
 		letterVersions: [] as Row[],
 		account: {
@@ -481,6 +492,8 @@ function makeState(fixture: Fixture) {
 			locale: "en-US",
 		},
 	};
+	completeBoardSeed(result, empty);
+	return result;
 }
 export function seed(fixture: Fixture): void {
 	selected = fixture;
@@ -522,8 +535,13 @@ export const fakeBackend: Backend = {
 			else if (resource === "letter") value = state.letters.find((row) => row.id === fields.id);
 			else if (resource === "applications") value = state.applications.filter((row) => !row.trashedAt);
 			else if (resource === "application") value = state.applications.find((row) => row.id === fields.id);
-			else if (resource === "publicResume") value = state.resumes[0];
-			else if (resource === "documents")
+			else if (resource === "publicResume") {
+				const row = state.resumes.find((row) => row.slug === fields.slug);
+				if (fields.username !== "alex" || !row) throw new Error("Resume not found.");
+				if (!fixturePublicAccess(row.id))
+					throw Object.assign(new Error("Enter the resume password."), { code: "NEED_PASSWORD" });
+				value = { ...row, name: "" };
+			} else if (resource === "documents")
 				value = state.documents.filter(
 					(row) =>
 						Boolean(row.trashedAt) === Boolean(fields.trashed) &&
@@ -581,8 +599,11 @@ export const fakeBackend: Backend = {
 			Object.assign(row, fields);
 			const document = (fields.type === "letter" ? state.letters : state.resumes).find((item) => item.id === fields.id);
 			if (document) Object.assign(document, fields);
-		} else if (operation === "career.saveWorkspace") state.workspace = { ...state.workspace, ...fields };
-		else if (operation === "career.saveFact" || operation === "career.updateFact") {
+		} else if (operation === "career.saveWorkspace") {
+			const workspaces = (state as Record<string, unknown>).workspaces as Record<string, Record<string, unknown>>;
+			const { applicationId, ...changes } = fields;
+			workspaces[String(applicationId)] = { ...EMPTY_WORKSPACE, ...workspaces[String(applicationId)], ...changes };
+		} else if (operation === "career.saveFact" || operation === "career.updateFact") {
 			const existing = state.facts.find((row) => row.id === fields.id);
 			if (existing) Object.assign(existing, fields, { updatedAt: now() });
 			else
@@ -595,7 +616,7 @@ export const fakeBackend: Backend = {
 					category: String(fields.category ?? "experience"),
 					applicationId: null,
 					company: null,
-					source: { kind: "manual", id: "", quote: "" },
+					source: (fields.source ?? { kind: "manual", id: "", quote: "" }) as (typeof state.facts)[number]["source"],
 					sourceKey: `fixture-${generation}`,
 					status: "active",
 					revisions: [],
@@ -631,7 +652,10 @@ export const fakeBackend: Backend = {
 		if (operation === "applicationProfile.save") return structuredClone(state.profile);
 		if (operation === "career.updateProfile" || operation === "career.saveProfile")
 			return structuredClone(state.preferences);
-		if (operation === "career.saveWorkspace") return structuredClone(state.workspace);
+		if (operation === "career.saveWorkspace")
+			return structuredClone(
+				((state as Record<string, unknown>).workspaces as Record<string, unknown>)[String(fields.applicationId)],
+			);
 		if (operation === "applications.update")
 			return structuredClone(state.applications.find((row) => row.id === fields.id));
 		if (operation === "career.saveFact" || operation === "career.updateFact")
@@ -668,6 +692,10 @@ export async function invokeFake(operation: string, input: unknown): Promise<unk
 	if (resource) return fakeBackend.read(resource, input as ResourceInput<typeof resource>);
 	state ??= makeState(selected ?? "storyboard");
 	const fields = input as Row;
+	if (operation === "resume.verifyPassword") {
+		const row = state.resumes.find((row) => row.slug === fields.slug);
+		return fields.username === "alex" && !!row && fixtureUnlock(row.id, String(fields.password));
+	}
 	if (operation === "career.saveSchedule") {
 		const current = state.schedules.find((row) => row.id === fields.id);
 		const saved = {
@@ -762,11 +790,29 @@ export async function invokeFake(operation: string, input: unknown): Promise<unk
 	return result;
 }
 
-export function recordFixtureMessages(threadId: string, message: unknown, text?: string, proposals?: unknown[]) {
+export function recordFixtureMessages(
+	threadId: string,
+	message: unknown,
+	text?: string,
+	proposals?: unknown[],
+	sources: Row[] = [],
+) {
 	state ??= makeState(selected ?? "storyboard");
 	const messages = (state.conversationMessages[threadId] ??= []);
 	if (message && typeof message === "object" && "id" in message && !messages.some((row) => row.id === message.id))
 		messages.push(structuredClone(message) as Row);
+	if (message && typeof message === "object" && "id" in message && "parts" in message && Array.isArray(message.parts)) {
+		const responseParts = message.parts;
+		const stored = messages.find((row) => row.id === message.id);
+		if (stored && Array.isArray(stored.parts))
+			stored.parts = stored.parts.map((part: Row) => {
+				const response = responseParts.find(
+					(candidate: Row) =>
+						candidate.toolCallId && candidate.toolCallId === part.toolCallId && candidate.state === "output-available",
+				);
+				return response ? { ...part, state: "output-available", output: response.output } : part;
+			});
+	}
 	const user = messages.findLast((row) => row.role === "user");
 	const id = `reply-${String(user?.id ?? threadId)}`;
 	const existing = messages.find((row) => row.id === id);
@@ -776,6 +822,7 @@ export function recordFixtureMessages(threadId: string, message: unknown, text?:
 			role: "assistant",
 			parts: [
 				{ type: "text", text },
+				...sources,
 				...(proposals
 					? [
 							{

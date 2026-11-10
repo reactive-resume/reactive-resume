@@ -104,6 +104,16 @@ export function useSharingActions() {
 export function useCareerActions() {
 	const actions = usePlatformActions();
 	return {
+		correctFact: (input: MutationInputs["career.correctFact"]) =>
+			actions.write("stories-and-facts", "career.correctFact", input),
+		proposeResumeFacts: (input: MutationInputs["career.proposeResumeFacts"]) =>
+			actions.run("career.proposeResumeFacts", input),
+		saveResumeFacts: (input: MutationInputs["career.saveResumeFacts"]) =>
+			actions.write("stories-and-facts", "career.saveResumeFacts", input),
+		suggestRoles: (input: MutationInputs["career.suggestTargetRoles"], signal?: AbortSignal) =>
+			actions.run("career.suggestTargetRoles", input, signal),
+		deleteOffer: (input: MutationInputs["career.deleteSavedItem"]) =>
+			actions.write("stories-and-facts", "career.deleteSavedItem", input),
 		saveFact: (input: MutationInputs["career.saveFact"]) => actions.run("career.saveFact", input),
 		updateFact: (input: MutationInputs["career.updateFact"]) =>
 			actions.write("stories-and-facts", "career.updateFact", input),
@@ -126,7 +136,11 @@ export function useAIProviderActions() {
 	return {
 		create: (input: MutationInputs["aiProviders.create"]) => actions.run("aiProviders.create", input),
 		update: (input: MutationInputs["aiProviders.update"]) => actions.run("aiProviders.update", input),
-		test: (input: MutationInputs["aiProviders.test"]) => actions.run("aiProviders.test", input),
+		async test(input: MutationInputs["aiProviders.test"]) {
+			const started = Date.now();
+			const result = await actions.run("aiProviders.test", input);
+			return { ...result, latencyMs: Date.now() - started };
+		},
 		setDefault: (input: MutationInputs["aiProviders.setDefault"]) => actions.run("aiProviders.setDefault", input),
 		delete: (input: MutationInputs["aiProviders.delete"]) => actions.run("aiProviders.delete", input),
 	};

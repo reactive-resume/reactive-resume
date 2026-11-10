@@ -20,6 +20,17 @@ export async function fakeReplyStream(
 		: (copy.find((text) => text.startsWith("Three edits")) ?? "");
 	const source = conversation.thread.sourceResumeId;
 	const proposals = !coach && source ? fixtureProposals((await fakeBackend.read("resume", { id: source })).data) : [];
+	const sources =
+		!coach && input?.context?.posting !== false
+			? [
+					{
+						type: "source-url",
+						sourceId: "lumen-posting",
+						url: "https://lumen.com/careers",
+						title: "Lumen · Senior product designer",
+					},
+				]
+			: [];
 	const replyId = `reply-${conversation.messages.findLast((message) => message.role === "user")?.id ?? threadId}`;
 	async function* stream() {
 		const chunks = [
@@ -31,6 +42,7 @@ export async function fakeReplyStream(
 				delta: text.slice(Math.floor((text.length * index) / 3), Math.floor((text.length * (index + 1)) / 3)),
 			})),
 			{ type: "text-end", id: "text" },
+			...sources,
 			...(proposals.length
 				? [{ type: "tool-output-available", toolCallId: `edits-${replyId}`, output: { edits: proposals } }]
 				: []),
@@ -42,7 +54,7 @@ export async function fakeReplyStream(
 			yield `data: ${JSON.stringify(chunk)}\n\n`;
 			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 		}
-		recordFixtureMessages(threadId, undefined, text, proposals);
+		recordFixtureMessages(threadId, undefined, text, proposals, sources);
 	}
 	return stream();
 }
