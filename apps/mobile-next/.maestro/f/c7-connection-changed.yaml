@@ -1,0 +1,9 @@
+# Requires a signed-in dedicated test account with an enabled, approved AI schedule.
+# Change its connection in Settings before returning; no production credentials in this flow.
+appId: me.rxresu.dev
+---
+- openLink: me.rxresu.dev://career/schedules/${SCHEDULE_ID}
+- tapOn: "Runs with .*"
+- tapOn: "${OTHER_CONNECTION_LABEL}"
+- assertVisible: "Paused: your AI connection changed"
+- assertVisible: "Review and resume"
