@@ -25,3 +25,14 @@ every iOS Text measures lines × line height + 1 device pixel (24.33, 20.33, 28.
 custom fonts or `lineHeight` quirks. Fix in `src/ui/Text.tsx`: `marginBottom: -1 / PixelRatio.get()` on iOS, so each
 Text contributes exactly its line box to layout. The design tag now also reports style overrides (font size, line
 height, family) instead of the variant's.
+
+## 2026-11-10 · Pass 3 · iOS scoreboard so far (debug build, per-agent captures)
+
+| Group | Screens           | Passing | Notes                                                                                                                |
+| ----- | ----------------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| A     | A1–A4, S1–S8      | 12 / 12 | 0.5–1.1% pixel difference, both themes                                                                               |
+| F     | C1–C7, P1, P2, X1 | 7 / 10  | C1 (root title offset), C2 (dump joins two text nodes), C7 (C1 stub behind the sheet is drawn higher than C1 itself) |
+
+`rootTitle` glyph offset on iOS reduced from +1 to +0.5 dp: the layout tool measures the translated box, and +1 put
+the title 1.5 dp from the dump's text box (57.5) on every root tab. At +0.5 the box measures 58.5 (within 1 dp) and
+the glyphs sit 1.0 / 0.5 dp high (within 1 dp).

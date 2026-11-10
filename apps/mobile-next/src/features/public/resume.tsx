@@ -92,16 +92,32 @@ export function PublicResumeScreen() {
 					onPress={() => void Share.share({ url }).catch(() => setFailed(true))}
 				/>
 			}
+			overlay={
+				// COMPONENTS.md §16: P1's zoom bar sits 122 dp above the bottom.
+				<View pointerEvents="box-none" style={{ position: "absolute", left: 0, right: 0, bottom: 122 }}>
+					<ZoomBar
+						compact
+						onFit={() => zoom.current?.fit()}
+						onZoomIn={() => zoom.current?.zoomIn()}
+						onZoomOut={() => zoom.current?.zoomOut()}
+						trailing={{
+							label: reading ? t`Show page` : t`Read as text`,
+							icon: "text-aa",
+							onPress: () => setReading(!reading),
+						}}
+					/>
+				</View>
+			}
 			footer={
 				resume?.showDownloadButtons ? (
-					<FooterBar bg="sunken">
+					<FooterBar>
 						<Button
 							label={t`Download PDF`}
 							icon="download-simple"
 							size="lg"
 							tone="primary"
-							block
-							disabled={!rendered || saving}
+							grow
+							disabled={(!rendered && !fake) || saving}
 							onPress={() => void save()}
 						/>
 					</FooterBar>
@@ -151,29 +167,6 @@ export function PublicResumeScreen() {
 					style={{ paddingHorizontal: 24 }}
 				>{t`Couldn't finish this. Try again.`}</Text>
 			) : null}
-			<View
-				style={{
-					paddingHorizontal: 24,
-					marginBottom: 20,
-					marginTop: 12,
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "center",
-					gap: 8,
-				}}
-			>
-				<ZoomBar
-					onFit={() => zoom.current?.fit()}
-					onZoomIn={() => zoom.current?.zoomIn()}
-					onZoomOut={() => zoom.current?.zoomOut()}
-				/>
-				<Button
-					label={reading ? t`Show page` : t`Read as text`}
-					icon="text-aa"
-					tone="ghost"
-					onPress={() => setReading(!reading)}
-				/>
-			</View>
 		</PushScreen>
 	);
 }

@@ -149,13 +149,14 @@ function ScheduleEditor({ schedule }: ScheduleEditorProps) {
 							: t`Follow-up reminder`
 				}
 				height={640}
+				closeIconSize={24}
 				keyboard
 				dirty={dirty}
 				footer={
-					<FooterBar bg="raised" divider={false}>
+					<FooterBar bg="raised" divider={false} inset={false}>
 						<Button
 							label={paused ? t`Review and resume` : t`Save`}
-							block
+							grow
 							size="lg"
 							tone="primary"
 							disabled={!connection || saving || discoveryLive || frequency === "weekdays"}
@@ -164,11 +165,13 @@ function ScheduleEditor({ schedule }: ScheduleEditorProps) {
 					</FooterBar>
 				}
 			>
-				<Text variant="body" color="ink3" style={{ paddingHorizontal: 24, paddingTop: 4 }}>
-					{schedule.kind === "discovery"
-						? t`Finds new roles that match your job search.`
-						: t`Prepare for your next interview.`}
-				</Text>
+				<View style={{ paddingHorizontal: 24 }}>
+					<Text variant="body" color="ink3">
+						{schedule.kind === "discovery"
+							? t`Finds new roles that match your job search.`
+							: t`Prepare for your next interview.`}
+					</Text>
+				</View>
 				<View style={{ marginHorizontal: 24, marginTop: 20 }}>
 					<Segmented
 						value={frequency}
@@ -209,13 +212,15 @@ function ScheduleEditor({ schedule }: ScheduleEditorProps) {
 						onPress={() => setChoosingProvider(true)}
 					/>
 				</View>
-				<Text variant="body" color="ink3" style={{ paddingHorizontal: 24, paddingTop: 8 }}>
-					{discoveryLive
-						? t`Discovery uses the web-search connection configured by your server administrator.`
-						: schedule.kind === "prepare"
-							? t`Each run sends your interview, application, resume and Knowledge to ${connection ? new URL(connection.host).host : "—"} with your key.`
-							: t`Each run sends your target roles, places and pay to ${connection ? new URL(connection.host).host : "—"} with your key.`}
-				</Text>
+				<View style={{ paddingHorizontal: 24, paddingTop: 8 }}>
+					<Text variant="ui" color="ink3">
+						{discoveryLive
+							? t`Discovery uses the web-search connection configured by your server administrator.`
+							: schedule.kind === "prepare"
+								? t`Each run sends your interview, application, resume and Knowledge to ${connection ? new URL(connection.host).host : "—"} with your key.`
+								: t`Each run sends your target roles, places and pay to ${connection ? new URL(connection.host).host : "—"} with your key.`}
+					</Text>
+				</View>
 				{paused ? (
 					<Text
 						variant="body"

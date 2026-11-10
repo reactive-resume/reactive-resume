@@ -17,6 +17,7 @@ import {
 	ReorderList,
 	type ReorderHandle,
 	SectionHeading,
+	Switch,
 	Text,
 	TextField,
 } from "@/ui";
@@ -42,6 +43,7 @@ function PreferencesContent() {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [saving, setSaving] = useState(false);
 	const profile = query.data;
+	const discovery = schedules.data?.find((s) => s.kind === "discovery");
 	const initialValue =
 		edit === "roles"
 			? (profile?.targetRoles.join(", ") ?? "")
@@ -179,6 +181,10 @@ function PreferencesContent() {
 								trailing="caret"
 								onPress={() => open("pay", profile.minBase.amount?.toString() ?? "")}
 							/>
+							{backend.kind === "fake" ? (
+								// The profile has no field for industries to avoid yet; the storyboard draws one.
+								<ListRow title={t`Avoid`} secondary={t`Gambling, defence`} trailing="caret" />
+							) : null}
 							<ListRow
 								title={t`Priorities`}
 								secondary={profile.priorities}
@@ -195,10 +201,8 @@ function PreferencesContent() {
 									? t`07:00 Berlin · Work OpenAI · may charge`
 									: t`Uses this server's web-search connection`
 							}
-							trailing="caret"
-							onPress={() =>
-								router.push(`/career/schedules/${schedules.data?.find((s) => s.kind === "discovery")?.id ?? "new"}`)
-							}
+							trailing={<Switch value={!!discovery?.enabled} interactive={false} />}
+							onPress={() => router.push(`/career/schedules/${discovery?.id ?? "new"}`)}
 						/>
 						<ListRow
 							title={t`Where to look`}

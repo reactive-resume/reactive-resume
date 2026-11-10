@@ -3,16 +3,17 @@ import { ScrollView, View } from "react-native";
 import { quickActions } from "./content";
 import { screenTexts } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
-import { Box, Button, Icon, Ring, Screen, StageDot, Text, Touch, WarnDot, radius } from "@/ui";
+import { Box, Button, Icon, Ring, Screen, StageDot, Text, Touch, WarnDot, radius, useTheme } from "@/ui";
 
 export function NotificationContentScreen() {
 	const router = useRouter();
 	const copy = screenTexts("X1-Notify");
+	const { colors, shadows } = useTheme();
 	if (!__DEV__ && !STORYBOARD) return null;
 	return (
 		<Screen>
 			<ScrollView contentContainerStyle={{ padding: 16, gap: 10 }}>
-				<Text variant="caption" color="ink3">
+				<Text variant="caption" weight={600} color="ink3">
 					{copy[0]}
 				</Text>
 				{[
@@ -65,9 +66,11 @@ export function NotificationContentScreen() {
 						) : null}
 					</Box>
 				))}
-				<Text variant="caption" color="ink3" style={{ paddingTop: 6 }}>
-					{copy[14]}
-				</Text>
+				<View style={{ paddingTop: 6 }}>
+					<Text variant="caption" weight={600} color="ink3">
+						{copy[14]}
+					</Text>
+				</View>
 				<Box component="TodayWidget" bg="raised" radius={radius.dialog} style={{ padding: 15, gap: 8 }}>
 					<Ring color="line" radius={radius.dialog} />
 					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -114,15 +117,31 @@ export function NotificationContentScreen() {
 							</Text>
 						</View>
 					</Box>
-					<Box component="QuickActions" bg="raised" radius={radius.lg} style={{ flex: 1 }}>
+					<Box
+						component="QuickActions"
+						bg="raised"
+						radius={radius.lg}
+						style={{ flex: 1, alignSelf: "flex-start", padding: 1, boxShadow: shadows.sh2 }}
+					>
 						<Ring color="line" radius={radius.lg} />
-						{quickActions().map((action) => (
+						{quickActions().map((action, index) => (
 							<Touch key={action.id} onPress={() => router.push(action.href)} accessibilityLabel={action.title}>
 								<View
-									style={{ minHeight: 44, paddingHorizontal: 12, flexDirection: "row", gap: 12, alignItems: "center" }}
+									style={{
+										height: 44,
+										paddingStart: 14,
+										paddingEnd: 12,
+										flexDirection: "row",
+										gap: 12,
+										alignItems: "center",
+										borderTopWidth: index ? 1 : 0,
+										borderTopColor: colors.line,
+									}}
 								>
 									<Icon name={action.icon} size={20} />
-									<Text variant="ui">{action.title}</Text>
+									<Text variant="buttonLg" numberOfLines={1} style={{ flex: 1 }}>
+										{action.title}
+									</Text>
 								</View>
 							</Touch>
 						))}
