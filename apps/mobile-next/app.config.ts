@@ -120,6 +120,8 @@ const config: ExpoConfig = {
 		],
 		["expo-notifications", { enableRemoteNotifications: false, enableBackgroundRemoteNotifications: false }],
 		"@react-native-community/datetimepicker",
+		"expo-background-task",
+		"expo-quick-actions",
 		["expo-build-properties", { android: { usesCleartextTraffic: storyboard } }],
 	],
 	extra: { variant },
