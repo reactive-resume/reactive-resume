@@ -89,6 +89,15 @@ export const runsBox =
 		return { x: outer.x, y: first.y, w: outer.w, h: drawn.reduce((sum, p) => sum + p.h, 0) };
 	};
 
+/**
+ * The layout box of a view drawn with a vertical translate: `Text` moves glyphs by a measured offset on Android, which
+ * leaves the line box where layout put it (the boards' textBox is that line box, lines × line height).
+ */
+export const untranslatedBox = (node: React.RefObject<Measurable | null>, translateY: number) => async () => {
+	const box = await measureBox(node.current);
+	return box && { ...box, y: box.y - translateY };
+};
+
 const registry = new Map<number, Entry>();
 let nextId = 1;
 
@@ -214,10 +223,6 @@ export async function collectDump(navState: NavState | undefined) {
 						: (cb: (x: number, y: number, w: number, h: number) => void) => node.measureInWindow(cb);
 					measure((x, y, w, h) => {
 						if (!w && !h) return resolve(null); // detached or not laid out
-						// Entirely outside the frame (other carousel pages, rows below the fold): not on screen, like the
-						// storyboard dumps' `offscreen` elements, which the comparison skips.
-						const frame = Dimensions.get("window");
-						if (x + w <= 0 || x >= frame.width || y + h <= 0 || y >= frame.height) return resolve(null);
 						const box = { x: r1(x), y: r1(y), w: r1(w), h: r1(h) };
 						const m = e.meta;
 						if (m.kind === "text") {
@@ -247,7 +252,24 @@ export async function collectDump(navState: NavState | undefined) {
 				}),
 		),
 	);
-	const elements = measured.filter((m): m is Record<string, unknown> => m !== null);
+	// Entirely outside the frame (other carousel pages, rows below the fold): not on screen, like the storyboard dumps'
+	// `offscreen` elements, which the comparison skips. A text or icon whose innermost component is partly on screen
+	// stays: the boards report a chip's label with the chip (C4's topic chips start above the fold, their labels below).
+	const frame = Dimensions.get("window");
+	type Placed = Record<string, unknown> & { x: number; y: number; w: number; h: number };
+	const all = measured.filter((m): m is Placed => m !== null);
+	const outside = (m: Placed) => m.x + m.w <= 0 || m.x >= frame.width || m.y + m.h <= 0 || m.y >= frame.height;
+	const holder = (m: Placed) =>
+		all
+			.filter(
+				(c) => c.component && c !== m && m.x >= c.x && m.y >= c.y && m.x + m.w <= c.x + c.w && m.y + m.h <= c.y + c.h,
+			)
+			.sort((a, b) => a.w * a.h - b.w * b.h)[0];
+	const elements = all.filter((m) => {
+		if (!outside(m)) return true;
+		const c = m.component ? undefined : holder(m);
+		return !!c && !outside(c);
+	});
 	// reading order, like the storyboard dumps
 	elements.sort((a, b) => (a.y as number) - (b.y as number) || (a.x as number) - (b.x as number));
 	return { elements, window: Dimensions.get("window"), platform: Platform.OS };

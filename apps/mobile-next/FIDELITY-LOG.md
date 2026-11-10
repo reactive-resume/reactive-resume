@@ -91,3 +91,40 @@ keeps kerning ("Today" 68.7 against 68.65 kerned, 71.43 unkerned).
 Backdrops: the boards draw a stub under S7, S8, C7, D2 and D3. `src/dev/storyboard/backdrop.tsx` (route
 `/storyboard-backdrop/<ID>`) draws exactly what each dump lists outside the sheet or dialog; the scenarios present the
 real sheet over it. S1's storyboard-only hidden body is gone.
+
+## 2026-11-10 · Pass 6 · Android after the design-system changes (Pixel_10_Pro emulator, API 37, 390 × 844 dp, debug storyboard build)
+
+Text metrics (`app/(dev)/metrics/[set].tsx` with `onLayout`, `scripts/text-metrics.py`): line boxes exact for every
+style (rootTitle 40, pageTitle 34, sheetTitle 28, heading 28, body 24 and 48, rowTitle 24, ui 20, keyLine 18). Glyphs
+after the Android offsets, dp (capture minus storyboard), top / bottom:
+
+| Style      | Sample                       | Top       | Bottom            |
+| ---------- | ---------------------------- | --------- | ----------------- |
+| rootTitle  | Today                        | −0.5      | 0                 |
+| pageTitle  | Product designer             | 0         | 0                 |
+| sheetTitle | Needs you, Sections          | 0, −0.5   | 0, −0.5           |
+| heading    | Technical interview at Lumen | 0         | 0                 |
+| body       | hero paragraph, status line  | +0.5      | 0                 |
+| rowTitle   | Basics, Summary, Experience  | +0.5      | +0.5              |
+| ui         | date, row secondary lines    | 0 to +0.5 | +0.5 (comma +1.0) |
+| keyLine    | Tuesday 10 Nov · 10:00       | 0         | −0.5              |
+
+Kerning: Android keeps Instrument Serif's kerning with or without `letterSpacing: 0` ("Cover letters" 91.67 both ways,
+boards 91.5; "Offer" 39.0 both ways, boards 38.5; "Today" at −0.17 tracking 69.0, boards 68.5). Dropping the attribute
+for iOS changes nothing on Android.
+
+Fixes:
+
+- Glyph shifts are ink corrections, but the layout tool measured the translated box, so on C6 the ui labels (0.7 dp high
+  on both platforms from the screen's own layout) went 1.2 dp out. `Text` now reports the line box at its layout
+  position when it applies a shift (`untranslatedBox` in the harness). Only Android has shifts.
+- `textDefaults` centres text vertically (`textAlignVertical`, Android only), so a Text stretched by its row drew its
+  lines in the middle: C2's list numbers sat beside the middle line. `Text` now aligns to the top as CSS does; text
+  inputs keep the centring from `textDefaults`.
+- C4's topic chips start above the fold and their labels sit below it: the harness dropped the labels as off-frame. An
+  off-frame text or icon now stays when its innermost component is partly on screen.
+
+Scoreboard (`fidelity.py --system-bars`): 30 of 30 (A1–A4, S1–S8, T1, T2, D1–D6, C1–C7, P1, P2, X1), 0 layout failures,
+0 EXTRA, 0.38–0.91 % differing pixels per theme except D3 dark 2.02 % (the backdrop's document thumbnails are brighter
+than the boards under the dark scrim, the same on iOS). Backdrops, sheet and dialog shadows, rings, the 47/34 insets, the
+dock, `TextBlock` on C2, P1's page and the text fields needed no Android change.
