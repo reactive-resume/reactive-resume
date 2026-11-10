@@ -51,6 +51,7 @@ export function Box({
 	component,
 	radius,
 	bg,
+	hidden = false,
 	style,
 	children,
 	...rest
@@ -58,18 +59,26 @@ export function Box({
 	component: string;
 	radius?: number;
 	bg?: ColorToken;
+	/**
+	 * Left out of the layout dump, as the boards leave it out: it draws nothing of its own (a borderless last row), or
+	 * the boards draw it without a component name (A3's code boxes are plain spans).
+	 */
+	hidden?: boolean;
 	style?: StyleProp<ViewStyle>;
 	children?: ReactNode;
 	pointerEvents?: "none" | "auto" | "box-none" | "box-only";
 	testID?: string;
 }) {
 	const { colors } = useTheme();
-	const ref = useDesignTag({
-		kind: "component",
-		component,
-		...(radius != null ? { radius } : {}),
-		...(bg ? { bg } : {}),
-	});
+	const ref = useDesignTag(
+		{
+			kind: "component",
+			component,
+			...(radius != null ? { radius } : {}),
+			...(bg ? { bg } : {}),
+		},
+		{ hidden },
+	);
 	return (
 		<View
 			ref={ref}

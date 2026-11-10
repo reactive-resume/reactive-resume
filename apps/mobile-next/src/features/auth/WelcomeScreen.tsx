@@ -5,10 +5,9 @@ import { useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { InlineLink } from "./InlineLink";
 import { hostOf, useAuthOptions } from "./options";
 import { continueAsGuest, useSession } from "@/auth/session";
-import { Button, motion, Screen, Text, Touch, hitSlopFor, useFadeUp } from "@/ui";
+import { Button, InlineLink, Logo, motion, Screen, Text, Touch, hitSlopFor, useFadeUp } from "@/ui";
 
 export function WelcomeScreen() {
 	const router = useRouter();
@@ -39,8 +38,7 @@ export function WelcomeScreen() {
 				}}
 			>
 				<Animated.View style={[{ flexDirection: "row", alignItems: "center", gap: 10, paddingTop: 24 }, logo]}>
-					{/* The logo mark (28 × 28) is a lead request: no Logo component in src/ui yet. */}
-					<View style={{ width: 28, height: 28 }} />
+					<Logo size={28} />
 					<Text variant="topBarTitle" weight={600} style={{ fontSize: 16 }}>
 						Reactive Resume
 					</Text>

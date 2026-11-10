@@ -153,7 +153,7 @@ export function ProviderScreen() {
 							setApiKey(next);
 							setResult(null);
 						}}
-						placeholder={existing ? `sk-•••••••••••••${existing.apiKeyPreview.slice(-4)}` : undefined}
+						savedValue={existing ? `sk-•••••••••••••${existing.apiKeyPreview.slice(-4)}` : undefined}
 						secureTextEntry={!!apiKey}
 						autoCapitalize="none"
 						autoCorrect={false}

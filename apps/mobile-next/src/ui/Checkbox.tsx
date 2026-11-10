@@ -64,7 +64,8 @@ export function Checkbox({
 			]}
 		>
 			<Animated.View style={[styles.fill, { backgroundColor: colors.accent }, fill]}>
-				<Icon name="check" size={14} color="onAccent" />
+				{/* S7, the only Checkbox in the dumps, lists no icon of its own. */}
+				<Icon name="check" size={14} color="onAccent" tag={false} />
 			</Animated.View>
 		</View>
 	);

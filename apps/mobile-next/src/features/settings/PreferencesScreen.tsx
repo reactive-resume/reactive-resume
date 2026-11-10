@@ -5,6 +5,7 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import * as Notifications from "expo-notifications";
 import { Linking, View } from "react-native";
+import { useStoryboardView } from "./storyboard-view";
 import { type Settings, useSettings } from "@/data";
 import { timeZone } from "@/data/clock";
 import {
@@ -43,6 +44,7 @@ export function languageName(locale: string): string {
 export function PreferencesScreen() {
 	const { i18n } = useLingui();
 	const settings = useSettings();
+	const view = useStoryboardView();
 	const theme = useThemeStore((s) => s.preference);
 	const setPreference = useThemeStore((s) => s.setPreference);
 	const data: Settings | undefined = settings.data;
@@ -92,7 +94,7 @@ export function PreferencesScreen() {
 			</View>
 			<ListRow
 				title={t`Language`}
-				value={languageName(i18n.locale)}
+				value={view?.language ?? languageName(i18n.locale)}
 				trailing="caret"
 				accessibilityHint={t`Opens this app's settings, where the phone sets its language`}
 				onPress={() => void Linking.openSettings()}
@@ -102,7 +104,13 @@ export function PreferencesScreen() {
 				value={automatic ? t`${zoneCity(timeZone())} · automatic` : zoneCity(data?.lastTimeZone ?? timeZone())}
 				trailing="caret"
 			/>
-			<ListRow title={t`Haptics`} trailing={<Switch value={haptics} interactive={false} />} last {...hapticsRow} />
+			<ListRow
+				title={t`Haptics`}
+				trailing={<Switch value={haptics} interactive={false} />}
+				last
+				boxHidden
+				{...hapticsRow}
+			/>
 			<SectionHeading title={t`Notify me about`} />
 			{channels.map((channel, i) => (
 				<ChannelRow
@@ -129,5 +137,13 @@ function ChannelRow({
 	last: boolean;
 }) {
 	const row = useSwitchRow(value, onChange);
-	return <ListRow title={label} trailing={<Switch value={value} interactive={false} />} last={last} {...row} />;
+	return (
+		<ListRow
+			title={label}
+			trailing={<Switch value={value} interactive={false} />}
+			last={last}
+			boxHidden={last}
+			{...row}
+		/>
+	);
 }

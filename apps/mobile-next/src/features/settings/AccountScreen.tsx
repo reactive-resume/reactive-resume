@@ -8,6 +8,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
 import { useAccountSecurity } from "./security";
+import { useStoryboardView } from "./storyboard-view";
 import { useSession } from "@/auth/session";
 import { useAccount, useDataBackend } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
@@ -20,6 +21,7 @@ export function AccountScreen() {
 	const account = useAccount();
 	const fake = useDataBackend().backend.kind === "fake";
 	const security = useAccountSecurity();
+	const view = useStoryboardView();
 	const options = useAuthOptions();
 	const params = useLocalSearchParams<{ delete?: string }>();
 	const [deleting, setDeleting] = useState(STORYBOARD && !!params.delete);
@@ -58,7 +60,7 @@ export function AccountScreen() {
 				)}
 				<ListRow
 					title={t`Username`}
-					secondary={data ? t`${data.username} · used in your public links` : undefined}
+					secondary={data ? t`${view?.username ?? data.username} · used in your public links` : undefined}
 					trailing="caret"
 					onPress={web("/dashboard/settings/account")}
 				/>
@@ -85,6 +87,7 @@ export function AccountScreen() {
 					secondary={security.connectedApps}
 					trailing="caret"
 					last
+					boxHidden
 					onPress={web("/dashboard/settings/integrations")}
 				/>
 			</View>
@@ -101,6 +104,7 @@ export function AccountScreen() {
 				title={t`Delete account`}
 				danger
 				last
+				boxHidden
 				onPress={fake ? () => setDeleting(true) : web("/dashboard/settings/account")}
 			/>
 		</PushScreen>
