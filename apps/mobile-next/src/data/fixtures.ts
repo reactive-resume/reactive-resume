@@ -731,7 +731,10 @@ export async function invokeFake(operation: string, input: unknown): Promise<unk
 		const row = state.resumes.find((row) => row.id === fields.id);
 		if (!row) throw new Error("Fixture resume not found.");
 		if (row.isLocked) throw new Error("Unlock this document before editing.");
-		if (fields.expectedUpdatedAt && new Date(String(fields.expectedUpdatedAt)).getTime() !== row.updatedAt.getTime())
+		if (
+			fields.expectedUpdatedAt &&
+			new Date(fields.expectedUpdatedAt as Date | string).getTime() !== row.updatedAt.getTime()
+		)
 			throw Object.assign(new Error("Resume changed."), { code: "RESUME_VERSION_CONFLICT" });
 		Object.assign(row, fields, { updatedAt: new Date(Math.max(now().getTime(), row.updatedAt.getTime() + 1)) });
 		const summary = state.documents.find((item) => item.id === row.id);

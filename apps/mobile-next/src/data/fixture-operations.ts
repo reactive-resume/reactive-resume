@@ -265,7 +265,7 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 	}
 	if (operation === "career.saveResumeFacts") {
 		const resume = find(state, "resumes", input.resumeId);
-		if (new Date(String(input.updatedAt)).getTime() !== new Date(resume.updatedAt as Date).getTime())
+		if (new Date(input.updatedAt as Date | string).getTime() !== new Date(resume.updatedAt as Date).getTime())
 			throw Object.assign(new Error("Resume changed."), { code: "CONFLICT" });
 		const quotes = new Set(
 			resumeFactProposals(resume.data as typeof defaultResumeData).proposals.map((row) => row.quote),

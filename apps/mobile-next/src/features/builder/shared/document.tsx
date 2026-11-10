@@ -58,12 +58,15 @@ function useLead(key: string) {
  * removes the case.
  */
 export function BuilderDocument({ id }: { id: string }) {
-	return useLead(`resume:${id}`) ? <Owner id={id} /> : null;
+	const lead = useLead(`resume:${id}`);
+	// A route whose params haven't arrived yet has no id; opening "" would close the draft every screen shares.
+	return lead && id ? <Owner id={id} /> : null;
 }
 
 /** The open letter's draft, once per letter visit: the same rules as `BuilderDocument`. */
 export function LetterDocument({ id }: { id: string }) {
-	return useLead(`letter:${id}`) ? <LetterOwner id={id} /> : null;
+	const lead = useLead(`letter:${id}`);
+	return lead && id ? <LetterOwner id={id} /> : null;
 }
 
 /** The route's document, section and entry ids. */
