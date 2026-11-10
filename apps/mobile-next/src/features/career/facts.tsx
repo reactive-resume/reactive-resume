@@ -58,7 +58,33 @@ function ScopedFactsScreen() {
 		setHeld(hold.values());
 		setEditing(null);
 		haptic("light");
-		showToast({ message: t`Fact forgotten`, action: { label: t`Undo`, onPress: () => restore(fact.id) } });
+		showToast({
+			message: t`Fact forgotten`,
+			action: { label: t`Undo`, onPress: () => restore(fact.id) },
+			// The toast going without Undo finalises the forget, unless Forgotten facts is open: then closing it does.
+			onDismiss: () => {
+				if (reviewing.current) finalise.current = true;
+				else finaliseForgets();
+			},
+		});
+	};
+	const finaliseForgets = () => {
+		finalise.current = false;
+		void hold
+			.flush()
+			.then(() => visible.current && setHeld(hold.values()))
+			.catch(() => showToast({ message: t`Couldn't forget the fact. Try again.` }));
+	};
+	const reviewing = useRef(false);
+	const finalise = useRef(false);
+	const openForgotten = () => {
+		reviewing.current = true;
+		setShowForgotten(true);
+	};
+	const closeForgotten = () => {
+		reviewing.current = false;
+		setShowForgotten(false);
+		if (finalise.current) finaliseForgets();
 	};
 	const [editing, setEditing] = useState<string | null>(null);
 	const [text, setText] = useState("");
@@ -139,13 +165,13 @@ function ScopedFactsScreen() {
 					})}
 					{held.length || (!fake && forgotten.data?.length) ? (
 						<View style={{ padding: 24 }}>
-							<Button label={t`Show forgotten`} onPress={() => setShowForgotten(true)} />
+							<Button label={t`Show forgotten`} onPress={openForgotten} />
 						</View>
 					) : null}
 				</ResourceState>
 			</PushScreen>
 			{showForgotten ? (
-				<BottomSheet title={t`Forgotten facts`} height={480} onClose={() => setShowForgotten(false)}>
+				<BottomSheet title={t`Forgotten facts`} height={480} onClose={closeForgotten}>
 					{held.map((fact) => (
 						<ListRow
 							key={fact.id}
@@ -195,7 +221,7 @@ function ScopedFactsScreen() {
 									label={t`Show forgotten`}
 									onPress={() => {
 										setEditing(null);
-										setShowForgotten(true);
+										openForgotten();
 									}}
 								/>
 							</>

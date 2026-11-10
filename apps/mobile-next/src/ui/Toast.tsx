@@ -27,6 +27,8 @@ import { useDesignTag } from "@/dev/storyboard/harness";
 export type ToastSpec = {
 	message: string;
 	action?: { label: string; onPress: () => void };
+	/** Runs once when the toast goes without its action being used: it ran out, was dismissed or was replaced. */
+	onDismiss?: () => void;
 	/** Overrides toastLifetime() (motion lab only). */
 	lifetime?: number;
 	/**
@@ -51,7 +53,7 @@ type ToastState = {
 	held: boolean;
 	offsets: { id: number; bottom: number }[];
 	show: (t: ToastSpec) => number;
-	dismiss: (id?: number) => void;
+	dismiss: (id?: number, acted?: boolean) => void;
 };
 
 let nextId = 1;
@@ -61,12 +63,16 @@ const useToasts = create<ToastState>((set, get) => ({
 	offsets: [],
 	show: (t) => {
 		const id = nextId++;
+		const replaced = get().current;
 		set({ current: { ...t, id }, held: false });
+		replaced?.onDismiss?.();
 		return id;
 	},
-	dismiss: (id) => {
+	dismiss: (id, acted = false) => {
 		const c = get().current;
-		if (c && (id === undefined || c.id === id)) set({ current: null });
+		if (!c || (id !== undefined && c.id !== id)) return;
+		set({ current: null });
+		if (!acted) c.onDismiss?.();
 	},
 }));
 
@@ -222,7 +228,7 @@ function ToastView({
 						accessibilityLabel={toast.action.label}
 						onPress={() => {
 							toast.action?.onPress();
-							dismissToast(toast.id);
+							useToasts.getState().dismiss(toast.id, true);
 						}}
 					>
 						<Text variant="ui" color="bg" weight={600}>
