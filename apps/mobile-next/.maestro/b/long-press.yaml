@@ -1,0 +1,11 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- assertVisible: Product designer
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- longPressOn:
+    id: document-resume-lead
+- assertVisible: Move to Trash
+- assertVisible:
+    id: haptic-log
+    text: light

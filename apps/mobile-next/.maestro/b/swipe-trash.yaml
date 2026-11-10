@@ -1,0 +1,16 @@
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- assertVisible: Product designer
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- swipe:
+    start: "85%,22%"
+    end: "25%,22%"
+    duration: 400
+- assertVisible: “Product designer” moved to Trash
+- assertVisible: Undo
+- assertVisible:
+    id: haptic-log
+    text: light
+- tapOn: Undo
+- assertVisible: Product designer
