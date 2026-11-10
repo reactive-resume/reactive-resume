@@ -1,0 +1,377 @@
+// Text fields and forms (COMPONENTS.md §10), the composer and chat pieces (§13), the formatting toolbar (§6).
+import type { ReactNode } from "react";
+import type { TextInputProps } from "react-native";
+import { useState } from "react";
+import { TextInput, View } from "react-native";
+import { Box, Ring, Touch } from "./base";
+import { IconButton } from "./buttons";
+import { Icon, type IconName } from "./Icon";
+import { hitSlopFor } from "./motion";
+import { Text } from "./Text";
+import { useTheme } from "./theme";
+import { fonts, layout, radius, type as typeScale } from "./tokens";
+import { STORYBOARD } from "@/dev/storyboard/harness";
+
+/** A 24 dp form column: 20 dp between fields. */
+export function Form({ children }: { children: ReactNode }) {
+	return <View style={{ paddingTop: 24, paddingHorizontal: layout.screenMargin, gap: 20 }}>{children}</View>;
+}
+
+/** Two fields side by side, 12 dp apart; they stack at large text (Reach board). */
+export function FieldRow({ children }: { children: ReactNode }) {
+	return <View style={{ flexDirection: "row", gap: 12 }}>{children}</View>;
+}
+
+export type TextFieldProps = Omit<TextInputProps, "style"> & {
+	label?: string | undefined;
+	error?: string | undefined;
+	leadingIcon?: IconName | undefined;
+	trailingIcon?: IconName | undefined;
+	onTrailingPress?: (() => void) | undefined;
+	trailingLabel?: string | undefined;
+	/** A mono suffix inside the field (".pdf"). */
+	suffix?: string | undefined;
+	/** Picker fields: the field is a button showing its value (dates, zones, choices). */
+	onPress?: (() => void) | undefined;
+	/** Draw the focus rings without focus (storyboard captures of a focused field). */
+	forceFocus?: boolean | undefined;
+	/** In a FieldRow: share the width. */
+	grow?: boolean | undefined;
+	/** Taller multi-line field. */
+	minHeight?: number | undefined;
+};
+
+export function TextField({
+	label,
+	error,
+	leadingIcon,
+	trailingIcon,
+	onTrailingPress,
+	trailingLabel,
+	suffix,
+	onPress,
+	forceFocus = false,
+	grow = false,
+	minHeight,
+	value,
+	placeholder,
+	onFocus,
+	onBlur,
+	multiline,
+	...input
+}: TextFieldProps) {
+	const { colors } = useTheme();
+	const [focused, setFocused] = useState(false);
+	const active = focused || forceFocus;
+	const ring = error ? "danger" : active ? "accent" : "controlBorder";
+	const outer = error ? colors.dangerSoft : active ? colors.accentSoft : null;
+	const field = (
+		<Box
+			component="TextField"
+			bg="raised"
+			radius={radius.md}
+			style={[
+				{
+					minHeight: minHeight ?? 44,
+					paddingHorizontal: 12,
+					flexDirection: "row",
+					alignItems: multiline ? "flex-start" : "center",
+					gap: 8,
+				},
+				outer ? { boxShadow: `0px 0px 0px 3px ${outer}` } : null,
+			]}
+		>
+			<Ring color={ring} radius={radius.md} />
+			{leadingIcon ? <Icon name={leadingIcon} size={20} color="ink3" /> : null}
+			{onPress ? (
+				<Text variant="input" color={value ? "ink" : "ink3"} numberOfLines={1} style={{ flex: 1 }}>
+					{value || placeholder || ""}
+				</Text>
+			) : (
+				<TextInput
+					{...input}
+					value={value}
+					placeholder={placeholder}
+					placeholderTextColor={colors.ink3}
+					multiline={multiline}
+					caretHidden={STORYBOARD}
+					selectionColor={colors.accent}
+					maxFontSizeMultiplier={2}
+					accessibilityLabel={label}
+					onFocus={(e) => {
+						setFocused(true);
+						onFocus?.(e);
+					}}
+					onBlur={(e) => {
+						setFocused(false);
+						onBlur?.(e);
+					}}
+					style={[
+						typeScale.input,
+						{ flex: 1, minWidth: 0, padding: 0, color: colors.ink, includeFontPadding: false },
+						multiline ? { paddingVertical: 11, textAlignVertical: "top" } : null,
+					]}
+				/>
+			)}
+			{suffix ? (
+				<Text variant="mono" color="ink3">
+					{suffix}
+				</Text>
+			) : null}
+			{trailingIcon ? (
+				onTrailingPress ? (
+					<Touch onPress={onTrailingPress} accessibilityLabel={trailingLabel ?? ""} hitSlop={hitSlopFor(20, 20)}>
+						<Icon name={trailingIcon} size={20} color="ink3" />
+					</Touch>
+				) : (
+					<Icon name={trailingIcon} size={20} color="ink3" />
+				)
+			) : null}
+		</Box>
+	);
+	return (
+		<View style={[{ gap: 8 }, grow ? { flex: 1, minWidth: 0 } : null]}>
+			{label ? (
+				<Text variant="formLabel" color="ink2">
+					{label}
+				</Text>
+			) : null}
+			{onPress ? (
+				<Touch onPress={onPress} feedback="none" accessibilityLabel={label ?? ""} accessibilityHint={value ?? ""}>
+					{field}
+				</Touch>
+			) : (
+				field
+			)}
+			{error ? (
+				<View accessibilityRole="alert" style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+					<Icon name="warning-circle" size={14} color="dangerText" />
+					<Text variant="caption" weight={400} color="dangerText" style={{ flex: 1 }}>
+						{error}
+					</Text>
+				</View>
+			) : null}
+		</View>
+	);
+}
+
+/** A3's six code boxes: 56 dp tall, mono 26/30, 8 dp apart; the focused box carries the focus rings. */
+export function CodeBoxes({
+	value,
+	length = 6,
+	focusedIndex,
+	error = false,
+}: {
+	value: string;
+	length?: number | undefined;
+	focusedIndex?: number | undefined;
+	error?: boolean | undefined;
+}) {
+	const { colors } = useTheme();
+	return (
+		<View
+			style={{ flexDirection: "row", gap: 8 }}
+			accessibilityLabel="Verification code"
+			accessibilityValue={{ text: value }}
+		>
+			{Array.from({ length }, (_, i) => {
+				const focus = i === focusedIndex;
+				return (
+					<Box
+						key={i}
+						component="CodeBox"
+						bg="raised"
+						radius={radius.md}
+						style={[
+							{ flex: 1, height: 56, alignItems: "center", justifyContent: "center" },
+							focus || error ? { boxShadow: `0px 0px 0px 3px ${error ? colors.dangerSoft : colors.accentSoft}` } : null,
+						]}
+					>
+						<Ring color={error ? "danger" : focus ? "accent" : "controlBorder"} radius={radius.md} />
+						<Text
+							variant="mono"
+							style={{ fontFamily: fonts.mono, fontSize: 26, lineHeight: 30 }}
+							maxFontSizeMultiplier={1.3}
+						>
+							{value[i] ?? ""}
+						</Text>
+					</Box>
+				);
+			})}
+		</View>
+	);
+}
+
+/** The 40 × 40 send button (48 hit). `stop` while a reply streams. */
+export function SendButton({
+	onPress,
+	disabled = false,
+	stop = false,
+}: {
+	onPress?: (() => void) | undefined;
+	disabled?: boolean | undefined;
+	stop?: boolean | undefined;
+}) {
+	return (
+		<Touch
+			onPress={onPress}
+			disabled={disabled}
+			accessibilityLabel={stop ? "Stop" : "Send"}
+			hitSlop={hitSlopFor(40, 40)}
+			style={disabled ? { opacity: 0.45 } : null}
+			testID="composer-send"
+		>
+			<Box
+				component="SendButton"
+				bg="accent"
+				radius={radius.md}
+				style={{ width: 40, height: 40, alignItems: "center", justifyContent: "center" }}
+			>
+				<Icon name={stop ? "stop" : "arrow-up"} size={20} color="onAccent" fill={stop} />
+			</Box>
+		</Touch>
+	);
+}
+
+/**
+ * The AI composer: the input, then context chips, a spacer and the send button. A status line under it appears only
+ * while sending is blocked (BUILD.md §3.6).
+ */
+export function Composer({
+	value,
+	onChangeText,
+	placeholder,
+	chips,
+	onSend,
+	onStop,
+	sending = false,
+	blocked,
+	autoFocus,
+}: {
+	value: string;
+	onChangeText?: (text: string) => void;
+	placeholder: string;
+	chips?: ReactNode | undefined;
+	onSend?: (() => void) | undefined;
+	onStop?: (() => void) | undefined;
+	sending?: boolean | undefined;
+	blocked?: string | undefined;
+	autoFocus?: boolean | undefined;
+}) {
+	const { colors } = useTheme();
+	return (
+		<View style={{ paddingTop: 12, paddingBottom: 8, paddingHorizontal: layout.screenMargin, gap: 8 }}>
+			<Box
+				component="Composer"
+				bg="raised"
+				radius={radius.xl}
+				style={{ paddingTop: 10, paddingEnd: 8, paddingBottom: 8, paddingStart: 12, gap: 8 }}
+			>
+				<Ring color="controlBorder" radius={radius.xl} />
+				<TextInput
+					value={value}
+					onChangeText={onChangeText}
+					placeholder={placeholder}
+					placeholderTextColor={colors.ink3}
+					multiline
+					autoFocus={!!autoFocus}
+					caretHidden={STORYBOARD}
+					selectionColor={colors.accent}
+					accessibilityLabel={placeholder}
+					style={[typeScale.body, { padding: 0, color: colors.ink, maxHeight: 120, includeFontPadding: false }]}
+				/>
+				<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+					<View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6 }}>{chips}</View>
+					<SendButton
+						onPress={sending ? onStop : onSend}
+						stop={sending}
+						disabled={!sending && (!value.trim() || !!blocked)}
+					/>
+				</View>
+			</Box>
+			{blocked ? (
+				<View accessibilityRole="alert" style={{ flexDirection: "row", gap: 6 }}>
+					<Icon name="warning-circle" size={14} color="ink3" style={{ marginTop: 1 }} />
+					<Text variant="caption" weight={400} color="ink3" style={{ flex: 1 }}>
+						{blocked}
+					</Text>
+				</View>
+			) : null}
+		</View>
+	);
+}
+
+/** The user's chat bubble: sunken, small corner at the bottom end, at most 84% wide. */
+export function Bubble({ children }: { children: string }) {
+	return (
+		<Box
+			component="Bubble"
+			bg="sunken"
+			style={{
+				alignSelf: "flex-end",
+				maxWidth: "84%",
+				paddingVertical: 10,
+				paddingHorizontal: 12,
+				borderTopStartRadius: radius.xl,
+				borderTopEndRadius: radius.xl,
+				borderBottomEndRadius: radius.xs,
+				borderBottomStartRadius: radius.xl,
+			}}
+		>
+			<Text variant="bubble">{children}</Text>
+		</Box>
+	);
+}
+
+/** The connection chip in B16 and C2's top bar: names the connection that receives the message. */
+export function ConnectionChip({ label, onPress }: { label: string; onPress?: (() => void) | undefined }) {
+	return (
+		<Touch
+			onPress={onPress}
+			accessibilityLabel={`Connection: ${label}`}
+			accessibilityHint="Change the connection"
+			hitSlop={hitSlopFor(48, 32)}
+		>
+			<Box
+				component="ConnectionChip"
+				bg="sunken"
+				radius={radius.sm}
+				style={{ height: 32, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", gap: 6 }}
+			>
+				<Icon name="sparkle" size={16} color="accentText" />
+				<Text variant="chip" color="ink2" numberOfLines={1}>
+					{label}
+				</Text>
+				<Icon name="caret-down" size={14} color="ink2" />
+			</Box>
+		</Touch>
+	);
+}
+
+/** The formatting toolbar above the keyboard (B4, L1): 52 dp, 44 dp icon buttons on a 52 dp pitch. */
+export function FormattingToolbar({
+	items,
+}: {
+	items: { icon: IconName; label: string; onPress?: (() => void) | undefined; on?: boolean | undefined }[];
+}) {
+	const { colors } = useTheme();
+	return (
+		<View
+			accessibilityRole="toolbar"
+			style={{
+				height: 52,
+				paddingHorizontal: 12,
+				flexDirection: "row",
+				alignItems: "center",
+				gap: 8,
+				backgroundColor: colors.raised,
+				borderTopWidth: 1,
+				borderTopColor: colors.line,
+			}}
+		>
+			{items.map((item) => (
+				<IconButton key={item.label} icon={item.icon} label={item.label} onPress={item.onPress} on={!!item.on} />
+			))}
+		</View>
+	);
+}

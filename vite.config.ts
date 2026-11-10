@@ -98,7 +98,7 @@ export default defineConfig({
 		},
 		overrides: [
 			{
-				files: ["apps/mobile/**"],
+				files: ["apps/mobile/**", "apps/mobile-next/**"],
 				rules: {
 					"no-restricted-imports": [
 						"error",

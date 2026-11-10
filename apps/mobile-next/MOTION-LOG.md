@@ -1,0 +1,34 @@
+# Motion log
+
+Every motion-lab probe run (design/MOTION.md §10.4). iOS: iPhone 14 simulator, storyboard debug build
+(`me.rxresu.storyboard`) on Metro :8081, recorded with `tools/rn_capture.mjs record`, measured with
+`tools/motion_probe.py suite`. The simulator writes variable-frame-rate video (a frame only when the screen changes).
+
+| Date       | Platform | Pass   | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ---------- | -------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-11-10 | iOS      | 0 / 26 | Cold launch per lab lands on the dev-client launcher ("Searching for development servers"): the deep link never reached the app. Fix: connect the dev client to Metro once, then record with the tool's `--warm` flag.                                                                                                                                                                                                                                                                                                               |
+| 2026-11-10 | iOS      | 2 / 26 | Warm. push-new and sheet-rise pass. `Dock` asked for `<icon>-fill` names after the icon set was regenerated with fill as a weight: render error from the tab lab on. Fixed (`<Icon name fill />`). sheet-close/release mounted the sheet before timeScale was zeroed (child effects run first).                                                                                                                                                                                                                                      |
+| 2026-11-10 | iOS      | 0 / 26 | Lab frame reused across deep links (same `[lab]` screen, new params) kept the first run's id and blanked every later lab. Fixed with `key={lab}`.                                                                                                                                                                                                                                                                                                                                                                                    |
+| 2026-11-10 | iOS      | 7 / 26 | push-new, sheet-rise, segment, switch, toast-fade, dialog, row-close-gap pass. Diagnosis of the rest: the probes count a marker appearing (0 → full) or the previous lab's markers leaving as the first motion segment; the previous lab blanked 200 ms into the next recording; Metro Fast Refresh banners (other agents editing the checkout) read as cyan. Fixes: arrive with a 0 ms open (`withInstantOpen`), blank after 4.9 s and pre-draw the next lab's still scene, sheets open from their first frame when timeScale is 0. |
+| 2026-11-10 | iOS      | 6 / 26 | After the pre-draw fix: page-hero and tab-in now pass; tab-in starts 43 ms after tab-out ends. Run-to-run variation (segment, push-new, row-close-gap flip) shows measurement noise.                                                                                                                                                                                                                                                                                                                                                 |
+| 2026-11-10 | iOS      | 8 / 26 | Pre-open `motion-lab/press` before recording so the first lab starts still. Pass: sheet-rise, tab-in, tab-in-rise, switch, toast-fade, dialog, row-close-gap, page-hero. Open diagnoses below.                                                                                                                                                                                                                                                                                                                                       |
+| 2026-11-10 | iOS      | 1 / 26 | Verification run after the lint pass (`sv.set()`, presence state adjusted during render). Not a measurement: from the `segment` lab on the app is on a red box, `Invalid RegExp: Invalid flags` in `locale-replacements.js` (reached from `http.ts → file.ts → slug.ts`, other agents' code) after a Fast Refresh. Re-run once that is fixed; the 8 / 26 run above is the latest valid scoreboard.                                                                                                                                   |
+
+## Open after the last valid iOS run (2026-11-10, 8 / 26)
+
+- **Measurement noise, not components.** The simulator writes variable-frame-rate video (frames only when the screen
+  changes) and Metro Fast Refresh banners appear whenever another agent saves a file; the blue banner reads as cyan
+  and touches the frame edge, so cyan position probes (push-covered, segment, pop) intermittently report "marker not
+  visible". Run the suite again on a quiet checkout before tuning anything.
+- **Fade plus travel probes measure short** (toast-rise 153 / 320 ms, menu 117–164 / 200 ms): the marker is drawn
+  only once its opacity passes the tool's threshold, so the first part of the travel is invisible. toast-fade, on the
+  same shared value, measures 316–343 ms.
+- **row-fold measures ~80 / 200 ms**: the tool's soft area multiplies height and opacity, and `foldOut` animates both
+  (MOTION.md §7 "fold height to 0 with a fade"); row-close-gap on the same timing passes. Question for the lead:
+  keep the fade on the row, or fade only its content.
+- **reorder-neighbour ~93 ms**: the lab moves the lifted row one slot at once, so the lifted (opaque, magenta) row
+  covers the neighbour's marker at the start of its slide.
+- **press, reorder-lift (d1 scale, 3 % change)**, sheet-scrim and title-collapse: a few frames of a small change;
+  MOTION.md §10.4 says d1 probes are coarse and the unit tests carry their values.
+- **sheet-release** (481 ms, no fit): not diagnosed yet; check the chart on the next quiet run.
+- **toast-fuse** (595 / 1500 ms): the fuse appears with the toast's fade-in in the same segment.

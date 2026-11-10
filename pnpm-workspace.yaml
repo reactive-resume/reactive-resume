@@ -60,6 +60,8 @@ catalog:
   "@reactive-resume/utils": workspace:*
   "@formatjs/intl-relativetimeformat": ^13.0.1
 allowBuilds:
+  # jest-expo (apps/mobile-next) pulls it through jest-haste-map; its prebuilt binary needs no build script.
+  "@parcel/watcher": false
   esbuild: true
   lefthook: true
   sharp: true

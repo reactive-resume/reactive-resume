@@ -1,0 +1,11 @@
+# MOTION.md §10.3 reorder contract on the design-system ReorderList: lift, one slot down, drop
+# → "medium selection rigid" (B8's two-slot row, "medium selection selection rigid", comes with the screen).
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- openLink: me.rxresu.storyboard://motion-lab/reorder?run=1
+- extendedWaitUntil:
+    visible:
+      id: haptic-log
+      text: medium selection rigid
+    timeout: 5000

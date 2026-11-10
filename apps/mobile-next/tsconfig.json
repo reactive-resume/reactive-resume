@@ -1,0 +1,16 @@
+{
+	"extends": "@reactive-resume/config/tsconfig.base.json",
+	"include": ["**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules", "ios", "android", "dist", "build"],
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"lib": ["DOM", "ESNext"],
+		"module": "preserve",
+		"customConditions": ["react-native"],
+		"types": ["node", "expo/types", "jest"],
+		"noEmit": true,
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	}
+}
