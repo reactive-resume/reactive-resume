@@ -184,6 +184,10 @@ export async function collectDump(navState: NavState | undefined) {
 					if (!node) return resolve(null);
 					node.measureInWindow((x, y, w, h) => {
 						if (!w && !h) return resolve(null); // detached or not laid out
+						// Entirely outside the frame (other carousel pages, rows below the fold): not on screen, like the
+						// storyboard dumps' `offscreen` elements, which the comparison skips.
+						const frame = Dimensions.get("window");
+						if (x + w <= 0 || x >= frame.width || y + h <= 0 || y >= frame.height) return resolve(null);
 						const box = { x: r1(x), y: r1(y), w: r1(w), h: r1(h) };
 						const m = e.meta;
 						if (m.kind === "text") {
