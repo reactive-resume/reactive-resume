@@ -85,6 +85,7 @@ export function ConsentScreen() {
 	return (
 		<PushScreen
 			back="close"
+			onBack={() => router.dismissTo("/welcome")}
 			footer={
 				<FooterBar>
 					<Button label={t`Deny`} size="lg" grow onPress={() => void answer(false)} />

@@ -93,7 +93,7 @@ export function CareerScreen() {
 				secondary={fake ? copy[19] : t`${schedules.data?.length ?? 0} schedules`}
 				last
 				trailing="caret"
-				onPress={() => go("/career/schedules")}
+				onPress={() => go(`/career/schedules/${schedules.data?.find((s) => s.kind === "discovery")?.id ?? "new"}`)}
 			/>
 		</TabScreen>
 	);

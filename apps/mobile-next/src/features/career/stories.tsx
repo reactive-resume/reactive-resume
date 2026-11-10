@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
+import { generateId } from "@reactive-resume/utils/string";
 import { ResourceState, useCareerLeaveGuard } from "./shared";
 import { useCareerActions, useCareerStories, useDataActions, useDataBackend } from "@/data";
 import {
@@ -243,6 +244,69 @@ export function StoryScreen() {
 					</>
 				)}
 			</ResourceState>
+		</PushScreen>
+	);
+}
+
+/** W3's missing-story link starts locally; nothing is stored until the complete story validates. */
+export function NewStoryScreen() {
+	const router = useRouter();
+	const actions = useDataActions();
+	const [id] = useState(() => generateId());
+	const [draft, setDraft] = useState({ title: "", situation: "", task: "", action: "", result: "", reflection: "" });
+	const [saving, setSaving] = useState(false);
+	const [failed, setFailed] = useState(false);
+	const guard = useCareerLeaveGuard(Object.values(draft).some(Boolean));
+	const labels = {
+		title: t`Title`,
+		situation: t`Situation`,
+		task: t`Task`,
+		action: t`What I did`,
+		result: t`Result`,
+		reflection: t`Reflection`,
+	};
+	const save = async () => {
+		const parsed = careerStoryInputSchema.safeParse(draft);
+		if (!parsed.success) {
+			setFailed(true);
+			return;
+		}
+		if (saving) return;
+		setSaving(true);
+		setFailed(false);
+		try {
+			await actions.write("stories-and-facts", "career.saveStory", { ...parsed.data, id });
+			guard.allowLeave();
+			router.replace(`/career/knowledge/stories/${id}`);
+		} catch {
+			setFailed(true);
+		} finally {
+			setSaving(false);
+		}
+	};
+	return (
+		<PushScreen
+			title={t`New story`}
+			overlay={guard.confirmation}
+			barEnd={<Button label={t`Save`} disabled={saving} onPress={() => void save()} />}
+		>
+			<View style={{ padding: 24, gap: 20 }}>
+				{(Object.keys(labels) as (keyof typeof draft)[]).map((key) => (
+					<TextField
+						key={key}
+						label={labels[key]}
+						value={draft[key]}
+						multiline={key !== "title"}
+						onChangeText={(value) => setDraft((current) => ({ ...current, [key]: value }))}
+					/>
+				))}
+				{failed ? (
+					<Text
+						variant="body"
+						color="dangerText"
+					>{t`Couldn't save your story. Check its title, situation, task and action, then try again. Your edits are kept here.`}</Text>
+				) : null}
+			</View>
 		</PushScreen>
 	);
 }

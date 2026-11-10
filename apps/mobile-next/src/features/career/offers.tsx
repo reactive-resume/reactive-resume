@@ -127,7 +127,7 @@ function ScopedOffersScreen() {
 						</Text>
 						{lastLine ? (
 							<Touch
-								onPress={() => router.push("/career/knowledge/priorities")}
+								onPress={() => router.push("/career/knowledge/preferences")}
 								feedback="none"
 								accessibilityRole="link"
 								accessibilityLabel={t`Change`}

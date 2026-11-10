@@ -43,7 +43,14 @@ export function LetterScreen() {
 				docked
 				barEnd={
 					<>
-						<IconButton icon="sparkle" label={t`Assistant`} disabled />
+						{/* Preserve the approved icon opacity while enabling its navigation. */}
+						<IconButton
+							icon="sparkle"
+							label={t`Assistant`}
+							style={{ opacity: 0.45 }}
+							disabled={!document?.sourceResumeId}
+							onPress={() => document?.sourceResumeId && router.push(`/builder/${document.sourceResumeId}/assistant`)}
+						/>
 						<IconButton icon="dots-three" label={t`More`} disabled />
 					</>
 				}

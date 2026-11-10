@@ -169,7 +169,9 @@ export function PushScreen({
 	const { colors } = useTheme();
 	const collapse = useTitleCollapse();
 	const ref = useMainScroll();
-	const goBack = onBack ?? (() => (router.canGoBack() ? router.back() : router.replace("/")));
+	const goBack =
+		onBack ??
+		(() => (docked ? router.dismissTo("/documents") : router.canGoBack() ? router.back() : router.replace("/")));
 	const { shown } = collapse;
 	const barTitle = useAnimatedStyle(() => ({ opacity: shown.value }));
 	const heading = (
