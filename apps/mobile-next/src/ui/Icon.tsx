@@ -17,11 +17,13 @@ export type IconProps = {
 	/** A literal colour for paper surfaces (white checks on swatches). The tag still reports `color`. */
 	tint?: string;
 	style?: StyleProp<ViewStyle>;
+	/** False while this layer is invisible (a crossfade's hidden side), so the design dump skips it. */
+	tag?: boolean;
 };
 
-export function Icon({ name, size = 24, color = "ink2", fill = false, tint, style }: IconProps) {
+export function Icon({ name, size = 24, color = "ink2", fill = false, tint, style, tag = true }: IconProps) {
 	const { colors } = useTheme();
-	const ref = useDesignTag({ kind: "icon", icon: name, size, color });
+	const ref = useDesignTag({ kind: "icon", icon: name, size, color }, { hidden: !tag });
 	const glyph = icons[name] as { regular?: string; fill?: string };
 	const d = (fill ? glyph.fill : glyph.regular) ?? glyph.regular ?? glyph.fill ?? "";
 	return (

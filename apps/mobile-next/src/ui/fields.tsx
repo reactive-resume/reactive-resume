@@ -41,6 +41,8 @@ export type TextFieldProps = Omit<TextInputProps, "style"> & {
 	trailingLabel?: string | undefined;
 	/** A mono suffix inside the field (".pdf"). */
 	suffix?: string | undefined;
+	/** A fixed mono `ink-3` prefix before the value (B12's "rxresu.me/alex/"); mono text then sits at 14/20. */
+	prefix?: string | undefined;
 	/** Picker fields: the field is a button showing its value (dates, zones, choices). */
 	onPress?: (() => void) | undefined;
 	/** Draw the focus rings without focus (storyboard captures of a focused field). */
@@ -62,6 +64,7 @@ export function TextField({
 	onTrailingPress,
 	trailingLabel,
 	suffix,
+	prefix,
 	onPress,
 	forceFocus = false,
 	grow = false,
@@ -80,7 +83,11 @@ export function TextField({
 	const stacked = useStacked();
 	const active = focused || forceFocus;
 	// The dumps list the drawn value (masked for passwords) or the placeholder as the field's text, in its line box.
-	const textStyle = mono ? monoInput : { ...typeScale.input, ...(multiline ? { lineHeight: 24 } : null) };
+	const textStyle = mono
+		? prefix
+			? { ...monoInput, lineHeight: 20 }
+			: monoInput
+		: { ...typeScale.input, ...(multiline ? { lineHeight: 24 } : null) };
 	const shown = value ? (input.secureTextEntry ? "\u2022".repeat(value.length) : value) : (placeholder ?? "");
 	const textRef = useDesignTag(
 		{
@@ -108,6 +115,11 @@ export function TextField({
 			<Ring color="controlBorder" radius={radius.md} />
 			<FocusRing focused={active} error={!!error} radius={radius.md} />
 			{leadingIcon ? <Icon name={leadingIcon} size={20} color="ink3" /> : null}
+			{prefix ? (
+				<Text variant="monoUi" color="ink3" numberOfLines={1} style={{ fontWeight: "400" }}>
+					{prefix}
+				</Text>
+			) : null}
 			{onPress ? (
 				<Text
 					variant="input"
@@ -256,7 +268,7 @@ export function SendButton({
 			testID="composer-send"
 		>
 			<Box
-				component="SendButton"
+				component="IconButton"
 				bg="accent"
 				radius={radius.md}
 				style={{ width: 40, height: 40, alignItems: "center", justifyContent: "center" }}
@@ -293,6 +305,13 @@ export function Composer({
 	autoFocus?: boolean | undefined;
 }) {
 	const { colors } = useTheme();
+	// The dumps list the composer's value, or its placeholder, as text in its 24 dp line box.
+	const textRef = useDesignTag({
+		kind: "text",
+		text: value || placeholder,
+		style: typeScale.body,
+		color: value ? "ink" : "ink3",
+	});
 	return (
 		<View style={{ paddingTop: 12, paddingBottom: 8, paddingHorizontal: layout.screenMargin, gap: 8 }}>
 			<Box
@@ -302,25 +321,30 @@ export function Composer({
 				style={{ paddingTop: 10, paddingEnd: 8, paddingBottom: 8, paddingStart: 12, gap: 8 }}
 			>
 				<Ring color="controlBorder" radius={radius.xl} />
-				<TextInput
-					value={value}
-					onChangeText={onChangeText}
-					placeholder={placeholder}
-					placeholderTextColor={colors.ink3}
-					multiline
-					autoFocus={!!autoFocus}
-					caretHidden={STORYBOARD}
-					selectionColor={colors.accent}
-					accessibilityLabel={placeholder}
-					style={[typeScale.body, { padding: 0, color: colors.ink, maxHeight: 120, includeFontPadding: false }]}
-				/>
+				<View ref={textRef} collapsable={false}>
+					<TextInput
+						value={value}
+						onChangeText={onChangeText}
+						placeholder={placeholder}
+						placeholderTextColor={colors.ink3}
+						multiline
+						autoFocus={!!autoFocus}
+						caretHidden={STORYBOARD}
+						selectionColor={colors.accent}
+						accessibilityLabel={placeholder}
+						style={[typeScale.body, { padding: 0, color: colors.ink, maxHeight: 120, includeFontPadding: false }]}
+					/>
+				</View>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
 					<View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 6 }}>{chips}</View>
-					<SendButton
-						onPress={sending ? onStop : onSend}
-						stop={sending}
-						disabled={!sending && (!value.trim() || !!blocked)}
-					/>
+					{/* B16 and C2 draw the send button 1 dp into the composer's end padding (x 319 to 319.5). */}
+					<View style={{ marginEnd: -1 }}>
+						<SendButton
+							onPress={sending ? onStop : onSend}
+							stop={sending}
+							disabled={!sending && (!value.trim() || !!blocked)}
+						/>
+					</View>
 				</View>
 			</Box>
 			{blocked ? (
@@ -367,7 +391,7 @@ export function ConnectionChip({ label, onPress }: { label: string; onPress?: ((
 			hitSlop={hitSlopFor(48, 32)}
 		>
 			<Box
-				component="ConnectionChip"
+				component="Chip"
 				bg="sunken"
 				radius={radius.sm}
 				style={{ height: 32, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", gap: 6 }}
@@ -376,7 +400,7 @@ export function ConnectionChip({ label, onPress }: { label: string; onPress?: ((
 				<Text variant="chip" color="ink2" numberOfLines={1}>
 					{label}
 				</Text>
-				<Icon name="caret-down" size={14} color="ink2" />
+				<Icon name="caret-down" size={16} color="ink2" />
 			</Box>
 		</Touch>
 	);

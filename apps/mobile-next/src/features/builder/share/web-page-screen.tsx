@@ -55,6 +55,8 @@ export function WebPageScreen() {
 						<TextField
 							label={t`Address`}
 							value={slug ?? document.slug}
+							prefix={`${server.replace(/^https?:\/\//, "")}/${username}/`}
+							mono
 							onChangeText={setSlug}
 							onBlur={saveSlug}
 							autoCapitalize="none"

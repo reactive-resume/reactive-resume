@@ -1,14 +1,15 @@
-// Hero card, cards, question card, board card, chips, badges and small markers (COMPONENTS.md §7, §8, §12).
-import type { ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
-import { View } from "react-native";
+// Hero card, cards, question card, board card, chips, badges and small markers (COMPONENTS.md §7, §8, §12).
+import { type ReactNode, useState } from "react";
+import { Text as RNText, View } from "react-native";
 import { Box, Ring, Touch } from "./base";
 import { Icon, type IconName } from "./Icon";
 import { hitSlopFor } from "./motion";
 import { type Stage, StageDot } from "./rows";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
-import { type ColorToken, fonts, layout, radius } from "./tokens";
+import { type ColorToken, fonts, layout, radius, textDefaults, type as typeScale } from "./tokens";
+import { STORYBOARD, useDesignTag } from "@/dev/storyboard/harness";
 
 /** The one hero card of a root tab: key line, title, paragraph, a Large primary button. */
 export function HeroCard({
@@ -119,7 +120,7 @@ export function QuestionCard({
 	gap?: number | undefined;
 }) {
 	return (
-		<Box component="QuestionCard" bg="infoSoft" radius={radius.xl} style={{ padding, gap }}>
+		<Box component="Card" bg="infoSoft" radius={radius.xl} style={{ padding, gap }}>
 			<Text variant="label" style={{ fontSize: 16, lineHeight: 24 }}>
 				{question}
 			</Text>
@@ -259,16 +260,16 @@ export function ContextChip({
 	return (
 		<Touch onPress={onRemove} accessibilityLabel={`Remove ${label}`} hitSlop={hitSlopFor(48, 32)}>
 			<Box
-				component="ContextChip"
+				component="Chip"
 				bg="sunken"
 				radius={radius.sm}
 				style={{ height: 32, paddingStart: 10, paddingEnd: 6, flexDirection: "row", alignItems: "center", gap: 6 }}
 			>
-				{icon ? <Icon name={icon} size={14} color="ink2" /> : null}
-				<Text variant="caption" color="ink2" numberOfLines={1}>
+				{icon ? <Icon name={icon} size={16} color="ink2" /> : null}
+				<Text variant="caption" color="ink2" numberOfLines={1} style={{ lineHeight: 18 }}>
 					{label}
 				</Text>
-				<Icon name="x" size={14} color="ink2" />
+				<Icon name="x" size={16} color="ink2" />
 			</Box>
 		</Touch>
 	);
@@ -344,18 +345,18 @@ export function Badge({
 }
 
 /** B17's 20 × 20 number tag. */
-export function NumberTag({ n }: { n: number }) {
+export function NumberTag({ n, decided = false }: { n: number; decided?: boolean | undefined }) {
 	return (
 		<Box
 			component="NumberTag"
-			bg="accent"
+			bg={decided ? "sunken" : "accent"}
 			radius={radius.xs}
 			style={{ width: 20, height: 20, alignItems: "center", justifyContent: "center" }}
 		>
 			<Text
 				variant="mono"
-				color="onAccent"
-				style={{ lineHeight: 20, fontFamily: fonts.mono }}
+				color={decided ? "ink2" : "onAccent"}
+				style={{ lineHeight: 20, fontFamily: fonts.mono, fontWeight: "600" }}
 				maxFontSizeMultiplier={1.3}
 			>
 				{n}
@@ -369,19 +370,28 @@ export function IssueMarker({
 	n,
 	onPress,
 	label,
+	targetOnly = false,
 }: {
 	n: number;
 	onPress?: (() => void) | undefined;
 	label?: string | undefined;
+	/** The page image already draws this marker (B18's storyboard page): keep only the invisible tap target. */
+	targetOnly?: boolean | undefined;
 }) {
 	const body = (
 		<Box
 			component="IssueMarker"
 			bg="warn"
 			radius={radius.xs}
-			style={{ width: 24, height: 24, alignItems: "center", justifyContent: "center" }}
+			style={{ width: 24, height: 24, alignItems: "center", justifyContent: "center", opacity: targetOnly ? 0 : 1 }}
 		>
-			<Text variant="mono" color="warnInk" style={{ lineHeight: 24 }} maxFontSizeMultiplier={1.3}>
+			<Text
+				variant="mono"
+				color="warnInk"
+				style={{ lineHeight: 24, fontWeight: "600" }}
+				maxFontSizeMultiplier={1.3}
+				tag={!targetOnly}
+			>
 				{n}
 			</Text>
 		</Box>
@@ -416,24 +426,95 @@ export function Skeleton({
 	);
 }
 
-/** Proposal text: removed words struck through in ink-2, added words on accent-soft (COMPONENTS.md §13). */
+/**
+ * Proposal text: removed words struck through in ink-2, added words on accent-soft (COMPONENTS.md §13). The layout
+ * dump lists the unchanged words as the paragraph's text and each removed or added run as its own text, with the
+ * run's line box (one line: from where it starts; several: the full lines it covers).
+ */
 export function ProposalText({ parts }: { parts: { text: string; kind?: "same" | "removed" | "added" }[] }) {
 	const { colors } = useTheme();
+	const body = typeScale.body;
+	const plain = parts
+		.filter((p) => !p.kind || p.kind === "same")
+		.map((p) => p.text)
+		.join("");
+	const ref = useDesignTag({ kind: "text", text: plain, style: body, color: "ink" });
 	return (
-		<Text variant="body">
-			{parts.map((p, i) =>
-				p.kind === "removed" ? (
-					<Text key={i} variant="body" color="ink2" tag={false} style={{ textDecorationLine: "line-through" }}>
-						{p.text}
-					</Text>
-				) : p.kind === "added" ? (
-					<Text key={i} variant="body" tag={false} style={{ backgroundColor: colors.accentSoft }}>
-						{p.text}
-					</Text>
-				) : (
-					p.text
-				),
-			)}
-		</Text>
+		<View ref={ref} collapsable={false}>
+			<Text variant="body" tag={false}>
+				{parts.map((p, i) =>
+					p.kind === "removed" ? (
+						<Text key={i} variant="body" color="ink2" tag={false} style={{ textDecorationLine: "line-through" }}>
+							{p.text}
+						</Text>
+					) : p.kind === "added" ? (
+						<Text key={i} variant="body" tag={false} style={{ backgroundColor: colors.accentSoft }}>
+							{p.text}
+						</Text>
+					) : (
+						p.text
+					),
+				)}
+			</Text>
+			{STORYBOARD
+				? parts.map((p, i) =>
+						p.kind === "removed" || p.kind === "added" ? (
+							<RunTag
+								key={i}
+								before={parts
+									.slice(0, i)
+									.map((q) => q.text)
+									.join("")}
+								text={p.text}
+								color={p.kind === "removed" ? "ink2" : "ink"}
+							/>
+						) : null,
+					)
+				: null}
+		</View>
+	);
+}
+
+type LineEnd = { line: number; x: number };
+const lastLine = (lines: { x: number; width: number }[]): LineEnd => {
+	const last = lines[lines.length - 1];
+	return { line: Math.max(0, lines.length - 1), x: last ? last.x + last.width : 0 };
+};
+
+/** Storyboard only: measures where a run starts and ends inside its paragraph and tags that box. */
+function RunTag({ before, text, color }: { before: string; text: string; color: ColorToken }) {
+	const body = typeScale.body;
+	const [start, setStart] = useState<LineEnd | null>(before ? null : { line: 0, x: 0 });
+	const [end, setEnd] = useState<LineEnd | null>(null);
+	const box =
+		start && end
+			? start.line === end.line
+				? { left: start.x, top: start.line * body.lineHeight, width: end.x - start.x, height: body.lineHeight }
+				: {
+						left: 0,
+						right: 0,
+						top: start.line * body.lineHeight,
+						height: (end.line - start.line + 1) * body.lineHeight,
+					}
+			: null;
+	const ref = useDesignTag({ kind: "text", text, style: body, color }, { hidden: !box });
+	const probe = { position: "absolute" as const, left: 0, right: 0, top: 0, opacity: 0 };
+	return (
+		<>
+			{before ? (
+				<RNText style={[textDefaults, body, probe]} onTextLayout={(e) => setStart(lastLine(e.nativeEvent.lines))}>
+					{before}
+				</RNText>
+			) : null}
+			<RNText style={[textDefaults, body, probe]} onTextLayout={(e) => setEnd(lastLine(e.nativeEvent.lines))}>
+				{before + text}
+			</RNText>
+			<View
+				ref={ref}
+				collapsable={false}
+				pointerEvents="none"
+				style={[{ position: "absolute" }, box ?? { width: 0 }]}
+			/>
+		</>
 	);
 }

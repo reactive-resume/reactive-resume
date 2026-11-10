@@ -135,10 +135,10 @@ function DockItem({
 			<View style={{ width: iconSize, height: iconSize }}>
 				{/* Regular → fill swaps at once; the colour crossfades d1. */}
 				<Fade s={s} on={false} absolute>
-					<Icon name={item.icon} size={iconSize} color={selected ? "accentText" : "ink2"} />
+					<Icon name={item.icon} size={iconSize} color={selected ? "accentText" : "ink2"} tag={!selected} />
 				</Fade>
 				<Fade s={s} on absolute>
-					<Icon name={item.icon} size={iconSize} color="accentText" fill />
+					<Icon name={item.icon} size={iconSize} color="accentText" fill tag={selected} />
 				</Fade>
 			</View>
 			<View>

@@ -21,6 +21,7 @@ import {
 	useSwitchRow,
 	IconButton,
 	Text,
+	TextLink,
 	Spinner,
 	useRowMotion,
 	showToast,
@@ -120,13 +121,7 @@ export function ShareScreen() {
 						</View>
 					</HeroCard>
 					<View style={{ paddingHorizontal: 24, height: 44, justifyContent: "center" }}>
-						<Button
-							label={t`Other formats`}
-							tone="accentGhost"
-							size="lg"
-							style={{ marginStart: -16 }}
-							onPress={() => router.push(`/builder/${id}/download`)}
-						/>
+						<TextLink label={t`Other formats`} onPress={() => router.push(`/builder/${id}/download`)} />
 					</View>
 					{error ? (
 						<Text color="dangerText" style={{ marginHorizontal: 24 }} accessibilityRole="alert">
@@ -144,6 +139,7 @@ export function ShareScreen() {
 						<Animated.View entering={rowMotion.foldIn} exiting={rowMotion.foldOut}>
 							<ListRow
 								title={link.replace("https://", "")}
+								titleVariant="monoUi"
 								secondary={document.isPrimary ? t`Your short link` : t`Public link`}
 								trailing={<IconButton icon="copy" iconSize={20} label={t`Copy link`} onPress={() => void copy()} />}
 							/>
