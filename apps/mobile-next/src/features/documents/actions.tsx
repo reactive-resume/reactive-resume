@@ -281,6 +281,8 @@ function ScopedDocumentActionsScreen() {
 									});
 								}}
 								last
+								// The board registers no ListRow box for its last, undivided row.
+								boxHidden
 							/>
 						</>
 					)}

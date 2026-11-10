@@ -189,6 +189,7 @@ function PreferencesContent() {
 								title={t`Priorities`}
 								secondary={profile.priorities}
 								last
+								boxHidden
 								trailing="caret"
 								onPress={() => router.push("/career/knowledge/priorities")}
 							/>

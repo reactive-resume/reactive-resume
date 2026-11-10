@@ -1,5 +1,6 @@
 import type { Scenario } from "../harness";
 import { router } from "expo-router";
+import { overBackdrop } from "../backdrop";
 import { providerConnection, recordRecurringApproval } from "@/data";
 
 // The board shows Discovery approved for the fixture's Work OpenAI key, so its sheet offers Save, not "Review and
@@ -19,7 +20,7 @@ export const scenarios: Record<string, Scenario> = {
 	"C4-Story": { hrefs: ["/career", "/career/knowledge/stories", "/career/knowledge/stories/story-onboarding"] },
 	"C5-Preferences": { hrefs: ["/career", "/career/knowledge/preferences"] },
 	"C6-Offers": { hrefs: ["/career", "/career/offers"] },
-	"C7-Schedule": { hrefs: ["/career"], prepare: approveDiscovery },
+	"C7-Schedule": { hrefs: ["/career", ...overBackdrop("C7-Schedule")], prepare: approveDiscovery },
 	"P1-Public": { hrefs: ["/r/alex/product-designer"] },
 	"P2-ATS": { hrefs: ["/ats-checker"] },
 	"X1-Notify": { hrefs: ["/x1"] },

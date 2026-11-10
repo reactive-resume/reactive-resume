@@ -189,6 +189,7 @@ function ScopedImportScreen() {
 						accessibilityRole="radio"
 						accessibilityState={{ checked: ai }}
 						last
+						boxHidden
 					/>
 				</>
 			) : null}
@@ -231,6 +232,7 @@ function ScopedImportScreen() {
 						secondary={t`Text we couldn't place, to sort later`}
 						value="1"
 						last
+						boxHidden
 					/>
 				</Animated.View>
 			) : null}

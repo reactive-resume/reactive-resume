@@ -26,7 +26,11 @@ export function ZoomBar({
 	compact?: boolean | undefined;
 }) {
 	const { colors, shadows } = useTheme();
-	const ref = useDesignTag({ kind: "component", component: "ZoomBar", radius: radius.lg, bg: "raised" });
+	// No board names the bar as a component (B18 and P1 draw it as a plain `div.zbar`): left out of the dump.
+	const ref = useDesignTag(
+		{ kind: "component", component: "ZoomBar", radius: radius.lg, bg: "raised" },
+		{ hidden: true },
+	);
 	return (
 		<View
 			ref={ref}

@@ -64,7 +64,30 @@ type Entry = {
 	meta: DesignMeta;
 	screenKey: string | undefined;
 	hidden: boolean;
+	box: (() => Promise<Box | null>) | undefined;
 };
+
+type Box = { x: number; y: number; w: number; h: number };
+
+const measureBox = (node: Measurable | null) =>
+	new Promise<Box | null>((resolve) => {
+		if (!node) return resolve(null);
+		node.measureInWindow((x, y, w, h) => resolve(!w && !h ? null : { x, y, w, h }));
+	});
+
+/**
+ * The box of a text made of several runs with other elements between them (a reply's intro and closing sentence
+ * around its list): the first run's top-left, the block's width, and the runs' heights added up (lines × line height,
+ * as the boards measure an element's own text).
+ */
+export const runsBox =
+	(block: React.RefObject<Measurable | null>, runs: React.RefObject<Measurable | null>[]) => async () => {
+		const [outer, ...parts] = await Promise.all([measureBox(block.current), ...runs.map((r) => measureBox(r.current))]);
+		const drawn = parts.filter((p): p is Box => p !== null);
+		const first = drawn[0];
+		if (!outer || !first) return null;
+		return { x: outer.x, y: first.y, w: outer.w, h: drawn.reduce((sum, p) => sum + p.h, 0) };
+	};
 
 const registry = new Map<number, Entry>();
 let nextId = 1;
@@ -101,14 +124,17 @@ export function DesignScreen({
  *   return <View ref={ref} ...>
  * Pass hidden: true while the element is visually hidden (opacity 0, e.g. the collapsed bar title before scroll).
  */
-export function useDesignTag(meta: DesignMeta, opts: { hidden?: boolean } = {}) {
+export function useDesignTag(
+	meta: DesignMeta,
+	opts: { hidden?: boolean; box?: (() => Promise<Box | null>) | undefined } = {},
+) {
 	const ref = useRef<HostInstance | null>(null);
 	const screenKey = useContext(ScreenKeyContext);
 	const id = useRef(0);
 	useEffect(() => {
 		if (!STORYBOARD) return;
 		if (!id.current) id.current = nextId++;
-		registry.set(id.current, { ref, meta, screenKey, hidden: !!opts.hidden });
+		registry.set(id.current, { ref, meta, screenKey, hidden: !!opts.hidden, box: opts.box });
 	});
 	useEffect(
 		() => () => {
@@ -182,7 +208,11 @@ export async function collectDump(navState: NavState | undefined) {
 				new Promise<Record<string, unknown> | null>((resolve) => {
 					const node = e.ref.current;
 					if (!node) return resolve(null);
-					node.measureInWindow((x, y, w, h) => {
+					const measure = e.box
+						? (cb: (x: number, y: number, w: number, h: number) => void) =>
+								void e.box?.().then((b) => (b ? cb(b.x, b.y, b.w, b.h) : cb(0, 0, 0, 0)))
+						: (cb: (x: number, y: number, w: number, h: number) => void) => node.measureInWindow(cb);
+					measure((x, y, w, h) => {
 						if (!w && !h) return resolve(null); // detached or not laid out
 						const box = { x: r1(x), y: r1(y), w: r1(w), h: r1(h) };
 						const m = e.meta;

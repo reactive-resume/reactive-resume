@@ -18,6 +18,7 @@ import {
 	MenuItem,
 	PushScreen,
 	Text,
+	TextBlock,
 	UsedChip,
 	haptic,
 	showToast,
@@ -124,14 +125,16 @@ export function CoachScreen() {
 			{fake ? (
 				<View style={{ paddingHorizontal: 24, paddingTop: 16, gap: 16 }}>
 					<Bubble>{copy[1] ?? ""}</Bubble>
-					<View style={{ gap: 8 }}>
-						<Text variant="body">{t`Two of your open roles meet your must-haves:`}</Text>
+					{/* The board's reply is one block: its own text around the numbered list. */}
+					<TextBlock
+						before={t`Two of your open roles meet your must-haves:`}
+						after={t`Parcel & Co. asks for 3 office days, above your limit of 2.`}
+					>
 						<View style={{ gap: 6 }}>
 							<ReplyItem number="1." lead={copy[4] ?? ""} rest={copy[3] ?? ""} />
 							<ReplyItem number="2." lead={copy[6] ?? ""} rest={copy[5] ?? ""} />
 						</View>
-						<Text variant="body">{t`Parcel & Co. asks for 3 office days, above your limit of 2.`}</Text>
-					</View>
+					</TextBlock>
 					<View style={{ flexDirection: "row", gap: 8 }}>
 						<UsedChip label={t`Preferences`} icon="target" />
 						<UsedChip label={t`3 applications`} icon="briefcase" />
@@ -171,8 +174,8 @@ export function ConversationsScreen() {
 function ReplyItem({ number, lead, rest }: { number: string; lead: string; rest: string }) {
 	return (
 		<View style={{ flexDirection: "row" }}>
-			{/* An outside list marker, right-aligned against the text as the board draws it. */}
-			<Text variant="body" align="right" style={{ width: 20, paddingEnd: 5 }}>
+			{/* An outside list marker, right-aligned against the text as the board draws it; a marker is no element. */}
+			<Text variant="body" align="right" tag={false} style={{ width: 20, paddingEnd: 5 }}>
 				{number}
 			</Text>
 			<View style={{ flex: 1 }}>

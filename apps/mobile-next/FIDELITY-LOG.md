@@ -26,8 +26,6 @@ custom fonts or `lineHeight` quirks. Fix in `src/ui/Text.tsx`: `marginBottom: -1
 Text contributes exactly its line box to layout. The design tag now also reports style overrides (font size, line
 height, family) instead of the variant's.
 
-<<<<<<< HEAD
-
 ## 2026-11-10 · Pass 3 · iOS scoreboard so far (debug build, per-agent captures)
 
 | Group | Screens           | Passing | Notes                                                                                                                |
@@ -38,7 +36,6 @@ height, family) instead of the variant's.
 `rootTitle` glyph offset on iOS reduced from +1 to +0.5 dp: the layout tool measures the translated box, and +1 put
 the title 1.5 dp from the dump's text box (57.5) on every root tab. At +0.5 the box measures 58.5 (within 1 dp) and
 the glyphs sit 1.0 / 0.5 dp high (within 1 dp).
-=======
 
 ## 2026-11-10 · Pass 4 · text metrics and first scoreboard, Android (Pixel_10_Pro emulator, API 37, 1170 × 2532 at 480 dpi = 390 × 844 dp, debug storyboard build)
 
@@ -69,4 +66,28 @@ static fonts all work). Native build needs `packages/forme-native/android/src/ma
 Scoreboard (`fidelity.py --system-bars`): A1–A4 and S1–S8 pass with 0 layout failures, 0.42–0.71 % differing pixels
 per theme and no bands. The debug build's floating gear accounts for most of the remaining pixels.
 
-> > > > > > > fix/android-mobile-fidelity
+## 2026-11-10 · Pass 5 · integration of the three screen groups, iOS (iPhone 14 simulator, debug storyboard build)
+
+The merged tree did not compile (`Chip` destructured `trailingIcon` twice; `Text` called the removed `iosLineBox`), so
+every screen first produced no dump. After the compile fixes: 24 of 30 passing; after this pass: 30 of 30, no EXTRA
+elements on screen.
+
+Line boxes: two fixes had been merged, `marginBottom: -1 / PixelRatio.get()` and a line height 0.01 under the token.
+`onLayout` on every style, one and two lines, stacked: with the margin each Text still measures +1 device pixel (24.33,
+48.33) though stacking no longer drifts; with the line height every style measures exactly lines × line height
+(24.00, 48.00) and stacks exactly. Kept the line height; the margin is gone.
+
+Root title (iOS): the layout tool measures the box with its transform, so a translate moves box and ink together. With
+the 2 dp margin and the +0.5 translate the box sat at 57.5 but the ink 1.5–2.0 dp high. Now no margin and no translate;
+`Text` moves the rootTitle ink 2/3 dp down inside its box (padding, taken back with a negative margin). T1, T2, D1, J1
+and C1: box 58.0 × 40.7 (dump 57.5 × 40), ink top −0.5 to −1.0, bottom −0.5, both themes.
+
+Serif widths (D1's "Cover letters" count 1.2 dp right): the boards' widths equal HarfBuzz shaping with the font's GPOS
+kerning ("Cover letters" 91.56, design 91.5); the app's equalled the unkerned advances (92.36, laid out 92.67). The
+serif tokens set `letterSpacing: 0`, which React Native on iOS passes as `NSKern` 0 and that turns kerning off.
+`fontVariant` and ligature settings changed nothing. Without the attribute: 91.67. Non-zero tracking (rootTitle −0.17)
+keeps kerning ("Today" 68.7 against 68.65 kerned, 71.43 unkerned).
+
+Backdrops: the boards draw a stub under S7, S8, C7, D2 and D3. `src/dev/storyboard/backdrop.tsx` (route
+`/storyboard-backdrop/<ID>`) draws exactly what each dump lists outside the sheet or dialog; the scenarios present the
+real sheet over it. S1's storyboard-only hidden body is gone.

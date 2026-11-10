@@ -212,7 +212,6 @@ export function Chip({
 	onPress,
 	dashed = false,
 	on = false,
-	trailingIcon,
 	testID,
 }: {
 	label: string;
