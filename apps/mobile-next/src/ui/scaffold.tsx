@@ -19,7 +19,7 @@ import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { type ColorToken, layout } from "./tokens";
 import { registerMainScroll } from "@/dev/storyboard/capture";
-import { STORYBOARD } from "@/dev/storyboard/harness";
+import { DesignClip, STORYBOARD } from "@/dev/storyboard/harness";
 
 type ScrollHandle = { scrollToEnd: (o?: { animated?: boolean }) => void };
 
@@ -43,6 +43,7 @@ export function TabScreen({
 	refreshing = false,
 	onRefresh,
 	children,
+	footer,
 	bottomPadding = 24,
 }: {
 	title: string;
@@ -53,6 +54,8 @@ export function TabScreen({
 	refreshing?: boolean;
 	onRefresh?: (() => void) | undefined;
 	children: ReactNode;
+	/** Pinned under the content, above the dock: J1's Select bar. */
+	footer?: ReactNode;
 	bottomPadding?: number;
 }) {
 	const collapse = useTitleCollapse();
@@ -71,6 +74,7 @@ export function TabScreen({
 					<RootHeader title={title} subtitle={subtitle} actions={actions} avatar={avatar} />
 					{children}
 				</PullToRefresh>
+				{footer}
 				<CollapsedBar
 					collapse={collapse}
 					title={title}
@@ -93,6 +97,8 @@ export type PushScreenProps = {
 	title?: string | undefined;
 	titleEditCue?: boolean;
 	onTitlePress?: (() => void) | undefined;
+	/** The title is the landing place of a shared-element flight (J1's company name → J6, MOTION.md §6.2). */
+	titleHeroId?: string | undefined;
 	/** One 15/24 line under the title. */
 	subtitle?: ReactNode;
 	/** The document status line with Undo · Redo instead of a subtitle. */
@@ -129,6 +135,7 @@ export function PushScreen({
 	title,
 	titleEditCue = false,
 	onTitlePress,
+	titleHeroId,
 	subtitle,
 	status,
 	back = "back",
@@ -155,7 +162,7 @@ export function PushScreen({
 	const heading = (
 		<>
 			{title ? (
-				<PageTitle editCue={titleEditCue} onPress={onTitlePress}>
+				<PageTitle editCue={titleEditCue} onPress={onTitlePress} heroId={titleHeroId}>
 					{title}
 				</PageTitle>
 			) : null}
@@ -217,19 +224,21 @@ export function PushScreen({
 				/>
 			</View>
 			{scroll ? (
-				<KeyboardAwareScrollView
-					ref={ref as never}
-					onScroll={collapse.onScroll as never}
-					scrollEventThrottle={16}
-					bottomOffset={24}
-					keyboardShouldPersistTaps="handled"
-					showsVerticalScrollIndicator={!STORYBOARD}
-					contentContainerStyle={{ paddingBottom: bottomPadding + (footer ? 0 : insets.bottom) }}
-					style={{ flex: 1 }}
-				>
-					{heading}
-					{children}
-				</KeyboardAwareScrollView>
+				<DesignClip style={{ flex: 1 }}>
+					<KeyboardAwareScrollView
+						ref={ref as never}
+						onScroll={collapse.onScroll as never}
+						scrollEventThrottle={16}
+						bottomOffset={24}
+						keyboardShouldPersistTaps="handled"
+						showsVerticalScrollIndicator={!STORYBOARD}
+						contentContainerStyle={{ paddingBottom: bottomPadding + (footer ? 0 : insets.bottom) }}
+						style={{ flex: 1 }}
+					>
+						{heading}
+						{children}
+					</KeyboardAwareScrollView>
+				</DesignClip>
 			) : (
 				<View style={{ flex: 1 }}>
 					{heading}

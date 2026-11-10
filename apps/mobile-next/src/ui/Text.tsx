@@ -55,6 +55,11 @@ export type TextProps = Omit<RNTextProps, "style"> & {
 	style?: RNTextProps["style"];
 	/** False for text nested inside another Text (the outer one carries the tag). */
 	tag?: boolean;
+	/**
+	 * A run drawn right after this text on the same line and reported on its own, as the boards nest a span in a
+	 * label (J3's "9–15 Nov · Berlin time"): this text's tag keeps its own words and takes the box of both.
+	 */
+	after?: ReactNode;
 };
 
 export function Text({
@@ -64,6 +69,7 @@ export function Text({
 	align,
 	style,
 	tag = true,
+	after,
 	children,
 	...rest
 }: TextProps) {
@@ -92,9 +98,9 @@ export function Text({
 	);
 	const shift = glyphShift[variant];
 	const ink = inkOffset[variant];
-	return (
+	const text = (
 		<RNText
-			ref={ref}
+			ref={after ? undefined : ref}
 			maxFontSizeMultiplier={maxScale(fontFamily)}
 			{...rest}
 			style={[
@@ -111,7 +117,16 @@ export function Text({
 			{children}
 		</RNText>
 	);
+	if (!after) return text;
+	return (
+		<View ref={ref} collapsable={false} style={styles.runs}>
+			{text}
+			{after}
+		</View>
+	);
 }
+
+const styles = StyleSheet.create({ runs: { flexDirection: "row", flexWrap: "wrap" } });
 
 /**
  * One paragraph block whose own text is `before` and `after`, with other elements (a list) between them: the coach's

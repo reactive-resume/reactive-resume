@@ -3,12 +3,13 @@
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowDimensions, View } from "react-native";
 import { nextStage, useApplicationActions } from "./actions";
 import {
 	addDays,
 	agendaItems,
+	applicationHeroId,
 	type ApplicationRow,
 	BOARD_ORDER,
 	cardLine,
@@ -37,6 +38,9 @@ import { storyboard } from "./storyboard";
 import { useApplications, useCareerOffers } from "@/data";
 import { now, timeZone } from "@/data/clock";
 import {
+	type as typeScale,
+	prepareHero,
+	FooterBar,
 	BoardCard,
 	BoardDrag,
 	BoardDragCard,
@@ -86,6 +90,8 @@ export function ApplicationsScreen() {
 		[offers.data],
 	);
 	const rows = applications.data ?? [];
+	// Select mode's bar (J1), pinned above the dock while the list is in Select mode.
+	const [selectBar, setSelectBar] = useState<ReactNode>(null);
 
 	const choose = (next: ApplicationsView) => {
 		rememberedView = next;
@@ -99,6 +105,7 @@ export function ApplicationsScreen() {
 			avatar={<SettingsAvatar />}
 			refreshing={applications.isRefetching}
 			onRefresh={() => void applications.refetch()}
+			footer={view === "list" ? selectBar : null}
 		>
 			<View style={{ paddingTop: 16, paddingHorizontal: layout.screenMargin }}>
 				<Segmented
@@ -122,7 +129,7 @@ export function ApplicationsScreen() {
 						<RowPlaceholders count={5} />
 					</View>
 				) : view === "list" ? (
-					<ListView rows={rows} context={context} />
+					<ListView rows={rows} context={context} onSelectBar={setSelectBar} />
 				) : view === "board" ? (
 					<BoardView rows={rows} context={context} initialStage={params.stage} />
 				) : (
@@ -143,7 +150,15 @@ type Sheet =
 	| { kind: "close"; apps: ApplicationRow[] }
 	| null;
 
-function ListView({ rows, context }: { rows: ApplicationRow[]; context: ListContext }) {
+function ListView({
+	rows,
+	context,
+	onSelectBar,
+}: {
+	rows: ApplicationRow[];
+	context: ListContext;
+	onSelectBar: (bar: ReactNode) => void;
+}) {
 	const router = useRouter();
 	const actions = useApplicationActions();
 	const [selecting, setSelecting] = useState(false);
@@ -171,6 +186,37 @@ function ListView({ rows, context }: { rows: ApplicationRow[]; context: ListCont
 		setSelecting(false);
 		setSelected(new Set());
 	};
+	const selectBar = selecting ? (
+		<FooterBar inset={false}>
+			<View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", columnGap: 24 }}>
+				<ToolLink label={t`Done`} icon="check" onPress={leaveSelect} />
+				<ToolLink
+					label={t`Move…`}
+					icon="arrows-left-right"
+					onPress={() => picked.length && setSheet({ kind: "move", apps: picked })}
+				/>
+				<ToolLink
+					label={t`Close…`}
+					icon="check-circle"
+					onPress={() => picked.length && setSheet({ kind: "close", apps: picked })}
+				/>
+				<ToolLink
+					label={t`Move to Trash`}
+					icon="trash"
+					onPress={() => {
+						if (!picked.length) return;
+						void actions.moveToTrash(picked.map((app) => app.id));
+						leaveSelect();
+					}}
+				/>
+			</View>
+		</FooterBar>
+	) : null;
+	// The bar lives in the tab's footer slot: it follows the selection and goes with the list. Its handlers only
+	// read the selection and the rows, so those are what it changes with.
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- the handlers are rebuilt every render; see above
+	useEffect(() => onSelectBar(selectBar), [selecting, selected, rows]);
+	useEffect(() => () => onSelectBar(null), [onSelectBar]);
 
 	if (rows.length === 0)
 		return (
@@ -181,6 +227,33 @@ function ListView({ rows, context }: { rows: ApplicationRow[]; context: ListCont
 				<Button label={t`Save job`} tone="primary" size="lg" block onPress={() => router.push("/applications/new")} />
 			</HeroCard>
 		);
+
+	// The company name travels into J6's title: both styles, crossfading (MOTION.md §6.2).
+	const open = async (app: ApplicationRow, rowTitle: string) => {
+		await prepareHero(
+			applicationHeroId(app.id),
+			() => (
+				<Text variant="pageTitle" numberOfLines={1} tag={false}>
+					{app.company}
+				</Text>
+			),
+			() => (
+				// Drawn at the title's size and scaled down to the row's line box at the start of the flight.
+				<Text
+					variant="rowTitle"
+					numberOfLines={1}
+					tag={false}
+					style={{
+						fontSize: (typeScale.rowTitle.fontSize * typeScale.pageTitle.lineHeight) / typeScale.rowTitle.lineHeight,
+						lineHeight: typeScale.pageTitle.lineHeight,
+					}}
+				>
+					{rowTitle}
+				</Text>
+			),
+		);
+		router.push(`/applications/${app.id}`);
+	};
 
 	const renderRow = (app: ApplicationRow, last: boolean) => {
 		const next = nextStage(app.status);
@@ -199,7 +272,8 @@ function ListView({ rows, context }: { rows: ApplicationRow[]; context: ListCont
 				last={last}
 				accessibilityRole={selecting ? "checkbox" : "button"}
 				{...(selecting ? { accessibilityState: { checked: selected.has(app.id) } } : {})}
-				onPress={() => (selecting ? toggle(app.id) : router.push(`/applications/${app.id}`))}
+				titleHeroId={applicationHeroId(app.id)}
+				onPress={() => (selecting ? toggle(app.id) : void open(app, titles.get(app.id) ?? app.company))}
 				onLongPress={() => (selecting ? toggle(app.id) : setSheet({ kind: "actions", app }))}
 				testID={`application-row-${app.id}`}
 			/>
@@ -284,30 +358,7 @@ function ListView({ rows, context }: { rows: ApplicationRow[]; context: ListCont
 					columnGap: 28,
 				}}
 			>
-				{selecting ? (
-					<>
-						<ToolLink label={t`Done`} icon="check" onPress={leaveSelect} />
-						<ToolLink
-							label={t`Move…`}
-							icon="arrows-left-right"
-							onPress={() => picked.length && setSheet({ kind: "move", apps: picked })}
-						/>
-						<ToolLink
-							label={t`Close…`}
-							icon="check-circle"
-							onPress={() => picked.length && setSheet({ kind: "close", apps: picked })}
-						/>
-						<ToolLink
-							label={t`Move to Trash`}
-							icon="trash"
-							onPress={() => {
-								if (!picked.length) return;
-								void actions.moveToTrash(picked.map((app) => app.id));
-								leaveSelect();
-							}}
-						/>
-					</>
-				) : (
+				{selecting ? null : (
 					<>
 						<ToolLink label={t`Select`} icon="check-square" onPress={() => enterSelect()} />
 						<ToolLink label={t`Stages`} icon="kanban" onPress={() => router.setParams({ view: "board" })} />
@@ -469,7 +520,7 @@ function BoardView({
 					index={index}
 					onIndexChange={setIndex}
 					style={{ paddingTop: 20 }}
-					renderItem={(column) => (
+					renderItem={(column, { index: at }) => (
 						<View>
 							<View style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}>
 								<Text variant="sheetTitle" accessibilityRole="header">
@@ -481,12 +532,16 @@ function BoardView({
 							</View>
 							<View style={{ paddingTop: 16, gap: 12 }}>
 								{column.rows.length === 0 ? (
-									<Box component="BoardCard" radius={radius.xl} style={{ padding: 16, alignItems: "center" }}>
-										<Ring color="line2" radius={radius.xl} dashed />
-										<Text variant="ui" color="ink3">
-											{t`Drag an application here`}
-										</Text>
-									</Box>
+									// The boards start at the current column: an empty one before it would peek 8 dp at
+									// the edge, so its placeholder appears once it is reached.
+									at < index ? null : (
+										<Box component="BoardCard" radius={radius.xl} style={{ padding: 16, alignItems: "center" }}>
+											<Ring color="line2" radius={radius.xl} dashed />
+											<Text variant="ui" color="ink3">
+												{t`Drag an application here`}
+											</Text>
+										</Box>
+									)
 								) : (
 									column.rows.map((app) => (
 										<BoardDragCard key={app.id} id={app.id}>
@@ -578,11 +633,16 @@ function CalendarView({
 				}}
 			>
 				<View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 4 }}>
-					<Text variant="textLink" weight={600}>
-						{month ? monthLabel(day) : weekRange(weekOf(day))}{" "}
-						<Text variant="textLink" weight={400} color="ink3">
-							{t`· ${zoneCity(context.zone)} time`}
-						</Text>
+					<Text
+						variant="textLink"
+						weight={600}
+						after={
+							<Text variant="textLink" weight={400} color="ink3">
+								{t`· ${zoneCity(context.zone)} time`}
+							</Text>
+						}
+					>
+						{`${month ? monthLabel(day) : weekRange(weekOf(day))} `}
 					</Text>
 				</View>
 				<IconButton

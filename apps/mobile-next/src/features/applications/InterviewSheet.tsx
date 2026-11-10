@@ -276,6 +276,7 @@ function InterviewForm({
 						accessibilityRole="switch"
 						accessibilityState={{ checked: calendar }}
 						last
+						boxHidden
 					/>
 				</View>
 			</SheetScrollView>

@@ -23,6 +23,7 @@ import {
 	PushScreen,
 	showToast,
 	Text,
+	TextBlock,
 	Touch,
 	type as typeScale,
 	useTheme,
@@ -147,7 +148,7 @@ export function MessagesScreen() {
 					value={contact ? [contact.name, contact.type || contact.role].filter(Boolean).join(" · ") : t`Add a contact`}
 					onPress={contact ? undefined : () => router.push(`/applications/${app.id}`)}
 				/>
-				<ListRow title={t`Subject`} secondary={subject} last />
+				<ListRow title={t`Subject`} secondary={subject} last boxHidden />
 			</View>
 			{ai.running ? <Working steps={STEPS.draft()} onStop={ai.stop} /> : null}
 			{ai.failed ? (
@@ -178,11 +179,19 @@ export function MessagesScreen() {
 							onPress={() => setEditing(true)}
 						>
 							<View style={{ gap: 16 }}>
-								{paragraphs.map((p, i) => (
-									<Text key={i} variant="prose">
-										{p}
-									</Text>
-								))}
+								{paragraphs.map((p, i) => {
+									// A line break inside a paragraph (the sign-off): two lines, one text, as the boards' <br>.
+									const [first = "", ...more] = p.split("\n");
+									return more.length ? (
+										<TextBlock key={i} variant="prose" gap={0} before={first} after={more.join("\n")}>
+											{null}
+										</TextBlock>
+									) : (
+										<Text key={i} variant="prose">
+											{p}
+										</Text>
+									);
+								})}
 							</View>
 						</Touch>
 					)}

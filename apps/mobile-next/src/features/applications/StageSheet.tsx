@@ -100,6 +100,7 @@ function StagesStep({ app, onStep }: { app: Application; onStep: (step: Step) =>
 					accessibilityRole="radio"
 					accessibilityState={{ selected: status === app.status }}
 					last={i === PIPELINE.length - 1}
+					boxHidden={i === PIPELINE.length - 1}
 					onPress={() => selectRadio(status === app.status, () => void choose(status))}
 					testID={`stage-${status}`}
 				/>
@@ -252,6 +253,7 @@ function CloseStep({ app }: { app: Application }) {
 						key={key}
 						top={i === 0}
 						last={i === CLOSED_REASONS.length - 1}
+						boxHidden={i === CLOSED_REASONS.length - 1}
 						title={outcomeLabel(key)}
 						secondary={key === "accepted" && offerSince ? t`Offer since ${dayMonth(offerSince, zone)}` : undefined}
 						leading={<Radio selected={reason === key} interactive={false} />}

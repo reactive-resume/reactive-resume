@@ -8,6 +8,7 @@ import { View } from "react-native";
 import { useApplicationActions } from "./actions";
 import {
 	type Application,
+	applicationHeroId,
 	clockTime,
 	closedLine,
 	dayMonth,
@@ -28,6 +29,7 @@ import { now, timeZone } from "@/data/clock";
 import { useSavedItems } from "@/features/workspace/shared";
 import {
 	Button,
+	flyBack,
 	HeroCard,
 	IconButton,
 	IconTile,
@@ -148,6 +150,11 @@ export function DetailScreen() {
 	return (
 		<PushScreen
 			title={app.company}
+			titleHeroId={applicationHeroId(app.id)}
+			onBack={() => {
+				void flyBack(applicationHeroId(app.id));
+				router.back();
+			}}
 			subtitle={<PageSubtitle status>{subtitle}</PageSubtitle>}
 			barEnd={more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
 			overlay={more.menu(

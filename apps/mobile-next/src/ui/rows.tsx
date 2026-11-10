@@ -3,6 +3,7 @@ import type { HapticToken } from "./tokens";
 import type { ReactNode } from "react";
 import { View } from "react-native";
 import { Box, Ring, Touch } from "./base";
+import { HeroSource } from "./Hero";
 import { Icon, type IconName } from "./Icon";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
@@ -185,6 +186,8 @@ export type ListRowProps = {
 	 * (no borderless `div.li` in any layout dump): true leaves the row's box out of the dump, its contents stay.
 	 */
 	boxHidden?: boolean | undefined;
+	/** The title alone is the source of a shared-element flight (J1's company name → J6, MOTION.md §6.2). */
+	titleHeroId?: string | undefined;
 };
 
 export function ListRow({
@@ -215,6 +218,7 @@ export function ListRow({
 	washDelay = 50,
 	children,
 	boxHidden = false,
+	titleHeroId,
 }: ListRowProps) {
 	const { colors } = useTheme();
 	const trailingNode =
@@ -227,6 +231,15 @@ export function ListRow({
 		) : (
 			trailing
 		);
+	const titleText = (
+		<Text
+			variant="rowTitle"
+			color={titleColor ?? (danger ? "dangerText" : "ink")}
+			{...(titleLines ? { numberOfLines: titleLines } : wrapTitle ? {} : { numberOfLines: 1 })}
+		>
+			{title}
+		</Text>
+	);
 	const body = (
 		<Box
 			component="ListRow"
@@ -246,13 +259,7 @@ export function ListRow({
 		>
 			{leading}
 			<View style={{ flex: 1, minWidth: 0, gap: 2 }}>
-				<Text
-					variant="rowTitle"
-					color={titleColor ?? (danger ? "dangerText" : "ink")}
-					{...(titleLines ? { numberOfLines: titleLines } : wrapTitle ? {} : { numberOfLines: 1 })}
-				>
-					{title}
-				</Text>
+				{titleHeroId ? <HeroSource id={titleHeroId}>{titleText}</HeroSource> : titleText}
 				{secondary ? (
 					<Text variant="ui" color={secondaryColor} {...(wrapSecondary ? {} : { numberOfLines: 1 })}>
 						{secondary}

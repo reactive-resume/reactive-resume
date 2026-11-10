@@ -186,6 +186,7 @@ export function SaveJobScreen() {
 					leading={<IconTile icon="plus" />}
 					trailing={more ? "up" : "caret"}
 					last={!more}
+					boxHidden={!more}
 					onPress={() => setMore((m) => !m)}
 				/>
 				{more ? (

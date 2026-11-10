@@ -363,3 +363,6 @@ export function stageBeforeClose(app: Pick<ApplicationRow, "activity">): Applica
 		.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
 	return entries[0]?.stage ?? null;
 }
+
+/** J1's company name → J6's page title (MOTION.md §6.2). */
+export const applicationHeroId = (id: string) => `application-${id}`;
