@@ -138,6 +138,7 @@ function ScopedTrashScreen() {
 					secondary={secondary}
 					leading={leading}
 					trailing={restoreButton(item)}
+					trailingAction
 					onPress={() => setSelection(item)}
 					last={last}
 					boxHidden={last}

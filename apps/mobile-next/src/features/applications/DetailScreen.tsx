@@ -223,6 +223,7 @@ export function DetailScreen() {
 			<SectionHeading title={t`Details`} />
 			<ListRow
 				title={t`Stage`}
+				accessibilityLabel={`${t`Stage`}, ${app.status === "closed" ? closedLine(app.closedReason) : stageLabel(app.status)}`}
 				trailing={
 					<View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
 						<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>

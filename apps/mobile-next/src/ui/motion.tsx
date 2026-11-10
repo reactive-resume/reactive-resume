@@ -267,6 +267,8 @@ export type TouchableProps = {
 	accessibilityLabel?: string | undefined;
 	accessibilityHint?: string | undefined;
 	accessibilityState?: AccessibilityState | undefined;
+	/** false when the content holds its own control that screen readers must reach (ListRow `trailingAction`). */
+	accessible?: boolean | undefined;
 	testID?: string | undefined;
 	/** Extra touch area around the drawing; use hitSlopFor(width, height) for anything drawn under 44/48. */
 	hitSlop?: number | Insets | undefined;
@@ -311,6 +313,7 @@ export function Touchable({
 	accessibilityLabel,
 	accessibilityHint,
 	accessibilityState,
+	accessible = true,
 	testID,
 	hitSlop,
 	pressedValue,
@@ -364,7 +367,7 @@ export function Touchable({
 	return (
 		<GestureDetector gesture={gesture}>
 			<Animated.View
-				accessible
+				accessible={accessible}
 				accessibilityRole={accessibilityRole}
 				accessibilityLabel={accessibilityLabel}
 				accessibilityHint={accessibilityHint}

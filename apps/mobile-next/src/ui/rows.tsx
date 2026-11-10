@@ -190,6 +190,11 @@ export type ListRowProps = {
 	boxHidden?: boolean | undefined;
 	/** The title alone is the source of a shared-element flight (J1's company name → J6, MOTION.md §6.2). */
 	titleHeroId?: string | undefined;
+	/**
+	 * The trailing slot holds its own control (a RowLink): the row stops grouping its content into one accessibility
+	 * element, so screen readers and UI tests reach that control.
+	 */
+	trailingAction?: boolean | undefined;
 };
 
 export function ListRow({
@@ -222,6 +227,7 @@ export function ListRow({
 	children,
 	boxHidden = false,
 	titleHeroId,
+	trailingAction = false,
 }: ListRowProps) {
 	const { colors } = useTheme();
 	const trailingNode =
@@ -302,6 +308,7 @@ export function ListRow({
 			{...(accessibilityHint || secondary ? { accessibilityHint: accessibilityHint ?? secondary ?? "" } : {})}
 			{...(accessibilityState ? { accessibilityState } : {})}
 			{...(testID ? { testID } : {})}
+			{...(trailingAction ? { accessible: false } : {})}
 			style={{ paddingHorizontal: layout.screenMargin }}
 		>
 			{body}
