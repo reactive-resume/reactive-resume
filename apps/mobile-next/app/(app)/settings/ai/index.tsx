@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+// S5 · AI and developer.
+import { AIScreen } from "@/features/settings/AIScreen";
 
-// S5: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="S5" kind="push" />;
-}
+export default AIScreen;
