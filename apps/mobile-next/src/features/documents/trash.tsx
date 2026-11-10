@@ -21,7 +21,7 @@ import {
 	haptic,
 	showToast,
 	useRowMotion,
-	Text,
+	PageSubtitle,
 } from "@/ui";
 
 type TrashItem = { ref: TrashRef; name: string };
@@ -153,11 +153,7 @@ function ScopedTrashScreen() {
 			<PushScreen
 				title={t`Trash`}
 				subtitle={
-					<Text
-						variant="body"
-						color="ink3"
-						style={{ paddingHorizontal: 24, paddingTop: 6 }}
-					>{t`Documents go after 30 days; applications stay until you delete them.`}</Text>
+					<PageSubtitle status>{t`Documents go after 30 days; applications stay until you delete them.`}</PageSubtitle>
 				}
 				barEnd={
 					<Button

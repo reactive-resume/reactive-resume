@@ -129,13 +129,15 @@ function ScopedDocumentActionsScreen() {
 				/>
 			) : (
 				<SheetScrollView>
-					<Text variant="body" color="ink3" style={{ paddingHorizontal: 24, paddingTop: 4 }}>
-						{document.type === "resume" ? t`Resume` : t`Cover letter`}
-						{" · "}
-						{backend.kind === "fake" && id === "resume-lead"
-							? t`edited 3 Oct`
-							: editedLabel(document.editedAt, now).toLocaleLowerCase()}
-					</Text>
+					<View style={{ paddingHorizontal: 24, flexDirection: "row" }}>
+						<Text variant="body" color="ink3">
+							{document.type === "resume" ? t`Resume` : t`Cover letter`}
+							{" · "}
+							{backend.kind === "fake" && id === "resume-lead"
+								? t`edited 3 Oct`
+								: editedLabel(document.editedAt, now).toLocaleLowerCase()}
+						</Text>
+					</View>
 					{error ? <CollectionState message={error} /> : null}
 					{editing ? (
 						<View style={{ padding: 24, gap: 20 }}>

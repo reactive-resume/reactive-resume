@@ -218,13 +218,8 @@ function ScopedImportScreen() {
 						wrapTitle
 						wrapSecondary
 						title={t`Basics`}
-						secondary={[
-							resume.data?.data.basics.name,
-							resume.data?.data.basics.headline,
-							resume.data?.data.basics.location,
-						]
-							.filter(Boolean)
-							.join(" · ")}
+						// The fixture review stands in for a parsed file; its basics are the storyboard's, not the saved resume's.
+						secondary={t`Alex Morgan · Product designer · Lisbon`}
 						trailing={<Icon name="check" size={24} color="ink2" />}
 					/>
 					<ListRow wrapTitle wrapSecondary title={t`Experience`} value="4" />

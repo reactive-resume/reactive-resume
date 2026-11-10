@@ -5,7 +5,15 @@ import { useNavigation, useRoute } from "expo-router";
 // icon swap, ink-2 → accent-text crossfade d1); content switches by fade-through (FadeThroughProvider). Builder and
 // letter docks play `selection`; root tabs play none. Re-tapping the selected item scrolls its list to the top.
 // Large text (≥ 150%): 80 dp, 30 dp icons, 18 sp labels; past 150% the short labels, full names read out.
-import { type ReactNode, type Ref, useEffect, useImperativeHandle, useState } from "react";
+import {
+	type ReactNode,
+	type Ref,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useState,
+	useSyncExternalStore,
+} from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, { type SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -135,10 +143,10 @@ function DockItem({
 			<View style={{ width: iconSize, height: iconSize }}>
 				{/* Regular → fill swaps at once; the colour crossfades d1. */}
 				<Fade s={s} on={false} absolute>
-					<Icon name={item.icon} size={iconSize} color={selected ? "accentText" : "ink2"} />
+					<Icon name={item.icon} size={iconSize} color={selected ? "accentText" : "ink2"} tag={!selected} />
 				</Fade>
 				<Fade s={s} on absolute>
-					<Icon name={item.icon} size={iconSize} color="accentText" fill />
+					<Icon name={item.icon} size={iconSize} color="accentText" fill tag={selected} />
 				</Fade>
 			</View>
 			<View>

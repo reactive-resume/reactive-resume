@@ -80,7 +80,13 @@ export function RootHeader({
 					minHeight: 54,
 				}}
 			>
-				<Text variant="rootTitle" accessibilityRole="header" numberOfLines={1} style={{ flexShrink: 1 }}>
+				{/* 2 dp under the title puts its line box at the board's 57.5; Text's iOS glyph shift then lands the ink. */}
+				<Text
+					variant="rootTitle"
+					accessibilityRole="header"
+					numberOfLines={1}
+					style={{ flexShrink: 1, marginBottom: 2 }}
+				>
 					{title}
 				</Text>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingBottom: 2 }}>
@@ -317,9 +323,11 @@ export function SectionHeading({
 				{title}
 			</Text>
 			{count ? (
-				<Text variant="ui" color="ink3" style={{ flex: 1, paddingStart: 2 }}>
-					{count}
-				</Text>
+				<View style={{ flex: 1, paddingStart: 2 }}>
+					<Text variant="ui" color="ink3">
+						{count}
+					</Text>
+				</View>
 			) : null}
 			{action ? (
 				<Touch

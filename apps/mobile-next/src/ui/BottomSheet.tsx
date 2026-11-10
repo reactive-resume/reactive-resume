@@ -424,6 +424,7 @@ const styles = StyleSheet.create({
 		paddingEnd: 12,
 		paddingBottom: 4,
 		paddingStart: 24,
+		gap: 8,
 	},
 	// 8 dp before the close button: every sheet dump measures the title slot 302 dp wide.
 	title: { flex: 1, marginEnd: 8 },

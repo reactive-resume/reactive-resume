@@ -37,8 +37,8 @@ export function IconTile({
 	);
 }
 
-/** 40 × 40 company monogram. */
-export function Monogram({ letters }: { letters: string }) {
+/** 40 × 40 company monogram. `numeral`: a step number in the serif at 18 (T2's "How it works"). */
+export function Monogram({ letters, numeral = false }: { letters: string; numeral?: boolean | undefined }) {
 	return (
 		<Box
 			component="Monogram"
@@ -46,7 +46,13 @@ export function Monogram({ letters }: { letters: string }) {
 			radius={radius.md}
 			style={{ width: 40, height: 40, alignItems: "center", justifyContent: "center" }}
 		>
-			<Text variant="ui" weight={600} color="ink2" style={{ lineHeight: 16 }} maxFontSizeMultiplier={1.3}>
+			<Text
+				variant={numeral ? "sheetTitle" : "ui"}
+				{...(numeral ? {} : { weight: 600 as const })}
+				color="ink2"
+				style={numeral ? { fontSize: 18, lineHeight: 16 } : { lineHeight: 16 }}
+				maxFontSizeMultiplier={1.3}
+			>
 				{letters}
 			</Text>
 		</Box>
