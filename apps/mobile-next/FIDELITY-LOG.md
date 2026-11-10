@@ -236,3 +236,36 @@ EXTRA lines left (contract issues for the lead, not tool failures):
 | P1-Public        | 0 failing / 37 ok | 0.5     | 0.44   | 0     | 0     | pass   |
 | P2-ATS           | 0 failing / 29 ok | 0.62    | 0.57   | 0     | 0     | pass   |
 | X1-Notify        | 0 failing / 36 ok | 0.92    | 0.8    | 0     | 0     | pass   |
+
+## 2026-11-10 · Pass 7 · builder and letters, Android (Pixel_10_Pro emulator, API 37, 390 × 844 dp, debug storyboard build)
+
+Native rebuild (prebuild `--clean`, `assembleDebug` for arm64-v8a) with `expo-background-task`, `expo-task-manager`,
+`expo-quick-actions` and `modules/pdf-pages` built first time; it needed only the forme-native `jniLibs` copy.
+
+First run: 20 of 23 (B3, B4, B18 failing). The composites showed three Android differences the layout tool passed:
+
+- **Proposal pads (B4).** `ProposalText` pads added runs with a zero-width space at 2 dp letter spacing. Figtree has
+  no U+200B; Android draws it from a fallback as a default-ignorable glyph with no advance and no spacing, so added runs
+  drew their glyphs 2 dp left (ink 49.5, boards 51.5). Android now pads with a no-break space (Figtree 0.247 em) at
+  2 / 0.247 dp, which advances exactly 2 dp: ink 51.5 / 52.0.
+- **Line breaking (L1).** Android's default `textBreakStrategy` ("highQuality") balances a paragraph's lines; CSS
+  breaks greedily. L1's letter wrapped "grow" a line early. `Text` sets `textBreakStrategy="simple"` (Android only;
+  iOS text layout never reads it), and the proposal probes use it so prefixes wrap like the whole paragraph.
+- **Strike-through (B17).** React Native 0.88 on Android drops a nested Text's `line-through` once the same paragraph
+  holds a background run (probe: struck run alone draws; struck plus any `backgroundColor` run, before or after it, with
+  or without `textDecorationColor` or style, does not). Android draws the removed run's strike itself in
+  `ProposalText`: 1 dp `ink-2` lines at the middle of each line it covers (the boards' 12 dp of 24), placed from the
+  same prefix probes as the storyboard run tags.
+
+B18's first light capture ran before the page image loaded (14 elements instead of 46); L2's first light capture drew a
+blank page. Both passed on recapture.
+
+Scoreboard (`fidelity.py --system-bars`), all 53 screens recaptured after the changes: 52 pass. B3's one failing line is
+the description preview's full text against the boards' pre-truncated string, the same on iOS. 0.42–0.85 % differing
+pixels per theme except B7 2.34 / 2.37 % (swatch palette and blank unselected thumbnails, both the same on iOS), B14
+dark 1.36 % and D3 dark 2.02 % (backdrop under the dark scrim, the same on iOS).
+
+Capture notes: the debug build stops answering after five or six captures in a row on this emulator; relaunching the
+dev client between batches of two screens kept every capture. The emulator itself hung once (QEMU) after about 100
+captures. Outside a capture the harness keeps `timeScale` at 0 after a storyboard link, so motion checks start from a
+fresh launch and real taps.

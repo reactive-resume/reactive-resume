@@ -128,6 +128,9 @@ export function Text({
 		<RNText
 			ref={after ? undefined : ref}
 			maxFontSizeMultiplier={maxScale(fontFamily)}
+			// Android balances paragraph lines by default ("highQuality"); CSS breaks greedily, as "simple" does (L1's
+			// letter wrapped "grow" a line early). Android-only prop: iOS never reads it.
+			textBreakStrategy="simple"
 			{...rest}
 			{...(clamp.active ? { accessibilityLabel: rest.accessibilityLabel ?? full } : {})}
 			style={textStyle}
