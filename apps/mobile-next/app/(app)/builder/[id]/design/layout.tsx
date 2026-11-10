@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { LayoutScreen } from "@/features/builder/design/LayoutScreen";
 
-// B8: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="B8" kind="push" />;
-}
+// B8 · Layout: columns, pages, order.
+export default LayoutScreen;

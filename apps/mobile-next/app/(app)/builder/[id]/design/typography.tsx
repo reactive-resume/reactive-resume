@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { TypographyScreen } from "@/features/builder/design/TypographyScreen";
 
-// Typography: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="Typography" kind="push" />;
-}
+// Typography picker (from B6).
+export default TypographyScreen;

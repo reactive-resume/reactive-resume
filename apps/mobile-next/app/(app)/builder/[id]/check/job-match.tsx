@@ -1,6 +1,8 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { Redirect } from "expo-router";
+import { useBuilderParams } from "@/features/builder/shared/document";
 
-// B10: placeholder until its screen agent builds it.
+// B10 · Check: job match lives in the Check mode (so the dock stays); this path opens it there.
 export default function Route() {
-	return <RoutePlaceholder ids="B10" kind="push" />;
+	const { id } = useBuilderParams();
+	return <Redirect href={`/builder/${id}/check?view=job`} />;
 }

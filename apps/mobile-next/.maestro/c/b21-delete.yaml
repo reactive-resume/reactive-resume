@@ -1,0 +1,15 @@
+# B21 › Delete entry → `light`; the toast offers Undo.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/B21-EntryActions?theme=light
+- extendedWaitUntil:
+    visible: Delete entry
+    timeout: 15000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn:
+    id: entry-action-delete
+- assertVisible:
+    id: haptic-log
+    text: light
+- assertVisible: Entry deleted
+- assertVisible: 1 entry · on page 1

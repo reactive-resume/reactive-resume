@@ -1,0 +1,13 @@
+# B21 › Move down → `selection`; the entry moves under its neighbour.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/B21-EntryActions?theme=light
+- extendedWaitUntil:
+    visible: Move down
+    timeout: 15000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn:
+    id: entry-action-down
+- assertVisible:
+    id: haptic-log
+    text: selection

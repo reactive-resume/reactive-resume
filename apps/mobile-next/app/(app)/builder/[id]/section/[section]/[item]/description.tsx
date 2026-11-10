@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { DescriptionScreen } from "@/features/builder/description/DescriptionScreen";
 
-// B4: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="B4" kind="push" />;
-}
+// B4 · Description and Improve.
+export default DescriptionScreen;

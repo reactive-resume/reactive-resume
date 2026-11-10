@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { DesignScreen } from "@/features/builder/design/DesignScreen";
 
-// B6: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="B6" kind="tab" docked />;
-}
+// B6 · Design overview.
+export default DesignScreen;

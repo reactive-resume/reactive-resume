@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { CheckScreen } from "@/features/builder/check/CheckScreen";
 
-// B9: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="B9" kind="tab" docked />;
-}
+// B9 · Check (Issues · Job match · Writing).
+export default CheckScreen;

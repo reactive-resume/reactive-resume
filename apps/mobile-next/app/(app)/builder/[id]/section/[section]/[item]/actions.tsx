@@ -1,6 +1,4 @@
-import { RoutePlaceholder } from "@/dev/RoutePlaceholder";
+import { EntryActionsSheet } from "@/features/builder/entry/EntryActionsSheet";
 
-// B21: placeholder until its screen agent builds it.
-export default function Route() {
-	return <RoutePlaceholder ids="B21" kind="sheet" />;
-}
+// B21 · Entry actions (sheet over B2 or B3).
+export default EntryActionsSheet;
