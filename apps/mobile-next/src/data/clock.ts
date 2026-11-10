@@ -44,12 +44,12 @@ export function wallTimeChoices(
 		const name = new Intl.DateTimeFormat("en-GB", { timeZone: zone, timeZoneName: "short" })
 			.formatToParts(instant)
 			.find((p) => p.type === "timeZoneName")?.value;
-		const offset =
-			new Intl.DateTimeFormat("en", { timeZone: zone, timeZoneName: "shortOffset" })
-				.formatToParts(instant)
-				.find((p) => p.type === "timeZoneName")
-				?.value?.replace("GMT", "UTC") ?? "UTC";
-		const padded = offset.replace(/([+-])(\d)(?=:|$)/, "$10$2");
+		// The offset from the wall time itself: Hermes doesn't support timeZoneName "shortOffset".
+		const local = zonedParts(instant, zone);
+		const minutes = Math.round((Date.parse(`${local.date}T${local.time}:00Z`) - instant.getTime()) / 60_000);
+		const abs = Math.abs(minutes);
+		const pad = (n: number) => String(n).padStart(2, "0");
+		const padded = `UTC${minutes < 0 ? "-" : "+"}${pad(Math.floor(abs / 60))}${abs % 60 ? `:${pad(abs % 60)}` : ""}`;
 		return {
 			instant,
 			zone,
