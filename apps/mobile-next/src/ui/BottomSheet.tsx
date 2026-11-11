@@ -24,9 +24,10 @@ import {
 	AccessibilityInfo,
 	BackHandler,
 	findNodeHandle,
-	type HostInstance,
 	I18nManager,
+	Keyboard,
 	StyleSheet,
+	type HostInstance,
 	View,
 } from "react-native";
 import { Gesture, GestureDetector, type GestureType } from "react-native-gesture-handler";
@@ -169,8 +170,9 @@ export function BottomSheet({
 		onClose();
 	};
 
-	// Open.
+	// Open. A sheet without fields puts the keyboard away, as it would cover the sheet (B21 from ··· while typing).
 	useEffect(() => {
+		if (!keyboard) Keyboard.dismiss();
 		if (startOpenAt === undefined && timeScale.value === 0) {
 			scrim.set(1);
 			fade.set(1);

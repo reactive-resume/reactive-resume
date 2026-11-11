@@ -2,8 +2,6 @@
 import type { StackNavigationOptions } from "expo-router/js-stack";
 import { useStackOptions } from "./motion";
 import { useThemeName } from "./theme";
-import { useCaptureStore } from "@/dev/storyboard/capture";
-import { STORYBOARD } from "@/dev/storyboard/harness";
 
 /**
  * push: slide from the trailing edge. modal: rise from the bottom. sheet: a transparent route whose design-system
@@ -14,9 +12,8 @@ export function useScreenOptions() {
 	const push = useStackOptions(theme, "push");
 	const modal = useStackOptions(theme, "modal");
 	const fade = useStackOptions(theme, "fade");
-	// Storyboard captures land every transition at once; once `storyboard-ready` shows, motion runs as shipped.
-	const capturing = useCaptureStore((s) => STORYBOARD && s.request !== null && s.ready !== s.request.nonce);
-	const still: StackNavigationOptions = capturing ? { animation: "none" } : {};
+	// Storyboard captures land every transition at once through `timeScale`; overriding `animation` to none for them
+	// left the stack's cards inert for the first touch once motion came back.
 	const sheet: StackNavigationOptions = {
 		headerShown: false,
 		presentation: "transparentModal",
@@ -26,9 +23,9 @@ export function useScreenOptions() {
 		gestureEnabled: false,
 	};
 	return {
-		push: { ...push, ...still },
-		modal: { ...modal, presentation: "modal" as const, ...still },
-		hero: { ...fade, ...still },
+		push,
+		modal: { ...modal, presentation: "modal" as const },
+		hero: fade,
 		sheet,
 	};
 }
