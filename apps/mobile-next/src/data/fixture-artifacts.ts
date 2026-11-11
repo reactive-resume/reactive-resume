@@ -63,7 +63,11 @@ export function fixtureArtifact(task: Record<string, unknown>) {
 				answer: task.answer,
 				landed: task.landed,
 				title: "",
-				verdicts: [],
+				// What the person said, proposed back as one fact to remember (W5's Remember / Not now rows).
+				verdicts:
+					typeof task.answer === "string" && task.answer.trim()
+						? [{ tag: "supported", text: task.answer.trim().slice(0, 400) }]
+						: [],
 				nextRound: "",
 				priority: "",
 				plan: [],

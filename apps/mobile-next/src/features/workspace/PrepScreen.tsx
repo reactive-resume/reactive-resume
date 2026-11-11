@@ -55,9 +55,12 @@ export function PrepScreen() {
 	const saved = useLocalValue<boolean | null>(refreshWork, null);
 	const refresh = saved.value ?? storyboard?.refreshOn ?? false;
 	const refreshPaused = refresh && !!ws.connection && recurringApprovalChanged(refreshWork, ws.connection);
+	// The approval lives outside React; a new one re-reads the paused state.
+	const [, setApproved] = useState(0);
 	const setRefresh = (next: boolean) => {
 		if (next && ws.connection) recordRecurringApproval(refreshWork, ws.connection);
 		saved.set(next);
+		setApproved((n) => n + 1);
 	};
 	const briefing = ws.latest("briefing")[0];
 	const generate = () =>
