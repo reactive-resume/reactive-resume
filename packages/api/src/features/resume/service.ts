@@ -493,7 +493,7 @@ function toSharedResumeResponse(
 	};
 }
 
-async function notifyResumeUpdated(event: ResumeUpdatedEvent) {
+export async function notifyResumeUpdated(event: ResumeUpdatedEvent) {
 	try {
 		await publishResumeUpdated(event);
 	} catch (error) {
