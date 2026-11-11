@@ -2067,6 +2067,68 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 		expect(fixture.email).toHaveBeenCalledOnce();
 	});
 
+	it.each([
+		["unverified", { emailVerified: false }],
+		["banned", { emailVerified: true, banned: true }],
+	] as const)("skips an %s owner's emails without spending the tick's claims on them", async (_state, owner) => {
+		await getDb()
+			.insert(tables.user)
+			.values({
+				id: "bob",
+				name: "Bob Example",
+				email: "bob@example.test",
+				username: `${schemaName}-bob`,
+				displayUsername: `${schemaName}-bob`,
+				...owner,
+			});
+		const later = new Date(Date.now() + 86_400_000);
+		const hoursAgo = (hours: number) => new Date(Date.now() - hours * 3_600_000);
+		await getDb()
+			.insert(tables.careerSchedule)
+			.values(
+				["bob", "alice"].map((userId) => ({
+					id: `${userId}-schedule`,
+					userId,
+					kind: "discovery",
+					query: "Roles",
+					timezone: "UTC",
+					enabled: true,
+					email: true,
+					nextRunAt: later,
+				})),
+			);
+		await getDb()
+			.insert(tables.careerJob)
+			.values([
+				{ id: "bob-job-1", userId: "bob", scheduleId: "bob-schedule", dueAt: hoursAgo(3), status: "completed" },
+				{ id: "bob-job-2", userId: "bob", scheduleId: "bob-schedule", dueAt: hoursAgo(2), status: "completed" },
+				{ id: "alice-job", userId: "alice", scheduleId: "alice-schedule", dueAt: hoursAgo(1), status: "completed" },
+			]);
+		const notice = { type: "opportunities" as const, count: 1, query: "Roles" };
+		await getDb()
+			.insert(tables.careerNotification)
+			.values([
+				{ userId: "bob", key: "bob-job-1", notice, createdAt: hoursAgo(3) },
+				{ userId: "bob", key: "bob-job-2", notice, createdAt: hoursAgo(2) },
+				{ userId: "alice", key: "alice-job", notice, createdAt: hoursAgo(1) },
+			]);
+		await run();
+		expect(fixture.email).toHaveBeenCalledOnce();
+		expect(fixture.email).toHaveBeenCalledWith(expect.objectContaining({ to: "alice@example.test", key: "alice-job" }));
+		const held = await getDb()
+			.select()
+			.from(tables.careerNotification)
+			.where(eq(tables.careerNotification.userId, "bob"));
+		expect(held.map((row) => [row.emailAttemptedAt, row.emailedAt])).toEqual([
+			[null, null],
+			[null, null],
+		]);
+		// Suspended, not dropped: delivery resumes once the owner can receive email again.
+		await getDb().update(tables.user).set({ emailVerified: true, banned: false }).where(eq(tables.user.id, "bob"));
+		await run();
+		expect(fixture.email).toHaveBeenCalledTimes(3);
+	});
+
 	it("deletes notifications read more than 90 days ago and keeps unread and recently read ones", async () => {
 		const day = 24 * 60 * 60 * 1000;
 		const old = new Date(Date.now() - 91 * day);
