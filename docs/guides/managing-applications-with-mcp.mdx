@@ -182,7 +182,7 @@ Find applications that haven't changed in three weeks and suggest which to follo
 Add the tag follow-up to every application in the applied stage with a follow-up date before today. Show me the list first.
 ```
 
-`bulk_update_applications` moves up to 200 applications to a stage or adds tags to them. `delete_application` and `bulk_delete_applications` delete permanently, including uploaded PDFs that no other application uses; there is no Trash for applications.
+`bulk_update_applications` moves up to 200 applications to a stage or adds tags to them. `delete_application` and `bulk_delete_applications` move applications to Trash with their timelines and uploaded PDFs. They stay there until removed: list them with `api_applications_list_trash`, restore one with `api_applications_restore`, or delete one permanently with `api_applications_purge`.
 
 ## Suggested client instructions
 
