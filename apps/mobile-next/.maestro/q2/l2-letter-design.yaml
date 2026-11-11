@@ -1,0 +1,24 @@
+# L2 · "Match my resume" is on by default; turning it off reveals Template, Colour and Typography, and on hides them.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/L2-LetterDesign?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- assertVisible:
+    text: Match my resume
+    checked: true
+- assertNotVisible: Colour
+- tapOn: Match my resume
+- extendedWaitUntil:
+    visible: Colour
+    timeout: 5000
+- assertVisible: Template
+- assertVisible: Typography
+- tapOn: Match my resume
+- waitForAnimationToEnd
+- assertNotVisible: Colour

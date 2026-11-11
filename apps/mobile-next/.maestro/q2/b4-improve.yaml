@@ -1,0 +1,28 @@
+# B4 · Replace swaps the line with "Line replaced" and Undo; Keep mine closes the card; Improve opens the line actions
+# (Shorter, Stronger verb, Add a result, Tie to the posting, Ask for something else…); Add a result asks "What changed
+# because of this?" first.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B4-Improve?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- assertVisible: "Suggestion · stronger verb"
+- tapOn: Keep mine
+- assertNotVisible: "Suggestion · stronger verb"
+- tapOn: Improve
+- assertVisible: Shorter
+- assertVisible: Stronger verb
+- assertVisible: Add a result
+- assertVisible: Tie to the posting
+- assertVisible: "Ask for something else…"
+- tapOn: Add a result
+- extendedWaitUntil:
+    visible: What changed because of this?
+    timeout: 5000
+- tapOn: Cancel
+- waitForAnimationToEnd

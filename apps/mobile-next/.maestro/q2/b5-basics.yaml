@@ -1,0 +1,34 @@
+# B5 · Change photo opens Take photo, Choose from library and Remove photo; the email field explains a missing domain
+# inline, as the web does; links are tapped to edit and Add link sits at the end.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B5-Basics?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Change photo
+- extendedWaitUntil:
+    visible: Take photo
+    timeout: 10000
+- assertVisible: Choose from library
+- assertVisible: Remove photo
+- tapOn: Close
+- waitForAnimationToEnd
+- tapOn: alex@morgan.design
+- eraseText: 30
+- inputText: "alex@"
+- assertVisible: "Add the domain after the @, like alex@example.com"
+- inputText: "morgan.design"
+- assertNotVisible: "Add the domain after the @, like alex@example.com"
+- hideKeyboard
+- scrollUntilVisible:
+    element: Add link
+    direction: DOWN
+- tapOn: linkedin.com/in/alexmorgan
+- extendedWaitUntil:
+    visible: Entry options
+    timeout: 10000

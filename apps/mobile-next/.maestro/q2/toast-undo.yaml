@@ -1,0 +1,30 @@
+# B6 · A change's toast offers Undo, and the toast's Undo reverts it (Balanced back to Classic).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B6-Design?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Typography
+- extendedWaitUntil:
+    visible: Font pairing
+    timeout: 10000
+- tapOn: Larger
+- assertVisible: "11 pt"
+- tapOn:
+    text: Balanced
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Font pairing changed
+- tapOn:
+    id: toast-action
+    waitToSettleTimeoutMs: 1
+- waitForAnimationToEnd
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: "Classic · 11 pt"
+    timeout: 10000

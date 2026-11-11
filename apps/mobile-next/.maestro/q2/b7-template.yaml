@@ -1,0 +1,74 @@
+# B7 · Tapping a template applies it at once with "Template changed to Azurill" and Undo; the filter segments narrow
+# the cards and ATS-safe only is a switch at the carousel's end; a colour swatch applies with Undo and names itself
+# selected; Custom colour opens a hex sheet that warns about light colours and offers a darker shade.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B7-Template?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn:
+    text: Azurill
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Template changed to Azurill
+- tapOn:
+    id: status-undo
+- extendedWaitUntil:
+    notVisible: "Template changed to Azurill"
+    timeout: 15000
+- assertVisible:
+    id: status-redo
+- tapOn: Two columns
+- assertNotVisible: Onyx
+- assertVisible: Azurill
+- tapOn: One column
+- assertVisible: Onyx
+- assertNotVisible: Azurill
+- tapOn: All
+- swipe:
+    start: 350, 300
+    end: 20, 300
+    duration: 300
+- repeat:
+    times: 8
+    commands:
+      - swipe:
+          start: 350, 300
+          end: 20, 300
+          duration: 200
+- tapOn: ATS-safe only
+- swipe:
+    start: 40, 300
+    end: 370, 300
+    duration: 200
+- repeat:
+    times: 8
+    commands:
+      - swipe:
+          start: 40, 300
+          end: 370, 300
+          duration: 200
+- assertVisible: Onyx
+- assertNotVisible: Azurill
+- tapOn:
+    text: Teal
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Colour changed
+- assertVisible: "Teal, selected"
+- tapOn: Custom colour
+- extendedWaitUntil:
+    visible: Hex
+    timeout: 10000
+- eraseText: 10
+- inputText: "F0E68C"
+- assertVisible: Too light for headings on white. It may be hard to read and print faintly.
+- tapOn: Use a darker shade
+- assertNotVisible: Too light for headings on white. It may be hard to read and print faintly.
+- tapOn:
+    text: Use colour
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Colour changed

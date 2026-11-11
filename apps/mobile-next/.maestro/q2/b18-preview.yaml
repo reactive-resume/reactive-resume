@@ -1,0 +1,32 @@
+# B18 · The zoom bar zooms with taps and Fit snaps back with `selection`; Read as text shows the resume as headings and paragraphs.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B18-Preview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- assertVisible: Page 1 of 1
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: Zoom in
+- tapOn: Zoom in
+- waitForAnimationToEnd
+- tapOn: Fit
+- extendedWaitUntil:
+    visible:
+      id: haptic-log
+      text: ".*selection$"
+    timeout: 5000
+- tapOn: Fit
+- waitForAnimationToEnd
+- tapOn: Read as text
+- extendedWaitUntil:
+    visible: Show page
+    timeout: 5000
+- assertVisible: ".*Northwind Labs.*"
+- tapOn: Show page
+- waitForAnimationToEnd

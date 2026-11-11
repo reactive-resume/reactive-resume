@@ -1,0 +1,29 @@
+# L1 · Tapping the letter edits it in place and the dock steps aside for the keyboard; Undo with the keyboard still
+# up reverts the edit and Redo brings it back; Return finishes the paragraph and the dock comes back.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/L1-Letter?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- assertVisible: Export
+- tapOn: ".*research before pixels.*"
+- tapOn: Letter paragraph 2
+- inputText: " Thanks."
+- assertNotVisible: Export
+# Undo while the keyboard is up.
+- tapOn:
+    id: status-undo
+- assertNotVisible: ".*Thanks\\..*"
+- tapOn:
+    id: status-redo
+- assertVisible: ".*Thanks\\..*"
+- tapOn: ".*research before pixels.*"
+- tapOn: Letter paragraph 2
+- pressKey: Enter
+- waitForAnimationToEnd
+- assertVisible: Export

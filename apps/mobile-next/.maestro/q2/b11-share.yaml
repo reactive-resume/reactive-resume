@@ -1,0 +1,39 @@
+# B11 · Share PDF renders the PDF and opens the system share sheet; Other formats opens
+# B14; Copy link says "Link copied"; switching the public link off folds the link row away.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B11-Share?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Other formats
+- extendedWaitUntil:
+    visible: Save to Files
+    timeout: 10000
+- tapOn: Close
+- waitForAnimationToEnd
+- tapOn:
+    text: Copy link
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Link copied
+- tapOn: Public link
+- waitForAnimationToEnd
+- assertNotVisible: Your short link
+- tapOn: Public link
+- waitForAnimationToEnd
+- assertVisible: Your short link
+- tapOn: Share PDF
+# The system share sheet.
+- extendedWaitUntil:
+    visible: "Alex Morgan Resume.*"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Save to Files
+    timeout: 30000
+- tapOn:
+    id: header.closeButton
+    optional: true

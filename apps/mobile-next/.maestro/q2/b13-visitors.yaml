@@ -1,0 +1,14 @@
+# B13 · One big number with its quiet line and a chart with a single accessible summary; "Only you see these.".
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B13-Visitors?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- assertVisible: "views in the last 30 days · 14 downloads"
+- assertVisible: "Views per day over 30 days.*"
+- assertVisible: Only you see these.

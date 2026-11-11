@@ -1,0 +1,23 @@
+# B12 · The address validates as you type ("Use Latin letters a–z, numbers and single dashes."); the privacy switches
+# turn on and off.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B12-WebPage?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: product-designer
+- inputText: " X"
+- assertVisible: "Use Latin letters a–z, numbers and single dashes."
+- eraseText: 2
+- inputText: "-x"
+- assertNotVisible: "Use Latin letters a–z, numbers and single dashes."
+- hideKeyboard
+- tapOn: Hide contact details
+- assertNotVisible: "Couldn't update sharing. Try again."
+- tapOn: Show in search engines
+- assertNotVisible: "Couldn't update sharing. Try again."

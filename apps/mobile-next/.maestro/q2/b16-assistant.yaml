@@ -1,0 +1,40 @@
+# B16 · A question card's answer becomes the next message; tapping a context chip removes it and the dashed chip
+# brings it back; "Review 3 edits" opens the proposals (B17); the first chat to a connection asks first (S7); a
+# failed reply keeps the message with Retry and Switch model.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B16-Assistant?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Yes, I led it
+- assertVisible:
+    id: composer-input
+    text: Yes, I led it
+- tapOn: Review 3 edits
+- extendedWaitUntil:
+    visible: Proposed edits
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Review 3 edits
+    timeout: 10000
+- tapOn: Send
+- extendedWaitUntil:
+    visible: Send to Work OpenAI?
+    timeout: 10000
+- tapOn:
+    id: first-send-send
+- extendedWaitUntil:
+    visible: "Couldn't send your message. Your message is kept."
+    timeout: 10000
+- assertVisible: Retry
+- assertVisible: Switch model
+- assertVisible:
+    id: composer-input
+    text: Yes, I led it

@@ -1,0 +1,68 @@
+# B8 · Tapping a section offers Move up, Move down, Move to Main, Move to Sidebar, Move to page… and Hide from page;
+# Two columns splits each page into Main column and Sidebar with Sidebar side and width under Columns; Add page adds a
+# page under the last one and Delete page moves its sections back; Fit to one page plays `success` when the page fits.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B8-Layout?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Summary
+- assertVisible: Hide from page
+- assertNotVisible: Move up
+- tapOn: Move down
+- waitForAnimationToEnd
+- assertVisible:
+    text: Summary
+    below: Experience
+- tapOn: Add page
+- extendedWaitUntil:
+    visible: Page 2
+    timeout: 5000
+- tapOn: Summary
+- tapOn: Move to page 2
+- waitForAnimationToEnd
+- assertVisible:
+    text: Summary
+    below: Page 2
+- tapOn: Delete page
+- assertNotVisible: Page 2
+- assertVisible: Summary
+# Onyx is a one-column template: pick a two-column one (Azurill) first.
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Typography
+    timeout: 10000
+- tapOn: Template
+- tapOn: Azurill
+- tapOn:
+    id: top-bar-back
+- scrollUntilVisible:
+    element: Reset design defaults
+    direction: DOWN
+- tapOn: Layout
+- extendedWaitUntil:
+    visible: Columns
+    timeout: 10000
+- tapOn: Two columns
+- extendedWaitUntil:
+    visible: Main column
+    timeout: 5000
+- assertVisible: Sidebar side
+- assertVisible: Sidebar width
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: One column
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn: Fit to one page
+- extendedWaitUntil:
+    visible:
+      id: haptic-log
+      text: success
+    timeout: 10000
