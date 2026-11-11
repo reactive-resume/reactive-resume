@@ -2,6 +2,7 @@ import type { ResumeData } from "./data";
 import { describe, expect, it } from "vite-plus/test";
 import { parseResumeData } from "./data";
 import {
+	formatEditableYearMonth,
 	formatResumeDates,
 	formatYearMonth,
 	getPresentLabel,
@@ -172,6 +173,26 @@ describe("formatYearMonth", () => {
 		expect(formatYearMonth("0019-03", { locale: "en-US", format: "short" })).toBe("Mar 0019");
 		expect(formatYearMonth("0019-03", { locale: "ar-SA", format: "short" })).toBe("مارس ٠٠١٩");
 		expect(formatYearMonth("0999-03", { locale: "en-US", format: "long" })).toBe("March 0999");
+	});
+});
+
+describe("formatEditableYearMonth", () => {
+	it.each([
+		["en-US", "short", "2022-03", "Mar 2022"],
+		["en-US", "numeric", "2022-03", "03/2022"],
+		["en-US", "short", "2022", "2022"],
+	] as const)("keeps %s %s text that reads back as %s", (locale, format, value, text) => {
+		expect(formatEditableYearMonth(value, { locale, format })).toBe(text);
+	});
+
+	it.each([
+		["ja-JP", "2022年3月"],
+		["ko-KR", "2022년 3월"],
+		["pt-BR", "mar. de 2022"],
+		["ru-RU", "март 2022 г."],
+	])("falls back to the stored date when %s prints %s", (locale, printed) => {
+		expect(formatYearMonth("2022-03", { locale, format: "short" }).replace(/\s/g, " ")).toBe(printed);
+		expect(formatEditableYearMonth("2022-03", { locale, format: "short" })).toBe("2022-03");
 	});
 });
 

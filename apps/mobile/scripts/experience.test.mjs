@@ -1967,6 +1967,17 @@ const { DatesField } = load("features/write/date-field.tsx", {
 	"@/draft": { resumeFieldFocus: { onFocus() {}, onBlur() {} } },
 });
 reset();
+const printedDate = nodes(
+	render(DatesField, { dates: { start: "2022-03", end: null, present: false }, locale: "ja-JP", onChange() {} }),
+).find((node) => node.props.label === "Start");
+reset();
+const printedDateField = () => control(render(printedDate.type, printedDate.props), "Start");
+assert.equal(printedDateField().value, "2022年3月");
+printedDateField().onFocus();
+assert.equal(printedDateField().value, "2022-03");
+printedDateField().onBlur();
+assert.equal(printedDateField().value, "2022年3月");
+reset();
 let dateValue = { start: "2022-03", end: null, present: true };
 const dateView = () =>
 	render(DatesField, {
