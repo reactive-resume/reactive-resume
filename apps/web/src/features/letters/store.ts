@@ -465,7 +465,8 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	flush: async () => {
 		const { sessionId } = get();
 		clearTimeout(timer);
-		if (inflight) await inflight;
+		// A save that finishes can start a follow-up for what was typed meanwhile; wait for that one too.
+		while (inflight) await inflight;
 		if (get().sessionId !== sessionId) return false;
 
 		const { letter, pending, status, pendingProposalApplications, proposalSafety } = get();
