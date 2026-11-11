@@ -269,3 +269,65 @@ Capture notes: the debug build stops answering after five or six captures in a r
 dev client between batches of two screens kept every capture. The emulator itself hung once (QEMU) after about 100
 captures. Outside a capture the harness keeps `timeScale` at 0 after a storyboard link, so motion checks start from a
 fresh launch and real taps.
+
+## 2026-11-10 · Pass 8 · applications and workspace, Android (Pixel_10_Pro emulator, API 37, 390 × 844 dp, debug storyboard build)
+
+Partial pass: the machine was overloaded (load average 50–114, three or four iOS simulators and Xcode builds running
+next to the emulator). The emulator's system server died several times (watchdog, `DeadSystemException`), once taking
+the package manager's activity table with it, so the full 67-screen run did not finish. The lead reruns all 67 on a
+quiet machine.
+
+Fixes:
+
+- **Serif line breaking (J1).** Android drew J1's "Applied" heading as "Applie": with `textBreakStrategy="simple"`
+  (added in pass 7 for L1) Android split Instrument Serif words at their own measured width and the last glyph went to
+  a clipped second line. `Text` keeps "simple" for Figtree and uses Android's default ("highQuality") for the display
+  face. The prop is Android-only; iOS never reads it.
+- **B1 and B6 Check warn dot.** Their scenarios now apply the same findings patch as B9 (`addFindings`).
+- **B17 removed/added gap.** A plain space part between "used by" and "and", as the board draws.
+- **Capture harness.** A newer capture request stops the previous run at its next step (`SUPERSEDED`), so a slow
+  capture no longer keeps navigating and measuring next to the following one. Image loads are counted per capture
+  (`resetImageTracking`): an image that unmounts mid-load no longer holds `settle` at its 15 s timeout for every later
+  capture.
+
+Capture stall (the "stops after five or six captures" note): on this machine the dumps did not stop, they arrived late.
+Under load a capture ran past the script's 30 s, the next request started while the old run was still navigating, and
+the runs piled up. The superseded check ends that cascade; run the script with `--timeout 90` while the machine is busy.
+The 8799 reverse the script sets has no listener when the capture uses another port, but the connection closes at
+once (checked with `nc`), so it is not the cause. Remaining stalls this pass were emulator crashes. Also: a phone on
+wireless debugging joined adb mid-run ("more than one device"); pin captures with `ANDROID_SERIAL=emulator-5554` and
+`--serial emulator-5554`. `adb shell settings put global hide_error_dialogs 1` keeps the "System UI isn't responding"
+dialog out of the screenshots.
+
+Scoreboard (`fidelity.py --system-bars`) on the final code, captured in batches of six with a dev-client relaunch:
+16 of 17 captured screens pass. Not recaptured on the final code: B2–B21, L1, L2, J1, J2, J7–J9, W1–W5, C1–C7,
+S1–S8, P1, P2, X1 (50 screens).
+
+| Screen      | Layout            | Light % | Dark % | Result |
+| ----------- | ----------------- | ------- | ------ | ------ |
+| A1-Welcome  | 0 failing / 10 ok | 0.49    | 0.51   | pass   |
+| A2-SignIn   | 0 failing / 28 ok | 0.48    | 0.48   | pass   |
+| A3-TwoStep  | 0 failing / 8 ok  | 0.42    | 0.44   | pass   |
+| A4-Allow    | 0 failing / 26 ok | 0.5     | 0.49   | pass   |
+| T1-Today    | 19 failing / 32   | 0.9     | 0.95   | fail   |
+| T2-FirstRun | 0 failing / 39 ok | 0.47    | 0.48   | pass   |
+| D1-Library  | 0 failing / 53 ok | 0.75    | 0.81   | pass   |
+| D2-Actions  | 0 failing / 52 ok | 0.41    | 0.49   | pass   |
+| D3-New      | 0 failing / 46 ok | 0.41    | 0.55   | pass   |
+| D4-Import   | 0 failing / 38 ok | 0.53    | 0.52   | pass   |
+| D5-Search   | 0 failing / 38 ok | 0.6     | 0.63   | pass   |
+| D6-Trash    | 0 failing / 24 ok | 0.62    | 0.62   | pass   |
+| B1-Overview | 0 failing / 65 ok | 0.46    | 0.47   | pass   |
+| J3-Calendar | 0 failing / 63 ok | 0.49    | 0.5    | pass   |
+| J4-Insights | 0 failing / 33 ok | 0.46    | 0.5    | pass   |
+| J5-SaveJob  | 0 failing / 42 ok | 0.67    | 0.67   | pass   |
+| J6-Detail   | 0 failing / 44 ok | 0.47    | 0.49   | pass   |
+
+T1: data, not layout. The "Follow up with Fieldnote" needs-you row is absent, so everything below it sits one row
+higher; it failed the same way in every capture this pass and passed in pass 7. Not investigated further.
+
+Before the serif and harness changes (same tree otherwise): J2, J7, J8, J9, W5, B6 and B17 passed (0 failing,
+0.38–0.67 %). J1, W1, W3, W4 failed on data only, cold start and after L2: J1 lists "Closed · 13" above the toolbar,
+W1 a different requirement set, W3 one question instead of four plus the refresh rows, W4 "question 1 of 2". These are
+the known cold-start scenario-state issue; a warm run in manifest order never got that far before the emulator died.
+W2 light passed (0 failing, 0.59 %); its dark capture timed out.

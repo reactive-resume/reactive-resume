@@ -344,16 +344,27 @@ export async function collectDump(navState: NavState | undefined) {
 // -------------------------------------------------------------------------------------------------
 
 let pendingImages = 0;
+let imageGeneration = 0;
+/**
+ * Each capture counts its own image loads. An image that unmounts mid-load (a screen replaced by the next capture)
+ * may never fire onLoadEnd; its count would stay above 0 for good and every later capture would wait out settle's
+ * timeout.
+ */
+export function resetImageTracking() {
+	pendingImages = 0;
+	imageGeneration += 1;
+}
 /** Spread onto storyboard-backed images: <Image {...trackImage()} />. */
 export function trackImage() {
+	const generation = imageGeneration;
 	return {
 		onLoadStart: () => {
-			pendingImages += 1;
+			if (generation === imageGeneration) pendingImages += 1;
 		},
 		// No clamp at 0: iOS fires onLoadEnd before onLoadStart for cached images, and a clamp left the count at 1 for
 		// good, so every later capture waited out settle's timeout.
 		onLoadEnd: () => {
-			pendingImages -= 1;
+			if (generation === imageGeneration) pendingImages -= 1;
 		},
 	};
 }

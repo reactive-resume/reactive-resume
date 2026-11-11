@@ -50,6 +50,12 @@ function addProfile(data: ResumeData) {
 	];
 }
 
+/** The findings the boards' Check shows (B9), which also light the Check warn dot on B1 and B6. */
+function addFindings(data: ResumeData) {
+	data.basics.website.url = "morgan.design";
+	data.metadata.typography.body.lineHeight = 1.1;
+}
+
 const reset = () => useBuilderStoryboard.setState({ focus: null, proposal: null });
 const prepared = (extra?: (data: ResumeData) => void, document?: Record<string, unknown>) => async () => {
 	reset();
@@ -57,7 +63,7 @@ const prepared = (extra?: (data: ResumeData) => void, document?: Record<string, 
 };
 
 export const scenarios: Record<string, Scenario> = {
-	"B1-Overview": { hrefs: base, prepare: prepared() },
+	"B1-Overview": { hrefs: base, prepare: prepared(addFindings) },
 	"B2-Section": { hrefs: [...base, `${doc}/section/experience`], prepare: prepared() },
 	"B3-Entry": {
 		hrefs: [...base, `${doc}/section/experience`, `${doc}/section/experience/northwind`],
@@ -103,15 +109,12 @@ export const scenarios: Record<string, Scenario> = {
 		hrefs: [...base, ...overBackdrop("B21-EntryActions", `${doc}/section/experience/northwind/actions?from=hold`)],
 		prepare: prepared(),
 	},
-	"B6-Design": { hrefs: [...base, `${doc}/design`], prepare: prepared() },
+	"B6-Design": { hrefs: [...base, `${doc}/design`], prepare: prepared(addFindings) },
 	"B7-Template": { hrefs: [...base, `${doc}/design`, `${doc}/design/template`], prepare: prepared() },
 	"B8-Layout": { hrefs: [...base, `${doc}/design`, `${doc}/design/layout`], prepare: prepared() },
 	"B9-Check": {
 		hrefs: [...base, `${doc}/check`],
-		prepare: prepared((data) => {
-			data.basics.website.url = "morgan.design";
-			data.metadata.typography.body.lineHeight = 1.1;
-		}),
+		prepare: prepared(addFindings),
 	},
 	"B10-JobMatch": {
 		hrefs: [...base, `${doc}/check?view=job`],
