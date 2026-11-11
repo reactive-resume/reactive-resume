@@ -81,9 +81,7 @@ function StagesStep({ app, onStep }: { app: Application; onStep: (step: Step) =>
 	};
 	const choose = async (status: ApplicationStatus) => {
 		if (status === "applied") return onStep("sent");
-		const moved = await actions.moveTo(app, status, {
-			schedule: () => router.push(`/applications/${app.id}/interview`),
-		});
+		const moved = await actions.moveTo(app, status);
 		if (!moved) return;
 		haptic("success");
 		router.back();

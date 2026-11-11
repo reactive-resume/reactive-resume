@@ -486,6 +486,22 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 		rows(state, "applications").push(row);
 		return { value: row.id };
 	}
+	if (operation === "applications.import") {
+		const items = input.items as Row[];
+		for (const item of items)
+			rows(state, "applications").push({
+				...structuredClone(rows(state, "applications")[0] ?? {}),
+				...item,
+				id: id(),
+				status: item.status ?? "saved",
+				activity: [],
+				tags: item.tags ?? [],
+				trashedAt: null,
+				createdAt: now(),
+				updatedAt: now(),
+			});
+		return { value: { imported: items.length } };
+	}
 	if (operation === "applications.bulkUpdate") {
 		const targets = rows(state, "applications").filter((row) => (input.ids as string[]).includes(String(row.id)));
 		const updated: Row[] = [];

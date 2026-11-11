@@ -91,6 +91,7 @@ export const writes = {
 	"coverLetters.createVersion": client.coverLetters.createVersion,
 	"coverLetters.restoreVersion": client.coverLetters.restoreVersion,
 	"applications.create": client.applications.create,
+	"applications.import": client.applications.import,
 	"applications.bulkUpdate": client.applications.bulkUpdate,
 	"applications.addNote": client.applications.addNote,
 	"applications.addInterview": client.applications.addInterview,

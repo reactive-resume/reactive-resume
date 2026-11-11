@@ -1,0 +1,93 @@
+# J1 · Tap a row opens J6; swiping toward the end moves to the next stage with Undo; toward the start moves to Trash
+# with Undo; long-press or Select shows checkboxes and the bar (Move…, Tags…, Close…, Move to Trash); + opens J5;
+# the view choice is remembered when you come back to the tab.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J1-List?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Kiln Studio
+    timeout: 20000
+- waitForAnimationToEnd
+# Points, not percentages: after a pushed screen comes back, Maestro resolves percentages against a different frame.
+# Swipe toward the end: Lumen (Interviewing) moves to Offer; Undo puts it back.
+- swipe:
+    start: "58,245"
+    end: "330,245"
+    duration: 600
+    waitToSettleTimeoutMs: 1
+- assertVisible: Moved to Offer\.
+- tapOn:
+    text: Undo
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible:
+      id: application-row-lumen
+      below: Interviewing
+      above: Offer
+    timeout: 10000
+# Swipe toward the start: Orbital Health moves to Trash; Undo restores it.
+- swipe:
+    start: "330,320"
+    end: "58,320"
+    duration: 600
+    waitToSettleTimeoutMs: 1
+- assertVisible: Moved to Trash
+- assertNotVisible: Orbital Health
+- tapOn:
+    text: Undo
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Orbital Health
+    timeout: 10000
+# Tap → J6.
+- tapOn:
+    id: application-row-lumen
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000
+- tapOn: Back
+- extendedWaitUntil:
+    visible: Kiln Studio
+    timeout: 10000
+- waitForAnimationToEnd
+# Long-press → the row's actions, Select enters selection with checkboxes and the bar.
+- longPressOn:
+    id: application-row-parcel
+- tapOn: Select
+- assertVisible: Done
+- assertVisible: Move…
+- assertVisible: Tags…
+- assertVisible: Close…
+- assertVisible: Move to Trash
+- tapOn: Tags…
+- tapOn:
+    id: tag-new
+- inputText: Dream job
+- tapOn:
+    text: Add tag
+    waitToSettleTimeoutMs: 1
+- assertVisible: Tagged “Dream job”
+- assertNotVisible: Tags…
+# + → J5.
+- tapOn: Save a job
+- extendedWaitUntil:
+    visible: Save job
+    timeout: 10000
+- tapOn: Close
+- waitForAnimationToEnd
+# The view choice is remembered: Board, leave the tab, come back.
+- tapOn: Board
+- waitForAnimationToEnd
+- tapOn: Career
+- waitForAnimationToEnd
+- tapOn: Applications
+- waitForAnimationToEnd
+- assertVisible:
+    text: Board
+    selected: true

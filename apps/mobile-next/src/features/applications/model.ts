@@ -347,10 +347,11 @@ export function insights(apps: readonly ApplicationRow[], range: InsightsRange, 
 		repliedShare: outcomes.sent ? Math.round((outcomes.heardBack / outcomes.sent) * 100) : null,
 		medianDays: outcomes.medianDaysToReply,
 		funnel: [
-			{ label: t`Applied`, count: outcomes.sent },
-			{ label: t`Replied`, count: outcomes.heardBack },
-			{ label: t`Interviewed`, count: reached("interview") },
-			{ label: t`Offer`, count: reached("offer") },
+			// `stage`: the J1 group a tap on the row opens (replies are the screening stage onwards).
+			{ label: t`Applied`, count: outcomes.sent, stage: "applied" },
+			{ label: t`Replied`, count: outcomes.heardBack, stage: "screening" },
+			{ label: t`Interviewed`, count: reached("interview"), stage: "interview" },
+			{ label: t`Offer`, count: reached("offer"), stage: "offer" },
 		],
 		sources: [...sources].map(([source, row]) => ({ source, ...row })).sort((a, b) => a.applied - b.applied),
 	};

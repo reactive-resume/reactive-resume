@@ -110,6 +110,12 @@ async function onlyOpenApplications() {
 /** Maestro flows only: Kiln Studio not yet sent, so every route to Applied (swipe, board drop) can be tried. */
 const kilnSaved = { kiln: { status: "saved", laneId: "saved", appliedAt: null, activity: [] } };
 
+/** Maestro flows only: move every application to Trash (J1's empty state). */
+async function noApplications() {
+	const apps = (await invokeFake("applications.list", {})) as { id: string }[];
+	for (const app of apps) await update(app.id, { trashedAt: new Date("2026-11-06T10:00:00Z") });
+}
+
 const tab = "/applications";
 const lumen = "/applications/lumen";
 
@@ -127,6 +133,26 @@ export const scenarios: Record<string, Scenario> = {
 		hrefs: [`${tab}?view=board&stage=saved`],
 		prepare: async () => {
 			await seedApplications(kilnSaved);
+		},
+	},
+	// Not storyboard screens (Maestro flows only): J1's empty state, every application closed, one that went quiet.
+	"J1-Empty": { hrefs: [`${tab}?view=list`], prepare: noApplications },
+	"J1-AllClosed": {
+		hrefs: [`${tab}?view=list`],
+		prepare: async () => {
+			await onlyOpenApplications();
+			for (const id of ["lumen", "orbital-health", "parcel", "fieldnote", "kiln"])
+				await update(id, { status: "closed", closedReason: "withdrew" });
+		},
+	},
+	"J1-Quiet": {
+		hrefs: [`${tab}?view=list`],
+		prepare: async () => {
+			await onlyOpenApplications();
+			await update("kiln", {
+				appliedAt: new Date("2026-09-20T12:00:00Z"),
+				activity: [stage("kiln-applied", "applied", "2026-09-20T12:00:00Z")],
+			});
 		},
 	},
 	"J2-Board": { hrefs: [`${tab}?view=board&stage=interview`], prepare: () => seedApplications() },

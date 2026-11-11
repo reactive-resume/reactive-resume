@@ -80,12 +80,17 @@ export function InsightsScreen() {
 						]}
 					/>
 					<SectionHeading title={t`How far they got`} />
-					<FunnelBars rows={data.funnel.map((row) => ({ ...row, fraction: row.count / max }))} />
+					<FunnelBars
+						rows={data.funnel.map((row) => ({ ...row, fraction: row.count / max }))}
+						onPress={(i) => router.navigate(`/applications?view=list&stage=${data.funnel[i]?.stage ?? "applied"}`)}
+					/>
 					<SectionHeading title={t`Where replies came from`} />
 					{data.sources.length === 0 ? (
 						<PageSubtitle
 							status
 						>{t`Add where each application came from to see which channel works for you.`}</PageSubtitle>
+					) : data.sources.filter((row) => row.applied >= 3).length < 2 ? (
+						<PageSubtitle status>{t`Not enough applications to compare yet: this needs 3 of each.`}</PageSubtitle>
 					) : (
 						data.sources.map((row, i) => (
 							<ListRow

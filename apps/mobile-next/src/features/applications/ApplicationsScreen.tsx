@@ -2,10 +2,12 @@
 // control. The content crossfades (d2) when the view changes; Segmented plays `selection`.
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowDimensions, View } from "react-native";
 import { nextStage, useApplicationActions } from "./actions";
+import { useCsvImport } from "./import-csv";
 import {
 	addDays,
 	agendaItems,
@@ -27,6 +29,7 @@ import {
 	outcomeLabel,
 	PIPELINE,
 	rowLine,
+	stageDate,
 	rowTitles,
 	stageLabel,
 	weekOf,
@@ -35,7 +38,7 @@ import {
 } from "./model";
 import { ApplicationsActions, ChoiceSheet, FadeIn, LoadError, RowPlaceholders, SettingsAvatar } from "./parts";
 import { storyboard } from "./storyboard";
-import { useApplications, useCareerOffers } from "@/data";
+import { useApplications, useApplicationTags, useCareerOffers } from "@/data";
 import { now, timeZone } from "@/data/clock";
 import {
 	type as typeScale,
@@ -51,6 +54,7 @@ import {
 	ExpandingStrip,
 	haptic,
 	HeroCard,
+	Icon,
 	IconButton,
 	layout,
 	ListRow,
@@ -68,8 +72,10 @@ import {
 	type IconName,
 	TabScreen,
 	Text,
+	TextField,
 	TextLink,
 	Touch,
+	showToast,
 	useTheme,
 } from "@/ui";
 
@@ -129,7 +135,12 @@ export function ApplicationsScreen() {
 						<RowPlaceholders count={5} />
 					</View>
 				) : view === "list" ? (
-					<ListView rows={rows} context={context} onSelectBar={setSelectBar} />
+					<ListView
+						rows={rows}
+						context={context}
+						onSelectBar={setSelectBar}
+						stage={PIPELINE.find((status) => status === params.stage)}
+					/>
 				) : view === "board" ? (
 					<BoardView rows={rows} context={context} initialStage={params.stage} />
 				) : (
@@ -148,16 +159,20 @@ type Sheet =
 	| { kind: "actions"; app: ApplicationRow }
 	| { kind: "move"; apps: ApplicationRow[] }
 	| { kind: "close"; apps: ApplicationRow[] }
+	| { kind: "tags"; apps: ApplicationRow[] }
 	| null;
 
 function ListView({
 	rows,
 	context,
 	onSelectBar,
+	stage,
 }: {
 	rows: ApplicationRow[];
 	context: ListContext;
 	onSelectBar: (bar: ReactNode) => void;
+	/** J4's funnel: only this stage's group, with a way back to all of them. */
+	stage?: ApplicationStatus | undefined;
 }) {
 	const router = useRouter();
 	const actions = useApplicationActions();
@@ -165,7 +180,15 @@ function ListView({
 	const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
 	const [showClosed, setShowClosed] = useState(false);
 	const [sheet, setSheet] = useState<Sheet>(null);
-	const { groups, closed } = groupByStage(rows, context);
+	const importCsv = useCsvImport();
+	const grouped = groupByStage(rows, context);
+	const groups = stage ? grouped.groups.filter((group) => group.status === stage) : grouped.groups;
+	const closed = stage ? [] : grouped.closed;
+	// Older applications that went quiet: sent 30 or more days ago and still at Applied.
+	const quiet = rows.filter((row) => {
+		const sent = row.status === "applied" ? (stageDate(row, "applied") ?? new Date(row.appliedAt)) : null;
+		return sent !== null && context.now.getTime() - sent.getTime() >= 30 * 86_400_000;
+	});
 	if (storyboard) for (const group of groups) group.rows.sort((a, b) => order(a.id) - order(b.id));
 	const titles = rowTitles(rows.filter((row) => row.status !== "closed"));
 	const picked = rows.filter((row) => selected.has(row.id));
@@ -194,6 +217,11 @@ function ListView({
 					label={t`Move…`}
 					icon="arrows-left-right"
 					onPress={() => picked.length && setSheet({ kind: "move", apps: picked })}
+				/>
+				<ToolLink
+					label={t`Tags…`}
+					icon="tag"
+					onPress={() => picked.length && setSheet({ kind: "tags", apps: picked })}
 				/>
 				<ToolLink
 					label={t`Close…`}
@@ -225,6 +253,7 @@ function ListView({
 				body={t`Paste a job link. We'll save the posting so Check, the assistant and your letter can use it.`}
 			>
 				<Button label={t`Save job`} tone="primary" size="lg" block onPress={() => router.push("/applications/new")} />
+				<Button label={t`Import from CSV`} tone="ghost" size="lg" block onPress={() => void importCsv()} />
 			</HeroCard>
 		);
 
@@ -310,7 +339,38 @@ function ListView({
 
 	return (
 		<View>
-			{groups.length === 0 ? (
+			{quiet.length > 0 && !stage && !selecting ? (
+				<View
+					style={{ paddingTop: 16, paddingHorizontal: layout.screenMargin, gap: 4 }}
+					accessibilityRole="alert"
+					testID="prior-no-response"
+				>
+					<View style={{ flexDirection: "row", gap: 6 }}>
+						<Icon name="warning-circle" size={16} color="warnText" style={{ height: 18, justifyContent: "center" }} />
+						<Text variant="small" color="warnText" style={{ flexShrink: 1 }}>
+							{quiet.length === 1
+								? t`${quiet[0]?.company ?? ""} hasn't replied in 30 days.`
+								: t`${quiet.length} applications haven't had a reply in 30 days.`}
+						</Text>
+					</View>
+					<TextLink
+						label={t`Close as No response…`}
+						color="ink3"
+						onPress={() => setSheet({ kind: "close", apps: quiet })}
+					/>
+				</View>
+			) : null}
+			{stage ? (
+				<View style={{ paddingTop: 8, paddingHorizontal: layout.screenMargin }}>
+					<TextLink
+						label={t`Show all stages`}
+						icon="x"
+						color="ink3"
+						onPress={() => router.setParams({ stage: undefined })}
+					/>
+				</View>
+			) : null}
+			{groups.length === 0 && !stage ? (
 				<HeroCard title={t`All your applications are closed`}>
 					<Button
 						label={t`Show closed applications`}
@@ -362,7 +422,7 @@ function ListView({
 					<>
 						<ToolLink label={t`Select`} icon="check-square" onPress={() => enterSelect()} />
 						<ToolLink label={t`Stages`} icon="kanban" onPress={() => router.setParams({ view: "board" })} />
-						<ToolLink label={t`Import`} icon="file-csv" />
+						<ToolLink label={t`Import`} icon="file-csv" onPress={() => void importCsv()} />
 					</>
 				)}
 			</View>
@@ -401,6 +461,17 @@ function ListView({
 						setSheet(null);
 						leaveSelect();
 						void actions.moveMany(apps, status);
+					}}
+				/>
+			) : null}
+			{sheet?.kind === "tags" ? (
+				<TagsSheet
+					apps={sheet.apps}
+					known={[...new Set(rows.flatMap((row) => row.tags))].sort()}
+					onClose={() => setSheet(null)}
+					onDone={() => {
+						setSheet(null);
+						leaveSelect();
 					}}
 				/>
 			) : null}
@@ -461,6 +532,71 @@ function ActionsSheet({
 				<ListRow title={t`Select`} onPress={onSelect} />
 				<ListRow title={t`Close…`} onPress={onCloseApp} />
 				<ListRow title={t`Move to Trash`} danger last onPress={onTrash} />
+			</View>
+		</BottomSheet>
+	);
+}
+
+/** Select › Tags…: add a tag to every selected application, one you've used or a new one. */
+function TagsSheet({
+	apps,
+	known,
+	onClose,
+	onDone,
+}: {
+	apps: ApplicationRow[];
+	known: string[];
+	onClose: () => void;
+	onDone: () => void;
+}) {
+	const tags = useApplicationTags();
+	const queryClient = useQueryClient();
+	const [draft, setDraft] = useState("");
+	const add = async (tag: string) => {
+		const name = tag.trim();
+		if (!name) return;
+		try {
+			await tags.set(
+				apps.map((app) => app.id),
+				[name],
+			);
+			await queryClient.invalidateQueries();
+		} catch {
+			showToast({ message: t`Couldn't update the application. Try again.` });
+			return;
+		}
+		onDone();
+		showToast({ message: apps.length === 1 ? t`Tagged “${name}”` : t`Tagged ${apps.length} applications “${name}”` });
+	};
+	return (
+		<BottomSheet title={t`Tags`} height={480} onClose={onClose} keyboard dirty={draft.trim().length > 0}>
+			<View style={{ paddingTop: 8 }}>
+				{known.map((tag) => (
+					<ListRow
+						key={tag}
+						title={tag}
+						leading={<Icon name="tag" size={20} color="ink2" />}
+						onPress={() => void add(tag)}
+					/>
+				))}
+				<View style={{ paddingHorizontal: layout.screenMargin, paddingTop: 12, gap: 12 }}>
+					<TextField
+						label={t`New tag`}
+						value={draft}
+						onChangeText={setDraft}
+						returnKeyType="done"
+						onSubmitEditing={() => void add(draft)}
+						testID="tag-new"
+					/>
+					<Button
+						label={t`Add tag`}
+						tone="primary"
+						size="lg"
+						block
+						disabled={!draft.trim()}
+						onPress={() => void add(draft)}
+					/>
+				</View>
 			</View>
 		</BottomSheet>
 	);

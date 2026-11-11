@@ -1,0 +1,42 @@
+# J1 states · Empty: "Track your first job" with Save job and Import from CSV. All closed: "All your applications are
+# closed" with Show closed applications. Older applications that went quiet: a notice above the list.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J1-Empty?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Track your first job
+    timeout: 20000
+- assertVisible: Paste a job link\. We'll save the posting so Check, the assistant and your letter can use it\.
+- assertVisible: Import from CSV
+- tapOn: Save job
+- extendedWaitUntil:
+    visible: Save a job
+    timeout: 10000
+- tapOn: Close
+- openLink: me.rxresu.storyboard://storyboard/J1-AllClosed?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: All your applications are closed
+    timeout: 20000
+- assertNotVisible: Kiln Studio
+- tapOn: Show closed applications
+- assertVisible: Kiln Studio
+- openLink: me.rxresu.storyboard://storyboard/J1-Quiet?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Kiln Studio hasn't replied in 30 days\.
+    timeout: 20000
+- tapOn: Close as No response…
+- assertVisible: How did it end?

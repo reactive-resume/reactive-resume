@@ -34,7 +34,7 @@ export function useApplicationActions() {
 		write("applications", "applications.update", { id, status, stageEnteredAt: zonedParts(now()).date });
 
 	/** Move one application: Applied opens the sent step; others move at once with a toast and Undo. */
-	async function moveTo(app: Moveable, status: ApplicationStatus, options: { schedule?: () => void } = {}) {
+	async function moveTo(app: Moveable, status: ApplicationStatus) {
 		if (status === app.status) return true;
 		if (status === "applied") {
 			router.push(sentStepHref(app.id));
@@ -61,8 +61,16 @@ export function useApplicationActions() {
 					if (previous !== "applied" && previous !== "closed") void setStage(app.id, previous).then(refresh);
 				},
 			},
+			// A stage that expects an interview offers to schedule it (J2).
+			...(status === "interview"
+				? {
+						secondAction: {
+							label: t`Schedule it`,
+							onPress: () => router.push(`/applications/${app.id}/interview`),
+						},
+					}
+				: {}),
 		});
-		if (status === "interview" && options.schedule) options.schedule();
 		return true;
 	}
 

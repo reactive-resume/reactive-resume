@@ -95,6 +95,7 @@ export function useApplicationActions() {
 				...input,
 				stageEnteredAt: input.stageEnteredAt ?? zonedParts(now()).date,
 			}),
+		importMany: (input: RouterInput["applications"]["import"]) => actions.run("applications.import", input),
 		bulkMove: (input: RouterInput["applications"]["bulkUpdate"]) =>
 			actions.write("applications", "applications.bulkUpdate", input),
 		addInterview: (input: RouterInput["applications"]["addInterview"]) =>

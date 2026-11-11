@@ -27,6 +27,8 @@ import { useDesignTag } from "@/dev/storyboard/harness";
 export type ToastSpec = {
 	message: string;
 	action?: { label: string; onPress: () => void };
+	/** A second action after the first (J2: "Moved to Interviewing." · Undo · Schedule it). */
+	secondAction?: { label: string; onPress: () => void };
 	/** Runs once when the toast goes without its action being used: it ran out, was dismissed or was replaced. */
 	onDismiss?: () => void;
 	/** Overrides toastLifetime() (motion lab only). */
@@ -221,20 +223,23 @@ function ToastView({
 						{toast.message}
 					</Text>
 				</View>
-				{toast.action && (
-					<Touch
-						feedback="scale"
-						style={[styles.action, lab?.hideText ? { opacity: 0 } : null]}
-						accessibilityLabel={toast.action.label}
-						onPress={() => {
-							toast.action?.onPress();
-							useToasts.getState().dismiss(toast.id, true);
-						}}
-					>
-						<Text variant="ui" color="bg" weight={600}>
-							{toast.action.label}
-						</Text>
-					</Touch>
+				{[toast.action, toast.secondAction].map((action) =>
+					action ? (
+						<Touch
+							key={action.label}
+							feedback="scale"
+							style={[styles.action, lab?.hideText ? { opacity: 0 } : null]}
+							accessibilityLabel={action.label}
+							onPress={() => {
+								action.onPress();
+								useToasts.getState().dismiss(toast.id, true);
+							}}
+						>
+							<Text variant="ui" color="bg" weight={600}>
+								{action.label}
+							</Text>
+						</Touch>
+					) : null,
 				)}
 				<Animated.View
 					pointerEvents="none"

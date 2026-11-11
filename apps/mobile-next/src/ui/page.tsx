@@ -208,18 +208,25 @@ export function ThreeUpStats({ items }: { items: { value: string; label: string 
 export function FunnelBars({
 	rows,
 	renderBar,
+	onPress,
 }: {
 	rows: { label: string; count: number; fraction: number }[];
 	renderBar?: (fraction: number, index: number) => ReactNode;
+	/** Tapping a row (J4 → J1 filtered to that stage); the hit area takes half the 14 dp gap each side. */
+	onPress?: (index: number) => void;
 }) {
 	const { colors } = useTheme();
 	return (
 		<View style={{ gap: 14, paddingTop: 4, paddingHorizontal: layout.screenMargin }}>
 			{rows.map((row, i) => (
-				<View
+				<Touch
 					key={row.label}
+					feedback="none"
+					disabled={!onPress}
+					onPress={() => onPress?.(i)}
+					hitSlop={{ top: 7, bottom: 7 }}
 					style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
-					accessible
+					accessibilityRole={onPress ? "button" : "text"}
 					accessibilityLabel={`${row.label}: ${row.count}`}
 				>
 					<Text variant="ui" color="ink2" style={{ width: 96 }} numberOfLines={1}>
@@ -237,7 +244,7 @@ export function FunnelBars({
 					<Text variant="monoUi" color="ink" align="right" style={{ width: 28 }}>
 						{row.count}
 					</Text>
-				</View>
+				</Touch>
 			))}
 		</View>
 	);
