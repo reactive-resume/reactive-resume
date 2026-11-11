@@ -56,9 +56,9 @@ export function useScheduleEmailState() {
 	const account = useAccount();
 	return { account, verified: account.data?.emailVerified, canEnableEmail: account.data?.emailVerified === true };
 }
-export function useTravelNotice() {
+/** `current` is the phone's zone; storyboard flows pass another one to reach the notice. */
+export function useTravelNotice(current = timeZone()) {
 	const settings = useSettings();
-	const current = timeZone();
 	return {
 		current,
 		home: settings.data?.homeTimeZone,
@@ -67,5 +67,7 @@ export function useTravelNotice() {
 			current !== settings.data.homeTimeZone &&
 			current !== settings.data.lastNotifiedTimeZone,
 		acknowledge: () => settings.save({ lastNotifiedTimeZone: current }),
+		/** Moves the schedules' home zone (this device and the account) to the phone's. */
+		move: () => settings.save({ homeTimeZone: current, lastNotifiedTimeZone: current }),
 	};
 }

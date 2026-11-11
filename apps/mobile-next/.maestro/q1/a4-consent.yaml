@@ -24,3 +24,7 @@ appId: me.rxresu.storyboard
 - assertNotVisible: Allow Claude to use your Reactive Resume?
 - openLink: me.rxresu.storyboard://consent?client_id=unknown&sig=stale
 - assertVisible: This connection request is invalid or has expired. Start the connection again from your client.
+# Loading: the spinner with its words (storyboard `preset=loading` holds the request in flight).
+- openLink: me.rxresu.storyboard://consent?preset=loading
+- waitForAnimationToEnd
+- assertVisible: Loading connection request…

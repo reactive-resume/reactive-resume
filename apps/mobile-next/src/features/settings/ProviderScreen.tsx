@@ -231,7 +231,7 @@ function ScopedProviderScreen() {
 							setResult(null);
 						}}
 						savedValue={existing ? `sk-•••••••••••••${existing.apiKeyPreview.slice(-4)}` : undefined}
-						secureTextEntry={!!apiKey}
+						secureTextEntry
 						autoCapitalize="none"
 						autoCorrect={false}
 						textContentType="password"

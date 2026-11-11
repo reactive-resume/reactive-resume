@@ -108,7 +108,7 @@ export function AccountScreen() {
 					trailing="caret"
 					last
 					boxHidden
-					onPress={web("/dashboard/settings/integrations")}
+					onPress={() => router.push("/settings/connections")}
 				/>
 			</View>
 			<SectionHeading title={t`Your data`} />

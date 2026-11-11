@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 import Storage from "expo-sqlite/kv-store";
-import { notificationTarget, type Notice } from "./content";
+import { notificationActions, notificationCommand, notificationTarget, type Notice } from "./content";
 import { syncTodayNotifications } from "./notifications";
 
 jest.mock("@lingui/core", () => ({
@@ -80,4 +80,24 @@ it("removes an in-flight notification if its account changes", async () => {
 it("routes notices from typed content, never the server URL", () => {
 	expect(notificationTarget({ ...notice, applicationId: "a/b" })).toBe("/applications/a%2Fb/prepare");
 	expect(notificationTarget({ ...notice, applicationId: null })).toBeNull();
+});
+it("turns action buttons into routes, and Log follow-up into a command that doesn't open the app", () => {
+	const data = { href: "/applications/fieldnote/messages", applicationId: "fieldnote" };
+	expect(notificationCommand("expo.modules.notifications.actions.DEFAULT", data)).toEqual({
+		kind: "open",
+		href: data.href,
+	});
+	expect(notificationCommand("draft-followup", data)).toEqual({
+		kind: "open",
+		href: "/applications/fieldnote/messages",
+	});
+	expect(notificationCommand("log-followup", data)).toEqual({ kind: "log-followup", applicationId: "fieldnote" });
+	expect(notificationCommand("practise", { href: "/applications/lumen/prepare", applicationId: "lumen" })).toEqual({
+		kind: "open",
+		href: "/applications/lumen/practise",
+	});
+	expect(notificationCommand("log-followup", { href: "https://evil.example" })).toBeNull();
+	expect(
+		notificationActions().followUps.find((a) => a.identifier === "log-followup")?.options.opensAppToForeground,
+	).toBe(false);
 });

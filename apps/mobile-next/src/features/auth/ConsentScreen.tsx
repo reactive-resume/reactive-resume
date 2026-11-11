@@ -10,6 +10,7 @@ import { View } from "react-native";
 import { type ConsentRequest, parseConsentRequest } from "./consent-request";
 import { useSession } from "@/auth/session";
 import { useAccount, useDataBackend } from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import { useStoryboardView } from "@/features/settings/storyboard-view";
 import {
 	Button,
@@ -55,7 +56,8 @@ export function ConsentScreen() {
 			</PushScreen>
 		);
 
-	if (account.isPending && !fake)
+	// Storyboard flows reach the loading state with `preset=loading` (OAuth already uses `state`).
+	if ((account.isPending && !fake) || (STORYBOARD && params.preset === "loading"))
 		return (
 			<PushScreen back="close">
 				<View style={{ padding: 24, flexDirection: "row", alignItems: "center", gap: 8 }}>

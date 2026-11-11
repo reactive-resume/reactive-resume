@@ -4,6 +4,7 @@
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import * as Notifications from "expo-notifications";
+import { useRouter } from "expo-router";
 import { Linking, View } from "react-native";
 import { useStoryboardView } from "./storyboard-view";
 import { type Settings, useSettings } from "@/data";
@@ -49,7 +50,10 @@ export function PreferencesScreen() {
 	const setPreference = useThemeStore((s) => s.setPreference);
 	const data: Settings | undefined = settings.data;
 	const haptics = data?.haptics ?? true;
-	const automatic = !data?.lastTimeZone || data.lastTimeZone === timeZone();
+	const automatic = data?.automaticTimeZone ?? true;
+	// The zone schedules run on: the phone's until it moves without "Move them" (T1's travel notice).
+	const home = data?.homeTimeZone ?? timeZone();
+	const router = useRouter();
 
 	const setTheme = (next: ThemePreference) => {
 		setPreference(next);
@@ -101,8 +105,9 @@ export function PreferencesScreen() {
 			/>
 			<ListRow
 				title={t`Timezone`}
-				value={automatic ? t`${zoneCity(timeZone())} · automatic` : zoneCity(data?.lastTimeZone ?? timeZone())}
+				value={automatic ? t`${zoneCity(home)} · automatic` : zoneCity(home)}
 				trailing="caret"
+				onPress={() => router.push("/settings/timezone")}
 			/>
 			<ListRow
 				title={t`Haptics`}

@@ -77,6 +77,11 @@ export function extendedSeed(empty: boolean) {
 	};
 }
 export function fixtureRead(resource: string, input: Row, state: FixtureState): { value: unknown } | undefined {
+	// Feedback links in the storyboard: tokens `revoked` and `expired` read as the server's 404 reasons, others as missing.
+	if (resource === "feedbackView") {
+		const reason = input.token === "revoked" || input.token === "expired" ? input.token : undefined;
+		throw Object.assign(new Error("Not found."), { code: "NOT_FOUND", ...(reason ? { data: { reason } } : {}) });
+	}
 	if (resource === "workspace")
 		return {
 			value:
@@ -903,6 +908,11 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 		const keys = state.apiKeys as { apiKeys: Row[]; total: number };
 		keys.apiKeys = keys.apiKeys.filter((key) => key.id !== input.keyId);
 		keys.total = keys.apiKeys.length;
+		return { value: { success: true } };
+	}
+	if (operation === "auth.connections.delete") {
+		const apps = state.connectedApps as { connections: Row[] };
+		apps.connections = apps.connections.filter((app) => app.id !== input.id);
 		return { value: { success: true } };
 	}
 

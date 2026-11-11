@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { AccountAvatar, CollectionState, DocumentPlaceholders, useOpenDocument } from "../documents/shared";
+import { zoneCity } from "../settings/PreferencesScreen";
 import { chooseHero, todaySteps } from "./model";
 import { useSession } from "@/auth/session";
 import {
@@ -16,6 +17,7 @@ import {
 	useDataBackend,
 	useDocuments,
 	useToday,
+	useTravelNotice,
 } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
@@ -78,6 +80,16 @@ export function TodayScreen() {
 	const { preset: presetParam } = useLocalSearchParams<{ preset?: string }>();
 	const preset = STORYBOARD ? presetParam : undefined;
 	const upToDate = preset === "up-to-date";
+	// `preset=travel` puts the phone on Lisbon time for the travel notice (S3).
+	const travel = useTravelNotice(preset === "travel" ? "Europe/Lisbon" : undefined);
+	const moveSchedules = async () => {
+		try {
+			await actions.run("auth.updateProfile", { timezone: travel.current });
+			await travel.move();
+		} catch {
+			showToast({ message: t`Couldn't save the timezone. Try again.` });
+		}
+	};
 	const applications = (today.applications.data ?? []).map((app) =>
 		fake && app.id === "fieldnote" ? { ...app, appliedAt: new Date("2026-10-28T08:00:00Z") } : app,
 	);
@@ -186,6 +198,17 @@ export function TodayScreen() {
 					<View style={{ padding: 24 }}>
 						<Text variant="body">{t`Offline. Edits are saved on this device and sync when you reconnect.`}</Text>
 					</View>
+				) : null}
+				{travel.show && travel.home ? (
+					<Card style={{ marginHorizontal: 24, marginTop: 20 }}>
+						<Text variant="body">
+							{t`Your phone is on ${zoneCity(travel.current)} time. Schedules stay on ${zoneCity(travel.home)} time.`}
+						</Text>
+						<View style={{ flexDirection: "row", gap: 8 }}>
+							<Button label={t`Move them`} tone="primary" onPress={() => void moveSchedules()} />
+							<Button label={t`Keep ${zoneCity(travel.home)} time`} onPress={() => void travel.acknowledge()} />
+						</View>
+					</Card>
 				) : null}
 				{failure ? (
 					<CollectionState
@@ -425,7 +448,11 @@ export function TodayScreen() {
 							title={t`New roles`}
 							count={fake && roles.length ? t`4 today` : String(roles.length)}
 							action={selectingRoles ? t`Done` : t`Select`}
-							onAction={() => setSelectingRoles(!selectingRoles)}
+							onAction={() => {
+								// Done ends the selection; Select starts an empty one.
+								setSelectedRoles([]);
+								setSelectingRoles(!selectingRoles);
+							}}
 						/>
 						{roles.length ? (
 							roles.map((role) => (

@@ -5,8 +5,15 @@ import { useRouter, useRootNavigationState } from "expo-router";
 import Storage from "expo-sqlite/kv-store";
 import { useEffect } from "react";
 import { Platform } from "react-native";
-import { noticeCategory, notificationCategories, notificationTarget, type Notice } from "./content";
-import { useDataBackend, useSettings, useToday } from "@/data";
+import {
+	noticeCategory,
+	notificationActions,
+	notificationCategories,
+	notificationCommand,
+	notificationTarget,
+	type Notice,
+} from "./content";
+import { usePlatformActions, useDataBackend, useSettings, useToday } from "@/data";
 import { showToast } from "@/ui";
 
 export async function requestLocalNotifications() {
@@ -31,6 +38,7 @@ export function syncTodayNotifications(
 			const allowed = (await Notifications.getPermissionsAsync()).granted;
 			if (!current()) return;
 			const labels = notificationCategories();
+			const buttons = notificationActions();
 			for (const [id, name] of Object.entries(labels)) {
 				if (!current()) return;
 				if (Platform.OS === "android")
@@ -38,7 +46,7 @@ export function syncTodayNotifications(
 						name,
 						importance: Notifications.AndroidImportance.DEFAULT,
 					});
-				await Notifications.setNotificationCategoryAsync(id, []);
+				await Notifications.setNotificationCategoryAsync(id, buttons[id as keyof typeof buttons]);
 			}
 			for (const notice of notices) {
 				const category = noticeCategory(notice);
@@ -52,7 +60,12 @@ export function syncTodayNotifications(
 				if (seen.has(notice.id)) continue;
 				await Notifications.scheduleNotificationAsync({
 					identifier,
-					content: { title: notice.title, body: notice.body, categoryIdentifier: category, data: { href, account } },
+					content: {
+						title: notice.title,
+						body: notice.body,
+						categoryIdentifier: category,
+						data: { href, account, applicationId: notice.applicationId },
+					},
 					trigger: Platform.OS === "android" ? { channelId: category } : null,
 				});
 				if (!current()) {
@@ -76,6 +89,7 @@ export function TodayNotifications() {
 	const router = useRouter();
 	const ready = !!useRootNavigationState()?.key;
 	const response = Notifications.useLastNotificationResponse();
+	const actions = usePlatformActions();
 	useEffect(() => {
 		if (!scope || backend.kind !== "real" || !today.notifications.data || !settings.data) return;
 		let current = true;
@@ -100,14 +114,17 @@ export function TodayNotifications() {
 				const data = response.notification.request.content.data;
 				Notifications.clearLastNotificationResponse();
 				if (data?.account !== account) return;
-				const href = data.href;
-				if (
-					typeof href !== "string" ||
-					!/^\/(?:applications\/[^/]+\/(?:prepare|messages)|\?section=new-roles)$/.test(href)
-				)
+				const command = notificationCommand(response.actionIdentifier, data);
+				if (!command) return;
+				if (command.kind === "log-followup") {
+					void actions
+						.run("applications.logFollowUp", { id: command.applicationId })
+						.then(() => Notifications.dismissNotificationAsync(response.notification.request.identifier))
+						.catch(() => showToast({ message: t`Couldn't log the follow-up. Try again.` }));
 					return;
-				router.replace(href.startsWith("/applications") ? "/applications" : "/");
-				router.push(href);
+				}
+				router.replace(command.href.startsWith("/applications") ? "/applications" : "/");
+				router.push(command.href);
 			})
 			.catch(() => {
 				if (current) showToast({ message: t`Couldn't open this notification. Open Today to continue.` });
@@ -115,7 +132,7 @@ export function TodayNotifications() {
 		return () => {
 			current = false;
 		};
-	}, [scope, backend.kind, ready, response, router]);
+	}, [scope, backend.kind, ready, response, router, actions]);
 	useEffect(() => {
 		if (!scope || backend.kind !== "real") return;
 		return () => {

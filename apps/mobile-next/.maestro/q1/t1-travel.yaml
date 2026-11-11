@@ -1,0 +1,29 @@
+# S3 travel notice on Today: with Automatic on and the phone in a new zone, Today says so once with Move them;
+# Move them puts the schedules on the phone's zone (S3 shows it) and the notice doesn't come back.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/T1-Today?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- assertNotVisible: ".*Schedules stay on.*"
+- openLink: me.rxresu.storyboard://?preset=travel
+- extendedWaitUntil:
+    visible: Your phone is on Lisbon time. Schedules stay on Berlin time.
+    timeout: 10000
+- assertVisible: Keep Berlin time
+- tapOn: Move them
+- waitForAnimationToEnd
+- assertNotVisible: ".*Schedules stay on.*"
+- openLink: me.rxresu.storyboard://?preset=up-to-date
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://?preset=travel
+- waitForAnimationToEnd
+- assertVisible: Open briefing
+- assertNotVisible: ".*Schedules stay on.*"
+- openLink: me.rxresu.storyboard://settings/preferences
+- waitForAnimationToEnd
+- assertVisible: Lisbon · automatic

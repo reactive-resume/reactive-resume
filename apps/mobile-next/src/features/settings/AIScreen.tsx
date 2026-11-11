@@ -145,14 +145,19 @@ export function AIScreen() {
 				trailing="caret"
 				onPress={() => void WebBrowser.openBrowserAsync("https://docs.rxresu.me")}
 			/>
-			<ListRow title={t`API keys`} secondary={developer.apiKeys} trailing="caret" onPress={web("/api-keys")} />
+			<ListRow
+				title={t`API keys`}
+				secondary={developer.apiKeys}
+				trailing="caret"
+				onPress={() => router.push("/settings/ai/keys")}
+			/>
 			<ListRow
 				title={t`Connected applications`}
 				secondary={developer.connectedApplications}
 				trailing="caret"
 				last
 				boxHidden
-				onPress={web("/integrations")}
+				onPress={() => router.push("/settings/connections")}
 			/>
 			{sent.length > 0 ? (
 				<>

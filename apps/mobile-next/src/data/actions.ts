@@ -150,5 +150,6 @@ export function useAPIKeyActions() {
 	return {
 		create: (input: MutationInputs["auth.createApiKey"]) => actions.run("auth.createApiKey", input),
 		delete: (input: MutationInputs["auth.apiKeys.delete"]) => actions.run("auth.apiKeys.delete", input),
+		disconnect: (input: MutationInputs["auth.connections.delete"]) => actions.run("auth.connections.delete", input),
 	};
 }

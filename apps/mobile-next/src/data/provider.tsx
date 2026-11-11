@@ -63,7 +63,7 @@ export function useResource<K extends Resource>(resource: K, input: ResourceInpu
 	return useQuery<ResourceOutput<K>>({
 		queryKey: [scope, resource, input, backend.kind === "fake" ? generation : 0],
 		queryFn: ({ signal }) => backend.read(resource, input, signal),
-		enabled: enabled && (scope !== null || resource === "publicResume"),
+		enabled: enabled && (scope !== null || resource === "publicResume" || resource === "feedbackView"),
 		meta: { persist: scope !== null && backend.kind === "real" },
 	});
 }
@@ -84,6 +84,7 @@ export const useProfile = () => useResource("profile", {});
 export const useAIProviders = () => useResource("aiProviders", {});
 export const useNotifications = () => useResource("notifications", {});
 export const usePublicResume = (input: ResourceInput<"publicResume">) => useResource("publicResume", input);
+export const useFeedbackView = (token: string) => useResource("feedbackView", { token }, !!token);
 export const useResumeVersions = (id: string) => useResource("versions", { resumeId: id }, !!id);
 export const useLetterVersions = (id: string) => useResource("letterVersions", { id }, !!id);
 export function useQueuedWrites() {
