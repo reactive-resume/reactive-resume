@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import * as DocumentPicker from "expo-document-picker";
+import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { pdfVerdict } from "@reactive-resume/resume/ats-pdf";
@@ -19,6 +20,7 @@ import {
 } from "@/ui";
 
 export function ATSCheckerScreen() {
+	const router = useRouter();
 	const check = usePDFATSCheck();
 	const controller = useRef<AbortController | null>(null);
 	const active = useRef(true);
@@ -87,6 +89,9 @@ export function ATSCheckerScreen() {
 								<View key={`${finding.code}-${i}`} style={{ gap: 8 }}>
 									<Text variant="label">{copy.title}</Text>
 									<Text variant="body">{copy.action}</Text>
+									{finding.code === "IMAGE_ONLY_DOCUMENT" ? (
+										<Button label={t`Start a blank resume`} onPress={() => router.push("/new")} />
+									) : null}
 								</View>
 							);
 						})
@@ -116,6 +121,7 @@ export function ATSCheckerScreen() {
 								block
 								style={{ marginTop: 8 }}
 								onPress={() => void choose()}
+								testID="ats-choose"
 							/>
 						</View>
 					)}

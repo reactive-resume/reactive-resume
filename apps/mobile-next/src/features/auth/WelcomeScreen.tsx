@@ -61,9 +61,10 @@ export function WelcomeScreen() {
 							size="lg"
 							block
 							onPress={() => router.push("/register")}
+							testID="welcome-register"
 						/>
 					) : null}
-					<Button label={t`Sign in`} size="lg" block onPress={() => router.push("/sign-in")} />
+					<Button label={t`Sign in`} size="lg" block onPress={() => router.push("/sign-in")} testID="welcome-sign-in" />
 					{options.data?.flags.allowGuestLogin ? (
 						<Quiet label={t`Continue without an account`} onPress={guest} />
 					) : null}

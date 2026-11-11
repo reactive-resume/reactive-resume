@@ -2,7 +2,7 @@
 // assistant settings and developer tools last. A failing row says what failed and offers Test again; the badge
 // crossfades between Testing… and its result (d1). `success` on a passing test, `error` on a failing one.
 import { t } from "@lingui/core/macro";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useState } from "react";
 import { View } from "react-native";
@@ -11,7 +11,8 @@ import { kindNoun } from "./first-send";
 import { isLocal, type Provider, providerHost, shortTestError } from "./providers";
 import { useDeveloperAccess } from "./security";
 import { useSession } from "@/auth/session";
-import { listApprovals, resetApprovals, useAIProviders, useAIProviderActions } from "@/data";
+import { listApprovals, resetConnectionApproval, useAIProviders, useAIProviderActions } from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	Badge,
 	Button,
@@ -52,8 +53,11 @@ export function AIScreen() {
 		}
 	};
 
-	const list = providers.data ?? [];
-	const failed = providers.isError;
+	// Storyboard flows reach S5's load failures: `state=no-secret` or `state=load-error`.
+	const params = useLocalSearchParams<{ state?: string }>();
+	const preset = STORYBOARD ? params.state : undefined;
+	const failed = providers.isError || preset === "no-secret" || preset === "load-error";
+	const list = failed ? [] : (providers.data ?? []);
 	const sent = Object.entries(approvals).filter(([, entry]) => entry.kinds.length > 0);
 
 	return (
@@ -66,7 +70,7 @@ export function AIScreen() {
 			<SectionHeading title={t`Providers`} first />
 			{failed ? (
 				<Text variant="ui" color="dangerText" style={{ paddingHorizontal: 24, paddingBottom: 12 }}>
-					{/ENCRYPTION_SECRET/.test(String(providers.error))
+					{preset === "no-secret" || /ENCRYPTION_SECRET/.test(String(providers.error))
 						? t`AI providers aren't available on this server until ENCRYPTION_SECRET is set.`
 						: t`AI providers couldn't be loaded. Reload to try again.`}
 				</Text>
@@ -162,7 +166,7 @@ export function AIScreen() {
 								<RowLink
 									label={t`Reset`}
 									onPress={() => {
-										resetApprovals();
+										resetConnectionApproval(id);
 										setApprovals(listApprovals());
 									}}
 								/>

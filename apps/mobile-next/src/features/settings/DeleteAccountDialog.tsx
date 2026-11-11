@@ -17,7 +17,12 @@ export function DeleteAccountDialog({
 	initialStep = "verify",
 	onClose,
 	onDeleted,
+	exportedAt = null,
+	onExport,
 }: {
+	/** When this session last saved Export everything; the dialog never claims an export it hasn't seen. */
+	exportedAt?: Date | null;
+	onExport?: () => void;
 	open: boolean;
 	initialStep?: "verify" | "confirm";
 	onClose: () => void;
@@ -26,6 +31,7 @@ export function DeleteAccountDialog({
 	const { server } = useSession();
 	const { backend } = useDataBackend();
 	const fake = backend.kind === "fake";
+	const exportedTime = exportedAt?.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 	const [step, setStep] = useState<"verify" | "confirm">(initialStep);
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | undefined>();
@@ -91,13 +97,17 @@ export function DeleteAccountDialog({
 			onClose={close}
 			title={t`Delete your account?`}
 			message={t`This deletes your documents, applications, career knowledge and public pages from ${new URL(server).host}. It can't be undone.`}
-			count={{ icon: "download-simple", text: t`No export yet · Export first` }}
+			count={{
+				icon: "download-simple",
+				text: exportedTime ? t`Export saved to Files at ${exportedTime}` : t`No export yet · Export first`,
+			}}
 			actions={[
 				{ label: t`Cancel`, tone: "primary", onPress: close },
 				{
 					label: t`Export everything first`,
 					tone: "secondary",
-					onPress: () => void WebBrowser.openBrowserAsync(`${server}/dashboard/settings/account`),
+					onPress: () =>
+						onExport ? onExport() : void WebBrowser.openBrowserAsync(`${server}/dashboard/settings/account`),
 				},
 				{ label: t`Delete account permanently`, tone: "danger", onPress: () => void remove() },
 			]}

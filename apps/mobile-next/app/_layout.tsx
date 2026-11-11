@@ -14,6 +14,7 @@ import { setNow } from "@/data/clock";
 import { registerStoryboardDeps, StoryboardController } from "@/dev/storyboard/capture";
 import { StoryboardInsets } from "@/dev/storyboard/harness";
 import { registerFirstSend } from "@/features/settings/first-send";
+import { TodayNotifications } from "@/features/system/notifications";
 import { i18n, initI18n } from "@/i18n";
 import { DevHost } from "@/ui/DevMenu";
 import { HeroOverlay } from "@/ui/Hero";
@@ -70,6 +71,7 @@ export default function RootLayout() {
 									<Stack screenOptions={options.push} />
 								</ThemeProvider>
 								<ToastHost />
+								<TodayNotifications />
 								<HeroOverlay />
 								<DevHost />
 								<StoryboardController />

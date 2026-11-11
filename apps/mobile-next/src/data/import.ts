@@ -60,12 +60,31 @@ export type ImportOptions = {
 	ai?: boolean;
 	onStep?: (step: ImportStep) => void;
 };
+const jsonResumeKeys = [
+	"$schema",
+	"basics",
+	"work",
+	"volunteer",
+	"education",
+	"awards",
+	"certificates",
+	"publications",
+	"skills",
+	"languages",
+	"interests",
+	"references",
+	"projects",
+];
 export function parseResumeFileJSON(value: unknown): ResumeData {
 	if (value && typeof value === "object" && "data" in value && !("sections" in value))
 		return parseResumeFileJSON(value.data);
 	if (!value || typeof value !== "object") throw new Error(t`Invalid resume JSON.`);
 	const json = JSON.stringify(value);
-	if (!("sections" in value) && !("metadata" in value)) return parseJSONResume(json);
+	if (!("sections" in value) && !("metadata" in value)) {
+		// A JSON Resume has at least one of its own sections; any other JSON isn't a resume.
+		if (!jsonResumeKeys.some((key) => key in value)) throw new Error(t`The file couldn't be read as a resume.`);
+		return parseJSONResume(json);
+	}
 	const metadata = "metadata" in value ? value.metadata : null;
 	return metadata && typeof metadata === "object" && "layout" in metadata && Array.isArray(metadata.layout)
 		? parseReactiveResumeV4JSON(json)

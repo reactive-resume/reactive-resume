@@ -111,7 +111,8 @@ function ScopedProviderScreen() {
 			const saved = await persist();
 			const tested = await actions.test({ id: saved.id });
 			const ok = tested.testStatus === "success";
-			setResult({ ok, text: ok ? t`Connected` : providerTestError(tested.testErrorKind ?? "network") });
+			const latency = tested.latencyMs;
+			setResult({ ok, text: ok ? t`Connected · ${latency} ms` : providerTestError(tested.testErrorKind ?? "network") });
 			haptic(ok ? "success" : "error");
 		} catch {
 			setResult({ ok: false, text: t`Couldn't test this provider. Check its settings and try again.` });

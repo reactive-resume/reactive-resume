@@ -186,13 +186,18 @@ function ScopedDocumentActionsScreen() {
 												try {
 													if (choosing === "copy") {
 														const copiedId = await queueJobCopy({ resumeId: id, applicationId: app.id });
+														showToast({ message: t`Copy made for ${app.company}. This resume is unchanged.` });
 														navigate(`/builder/${copiedId}`);
 													} else {
 														await actions.linkApplication({ type: document.type, id, applicationId: app.id });
 														setChoosing(null);
 													}
 												} catch {
-													setError(t`Couldn't save your changes. Try again.`);
+													setError(
+														choosing === "copy"
+															? t`Couldn't copy the resume. Try again.`
+															: t`Couldn't save your changes. Try again.`,
+													);
 												} finally {
 													setSaving(false);
 												}
@@ -200,7 +205,12 @@ function ScopedDocumentActionsScreen() {
 										}}
 									/>
 								))}
-							<ListRow title={t`Save a job`} onPress={() => setChoosing("copy")} />
+							<ListRow
+								title={t`Save a job`}
+								onPress={() =>
+									navigate(id && choosing === "copy" ? `/applications/new?resumeId=${id}` : "/applications/new")
+								}
+							/>
 						</>
 					) : more ? (
 						<>
@@ -216,7 +226,7 @@ function ScopedDocumentActionsScreen() {
 								wrapSecondary
 								title={t`Copy for a job…`}
 								leading={<IconTile icon="copy" />}
-								onPress={() => navigate(`/applications/new?resumeId=${id}`)}
+								onPress={() => setChoosing("copy")}
 							/>
 							<ListRow
 								wrapTitle
@@ -279,7 +289,7 @@ function ScopedDocumentActionsScreen() {
 								title={t`Tailor for a job…`}
 								secondary={t`Makes a copy linked to an application`}
 								leading={<IconTile icon="sparkle" accent />}
-								onPress={() => navigate(`/applications/new?resumeId=${id}`)}
+								onPress={() => setChoosing("copy")}
 							/>
 							<ListRow
 								wrapTitle

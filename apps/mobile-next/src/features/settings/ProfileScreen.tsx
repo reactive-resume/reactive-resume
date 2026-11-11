@@ -6,6 +6,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
+import { applicationProfileDataSchema } from "@reactive-resume/schema/application-profile";
 import { emptyProfile, fromFields, type ProfileData, type ProfileFields, toFields } from "./profile-fields";
 import { useStoryboardView } from "./storyboard-view";
 import { useDataActions, useProfile } from "@/data";
@@ -32,6 +33,8 @@ export function ProfileScreen() {
 
 	const save = async (next: ProfileFields, revision: string | null) => {
 		if (!base) return;
+		// Check what the server would reject before queueing it, so the line says what to fix.
+		if (!applicationProfileDataSchema.safeParse(fromFields(base, next)).success) return setState("invalid");
 		setState("saving");
 		try {
 			await actions.write("profile", "applicationProfile.save", {

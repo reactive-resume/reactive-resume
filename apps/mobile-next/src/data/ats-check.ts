@@ -28,11 +28,17 @@ function sniff(file: File) {
 	}
 }
 
-/** Uploads the PDF to the server's checker, which reads it in memory and stores nothing. */
-export async function runAtsCheck(uri: string, name: string, posting: string, signal: AbortSignal): Promise<AtsResult> {
+/** What the phone can tell before uploading: size, PDF header and encryption. */
+export function checkPdfFile(uri: string): File {
 	const file = new File(uri);
 	if (file.size > MAX_CHECK_BYTES) throw new AtsCheckError(t`That file is too large to check. PDFs up to 25 MB work.`);
 	sniff(file);
+	return file;
+}
+
+/** Uploads the PDF to the server's checker, which reads it in memory and stores nothing. */
+export async function runAtsCheck(uri: string, name: string, posting: string, signal: AbortSignal): Promise<AtsResult> {
+	const file = checkPdfFile(uri);
 
 	const network = await getNetworkStateAsync();
 	if (network.isConnected === false || network.isInternetReachable === false)

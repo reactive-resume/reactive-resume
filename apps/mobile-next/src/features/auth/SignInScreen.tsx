@@ -13,6 +13,7 @@ import { View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { type SignInMethod, signInMethods, useAuthOptions } from "./options";
+import { takePendingLink } from "./pending-link";
 import { signInErrorMessage } from "@/auth/messages";
 import { signIn, useSession } from "@/auth/session";
 import { useDataBackend } from "@/data";
@@ -83,7 +84,7 @@ export function SignInScreen({ mode }: { mode: SignInMode }) {
 			if (!done) return;
 			// The storyboard server asks for the second step in the app (A3); a real server asks for it in the browser.
 			if (backend.kind === "fake" && mode === "sign-in") router.push("/two-step");
-			else router.replace("/");
+			else router.replace(takePendingLink() as never);
 		} catch (failure) {
 			fail(signInErrorMessage(i18n, failure));
 		} finally {
@@ -187,6 +188,7 @@ export function SignInScreen({ mode }: { mode: SignInMode }) {
 							onSubmitEditing={mode === "reset" ? submit : undefined}
 							submitBehavior={mode === "reset" ? "blurAndSubmit" : "submit"}
 							error={mode === "reset" ? error : undefined}
+							testID="sign-in-email"
 						/>
 						{mode === "reset" ? null : (
 							<TextField
@@ -207,6 +209,7 @@ export function SignInScreen({ mode }: { mode: SignInMode }) {
 								returnKeyType="go"
 								onSubmitEditing={submit}
 								error={error}
+								testID="sign-in-password"
 							/>
 						)}
 						<Button

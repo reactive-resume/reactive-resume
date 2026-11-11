@@ -24,13 +24,14 @@ import {
 } from "@/ui";
 
 export function PublicResumeScreen() {
-	const { username, slug } = useLocalSearchParams<{ username: string; slug: string }>();
+	// Storyboard flows view the link as its owner with `as=owner` (the fixture account's username differs from "alex").
+	const { username, slug, as } = useLocalSearchParams<{ username: string; slug: string; as?: string }>();
 	const query = usePublicResume({ username, slug });
 	const account = useAccount();
 	const router = useRouter();
 	const { backend } = useDataBackend();
 	const fake = backend.kind === "fake";
-	const owner = !fake && account.data?.username === username;
+	const owner = fake ? as === "owner" : account.data?.username === username;
 	const zoom = useRef<PageZoomHandle>(null);
 	const [pageState, setPageState] = useState<{ resume: typeof query.data; result: PageRenderResult } | null>(null);
 	const rendered = pageState && pageState.resume === query.data ? pageState.result : null;

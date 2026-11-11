@@ -6,6 +6,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { AccessibilityInfo, StyleSheet, TextInput, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import { takePendingLink } from "./pending-link";
 import { verifySecondStep } from "./two-step";
 import { useDataBackend } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
@@ -30,7 +31,7 @@ export function TwoStepScreen() {
 		const result = verifySecondStep(value, { fake: backend.kind === "fake", backup });
 		if (result === "accepted") {
 			haptic("success");
-			router.replace("/");
+			router.replace(takePendingLink() as never);
 			return;
 		}
 		if (result === "expired") {

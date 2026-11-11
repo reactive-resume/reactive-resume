@@ -53,6 +53,7 @@ export function ServerSheet() {
 						disabled={checking}
 						leading={checking ? <Spinner color="onAccent" /> : undefined}
 						onPress={() => void check()}
+						testID="server-check"
 					/>
 				</FooterBar>
 			}
@@ -73,6 +74,7 @@ export function ServerSheet() {
 					returnKeyType="go"
 					onSubmitEditing={() => void check()}
 					error={error}
+					testID="server-address"
 				/>
 				<Text variant="ui" color="ink3">
 					{t`Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue.`}

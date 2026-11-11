@@ -16,6 +16,7 @@ import {
 	useTrashDocument,
 } from "./shared";
 import { useDocumentActions, downloadDocuments, useDocuments, useTrash, useToday, useDataBackend } from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	Button,
 	Dialog,
@@ -39,7 +40,9 @@ export function LibraryScreen() {
 
 function ScopedLibraryScreen() {
 	const router = useRouter();
-	const params = useLocalSearchParams<{ select?: string; q?: string }>();
+	const params = useLocalSearchParams<{ select?: string; q?: string; state?: string }>();
+	// Storyboard flows reach the load error with `state=error`.
+	const loadError = STORYBOARD && params.state === "error";
 	const query = typeof params.q === "string" ? params.q : "";
 	const documents = useDocuments({ q: query });
 	const trash = useTrash();
@@ -131,7 +134,7 @@ function ScopedLibraryScreen() {
 				{batchError ? (
 					<CollectionState message={batchError} action={t`Dismiss`} onPress={() => setBatchError(undefined)} />
 				) : null}
-				{documents.isError ? (
+				{documents.isError || loadError ? (
 					<CollectionState
 						message={t`Couldn't load your documents. Try again.`}
 						action={t`Retry`}
@@ -140,7 +143,7 @@ function ScopedLibraryScreen() {
 						}}
 					/>
 				) : null}
-				{documents.isPending ? (
+				{loadError ? null : documents.isPending ? (
 					<>
 						<SectionHeading title={t`Resumes`} first />
 						<DocumentPlaceholders />

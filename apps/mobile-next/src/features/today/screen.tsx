@@ -1,12 +1,23 @@
 import { t } from "@lingui/core/macro";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { AccountAvatar, CollectionState, DocumentPlaceholders, useOpenDocument } from "../documents/shared";
 import { chooseHero, todaySteps } from "./model";
 import { useSession } from "@/auth/session";
-import { usePlatformActions, useAccount, useCareerSchedules, useDataBackend, useDocuments, useToday } from "@/data";
+import {
+	completeStep,
+	isStepComplete,
+	undoStep,
+	usePlatformActions,
+	useAccount,
+	useCareerSchedules,
+	useDataBackend,
+	useDocuments,
+	useToday,
+} from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	Button,
 	SwipeRow,
@@ -63,10 +74,40 @@ export function TodayScreen() {
 	const router = useRouter();
 	const openDocument = useOpenDocument();
 	const fake = backend.kind === "fake";
+	// Storyboard flows reach T1's states: `preset=up-to-date`, `discovery-off`, `discovery-paused` or `offline`.
+	const { preset: presetParam } = useLocalSearchParams<{ preset?: string }>();
+	const preset = STORYBOARD ? presetParam : undefined;
+	const upToDate = preset === "up-to-date";
 	const applications = (today.applications.data ?? []).map((app) =>
 		fake && app.id === "fieldnote" ? { ...app, appliedAt: new Date("2026-10-28T08:00:00Z") } : app,
 	);
-	const steps = todaySteps(applications, today.offers.data ?? [], today.now, today.timeZone);
+	// Swiping a Needs-you row hides its step on this device (completeStep); the revision re-reads that local state.
+	const [, setStepRevision] = useState(0);
+	const steps = todaySteps(applications, today.offers.data ?? [], today.now, today.timeZone).filter(
+		(item) => !isStepComplete({ applicationId: item.application.id, kind: item.step.kind }),
+	);
+	const completeNextStep = (applicationId: string, kind: string) => {
+		try {
+			const handle = completeStep({ applicationId, kind });
+			setStepRevision((n) => n + 1);
+			showToast({
+				message: t`Marked done`,
+				action: {
+					label: t`Undo`,
+					onPress: () => {
+						try {
+							undoStep(handle);
+							setStepRevision((n) => n + 1);
+						} catch {
+							setFailure(true);
+						}
+					},
+				},
+			});
+		} catch {
+			setFailure(true);
+		}
+	};
 	const notifications = today.model.notifications;
 	const hasResume = !!documents.data?.some((document) => document.type === "resume");
 	const firstRun =
@@ -77,11 +118,17 @@ export function TodayScreen() {
 		!applications.length &&
 		!notifications.length &&
 		(fake || today.firstRun.data === true);
-	const hero = fake
-		? (steps.find((item) => item.application.id === "lumen") ?? chooseHero(steps, today.now))
-		: today.model.hero;
-	const needs = fake ? steps.filter((item) => item !== hero && item.step.kind !== "interview") : today.model.needsYou;
-	const upcoming = fake ? steps.filter((item) => item.step.kind === "interview") : today.model.comingUp;
+	const hero = upToDate
+		? undefined
+		: fake
+			? (steps.find((item) => item.application.id === "lumen") ?? chooseHero(steps, today.now))
+			: today.model.hero;
+	const needs = upToDate
+		? []
+		: fake
+			? steps.filter((item) => item !== hero && item.step.kind !== "interview")
+			: today.model.needsYou;
+	const upcoming = upToDate ? [] : fake ? steps.filter((item) => item.step.kind === "interview") : today.model.comingUp;
 	const format = (date: Date, options: Intl.DateTimeFormatOptions) =>
 		date.toLocaleDateString("en-GB", { ...options, timeZone: today.timeZone });
 	const time = (date: Date) =>
@@ -93,7 +140,14 @@ export function TodayScreen() {
 		void today.opportunities.refetch();
 		void documents.refetch();
 	};
-	const discovery = schedules.data?.find((schedule) => schedule.kind === "discovery");
+	const savedDiscovery = schedules.data?.find((schedule) => schedule.kind === "discovery");
+	const discovery =
+		preset === "discovery-off"
+			? undefined
+			: preset === "discovery-paused" && savedDiscovery
+				? { ...savedDiscovery, enabled: false }
+				: savedDiscovery;
+	const roles = preset?.startsWith("discovery-") ? [] : (today.opportunities.data ?? []);
 	const guest = session.status === "guest";
 	const [failure, setFailure] = useState(false);
 	useEffect(() => {
@@ -128,7 +182,7 @@ export function TodayScreen() {
 				refreshing={today.applications.isRefetching}
 				onRefresh={refresh}
 			>
-				{today.connectivity.offline ? (
+				{today.connectivity.offline || preset === "offline" ? (
 					<View style={{ padding: 24 }}>
 						<Text variant="body">{t`Offline. Edits are saved on this device and sync when you reconnect.`}</Text>
 					</View>
@@ -265,31 +319,45 @@ export function TodayScreen() {
 							<>
 								<SectionHeading title={t`Needs you`} />
 								{needs.map(({ application, step }, index) => (
-									<ListRow
-										wrapTitle
-										wrapSecondary
+									<SwipeRow
 										key={application.id}
-										title={
-											step.kind === "offer"
-												? t`Reply to ${application.company}`
-												: t`Follow up with ${application.company}`
-										}
-										secondary={
-											step.kind === "offer"
-												? step.respondBy
-													? t`Offer · by ${format(step.respondBy, { weekday: "long", day: "numeric", month: "short" }).replace(",", "")}`
-													: t`Compare it with your other offers`
-												: fake && application.id === "fieldnote"
-													? t`Applied 28 Oct · a short note is fine now`
-													: t`A short follow-up is usually fine now`
-										}
-										leading={<StageDot stage={application.status} />}
-										trailing="caret"
-										last={index === needs.length - 1 && !notifications.length}
-										onPress={() =>
-											router.push(step.kind === "offer" ? "/career/offers" : `/applications/${application.id}/messages`)
-										}
-									/>
+										start={{
+											key: "done",
+											label: t`Done`,
+											icon: "check",
+											tone: "accent",
+											onCommit: () => completeNextStep(application.id, step.kind),
+										}}
+									>
+										<ListRow
+											wrapTitle
+											wrapSecondary
+											key={application.id}
+											title={
+												step.kind === "offer"
+													? t`Reply to ${application.company}`
+													: t`Follow up with ${application.company}`
+											}
+											secondary={
+												step.kind === "offer"
+													? step.respondBy
+														? t`Offer · by ${format(step.respondBy, { weekday: "long", day: "numeric", month: "short" }).replace(",", "")}`
+														: t`Compare it with your other offers`
+													: fake && application.id === "fieldnote"
+														? t`Applied 28 Oct · a short note is fine now`
+														: t`A short follow-up is usually fine now`
+											}
+											leading={<StageDot stage={application.status} />}
+											trailing="caret"
+											last={index === needs.length - 1 && !notifications.length}
+											onPress={() =>
+												router.push(
+													step.kind === "offer" ? "/career/offers" : `/applications/${application.id}/messages`,
+												)
+											}
+											testID={`today-needs-${application.id}`}
+										/>
+									</SwipeRow>
 								))}
 								{notifications.map((notice, index) => (
 									<SwipeRow
@@ -355,12 +423,12 @@ export function TodayScreen() {
 						) : null}
 						<SectionHeading
 							title={t`New roles`}
-							count={fake ? t`4 today` : String(today.opportunities.data?.length ?? 0)}
+							count={fake && roles.length ? t`4 today` : String(roles.length)}
 							action={selectingRoles ? t`Done` : t`Select`}
 							onAction={() => setSelectingRoles(!selectingRoles)}
 						/>
-						{today.opportunities.data?.length ? (
-							today.opportunities.data.map((role) => (
+						{roles.length ? (
+							roles.map((role) => (
 								<ListRow
 									wrapTitle
 									wrapSecondary
@@ -386,6 +454,7 @@ export function TodayScreen() {
 										setSelectingRoles(true);
 										setSelectedRoles([role.id]);
 									}}
+									testID={`today-role-${role.id}`}
 									last
 								/>
 							))

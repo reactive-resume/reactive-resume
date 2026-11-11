@@ -157,7 +157,8 @@ function ScopedSearchScreen() {
 								onChangeText={setQuery}
 								placeholder={t`Search everything`}
 								leadingIcon="magnifying-glass"
-								autoFocus={!STORYBOARD}
+								// Storyboard captures arrive with a query and draw the field focused without a keyboard.
+								autoFocus={!STORYBOARD || params.q === undefined}
 								forceFocus
 								returnKeyType="search"
 								onSubmitEditing={remember}
@@ -193,6 +194,7 @@ function ScopedSearchScreen() {
 								key={term}
 								title={term}
 								onPress={() => setQuery(term)}
+								trailingAction
 								trailing={
 									<TextLink
 										label={t`Remove`}

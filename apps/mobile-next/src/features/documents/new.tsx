@@ -102,7 +102,11 @@ function ScopedNewDocumentScreen() {
 							secondary={t`For a saved application`}
 							leading={<IconTile icon="envelope-simple" />}
 							trailing="caret"
-							onPress={() => setChooseApplication(true)}
+							onPress={() => {
+								const [only, ...others] = openApplications;
+								if (only && !others.length) void create(only.id);
+								else setChooseApplication(true);
+							}}
 						/>
 						<ListRow
 							wrapTitle

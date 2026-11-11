@@ -184,11 +184,13 @@ export function usePDFATSCheck() {
 			signal: AbortSignal;
 		}) => {
 			const { isFake } = await import("./fixtures");
+			const { checkPdfFile, runAtsCheck } = await import("./ats-check");
 			if (isFake()) {
+				// The storyboard server's report, after the same checks the phone makes before any upload.
+				checkPdfFile(uri);
 				const { storyboardPdfCheck } = await import("./ats-fixture");
 				return storyboardPdfCheck(name, posting);
 			}
-			const { runAtsCheck } = await import("./ats-check");
 			return runAtsCheck(uri, name, posting, signal);
 		},
 	});

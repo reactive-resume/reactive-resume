@@ -25,11 +25,27 @@ export function AccountScreen() {
 	const security = useAccountSecurity();
 	const view = useStoryboardView();
 	const options = useAuthOptions();
-	const params = useLocalSearchParams<{ delete?: string }>();
+	// Storyboard flows reach S2's states: `state=unverified` (email not verified) or `state=no-email` (no SMTP).
+	const params = useLocalSearchParams<{ delete?: string; state?: string }>();
+	const preset = STORYBOARD ? params.state : undefined;
+	const [exportedAt, setExportedAt] = useState<Date | null>(null);
 	const [deleting, setDeleting] = useState(STORYBOARD && !!params.delete);
 	const web = (path: string) => () => void WebBrowser.openBrowserAsync(`${server}${path}`);
 	const data = account.data;
-	const canEmail = options.data?.flags.smtpEnabled !== false;
+	const canEmail = preset !== "no-email" && options.data?.flags.smtpEnabled !== false;
+	const verified = preset !== "unverified" && !!data?.emailVerified;
+	const exportData = () => {
+		if (exporting) return;
+		setExporting(true);
+		void actions
+			.exportEverything()
+			.then(() => {
+				setExportedAt(new Date());
+				showToast({ message: t`Saved to Files` });
+			})
+			.catch(() => showToast({ message: t`Couldn't export your data. Try again.` }))
+			.finally(() => setExporting(false));
+	};
 
 	return (
 		<PushScreen
@@ -38,6 +54,8 @@ export function AccountScreen() {
 				<DeleteAccountDialog
 					open={deleting}
 					initialStep={params.delete === "confirm" ? "confirm" : "verify"}
+					exportedAt={exportedAt}
+					onExport={exportData}
 					onClose={() => setDeleting(false)}
 					onDeleted={() => {
 						setDeleting(false);
@@ -50,7 +68,7 @@ export function AccountScreen() {
 			<View style={{ marginTop: 20 }}>
 				<ListRow
 					title={t`Email`}
-					secondary={data && !data.emailVerified ? t`Not verified yet. Resend the link` : data?.email}
+					secondary={data && !verified ? t`Not verified yet. Resend the link` : data?.email}
 					trailing="caret"
 					top
 					onPress={web("/dashboard/settings/account")}
@@ -98,15 +116,7 @@ export function AccountScreen() {
 				title={t`Export my data`}
 				secondary={t`A JSON file of everything`}
 				trailing="caret"
-				onPress={() => {
-					if (exporting) return;
-					setExporting(true);
-					void actions
-						.exportEverything()
-						.then(() => showToast({ message: t`Saved to Files` }))
-						.catch(() => showToast({ message: t`Couldn't export your data. Try again.` }))
-						.finally(() => setExporting(false));
-				}}
+				onPress={exportData}
 			/>
 			<ListRow
 				title={t`Delete account`}

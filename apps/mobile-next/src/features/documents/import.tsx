@@ -216,6 +216,7 @@ function ScopedImportScreen() {
 							onPress={() => {
 								void choose();
 							}}
+							testID="import-choose"
 						/>
 					</View>
 				</HeroCard>
