@@ -68,7 +68,12 @@ export default function RootLayout() {
 						<I18nProvider i18n={i18n}>
 							<DataProvider>
 								<ThemeProvider value={navigationTheme}>
-									<Stack screenOptions={options.push} />
+									<Stack screenOptions={options.push}>
+										{/* The storyboard link only hands its request to the capture controller, which replaces this route
+										at once. Animating it in left the stack mid-transition when a link opened it in a running app, and
+										every touch after that was ignored. */}
+										<Stack.Screen name="(dev)/storyboard/[id]" options={{ animation: "none" }} />
+									</Stack>
 								</ThemeProvider>
 								<ToastHost />
 								<TodayNotifications />
