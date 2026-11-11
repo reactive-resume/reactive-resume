@@ -27,6 +27,7 @@ import {
 import { useBuilderStoryboard } from "../shared/storyboard";
 import { MonthPickerSheet } from "./MonthPickerSheet";
 import { resumeFieldFocus, useResumeStore } from "@/data";
+import { useCaptureStore } from "@/dev/storyboard/capture";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	BottomSheet,
@@ -82,6 +83,7 @@ export function EntryScreen({ isNew = false }: { isNew?: boolean }) {
 	const word = useSaveWord();
 	const visit = useVisit();
 	const focus = useBuilderStoryboard((s) => s.focus);
+	const capturing = useCaptureStore((s) => STORYBOARD && s.request !== null && s.ready !== s.request.nonce);
 	const section = data ? resolveSection(data, params.section) : null;
 	// B20: the entry id once the first character has created it.
 	const [createdId, setCreatedId] = useState<string | null>(null);
@@ -119,6 +121,13 @@ export function EntryScreen({ isNew = false }: { isNew?: boolean }) {
 	const change = (field: string, apply: (e: Values, d?: ResumeData) => void) => {
 		if (locked) return;
 		if (!created) {
+			// B20: spaces count as empty; the entry exists only once something real is typed.
+			const next = structuredClone(draft ?? createEntry(section.type));
+			apply(next as Values);
+			if (isEmptyEntry(next)) {
+				setDraft(next);
+				return;
+			}
 			const id = createEntryWith(section, (e) => apply(e as Values));
 			setCreatedId(id);
 			setDraft(null);
@@ -142,8 +151,8 @@ export function EntryScreen({ isNew = false }: { isNew?: boolean }) {
 			placeholder={spec.placeholder?.() ?? (spec.key === meta.primary && isNew ? placeholderFor(section) : undefined)}
 			editable={!locked}
 			forceFocus={focus === spec.key}
-			// Storyboard captures draw the focused field without the system keyboard (B20).
-			autoFocus={isNew && index === 0 && !STORYBOARD}
+			// Storyboard captures draw the focused field without the system keyboard (B20); afterwards it rises as shipped.
+			autoFocus={isNew && index === 0 && !capturing}
 			inputPlaceholder={isNew}
 			returnKeyType="next"
 			submitBehavior="submit"
@@ -366,7 +375,8 @@ export function EntryScreen({ isNew = false }: { isNew?: boolean }) {
 				)
 			}
 			barEnd={
-				created && !locked ? (
+				// Locked, ··· still opens B21, where every action is dimmed and says how to unlock.
+				created ? (
 					<IconButton
 						icon="dots-three"
 						label={t`Entry options`}

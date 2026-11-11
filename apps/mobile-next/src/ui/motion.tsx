@@ -223,7 +223,9 @@ export function haptic(token: HapticToken): void {
 /** From a gesture worklet (UI thread). */
 export function hapticOnUI(token: HapticToken) {
 	"worklet";
-	runOnJS(haptic)(token);
+	// Worklets also run on the JS thread when called directly (PageZoom's zoom bar): play it there and then.
+	if ((globalThis as { _WORKLET?: boolean })._WORKLET) runOnJS(haptic)(token);
+	else haptic(token);
 }
 
 // -------------------------------------------------------------------------------------------------

@@ -75,6 +75,7 @@ export function TemplateScreen() {
 		editResume((d) => {
 			d.metadata.design.colors.primary = hexToRgba(hex);
 		});
+		showToast({ message: t`Colour changed`, action: undo() });
 	};
 	const customHex = custom === null ? null : normalizeHex(custom);
 	const tooLight = !!customHex && contrastOnWhite(customHex) < 4.6;

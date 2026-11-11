@@ -230,6 +230,7 @@ function ToastView({
 							feedback="scale"
 							style={[styles.action, lab?.hideText ? { opacity: 0 } : null]}
 							accessibilityLabel={action.label}
+							testID={action === toast.action ? "toast-action" : "toast-second-action"}
 							onPress={() => {
 								action.onPress();
 								useToasts.getState().dismiss(toast.id, true);

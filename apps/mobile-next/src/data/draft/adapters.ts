@@ -23,6 +23,8 @@ function resumeFields(document: ResumeDocument) {
 		tags: document.tags,
 		isPublic: document.isPublic,
 		showDownloadButtons: document.showDownloadButtons,
+		hideContactDetails: document.hideContactDetails,
+		showInSearchEngines: document.showInSearchEngines,
 		data: document.data,
 		aiOperationIds: document.aiOperationIds ?? [],
 	};

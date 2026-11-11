@@ -53,6 +53,7 @@ export function TypographyScreen() {
 		if (next === size) return;
 		haptic("selection");
 		editResume((d) => applyTextSize(d.metadata, next), { coalesceKey: "text-size", sameStep: false });
+		designUndo(t`Text size changed`);
 	};
 	return (
 		<BuilderScreen title={t`Typography`} status={word} subtitle={null}>

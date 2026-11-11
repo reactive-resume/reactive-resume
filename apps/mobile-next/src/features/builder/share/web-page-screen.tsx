@@ -21,12 +21,19 @@ export function WebPageScreen() {
 	const [error, setError] = useState("");
 	const username = STORYBOARD ? "alex" : (account.data?.username ?? "");
 	const primary = useSwitchRow(document?.isPrimary ?? false, () => setError(t`Couldn't update sharing. Try again.`));
-	const hidden = useSwitchRow(document?.hideContactDetails ?? false, () =>
-		setError(t`Couldn't update sharing. Try again.`),
-	);
-	const search = useSwitchRow(document?.showInSearchEngines ?? false, () =>
-		setError(t`Couldn't update sharing. Try again.`),
-	);
+	// A privacy switch saves through the open draft; without one it says so and stays as saved.
+	const setting = (field: "hideContactDetails" | "showInSearchEngines") => (next: boolean) => {
+		if (draft.document?.id !== id) {
+			setError(t`Couldn't update sharing. Try again.`);
+			return;
+		}
+		setError("");
+		draft.updateDocument((d) => {
+			d[field] = next;
+		});
+	};
+	const hidden = useSwitchRow(document?.hideContactDetails ?? false, setting("hideContactDetails"));
+	const search = useSwitchRow(document?.showInSearchEngines ?? false, setting("showInSearchEngines"));
 	const saveSlug = () => {
 		if (slug === undefined || !isValidSlug(slug)) return;
 		if (draft.document?.id !== id) {
