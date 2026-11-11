@@ -1,4 +1,4 @@
-# Clean storyboard sandbox required. Uses real request guard, repeats same kind, changes fake key, requests again. File/audio also need native picker/microphone setup; see README.
+# Clean storyboard sandbox required. Uses real request guard, repeats same kind, changes fake key, requests again. Needs microphone permission: xcrun simctl privacy <udid> grant microphone me.rxresu.storyboard.
 appId: me.rxresu.storyboard
 ---
 - openLink: me.rxresu.storyboard://storyboard/W4-Practice?theme=light
@@ -13,9 +13,11 @@ appId: me.rxresu.storyboard
     visible:
       id: storyboard-ready
     timeout: 30000
+# The W4 board is drawn mid-recording; practise from an idle screen.
+- openLink: me.rxresu.storyboard://applications/lumen/practise
 - tapOn: Start recording
 - extendedWaitUntil:
-    visible: 00:02 / 02:00
+    visible: "0?0:0[1-9] / 0?2:00"
     timeout: 10000
 - waitForAnimationToEnd
 - tapOn: Stop recording
@@ -28,7 +30,7 @@ appId: me.rxresu.storyboard
 - openLink: me.rxresu.storyboard://applications/lumen/practise
 - tapOn: Start recording
 - extendedWaitUntil:
-    visible: 00:02 / 02:00
+    visible: "0?0:0[1-9] / 0?2:00"
     timeout: 10000
 - waitForAnimationToEnd
 - tapOn: Stop recording
@@ -43,7 +45,7 @@ appId: me.rxresu.storyboard
 - openLink: me.rxresu.storyboard://applications/lumen/practise
 - tapOn: Start recording
 - extendedWaitUntil:
-    visible: 00:02 / 02:00
+    visible: "0?0:0[1-9] / 0?2:00"
     timeout: 10000
 - waitForAnimationToEnd
 - tapOn: Stop recording

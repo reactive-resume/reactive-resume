@@ -27,14 +27,14 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Marked done
     timeout: 5000
-- assertVisible:
-    id: haptic-log
-    text: light
 - assertNotVisible:
     id: today-needs-fieldnote
 - tapOn:
     text: Undo
     waitToSettleTimeoutMs: 1
+- assertVisible:
+    id: haptic-log
+    text: light
 - extendedWaitUntil:
     visible:
       id: today-needs-fieldnote
@@ -72,6 +72,9 @@ appId: me.rxresu.storyboard
 - tapOn:
     id: today-role-opportunity-kiln
 - waitForAnimationToEnd
+- scrollUntilVisible:
+    element: Not for me
+    direction: DOWN
 - tapOn: Not for me
 - waitForAnimationToEnd
 - extendedWaitUntil:

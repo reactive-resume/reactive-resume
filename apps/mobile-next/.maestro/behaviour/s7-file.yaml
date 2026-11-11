@@ -14,8 +14,19 @@ appId: me.rxresu.storyboard
       id: storyboard-ready
     timeout: 30000
 - openLink: me.rxresu.storyboard://import
-- tapOn:
-    id: import-choose
+- runFlow:
+    when:
+      visible:
+        id: import-choose
+    commands:
+      - tapOn:
+          id: import-choose
+- runFlow:
+    when:
+      notVisible:
+        id: import-choose
+    commands:
+      - tapOn: Change
 - runFlow:
     file: ../q1/lib/pick-file.yaml
     env:
@@ -28,8 +39,19 @@ appId: me.rxresu.storyboard
 - assertNotVisible: Send to Work OpenAI?
 - openLink: me.rxresu.storyboard://import
 - openLink: me.rxresu.storyboard://import
-- tapOn:
-    id: import-choose
+- runFlow:
+    when:
+      visible:
+        id: import-choose
+    commands:
+      - tapOn:
+          id: import-choose
+- runFlow:
+    when:
+      notVisible:
+        id: import-choose
+    commands:
+      - tapOn: Change
 - runFlow:
     file: ../q1/lib/pick-file.yaml
     env:
@@ -44,8 +66,19 @@ appId: me.rxresu.storyboard
     id: provider-save
 - openLink: me.rxresu.storyboard://import
 - openLink: me.rxresu.storyboard://import
-- tapOn:
-    id: import-choose
+- runFlow:
+    when:
+      visible:
+        id: import-choose
+    commands:
+      - tapOn:
+          id: import-choose
+- runFlow:
+    when:
+      notVisible:
+        id: import-choose
+    commands:
+      - tapOn: Change
 - runFlow:
     file: ../q1/lib/pick-file.yaml
     env:
