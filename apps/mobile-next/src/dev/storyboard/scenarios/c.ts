@@ -33,7 +33,11 @@ async function patch(extra?: (data: ResumeData) => void, document?: Record<strin
 		{ id: "lang-pt", hidden: false, language: "Portuguese", fluency: "Native", level: 0 },
 	];
 	extra?.(data);
-	useResumeStore.setState({ data, ...(document && s.document ? { document: { ...s.document, ...document } } : {}) });
+	// Through the draft (no undo step), so later edits and Undo build on the boards' resume rather than the fixture's.
+	s.updateDocument((draft) => {
+		Object.assign(draft, document ?? {});
+		draft.data = data as never;
+	});
 }
 
 function addProfile(data: ResumeData) {
