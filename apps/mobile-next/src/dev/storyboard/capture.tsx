@@ -4,7 +4,7 @@ import type { ThemeName } from "@/ui/tokens";
 // Mounted once in the root layout; inert unless EXPO_PUBLIC_STORYBOARD=1.
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigationContainerRef, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { LogBox, View } from "react-native";
 import { create } from "zustand";
 import { CAPTURE_SERVER, collectDump, resetImageTracking, STORYBOARD, STORYBOARD_NOW, settle } from "./harness";
@@ -14,10 +14,18 @@ import { useThemeStore } from "@/ui/theme";
 
 type Request = { id: string; theme: ThemeName; scroll: "top" | "end"; nonce: number };
 
-export const useCaptureStore = create<{ request: Request | null; ask: (r: Omit<Request, "nonce">) => void }>((set) => ({
+export const useCaptureStore = create<{
+	request: Request | null;
+	/** The request whose motion is back: Maestro flows wait for `storyboard-ready` before they touch anything. */
+	ready: number | null;
+	ask: (r: Omit<Request, "nonce">) => void;
+}>((set) => ({
 	request: null,
+	ready: null,
 	ask: (r) => set({ request: { ...r, nonce: Date.now() } }),
 }));
+
+const setReady = (nonce: number) => useCaptureStore.setState({ ready: nonce });
 
 /** The data layer and screens register what the harness needs from them. */
 export type StoryboardDeps = {
@@ -66,8 +74,7 @@ export function StoryboardController() {
 	const navigation = useNavigationContainerRef();
 	const request = useCaptureStore((s) => s.request);
 	const queryClient = useQueryClient();
-	// The request whose motion is back: Maestro flows wait for `storyboard-ready` before they touch anything.
-	const [ready, setReady] = useState<number | null>(null);
+	const ready = useCaptureStore((s) => s.ready);
 
 	useEffect(() => {
 		if (STORYBOARD) LogBox.ignoreAllLogs(true);

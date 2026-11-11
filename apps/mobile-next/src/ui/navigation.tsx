@@ -14,8 +14,8 @@ export function useScreenOptions() {
 	const push = useStackOptions(theme, "push");
 	const modal = useStackOptions(theme, "modal");
 	const fade = useStackOptions(theme, "fade");
-	// Storyboard captures land every transition at once.
-	const capturing = useCaptureStore((s) => STORYBOARD && s.request !== null);
+	// Storyboard captures land every transition at once; once `storyboard-ready` shows, motion runs as shipped.
+	const capturing = useCaptureStore((s) => STORYBOARD && s.request !== null && s.ready !== s.request.nonce);
 	const still: StackNavigationOptions = capturing ? { animation: "none" } : {};
 	const sheet: StackNavigationOptions = {
 		headerShown: false,
