@@ -14,6 +14,19 @@ appId: me.rxresu.storyboard
     visible: Kiln Studio
     timeout: 20000
 - waitForAnimationToEnd
+# The view choice is remembered: Board, leave the tab, come back.
+- tapOn: Board
+- waitForAnimationToEnd
+- tapOn: Career
+- waitForAnimationToEnd
+- tapOn: Applications
+- waitForAnimationToEnd
+# The board's stage button is only on Board.
+- assertVisible: "Interviewing, .*"
+- tapOn: List
+- extendedWaitUntil:
+    visible: Kiln Studio
+    timeout: 10000
 # Points, not percentages: after a pushed screen comes back, Maestro resolves percentages against a different frame.
 # Swipe toward the end: Lumen (Interviewing) moves to Offer; Undo puts it back.
 - swipe:
@@ -45,17 +58,6 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Orbital Health
     timeout: 10000
-# Tap → J6.
-- tapOn:
-    id: application-row-lumen
-- extendedWaitUntil:
-    visible: Work on it
-    timeout: 10000
-- tapOn: Back
-- extendedWaitUntil:
-    visible: Kiln Studio
-    timeout: 10000
-- waitForAnimationToEnd
 # Long-press → the row's actions, Select enters selection with checkboxes and the bar.
 - longPressOn:
     id: application-row-parcel
@@ -80,14 +82,18 @@ appId: me.rxresu.storyboard
     visible: Save job
     timeout: 10000
 - tapOn: Close
+- extendedWaitUntil:
+    visible: Kiln Studio
+    timeout: 10000
 - waitForAnimationToEnd
-# The view choice is remembered: Board, leave the tab, come back.
-- tapOn: Board
+# Tap → J6. A point: after a modal or pushed screen goes, Maestro's iOS element frames can be stale.
+- tapOn:
+    point: "195,250"
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000
+- tapOn: Back
+- extendedWaitUntil:
+    visible: Kiln Studio
+    timeout: 10000
 - waitForAnimationToEnd
-- tapOn: Career
-- waitForAnimationToEnd
-- tapOn: Applications
-- waitForAnimationToEnd
-- assertVisible:
-    text: Board
-    selected: true

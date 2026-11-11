@@ -45,6 +45,7 @@ export function TabScreen({
 	onRefresh,
 	children,
 	footer,
+	overlay,
 	bottomPadding = 24,
 }: {
 	title: string;
@@ -57,6 +58,8 @@ export function TabScreen({
 	children: ReactNode;
 	/** Pinned under the content, above the dock: J1's Select bar. */
 	footer?: ReactNode;
+	/** Drawn over the whole screen, above the bar: sheets a tab opens in place (J1's Move…, J2's stages). */
+	overlay?: ReactNode;
 	bottomPadding?: number;
 }) {
 	const collapse = useTitleCollapse();
@@ -88,6 +91,7 @@ export function TabScreen({
 						) : null
 					}
 				/>
+				{overlay}
 			</Screen>
 		</DockScene>
 	);

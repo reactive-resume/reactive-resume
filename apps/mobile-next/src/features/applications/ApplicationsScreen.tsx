@@ -85,10 +85,16 @@ let rememberedView: ApplicationsView = "list";
 
 export function ApplicationsScreen() {
 	const params = useLocalSearchParams<{ view?: string; day?: string; stage?: string }>();
-	const router = useRouter();
 	const requested =
 		params.view === "board" || params.view === "calendar" || params.view === "list" ? params.view : null;
-	const view: ApplicationsView = requested ?? rememberedView;
+	// A link may ask for a view (J4's funnel, captures); the tab otherwise keeps the one last chosen. The param stays as
+	// the link set it, so coming back to the tab doesn't undo a later choice.
+	const [view, setView] = useState<ApplicationsView>(requested ?? rememberedView);
+	const [linked, setLinked] = useState(requested);
+	if (requested !== linked) {
+		setLinked(requested);
+		if (requested) setView(requested);
+	}
 	const applications = useApplications();
 	const offers = useCareerOffers();
 	const context = useMemo<ListContext>(
@@ -98,10 +104,12 @@ export function ApplicationsScreen() {
 	const rows = applications.data ?? [];
 	// Select mode's bar (J1), pinned above the dock while the list is in Select mode.
 	const [selectBar, setSelectBar] = useState<ReactNode>(null);
+	// Sheets the list and board open in place, drawn over the whole tab (not inside the scrolling content).
+	const [overlay, setOverlay] = useState<ReactNode>(null);
 
 	const choose = (next: ApplicationsView) => {
 		rememberedView = next;
-		router.setParams({ view: next });
+		setView(next);
 	};
 
 	return (
@@ -112,6 +120,7 @@ export function ApplicationsScreen() {
 			refreshing={applications.isRefetching}
 			onRefresh={() => void applications.refetch()}
 			footer={view === "list" ? selectBar : null}
+			overlay={overlay}
 		>
 			<View style={{ paddingTop: 16, paddingHorizontal: layout.screenMargin }}>
 				<Segmented
@@ -139,10 +148,12 @@ export function ApplicationsScreen() {
 						rows={rows}
 						context={context}
 						onSelectBar={setSelectBar}
+						onOverlay={setOverlay}
+						onStages={() => choose("board")}
 						stage={PIPELINE.find((status) => status === params.stage)}
 					/>
 				) : view === "board" ? (
-					<BoardView rows={rows} context={context} initialStage={params.stage} />
+					<BoardView rows={rows} context={context} initialStage={params.stage} onOverlay={setOverlay} />
 				) : (
 					<CalendarView rows={rows} context={context} initialDay={params.day} />
 				)}
@@ -166,11 +177,15 @@ function ListView({
 	rows,
 	context,
 	onSelectBar,
+	onOverlay,
+	onStages,
 	stage,
 }: {
 	rows: ApplicationRow[];
 	context: ListContext;
 	onSelectBar: (bar: ReactNode) => void;
+	onOverlay: (sheet: ReactNode) => void;
+	onStages: () => void;
 	/** J4's funnel: only this stage's group, with a way back to all of them. */
 	stage?: ApplicationStatus | undefined;
 }) {
@@ -245,6 +260,78 @@ function ListView({
 	// eslint-disable-next-line react-hooks/exhaustive-deps -- the handlers are rebuilt every render; see above
 	useEffect(() => onSelectBar(selectBar), [selecting, selected, rows]);
 	useEffect(() => () => onSelectBar(null), [onSelectBar]);
+	const sheets = (
+		<>
+			{sheet?.kind === "actions" ? (
+				<ActionsSheet
+					app={sheet.app}
+					onClose={() => setSheet(null)}
+					onSelect={() => {
+						setSheet(null);
+						enterSelect(sheet.app.id);
+					}}
+					onMove={() => setSheet({ kind: "move", apps: [sheet.app] })}
+					onCloseApp={() => {
+						setSheet(null);
+						router.push(`/applications/${sheet.app.id}/stage?step=close`);
+					}}
+					onTrash={() => {
+						setSheet(null);
+						void actions.moveToTrash([sheet.app.id]);
+					}}
+				/>
+			) : null}
+			{sheet?.kind === "move" ? (
+				<ChoiceSheet<ApplicationStatus>
+					title={t`Move to…`}
+					height={480}
+					choices={PIPELINE.map((status) => ({
+						key: status,
+						title: stageLabel(status),
+						trailing: <StageDot stage={status} />,
+					}))}
+					value={sheet.apps.length === 1 ? sheet.apps[0]?.status : undefined}
+					onClose={() => setSheet(null)}
+					onChoose={(status) => {
+						const apps = sheet.apps;
+						setSheet(null);
+						leaveSelect();
+						void actions.moveMany(apps, status);
+					}}
+				/>
+			) : null}
+			{sheet?.kind === "tags" ? (
+				<TagsSheet
+					apps={sheet.apps}
+					known={[...new Set(rows.flatMap((row) => row.tags))].sort()}
+					onClose={() => setSheet(null)}
+					onDone={() => {
+						setSheet(null);
+						leaveSelect();
+					}}
+				/>
+			) : null}
+			{sheet?.kind === "close" ? (
+				<ChoiceSheet
+					title={t`How did it end?`}
+					height={480}
+					choices={CLOSED_REASONS.map((reason) => ({ key: reason, title: outcomeLabel(reason) }))}
+					onClose={() => setSheet(null)}
+					onChoose={(reason) => {
+						const apps = sheet.apps;
+						setSheet(null);
+						leaveSelect();
+						void (async () => {
+							for (const app of apps) await actions.close(app.id, reason, undefined, app.status);
+						})();
+					}}
+				/>
+			) : null}
+		</>
+	);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- as the bar above: the sheets change with these
+	useEffect(() => onOverlay(sheets), [sheet, rows, selected]);
+	useEffect(() => () => onOverlay(null), [onOverlay]);
 
 	if (rows.length === 0)
 		return (
@@ -421,76 +508,11 @@ function ListView({
 				{selecting ? null : (
 					<>
 						<ToolLink label={t`Select`} icon="check-square" onPress={() => enterSelect()} />
-						<ToolLink label={t`Stages`} icon="kanban" onPress={() => router.setParams({ view: "board" })} />
+						<ToolLink label={t`Stages`} icon="kanban" onPress={onStages} />
 						<ToolLink label={t`Import`} icon="file-csv" onPress={() => void importCsv()} />
 					</>
 				)}
 			</View>
-			{sheet?.kind === "actions" ? (
-				<ActionsSheet
-					app={sheet.app}
-					onClose={() => setSheet(null)}
-					onSelect={() => {
-						setSheet(null);
-						enterSelect(sheet.app.id);
-					}}
-					onMove={() => setSheet({ kind: "move", apps: [sheet.app] })}
-					onCloseApp={() => {
-						setSheet(null);
-						router.push(`/applications/${sheet.app.id}/stage?step=close`);
-					}}
-					onTrash={() => {
-						setSheet(null);
-						void actions.moveToTrash([sheet.app.id]);
-					}}
-				/>
-			) : null}
-			{sheet?.kind === "move" ? (
-				<ChoiceSheet<ApplicationStatus>
-					title={t`Move to…`}
-					height={480}
-					choices={PIPELINE.map((status) => ({
-						key: status,
-						title: stageLabel(status),
-						trailing: <StageDot stage={status} />,
-					}))}
-					value={sheet.apps.length === 1 ? sheet.apps[0]?.status : undefined}
-					onClose={() => setSheet(null)}
-					onChoose={(status) => {
-						const apps = sheet.apps;
-						setSheet(null);
-						leaveSelect();
-						void actions.moveMany(apps, status);
-					}}
-				/>
-			) : null}
-			{sheet?.kind === "tags" ? (
-				<TagsSheet
-					apps={sheet.apps}
-					known={[...new Set(rows.flatMap((row) => row.tags))].sort()}
-					onClose={() => setSheet(null)}
-					onDone={() => {
-						setSheet(null);
-						leaveSelect();
-					}}
-				/>
-			) : null}
-			{sheet?.kind === "close" ? (
-				<ChoiceSheet
-					title={t`How did it end?`}
-					height={480}
-					choices={CLOSED_REASONS.map((reason) => ({ key: reason, title: outcomeLabel(reason) }))}
-					onClose={() => setSheet(null)}
-					onChoose={(reason) => {
-						const apps = sheet.apps;
-						setSheet(null);
-						leaveSelect();
-						void (async () => {
-							for (const app of apps) await actions.close(app.id, reason, undefined, app.status);
-						})();
-					}}
-				/>
-			) : null}
 		</View>
 	);
 }
@@ -613,10 +635,12 @@ function BoardView({
 	rows,
 	context,
 	initialStage,
+	onOverlay,
 }: {
 	rows: ApplicationRow[];
 	context: ListContext;
 	initialStage?: string | undefined;
+	onOverlay: (sheet: ReactNode) => void;
 }) {
 	const router = useRouter();
 	const actions = useApplicationActions();
@@ -628,6 +652,31 @@ function BoardView({
 	const [choosing, setChoosing] = useState(false);
 	const columns = BOARD_ORDER.map((status) => ({ status, rows: rows.filter((row) => row.status === status) }));
 	const current = columns[index] ?? columns[0];
+	const sheets = current ? (
+		<>
+			{choosing ? (
+				<ChoiceSheet<ApplicationStatus>
+					title={t`Stages`}
+					height={540}
+					value={current.status}
+					choices={columns.map((column) => ({
+						key: column.status,
+						title: stageLabel(column.status),
+						secondary: String(column.rows.length),
+						trailing: <StageDot stage={column.status} />,
+					}))}
+					onClose={() => setChoosing(false)}
+					onChoose={(status) => {
+						setChoosing(false);
+						carousel.current?.scrollToIndex(Math.max(0, BOARD_ORDER.indexOf(status)));
+					}}
+				/>
+			) : null}
+		</>
+	) : null;
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- the sheet changes with these
+	useEffect(() => onOverlay(sheets), [choosing, index, rows]);
+	useEffect(() => () => onOverlay(null), [onOverlay]);
 	if (!current) return null;
 	const columnOf = (id: string) => BOARD_ORDER.indexOf(rows.find((row) => row.id === id)?.status ?? "saved");
 	const onDrop = (id: string, _from: number, to: number) => {
@@ -695,24 +744,6 @@ function BoardView({
 					)}
 				/>
 			</BoardDrag>
-			{choosing ? (
-				<ChoiceSheet<ApplicationStatus>
-					title={t`Stages`}
-					height={540}
-					value={current.status}
-					choices={columns.map((column) => ({
-						key: column.status,
-						title: stageLabel(column.status),
-						secondary: String(column.rows.length),
-						trailing: <StageDot stage={column.status} />,
-					}))}
-					onClose={() => setChoosing(false)}
-					onChoose={(status) => {
-						setChoosing(false);
-						carousel.current?.scrollToIndex(Math.max(0, BOARD_ORDER.indexOf(status)));
-					}}
-				/>
-			) : null}
 		</View>
 	);
 }
