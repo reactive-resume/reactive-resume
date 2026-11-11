@@ -45,7 +45,9 @@ type Ask =
 
 export function DescriptionScreen() {
 	const params = useBuilderParams();
-	const { improve: openImprove } = useLocalSearchParams<{ improve?: string }>();
+	// Storyboard flows reach B4's other paths: `ai=none` (no connection) and `ai=fail` (the request fails).
+	const { improve: openImprove, ai } = useLocalSearchParams<{ improve?: string; ai?: string }>();
+	const aiPreset = STORYBOARD ? ai : undefined;
 	const router = useRouter();
 	const insets = useSafeAreaInsets();
 	const { colors } = useTheme();
@@ -119,8 +121,9 @@ export function DescriptionScreen() {
 		setAsk({ status: "working", index, action, request });
 		try {
 			const where = [title, entry && section ? entryTitle(section.type, entry) : ""].filter(Boolean).join(" · ");
+			if (aiPreset === "fail") throw new Error("Storyboard improve failure.");
 			const proposal = await improveLine({
-				providers: providers.data ?? [],
+				providers: aiPreset === "none" ? [] : (providers.data ?? []),
 				line: line.text,
 				action,
 				request,

@@ -2,10 +2,11 @@
 // toward the start to delete it; press and hold to reorder, or open the entry's actions (B21).
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { plural, t } from "@lingui/core/macro";
-import { useRouter } from "expo-router";
-import { useRef } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { createEntry } from "@reactive-resume/resume/entries";
 import { useAnchoredMenu, useAnchorRef, Anchor } from "../shared/anchored-menu";
 import {
 	BuilderScreen,
@@ -31,6 +32,8 @@ import {
 	sectionName,
 } from "../shared/model";
 import { sectionActions, useRenameSection } from "../shared/section-actions";
+import { useResumeStore } from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import { IconButton, ListRow, ReorderList, type ReorderHandle, SwipeRow, Text, TextLink, useTheme } from "@/ui";
 
 const ROW = 71;
@@ -100,6 +103,22 @@ export function SectionScreen() {
 	const optionsRef = useAnchorRef();
 	const reorder = useRef<ReorderHandle>(null);
 	const section = data ? resolveSection(data, sectionId) : null;
+	// Storyboard flows reach "An entry left empty elsewhere": `preset=untitled` adds one, as the web or an older app
+	// leaves it (no undo step).
+	const { preset } = useLocalSearchParams<{ preset?: string }>();
+	const seed = STORYBOARD && preset === "untitled" && !!section;
+	useEffect(() => {
+		const s = useResumeStore.getState();
+		if (!seed || !s.data || !section) return;
+		if (getEntries(s.data, section).some((entry) => isEmptyEntry(entry))) return;
+		s.updateDocument((draft) => {
+			getEntries(draft.data as ResumeData, section).push({
+				...createEntry(section.type),
+				id: "storyboard-untitled",
+			} as never);
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- once per preset visit
+	}, [seed]);
 	if (!data || !section) return <BuilderScreen title="">{null}</BuilderScreen>;
 
 	const entries = getEntries(data, section);

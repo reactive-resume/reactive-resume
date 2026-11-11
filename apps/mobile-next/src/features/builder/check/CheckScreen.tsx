@@ -62,14 +62,18 @@ function IssueCard({
 	locked: boolean;
 }) {
 	return (
-		<Touch
-			onPress={onMore}
-			onLongPress={onMore}
-			feedback="none"
-			accessibilityLabel={t`Issue ${issue.number}: ${issue.title}`}
-		>
+		// The card isn't one accessibility element: its Fix button must stay reachable. The heading opens the sheet.
+		<Touch onPress={onMore} onLongPress={onMore} feedback="none" accessible={false}>
 			<Card>
-				<View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+				<View
+					accessible
+					accessibilityRole="button"
+					accessibilityLabel={t`Issue ${issue.number}: ${issue.title}`}
+					accessibilityActions={[{ name: "longpress", label: t`Actions` }]}
+					onAccessibilityAction={onMore}
+					onAccessibilityTap={onMore}
+					style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
+				>
 					<IssueMarker n={issue.number} />
 					<Text variant="rowTitle" weight={600} style={{ flexShrink: 1 }}>
 						{issue.title}
@@ -292,6 +296,7 @@ export function CheckScreen() {
 							</Touch>
 						}
 						last
+						trailingAction
 						onPress={() => (applicationId ? router.push(`/applications/${applicationId}`) : setPicker(true))}
 					/>
 				</View>

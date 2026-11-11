@@ -137,7 +137,8 @@ export function useImprove() {
 }
 export function validatePhoto(size: number, type: string) {
 	if (!Number.isFinite(size) || size <= 0 || size > 10 * 1024 * 1024) throw new Error(t`Choose a photo up to 10 MB.`);
-	if (!["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"].includes(type))
+	// The server's storage accepts these four (packages/api storage IMAGE_MIME_TYPES).
+	if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(type))
 		throw new Error(t`Unsupported photo format.`);
 }
 /** Progress describes phases: oRPC does not report byte progress. No document is changed until caller accepts URL. */

@@ -2,8 +2,9 @@
 // Photo look (show or hide, size, shape, border) lives in Design (B6).
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
+import { Asset } from "expo-asset";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Image, View } from "react-native";
 import {
@@ -16,9 +17,22 @@ import {
 	useBackToResume,
 } from "../shared/document";
 import { entryTitle } from "../shared/model";
-import { resumeFieldFocus } from "@/data";
+import { resumeFieldFocus, usePhotoUpload } from "@/data";
 import { STORYBOARD, trackImage } from "@/dev/storyboard/harness";
-import { BottomSheet, Form, Icon, type IconName, IconTile, ListRow, SectionHeading, TextField, TextLink } from "@/ui";
+import {
+	BottomSheet,
+	Form,
+	haptic,
+	Icon,
+	type IconName,
+	IconTile,
+	ListRow,
+	SectionHeading,
+	Spinner,
+	Text,
+	TextField,
+	TextLink,
+} from "@/ui";
 
 const photoFixture = require("../../../../assets/fixtures/photo-alex.png");
 
@@ -53,6 +67,8 @@ const networkIcon = (network: string): IconName => {
 };
 
 type Key = "name" | "headline" | "email" | "phone" | "location";
+const KEYS: readonly Key[] = ["name", "headline", "email", "phone", "location"];
+type Focusable = { focus: () => void };
 
 export function BasicsScreen() {
 	const { id } = useBuilderParams();
@@ -62,8 +78,14 @@ export function BasicsScreen() {
 	const locked = useLocked();
 	const word = useSaveWord();
 	const visit = useRef(0);
+	const inputs = useRef<Partial<Record<Key, Focusable | null>>>({});
 	const [touched, setTouched] = useState<Record<string, boolean>>({});
 	const [photoSheet, setPhotoSheet] = useState(false);
+	const upload = usePhotoUpload();
+	const [uploadFailed, setUploadFailed] = useState(false);
+	// Storyboard flows stand in for the system picker: `photo=fixture` picks the fixture photo, `photo=unreadable` a
+	// file that can't be read.
+	const { photo: photoPreset } = useLocalSearchParams<{ photo?: string }>();
 	if (!data) return <BuilderScreen title={t`Basics`}>{null}</BuilderScreen>;
 	const basics = data.basics;
 
@@ -93,6 +115,11 @@ export function BasicsScreen() {
 				setTouched((s) => ({ ...s, [key]: true }));
 			}}
 			onChangeText={(value) => set(key, (d) => (d.basics[key] = value))}
+			// Return moves to the next field, as on B3; the one left shows its message above the next.
+			returnKeyType={key === "location" ? "done" : "next"}
+			submitBehavior={key === "location" ? "blurAndSubmit" : "submit"}
+			onSubmitEditing={() => inputs.current[KEYS[KEYS.indexOf(key) + 1] as Key]?.focus()}
+			{...({ ref: (node: Focusable | null) => (inputs.current[key] = node) } as object)}
 			{...extra}
 		/>
 	);
@@ -106,18 +133,35 @@ export function BasicsScreen() {
 			aspect: [1, 1],
 			quality: 0.9,
 		};
-		const result = camera
-			? await ImagePicker.launchCameraAsync(options)
-			: await ImagePicker.launchImageLibraryAsync(options);
-		if (result.canceled || !result.assets[0]) return;
-		// ponytail: the photo upload hook is requested from the data owner; until it lands the chosen photo is kept
-		// on this device only.
-		const uri = result.assets[0].uri;
-		editResume((d) => {
-			d.picture.url = uri;
-			d.picture.hidden = false;
-		});
+		let uri: string | undefined;
+		if (STORYBOARD && photoPreset) {
+			uri =
+				photoPreset === "fixture"
+					? ((await Asset.fromModule(photoFixture).downloadAsync()).localUri ?? undefined)
+					: "file:///storyboard/unreadable.png";
+		} else {
+			const result = camera
+				? await ImagePicker.launchCameraAsync(options)
+				: await ImagePicker.launchImageLibraryAsync(options);
+			if (result.canceled || !result.assets[0]) return;
+			uri = result.assets[0].uri;
+		}
+		if (!uri) return;
+		setUploadFailed(false);
+		try {
+			// The previous photo stays until the upload succeeds.
+			const { url } = await upload.upload(uri);
+			editResume((d) => {
+				d.picture.url = url;
+				d.picture.hidden = false;
+			});
+			haptic("success");
+		} catch {
+			setUploadFailed(true);
+			haptic("error");
+		}
 	};
+	const uploading = upload.progress === "reading" || upload.progress === "uploading";
 
 	const links = data.sections.profiles.items.map((p) => ({
 		key: p.id,
@@ -174,11 +218,24 @@ export function BasicsScreen() {
 						)}
 					</View>
 					{locked ? null : (
-						<View>
-							<TextLink label={t`Change photo`} onPress={() => setPhotoSheet(true)} />
+						<View style={{ gap: 4 }}>
+							<TextLink label={t`Change photo`} onPress={uploading ? undefined : () => setPhotoSheet(true)} />
+							{uploading ? (
+								<View style={{ flexDirection: "row", alignItems: "center", gap: 8 }} accessibilityLiveRegion="polite">
+									<Spinner />
+									<Text variant="ui" color="ink3">
+										{t`Uploading photo…`}
+									</Text>
+								</View>
+							) : null}
 						</View>
 					)}
 				</View>
+				{uploadFailed ? (
+					<Text variant="ui" color="dangerText" accessibilityRole="alert">
+						{t`Couldn't upload the photo. Choose a PNG, JPEG, WebP or GIF up to 10 MB, then try again.`}
+					</Text>
+				) : null}
 				{field("name", t`Full name`, { autoComplete: "name", textContentType: "name" })}
 				{field("headline", t`Headline`)}
 				{field("email", t`Email`, {

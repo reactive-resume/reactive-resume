@@ -2,7 +2,8 @@
 // one-line summary each; Basics first, hidden sections dimmed with "Not on the page", then Add section.
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { plural, t } from "@lingui/core/macro";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect } from "react";
 import { View } from "react-native";
 import { stripHtml } from "@reactive-resume/utils/string";
 import { Anchor, useAnchoredMenu, useAnchorRef } from "../shared/anchored-menu";
@@ -27,6 +28,8 @@ import {
 } from "../shared/model";
 import { BuilderPageBand, usePageImage } from "../shared/page-band";
 import { sectionActions, useRenameSection } from "../shared/section-actions";
+import { useResumeStore } from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import { IconButton, ListRow, SectionHeading, TextLink } from "@/ui";
 
 /** "Product designer with eight years in…": the text up to the last word that fits 36 characters. */
@@ -117,6 +120,13 @@ export function OverviewScreen() {
 	const menu = useAnchoredMenu();
 	const rename = useRenameSection(data);
 	const addRef = useAnchorRef();
+	// Storyboard flows reach the status line's other words: `status=saving` or `status=offline`.
+	const { status: statusPreset } = useLocalSearchParams<{ status?: string }>();
+	const opened = !!data;
+	useEffect(() => {
+		if (STORYBOARD && opened && (statusPreset === "saving" || statusPreset === "offline"))
+			useResumeStore.setState({ status: statusPreset });
+	}, [statusPreset, opened]);
 
 	// Locked reads "Locked · 1 page · Public", as B19 draws the locked overview (`word` is "Locked").
 	const status = [word, plural(pageCount, { one: "# page", other: "# pages" }), document?.isPublic ? t`Public` : null]

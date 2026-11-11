@@ -3,6 +3,7 @@
 // one page sits in each page heading; Add page under the last page.
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { templateLayouts } from "@reactive-resume/schema/templates";
@@ -12,6 +13,7 @@ import { getSectionObject, isSectionInUse, placeSection, resolveSection, section
 import { applyFitStep, type FitState, matchDensity, matchMargins, nextFitStep } from "./presets";
 import { FieldLabel } from "./TypographyScreen";
 import { useResumeStore } from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 import { pageRenderer } from "@/render/page-renderer";
 import {
 	haptic,
@@ -82,6 +84,10 @@ export function LayoutScreen() {
 	const word = useSaveWord();
 	const menu = useAnchoredMenu();
 	const [fitting, setFitting] = useState(false);
+	// Storyboard flows reach Fit's other outcomes: `fit=over` (the page starts one step too long) and `fit=slow`
+	// (the preview never answers, so Fit stops after 15 s).
+	const { fit: fitParam } = useLocalSearchParams<{ fit?: string }>();
+	const fitPreset = STORYBOARD ? fitParam : undefined;
 	if (!data) return <BuilderScreen title={t`Layout`}>{null}</BuilderScreen>;
 	const pages = data.metadata.layout.pages;
 	const two = templateLayouts[data.metadata.template].columns === 2 && pages.some((page) => !page.fullWidth);
@@ -176,12 +182,12 @@ export function LayoutScreen() {
 			for (let guard = 0; guard < 16; guard++) {
 				const current = useResumeStore.getState().data;
 				if (!current) break;
-				const render = pageRenderer.render({
-					kind: "resume",
-					id,
-					revision: `fit:${Date.now()}:${guard}`,
-					data: current,
-				});
+				const render =
+					fitPreset === "slow"
+						? new Promise<{ pageCount: number }>(() => {})
+						: fitPreset === "over" && guard === 0
+							? Promise.resolve({ pageCount: 2 })
+							: pageRenderer.render({ kind: "resume", id, revision: `fit:${Date.now()}:${guard}`, data: current });
 				const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error("timeout")), FIT_TIMEOUT));
 				const { pageCount } = await Promise.race([render, timeout]);
 				if (pageCount <= 1) {
