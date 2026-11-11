@@ -7,7 +7,8 @@ import { HeroSource } from "./Hero";
 import { Icon, type IconName } from "./Icon";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
-import { type ColorToken, layout, radius, type TypeToken } from "./tokens";
+import { type ColorToken, fonts, layout, radius, type TypeToken } from "./tokens";
+import { useDesignTag } from "@/dev/storyboard/harness";
 
 /**
  * 40 × 40 icon tile; `accent` uses accent-soft with an accent-text icon. A4's 56 dp tiles keep the 10 dp corners and
@@ -47,16 +48,36 @@ export function Monogram({ letters, numeral = false }: { letters: string; numera
 			radius={radius.md}
 			style={{ width: 40, height: 40, alignItems: "center", justifyContent: "center" }}
 		>
+			{numeral ? (
+				<Numeral>{letters}</Numeral>
+			) : (
+				<Text variant="ui" weight={600} color="ink2" style={{ lineHeight: 16 }} maxFontSizeMultiplier={1.3}>
+					{letters}
+				</Text>
+			)}
+		</Box>
+	);
+}
+
+/**
+ * The boards set the step numeral 18/16, but a line box shorter than Instrument Serif's glyphs clips their tops on iOS
+ * ("2" read "Z"). The numeral draws at 18/22, centred like the CSS line box, inside a 16 dp box that carries its tag.
+ */
+const numeralStyle = { fontFamily: fonts.display, fontSize: 18, lineHeight: 16 };
+function Numeral({ children }: { children: string }) {
+	const ref = useDesignTag({ kind: "text", text: children, style: numeralStyle, color: "ink2" });
+	return (
+		<View ref={ref} collapsable={false} style={{ height: numeralStyle.lineHeight, justifyContent: "center" }}>
 			<Text
-				variant={numeral ? "sheetTitle" : "ui"}
-				{...(numeral ? {} : { weight: 600 as const })}
+				variant="sheetTitle"
 				color="ink2"
-				style={numeral ? { fontSize: 18, lineHeight: 16 } : { lineHeight: 16 }}
+				tag={false}
+				style={{ fontSize: 18, lineHeight: 22, marginVertical: -3 }}
 				maxFontSizeMultiplier={1.3}
 			>
-				{letters}
+				{children}
 			</Text>
-		</Box>
+		</View>
 	);
 }
 
