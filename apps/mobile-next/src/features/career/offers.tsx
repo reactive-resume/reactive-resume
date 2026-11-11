@@ -6,7 +6,7 @@ import { offerTermsSchema, type OfferTerms } from "@reactive-resume/schema/caree
 import { betterBase, betterLeave } from "./model";
 import { ResourceState } from "./shared";
 import { useDataBackend } from "@/data";
-import { useOfferComparison, useCareerActions } from "@/data";
+import { useApplications, useOfferComparison, useCareerActions } from "@/data";
 import { now } from "@/data/clock";
 import {
 	BottomSheet,
@@ -19,6 +19,7 @@ import {
 	Text,
 	TextField,
 	Touch,
+	RowLink,
 	useTheme,
 } from "@/ui";
 
@@ -37,6 +38,17 @@ function ScopedOffersScreen() {
 	const [editError, setEditError] = useState(false);
 	const [saving, setSaving] = useState(false);
 	const router = useRouter();
+	const applications = useApplications();
+	// Applications at Offer whose terms aren't added yet: each links to Add terms (a new offer for it).
+	const withoutTerms = (applications.data ?? []).filter(
+		(app) =>
+			app.status === "offer" && !(query.data ?? []).some((o) => o.applicationId === app.id && o.data.kind === "offer"),
+	);
+	const addTerms = (applicationId: string) => {
+		setEditError(false);
+		setFields({ currency: "EUR", period: "year" });
+		setEditingId(`new:${applicationId}`);
+	};
 	const { colors } = useTheme();
 	const { fontScale } = useWindowDimensions();
 	const [choosing, setChoosing] = useState<"counter" | "edit" | null>(null);
@@ -260,11 +272,21 @@ function ScopedOffersScreen() {
 							))}
 						</View>
 					)}
+					{withoutTerms.map((app, i) => (
+						<ListRow
+							key={app.id}
+							top={i === 0}
+							last={i === withoutTerms.length - 1}
+							title={app.company}
+							secondary={t`In the Offer stage, terms not added`}
+							trailing={<RowLink label={t`Add terms`} onPress={() => addTerms(app.id)} />}
+						/>
+					))}
 				</ResourceState>
 			</PushScreen>
 			{editingId ? (
 				<BottomSheet
-					title={t`Edit terms`}
+					title={editingId?.startsWith("new:") ? t`Add terms` : t`Edit terms`}
 					height={640}
 					keyboard
 					onClose={() => setEditingId(undefined)}
@@ -274,6 +296,23 @@ function ScopedOffersScreen() {
 								label={t`Save`}
 								disabled={saving}
 								onPress={() => {
+									if (editingId?.startsWith("new:") && !saving) {
+										const parsed = offerTermsSchema.safeParse({
+											...fields,
+											base: fields.base ? Number(fields.base) : null,
+											variable: fields.variable ? Number(fields.variable) : null,
+											startDate: fields.startDate || null,
+											respondBy: fields.respondBy || null,
+										});
+										if (!parsed.success) return setEditError(true);
+										setSaving(true);
+										void actions
+											.createOffer({ ...parsed.data, applicationId: editingId.slice(4) })
+											.then(() => setEditingId(undefined))
+											.catch(() => setEditError(true))
+											.finally(() => setSaving(false));
+										return;
+									}
 									const offer = offers.find((item) => item.id === editingId);
 									if (offer?.data.kind !== "offer" || saving) return;
 									const parsed = offerTermsSchema.safeParse({

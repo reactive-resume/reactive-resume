@@ -16,6 +16,7 @@ import {
 	useCareerActions,
 	useAIProviders,
 	useCareerFacts,
+	useCoachDraft,
 	useDataBackend,
 } from "@/data";
 import {
@@ -36,7 +37,9 @@ import {
 	WorkingLabel,
 	TextField,
 	Dialog,
+	BottomSheet,
 	haptic,
+	showToast,
 } from "@/ui";
 
 export function CoachScreen() {
@@ -71,13 +74,23 @@ function ScopedCoachScreen() {
 	const provider = threadId
 		? providers.data?.find((p) => p.id === conversation.data?.thread.aiProviderId && p.enabled)
 		: (providers.data?.find((p) => p.enabled && p.isDefault) ?? providers.data?.find((p) => p.enabled));
-	const [value, setValue] = useState("");
+	// Unsent text survives leaving the screen (draft recovery), so leaving never asks to discard it.
+	const draft = useCoachDraft((Array.isArray(params.thread) ? params.thread[0] : params.thread) || undefined);
+	const value = draft.text;
+	const setValue = (next: string | ((current: string) => string)) =>
+		draft.setText(typeof next === "function" ? next(draft.text) : next);
+	const draftRef = useRef(draft);
+	useEffect(() => {
+		draftRef.current = draft;
+	});
+	// A reply's actions: tap or long-press it.
+	const [replyActions, setReplyActions] = useState<string | null>(null);
 	const [knowledge, setKnowledge] = useState(true);
 	const [applications, setApplications] = useState(true);
 	const [remember, setRemember] = useState(true);
 	const [menu, setMenu] = useState(false);
 	const [error, setError] = useState(false);
-	const guard = useCareerLeaveGuard(value.trim().length > 0);
+	const guard = useCareerLeaveGuard(false);
 	const blocked = !provider
 		? t`Connect an AI provider to use the coach`
 		: knowledge && facts.isPending
@@ -136,7 +149,10 @@ function ScopedCoachScreen() {
 					...(params.offers ? { offerIds: params.offers.split(",").slice(0, 2) } : {}),
 				},
 			})
-			.then(() => setValue((current) => (current === text ? "" : current)))
+			.then(() => {
+				// Sent: the draft goes, unless the person has typed something new meanwhile.
+				if (draftRef.current.text === text) draftRef.current.clear();
+			})
 			.catch(() => {
 				setError(true);
 				haptic("error");
@@ -194,6 +210,27 @@ function ScopedCoachScreen() {
 			overlay={
 				<>
 					{guard.confirmation}
+					{replyActions !== null ? (
+						<BottomSheet title={t`Reply`} height={260} onClose={() => setReplyActions(null)}>
+							<ListRow
+								title={t`Copy`}
+								onPress={() => {
+									const text = replyActions;
+									setReplyActions(null);
+									void Clipboard.setStringAsync(text).then(() => showToast({ message: t`Copied` }));
+								}}
+							/>
+							<ListRow
+								title={t`Share`}
+								last
+								onPress={() => {
+									const text = replyActions;
+									setReplyActions(null);
+									void Share.share({ message: text });
+								}}
+							/>
+						</BottomSheet>
+					) : null}
 					<Dialog
 						open={renaming}
 						onClose={() => setRenaming(false)}
@@ -317,14 +354,22 @@ function ScopedCoachScreen() {
 							<Text
 								key={message.id}
 								variant="body"
-								onPress={() => {
-									void Clipboard.setStringAsync(
+								onPress={() =>
+									setReplyActions(
 										message.parts
 											.filter((part) => part.type === "text")
 											.map((part) => ("text" in part ? part.text : ""))
 											.join("\n"),
-									);
-								}}
+									)
+								}
+								onLongPress={() =>
+									setReplyActions(
+										message.parts
+											.filter((part) => part.type === "text")
+											.map((part) => ("text" in part ? part.text : ""))
+											.join("\n"),
+									)
+								}
 							>
 								{message.parts
 									.filter((part) => part.type === "text")
@@ -333,7 +378,11 @@ function ScopedCoachScreen() {
 							</Text>
 						))}
 					{stream.text ? (
-						<Text variant="body" onPress={() => void Share.share({ message: stream.text })}>
+						<Text
+							variant="body"
+							onPress={() => setReplyActions(stream.text)}
+							onLongPress={() => setReplyActions(stream.text)}
+						>
 							{stream.text}
 						</Text>
 					) : null}

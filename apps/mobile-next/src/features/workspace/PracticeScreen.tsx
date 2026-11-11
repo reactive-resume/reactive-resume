@@ -14,6 +14,7 @@ import { storyboard } from "@/features/applications/storyboard";
 import {
 	BottomSheet,
 	Button,
+	Card,
 	IconButton,
 	IconTile,
 	layout,
@@ -26,7 +27,7 @@ import {
 } from "@/ui";
 
 export function PracticeScreen() {
-	const { id = "" } = useLocalSearchParams<{ id: string }>();
+	const { id = "", story: storyParam, take } = useLocalSearchParams<{ id: string; story?: string; take?: string }>();
 	const insets = useSafeAreaInsets();
 	const ws = useWorkspace(id);
 	const stories = useCareerStories();
@@ -37,6 +38,8 @@ export function PracticeScreen() {
 	const [answer, setAnswer] = useState("");
 	const [notice, setNotice] = useState<string | undefined>();
 	const [attemptsOpen, setAttemptsOpen] = useState(false);
+	// The feedback card for the answer just given, until Practice again or Next question.
+	const [feedback, setFeedback] = useState(false);
 	const app = ws.app;
 	const company = app?.company ?? "";
 	const briefing = ws.latest("briefing")[0];
@@ -49,8 +52,12 @@ export function PracticeScreen() {
 				t`Tell me about a time you disagreed with a colleague. How did you resolve it?`,
 				t`Why do you want this role at ${company}?`,
 			];
-	const question = questions[index % questions.length] ?? "";
-	const storyId = simulated.length ? briefing?.data.storyIds[index % questions.length] : undefined;
+	// From C4's Practice this story: one question, for that story.
+	const fromStory = storyParam ? stories.data?.find((s) => s.id === storyParam) : undefined;
+	const question = fromStory
+		? t`Tell me about a time when: ${fromStory.data.title}.`
+		: (questions[index % questions.length] ?? "");
+	const storyId = fromStory?.id ?? (simulated.length ? briefing?.data.storyIds[index % questions.length] : undefined);
 	const story = storyId
 		? (stories.data?.find((s) => s.id === storyId)?.data.title ?? storyboard?.storyNames[storyId])
 		: undefined;
@@ -64,6 +71,7 @@ export function PracticeScreen() {
 		void ai.run("audio", async (signal) => {
 			const transcript = await ws.transcribe(take.uri, signal);
 			await practise(transcript.text, "spoken");
+			setFeedback(true);
 		});
 	};
 	const practise = (text: string, mode: "spoken" | "typed") =>
@@ -125,7 +133,47 @@ export function PracticeScreen() {
 				</View>
 				<View style={{ flex: 1 }} />
 				{ai.running ? <Working steps={STEPS.feedback()} onStop={ai.stop} /> : null}
-				{typing ? (
+				{feedback && latest ? (
+					<View style={{ paddingHorizontal: layout.screenMargin, paddingBottom: 12 }}>
+						<Card>
+							<Text variant="label">{t`What you said`}</Text>
+							<Text variant="ui" color="ink2" numberOfLines={4}>
+								{latest.data.answer}
+							</Text>
+							<Text variant="label">{t`What worked`}</Text>
+							<Text variant="ui" color="ink2">
+								{latest.data.works}
+							</Text>
+							<Text variant="label">{t`What to add`}</Text>
+							<Text variant="ui" color="ink2">
+								{latest.data.strengthen}
+							</Text>
+							<View style={{ flexDirection: "row", gap: 12 }}>
+								<Button
+									label={t`Practice again`}
+									tone="secondary"
+									size="md"
+									grow
+									onPress={() => {
+										setFeedback(false);
+										setAnswer("");
+									}}
+								/>
+								<Button
+									label={t`Next question`}
+									tone="primary"
+									size="md"
+									grow
+									onPress={() => {
+										setFeedback(false);
+										setAnswer("");
+										setIndex((i) => i + 1);
+									}}
+								/>
+							</View>
+						</Card>
+					</View>
+				) : typing ? (
 					<View style={{ paddingHorizontal: layout.screenMargin, gap: 12, paddingBottom: 12 }}>
 						<TextField
 							label={t`Your answer`}
@@ -141,14 +189,20 @@ export function PracticeScreen() {
 							size="lg"
 							block
 							disabled={answer.trim().length < 10}
-							onPress={() => void ai.run("chat", () => practise(answer, "typed"))}
+							onPress={() =>
+								void ai.run("chat", async () => {
+									await practise(answer, "typed");
+									setFeedback(true);
+								})
+							}
 						/>
 					</View>
 				) : (
 					<View style={{ paddingBottom: 8 }}>
 						<Recorder
 							recorded={attempts.length > 0}
-							seeded={storyboard?.recording}
+							// Only W4's capture draws the take mid-recording; flows use the real recorder.
+							seeded={take === "storyboard" ? storyboard?.recording : undefined}
 							onFinish={send}
 							onTypeInstead={() => setTyping(true)}
 							notice={ai.failed ? t`Nothing was heard. Try again, or type your answer.` : notice}

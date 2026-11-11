@@ -169,7 +169,10 @@ export function Recorder({ onFinish, onTypeInstead, recorded, notice, seeded }: 
 			<View style={{ paddingTop: 12, alignItems: "center" }}>
 				<View style={{ paddingVertical: 4 }}>
 					{status === "denied" ? (
-						<TextLink label={t`Open Settings`} onPress={() => void Linking.openSettings()} />
+						<View style={{ flexDirection: "row", gap: 24 }}>
+							<TextLink label={t`Type your answer instead`} icon="keyboard" onPress={onTypeInstead} />
+							<TextLink label={t`Open Settings`} onPress={() => void Linking.openSettings()} />
+						</View>
 					) : (
 						<TextLink label={t`Type your answer instead`} icon="keyboard" onPress={onTypeInstead} />
 					)}

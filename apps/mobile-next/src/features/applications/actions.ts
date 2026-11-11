@@ -49,8 +49,15 @@ export function useApplicationActions() {
 			if (previous === "closed") await reopenApplication(app.id, status);
 			else await setStage(app.id, status);
 			await refresh();
-		} catch {
-			showToast({ message: t`Couldn't update the application. Try again.` });
+		} catch (error) {
+			// Stages edited on another device: refresh them and let the person choose again.
+			const changed = (error as { code?: string }).code === "CONFLICT";
+			if (changed) await refresh();
+			showToast({
+				message: changed
+					? t`Your stages changed somewhere else. They've been refreshed; try again.`
+					: t`Couldn't update the application. Try again.`,
+			});
 			return false;
 		}
 		showToast({
@@ -128,14 +135,15 @@ export function useApplicationActions() {
 		});
 	}
 
-	async function close(id: string, reason: ClosedReason, note?: string, before?: ApplicationStatus) {
+	async function close(id: string, reason: ClosedReason, note?: string, before?: ApplicationStatus, toast = true) {
 		await closeApplication(id, reason, note);
 		await refresh();
 		if (reason === "accepted") haptic("success");
-		showToast({
-			message: t`Closed`,
-			action: { label: t`Undo`, onPress: () => void reopen(id, before) },
-		});
+		if (toast)
+			showToast({
+				message: t`Closed`,
+				action: { label: t`Undo`, onPress: () => void reopen(id, before) },
+			});
 	}
 
 	/** Reopen at the stage it closed from. Applied can only be re-entered through the sent step, so it reopens Saved. */

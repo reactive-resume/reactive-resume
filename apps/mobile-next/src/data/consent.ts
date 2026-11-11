@@ -116,3 +116,9 @@ export function recurringWorkStatus(workId: string, connection: Connection): "ac
 	const raw = Storage.getItemSync(`recurring:${scope}:${workId}`);
 	return raw ? recurringStatus(JSON.parse(raw), connection) : "paused";
 }
+/** An approval was saved for this work and the connection is no longer the one approved (paused until reviewed). */
+export function recurringApprovalChanged(workId: string, connection: Connection): boolean {
+	const scope = getAccountScope();
+	const raw = scope ? Storage.getItemSync(`recurring:${scope}:${workId}`) : null;
+	return !!raw && recurringStatus(JSON.parse(raw), connection) === "paused";
+}

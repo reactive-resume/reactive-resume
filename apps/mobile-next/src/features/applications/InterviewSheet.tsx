@@ -6,17 +6,27 @@ import DateTimePicker, {
 	DateTimePickerAndroid,
 	type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { File, Paths } from "expo-file-system";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import * as Sharing from "expo-sharing";
 import { useState } from "react";
 import { Platform, View } from "react-native";
 import { clockTime, interviewTitle, shortDay, zoneAbbreviation, zoneCity } from "./model";
 import { ChoiceSheet } from "./parts";
 import { storyboard } from "./storyboard";
-import { approveRecurring, providerConnection, useAIProviders, useApplication, useApplicationActions } from "@/data";
+import {
+	approveRecurring,
+	interviewCalendar,
+	providerConnection,
+	useAIProviders,
+	useApplication,
+	useApplicationActions,
+} from "@/data";
 import { now, timeZone, wallTimeChoices, zonedParts } from "@/data/clock";
 import {
 	BottomSheet,
 	Button,
+	Chip,
 	FieldRow,
 	FooterBar,
 	haptic,
@@ -155,9 +165,16 @@ function InterviewForm({
 				? actions.updateInterview({ id, entryId: interview.id, ...details })
 				: actions.addInterview({ id, ...details })
 		)
-			.then(() => {
+			.then(async (saved) => {
 				haptic("success");
 				router.back();
+				// Add to my phone calendar: the system share sheet takes the .ics (Calendar is one of its targets).
+				const entryId =
+					interview?.id ??
+					(saved as { activity?: { id: string; type: string }[] } | undefined)?.activity?.findLast(
+						(entry) => entry.type === "interview",
+					)?.id;
+				if (calendar && saved && entryId) await shareCalendar(saved as never, entryId);
 			})
 			.catch(() => {
 				haptic("error");
@@ -165,6 +182,13 @@ function InterviewForm({
 			});
 	};
 
+	// People autocomplete from the application's contacts: those not named yet, while typing matches them.
+	const named = people.split(",").map((name) => name.trim().toLowerCase());
+	const typing = named.at(-1) ?? "";
+	const suggestions = (application.data?.contacts ?? [])
+		.map((contact) => contact.name)
+		.filter((name) => !named.includes(name.toLowerCase()) && name.toLowerCase().startsWith(typing))
+		.slice(0, 3);
 	const startsLabel = starts ? `${shortDay(starts, zone)}, ${clockTime(starts, zone)}` : "";
 	const away =
 		starts && zone !== home
@@ -241,6 +265,31 @@ function InterviewForm({
 					}}
 					placeholder={application.data?.contacts.map((c) => c.name).join(", ") || t`Who you'll meet`}
 				/>
+				{suggestions.length ? (
+					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: -8 }}>
+						{suggestions.map((name) => (
+							<Chip
+								key={name}
+								label={name}
+								icon="plus"
+								dashed
+								onPress={() => {
+									setTouched(true);
+									setPeople((current) => {
+										// The half-typed name becomes the chosen one.
+										const parts = current
+											.split(",")
+											.map((part) => part.trim())
+											.filter(Boolean);
+										const last = parts.at(-1);
+										if (last && name.toLowerCase().startsWith(last.toLowerCase())) parts.pop();
+										return [...parts, name].join(", ");
+									});
+								}}
+							/>
+						))}
+					</View>
+				) : null}
 				<View style={{ marginHorizontal: -layout.screenMargin, marginTop: -8 }}>
 					<ListRow
 						title={t`Remind me the day before`}
@@ -351,4 +400,17 @@ function InterviewForm({
 			) : null}
 		</SheetScreen>
 	);
+}
+
+async function shareCalendar(application: Parameters<typeof interviewCalendar>[0], entryId: string) {
+	try {
+		const ics = interviewCalendar(application, entryId);
+		const file = new File(Paths.cache, ics.name);
+		if (file.exists) file.delete();
+		file.write(ics.text);
+		if (!(await Sharing.isAvailableAsync())) throw new Error("Sharing unavailable.");
+		await Sharing.shareAsync(file.uri, { mimeType: ics.mimeType, UTI: "com.apple.ical.ics" });
+	} catch {
+		showToast({ message: t`Couldn't add it to your calendar. Try again from the interview.` });
+	}
 }

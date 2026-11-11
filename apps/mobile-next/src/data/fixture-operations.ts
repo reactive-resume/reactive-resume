@@ -564,7 +564,11 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 				requirements: [],
 				jobDescription: input.input,
 				sourceUrl: String(input.input).startsWith("https:") ? input.input : null,
-				postingSource: null,
+				// Pasted text this short is only part of a posting (J5's clipped-description warning).
+				postingSource:
+					!String(input.input).startsWith("https:") && String(input.input).length < 200
+						? { method: "paste", format: "text", truncated: false, completeness: "incomplete" }
+						: null,
 				enrichmentWarning: null,
 				filledBy: "page",
 			},

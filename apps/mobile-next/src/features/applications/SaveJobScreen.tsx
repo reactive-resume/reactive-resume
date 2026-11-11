@@ -9,7 +9,15 @@ import { sentStepHref } from "./actions";
 import { isLink } from "./model";
 import { FadeIn } from "./parts";
 import { storyboard } from "./storyboard";
-import { useApplicationActions } from "@/data";
+import {
+	ensureApproved,
+	providerConnection,
+	queueJobCopy,
+	useAIProviders,
+	useApplicationActions,
+	useApplications,
+	useDocuments,
+} from "@/data";
 import {
 	Button,
 	FieldRow,
@@ -46,12 +54,43 @@ export function SaveJobScreen() {
 	const [more, setMore] = useState(false);
 	const [salary, setSalary] = useState("");
 	const [clipboardLink, setClipboardLink] = useState(false);
-	const read = !!params.url && !!(params.role || params.company);
+	// Read from the link: on open from the share sheet (params), or with Read posting / Read with AI.
+	const [readDone, setReadDone] = useState(false);
+	const [reading, setReading] = useState(false);
+	const [readFailed, setReadFailed] = useState(false);
+	const [clipped, setClipped] = useState(false);
+	const read = readDone || (!!params.url && !!(params.role || params.company));
 	const missing = read && (!role.trim() || !company.trim());
 	// ponytail: the count is known once the posting is parsed; until J5 parses on open, only the storyboard has one.
 	const requirementCount = storyboard?.postingRequirements ?? 0;
 	const actions = useApplicationActions();
 	const router = useRouter();
+	const applications = useApplications();
+	const documents = useDocuments({ type: "resume" });
+	const providers = useAIProviders();
+	const provider = providers.data?.find((p) => p.isDefault && p.enabled) ?? providers.data?.find((p) => p.enabled);
+	// Duplicate check: the same posting link is already tracked.
+	const duplicate = isLink(link) ? applications.data?.find((app) => app.sourceUrl === link.trim()) : undefined;
+
+	const readPosting = async (useAI: boolean) => {
+		// The first posting sent to an AI connection asks first (S7); reading without AI sends nothing.
+		if (useAI && (!provider || !(await ensureApproved("posting", providerConnection(provider))))) return;
+		setReading(true);
+		setReadFailed(false);
+		try {
+			const posting = await actions.parsePosting(link.trim(), useAI);
+			setRole((current) => posting.role || current);
+			setCompany((current) => posting.company || current);
+			setLocation((current) => posting.location || current);
+			setClipped(posting.postingSource?.completeness === "incomplete");
+			setReadDone(true);
+		} catch {
+			haptic("error");
+			setReadFailed(true);
+		} finally {
+			setReading(false);
+		}
+	};
 
 	useEffect(() => {
 		if (link) return;
@@ -65,7 +104,7 @@ export function SaveJobScreen() {
 		if (text) setLink(text);
 	};
 
-	const save = () => {
+	const save = (prepare = false) => {
 		if (!role.trim() || !company.trim()) {
 			haptic("error");
 			showToast({ message: t`Fill in the role and company before saving.` });
@@ -84,6 +123,14 @@ export function SaveJobScreen() {
 					status: stage === "interview" ? "interview" : "saved",
 				});
 				haptic("success");
+				showToast({ message: t`Added ${role.trim()} at ${company.trim()}` });
+				const base = documents.data?.find((doc) => doc.type === "resume");
+				if (prepare && base) {
+					// Save and prepare resume: a copy of the main resume, linked to this job, opens in the builder.
+					const copy = await queueJobCopy({ resumeId: base.id, applicationId: id });
+					router.replace(`/builder/${copy}`);
+					return;
+				}
 				router.replace(stage === "applied" ? sentStepHref(id) : `/applications/${id}`);
 			} catch {
 				haptic("error");
@@ -100,8 +147,8 @@ export function SaveJobScreen() {
 			barEnd={<Button label={t`Search postings`} tone="accentGhost" size="sm" icon="magnifying-glass" />}
 			footer={
 				<FooterBar stacked gap={4}>
-					<Button label={t`Save job`} tone="primary" size="lg" block onPress={save} testID="save-job" />
-					<Button label={t`Save and prepare resume`} tone="ghost" size="lg" block onPress={save} />
+					<Button label={t`Save job`} tone="primary" size="lg" block onPress={() => save()} testID="save-job" />
+					<Button label={t`Save and prepare resume`} tone="ghost" size="lg" block onPress={() => save(true)} />
 				</FooterBar>
 			}
 		>
@@ -135,6 +182,35 @@ export function SaveJobScreen() {
 						</View>
 					) : !link && clipboardLink ? (
 						<TextLink label={t`Paste link from clipboard`} icon="link-simple" onPress={() => void paste()} />
+					) : reading ? (
+						<Text variant="small" color="ink3">
+							{t`Reading the link…`}
+						</Text>
+					) : link.trim() ? (
+						<View style={{ flexDirection: "row", flexWrap: "wrap", columnGap: 24 }}>
+							<TextLink label={t`Read posting`} icon="link-simple" onPress={() => void readPosting(false)} />
+							{provider ? (
+								<TextLink label={t`Read with AI`} icon="sparkle" onPress={() => void readPosting(true)} />
+							) : null}
+						</View>
+					) : null}
+					{readFailed ? (
+						<Text variant="small" color="warnText" accessibilityRole="alert">
+							{t`Couldn't read this posting. Paste the posting text instead, or fill in the details.`}
+						</Text>
+					) : null}
+					{clipped ? (
+						<Text variant="small" color="warnText" accessibilityRole="alert">
+							{t`This description is clipped or incomplete. Review it or paste the full description before preparing.`}
+						</Text>
+					) : null}
+					{duplicate ? (
+						<View style={{ gap: 4 }} accessibilityRole="alert">
+							<Text variant="small" color="ink2">
+								{t`Already tracked: ${duplicate.role} at ${duplicate.company}. Open it or update only its posting details.`}
+							</Text>
+							<TextLink label={t`Open tracked job`} onPress={() => router.replace(`/applications/${duplicate.id}`)} />
+						</View>
 					) : null}
 					{params.shared ? (
 						<Text variant="small" color="ink3">

@@ -5,7 +5,7 @@ import { View } from "react-native";
 import { createForgetHold } from "./forget-hold";
 import { factSourceLine } from "./model";
 import { ResourceState } from "./shared";
-import { screenTexts, useCareerFacts, useCareerActions, useForgottenFacts, useDataBackend } from "@/data";
+import { screenTexts, useCareerFacts, useCareerActions, useForgottenFacts, useDataBackend, useDocuments } from "@/data";
 import {
 	BottomSheet,
 	Button,
@@ -93,7 +93,29 @@ function ScopedFactsScreen() {
 	const [failure, setFailure] = useState(false);
 	const fake = useDataBackend().backend.kind === "fake";
 	const copy = screenTexts("C3-Facts");
-	const rows = (query.data ?? []).filter((fact) => !held.some((item) => item.id === fact.id));
+	const [search, setSearch] = useState("");
+	const documents = useDocuments({ type: "resume" });
+	const kept = (query.data ?? []).filter((fact) => !held.some((item) => item.id === fact.id));
+	// ponytail: the search shows from six facts; the board draws four without it. Lower when the board allows.
+	const searchable = kept.length > 5;
+	const needle = search.trim().toLowerCase();
+	const rows = needle ? kept.filter((fact) => fact.text.toLowerCase().includes(needle)) : kept;
+	const pull = async () => {
+		const resume = documents.data?.find((doc) => doc.type === "resume");
+		if (!resume) return showToast({ message: t`Add a resume first.` });
+		try {
+			const found = await actions.proposeResumeFacts({ resumeId: resume.id });
+			if (!found.proposals.length) return showToast({ message: t`No facts found in your resume.` });
+			await actions.saveResumeFacts({
+				resumeId: found.id,
+				updatedAt: found.updatedAt,
+				proposals: found.proposals.slice(0, 50),
+			});
+			showToast({ message: t`Added facts from your resume. Edit or forget any of them.` });
+		} catch {
+			showToast({ message: t`Couldn't read your resume. Try again.` });
+		}
+	};
 	// The fixture's facts all come from the resume; the storyboard draws each row's own source line.
 	const sourceOf = (fact: (typeof rows)[number]) => {
 		const drawn = fake ? copy[copy.indexOf(fact.text) + 1] : undefined;
@@ -136,7 +158,24 @@ function ScopedFactsScreen() {
 						<View style={{ padding: 24, gap: 20 }}>
 							<Text variant="heading">{t`No facts yet`}</Text>
 							<Button label={t`Add a fact`} onPress={() => open("")} />
-							<Button label={t`Pull facts from my resume`} disabled />
+							<Button label={t`Pull facts from my resume`} onPress={() => void pull()} />
+						</View>
+					) : null}
+					{searchable ? (
+						<View style={{ paddingTop: 16, paddingHorizontal: 24 }}>
+							<TextField
+								leadingIcon="magnifying-glass"
+								placeholder={t`Search facts`}
+								value={search}
+								onChangeText={setSearch}
+								autoCorrect={false}
+								testID="facts-search"
+							/>
+						</View>
+					) : null}
+					{searchable && needle && rows.length === 0 ? (
+						<View style={{ padding: 24 }}>
+							<Text variant="body" color="ink2">{t`No facts match. Try another word or type.`}</Text>
 						</View>
 					) : null}
 					{(["experience", "skill", "preference"] as const).map((group) => {

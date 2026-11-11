@@ -2,7 +2,7 @@
 // remember as Remember / Not now rows. Library (W5's layout): earlier results kept for this job, newest first,
 // opened read-only.
 import { t } from "@lingui/core/macro";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { MAX_BYTES, Recorder, type Take } from "./Recorder";
@@ -22,10 +22,12 @@ import {
 	showToast,
 	Text,
 	TextField,
+	TextLink,
 } from "@/ui";
 
 export function DebriefScreen() {
 	const { id = "" } = useLocalSearchParams<{ id: string }>();
+	const router = useRouter();
 	const ws = useWorkspace(id);
 	const ai = useAIRun(ws.connection);
 	const { write } = useDataActions();
@@ -105,6 +107,14 @@ export function DebriefScreen() {
 							minHeight={160}
 							autoFocus
 						/>
+						{OFFER.test(answer) && /\d/.test(answer) ? (
+							// An offer message pasted in: its terms belong in Career → Offers.
+							<TextLink
+								label={t`Save these offer terms to compare. Opens in Career → Offers.`}
+								icon="receipt"
+								onPress={() => router.push("/career/offers")}
+							/>
+						) : null}
 						<Button
 							label={t`Review it`}
 							tone="primary"
@@ -227,3 +237,7 @@ export function LibraryScreen() {
 		</PushScreen>
 	);
 }
+
+/** An offer message: the word "offer" with a salary, base or equity term. */
+const OFFER =
+	/\boffer\b[\s\S]*\b(salary|base|equity|bonus|per year|a year|annual)\b|\b(salary|base|equity|bonus)\b[\s\S]*\boffer\b/i;

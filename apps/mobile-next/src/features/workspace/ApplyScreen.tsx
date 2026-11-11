@@ -101,7 +101,17 @@ export function ApplyScreen() {
 				}
 				leading={<DocThumb />}
 				trailing="caret"
-				onPress={app.resumeId ? () => router.push(`/builder/${app.resumeId}/versions`) : () => router.push("/new")}
+				// The version that was sent, read-only with Open current; before applying, the resume itself.
+				onPress={
+					app.resumeId
+						? () =>
+								router.push(
+									sent && app.sentResumeVersionId
+										? `/builder/${app.resumeId}/versions/${app.sentResumeVersionId}`
+										: `/builder/${app.resumeId}`,
+								)
+						: () => router.push("/new")
+				}
 			/>
 			<ListRow
 				title={t`Cover letter`}

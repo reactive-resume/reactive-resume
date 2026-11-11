@@ -140,7 +140,7 @@ function SentStep({ app, queue }: { app: Application; queue: readonly string[] }
 		} catch {
 			setSaving(false);
 			haptic("error");
-			showToast({ message: t`Couldn't mark it as applied. Try again.` });
+			showToast({ message: t`Couldn't record submission. Try again.` });
 			return;
 		}
 		await queryClient.invalidateQueries();

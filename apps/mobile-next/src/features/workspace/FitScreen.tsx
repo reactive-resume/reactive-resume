@@ -6,6 +6,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
+import { queueJobCopy, useDocuments } from "@/data";
 import { clockTime, isoDay } from "@/features/applications/model";
 import { FadeIn, QuietLine, useBarMenu } from "@/features/applications/parts";
 import {
@@ -62,12 +63,15 @@ export function FitScreen() {
 		{ title: t`Must have`, rows: requirements.filter((r) => r.origin === "posting") },
 		{ title: t`Nice to have`, rows: requirements.filter((r) => r.origin === "inferred") },
 	].filter((g) => g.rows.length > 0);
-	const tailor = () =>
-		router.push(
-			app?.resumeId
-				? `/builder/${app.resumeId}/assistant?prompt=${encodeURIComponent(t`Tailor to the ${app.company} posting`)}`
-				: "/new",
-		);
+	const documents = useDocuments({ type: "resume" });
+	// Tailor opens the assistant on the linked resume; without one, it makes a copy of your resume for this job first.
+	const tailor = async () => {
+		if (!app) return;
+		const prompt = encodeURIComponent(t`Tailor to the ${app.company} posting`);
+		const base = documents.data?.find((doc) => doc.type === "resume");
+		const resumeId = app.resumeId ?? (base ? await queueJobCopy({ resumeId: base.id, applicationId: app.id }) : null);
+		router.push(resumeId ? `/builder/${resumeId}/assistant?prompt=${prompt}` : "/new");
+	};
 	const checkedAt = fit ? new Date(fit.createdAt) : null;
 	const checkedLine =
 		checkedAt && isoDay(checkedAt, ws.zone) === isoDay(ws.at, ws.zone)
@@ -100,7 +104,7 @@ export function FitScreen() {
 						tone="primary"
 						size="lg"
 						grow
-						onPress={tailor}
+						onPress={() => void tailor()}
 					/>
 				</FooterBar>
 			}

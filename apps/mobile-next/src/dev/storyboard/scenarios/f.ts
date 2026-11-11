@@ -2,7 +2,7 @@ import type { Scenario } from "../harness";
 import { router } from "expo-router";
 import { overBackdrop } from "../backdrop";
 import { providerConnection, recordRecurringApproval, screenTexts } from "@/data";
-import { invokeFake } from "@/data/fixtures";
+import { failFake, invokeFake } from "@/data/fixtures";
 
 // The board shows Discovery approved for the fixture's Work OpenAI key, so its sheet offers Save, not "Review and
 // resume". Approve before the sheet renders: its paused state is read when it mounts.
@@ -21,7 +21,65 @@ const boardFacts = async () => {
 	for (const fact of facts.filter((row) => !drawn.includes(row.text)))
 		await invokeFake("career.forgetFact", { id: fact.id });
 };
+// Maestro flows only (not storyboard screens): the career states the boards don't draw.
+const noAI = async () => {
+	await invokeFake("aiProviders.update", { id: "work-openai", enabled: false });
+};
+const allFacts = async () => {
+	const facts = (await invokeFake("career.facts", {})) as { id: string }[];
+	for (const fact of facts) await invokeFake("career.forgetFact", { id: fact.id });
+};
+const flowScenarios: Record<string, Scenario> = {
+	"C1-NoAI": { hrefs: ["/career"], prepare: noAI },
+	"C1-NoSchedules": { hrefs: ["/career"], prepare: () => failFake("schedules", 4) },
+	"C3-AllFacts": { hrefs: ["/career", "/career/knowledge/facts"] },
+	"C3-Empty": {
+		hrefs: ["/career"],
+		prepare: async () => {
+			await allFacts();
+			router.push("/career/knowledge/facts");
+		},
+	},
+	"C4-Unavailable": { hrefs: ["/career", "/career/knowledge/stories", "/career/knowledge/stories/story-missing"] },
+	"C6-NoOffers": {
+		hrefs: ["/career"],
+		prepare: async () => {
+			for (const id of ["offer-0", "offer-1"]) await invokeFake("career.deleteSavedItem", { id });
+			await invokeFake("applications.update", { id: "parcel", status: "interview" });
+			router.push("/career/offers");
+		},
+	},
+	"C6-TermsMissing": {
+		hrefs: ["/career"],
+		prepare: async () => {
+			await invokeFake("applications.update", { id: "kiln", status: "offer" });
+			router.push("/career/offers");
+		},
+	},
+	"C7-Unavailable": {
+		hrefs: ["/career"],
+		prepare: () => {
+			failFake("schedules", 4);
+			router.push("/career/schedules/discovery");
+		},
+	},
+	"C7-NoConnection": {
+		hrefs: ["/career"],
+		prepare: async () => {
+			await noAI();
+			router.push("/career/schedules/discovery");
+		},
+	},
+	"C7-Away": {
+		hrefs: ["/career"],
+		prepare: async () => {
+			await invokeFake("career.saveSchedule", { id: "discovery", timezone: "America/New_York" });
+			await approveDiscovery();
+		},
+	},
+};
 export const scenarios: Record<string, Scenario> = {
+	...flowScenarios,
 	"C1-Career": { hrefs: ["/career"] },
 	"C2-Coach": { hrefs: ["/career", "/career/coach"] },
 	"C3-Facts": { hrefs: ["/career", "/career/knowledge/facts"], prepare: boardFacts },

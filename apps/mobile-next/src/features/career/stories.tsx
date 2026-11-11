@@ -6,7 +6,7 @@ import { View } from "react-native";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
 import { generateId } from "@reactive-resume/utils/string";
 import { ResourceState, useCareerLeaveGuard } from "./shared";
-import { useCareerActions, useCareerStories, useDataActions, useDataBackend } from "@/data";
+import { useApplications, useCareerActions, useCareerStories, useDataActions, useDataBackend } from "@/data";
 import {
 	Button,
 	Dialog,
@@ -23,6 +23,7 @@ import {
 	TextField,
 	TextLink,
 	Touch,
+	showToast,
 } from "@/ui";
 
 export function StoriesScreen() {
@@ -53,6 +54,7 @@ export function StoriesScreen() {
 const parts = ["situation", "task", "action", "result", "reflection"] as const;
 type Part = (typeof parts)[number];
 export function StoryScreen() {
+	const applications = useApplications();
 	const router = useRouter();
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const query = useCareerStories();
@@ -135,6 +137,18 @@ export function StoryScreen() {
 					/>
 					<Menu open={menu} onClose={() => setMenu(false)} anchor={{ x: 334, y: 53, width: 44, height: 44 }}>
 						<MenuItem
+							label={t`Practice this story`}
+							onPress={() => {
+								setMenu(false);
+								// W4 with this story's one question, on the application you're most likely interviewing for.
+								const target =
+									applications.data?.find((app) => app.status === "interview") ??
+									applications.data?.find((app) => app.status !== "closed");
+								if (target) router.push(`/applications/${target.id}/practise?story=${id}`);
+								else showToast({ message: t`Save a job to practise for it.` });
+							}}
+						/>
+						<MenuItem
 							label={t`Duplicate`}
 							onPress={() => {
 								setMenu(false);
@@ -186,6 +200,7 @@ export function StoryScreen() {
 											accessibilityLabel={names[part]}
 											multiline
 											forceFocus
+											autoFocus
 											value={data[part]}
 											onChangeText={(value) => setDraft({ ...data, [part]: value })}
 											maxLength={part === "action" ? 6000 : 4000}

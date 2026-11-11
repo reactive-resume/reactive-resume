@@ -4,8 +4,16 @@ import type { IconName } from "@/ui";
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
+import { useState } from "react";
 import { View } from "react-native";
 import { useApplicationActions } from "./actions";
+import {
+	CloseOthersSheet,
+	EditDetailsSheet,
+	LinkDocumentSheet,
+	useClosedForOffer,
+	useOtherOpen,
+} from "./detail-sheets";
 import {
 	type Application,
 	applicationHeroId,
@@ -97,6 +105,7 @@ export function DetailScreen() {
 	const saved = useSavedItems(id);
 	const actions = useApplicationActions();
 	const more = useBarMenu();
+	const [sheet, setSheet] = useState<"edit" | "link" | "others" | null>(null);
 	const app = application.data;
 	const zone = timeZone();
 	const at = now();
@@ -157,46 +166,69 @@ export function DetailScreen() {
 			}}
 			subtitle={<PageSubtitle status>{subtitle}</PageSubtitle>}
 			barEnd={more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
-			overlay={more.menu(
+			overlay={
 				<>
-					<MenuItem
-						label={t`Add interview`}
-						icon="calendar-blank"
-						onPress={() => {
-							more.close();
-							go("interview");
-						}}
-					/>
-					{app.status === "closed" ? (
-						<MenuItem
-							label={t`Reopen`}
-							icon="arrow-counter-clockwise"
-							onPress={() => {
-								more.close();
-								void actions.reopen(app.id, stageBeforeClose(app));
-							}}
-						/>
-					) : (
-						<MenuItem
-							label={t`Close…`}
-							icon="check-circle"
-							onPress={() => {
-								more.close();
-								go("stage?step=close");
-							}}
-						/>
+					{more.menu(
+						<>
+							<MenuItem
+								label={t`Edit details`}
+								icon="pencil-simple"
+								onPress={() => {
+									more.close();
+									setSheet("edit");
+								}}
+							/>
+							<MenuItem
+								label={t`Add interview`}
+								icon="calendar-blank"
+								onPress={() => {
+									more.close();
+									go("interview");
+								}}
+							/>
+							<MenuItem
+								label={t`Link a resume or letter`}
+								icon="link-simple"
+								onPress={() => {
+									more.close();
+									setSheet("link");
+								}}
+							/>
+							{app.status === "closed" ? (
+								<MenuItem
+									label={t`Reopen`}
+									icon="arrow-counter-clockwise"
+									onPress={() => {
+										more.close();
+										void actions.reopen(app.id, stageBeforeClose(app));
+									}}
+								/>
+							) : (
+								<MenuItem
+									label={t`Close…`}
+									icon="check-circle"
+									onPress={() => {
+										more.close();
+										go("stage?step=close");
+									}}
+								/>
+							)}
+							<MenuItem
+								label={t`Move to Trash`}
+								icon="trash"
+								danger
+								onPress={() => {
+									more.close();
+									void actions.moveToTrash([app.id]).then(() => router.back());
+								}}
+							/>
+						</>,
 					)}
-					<MenuItem
-						label={t`Move to Trash`}
-						icon="trash"
-						danger
-						onPress={() => {
-							more.close();
-							void actions.moveToTrash([app.id]).then(() => router.back());
-						}}
-					/>
-				</>,
-			)}
+					{sheet === "edit" ? <EditDetailsSheet app={app} onClose={() => setSheet(null)} /> : null}
+					{sheet === "link" ? <LinkDocumentSheet app={app} onClose={() => setSheet(null)} /> : null}
+					{sheet === "others" ? <OthersSheet app={app} onClose={() => setSheet(null)} /> : null}
+				</>
+			}
 		>
 			<FadeIn key={heroKey(app, at)} ms={motion.d3}>
 				<NextStepHero
@@ -206,6 +238,7 @@ export function DetailScreen() {
 					hasBriefing={status.briefing}
 					go={go}
 					onReopen={() => void actions.reopen(app.id, stageBeforeClose(app))}
+					onCloseOthers={() => setSheet("others")}
 				/>
 			</FadeIn>
 			<SectionHeading title={t`Work on it`} />
@@ -258,6 +291,7 @@ function NextStepHero({
 	hasBriefing,
 	go,
 	onReopen,
+	onCloseOthers,
 }: {
 	app: Application;
 	at: Date;
@@ -265,8 +299,12 @@ function NextStepHero({
 	hasBriefing: boolean;
 	go: (path: string) => void;
 	onReopen: () => void;
+	onCloseOthers: () => void;
 }) {
 	const router = useRouter();
+	const actions = useApplicationActions();
+	const others = useOtherOpen(app);
+	const closedForOffer = useClosedForOffer(app);
 	const interview = nextInterview(app, at);
 	if (interview) {
 		const when = new Date(interview.at);
@@ -281,6 +319,15 @@ function NextStepHero({
 				stage={app.status}
 				title={interviewTitle(interview.kind)}
 				body={[with_, where].filter(Boolean).join(" · ") || undefined}
+				// "Where" holding a meeting link: the line opens it in the system browser.
+				onBodyPress={
+					isLink(interview.location)
+						? () =>
+								void openBrowserAsync(
+									/^https?:\/\//.test(interview.location) ? interview.location : `https://${interview.location}`,
+								)
+						: undefined
+				}
 			>
 				<Button
 					label={hasBriefing ? t`Open briefing` : t`Prepare for it`}
@@ -301,6 +348,40 @@ function NextStepHero({
 				body={t`Its history and Insights are kept.`}
 			>
 				<Button label={t`Reopen`} tone="primary" size="lg" block onPress={onReopen} />
+				{app.closedReason === "accepted" && others.length > 0 && closedForOffer.value.ids.length === 0 ? (
+					<Button
+						label={
+							others.length === 1 ? t`Close the other application…` : t`Close the other ${others.length} applications…`
+						}
+						tone="secondary"
+						size="lg"
+						block
+						onPress={onCloseOthers}
+					/>
+				) : null}
+				{closedForOffer.value.ids.length > 0 && !closedForOffer.value.dismissed ? (
+					<>
+						<Button
+							label={t`Reopen the ${closedForOffer.value.ids.length}`}
+							tone="secondary"
+							size="lg"
+							block
+							onPress={() => {
+								void (async () => {
+									for (const id of closedForOffer.value.ids) await actions.reopen(id);
+									closedForOffer.set({ ids: [], dismissed: false });
+								})();
+							}}
+						/>
+						<Button
+							label={t`Dismiss`}
+							tone="ghost"
+							size="lg"
+							block
+							onPress={() => closedForOffer.set({ ...closedForOffer.value, dismissed: true })}
+						/>
+					</>
+				) : null}
 			</HeroCard>
 		);
 	if (app.status === "offer")
@@ -341,4 +422,9 @@ function NextStepHero({
 			<Button label={t`Draft a follow-up`} tone="primary" size="lg" block onPress={() => go("messages")} />
 		</HeroCard>
 	);
+}
+
+function OthersSheet({ app, onClose }: { app: Application; onClose: () => void }) {
+	const others = useOtherOpen(app);
+	return <CloseOthersSheet app={app} others={others} onClose={onClose} />;
 }

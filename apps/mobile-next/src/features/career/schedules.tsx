@@ -7,6 +7,7 @@ import { View } from "react-native";
 import { ResourceState } from "./shared";
 import {
 	providerConnection,
+	recurringApprovalChanged,
 	recurringWorkStatus,
 	saveApprovedSchedule,
 	useAIProviders,
@@ -87,10 +88,16 @@ function ScheduleEditor({ schedule }: ScheduleEditorProps) {
 	const [choosingProvider, setChoosingProvider] = useState(false);
 	const provider = providers.data?.find((p) => p.id === providerId && p.enabled);
 	const connection = provider ? providerConnection(provider) : null;
-	const paused = connection && schedule.enabled && recurringWorkStatus(schedule.id, connection) === "paused";
+	// Paused when the connection changed since this schedule was approved; the server may also have switched it off.
+	const paused =
+		!!connection &&
+		(schedule.enabled
+			? recurringWorkStatus(schedule.id, connection) === "paused"
+			: recurringApprovalChanged(schedule.id, connection));
 	const [frequency, setFrequency] = useState(schedule.intervalDays === 7 ? "weekly" : "daily");
 	const [instant, setInstant] = useState(new Date(schedule.nextRunAt));
-	const [enabled, setEnabled] = useState(schedule.enabled);
+	// Review and resume turns a paused schedule back on.
+	const [enabled, setEnabled] = useState(schedule.enabled || paused);
 	const [notify, setNotify] = useState(settings.data?.notificationCategories.newRoles !== false);
 	const [picker, setPicker] = useState(false);
 	const [pause, setPause] = useState(false);

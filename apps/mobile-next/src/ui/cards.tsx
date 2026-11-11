@@ -19,6 +19,7 @@ export function HeroCard({
 	keyIconSize = 18,
 	title,
 	body,
+	onBodyPress,
 	children,
 	dashed = false,
 	bg = "surface",
@@ -33,6 +34,8 @@ export function HeroCard({
 	bg?: "surface" | "raised" | undefined;
 	title?: string | undefined;
 	body?: string | undefined;
+	/** The body is a link (J6: an interview's meeting link opens in the browser); it looks the same. */
+	onBodyPress?: (() => void) | undefined;
 	/** The button (8 dp extra top margin is added) and an optional centred link under it. */
 	children?: ReactNode | undefined;
 	/** The dashed drop target (D4 empty, P2): no shadow, content centred. */
@@ -77,7 +80,12 @@ export function HeroCard({
 				</Text>
 			) : null}
 			{body ? (
-				<Text variant="body" color="ink2" {...(dashed ? { align: "center" as const } : {})}>
+				<Text
+					variant="body"
+					color="ink2"
+					{...(dashed ? { align: "center" as const } : {})}
+					{...(onBodyPress ? { onPress: onBodyPress, accessibilityRole: "link" as const } : {})}
+				>
 					{body}
 				</Text>
 			) : null}

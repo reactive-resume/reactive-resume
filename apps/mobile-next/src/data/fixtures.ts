@@ -497,15 +497,15 @@ function makeState(fixture: Fixture) {
 }
 // Maestro flows only (flow-only storyboard presets): the next `times` fake calls of `name`, a write operation or a
 // read resource, fail, so error states can be reached. Seeding clears it.
-const failures = new Map<string, number>();
-export function failFake(name: string, times = 1): void {
-	failures.set(name, times);
+const failures = new Map<string, { left: number; code: string | undefined }>();
+export function failFake(name: string, times = 1, code?: string): void {
+	failures.set(name, { left: times, code });
 }
 function failIfAsked(name: string) {
-	const left = failures.get(name);
-	if (!left) return;
-	failures.set(name, left - 1);
-	throw new Error("Storyboard failure.");
+	const failure = failures.get(name);
+	if (!failure?.left) return;
+	failure.left--;
+	throw Object.assign(new Error("Storyboard failure."), failure.code ? { code: failure.code } : {});
 }
 export function seed(fixture: Fixture): void {
 	failures.clear();

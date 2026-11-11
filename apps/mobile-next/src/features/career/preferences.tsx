@@ -6,7 +6,17 @@ import { View } from "react-native";
 import { careerProfileUpdateSchema } from "@reactive-resume/schema/career";
 import { priorityItems, movePriority } from "./model";
 import { ResourceState, useCareerLeaveGuard } from "./shared";
-import { useCareerPreferences, useCareerSchedules, useDataActions, useDataBackend } from "@/data";
+import {
+	ensureApproved,
+	providerConnection,
+	useAIProviders,
+	useCareerActions,
+	useCareerPreferences,
+	useCareerSchedules,
+	useDataActions,
+	useDataBackend,
+	useDocuments,
+} from "@/data";
 import {
 	Button,
 	FooterBar,
@@ -20,6 +30,8 @@ import {
 	Switch,
 	Text,
 	TextField,
+	Chip,
+	TextLink,
 } from "@/ui";
 
 function PreferencesContent() {
@@ -43,6 +55,31 @@ function PreferencesContent() {
 	const [failure, setFailure] = useState<string | null>(null);
 	const [saving, setSaving] = useState(false);
 	const profile = query.data;
+	// Roles: suggestions from your resume, as dashed chips to add (optional AI; S7 asks the first time).
+	const career = useCareerActions();
+	const providers = useAIProviders();
+	const documents = useDocuments({ type: "resume" });
+	const [suggested, setSuggested] = useState<string[] | null>(null);
+	const suggest = async () => {
+		const provider = providers.data?.find((p) => p.isDefault && p.enabled) ?? providers.data?.find((p) => p.enabled);
+		if (!provider || !(await ensureApproved("resume-and-facts", providerConnection(provider)))) return;
+		try {
+			const result = await career.suggestRoles({
+				providerId: provider.id,
+				recipientVersion: provider.recipientVersion,
+				resumeId: documents.data?.find((doc) => doc.type === "resume")?.id ?? null,
+				includeKnowledge: true,
+				locale: "en-US",
+			});
+			setSuggested(result.suggestions.map((row) => row.role));
+		} catch {
+			setFailure(t`Couldn't suggest roles. Try again.`);
+		}
+	};
+	const chosen = value
+		.split(",")
+		.map((v) => v.trim().toLowerCase())
+		.filter(Boolean);
 	const discovery = schedules.data?.find((s) => s.kind === "discovery");
 	const initialValue =
 		edit === "roles"
@@ -107,7 +144,14 @@ function PreferencesContent() {
 				title={edit === "roles" ? t`Roles` : edit === "places" ? t`Places` : edit === "work" ? t`Work` : t`Pay`}
 				footer={
 					<FooterBar>
-						<Button label={t`Save`} block tone="primary" size="lg" disabled={saving} onPress={() => void save()} />
+						<Button
+							label={failure === t`Couldn't save your preferences. Try again.` ? t`Retry` : t`Save`}
+							block
+							tone="primary"
+							size="lg"
+							disabled={saving}
+							onPress={() => void save()}
+						/>
 					</FooterBar>
 				}
 			>
@@ -126,6 +170,25 @@ function PreferencesContent() {
 						onChangeText={setValue}
 						keyboardType={edit === "pay" || edit === "work" ? "number-pad" : "default"}
 					/>
+					{edit === "roles" ? (
+						suggested ? (
+							<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+								{suggested
+									.filter((role) => !chosen.includes(role.toLowerCase()))
+									.map((role) => (
+										<Chip
+											key={role}
+											label={role}
+											icon="plus"
+											dashed
+											onPress={() => setValue((current) => [current.trim(), role].filter(Boolean).join(", "))}
+										/>
+									))}
+							</View>
+						) : (
+							<TextLink label={t`Suggest roles from my resume`} icon="sparkle" onPress={() => void suggest()} />
+						)
+					) : null}
 					{edit === "pay" ? (
 						<>
 							<Text variant="body">

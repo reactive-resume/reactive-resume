@@ -90,7 +90,13 @@ export function CareerScreen() {
 			<SectionHeading title={t`Routines`} />
 			<ListRow
 				title={t`Discovery`}
-				secondary={fake ? copy[19] : t`${schedules.data?.length ?? 0} schedules`}
+				secondary={
+					schedules.isError
+						? t`Not available on this server`
+						: fake
+							? copy[19]
+							: t`${schedules.data?.length ?? 0} schedules`
+				}
 				last
 				trailing="caret"
 				onPress={() => go(`/career/schedules/${schedules.data?.find((s) => s.kind === "discovery")?.id ?? "new"}`)}

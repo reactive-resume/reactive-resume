@@ -6,7 +6,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
-import { approveRecurring, useApplicationWorkspace, useCareerStories } from "@/data";
+import {
+	recordRecurringApproval,
+	recurringApprovalChanged,
+	useApplicationWorkspace,
+	useCareerStories,
+	useLocalValue,
+} from "@/data";
 import { clockTime, interviewTitle, isoDay, longWeekday, zoneCity } from "@/features/applications/model";
 import { FadeIn, useBarMenu } from "@/features/applications/parts";
 import { storyboard } from "@/features/applications/storyboard";
@@ -44,7 +50,15 @@ export function PrepScreen() {
 		.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 	const [roundId, setRoundId] = useState<string | undefined>(ws.interview?.id);
 	const round = rounds.find((r) => r.id === roundId) ?? ws.interview ?? rounds.at(-1);
-	const [refresh, setRefresh] = useState(storyboard?.refreshOn ?? false);
+	// The scheduled refresh is approved for one connection; another connection pauses it until reviewed (C7's rule).
+	const refreshWork = `briefing-refresh:${id}`;
+	const saved = useLocalValue<boolean | null>(refreshWork, null);
+	const refresh = saved.value ?? storyboard?.refreshOn ?? false;
+	const refreshPaused = refresh && !!ws.connection && recurringApprovalChanged(refreshWork, ws.connection);
+	const setRefresh = (next: boolean) => {
+		if (next && ws.connection) recordRecurringApproval(refreshWork, ws.connection);
+		saved.set(next);
+	};
 	const briefing = ws.latest("briefing")[0];
 	const generate = () =>
 		round && void ai.run("resume-and-facts", () => ws.actions.generate({ task: "briefing", interviewId: round.id }));
@@ -123,6 +137,23 @@ export function PrepScreen() {
 					/>
 				</View>
 			) : null}
+			{when && when.getTime() < ws.at.getTime() && !ws.interview ? (
+				// The interview has passed: the tab suggests a debrief instead.
+				<View style={{ paddingTop: 20, paddingHorizontal: layout.screenMargin }}>
+					<Card>
+						<Text variant="label">{t`This interview has passed`}</Text>
+						<Text variant="ui" color="ink2">
+							{t`Say what happened while it's fresh. The coach keeps the facts and stories worth remembering.`}
+						</Text>
+						<Button
+							label={t`Debrief`}
+							tone="secondary"
+							size="md"
+							onPress={() => router.push(`/applications/${app.id}/debrief`)}
+						/>
+					</Card>
+				</View>
+			) : null}
 			{ai.running ? <Working steps={STEPS.briefing()} onStop={ai.stop} /> : null}
 			{!briefing && !ai.running ? (
 				<View style={{ paddingTop: 20, paddingHorizontal: layout.screenMargin }}>
@@ -197,19 +228,19 @@ export function PrepScreen() {
 					<SectionHeading title={t`Refresh`} />
 					<ListRow
 						title={t`Refresh the briefing 24 hours before`}
-						secondary={t`${longWeekday(refreshAt, ws.zone)}, ${clockTime(refreshAt, ws.zone)} ${zoneCity(ws.zone)} · ${ws.provider.label} · may charge`}
-						wrapSecondary
-						trailing={<Switch value={refresh} interactive={false} />}
-						accessibilityRole="switch"
-						accessibilityState={{ checked: refresh }}
-						last
-						onPress={() =>
-							toggleValue(refresh, (next) => {
-								// Turning it on is the approval for the posting, resume and stories to go to this connection.
-								if (next && ws.connection) approveRecurring(ws.connection);
-								setRefresh(next);
-							})
+						secondary={
+							refreshPaused
+								? t`Paused: your AI connection changed. Turn it on again to approve ${ws.provider.label}.`
+								: t`${longWeekday(refreshAt, ws.zone)}, ${clockTime(refreshAt, ws.zone)} ${zoneCity(ws.zone)} · ${ws.provider.label} · may charge`
 						}
+						wrapSecondary
+						trailing={<Switch value={refresh && !refreshPaused} interactive={false} />}
+						accessibilityRole="switch"
+						accessibilityState={{ checked: refresh && !refreshPaused }}
+						last
+						testID="briefing-refresh"
+						// Turning it on is the approval for the posting, resume and stories to go to this connection.
+						onPress={() => toggleValue(refresh && !refreshPaused, setRefresh)}
 					/>
 				</>
 			) : null}
