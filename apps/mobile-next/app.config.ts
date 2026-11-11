@@ -122,7 +122,17 @@ const config: ExpoConfig = {
 		"@react-native-community/datetimepicker",
 		"expo-background-task",
 		"expo-quick-actions",
-		["expo-build-properties", { android: { usesCleartextTraffic: storyboard } }],
+		[
+			"expo-build-properties",
+			{
+				android: {
+					usesCleartextTraffic: storyboard,
+					// R8 strips the no-argument constructors Room finds by reflection, so WorkManager (expo-background-task)
+					// crashed every release build at startup.
+					extraProguardRules: "-keep class * extends androidx.room.RoomDatabase { <init>(); }",
+				},
+			},
+		],
 	],
 	extra: { variant },
 };
