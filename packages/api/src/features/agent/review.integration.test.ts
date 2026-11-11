@@ -284,6 +284,48 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 		}
 	});
 
+	it("writes nothing more into a conversation deleted while its reply was running", async () => {
+		const thread = await agent.threads.start({ userId, resumeId: copyId });
+		const { insertDraftAssistantMessage, upsertAssistantUiMessage } = await import("./messages-persistence");
+		const { getStorageService } = await import("../storage/service");
+		const remove = vi.spyOn(getStorageService(), "delete").mockResolvedValue(true);
+		const saved = async () =>
+			(await pool.query("select id from agent_messages where thread_id=$1", [thread.id])).rowCount;
+		try {
+			// A reply in progress: its draft row is saved before the stream starts.
+			const uiMessageId = randomUUID();
+			const draft = await insertDraftAssistantMessage({ userId, threadId: thread.id, uiMessageId });
+			await agent.threads.delete({ id: thread.id, userId });
+			expect(await saved()).toBe(0);
+
+			// The stopped run's last write arrives after the delete removed its draft.
+			const written = await upsertAssistantUiMessage({
+				userId,
+				threadId: thread.id,
+				rowId: draft.rowId,
+				message: { id: uiMessageId, role: "assistant", parts: [{ type: "text", text: "Partial reply." }] },
+				status: "canceled",
+			});
+			expect(written).toBeNull();
+			expect(await saved()).toBe(0);
+
+			// A message the run saved after the delete (sent just before it) goes with the next write.
+			await pool.query(
+				"insert into agent_messages (id,user_id,thread_id,role,sequence,ui_message) values ($1,$2,$3,'user',0,$4)",
+				[randomUUID(), userId, thread.id, { id: "late", role: "user", parts: [] }],
+			);
+			await upsertAssistantUiMessage({
+				userId,
+				threadId: thread.id,
+				message: { id: uiMessageId, role: "assistant", parts: [] },
+				status: "canceled",
+			});
+			expect(await saved()).toBe(0);
+		} finally {
+			remove.mockRestore();
+		}
+	});
+
 	const proposalOf = (messages: UIMessage[]) => {
 		for (const message of messages)
 			for (const part of message.parts)
