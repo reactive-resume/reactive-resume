@@ -3,7 +3,8 @@
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Keyboard, View } from "react-native";
+import { View } from "react-native";
+import { KeyboardAvoidingView, KeyboardController, useKeyboardState } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MAX_BYTES, Recorder, type Take } from "./Recorder";
 import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
@@ -35,6 +36,8 @@ export function PracticeScreen() {
 	const more = useBarMenu();
 	const [index, setIndex] = useState(0);
 	const [typing, setTyping] = useState(false);
+	// With the keyboard up the answer box gives up height so Get feedback stays above it.
+	const keyboardUp = useKeyboardState((s) => s.isVisible);
 	const [answer, setAnswer] = useState("");
 	const [notice, setNotice] = useState<string | undefined>();
 	const [attemptsOpen, setAttemptsOpen] = useState(false);
@@ -118,7 +121,8 @@ export function PracticeScreen() {
 					</View>
 				}
 			>
-				<View style={{ flex: 1, paddingTop: 8 }}>
+				{/* A typed answer and its Get feedback button stay above the keyboard. */}
+				<KeyboardAvoidingView behavior="padding" automaticOffset style={{ flex: 1, paddingTop: 8 }}>
 					<View style={{ paddingHorizontal: layout.screenMargin, gap: 16 }}>
 						<Text variant="ui" color="ink3">
 							{heading}
@@ -181,7 +185,7 @@ export function PracticeScreen() {
 								value={answer}
 								onChangeText={setAnswer}
 								multiline
-								minHeight={160}
+								minHeight={keyboardUp ? 96 : 160}
 								autoFocus
 							/>
 							<Button
@@ -191,12 +195,14 @@ export function PracticeScreen() {
 								block
 								disabled={answer.trim().length < 10}
 								onPress={() => {
-									// The keyboard goes so the first-send sheet and the feedback are in view.
-									Keyboard.dismiss();
-									void ai.run("chat", async () => {
-										await practise(answer, "typed");
-										setFeedback(true);
-									});
+									// The keyboard goes first, so the first-send sheet and the feedback are in view: a sheet opened
+									// while it is still leaving brought it back over the sheet.
+									void KeyboardController.dismiss().then(() =>
+										ai.run("chat", async () => {
+											await practise(answer, "typed");
+											setFeedback(true);
+										}),
+									);
 								}}
 							/>
 						</View>
@@ -212,7 +218,7 @@ export function PracticeScreen() {
 							/>
 						</View>
 					)}
-				</View>
+				</KeyboardAvoidingView>
 			</PushScreen>
 			{attemptsOpen ? (
 				<BottomSheet title={t`Your attempts`} height={600} onClose={() => setAttemptsOpen(false)}>
