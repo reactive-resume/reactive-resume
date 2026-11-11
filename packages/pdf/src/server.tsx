@@ -32,7 +32,11 @@ async function createEngine(): Promise<FormeEngine> {
 	// Workers can't compile WebAssembly from bytes, so there fonts still go whole.
 	if (process.env.CLOUDFLARE === "1") return forme;
 	try {
-		const wasm = await readFile(fileURLToPath(import.meta.resolve("harfbuzzjs/dist/harfbuzz-subset.wasm")));
+		// A built server carries the file beside its bundle (a Vercel Function has no node_modules entry for a file
+		// that is only read). From source, and in tests, it comes from the package.
+		const wasm = await readFile(new URL("./wasm/harfbuzz-subset.wasm", import.meta.url)).catch(() =>
+			readFile(fileURLToPath(import.meta.resolve("harfbuzzjs/dist/harfbuzz-subset.wasm"))),
+		);
 		return {
 			renderSerializedDocWithLayout: forme.renderSerializedDocWithLayout,
 			prepareFont: createFontPreparer(await createFontSubsetter(wasm)),
