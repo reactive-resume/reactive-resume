@@ -362,8 +362,9 @@ jobs:
         run: |
           node --no-experimental-require-module --input-type=module - <<'JS'
           import assert from 'node:assert/strict';
-          import { cpSync, readFileSync } from 'node:fs';
+          import { cpSync, existsSync, readFileSync } from 'node:fs';
           import { join } from 'node:path';
+          import { createRequire } from 'node:module';
           const func = '.vercel/output/services/backend/functions/index.func';
           const config = JSON.parse(readFileSync(`${func}/.vc-config.json`));
           assert.equal(config.runtime, 'nodejs24.x');
@@ -377,6 +378,15 @@ jobs:
           const home = await app.fetch(new Request('http://localhost:3000/'));
           assert.equal(home.status, 200);
           assert.match(await home.text(), /application\/ld\+json/);
+          // The server reads these files from node_modules at runtime. Without the first, PDFs quietly render
+          // from whole fonts; without the second, link-preview cards fail.
+          const fromFunction = createRequire(join(root, config.handler));
+          for (const file of ['harfbuzzjs/dist/harfbuzz-subset.wasm', '@resvg/resvg-wasm/index_bg.wasm']) {
+            let resolved;
+            try { resolved = fromFunction.resolve(file); } catch {}
+            console.log(`${file}: ${resolved && existsSync(resolved) ? 'present' : 'MISSING'}`);
+          }
+          assert.ok(existsSync(fromFunction.resolve('harfbuzzjs/dist/harfbuzz-subset.wasm')));
           process.exit(0);
           JS
 
