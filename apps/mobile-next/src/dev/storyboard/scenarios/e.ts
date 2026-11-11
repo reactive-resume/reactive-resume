@@ -281,7 +281,8 @@ export const scenarios: Record<string, Scenario> = {
 					requirements: ["Design systems at scale", "Prototyping in code"],
 				},
 			});
-			await invokeFake("aiProviders.update", { id: "work-openai", enabled: false });
+			const providers = (await invokeFake("aiProviders.list", {})) as { id: string }[];
+			for (const provider of providers) await invokeFake("aiProviders.update", { id: provider.id, enabled: false });
 			router.push("/applications/kiln/fit");
 		},
 	},

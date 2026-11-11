@@ -23,7 +23,8 @@ const boardFacts = async () => {
 };
 // Maestro flows only (not storyboard screens): the career states the boards don't draw.
 const noAI = async () => {
-	await invokeFake("aiProviders.update", { id: "work-openai", enabled: false });
+	const providers = (await invokeFake("aiProviders.list", {})) as { id: string }[];
+	for (const provider of providers) await invokeFake("aiProviders.update", { id: provider.id, enabled: false });
 };
 const allFacts = async () => {
 	const facts = (await invokeFake("career.facts", {})) as { id: string }[];
@@ -41,6 +42,13 @@ const flowScenarios: Record<string, Scenario> = {
 		},
 	},
 	"C4-Unavailable": { hrefs: ["/career", "/career/knowledge/stories", "/career/knowledge/stories/story-missing"] },
+	"C5-NoRoles": {
+		hrefs: ["/career"],
+		prepare: async () => {
+			await invokeFake("career.updateProfile", { targetRoles: [] });
+			router.push({ pathname: "/career/knowledge/preferences", params: { edit: "roles" } });
+		},
+	},
 	"C6-NoOffers": {
 		hrefs: ["/career"],
 		prepare: async () => {

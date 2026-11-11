@@ -1,0 +1,50 @@
+# C6 · Tap a value to edit it (the full terms). Sparkle asks the coach with both offers attached. Draft a counter asks
+# "Which offer?" first. No offers: "No offers to compare yet". An application at Offer without terms links to Add terms.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C6-Offers?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Draft a counter
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: "€72,000"
+- extendedWaitUntil:
+    visible: Edit terms
+    timeout: 10000
+- tapOn: Close
+- tapOn: Draft a counter
+- extendedWaitUntil:
+    visible: Which offer\?
+    timeout: 10000
+- tapOn: Close
+- tapOn: Ask the coach
+- extendedWaitUntil:
+    visible:
+      id: composer-send
+    timeout: 10000
+- openLink: me.rxresu.storyboard://storyboard/C6-NoOffers?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: No offers to compare yet
+    timeout: 20000
+- assertVisible: Add each offer's terms to compare it\. Nothing is filled in for you\.
+- openLink: me.rxresu.storyboard://storyboard/C6-TermsMissing?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- scrollUntilVisible:
+    element: In the Offer stage, terms not added
+- tapOn: Add terms
+- extendedWaitUntil:
+    visible: Add terms
+    timeout: 10000

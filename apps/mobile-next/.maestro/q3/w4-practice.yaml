@@ -1,0 +1,73 @@
+# W4 · Tap to start (the system asks for the microphone), tap to stop. Leaving the app pauses the take and keeps it:
+# back in the app, "Paused at 0:0x" with Resume, Finish, Discard. A typed answer gets the feedback card (what you said,
+# what worked, what to add) with Practice again and Next question. Mic denied: type the answer, with Open Settings.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+    permissions:
+      microphone: allow
+- openLink: me.rxresu.storyboard://storyboard/J6-Detail?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 20000
+- openLink: me.rxresu.storyboard://applications/lumen/practise
+- extendedWaitUntil:
+    visible: Record again|Record your answer
+    timeout: 10000
+- tapOn: Start recording
+- extendedWaitUntil:
+    visible: Recording\. Tap to stop\.
+    timeout: 10000
+# Leaving the app pauses the take; coming back offers Resume, Finish, Discard.
+- pressKey: home
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Paused at .*"
+    timeout: 10000
+- assertVisible: Resume
+- assertVisible: Finish
+- tapOn: Discard
+- assertNotVisible: "Paused at .*"
+# Typed answer → feedback card.
+- tapOn: Type your answer instead
+- inputText: I led the onboarding redesign and activation rose from 41% to 58%.
+- tapOn: Get feedback
+- tapOn:
+    id: first-send-send
+    optional: true
+- extendedWaitUntil:
+    visible: What worked
+    timeout: 20000
+- assertVisible: What to add
+- assertVisible: Practice again
+- tapOn: Next question
+- assertVisible: ".*question 2 of .*"
+# Microphone denied.
+- launchApp:
+    clearState: true
+    permissions:
+      microphone: deny
+- openLink: me.rxresu.storyboard://storyboard/J6-Detail?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 20000
+- openLink: me.rxresu.storyboard://applications/lumen/practise
+- extendedWaitUntil:
+    visible: Record again|Record your answer
+    timeout: 10000
+- tapOn: Start recording
+- extendedWaitUntil:
+    visible: The microphone is off for Reactive Resume\. Type your answer, or turn it on in Settings\.
+    timeout: 10000
+- assertVisible: Open Settings
+- assertVisible: Type your answer instead

@@ -81,109 +81,111 @@ export function FitScreen() {
 				: "";
 
 	return (
-		<PushScreen
-			clipDump
-			title={t`Fit`}
-			subtitle={app ? <PageSubtitle status>{t`${app.role} at ${app.company}`}</PageSubtitle> : undefined}
-			barEnd={more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
-			overlay={more.menu(
-				<MenuItem
-					label={t`Check again`}
-					icon="arrows-clockwise"
-					onPress={() => {
-						more.close();
-						check();
-					}}
-				/>,
-			)}
-			footer={
-				<FooterBar>
-					<Button
-						label={t`Tailor the resume to this job`}
-						icon="sparkle"
-						tone="primary"
-						size="lg"
-						grow
-						onPress={() => void tailor()}
-					/>
-				</FooterBar>
-			}
-		>
-			{app && !app.jobDescription && requirements.length === 0 ? (
-				<View style={{ paddingTop: 20 }}>
-					<QuietLine>{t`This application has no posting saved yet. Paste it to check fit.`}</QuietLine>
-				</View>
-			) : null}
-			{ai.running ? <Working steps={STEPS.fit()} onStop={ai.stop} /> : null}
-			{!fit && !ai.running ? (
-				<View style={{ paddingTop: 20, paddingHorizontal: layout.screenMargin }}>
-					<Card>
-						<Text variant="label">{t`Check this role against your evidence`}</Text>
-						<Text variant="ui" color="ink2">
-							{ws.connection
-								? t`Each requirement is matched to your resume and Knowledge. Missing evidence, not missing ability.`
-								: t`Set up AI to match each requirement to your resume and Knowledge.`}
-						</Text>
-						{ai.failed ? (
-							<Text variant="ui" color="dangerText">
-								{t`Couldn't check your evidence. Try again.`}
-							</Text>
-						) : null}
+		<>
+			<PushScreen
+				clipDump
+				title={t`Fit`}
+				subtitle={app ? <PageSubtitle status>{t`${app.role} at ${app.company}`}</PageSubtitle> : undefined}
+				barEnd={more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
+				overlay={more.menu(
+					<MenuItem
+						label={t`Check again`}
+						icon="arrows-clockwise"
+						onPress={() => {
+							more.close();
+							check();
+						}}
+					/>,
+				)}
+				footer={
+					<FooterBar>
 						<Button
-							label={ws.connection ? t`Check fit` : t`Set up AI`}
-							tone="secondary"
-							size="md"
-							onPress={ws.connection ? check : () => router.push("/settings/ai")}
+							label={t`Tailor the resume to this job`}
+							icon="sparkle"
+							tone="primary"
+							size="lg"
+							grow
+							onPress={() => void tailor()}
 						/>
-					</Card>
-				</View>
-			) : null}
-			{fit ? (
-				<FadeIn px={6}>
-					<View style={{ paddingTop: 24, paddingHorizontal: layout.screenMargin }}>
-						<Text variant="bigNumber">{t`${withEvidence} of ${requirements.length}`}</Text>
-						<View style={{ paddingTop: 4 }}>
-							<Text variant="body" color="ink2">
-								{t`requirements have evidence`}
-							</Text>
-						</View>
-						<View style={{ paddingTop: 8 }}>
-							<Text variant="ui" color="ink3">
-								{t`From “${app?.company ?? ""} · ${app?.role ?? ""}” and ${fit.evidence.factIds.length} Knowledge facts · ${checkedLine}`}
-							</Text>
-						</View>
+					</FooterBar>
+				}
+			>
+				{app && !app.jobDescription && requirements.length === 0 ? (
+					<View style={{ paddingTop: 20 }}>
+						<QuietLine>{t`This application has no posting saved yet. Paste it to check fit.`}</QuietLine>
 					</View>
-				</FadeIn>
-			) : null}
-			{groups.map((group) => (
-				<View key={group.title}>
-					<SectionHeading title={group.title} />
-					{group.rows.map((r, i) => {
-						const e = evidence[r.status];
-						return (
-							<ListRow
-								key={r.text}
-								title={r.text}
-								secondary={fit ? (r.evidence ? `${e.word()} · ${r.evidence}` : e.word()) : undefined}
-								leading={
-									fit ? (
-										<View style={{ width: 24, alignItems: "center" }}>
-											<Icon name={e.icon} size={22} color={e.color} />
-										</View>
-									) : undefined
-								}
-								trailing={
-									fit && r.status === "missing" ? (
-										<RowLink label={t`Add a fact`} onPress={() => router.push("/career/knowledge/facts")} />
-									) : undefined
-								}
-								last={i === group.rows.length - 1}
-								onPress={fit ? () => setOpen(r) : undefined}
+				) : null}
+				{ai.running ? <Working steps={STEPS.fit()} onStop={ai.stop} /> : null}
+				{!fit && !ai.running ? (
+					<View style={{ paddingTop: 20, paddingHorizontal: layout.screenMargin }}>
+						<Card>
+							<Text variant="label">{t`Check this role against your evidence`}</Text>
+							<Text variant="ui" color="ink2">
+								{ws.connection
+									? t`Each requirement is matched to your resume and Knowledge. Missing evidence, not missing ability.`
+									: t`Set up AI to match each requirement to your resume and Knowledge.`}
+							</Text>
+							{ai.failed ? (
+								<Text variant="ui" color="dangerText">
+									{t`Couldn't check your evidence. Try again.`}
+								</Text>
+							) : null}
+							<Button
+								label={ws.connection ? t`Check fit` : t`Set up AI`}
+								tone="secondary"
+								size="md"
+								onPress={ws.connection ? check : () => router.push("/settings/ai")}
 							/>
-						);
-					})}
-				</View>
-			))}
+						</Card>
+					</View>
+				) : null}
+				{fit ? (
+					<FadeIn px={6}>
+						<View style={{ paddingTop: 24, paddingHorizontal: layout.screenMargin }}>
+							<Text variant="bigNumber">{t`${withEvidence} of ${requirements.length}`}</Text>
+							<View style={{ paddingTop: 4 }}>
+								<Text variant="body" color="ink2">
+									{t`requirements have evidence`}
+								</Text>
+							</View>
+							<View style={{ paddingTop: 8 }}>
+								<Text variant="ui" color="ink3">
+									{t`From “${app?.company ?? ""} · ${app?.role ?? ""}” and ${fit.evidence.factIds.length} Knowledge facts · ${checkedLine}`}
+								</Text>
+							</View>
+						</View>
+					</FadeIn>
+				) : null}
+				{groups.map((group) => (
+					<View key={group.title}>
+						<SectionHeading title={group.title} />
+						{group.rows.map((r, i) => {
+							const e = evidence[r.status];
+							return (
+								<ListRow
+									key={r.text}
+									title={r.text}
+									secondary={fit ? (r.evidence ? `${e.word()} · ${r.evidence}` : e.word()) : undefined}
+									leading={
+										fit ? (
+											<View style={{ width: 24, alignItems: "center" }}>
+												<Icon name={e.icon} size={22} color={e.color} />
+											</View>
+										) : undefined
+									}
+									trailing={
+										fit && r.status === "missing" ? (
+											<RowLink label={t`Add a fact`} onPress={() => router.push("/career/knowledge/facts")} />
+										) : undefined
+									}
+									last={i === group.rows.length - 1}
+									onPress={fit ? () => setOpen(r) : undefined}
+								/>
+							);
+						})}
+					</View>
+				))}
+			</PushScreen>
 			{open ? (
 				<BottomSheet title={open.text} height={360} onClose={() => setOpen(null)}>
 					<View style={{ paddingHorizontal: layout.screenMargin, gap: 8 }}>
@@ -197,6 +199,6 @@ export function FitScreen() {
 					</View>
 				</BottomSheet>
 			) : null}
-		</PushScreen>
+		</>
 	);
 }

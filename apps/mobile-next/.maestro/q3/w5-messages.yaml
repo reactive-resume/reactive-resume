@@ -1,0 +1,90 @@
+# W5 · Messages: pick a kind (Thank-you), edit the draft in place, Copy offers Log follow-up ("Followed up"). No contact:
+# To shows "Add a contact", which opens J6. A failed log says "Couldn't log the follow-up…". Debrief: typed what
+# happened gets Remember / Not now rows; an offer message offers to save its terms in Career → Offers. Library lists
+# saved work newest first and opens one read-only with Back to current.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/W5-Messages?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Hi Joana,.*"
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: "Kind.*"
+- tapOn: Thank-you
+- extendedWaitUntil:
+    visible: ".*Thank you for your time today.*"
+    timeout: 5000
+# Edit in place.
+- tapOn: ".*Thank you for your time today.*"
+- inputText: " P.S. Thanks again."
+- tapOn: Messages
+- assertVisible: ".*P\\.S\\. Thanks again\\..*"
+- tapOn:
+    text: Copy
+    waitToSettleTimeoutMs: 1
+- assertVisible: Copied
+- tapOn:
+    text: Log follow-up
+    waitToSettleTimeoutMs: 1
+- assertVisible: Followed up
+# No contact.
+- openLink: me.rxresu.storyboard://applications/kiln/messages
+- extendedWaitUntil:
+    visible: ".*Add a contact.*"
+    timeout: 10000
+- tapOn: ".*Add a contact.*"
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000
+# Library.
+- openLink: me.rxresu.storyboard://applications/lumen/library
+- extendedWaitUntil:
+    visible: Library
+    timeout: 10000
+- tapOn:
+    text: Fit check.*
+    index: 0
+- extendedWaitUntil:
+    visible: Back to current
+    timeout: 10000
+- tapOn: Back to current
+# Debrief.
+- openLink: me.rxresu.storyboard://applications/lumen/debrief
+- extendedWaitUntil:
+    visible: What happened\?
+    timeout: 10000
+- tapOn: Type your answer instead
+- inputText: They made an offer with a base salary of 70000 a year and 10% bonus.
+- assertVisible: Save these offer terms to compare\. Opens in Career → Offers\.
+- tapOn: Review it
+- tapOn:
+    id: first-send-send
+    optional: true
+- extendedWaitUntil:
+    visible: Worth remembering
+    timeout: 20000
+- assertVisible: Remember
+- assertVisible: Not now
+# A failed log.
+- openLink: me.rxresu.storyboard://storyboard/W5-LogFails?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Hi Joana,.*"
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn:
+    text: Copy
+    waitToSettleTimeoutMs: 1
+- tapOn:
+    text: Log follow-up
+    waitToSettleTimeoutMs: 1
+- assertVisible: Couldn't log the follow-up\. Check the timeline before trying again\.

@@ -247,6 +247,8 @@ export function DetailScreen() {
 					key={row.path}
 					title={row.title}
 					secondary={row.line}
+					// The status is read with the row's name (VoiceOver, and the flows that check it).
+					accessibilityLabel={`${row.title}, ${row.line}`}
 					leading={<IconTile icon={row.icon} />}
 					trailing="caret"
 					last={i === work.length - 1}

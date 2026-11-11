@@ -273,6 +273,7 @@ function InterviewForm({
 								label={name}
 								icon="plus"
 								dashed
+								testID={`suggest-${name}`}
 								onPress={() => {
 									setTouched(true);
 									setPeople((current) => {

@@ -1,0 +1,69 @@
+# J9 · Back (‹) returns to the stages. After "I accepted this offer", J6's hero offers "Close the other 4
+# applications…": all ticked, untick any, "Close 4 as I accepted another offer"; then "Reopen the 4" until dismissed.
+# J1's Closed list uses the outcome names. A failed close keeps the choice and says "Couldn't close the application."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J1-List?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Kiln Studio
+    timeout: 20000
+- openLink: me.rxresu.storyboard://applications/parcel/stage
+- extendedWaitUntil:
+    visible: Move Parcel & Co\.
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: stage-close
+- extendedWaitUntil:
+    visible: How did it end?
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn: Back to Move
+- extendedWaitUntil:
+    visible: Move Parcel & Co\.
+    timeout: 10000
+- tapOn:
+    id: stage-close
+- extendedWaitUntil:
+    visible: How did it end?
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: close-confirm
+- extendedWaitUntil:
+    notVisible: How did it end?
+    timeout: 10000
+- openLink: me.rxresu.storyboard://applications/parcel
+- extendedWaitUntil:
+    visible: Close the other 4 applications…
+    timeout: 10000
+- tapOn: Close the other 4 applications…
+- extendedWaitUntil:
+    visible: Close 4 as I accepted another offer
+    timeout: 10000
+- tapOn: Kiln Studio
+- assertVisible: Close 3 as I accepted another offer
+- tapOn:
+    id: close-others-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Closed 3 applications
+- extendedWaitUntil:
+    visible: Reopen the 3
+    timeout: 10000
+- tapOn: Dismiss
+- assertNotVisible: Reopen the 3
+- assertNotVisible: Close the other .*
+# J1's Closed list uses the outcome names.
+- openLink: me.rxresu.storyboard://applications?view=list
+- scrollUntilVisible:
+    element: "Closed · .*"
+- tapOn: "Closed · .*"
+- scrollUntilVisible:
+    element: ".*I accepted another offer"
+- assertVisible: ".*I accepted this offer"

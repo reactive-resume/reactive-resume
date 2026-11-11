@@ -58,99 +58,92 @@ export function ApplyScreen() {
 	};
 
 	return (
-		<PushScreen
-			title={t`Apply`}
-			subtitle={
-				<PageSubtitle status>
-					{sent && sentOn ? t`Sent on ${longDay(sentOn, ws.zone)}` : t`Before you apply`}
-				</PageSubtitle>
-			}
-			footer={
-				sent ? undefined : (
-					<FooterBar>
-						<Button
-							label={t`Open the form`}
-							tone="secondary"
-							size="lg"
-							grow
-							disabled={!where}
-							onPress={() => void openBrowserAsync(where)}
+		<>
+			<PushScreen
+				title={t`Apply`}
+				subtitle={
+					<PageSubtitle status>
+						{sent && sentOn ? t`Sent on ${longDay(sentOn, ws.zone)}` : t`Before you apply`}
+					</PageSubtitle>
+				}
+				footer={
+					sent ? undefined : (
+						<FooterBar>
+							<Button
+								label={t`Open the form`}
+								tone="secondary"
+								size="lg"
+								grow
+								disabled={!where}
+								onPress={() => void openBrowserAsync(where)}
+							/>
+							<Button
+								label={t`Mark as applied`}
+								tone="primary"
+								size="lg"
+								grow
+								onPress={() => router.push(sentStepHref(app.id))}
+							/>
+						</FooterBar>
+					)
+				}
+			>
+				<SectionHeading title={sent ? t`What you sent` : t`Documents for this job`} />
+				<ListRow
+					title={t`Resume`}
+					secondary={
+						sent
+							? sentAt
+								? t`Version sent ${dayMonth(sentAt, ws.zone)}, ${clockTime(sentAt, ws.zone)}`
+								: t`No resume recorded`
+							: app.resumeId
+								? t`Ready`
+								: t`Needs work · link a resume`
+					}
+					leading={<DocThumb />}
+					trailing="caret"
+					// The board's edge: Versions (B15), where the sent version is kept by name.
+					onPress={app.resumeId ? () => router.push(`/builder/${app.resumeId}/versions`) : () => router.push("/new")}
+				/>
+				<ListRow
+					title={t`Cover letter`}
+					secondary={
+						letter.data?.name ?? (app.coverLetterId ? "" : sent ? t`No letter sent` : t`Needs work · link a letter`)
+					}
+					leading={<DocThumb letter />}
+					trailing="caret"
+					onPress={app.coverLetterId ? () => router.push(`/letter/${app.coverLetterId}`) : undefined}
+				/>
+				<ListRow
+					title={t`Form answers`}
+					secondary={answersLine}
+					leading={<IconTile icon="list-checks" />}
+					trailing="caret"
+					onPress={() => setAnswersOpen(true)}
+				/>
+				<ListRow
+					title={t`Where`}
+					secondary={where ? host(where) : t`Add the application link`}
+					leading={<IconTile icon="globe-simple" />}
+					trailing="external"
+					last
+					boxHidden
+					onPress={where ? () => void openBrowserAsync(where) : undefined}
+				/>
+				{sent && followUp ? (
+					<>
+						<SectionHeading title={t`Next`} />
+						<ListRow
+							title={t`Follow up`}
+							secondary={t`Suggested for ${longWeekday(followUp, ws.zone)}`}
+							leading={<IconTile icon="envelope-simple" />}
+							trailing="caret"
+							last
+							onPress={() => router.push(`/applications/${app.id}/messages`)}
 						/>
-						<Button
-							label={t`Mark as applied`}
-							tone="primary"
-							size="lg"
-							grow
-							onPress={() => router.push(sentStepHref(app.id))}
-						/>
-					</FooterBar>
-				)
-			}
-		>
-			<SectionHeading title={sent ? t`What you sent` : t`Documents for this job`} />
-			<ListRow
-				title={t`Resume`}
-				secondary={
-					sent
-						? sentAt
-							? t`Version sent ${dayMonth(sentAt, ws.zone)}, ${clockTime(sentAt, ws.zone)}`
-							: t`No resume recorded`
-						: app.resumeId
-							? t`Ready`
-							: t`Needs work · link a resume`
-				}
-				leading={<DocThumb />}
-				trailing="caret"
-				// The version that was sent, read-only with Open current; before applying, the resume itself.
-				onPress={
-					app.resumeId
-						? () =>
-								router.push(
-									sent && app.sentResumeVersionId
-										? `/builder/${app.resumeId}/versions/${app.sentResumeVersionId}`
-										: `/builder/${app.resumeId}`,
-								)
-						: () => router.push("/new")
-				}
-			/>
-			<ListRow
-				title={t`Cover letter`}
-				secondary={
-					letter.data?.name ?? (app.coverLetterId ? "" : sent ? t`No letter sent` : t`Needs work · link a letter`)
-				}
-				leading={<DocThumb letter />}
-				trailing="caret"
-				onPress={app.coverLetterId ? () => router.push(`/letter/${app.coverLetterId}`) : undefined}
-			/>
-			<ListRow
-				title={t`Form answers`}
-				secondary={answersLine}
-				leading={<IconTile icon="list-checks" />}
-				trailing="caret"
-				onPress={() => setAnswersOpen(true)}
-			/>
-			<ListRow
-				title={t`Where`}
-				secondary={where ? host(where) : t`Add the application link`}
-				leading={<IconTile icon="globe-simple" />}
-				trailing="external"
-				last
-				boxHidden
-				onPress={where ? () => void openBrowserAsync(where) : undefined}
-			/>
-			{sent && followUp ? (
-				<>
-					<SectionHeading title={t`Next`} />
-					<ListRow
-						title={t`Follow up`}
-						secondary={t`Suggested for ${longWeekday(followUp, ws.zone)}`}
-						leading={<IconTile icon="envelope-simple" />}
-						trailing="caret"
-						last
-						onPress={() => router.push(`/applications/${app.id}/messages`)}
-					/>
-				</>
-			) : null}
+					</>
+				) : null}
+			</PushScreen>
 			{answersOpen ? (
 				<BottomSheet title={t`Form answers`} height={640} onClose={() => setAnswersOpen(false)}>
 					<SheetScrollView contentContainerStyle={{ paddingBottom: 24 }}>
@@ -185,6 +178,6 @@ export function ApplyScreen() {
 					</SheetScrollView>
 				</BottomSheet>
 			) : null}
-		</PushScreen>
+		</>
 	);
 }

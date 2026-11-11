@@ -20,7 +20,10 @@ export function fixtureArtifact(task: Record<string, unknown>) {
 					text: fit[Number(text)],
 					origin: "posting",
 					status,
-					evidence: fit[Number(evidence)],
+					// The board's line is "<evidence word> · <cited line>"; the screen adds the word itself.
+					evidence: (fit[Number(evidence)] ?? "").includes(" · ")
+						? (fit[Number(evidence)] ?? "").split(" · ").slice(1).join(" · ")
+						: "",
 					factIds: [],
 				})),
 				checks: [],

@@ -1,0 +1,67 @@
+# C5 · Roles: suggestions from the resume appear as dashed chips to add. Pay: "Don't use pay to filter"; a partial
+# amount says "Enter a full amount, such as 95000. Your previous amount is unchanged." Priorities is an ordered list
+# with Move up and Move down.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C5-Preferences?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Job search
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: "Pay.*"
+- extendedWaitUntil:
+    visible: Minimum base salary
+    timeout: 10000
+- tapOn:
+    point: "195,213"
+- eraseText: 20
+- inputText: 65k
+- tapOn: Save
+- assertVisible: Enter a full amount, such as 95000\. Your previous amount is unchanged\.
+- tapOn: Don't use pay to filter
+- tapOn: Save
+- extendedWaitUntil:
+    visible: Don't use pay to filter
+    timeout: 10000
+- tapOn: "Priorities.*"
+- extendedWaitUntil:
+    visible: Put what matters most first\.
+    timeout: 10000
+- tapOn:
+    text: "Actions for .*"
+    index: 1
+- tapOn: Move up
+# C6 reads the new order.
+- openLink: me.rxresu.storyboard://career/offers
+- extendedWaitUntil:
+    visible: ".*follows your priorities: remote, then pay.*"
+    timeout: 10000
+# Roles: suggestions from the resume as dashed chips.
+- openLink: me.rxresu.storyboard://storyboard/C5-NoRoles?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Suggest roles from my resume
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: Suggest roles from my resume
+- tapOn:
+    id: first-send-send
+    optional: true
+- extendedWaitUntil:
+    visible: Design lead
+    timeout: 10000
+- assertVisible: Senior product designer
+- tapOn:
+    id: role-Design lead
+- assertNotVisible:
+    id: role-Design lead
+- assertVisible: Design lead

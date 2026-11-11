@@ -171,7 +171,9 @@ function PreferencesContent() {
 						keyboardType={edit === "pay" || edit === "work" ? "number-pad" : "default"}
 					/>
 					{edit === "roles" ? (
-						suggested ? (
+						suggested && suggested.every((role) => chosen.includes(role.toLowerCase())) ? (
+							<Text variant="ui" color="ink3">{t`You already have every role your resume suggests.`}</Text>
+						) : suggested ? (
 							<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
 								{suggested
 									.filter((role) => !chosen.includes(role.toLowerCase()))
@@ -181,6 +183,7 @@ function PreferencesContent() {
 											label={role}
 											icon="plus"
 											dashed
+											testID={`role-${role}`}
 											onPress={() => setValue((current) => [current.trim(), role].filter(Boolean).join(", "))}
 										/>
 									))}

@@ -104,99 +104,103 @@ export function MessagesScreen() {
 	};
 
 	return (
-		<PushScreen
-			title={t`Messages`}
-			subtitle={<PageSubtitle status>{`${app.company} · ${app.role}`}</PageSubtitle>}
-			barEnd={
-				<>
-					<IconButton
-						icon="sparkle"
-						label={t`Redraft`}
-						onPress={() => void ai.run("posting", () => ws.actions.redraftMessage(draft))}
-					/>
-					{more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
-				</>
-			}
-			overlay={more.menu(
-				<MenuItem
-					label={t`Log follow-up`}
-					icon="check-circle"
-					onPress={() => {
-						more.close();
-						logFollowUp();
-					}}
-				/>,
-			)}
-			footer={
-				<FooterBar>
-					<Button label={t`Copy`} icon="copy" tone="secondary" size="lg" grow onPress={() => void copy()} />
-					<Button
-						label={t`Open in Mail`}
-						icon="envelope-simple"
-						tone="primary"
-						size="lg"
-						grow
-						onPress={() => void mail()}
-					/>
-				</FooterBar>
-			}
-		>
-			<View style={{ paddingTop: 16 }}>
-				<ListRow top title={t`Kind`} value={kindLabel(kind)} trailing="caret" onPress={() => setChoosing(true)} />
-				<ListRow
-					title={t`To`}
-					value={contact ? [contact.name, contact.type || contact.role].filter(Boolean).join(" · ") : t`Add a contact`}
-					onPress={contact ? undefined : () => router.push(`/applications/${app.id}`)}
-				/>
-				<ListRow title={t`Subject`} secondary={subject} last boxHidden />
-			</View>
-			{ai.running ? <Working steps={STEPS.draft()} onStop={ai.stop} /> : null}
-			{ai.failed ? (
-				<View style={{ paddingTop: 12, paddingHorizontal: layout.screenMargin }}>
-					<Text variant="ui" color="dangerText">
-						{t`Couldn't redraft. Your draft is unchanged.`}
-					</Text>
-				</View>
-			) : null}
-			<FadeIn key={kind}>
-				<View style={{ paddingTop: 16, paddingHorizontal: layout.screenMargin }}>
-					{editing ? (
-						<TextInput
-							value={draft}
-							onChangeText={(text) => setEdited((current) => ({ ...current, [kind]: text }))}
-							onBlur={() => setEditing(false)}
-							multiline
-							autoFocus
-							accessibilityLabel={t`Message`}
-							selectionColor={colors.accent}
-							style={[typeScale.prose, { color: colors.ink, padding: 0 }]}
+		<>
+			<PushScreen
+				title={t`Messages`}
+				subtitle={<PageSubtitle status>{`${app.company} · ${app.role}`}</PageSubtitle>}
+				barEnd={
+					<>
+						<IconButton
+							icon="sparkle"
+							label={t`Redraft`}
+							onPress={() => void ai.run("posting", () => ws.actions.redraftMessage(draft))}
 						/>
-					) : (
-						<Touch
-							feedback="none"
-							accessibilityLabel={draft}
-							accessibilityHint={t`Edit the message`}
-							onPress={() => setEditing(true)}
-						>
-							<View style={{ gap: 16 }}>
-								{paragraphs.map((p, i) => {
-									// A line break inside a paragraph (the sign-off): two lines, one text, as the boards' <br>.
-									const [first = "", ...more] = p.split("\n");
-									return more.length ? (
-										<TextBlock key={i} variant="prose" gap={0} before={first} after={more.join("\n")}>
-											{null}
-										</TextBlock>
-									) : (
-										<Text key={i} variant="prose">
-											{p}
-										</Text>
-									);
-								})}
-							</View>
-						</Touch>
-					)}
+						{more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
+					</>
+				}
+				overlay={more.menu(
+					<MenuItem
+						label={t`Log follow-up`}
+						icon="check-circle"
+						onPress={() => {
+							more.close();
+							logFollowUp();
+						}}
+					/>,
+				)}
+				footer={
+					<FooterBar>
+						<Button label={t`Copy`} icon="copy" tone="secondary" size="lg" grow onPress={() => void copy()} />
+						<Button
+							label={t`Open in Mail`}
+							icon="envelope-simple"
+							tone="primary"
+							size="lg"
+							grow
+							onPress={() => void mail()}
+						/>
+					</FooterBar>
+				}
+			>
+				<View style={{ paddingTop: 16 }}>
+					<ListRow top title={t`Kind`} value={kindLabel(kind)} trailing="caret" onPress={() => setChoosing(true)} />
+					<ListRow
+						title={t`To`}
+						value={
+							contact ? [contact.name, contact.type || contact.role].filter(Boolean).join(" · ") : t`Add a contact`
+						}
+						onPress={contact ? undefined : () => router.push(`/applications/${app.id}`)}
+					/>
+					<ListRow title={t`Subject`} secondary={subject} last boxHidden />
 				</View>
-			</FadeIn>
+				{ai.running ? <Working steps={STEPS.draft()} onStop={ai.stop} /> : null}
+				{ai.failed ? (
+					<View style={{ paddingTop: 12, paddingHorizontal: layout.screenMargin }}>
+						<Text variant="ui" color="dangerText">
+							{t`Couldn't redraft. Your draft is unchanged.`}
+						</Text>
+					</View>
+				) : null}
+				<FadeIn key={kind}>
+					<View style={{ paddingTop: 16, paddingHorizontal: layout.screenMargin }}>
+						{editing ? (
+							<TextInput
+								value={draft}
+								onChangeText={(text) => setEdited((current) => ({ ...current, [kind]: text }))}
+								onBlur={() => setEditing(false)}
+								multiline
+								autoFocus
+								accessibilityLabel={t`Message`}
+								selectionColor={colors.accent}
+								style={[typeScale.prose, { color: colors.ink, padding: 0 }]}
+							/>
+						) : (
+							<Touch
+								feedback="none"
+								accessibilityLabel={draft}
+								accessibilityHint={t`Edit the message`}
+								onPress={() => setEditing(true)}
+							>
+								<View style={{ gap: 16 }}>
+									{paragraphs.map((p, i) => {
+										// A line break inside a paragraph (the sign-off): two lines, one text, as the boards' <br>.
+										const [first = "", ...more] = p.split("\n");
+										return more.length ? (
+											<TextBlock key={i} variant="prose" gap={0} before={first} after={more.join("\n")}>
+												{null}
+											</TextBlock>
+										) : (
+											<Text key={i} variant="prose">
+												{p}
+											</Text>
+										);
+									})}
+								</View>
+							</Touch>
+						)}
+					</View>
+				</FadeIn>
+			</PushScreen>
 			{choosing ? (
 				<ChoiceSheet
 					title={t`Kind`}
@@ -210,7 +214,7 @@ export function MessagesScreen() {
 					}}
 				/>
 			) : null}
-		</PushScreen>
+		</>
 	);
 }
 

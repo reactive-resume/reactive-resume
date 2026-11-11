@@ -1,0 +1,75 @@
+# W3 · Questions to ask copy with one tap. ··· → Generate briefing now. The scheduled refresh row names when (with its
+# zone), the connection and that it may charge; turning it on is the approval, and a changed connection pauses it until
+# it is turned on again. No briefing yet: "Prepare for Orbital Health" with Generate briefing now. A passed interview
+# suggests Debrief.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/W3-Prep?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Company brief
+    timeout: 20000
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element: Who owns the design system day to day\?
+- tapOn:
+    text: Who owns the design system day to day\?
+    waitToSettleTimeoutMs: 1
+- assertVisible: Copied
+- scrollUntilVisible:
+    element: Refresh the briefing 24 hours before
+- assertVisible: ".*Berlin · Work OpenAI · may charge.*"
+# Off, then on again: on is the approval for this connection.
+- tapOn:
+    id: briefing-refresh
+- tapOn:
+    id: briefing-refresh
+# The key changes: the refresh pauses until it's turned on again.
+- openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
+- extendedWaitUntil:
+    visible: API key
+    timeout: 10000
+- tapOn: API key
+- inputText: storyboard-replacement-key
+- tapOn:
+    id: provider-save
+- openLink: me.rxresu.storyboard://applications/lumen/prepare
+- scrollUntilVisible:
+    element: ".*Paused. your AI connection changed.*"
+- tapOn:
+    id: briefing-refresh
+- assertVisible: ".*Berlin · Work OpenAI · may charge.*"
+# No briefing yet.
+- openLink: me.rxresu.storyboard://applications/orbital-health/prepare
+- extendedWaitUntil:
+    visible: Prepare for Orbital Health
+    timeout: 10000
+- tapOn:
+    text: Generate briefing now
+    index: 0
+- tapOn:
+    id: first-send-send
+    optional: true
+- extendedWaitUntil:
+    visible: Company brief
+    timeout: 20000
+# A passed interview suggests Debrief.
+- openLink: me.rxresu.storyboard://storyboard/W3-Passed?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: This interview has passed
+    timeout: 20000
+- tapOn:
+    text: Debrief
+    index: 1
+- extendedWaitUntil:
+    visible: What happened\?
+    timeout: 10000

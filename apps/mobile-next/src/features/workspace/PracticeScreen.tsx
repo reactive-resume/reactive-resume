@@ -89,127 +89,129 @@ export function PracticeScreen() {
 		: t`None yet`;
 
 	return (
-		<PushScreen
-			scroll={false}
-			barEnd={more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
-			overlay={more.menu(
-				<MenuItem
-					label={t`Practice another question`}
-					icon="arrows-clockwise"
-					onPress={() => {
-						more.close();
-						setIndex((i) => i + 1);
-					}}
-				/>,
-			)}
-			footer={
-				<View style={{ paddingBottom: insets.bottom }}>
-					<ListRow
-						top
-						last
-						title={t`Your attempts`}
-						secondary={latestLine}
-						leading={<IconTile icon="clock-counter-clockwise" />}
-						value={String(attempts.length)}
-						trailing="up"
-						onPress={() => setAttemptsOpen(true)}
-					/>
-				</View>
-			}
-		>
-			<View style={{ flex: 1, paddingTop: 8 }}>
-				<View style={{ paddingHorizontal: layout.screenMargin, gap: 16 }}>
-					<Text variant="ui" color="ink3">
-						{heading}
-					</Text>
-					<Text variant="title" accessibilityRole="header" style={{ lineHeight: 38 }}>
-						{question}
-					</Text>
-					{story ? (
-						<Text variant="ui" color="ink3">
-							{t`Story to use: ${story} · Situation, Task, Action, Result, Reflection`}
-						</Text>
-					) : null}
-				</View>
-				<View style={{ flex: 1 }} />
-				{ai.running ? <Working steps={STEPS.feedback()} onStop={ai.stop} /> : null}
-				{feedback && latest ? (
-					<View style={{ paddingHorizontal: layout.screenMargin, paddingBottom: 12 }}>
-						<Card>
-							<Text variant="label">{t`What you said`}</Text>
-							<Text variant="ui" color="ink2" numberOfLines={4}>
-								{latest.data.answer}
-							</Text>
-							<Text variant="label">{t`What worked`}</Text>
-							<Text variant="ui" color="ink2">
-								{latest.data.works}
-							</Text>
-							<Text variant="label">{t`What to add`}</Text>
-							<Text variant="ui" color="ink2">
-								{latest.data.strengthen}
-							</Text>
-							<View style={{ flexDirection: "row", gap: 12 }}>
-								<Button
-									label={t`Practice again`}
-									tone="secondary"
-									size="md"
-									grow
-									onPress={() => {
-										setFeedback(false);
-										setAnswer("");
-									}}
-								/>
-								<Button
-									label={t`Next question`}
-									tone="primary"
-									size="md"
-									grow
-									onPress={() => {
-										setFeedback(false);
-										setAnswer("");
-										setIndex((i) => i + 1);
-									}}
-								/>
-							</View>
-						</Card>
-					</View>
-				) : typing ? (
-					<View style={{ paddingHorizontal: layout.screenMargin, gap: 12, paddingBottom: 12 }}>
-						<TextField
-							label={t`Your answer`}
-							value={answer}
-							onChangeText={setAnswer}
-							multiline
-							minHeight={160}
-							autoFocus
-						/>
-						<Button
-							label={t`Get feedback`}
-							tone="primary"
-							size="lg"
-							block
-							disabled={answer.trim().length < 10}
-							onPress={() =>
-								void ai.run("chat", async () => {
-									await practise(answer, "typed");
-									setFeedback(true);
-								})
-							}
-						/>
-					</View>
-				) : (
-					<View style={{ paddingBottom: 8 }}>
-						<Recorder
-							recorded={attempts.length > 0}
-							// Only W4's capture draws the take mid-recording; flows use the real recorder.
-							seeded={take === "storyboard" ? storyboard?.recording : undefined}
-							onFinish={send}
-							onTypeInstead={() => setTyping(true)}
-							notice={ai.failed ? t`Nothing was heard. Try again, or type your answer.` : notice}
-						/>
-					</View>
+		<>
+			<PushScreen
+				scroll={false}
+				barEnd={more.wrap(<IconButton icon="dots-three" label={t`More`} onPress={more.open} />)}
+				overlay={more.menu(
+					<MenuItem
+						label={t`Practice another question`}
+						icon="arrows-clockwise"
+						onPress={() => {
+							more.close();
+							setIndex((i) => i + 1);
+						}}
+					/>,
 				)}
-			</View>
+				footer={
+					<View style={{ paddingBottom: insets.bottom }}>
+						<ListRow
+							top
+							last
+							title={t`Your attempts`}
+							secondary={latestLine}
+							leading={<IconTile icon="clock-counter-clockwise" />}
+							value={String(attempts.length)}
+							trailing="up"
+							onPress={() => setAttemptsOpen(true)}
+						/>
+					</View>
+				}
+			>
+				<View style={{ flex: 1, paddingTop: 8 }}>
+					<View style={{ paddingHorizontal: layout.screenMargin, gap: 16 }}>
+						<Text variant="ui" color="ink3">
+							{heading}
+						</Text>
+						<Text variant="title" accessibilityRole="header" style={{ lineHeight: 38 }}>
+							{question}
+						</Text>
+						{story ? (
+							<Text variant="ui" color="ink3">
+								{t`Story to use: ${story} · Situation, Task, Action, Result, Reflection`}
+							</Text>
+						) : null}
+					</View>
+					<View style={{ flex: 1 }} />
+					{ai.running ? <Working steps={STEPS.feedback()} onStop={ai.stop} /> : null}
+					{feedback && latest ? (
+						<View style={{ paddingHorizontal: layout.screenMargin, paddingBottom: 12 }}>
+							<Card>
+								<Text variant="label">{t`What you said`}</Text>
+								<Text variant="ui" color="ink2" numberOfLines={4}>
+									{latest.data.answer}
+								</Text>
+								<Text variant="label">{t`What worked`}</Text>
+								<Text variant="ui" color="ink2">
+									{latest.data.works}
+								</Text>
+								<Text variant="label">{t`What to add`}</Text>
+								<Text variant="ui" color="ink2">
+									{latest.data.strengthen}
+								</Text>
+								<View style={{ flexDirection: "row", gap: 12 }}>
+									<Button
+										label={t`Practice again`}
+										tone="secondary"
+										size="md"
+										grow
+										onPress={() => {
+											setFeedback(false);
+											setAnswer("");
+										}}
+									/>
+									<Button
+										label={t`Next question`}
+										tone="primary"
+										size="md"
+										grow
+										onPress={() => {
+											setFeedback(false);
+											setAnswer("");
+											setIndex((i) => i + 1);
+										}}
+									/>
+								</View>
+							</Card>
+						</View>
+					) : typing ? (
+						<View style={{ paddingHorizontal: layout.screenMargin, gap: 12, paddingBottom: 12 }}>
+							<TextField
+								label={t`Your answer`}
+								value={answer}
+								onChangeText={setAnswer}
+								multiline
+								minHeight={160}
+								autoFocus
+							/>
+							<Button
+								label={t`Get feedback`}
+								tone="primary"
+								size="lg"
+								block
+								disabled={answer.trim().length < 10}
+								onPress={() =>
+									void ai.run("chat", async () => {
+										await practise(answer, "typed");
+										setFeedback(true);
+									})
+								}
+							/>
+						</View>
+					) : (
+						<View style={{ paddingBottom: 8 }}>
+							<Recorder
+								recorded={attempts.length > 0}
+								// Only W4's capture draws the take mid-recording; flows use the real recorder.
+								seeded={take === "storyboard" ? storyboard?.recording : undefined}
+								onFinish={send}
+								onTypeInstead={() => setTyping(true)}
+								notice={ai.failed ? t`Nothing was heard. Try again, or type your answer.` : notice}
+							/>
+						</View>
+					)}
+				</View>
+			</PushScreen>
 			{attemptsOpen ? (
 				<BottomSheet title={t`Your attempts`} height={600} onClose={() => setAttemptsOpen(false)}>
 					<SheetScrollView>
@@ -234,6 +236,6 @@ export function PracticeScreen() {
 					</SheetScrollView>
 				</BottomSheet>
 			) : null}
-		</PushScreen>
+		</>
 	);
 }

@@ -1,0 +1,113 @@
+# J6 · Rows push their workspace screen and Back shows the row's new status (Fit after a check). ⋯ has Edit details,
+# Add interview, Link a resume or letter, Close…, Move to Trash. The hero follows the stage: Saved → Check fit,
+# Applied → Follow up, Offer → Compare offers. Load failure: "Couldn't load this…" with Try again.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J1-KilnSaved?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Kiln Studio
+    timeout: 20000
+- openLink: me.rxresu.storyboard://applications/kiln
+- extendedWaitUntil:
+    visible: Check your fit
+    timeout: 10000
+- assertVisible: Check fit
+- assertVisible: "Fit, Not checked yet"
+- tapOn: "Fit, Not checked yet"
+- extendedWaitUntil:
+    visible: Check this role against your evidence
+    timeout: 10000
+- tapOn:
+    text: Check fit
+    index: 0
+- tapOn:
+    id: first-send-send
+    optional: true
+- extendedWaitUntil:
+    visible: Tailor the resume to this job
+    timeout: 10000
+- extendedWaitUntil:
+    notVisible: Check this role against your evidence
+    timeout: 20000
+- tapOn: Back
+- extendedWaitUntil:
+    visible: "Fit, .* requirements have evidence"
+    timeout: 10000
+# Library pushes too.
+- scrollUntilVisible:
+    element: "Library, .*"
+- tapOn: "Library, .*"
+- extendedWaitUntil:
+    visible: Library
+    timeout: 10000
+- tapOn: Back
+# ⋯ menu.
+- tapOn: More
+- assertVisible: Edit details
+- assertVisible: Add interview
+- assertVisible: Link a resume or letter
+- assertVisible: Close…
+- assertVisible: Move to Trash
+- tapOn: Edit details
+- tapOn:
+    id: edit-role
+- eraseText: 40
+- inputText: Lead product designer
+- tapOn:
+    id: edit-save
+    waitToSettleTimeoutMs: 1
+- assertVisible: Details saved
+- extendedWaitUntil:
+    visible: "Lead product designer.*"
+    timeout: 10000
+- tapOn: More
+- tapOn: Link a resume or letter
+- extendedWaitUntil:
+    visible: "Letter"
+    timeout: 10000
+- tapOn:
+    text: "Letter"
+    index: 0
+    waitToSettleTimeoutMs: 1
+- assertVisible: "Linked “.*”"
+- tapOn: More
+- tapOn:
+    text: Move to Trash
+    waitToSettleTimeoutMs: 1
+- assertVisible: Moved to Trash
+- extendedWaitUntil:
+    visible: Applications
+    timeout: 10000
+# Applied → Follow up; Offer → Compare offers.
+- openLink: me.rxresu.storyboard://applications/fieldnote
+- extendedWaitUntil:
+    visible: Draft a follow-up
+    timeout: 10000
+- assertVisible: Follow up
+- openLink: me.rxresu.storyboard://applications/parcel
+- extendedWaitUntil:
+    visible: Decide on the offer
+    timeout: 10000
+- tapOn: Compare offers
+- extendedWaitUntil:
+    visible: Compare offers
+    timeout: 10000
+# Load failure.
+- openLink: me.rxresu.storyboard://storyboard/J6-LoadError?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Couldn't load this\. Your saved data hasn't changed\.
+    timeout: 20000
+- tapOn: Try again
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000

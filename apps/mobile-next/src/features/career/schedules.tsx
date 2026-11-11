@@ -206,6 +206,7 @@ function ScheduleEditor({ schedule }: ScheduleEditorProps) {
 					<ListRow
 						title={t`Pause`}
 						value={!enabled ? t`Until I turn it back on` : pauseDays ? t`${pauseDays} days` : t`Not paused`}
+						accessibilityLabel={`${t`Pause`}, ${!enabled ? t`Until I turn it back on` : pauseDays ? t`${pauseDays} days` : t`Not paused`}`}
 						trailing="caret"
 						onPress={() => setPause(true)}
 					/>

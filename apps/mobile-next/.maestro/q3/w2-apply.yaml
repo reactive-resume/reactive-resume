@@ -1,0 +1,59 @@
+# W2 · After applying, the resume row opens Versions, where the sent version is kept. Form answers lists question and answer pairs,
+# each with a visible Copy (long-press copies too). Where opens the exact link in the system browser (Safari view);
+# closing it returns here. Before applying it is a checklist with Open the form and Mark as applied; a failed
+# submission says "Couldn't record submission. Try again."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/W2-Answers?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: What you sent
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: "Form answers.*"
+- extendedWaitUntil:
+    visible: Why do you want to work at Lumen\?
+    timeout: 10000
+- tapOn:
+    text: Copy
+    waitToSettleTimeoutMs: 1
+- assertVisible: Copied
+- tapOn: Close
+- tapOn: "Where.*"
+- extendedWaitUntil:
+    visible: Done
+    timeout: 15000
+- tapOn: Done
+- extendedWaitUntil:
+    visible: What you sent
+    timeout: 10000
+- tapOn: "Resume.*"
+- extendedWaitUntil:
+    visible: Versions
+    timeout: 10000
+# Before applying: the checklist.
+- openLink: me.rxresu.storyboard://storyboard/W2-MarkFails?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Before you apply
+    timeout: 20000
+- assertVisible: Open the form
+- assertVisible: "Resume, Ready"
+- tapOn: Mark as applied
+- extendedWaitUntil:
+    visible: What did you send\?
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: sent-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Couldn't record submission\. Try again\.
+- assertVisible: What did you send\?

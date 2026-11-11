@@ -211,7 +211,8 @@ export function StoryScreen() {
 												setDraft(data);
 												setEditing(part);
 											}}
-											accessibilityLabel={t`Edit ${names[part]}`}
+											accessibilityLabel={data[part]}
+											accessibilityHint={t`Edit ${names[part]}`}
 										>
 											<Text variant="prose">{data[part]}</Text>
 										</Touch>

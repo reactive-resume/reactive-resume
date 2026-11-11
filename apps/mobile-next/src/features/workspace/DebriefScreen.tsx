@@ -193,31 +193,33 @@ export function LibraryScreen() {
 	const [open, setOpen] = useState<SavedItem | null>(null);
 	const items = [...ws.items].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 	return (
-		<PushScreen
-			title={t`Library`}
-			subtitle={<PageSubtitle status>{t`Saved briefings, fit results and drafts`}</PageSubtitle>}
-		>
-			<View style={{ paddingTop: 16 }}>
-				{items.length === 0 ? (
-					<View style={{ paddingHorizontal: layout.screenMargin }}>
-						<Text variant="ui" color="ink3">
-							{t`Fit checks, briefings, practice and drafts for this job are kept here.`}
-						</Text>
-					</View>
-				) : (
-					items.map((item, i) => (
-						<ListRow
-							key={item.id}
-							top={i === 0}
-							last={i === items.length - 1}
-							title={itemTitle(item)}
-							secondary={dayMonth(new Date(item.createdAt), ws.zone)}
-							trailing="caret"
-							onPress={() => setOpen(item)}
-						/>
-					))
-				)}
-			</View>
+		<>
+			<PushScreen
+				title={t`Library`}
+				subtitle={<PageSubtitle status>{t`Saved briefings, fit results and drafts`}</PageSubtitle>}
+			>
+				<View style={{ paddingTop: 16 }}>
+					{items.length === 0 ? (
+						<View style={{ paddingHorizontal: layout.screenMargin }}>
+							<Text variant="ui" color="ink3">
+								{t`Fit checks, briefings, practice and drafts for this job are kept here.`}
+							</Text>
+						</View>
+					) : (
+						items.map((item, i) => (
+							<ListRow
+								key={item.id}
+								top={i === 0}
+								last={i === items.length - 1}
+								title={itemTitle(item)}
+								secondary={dayMonth(new Date(item.createdAt), ws.zone)}
+								trailing="caret"
+								onPress={() => setOpen(item)}
+							/>
+						))
+					)}
+				</View>
+			</PushScreen>
 			{open ? (
 				<BottomSheet
 					title={itemTitle(open)}
@@ -234,7 +236,7 @@ export function LibraryScreen() {
 					</SheetScrollView>
 				</BottomSheet>
 			) : null}
-		</PushScreen>
+		</>
 	);
 }
 
