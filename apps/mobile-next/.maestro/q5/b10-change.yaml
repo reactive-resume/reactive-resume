@@ -1,0 +1,32 @@
+# B10 · On a linked resume Change opens the application picker, and a term already covered opens the page preview.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B10-JobMatch?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- assertVisible: "9 of 14"
+- tapOn: Change
+- extendedWaitUntil:
+    visible: Link an application
+    timeout: 10000
+- assertVisible: Lumen
+- scrollUntilVisible:
+    element: "Paste a job posting…"
+    direction: DOWN
+- tapOn: Close
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element: Already covered
+    direction: DOWN
+- scrollUntilVisible:
+    element: Onboarding
+    direction: DOWN
+- tapOn: Onboarding
+- extendedWaitUntil:
+    visible: Page 1 of 1
+    timeout: 10000

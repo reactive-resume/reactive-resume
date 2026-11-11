@@ -1,0 +1,33 @@
+# B2 · An entry left empty elsewhere shows as "Untitled experience" (`preset=untitled` adds one, as the web leaves it);
+# its actions (B21) offer Delete entry, and swiping it toward the start deletes it with "Entry deleted" and Undo.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B2-Section?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://builder/resume-product/section/experience?preset=untitled
+- extendedWaitUntil:
+    visible: Untitled experience
+    timeout: 10000
+- waitForAnimationToEnd
+- longPressOn: Untitled experience
+- extendedWaitUntil:
+    visible: Delete entry
+    timeout: 10000
+- tapOn: Close
+- waitForAnimationToEnd
+# Swipe the third row (Untitled experience) toward the start, past 40% of the row.
+- swipe:
+    start: 350, 366
+    end: 30, 366
+    duration: 600
+- extendedWaitUntil:
+    visible: Entry deleted
+    timeout: 5000
+- assertNotVisible: Untitled experience
+- assertVisible: "2 entries · on page 1.*"

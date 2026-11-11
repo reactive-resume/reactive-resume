@@ -1,0 +1,27 @@
+# B10 · An unlinked resume offers "Link an application…" and "Paste a job posting…"; a pasted posting with no terms
+# says "No terms stood out in this posting."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B9-Check?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Job match
+- extendedWaitUntil:
+    visible: "Link an application…"
+    timeout: 10000
+- assertVisible: "Paste a job posting…"
+- tapOn: "Paste a job posting…"
+- extendedWaitUntil:
+    visible: Match
+    timeout: 10000
+- inputText: "and the of"
+- tapOn: Match
+- extendedWaitUntil:
+    visible: No terms stood out in this posting.
+    timeout: 20000
+- assertVisible: Pasted job posting

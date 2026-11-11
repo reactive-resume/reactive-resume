@@ -1,0 +1,36 @@
+# B3 · An entry without its main field says "Appears on the page once it has a company."; leaving an entry with every
+# field cleared removes it with "Empty entry removed" and Undo, and the toast's Undo brings it back. (The row's removal
+# is proved by b2-untitled's swipe; here the toast's own Undo is what matters.)
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B2-Section?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://builder/resume-product/section/experience?preset=untitled
+- extendedWaitUntil:
+    visible: Untitled experience
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn: Untitled experience
+- extendedWaitUntil:
+    visible: Appears on the page once it has a company.
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+    waitToSettleTimeoutMs: 1000
+- extendedWaitUntil:
+    visible: Empty entry removed
+    timeout: 5000
+# Tap Undo at once (Maestro waits for the running fuse before each command); then check the row was gone and is back.
+- tapOn:
+    id: toast-action
+    waitToSettleTimeoutMs: 1
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: Untitled experience
+    timeout: 5000

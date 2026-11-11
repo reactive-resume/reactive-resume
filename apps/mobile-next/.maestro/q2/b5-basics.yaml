@@ -1,5 +1,5 @@
-# B5 · Change photo opens Take photo, Choose from library and Remove photo; the email field explains a missing domain
-# inline, as the web does; links are tapped to edit and Add link sits at the end.
+# B5 · Change photo opens Take photo, Choose from library and Remove photo; links are tapped to edit and Add link sits
+# at the end. (The email field's inline message is proved by q5/b5-basics.)
 appId: me.rxresu.storyboard
 ---
 - launchApp:
@@ -18,13 +18,6 @@ appId: me.rxresu.storyboard
 - assertVisible: Remove photo
 - tapOn: Close
 - waitForAnimationToEnd
-- tapOn: alex@morgan.design
-- eraseText: 30
-- inputText: "alex@"
-- assertVisible: "Add the domain after the @, like alex@example.com"
-- inputText: "morgan.design"
-- assertNotVisible: "Add the domain after the @, like alex@example.com"
-- hideKeyboard
 - scrollUntilVisible:
     element: Add link
     direction: DOWN

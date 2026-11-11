@@ -1,0 +1,61 @@
+# B4 · The first improvement sent to a connection asks S7 what goes and where, and later ones just send; the arrows
+# ask for another suggestion; a failed request says "Couldn't get a suggestion. Nothing changed." with Try again
+# (`ai=fail`); with no AI connection Improve opens provider setup (`ai=none`).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B4-Improve?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Keep mine
+- tapOn: Improve
+- tapOn: Shorter
+- extendedWaitUntil:
+    visible: "Send to .*\\?"
+    timeout: 10000
+- tapOn:
+    id: first-send-send
+- extendedWaitUntil:
+    visible: "Suggestion · shorter"
+    timeout: 15000
+- tapOn: Try another
+- extendedWaitUntil:
+    visible: "Suggestion · shorter"
+    timeout: 15000
+- assertNotVisible: "Send to .*\\?"
+- tapOn: Keep mine
+- tapOn: Improve
+- tapOn: Stronger verb
+- extendedWaitUntil:
+    visible: "Suggestion · stronger verb"
+    timeout: 15000
+- assertNotVisible: "Send to .*\\?"
+- openLink: me.rxresu.storyboard://builder/resume-product/section/experience/northwind/description?ai=fail
+- extendedWaitUntil:
+    visible: Improve
+    timeout: 10000
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn: Improve
+- tapOn: Shorter
+- extendedWaitUntil:
+    visible: "Couldn't get a suggestion. Nothing changed."
+    timeout: 10000
+- assertVisible:
+    id: haptic-log
+    text: ".*error"
+- assertVisible: Try again
+- openLink: me.rxresu.storyboard://builder/resume-product/section/experience/northwind/description?ai=none
+- extendedWaitUntil:
+    visible: Improve
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn: Improve
+- tapOn: Shorter
+- extendedWaitUntil:
+    visible: Add AI provider
+    timeout: 10000

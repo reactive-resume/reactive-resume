@@ -21,12 +21,12 @@ appId: me.rxresu.storyboard
     text: Restore
     waitToSettleTimeoutMs: 1
 - assertVisible: Restored “Junior designer 2021”
-- assertVisible: Open
-- assertNotVisible:
-    id: trash-resume-junior
+# Tap Open at once: Maestro waits about 3 s for the screen to settle before each command while the toast's fuse runs,
+# so every extra step eats into its 8 s.
 - tapOn:
     text: Open
     waitToSettleTimeoutMs: 1
+    retryTapIfNoChange: false
 - extendedWaitUntil:
     visible: Junior designer 2021
     timeout: 10000

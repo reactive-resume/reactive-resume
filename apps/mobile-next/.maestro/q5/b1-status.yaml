@@ -1,0 +1,20 @@
+# B1 · The status line reads Saved, Saving… or "Offline, kept on this device" (`status=` presets).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B1-Overview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- assertVisible: "Saved · 1 page · Public"
+- openLink: me.rxresu.storyboard://builder/resume-product?status=offline
+- extendedWaitUntil:
+    visible: "Offline, kept on this device · 1 page · Public"
+    timeout: 10000
+- openLink: me.rxresu.storyboard://builder/resume-product?status=saving
+- extendedWaitUntil:
+    visible: "Saving… · 1 page · Public"
+    timeout: 10000
