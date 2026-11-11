@@ -27,8 +27,10 @@ appId: me.rxresu.storyboard
 - tapOn:
     id: revoke-key-0
 - waitForAnimationToEnd
-- tapOn: Revoke key
-- waitForAnimationToEnd
+- tapOn:
+    text: Revoke key
+    waitToSettleTimeoutMs: 1
+# Read the toast at once: waiting for its countdown to settle outlasts it.
 - extendedWaitUntil:
     visible: Key revoked. Apps using it stop working now.
     timeout: 5000
@@ -50,8 +52,8 @@ appId: me.rxresu.storyboard
 - assertVisible: Disconnect “Claude Desktop”?
 - tapOn:
     text: Disconnect
-    index: 1
-- waitForAnimationToEnd
+    below: It loses access now.*
+    waitToSettleTimeoutMs: 1
 - extendedWaitUntil:
     visible: Disconnected “Claude Desktop”.
     timeout: 5000

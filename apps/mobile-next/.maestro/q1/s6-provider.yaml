@@ -47,7 +47,8 @@ appId: me.rxresu.storyboard
 - tapOn:
     id: provider-base-url
 - waitForAnimationToEnd
-- eraseText: 20
+- eraseText: 40
+- hideKeyboard
 - tapOn: Test
 - waitForAnimationToEnd
 - extendedWaitUntil:
@@ -59,15 +60,21 @@ appId: me.rxresu.storyboard
 # Ollama on this phone fails its test; the row and its edit screen say why.
 - tapOn: Add AI provider
 - waitForAnimationToEnd
-- tapOn: Provider
+- tapOn:
+    id: provider-kind
 - waitForAnimationToEnd
+# Ollama is further down the menu.
+- scrollUntilVisible:
+    element: Ollama
+    direction: DOWN
 - tapOn: Ollama
 - waitForAnimationToEnd
 - tapOn:
     id: provider-key
 - waitForAnimationToEnd
 - inputText: local
-- hideKeyboard
+# Return ends the key field (Maestro's hideKeyboard can't close the keyboard over a secure field).
+- pressKey: Enter
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
 - waitForAnimationToEnd
 - tapOn: Test
@@ -81,8 +88,12 @@ appId: me.rxresu.storyboard
 - tapOn:
     id: top-bar-back
 - waitForAnimationToEnd
-- assertVisible: Can't reach localhost:11434
-- tapOn: Test again
+# The new Ollama row (last, under the OpenAI one added above) says what failed; the seeded "Ollama on my Mac" row
+# already fails with localhost.
+- assertVisible: Can't reach ollama.com
+- tapOn:
+    text: Test again
+    below: OpenAI
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible:

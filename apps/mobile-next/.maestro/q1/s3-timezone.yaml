@@ -9,26 +9,34 @@ appId: me.rxresu.storyboard
     visible:
       id: storyboard-ready
     timeout: 30000
-- assertVisible: Berlin · automatic
-- tapOn: Timezone
+- assertVisible: "Timezone, Berlin · automatic"
+- tapOn: "Timezone, .*"
 - waitForAnimationToEnd
 - assertVisible: Use the phone's timezone
 - tapOn:
     id: timezone-search
 - inputText: lisbon
+- pressKey: Enter
 - waitForAnimationToEnd
-- hideKeyboard
-- tapOn: Lisbon
+- tapOn:
+    text: Lisbon
+    below: Use the phone's timezone
 - waitForAnimationToEnd
 - assertVisible: Preferences
-- assertVisible: Lisbon
-- assertNotVisible: Berlin · automatic
-- tapOn: Timezone
+- assertVisible: "Timezone, Lisbon"
+- tapOn: "Timezone, .*"
 - waitForAnimationToEnd
-- assertVisible: Selected
+# The list starts at A; search for the chosen zone to see it marked.
+- tapOn:
+    id: timezone-search
+- inputText: lisbon
+- assertVisible:
+    text: Lisbon
+    below: Use the phone's timezone
+    selected: true
 - tapOn: Use the phone's timezone
 - waitForAnimationToEnd
-- assertVisible: Berlin · automatic
+- assertVisible: "Timezone, Berlin · automatic"
 - openLink: me.rxresu.storyboard://settings/timezone?state=save-error
 - waitForAnimationToEnd
 - tapOn: Use the phone's timezone

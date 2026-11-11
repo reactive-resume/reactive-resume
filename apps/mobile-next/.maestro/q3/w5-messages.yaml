@@ -28,6 +28,7 @@ appId: me.rxresu.storyboard
     start: "195,250"
     end: "195,420"
     duration: 300
+- waitForAnimationToEnd
 - assertVisible: ".*P\\.S\\. Thanks again\\..*"
 - tapOn:
     text: Copy
@@ -66,7 +67,19 @@ appId: me.rxresu.storyboard
 - tapOn: Type your answer instead
 - inputText: They made an offer with a base salary of 70000 a year and 10% bonus.
 - assertVisible: Save these offer terms to compare\. Opens in Career → Offers\.
+# Review it sits under the keyboard: scrolling the form up brings it into view and puts the keyboard away.
+- swipe:
+    start: "195,450"
+    end: "195,250"
+    duration: 300
+- waitForAnimationToEnd
 - tapOn: Review it
+# The first send to this connection asks first; wait for the sheet to rise.
+- extendedWaitUntil:
+    visible:
+      id: first-send-send
+    timeout: 5000
+    optional: true
 - tapOn:
     id: first-send-send
     optional: true

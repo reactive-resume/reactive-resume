@@ -22,14 +22,12 @@ appId: me.rxresu.storyboard
     end: "20%,64%"
     duration: 400
     waitToSettleTimeoutMs: 1
+# Maestro waits about 3.4 s per command while the toast's countdown animates, and the toast lasts 8 s:
+# one check that the row left, then Undo straight away.
 - extendedWaitUntil:
-    visible: Marked done
+    notVisible:
+      id: today-needs-fieldnote
     timeout: 5000
-- assertNotVisible:
-    id: today-needs-fieldnote
-# Let the toast finish rising before tapping its Undo.
-- waitForAnimationToEnd:
-    timeout: 1500
 - tapOn:
     text: Undo
     waitToSettleTimeoutMs: 1
@@ -39,4 +37,13 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: today-needs-fieldnote
+    timeout: 5000
+# Swipe it away again to read the toast's words, which the Undo above had no time for.
+- swipe:
+    start: "85%,64%"
+    end: "20%,64%"
+    duration: 400
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Marked done
     timeout: 5000

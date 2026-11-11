@@ -47,10 +47,11 @@ appId: me.rxresu.storyboard
     direction: DOWN
 - tapOn: Not for me
 - waitForAnimationToEnd
-- extendedWaitUntil:
-    visible: No new roles today. Next run tomorrow, 07:00.
-    timeout: 5000
-# Re-tapping the Today tab scrolls back to the top.
-- tapOn: Today
+- scrollUntilVisible:
+    element: No new roles today. Next run tomorrow, 07:00.
+    direction: DOWN
+# Re-tapping the Today tab scrolls back to the top (the tab, not the collapsed "Today" title above).
+- tapOn:
+    point: "14%,93%"
 - waitForAnimationToEnd
 - assertVisible: Open briefing
