@@ -3,7 +3,7 @@
 //   PushScreen   pushed screens and full-screen modals: bare 56 dp bar, 28/34 title, one line, optional footer
 //   SheetScreen  a route presented as the design-system bottom sheet
 import { t } from "@lingui/core/macro";
-import { useFocusEffect, useIsFocused, useRouter } from "expo-router";
+import { useFocusEffect, useIsFocused, useRouter, useScrollToTop } from "expo-router";
 import { type ReactNode, useCallback, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
@@ -64,6 +64,8 @@ export function TabScreen({
 }) {
 	const collapse = useTitleCollapse();
 	const scroll = useMainScroll();
+	// Re-tapping the selected tab in the dock scrolls back to the top.
+	useScrollToTop(scroll as never);
 	return (
 		<DockScene>
 			<Screen>

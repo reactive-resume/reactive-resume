@@ -53,6 +53,7 @@ export function PreferencesScreen() {
 	const automatic = data?.automaticTimeZone ?? true;
 	// The zone schedules run on: the phone's until it moves without "Move them" (T1's travel notice).
 	const home = data?.homeTimeZone ?? timeZone();
+	const zoneLabel = automatic ? t`${zoneCity(home)} · automatic` : zoneCity(home);
 	const router = useRouter();
 
 	const setTheme = (next: ThemePreference) => {
@@ -105,8 +106,9 @@ export function PreferencesScreen() {
 			/>
 			<ListRow
 				title={t`Timezone`}
-				value={automatic ? t`${zoneCity(home)} · automatic` : zoneCity(home)}
+				value={zoneLabel}
 				trailing="caret"
+				accessibilityLabel={t`Timezone, ${zoneLabel}`}
 				onPress={() => router.push("/settings/timezone")}
 			/>
 			<ListRow

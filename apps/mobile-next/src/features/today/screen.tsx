@@ -500,6 +500,24 @@ export function TodayScreen() {
 								}
 							/>
 						)}
+						{selectingRoles && selectedRoles.length ? (
+							<View style={{ padding: 24 }}>
+								<Button
+									label={t`Not for me`}
+									onPress={() => {
+										void (async () => {
+											try {
+												for (const id of selectedRoles)
+													await actions.write("stories-and-facts", "career.dismissOpportunity", { id });
+												setSelectedRoles([]);
+											} catch {
+												setFailure(true);
+											}
+										})();
+									}}
+								/>
+							</View>
+						) : null}
 						<SectionHeading title={t`Pick up where you left off`} />
 						{documents.data?.slice(0, 3).map((doc, index) => (
 							<ListRow
@@ -527,24 +545,6 @@ export function TodayScreen() {
 							trailing={<TextLink label={t`Undo`} onPress={() => undo(notice.id)} />}
 						/>
 					))}
-				{selectingRoles && selectedRoles.length ? (
-					<View style={{ padding: 24 }}>
-						<Button
-							label={t`Not for me`}
-							onPress={() => {
-								void (async () => {
-									try {
-										for (const id of selectedRoles)
-											await actions.write("stories-and-facts", "career.dismissOpportunity", { id });
-										setSelectedRoles([]);
-									} catch {
-										setFailure(true);
-									}
-								})();
-							}}
-						/>
-					</View>
-				) : null}
 			</TabScreen>
 			{selectedRole ? (
 				<BottomSheet title={selectedRole.role} height={480} onClose={() => setRoleId(undefined)}>

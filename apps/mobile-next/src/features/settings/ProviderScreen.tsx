@@ -37,13 +37,17 @@ export function ProviderScreen() {
 	const { scope } = useDataBackend();
 	const params = useLocalSearchParams<{ id: string }>();
 	const list = useAIProviders();
-	if (list.isPending)
+	// Only the first load shows the skeleton: a refetch under a new key (each storyboard write) must not unmount the
+	// form and drop what was typed.
+	const [loaded, setLoaded] = useState(false);
+	if (list.data && !loaded) setLoaded(true);
+	if (list.isPending && !loaded)
 		return (
 			<PushScreen title={t`AI provider`}>
 				<Skeleton height={480} />
 			</PushScreen>
 		);
-	if (list.isError)
+	if (list.isError && !loaded)
 		return (
 			<PushScreen title={t`AI provider`}>
 				<Button label={t`Retry`} onPress={() => void list.refetch()} />
@@ -213,6 +217,7 @@ function ScopedProviderScreen() {
 						label={t`Provider`}
 						value={AI_PROVIDER_DISPLAY_NAMES[provider]}
 						trailingIcon="caret-down"
+						testID="provider-kind"
 						onPress={() => field.current?.measureInWindow((x, y, width, height) => setPicking({ x, y, width, height }))}
 					/>
 				</View>
@@ -234,7 +239,9 @@ function ScopedProviderScreen() {
 						secureTextEntry
 						autoCapitalize="none"
 						autoCorrect={false}
-						textContentType="password"
+						// An API key isn't an account password. iOS offers Passwords AutoFill and "Save Password?" for any secure
+						// field unless it is marked as a one-time code ("none" still prompts).
+						textContentType="oneTimeCode"
 						accessibilityHint={existing ? t`Leave empty to keep the saved key` : undefined}
 						error={keyError}
 						testID="provider-key"

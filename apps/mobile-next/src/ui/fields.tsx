@@ -233,7 +233,14 @@ export function TextField({
 				</Text>
 			) : null}
 			{onPress ? (
-				<Touch onPress={onPress} feedback="none" accessibilityLabel={label ?? ""} accessibilityHint={value ?? ""}>
+				<Touch
+					onPress={onPress}
+					feedback="none"
+					accessibilityLabel={label ?? ""}
+					// The chosen value is the field's value, read after its label (a hint is only read after a pause, if at all).
+					accessibilityValue={{ text: value ?? "" }}
+					testID={input.testID}
+				>
 					{field}
 				</Touch>
 			) : (

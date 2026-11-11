@@ -72,6 +72,7 @@ export function TimezoneScreen() {
 				secondary={zoneCity(phone)}
 				trailing={automatic ? <Text variant="ui" color="accentText">{t`On`}</Text> : undefined}
 				top
+				accessibilityState={{ selected: automatic }}
 				onPress={() => void choose(null)}
 			/>
 			{matches.map((zone, i) => (
@@ -83,6 +84,7 @@ export function TimezoneScreen() {
 						!automatic && zone === home ? <Text variant="ui" color="accentText">{t`Selected`}</Text> : undefined
 					}
 					last={i === matches.length - 1}
+					accessibilityState={{ selected: !automatic && zone === home }}
 					onPress={() => void choose(zone)}
 				/>
 			))}

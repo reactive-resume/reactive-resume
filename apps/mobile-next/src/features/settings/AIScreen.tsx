@@ -90,6 +90,8 @@ export function AIScreen() {
 						key={provider.id}
 						title={provider.label}
 						secondary={secondary}
+						// The second line (model, or what failed) is read after the name.
+						accessibilityValue={secondary}
 						secondaryColor={!ok && provider.testStatus !== "untested" ? "dangerText" : "ink3"}
 						leading={<IconTile icon={isLocal(host) ? "desktop" : "sparkle"} accent={ok && !isLocal(host)} />}
 						trailing={
@@ -103,6 +105,8 @@ export function AIScreen() {
 								)}
 							</SwapIn>
 						}
+						// Test again is its own button for assistive tech.
+						trailingAction={!ok && !isTesting}
 						last={i === list.length - 1}
 						onPress={provider.managed ? undefined : () => router.push(`/settings/ai/providers/${provider.id}`)}
 					/>
