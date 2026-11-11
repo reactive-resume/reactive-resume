@@ -247,6 +247,23 @@ async function trustFirstPartyClient(client: Record<string, unknown>) {
 }
 
 /**
+ * Consent is skipped only while the app callback is a client's single redirect. A client whose redirects were
+ * changed afterwards asks for consent like any other.
+ */
+async function revokeMisplacedTrust(clientId: string) {
+	await db
+		.update(schema.oauthClient)
+		.set({ skipConsent: false })
+		.where(
+			and(
+				eq(schema.oauthClient.clientId, clientId),
+				eq(schema.oauthClient.skipConsent, true),
+				sql`${schema.oauthClient.redirectUris} <> ARRAY[${FIRST_PARTY_APP_CALLBACK}]::text[]`,
+			),
+		);
+}
+
+/**
  * A grant without the consent screen still needs a consent row: tokens carry its ID, Connected apps lists it and
  * disconnecting deletes it. Only a new code records one, so a refresh can't bring back a disconnected grant.
  */
@@ -802,6 +819,8 @@ const getAuthConfig = () => {
 					const isFormPost =
 						ctx.request?.method === "POST" && new URL(ctx.request.url).pathname.endsWith("/oauth2/authorize");
 					const params = (isFormPost ? ctx.body : ctx.query) as Record<string, unknown> | undefined;
+					// The provider reads the client after this hook, so a client that no longer qualifies meets the consent screen.
+					if (typeof params?.client_id === "string") await revokeMisplacedTrust(params.client_id);
 					if (!params?.resource) {
 						const redirect = await missingResourceRedirect(params);
 						if (redirect) throw ctx.redirect(redirect);
@@ -975,6 +994,10 @@ const getAuthConfig = () => {
 				const payload = ctx.context.returned as JWTPayload | undefined;
 				if (ctx.path === "/oauth2/register" && payload) {
 					await trustFirstPartyClient(payload);
+					return;
+				}
+				if (ctx.path === "/oauth2/update-client" && payload && typeof payload.client_id === "string") {
+					await revokeMisplacedTrust(payload.client_id);
 					return;
 				}
 				if (ctx.path === "/oauth2/public-client-prelogin" && payload && typeof payload.client_id === "string") {
