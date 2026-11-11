@@ -370,17 +370,28 @@ export function Composer({
 			>
 				<Ring color="controlBorder" radius={radius.xl} />
 				<View ref={textRef} collapsable={false}>
+					{/* The placeholder is drawn here, not by the input: iOS appends an input's placeholder to its label, which
+					    named the composer "Ask about this resume… Ask about this resume…" and nothing could find it. */}
+					{value ? null : (
+						<View
+							pointerEvents="none"
+							style={{ position: "absolute", top: 0, left: 0, right: 0 }}
+							importantForAccessibility="no-hide-descendants"
+							accessibilityElementsHidden
+						>
+							<Text variant="body" color="ink3" tag={false} accessible={false}>
+								{placeholder}
+							</Text>
+						</View>
+					)}
 					<TextInput
 						value={value}
 						onChangeText={onChangeText}
-						placeholder={placeholder}
-						placeholderTextColor={colors.ink3}
+						accessibilityLabel={placeholder}
 						multiline
 						autoFocus={!!autoFocus}
 						caretHidden={STORYBOARD}
 						selectionColor={colors.accent}
-						// No accessibilityLabel: iOS reads the placeholder after any label, and repeating the placeholder as the
-						// label named the field "Ask about this resume… Ask about this resume…", which nothing could find.
 						testID="composer-input"
 						style={[
 							multiLine(typeScale.body),
