@@ -71,7 +71,9 @@ export function EntryActionsSheet() {
 					router.back();
 					const action = after.current;
 					after.current = null;
-					action?.();
+					// A frame later, once the sheet's pop has landed: popping B3 in the same tick left B2 deaf to its next tap
+					// (the status line's Undo after Delete entry).
+					if (action) requestAnimationFrame(action);
 				}}
 			>
 				{/* B21: the first row starts 8 dp under the header. */}
