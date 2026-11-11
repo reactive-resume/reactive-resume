@@ -155,6 +155,7 @@ export const scenarios: Record<string, Scenario> = {
 			});
 		},
 	},
+	"J3-Empty": { hrefs: [`${tab}?view=calendar&day=2026-11-10`], prepare: noApplications },
 	"J2-Board": { hrefs: [`${tab}?view=board&stage=interview`], prepare: () => seedApplications() },
 	"J3-Calendar": { hrefs: [`${tab}?view=calendar&day=2026-11-10`], prepare: () => seedApplications() },
 	// The shared seed already carries J4's 18 sent applications; seedApplications' J6 history would add an interview.

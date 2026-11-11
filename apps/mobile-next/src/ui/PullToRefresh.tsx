@@ -8,9 +8,9 @@
 // ponytail: iOS top bounce is off inside this view (the pan owns the pull); bottom overscroll stays native on Android.
 // The title collapse is unaffected: it reads offsets past 40 dp, and bounce only ever produced negative ones.
 import { t } from "@lingui/core/macro";
-import { type ReactElement, type ReactNode, type Ref, useEffect } from "react";
+import { createContext, type ReactElement, type ReactNode, type Ref, useEffect } from "react";
 import { type AccessibilityActionEvent, Platform, type ScrollViewProps, StyleSheet, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { Gesture, GestureDetector, type GestureType } from "react-native-gesture-handler";
 import Animated, {
 	runOnJS,
 	type SharedValue,
@@ -24,6 +24,9 @@ import { enter, hapticOnUI, release } from "./motion";
 import { Spinner } from "./Spinner";
 import { Text } from "./Text";
 import { motion } from "./tokens";
+
+/** The pull's pan, for a vertical gesture inside the list that must win over it (J3's strip, pulled down to expand). */
+export const PullGesture = createContext<GestureType | null>(null);
 
 const ARM = 64;
 const HOLD = 44;
@@ -139,13 +142,15 @@ export function PullToRefresh({
 			</Animated.View>
 			<GestureDetector gesture={pan}>
 				<GestureDetector gesture={native}>
-					{renderList ? (
-						renderList({ ...shared, style: content })
-					) : (
-						<Animated.ScrollView {...scrollProps} {...shared} ref={scrollRef}>
-							<Animated.View style={content}>{children}</Animated.View>
-						</Animated.ScrollView>
-					)}
+					<PullGesture.Provider value={pan}>
+						{renderList ? (
+							renderList({ ...shared, style: content })
+						) : (
+							<Animated.ScrollView {...scrollProps} {...shared} ref={scrollRef}>
+								<Animated.View style={content}>{children}</Animated.View>
+							</Animated.ScrollView>
+						)}
+					</PullGesture.Provider>
 				</GestureDetector>
 			</GestureDetector>
 		</View>

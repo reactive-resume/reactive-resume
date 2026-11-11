@@ -1,0 +1,77 @@
+# J3 · Times show in the Preferences zone, named once above the strip ("Berlin time"). ‹ and › move a week, and so
+# does swiping the strip; Month expands the strip to a month grid and Week folds it, as does pulling the strip down.
+# Tapping a day jumps the agenda to it; tapping an item opens its screen. Empty: "Nothing scheduled yet".
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J3-Calendar?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Lumen · Technical interview
+    timeout: 20000
+- waitForAnimationToEnd
+- assertVisible: "9–15 Nov.*"
+- assertVisible: ".*Berlin time"
+# Tap a day: the agenda starts there (Friday's deadline first; Tuesday's interview is gone).
+- tapOn: Friday 13 November
+- assertVisible: Parcel & Co. · Offer deadline
+- assertNotVisible: Lumen · Technical interview
+# › and ‹ move a week.
+- tapOn: Next week
+- extendedWaitUntil:
+    visible: "16–22 Nov.*"
+    timeout: 5000
+- tapOn: Previous week
+- extendedWaitUntil:
+    visible: "9–15 Nov.*"
+    timeout: 5000
+# Swiping the strip pages a week too.
+- swipe:
+    start: "330,272"
+    end: "40,272"
+    duration: 300
+- extendedWaitUntil:
+    visible: "16–22 Nov.*"
+    timeout: 5000
+- tapOn: Previous week
+- extendedWaitUntil:
+    visible: "9–15 Nov.*"
+    timeout: 5000
+# Month expands to the grid; Week folds it.
+- tapOn: Month
+- extendedWaitUntil:
+    visible: "November 2026.*"
+    timeout: 5000
+- assertVisible: Monday 30 November
+- tapOn: Week
+- extendedWaitUntil:
+    visible: "9–15 Nov.*"
+    timeout: 5000
+- assertNotVisible: Monday 30 November
+# Pulling the strip down expands it as well.
+- swipe:
+    start: "195,265"
+    end: "195,500"
+    duration: 500
+- extendedWaitUntil:
+    visible: "November 2026.*"
+    timeout: 5000
+- tapOn: Week
+# Tap an item → its screen.
+- tapOn: Tuesday 10 November
+- tapOn: Lumen · Technical interview
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000
+- openLink: me.rxresu.storyboard://storyboard/J3-Empty?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Nothing scheduled yet\. Add screening calls and technical interviews to see them here and on the calendar\.
+    timeout: 20000

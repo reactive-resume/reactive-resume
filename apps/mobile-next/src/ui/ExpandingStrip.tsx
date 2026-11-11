@@ -3,7 +3,7 @@
 // on the open grid), releasing with release(): open past half way or on a downward fling faster than 500 dp/s,
 // closed past half way up or on an upward one. No haptic (J3's `selection` belongs to day changes and week snaps).
 // `children` gets the 0 → 1 progress to crossfade the week row into the month grid.
-import { type ReactNode, type Ref, useEffect, useImperativeHandle } from "react";
+import { type ReactNode, type Ref, useContext, useEffect, useImperativeHandle } from "react";
 import { StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -16,6 +16,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { curve, enter, release, rubberBand } from "./motion";
+import { PullGesture } from "./PullToRefresh";
 import { motion } from "./tokens";
 
 const FLING = 500;
@@ -108,7 +109,8 @@ export function ExpandingStrip({
 		release: (vy) => releaseAt(vy),
 	}));
 
-	const pan = Gesture.Pan()
+	const pull = useContext(PullGesture);
+	const strip = Gesture.Pan()
 		.activeOffsetY([-10, 10])
 		.failOffsetX([-12, 12])
 		.onBegin(() => {
@@ -117,6 +119,8 @@ export function ExpandingStrip({
 		})
 		.onUpdate((e) => pullTo(e.translationY))
 		.onEnd((e) => releaseAt(e.velocityY));
+	// Pulling the strip down expands it; the screen's pull to refresh waits until the strip's pan fails.
+	const pan = pull ? strip.blocksExternalGesture(pull) : strip;
 
 	const progress = useDerivedValue(() => (span > 0 ? (h.value - collapsedHeight) / span : 0));
 	const style = useAnimatedStyle(() => ({ height: h.value }));
