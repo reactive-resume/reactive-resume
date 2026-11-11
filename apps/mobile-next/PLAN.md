@@ -297,23 +297,13 @@ from the worktree's repo root. Commit your work in your worktree with a Conventi
 screen; each remaining difference with its cause; every request to the lead; behaviour bullets from `SCREENS.md` you
 did not implement and why; questions about direction.
 
-### Simulators (from 2026-11-10)
+### Simulator (from 2026-11-11)
 
-Four iPhone 14 simulators exist, all with the storyboard debug app installed. A brief that names a simulator UDID gives
-that agent the simulator for itself: use that UDID wherever the guide says `U=…`, and skip the lock. Only slot 1
-(`CD4BE437-2AEC-4FB8-8CB6-5D00E08188AE`) is shared and still needs `/tmp/rr-device.lock`.
-
-| Slot             | UDID                                   |
-| ---------------- | -------------------------------------- |
-| 1 (shared, lock) | `CD4BE437-2AEC-4FB8-8CB6-5D00E08188AE` |
-| 2                | `BA09A98F-9DA9-496B-8315-F09946A54759` |
-| 3                | `2497804D-9672-425A-935E-083CC064C6DC` |
-| 4                | `DB7E3620-BA54-4DB3-8DE6-1681AACE8E64` |
-
-Captures on slots 2 to 4 run at the same time as others only with their own dump port, because the bundle's capture
-script listens on one fixed port. Run it as
-`RR_CAPTURE_PORT=<port> node --import ./scripts/capture-port.mjs $B/tools/rn_capture.mjs screens …` from the app folder:
-slot 2 → 8800, slot 3 → 8801, slot 4 → 8802 (slot 1 keeps 8799 and needs no preload). The tool itself is unchanged.
+Exactly one simulator runs at a time, machine-wide: iPhone 14 slot 3, `2497804D-9672-425A-935E-083CC064C6DC`. Use that
+UDID wherever the guide says `U=…`. Never boot another simulator, and never run the Android emulator while it is
+booted. Every agent that touches the device takes `/tmp/rr-device.lock` first and runs one install, Maestro flow or
+capture at a time. One Metro only (port 8081) and one shared build directory; no per-agent builds. Captures use the
+default port 8799.
 
 ### Android
 
@@ -322,5 +312,4 @@ Gradle needs JDK 17 (`~/.gradle/jdks/eclipse_adoptium-17-aarch64-os_x.2/jdk-17*/
 `.so` files (`pnpm --filter @reactive-resume/forme-native build:native`, or copy
 `packages/forme-native/android/src/main/jniLibs` from a checkout that has them; the folder is git-ignored). A first
 install shows two prompts to dismiss: the dev client's nearby-devices permission and the developer-menu introduction.
-While iOS captures use port 8799, run Android captures on their own port: `adb reverse tcp:8800 tcp:8803`, then
-`RR_CAPTURE_PORT=8803 node --import ./scripts/capture-port.mjs $B/tools/rn_capture.mjs screens --platform android …`.
+Shut the iOS simulator down before booting the emulator, and the reverse.
