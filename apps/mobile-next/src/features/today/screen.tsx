@@ -191,7 +191,7 @@ export function TodayScreen() {
 						<IconButton icon="magnifying-glass" label={t`Search`} onPress={() => router.push("/search")} />
 					)
 				}
-				refreshing={today.applications.isRefetching}
+				refreshing={today.applications.isRefetching && !today.applications.isPlaceholderData}
 				onRefresh={refresh}
 			>
 				{today.connectivity.offline || preset === "offline" ? (

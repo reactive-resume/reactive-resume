@@ -117,7 +117,7 @@ export function ApplicationsScreen() {
 			title={t`Applications`}
 			actions={<ApplicationsActions />}
 			avatar={<SettingsAvatar />}
-			refreshing={applications.isRefetching}
+			refreshing={applications.isRefetching && !applications.isPlaceholderData}
 			onRefresh={() => void applications.refetch()}
 			footer={view === "list" ? selectBar : null}
 			overlay={overlay}

@@ -120,7 +120,7 @@ function ScopedLibraryScreen() {
 			<TabScreen
 				title={t`Documents`}
 				avatar={<AccountAvatar />}
-				refreshing={documents.isRefetching}
+				refreshing={documents.isRefetching && !documents.isPlaceholderData}
 				onRefresh={() => {
 					void documents.refetch();
 				}}

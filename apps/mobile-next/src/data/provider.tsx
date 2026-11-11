@@ -63,6 +63,11 @@ export function useResource<K extends Resource>(resource: K, input: ResourceInpu
 	return useQuery<ResourceOutput<K>>({
 		queryKey: [scope, resource, input, backend.kind === "fake" ? generation : 0],
 		queryFn: ({ signal }) => backend.read(resource, input, signal),
+		// Every fake write bumps the generation: keep showing the same resource's data while it reloads, as a real
+		// refetch would, so a screen that waits for data doesn't remount and lose its state. Pull-to-refresh lists
+		// show their spinner only for a real refetch (`isPlaceholderData` is true meanwhile).
+		placeholderData: (previous, query) =>
+			JSON.stringify(query?.queryKey.slice(0, 3)) === JSON.stringify([scope, resource, input]) ? previous : undefined,
 		enabled: enabled && (scope !== null || resource === "publicResume" || resource === "feedbackView"),
 		meta: { persist: scope !== null && backend.kind === "real" },
 	});
