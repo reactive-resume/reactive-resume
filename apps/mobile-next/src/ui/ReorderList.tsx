@@ -44,6 +44,8 @@ export type ReorderListProps<T> = {
 	/** The scroll view the list sits in, for auto-scroll: its ref, live offset and window top and height. */
 	scroll?: { ref: AnimatedRef<Animated.ScrollView>; offset: SharedValue<number>; top: number; height: number };
 	label?: (item: T) => string;
+	/** A hold released without moving (B2: the entry's actions, B21). `light` plays as it fires. */
+	onHold?: (item: T) => void;
 	ref?: Ref<ReorderHandle>;
 };
 
@@ -71,7 +73,16 @@ export function reorderSlots(
 	return { next, passed: Math.abs(target - current) };
 }
 
-type Drag = { key: string; startSlot: number; startTop: number; dy: number; scrolled: number; fingerY: number } | null;
+// `by`: the gesture that lifted the row (the handle's or the row's hold); only it moves and drops it.
+type Drag = {
+	key: string;
+	by: string;
+	startSlot: number;
+	startTop: number;
+	dy: number;
+	scrolled: number;
+	fingerY: number;
+} | null;
 
 const MAX_SCROLL = 14; // dp per frame at the very edge
 
@@ -83,6 +94,7 @@ export function ReorderList<T>({
 	onReorder,
 	scroll,
 	label,
+	onHold,
 	ref,
 }: ReorderListProps<T>) {
 	const keys = data.map(keyOf);
@@ -92,7 +104,13 @@ export function ReorderList<T>({
 	// gesture lands (a reaction in the row would start it a frame later). Only one row is lifted at a time.
 	const liftedKey = useSharedValue<string | null>(null);
 	const liftProgress = useSharedValue(0);
+	// The row whose hold just ended without a move: it settles back without `rigid`.
+	const quiet = useSharedValue<string | null>(null);
 	const n = keys.length;
+	const hold = (key: string) => {
+		const item = data[keys.indexOf(key)];
+		if (item !== undefined) onHold?.(item);
+	};
 
 	// A new order from the parent (after onReorder) already matches the slots; anything else resets them.
 	const signature = keys.join("|");
@@ -100,10 +118,11 @@ export function ReorderList<T>({
 		slots.set(Object.fromEntries(signature.split("|").map((k, i) => [k, i])));
 	}, [signature, slots]);
 
-	const lift = (key: string) => {
+	const lift = (key: string, by = "api") => {
 		"worklet";
+		if (drag.value) return;
 		const slot = slots.value[key] ?? 0;
-		drag.set({ key, startSlot: slot, startTop: slot * itemHeight, dy: 0, scrolled: 0, fingerY: -1 });
+		drag.set({ key, by, startSlot: slot, startTop: slot * itemHeight, dy: 0, scrolled: 0, fingerY: -1 });
 		liftedKey.set(key);
 		liftProgress.set(withTiming(1, enter(motion.d1)));
 		hapticOnUI("medium");
@@ -117,18 +136,23 @@ export function ReorderList<T>({
 		for (let i = 0; i < passed; i++) hapticOnUI("selection");
 	};
 
-	const dragBy = (key: string, dy: number) => {
+	const dragBy = (key: string, dy: number, by = "api") => {
 		"worklet";
 		const d = drag.value;
-		if (!d || d.key !== key) return;
+		if (!d || d.key !== key || d.by !== by) return;
 		drag.set({ ...d, dy });
 		moveTo(key, d.startTop + dy + d.scrolled);
 	};
 
-	const drop = (key: string) => {
+	const drop = (key: string, by = "api", still = false) => {
 		"worklet";
 		const d = drag.value;
-		if (!d || d.key !== key) return;
+		if (!d || d.key !== key || d.by !== by) return;
+		if (still && by === "hold" && onHold) {
+			quiet.set(key);
+			hapticOnUI("light");
+			runOnJS(hold)(key);
+		}
 		drag.set(null);
 		liftProgress.set(withTiming(0, enter(motion.d1)));
 		const to = slots.value[key] ?? d.startSlot;
@@ -147,7 +171,12 @@ export function ReorderList<T>({
 		onReorder(from, to);
 	};
 
-	useImperativeHandle(ref, () => ({ lift, dragBy, drop, moveBy }));
+	useImperativeHandle(ref, () => ({
+		lift: (key) => lift(key),
+		dragBy: (key, dy) => dragBy(key, dy),
+		drop: (key) => drop(key),
+		moveBy,
+	}));
 
 	// Auto-scroll while the finger is in the outer 8% of the scroll view.
 	useFrameCallback(() => {
@@ -186,6 +215,8 @@ export function ReorderList<T>({
 						dragBy={dragBy}
 						drop={drop}
 						moveBy={moveBy}
+						quiet={quiet}
+						onHold={onHold ? hold : undefined}
 						label={label?.(item)}
 						render={(handle) => renderItem(item, { index, handle })}
 					/>
@@ -208,6 +239,8 @@ function Row({
 	dragBy,
 	drop,
 	moveBy,
+	quiet,
+	onHold,
 	label,
 	render,
 }: {
@@ -219,10 +252,12 @@ function Row({
 	drag: SharedValue<Drag>;
 	liftedKey: SharedValue<string | null>;
 	liftProgress: SharedValue<number>;
-	lift: (key: string) => void;
-	dragBy: (key: string, dy: number) => void;
-	drop: (key: string) => void;
+	lift: (key: string, by?: string) => void;
+	dragBy: (key: string, dy: number, by?: string) => void;
+	drop: (key: string, by?: string, still?: boolean) => void;
 	moveBy: (key: string, step: -1 | 1) => void;
+	quiet: SharedValue<string | null>;
+	onHold: ((key: string) => void) | undefined;
 	label: string | undefined;
 	render: (handle: (children: ReactNode) => ReactNode) => ReactNode;
 }) {
@@ -247,7 +282,8 @@ function Row({
 			const remaining = target - top.value;
 			top.set(
 				withTiming(target, release(remaining, itemHeight), (done) => {
-					if (done) hapticOnUI("rigid");
+					if (quiet.value === id) quiet.set(null);
+					else if (done) hapticOnUI("rigid");
 				}),
 			);
 		},
@@ -261,14 +297,16 @@ function Row({
 	);
 
 	const pan = (immediate: boolean) => {
+		const by = immediate ? "handle" : "hold";
 		const g = Gesture.Pan()
-			.onStart(() => lift(id))
+			.onStart(() => lift(id, by))
 			.onUpdate((e) => {
 				const d = drag.value;
-				if (d) drag.set({ ...d, fingerY: e.absoluteY });
-				dragBy(id, e.translationY);
+				if (d?.by !== by) return;
+				drag.set({ ...d, fingerY: e.absoluteY });
+				dragBy(id, e.translationY, by);
 			})
-			.onFinalize(() => drop(id));
+			.onFinalize((e) => drop(id, by, Math.hypot(e.translationX, e.translationY) < 10));
 		return immediate ? g.minDistance(0) : g.activateAfterLongPress(500);
 	};
 
@@ -280,8 +318,11 @@ function Row({
 	const shadow = useAnimatedStyle(() => ({ opacity: liftedKey.value === id ? liftProgress.value : 0 }));
 
 	const slot = index; // accessibility actions use the data order
+	// One lift per drag: a slow drag by the handle also sets off the row's 500 ms hold, which lift() ignores.
+	const hold = pan(false);
+	const byHandle = pan(true);
 	return (
-		<GestureDetector gesture={pan(false)}>
+		<GestureDetector gesture={hold}>
 			<Animated.View
 				style={[styles.row, { height: itemHeight }, style]}
 				accessible={!!label}
@@ -289,8 +330,13 @@ function Row({
 				accessibilityActions={[
 					...(slot > 0 ? [{ name: "moveUp", label: t`Move up` }] : []),
 					...(slot < count - 1 ? [{ name: "moveDown", label: t`Move down` }] : []),
+					...(onHold ? [{ name: "longpress" }] : []),
 				]}
-				onAccessibilityAction={(e) => moveBy(id, e.nativeEvent.actionName === "moveUp" ? -1 : 1)}
+				onAccessibilityAction={(e) => {
+					const name = e.nativeEvent.actionName;
+					if (name === "longpress") onHold?.(id);
+					else moveBy(id, name === "moveUp" ? -1 : 1);
+				}}
 			>
 				<Animated.View
 					pointerEvents="none"
@@ -298,7 +344,7 @@ function Row({
 				/>
 				<View style={[StyleSheet.absoluteFill, { backgroundColor: colors.bg }]}>
 					{render((children) => (
-						<GestureDetector gesture={pan(true)}>{children as ReactElement}</GestureDetector>
+						<GestureDetector gesture={byHandle}>{children as ReactElement}</GestureDetector>
 					))}
 				</View>
 			</Animated.View>

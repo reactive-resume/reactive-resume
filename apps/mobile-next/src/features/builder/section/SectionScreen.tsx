@@ -44,7 +44,6 @@ function EntryRow({
 	entry,
 	locked,
 	onOpen,
-	onHold,
 	last,
 }: {
 	data: ResumeData;
@@ -54,7 +53,6 @@ function EntryRow({
 	/** The list's last entry: no rule under it, and nothing of its own in the dump (the boards' borderless rows). */
 	last: boolean;
 	onOpen: () => void;
-	onHold: () => void;
 }) {
 	const meta = sectionMeta[section.type];
 	const empty = isEmptyEntry(entry);
@@ -70,7 +68,6 @@ function EntryRow({
 				last={last}
 				boxHidden={last}
 				onPress={onOpen}
-				{...(locked ? {} : { onLongPress: onHold })}
 			/>
 		</View>
 	);
@@ -223,6 +220,10 @@ export function SectionScreen() {
 						keyOf={(entry) => entry.id}
 						itemHeight={ROW}
 						label={(entry) => entryTitle(section.type, entry) || meta.untitled()}
+						// Press and hold lifts the row; let go without moving for its actions (B21).
+						{...(locked
+							? {}
+							: { onHold: (entry: (typeof entries)[number]) => router.push(`${base}/${entry.id}/actions?from=hold`) })}
 						onReorder={(from, to) =>
 							editResume((d) => {
 								const list = getEntries(d, section);
@@ -238,7 +239,6 @@ export function SectionScreen() {
 								last={index === entries.length - 1}
 								locked={locked}
 								onOpen={() => router.push(`${base}/${entry.id}`)}
-								onHold={() => router.push(`${base}/${entry.id}/actions?from=hold`)}
 							/>
 						)}
 					/>
