@@ -199,6 +199,8 @@ export type ListRowProps = {
 	accessibilityHint?: string | undefined;
 	accessibilityRole?: "button" | "switch" | "link" | "radio" | "checkbox";
 	accessibilityState?: { checked?: boolean | undefined; selected?: boolean | undefined };
+	/** The value the row shows at its end, read after the title. */
+	accessibilityValue?: string | undefined;
 	testID?: string | undefined;
 	/** Inside a scroll view rows wait 50 ms before washing so a scroll never flashes them. */
 	washDelay?: number | undefined;
@@ -243,6 +245,7 @@ export function ListRow({
 	accessibilityHint,
 	accessibilityRole = "button",
 	accessibilityState,
+	accessibilityValue,
 	testID,
 	washDelay = 50,
 	children,
@@ -328,6 +331,7 @@ export function ListRow({
 			accessibilityLabel={accessibilityLabel ?? title}
 			{...(accessibilityHint || secondary ? { accessibilityHint: accessibilityHint ?? secondary ?? "" } : {})}
 			{...(accessibilityState ? { accessibilityState } : {})}
+			{...(accessibilityValue ? { accessibilityValue: { text: accessibilityValue } } : {})}
 			{...(testID ? { testID } : {})}
 			{...(trailingAction ? { accessible: false } : {})}
 			style={{ paddingHorizontal: layout.screenMargin }}

@@ -269,6 +269,8 @@ export type TouchableProps = {
 	accessibilityLabel?: string | undefined;
 	accessibilityHint?: string | undefined;
 	accessibilityState?: AccessibilityState | undefined;
+	/** The current value a row shows (B6's "Onyx", "Classic · 11 pt"), read after the label. */
+	accessibilityValue?: { text: string } | undefined;
 	/** false when the content holds its own control that screen readers must reach (ListRow `trailingAction`). */
 	accessible?: boolean | undefined;
 	testID?: string | undefined;
@@ -315,6 +317,7 @@ export function Touchable({
 	accessibilityLabel,
 	accessibilityHint,
 	accessibilityState,
+	accessibilityValue,
 	accessible = true,
 	testID,
 	hitSlop,
@@ -374,6 +377,7 @@ export function Touchable({
 				accessibilityLabel={accessibilityLabel}
 				accessibilityHint={accessibilityHint}
 				accessibilityState={{ disabled, ...accessibilityState }}
+				{...(accessibilityValue ? { accessibilityValue } : {})}
 				accessibilityActions={onLongPress ? [{ name: "longpress", label: "Actions" }] : undefined}
 				onAccessibilityAction={(e) => e.nativeEvent.actionName === "longpress" && longPress()}
 				onAccessibilityTap={press}

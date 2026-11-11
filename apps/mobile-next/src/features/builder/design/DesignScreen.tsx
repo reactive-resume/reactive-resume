@@ -2,7 +2,7 @@
 // Colour → B7, Typography and Page → their pickers, Layout → B8; then Photo and Reset design defaults.
 import { t } from "@lingui/core/macro";
 import { useRouter } from "expo-router";
-import { type ReactNode, useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { templateLayouts } from "@reactive-resume/schema/templates";
@@ -51,8 +51,21 @@ export function DesignScreen() {
 	const margins = matchMargins(m);
 	const columns = templateLayouts[m.template].columns === 2 && m.layout.pages.some((page) => !page.fullWidth) ? 2 : 1;
 	const go = (path: string) => (locked ? undefined : () => router.push(`/builder/${id}/${path}` as never));
-	const row = (title: string, value: ReactNode, onPress: (() => void) | undefined, last = false) => (
-		<ListRow title={title} trailing={value} onPress={onPress ?? (() => {})} disabled={locked} last={last} />
+	const row = (
+		title: string,
+		value: string | null,
+		onPress: (() => void) | undefined,
+		last = false,
+		swatch?: string,
+	) => (
+		<ListRow
+			title={title}
+			trailing={value === null ? null : <RowValue swatch={swatch}>{value}</RowValue>}
+			accessibilityValue={value ?? undefined}
+			onPress={onPress ?? (() => {})}
+			disabled={locked}
+			last={last}
+		/>
 	);
 	return (
 		<BuilderScreen
@@ -108,24 +121,22 @@ export function DesignScreen() {
 		>
 			<BuilderPageBand id={id} variant="design" />
 			<View style={{ height: 8 }} />
-			{row(t`Template`, <RowValue>{templateName(m.template)}</RowValue>, go("design/template"))}
-			{row(t`Colour`, <RowValue swatch={accent.hex}>{accent.name}</RowValue>, go("design/template"))}
+			{row(t`Template`, templateName(m.template), go("design/template"))}
+			{row(t`Colour`, accent.name, go("design/template"), false, accent.hex ?? undefined)}
 			{row(
 				t`Typography`,
-				<RowValue>{`${pairing ? pairing.label() : m.typography.body.fontFamily} · ${points(m.typography.body.fontSize)}`}</RowValue>,
+				`${pairing ? pairing.label() : m.typography.body.fontFamily} · ${points(m.typography.body.fontSize)}`,
 				go("design/typography"),
 			)}
 			{row(
 				t`Page`,
-				<RowValue>
-					{[PAPER[m.page.format](), margins ? MARGINS[margins].value() : null].filter(Boolean).join(" · ")}
-				</RowValue>,
+				[PAPER[m.page.format](), margins ? MARGINS[margins].value() : null].filter(Boolean).join(" · "),
 				go("design/page"),
 			)}
-			{row(t`Layout`, <RowValue>{columns === 1 ? t`One column` : t`Two columns`}</RowValue>, go("design/layout"))}
+			{row(t`Layout`, columns === 1 ? t`One column` : t`Two columns`, go("design/layout"))}
 			{row(
 				t`Photo`,
-				<RowValue>{data.picture.hidden || !data.picture.url ? t`Hidden` : t`Shown`}</RowValue>,
+				data.picture.hidden || !data.picture.url ? t`Hidden` : t`Shown`,
 				locked ? undefined : () => setPhoto(true),
 			)}
 			{row(t`Reset design defaults`, null, locked ? undefined : () => setReset(true), true)}

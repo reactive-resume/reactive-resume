@@ -256,7 +256,8 @@ export function PushScreen({
 						// Only the screen on top follows the keyboard: a screen under it scrolling for its field moved its
 						// rows under taps meant for the top screen.
 						enabled={focused}
-						bottomOffset={24}
+						// Room under the focused input for its message (8 dp gap, one caption line) plus 24 dp clear of the keyboard.
+						bottomOffset={56}
 						keyboardShouldPersistTaps="handled"
 						// Dragging the form puts the keyboard away. "interactive" only let go once the finger reached the keyboard,
 						// so a short drag over the letter (L1) never closed it.
