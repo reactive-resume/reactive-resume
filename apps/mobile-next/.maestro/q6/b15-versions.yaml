@@ -1,0 +1,74 @@
+# B15 · Long-press a named version: Rename… and Delete… (a danger Delete permanently); a version opens its page with
+# Restore this version, which keeps the current state as "Before restoring “…”" and returns to the resume; with one
+# version: "Only one version so far. Every editing session adds one automatically."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B15-Versions?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- longPressOn: Sent to Lumen
+- extendedWaitUntil:
+    visible: Rename…
+    timeout: 10000
+- tapOn: Rename…
+- extendedWaitUntil:
+    visible: Rename version
+    timeout: 5000
+- tapOn:
+    id: version-name
+- eraseText: 20
+- inputText: Sent to Lumen v2
+- tapOn: Save
+- extendedWaitUntil:
+    visible: Sent to Lumen v2
+    timeout: 10000
+- tapOn: Sent to Lumen v2
+- extendedWaitUntil:
+    visible: Restore this version
+    timeout: 15000
+- assertVisible: Back to now
+- tapOn:
+    text: Restore this version
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: "Restored “Sent to Lumen v2”. Your previous state is saved as “Before restoring “Sent to Lumen v2””."
+    timeout: 10000
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- tapOn: Share
+- extendedWaitUntil:
+    visible: Versions
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      text: Versions
+      index: 1
+    direction: DOWN
+- tapOn:
+    text: Versions
+    index: 1
+- extendedWaitUntil:
+    visible: Before restore
+    timeout: 10000
+- longPressOn: Sent to Lumen v2
+- extendedWaitUntil:
+    visible: Delete…
+    timeout: 10000
+- tapOn: Delete…
+- extendedWaitUntil:
+    visible: Delete permanently
+    timeout: 5000
+- tapOn: Delete permanently
+- extendedWaitUntil:
+    notVisible: Sent to Lumen v2
+    timeout: 10000
+- openLink: me.rxresu.storyboard://builder/resume-product/versions?preset=one
+- extendedWaitUntil:
+    visible: Only one version so far. Every editing session adds one automatically.
+    timeout: 10000

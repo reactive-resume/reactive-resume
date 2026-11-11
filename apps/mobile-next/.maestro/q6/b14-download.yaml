@@ -1,0 +1,36 @@
+# B14 · Word failing: "Download failed. Try again." with "Download PDF instead", which picks PDF; offline, Word and
+# text are dimmed ("Connect to make this format.") while PDF and JSON stay available.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B14-Download?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Word
+- tapOn: Share
+- extendedWaitUntil:
+    visible: Download failed. Try again.
+    timeout: 10000
+- tapOn: Download PDF instead
+- extendedWaitUntil:
+    visible: .pdf
+    timeout: 5000
+- assertNotVisible: Download failed. Try again.
+- openLink: me.rxresu.storyboard://builder/resume-product/download?preset=offline
+# Word and text are dimmed (their line says "Connect to make this format."; a row's second line is an
+# accessibility hint Maestro can't read).
+- extendedWaitUntil:
+    visible:
+      text: Word
+      enabled: false
+    timeout: 10000
+- assertVisible:
+    text: PDF
+    enabled: true
+- assertVisible:
+    text: JSON backup
+    enabled: true

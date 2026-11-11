@@ -135,6 +135,7 @@ export function PageZoom({ children, onDismiss, onZoom, ref }: PageZoomProps) {
 
 	const doubleTap = Gesture.Tap()
 		.numberOfTaps(2)
+		.withTestId("page-zoom-double-tap")
 		.onEnd((e, ok) => {
 			if (ok) zoomTo(Math.abs(scale.value - 1) < 0.01 ? DOUBLE : 1, e.x, e.y);
 		});

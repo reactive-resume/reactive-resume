@@ -90,7 +90,7 @@ export function ActivityScreen() {
 					{making ? (
 						<BottomSheet title={t`New link`} height={560} keyboard onClose={() => setMaking(false)}>
 							<Form>
-								<TextField label={t`Who is it for?`} value={label} onChangeText={setLabel} maxLength={80} />
+								<TextField label={t`Who is it for?`} value={label} onChangeText={setLabel} maxLength={80} autoFocus />
 								<Text color="ink3" style={{ marginTop: -12 }}>{t`Only you see this.`}</Text>
 							</Form>
 							<View style={{ marginTop: 12 }}>

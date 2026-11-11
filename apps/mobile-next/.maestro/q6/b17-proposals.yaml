@@ -1,0 +1,53 @@
+# B17 · Swiping an edit toward the end accepts it; "Accept the others" accepts the edits without unverified claims
+# and leaves "New detail: check it's true" open; an out-of-date edit says so with Suggest again; a failing save of
+# your wording keeps the text and says "Couldn't save your wording. Your text is still here; try again."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B17-Proposals?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- assertVisible: 2 of 3 open
+- swipe:
+    start: 60, 330
+    end: 380, 330
+    duration: 500
+- extendedWaitUntil:
+    visible: ".*Northwind Labs › line 2 · Accepted"
+    timeout: 5000
+- assertVisible: 1 of 3 open
+# Three open edits: two can go together.
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant/proposals?preset=three
+- extendedWaitUntil:
+    visible: Accept the others
+    timeout: 10000
+- assertVisible: 3 of 3 open
+- tapOn: Accept the others
+- extendedWaitUntil:
+    visible: 1 of 3 open
+    timeout: 5000
+- assertVisible: "New detail: check it's true"
+# Out of date.
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant/proposals?preset=stale
+- extendedWaitUntil:
+    visible: "Out of date: the text has changed since."
+    timeout: 10000
+- assertVisible: Suggest again
+# Saving your wording fails.
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant/proposals?preset=save-fail
+- extendedWaitUntil:
+    visible: Edit
+    timeout: 10000
+- tapOn: Edit
+- extendedWaitUntil:
+    visible: Save wording
+    timeout: 5000
+- tapOn: Save wording
+- extendedWaitUntil:
+    visible: Couldn't save your wording. Your text is still here; try again.
+    timeout: 5000
+- assertVisible: Your wording

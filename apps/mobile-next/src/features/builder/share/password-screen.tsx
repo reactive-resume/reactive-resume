@@ -1,10 +1,10 @@
 // B12 › Password: set a password for the web page (Password and Confirm), or remove it after asking.
 import { t } from "@lingui/core/macro";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { View } from "react-native";
 import { useBuilderDocument, useDocumentId } from "./document";
-import { useSharing } from "@/data";
+import { useResumeStore, useSharing } from "@/data";
 import { Button, Dialog, Form, PushScreen, Text, TextField, haptic, showToast } from "@/ui";
 
 export function PasswordScreen() {
@@ -17,12 +17,16 @@ export function PasswordScreen() {
 	const [removing, setRemoving] = useState(false);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState("");
+	const confirmRef = useRef<{ focus: () => void } | null>(null);
 	const mismatch = confirm.length > 0 && confirm !== password;
-	const run = async (work: () => Promise<unknown>, done: string) => {
+	const run = async (work: () => Promise<unknown>, done: string, hasPassword: boolean) => {
 		setBusy(true);
 		setError("");
 		try {
 			await work();
+			// The open draft carries the sharing state Share reads.
+			const current = useResumeStore.getState().document;
+			if (current?.id === id) useResumeStore.setState({ document: { ...current, hasPassword } });
 			haptic("success");
 			showToast({ message: done });
 			router.back();
@@ -45,11 +49,11 @@ export function PasswordScreen() {
 					message={t`Anyone with the link will be able to view your resume.`}
 					actions={[
 						{
-							label: t`Remove password`,
+							label: t`Remove`,
 							tone: "danger",
 							onPress: () => {
 								setRemoving(false);
-								void run(() => sharing.removePassword(), t`Password removed`);
+								void run(() => sharing.removePassword(), t`Password removed`, false);
 							},
 						},
 						{ label: t`Cancel`, tone: "secondary", onPress: () => setRemoving(false) },
@@ -62,6 +66,10 @@ export function PasswordScreen() {
 					label={t`Password`}
 					value={password}
 					onChangeText={setPassword}
+					autoFocus
+					returnKeyType="next"
+					submitBehavior="submit"
+					onSubmitEditing={() => confirmRef.current?.focus()}
 					secureTextEntry
 					autoCapitalize="none"
 					autoCorrect={false}
@@ -69,6 +77,7 @@ export function PasswordScreen() {
 				<TextField
 					label={t`Confirm`}
 					value={confirm}
+					{...({ ref: confirmRef } as object)}
 					onChangeText={setConfirm}
 					secureTextEntry
 					autoCapitalize="none"
@@ -81,7 +90,7 @@ export function PasswordScreen() {
 					size="lg"
 					block
 					disabled={busy || password.length < 6 || password !== confirm}
-					onPress={() => void run(() => sharing.setPassword(password), t`Password set`)}
+					onPress={() => void run(() => sharing.setPassword(password), t`Password set`, true)}
 				/>
 				{document?.hasPassword ? (
 					<Button label={t`Remove password`} tone="dangerGhost" block onPress={() => setRemoving(true)} />

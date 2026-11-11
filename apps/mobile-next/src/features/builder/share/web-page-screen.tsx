@@ -58,21 +58,24 @@ export function WebPageScreen() {
 	);
 	// A privacy switch saves through the open draft; without one it says so and stays as saved.
 	const setting = (field: "hideContactDetails" | "showInSearchEngines") => (next: boolean) => {
-		if (failing || draft.document?.id !== id) {
+		if (failing) {
 			setError(t`Couldn't update sharing. Try again.`);
 			return;
 		}
 		setError("");
-		draft.updateDocument((d) => {
-			d[field] = next;
-		});
+		// Through the open draft when it is this resume's, else straight to the server.
+		if (draft.document?.id === id)
+			draft.updateDocument((d) => {
+				d[field] = next;
+			});
+		else void sharing.update({ [field]: next }).catch(() => setError(t`Couldn't update sharing. Try again.`));
 	};
 	const hidden = useSwitchRow(document?.hideContactDetails ?? false, setting("hideContactDetails"));
 	const search = useSwitchRow(document?.showInSearchEngines ?? false, setting("showInSearchEngines"));
 	const saveSlug = () => {
 		if (slug === undefined || !isValidSlug(slug) || taken(slug)) return;
 		if (draft.document?.id !== id) {
-			setError(t`Couldn't update sharing. Try again.`);
+			void sharing.update({ slug }).catch(() => setError(t`Couldn't update sharing. Try again.`));
 			return;
 		}
 		draft.updateDocument((d) => {

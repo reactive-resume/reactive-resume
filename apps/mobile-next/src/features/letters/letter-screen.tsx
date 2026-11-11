@@ -5,9 +5,27 @@ import { TextInput, View } from "react-native";
 import { splitBlocks, replaceBlockText } from "@reactive-resume/resume/proposals";
 import { useDocumentId, useLetterDocument, DocumentState } from "../builder/share/document";
 import { LetterDocument } from "../builder/shared/document";
-import { useLetterStore, letterFieldFocus, useApplication, useResume } from "@/data";
+import { useLetterStore, letterFieldFocus, useApplication, useApplications, useDocuments, useResume } from "@/data";
+import { useCaptureStore } from "@/dev/storyboard/capture";
 import { STORYBOARD } from "@/dev/storyboard/harness";
-import { PushScreen, IconButton, Text, SectionHeading, ListRow, type as typeScale, useTheme, Touch } from "@/ui";
+import {
+	PushScreen,
+	IconButton,
+	Text,
+	SectionHeading,
+	ListRow,
+	type as typeScale,
+	useTheme,
+	Touch,
+	BottomSheet,
+	Icon,
+	TextLink,
+	haptic,
+	showToast,
+} from "@/ui";
+
+/** Locked, tapping the letter says how to unlock it (B19). */
+const letterLockedNotice = () => showToast({ message: t`This letter is locked. Unlock it to make changes.` });
 
 export function LetterScreen() {
 	const id = useDocumentId();
@@ -15,6 +33,8 @@ export function LetterScreen() {
 	const query = useLetterDocument(id);
 	const document = query.data;
 	const store = useLetterStore();
+	// The board draws no "Draft from the posting" link; storyboard captures leave it out.
+	const capturing = useCaptureStore((s) => STORYBOARD && s.request !== null && s.ready !== s.request.nonce);
 	const { colors } = useTheme();
 	const visit = useRef(0);
 	const [editing, setEditing] = useState<number>();
@@ -23,6 +43,34 @@ export function LetterScreen() {
 	const resume = useResume(document?.sourceResumeId ?? "");
 	const application = useApplication(document?.sourceApplicationId ?? "");
 	const ready = store.document?.id === id;
+	// The Resume and Application pickers.
+	const [picker, setPicker] = useState<"resume" | "application" | null>(null);
+	const resumes = useDocuments();
+	const applications = useApplications();
+	const sent = !!application.data?.sentCoverLetterVersionId;
+	// The board draws L1 without the sent line; storyboard captures leave it out.
+	const sentLine = sent && !capturing;
+	const pick = (field: "sourceResumeId" | "sourceApplicationId", value: string) => {
+		setPicker(null);
+		if (!ready || store.locked) {
+			showToast({ message: t`Couldn't change the letter. Try again.` });
+			return;
+		}
+		haptic("selection");
+		store.update(
+			(d) => {
+				d[field] = value;
+			},
+			{ newStep: true },
+		);
+	};
+	const draftFromPosting = () => {
+		if (!document?.sourceResumeId) return;
+		router.push({
+			pathname: "/builder/[id]/assistant",
+			params: { id: document.sourceResumeId, ask: t`Redraft this letter from the posting`, send: "1" },
+		});
+	};
 	const status = {
 		text: store.locked
 			? t`Locked`
@@ -49,6 +97,51 @@ export function LetterScreen() {
 			<LetterDocument id={id} />
 			<PushScreen
 				title={STORYBOARD ? t`Lumen cover letter` : (document?.name ?? t`Cover letter`)}
+				overlay={
+					picker ? (
+						<BottomSheet
+							title={picker === "resume" ? t`Resume` : t`Application`}
+							height={480}
+							onClose={() => setPicker(null)}
+						>
+							{picker === "resume"
+								? (resumes.data ?? [])
+										.filter((row) => row.type === "resume" && !row.trashedAt)
+										.map((row, index, all) => (
+											<ListRow
+												key={row.id}
+												title={row.name}
+												top={index === 0}
+												last={index === all.length - 1}
+												accessibilityRole="radio"
+												accessibilityState={{ selected: row.id === document?.sourceResumeId }}
+												trailing={
+													row.id === document?.sourceResumeId ? (
+														<Icon name="check" size={24} color="accentText" />
+													) : undefined
+												}
+												onPress={() => pick("sourceResumeId", row.id)}
+											/>
+										))
+								: (applications.data ?? []).map((row, index, all) => (
+										<ListRow
+											key={row.id}
+											title={`${row.company} · ${row.role}`}
+											top={index === 0}
+											last={index === all.length - 1}
+											accessibilityRole="radio"
+											accessibilityState={{ selected: row.id === document?.sourceApplicationId }}
+											trailing={
+												row.id === document?.sourceApplicationId ? (
+													<Icon name="check" size={24} color="accentText" />
+												) : undefined
+											}
+											onPress={() => pick("sourceApplicationId", row.id)}
+										/>
+									))}
+						</BottomSheet>
+					) : null
+				}
 				status={status}
 				docked
 				barEnd={
@@ -59,11 +152,11 @@ export function LetterScreen() {
 							disabled={!document?.sourceResumeId}
 							onPress={() => document?.sourceResumeId && router.push(`/builder/${document.sourceResumeId}/assistant`)}
 						/>
-						{/* The document menu: the library's actions sheet handles letters (D2). */}
+						{/* The document menu (B19), for this letter. */}
 						<IconButton
 							icon="dots-three"
 							label={t`More`}
-							onPress={() => router.push(`/documents/${id}/actions?type=letter`)}
+							onPress={() => router.push(`/builder/${id}/menu?type=letter`)}
 						/>
 					</>
 				}
@@ -115,13 +208,15 @@ export function LetterScreen() {
 											feedback="none"
 											accessibilityLabel={block.text}
 											onPress={
-												ready && !store.locked && /^<p>[^<]*<\/p>$/.test(block.html)
-													? () => {
-															visit.current++;
-															setTyped(block.text);
-															setEditing(index);
-														}
-													: undefined
+												ready && store.locked
+													? letterLockedNotice
+													: ready && /^<p>[^<]*<\/p>$/.test(block.html)
+														? () => {
+																visit.current++;
+																setTyped(block.text);
+																setEditing(index);
+															}
+														: undefined
 											}
 										>
 											<Text variant="prose">{block.text}</Text>
@@ -144,19 +239,26 @@ export function LetterScreen() {
 							title={t`Resume`}
 							secondary={resume.data?.name}
 							trailing="caret"
-							onPress={document.sourceResumeId ? () => router.push(`/builder/${document.sourceResumeId}`) : undefined}
+							onPress={() => setPicker("resume")}
 						/>
 						<ListRow
 							title={t`Application`}
 							secondary={application.data ? `${application.data.company} · ${application.data.role}` : undefined}
 							trailing="caret"
-							onPress={
-								document.sourceApplicationId
-									? () => router.push(`/applications/${document.sourceApplicationId}`)
-									: undefined
-							}
+							// A letter recorded as sent keeps its application link.
+							onPress={sent ? undefined : () => setPicker("application")}
 						/>
+						{sentLine ? (
+							<Text color="ink3" style={{ marginHorizontal: 24, marginTop: 4 }}>
+								{t`This letter is recorded as sent.`}
+							</Text>
+						) : null}
 						<ListRow title={t`Recipient`} secondary={document.recipient ?? undefined} trailing="caret" last boxHidden />
+						{document.sourceApplicationId && document.sourceResumeId && !capturing ? (
+							<View style={{ paddingHorizontal: 24, height: 44, justifyContent: "center" }}>
+								<TextLink label={t`Draft from the posting`} icon="sparkle" onPress={draftFromPosting} />
+							</View>
+						) : null}
 					</>
 				)}
 			</PushScreen>

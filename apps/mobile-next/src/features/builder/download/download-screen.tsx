@@ -1,10 +1,10 @@
 import { t } from "@lingui/core/macro";
-import { useIsFocused } from "expo-router";
+import { useIsFocused, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { useBuilderDocument, useDocumentId, useLetterDocument, DocumentState } from "../share/document";
 import { deliverExport, deliverExports, prepareExport, type ExportFormat } from "./export-file";
-import { useLetterStore, useResumeStore, useResume } from "@/data";
+import { useConnectivity, useLetterStore, useResumeStore, useResume } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	Button,
@@ -43,6 +43,10 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState("");
 	const focused = useIsFocused();
+	// Offline, only PDF and JSON are made on the device (storyboard flows: `preset=offline`).
+	const { preset } = useLocalSearchParams<{ preset?: string }>();
+	const offline = useConnectivity().offline || (STORYBOARD && preset === "offline");
+	const needsServer = (id: string) => offline && id !== "pdf" && id !== "json";
 	const resumeDraft = useResumeStore();
 	const letterDraft = useLetterStore();
 	const fileName =
@@ -106,6 +110,21 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 	const body = (
 		<View style={letter ? null : { paddingTop: 8 }}>
 			<DocumentState loading={query.isPending} error={query.isError} retry={() => void query.refetch()} />
+			{/* Above the formats, so it shows without scrolling the fixed-height sheet. */}
+			{error && (
+				<View accessibilityRole="alert" style={{ marginHorizontal: 24, marginBottom: 8, gap: 8 }}>
+					<Text color="dangerText">{error}</Text>
+					{format !== "pdf" && (
+						<Button
+							label={t`Download PDF instead`}
+							onPress={() => {
+								setError("");
+								setFormat("pdf");
+							}}
+						/>
+					)}
+				</View>
+			)}
 			{letter && (
 				<>
 					<ListRow
@@ -140,7 +159,8 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 				<ListRow
 					key={item.id}
 					title={item.label}
-					secondary={item.reason}
+					secondary={needsServer(item.id) ? t`Connect to make this format.` : item.reason}
+					disabled={needsServer(item.id)}
 					last={item.id === (more ? "odt" : "json")}
 					boxHidden={item.id === (more ? "odt" : "json")}
 					leading={<Radio selected={format === item.id} interactive={false} />}
@@ -164,12 +184,6 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 					<TextField label={t`File name`} value={fileName} onChangeText={setName} suffix={`.${format}`} />
 				</Form>
 			</View>
-			{error && (
-				<View accessibilityRole="alert" style={{ margin: 24, gap: 8 }}>
-					<Text color="dangerText">{error}</Text>
-					{format !== "pdf" && <Button label={t`Download PDF instead`} onPress={() => setFormat("pdf")} />}
-				</View>
-			)}
 		</View>
 	);
 	return letter ? (

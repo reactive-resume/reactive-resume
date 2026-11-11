@@ -1,0 +1,21 @@
+# B11 · Share PDF renders the PDF and opens the system share sheet; closing it says "Good luck out there."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B11-Share?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Share PDF
+- extendedWaitUntil:
+    visible: ".*Alex Morgan Resume.*"
+    timeout: 20000
+- tapOn:
+    text: Close
+    optional: true
+- extendedWaitUntil:
+    visible: Good luck out there.
+    timeout: 10000

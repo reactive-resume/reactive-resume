@@ -1,0 +1,14 @@
+# B13 · With no visitors: "No visitors yet. Share your link to see views here."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B13-Visitors?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- openLink: me.rxresu.storyboard://builder/resume-product/share/activity?preset=no-visitors
+- extendedWaitUntil:
+    visible: No visitors yet. Share your link to see views here.
+    timeout: 10000

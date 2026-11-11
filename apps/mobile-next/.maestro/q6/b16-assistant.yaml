@@ -1,0 +1,100 @@
+# B16 · The assistant sends: the first send asks S7 (approve once per kind); the message shows as a bubble and the
+# reply proposes edits ("Review N edits" → B17); while it streams the send button is a filled Stop, and Stop ends
+# with "Stopped. No edits were proposed." and Continue; a failed reply keeps the message with Retry and Switch
+# model; with no connection the screen offers provider setup and sends nothing.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B16-Assistant?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Ask about this resume…
+- inputText: Make it shorter
+- tapOn: Send
+- extendedWaitUntil:
+    visible: Send to Work OpenAI?
+    timeout: 10000
+- tapOn:
+    id: first-send-send
+# The resume and the posting go with it: their kind is asked once too.
+- extendedWaitUntil:
+    visible:
+      id: first-send-send
+    timeout: 5000
+    optional: true
+- tapOn:
+    id: first-send-send
+    optional: true
+- extendedWaitUntil:
+    visible: Make it shorter
+    timeout: 10000
+- tapOn: Tailor this to the Lumen posting
+- scrollUntilVisible:
+    element:
+      id: assistant-review-edits
+      text: Review 3 edits
+    direction: DOWN
+    timeout: 15000
+- tapOn:
+    id: assistant-review-edits
+- extendedWaitUntil:
+    visible: Proposed edits
+    timeout: 10000
+# Stop while it streams.
+- tapOn:
+    id: top-bar-back
+- tapOn: Close
+- extendedWaitUntil:
+    notVisible: Ask about this resume…
+    timeout: 10000
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant?preset=slow&ask=Find%20weak%20bullets
+- extendedWaitUntil:
+    visible: Send
+    timeout: 10000
+- tapOn: Send
+- extendedWaitUntil:
+    visible: Stop
+    timeout: 10000
+- tapOn: Stop
+- extendedWaitUntil:
+    visible: Stopped. No edits were proposed.
+    timeout: 10000
+- assertVisible: Continue
+- tapOn: Continue
+- extendedWaitUntil:
+    visible: Stop
+    timeout: 10000
+# A failed reply keeps the message.
+- tapOn: Close
+- extendedWaitUntil:
+    notVisible: Ask about this resume…
+    timeout: 10000
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant?preset=fail&ask=Tighten%20to%20one%20page
+- extendedWaitUntil:
+    visible: Send
+    timeout: 10000
+- tapOn: Send
+- extendedWaitUntil:
+    visible: Couldn't send your message. Your message is kept.
+    timeout: 15000
+- assertVisible: Retry
+- assertVisible: Switch model
+- assertVisible: Tighten to one page
+# No connection yet: setup first, nothing sent.
+- tapOn: Close
+- extendedWaitUntil:
+    notVisible: Ask about this resume…
+    timeout: 10000
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant?preset=no-connection
+- extendedWaitUntil:
+    visible: Connect an AI provider first. Nothing is sent until you choose a connection.
+    timeout: 10000
+- assertVisible: Choose a connection before sending.
+- tapOn: Add AI provider
+- extendedWaitUntil:
+    visible: ".*API key.*"
+    timeout: 10000

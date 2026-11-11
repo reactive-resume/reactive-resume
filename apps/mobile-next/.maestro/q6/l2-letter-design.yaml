@@ -1,0 +1,33 @@
+# L2 · With Match my resume off, Template opens a picker and the choice shows on the row; a failing design write
+# says "Couldn't change the design. Try again."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/L2-LetterDesign?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- tapOn: Match my resume
+- extendedWaitUntil:
+    visible: Template
+    timeout: 5000
+- tapOn: Template
+- extendedWaitUntil:
+    visible: Pikachu
+    timeout: 10000
+- tapOn: Pikachu
+- extendedWaitUntil:
+    visible: Pikachu
+    timeout: 10000
+- assertNotVisible: Azurill
+- openLink: me.rxresu.storyboard://letter/letter-0/design?preset=design-fail
+- extendedWaitUntil:
+    visible: Match my resume
+    timeout: 10000
+- tapOn: Match my resume
+- extendedWaitUntil:
+    visible: Couldn't change the design. Try again.
+    timeout: 5000

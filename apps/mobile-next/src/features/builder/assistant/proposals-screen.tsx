@@ -1,12 +1,18 @@
 import { t } from "@lingui/core/macro";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { blockText, withEditedText, type Proposal } from "@reactive-resume/resume/proposals";
 import { wordDiff } from "@reactive-resume/resume/word-diff";
 import { useDocumentId, useBuilderDocument } from "../share/document";
-import { storyboardProposals, storyboardDecided, applyResumeProposals, getProposalState } from "./proposal-model";
+import {
+	storyboardProposals,
+	storyboardDecided,
+	storyboardSkillsProposal,
+	applyResumeProposals,
+	getProposalState,
+} from "./proposal-model";
 import { useResumeStore } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
@@ -33,18 +39,30 @@ export function ProposalsScreen() {
 	const router = useRouter();
 	const document = useBuilderDocument(id);
 	const store = useResumeStore();
+	// Storyboard flows reach B17's states: `preset=three` (the Skills edit still open, so two can go in bulk), `stale`
+	// (the first edit's text changed since) and `save-fail` (Save wording fails).
+	const { preset: presetParam } = useLocalSearchParams<{ preset?: string }>();
+	const preset = STORYBOARD ? presetParam : undefined;
+	const seed = (data: NonNullable<typeof document.data>["data"]) => {
+		const list = storyboardProposals(data);
+		if (preset === "three") list.push(storyboardSkillsProposal(data));
+		if (preset === "stale" && list[0]) list[0] = { ...list[0], before: "<li>Text that has changed since.</li>" };
+		return list;
+	};
 	const [proposals, setProposals] = useState<Proposal[]>(() =>
-		STORYBOARD && document.data ? storyboardProposals(document.data.data) : [],
+		STORYBOARD && document.data ? seed(document.data.data) : [],
 	);
 	const [seeded, setSeeded] = useState<string>();
 	if (STORYBOARD && document.data && seeded !== id) {
 		setSeeded(id);
-		setProposals(storyboardProposals(document.data.data));
+		setProposals(seed(document.data.data));
 	}
 
 	const [rejected, setRejected] = useState<string[]>([]);
 	// Edits decided before this visit (the storyboard's third edit); Undo brings them back to the list.
-	const [decidedEarlier, setDecidedEarlier] = useState(() => (STORYBOARD ? storyboardDecided : []));
+	const [decidedEarlier, setDecidedEarlier] = useState(() =>
+		STORYBOARD && presetParam !== "three" ? storyboardDecided : [],
+	);
 	const [focus, setFocus] = useState(0);
 	const [editing, setEditing] = useState<string>();
 	const [wording, setWording] = useState("");
@@ -54,6 +72,23 @@ export function ProposalsScreen() {
 	const status = (p: Proposal) =>
 		rejected.includes(p.id) ? "rejected" : data ? getProposalState(data, p, store.proposalApplications) : "stale";
 	const pending = proposals.filter((p) => status(p) === "pending");
+	// Edits with unverified claims are accepted one by one; the rest can go together.
+	const eligible = pending.filter((p) => !p.unsupported?.length);
+	const acceptMany = () => {
+		if (store.document?.id !== id || store.locked) {
+			setError(t`Couldn't save your wording. Your text is still here; try again.`);
+			return;
+		}
+		const applied: Proposal[] = [];
+		store.update(
+			(draft) => {
+				applied.push(...applyResumeProposals(draft, eligible, store.proposalApplications).applied);
+			},
+			{ newStep: true, applied },
+		);
+		haptic(pending.length === eligible.length ? "success" : "light");
+		setFocus(proposals.findIndex((item) => !eligible.includes(item) && status(item) === "pending"));
+	};
 	const decide = (p: Proposal, accept: boolean, fromSwipe = false) => {
 		if (accept) {
 			if (store.document?.id !== id || store.locked) {
@@ -87,17 +122,28 @@ export function ProposalsScreen() {
 			barEnd={<TopBarNote>{t`${pending.length} of ${proposals.length + decidedEarlier.length} open`}</TopBarNote>}
 			bottomPadding={96}
 			footer={
-				pending.length > 1 ? (
+				pending.length > 1 || eligible.length > 1 ? (
 					<FooterBar>
-						<Button
-							label={t`Reject all`}
-							grow
-							size="lg"
-							onPress={() => {
-								setRejected(proposals.map((p) => p.id));
-								haptic("light");
-							}}
-						/>
+						{pending.length > 1 ? (
+							<Button
+								label={t`Reject all`}
+								grow
+								size="lg"
+								onPress={() => {
+									setRejected(proposals.map((p) => p.id));
+									haptic("light");
+								}}
+							/>
+						) : null}
+						{eligible.length > 1 ? (
+							<Button
+								label={eligible.length === pending.length ? t`Accept all` : t`Accept the others`}
+								tone="primary"
+								grow
+								size="lg"
+								onPress={acceptMany}
+							/>
+						) : null}
 					</FooterBar>
 				) : undefined
 			}
@@ -167,6 +213,12 @@ export function ProposalsScreen() {
 												<Button
 													label={t`Save wording`}
 													onPress={() => {
+														if (preset === "save-fail") {
+															setError(t`Couldn't save your wording. Your text is still here; try again.`);
+															haptic("error");
+															return;
+														}
+														setError("");
 														setProposals(
 															proposals.map((item) => (item.id === p.id ? withEditedText(item, wording) : item)),
 														);
@@ -179,7 +231,7 @@ export function ProposalsScreen() {
 									) : (
 										<ProposalText
 											parts={
-												p.edited
+												p.edited || (p.id !== "storyboard-design-system" && p.id !== "storyboard-summary")
 													? (wordDiff(blockText(p.before), blockText(p.after)) ?? [
 															{ text: blockText(p.before), kind: "removed" },
 															{ text: blockText(p.after), kind: "added" },
@@ -201,7 +253,19 @@ export function ProposalsScreen() {
 										/>
 									)}
 									{status(p) === "stale" ? (
-										<Text color="dangerText">{t`Out of date: the text has changed since.`}</Text>
+										<View style={{ gap: 8, alignItems: "flex-start" }}>
+											<Text color="dangerText">{t`Out of date: the text has changed since.`}</Text>
+											<Button
+												label={t`Suggest again`}
+												tone="accentGhost"
+												padding={4}
+												onPress={() =>
+													router.push(
+														`/builder/${id}/assistant?ask=${encodeURIComponent(t`Suggest the ${p.location} edit again`)}`,
+													)
+												}
+											/>
+										</View>
 									) : p.unsupported?.length ? (
 										<View style={{ flexDirection: "row", gap: 6 }}>
 											<Icon

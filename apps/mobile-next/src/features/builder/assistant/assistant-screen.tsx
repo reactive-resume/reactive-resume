@@ -70,6 +70,11 @@ export function AssistantScreen() {
 	// sending.
 	const [message, setMessage] = useState(ask ?? prompt ?? "");
 	const [answer, setAnswer] = useState("");
+	// A link to the open assistant hands over a new request: it replaces what the composer holds.
+	const handed = ask ?? prompt;
+	useEffect(() => {
+		if (handed) setMessage(handed);
+	}, [handed]);
 	const [resume, setResume] = useState(true);
 	const [posting, setPosting] = useState(true);
 	const [failed, setFailed] = useState(false);
@@ -256,6 +261,7 @@ export function AssistantScreen() {
 						<View style={{ flex: 1 }} />
 						<Button
 							label={edits === 1 ? t`Review 1 edit` : t`Review ${edits} edits`}
+							testID="assistant-review-edits"
 							onPress={() => router.push(`/builder/${id}/assistant/proposals`)}
 						/>
 					</View>

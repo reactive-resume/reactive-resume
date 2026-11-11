@@ -9,7 +9,7 @@ import { prepareExport, deliverExport } from "../download/export-file";
 import { Anchor, useAnchoredMenu, useAnchorRef } from "../shared/anchored-menu";
 import { BuilderActions, DocumentState, useBuilderDocument, useDocumentId, useRenderedPage } from "./document";
 import { useSession } from "@/auth/session";
-import { useAccount, useLocalValue, useResumeStore } from "@/data";
+import { useAccount, useLocalValue, useResumeStore, useSharing } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	Button,
@@ -62,28 +62,37 @@ export function ShareScreen() {
 	);
 	const rowMotion = useRowMotion();
 	const publicOn = document?.isPublic ?? false;
+	const sharing = useSharing(id);
+	// Through the open draft when it is this resume's, else straight to the server.
 	const setPublic = (next: boolean, slug?: string) => {
-		if (draft.document?.id !== id) {
-			setError(t`Couldn't update sharing. Try again.`);
-			return false;
+		setError("");
+		if (draft.document?.id === id) {
+			draft.updateDocument((d) => {
+				d.isPublic = next;
+				if (slug !== undefined) d.slug = slug;
+			});
+			return Promise.resolve(true);
 		}
-		draft.updateDocument((d) => {
-			d.isPublic = next;
-			if (slug !== undefined) d.slug = slug;
-		});
-		return true;
+		return sharing
+			.update({ isPublic: next, ...(slug !== undefined ? { slug } : {}) })
+			.then(() => true)
+			.catch(() => {
+				setError(t`Couldn't update sharing. Try again.`);
+				return false;
+			});
 	};
 	const toggle = useSwitchRow(publicOn, (next) => {
 		if (next && !published.value && document) {
 			setAsking(document.slug);
 			return;
 		}
-		setPublic(next);
+		void setPublic(next);
 	});
-	const goLive = () => {
+	const goLive = async () => {
 		if (asking === undefined || !isValidSlug(asking)) return;
-		if (!setPublic(true, asking)) return;
+		const slug = asking;
 		setAsking(undefined);
+		if (!(await setPublic(true, slug))) return;
 		published.set(true);
 		haptic("success");
 		showToast({ message: t`Your web page is live` });
@@ -156,7 +165,7 @@ export function ShareScreen() {
 									size="lg"
 									block
 									disabled={!isValidSlug(asking)}
-									onPress={goLive}
+									onPress={() => void goLive()}
 								/>
 							</Form>
 						</BottomSheet>

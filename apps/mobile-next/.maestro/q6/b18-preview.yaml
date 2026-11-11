@@ -1,0 +1,28 @@
+# B18 · Swipe down at fit zoom closes the preview; while rendering the bar says "Updating…"; offline: "Offline.
+# Showing the last saved page."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B18-Preview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- waitForAnimationToEnd
+- assertVisible: Page 1 of 1
+- swipe:
+    start: 50%, 35%
+    end: 50%, 85%
+    duration: 400
+- extendedWaitUntil:
+    notVisible: Page 1 of 1
+    timeout: 10000
+- openLink: me.rxresu.storyboard://builder/resume-product/preview?preset=updating
+- extendedWaitUntil:
+    visible: Updating…
+    timeout: 10000
+- openLink: me.rxresu.storyboard://builder/resume-product/preview?preset=offline
+- extendedWaitUntil:
+    visible: Offline. Showing the last saved page.
+    timeout: 10000

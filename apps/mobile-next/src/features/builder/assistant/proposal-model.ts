@@ -30,6 +30,20 @@ export function storyboardProposals(data: ResumeData): Proposal[] {
 		},
 	];
 }
+/** A third open edit for B17's `preset=three` (Harbour Studio's first line), so two edits can be accepted together. */
+export function storyboardSkillsProposal(data: ResumeData): Proposal {
+	const entry = data.sections.experience.items[1];
+	return {
+		id: "storyboard-harbour",
+		target: { sectionId: "experience", itemId: entry?.id ?? "", field: "description" },
+		location: "Experience › Harbour Studio › line 1",
+		before: splitBlocks(entry?.description ?? "")[0]?.html ?? "",
+		after: "<li>Redesigned checkout and invoicing for 30 retail clients; completed payments rose by 12%.</li>",
+		why: "Your payments fact backs it.",
+		status: "pending",
+		source: "assistant",
+	};
+}
 /**
  * The storyboard's third edit, decided before the capture (B17 draws it folded to "Skills · Accepted" with Undo).
  * Gap: the fake conversation carries only the two open edits.

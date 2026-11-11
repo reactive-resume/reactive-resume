@@ -8,6 +8,7 @@ import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { prepareExport, deliverExport } from "../download/export-file";
 import { useBuilderDocument, useDocumentId, useRenderedPage, DocumentState } from "../share/document";
+import { useResumeStore, useVersionActions, useVersionPreview } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import { paperText } from "@/dev/storyboard/paper-text.gen";
 import {
@@ -24,13 +25,45 @@ import {
 	Spinner,
 	flyBack,
 	haptic,
+	showToast,
 } from "@/ui";
 
 export function PreviewScreen({ version = false }: { version?: boolean }) {
 	const id = useDocumentId();
 	const router = useRouter();
-	const params = useLocalSearchParams<{ marker?: string }>();
+	// Storyboard flows reach B18's states with `preset=updating` and `preset=offline`.
+	const params = useLocalSearchParams<{ marker?: string; version?: string; name?: string; preset?: string }>();
 	const document = useBuilderDocument(id);
+	// B15: a version's own page, and Restore this version.
+	const versionPreview = useVersionPreview(version ? id : "", version ? (params.version ?? "") : "");
+	const versionActions = useVersionActions();
+	const [restoring, setRestoring] = useState(false);
+	const restore = async () => {
+		if (!params.version || restoring) return;
+		setRestoring(true);
+		try {
+			const draft = useResumeStore.getState();
+			if (draft.document?.id === id) await draft.flush();
+			await versionActions.restoreResume({ resumeId: id, versionId: params.version });
+			// The open draft takes the restored resume.
+			if (useResumeStore.getState().document?.id === id) {
+				await useResumeStore.getState().close();
+				await useResumeStore.getState().open(id);
+			}
+			haptic("success");
+			showToast({
+				message: params.name
+					? t`Restored “${params.name}”. Your previous state is saved as “Before restoring “${params.name}””.`
+					: t`Restored. Your previous state is saved as “Before restore”.`,
+			});
+			router.dismissTo(`/builder/${id}`);
+		} catch {
+			setShareError(t`Couldn't restore this version. Try again.`);
+			haptic("error");
+		} finally {
+			setRestoring(false);
+		}
+	};
 	const page = useRenderedPage(
 		!version && document.data
 			? {
@@ -64,11 +97,19 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 		void flyBack(`resume-page-${id}`);
 		router.back();
 	};
-	const current = page.data?.pages[index];
+	const shown = version ? versionPreview.preview : page;
+	const current = shown.data?.pages[index];
 	const footer = version ? (
 		<FooterBar>
 			<Button label={t`Back to now`} onPress={close} grow size="lg" />
-			<Button label={t`Restore this version`} disabled grow size="lg" tone="primary" />
+			<Button
+				label={restoring ? t`Restoring…` : t`Restore this version`}
+				disabled={restoring || !versionPreview.version.data}
+				grow
+				size="lg"
+				tone="primary"
+				onPress={() => void restore()}
+			/>
 		</FooterBar>
 	) : params.marker ? (
 		<FooterBar>
@@ -197,13 +238,15 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 					{shareError}
 				</Text>
 			)}
-			{page.isFetching && page.data && (
+			{((page.isFetching && page.data) || (STORYBOARD && params.preset === "updating")) && (
 				<View style={{ flexDirection: "row", gap: 8, margin: 16 }}>
 					<Spinner />
 					<Text>{t`Updating…`}</Text>
 				</View>
 			)}
-			{page.data?.stale && <Text style={{ marginHorizontal: 24 }}>{t`Offline. Showing the last saved page.`}</Text>}
+			{(page.data?.stale || (STORYBOARD && params.preset === "offline")) && (
+				<Text style={{ marginHorizontal: 24 }}>{t`Offline. Showing the last saved page.`}</Text>
+			)}
 			{(page.data?.pageCount ?? 0) > 1 && (
 				<View style={{ flexDirection: "row", justifyContent: "center", gap: 12 }}>
 					<Button label={t`Previous page`} disabled={index === 0} onPress={() => setIndex(index - 1)} />

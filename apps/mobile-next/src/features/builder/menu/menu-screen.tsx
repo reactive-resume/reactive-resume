@@ -1,15 +1,15 @@
 import { t } from "@lingui/core/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { printAsync } from "expo-print";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { languageCopyRequest } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { getLanguageName, type Locale, supportedLocales } from "@reactive-resume/utils/locale";
 import { prepareExport } from "../download/export-file";
-import { DocumentState, useBuilderDocument, useDocumentId } from "../share/document";
-import { moveToTrash, restore, useDataActions, useDocumentActions, useResumeStore } from "@/data";
+import { DocumentState, useBuilderDocument, useDocumentId, useLetterDocument } from "../share/document";
+import { moveToTrash, restore, useDataActions, useDocumentActions, useLetterStore, useResumeStore } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	SheetScreen,
@@ -36,6 +36,12 @@ const languageName = (locale: string) => {
 };
 
 export function MenuScreen() {
+	// L1's ··· opens the same document menu for a letter (`?type=letter`).
+	const { type } = useLocalSearchParams<{ type?: string }>();
+	return type === "letter" ? <LetterMenu /> : <ResumeMenu />;
+}
+
+function ResumeMenu() {
 	const id = useDocumentId();
 	const router = useRouter();
 	const insets = useSafeAreaInsets();
@@ -258,6 +264,159 @@ export function MenuScreen() {
 									}),
 							)}
 							{row(t`Move to trash`, "trash", () => void trash(), locked, undefined, { danger: true, last: true })}
+						</View>
+					</SheetScrollView>
+				))}
+			{error && (
+				<Text color="dangerText" accessibilityRole="alert" style={{ margin: 24 }}>
+					{error}
+				</Text>
+			)}
+		</SheetScreen>
+	);
+}
+
+/** B19 for a letter: details, Lock or Unlock editing, Rename…, Duplicate, Print and Move to trash. */
+function LetterMenu() {
+	const id = useDocumentId();
+	const router = useRouter();
+	const insets = useSafeAreaInsets();
+	const query = useLetterDocument(id);
+	const document = query.data;
+	const actions = useDataActions();
+	const documents = useDocumentActions();
+	const cache = useQueryClient();
+	const [step, setStep] = useState("menu");
+	const [value, setValue] = useState("");
+	const [error, setError] = useState("");
+	const [busy, setBusy] = useState(false);
+	const locked = document?.isLocked ?? false;
+	const run = async (operation: () => Promise<unknown>) => {
+		if (busy) return;
+		setBusy(true);
+		setError("");
+		try {
+			await operation();
+		} catch {
+			setError(t`Couldn't update this document. Try again.`);
+			haptic("error");
+		} finally {
+			setBusy(false);
+		}
+	};
+	const toggleLock = () =>
+		run(async () => {
+			const next = !locked;
+			await documents.setLocked({ type: "letter", id, isLocked: next });
+			const current = useLetterStore.getState().document;
+			if (current?.id === id) useLetterStore.setState({ locked: next, document: { ...current, isLocked: next } });
+			await cache.invalidateQueries();
+			haptic(next ? "toggleOn" : "toggleOff");
+		});
+	const trash = () =>
+		run(async () => {
+			if (locked) return;
+			const draft = useLetterStore.getState();
+			if (draft.document?.id === id) await draft.flush();
+			const ref = { type: "letter" as const, id };
+			await moveToTrash(ref);
+			await cache.invalidateQueries();
+			haptic("light");
+			showToast({
+				message: t`Moved to Trash`,
+				action: { label: t`Undo`, onPress: () => void restore(ref).then(() => cache.invalidateQueries()) },
+			});
+			router.replace("/documents");
+		});
+	const row = (title: string, icon: Parameters<typeof IconTile>[0]["icon"], onPress: () => void, disabled = false) => (
+		<ListRow title={title} leading={<IconTile icon={icon} accent={false} />} onPress={onPress} disabled={disabled} />
+	);
+	return (
+		<SheetScreen
+			title={step === "rename" ? t`Rename…` : (document?.name ?? t`Document`)}
+			height={620}
+			step={step}
+			closeIconSize={24}
+			bottomPadding={0}
+		>
+			<DocumentState loading={query.isPending} error={query.isError} retry={() => void query.refetch()} />
+			{document &&
+				(step === "rename" ? (
+					<>
+						<Form>
+							<TextField label={t`Name`} value={value} onChangeText={setValue} maxLength={100} />
+						</Form>
+						<View style={{ margin: 24, gap: 12 }}>
+							<Button
+								label={t`Save`}
+								disabled={busy || !value.trim()}
+								onPress={() =>
+									void run(async () => {
+										await actions.write("letters", "documents.rename", { type: "letter", id, name: value.trim() });
+										setStep("menu");
+									})
+								}
+							/>
+							<Button label={t`Cancel`} onPress={() => setStep("menu")} />
+						</View>
+					</>
+				) : (
+					<SheetScrollView contentContainerStyle={{ paddingBottom: insets.bottom }}>
+						<View style={{ marginHorizontal: 24, marginTop: 12, flexDirection: "row", gap: 16 }}>
+							<View style={{ flex: 1, gap: 2 }}>
+								<Text variant="small" color="ink3">
+									{t`Last edited`}
+								</Text>
+								<Text variant="textLink">{document.updatedAt.toLocaleDateString()}</Text>
+							</View>
+							<View style={{ flex: 1, gap: 2 }}>
+								<Text variant="small" color="ink3">
+									{t`Template`}
+								</Text>
+								<Text variant="textLink">{templateName(document.style.metadata.template)}</Text>
+							</View>
+						</View>
+						<View style={{ marginTop: 8 }}>
+							<ListRow
+								title={locked ? t`Unlock editing` : t`Lock editing`}
+								leading={<IconTile icon={locked ? "lock-simple-open" : "lock-simple"} accent={locked} />}
+								onPress={() => void toggleLock()}
+								disabled={busy}
+								top
+							/>
+							{row(t`Rename…`, "pencil-simple", () => {
+								setValue(document.name);
+								setStep("rename");
+							})}
+							{row(
+								t`Duplicate`,
+								"copy",
+								() =>
+									void run(async () => {
+										await documents.duplicateLetter({ id });
+										await cache.invalidateQueries();
+										showToast({ message: t`Letter duplicated` });
+									}),
+								busy,
+							)}
+							{row(
+								t`Print`,
+								"printer",
+								() =>
+									void run(async () => {
+										const file = await prepareExport(document, "letter", "pdf", `${document.name}`);
+										await printAsync({ uri: file.uri });
+									}),
+							)}
+							<ListRow
+								title={t`Move to trash`}
+								leading={<IconTile icon="trash" accent={false} />}
+								onPress={() => void trash()}
+								disabled={locked}
+								danger
+								last
+								boxHidden
+							/>
 						</View>
 					</SheetScrollView>
 				))}

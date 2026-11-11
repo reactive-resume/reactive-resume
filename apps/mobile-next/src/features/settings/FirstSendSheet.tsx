@@ -1,3 +1,4 @@
+import type { ConsentDecision } from "@/data";
 // S7 · First send to an AI connection: three plain lines (what goes, where with whose key, that the provider may
 // charge), "Don't ask again" ticked by default for this kind and connection, Send, and the local path or Cancel.
 // No haptic. Send hands straight back to the action's own Working state.
@@ -37,26 +38,27 @@ export function FirstSendSheet() {
 	const id = request?.connection.id ?? params.connection;
 	const provider = providers.data?.find((p) => p.id === id) ?? providers.data?.find((p) => p.isDefault);
 	const [remember, setRemember] = useState(true);
-	const answered = useRef(false);
+	// The answer goes once the sheet has closed: a send that asks for its next kind at once opens a new sheet, which
+	// this one's close must not pop (it did, and declined that kind).
+	const decision = useRef<ConsentDecision | null>(null);
+	const settled = useRef(false);
+	const settle = () => {
+		if (settled.current) return;
+		settled.current = true;
+		answerFirstSend(decision.current ?? { approved: false, remember: false });
+	};
 
 	const sheet = useRef<BottomSheetHandle>(null);
 	const answer = (approved: boolean) => {
-		answered.current = true;
-		answerFirstSend({ approved, remember: approved && remember });
+		decision.current = { approved, remember: approved && remember };
 		sheet.current?.close();
 	};
 	const closed = () => {
-		if (!answered.current) answerFirstSend({ approved: false, remember: false });
-		answered.current = true;
 		if (router.canGoBack()) router.back();
+		settle();
 	};
 	// Closing by the ×, the scrim or back declines; the send doesn't go.
-	useEffect(
-		() => () => {
-			if (!answered.current) answerFirstSend({ approved: false, remember: false });
-		},
-		[],
-	);
+	useEffect(() => settle, []);
 
 	const label = provider?.label ?? providerName(request?.connection.provider ?? "");
 	const host = provider ? providerHost(provider) : (request?.connection.host.replace(/^https?:\/\//, "") ?? "");
