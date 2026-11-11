@@ -68,7 +68,13 @@ export function BasicsScreen() {
 	const basics = data.basics;
 
 	const set = (key: string, apply: (d: ResumeData) => void) =>
-		editResume((d) => apply(d as ResumeData), { coalesceKey: `basics.${key}:${visit.current}`, sameStep: true });
+		// A block body: Immer throws (and Release aborts) when a recipe both edits the draft and returns a value.
+		editResume(
+			(d) => {
+				apply(d as ResumeData);
+			},
+			{ coalesceKey: `basics.${key}:${visit.current}`, sameStep: true },
+		);
 	const focus = {
 		onFocus: () => {
 			visit.current++;
