@@ -22,12 +22,17 @@ appId: me.rxresu.storyboard
     point: "195,213"
 - eraseText: 20
 - inputText: 65k
+# Dragging the form puts the keyboard away (the footer sits under it).
+- swipe:
+    start: "195,420"
+    end: "195,600"
+    duration: 300
 - tapOn: Save
 - assertVisible: Enter a full amount, such as 95000\. Your previous amount is unchanged\.
 - tapOn: Don't use pay to filter
 - tapOn: Save
 - extendedWaitUntil:
-    visible: Don't use pay to filter
+    visible: "Pay, Don't use pay to filter"
     timeout: 10000
 - tapOn: "Priorities.*"
 - extendedWaitUntil:

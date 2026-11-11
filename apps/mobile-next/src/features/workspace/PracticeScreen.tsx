@@ -3,7 +3,7 @@
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MAX_BYTES, Recorder, type Take } from "./Recorder";
 import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
@@ -190,12 +190,14 @@ export function PracticeScreen() {
 								size="lg"
 								block
 								disabled={answer.trim().length < 10}
-								onPress={() =>
+								onPress={() => {
+									// The keyboard goes so the first-send sheet and the feedback are in view.
+									Keyboard.dismiss();
 									void ai.run("chat", async () => {
 										await practise(answer, "typed");
 										setFeedback(true);
-									})
-								}
+									});
+								}}
 							/>
 						</View>
 					) : (

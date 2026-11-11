@@ -239,6 +239,11 @@ export function PrepScreen() {
 						accessibilityState={{ checked: refresh && !refreshPaused }}
 						last
 						testID="briefing-refresh"
+						accessibilityLabel={`${t`Refresh the briefing 24 hours before`}, ${
+							refreshPaused
+								? t`Paused: your AI connection changed. Turn it on again to approve ${ws.provider.label}.`
+								: t`${longWeekday(refreshAt, ws.zone)}, ${clockTime(refreshAt, ws.zone)} ${zoneCity(ws.zone)} · ${ws.provider.label} · may charge`
+						}`}
 						// Turning it on is the approval for the posting, resume and stories to go to this connection.
 						onPress={() => toggleValue(refresh && !refreshPaused, setRefresh)}
 					/>

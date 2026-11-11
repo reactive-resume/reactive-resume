@@ -50,9 +50,12 @@ appId: me.rxresu.storyboard
 - waitForAnimationToEnd
 - tapOn: Add a note
 - inputText: They chose an internal candidate
+- waitForAnimationToEnd
+# Close application, just above the keyboard (a point: the sheet has moved up with the keyboard).
 - tapOn:
-    id: close-confirm
+    point: "195,482"
     waitToSettleTimeoutMs: 1
 - assertVisible: Couldn't close the application\. Try again\.
-- assertVisible: How did it end?
 - assertVisible: They chose an internal candidate
+- assertVisible:
+    id: outcome-accepted

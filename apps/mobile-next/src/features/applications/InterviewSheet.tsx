@@ -189,6 +189,9 @@ function InterviewForm({
 		.map((contact) => contact.name)
 		.filter((name) => !named.includes(name.toLowerCase()) && name.toLowerCase().startsWith(typing))
 		.slice(0, 3);
+	const briefingLine = provider
+		? t`Sends the posting and resume to ${provider.label}, which may charge`
+		: t`Set up AI in Settings to prepare a briefing`;
 	const startsLabel = starts ? `${shortDay(starts, zone)}, ${clockTime(starts, zone)}` : "";
 	const away =
 		starts && zone !== home
@@ -301,11 +304,8 @@ function InterviewForm({
 					/>
 					<ListRow
 						title={t`Prepare a briefing`}
-						secondary={
-							provider
-								? t`Sends the posting and resume to ${provider.label}, which may charge`
-								: t`Set up AI in Settings to prepare a briefing`
-						}
+						secondary={briefingLine}
+						accessibilityLabel={`${t`Prepare a briefing`}, ${briefingLine}`}
 						wrapSecondary
 						disabled={!provider}
 						trailing={<Switch value={brief} interactive={false} />}

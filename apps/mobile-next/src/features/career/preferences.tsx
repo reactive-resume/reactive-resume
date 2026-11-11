@@ -208,6 +208,11 @@ function PreferencesContent() {
 				</View>
 			</PushScreen>
 		);
+	const payLine = !profile
+		? ""
+		: profile.minBase.amount === null
+			? t`Don't use pay to filter`
+			: t`From ${new Intl.NumberFormat("en", { style: "currency", currency: profile.minBase.currency, maximumFractionDigits: 0 }).format(profile.minBase.amount)} a ${profile.minBase.period}`;
 	return (
 		<PushScreen title={t`Job search`} subtitle={t`Used to find new roles and to judge fit.`}>
 			<ResourceState pending={query.isPending} error={query.isError} retry={() => void query.refetch()}>
@@ -239,11 +244,9 @@ function PreferencesContent() {
 							/>
 							<ListRow
 								title={t`Pay`}
-								secondary={
-									profile.minBase.amount === null
-										? t`Don't use pay to filter`
-										: t`From ${new Intl.NumberFormat("en", { style: "currency", currency: profile.minBase.currency, maximumFractionDigits: 0 }).format(profile.minBase.amount)} a ${profile.minBase.period}`
-								}
+								secondary={payLine}
+								// The amount is read with the row's name (VoiceOver, and the flow that checks it).
+								accessibilityLabel={`${t`Pay`}, ${payLine}`}
 								trailing="caret"
 								onPress={() => open("pay", profile.minBase.amount?.toString() ?? "")}
 							/>

@@ -6,7 +6,7 @@ import { t } from "@lingui/core/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { type ClosedReason, sentStepHref, useApplicationActions } from "./actions";
 import { type Application, CLOSED_REASONS, dayMonth, outcomeLabel, PIPELINE, stageDate, stageLabel } from "./model";
 import { markApplied, type SentCandidate, sentCandidates, useApplication } from "@/data";
@@ -47,6 +47,8 @@ export function StageSheet() {
 			title={title}
 			height={HEIGHT[step]}
 			step={step}
+			// J9's note: the sheet rises with the keyboard so the note and Close application stay in view.
+			keyboard
 			closeIconSize={24}
 			back={step === "close" ? { label: t`Back to Move`, onPress: () => setStep("stages") } : undefined}
 		>
@@ -228,6 +230,8 @@ function CloseStep({ app }: { app: Application }) {
 
 	const close = async () => {
 		if (!reason) return;
+		// The keyboard goes so a failure's toast isn't hidden under it.
+		Keyboard.dismiss();
 		setSaving(true);
 		try {
 			await actions.close(app.id, reason, note, app.status);

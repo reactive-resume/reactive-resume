@@ -6,8 +6,9 @@ import { t } from "@lingui/core/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { PIPELINE, stageLabel } from "./model";
-import { closeApplication, moveToTrash, reopenApplication, restore, useDataActions, useTrash } from "@/data";
+import { closeApplication, moveToTrash, reopenApplication, restore, useDataActions } from "@/data";
 import { now, zonedParts } from "@/data/clock";
+import { allApplicationTrash } from "@/data/trash";
 import { haptic, showToast } from "@/ui";
 
 type Moveable = { id: string; status: ApplicationStatus };
@@ -27,7 +28,6 @@ export function useApplicationActions() {
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { write } = useDataActions();
-	const trash = useTrash();
 	const refresh = () => queryClient.invalidateQueries();
 
 	const setStage = (id: string, status: Exclude<ApplicationStatus, "applied" | "closed">) =>
@@ -123,9 +123,10 @@ export function useApplicationActions() {
 				label: t`Undo`,
 				onPress: () => {
 					void (async () => {
-						const { data } = await trash.applications.refetch();
+						// Read Trash now: the screen's Trash query may be an older generation by the time Undo is tapped.
+						const items = await allApplicationTrash();
 						for (const id of ids) {
-							const row = data?.items.find((item) => item.id === id);
+							const row = items.find((item) => item.id === id);
 							if (row) await restore({ type: "application", id, trashedAt: row.trashedAt });
 						}
 						await refresh();

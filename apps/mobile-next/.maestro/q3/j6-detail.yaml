@@ -63,19 +63,18 @@ appId: me.rxresu.storyboard
     id: edit-save
     waitToSettleTimeoutMs: 1
 - assertVisible: Details saved
-- extendedWaitUntil:
-    visible: "Lead product designer.*"
-    timeout: 10000
+- scrollUntilVisible:
+    element: "Lead product designer.*"
+    direction: UP
 - tapOn: More
 - tapOn: Link a resume or letter
 - extendedWaitUntil:
-    visible: "Letter"
+    visible: Letter for Orbital Health
     timeout: 10000
 - tapOn:
-    text: "Letter"
-    index: 0
+    text: Letter for Orbital Health
     waitToSettleTimeoutMs: 1
-- assertVisible: "Linked “.*”"
+- assertVisible: "Linked “Letter for Orbital Health”"
 - tapOn: More
 - tapOn:
     text: Move to Trash
@@ -107,7 +106,9 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Couldn't load this\. Your saved data hasn't changed\.
     timeout: 20000
-- tapOn: Try again
+- waitForAnimationToEnd
+- tapOn:
+    point: "195,282"
 - extendedWaitUntil:
     visible: Work on it
     timeout: 10000

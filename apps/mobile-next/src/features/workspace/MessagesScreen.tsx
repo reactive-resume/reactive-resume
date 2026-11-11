@@ -149,6 +149,7 @@ export function MessagesScreen() {
 						value={
 							contact ? [contact.name, contact.type || contact.role].filter(Boolean).join(" · ") : t`Add a contact`
 						}
+						accessibilityLabel={`${t`To`}, ${contact ? [contact.name, contact.type || contact.role].filter(Boolean).join(" · ") : t`Add a contact`}`}
 						onPress={contact ? undefined : () => router.push(`/applications/${app.id}`)}
 					/>
 					<ListRow title={t`Subject`} secondary={subject} last boxHidden />

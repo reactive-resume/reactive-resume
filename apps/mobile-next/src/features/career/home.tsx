@@ -25,6 +25,11 @@ export function CareerScreen() {
 	const copy = screenTexts("C1-Career");
 	const connected = providers.data?.some((p) => p.enabled);
 	const go = (href: string) => router.push(href);
+	const discoveryLine = schedules.isError
+		? t`Not available on this server`
+		: fake
+			? (copy[19] ?? "")
+			: t`${schedules.data?.length ?? 0} schedules`;
 	return (
 		<TabScreen
 			title={t`Career`}
@@ -90,13 +95,8 @@ export function CareerScreen() {
 			<SectionHeading title={t`Routines`} />
 			<ListRow
 				title={t`Discovery`}
-				secondary={
-					schedules.isError
-						? t`Not available on this server`
-						: fake
-							? copy[19]
-							: t`${schedules.data?.length ?? 0} schedules`
-				}
+				secondary={discoveryLine}
+				accessibilityLabel={`${t`Discovery`}, ${discoveryLine}`}
 				last
 				trailing="caret"
 				onPress={() => go(`/career/schedules/${schedules.data?.find((s) => s.kind === "discovery")?.id ?? "new"}`)}

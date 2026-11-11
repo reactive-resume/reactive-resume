@@ -32,7 +32,14 @@ const allFacts = async () => {
 };
 const flowScenarios: Record<string, Scenario> = {
 	"C1-NoAI": { hrefs: ["/career"], prepare: noAI },
-	"C1-NoSchedules": { hrefs: ["/career"], prepare: () => failFake("schedules", 4) },
+	// The failure is set before Career first reads its schedules.
+	"C1-NoSchedules": {
+		hrefs: ["/documents"],
+		prepare: () => {
+			failFake("schedules", 4);
+			router.navigate("/career");
+		},
+	},
 	"C3-AllFacts": { hrefs: ["/career", "/career/knowledge/facts"] },
 	"C3-Empty": {
 		hrefs: ["/career"],
@@ -66,9 +73,9 @@ const flowScenarios: Record<string, Scenario> = {
 	},
 	"C7-Unavailable": {
 		hrefs: ["/career"],
+		// A schedule the server doesn't have: what a server without scheduled work answers for every schedule.
 		prepare: () => {
-			failFake("schedules", 4);
-			router.push("/career/schedules/discovery");
+			router.push("/career/schedules/unavailable");
 		},
 	},
 	"C7-NoConnection": {

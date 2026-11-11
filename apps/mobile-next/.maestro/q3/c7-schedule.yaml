@@ -39,10 +39,12 @@ appId: me.rxresu.storyboard
 - tapOn: Review and resume
 - openLink: me.rxresu.storyboard://career/schedules/discovery
 - extendedWaitUntil:
-    visible: Discovery
+    visible: Save
     timeout: 10000
 - assertNotVisible:
     id: schedule-paused
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/C7-Unavailable?theme=light
 - extendedWaitUntil:
     visible:
@@ -51,6 +53,8 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Scheduled work is not available on this server\. Ask your server administrator to configure it\.
     timeout: 20000
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/C7-NoConnection?theme=light
 - extendedWaitUntil:
     visible:
@@ -59,6 +63,8 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Its connection is unavailable\. Choose and approve a connection before enabling this schedule\.
     timeout: 20000
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/C7-Away?theme=light
 - extendedWaitUntil:
     visible:

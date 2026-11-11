@@ -19,8 +19,9 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Why do you want to work at Lumen\?
     timeout: 10000
+# The row's Copy button (a point: the row is one accessibility element).
 - tapOn:
-    text: Copy
+    point: "336,282"
     waitToSettleTimeoutMs: 1
 - assertVisible: Copied
 - tapOn: Close
@@ -46,7 +47,7 @@ appId: me.rxresu.storyboard
     visible: Before you apply
     timeout: 20000
 - assertVisible: Open the form
-- assertVisible: "Resume, Ready"
+- assertVisible: Mark as applied
 - tapOn: Mark as applied
 - extendedWaitUntil:
     visible: What did you send\?

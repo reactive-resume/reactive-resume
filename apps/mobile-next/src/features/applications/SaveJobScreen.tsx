@@ -4,7 +4,7 @@ import { t } from "@lingui/core/macro";
 import * as Clipboard from "expo-clipboard";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Platform, View } from "react-native";
+import { Keyboard, Platform, View } from "react-native";
 import { sentStepHref } from "./actions";
 import { isLink } from "./model";
 import { FadeIn } from "./parts";
@@ -73,6 +73,8 @@ export function SaveJobScreen() {
 	const duplicate = isLink(link) ? applications.data?.find((app) => app.sourceUrl === link.trim()) : undefined;
 
 	const readPosting = async (useAI: boolean) => {
+		// The read fills the fields below; the keyboard goes so they (and Save job) are in view.
+		Keyboard.dismiss();
 		// The first posting sent to an AI connection asks first (S7); reading without AI sends nothing.
 		if (useAI && (!provider || !(await ensureApproved("posting", providerConnection(provider))))) return;
 		setReading(true);
@@ -158,7 +160,13 @@ export function SaveJobScreen() {
 						label={t`Job link or posting text`}
 						leadingIcon="link-simple"
 						value={link}
-						onChangeText={setLink}
+						onChangeText={(next) => {
+							// A new link or posting is read again.
+							setLink(next);
+							setReadDone(false);
+							setClipped(false);
+							setReadFailed(false);
+						}}
 						placeholder={t`Paste a link or the posting`}
 						autoCapitalize="none"
 						autoCorrect={false}

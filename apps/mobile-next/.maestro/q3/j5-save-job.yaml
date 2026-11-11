@@ -89,9 +89,19 @@ appId: me.rxresu.storyboard
     visible: This description is clipped or incomplete\. Review it or paste the full description before preparing\.
     timeout: 10000
 # Read with AI asks first (S7).
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J5-Blank?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- extendedWaitUntil:
+    visible: Job link or posting text
+    timeout: 20000
+- waitForAnimationToEnd
 - tapOn:
-    id: save-job-link
-- eraseText: 80
+    point: "195,213"
 - inputText: https://jobs.example.com/lead
 # Dragging the form puts the keyboard away.
 - swipe:

@@ -23,7 +23,11 @@ appId: me.rxresu.storyboard
 # Edit in place.
 - tapOn: ".*Thank you for your time today.*"
 - inputText: " P.S. Thanks again."
-- tapOn: Messages
+# Dragging the form puts the keyboard away and ends the edit.
+- swipe:
+    start: "195,250"
+    end: "195,420"
+    duration: 300
 - assertVisible: ".*P\\.S\\. Thanks again\\..*"
 - tapOn:
     text: Copy

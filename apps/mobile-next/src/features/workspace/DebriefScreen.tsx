@@ -4,7 +4,7 @@
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { MAX_BYTES, Recorder, type Take } from "./Recorder";
 import { STEPS, useAIRun, useWorkspace, Working } from "./shared";
 import { useDataActions } from "@/data";
@@ -121,7 +121,10 @@ export function DebriefScreen() {
 							size="lg"
 							block
 							disabled={!answer.trim()}
-							onPress={() => void ai.run("chat", () => review(answer))}
+							onPress={() => {
+								Keyboard.dismiss();
+								void ai.run("chat", () => review(answer));
+							}}
 						/>
 					</View>
 				) : (

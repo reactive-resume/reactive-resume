@@ -14,6 +14,16 @@ appId: me.rxresu.storyboard
     visible: Start a conversation
     timeout: 20000
 - waitForAnimationToEnd
+# Rows push their screens.
+- tapOn: Facts
+- extendedWaitUntil:
+    visible: What the coach and assistant may use\. Edit or forget any of them\.
+    timeout: 10000
+- tapOn: Back
+- extendedWaitUntil:
+    visible: Start a conversation
+    timeout: 10000
+- waitForAnimationToEnd
 - tapOn: Start a conversation
 - extendedWaitUntil:
     visible:
@@ -40,19 +50,14 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Connect an AI provider to use the coach
     timeout: 20000
-- scrollUntilVisible:
-    element: Compare offers
-- tapOn: Compare offers
-- extendedWaitUntil:
-    visible: Draft a counter
-    timeout: 10000
-- tapOn: Back
-- scrollUntilVisible:
-    element: Connect
-    direction: UP
 - tapOn: Connect
 - extendedWaitUntil:
     visible: AI and developer
+    timeout: 10000
+# Offers still work without a connection.
+- openLink: me.rxresu.storyboard://career/offers
+- extendedWaitUntil:
+    visible: Draft a counter
     timeout: 10000
 - openLink: me.rxresu.storyboard://storyboard/C1-NoSchedules?theme=light
 - extendedWaitUntil:

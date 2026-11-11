@@ -34,8 +34,9 @@ appId: me.rxresu.storyboard
     timeout: 10000
 - tapOn: Close
 - tapOn: Tailor the resume to this job
+# The assistant (B16) opens on the linked resume with the posting attached.
 - extendedWaitUntil:
-    visible: Tailor to the Lumen posting
+    visible: Ask about this resume…|Lumen posting
     timeout: 15000
 # First run without a posting.
 - openLink: me.rxresu.storyboard://applications/kiln/fit
