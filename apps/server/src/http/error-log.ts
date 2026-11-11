@@ -12,6 +12,11 @@ export function platformRequestId(headers: Headers | undefined) {
 	return value && SAFE_REQUEST_ID.test(value) ? value : undefined;
 }
 
+// "at fn (location)" or "at location", where the location ends in ":line:column" or is "index N" (Promise.all).
+// A line of a message that merely starts with "at " does not pass.
+const STACK_FRAME =
+	/^at (?:(?:async |new )?[\w.$<>[\] ]+ \((?:[\w./\\:<>@+~-]+:\d+:\d+|index \d+)\)|(?:[\w./\\:<>@+~-]+:\d+:\d+))$/;
+
 // V8 starts a stack with "<name>: <message>"; the message can hold SQL parameters or submitted text. Frames only.
 function stackFrames(error: Error) {
 	const stack = typeof error.stack === "string" ? error.stack : "";
@@ -19,7 +24,7 @@ function stackFrames(error: Error) {
 	const frames = (messageEnd === -1 ? stack : stack.slice(messageEnd + error.message.length))
 		.split("\n")
 		.map((line) => line.trim())
-		.filter((line) => line.startsWith("at "))
+		.filter((line) => STACK_FRAME.test(line))
 		.slice(0, 8);
 	return frames.length > 0 ? frames : undefined;
 }
