@@ -1,5 +1,6 @@
 import type { TsdownPlugin } from "tsdown";
 import { readdirSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "tsdown";
@@ -99,6 +100,28 @@ const agentSkillAssetsPlugin: TsdownPlugin = {
 	},
 };
 
+const requireFromServer = createRequire(import.meta.url);
+
+// Files the server reads at runtime but never imports. A Vercel Function only contains traced imports, so these are
+// copied beside the bundle like the prompts, and vercel.json includes the folder.
+const runtimeWasmFiles = {
+	"harfbuzz-subset.wasm": "harfbuzzjs/dist/harfbuzz-subset.wasm",
+	"resvg.wasm": "@resvg/resvg-wasm/index_bg.wasm",
+};
+
+const wasmAssetsPlugin: TsdownPlugin = {
+	name: "wasm-assets",
+	buildStart() {
+		for (const [fileName, specifier] of Object.entries(runtimeWasmFiles)) {
+			this.emitFile({
+				type: "asset",
+				fileName: `wasm/${fileName}`,
+				source: readFileSync(requireFromServer.resolve(specifier)),
+			});
+		}
+	},
+};
+
 export default defineConfig({
 	entry: {
 		index: "src/index.ts",
@@ -124,5 +147,5 @@ export default defineConfig({
 		alwaysBundle: shouldBundle,
 		neverBundle: shouldExternalizeThirdParty,
 	},
-	plugins: [promptAssetsPlugin, agentSkillAssetsPlugin],
+	plugins: [promptAssetsPlugin, agentSkillAssetsPlugin, wasmAssetsPlugin],
 });

@@ -40,4 +40,27 @@ describe("fonts cut to the document's characters (#3593)", () => {
 		// Each whole Noto Sans SC face is over 10 MB.
 		expect(fontBytes).toBeLessThan(2_000_000);
 	});
+
+	it("keeps the capitals an uppercase heading draws", { timeout: 120_000 }, async () => {
+		const data = structuredClone(defaultResumeData);
+		data.picture.hidden = true;
+		data.basics.name = "jane doe";
+		data.metadata.template = "meowth";
+		data.metadata.typography.body.fontFamily = "Noto Sans";
+		data.metadata.typography.heading.fontFamily = "Noto Sans";
+		data.metadata.layout.pages = [{ fullWidth: true, main: ["summary"], sidebar: [] }];
+		data.summary.hidden = false;
+		// Lower case only: "Ó", "П", "Ы" and "Т" are in no string of the document.
+		data.summary.title = "formación опыт";
+		data.summary.content = "<p>plain text</p>";
+
+		const engine = {
+			renderSerializedDocWithLayout: forme.renderSerializedDocWithLayout,
+			prepareFont: createFontPreparer(await createFontSubsetter(wasm)),
+		};
+		const result = await renderResume(engine, { data });
+
+		expect(result.missingFonts).toEqual([]);
+		expect(lostCharacters(result.warnings)).toBeNull();
+	});
 });

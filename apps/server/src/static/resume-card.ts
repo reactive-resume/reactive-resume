@@ -9,10 +9,12 @@ import { publicResumePath } from "@reactive-resume/resume/sharing";
 import { matchesIfNoneMatch } from "@reactive-resume/utils/http";
 
 let ready: Promise<void> | undefined;
+// A built server carries the file beside its bundle (a Vercel Function has no node_modules entry for a file that is
+// only read). From source it comes from the package.
 const initialize = () =>
-	(ready ??= readFile(fileURLToPath(import.meta.resolve("@resvg/resvg-wasm/index_bg.wasm"))).then((bytes) =>
-		initWasm(bytes),
-	));
+	(ready ??= readFile(new URL("./wasm/resvg.wasm", import.meta.url))
+		.catch(() => readFile(fileURLToPath(import.meta.resolve("@resvg/resvg-wasm/index_bg.wasm"))))
+		.then((bytes) => initWasm(bytes)));
 
 // Recent cards by what they draw; crawlers fetch a card once per share, so a small cache covers bursts.
 // ponytail: keyed on the picture's address; a new picture at the same address shows once the cache is cleared.

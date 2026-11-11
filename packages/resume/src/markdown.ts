@@ -1,5 +1,11 @@
 import type { FactCategory } from "@reactive-resume/schema/career";
-import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type {
+	CustomSection,
+	CustomSectionType,
+	LayoutPage,
+	ResumeData,
+	SectionType,
+} from "@reactive-resume/schema/resume/data";
 import { MAX_RESUME_FACT_CHARACTERS } from "@reactive-resume/schema/career";
 import { assertResumeRenderBudget, assertRichTextComplexity } from "@reactive-resume/schema/resume/limits";
 import { toSafeLink } from "@reactive-resume/utils/link";
@@ -14,6 +20,9 @@ type Sections = ResumeData["sections"];
  */
 export type SectionTitleResolver = (sectionId: string) => string | undefined;
 
+/** The sections a page prints, in reading order. A full-width page prints no sidebar, as in the PDF, DOCX and ODT. */
+const printedSectionIds = (page: LayoutPage) => [...page.main, ...(page.fullWidth ? [] : page.sidebar)];
+
 /**
  * Serializes resume data to Markdown — a compact, readable format well suited for feeding
  * into AI agents. Scope the input first with `getResumeExportData(data, target)` to emit only
@@ -24,7 +33,7 @@ export function buildMarkdown(data: ResumeData, resolveTitle?: SectionTitleResol
 	const blocks: string[] = isCoverLetterOnlyDocument(data) ? [] : [...renderHeader(data.basics)];
 
 	for (const page of data.metadata.layout.pages) {
-		for (const sectionId of [...page.main, ...page.sidebar]) {
+		for (const sectionId of printedSectionIds(page)) {
 			blocks.push(...renderSection(sectionId, data, resolveTitle));
 		}
 	}
@@ -45,7 +54,7 @@ export function resumeFactProposals(data: ResumeData) {
 	const seen = new Set<string>();
 	if (isCoverLetterOnlyDocument(data)) return { proposals, omitted };
 	for (const page of data.metadata.layout.pages) {
-		for (const id of [...page.main, ...page.sidebar]) {
+		for (const id of printedSectionIds(page)) {
 			const section =
 				id === "summary"
 					? data.summary

@@ -58,6 +58,9 @@ export const coverLetter = pg.pgTable(
 			.index()
 			.on(table.trashedAt)
 			.where(sql`${table.trashedAt} is not null`),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(table.sourceResumeId),
+		pg.index().on(table.sourceApplicationId),
 	],
 );
 
@@ -110,5 +113,7 @@ export const coverLetterVersion = pg.pgTable(
 			.uniqueIndex("cover_letter_version_session_unique")
 			.on(t.coverLetterId, t.sessionId)
 			.where(sql`${t.kind} = 'auto'`),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.userId),
 	],
 );

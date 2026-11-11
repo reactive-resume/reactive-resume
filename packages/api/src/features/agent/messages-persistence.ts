@@ -328,6 +328,20 @@ export function upsertAssistantUiMessage(
 ) {
 	return database.transaction(async (database) => {
 		const rows = await lockThreadMessages(database, input);
+		// The thread row is locked above, and deleting a conversation marks that row first: a run can't write into
+		// one that's gone. What it saved before it learned of the delete goes too.
+		const [thread] = await database
+			.select({ deletedAt: schema.agentThread.deletedAt })
+			.from(schema.agentThread)
+			.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)))
+			.for("update");
+		if (!thread || thread.deletedAt) {
+			if (rows.length > 0)
+				await database
+					.delete(schema.agentMessage)
+					.where(and(eq(schema.agentMessage.threadId, input.threadId), eq(schema.agentMessage.userId, input.userId)));
+			return null;
+		}
 		const stored =
 			rows.find((row) => row.id === input.rowId) ??
 			rows.find((row) => row.role === "assistant" && row.uiMessage.id === input.message.id);
