@@ -1,15 +1,18 @@
 import { t } from "@lingui/core/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useContext } from "react";
 import { View } from "react-native";
 import { fnv1a } from "@reactive-resume/utils/string";
+import { DockDocumentId } from "../shared/document";
 import { useResume, useResumeStore, useLetter, useLetterStore, useDataBackend } from "@/data";
 import { pageRenderer, type PageRenderRequest } from "@/render/page-renderer";
 import { Button, IconButton, Skeleton, Text } from "@/ui";
 
 export function useDocumentId() {
 	const { id } = useLocalSearchParams<{ id: string }>();
-	return id;
+	const dock = useContext(DockDocumentId);
+	return id ?? dock;
 }
 export function BuilderActions({ id }: { id: string }) {
 	const router = useRouter();

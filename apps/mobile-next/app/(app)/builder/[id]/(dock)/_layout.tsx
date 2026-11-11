@@ -2,7 +2,7 @@
 import { useLocalSearchParams } from "expo-router";
 import { Tabs } from "expo-router/js-tabs";
 import { useCheckReport } from "@/features/builder/check/report";
-import { BuilderDocument, useResumeData } from "@/features/builder/shared/document";
+import { DockDocumentId, BuilderDocument, useResumeData } from "@/features/builder/shared/document";
 import { DockTabBar, type DockItemSpec } from "@/ui/Dock";
 import { FadeThroughProvider } from "@/ui/motion";
 
@@ -19,14 +19,16 @@ export default function Layout() {
 	return (
 		<FadeThroughProvider>
 			<BuilderDocument id={id} />
-			<Tabs
-				screenOptions={{ headerShown: false, animation: "none" }}
-				tabBar={(props) => <DockTabBar {...props} variant="builder" items={items} />}
-			>
-				{items.map((item) => (
-					<Tabs.Screen key={item.key} name={item.key} />
-				))}
-			</Tabs>
+			<DockDocumentId value={id}>
+				<Tabs
+					screenOptions={{ headerShown: false, animation: "none" }}
+					tabBar={(props) => <DockTabBar {...props} variant="builder" items={items} />}
+				>
+					{items.map((item) => (
+						<Tabs.Screen key={item.key} name={item.key} />
+					))}
+				</Tabs>
+			</DockDocumentId>
 		</FadeThroughProvider>
 	);
 }

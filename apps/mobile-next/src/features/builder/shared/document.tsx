@@ -4,7 +4,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { View } from "react-native";
 import { create } from "zustand";
 import { useDocumentHistory, useLetterDraftOwner, useResumeDraftOwner, useResumeStore } from "@/data";
@@ -84,9 +84,13 @@ export function LetterDocument({ id: param }: { id: string }) {
 }
 
 /** The route's document, section and entry ids. */
+/** The document id of the dock around a mode: a mode switched to from the dock has no route params of its own. */
+export const DockDocumentId = createContext("");
+
 export function useBuilderParams() {
 	const params = useLocalSearchParams<{ id: string; section?: string; item?: string }>();
-	return { id: String(params.id ?? ""), section: params.section ?? "", item: params.item ?? "" };
+	const dock = useContext(DockDocumentId);
+	return { id: String(params.id ?? dock), section: params.section ?? "", item: params.item ?? "" };
 }
 
 export const useResumeData = () => useResumeStore((s) => s.data);
