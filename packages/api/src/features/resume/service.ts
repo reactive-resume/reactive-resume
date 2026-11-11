@@ -112,13 +112,24 @@ const uniqueConstraint = (error: unknown) => (error as { cause?: { constraint?: 
 const otherPrimary = alias(schema.resume, "other_primary");
 
 /**
- * Makes a resume the account's primary one when the account has none, in its own savepoint: when another resume
- * becomes primary at the same moment, that one keeps the role and this save still succeeds.
+ * Makes a resume the account's primary one when the account has none outside Trash, in its own savepoint: when
+ * another resume becomes primary at the same moment, that one keeps the role and this save still succeeds.
  */
 async function claimPrimaryIfNone(tx: DbOrTx, input: { userId: string; resumeId: string }) {
 	try {
-		await tx.transaction((savepoint) =>
-			savepoint
+		await tx.transaction(async (savepoint) => {
+			// A primary resume in Trash opens nothing and Share can't show it, so the role passes on.
+			await savepoint
+				.update(schema.resume)
+				.set({ isPrimary: false })
+				.where(
+					and(
+						eq(schema.resume.userId, input.userId),
+						eq(schema.resume.isPrimary, true),
+						isNotNull(schema.resume.trashedAt),
+					),
+				);
+			await savepoint
 				.update(schema.resume)
 				.set({ isPrimary: true })
 				.where(
@@ -132,8 +143,8 @@ async function claimPrimaryIfNone(tx: DbOrTx, input: { userId: string; resumeId:
 								.where(and(eq(otherPrimary.userId, input.userId), eq(otherPrimary.isPrimary, true))),
 						),
 					),
-				),
-		);
+				);
+		});
 	} catch (error) {
 		if (uniqueConstraint(error) !== "resume_primary_unique") throw error;
 	}
