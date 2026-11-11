@@ -93,7 +93,7 @@ Quotas and permitted use depend on your Vercel, Neon, and Upstash plans. Check [
 1. Open `https://<your-project>.vercel.app/api/health`. `database`, `storage`, and `redis` should each report `"status": "healthy"`, and `version` shows the release you deployed. A sleeping Neon database can fail the first check; retry once.
 2. Open the production domain and create an account.
 3. Optional: to use AI features, each person adds their own provider under **Settings → AI**.
-4. Optional: configure SMTP for verification and password-reset emails. Without SMTP, emails are written to the Function logs.
+4. Optional: configure SMTP for verification and password-reset emails. Without SMTP, no email is sent; the Function logs show only each email's recipient and subject.
 5. Optional: add Google, GitHub, LinkedIn, or your own identity provider. See [Single sign-on (SSO)](/self-hosting/sso) for the callback URLs.
 
 ## Scheduled career work
