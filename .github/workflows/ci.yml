@@ -158,6 +158,12 @@ jobs:
         timeout-minutes: 20
         run: pnpm exec playwright install --with-deps chromium webkit
 
+      # The tooling unit tests include an Android import reader test that drives headless Chromium.
+      - name: Install headless Chromium for tooling tests
+        if: matrix.suite == 'Unit'
+        timeout-minutes: 10
+        run: pnpm exec playwright install --with-deps --only-shell chromium
+
       - name: Prepare test storage
         run: mkdir -p "$LOCAL_STORAGE_PATH"
 
