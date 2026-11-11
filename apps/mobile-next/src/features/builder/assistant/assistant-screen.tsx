@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useDocumentId } from "../share/document";
 import { ensureApproved, providerConnection, useAIProviders } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
@@ -71,30 +72,35 @@ export function AssistantScreen() {
 				/>
 			}
 			footer={
-				<View style={{ paddingBottom: 34 }}>
-					<Composer
-						value={message}
-						onChangeText={setMessage}
-						placeholder={t`Ask about this resume…`}
-						onSend={() => void send()}
-						sending={sending}
-						blocked={!provider ? t`Choose a connection before sending.` : failed ? t`Your message is kept.` : undefined}
-						chips={
-							<>
-								{resume ? (
-									<ContextChip label={t`This resume`} icon="file-text" onRemove={() => setResume(false)} />
-								) : (
-									<Chip label={t`This resume`} dashed onPress={() => setResume(true)} />
-								)}
-								{posting ? (
-									<ContextChip label={t`Lumen posting`} icon="briefcase" onRemove={() => setPosting(false)} />
-								) : (
-									<Chip label={t`Lumen posting`} dashed onPress={() => setPosting(true)} />
-								)}
-							</>
-						}
-					/>
-				</View>
+				// The composer rides above the keyboard while typing (the home-indicator gap goes under it).
+				<KeyboardStickyView offset={{ opened: 34 }}>
+					<View style={{ paddingBottom: 34 }}>
+						<Composer
+							value={message}
+							onChangeText={setMessage}
+							placeholder={t`Ask about this resume…`}
+							onSend={() => void send()}
+							sending={sending}
+							blocked={
+								!provider ? t`Choose a connection before sending.` : failed ? t`Your message is kept.` : undefined
+							}
+							chips={
+								<>
+									{resume ? (
+										<ContextChip label={t`This resume`} icon="file-text" onRemove={() => setResume(false)} />
+									) : (
+										<Chip label={t`This resume`} dashed onPress={() => setResume(true)} />
+									)}
+									{posting ? (
+										<ContextChip label={t`Lumen posting`} icon="briefcase" onRemove={() => setPosting(false)} />
+									) : (
+										<Chip label={t`Lumen posting`} dashed onPress={() => setPosting(true)} />
+									)}
+								</>
+							}
+						/>
+					</View>
+				</KeyboardStickyView>
 			}
 		>
 			<View style={{ paddingTop: 16, paddingHorizontal: 24, gap: 16 }}>

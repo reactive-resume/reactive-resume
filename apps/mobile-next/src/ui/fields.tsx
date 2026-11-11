@@ -379,7 +379,9 @@ export function Composer({
 						autoFocus={!!autoFocus}
 						caretHidden={STORYBOARD}
 						selectionColor={colors.accent}
-						accessibilityLabel={placeholder}
+						// No accessibilityLabel: iOS reads the placeholder after any label, and repeating the placeholder as the
+						// label named the field "Ask about this resume… Ask about this resume…", which nothing could find.
+						testID="composer-input"
 						style={[
 							multiLine(typeScale.body),
 							{ padding: 0, color: colors.ink, maxHeight: 120, includeFontPadding: false },
