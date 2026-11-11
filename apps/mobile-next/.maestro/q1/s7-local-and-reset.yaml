@@ -1,0 +1,48 @@
+# S7 · The secondary button is the local path where one exists (file, audio), else Cancel; after a send, S5's
+# "Sent before" lists the approval and Reset removes it, so the next send asks again.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S7-FirstSend?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- assertVisible: Read on this device instead
+- openLink: me.rxresu.storyboard://storyboard/S7-Audio?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- assertVisible: Type your answer instead
+- openLink: me.rxresu.storyboard://storyboard/S7-Chat?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- assertVisible: Cancel
+- assertNotVisible: Read on this device instead
+- openLink: me.rxresu.storyboard://storyboard/W5-Messages?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn: Redraft
+- waitForAnimationToEnd
+- assertVisible: Send to Work OpenAI?
+- tapOn:
+    id: first-send-send
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://settings/ai
+- scrollUntilVisible:
+    element: Sent before
+    direction: DOWN
+- assertVisible: postings
+- tapOn: Reset
+- waitForAnimationToEnd
+- assertNotVisible: Sent before
+- openLink: me.rxresu.storyboard://applications/fieldnote/messages
+- tapOn: Redraft
+- waitForAnimationToEnd
+- assertVisible: Send to Work OpenAI?

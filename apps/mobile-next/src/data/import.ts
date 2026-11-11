@@ -31,7 +31,7 @@ export class DocumentImportError extends Error {
 		const messages = {
 			unsupported: t`Choose a PDF, Word, JSON or LinkedIn ZIP file. Your file is kept.`,
 			"too-large": t`File is too large. Choose a file up to 10 MB.`,
-			invalid: t`This file couldn't be read. Your file is kept.`,
+			invalid: t`The file couldn't be read as a resume.`,
 			consent: t`File sharing wasn't approved. Your file is kept.`,
 			unreadable: t`Couldn't read the file. Your file is kept.`,
 			canceled: t`Import canceled. Your file is kept.`,

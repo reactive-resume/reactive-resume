@@ -1,0 +1,101 @@
+# S6 · Add AI provider: missing fields say what to enter; a failing test names the problem and keeps what was typed;
+# S5 then shows the failed row in its own words with Test again; a passing test shows Connected with its latency;
+# the saved key isn't sent to a new base URL.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S5-AI?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn: Add AI provider
+- waitForAnimationToEnd
+- tapOn:
+    id: provider-save
+- waitForAnimationToEnd
+- assertVisible: Enter an API key for this provider.
+- tapOn:
+    id: provider-model
+- waitForAnimationToEnd
+- eraseText: 40
+- tapOn:
+    id: provider-key
+- waitForAnimationToEnd
+- inputText: sk-test-key
+- tapOn:
+    id: provider-save
+- waitForAnimationToEnd
+- assertVisible: Enter a model ID.
+- tapOn:
+    id: provider-model
+- waitForAnimationToEnd
+- inputText: gpt-test
+- tapOn:
+    id: provider-base-url
+- waitForAnimationToEnd
+- inputText: not a url
+- hideKeyboard
+- tapOn:
+    id: provider-save
+- waitForAnimationToEnd
+- assertVisible: Enter an http:// or https:// base URL.
+- tapOn:
+    id: provider-base-url
+- waitForAnimationToEnd
+- eraseText: 20
+- hideKeyboard
+- tapOn: Test
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "Connected · \\d+ ms"
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+# Ollama on this phone fails its test; the row and its edit screen say why.
+- tapOn: Add AI provider
+- waitForAnimationToEnd
+- tapOn: Provider
+- waitForAnimationToEnd
+- tapOn: Ollama
+- waitForAnimationToEnd
+- tapOn:
+    id: provider-key
+- waitForAnimationToEnd
+- inputText: local
+- hideKeyboard
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: Test
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: haptic-log
+      text: error
+    timeout: 10000
+- assertVisible: Ollama
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- assertVisible: Can't reach localhost:11434
+- tapOn: Test again
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: haptic-log
+      text: error error
+    timeout: 10000
+# The saved key isn't sent to a new address.
+- tapOn: Work OpenAI
+- waitForAnimationToEnd
+- tapOn:
+    id: provider-base-url
+- waitForAnimationToEnd
+- inputText: https://proxy.example.org/v1
+- hideKeyboard
+- tapOn:
+    id: provider-save
+- waitForAnimationToEnd
+- assertVisible: The saved key isn't sent to a new base URL. Enter it again.

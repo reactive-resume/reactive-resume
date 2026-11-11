@@ -1,0 +1,31 @@
+# A2 · Return on the password field signs in (the storyboard server then asks for A3).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/A1-Welcome?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn:
+    id: welcome-sign-in
+- waitForAnimationToEnd
+- tapOn:
+    id: sign-in-email
+- waitForAnimationToEnd
+- inputText: alex@morgan.design
+- tapOn:
+    id: sign-in-password
+- waitForAnimationToEnd
+- inputText: storyboard
+- pressKey: Enter
+# iOS offers to save the password: the fields carry username and password autofill hints.
+- runFlow:
+    when:
+      visible: Save Password?
+    commands:
+      - tapOn: Not Now
+- extendedWaitUntil:
+    visible: Enter the code
+    timeout: 10000

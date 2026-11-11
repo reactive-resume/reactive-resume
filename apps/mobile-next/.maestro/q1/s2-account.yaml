@@ -1,0 +1,33 @@
+# S2 · Account: a server without email says it can't change the address; Delete
+# account asks for the password first, then says whether an export exists.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S2-Account?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- openLink: me.rxresu.storyboard://settings/account?state=no-email
+- assertVisible: This server can't send email, so the address can't be changed here. Ask the person who runs it.
+- tapOn: Delete account
+- waitForAnimationToEnd
+- assertVisible: Confirm it's you
+- tapOn: Continue
+- waitForAnimationToEnd
+- assertVisible: Enter your password.
+- tapOn: Use a passkey
+- waitForAnimationToEnd
+- assertVisible: Delete your account?
+- assertVisible: No export yet · Export first
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: Delete account permanently
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Your resume, from first draft to the offer.
+    timeout: 10000
+- assertVisible:
+    id: haptic-log
+    text: warning

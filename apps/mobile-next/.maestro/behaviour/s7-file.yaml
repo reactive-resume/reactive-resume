@@ -1,4 +1,4 @@
-# Clean storyboard sandbox required. Uses real request guard, repeats same kind, changes fake key, requests again. File/audio also need native picker/microphone setup; see README.
+# Clean storyboard sandbox required. Uses real request guard, repeats same kind, changes fake key, requests again. The picker chooses q1-resume.pdf, copied into Files by q1/lib/files.sh.
 appId: me.rxresu.storyboard
 ---
 - openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
@@ -14,8 +14,12 @@ appId: me.rxresu.storyboard
       id: storyboard-ready
     timeout: 30000
 - openLink: me.rxresu.storyboard://import
-- tapOn: Choose a file
-- tapOn: "${IMPORT_FIXTURE_NAME}"
+- tapOn:
+    id: import-choose
+- runFlow:
+    file: ../q1/lib/pick-file.yaml
+    env:
+      FILE: q1-resume, pdf
 - tapOn: Read with AI
 - assertVisible: Send to Work OpenAI?
 - assertVisible: "Don't ask again for files"
@@ -24,8 +28,12 @@ appId: me.rxresu.storyboard
 - assertNotVisible: Send to Work OpenAI?
 - openLink: me.rxresu.storyboard://import
 - openLink: me.rxresu.storyboard://import
-- tapOn: Choose a file
-- tapOn: "${IMPORT_FIXTURE_NAME}"
+- tapOn:
+    id: import-choose
+- runFlow:
+    file: ../q1/lib/pick-file.yaml
+    env:
+      FILE: q1-resume, pdf
 - tapOn: Read with AI
 - assertNotVisible: Send to Work OpenAI?
 - openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
@@ -36,7 +44,11 @@ appId: me.rxresu.storyboard
     id: provider-save
 - openLink: me.rxresu.storyboard://import
 - openLink: me.rxresu.storyboard://import
-- tapOn: Choose a file
-- tapOn: "${IMPORT_FIXTURE_NAME}"
+- tapOn:
+    id: import-choose
+- runFlow:
+    file: ../q1/lib/pick-file.yaml
+    env:
+      FILE: q1-resume, pdf
 - tapOn: Read with AI
 - assertVisible: Send to Work OpenAI?

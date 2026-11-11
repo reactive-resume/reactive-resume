@@ -1,0 +1,55 @@
+# A1 · Welcome: Create an account opens A2 in register mode, Sign in opens A2, the quiet link opens P2 signed out;
+# Change server with an address nobody answers at says so.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/A1-Welcome?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn:
+    id: welcome-register
+- waitForAnimationToEnd
+- assertVisible: Start your resume
+- assertVisible: Username
+- assertVisible: Sign up
+- openLink: me.rxresu.storyboard://storyboard/A1-Welcome?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn:
+    id: welcome-sign-in
+- waitForAnimationToEnd
+- assertVisible: Email or username
+- assertVisible: Forgot password?
+- openLink: me.rxresu.storyboard://storyboard/A1-Welcome?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn: Check a resume PDF without an account
+- waitForAnimationToEnd
+- assertVisible: Choose a PDF
+- openLink: me.rxresu.storyboard://storyboard/A1-Welcome?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn:
+    id: welcome-server
+- waitForAnimationToEnd
+- assertVisible: Server address
+- tapOn:
+    id: server-address
+- waitForAnimationToEnd
+- eraseText: 40
+- inputText: nowhere.invalid
+- tapOn:
+    id: server-check
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Couldn't reach that server. Check the address and try again.
+    timeout: 20000

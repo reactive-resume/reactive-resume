@@ -1,0 +1,55 @@
+# D4 · Import: a PDF read on this device shows what was found with the resume language first in the footer and
+# Create resume opens B1; a file that isn't a resume, one with no sections and one without contact details each say so.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- openLink: me.rxresu.storyboard://import
+- tapOn:
+    id: import-choose
+- waitForAnimationToEnd
+- runFlow:
+    file: lib/pick-file.yaml
+    env:
+      FILE: q1-notes.json, json
+- extendedWaitUntil:
+    visible: The file couldn't be read as a resume.
+    timeout: 30000
+- tapOn: Choose another file
+- waitForAnimationToEnd
+- runFlow:
+    file: lib/pick-file.yaml
+    env:
+      FILE: q1-blank.json, json
+- extendedWaitUntil:
+    visible: No sections were found in this file.
+    timeout: 30000
+- assertVisible: Start blank
+- tapOn: Change
+- waitForAnimationToEnd
+- runFlow:
+    file: lib/pick-file.yaml
+    env:
+      FILE: q1-nocontact.json, json
+- extendedWaitUntil:
+    visible: Name and contact details weren't found. Add them in Basics.
+    timeout: 30000
+- tapOn: Change
+- waitForAnimationToEnd
+- runFlow:
+    file: lib/pick-file.yaml
+    env:
+      FILE: q1-resume, pdf
+- extendedWaitUntil:
+    visible: Check what was found
+    timeout: 30000
+- tapOn: Create resume
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 20000

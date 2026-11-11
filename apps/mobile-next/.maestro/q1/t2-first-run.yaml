@@ -1,0 +1,30 @@
+# T2 · First run: Import a resume opens D4; the template link opens D3 with Resume; steps 2 and 3 are not buttons
+# until reachable; a signed-in account sees no guest notice.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/T2-FirstRun?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- assertNotVisible: You're using a guest account
+- tapOn: Import a resume
+- waitForAnimationToEnd
+- assertVisible: Choose a file
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- tapOn: Start from a template instead
+- waitForAnimationToEnd
+- assertVisible: Import a resume
+- tapOn: Resume
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Template
+    timeout: 10000
+- openLink: me.rxresu.storyboard://
+- tapOn: Save a job you want
+- waitForAnimationToEnd
+- assertVisible: Save a job

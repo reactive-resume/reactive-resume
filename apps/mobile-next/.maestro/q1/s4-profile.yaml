@@ -1,0 +1,28 @@
+# S4 · Application profile: fields save as you type with Saving… in the status line; an invalid email says what to
+# check; Pay expectations opens the same value in Job search (C5).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S4-Profile?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- tapOn:
+    id: profile-email
+- waitForAnimationToEnd
+- eraseText: 40
+- inputText: not-an-email
+- extendedWaitUntil:
+    visible: Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period.
+    timeout: 10000
+- eraseText: 20
+- inputText: alex@example.org
+- extendedWaitUntil:
+    notVisible: Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period.
+    timeout: 10000
+- hideKeyboard
+- tapOn: Pay expectations
+- waitForAnimationToEnd
+- assertVisible: Find new roles for me

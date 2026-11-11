@@ -1,4 +1,5 @@
-# Blocked on native Files destination selection; opening a picker is not a successful export.
+# S8 · Export a copy first saves the queued changes to a folder chosen in the system picker (On My iPhone); the
+# dialog stays open and reads "Saved to Files".
 appId: me.rxresu.storyboard
 ---
 - launchApp:
@@ -12,8 +13,11 @@ appId: me.rxresu.storyboard
 - tapOn:
     id: settings-sign-out
 - tapOn: Export a copy first
-# Native Files picker: lead supplies platform-specific destination selection before this assertion.
-- assertVisible: Saved to Files
+- runFlow:
+    file: ../q1/lib/pick-folder.yaml
+- extendedWaitUntil:
+    visible: Saved to Files
+    timeout: 15000
 - assertVisible: 3 changes haven't synced
 - tapOn: Keep working
 - assertVisible:

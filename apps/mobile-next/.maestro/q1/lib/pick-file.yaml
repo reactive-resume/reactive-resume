@@ -1,0 +1,19 @@
+# Picks ${FILE} (resource id "<name>, <type>") from On My iPhone in the system document picker. The fixtures are
+# nonpersonal files copied into the simulator's Files storage first (see README in this folder).
+appId: me.rxresu.storyboard
+---
+- extendedWaitUntil:
+    visible: Browse
+    timeout: 20000
+- tapOn: Browse
+- runFlow:
+    when:
+      visible: On My iPhone
+    commands:
+      - tapOn: On My iPhone
+- extendedWaitUntil:
+    visible:
+      id: ${FILE}
+    timeout: 10000
+- tapOn:
+    id: ${FILE}

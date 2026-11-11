@@ -237,6 +237,7 @@ function ScopedProviderScreen() {
 						textContentType="password"
 						accessibilityHint={existing ? t`Leave empty to keep the saved key` : undefined}
 						error={keyError}
+						testID="provider-key"
 					/>
 					{result ? <TestResult key={result.text} {...result} /> : null}
 				</View>
@@ -248,6 +249,7 @@ function ScopedProviderScreen() {
 					autoCapitalize="none"
 					autoCorrect={false}
 					error={problem === "model" ? t`Enter a model ID.` : undefined}
+					testID="provider-model"
 				/>
 				<TextField
 					label={t`Base URL`}
@@ -258,6 +260,7 @@ function ScopedProviderScreen() {
 					autoCapitalize="none"
 					autoCorrect={false}
 					error={problem === "baseURL" ? t`Enter an http:// or https:// base URL.` : undefined}
+					testID="provider-base-url"
 				/>
 			</Form>
 			<View style={{ paddingTop: 16, paddingHorizontal: 24 }}>

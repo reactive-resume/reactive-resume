@@ -1,0 +1,48 @@
+# D6 · Trash: long-press and swipe both open Delete permanently for that one item; Restore folds the row and plays
+# success; Empty deletes what it counts and leaves the empty state.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D6-Trash?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- longPressOn:
+    id: trash-resume-junior
+- waitForAnimationToEnd
+- assertVisible: Delete 1 document permanently?
+- assertVisible:
+    id: haptic-log
+    text: ""
+- tapOn: Cancel
+- waitForAnimationToEnd
+- swipe:
+    start: "85%,33%"
+    end: "25%,33%"
+    duration: 400
+- assertVisible: Delete 1 document permanently?
+- tapOn: Cancel
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn:
+    text: Restore
+    index: 0
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Open
+    timeout: 5000
+- assertVisible:
+    id: haptic-log
+    text: success
+- tapOn: Empty
+- waitForAnimationToEnd
+- tapOn: Delete permanently
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Trash is empty. Documents stay here for 30 days; applications until you delete them.
+    timeout: 10000

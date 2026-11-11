@@ -89,6 +89,7 @@ export function WelcomeScreen() {
 						link={t`Change`}
 						hint={t`Change server`}
 						onPress={() => router.push("/server")}
+						testID="welcome-server"
 					/>
 				</Animated.View>
 			</View>

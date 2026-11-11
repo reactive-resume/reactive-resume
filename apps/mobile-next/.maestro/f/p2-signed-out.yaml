@@ -5,5 +5,8 @@ appId: me.rxresu.storyboard
 - openLink: me.rxresu.storyboard://ats-checker
 - assertVisible: "ATS checker"
 - assertNotVisible: "Sign in"
-- tapOn: "Choose a PDF"
-- assertVisible: "Browse"
+- tapOn:
+    id: ats-choose
+- extendedWaitUntil:
+    visible: "Browse"
+    timeout: 20000

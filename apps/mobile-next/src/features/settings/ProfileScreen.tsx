@@ -127,6 +127,7 @@ export function ProfileScreen() {
 							autoCapitalize="none"
 							autoComplete="email"
 							textContentType="emailAddress"
+							testID="profile-email"
 						/>
 						<TextField
 							label={t`Phone`}

@@ -1,0 +1,44 @@
+# S3 · Preferences: the theme changes at once and plays selection; turning a notification category on the first time
+# asks for the system permission; the Haptics switch plays toggleOn when turned back on.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S3-Preferences?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 30000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: Dark
+- waitForAnimationToEnd
+- assertVisible:
+    text: Dark
+    selected: true
+- assertVisible:
+    id: haptic-log
+    text: selection
+- tapOn: Light
+- waitForAnimationToEnd
+- tapOn: New roles
+- waitForAnimationToEnd
+- tapOn: New roles
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: ".*Would Like to Send You Notifications"
+    timeout: 10000
+- tapOn:
+    text: Allow
+    optional: true
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: Haptics
+- waitForAnimationToEnd
+- tapOn: Haptics
+- waitForAnimationToEnd
+# Off plays toggleOff before haptics stop; on plays toggleOn once they're back.
+- assertVisible:
+    id: haptic-log
+    text: toggleOff toggleOn
