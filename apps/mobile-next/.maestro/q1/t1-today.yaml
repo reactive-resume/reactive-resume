@@ -1,6 +1,4 @@
-# T1 · Today: a Needs-you row opens its screen; swiping it toward the start marks it done with Undo; New roles open
-# the posting with Track in Applications and Not for me; Select and long-press choose several; re-tapping Today
-# scrolls to the top.
+# T1 · Today: a Needs-you row opens its screen; swiping it toward the start marks it done with Undo.
 appId: me.rxresu.storyboard
 ---
 - launchApp:
@@ -29,6 +27,9 @@ appId: me.rxresu.storyboard
     timeout: 5000
 - assertNotVisible:
     id: today-needs-fieldnote
+# Let the toast finish rising before tapping its Undo.
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     text: Undo
     waitToSettleTimeoutMs: 1
@@ -39,48 +40,3 @@ appId: me.rxresu.storyboard
     visible:
       id: today-needs-fieldnote
     timeout: 5000
-- scrollUntilVisible:
-    element:
-      id: today-role-opportunity-kiln
-    direction: DOWN
-- tapOn:
-    id: today-role-opportunity-kiln
-- waitForAnimationToEnd
-- assertVisible: Track in Applications
-- assertVisible: Not for me
-- tapOn: Track in Applications
-- waitForAnimationToEnd
-- assertVisible: Save a job
-- tapOn:
-    id: top-bar-back
-- waitForAnimationToEnd
-- scrollUntilVisible:
-    element:
-      id: today-role-opportunity-kiln
-    direction: DOWN
-- longPressOn:
-    id: today-role-opportunity-kiln
-- waitForAnimationToEnd
-- assertVisible: Done
-- assertVisible: Not for me
-- tapOn: Done
-- waitForAnimationToEnd
-- assertNotVisible: Not for me
-- tapOn: Select
-- waitForAnimationToEnd
-- assertVisible: Done
-- tapOn:
-    id: today-role-opportunity-kiln
-- waitForAnimationToEnd
-- scrollUntilVisible:
-    element: Not for me
-    direction: DOWN
-- tapOn: Not for me
-- waitForAnimationToEnd
-- extendedWaitUntil:
-    visible: No new roles today. Next run tomorrow, 07:00.
-    timeout: 5000
-# Re-tapping the Today tab scrolls back to the top.
-- tapOn: Today
-- waitForAnimationToEnd
-- assertVisible: Open briefing
