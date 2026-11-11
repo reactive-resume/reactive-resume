@@ -371,7 +371,7 @@ describe("Semantic CSS cascade and structural resolution", () => {
 	it("normalizes supported line-height lengths and enforces font-size and opacity bounds", () => {
 		const valid = resolve("section-heading { line-height: 12pt; font-size: 0; opacity: 0; }");
 		expect(valid.nodes["heading-experience"]?.style).toMatchObject({
-			"line-height": 12,
+			"line-height": "12pt",
 			"font-size": 0,
 			opacity: 0,
 		});
@@ -392,6 +392,37 @@ describe("Semantic CSS cascade and structural resolution", () => {
 		const variable = resolve(":root { --bad: 1.0001; } section-heading { opacity: var(--bad); }");
 		expect(variable.nodes["heading-experience"]?.style.color).toBe("black");
 		expect(variable.diagnostics).toContainEqual(expect.objectContaining({ code: "INVALID_VALUE", severity: "error" }));
+	});
+
+	it("keeps line-height multiples as numbers and lengths as lengths", () => {
+		const lineHeight = (value: string) =>
+			resolve(`section-heading { line-height: ${value}; }`).nodes["heading-experience"]?.style["line-height"];
+
+		expect(lineHeight("1.5")).toBe(1.5);
+		expect(lineHeight("12pt")).toBe("12pt");
+		expect(lineHeight("16px")).toBe("12pt");
+		expect(lineHeight("1.5rem")).toBe("15pt");
+		expect(lineHeight("1.2em")).toBe(1.2);
+		expect(lineHeight("150%")).toBe(1.5);
+		expect(lineHeight("normal")).toBe("normal");
+	});
+
+	it("inherits a line-height length unchanged by a child with another font size", () => {
+		const richTree = node("resume", "resume", {
+			children: [
+				node("page-1", "page", {
+					attributes: { "page-number": "1" },
+					children: [node("paragraph-1", "paragraph", { children: [node("strong-1", "strong")] })],
+				}),
+			],
+		});
+		const result = resolveTree("paragraph { line-height: 18pt; } strong { font-size: 20pt; }", richTree, {
+			...context,
+			baseStyles: {},
+		});
+
+		expect(result.nodes["paragraph-1"]?.style["line-height"]).toBe("18pt");
+		expect(result.nodes["strong-1"]?.style["line-height"]).toBe("18pt");
 	});
 
 	it("matches positional selectors before applying display and stable order exactly once", () => {

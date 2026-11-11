@@ -466,7 +466,17 @@ function normalizeValue(property: string, value: string, context: LengthContext)
 	}
 	if (property === "line-height") {
 		if (value.toLowerCase() === "normal") return "normal";
-		return toPoints(value, property, context);
+		// A bare number, `em` and `%` are multiples of the element's own font size, which is how renderers read a
+		// number. Any other unit is a length: it keeps a unit so the renderer divides by the size it draws with.
+		const multiple = value.trim().match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*(%|em)?$/i);
+		if (multiple) {
+			const number = Number(multiple[1]);
+			if (!Number.isFinite(number)) return null;
+			return multiple[2] === "%" ? number / 100 : number;
+		}
+		const points = toPoints(value, property, context);
+		if (typeof points !== "number" || Math.abs(points) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt) return null;
+		return `${points}pt`;
 	}
 	if (/^(opacity|flex-grow|flex-shrink|order|orphans|widows|z-index|max-lines)$/i.test(property)) {
 		const number = Number(value);
