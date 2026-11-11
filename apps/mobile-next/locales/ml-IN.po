@@ -29,6 +29,11 @@ msgstr "· {0} സമയം"
 msgid "“{0}” moved to Trash"
 msgstr "“{0}” ട്രാഷിലേക്ക് നീക്കി"
 
+#. placeholder {0}: currentPrimary?.name ?? ""
+#: src/features/builder/share/web-page-screen.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr ""
+
 #: src/features/builder/check/issues.ts
 msgid "“{title}” isn't a heading systems look for"
 msgstr "“{title}” എന്നത് ഒരു തലക്കെട്ട് സിസ്റ്റങ്ങൾ തിരയുന്നതല്ല"
@@ -109,7 +114,7 @@ msgstr "{0, plural, one {# പ്രൊഫൈൽ മാറ്റം} other {# �
 msgid "{0, plural, one {# story or fact} other {# stories and facts}}"
 msgstr "{0, plural, one {# അനുഭവകഥയോ വസ്തുതയോ} other {# അനുഭവകഥകളും വസ്തുതകളും}}"
 
-#. placeholder {0}: zoneCity(timeZone())
+#. placeholder {0}: zoneCity(home)
 #: src/features/settings/PreferencesScreen.tsx
 msgid "{0} · automatic"
 msgstr "{0} · സ്വയമേവ"
@@ -163,6 +168,11 @@ msgstr "{0} കഴിവുകളിൽ ചേർത്തു"
 msgid "{0} application"
 msgstr "{0} അപേക്ഷ"
 
+#. placeholder {0}: quiet.length
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "{0} applications haven't had a reply in 30 days."
+msgstr ""
+
 #. placeholder {0}: row.applied
 #: src/features/applications/InsightsScreen.tsx
 msgid "{0} applied"
@@ -199,6 +209,11 @@ msgstr "ജോലിയെക്കുറിച്ച് {0} വസ്തുത�
 #: src/features/career/facts.tsx
 msgid "{0} facts permanently forgotten"
 msgstr "{0} വസ്തുതകൾ പൂർണ്ണമായി മറന്നു"
+
+#. placeholder {0}: quiet[0]?.company ?? ""
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "{0} hasn't replied in 30 days."
+msgstr ""
 
 #. placeholder {0}: term.label
 #: src/features/builder/check/CheckScreen.tsx
@@ -285,6 +300,11 @@ msgstr "അഭിമുഖങ്ങൾക്ക് {0} അനുഭവകഥക�
 msgid "{0} time"
 msgstr "{0} സമയം"
 
+#. placeholder {0}: day.views
+#: src/features/builder/share/activity-screen.tsx
+msgid "{0} views"
+msgstr ""
+
 #. placeholder {0}: preferences.data.noticeWeeks
 #: src/data/career-tools.ts
 msgid "{0} weeks"
@@ -298,6 +318,11 @@ msgstr "{0} ആഴ്ചകൾ"
 msgid "{0}, {1} {2} · {3} · may charge"
 msgstr "{0}, {1} {2} · {3} · നിരക്ക് ഉണ്ടായേക്കാം"
 
+#. placeholder {0}: item.label
+#: src/ui/Dock.tsx
+msgid "{0}, issues to review"
+msgstr ""
+
 #. placeholder {0}: accent.label()
 #: src/features/builder/design/TemplateScreen.tsx
 msgid "{0}, selected"
@@ -310,6 +335,10 @@ msgstr "{0}, തിരഞ്ഞെടുത്തു"
 #: src/features/workspace/PracticeScreen.tsx
 msgid "{0}{1} · question {2} of {3}"
 msgstr "{0}{1} · ചോദ്യം {2}/{3}"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "{access} · last used {used}"
+msgstr ""
 
 #: src/features/workspace/ApplyScreen.tsx
 msgid "{answerCount} answers saved"
@@ -538,6 +567,7 @@ msgid "3 facts"
 msgstr "3 വസ്തുതകൾ"
 
 #: src/features/applications/InsightsScreen.tsx
+#: src/features/builder/share/activity-screen.tsx
 msgid "30 days"
 msgstr "30 ദിവസം"
 
@@ -545,7 +575,12 @@ msgstr "30 ദിവസം"
 msgid "4 today"
 msgstr "ഇന്ന് 4"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "7 days"
+msgstr ""
+
 #: src/features/applications/InsightsScreen.tsx
+#: src/features/builder/share/activity-screen.tsx
 msgid "90 days"
 msgstr "90 ദിവസം"
 
@@ -638,6 +673,14 @@ msgid "Accept"
 msgstr "സ്വീകരിക്കുക"
 
 #: src/features/builder/assistant/proposals-screen.tsx
+msgid "Accept all"
+msgstr ""
+
+#: src/features/builder/assistant/proposals-screen.tsx
+msgid "Accept the others"
+msgstr ""
+
+#: src/features/builder/assistant/proposals-screen.tsx
 msgid "Accepted"
 msgstr "സ്വീകരിച്ചു"
 
@@ -654,6 +697,10 @@ msgstr "ഈ ഓഫർ സ്വീകരിച്ചു"
 #: src/features/settings/SettingsScreen.tsx
 msgid "Account and security"
 msgstr "അക്കൗണ്ടും സുരക്ഷയും"
+
+#: src/features/builder/check/CheckScreen.tsx
+msgid "Actions"
+msgstr ""
 
 #. placeholder {0}: item.text
 #: src/features/career/preferences.tsx
@@ -703,6 +750,10 @@ msgstr "ഫലം ചേർക്കുക"
 msgid "Add a result"
 msgstr "ഒരു ഫലം ചേർക്കുക"
 
+#: src/features/career/facts.tsx
+msgid "Add a resume first."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "\"Education\" എന്ന തലക്കെട്ടോടെ ഒരു വിഭാഗം ചേർക്കുക. പല സിസ്റ്റങ്ങൾക്കും വിദ്യാഭ്യാസം നിർബന്ധിത ഫീൽഡാണ്."
@@ -715,6 +766,7 @@ msgstr "\"Experience\" അല്ലെങ്കിൽ \"Work Experience\" എന
 msgid "Add a term only if it's true for you."
 msgstr "സത്യമായ പദങ്ങൾ മാത്രം ചേർക്കുക."
 
+#: src/features/builder/assistant/assistant-screen.tsx
 #: src/features/settings/AIScreen.tsx
 #: src/features/settings/ProviderScreen.tsx
 msgid "Add AI provider"
@@ -835,6 +887,14 @@ msgstr "ഒരാൾക്ക് പെട്ടെന്ന് കണ്ണോ�
 msgid "Add summary"
 msgstr "സംഗ്രഹം ചേർക്കുക"
 
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Add tag"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Add terms"
+msgstr ""
+
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Add the application link"
 msgstr "അപേക്ഷയുടെ ലിങ്ക് ചേർക്കുക"
@@ -875,10 +935,21 @@ msgstr "ഏത് വഴിയാണ് ഫലപ്രദമെന്നറി�
 msgid "Add your name"
 msgstr "നിങ്ങളുടെ പേര് ചേർക്കുക"
 
+#. placeholder {0}: role.trim()
+#. placeholder {1}: company.trim()
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Added {0} at {1}"
+msgstr ""
+
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "നിങ്ങൾ ചേർത്തത്"
 
+#: src/features/career/facts.tsx
+msgid "Added facts from your resume. Edit or forget any of them."
+msgstr ""
+
+#: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Address"
 msgstr "വിലാസം"
@@ -951,6 +1022,10 @@ msgstr "അനുവദിക്കുക"
 msgid "Allow {0} to use your Reactive Resume?"
 msgstr "നിങ്ങളുടെ Reactive Resume ഉപയോഗിക്കാൻ {0} നെ അനുവദിക്കണോ?"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Allow comments"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Allow scheduled sharing"
 msgstr "ഷെഡ്യൂൾ ചെയ്ത പങ്കിടൽ അനുവദിക്കുക"
@@ -971,6 +1046,12 @@ msgstr "ഇതിനകം ഉൾപ്പെടുത്തി"
 msgid "Already have an account?"
 msgstr "അക്കൗണ്ട് ഉണ്ടോ?"
 
+#. placeholder {0}: duplicate.role
+#. placeholder {1}: duplicate.company
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "An embedded font could not be read."
 msgstr "എംബെഡ് ചെയ്ത ഒരു ഫോണ്ട് വായിക്കാൻ കഴിഞ്ഞില്ല."
@@ -978,6 +1059,10 @@ msgstr "എംബെഡ് ചെയ്ത ഒരു ഫോണ്ട് വാ�
 #: src/features/builder/check/issues.ts
 msgid "An entry has no dates"
 msgstr "ഒരു എൻട്രിക്ക് തീയതികളില്ല"
+
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Another of your resumes uses this address."
+msgstr ""
 
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Answers you draft for this job's form are kept here to copy."
@@ -987,14 +1072,23 @@ msgstr "ഈ ജോലിയുടെ ഫോമിനായി തയ്യാറ
 msgid "Any tag"
 msgstr "ഏത് ടാഗും"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Anyone who has it can no longer open it."
+msgstr ""
+
 #: src/features/builder/share/share-screen.tsx
 msgid "Anyone with the link can see it"
 msgstr "ലിങ്കുള്ള ആർക്കും കാണാം"
+
+#: src/features/builder/share/password-screen.tsx
+msgid "Anyone with the link will be able to view your resume."
+msgstr ""
 
 #: src/features/settings/ProviderScreen.tsx
 msgid "API key"
 msgstr "API കീ"
 
+#: src/features/settings/AccessScreens.tsx
 #: src/features/settings/AIScreen.tsx
 msgid "API keys"
 msgstr "API കീകൾ"
@@ -1044,7 +1138,6 @@ msgstr "അപേക്ഷകൾ"
 msgid "applied"
 msgstr "അപേക്ഷിച്ചു"
 
-#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Applied"
@@ -1066,6 +1159,10 @@ msgstr "ഒക്ടോ 28 ന് അപേക്ഷിച്ചു · ഇനി
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
 msgstr "അപേക്ഷിക്കുക"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Apps using it stop working at once. This can't be undone; make a new key if you need one."
+msgstr ""
 
 #: src/features/builder/shared/model.ts
 msgid "Area of study"
@@ -1102,6 +1199,10 @@ msgstr "അതിൽ പ്രവർത്തിക്കാൻ അസിസ്�
 #: src/features/career/offers.tsx
 msgid "Ask the coach"
 msgstr "കോച്ചിനോട് ചോദിക്കുക"
+
+#: src/features/public/feedback.tsx
+msgid "Ask the person who sent it for a new link. Comments you left are still with them."
+msgstr ""
 
 #: src/features/settings/FirstSendSheet.tsx
 msgid "Asks again if the connection changes"
@@ -1207,6 +1308,10 @@ msgstr "പങ്കിടലിലേക്ക് മടങ്ങുക"
 msgid "Back to sign in"
 msgstr "സൈൻ ഇന്നിലേക്ക് മടങ്ങുക"
 
+#: src/features/builder/share/password-screen.tsx
+msgid "Back to Web page"
+msgstr ""
+
 #: src/features/auth/TwoStepScreen.tsx
 msgid "Backup code"
 msgstr "ബാക്കപ്പ് കോഡ്"
@@ -1237,6 +1342,10 @@ msgstr "അടിസ്ഥാനം, വർഷത്തിൽ"
 #: src/features/documents/import.tsx
 msgid "Basics"
 msgstr "അടിസ്ഥാന വിവരങ്ങൾ"
+
+#: src/features/builder/versions/versions-screen.tsx
+msgid "Before restore"
+msgstr ""
 
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Before you apply"
@@ -1329,6 +1438,10 @@ msgstr "ബുള്ളറ്റ് ലിസ്റ്റ്"
 msgid "Burgundy"
 msgstr "ബർഗണ്ടി"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "By day"
+msgstr ""
+
 #: src/features/applications/ApplicationsScreen.tsx
 #: src/features/today/screen.tsx
 msgid "Calendar"
@@ -1343,6 +1456,9 @@ msgstr "{host} നെ ബന്ധപ്പെടാനായില്ല"
 #: src/features/builder/description/DescriptionScreen.tsx
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/menu/menu-screen.tsx
+#: src/features/builder/share/activity-screen.tsx
+#: src/features/builder/share/password-screen.tsx
+#: src/features/builder/share/web-page-screen.tsx
 #: src/features/builder/shared/section-actions.tsx
 #: src/features/builder/versions/versions-screen.tsx
 #: src/features/career/coach.tsx
@@ -1351,6 +1467,7 @@ msgstr "{host} നെ ബന്ധപ്പെടാനായില്ല"
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
 #: src/features/documents/trash.tsx
+#: src/features/settings/AccessScreens.tsx
 #: src/features/settings/DeleteAccountDialog.tsx
 #: src/features/settings/first-send.ts
 #: src/features/settings/ProviderScreen.tsx
@@ -1431,6 +1548,10 @@ msgstr "അനുയോജ്യത പരിശോധിക്കുക"
 #: src/features/builder/description/DescriptionScreen.tsx
 msgid "Check it's accurate."
 msgstr "അത് കൃത്യമാണോ എന്ന് പരിശോധിക്കുക."
+
+#: src/features/public/feedback.tsx
+msgid "Check that you copied the whole link, or ask the person who sent it for a new one."
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1563,6 +1684,10 @@ msgstr "അനുഭവകഥകൾ തിരഞ്ഞെടുക്കുന�
 msgid "City"
 msgstr "നഗരം"
 
+#: src/features/settings/TimezoneScreen.tsx
+msgid "City or region"
+msgstr ""
+
 #: src/features/builder/design/presets.ts
 msgid "Classic"
 msgstr "ക്ലാസിക്"
@@ -1585,9 +1710,31 @@ msgstr "ഫിൽട്ടറുകൾ മായ്ക്കുക"
 msgid "Close"
 msgstr "അടയ്ക്കുക"
 
+#. placeholder {0}: picked.length
+#: src/features/applications/detail-sheets.tsx
+msgid "Close {0} as I accepted another offer"
+msgstr ""
+
 #: src/features/applications/StageSheet.tsx
 msgid "Close application"
 msgstr "അപേക്ഷ അവസാനിപ്പിക്കുക"
+
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Close as No response…"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/DetailScreen.tsx
+msgid "Close the other {0} applications…"
+msgstr ""
+
+#: src/features/applications/DetailScreen.tsx
+msgid "Close the other application…"
+msgstr ""
+
+#: src/features/applications/detail-sheets.tsx
+msgid "Close the other applications"
+msgstr ""
 
 #: src/features/applications/StageSheet.tsx
 msgid "Close this application…"
@@ -1610,6 +1757,15 @@ msgstr "അടച്ചു"
 msgid "Closed · {0}"
 msgstr "അവസാനിച്ചു · {0}"
 
+#. placeholder {0}: closed.length
+#: src/features/applications/detail-sheets.tsx
+msgid "Closed {0} applications"
+msgstr ""
+
+#: src/features/applications/detail-sheets.tsx
+msgid "Closed 1 application"
+msgstr ""
+
 #: src/features/career/home.tsx
 msgid "Coach"
 msgstr "കോച്ച്"
@@ -1623,6 +1779,10 @@ msgstr "കോഡ്, 6 അക്കങ്ങൾ"
 #: src/features/letters/design-screen.tsx
 msgid "Colour"
 msgstr "നിറം"
+
+#: src/features/builder/design/TemplateScreen.tsx
+msgid "Colour changed"
+msgstr ""
 
 #: src/features/builder/design/LayoutScreen.tsx
 #: src/features/builder/section/SectionScreen.tsx
@@ -1641,6 +1801,7 @@ msgstr "വരാനിരിക്കുന്നത്"
 msgid "Compact"
 msgstr "സംക്ഷിപ്തമായ"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/SaveJobScreen.tsx
 #: src/features/builder/shared/model.ts
 msgid "Company"
@@ -1671,6 +1832,7 @@ msgid "Compress or remove large images to keep uploads quick."
 msgstr "അപ്‌ലോഡുകൾ വേഗത്തിലാക്കാൻ വലിയ ചിത്രങ്ങൾ കംപ്രസ് ചെയ്യുകയോ നീക്കം ചെയ്യുകയോ ചെയ്യുക."
 
 #: src/features/applications/StageSheet.tsx
+#: src/features/builder/share/password-screen.tsx
 msgid "Confirm"
 msgstr "സ്ഥിരീകരിക്കുക"
 
@@ -1687,6 +1849,10 @@ msgstr "അപേക്ഷിച്ചതായി അടയാളപ്പെ�
 msgid "Connect"
 msgstr "കണക്റ്റ് ചെയ്യുക"
 
+#: src/features/builder/assistant/assistant-screen.tsx
+msgid "Connect an AI provider first. Nothing is sent until you choose a connection."
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/career/home.tsx
 msgid "Connect an AI provider to use the coach"
@@ -1696,15 +1862,23 @@ msgstr "കോച്ചിനെ ഉപയോഗിക്കാൻ AI സേവ�
 msgid "Connect an application"
 msgstr "ഒരു ആപ്ലിക്കേഷൻ ബന്ധിപ്പിക്കുക"
 
+#: src/features/builder/download/download-screen.tsx
+msgid "Connect to make this format."
+msgstr ""
+
 #: src/features/documents/search.tsx
 msgid "Connect to search everything."
 msgstr "എല്ലാം തിരയാൻ ബന്ധിപ്പിക്കുക."
 
 #: src/features/settings/AIScreen.tsx
-#: src/features/settings/ProviderScreen.tsx
 msgid "Connected"
 msgstr "ബന്ധിപ്പിച്ചു"
 
+#: src/features/settings/ProviderScreen.tsx
+msgid "Connected · {latency} ms"
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
 #: src/features/settings/AIScreen.tsx
 msgid "Connected applications"
 msgstr "ബന്ധിപ്പിച്ച ആപ്ലിക്കേഷനുകൾ"
@@ -1726,6 +1900,7 @@ msgstr "ബന്ധപ്പെടൽ വിവരങ്ങൾ വായിക�
 msgid "Content is laid out in a grid."
 msgstr "ഉള്ളടക്കം ഒരു ഗ്രിഡിലായി ക്രമീകരിച്ചിരിക്കുന്നു."
 
+#: src/features/builder/assistant/assistant-screen.tsx
 #: src/features/settings/DeleteAccountDialog.tsx
 msgid "Continue"
 msgstr "തുടരുക"
@@ -1760,12 +1935,14 @@ msgstr "അക്കൗണ്ടില്ലാതെ തുടരുക"
 msgid "Conversations"
 msgstr "സംഭാഷണങ്ങൾ"
 
+#: src/features/career/coach.tsx
 #: src/features/workspace/ApplyScreen.tsx
 #: src/features/workspace/MessagesScreen.tsx
 #: src/features/workspace/PrepScreen.tsx
 msgid "Copied"
 msgstr "പകർത്തി"
 
+#: src/features/career/coach.tsx
 #: src/features/workspace/ApplyScreen.tsx
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Copy"
@@ -1781,8 +1958,18 @@ msgid "Copy for a job…"
 msgstr "ജോലിക്കായി പകർത്തുക..."
 
 #: src/features/builder/share/share-screen.tsx
+msgid "Copy full address"
+msgstr ""
+
+#: src/features/builder/share/activity-screen.tsx
+#: src/features/builder/share/share-screen.tsx
 msgid "Copy link"
 msgstr "ലിങ്ക് പകർത്തുക"
+
+#. placeholder {0}: app.company
+#: src/features/documents/actions.tsx
+msgid "Copy made for {0}. This resume is unchanged."
+msgstr ""
 
 #: src/features/documents/actions.tsx
 msgid "Copy public link"
@@ -1809,9 +1996,17 @@ msgstr "ചെലവ്"
 msgid "Could you share where things stand with the {0} role? I'm happy to send anything else you need."
 msgstr "{0} തസ്തികയുടെ സ്ഥിതി അറിയിക്കാമോ? കൂടുതൽ വിവരങ്ങൾ ആവശ്യമെങ്കിൽ അയയ്ക്കാം."
 
+#: src/features/applications/InterviewSheet.tsx
+msgid "Couldn't add it to your calendar. Try again from the interview."
+msgstr ""
+
 #: src/features/letters/design-screen.tsx
 msgid "Couldn't change the design. Try again."
 msgstr "ഡിസൈൻ മാറ്റാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/letters/letter-screen.tsx
+msgid "Couldn't change the letter. Try again."
+msgstr ""
 
 #: src/features/workspace/FitScreen.tsx
 msgid "Couldn't check your evidence. Try again."
@@ -1821,6 +2016,7 @@ msgstr "തെളിവ് പരിശോധിക്കാനായില്�
 msgid "Couldn't clear local notifications. Clear them in your device settings."
 msgstr "അറിയിപ്പുകൾ മായ്ക്കാനായില്ല. ഉപകരണ ക്രമീകരണങ്ങളിൽ മായ്ക്കുക."
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't close the application. Try again."
 msgstr "അപേക്ഷ അവസാനിപ്പിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
@@ -1836,6 +2032,10 @@ msgstr "ലിങ്ക് പകർത്താനായില്ല. വീണ
 #: src/features/documents/actions.tsx
 msgid "Couldn't copy the public link. Try again."
 msgstr "പൊതു ലിങ്ക് പകർത്താനായില്ല. വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/documents/actions.tsx
+msgid "Couldn't copy the resume. Try again."
+msgstr ""
 
 #: src/features/documents/new.tsx
 msgid "Couldn't create the document. Try again."
@@ -1881,10 +2081,18 @@ msgstr "ഫയൽ സൃഷ്ടിക്കാനായില്ല. മുൻ
 msgid "Couldn't get a suggestion. Nothing changed."
 msgstr "ഒരു നിർദ്ദേശം നേടാനായില്ല. ഒന്നും മാറിയില്ല."
 
+#: src/features/applications/import-csv.ts
+msgid "Couldn't import the file. Check it's a CSV and try again."
+msgstr ""
+
 #: src/data/import.ts
 #: src/features/documents/import.tsx
 msgid "Couldn't import the file. Your file is kept. Try again."
 msgstr "ഫയൽ ഇറക്കുമതി ആയില്ല. ഫയൽ സൂക്ഷിച്ചിട്ടുണ്ട്. വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Couldn't load connected applications. Try again."
+msgstr ""
 
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
@@ -1922,6 +2130,10 @@ msgstr "ട്രാഷ് ലോഡായില്ല. വീണ്ടും �
 msgid "Couldn't load visitors. Try again."
 msgstr "സന്ദർശകർ ലോഡായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Couldn't load your API keys. Try again."
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Couldn't load your documents. Try again."
 msgstr "നിങ്ങളുടെ രേഖകൾ ലോഡായില്ല. വീണ്ടും ശ്രമിക്കുക."
@@ -1930,13 +2142,17 @@ msgstr "നിങ്ങളുടെ രേഖകൾ ലോഡായില്ല.
 msgid "Couldn't log the follow-up. Check the timeline before trying again."
 msgstr "വീണ്ടും ബന്ധപ്പെട്ടത് രേഖപ്പെടുത്താനായില്ല. വീണ്ടും ശ്രമിക്കുന്നതിന് മുമ്പ് ടൈംലൈൻ പരിശോധിക്കുക."
 
+#: src/features/system/notifications.tsx
+msgid "Couldn't log the follow-up. Try again."
+msgstr ""
+
 #: src/features/workspace/PrepScreen.tsx
 msgid "Couldn't make the briefing. Try again."
 msgstr "തയ്യാറെടുപ്പ് വിവരം സൃഷ്ടിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
-#: src/features/applications/StageSheet.tsx
-msgid "Couldn't mark it as applied. Try again."
-msgstr "അപേക്ഷിച്ചതായി അടയാളപ്പെടുത്താനായില്ല. വീണ്ടും ശ്രമിക്കുക."
+#: src/features/builder/share/activity-screen.tsx
+msgid "Couldn't make the link. Try again."
+msgstr ""
 
 #: src/features/applications/actions.ts
 msgid "Couldn't move it to Trash. Try again."
@@ -1968,6 +2184,18 @@ msgstr "ആ ഫയൽ വായിക്കാനായില്ല. വീണ�
 msgid "Couldn't read the file. Your file is kept."
 msgstr "ഫയൽ വായിക്കാനായില്ല. ഫയൽ സൂക്ഷിച്ചിട്ടുണ്ട്."
 
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
+msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Couldn't read your resume. Try again."
+msgstr ""
+
+#: src/features/applications/StageSheet.tsx
+msgid "Couldn't record submission. Try again."
+msgstr ""
+
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Couldn't redraft. Your draft is unchanged."
 msgstr "കരട് മാറ്റിയെഴുതാനായില്ല. പഴയ കരട് തുടരുന്നു."
@@ -1992,6 +2220,18 @@ msgstr "പ്രമാണം പുനഃസ്ഥാപിക്കാനാ�
 msgid "Couldn't restore the item. Try again."
 msgstr "ഇനം പുനഃസ്ഥാപിച്ചില്ല. വീണ്ടും ശ്രമിക്കുക."
 
+#: src/features/builder/preview/preview-screen.tsx
+msgid "Couldn't restore this version. Try again."
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Couldn't revoke this key. Try again."
+msgstr ""
+
 #: src/features/career/facts.tsx
 msgid "Couldn't save that change. Try again. Your words are kept on this device."
 msgstr "മാറ്റം സംരക്ഷിച്ചില്ല. വീണ്ടും ശ്രമിക്കുക. വാചകം ഉപകരണത്തിൽ സൂക്ഷിച്ചിട്ടുണ്ട്."
@@ -2007,6 +2247,11 @@ msgstr "ജോലി സേവ് ചെയ്യാനായില്ല. വ�
 #: src/features/career/offers.tsx
 msgid "Couldn't save the offer. Check its terms and try again."
 msgstr "ഓഫർ സംരക്ഷിച്ചില്ല. നിബന്ധനകൾ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/settings/TimezoneScreen.tsx
+#: src/features/today/screen.tsx
+msgid "Couldn't save the timezone. Try again."
+msgstr ""
 
 #: src/features/settings/ProviderScreen.tsx
 msgid "Couldn't save this provider. Test the connection and try again."
@@ -2062,6 +2307,10 @@ msgstr "PDF പങ്കിടാനായില്ല. വീണ്ടും �
 msgid "Couldn't sign you in. Try again."
 msgstr "നിങ്ങളെ സൈൻ ഇൻ ചെയ്യിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
+#: src/features/career/preferences.tsx
+msgid "Couldn't suggest roles. Try again."
+msgstr ""
+
 #: src/features/settings/ProviderScreen.tsx
 msgid "Couldn't test this provider. Check its settings and try again."
 msgstr "സേവനദാതാവിനെ പരിശോധിക്കാനായില്ല. ക്രമീകരണങ്ങൾ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
@@ -2070,18 +2319,29 @@ msgstr "സേവനദാതാവിനെ പരിശോധിക്കാ�
 msgid "Couldn't transcribe the recording. It is kept on this device."
 msgstr "റെക്കോർഡിങ് എഴുത്താക്കാനായില്ല. ഉപകരണത്തിൽ സൂക്ഷിച്ചിട്ടുണ്ട്."
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Couldn't turn off the link. Try again."
+msgstr ""
+
+#: src/features/builder/share/password-screen.tsx
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "പങ്കിടൽ അപ്‌ഡേറ്റ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/applications/actions.ts
+#: src/features/applications/ApplicationsScreen.tsx
+#: src/features/applications/detail-sheets.tsx
 msgid "Couldn't update the application. Try again."
 msgstr "അപേക്ഷ അപ്‌ഡേറ്റ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/builder/menu/menu-screen.tsx
 msgid "Couldn't update this document. Try again."
 msgstr "രേഖ പുതുക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/builder/basics/BasicsScreen.tsx
+msgid "Couldn't upload the photo. Choose a PNG, JPEG, WebP or GIF up to 10 MB, then try again."
+msgstr ""
 
 #: src/features/auth/TwoStepScreen.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
@@ -2111,6 +2371,10 @@ msgstr "അക്കൗണ്ട് സൃഷ്ടിക്കുക"
 #: src/features/auth/WelcomeScreen.tsx
 msgid "Create an account"
 msgstr "അക്കൗണ്ട് സൃഷ്ടിക്കുക"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -2188,6 +2452,7 @@ msgstr "പ്രിയ നിയമന ടീം,"
 
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/DebriefScreen.tsx
+#: src/features/workspace/PrepScreen.tsx
 msgid "Debrief"
 msgstr "അവലോകനം"
 
@@ -2215,6 +2480,11 @@ msgstr "ഡിഗ്രി"
 msgid "Delete"
 msgstr "ഡിലീറ്റ് ചെയ്യുക"
 
+#. placeholder {0}: deleting?.name ?? ""
+#: src/features/builder/versions/versions-screen.tsx
+msgid "Delete “{0}”?"
+msgstr ""
+
 #: src/features/settings/ProviderScreen.tsx
 msgid "Delete “{name}”?"
 msgstr "“{name}” ഇല്ലാതാക്കണോ?"
@@ -2239,6 +2509,10 @@ msgstr "അക്കൗണ്ട് പൂർണ്ണമായി ഇല്ല�
 msgid "Delete conversation?"
 msgstr "സംഭാഷണം ഇല്ലാതാക്കണോ?"
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/builder/entry/EntryActionsSheet.tsx
 #: src/features/builder/entry/EntryScreen.tsx
 msgid "Delete entry"
@@ -2252,6 +2526,7 @@ msgstr "അത് ഡിലീറ്റ് ചെയ്യുക. മറഞ്�
 msgid "Delete page"
 msgstr "പേജ് ഇല്ലാതാക്കുക"
 
+#: src/features/builder/versions/versions-screen.tsx
 #: src/features/career/stories.tsx
 #: src/features/documents/trash.tsx
 msgid "Delete permanently"
@@ -2264,6 +2539,10 @@ msgstr "ശാശ്വതമായി ഇല്ലാതാക്കുക…"
 #: src/features/settings/DeleteAccountDialog.tsx
 msgid "Delete your account?"
 msgstr "നിങ്ങളുടെ അക്കൗണ്ട് ഇല്ലാതാക്കണോ?"
+
+#: src/features/builder/versions/versions-screen.tsx
+msgid "Delete…"
+msgstr ""
 
 #: src/features/documents/trash.tsx
 msgid "Deleted permanently"
@@ -2308,6 +2587,10 @@ msgstr "വിശദാംശങ്ങൾ"
 msgid "Details for job forms"
 msgstr "ജോലി ഫോമുകൾക്കുള്ള വിവരങ്ങൾ"
 
+#: src/features/applications/detail-sheets.tsx
+msgid "Details saved"
+msgstr ""
+
 #: src/features/settings/AIScreen.tsx
 #: src/ui/DevMenu.tsx
 msgid "Developer"
@@ -2331,6 +2614,19 @@ msgstr "നിരസിക്കുക"
 msgid "Discard changes?"
 msgstr "മാറ്റങ്ങൾ ഉപേക്ഷിക്കണോ?"
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Disconnect"
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: target.name
+#: src/features/settings/AccessScreens.tsx
+msgid "Disconnected “{0}”."
+msgstr ""
+
 #: src/features/career/home.tsx
 #: src/features/career/preferences.tsx
 #: src/features/career/schedules.tsx
@@ -2349,6 +2645,7 @@ msgstr "ജോലി കണ്ടെത്തൽ നിർത്തിവച്�
 msgid "Discovery uses the web-search connection configured by your server administrator."
 msgstr "സെർവർ അഡ്മിൻ ക്രമീകരിച്ച വെബ് തിരയൽ കണക്ഷൻ ഉപയോഗിക്കും."
 
+#: src/features/applications/DetailScreen.tsx
 #: src/features/documents/library.tsx
 #: src/features/documents/trash.tsx
 msgid "Dismiss"
@@ -2441,6 +2738,14 @@ msgstr "പ്രതിഓഫർ തയ്യാറാക്കുക"
 msgid "Draft a follow-up"
 msgstr "ഒരു ഫോളോ-അപ്പ് തയ്യാറാക്കുക"
 
+#: src/features/system/content.ts
+msgid "Draft follow-up"
+msgstr ""
+
+#: src/features/letters/letter-screen.tsx
+msgid "Draft from the posting"
+msgstr ""
+
 #: src/features/workspace/shared.tsx
 msgid "Drafting"
 msgstr "ഡ്രാഫ്റ്റ് ചെയ്യുന്നു"
@@ -2498,6 +2803,11 @@ msgstr "എഡിറ്റ് ചെയ്യുക"
 #: src/features/career/stories.tsx
 msgid "Edit {0}"
 msgstr "{0} തിരുത്തുക"
+
+#: src/features/applications/detail-sheets.tsx
+#: src/features/applications/DetailScreen.tsx
+msgid "Edit details"
+msgstr ""
 
 #: src/features/applications/InterviewSheet.tsx
 msgid "Edit interview"
@@ -2712,6 +3022,10 @@ msgstr "അനുഭവം"
 msgid "Experience, education, skills"
 msgstr "അനുഭവം, വിദ്യാഭ്യാസം, കഴിവുകൾ"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Expired"
+msgstr ""
+
 #: src/features/builder/download/download-screen.tsx
 msgid "Export"
 msgstr "എക്സ്പോർട്ട്"
@@ -2731,6 +3045,10 @@ msgstr "സ്കാൻ ചെയ്യുകയോ സ്ക്രീൻഷോ�
 #: src/features/settings/AccountScreen.tsx
 msgid "Export my data"
 msgstr "എന്റെ ഡാറ്റ എക്സ്പോർട്ട് ചെയ്യുക"
+
+#: src/features/settings/DeleteAccountDialog.tsx
+msgid "Export saved to Files at {exportedTime}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Export the resume as a text PDF rather than as an image or a scan."
@@ -2770,9 +3088,17 @@ msgstr "പരാജയപ്പെട്ടു"
 msgid "Feedback comments"
 msgstr "അഭിപ്രായങ്ങൾ"
 
+#: src/features/public/feedback.tsx
+msgid "Feedback link"
+msgstr ""
+
 #: src/features/builder/share/activity-screen.tsx
 msgid "Feedback links"
 msgstr "ഫീഡ്ബാക്ക് ലിങ്കുകൾ"
+
+#: src/features/public/feedback.tsx
+msgid "Feedback pages open in your browser."
+msgstr ""
 
 #: src/data/import.ts
 msgid "File is too large. Choose a file up to 10 MB."
@@ -3008,6 +3334,10 @@ msgstr "നിങ്ങളുടെ കവർ ലെറ്ററിൽ നിന
 msgid "From your resume"
 msgstr "നിങ്ങളുടെ റെസ്യൂമെയിൽ നിന്ന്"
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/builder/basics/BasicsScreen.tsx
 #: src/features/settings/ProfileScreen.tsx
 msgid "Full name"
@@ -3036,6 +3366,10 @@ msgstr "നിങ്ങളുടെ ടൈംലൈൻ പുനർനിർമ�
 #: src/features/public/ats-messages.ts
 msgid "Give every role and qualification a date range."
 msgstr "ഓരോ റോളിനും യോഗ്യതയ്ക്കും ഒരു തീയതി പരിധി നൽകുക."
+
+#: src/features/public/feedback.tsx
+msgid "Go to Reactive Resume"
+msgstr ""
 
 #: src/features/documents/search.tsx
 msgid "Go to…"
@@ -3102,6 +3436,10 @@ msgstr "മറഞ്ഞത്"
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Hide contact details"
 msgstr "ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ മറയ്ക്കുക"
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Hide days"
+msgstr ""
 
 #: src/features/builder/design/LayoutScreen.tsx
 #: src/features/builder/entry/EntryActionsSheet.tsx
@@ -3236,9 +3574,22 @@ msgstr "ഒരു റെസ്യൂമെ ഇറക്കുമതി ചെയ
 msgid "Import canceled. Your file is kept."
 msgstr "ഇറക്കുമതി റദ്ദാക്കി. ഫയൽ സൂക്ഷിച്ചിട്ടുണ്ട്."
 
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Import from CSV"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Import or create a resume"
 msgstr "ഒരു റെസ്യൂമെ ഇറക്കുമതി ചെയ്യുക അല്ലെങ്കിൽ സൃഷ്‌ടിക്കുക"
+
+#: src/features/applications/import-csv.ts
+msgid "Imported {imported} applications."
+msgstr ""
+
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-csv.ts
+msgid "Imported {imported} applications. {0} rows had no company or role."
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Imports back into Reactive Resume"
@@ -3256,6 +3607,10 @@ msgstr "മെച്ചപ്പെടുത്തുന്നു..."
 #: src/features/workspace/PrepScreen.tsx
 msgid "in {days} days"
 msgstr "{days} ദിവസത്തിൽ"
+
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
@@ -3296,7 +3651,6 @@ msgstr "അഭിമുഖ തയ്യാറെടുപ്പ്"
 msgid "Interview unavailable."
 msgstr "അഭിമുഖം ലഭ്യമല്ല."
 
-#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 msgid "Interviewed"
 msgstr "അഭിമുഖം കഴിഞ്ഞു"
@@ -3362,6 +3716,10 @@ msgstr "പുനഃസ്ഥാപിക്കാനാവില്ല."
 msgid "It has entries but isn't placed on a page."
 msgstr "ഇതിന് എൻട്രികളുണ്ടെങ്കിലും ഒരു പേജിൽ സ്ഥാപിച്ചിട്ടില്ല."
 
+#: src/features/settings/AccessScreens.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/auth/ConsentScreen.tsx
 msgid "It will be able to"
 msgstr "ഇതിന് കഴിയുന്നവ"
@@ -3407,9 +3765,18 @@ msgstr "JSON ബാക്കപ്പ്"
 msgid "Jump to"
 msgstr "ഇവിടേക്ക് പോകുക"
 
+#. placeholder {0}: zoneCity(travel.home)
+#: src/features/today/screen.tsx
+msgid "Keep {0} time"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "ഒരൊറ്റ വിലാസം മാത്രം വയ്ക്കുക; അപ്പോൾ ഏതാണ് ഉപയോഗിക്കേണ്ടതെന്ന് സോഫ്റ്റ്‌വെയറിന് ഊഹിക്കേണ്ടിവരില്ല."
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Keep access when you are not using the application."
+msgstr ""
 
 #: src/ui/Dialog.tsx
 msgid "Keep editing"
@@ -3423,6 +3790,10 @@ msgstr "സാധാരണയായി ചിത്രങ്ങൾ നീക്�
 #: src/features/settings/ProfileScreen.tsx
 msgid "Keep mine"
 msgstr "എൻ്റേത് സൂക്ഷിക്കുക"
+
+#: src/features/builder/notes/NotesScreen.tsx
+msgid "Keep private notes about this resume here. Nobody else can see them."
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Keep resume content as real text rather than as pictures of text."
@@ -3460,6 +3831,10 @@ msgstr "ഇല്ലാതാക്കും വരെ സൂക്ഷിക്�
 #: src/features/settings/providers.ts
 msgid "Key rejected"
 msgstr "കീ നിരസിച്ചു"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Key revoked. Apps using it stop working now."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 msgid "Keywords"
@@ -3566,10 +3941,15 @@ msgstr "നീളം"
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "നീളം ഒരു കുറവല്ല, ഒരു സാർവത്രിക ഒറ്റ-പേജ് നിയമവുമില്ല. അർഹമായ പേജുകൾ നിലനിർത്തുക."
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/StageSheet.tsx
 #: src/features/builder/design/presets.ts
 msgid "Letter"
 msgstr "ലെറ്റർ"
+
+#: src/features/builder/menu/menu-screen.tsx
+msgid "Letter duplicated"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Letter only"
@@ -3625,6 +4005,11 @@ msgstr "ഇത്ര അടുത്ത വരികൾ വായിക്കു
 msgid "Link"
 msgstr "ലിങ്ക്"
 
+#: src/features/applications/detail-sheets.tsx
+#: src/features/applications/DetailScreen.tsx
+msgid "Link a resume or letter"
+msgstr ""
+
 #: src/features/builder/description/DescriptionScreen.tsx
 msgid "Link address"
 msgstr "ലിങ്ക് വിലാസം"
@@ -3637,6 +4022,7 @@ msgstr "ഒരു ജോലി അപേക്ഷ ലിങ്ക് ചെയ�
 msgid "Link an application…"
 msgstr "ഒരു ജോലി അപേക്ഷ ലിങ്ക് ചെയ്യുക..."
 
+#: src/features/builder/share/activity-screen.tsx
 #: src/features/builder/share/share-screen.tsx
 msgid "Link copied"
 msgstr "ലിങ്ക് പകർത്തി"
@@ -3645,6 +4031,10 @@ msgstr "ലിങ്ക് പകർത്തി"
 msgid "Link copied to clipboard"
 msgstr "ലിങ്ക് ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തി"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Link expires"
+msgstr ""
+
 #: src/features/documents/actions.tsx
 msgid "Link to an application…"
 msgstr "അപേക്ഷയുമായി ബന്ധിപ്പിക്കുക…"
@@ -3652,6 +4042,11 @@ msgstr "അപേക്ഷയുമായി ബന്ധിപ്പിക്�
 #: src/features/builder/check/issues.ts
 msgid "Link updated"
 msgstr "ലിങ്ക് അപ്ഡേറ്റ് ചെയ്തു"
+
+#. placeholder {0}: doc.name
+#: src/features/applications/detail-sheets.tsx
+msgid "Linked “{0}”"
+msgstr ""
 
 #: src/features/settings/ProfileScreen.tsx
 msgid "LinkedIn"
@@ -3677,6 +4072,7 @@ msgstr "കണക്ഷൻ അഭ്യർത്ഥന ലോഡ് ചെയ്
 msgid "Loading Knowledge before you send…"
 msgstr "അയയ്ക്കുന്നതിന് മുമ്പ് അറിവ് ലോഡ് ചെയ്യുന്നു…"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/SaveJobScreen.tsx
 #: src/features/builder/basics/BasicsScreen.tsx
 #: src/features/builder/shared/model.ts
@@ -3698,6 +4094,7 @@ msgstr "പൂട്ടി"
 msgid "Locked. Unlock it from ··· on the resume."
 msgstr "പൂട്ടിയിരിക്കുന്നു. റെസ്യൂമെയിലെ ··· വഴി തുറക്കുക."
 
+#: src/features/system/content.ts
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Log follow-up"
 msgstr "തുടർബന്ധപ്പെടൽ രേഖപ്പെടുത്തുക"
@@ -3726,6 +4123,14 @@ msgstr "പ്രധാന നിര"
 msgid "Make default"
 msgstr "ഡിഫോൾട്ട് ആക്കുക"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Make link"
+msgstr ""
+
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Make primary"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Make the visible text and the destination match."
 msgstr "ദൃശ്യമായ ടെക്സ്റ്റും ലക്ഷ്യസ്ഥാനവും ഒത്തുപോകുന്നതാക്കുക."
@@ -3733,6 +4138,10 @@ msgstr "ദൃശ്യമായ ടെക്സ്റ്റും ലക്ഷ�
 #: src/features/public/ats-messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "അവ വ്യക്തമായി വലുതോ ബോൾഡോ ക്യാപിറ്റലൈസ്ഡോ ആക്കുക."
+
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Make this your primary resume?"
+msgstr ""
 
 #: src/features/documents/actions.tsx
 msgid "Makes a copy linked to an application"
@@ -3936,6 +4345,10 @@ msgstr "ഇത് പ്രധാന നിരയിലേക്ക് നീക
 msgid "Move real content into the body of the page; some software discards the margins."
 msgstr "യഥാർത്ഥ ഉള്ളടക്കം പേജിന്റെ ബോഡിയിലേക്ക് നീക്കുക; ചില സോഫ്റ്റ്‌വെയറുകൾ മാർജിനുകൾ ഒഴിവാക്കുന്നു."
 
+#: src/features/today/screen.tsx
+msgid "Move them"
+msgstr ""
+
 #: src/features/auth/ConsentScreen.tsx
 msgid "Move them to the trash"
 msgstr "അവ ട്രാഷിലേക്ക് നീക്കുക"
@@ -4067,6 +4480,11 @@ msgstr "നിങ്ങളുടെ ശ്രദ്ധ വേണം"
 msgid "Network"
 msgstr "നെറ്റ്‌വർക്ക്"
 
+#: src/features/builder/share/activity-screen.tsx
+#: src/features/settings/AccessScreens.tsx
+msgid "Never"
+msgstr ""
+
 #: src/features/documents/library.tsx
 #: src/features/documents/new.tsx
 msgid "New"
@@ -4155,6 +4573,10 @@ msgstr "പുതിയ അനുഭവകഥ"
 msgid "New summary"
 msgstr "പുതിയ സംഗ്രഹം"
 
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "New tag"
+msgstr ""
+
 #: src/features/builder/shared/model.ts
 msgid "New volunteering"
 msgstr "പുതിയ സന്നദ്ധസേവനം"
@@ -4177,6 +4599,10 @@ msgstr "അടുത്ത മാസം"
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Next page"
 msgstr "അടുത്ത പേജ്"
+
+#: src/features/workspace/PracticeScreen.tsx
+msgid "Next question"
+msgstr ""
 
 #. placeholder {0}: local.date
 #. placeholder {1}: local.time
@@ -4209,6 +4635,10 @@ msgstr "ഈ ഓപ്പറേഷന് AI പ്രൊവൈഡർ ഉപയോ
 msgid "No answers yet"
 msgstr "ഉത്തരങ്ങളില്ല"
 
+#: src/features/applications/import-csv.ts
+msgid "No applications found. Each row needs a company and a role."
+msgstr ""
+
 #: src/features/applications/DetailScreen.tsx
 msgid "No briefing yet"
 msgstr "തയ്യാറെടുപ്പ് വിവരമില്ല"
@@ -4216,6 +4646,14 @@ msgstr "തയ്യാറെടുപ്പ് വിവരമില്ല"
 #: src/features/public/ats-messages.ts
 msgid "No bullet lists were found."
 msgstr "ബുള്ളറ്റ് ലിസ്റ്റുകളൊന്നും കണ്ടെത്തിയില്ല."
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "No comments yet."
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "No conventional section headings were found."
@@ -4246,8 +4684,20 @@ msgid "No export yet · Export first"
 msgstr "എക്സ്പോർട്ട് ഇല്ല · ആദ്യം ചെയ്യുക"
 
 #: src/features/career/facts.tsx
+msgid "No facts found in your resume."
+msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "No facts match. Try another word or type."
+msgstr ""
+
+#: src/features/career/facts.tsx
 msgid "No facts yet"
 msgstr "ഇതുവരെ വസ്തുതകളില്ല"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "No keys yet."
+msgstr ""
 
 #: src/features/workspace/ApplyScreen.tsx
 msgid "No letter sent"
@@ -4345,6 +4795,10 @@ msgstr "ഈ ജോലി പോസ്റ്റിംഗിൽ നിബന്ധ
 msgid "No text could be read from this file."
 msgstr "ഈ ഫയലിൽ നിന്ന് ടെക്സ്റ്റൊന്നും വായിക്കാൻ കഴിഞ്ഞില്ല."
 
+#: src/features/settings/TimezoneScreen.tsx
+msgid "No timezone matches “{query}”."
+msgstr ""
+
 #: src/features/builder/share/activity-screen.tsx
 msgid "No visitors yet. Share your link to see views here."
 msgstr "സന്ദർശകരില്ല. കാഴ്ചകൾ കാണാൻ ലിങ്ക് പങ്കിടുക."
@@ -4373,9 +4827,17 @@ msgstr "സാധാരണ മാർജിനുകൾ"
 msgid "Not an image of text"
 msgstr "വാചകത്തിന്റെ ചിത്രമല്ല"
 
+#: src/features/career/home.tsx
+msgid "Not available on this server"
+msgstr ""
+
 #: src/features/applications/DetailScreen.tsx
 msgid "Not checked yet"
 msgstr "പരിശോധിച്ചിട്ടില്ല"
+
+#: src/features/applications/InsightsScreen.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
 
 #: src/features/today/screen.tsx
 msgid "Not for me"
@@ -4443,12 +4905,17 @@ msgstr "വിവരങ്ങൾ"
 
 #: src/features/applications/DetailScreen.tsx
 #: src/features/builder/menu/menu-screen.tsx
+#: src/features/builder/notes/NotesScreen.tsx
 msgid "Notes"
 msgstr "കുറിപ്പുകൾ"
 
 #: src/features/documents/search.tsx
 msgid "Notes and messages"
 msgstr "കുറിപ്പുകളും സന്ദേശങ്ങളും"
+
+#: src/features/builder/notes/NotesScreen.tsx
+msgid "Notes, locked"
+msgstr ""
 
 #: src/features/builder/section/SectionScreen.tsx
 msgid "Nothing here yet"
@@ -4519,7 +4986,6 @@ msgstr "ഒച്ചർ"
 msgid "Off"
 msgstr "ഓഫ്"
 
-#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 msgid "Offer"
 msgstr "ഓഫർ"
@@ -4564,6 +5030,7 @@ msgid "Offline. Showing the last saved page."
 msgstr "ഓഫ്‌ലൈൻ. അവസാനം സംരക്ഷിച്ച പേജ് കാണിക്കുന്നു."
 
 #: src/features/builder/share/web-page-screen.tsx
+#: src/features/settings/TimezoneScreen.tsx
 msgid "On"
 msgstr "പ്രവർത്തനക്ഷമമാക്കി"
 
@@ -4614,6 +5081,10 @@ msgstr "നിങ്ങൾക്ക് മാത്രം കാണാം"
 msgid "Only you see these."
 msgstr "നിങ്ങൾക്ക് മാത്രം കാണാം."
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Only you see this."
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr "നിങ്ങളുടെ റെക്കോർഡിംഗ് മാത്രം ഈ ട്രാൻസ്ക്രിപ്ഷൻ മോഡലിലേക്ക് അയയ്ക്കപ്പെടുന്നു. ലഭിക്കുന്ന ട്രാൻസ്ക്രിപ്റ്റ് നിങ്ങളുടെ അക്കൗൺ്റ്റിൽ സേവ് ചെയ്യപ്പെടുന്നു."
@@ -4648,9 +5119,14 @@ msgid "Open application"
 msgstr "ഈ തൊഴിൽ അപേക്ഷ തുറക്കുക"
 
 #: src/features/applications/DetailScreen.tsx
+#: src/features/system/content.ts
 #: src/features/today/screen.tsx
 msgid "Open briefing"
 msgstr "ബ്രീഫിംഗ് തുറക്കുക"
+
+#: src/features/public/feedback.tsx
+msgid "Open feedback page"
+msgstr ""
 
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Open in Mail"
@@ -4671,6 +5147,10 @@ msgstr "ഫോം തുറക്കുക"
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Open the web page"
 msgstr "വെബ് പേജ് തുറക്കുക"
+
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Open tracked job"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "OpenDocument"
@@ -4753,15 +5233,28 @@ msgid "Passkeys"
 msgstr "പാസ്‌കീകൾ"
 
 #: src/features/auth/SignInScreen.tsx
+#: src/features/builder/share/password-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
 #: src/features/settings/AccountScreen.tsx
 #: src/features/settings/DeleteAccountDialog.tsx
 msgid "Password"
 msgstr "പാസ്‌വേഡ്"
 
+#: src/features/builder/share/password-screen.tsx
+msgid "Password removed"
+msgstr ""
+
+#: src/features/builder/share/password-screen.tsx
+msgid "Password set"
+msgstr ""
+
 #: src/features/builder/assistant/assistant-screen.tsx
 msgid "Past conversations"
 msgstr "കഴിഞ്ഞ സംഭാഷണങ്ങൾ"
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Past links"
+msgstr ""
 
 #: src/features/applications/ApplicationsScreen.tsx
 msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
@@ -4819,6 +5312,11 @@ msgstr "{0} ന് നിർത്തിവച്ചു"
 #: src/features/career/schedules.tsx
 msgid "Paused: your AI connection changed"
 msgstr "നിർത്തിവച്ചു: AI കണക്ഷൻ മാറി"
+
+#. placeholder {0}: ws.provider.label
+#: src/features/workspace/PrepScreen.tsx
+msgid "Paused: your AI connection changed. Turn it on again to approve {0}."
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Pay"
@@ -4921,8 +5419,13 @@ msgid "practice"
 msgstr "പരിശീലനം"
 
 #: src/features/applications/DetailScreen.tsx
+#: src/features/system/content.ts
 msgid "Practice"
 msgstr "പരിശീലനം"
+
+#: src/features/workspace/PracticeScreen.tsx
+msgid "Practice again"
+msgstr ""
 
 #: src/features/workspace/PracticeScreen.tsx
 msgid "Practice another question"
@@ -4935,6 +5438,10 @@ msgstr "പരിശീലന ശ്രമം"
 #: src/features/workspace/PrepScreen.tsx
 msgid "Practice these questions"
 msgstr "ഈ ചോദ്യങ്ങൾ പരിശീലിക്കുക"
+
+#: src/features/career/stories.tsx
+msgid "Practice this story"
+msgstr ""
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -5074,6 +5581,10 @@ msgstr "പൊതു, ഒരു പാസ്‌വേഡ്"
 msgid "Publications"
 msgstr "പ്രസിദ്ധീകരണങ്ങൾ"
 
+#: src/features/builder/share/share-screen.tsx
+msgid "Publish"
+msgstr ""
+
 #: src/features/builder/shared/model.ts
 msgid "Publisher"
 msgstr "പ്രസാധകൻ"
@@ -5147,10 +5658,19 @@ msgstr "ഈ ഉപകരണത്തിൽ വായിക്കുക (സൗ�
 msgid "Read on this device instead"
 msgstr "പകരം ഈ ഉപകരണത്തിൽ വായിക്കുക"
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Read only"
+msgstr ""
+
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Read posting"
+msgstr ""
+
 #: src/features/builder/assistant/assistant-screen.tsx
 msgid "Read the posting · matched your facts · measured page fit"
 msgstr "പരസ്യം വായിച്ചു · വസ്തുതകൾ പൊരുത്തപ്പെടുത്തി · പേജ് അളന്നു"
 
+#: src/features/applications/SaveJobScreen.tsx
 #: src/features/documents/import.tsx
 msgid "Read with AI"
 msgstr "AI ഉപയോഗിച്ച് വായിക്കുക"
@@ -5167,9 +5687,17 @@ msgstr "നിങ്ങളുടെ ഇമെയിൽ വിലാസം വാ
 msgid "Read your profile information."
 msgstr "നിങ്ങളുടെ പ്രൊഫൈൽ വിവരങ്ങൾ വായിക്കുക."
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
 #: src/features/builder/share/activity-model.ts
 msgid "Read-only"
 msgstr "വായിക്കാൻ മാത്രം"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Readability"
@@ -5183,6 +5711,10 @@ msgstr "വായനാക്ഷമത സ്കോർ: 100-ൽ {0}"
 #: src/features/documents/import.tsx
 msgid "Reading the file"
 msgstr "ഫയൽ വായിക്കുന്നു"
+
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Reading the link…"
+msgstr ""
 
 #: src/features/workspace/shared.tsx
 msgid "Reading the posting"
@@ -5258,6 +5790,10 @@ msgstr "വീണ്ടും ചെയ്യുക"
 msgid "Redraft"
 msgstr "വീണ്ടും എഴുതുക"
 
+#: src/features/letters/letter-screen.tsx
+msgid "Redraft this letter from the posting"
+msgstr ""
+
 #: src/features/builder/shared/model.ts
 msgid "References"
 msgstr "റഫറൻസുകൾ"
@@ -5316,13 +5852,22 @@ msgstr "തലേദിവസം ഓർമ്മിപ്പിക്കുക"
 msgid "Reminder"
 msgstr "ഓർമ്മപ്പെടുത്തൽ"
 
+#: src/features/builder/share/password-screen.tsx
 #: src/features/documents/search.tsx
 msgid "Remove"
 msgstr "നീക്കം ചെയ്യുക"
 
+#: src/features/builder/share/password-screen.tsx
+msgid "Remove password"
+msgstr ""
+
 #: src/features/builder/basics/BasicsScreen.tsx
 msgid "Remove photo"
 msgstr "ഫോട്ടോ നീക്കം ചെയ്യുക"
+
+#: src/features/builder/share/password-screen.tsx
+msgid "Remove the password?"
+msgstr ""
 
 #: src/features/builder/shared/section-actions.tsx
 #: src/features/career/coach.tsx
@@ -5338,13 +5883,23 @@ msgstr "സംഭാഷണത്തിന്റെ പേര് മാറ്റ�
 msgid "Rename section"
 msgstr "വിഭാഗത്തിന്റെ പേര് മാറ്റുക"
 
+#: src/features/builder/versions/versions-screen.tsx
+msgid "Rename version"
+msgstr ""
+
 #: src/features/builder/menu/menu-screen.tsx
+#: src/features/builder/versions/versions-screen.tsx
 msgid "Rename…"
 msgstr "പേരുമാറ്റുക..."
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Reopen"
 msgstr "വീണ്ടും തുറക്കുക"
+
+#. placeholder {0}: closedForOffer.value.ids.length
+#: src/features/applications/DetailScreen.tsx
+msgid "Reopen the {0}"
+msgstr ""
 
 #: src/features/builder/description/DescriptionScreen.tsx
 msgid "Replace"
@@ -5362,10 +5917,13 @@ msgstr "ടേബിളുകൾക്ക് പകരം സാധാരണ ഖ
 msgid "replied"
 msgstr "മറുപടി നൽകി"
 
-#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 msgid "Replied"
 msgstr "മറുപടി നൽകി"
+
+#: src/features/career/coach.tsx
+msgid "Reply"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Reply by"
@@ -5445,10 +6003,25 @@ msgstr "ഈ പതിപ്പ് പുനഃസ്ഥാപിക്കുക"
 msgid "Restored “{0}”"
 msgstr "\"{0}\" പുനഃസ്ഥാപിച്ചു"
 
+#. placeholder {0}: params.name
+#. placeholder {1}: params.name
+#: src/features/builder/preview/preview-screen.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
+msgstr ""
+
+#: src/features/builder/preview/preview-screen.tsx
+msgid "Restored. Your previous state is saved as “Before restore”."
+msgstr ""
+
+#: src/features/builder/preview/preview-screen.tsx
+msgid "Restoring…"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Result"
 msgstr "ഫലം"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/StageSheet.tsx
 #: src/features/career/schedules.tsx
 #: src/features/documents/actions.tsx
@@ -5511,6 +6084,14 @@ msgid "Review"
 msgstr "അവലോകനം"
 
 #: src/features/builder/assistant/assistant-screen.tsx
+msgid "Review {edits} edits"
+msgstr ""
+
+#: src/features/builder/assistant/assistant-screen.tsx
+msgid "Review 1 edit"
+msgstr ""
+
+#: src/features/builder/assistant/assistant-screen.tsx
 msgid "Review 3 edits"
 msgstr "3 തിരുത്തലുകൾ പരിശോധിക്കുക"
 
@@ -5546,10 +6127,23 @@ msgstr "ആദ്യം സംഭവിച്ചത് പരിശോധിക�
 msgid "Review your file first."
 msgstr "ആദ്യം ഫയൽ പരിശോധിക്കുക."
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Revoke"
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Revoke key"
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Revoke this key?"
+msgstr ""
+
 #: src/features/builder/design/LayoutScreen.tsx
 msgid "Right"
 msgstr "ശരിയാണ്"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Role"
 msgstr "തസ്തിക"
@@ -5584,6 +6178,7 @@ msgstr "ഈ സെർവറിന്റെ വെബ് തിരയൽ കണ�
 msgid "Rust"
 msgstr "തുരുമ്പ് തവിട്ട്"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Salary"
 msgstr "ശമ്പളം"
@@ -5596,6 +6191,7 @@ msgstr "വേതനം, അപേക്ഷാ തീയതി"
 msgid "Salary, application date, documents sent"
 msgstr "വേതനം, അപേക്ഷാ തീയതി, അയച്ച രേഖകൾ"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/builder/menu/menu-screen.tsx
 #: src/features/builder/versions/versions-screen.tsx
 #: src/features/career/coach.tsx
@@ -5624,6 +6220,10 @@ msgstr "ഒരു ജോലി സംരക്ഷിക്കുക"
 msgid "Save a job first"
 msgstr "ആദ്യം ജോലി സംരക്ഷിക്കുക"
 
+#: src/features/career/stories.tsx
+msgid "Save a job to practise for it."
+msgstr ""
+
 #: src/features/today/screen.tsx
 msgid "Save a job you want"
 msgstr "ഇഷ്ടമുള്ള ജോലി സംരക്ഷിക്കുക"
@@ -5648,6 +6248,10 @@ msgstr "ജോലി സംരക്ഷിക്കുക"
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "എല്ലാ പേജും നിവർന്ന നിലയിൽ ഫയൽ സേവ് ചെയ്യുക."
+
+#: src/features/workspace/DebriefScreen.tsx
+msgid "Save these offer terms to compare. Opens in Career → Offers."
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -5703,9 +6307,17 @@ msgstr "… സംരക്ഷിക്കുന്നു"
 msgid "Say what happened after an interview"
 msgstr "അഭിമുഖത്തിന് ശേഷം സംഭവിച്ചത് പറയുക"
 
+#: src/features/workspace/PrepScreen.tsx
+msgid "Say what happened while it's fresh. The coach keeps the facts and stories worth remembering."
+msgstr ""
+
 #: src/features/career/schedules.tsx
 msgid "Schedule"
 msgstr "സമയക്രമം"
+
+#: src/features/applications/actions.ts
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedules.tsx
 msgid "Scheduled work is not available on this server. Ask your server administrator to configure it."
@@ -5739,9 +6351,17 @@ msgstr "തിരയുക"
 msgid "Search everything"
 msgstr "എല്ലാം തിരയുക"
 
+#: src/features/career/facts.tsx
+msgid "Search facts"
+msgstr ""
+
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Search postings"
 msgstr "പരസ്യങ്ങൾ തിരയുക"
+
+#: src/features/settings/TimezoneScreen.tsx
+msgid "Search timezones"
+msgstr ""
 
 #: src/features/builder/check/issues.ts
 msgid "Section headings"
@@ -5789,6 +6409,10 @@ msgstr "പലതും തിരഞ്ഞെടുക്കുക"
 #: src/features/documents/actions.tsx
 msgid "Select, link, letter, tags, lock"
 msgstr "തിരഞ്ഞെടുപ്പ്, ലിങ്ക്, കത്ത്, ടാഗുകൾ, പൂട്ടൽ"
+
+#: src/features/settings/TimezoneScreen.tsx
+msgid "Selected"
+msgstr ""
 
 #: src/features/settings/FirstSendSheet.tsx
 msgid "Send"
@@ -5846,6 +6470,10 @@ msgstr "സെർവർ മാറി."
 msgid "Server: {0} ·"
 msgstr "സെർവർ: {0} ·"
 
+#: src/features/builder/share/password-screen.tsx
+msgid "Set password"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Set the document language when exporting."
 msgstr "എക്സ്പോർട്ട് ചെയ്യുമ്പോൾ രേഖയുടെ ഭാഷ സെറ്റ് ചെയ്യുക."
@@ -5879,6 +6507,7 @@ msgstr "സെറ്റിംഗ്സ്"
 
 #: src/features/builder/download/download-screen.tsx
 #: src/features/builder/share/share-screen.tsx
+#: src/features/career/coach.tsx
 #: src/features/public/resume.tsx
 msgid "Share"
 msgstr "പങ്കിടുക"
@@ -5928,6 +6557,10 @@ msgstr "ചെറുത്"
 #: src/features/documents/search.tsx
 msgid "Show all {0}"
 msgstr "എല്ലാ {0} ഉം കാണിക്കുക"
+
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Show all stages"
+msgstr ""
 
 #: src/features/applications/ApplicationsScreen.tsx
 msgid "Show closed applications"
@@ -6139,6 +6772,10 @@ msgstr "ഘട്ടങ്ങൾ"
 msgid "Start"
 msgstr "ആരംഭിക്കുക"
 
+#: src/features/public/ats.tsx
+msgid "Start a blank resume"
+msgstr ""
+
 #: src/features/career/home.tsx
 msgid "Start a conversation"
 msgstr "സംഭാഷണം തുടങ്ങുക"
@@ -6199,6 +6836,10 @@ msgstr "ഇപ്പോഴും പുരോഗതിയിൽ"
 msgid "Stop"
 msgstr "നിർത്തുക"
 
+#: src/features/builder/assistant/assistant-screen.tsx
+msgid "Stopped. No edits were proposed."
+msgstr ""
+
 #: src/features/career/home.tsx
 #: src/features/career/stories.tsx
 msgid "Stories"
@@ -6227,6 +6868,19 @@ msgstr "ശക്തമായ ക്രിയ"
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Subject"
 msgstr "വിഷയം"
+
+#: src/features/builder/assistant/proposals-screen.tsx
+msgid "Suggest again"
+msgstr ""
+
+#: src/features/career/preferences.tsx
+msgid "Suggest roles from my resume"
+msgstr ""
+
+#. placeholder {0}: p.location
+#: src/features/builder/assistant/proposals-screen.tsx
+msgid "Suggest the {0} edit again"
+msgstr ""
 
 #. placeholder {0}: longWeekday(followUp, ws.zone)
 #: src/features/workspace/ApplyScreen.tsx
@@ -6291,6 +6945,16 @@ msgstr "സിസ്റ്റങ്ങൾ ഒരു അനുഭവ വിഭാ
 msgid "Tag"
 msgstr "ടാഗ് ചെയ്യുക"
 
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Tagged “{name}”"
+msgstr ""
+
+#. placeholder {0}: apps.length
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Tagged {0} applications “{name}”"
+msgstr ""
+
+#: src/features/applications/ApplicationsScreen.tsx
 #: src/features/builder/menu/menu-screen.tsx
 #: src/features/documents/actions.tsx
 #: src/features/documents/library.tsx
@@ -6305,6 +6969,7 @@ msgstr "ടാഗുകൾ സോഫ്റ്റ്‌വെയറിന് വ�
 msgid "Tags, separated by commas"
 msgstr "ടാഗുകൾ, കോമ ഉപയോഗിച്ച് വേർതിരിച്ചത്"
 
+#: src/features/applications/ApplicationsScreen.tsx
 #: src/features/documents/actions.tsx
 msgid "Tags…"
 msgstr "ടാഗുകൾ…"
@@ -6376,6 +7041,11 @@ msgstr "{0} ലെ സാങ്കേതിക അഭിമുഖം"
 msgid "Tell me about a piece of work you're proud of. What was your part in it, and how did you measure success?"
 msgstr "നിങ്ങൾക്ക് അഭിമാനമുള്ള ഒരു ജോലിയെക്കുറിച്ച് പറയൂ. അതിൽ നിങ്ങളുടെ പങ്ക് എന്തായിരുന്നു, വിജയം എങ്ങനെ അളന്നു?"
 
+#. placeholder {0}: fromStory.data.title
+#: src/features/workspace/PracticeScreen.tsx
+msgid "Tell me about a time when: {0}."
+msgstr ""
+
 #: src/features/workspace/PracticeScreen.tsx
 msgid "Tell me about a time you disagreed with a colleague. How did you resolve it?"
 msgstr "ഒരു സഹപ്രവർത്തകനുമായി നിങ്ങൾ വിയോജിച്ച ഒരു സന്ദർഭത്തെക്കുറിച്ച് പറയൂ. അത് എങ്ങനെ പരിഹരിച്ചു?"
@@ -6440,6 +7110,10 @@ msgstr "ടെക്സ്റ്റ് ഹെഡർ അല്ലെങ്കി�
 #: src/features/builder/design/TypographyScreen.tsx
 msgid "Text size"
 msgstr "വാചക വലുപ്പം"
+
+#: src/features/builder/design/TypographyScreen.tsx
+msgid "Text size changed"
+msgstr ""
 
 #: src/features/builder/check/issues.ts
 msgid "Text this close to the edge can be cut off. Use at least {minimum} pt."
@@ -6522,6 +7196,7 @@ msgstr "അവസാന തീയതി തുടക്കത്തിനും 
 msgid "The exported PDF couldn't be checked. Try again."
 msgstr "കയറ്റുമതി ചെയ്ത PDF പരിശോധിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
+#: src/data/import.ts
 #: src/features/documents/import.tsx
 msgid "The file couldn't be read as a resume."
 msgstr "ഫയൽ ഒരു റെസ്യൂമെ ആയി വായിക്കാൻ കഴിഞ്ഞില്ല."
@@ -6554,9 +7229,17 @@ msgstr "മോഡൽ ലഭ്യമല്ലായിരുന്നോ ടെ�
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "ടെക്സ്റ്റ് സംഭരിച്ചിരിക്കുന്ന ക്രമം അത് വായിക്കുന്ന ക്രമവുമായി വളരെയധികം വ്യത്യാസപ്പെട്ടിരിക്കുന്നു."
 
+#: src/features/builder/menu/menu-screen.tsx
+msgid "The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "The pages are pictures, with no text behind them."
 msgstr "പേജുകൾ ചിത്രങ്ങളാണ്, പിന്നിൽ ടെക്സ്റ്റൊന്നുമില്ല."
+
+#: src/features/builder/share/password-screen.tsx
+msgid "The passwords don't match."
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
@@ -6605,6 +7288,10 @@ msgstr "ടെക്സ്റ്റ് വായിക്കാൻ കഴിയ�
 #: src/features/public/ats-messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "ആദ്യ പേജിന്റെ മുകൾഭാഗം ഒരു പേര് പോലെ കാണുന്നില്ല."
+
+#: src/features/builder/versions/versions-screen.tsx
+msgid "The version is deleted. The resume as it is now doesn't change."
+msgstr ""
 
 #: src/features/settings/PreferencesScreen.tsx
 msgid "Theme"
@@ -6659,6 +7346,10 @@ msgstr "ഈ സംഭാഷണം"
 msgid "This deletes your documents, applications, career knowledge and public pages from {0}. It can't be undone."
 msgstr "{0} ൽ നിന്ന് രേഖകൾ, അപേക്ഷകൾ, തൊഴിൽ അറിവ്, പൊതു പേജുകൾ ഇല്ലാതാകും. പഴയപടിയാക്കാനാവില്ല."
 
+#: src/features/applications/SaveJobScreen.tsx
+msgid "This description is clipped or incomplete. Review it or paste the full description before preparing."
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "This enables recurring processing while the schedule is on, using your server's selected providers. Turn the schedule off to stop future runs."
 msgstr "നിങ്ങളുടെ സെർവറിൻ്റെ തിരഞ്ഞെടുത്ത ദാതാക്കളെ ഉപയോഗിച്ച് ഷെഡ്യൂൾ ഓണായിരിക്കുമ്പോൾ ഇത് ആവർത്തിച്ചുള്ള പ്രോസസ്സിംഗ് പ്രവർത്തനക്ഷമമാക്കുന്നു. ഭാവിയിലെ ഓട്ടം നിർത്താൻ ഷെഡ്യൂൾ ഓഫാക്കുക."
@@ -6678,10 +7369,6 @@ msgstr "ഈ ഫയലിൽ അദൃശ്യമായി വരച്ച ട�
 #: src/features/public/ats-messages.ts
 msgid "This file contains white-on-white text."
 msgstr "ഈ ഫയലിൽ വെള്ളയിൽ വെള്ള ടെക്സ്റ്റ് അടങ്ങിയിരിക്കുന്നു."
-
-#: src/data/import.ts
-msgid "This file couldn't be read. Your file is kept."
-msgstr "ഈ ഫയൽ വായിക്കാനായില്ല. ഫയൽ സൂക്ഷിച്ചിട്ടുണ്ട്."
 
 #: src/features/public/ats-messages.ts
 msgid "This file declares no language."
@@ -6711,6 +7398,10 @@ msgstr "ഈ ഫയൽ ധാരാളം വ്യത്യസ്ത ഫോണ�
 msgid "This file uses Type 3 fonts, which carry drawings instead of characters."
 msgstr "ഈ ഫയൽ Type 3 ഫോണ്ടുകൾ ഉപയോഗിക്കുന്നു, അവ അക്ഷരങ്ങൾക്ക് പകരം ഡ്രോയിംഗുകൾ വഹിക്കുന്നു."
 
+#: src/features/workspace/PrepScreen.tsx
+msgid "This interview has passed"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "ഇത് ഒരു PDF പോർട്ട്‌ഫോളിയോ ആണ്: ദൃശ്യമായ പേജ് ഒരു കവർ മാത്രമാണ്."
@@ -6726,6 +7417,26 @@ msgstr "സന്ദർശകർ ഇങ്ങനെയാണ് കാണുക"
 #: src/features/public/ats-messages.ts
 msgid "This is not a common resume page size."
 msgstr "ഇത് സാധാരണ റിസ്യൂം പേജ് വലുപ്പമല്ല."
+
+#: src/features/letters/letter-screen.tsx
+msgid "This letter is locked. Unlock it to make changes."
+msgstr ""
+
+#: src/features/letters/letter-screen.tsx
+msgid "This letter is recorded as sent."
+msgstr ""
+
+#: src/features/public/feedback.tsx
+msgid "This link doesn't open"
+msgstr ""
+
+#: src/features/public/feedback.tsx
+msgid "This link has expired"
+msgstr ""
+
+#: src/features/public/feedback.tsx
+msgid "This link was turned off"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "This page is in columns, and the text extracts out of order."
@@ -6743,6 +7454,10 @@ msgstr "ഈ PDF പാസ്‌വേഡ് സംരക്ഷിതമാണ്
 msgid "This resume"
 msgstr "ഈ റെസ്യൂമെ"
 
+#: src/features/builder/notes/NotesScreen.tsx
+msgid "This resume is locked. Unlock it to make changes."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "ഈ റിസ്യൂം നീണ്ടതാണ്."
@@ -6754,6 +7469,10 @@ msgstr "റെസ്യൂമെ പാസ്‌വേഡാൽ സംരക്�
 #: src/features/public/resume.tsx
 msgid "This resume isn't shared right now."
 msgstr "ഈ റെസ്യൂമെ ഇപ്പോൾ പങ്കിട്ടിട്ടില്ല."
+
+#: src/features/builder/notes/NotesScreen.tsx
+msgid "This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them."
+msgstr ""
 
 #: src/features/settings/AccountScreen.tsx
 msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
@@ -6825,8 +7544,13 @@ msgid "Timeline"
 msgstr "ടൈംലൈൻ"
 
 #: src/features/settings/PreferencesScreen.tsx
+#: src/features/settings/TimezoneScreen.tsx
 msgid "Timezone"
 msgstr "സമയമേഖല"
+
+#: src/features/settings/PreferencesScreen.tsx
+msgid "Timezone, {zoneLabel}"
+msgstr ""
 
 #: src/features/builder/shared/model.ts
 #: src/features/career/stories.tsx
@@ -6928,6 +7652,18 @@ msgstr "മറ്റൊന്ന് പരീക്ഷിക്കുക"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "എക്സ്പോർട്ട് ചെയ്യുമ്പോൾ ഡിസ്ക്രീഷണറി ലിഗേച്ചറുകൾ ഓഫ് ചെയ്യുക."
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Turn off link"
+msgstr ""
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Turn off link…"
+msgstr ""
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Turn off this link?"
+msgstr ""
+
 #: src/features/today/screen.tsx
 msgid "Turn on"
 msgstr "ഓണാക്കുക"
@@ -6935,6 +7671,10 @@ msgstr "ഓണാക്കുക"
 #: src/features/documents/actions.tsx
 msgid "Turn on the public link in Share first."
 msgstr "ആദ്യം പങ്കിടലിൽ പൊതു ലിങ്ക് ഓണാക്കുക."
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Turned off"
+msgstr ""
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx
@@ -6993,6 +7733,10 @@ msgstr "പഴയപടിയാക്കുക"
 #: src/features/documents/actions.tsx
 msgid "Unlock editing"
 msgstr "എഡിറ്റിംഗ് അൺലോക്ക് ചെയ്യുക"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "unnamed key"
+msgstr ""
 
 #: src/data/workspace.ts
 msgid "Unsupported audio format."
@@ -7092,6 +7836,10 @@ msgstr "ജോലിക്കായി പകർത്തും മുമ്പ�
 msgid "Updating…"
 msgstr "പുതുക്കുന്നു…"
 
+#: src/features/builder/basics/BasicsScreen.tsx
+msgid "Uploading photo…"
+msgstr ""
+
 #: src/features/settings/AIScreen.tsx
 msgid "Usage"
 msgstr "ഉപയോഗം"
@@ -7153,6 +7901,7 @@ msgstr "കുറഞ്ഞത് 9pt ഉപയോഗിക്കുക."
 msgid "Use colour"
 msgstr "നിറം ഉപയോഗിക്കുക"
 
+#: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Use Latin letters a–z, numbers and single dashes."
 msgstr "ലാറ്റിൻ അക്ഷരങ്ങളും (a–z) അക്കങ്ങളും ഒറ്റ ഡാഷുകളും ഉപയോഗിക്കുക."
@@ -7168,6 +7917,10 @@ msgstr "\"Experience\", \"Education\", \"Skills\" പോലുള്ള ലള�
 #: src/features/auth/TwoStepScreen.tsx
 msgid "Use the authenticator app instead"
 msgstr "പകരം ഓതന്റിക്കേറ്റർ ആപ്പ് ഉപയോഗിക്കുക"
+
+#: src/features/settings/TimezoneScreen.tsx
+msgid "Use the phone's timezone"
+msgstr ""
 
 #: src/features/settings/ProfileScreen.tsx
 msgid "Use the saved one"
@@ -7264,7 +8017,7 @@ msgid "Views per day over 30 days"
 msgstr "30 ദിവസത്തെ പ്രതിദിന കാഴ്ചകൾ"
 
 #. placeholder {0}: peak.views
-#. placeholder {1}: new Date(peak.date).toLocaleDateString(undefined, { day: "numeric", month: "long" })
+#. placeholder {1}: dayLabel(peak.date)
 #: src/features/builder/share/activity-screen.tsx
 msgid "Views per day over 30 days, highest {0} on {1}"
 msgstr "30 ദിവസത്തെ പ്രതിദിന കാഴ്ചകൾ, പരമാവധി {0}, {1} ന്"
@@ -7277,6 +8030,10 @@ msgstr "സന്ദർശകരും അഭിപ്രായങ്ങളു�
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Visitors can download it"
 msgstr "സന്ദർശകർക്ക് ഡൗൺലോഡ് ചെയ്യാം"
+
+#: src/features/builder/share/password-screen.tsx
+msgid "Visitors enter it before they see the page. At least 6 characters."
+msgstr ""
 
 #: src/features/builder/shared/model.ts
 msgid "Volunteer"
@@ -7366,6 +8123,18 @@ msgstr "നമ്മൾ എന്താണ് പ്രവർത്തിക്�
 msgid "What the coach and assistant may use. Edit or forget any of them."
 msgstr "കോച്ചും അസിസ്റ്റന്റും ഉപയോഗിക്കാവുന്നവ. തിരുത്തുകയോ മറക്കുകയോ ചെയ്യാം."
 
+#: src/features/workspace/PracticeScreen.tsx
+msgid "What to add"
+msgstr ""
+
+#: src/features/workspace/PracticeScreen.tsx
+msgid "What worked"
+msgstr ""
+
+#: src/features/workspace/PracticeScreen.tsx
+msgid "What you said"
+msgstr ""
+
 #: src/features/workspace/ApplyScreen.tsx
 msgid "What you sent"
 msgstr "നിങ്ങൾ അയച്ചത്"
@@ -7396,6 +8165,10 @@ msgstr "ഏത് അപേക്ഷ?"
 #: src/features/career/offers.tsx
 msgid "Which offer?"
 msgstr "ഏത് ഓഫർ?"
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Who is it for?"
+msgstr ""
 
 #: src/features/applications/InterviewSheet.tsx
 msgid "Who you'll meet"
@@ -7531,6 +8304,10 @@ msgstr "അതെ, നേതൃത്വം നൽകി"
 msgid "You added this"
 msgstr "നിങ്ങൾ ചേർത്തത്"
 
+#: src/features/career/preferences.tsx
+msgid "You already have every role your resume suggests."
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "You answered the assistant · today"
 msgstr "അസിസ്റ്റന്റിന് ഉത്തരം നൽകി · ഇന്ന്"
@@ -7647,6 +8424,12 @@ msgstr "നിങ്ങളുടെ സന്ദേശം നിലനിർത�
 msgid "Your name is missing"
 msgstr "നിങ്ങളുടെ പേര് കാണാനില്ല"
 
+#. placeholder {0}: zoneCity(travel.current)
+#. placeholder {1}: zoneCity(travel.home)
+#: src/features/today/screen.tsx
+msgid "Your phone is on {0} time. Schedules stay on {1} time."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Your phone number is written in an unusual shape."
 msgstr "നിങ്ങളുടെ ഫോൺ നമ്പർ അസാധാരണമായ രീതിയിലാണ് എഴുതിയിരിക്കുന്നത്."
@@ -7730,6 +8513,18 @@ msgstr "നിങ്ങളുടെ ഹ്രസ്വ ലിങ്ക്"
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Your short link rx.cv/{username} opens this one."
 msgstr "നിങ്ങളുടെ rx.cv/{username} ഹ്രസ്വ ലിങ്ക് ഇത് തുറക്കും."
+
+#: src/features/applications/actions.ts
+msgid "Your stages changed somewhere else. They've been refreshed; try again."
+msgstr ""
+
+#: src/features/builder/share/share-screen.tsx
+msgid "Your web page address"
+msgstr ""
+
+#: src/features/builder/share/share-screen.tsx
+msgid "Your web page is live"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Your web settings changed. Nothing was sent; try again."

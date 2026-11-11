@@ -29,6 +29,11 @@ msgstr "· {0} tyd"
 msgid "“{0}” moved to Trash"
 msgstr "\"{0}\" na asblik geskuif"
 
+#. placeholder {0}: currentPrimary?.name ?? ""
+#: src/features/builder/share/web-page-screen.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr ""
+
 #: src/features/builder/check/issues.ts
 msgid "“{title}” isn't a heading systems look for"
 msgstr "“{title}” is nie 'n opskrif wat stelsels soek nie"
@@ -109,7 +114,7 @@ msgstr "{0, plural, one {# profielverandering} other {# profielveranderings}}"
 msgid "{0, plural, one {# story or fact} other {# stories and facts}}"
 msgstr "{0, plural, one {# verhaal of feit} other {# verhale en feite}}"
 
-#. placeholder {0}: zoneCity(timeZone())
+#. placeholder {0}: zoneCity(home)
 #: src/features/settings/PreferencesScreen.tsx
 msgid "{0} · automatic"
 msgstr "{0} · outomaties"
@@ -163,6 +168,11 @@ msgstr "{0} by Vaardighede gevoeg"
 msgid "{0} application"
 msgstr "{0} aansoek"
 
+#. placeholder {0}: quiet.length
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "{0} applications haven't had a reply in 30 days."
+msgstr ""
+
 #. placeholder {0}: row.applied
 #: src/features/applications/InsightsScreen.tsx
 msgid "{0} applied"
@@ -199,6 +209,11 @@ msgstr "{0} feite oor jou werk"
 #: src/features/career/facts.tsx
 msgid "{0} facts permanently forgotten"
 msgstr "{0} feite permanent vergeet"
+
+#. placeholder {0}: quiet[0]?.company ?? ""
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "{0} hasn't replied in 30 days."
+msgstr ""
 
 #. placeholder {0}: term.label
 #: src/features/builder/check/CheckScreen.tsx
@@ -285,6 +300,11 @@ msgstr "{0} verhale vir onderhoude"
 msgid "{0} time"
 msgstr "{0} tyd"
 
+#. placeholder {0}: day.views
+#: src/features/builder/share/activity-screen.tsx
+msgid "{0} views"
+msgstr ""
+
 #. placeholder {0}: preferences.data.noticeWeeks
 #: src/data/career-tools.ts
 msgid "{0} weeks"
@@ -298,6 +318,11 @@ msgstr "{0} weke"
 msgid "{0}, {1} {2} · {3} · may charge"
 msgstr "{0}, {1} {2} · {3} · koste kan geld"
 
+#. placeholder {0}: item.label
+#: src/ui/Dock.tsx
+msgid "{0}, issues to review"
+msgstr ""
+
 #. placeholder {0}: accent.label()
 #: src/features/builder/design/TemplateScreen.tsx
 msgid "{0}, selected"
@@ -310,6 +335,10 @@ msgstr "{0}, gekies"
 #: src/features/workspace/PracticeScreen.tsx
 msgid "{0}{1} · question {2} of {3}"
 msgstr "{0}{1} · vraag {2} van {3}"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "{access} · last used {used}"
+msgstr ""
 
 #: src/features/workspace/ApplyScreen.tsx
 msgid "{answerCount} answers saved"
@@ -538,6 +567,7 @@ msgid "3 facts"
 msgstr "3 feite"
 
 #: src/features/applications/InsightsScreen.tsx
+#: src/features/builder/share/activity-screen.tsx
 msgid "30 days"
 msgstr "30 dae"
 
@@ -545,7 +575,12 @@ msgstr "30 dae"
 msgid "4 today"
 msgstr "4 vandag"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "7 days"
+msgstr ""
+
 #: src/features/applications/InsightsScreen.tsx
+#: src/features/builder/share/activity-screen.tsx
 msgid "90 days"
 msgstr "90 dae"
 
@@ -638,6 +673,14 @@ msgid "Accept"
 msgstr "Aanvaar"
 
 #: src/features/builder/assistant/proposals-screen.tsx
+msgid "Accept all"
+msgstr ""
+
+#: src/features/builder/assistant/proposals-screen.tsx
+msgid "Accept the others"
+msgstr ""
+
+#: src/features/builder/assistant/proposals-screen.tsx
 msgid "Accepted"
 msgstr "Aanvaar"
 
@@ -654,6 +697,10 @@ msgstr "Hierdie aanbod aanvaar"
 #: src/features/settings/SettingsScreen.tsx
 msgid "Account and security"
 msgstr "Rekening en sekuriteit"
+
+#: src/features/builder/check/CheckScreen.tsx
+msgid "Actions"
+msgstr ""
 
 #. placeholder {0}: item.text
 #: src/features/career/preferences.tsx
@@ -703,6 +750,10 @@ msgstr "voeg 'n resultaat by"
 msgid "Add a result"
 msgstr "Voeg 'n resultaat by"
 
+#: src/features/career/facts.tsx
+msgid "Add a resume first."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Voeg 'n afdeling met die opskrif \"Opleiding\" by. Baie stelsels het 'n verpligte opleidingsveld."
@@ -715,6 +766,7 @@ msgstr "Voeg 'n afdeling met die opskrif \"Ervaring\" of \"Werkservaring\" by. D
 msgid "Add a term only if it's true for you."
 msgstr "Voeg 'n term slegs by as dit op jou van toepassing is."
 
+#: src/features/builder/assistant/assistant-screen.tsx
 #: src/features/settings/AIScreen.tsx
 #: src/features/settings/ProviderScreen.tsx
 msgid "Add AI provider"
@@ -835,6 +887,14 @@ msgstr "Voeg 'n bietjie wit spasie tussen afdelings by sodat 'n persoon dit vlug
 msgid "Add summary"
 msgstr "Voeg opsomming by"
 
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Add tag"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Add terms"
+msgstr ""
+
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Add the application link"
 msgstr "Voeg die aansoekskakel by"
@@ -875,10 +935,21 @@ msgstr "Voeg by waar elke aansoek vandaan kom om te sien watter kanaal vir jou w
 msgid "Add your name"
 msgstr "Voeg jou naam by"
 
+#. placeholder {0}: role.trim()
+#. placeholder {1}: company.trim()
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Added {0} at {1}"
+msgstr ""
+
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Deur jou bygevoeg"
 
+#: src/features/career/facts.tsx
+msgid "Added facts from your resume. Edit or forget any of them."
+msgstr ""
+
+#: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Address"
 msgstr "Adres"
@@ -951,6 +1022,10 @@ msgstr "Laat toe"
 msgid "Allow {0} to use your Reactive Resume?"
 msgstr "Laat {0} jou Reactive Resume gebruik?"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Allow comments"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Allow scheduled sharing"
 msgstr "Laat geskeduleerde deling toe"
@@ -971,6 +1046,12 @@ msgstr "Reeds gedek"
 msgid "Already have an account?"
 msgstr "Het jy reeds 'n rekening?"
 
+#. placeholder {0}: duplicate.role
+#. placeholder {1}: duplicate.company
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "An embedded font could not be read."
 msgstr "'n Ingebedde lettertipe kon nie gelees word nie."
@@ -978,6 +1059,10 @@ msgstr "'n Ingebedde lettertipe kon nie gelees word nie."
 #: src/features/builder/check/issues.ts
 msgid "An entry has no dates"
 msgstr "'n Inskrywing het geen datums nie"
+
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Another of your resumes uses this address."
+msgstr ""
 
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Answers you draft for this job's form are kept here to copy."
@@ -987,14 +1072,23 @@ msgstr "Antwoorde wat jy vir hierdie pos se vorm opstel, word hier gehou om te k
 msgid "Any tag"
 msgstr "Enige etiket"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Anyone who has it can no longer open it."
+msgstr ""
+
 #: src/features/builder/share/share-screen.tsx
 msgid "Anyone with the link can see it"
 msgstr "Enigiemand met die skakel kan dit sien"
+
+#: src/features/builder/share/password-screen.tsx
+msgid "Anyone with the link will be able to view your resume."
+msgstr ""
 
 #: src/features/settings/ProviderScreen.tsx
 msgid "API key"
 msgstr "API sleutel"
 
+#: src/features/settings/AccessScreens.tsx
 #: src/features/settings/AIScreen.tsx
 msgid "API keys"
 msgstr "API sleutels"
@@ -1044,7 +1138,6 @@ msgstr "Aansoeke"
 msgid "applied"
 msgstr "aansoek gedoen"
 
-#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Applied"
@@ -1066,6 +1159,10 @@ msgstr "Aansoek gedoen op 28 Okt · 'n kort boodskap is nou gepas"
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
 msgstr "Doen aansoek"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Apps using it stop working at once. This can't be undone; make a new key if you need one."
+msgstr ""
 
 #: src/features/builder/shared/model.ts
 msgid "Area of study"
@@ -1102,6 +1199,10 @@ msgstr "Vra die assistent om dit in te werk"
 #: src/features/career/offers.tsx
 msgid "Ask the coach"
 msgstr "Vra die afrigter"
+
+#: src/features/public/feedback.tsx
+msgid "Ask the person who sent it for a new link. Comments you left are still with them."
+msgstr ""
 
 #: src/features/settings/FirstSendSheet.tsx
 msgid "Asks again if the connection changes"
@@ -1207,6 +1308,10 @@ msgstr "Terug na Deel"
 msgid "Back to sign in"
 msgstr "Terug na aanmelding"
 
+#: src/features/builder/share/password-screen.tsx
+msgid "Back to Web page"
+msgstr ""
+
 #: src/features/auth/TwoStepScreen.tsx
 msgid "Backup code"
 msgstr "Rugsteun kode"
@@ -1237,6 +1342,10 @@ msgstr "Basissalaris, per jaar"
 #: src/features/documents/import.tsx
 msgid "Basics"
 msgstr "Basies"
+
+#: src/features/builder/versions/versions-screen.tsx
+msgid "Before restore"
+msgstr ""
 
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Before you apply"
@@ -1329,6 +1438,10 @@ msgstr "Kolpuntlys"
 msgid "Burgundy"
 msgstr "Bordeauxrooi"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "By day"
+msgstr ""
+
 #: src/features/applications/ApplicationsScreen.tsx
 #: src/features/today/screen.tsx
 msgid "Calendar"
@@ -1343,6 +1456,9 @@ msgstr "Kan nie {host} bereik nie"
 #: src/features/builder/description/DescriptionScreen.tsx
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/menu/menu-screen.tsx
+#: src/features/builder/share/activity-screen.tsx
+#: src/features/builder/share/password-screen.tsx
+#: src/features/builder/share/web-page-screen.tsx
 #: src/features/builder/shared/section-actions.tsx
 #: src/features/builder/versions/versions-screen.tsx
 #: src/features/career/coach.tsx
@@ -1351,6 +1467,7 @@ msgstr "Kan nie {host} bereik nie"
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
 #: src/features/documents/trash.tsx
+#: src/features/settings/AccessScreens.tsx
 #: src/features/settings/DeleteAccountDialog.tsx
 #: src/features/settings/first-send.ts
 #: src/features/settings/ProviderScreen.tsx
@@ -1431,6 +1548,10 @@ msgstr "Kontroleer geskiktheid"
 #: src/features/builder/description/DescriptionScreen.tsx
 msgid "Check it's accurate."
 msgstr "Kyk of dit akkuraat is."
+
+#: src/features/public/feedback.tsx
+msgid "Check that you copied the whole link, or ask the person who sent it for a new one."
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1563,6 +1684,10 @@ msgstr "Kies jou verhale"
 msgid "City"
 msgstr "Stad"
 
+#: src/features/settings/TimezoneScreen.tsx
+msgid "City or region"
+msgstr ""
+
 #: src/features/builder/design/presets.ts
 msgid "Classic"
 msgstr "Klassiek"
@@ -1585,9 +1710,31 @@ msgstr "Vee filters uit"
 msgid "Close"
 msgstr "Maak toe"
 
+#. placeholder {0}: picked.length
+#: src/features/applications/detail-sheets.tsx
+msgid "Close {0} as I accepted another offer"
+msgstr ""
+
 #: src/features/applications/StageSheet.tsx
 msgid "Close application"
 msgstr "Sluit aansoek"
+
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Close as No response…"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/DetailScreen.tsx
+msgid "Close the other {0} applications…"
+msgstr ""
+
+#: src/features/applications/DetailScreen.tsx
+msgid "Close the other application…"
+msgstr ""
+
+#: src/features/applications/detail-sheets.tsx
+msgid "Close the other applications"
+msgstr ""
 
 #: src/features/applications/StageSheet.tsx
 msgid "Close this application…"
@@ -1610,6 +1757,15 @@ msgstr "Gesluit"
 msgid "Closed · {0}"
 msgstr "Gesluit · {0}"
 
+#. placeholder {0}: closed.length
+#: src/features/applications/detail-sheets.tsx
+msgid "Closed {0} applications"
+msgstr ""
+
+#: src/features/applications/detail-sheets.tsx
+msgid "Closed 1 application"
+msgstr ""
+
 #: src/features/career/home.tsx
 msgid "Coach"
 msgstr "Afrigter"
@@ -1623,6 +1779,10 @@ msgstr "Kode, 6 syfers"
 #: src/features/letters/design-screen.tsx
 msgid "Colour"
 msgstr "Kleur"
+
+#: src/features/builder/design/TemplateScreen.tsx
+msgid "Colour changed"
+msgstr ""
 
 #: src/features/builder/design/LayoutScreen.tsx
 #: src/features/builder/section/SectionScreen.tsx
@@ -1641,6 +1801,7 @@ msgstr "Binnekort"
 msgid "Compact"
 msgstr "Kompak"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/SaveJobScreen.tsx
 #: src/features/builder/shared/model.ts
 msgid "Company"
@@ -1671,6 +1832,7 @@ msgid "Compress or remove large images to keep uploads quick."
 msgstr "Kompakteer of verwyder groot beelde om oplaaie vinnig te hou."
 
 #: src/features/applications/StageSheet.tsx
+#: src/features/builder/share/password-screen.tsx
 msgid "Confirm"
 msgstr "Bevestig"
 
@@ -1687,6 +1849,10 @@ msgstr "Bevestig wat jy gestuur het voordat jy dit as aansoek gedoen merk."
 msgid "Connect"
 msgstr "Koppel"
 
+#: src/features/builder/assistant/assistant-screen.tsx
+msgid "Connect an AI provider first. Nothing is sent until you choose a connection."
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/career/home.tsx
 msgid "Connect an AI provider to use the coach"
@@ -1696,15 +1862,23 @@ msgstr "Koppel 'n KI-verskaffer om die afrigter te gebruik"
 msgid "Connect an application"
 msgstr "Koppel 'n toepassing"
 
+#: src/features/builder/download/download-screen.tsx
+msgid "Connect to make this format."
+msgstr ""
+
 #: src/features/documents/search.tsx
 msgid "Connect to search everything."
 msgstr "Koppel om alles te deursoek."
 
 #: src/features/settings/AIScreen.tsx
-#: src/features/settings/ProviderScreen.tsx
 msgid "Connected"
 msgstr "Verbonde"
 
+#: src/features/settings/ProviderScreen.tsx
+msgid "Connected · {latency} ms"
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
 #: src/features/settings/AIScreen.tsx
 msgid "Connected applications"
 msgstr "Gekoppelde toepassings"
@@ -1726,6 +1900,7 @@ msgstr "Kontakbesonderhede kom deur"
 msgid "Content is laid out in a grid."
 msgstr "Inhoud is in 'n rooster uitgelê."
 
+#: src/features/builder/assistant/assistant-screen.tsx
 #: src/features/settings/DeleteAccountDialog.tsx
 msgid "Continue"
 msgstr "Gaan voort"
@@ -1760,12 +1935,14 @@ msgstr "Gaan voort sonder 'n rekening"
 msgid "Conversations"
 msgstr "Gesprekke"
 
+#: src/features/career/coach.tsx
 #: src/features/workspace/ApplyScreen.tsx
 #: src/features/workspace/MessagesScreen.tsx
 #: src/features/workspace/PrepScreen.tsx
 msgid "Copied"
 msgstr "Gekopieer"
 
+#: src/features/career/coach.tsx
 #: src/features/workspace/ApplyScreen.tsx
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Copy"
@@ -1781,8 +1958,18 @@ msgid "Copy for a job…"
 msgstr "Kopieer vir 'n werk..."
 
 #: src/features/builder/share/share-screen.tsx
+msgid "Copy full address"
+msgstr ""
+
+#: src/features/builder/share/activity-screen.tsx
+#: src/features/builder/share/share-screen.tsx
 msgid "Copy link"
 msgstr "Kopieer skakel"
+
+#. placeholder {0}: app.company
+#: src/features/documents/actions.tsx
+msgid "Copy made for {0}. This resume is unchanged."
+msgstr ""
 
 #: src/features/documents/actions.tsx
 msgid "Copy public link"
@@ -1809,9 +1996,17 @@ msgstr "Koste"
 msgid "Could you share where things stand with the {0} role? I'm happy to send anything else you need."
 msgstr "Kan u laat weet hoe sake staan met die {0}-pos? Ek stuur graag enigiets anders wat u nodig het."
 
+#: src/features/applications/InterviewSheet.tsx
+msgid "Couldn't add it to your calendar. Try again from the interview."
+msgstr ""
+
 #: src/features/letters/design-screen.tsx
 msgid "Couldn't change the design. Try again."
 msgstr "Kon nie die ontwerp verander nie. Probeer weer."
+
+#: src/features/letters/letter-screen.tsx
+msgid "Couldn't change the letter. Try again."
+msgstr ""
 
 #: src/features/workspace/FitScreen.tsx
 msgid "Couldn't check your evidence. Try again."
@@ -1821,6 +2016,7 @@ msgstr "Bewyse kon nie nagegaan word nie. Probeer weer."
 msgid "Couldn't clear local notifications. Clear them in your device settings."
 msgstr "Plaaslike kennisgewings kon nie uitgevee word nie. Vee hulle in jou toestelinstellings uit."
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't close the application. Try again."
 msgstr "Aansoek kon nie gesluit word nie. Probeer weer."
@@ -1836,6 +2032,10 @@ msgstr "Skakel kon nie gekopieer word nie. Probeer weer."
 #: src/features/documents/actions.tsx
 msgid "Couldn't copy the public link. Try again."
 msgstr "Openbare skakel kon nie gekopieer word nie. Probeer weer."
+
+#: src/features/documents/actions.tsx
+msgid "Couldn't copy the resume. Try again."
+msgstr ""
 
 #: src/features/documents/new.tsx
 msgid "Couldn't create the document. Try again."
@@ -1881,10 +2081,18 @@ msgstr "Hierdie lêer kon nie geskep word nie. Voorheen gestoorde lêers word be
 msgid "Couldn't get a suggestion. Nothing changed."
 msgstr "Kon nie 'n voorstel kry nie. Niks het verander nie."
 
+#: src/features/applications/import-csv.ts
+msgid "Couldn't import the file. Check it's a CSV and try again."
+msgstr ""
+
 #: src/data/import.ts
 #: src/features/documents/import.tsx
 msgid "Couldn't import the file. Your file is kept. Try again."
 msgstr "Die lêer kon nie ingevoer word nie. Jou lêer word behou. Probeer weer."
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Couldn't load connected applications. Try again."
+msgstr ""
 
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
@@ -1922,6 +2130,10 @@ msgstr "Die asblik kon nie gelaai word nie. Probeer weer."
 msgid "Couldn't load visitors. Try again."
 msgstr "Besoekers kon nie gelaai word nie. Probeer weer."
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Couldn't load your API keys. Try again."
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Couldn't load your documents. Try again."
 msgstr "Jou dokumente kon nie gelaai word nie. Probeer weer."
@@ -1930,13 +2142,17 @@ msgstr "Jou dokumente kon nie gelaai word nie. Probeer weer."
 msgid "Couldn't log the follow-up. Check the timeline before trying again."
 msgstr "Kon nie die opvolg aanteken nie. Gaan die tydlyn na voordat jy weer probeer."
 
+#: src/features/system/notifications.tsx
+msgid "Couldn't log the follow-up. Try again."
+msgstr ""
+
 #: src/features/workspace/PrepScreen.tsx
 msgid "Couldn't make the briefing. Try again."
 msgstr "Die oorsig kon nie geskep word nie. Probeer weer."
 
-#: src/features/applications/StageSheet.tsx
-msgid "Couldn't mark it as applied. Try again."
-msgstr "Kon dit nie as aansoek gedoen merk nie. Probeer weer."
+#: src/features/builder/share/activity-screen.tsx
+msgid "Couldn't make the link. Try again."
+msgstr ""
 
 #: src/features/applications/actions.ts
 msgid "Couldn't move it to Trash. Try again."
@@ -1968,6 +2184,18 @@ msgstr "Kon nie daardie lêer lees nie. Probeer weer."
 msgid "Couldn't read the file. Your file is kept."
 msgstr "Die lêer kon nie gelees word nie. Jou lêer word behou."
 
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
+msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "Couldn't read your resume. Try again."
+msgstr ""
+
+#: src/features/applications/StageSheet.tsx
+msgid "Couldn't record submission. Try again."
+msgstr ""
+
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Couldn't redraft. Your draft is unchanged."
 msgstr "Dit kon nie herskryf word nie. Jou konsep is onveranderd."
@@ -1992,6 +2220,18 @@ msgstr "Kon nie die dokument herstel nie. Probeer weer."
 msgid "Couldn't restore the item. Try again."
 msgstr "Die item kon nie herstel word nie. Probeer weer."
 
+#: src/features/builder/preview/preview-screen.tsx
+msgid "Couldn't restore this version. Try again."
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Couldn't revoke this key. Try again."
+msgstr ""
+
 #: src/features/career/facts.tsx
 msgid "Couldn't save that change. Try again. Your words are kept on this device."
 msgstr "Daardie verandering kon nie gestoor word nie. Probeer weer. Jou woorde word op hierdie toestel behou."
@@ -2007,6 +2247,11 @@ msgstr "Kon die werk nie bewaar nie. Probeer weer."
 #: src/features/career/offers.tsx
 msgid "Couldn't save the offer. Check its terms and try again."
 msgstr "Die aanbod kon nie gestoor word nie. Kontroleer die voorwaardes en probeer weer."
+
+#: src/features/settings/TimezoneScreen.tsx
+#: src/features/today/screen.tsx
+msgid "Couldn't save the timezone. Try again."
+msgstr ""
 
 #: src/features/settings/ProviderScreen.tsx
 msgid "Couldn't save this provider. Test the connection and try again."
@@ -2025,6 +2270,10 @@ msgstr "Kon nie jou veranderinge stoor nie. Probeer weer."
 #: src/features/career/preferences.tsx
 msgid "Couldn't save your preferences. Try again."
 msgstr "Kon nie jou voorkeure bewaar nie. Probeer weer."
+
+#: src/features/career/stories.tsx
+msgid "Couldn't save your story. Check its title, situation, task and action, then try again. Your edits are kept here."
+msgstr ""
 
 #: src/features/career/stories.tsx
 msgid "Couldn't save your story. Your edits are kept on this device. Try again."
@@ -2058,6 +2307,10 @@ msgstr "Die PDF kon nie gedeel word nie. Probeer weer."
 msgid "Couldn't sign you in. Try again."
 msgstr "Kon jou nie aanmeld nie. Probeer weer."
 
+#: src/features/career/preferences.tsx
+msgid "Couldn't suggest roles. Try again."
+msgstr ""
+
 #: src/features/settings/ProviderScreen.tsx
 msgid "Couldn't test this provider. Check its settings and try again."
 msgstr "Hierdie verskaffer kon nie getoets word nie. Kontroleer die instellings en probeer weer."
@@ -2066,18 +2319,29 @@ msgstr "Hierdie verskaffer kon nie getoets word nie. Kontroleer die instellings 
 msgid "Couldn't transcribe the recording. It is kept on this device."
 msgstr "Die opname kon nie getranskribeer word nie. Dit word op hierdie toestel behou."
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Couldn't turn off the link. Try again."
+msgstr ""
+
+#: src/features/builder/share/password-screen.tsx
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "Kon nie deling bywerk nie. Probeer weer."
 
 #: src/features/applications/actions.ts
+#: src/features/applications/ApplicationsScreen.tsx
+#: src/features/applications/detail-sheets.tsx
 msgid "Couldn't update the application. Try again."
 msgstr "Kon nie die aansoek bywerk nie. Probeer weer."
 
 #: src/features/builder/menu/menu-screen.tsx
 msgid "Couldn't update this document. Try again."
 msgstr "Hierdie dokument kon nie bygewerk word nie. Probeer weer."
+
+#: src/features/builder/basics/BasicsScreen.tsx
+msgid "Couldn't upload the photo. Choose a PNG, JPEG, WebP or GIF up to 10 MB, then try again."
+msgstr ""
 
 #: src/features/auth/TwoStepScreen.tsx
 msgid "Couldn't verify your backup code. Check the code and try again."
@@ -2107,6 +2371,10 @@ msgstr "Skep rekening"
 #: src/features/auth/WelcomeScreen.tsx
 msgid "Create an account"
 msgstr "Skep 'n rekening"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -2184,6 +2452,7 @@ msgstr "Geagte huurspan,"
 
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/DebriefScreen.tsx
+#: src/features/workspace/PrepScreen.tsx
 msgid "Debrief"
 msgstr "Nabespreking"
 
@@ -2211,6 +2480,11 @@ msgstr "Graad"
 msgid "Delete"
 msgstr "Vee uit"
 
+#. placeholder {0}: deleting?.name ?? ""
+#: src/features/builder/versions/versions-screen.tsx
+msgid "Delete “{0}”?"
+msgstr ""
+
 #: src/features/settings/ProviderScreen.tsx
 msgid "Delete “{name}”?"
 msgstr "Vee “{name}” uit?"
@@ -2235,6 +2509,10 @@ msgstr "Vee rekening permanent uit"
 msgid "Delete conversation?"
 msgstr "Vee gesprek uit?"
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/builder/entry/EntryActionsSheet.tsx
 #: src/features/builder/entry/EntryScreen.tsx
 msgid "Delete entry"
@@ -2248,6 +2526,7 @@ msgstr "Verwyder dit. Verskuilde sleutelwoorde word beskou as 'n doelbewuste pog
 msgid "Delete page"
 msgstr "Vee bladsy uit"
 
+#: src/features/builder/versions/versions-screen.tsx
 #: src/features/career/stories.tsx
 #: src/features/documents/trash.tsx
 msgid "Delete permanently"
@@ -2260,6 +2539,10 @@ msgstr "Vee permanent uit…"
 #: src/features/settings/DeleteAccountDialog.tsx
 msgid "Delete your account?"
 msgstr "Vee jou rekening uit?"
+
+#: src/features/builder/versions/versions-screen.tsx
+msgid "Delete…"
+msgstr ""
 
 #: src/features/documents/trash.tsx
 msgid "Deleted permanently"
@@ -2304,6 +2587,10 @@ msgstr "Besonderhede"
 msgid "Details for job forms"
 msgstr "Besonderhede vir werksaansoekvorms"
 
+#: src/features/applications/detail-sheets.tsx
+msgid "Details saved"
+msgstr ""
+
 #: src/features/settings/AIScreen.tsx
 #: src/ui/DevMenu.tsx
 msgid "Developer"
@@ -2327,6 +2614,19 @@ msgstr "Gooi weg"
 msgid "Discard changes?"
 msgstr "Verwerp veranderinge?"
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Disconnect"
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: target.name
+#: src/features/settings/AccessScreens.tsx
+msgid "Disconnected “{0}”."
+msgstr ""
+
 #: src/features/career/home.tsx
 #: src/features/career/preferences.tsx
 #: src/features/career/schedules.tsx
@@ -2345,6 +2645,7 @@ msgstr "Ontdekking is onderbreek."
 msgid "Discovery uses the web-search connection configured by your server administrator."
 msgstr "Ontdekking gebruik die websoekverbinding wat jou bedieneradministrateur opgestel het."
 
+#: src/features/applications/DetailScreen.tsx
 #: src/features/documents/library.tsx
 #: src/features/documents/trash.tsx
 msgid "Dismiss"
@@ -2437,6 +2738,14 @@ msgstr "Stel 'n teenaanbod op"
 msgid "Draft a follow-up"
 msgstr "Stel 'n opvolg op"
 
+#: src/features/system/content.ts
+msgid "Draft follow-up"
+msgstr ""
+
+#: src/features/letters/letter-screen.tsx
+msgid "Draft from the posting"
+msgstr ""
+
 #: src/features/workspace/shared.tsx
 msgid "Drafting"
 msgstr "Besig om op te stel"
@@ -2494,6 +2803,11 @@ msgstr "Wysig"
 #: src/features/career/stories.tsx
 msgid "Edit {0}"
 msgstr "Wysig {0}"
+
+#: src/features/applications/detail-sheets.tsx
+#: src/features/applications/DetailScreen.tsx
+msgid "Edit details"
+msgstr ""
 
 #: src/features/applications/InterviewSheet.tsx
 msgid "Edit interview"
@@ -2708,6 +3022,10 @@ msgstr "Ervaring"
 msgid "Experience, education, skills"
 msgstr "Ervaring, opleiding, vaardighede"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Expired"
+msgstr ""
+
 #: src/features/builder/download/download-screen.tsx
 msgid "Export"
 msgstr "Uitvoer"
@@ -2727,6 +3045,10 @@ msgstr "Voer uit vanaf die oorspronklike dokument in plaas daarvan om dit te ska
 #: src/features/settings/AccountScreen.tsx
 msgid "Export my data"
 msgstr "Voer my data uit"
+
+#: src/features/settings/DeleteAccountDialog.tsx
+msgid "Export saved to Files at {exportedTime}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Export the resume as a text PDF rather than as an image or a scan."
@@ -2766,9 +3088,17 @@ msgstr "Misluk"
 msgid "Feedback comments"
 msgstr "Terugvoeropmerkings"
 
+#: src/features/public/feedback.tsx
+msgid "Feedback link"
+msgstr ""
+
 #: src/features/builder/share/activity-screen.tsx
 msgid "Feedback links"
 msgstr "Terugvoerskakels"
+
+#: src/features/public/feedback.tsx
+msgid "Feedback pages open in your browser."
+msgstr ""
 
 #: src/data/import.ts
 msgid "File is too large. Choose a file up to 10 MB."
@@ -3004,6 +3334,10 @@ msgstr "Uit jou dekbrief"
 msgid "From your resume"
 msgstr "Uit jou CV"
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/builder/basics/BasicsScreen.tsx
 #: src/features/settings/ProfileScreen.tsx
 msgid "Full name"
@@ -3032,6 +3366,10 @@ msgstr "Gee elke rol 'n tydperk, soos \"Jan 2020 - Huidig\", sodat jou tydlyn he
 #: src/features/public/ats-messages.ts
 msgid "Give every role and qualification a date range."
 msgstr "Gee elke rol en kwalifikasie 'n datumreeks."
+
+#: src/features/public/feedback.tsx
+msgid "Go to Reactive Resume"
+msgstr ""
 
 #: src/features/documents/search.tsx
 msgid "Go to…"
@@ -3098,6 +3436,10 @@ msgstr "Versteek"
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Hide contact details"
 msgstr "Versteek kontakbesonderhede"
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Hide days"
+msgstr ""
 
 #: src/features/builder/design/LayoutScreen.tsx
 #: src/features/builder/entry/EntryActionsSheet.tsx
@@ -3232,9 +3574,22 @@ msgstr "Voer 'n CV in"
 msgid "Import canceled. Your file is kept."
 msgstr "Invoer gekanselleer. Jou lêer word behou."
 
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Import from CSV"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Import or create a resume"
 msgstr "Voer in of skep 'n CV"
+
+#: src/features/applications/import-csv.ts
+msgid "Imported {imported} applications."
+msgstr ""
+
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-csv.ts
+msgid "Imported {imported} applications. {0} rows had no company or role."
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Imports back into Reactive Resume"
@@ -3252,6 +3607,10 @@ msgstr "Verbeter tans …"
 #: src/features/workspace/PrepScreen.tsx
 msgid "in {days} days"
 msgstr "oor {days} dae"
+
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
@@ -3292,7 +3651,6 @@ msgstr "Onderhoudvoorbereiding"
 msgid "Interview unavailable."
 msgstr "Onderhoud onbeskikbaar."
 
-#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 msgid "Interviewed"
 msgstr "Onderhoud gevoer"
@@ -3358,6 +3716,10 @@ msgstr "Dit kan nie herstel word nie."
 msgid "It has entries but isn't placed on a page."
 msgstr "Dit het inskrywings, maar word nie op 'n bladsy geplaas nie."
 
+#: src/features/settings/AccessScreens.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/auth/ConsentScreen.tsx
 msgid "It will be able to"
 msgstr "Dit sal kan"
@@ -3403,9 +3765,18 @@ msgstr "JSON-rugsteun"
 msgid "Jump to"
 msgstr "Spring na"
 
+#. placeholder {0}: zoneCity(travel.home)
+#: src/features/today/screen.tsx
+msgid "Keep {0} time"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "Hou by een adres, sodat sagteware nie hoef te raai watter een om te gebruik nie."
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Keep access when you are not using the application."
+msgstr ""
 
 #: src/ui/Dialog.tsx
 msgid "Keep editing"
@@ -3419,6 +3790,10 @@ msgstr "Hou dit onder 2.5 MB, gewoonlik deur beelde te verwyder of te verklein."
 #: src/features/settings/ProfileScreen.tsx
 msgid "Keep mine"
 msgstr "Hou myne"
+
+#: src/features/builder/notes/NotesScreen.tsx
+msgid "Keep private notes about this resume here. Nobody else can see them."
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Keep resume content as real text rather than as pictures of text."
@@ -3456,6 +3831,10 @@ msgstr "Behou totdat jy dit uitvee"
 #: src/features/settings/providers.ts
 msgid "Key rejected"
 msgstr "Sleutel verwerp"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Key revoked. Apps using it stop working now."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 msgid "Keywords"
@@ -3562,10 +3941,15 @@ msgstr "Lengte"
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Lengte is nie 'n gebrek nie, en daar is geen universele eenbladsy-reël nie. Hou die bladsye wat hul plek verdien."
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/StageSheet.tsx
 #: src/features/builder/design/presets.ts
 msgid "Letter"
 msgstr "Brief"
+
+#: src/features/builder/menu/menu-screen.tsx
+msgid "Letter duplicated"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Letter only"
@@ -3621,6 +4005,11 @@ msgstr "Reëls so naby aan mekaar kan tydens lees saamvloei."
 msgid "Link"
 msgstr "Skakel"
 
+#: src/features/applications/detail-sheets.tsx
+#: src/features/applications/DetailScreen.tsx
+msgid "Link a resume or letter"
+msgstr ""
+
 #: src/features/builder/description/DescriptionScreen.tsx
 msgid "Link address"
 msgstr "Skakel adres"
@@ -3633,6 +4022,7 @@ msgstr "Koppel 'n werksaansoek"
 msgid "Link an application…"
 msgstr "Koppel 'n werksaansoek..."
 
+#: src/features/builder/share/activity-screen.tsx
 #: src/features/builder/share/share-screen.tsx
 msgid "Link copied"
 msgstr "Skakel gekopieer"
@@ -3641,6 +4031,10 @@ msgstr "Skakel gekopieer"
 msgid "Link copied to clipboard"
 msgstr "Skakel na knipbord gekopieer"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Link expires"
+msgstr ""
+
 #: src/features/documents/actions.tsx
 msgid "Link to an application…"
 msgstr "Koppel aan 'n aansoek…"
@@ -3648,6 +4042,11 @@ msgstr "Koppel aan 'n aansoek…"
 #: src/features/builder/check/issues.ts
 msgid "Link updated"
 msgstr "Skakel opgedateer"
+
+#. placeholder {0}: doc.name
+#: src/features/applications/detail-sheets.tsx
+msgid "Linked “{0}”"
+msgstr ""
 
 #: src/features/settings/ProfileScreen.tsx
 msgid "LinkedIn"
@@ -3673,6 +4072,7 @@ msgstr "Koppelingsversoek word gelaai…"
 msgid "Loading Knowledge before you send…"
 msgstr "Laai Kennis voordat jy stuur…"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/SaveJobScreen.tsx
 #: src/features/builder/basics/BasicsScreen.tsx
 #: src/features/builder/shared/model.ts
@@ -3694,6 +4094,7 @@ msgstr "Gesluit"
 msgid "Locked. Unlock it from ··· on the resume."
 msgstr "Gesluit. Ontsluit dit vanaf ··· op die CV."
 
+#: src/features/system/content.ts
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Log follow-up"
 msgstr "Teken opvolging aan"
@@ -3722,6 +4123,14 @@ msgstr "Hoofkolom"
 msgid "Make default"
 msgstr "Maak verstek"
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Make link"
+msgstr ""
+
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Make primary"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Make the visible text and the destination match."
 msgstr "Maak die sigbare teks en die bestemming ooreenstem."
@@ -3729,6 +4138,10 @@ msgstr "Maak die sigbare teks en die bestemming ooreenstem."
 #: src/features/public/ats-messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Maak hulle sigbaar groter, vetter of met hoofletters."
+
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Make this your primary resume?"
+msgstr ""
 
 #: src/features/documents/actions.tsx
 msgid "Makes a copy linked to an application"
@@ -3932,6 +4345,10 @@ msgstr "Skuif dit na die hoofkolom"
 msgid "Move real content into the body of the page; some software discards the margins."
 msgstr "Skuif werklike inhoud na die liggaam van die bladsy; sommige sagteware verwerp die kantlyne."
 
+#: src/features/today/screen.tsx
+msgid "Move them"
+msgstr ""
+
 #: src/features/auth/ConsentScreen.tsx
 msgid "Move them to the trash"
 msgstr "Skuif hulle na die asblik"
@@ -4063,6 +4480,11 @@ msgstr "Wag op jou"
 msgid "Network"
 msgstr "Netwerk"
 
+#: src/features/builder/share/activity-screen.tsx
+#: src/features/settings/AccessScreens.tsx
+msgid "Never"
+msgstr ""
+
 #: src/features/documents/library.tsx
 #: src/features/documents/new.tsx
 msgid "New"
@@ -4143,9 +4565,17 @@ msgstr "Nuwe poste"
 msgid "New skill"
 msgstr "Nuwe vaardigheid"
 
+#: src/features/career/stories.tsx
+msgid "New story"
+msgstr ""
+
 #: src/features/builder/shared/model.ts
 msgid "New summary"
 msgstr "Nuwe opsomming"
+
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "New tag"
+msgstr ""
 
 #: src/features/builder/shared/model.ts
 msgid "New volunteering"
@@ -4169,6 +4599,10 @@ msgstr "Volgende maand"
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Next page"
 msgstr "Volgende bladsy"
+
+#: src/features/workspace/PracticeScreen.tsx
+msgid "Next question"
+msgstr ""
 
 #. placeholder {0}: local.date
 #. placeholder {1}: local.time
@@ -4201,6 +4635,10 @@ msgstr "Geen KI-verskaffer word vir hierdie bewerking gebruik nie."
 msgid "No answers yet"
 msgstr "Nog geen antwoorde nie"
 
+#: src/features/applications/import-csv.ts
+msgid "No applications found. Each row needs a company and a role."
+msgstr ""
+
 #: src/features/applications/DetailScreen.tsx
 msgid "No briefing yet"
 msgstr "Nog geen oorsig nie"
@@ -4208,6 +4646,14 @@ msgstr "Nog geen oorsig nie"
 #: src/features/public/ats-messages.ts
 msgid "No bullet lists were found."
 msgstr "Geen kolpuntlyste is gevind nie."
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "No comments yet."
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "No conventional section headings were found."
@@ -4238,8 +4684,20 @@ msgid "No export yet · Export first"
 msgstr "Nog geen uitvoer nie · Voer eers uit"
 
 #: src/features/career/facts.tsx
+msgid "No facts found in your resume."
+msgstr ""
+
+#: src/features/career/facts.tsx
+msgid "No facts match. Try another word or type."
+msgstr ""
+
+#: src/features/career/facts.tsx
 msgid "No facts yet"
 msgstr "Nog geen feite nie"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "No keys yet."
+msgstr ""
 
 #: src/features/workspace/ApplyScreen.tsx
 msgid "No letter sent"
@@ -4337,6 +4795,10 @@ msgstr "Geen terme het uitgestaan ​​in hierdie posplasing nie."
 msgid "No text could be read from this file."
 msgstr "Geen teks kon uit hierdie lêer gelees word nie."
 
+#: src/features/settings/TimezoneScreen.tsx
+msgid "No timezone matches “{query}”."
+msgstr ""
+
 #: src/features/builder/share/activity-screen.tsx
 msgid "No visitors yet. Share your link to see views here."
 msgstr "Nog geen besoekers nie. Deel jou skakel om kyke hier te sien."
@@ -4365,9 +4827,17 @@ msgstr "normale marges"
 msgid "Not an image of text"
 msgstr "Nie 'n beeld van teks nie"
 
+#: src/features/career/home.tsx
+msgid "Not available on this server"
+msgstr ""
+
 #: src/features/applications/DetailScreen.tsx
 msgid "Not checked yet"
 msgstr "Nog nie nagegaan nie"
+
+#: src/features/applications/InsightsScreen.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
 
 #: src/features/today/screen.tsx
 msgid "Not for me"
@@ -4435,12 +4905,17 @@ msgstr "Inligting"
 
 #: src/features/applications/DetailScreen.tsx
 #: src/features/builder/menu/menu-screen.tsx
+#: src/features/builder/notes/NotesScreen.tsx
 msgid "Notes"
 msgstr "Notas"
 
 #: src/features/documents/search.tsx
 msgid "Notes and messages"
 msgstr "Notas en boodskappe"
+
+#: src/features/builder/notes/NotesScreen.tsx
+msgid "Notes, locked"
+msgstr ""
 
 #: src/features/builder/section/SectionScreen.tsx
 msgid "Nothing here yet"
@@ -4511,7 +4986,6 @@ msgstr "Oker"
 msgid "Off"
 msgstr "Af"
 
-#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 msgid "Offer"
 msgstr "Aanbod"
@@ -4556,6 +5030,7 @@ msgid "Offline. Showing the last saved page."
 msgstr "Vanlyn. Laaste gestoorde bladsy word gewys."
 
 #: src/features/builder/share/web-page-screen.tsx
+#: src/features/settings/TimezoneScreen.tsx
 msgid "On"
 msgstr "Aan"
 
@@ -4606,6 +5081,10 @@ msgstr "Net jy kan dit sien"
 msgid "Only you see these."
 msgstr "Net jy sien dit."
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Only you see this."
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr "Slegs jou opname word na hierdie transkripsiemodel gestuur. Die teruggekeerde transkripsie word na jou rekening bewaar."
@@ -4640,9 +5119,14 @@ msgid "Open application"
 msgstr "Oop aansoek"
 
 #: src/features/applications/DetailScreen.tsx
+#: src/features/system/content.ts
 #: src/features/today/screen.tsx
 msgid "Open briefing"
 msgstr "Maak oorsig oop"
+
+#: src/features/public/feedback.tsx
+msgid "Open feedback page"
+msgstr ""
 
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Open in Mail"
@@ -4663,6 +5147,10 @@ msgstr "Maak die vorm oop"
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Open the web page"
 msgstr "Maak die webblad oop"
+
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Open tracked job"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "OpenDocument"
@@ -4745,15 +5233,28 @@ msgid "Passkeys"
 msgstr "Pasleutels"
 
 #: src/features/auth/SignInScreen.tsx
+#: src/features/builder/share/password-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
 #: src/features/settings/AccountScreen.tsx
 #: src/features/settings/DeleteAccountDialog.tsx
 msgid "Password"
 msgstr "Wagwoord"
 
+#: src/features/builder/share/password-screen.tsx
+msgid "Password removed"
+msgstr ""
+
+#: src/features/builder/share/password-screen.tsx
+msgid "Password set"
+msgstr ""
+
 #: src/features/builder/assistant/assistant-screen.tsx
 msgid "Past conversations"
 msgstr "Vorige gesprekke"
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Past links"
+msgstr ""
 
 #: src/features/applications/ApplicationsScreen.tsx
 msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
@@ -4811,6 +5312,11 @@ msgstr "Onderbreek om {0}"
 #: src/features/career/schedules.tsx
 msgid "Paused: your AI connection changed"
 msgstr "Onderbreek: jou KI-verbinding het verander"
+
+#. placeholder {0}: ws.provider.label
+#: src/features/workspace/PrepScreen.tsx
+msgid "Paused: your AI connection changed. Turn it on again to approve {0}."
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Pay"
@@ -4913,8 +5419,13 @@ msgid "practice"
 msgstr "oefening"
 
 #: src/features/applications/DetailScreen.tsx
+#: src/features/system/content.ts
 msgid "Practice"
 msgstr "Oefening"
+
+#: src/features/workspace/PracticeScreen.tsx
+msgid "Practice again"
+msgstr ""
 
 #: src/features/workspace/PracticeScreen.tsx
 msgid "Practice another question"
@@ -4927,6 +5438,10 @@ msgstr "Oefenpoging"
 #: src/features/workspace/PrepScreen.tsx
 msgid "Practice these questions"
 msgstr "Oefen hierdie vrae"
+
+#: src/features/career/stories.tsx
+msgid "Practice this story"
+msgstr ""
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -5066,6 +5581,10 @@ msgstr "Publiek, met 'n wagwoord"
 msgid "Publications"
 msgstr "Publikasies"
 
+#: src/features/builder/share/share-screen.tsx
+msgid "Publish"
+msgstr ""
+
 #: src/features/builder/shared/model.ts
 msgid "Publisher"
 msgstr "Uitgewer"
@@ -5139,10 +5658,19 @@ msgstr "Lees op hierdie toestel (gratis)"
 msgid "Read on this device instead"
 msgstr "Lees eerder op hierdie toestel"
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Read only"
+msgstr ""
+
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Read posting"
+msgstr ""
+
 #: src/features/builder/assistant/assistant-screen.tsx
 msgid "Read the posting · matched your facts · measured page fit"
 msgstr "Posadvertensie gelees · jou feite vergelyk · bladsyinpassing gemeet"
 
+#: src/features/applications/SaveJobScreen.tsx
 #: src/features/documents/import.tsx
 msgid "Read with AI"
 msgstr "Lees met KI"
@@ -5159,9 +5687,17 @@ msgstr "Lees jou e-posadres."
 msgid "Read your profile information."
 msgstr "Lees jou profielinligting."
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
 #: src/features/builder/share/activity-model.ts
 msgid "Read-only"
 msgstr "Slegs-lees"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Readability"
@@ -5175,6 +5711,10 @@ msgstr "Leesbaarheidtelling: {0} uit 100"
 #: src/features/documents/import.tsx
 msgid "Reading the file"
 msgstr "Lees die lêer"
+
+#: src/features/applications/SaveJobScreen.tsx
+msgid "Reading the link…"
+msgstr ""
 
 #: src/features/workspace/shared.tsx
 msgid "Reading the posting"
@@ -5250,6 +5790,10 @@ msgstr "Herdoen"
 msgid "Redraft"
 msgstr "Herskryf"
 
+#: src/features/letters/letter-screen.tsx
+msgid "Redraft this letter from the posting"
+msgstr ""
+
 #: src/features/builder/shared/model.ts
 msgid "References"
 msgstr "Verwysings"
@@ -5308,13 +5852,22 @@ msgstr "Herinner my die vorige dag"
 msgid "Reminder"
 msgstr "Herinnering"
 
+#: src/features/builder/share/password-screen.tsx
 #: src/features/documents/search.tsx
 msgid "Remove"
 msgstr "Verwyder"
 
+#: src/features/builder/share/password-screen.tsx
+msgid "Remove password"
+msgstr ""
+
 #: src/features/builder/basics/BasicsScreen.tsx
 msgid "Remove photo"
 msgstr "Verwyder foto"
+
+#: src/features/builder/share/password-screen.tsx
+msgid "Remove the password?"
+msgstr ""
 
 #: src/features/builder/shared/section-actions.tsx
 #: src/features/career/coach.tsx
@@ -5330,13 +5883,23 @@ msgstr "Hernoem gesprek"
 msgid "Rename section"
 msgstr "Hernoem afdeling"
 
+#: src/features/builder/versions/versions-screen.tsx
+msgid "Rename version"
+msgstr ""
+
 #: src/features/builder/menu/menu-screen.tsx
+#: src/features/builder/versions/versions-screen.tsx
 msgid "Rename…"
 msgstr "Hernoem …"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Reopen"
 msgstr "Heropen"
+
+#. placeholder {0}: closedForOffer.value.ids.length
+#: src/features/applications/DetailScreen.tsx
+msgid "Reopen the {0}"
+msgstr ""
 
 #: src/features/builder/description/DescriptionScreen.tsx
 msgid "Replace"
@@ -5354,10 +5917,13 @@ msgstr "Vervang tabelle met gewone paragrawe en lyste. Selle word in bergingsord
 msgid "replied"
 msgstr "geantwoord"
 
-#: src/features/applications/InsightsScreen.tsx
 #: src/features/applications/model.ts
 msgid "Replied"
 msgstr "Beantwoord"
+
+#: src/features/career/coach.tsx
+msgid "Reply"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Reply by"
@@ -5437,10 +6003,25 @@ msgstr "Herstel hierdie weergawe"
 msgid "Restored “{0}”"
 msgstr "\"{0}\" herstel"
 
+#. placeholder {0}: params.name
+#. placeholder {1}: params.name
+#: src/features/builder/preview/preview-screen.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
+msgstr ""
+
+#: src/features/builder/preview/preview-screen.tsx
+msgid "Restored. Your previous state is saved as “Before restore”."
+msgstr ""
+
+#: src/features/builder/preview/preview-screen.tsx
+msgid "Restoring…"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Result"
 msgstr "Resultaat"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/StageSheet.tsx
 #: src/features/career/schedules.tsx
 #: src/features/documents/actions.tsx
@@ -5503,6 +6084,14 @@ msgid "Review"
 msgstr "Hersien"
 
 #: src/features/builder/assistant/assistant-screen.tsx
+msgid "Review {edits} edits"
+msgstr ""
+
+#: src/features/builder/assistant/assistant-screen.tsx
+msgid "Review 1 edit"
+msgstr ""
+
+#: src/features/builder/assistant/assistant-screen.tsx
 msgid "Review 3 edits"
 msgstr "Hersien 3 wysigings"
 
@@ -5538,10 +6127,23 @@ msgstr "Hersien eers wat gebeur het."
 msgid "Review your file first."
 msgstr "Hersien eers jou lêer."
 
+#: src/features/settings/AccessScreens.tsx
+msgid "Revoke"
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Revoke key"
+msgstr ""
+
+#: src/features/settings/AccessScreens.tsx
+msgid "Revoke this key?"
+msgstr ""
+
 #: src/features/builder/design/LayoutScreen.tsx
 msgid "Right"
 msgstr "Reg"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Role"
 msgstr "Pos"
@@ -5576,6 +6178,7 @@ msgstr "Loop met hierdie bediener se websoekverbinding"
 msgid "Rust"
 msgstr "Roesbruin"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Salary"
 msgstr "Salaris"
@@ -5588,6 +6191,7 @@ msgstr "Salaris, aansoekdatum"
 msgid "Salary, application date, documents sent"
 msgstr "Salaris, aansoekdatum, gestuurde dokumente"
 
+#: src/features/applications/detail-sheets.tsx
 #: src/features/builder/menu/menu-screen.tsx
 #: src/features/builder/versions/versions-screen.tsx
 #: src/features/career/coach.tsx
@@ -5595,6 +6199,7 @@ msgstr "Salaris, aansoekdatum, gestuurde dokumente"
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 #: src/features/career/schedules.tsx
+#: src/features/career/stories.tsx
 #: src/features/documents/actions.tsx
 #: src/features/documents/library.tsx
 #: src/features/settings/ProviderScreen.tsx
@@ -5614,6 +6219,10 @@ msgstr "Stoor 'n werk"
 #: src/features/documents/new.tsx
 msgid "Save a job first"
 msgstr "Stoor eers 'n pos"
+
+#: src/features/career/stories.tsx
+msgid "Save a job to practise for it."
+msgstr ""
 
 #: src/features/today/screen.tsx
 msgid "Save a job you want"
@@ -5639,6 +6248,10 @@ msgstr "Stoor werk"
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Stoor die lêer met elke bladsy regop."
+
+#: src/features/workspace/DebriefScreen.tsx
+msgid "Save these offer terms to compare. Opens in Career → Offers."
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -5694,9 +6307,17 @@ msgstr "Stoor…"
 msgid "Say what happened after an interview"
 msgstr "Sê wat ná 'n onderhoud gebeur het"
 
+#: src/features/workspace/PrepScreen.tsx
+msgid "Say what happened while it's fresh. The coach keeps the facts and stories worth remembering."
+msgstr ""
+
 #: src/features/career/schedules.tsx
 msgid "Schedule"
 msgstr "Skedule"
+
+#: src/features/applications/actions.ts
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedules.tsx
 msgid "Scheduled work is not available on this server. Ask your server administrator to configure it."
@@ -5730,9 +6351,17 @@ msgstr "Soek"
 msgid "Search everything"
 msgstr "Deursoek alles"
 
+#: src/features/career/facts.tsx
+msgid "Search facts"
+msgstr ""
+
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Search postings"
 msgstr "Deursoek posadvertensies"
+
+#: src/features/settings/TimezoneScreen.tsx
+msgid "Search timezones"
+msgstr ""
 
 #: src/features/builder/check/issues.ts
 msgid "Section headings"
@@ -5780,6 +6409,10 @@ msgstr "Kies verskeie"
 #: src/features/documents/actions.tsx
 msgid "Select, link, letter, tags, lock"
 msgstr "Kies, koppel, brief, etikette, sluit"
+
+#: src/features/settings/TimezoneScreen.tsx
+msgid "Selected"
+msgstr ""
 
 #: src/features/settings/FirstSendSheet.tsx
 msgid "Send"
@@ -5837,6 +6470,10 @@ msgstr "Bediener verander."
 msgid "Server: {0} ·"
 msgstr "Bediener: {0} ·"
 
+#: src/features/builder/share/password-screen.tsx
+msgid "Set password"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Set the document language when exporting."
 msgstr "Stel die dokumenttaal wanneer jy uitvoer."
@@ -5870,6 +6507,7 @@ msgstr "Instellings"
 
 #: src/features/builder/download/download-screen.tsx
 #: src/features/builder/share/share-screen.tsx
+#: src/features/career/coach.tsx
 #: src/features/public/resume.tsx
 msgid "Share"
 msgstr "Deel"
@@ -5919,6 +6557,10 @@ msgstr "Korter"
 #: src/features/documents/search.tsx
 msgid "Show all {0}"
 msgstr "Wys al {0}"
+
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Show all stages"
+msgstr ""
 
 #: src/features/applications/ApplicationsScreen.tsx
 msgid "Show closed applications"
@@ -6130,6 +6772,10 @@ msgstr "Stadiums"
 msgid "Start"
 msgstr "Begin"
 
+#: src/features/public/ats.tsx
+msgid "Start a blank resume"
+msgstr ""
+
 #: src/features/career/home.tsx
 msgid "Start a conversation"
 msgstr "Begin 'n gesprek"
@@ -6190,6 +6836,10 @@ msgstr "Werk nog"
 msgid "Stop"
 msgstr "Stop"
 
+#: src/features/builder/assistant/assistant-screen.tsx
+msgid "Stopped. No edits were proposed."
+msgstr ""
+
 #: src/features/career/home.tsx
 #: src/features/career/stories.tsx
 msgid "Stories"
@@ -6218,6 +6868,19 @@ msgstr "Sterker werkwoord"
 #: src/features/workspace/MessagesScreen.tsx
 msgid "Subject"
 msgstr "Onderwerp"
+
+#: src/features/builder/assistant/proposals-screen.tsx
+msgid "Suggest again"
+msgstr ""
+
+#: src/features/career/preferences.tsx
+msgid "Suggest roles from my resume"
+msgstr ""
+
+#. placeholder {0}: p.location
+#: src/features/builder/assistant/proposals-screen.tsx
+msgid "Suggest the {0} edit again"
+msgstr ""
 
 #. placeholder {0}: longWeekday(followUp, ws.zone)
 #: src/features/workspace/ApplyScreen.tsx
@@ -6282,6 +6945,16 @@ msgstr "Stelsels soek 'n ervaringsafdeling. Projekte of vrywilligerswerk kan die
 msgid "Tag"
 msgstr "Merk"
 
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Tagged “{name}”"
+msgstr ""
+
+#. placeholder {0}: apps.length
+#: src/features/applications/ApplicationsScreen.tsx
+msgid "Tagged {0} applications “{name}”"
+msgstr ""
+
+#: src/features/applications/ApplicationsScreen.tsx
 #: src/features/builder/menu/menu-screen.tsx
 #: src/features/documents/actions.tsx
 #: src/features/documents/library.tsx
@@ -6296,6 +6969,7 @@ msgstr "Merkers gee sagteware 'n uitdruklike leesorde. Aktiveer hulle wanneer jy
 msgid "Tags, separated by commas"
 msgstr "Merkers, geskei deur kommas"
 
+#: src/features/applications/ApplicationsScreen.tsx
 #: src/features/documents/actions.tsx
 msgid "Tags…"
 msgstr "Merkers …"
@@ -6367,6 +7041,11 @@ msgstr "Tegniese onderhoud by {0}"
 msgid "Tell me about a piece of work you're proud of. What was your part in it, and how did you measure success?"
 msgstr "Vertel my van 'n stuk werk waarop jy trots is. Wat was jou deel daarin, en hoe het jy sukses gemeet?"
 
+#. placeholder {0}: fromStory.data.title
+#: src/features/workspace/PracticeScreen.tsx
+msgid "Tell me about a time when: {0}."
+msgstr ""
+
 #: src/features/workspace/PracticeScreen.tsx
 msgid "Tell me about a time you disagreed with a colleague. How did you resolve it?"
 msgstr "Vertel my van 'n keer toe jy met 'n kollega verskil het. Hoe het jy dit opgelos?"
@@ -6431,6 +7110,10 @@ msgstr "Teks sit in die opskrif- of voetskrifarea."
 #: src/features/builder/design/TypographyScreen.tsx
 msgid "Text size"
 msgstr "Teks grootte"
+
+#: src/features/builder/design/TypographyScreen.tsx
+msgid "Text size changed"
+msgstr ""
 
 #: src/features/builder/check/issues.ts
 msgid "Text this close to the edge can be cut off. Use at least {minimum} pt."
@@ -6513,6 +7196,7 @@ msgstr "Die einddatum is voor die begindatum."
 msgid "The exported PDF couldn't be checked. Try again."
 msgstr "Die uitgevoerde PDF kon nie nagegaan word nie. Probeer weer."
 
+#: src/data/import.ts
 #: src/features/documents/import.tsx
 msgid "The file couldn't be read as a resume."
 msgstr "Die lêer kon nie as 'n CV gelees word nie."
@@ -6545,9 +7229,17 @@ msgstr "Die model was nie beskikbaar of kon die toets nie voltooi nie. Kontrolee
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "Die orde waarin die teks gebêre word, verskil ernstig van die orde waarin dit lees."
 
+#: src/features/builder/menu/menu-screen.tsx
+msgid "The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "The pages are pictures, with no text behind them."
 msgstr "Die bladsye is prente, sonder teks daaragter."
+
+#: src/features/builder/share/password-screen.tsx
+msgid "The passwords don't match."
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
@@ -6596,6 +7288,10 @@ msgstr "Die teks kom onleesbaar uit."
 #: src/features/public/ats-messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "Die bopunt van die eerste bladsy lyk nie soos 'n naam nie."
+
+#: src/features/builder/versions/versions-screen.tsx
+msgid "The version is deleted. The resume as it is now doesn't change."
+msgstr ""
 
 #: src/features/settings/PreferencesScreen.tsx
 msgid "Theme"
@@ -6650,6 +7346,10 @@ msgstr "Hierdie gesprek"
 msgid "This deletes your documents, applications, career knowledge and public pages from {0}. It can't be undone."
 msgstr "Dit vee jou dokumente, aansoeke, loopbaankennis en openbare bladsye van {0} uit. Dit kan nie ongedaan gemaak word nie."
 
+#: src/features/applications/SaveJobScreen.tsx
+msgid "This description is clipped or incomplete. Review it or paste the full description before preparing."
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "This enables recurring processing while the schedule is on, using your server's selected providers. Turn the schedule off to stop future runs."
 msgstr "Dit maak herhalende verwerking moontlik terwyl die skedule aan is, deur jou bediener se geselekteerde verskaffers te gebruik. Skakel die skedule af om toekomstige lopies te stop."
@@ -6669,10 +7369,6 @@ msgstr "Hierdie lêer bevat teks wat onsigbaar geteken is."
 #: src/features/public/ats-messages.ts
 msgid "This file contains white-on-white text."
 msgstr "Hierdie lêer bevat wit-op-wit teks."
-
-#: src/data/import.ts
-msgid "This file couldn't be read. Your file is kept."
-msgstr "Hierdie lêer kon nie gelees word nie. Jou lêer word behou."
 
 #: src/features/public/ats-messages.ts
 msgid "This file declares no language."
@@ -6702,6 +7398,10 @@ msgstr "Hierdie lêer gebruik baie verskillende lettertipes."
 msgid "This file uses Type 3 fonts, which carry drawings instead of characters."
 msgstr "Hierdie lêer gebruik Tipe 3-lettertipes, wat tekeninge eerder as karakters dra."
 
+#: src/features/workspace/PrepScreen.tsx
+msgid "This interview has passed"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "Hierdie is 'n PDF-portefeulje: die sigbare bladsy is slegs 'n omslag."
@@ -6717,6 +7417,26 @@ msgstr "Só sien besoekers dit"
 #: src/features/public/ats-messages.ts
 msgid "This is not a common resume page size."
 msgstr "Hierdie is nie 'n algemene CV-bladsygrootte nie."
+
+#: src/features/letters/letter-screen.tsx
+msgid "This letter is locked. Unlock it to make changes."
+msgstr ""
+
+#: src/features/letters/letter-screen.tsx
+msgid "This letter is recorded as sent."
+msgstr ""
+
+#: src/features/public/feedback.tsx
+msgid "This link doesn't open"
+msgstr ""
+
+#: src/features/public/feedback.tsx
+msgid "This link has expired"
+msgstr ""
+
+#: src/features/public/feedback.tsx
+msgid "This link was turned off"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "This page is in columns, and the text extracts out of order."
@@ -6734,6 +7454,10 @@ msgstr "Hierdie PDF is wagwoordbeskerm. Stoor 'n onbeskermde kopie en probeer we
 msgid "This resume"
 msgstr "Hierdie CV"
 
+#: src/features/builder/notes/NotesScreen.tsx
+msgid "This resume is locked. Unlock it to make changes."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Hierdie CV is lank."
@@ -6745,6 +7469,10 @@ msgstr "Hierdie CV is met 'n wagwoord beskerm. Maak die openbare skakel in jou b
 #: src/features/public/resume.tsx
 msgid "This resume isn't shared right now."
 msgstr "Hierdie CV word nie nou gedeel nie."
+
+#: src/features/builder/notes/NotesScreen.tsx
+msgid "This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them."
+msgstr ""
 
 #: src/features/settings/AccountScreen.tsx
 msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
@@ -6816,10 +7544,16 @@ msgid "Timeline"
 msgstr "Tydlyn"
 
 #: src/features/settings/PreferencesScreen.tsx
+#: src/features/settings/TimezoneScreen.tsx
 msgid "Timezone"
 msgstr "Tydsone"
 
+#: src/features/settings/PreferencesScreen.tsx
+msgid "Timezone, {zoneLabel}"
+msgstr ""
+
 #: src/features/builder/shared/model.ts
+#: src/features/career/stories.tsx
 msgid "Title"
 msgstr "Titel"
 
@@ -6918,6 +7652,18 @@ msgstr "Probeer ’n ander een"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "Skakel diskresionêre ligature af wanneer jy uitvoer."
 
+#: src/features/builder/share/activity-screen.tsx
+msgid "Turn off link"
+msgstr ""
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Turn off link…"
+msgstr ""
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Turn off this link?"
+msgstr ""
+
 #: src/features/today/screen.tsx
 msgid "Turn on"
 msgstr "Skakel aan"
@@ -6925,6 +7671,10 @@ msgstr "Skakel aan"
 #: src/features/documents/actions.tsx
 msgid "Turn on the public link in Share first."
 msgstr "Skakel eers die openbare skakel in Deel aan."
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Turned off"
+msgstr ""
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx
@@ -6983,6 +7733,10 @@ msgstr "Ongedaan maak"
 #: src/features/documents/actions.tsx
 msgid "Unlock editing"
 msgstr "Ontsluit redigering"
+
+#: src/features/settings/AccessScreens.tsx
+msgid "unnamed key"
+msgstr ""
 
 #: src/data/workspace.ts
 msgid "Unsupported audio format."
@@ -7082,6 +7836,10 @@ msgstr "Werk jou bediener by voordat jy vir 'n pos kopieer."
 msgid "Updating…"
 msgstr "Word bygewerk…"
 
+#: src/features/builder/basics/BasicsScreen.tsx
+msgid "Uploading photo…"
+msgstr ""
+
 #: src/features/settings/AIScreen.tsx
 msgid "Usage"
 msgstr "Gebruik"
@@ -7143,6 +7901,7 @@ msgstr "Gebruik ten minste 9pt."
 msgid "Use colour"
 msgstr "Gebruik kleur"
 
+#: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Use Latin letters a–z, numbers and single dashes."
 msgstr "Gebruik Latynse letters a–z, syfers en enkelstrepies."
@@ -7158,6 +7917,10 @@ msgstr "Gebruik eenvoudige opskrifte soos \"Ervaring\", \"Opleiding\" en \"Vaard
 #: src/features/auth/TwoStepScreen.tsx
 msgid "Use the authenticator app instead"
 msgstr "Gebruik eerder die verifikasietoepassing"
+
+#: src/features/settings/TimezoneScreen.tsx
+msgid "Use the phone's timezone"
+msgstr ""
 
 #: src/features/settings/ProfileScreen.tsx
 msgid "Use the saved one"
@@ -7254,7 +8017,7 @@ msgid "Views per day over 30 days"
 msgstr "Kyke per dag oor 30 dae"
 
 #. placeholder {0}: peak.views
-#. placeholder {1}: new Date(peak.date).toLocaleDateString(undefined, { day: "numeric", month: "long" })
+#. placeholder {1}: dayLabel(peak.date)
 #: src/features/builder/share/activity-screen.tsx
 msgid "Views per day over 30 days, highest {0} on {1}"
 msgstr "Kyke per dag oor 30 dae, hoogste {0} op {1}"
@@ -7267,6 +8030,10 @@ msgstr "Besoekers en terugvoer"
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Visitors can download it"
 msgstr "Besoekers kan dit aflaai"
+
+#: src/features/builder/share/password-screen.tsx
+msgid "Visitors enter it before they see the page. At least 6 characters."
+msgstr ""
 
 #: src/features/builder/shared/model.ts
 msgid "Volunteer"
@@ -7356,6 +8123,18 @@ msgstr "Waaraan moet ons werk?"
 msgid "What the coach and assistant may use. Edit or forget any of them."
 msgstr "Wat die afrigter en assistent mag gebruik. Wysig of vergeet enige hiervan."
 
+#: src/features/workspace/PracticeScreen.tsx
+msgid "What to add"
+msgstr ""
+
+#: src/features/workspace/PracticeScreen.tsx
+msgid "What worked"
+msgstr ""
+
+#: src/features/workspace/PracticeScreen.tsx
+msgid "What you said"
+msgstr ""
+
 #: src/features/workspace/ApplyScreen.tsx
 msgid "What you sent"
 msgstr "Wat jy gestuur het"
@@ -7386,6 +8165,10 @@ msgstr "Watter aansoek?"
 #: src/features/career/offers.tsx
 msgid "Which offer?"
 msgstr "Watter aanbod?"
+
+#: src/features/builder/share/activity-screen.tsx
+msgid "Who is it for?"
+msgstr ""
 
 #: src/features/applications/InterviewSheet.tsx
 msgid "Who you'll meet"
@@ -7521,6 +8304,10 @@ msgstr "Ja, ek het dit gelei"
 msgid "You added this"
 msgstr "Jy het dit bygevoeg"
 
+#: src/features/career/preferences.tsx
+msgid "You already have every role your resume suggests."
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "You answered the assistant · today"
 msgstr "Jy het die assistent geantwoord · vandag"
@@ -7637,6 +8424,12 @@ msgstr "Jou boodskap word gehou."
 msgid "Your name is missing"
 msgstr "Jou naam ontbreek"
 
+#. placeholder {0}: zoneCity(travel.current)
+#. placeholder {1}: zoneCity(travel.home)
+#: src/features/today/screen.tsx
+msgid "Your phone is on {0} time. Schedules stay on {1} time."
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Your phone number is written in an unusual shape."
 msgstr "Jou telefoonnommer is in 'n ongewone vorm geskryf."
@@ -7720,6 +8513,18 @@ msgstr "Jou kortskakel"
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Your short link rx.cv/{username} opens this one."
 msgstr "Jou kortskakel rx.cv/{username} maak hierdie een oop."
+
+#: src/features/applications/actions.ts
+msgid "Your stages changed somewhere else. They've been refreshed; try again."
+msgstr ""
+
+#: src/features/builder/share/share-screen.tsx
+msgid "Your web page address"
+msgstr ""
+
+#: src/features/builder/share/share-screen.tsx
+msgid "Your web page is live"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "Your web settings changed. Nothing was sent; try again."
