@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "0511621e-d769-4ad5-a3e7-01cf7bd6d6ce",
+  "id": "1797eb85-dd96-47e5-bb34-d0dae83b9479",
   "prevIds": [
     "ee364bd5-f246-42dc-8018-51c0242ed531"
   ],
@@ -9877,7 +9877,49 @@
       "with": "",
       "method": "btree",
       "concurrently": false,
+      "name": "oauth_access_token_client_id_index",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "oauth_access_token"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        {
+          "value": "client_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
       "name": "oauth_client_client_id_index",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "oauth_client"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        {
+          "value": "user_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "oauth_client_user_id_index",
       "entityType": "indexes",
       "schema": "public",
       "table": "oauth_client"
@@ -9984,6 +10026,27 @@
       "nameExplicit": false,
       "columns": [
         {
+          "value": "client_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "oauth_consent_client_id_index",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "oauth_consent"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        {
           "value": "token",
           "isExpression": false,
           "asc": true,
@@ -10039,6 +10102,27 @@
       "method": "btree",
       "concurrently": false,
       "name": "oauth_refresh_token_user_id_index",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "oauth_refresh_token"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        {
+          "value": "client_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "oauth_refresh_token_client_id_index",
       "entityType": "indexes",
       "schema": "public",
       "table": "oauth_refresh_token"

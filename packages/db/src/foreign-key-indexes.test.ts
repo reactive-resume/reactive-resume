@@ -12,10 +12,6 @@ const UNINDEXED_ON_PURPOSE: Record<string, string> = {
 	"ai_content_report.user_id": "Small operator-reviewed table; read only by the account export.",
 	"resume_writing_review.user_id": "At most one row per resume; read only by the account export.",
 	"career_schedule.ai_provider_id": "Capped at 100 schedules per account; providers are rarely deleted.",
-	"oauth_client.user_id": "Small table; only an account deletion looks it up.",
-	"oauth_consent.client_id": "No code path deletes an OAuth client.",
-	"oauth_access_token.client_id": "No code path deletes an OAuth client.",
-	"oauth_refresh_token.client_id": "No code path deletes an OAuth client.",
 };
 
 function leadingColumns(table: PgTable): Set<string> {
