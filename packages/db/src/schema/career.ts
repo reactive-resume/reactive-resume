@@ -57,7 +57,12 @@ export const careerFact = pg.pgTable(
 		status: pg.text("status").notNull().default("active"),
 		revisions: pg.jsonb("revisions").notNull().$type<CareerFactRevision[]>().default([]),
 	},
-	(t) => [pg.index().on(t.userId, t.applicationId, t.status), pg.uniqueIndex().on(t.userId, t.sourceKey)],
+	(t) => [
+		pg.index().on(t.userId, t.applicationId, t.status),
+		pg.uniqueIndex().on(t.userId, t.sourceKey),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.applicationId),
+	],
 );
 export const careerStory = pg.pgTable(
 	"career_story",
@@ -66,7 +71,11 @@ export const careerStory = pg.pgTable(
 		applicationId: applicationId(),
 		data: pg.jsonb("data").notNull().$type<CareerStoryData>(),
 	},
-	(t) => [pg.index().on(t.userId, t.applicationId)],
+	(t) => [
+		pg.index().on(t.userId, t.applicationId),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.applicationId),
+	],
 );
 export const careerArtifact = pg.pgTable(
 	"career_artifact",
@@ -82,7 +91,12 @@ export const careerArtifact = pg.pgTable(
 		inputVersion: pg.text("input_version").notNull(),
 		aiOperationId: pg.text("ai_operation_id"),
 	},
-	(t) => [pg.index().on(t.userId, t.applicationId, t.createdAt), pg.uniqueIndex().on(t.jobId)],
+	(t) => [
+		pg.index().on(t.userId, t.applicationId, t.createdAt),
+		pg.uniqueIndex().on(t.jobId),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.applicationId),
+	],
 );
 export const careerSchedule = pg.pgTable(
 	"career_schedule",
@@ -106,7 +120,12 @@ export const careerSchedule = pg.pgTable(
 		/** Recipient revision approved when this schedule was enabled; never supplied by a client. */
 		aiProviderVersion: pg.text("ai_provider_version"),
 	},
-	(t) => [pg.index().on(t.enabled, t.nextRunAt)],
+	(t) => [
+		pg.index().on(t.enabled, t.nextRunAt),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.userId),
+		pg.index().on(t.applicationId),
+	],
 );
 export const careerJob = pg.pgTable(
 	"career_job",
@@ -123,7 +142,12 @@ export const careerJob = pg.pgTable(
 		leaseUntil: pg.timestamp("lease_until", { withTimezone: true }),
 		error: pg.text("error"),
 	},
-	(t) => [pg.uniqueIndex().on(t.scheduleId, t.dueAt), pg.index().on(t.status, t.leaseUntil)],
+	(t) => [
+		pg.uniqueIndex().on(t.scheduleId, t.dueAt),
+		pg.index().on(t.status, t.leaseUntil),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.userId),
+	],
 );
 export const careerNotification = pg.pgTable(
 	"career_notification",
@@ -138,7 +162,12 @@ export const careerNotification = pg.pgTable(
 		emailedAt: pg.timestamp("emailed_at", { withTimezone: true }),
 		emailAttemptedAt: pg.timestamp("email_attempted_at", { withTimezone: true }),
 	},
-	(t) => [pg.uniqueIndex().on(t.userId, t.key), pg.index().on(t.userId, t.createdAt)],
+	(t) => [
+		pg.uniqueIndex().on(t.userId, t.key),
+		pg.index().on(t.userId, t.createdAt),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.applicationId),
+	],
 );
 
 export const careerOpportunity = pg.pgTable(
@@ -161,28 +190,37 @@ export const careerOpportunity = pg.pgTable(
 		/** Set when tracked in Applications; a tracked role never returns in later runs. */
 		trackedApplicationId: pg.text("tracked_application_id").references(() => application.id, { onDelete: "set null" }),
 	},
-	(t) => [pg.uniqueIndex().on(t.userId, t.url)],
+	(t) => [
+		pg.uniqueIndex().on(t.userId, t.url),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.trackedApplicationId),
+	],
 );
 
 /** One application's live workspace state: answers, checklist ticks, questions to ask. */
-export const careerWorkspace = pg.pgTable("career_workspace", {
-	applicationId: pg
-		.text("application_id")
-		.primaryKey()
-		.references(() => application.id, { onDelete: "cascade" }),
-	userId: pg
-		.text("user_id")
-		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
-	data: pg.jsonb("data").notNull().$type<Omit<CareerWorkspace, "submissionReview">>(),
-	/** Old whole-workspace writers must not erase the first-submission receipt. */
-	submissionReview: pg.jsonb("submission_review").$type<NonNullable<CareerWorkspace["submissionReview"]>>(),
-	updatedAt: pg
-		.timestamp("updated_at", { withTimezone: true })
-		.notNull()
-		.defaultNow()
-		.$onUpdate(() => new Date()),
-});
+export const careerWorkspace = pg.pgTable(
+	"career_workspace",
+	{
+		applicationId: pg
+			.text("application_id")
+			.primaryKey()
+			.references(() => application.id, { onDelete: "cascade" }),
+		userId: pg
+			.text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		data: pg.jsonb("data").notNull().$type<Omit<CareerWorkspace, "submissionReview">>(),
+		/** Old whole-workspace writers must not erase the first-submission receipt. */
+		submissionReview: pg.jsonb("submission_review").$type<NonNullable<CareerWorkspace["submissionReview"]>>(),
+		updatedAt: pg
+			.timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow()
+			.$onUpdate(() => new Date()),
+	},
+	// Looked up when the row it points to is deleted.
+	(t) => [pg.index().on(t.userId)],
+);
 
 export const careerTranscript = pg.pgTable(
 	"career_transcript",
@@ -194,7 +232,11 @@ export const careerTranscript = pg.pgTable(
 		model: pg.text("model").notNull(),
 		aiOperationId: pg.text("ai_operation_id"),
 	},
-	(t) => [pg.index().on(t.userId, t.applicationId)],
+	(t) => [
+		pg.index().on(t.userId, t.applicationId),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.applicationId),
+	],
 );
 
 /** Explicitly reviewed reusable wording, independent of editable workspaces and submitted artifacts. */
@@ -218,5 +260,10 @@ export const careerAnswer = pg.pgTable(
 		/** Normalized question plus scope target, hashed by the owning service. */
 		duplicateKey: pg.text("duplicate_key").notNull(),
 	},
-	(t) => [pg.uniqueIndex().on(t.userId, t.duplicateKey)],
+	(t) => [
+		pg.uniqueIndex().on(t.userId, t.duplicateKey),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.applicationId),
+		pg.index().on(t.sourceApplicationId),
+	],
 );
