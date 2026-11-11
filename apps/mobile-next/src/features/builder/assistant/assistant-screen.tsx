@@ -33,6 +33,9 @@ import {
 	haptic,
 } from "@/ui";
 
+/** The assistant whose storyboard preset is in force. */
+let presetOwner: object | null = null;
+
 /** The edits a finished reply proposed (the `propose_edits` tool output). */
 const editCount = (chunks: readonly { type: string; [key: string]: unknown }[]) =>
 	chunks.reduce((sum, chunk) => {
@@ -56,9 +59,13 @@ export function AssistantScreen() {
 		preset === "no-connection" ? undefined : (providers.data?.find((p) => p.enabled) ?? providers.data?.[0]);
 	useEffect(() => {
 		if (!STORYBOARD) return;
+		const mine = {};
+		presetOwner = mine;
 		setFakeStreamFailure(preset === "fail" ? 2 : undefined);
-		setFakeStreamDelay(preset === "slow" ? 1500 : 0);
+		setFakeStreamDelay(preset === "slow" ? 5000 : 0);
 		return () => {
+			// A closing assistant must not undo the preset of the one that replaced it.
+			if (presetOwner !== mine) return;
 			setFakeStreamFailure();
 			setFakeStreamDelay();
 		};
@@ -204,6 +211,17 @@ export function AssistantScreen() {
 			}
 		>
 			<View style={{ paddingTop: 16, paddingHorizontal: 24, gap: 16 }}>
+				{/* No connection yet: setup comes first, before anything else on the screen. */}
+				{!provider && providers.isSuccess ? (
+					<Box component="Card" bg="raised" style={{ padding: 20, gap: 12 }}>
+						<Text variant="body">{t`Connect an AI provider first. Nothing is sent until you choose a connection.`}</Text>
+						<Button
+							label={t`Add AI provider`}
+							tone="primary"
+							onPress={() => router.push("/settings/ai/providers/new")}
+						/>
+					</Box>
+				) : null}
 				{STORYBOARD ? (
 					<>
 						<Bubble>{t`Tailor this to the Lumen posting`}</Bubble>
@@ -241,16 +259,6 @@ export function AssistantScreen() {
 						)}
 					</>
 				)}
-				{!provider && providers.isSuccess ? (
-					<Box component="Card" bg="raised" style={{ padding: 20, gap: 12 }}>
-						<Text variant="body">{t`Connect an AI provider first. Nothing is sent until you choose a connection.`}</Text>
-						<Button
-							label={t`Add AI provider`}
-							tone="primary"
-							onPress={() => router.push("/settings/ai/providers/new")}
-						/>
-					</Box>
-				) : null}
 				{sent.map((text, index) => (
 					<Bubble key={`${index}-${text}`}>{text}</Bubble>
 				))}

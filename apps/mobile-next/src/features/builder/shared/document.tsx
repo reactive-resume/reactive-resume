@@ -32,22 +32,26 @@ function LetterOwner({ id }: { id: string }) {
 	return null;
 }
 
-const useLeads = create<Record<string, symbol>>(() => ({}));
+type Claim = { token: symbol; id: string };
+const useClaims = create<Record<string, Claim[]>>(() => ({}));
 
-/** The first caller mounted for a key leads; the rest wait. Pushed screens unmount before the screen under them. */
-function useLead(key: string) {
-	const [token] = useState(() => Symbol(key));
-	const lead = useLeads((s) => s[key] === token);
+/**
+ * One draft per kind is open at a time: the document of the screen mounted last (the top of the stack) owns it, through
+ * its first-mounted screen, so pushing another screen of the same document never moves it. A second document opened on
+ * top (a link) takes the draft; popping it hands the draft back.
+ */
+function useLead(kind: string, id: string) {
+	const [token] = useState(() => Symbol(kind));
+	const lead = useClaims((s) => {
+		const claims = s[kind] ?? [];
+		const top = claims.at(-1)?.id;
+		return !!top && claims.find((claim) => claim.id === top)?.token === token;
+	});
 	useEffect(() => {
-		if (useLeads.getState()[key]) return;
-		useLeads.setState({ [key]: token });
-		return () =>
-			useLeads.setState((s) => {
-				if (s[key] !== token) return s;
-				const { [key]: _, ...rest } = s;
-				return rest;
-			}, true);
-	}, [key, token]);
+		if (!id) return;
+		useClaims.setState((s) => ({ [kind]: [...(s[kind] ?? []), { token, id }] }));
+		return () => useClaims.setState((s) => ({ [kind]: (s[kind] ?? []).filter((claim) => claim.token !== token) }));
+	}, [kind, id, token]);
 	return lead;
 }
 
@@ -62,14 +66,12 @@ function useStickyId(id: string) {
 }
 
 /**
- * The open resume's draft and history, once per document visit. Mount it where every builder route sits under it
- * (the builder dock layout); until then each builder screen mounts it too and the first one mounted owns them.
- * ponytail: if the owning screen unmounted while a later one stayed, the draft would close; the layout mount
- * removes the case.
+ * The open resume's draft and history, once per document visit. Every builder screen mounts it; `useLead` picks the one
+ * that owns them.
  */
 export function BuilderDocument({ id: param }: { id: string }) {
 	const id = useStickyId(param);
-	const lead = useLead(`resume:${id}`);
+	const lead = useLead("resume", id);
 	// A route whose params haven't arrived yet has no id; opening "" would close the draft every screen shares.
 	return lead && id ? <Owner id={id} /> : null;
 }
@@ -77,7 +79,7 @@ export function BuilderDocument({ id: param }: { id: string }) {
 /** The open letter's draft, once per letter visit: the same rules as `BuilderDocument`. */
 export function LetterDocument({ id: param }: { id: string }) {
 	const id = useStickyId(param);
-	const lead = useLead(`letter:${id}`);
+	const lead = useLead("letter", id);
 	return lead && id ? <LetterOwner id={id} /> : null;
 }
 

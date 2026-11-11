@@ -20,6 +20,12 @@ appId: me.rxresu.storyboard
 - assertVisible: "Don't ask again for chats"
 - tapOn:
     id: first-send-send
+# B16 sends the resume and the posting too: that kind is asked once as well.
+- extendedWaitUntil:
+    visible: "Don't ask again for your resume and facts"
+    timeout: 5000
+- tapOn:
+    id: first-send-send
 - assertNotVisible: Send to Work OpenAI?
 - openLink: me.rxresu.storyboard://builder/resume-product/assistant
 - tapOn: Ask about this resume…

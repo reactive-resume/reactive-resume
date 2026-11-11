@@ -248,17 +248,17 @@ export function LetterScreen() {
 							// A letter recorded as sent keeps its application link.
 							onPress={sent ? undefined : () => setPicker("application")}
 						/>
+						{document.sourceApplicationId && document.sourceResumeId && !capturing ? (
+							<View style={{ paddingHorizontal: 24, height: 44, justifyContent: "center" }}>
+								<TextLink label={t`Draft from the posting`} icon="sparkle" onPress={draftFromPosting} />
+							</View>
+						) : null}
 						{sentLine ? (
 							<Text color="ink3" style={{ marginHorizontal: 24, marginTop: 4 }}>
 								{t`This letter is recorded as sent.`}
 							</Text>
 						) : null}
 						<ListRow title={t`Recipient`} secondary={document.recipient ?? undefined} trailing="caret" last boxHidden />
-						{document.sourceApplicationId && document.sourceResumeId && !capturing ? (
-							<View style={{ paddingHorizontal: 24, height: 44, justifyContent: "center" }}>
-								<TextLink label={t`Draft from the posting`} icon="sparkle" onPress={draftFromPosting} />
-							</View>
-						) : null}
 					</>
 				)}
 			</PushScreen>

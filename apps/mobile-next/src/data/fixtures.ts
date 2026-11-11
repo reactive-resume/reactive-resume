@@ -762,9 +762,13 @@ export async function invokeFake(operation: string, input: unknown): Promise<unk
 		if (row.isLocked) throw new Error("Unlock this document before editing.");
 		if (fields.expectedRevision !== undefined && fields.expectedRevision !== row.revision)
 			throw Object.assign(new Error("Letter changed."), { code: "CONFLICT" });
-		// The API takes the links as resumeId and applicationId; the letter stores them as its sources.
-		const { resumeId, applicationId, ...rest } = fields;
+		// The API takes the links as resumeId and applicationId (the letter stores them as its sources) and the template
+		// beside the style it belongs in.
+		const { resumeId, applicationId, template, ...rest } = fields;
 		Object.assign(row, rest, { revision: row.revision + 1, updatedAt: now() });
+		if (template !== undefined) {
+			Object.assign(row, { style: { ...row.style, metadata: { ...row.style.metadata, template } } });
+		}
 		if (resumeId !== undefined) Object.assign(row, { sourceResumeId: resumeId });
 		if (applicationId !== undefined) Object.assign(row, { sourceApplicationId: applicationId });
 		return structuredClone(row);

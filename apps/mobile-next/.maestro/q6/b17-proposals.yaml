@@ -20,17 +20,12 @@ appId: me.rxresu.storyboard
     visible: ".*Northwind Labs › line 2 · Accepted"
     timeout: 5000
 - assertVisible: 1 of 3 open
-# Three open edits: two can go together.
-- openLink: me.rxresu.storyboard://builder/resume-product/assistant/proposals?preset=three
+- tapOn:
+    text: Undo
+    index: 0
 - extendedWaitUntil:
-    visible: Accept the others
-    timeout: 10000
-- assertVisible: 3 of 3 open
-- tapOn: Accept the others
-- extendedWaitUntil:
-    visible: 1 of 3 open
+    visible: 2 of 3 open
     timeout: 5000
-- assertVisible: "New detail: check it's true"
 # Out of date.
 - openLink: me.rxresu.storyboard://builder/resume-product/assistant/proposals?preset=stale
 - extendedWaitUntil:
@@ -47,7 +42,20 @@ appId: me.rxresu.storyboard
     visible: Save wording
     timeout: 5000
 - tapOn: Save wording
-- extendedWaitUntil:
-    visible: Couldn't save your wording. Your text is still here; try again.
-    timeout: 5000
+- scrollUntilVisible:
+    element: Couldn't save your wording. Your text is still here; try again.
+    direction: DOWN
+    timeout: 10000
 - assertVisible: Your wording
+
+# Three open edits: two can go together.
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant/proposals?preset=three
+- extendedWaitUntil:
+    visible: Accept the others
+    timeout: 10000
+- assertVisible: 3 of 3 open
+- tapOn: Accept the others
+- extendedWaitUntil:
+    visible: 1 of 3 open
+    timeout: 5000
+- assertVisible: "New detail: check it's true"

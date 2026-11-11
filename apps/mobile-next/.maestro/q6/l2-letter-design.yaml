@@ -1,4 +1,4 @@
-# L2 · With Match my resume off, Template opens a picker and the choice shows on the row; a failing design write
+# L2 · With Match my resume off, Template opens a picker and the choice sticks; a failing design write
 # says "Couldn't change the design. Try again."
 appId: me.rxresu.storyboard
 ---
@@ -16,18 +16,25 @@ appId: me.rxresu.storyboard
     timeout: 5000
 - tapOn: Template
 - extendedWaitUntil:
-    visible: Pikachu
+    visible: Gengar
     timeout: 10000
-- tapOn: Pikachu
+- tapOn: Gengar
 - extendedWaitUntil:
-    visible: Pikachu
+    notVisible: Azurill
     timeout: 10000
-- assertNotVisible: Azurill
+# The row now names it (its value isn't readable by Maestro): the picker shows it chosen.
+- tapOn: Template
+- extendedWaitUntil:
+    visible:
+      text: Gengar
+      selected: true
+    timeout: 10000
 - openLink: me.rxresu.storyboard://letter/letter-0/design?preset=design-fail
 - extendedWaitUntil:
     visible: Match my resume
     timeout: 10000
 - tapOn: Match my resume
-- extendedWaitUntil:
-    visible: Couldn't change the design. Try again.
-    timeout: 5000
+- scrollUntilVisible:
+    element: Couldn't change the design. Try again.
+    direction: DOWN
+    timeout: 10000

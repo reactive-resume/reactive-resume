@@ -1,6 +1,6 @@
 # B16 · A question card's answer becomes the next message; tapping a context chip removes it and the dashed chip
-# brings it back; "Review 3 edits" opens the proposals (B17); the first chat to a connection asks first (S7); a
-# failed reply keeps the message with Retry and Switch model.
+# brings it back; "Review 3 edits" opens the proposals (B17); the first chat to a connection asks first (S7), then
+# the answer is sent.
 appId: me.rxresu.storyboard
 ---
 - launchApp:
@@ -30,11 +30,13 @@ appId: me.rxresu.storyboard
     timeout: 10000
 - tapOn:
     id: first-send-send
+# The resume and the posting go too: that kind is asked once as well. The answer is sent (the failure card is
+# q6/b16-assistant.yaml's `preset=fail`).
+- tapOn:
+    id: first-send-send
+    optional: true
 - extendedWaitUntil:
-    visible: "Couldn't send your message. Your message is kept."
+    notVisible:
+      id: composer-input
+      text: Yes, I led it
     timeout: 10000
-- assertVisible: Retry
-- assertVisible: Switch model
-- assertVisible:
-    id: composer-input
-    text: Yes, I led it

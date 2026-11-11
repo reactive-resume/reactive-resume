@@ -226,6 +226,7 @@ export function ShareScreen() {
 									secondary={document.isPrimary ? t`Your short link` : t`Public link`}
 									onPress={openLinkMenu}
 									onLongPress={openLinkMenu}
+									trailingAction
 									trailing={<IconButton icon="copy" iconSize={20} label={t`Copy link`} onPress={() => void copy()} />}
 								/>
 							</Anchor>

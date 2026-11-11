@@ -34,7 +34,13 @@ import {
 	SwipeRow,
 } from "@/ui";
 
+/** A storyboard preset link opens the same screen again: each preset starts from its own edits. */
 export function ProposalsScreen() {
+	const { preset } = useLocalSearchParams<{ preset?: string }>();
+	return <Proposals key={preset ?? ""} />;
+}
+
+function Proposals() {
 	const id = useDocumentId();
 	const router = useRouter();
 	const document = useBuilderDocument(id);

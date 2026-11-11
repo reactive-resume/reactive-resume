@@ -17,7 +17,12 @@ appId: me.rxresu.storyboard
     direction: DOWN
 - assertVisible: This letter is recorded as sent.
 # The Orbital Health letter: the pickers.
-- openLink: me.rxresu.storyboard://letter/letter-1
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Letter for Orbital Health
+    timeout: 10000
+- tapOn: Letter for Orbital Health
 - extendedWaitUntil:
     visible: Details
     timeout: 10000
@@ -45,6 +50,9 @@ appId: me.rxresu.storyboard
     timeout: 3000
     optional: true
 - assertNotVisible: This letter is recorded as sent.
+- scrollUntilVisible:
+    element: Draft from the posting
+    direction: DOWN
 - tapOn: Draft from the posting
 - extendedWaitUntil:
     visible: Send to Work OpenAI?
