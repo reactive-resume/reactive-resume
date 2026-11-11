@@ -277,7 +277,8 @@ export const crudRouter = {
 				name: input.name ?? (await suggestDuplicateName({ userId: context.user.id, type: "resume", id: input.id })),
 				...(input.slug ? { slug: input.slug } : {}),
 				tags: input.tags ?? original.tags,
-				locale: input.pageLocale ?? context.locale,
+				// A copy keeps its source's page language; only an explicit choice changes it.
+				...(input.pageLocale ? { locale: input.pageLocale } : {}),
 				data,
 				aiOperationIds: original.aiOperationIds,
 			});
