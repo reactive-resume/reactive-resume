@@ -332,8 +332,12 @@ export function buildDocument(
 		lead: entryHeaderOf(data.metadata.design).lead,
 	};
 	const showHeader = options.includeCoverLetterHeader || !isCoverLetterOnlyDocument(data);
-	// Standalone letters use full-width pages even when their resume template puts the header in a column.
-	const headerPlacement = options.includeCoverLetterHeader ? "full-width" : layout.headerPlacement;
+	// The header prints once, with the first page, as in the PDF. It sits in a column only when that page splits:
+	// standalone letters and single-column first pages print it across the page.
+	const firstPage = data.metadata.layout.pages.at(0);
+	const firstPageSplits =
+		firstPage !== undefined && planPageColumns(firstPage, data.metadata.template).kind === "split";
+	const headerPlacement = options.includeCoverLetterHeader || !firstPageSplits ? "full-width" : layout.headerPlacement;
 
 	// Header placement depends on template
 	if (headerPlacement === "full-width" && showHeader) {
@@ -342,7 +346,7 @@ export function buildDocument(
 	}
 
 	// Process each page in the layout
-	for (const layoutPage of data.metadata.layout.pages) {
+	for (const [pageIndex, layoutPage] of data.metadata.layout.pages.entries()) {
 		const plan = planPageColumns(layoutPage, data.metadata.template);
 
 		if (plan.kind === "single") {
@@ -355,7 +359,7 @@ export function buildDocument(
 			setRenderConfig(mainConfig);
 
 			const mainParagraphs: Paragraph[] = [];
-			if (headerPlacement === "main-only" && showHeader) {
+			if (pageIndex === 0 && headerPlacement === "main-only" && showHeader) {
 				mainParagraphs.push(...buildHeader(data, colorHex, textColorHex));
 			}
 			for (const sectionId of layoutPage.main) {
@@ -366,7 +370,7 @@ export function buildDocument(
 			setRenderConfig({ ...mainConfig, textColorHex: sidebarTextColorHex, primaryColorHex: sidebarHeadingColorHex });
 
 			const sidebarParagraphs: Paragraph[] = [];
-			if (headerPlacement === "sidebar-only" && showHeader) {
+			if (pageIndex === 0 && headerPlacement === "sidebar-only" && showHeader) {
 				sidebarParagraphs.push(...buildHeader(data, sidebarHeadingColorHex, sidebarTextColorHex));
 			}
 			for (const sectionId of layoutPage.sidebar) {
