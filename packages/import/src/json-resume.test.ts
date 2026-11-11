@@ -110,8 +110,27 @@ describe("parseJSONResume", () => {
 
 		const edu = result.sections.education.items[0]!;
 		expect(edu.school).toBe("MIT");
-		expect(edu.degree).toBe("BS in Computer Science");
+		expect(edu.degree).toBe("BS");
+		expect(edu.area).toBe("Computer Science");
 		expect(edu.description).toContain("Algorithms");
+	});
+
+	it("keeps the study type and the area of study in their own fields, so neither prints twice", () => {
+		const result = parseJSONResume(
+			JSON.stringify({
+				education: [
+					{ institution: "MIT", studyType: "BS", area: "Computer Science" },
+					{ institution: "Area Only University", area: "Physics" },
+					{ institution: "Type Only College", studyType: "Diploma" },
+				],
+			}),
+		);
+
+		expect(result.sections.education.items.map(({ degree, area }) => ({ degree, area }))).toEqual([
+			{ degree: "BS", area: "Computer Science" },
+			{ degree: "", area: "Physics" },
+			{ degree: "Diploma", area: "" },
+		]);
 	});
 
 	it("maps skills with level parsing", () => {
