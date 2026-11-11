@@ -20,24 +20,34 @@ appId: me.rxresu.storyboard
     visible: "0?0:0[1-9] / 0?2:00"
     timeout: 10000
 - waitForAnimationToEnd
+# Stopping a take sends it (W4: Finish is only for a paused take).
 - tapOn: Stop recording
-- tapOn: Finish
 - assertVisible: Send to Work OpenAI?
 - assertVisible: "Don't ask again for recordings"
 - tapOn:
     id: first-send-send
 - assertNotVisible: Send to Work OpenAI?
-- openLink: me.rxresu.storyboard://applications/lumen/practise
+# The take gets its feedback card; Practice again brings the recorder back.
+- extendedWaitUntil:
+    visible: Practice again
+    timeout: 20000
+- tapOn: Practice again
 - tapOn: Start recording
 - extendedWaitUntil:
     visible: "0?0:0[1-9] / 0?2:00"
     timeout: 10000
 - waitForAnimationToEnd
+# Stopping a take sends it (W4: Finish is only for a paused take).
 - tapOn: Stop recording
-- tapOn: Finish
 - assertNotVisible: Send to Work OpenAI?
+# The take gets its feedback card; Practice again brings the recorder back.
+- extendedWaitUntil:
+    visible: Practice again
+    timeout: 20000
+- tapOn: Practice again
 - openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
-- tapOn: API key
+- tapOn:
+    id: provider-key
 - inputText: storyboard-replacement-key
 - hideKeyboard
 - tapOn:
@@ -48,6 +58,6 @@ appId: me.rxresu.storyboard
     visible: "0?0:0[1-9] / 0?2:00"
     timeout: 10000
 - waitForAnimationToEnd
+# Stopping a take sends it (W4: Finish is only for a paused take).
 - tapOn: Stop recording
-- tapOn: Finish
 - assertVisible: Send to Work OpenAI?

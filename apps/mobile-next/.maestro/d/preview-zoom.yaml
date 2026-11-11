@@ -10,11 +10,10 @@ appId: me.rxresu.storyboard
 - assertVisible: Page 1 of 1
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
 - waitForAnimationToEnd
-- doubleTapOn:
-    point: 50%, 40%
-- assertVisible:
-    id: haptic-log
-    text: selection
+# B18: Fit snaps a zoomed page back with `selection`. Zoomed with the bar's + here: Maestro's double tap reaches the
+# page's gesture only some of the time, so the double-tap snap is proved in src/ui/page-zoom.test.tsx instead.
+- tapOn: Zoom in
+- waitForAnimationToEnd
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
 - waitForAnimationToEnd
 - tapOn: Fit

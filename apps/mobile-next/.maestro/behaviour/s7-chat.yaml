@@ -33,7 +33,8 @@ appId: me.rxresu.storyboard
 - tapOn: Send
 - assertNotVisible: Send to Work OpenAI?
 - openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
-- tapOn: API key
+- tapOn:
+    id: provider-key
 - inputText: storyboard-replacement-key
 - hideKeyboard
 - tapOn:

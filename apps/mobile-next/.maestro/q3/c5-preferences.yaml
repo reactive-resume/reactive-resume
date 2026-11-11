@@ -38,9 +38,10 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Put what matters most first\.
     timeout: 10000
+# Each row is one accessible element with Move up / Move down actions, so its ··· isn't in the tree on its own:
+# tap the second row's ··· where it is drawn.
 - tapOn:
-    text: "Actions for .*"
-    index: 1
+    point: "344,267"
 - tapOn: Move up
 # C6 reads the new order.
 - openLink: me.rxresu.storyboard://career/offers

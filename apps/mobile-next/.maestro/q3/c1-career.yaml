@@ -59,6 +59,9 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Draft a counter
     timeout: 10000
+# The schedules failure only shows if Career hasn't read them yet in this launch.
+- launchApp:
+    clearState: true
 - openLink: me.rxresu.storyboard://storyboard/C1-NoSchedules?theme=light
 - extendedWaitUntil:
     visible:

@@ -1,20 +1,26 @@
-# Blocked: ApplicationsScreen BoardView renders static BoardCard; BoardDrag is not wired. Coordinates require lead calibration.
+# J2: a Saved card held 500 ms lifts (`medium`); held at the board's end edge it pages (`selection` per column);
+# dropped over a new column it moves there (`rigid` and "Moved to …"). The swipe is slow so the card holds still
+# long enough to lift, and ends just inside the 48 dp edge zone.
 appId: me.rxresu.storyboard
 ---
 - launchApp:
     clearState: true
-- openLink: me.rxresu.storyboard://storyboard/J2-Board?theme=light
+- openLink: me.rxresu.storyboard://storyboard/J2-KilnSaved?theme=light
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
     timeout: 30000
-- assertVisible: Interviewing
+- assertVisible: "Kiln Studio.*"
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
 - waitForAnimationToEnd
 - swipe:
-    start: 50%, 44%
-    end: 96%, 44%
-    duration: 1600
-- assertVisible:
-    id: haptic-log
-    text: "medium selection rigid"
+    start: 156, 320
+    end: 352, 322
+    duration: 11000
+# The swipe's end hold varies by a few hundred ms, so the board may page once or twice: `selection` per page.
+- extendedWaitUntil:
+    visible:
+      id: haptic-log
+      text: "medium (selection )+rigid"
+    timeout: 10000
+- assertVisible: "Moved to .*\\."

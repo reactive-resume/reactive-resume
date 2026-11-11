@@ -12,67 +12,66 @@ maestro test .maestro/haptics
 maestro test .maestro/behaviour
 ```
 
-The retained `f/c7-connection-changed.yaml` is a separate legacy real-server flow for `me.rxresu.dev`, requiring `SCHEDULE_ID` and `OTHER_CONNECTION_LABEL`. It is not part of the storyboard folders above. For `behaviour/s7-file.yaml`, preload a nonpersonal PDF in Files and supply `-e IMPORT_FIXTURE_NAME=<visible filename>`. Microphone permission must be granted for `s7-audio.yaml`.
+The picker flows (`q1/d4-import`, `q1/p2-ats`, `behaviour/s7-file`) choose nonpersonal files that `q1/lib/files.sh <udid>` copies into Files › On My iPhone; run it once per simulator. Microphone permission must be granted for `s7-audio.yaml`.
 
 Each haptic flow clears the visible `haptic-log` pill and asserts an exact sequence, including an empty string for silent actions. The four former motion-lab placeholders now use actual screens. Existing screen flows were relocated without removing their assertions. `settings?queued=offline-two` supplies the specification row’s two queued changes; `queued=offline` keeps S8's drawn three.
 
 Storyboard capture temporarily sets `timeScale=0`, restoring 1 four seconds after capture completion. Wait for that restoration before measuring motion. `waitForAnimationToEnd` alone does not prove the scale has reset. The tour contains no frame-pacing instrumentation; the lead records gfxinfo/xctrace, real pinch and busy-JS evidence separately. No supported pinch syntax was established by the fetched Maestro documentation, so no invented command is included.
 
-`j8-repeated-hour.yaml` and `s8-export.yaml` are explicitly incomplete drafts: their comments identify native interactions the lead must author before they can pass. No fake app selector substitutes for a native picker. Board gestures and row swipes use inherited/calibrated coordinates only as authoring starting points; remeasure on both platforms before relying on them. The board contract intentionally fails while BoardView is static. J5 intentionally expects success and the Applied gate even though SaveJobScreen currently cannot save.
+`j8-repeated-hour.yaml` and `s8-export.yaml` are explicitly incomplete drafts: their comments identify native interactions the lead must author before they can pass. No fake app selector substitutes for a native picker. Board gestures and row swipes use inherited/calibrated coordinates only as authoring starting points; remeasure on both platforms before relying on them. Board drags hold still long enough to lift only in a slow swipe (about 18 dp/s), so the board flows use 11 s swipes from fixed points measured on the iPhone 14; remeasure on another device. Maestro's double tap reaches PageZoom only some of the time: the double-tap snap is proved in `src/ui/page-zoom.test.tsx`. J5 intentionally expects success and the Applied gate even though SaveJobScreen currently cannot save.
 
 ## Flow inventory
 
-| Flow                                                                       | Contract / limitation                                                                                           |
-| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| [b/restore.yaml](b/restore.yaml)                                           | b · restore                                                                                                     |
-| [behaviour/applied-board.yaml](behaviour/applied-board.yaml)               | Blocked: board drag absent.                                                                                     |
-| [behaviour/applied-bulk.yaml](behaviour/applied-bulk.yaml)                 | Applied means sent: a bulk move to Applied asks for each application in turn; cancelling changes nothing.       |
-| [behaviour/applied-confirm.yaml](behaviour/applied-confirm.yaml)           | Confirming "What did you send?" freezes what was ticked and moves the application to Applied (`success`).       |
-| [behaviour/applied-j5.yaml](behaviour/applied-j5.yaml)                     | Expected failure: save/create and gate unimplemented.                                                           |
-| [behaviour/applied-j7.yaml](behaviour/applied-j7.yaml)                     | Applied means sent: J7's Applied opens "What did you send?"; closing it changes nothing.                        |
-| [behaviour/applied-swipe.yaml](behaviour/applied-swipe.yaml)               | Kiln is Saved; lead must calibrate swipe to its row. Cancellation must retain Saved.                            |
-| [behaviour/applied-w2.yaml](behaviour/applied-w2.yaml)                     | behaviour · applied w2                                                                                          |
-| [behaviour/b20-empty-back.yaml](behaviour/b20-empty-back.yaml)             | B20: leaving a new entry with nothing typed creates nothing and shows no toast.                                 |
-| [behaviour/b3-undo-redo.yaml](behaviour/b3-undo-redo.yaml)                 | B3: Undo in the status line reverts the last field edit; Redo appears after an Undo and restores it.            |
-| [behaviour/j8-repeated-hour.yaml](behaviour/j8-repeated-hour.yaml)         | Incomplete draft: native picker date/time selection needed.                                                     |
-| [behaviour/j9-close-reopen.yaml](behaviour/j9-close-reopen.yaml)           | J9: close with an outcome (`success` for "I accepted this offer"), then Reopen from J6.                         |
-| [behaviour/l1-undo-redo.yaml](behaviour/l1-undo-redo.yaml)                 | behaviour · l1 undo redo                                                                                        |
-| [behaviour/s7-audio.yaml](behaviour/s7-audio.yaml)                         | Needs microphone permission and nonempty native recording.                                                      |
-| [behaviour/s7-chat.yaml](behaviour/s7-chat.yaml)                           | Authored; repeated send may expose disabled retry after failure.                                                |
-| [behaviour/s7-file.yaml](behaviour/s7-file.yaml)                           | Needs preloaded IMPORT_FIXTURE_NAME and native Files picker.                                                    |
-| [behaviour/s7-posting.yaml](behaviour/s7-posting.yaml)                     | Authored; awaits lead device validation.                                                                        |
-| [behaviour/s7-resume-and-facts.yaml](behaviour/s7-resume-and-facts.yaml)   | Authored; awaits lead device validation.                                                                        |
-| [behaviour/s8-discard.yaml](behaviour/s8-discard.yaml)                     | behaviour · s8 discard                                                                                          |
-| [behaviour/s8-export.yaml](behaviour/s8-export.yaml)                       | Incomplete draft: native Files destination selection needed.                                                    |
-| [behaviour/s8-offline.yaml](behaviour/s8-offline.yaml)                     | behaviour · s8 offline                                                                                          |
-| [behaviour/schedule-connection.yaml](behaviour/schedule-connection.yaml)   | Authored against fake provider key update.                                                                      |
-| [behaviour/toast-touch.yaml](behaviour/toast-touch.yaml)                   | behaviour · toast touch                                                                                         |
-| [behaviour/trash-restore-delete.yaml](behaviour/trash-restore-delete.yaml) | behaviour · trash restore delete                                                                                |
-| [d/preview-zoom.yaml](d/preview-zoom.yaml)                                 | d · preview zoom                                                                                                |
-| [f/c7-connection-changed.yaml](f/c7-connection-changed.yaml)               | Existing separate real-server dev-account contract; environment variables required.                             |
-| [f/p2-signed-out.yaml](f/p2-signed-out.yaml)                               | f · p2 signed out                                                                                               |
-| [haptics/board-drop.yaml](haptics/board-drop.yaml)                         | Blocked: board drag absent; calibrate card/edge coordinates after wiring.                                       |
-| [haptics/builder-dock.yaml](haptics/builder-dock.yaml)                     | B1: the dock's Edit → Design switch plays `selection`.                                                          |
-| [haptics/delete-entry.yaml](haptics/delete-entry.yaml)                     | B21 › Delete entry → `light`; the toast offers Undo.                                                            |
-| [haptics/delete-permanently.yaml](haptics/delete-permanently.yaml)         | haptics · delete permanently                                                                                    |
-| [haptics/forget.yaml](haptics/forget.yaml)                                 | C3 Forget emits one light; Show forgotten and Restore retain the reversible action.                             |
-| [haptics/long-press.yaml](haptics/long-press.yaml)                         | haptics · long press                                                                                            |
-| [haptics/move-down.yaml](haptics/move-down.yaml)                           | B21 › Move down → `selection`; the entry moves under its neighbour.                                             |
-| [haptics/proposal.yaml](haptics/proposal.yaml)                             | haptics · proposal                                                                                              |
-| [haptics/refresh-today.yaml](haptics/refresh-today.yaml)                   | haptics · refresh today                                                                                         |
-| [haptics/reorder.yaml](haptics/reorder.yaml)                               | B8: drag a section down two slots by its handle → "medium selection selection rigid".                           |
-| [haptics/root-tab.yaml](haptics/root-tab.yaml)                             | haptics · root tab                                                                                              |
-| [haptics/save-job.yaml](haptics/save-job.yaml)                             | Expected failure: saving is unimplemented.                                                                      |
-| [haptics/segment.yaml](haptics/segment.yaml)                               | J1 List → Board: the view switch plays `selection` (MOTION.md §12, J1).                                         |
-| [haptics/sign-out-offline.yaml](haptics/sign-out-offline.yaml)             | S1 → S8: Sign out with three queued changes while offline opens S8 and plays `warning`; Keep working closes it. |
-| [haptics/swipe-cancel.yaml](haptics/swipe-cancel.yaml)                     | haptics · swipe cancel                                                                                          |
-| [haptics/swipe-trash.yaml](haptics/swipe-trash.yaml)                       | haptics · swipe trash                                                                                           |
-| [haptics/switch-on.yaml](haptics/switch-on.yaml)                           | haptics · switch on                                                                                             |
-| [haptics/typing.yaml](haptics/typing.yaml)                                 | B3: typing plays no haptic (MOTION.md §4.2).                                                                    |
-| [haptics/wrong-code.yaml](haptics/wrong-code.yaml)                         | A3: a wrong two-step code clears the boxes, says so and plays `error` (MOTION.md §5, §12).                      |
-| [haptics/zoom-double-tap.yaml](haptics/zoom-double-tap.yaml)               | haptics · zoom double tap                                                                                       |
-| [haptics/zoom-fit.yaml](haptics/zoom-fit.yaml)                             | haptics · zoom fit                                                                                              |
-| [tour/motion-tour.yaml](tour/motion-tour.yaml)                             | Partial tour: manual pinch, calibrated gestures and real end-of-list confirmation required.                     |
+| Flow                                                                       | Contract / limitation                                                                                            |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [b/restore.yaml](b/restore.yaml)                                           | b · restore                                                                                                      |
+| [behaviour/applied-board.yaml](behaviour/applied-board.yaml)               | A Saved card dropped over Applied opens "What did you send?"; Close puts it back. Slow swipe: the hold lifts it. |
+| [behaviour/applied-bulk.yaml](behaviour/applied-bulk.yaml)                 | Applied means sent: a bulk move to Applied asks for each application in turn; cancelling changes nothing.        |
+| [behaviour/applied-confirm.yaml](behaviour/applied-confirm.yaml)           | Confirming "What did you send?" freezes what was ticked and moves the application to Applied (`success`).        |
+| [behaviour/applied-j5.yaml](behaviour/applied-j5.yaml)                     | Expected failure: save/create and gate unimplemented.                                                            |
+| [behaviour/applied-j7.yaml](behaviour/applied-j7.yaml)                     | Applied means sent: J7's Applied opens "What did you send?"; closing it changes nothing.                         |
+| [behaviour/applied-swipe.yaml](behaviour/applied-swipe.yaml)               | Kiln is Saved; lead must calibrate swipe to its row. Cancellation must retain Saved.                             |
+| [behaviour/applied-w2.yaml](behaviour/applied-w2.yaml)                     | behaviour · applied w2                                                                                           |
+| [behaviour/b20-empty-back.yaml](behaviour/b20-empty-back.yaml)             | B20: leaving a new entry with nothing typed creates nothing and shows no toast.                                  |
+| [behaviour/b3-undo-redo.yaml](behaviour/b3-undo-redo.yaml)                 | B3: Undo in the status line reverts the last field edit; Redo appears after an Undo and restores it.             |
+| [behaviour/j8-repeated-hour.yaml](behaviour/j8-repeated-hour.yaml)         | Incomplete draft: native picker date/time selection needed.                                                      |
+| [behaviour/j9-close-reopen.yaml](behaviour/j9-close-reopen.yaml)           | J9: close with an outcome (`success` for "I accepted this offer"), then Reopen from J6.                          |
+| [behaviour/l1-undo-redo.yaml](behaviour/l1-undo-redo.yaml)                 | behaviour · l1 undo redo                                                                                         |
+| [behaviour/s7-audio.yaml](behaviour/s7-audio.yaml)                         | Needs microphone permission and nonempty native recording.                                                       |
+| [behaviour/s7-chat.yaml](behaviour/s7-chat.yaml)                           | Authored; repeated send may expose disabled retry after failure.                                                 |
+| [behaviour/s7-file.yaml](behaviour/s7-file.yaml)                           | Needs preloaded IMPORT_FIXTURE_NAME and native Files picker.                                                     |
+| [behaviour/s7-posting.yaml](behaviour/s7-posting.yaml)                     | Authored; awaits lead device validation.                                                                         |
+| [behaviour/s7-resume-and-facts.yaml](behaviour/s7-resume-and-facts.yaml)   | Authored; awaits lead device validation.                                                                         |
+| [behaviour/s8-discard.yaml](behaviour/s8-discard.yaml)                     | behaviour · s8 discard                                                                                           |
+| [behaviour/s8-export.yaml](behaviour/s8-export.yaml)                       | Incomplete draft: native Files destination selection needed.                                                     |
+| [behaviour/s8-offline.yaml](behaviour/s8-offline.yaml)                     | behaviour · s8 offline                                                                                           |
+| [behaviour/schedule-connection.yaml](behaviour/schedule-connection.yaml)   | Authored against fake provider key update.                                                                       |
+| [behaviour/toast-touch.yaml](behaviour/toast-touch.yaml)                   | behaviour · toast touch                                                                                          |
+| [behaviour/trash-restore-delete.yaml](behaviour/trash-restore-delete.yaml) | behaviour · trash restore delete                                                                                 |
+| [d/preview-zoom.yaml](d/preview-zoom.yaml)                                 | d · preview zoom                                                                                                 |
+| [f/c7-connection-changed.yaml](f/c7-connection-changed.yaml)               | C7: choosing another connection pauses the schedule ("Paused: your AI connection changed", Review and resume).   |
+| [f/p2-signed-out.yaml](f/p2-signed-out.yaml)                               | f · p2 signed out                                                                                                |
+| [haptics/board-drop.yaml](haptics/board-drop.yaml)                         | J2 drag: lift, one page at the edge, drop on the next column: `medium selection rigid`.                          |
+| [haptics/builder-dock.yaml](haptics/builder-dock.yaml)                     | B1: the dock's Edit → Design switch plays `selection`.                                                           |
+| [haptics/delete-entry.yaml](haptics/delete-entry.yaml)                     | B21 › Delete entry → `light`; the toast offers Undo.                                                             |
+| [haptics/delete-permanently.yaml](haptics/delete-permanently.yaml)         | haptics · delete permanently                                                                                     |
+| [haptics/forget.yaml](haptics/forget.yaml)                                 | C3 Forget emits one light; Show forgotten and Restore retain the reversible action.                              |
+| [haptics/long-press.yaml](haptics/long-press.yaml)                         | haptics · long press                                                                                             |
+| [haptics/move-down.yaml](haptics/move-down.yaml)                           | B21 › Move down → `selection`; the entry moves under its neighbour.                                              |
+| [haptics/proposal.yaml](haptics/proposal.yaml)                             | haptics · proposal                                                                                               |
+| [haptics/refresh-today.yaml](haptics/refresh-today.yaml)                   | haptics · refresh today                                                                                          |
+| [haptics/reorder.yaml](haptics/reorder.yaml)                               | B8: drag a section down two slots by its handle → "medium selection selection rigid".                            |
+| [haptics/root-tab.yaml](haptics/root-tab.yaml)                             | haptics · root tab                                                                                               |
+| [haptics/save-job.yaml](haptics/save-job.yaml)                             | Expected failure: saving is unimplemented.                                                                       |
+| [haptics/segment.yaml](haptics/segment.yaml)                               | J1 List → Board: the view switch plays `selection` (MOTION.md §12, J1).                                          |
+| [haptics/sign-out-offline.yaml](haptics/sign-out-offline.yaml)             | S1 → S8: Sign out with three queued changes while offline opens S8 and plays `warning`; Keep working closes it.  |
+| [haptics/swipe-cancel.yaml](haptics/swipe-cancel.yaml)                     | haptics · swipe cancel                                                                                           |
+| [haptics/swipe-trash.yaml](haptics/swipe-trash.yaml)                       | haptics · swipe trash                                                                                            |
+| [haptics/switch-on.yaml](haptics/switch-on.yaml)                           | haptics · switch on                                                                                              |
+| [haptics/typing.yaml](haptics/typing.yaml)                                 | B3: typing plays no haptic (MOTION.md §4.2).                                                                     |
+| [haptics/wrong-code.yaml](haptics/wrong-code.yaml)                         | A3: a wrong two-step code clears the boxes, says so and plays `error` (MOTION.md §5, §12).                       |
+| [haptics/zoom-fit.yaml](haptics/zoom-fit.yaml)                             | haptics · zoom fit                                                                                               |
+| [tour/motion-tour.yaml](tour/motion-tour.yaml)                             | Partial tour: manual pinch, calibrated gestures and real end-of-list confirmation required.                      |
 
 ## Missing app hooks and selectors
 

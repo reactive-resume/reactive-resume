@@ -37,10 +37,19 @@ appId: me.rxresu.storyboard
 # Typed answer → feedback card.
 - tapOn: Type your answer instead
 - inputText: I led the onboarding redesign and activation rose from 41% to 58%.
+# A fresh simulator shows the keyboard's one-time "slide to type" tip over the screen.
+- tapOn:
+    text: Continue
+    optional: true
 - tapOn: Get feedback
+# A clean launch asks before the first chat goes: wait for the sheet to settle, then send.
+- extendedWaitUntil:
+    visible:
+      id: first-send-send
+    timeout: 10000
+- waitForAnimationToEnd
 - tapOn:
     id: first-send-send
-    optional: true
 - extendedWaitUntil:
     visible: What worked
     timeout: 20000
