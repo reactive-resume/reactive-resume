@@ -1,12 +1,14 @@
 import type { BottomTabBarProps } from "expo-router/js-tabs";
-import { useNavigation, useRoute } from "expo-router";
 // Dock (COMPONENTS.md §15, MOTION.md §5, §6.3): root tabs, builder modes, letter modes. 1 dp `line` on top, `bg`,
 // 64 dp plus the bottom safe area, 8 dp sides, items share the width. The selection changes at once on tap (fill
 // icon swap, ink-2 → accent-text crossfade d1); content switches by fade-through (FadeThroughProvider). Builder and
 // letter docks play `selection`; root tabs play none. Re-tapping the selected item scrolls its list to the top.
 // Large text (≥ 150%): 80 dp, 30 dp icons, 18 sp labels; past 150% the short labels, full names read out.
+import { t } from "@lingui/core/macro";
+import { useNavigation, useRoute } from "expo-router";
 import { type ReactNode, type Ref, useEffect, useImperativeHandle, useState } from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
+import { useKeyboardState } from "react-native-keyboard-controller";
 import Animated, { type SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Touch } from "./base";
@@ -75,6 +77,9 @@ export function Dock({ variant, items, selected, onNavigate, onReselect, onWillS
 		switchTo(() => onNavigate(key), key);
 	};
 	useImperativeHandle(handle, () => ({ select: press }));
+	// The dock steps aside while the keyboard is up (L1: editing the letter in place).
+	const typing = useKeyboardState((s) => s.isVisible);
+	if (typing) return null;
 
 	return (
 		<View
@@ -127,7 +132,14 @@ function DockItem({
 			feedback="none"
 			onPress={onPress}
 			accessibilityRole="tab"
-			accessibilityLabel={item.count ? `${item.label}, ${item.count}` : item.label}
+			// The warn dot in words (BUILD.md §3.7): "Check, issues to review".
+			accessibilityLabel={
+				item.count
+					? `${item.label}, ${item.count}`
+					: item.warn && !selected
+						? t`${item.label}, issues to review`
+						: item.label
+			}
 			accessibilityState={{ selected }}
 			style={[styles.item, { height }]}
 		>

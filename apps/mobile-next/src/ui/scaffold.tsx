@@ -258,8 +258,9 @@ export function PushScreen({
 						enabled={focused}
 						bottomOffset={24}
 						keyboardShouldPersistTaps="handled"
-						// Dragging the form down puts the keyboard away, as system forms do.
-						keyboardDismissMode="interactive"
+						// Dragging the form puts the keyboard away. "interactive" only let go once the finger reached the keyboard,
+						// so a short drag over the letter (L1) never closed it.
+						keyboardDismissMode="on-drag"
 						showsVerticalScrollIndicator={!STORYBOARD}
 						contentContainerStyle={{ paddingBottom: bottomPadding + (footer ? 0 : insets.bottom) }}
 						style={{ flex: 1 }}

@@ -18,6 +18,8 @@ export function LetterScreen() {
 	const { colors } = useTheme();
 	const visit = useRef(0);
 	const [editing, setEditing] = useState<number>();
+	// What is typed while a paragraph is open: the saved block is normalised (trimmed), which ate a space just typed.
+	const [typed, setTyped] = useState("");
 	const resume = useResume(document?.sourceResumeId ?? "");
 	const application = useApplication(document?.sourceApplicationId ?? "");
 	const ready = store.document?.id === id;
@@ -29,8 +31,16 @@ export function LetterScreen() {
 				: store.status === "offline"
 					? t`Offline · Changes kept on this device`
 					: t`Saved · to the hiring team at ${document?.recipientCompany ?? ""}`,
-		onUndo: store.undo,
-		onRedo: store.redo,
+		// Close the paragraph being edited in the same render: a focused input handed the undone text echoes it back as a
+		// new edit, which cleared Redo.
+		onUndo: () => {
+			setEditing(undefined);
+			store.undo();
+		},
+		onRedo: () => {
+			setEditing(undefined);
+			store.redo();
+		},
 		canUndo: ready && store.canUndo,
 		canRedo: ready && store.canRedo,
 	};
@@ -73,16 +83,22 @@ export function LetterScreen() {
 									{editing === index ? (
 										<TextInput
 											accessibilityLabel={t`Letter paragraph ${index + 1}`}
-											value={block.text}
+											value={typed}
 											autoFocus
 											multiline
+											// A paragraph is one block: Return finishes it and puts the keyboard away.
+											submitBehavior="blurAndSubmit"
+											returnKeyType="done"
+											// It grows with its text; a drag scrolls the letter (and puts the keyboard away), not the paragraph.
+											scrollEnabled={false}
 											caretHidden={STORYBOARD}
 											onFocus={letterFieldFocus.onFocus}
 											onBlur={() => {
 												letterFieldFocus.onBlur();
 												setEditing(undefined);
 											}}
-											onChangeText={(value) =>
+											onChangeText={(value) => {
+												setTyped(value);
 												store.update(
 													(d) => {
 														const current = splitBlocks(d.content)[index];
@@ -90,8 +106,8 @@ export function LetterScreen() {
 															d.content = d.content.replace(current.html, () => replaceBlockText(current.html, value));
 													},
 													{ coalesceKey: `letter-${id}-${index}-${visit.current}`, sameStep: true },
-												)
-											}
+												);
+											}}
 											style={[typeScale.prose, { padding: 0, color: colors.ink, includeFontPadding: false }]}
 										/>
 									) : (
@@ -102,6 +118,7 @@ export function LetterScreen() {
 												ready && !store.locked && /^<p>[^<]*<\/p>$/.test(block.html)
 													? () => {
 															visit.current++;
+															setTyped(block.text);
 															setEditing(index);
 														}
 													: undefined
