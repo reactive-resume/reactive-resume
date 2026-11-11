@@ -2,8 +2,13 @@ import type { RouterInput } from "@/api/client";
 import { fixtureProposals } from "./fixture-proposals";
 import { screenTexts, recordFixtureMessages, fakeBackend } from "./fixtures";
 let failAt: number | undefined;
+let chunkDelay = 0;
 export function setFakeStreamFailure(afterChunks?: number) {
 	failAt = afterChunks;
+}
+/** Storyboard flows slow the fake reply down (ms per chunk) so Stop can be reached while it streams. */
+export function setFakeStreamDelay(ms = 0) {
+	chunkDelay = ms;
 }
 export async function fakeReplyStream(
 	threadId: string,
@@ -52,7 +57,9 @@ export async function fakeReplyStream(
 			signal.throwIfAborted();
 			if (failAt !== undefined && index >= failAt) throw new Error("Fixture stream failed.");
 			yield `data: ${JSON.stringify(chunk)}\n\n`;
-			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+			await new Promise<void>((resolve) =>
+				chunkDelay ? setTimeout(resolve, chunkDelay) : requestAnimationFrame(() => resolve()),
+			);
 		}
 		recordFixtureMessages(threadId, undefined, text, proposals, sources);
 	}

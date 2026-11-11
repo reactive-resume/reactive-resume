@@ -52,19 +52,31 @@ function useLead(key: string) {
 }
 
 /**
+ * A mounted screen belongs to one document: its first real id stands. Coming back from Notes over B19's sheet, the
+ * dock layout's params briefly read the sheet's route name ("menu"), which closed the open draft and opened nothing.
+ */
+function useStickyId(id: string) {
+	const [first, setFirst] = useState(id);
+	if (!first && id) setFirst(id);
+	return first || id;
+}
+
+/**
  * The open resume's draft and history, once per document visit. Mount it where every builder route sits under it
  * (the builder dock layout); until then each builder screen mounts it too and the first one mounted owns them.
  * ponytail: if the owning screen unmounted while a later one stayed, the draft would close; the layout mount
  * removes the case.
  */
-export function BuilderDocument({ id }: { id: string }) {
+export function BuilderDocument({ id: param }: { id: string }) {
+	const id = useStickyId(param);
 	const lead = useLead(`resume:${id}`);
 	// A route whose params haven't arrived yet has no id; opening "" would close the draft every screen shares.
 	return lead && id ? <Owner id={id} /> : null;
 }
 
 /** The open letter's draft, once per letter visit: the same rules as `BuilderDocument`. */
-export function LetterDocument({ id }: { id: string }) {
+export function LetterDocument({ id: param }: { id: string }) {
+	const id = useStickyId(param);
 	const lead = useLead(`letter:${id}`);
 	return lead && id ? <LetterOwner id={id} /> : null;
 }

@@ -1,10 +1,18 @@
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useDocumentId } from "../share/document";
-import { ensureApproved, providerConnection, useAIProviders } from "@/data";
+import {
+	ensureApproved,
+	providerConnection,
+	setFakeStreamDelay,
+	setFakeStreamFailure,
+	useAIProviders,
+	useAssistantStream,
+	usePlatformActions,
+} from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	PushScreen,
@@ -22,32 +30,118 @@ import {
 	Chip,
 	WorkingLabel,
 	Box,
+	haptic,
 } from "@/ui";
+
+/** The edits a finished reply proposed (the `propose_edits` tool output). */
+const editCount = (chunks: readonly { type: string; [key: string]: unknown }[]) =>
+	chunks.reduce((sum, chunk) => {
+		const output = chunk.output as { edits?: unknown[] } | undefined;
+		return chunk.type === "tool-output-available" && Array.isArray(output?.edits) ? sum + output.edits.length : sum;
+	}, 0);
 
 export function AssistantScreen() {
 	const id = useDocumentId();
 	const router = useRouter();
 	const providers = useAIProviders();
-	const provider = providers.data?.[0];
-	// A request handed over unsent (B19's Translate into…): the person reviews it before sending.
-	const { ask } = useLocalSearchParams<{ ask?: string }>();
-	const [message, setMessage] = useState(ask ?? "");
+	// Storyboard flows reach B16's states: `preset=no-connection`, `fail` (the reply fails) or `slow` (time to Stop).
+	const {
+		ask,
+		prompt,
+		send: autoSend,
+		preset: presetParam,
+	} = useLocalSearchParams<{ ask?: string; prompt?: string; send?: string; preset?: string }>();
+	const preset = STORYBOARD ? presetParam : undefined;
+	const provider =
+		preset === "no-connection" ? undefined : (providers.data?.find((p) => p.enabled) ?? providers.data?.[0]);
+	useEffect(() => {
+		if (!STORYBOARD) return;
+		setFakeStreamFailure(preset === "fail" ? 2 : undefined);
+		setFakeStreamDelay(preset === "slow" ? 1500 : 0);
+		return () => {
+			setFakeStreamFailure();
+			setFakeStreamDelay();
+		};
+	}, [preset]);
+	const actions = usePlatformActions();
+	const [threadId, setThreadId] = useState("");
+	const stream = useAssistantStream(threadId);
+	// A request handed over unsent (B19's Translate into…, B10's Ask the assistant, W-Fit): the person reviews it before
+	// sending.
+	const [message, setMessage] = useState(ask ?? prompt ?? "");
 	const [answer, setAnswer] = useState("");
 	const [resume, setResume] = useState(true);
 	const [posting, setPosting] = useState(true);
 	const [failed, setFailed] = useState(false);
-	const [sending, setSending] = useState(false);
-	const send = async () => {
-		if (!message.trim() || !provider || sending) return;
-		setSending(true);
+	const [starting, setStarting] = useState(false);
+	// What has been sent this visit, in order; the reply streams under the last one.
+	const [sent, setSent] = useState<string[]>([]);
+	const [pending, setPending] = useState<string>();
+	const dispatched = useRef<string | undefined>(undefined);
+	const streaming = stream.status === "streaming" || stream.status === "reconnecting";
+	const sending = starting || streaming || pending !== undefined;
+	const send = async (text = message) => {
+		if (!text.trim() || !provider || sending) return;
+		setStarting(true);
+		setFailed(false);
 		try {
 			const connection = providerConnection(provider);
 			if (!(await ensureApproved("chat", connection))) return;
+			if ((resume || posting) && !(await ensureApproved("resume-and-facts", connection))) return;
+			if (!threadId) {
+				const thread = await actions.run("agent.threads.start", {
+					scope: "document",
+					resumeId: id,
+					aiProviderId: provider.id,
+				});
+				setThreadId(thread.id);
+			}
+			haptic("light");
+			setPending(text);
+		} catch {
 			setFailed(true);
+			haptic("error");
 		} finally {
-			setSending(false);
+			setStarting(false);
 		}
 	};
+	// Sends once the thread exists (its id arrives a render after it is started).
+	useEffect(() => {
+		if (!threadId || pending === undefined || dispatched.current === pending) return;
+		const text = pending;
+		dispatched.current = text;
+		setSent((list) => [...list, text]);
+		if (message === text) setMessage("");
+		void stream
+			.send({
+				message: { id: `${Date.now()}`, role: "user", parts: [{ type: "text", text }] },
+				context: { document: resume, posting },
+			})
+			.catch(() => {
+				// The message goes back in the composer: it is kept.
+				setMessage((current) => current || text);
+				setFailed(true);
+				haptic("error");
+			})
+			.finally(() => {
+				setPending(undefined);
+				dispatched.current = undefined;
+			});
+	}, [threadId, pending, stream, message, resume, posting]);
+	// B19's Translate into… sends its request at once: the copy is translated by the assistant.
+	const autoSent = useRef(false);
+	useEffect(() => {
+		if (autoSend !== "1" || autoSent.current || !provider || !message.trim()) return;
+		autoSent.current = true;
+		void send();
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- sends the handed-over request once
+	}, [autoSend, provider]);
+	const stop = () => {
+		haptic("light");
+		void stream.stop().catch(() => undefined);
+	};
+	const edits = stream.status === "idle" ? editCount(stream.chunks) : 0;
+	const stopped = stream.status === "stopped";
 	return (
 		<PushScreen
 			back="close"
@@ -80,6 +174,7 @@ export function AssistantScreen() {
 							onChangeText={setMessage}
 							placeholder={t`Ask about this resume…`}
 							onSend={() => void send()}
+							onStop={stop}
 							sending={sending}
 							blocked={
 								!provider ? t`Choose a connection before sending.` : failed ? t`Your message is kept.` : undefined
@@ -141,7 +236,38 @@ export function AssistantScreen() {
 						)}
 					</>
 				)}
+				{!provider && providers.isSuccess ? (
+					<Box component="Card" bg="raised" style={{ padding: 20, gap: 12 }}>
+						<Text variant="body">{t`Connect an AI provider first. Nothing is sent until you choose a connection.`}</Text>
+						<Button
+							label={t`Add AI provider`}
+							tone="primary"
+							onPress={() => router.push("/settings/ai/providers/new")}
+						/>
+					</Box>
+				) : null}
+				{sent.map((text, index) => (
+					<Bubble key={`${index}-${text}`}>{text}</Bubble>
+				))}
+				{stream.text ? <Text variant="body">{stream.text}</Text> : null}
 				{sending && <WorkingLabel steps={[t`Reading your message`, t`Still working`]} />}
+				{edits > 0 ? (
+					<View style={{ flexDirection: "row" }}>
+						<View style={{ flex: 1 }} />
+						<Button
+							label={edits === 1 ? t`Review 1 edit` : t`Review ${edits} edits`}
+							onPress={() => router.push(`/builder/${id}/assistant/proposals`)}
+						/>
+					</View>
+				) : null}
+				{stopped ? (
+					<View style={{ gap: 12 }}>
+						<Text color="ink3">{t`Stopped. No edits were proposed.`}</Text>
+						<View style={{ flexDirection: "row" }}>
+							<Button label={t`Continue`} onPress={() => void send(sent.at(-1) ?? "")} />
+						</View>
+					</View>
+				) : null}
 				{failed && (
 					<Box component="Card" bg="dangerSoft" style={{ padding: 20, gap: 12 }}>
 						<Text color="dangerText">{t`Couldn't send your message. Your message is kept.`}</Text>

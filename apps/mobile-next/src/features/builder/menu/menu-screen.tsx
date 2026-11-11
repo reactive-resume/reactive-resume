@@ -103,7 +103,7 @@ export function MenuScreen() {
 			const copyId = typeof copy === "string" ? copy : copy?.id;
 			if (copyId) router.replace(`/builder/${copyId}`);
 		});
-	// Web parity (translate-resume.tsx): a language copy is made without AI; its assistant opens with an unsent draft.
+	// B19: Translate into… makes a language copy, opens it and sends the translation request to its assistant.
 	const translate = (locale: Locale) =>
 		run(async () => {
 			if (!document) return;
@@ -120,7 +120,10 @@ export function MenuScreen() {
 			const copyId = typeof copy === "string" ? copy : copy?.id;
 			if (!copyId) return;
 			router.replace(`/builder/${copyId}`);
-			router.push({ pathname: "/builder/[id]/assistant", params: { id: copyId, ask: languageCopyRequest(locale) } });
+			router.push({
+				pathname: "/builder/[id]/assistant",
+				params: { id: copyId, ask: languageCopyRequest(locale), send: "1" },
+			});
 		});
 	const row = (
 		title: string,

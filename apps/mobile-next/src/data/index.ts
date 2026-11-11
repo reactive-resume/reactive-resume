@@ -34,7 +34,7 @@ export * from "./today";
 export * from "./import";
 export * from "./stream";
 export * from "./proposals";
-export { setFakeStreamFailure } from "./fixture-stream";
+export { setFakeStreamFailure, setFakeStreamDelay } from "./fixture-stream";
 
 export * from "./workspace";
 export * from "./security";

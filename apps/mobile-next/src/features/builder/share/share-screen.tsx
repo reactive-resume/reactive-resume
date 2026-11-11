@@ -1,17 +1,21 @@
 import { t } from "@lingui/core/macro";
 import { setStringAsync } from "expo-clipboard";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
-import { publicResumeUrl } from "@reactive-resume/resume/sharing";
+import { isValidSlug, publicResumeUrl } from "@reactive-resume/resume/sharing";
 import { prepareExport, deliverExport } from "../download/export-file";
+import { Anchor, useAnchoredMenu, useAnchorRef } from "../shared/anchored-menu";
 import { BuilderActions, DocumentState, useBuilderDocument, useDocumentId, useRenderedPage } from "./document";
 import { useSession } from "@/auth/session";
-import { useAccount, useResumeStore } from "@/data";
+import { useAccount, useLocalValue, useResumeStore } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	Button,
+	BottomSheet,
+	Form,
+	TextField,
 	HeroCard,
 	PageThumbnail,
 	PushScreen,
@@ -36,7 +40,14 @@ export function ShareScreen() {
 	const { server } = useSession();
 	const account = useAccount();
 	const draft = useResumeStore();
+	// Storyboard flows reach "Download failed. Try again." with `preset=export-fail`.
+	const { preset } = useLocalSearchParams<{ preset?: string }>();
 	const [busy, setBusy] = useState(false);
+	const linkMenu = useAnchoredMenu();
+	const linkRef = useAnchorRef();
+	// B11: the first time a resume goes public, its address is asked for first. A resume public on arrival has an address.
+	const published = useLocalValue<boolean>(`web-page-published:${id}`, false);
+	const [asking, setAsking] = useState<string>();
 	const [error, setError] = useState("");
 	const rendered = useRenderedPage(
 		document
@@ -51,26 +62,54 @@ export function ShareScreen() {
 	);
 	const rowMotion = useRowMotion();
 	const publicOn = document?.isPublic ?? false;
-	const toggle = useSwitchRow(publicOn, (next) => {
+	const setPublic = (next: boolean, slug?: string) => {
 		if (draft.document?.id !== id) {
 			setError(t`Couldn't update sharing. Try again.`);
-			return;
+			return false;
 		}
 		draft.updateDocument((d) => {
 			d.isPublic = next;
+			if (slug !== undefined) d.slug = slug;
 		});
+		return true;
+	};
+	const toggle = useSwitchRow(publicOn, (next) => {
+		if (next && !published.value && document) {
+			setAsking(document.slug);
+			return;
+		}
+		setPublic(next);
 	});
+	const goLive = () => {
+		if (asking === undefined || !isValidSlug(asking)) return;
+		if (!setPublic(true, asking)) return;
+		setAsking(undefined);
+		published.set(true);
+		haptic("success");
+		showToast({ message: t`Your web page is live` });
+	};
+	useEffect(() => {
+		if (publicOn && !published.value) published.set(true);
+	}, [publicOn, published]);
 	const username = STORYBOARD ? "alex" : account.data?.username;
 	const link = publicResumeUrl(STORYBOARD && document?.isPrimary ? "https://rx.cv" : server, {
 		username: username ?? "",
 		slug: document?.slug ?? "",
 		isPrimary: document?.isPrimary,
 	});
+	// The full address, also for a primary resume whose row shows the short link.
+	const fullLink = publicResumeUrl(STORYBOARD ? "https://rxresu.me" : server, {
+		username: username ?? "",
+		slug: document?.slug ?? "",
+		isPrimary: false,
+	});
+	const openLinkMenu = () => linkMenu.open(linkRef, [{ label: t`Copy full address`, onPress: () => void copy(true) }]);
 	const share = async () => {
 		if (!document || busy) return;
 		setBusy(true);
 		setError("");
 		try {
+			if (STORYBOARD && preset === "export-fail") throw new Error("Storyboard export failure.");
 			await deliverExport(await prepareExport(document, "resume", "pdf", `${document.data.basics.name} Resume`), false);
 			showToast({ message: t`Good luck out there.` });
 		} catch {
@@ -80,9 +119,9 @@ export function ShareScreen() {
 			setBusy(false);
 		}
 	};
-	const copy = async () => {
+	const copy = async (full = false) => {
 		try {
-			await setStringAsync(link);
+			await setStringAsync(full ? fullLink : link);
 			showToast({ message: t`Link copied` });
 			haptic("success");
 		} catch {
@@ -90,7 +129,41 @@ export function ShareScreen() {
 		}
 	};
 	return (
-		<PushScreen title={t`Share`} docked clipDump barEnd={<BuilderActions id={id} />}>
+		<PushScreen
+			title={t`Share`}
+			docked
+			clipDump
+			barEnd={<BuilderActions id={id} />}
+			overlay={
+				<>
+					{linkMenu.menu}
+					{asking !== undefined ? (
+						<BottomSheet title={t`Your web page address`} height={360} keyboard onClose={() => setAsking(undefined)}>
+							<Form>
+								<TextField
+									label={t`Address`}
+									value={asking}
+									prefix={`${STORYBOARD ? "rxresu.me" : server.replace(/^https?:\/\//, "")}/${username ?? ""}/`}
+									mono
+									autoCapitalize="none"
+									autoCorrect={false}
+									onChangeText={setAsking}
+									error={isValidSlug(asking) ? undefined : t`Use Latin letters a–z, numbers and single dashes.`}
+								/>
+								<Button
+									label={t`Publish`}
+									tone="primary"
+									size="lg"
+									block
+									disabled={!isValidSlug(asking)}
+									onPress={goLive}
+								/>
+							</Form>
+						</BottomSheet>
+					) : null}
+				</>
+			}
+		>
 			<DocumentState loading={query.isPending} error={query.isError} retry={() => void query.refetch()} />
 			{document && (
 				<>
@@ -137,12 +210,16 @@ export function ShareScreen() {
 					/>
 					{publicOn && (
 						<Animated.View entering={rowMotion.foldIn} exiting={rowMotion.foldOut}>
-							<ListRow
-								title={link.replace("https://", "")}
-								titleVariant="monoUi"
-								secondary={document.isPrimary ? t`Your short link` : t`Public link`}
-								trailing={<IconButton icon="copy" iconSize={20} label={t`Copy link`} onPress={() => void copy()} />}
-							/>
+							<Anchor anchorRef={linkRef}>
+								<ListRow
+									title={link.replace("https://", "")}
+									titleVariant="monoUi"
+									secondary={document.isPrimary ? t`Your short link` : t`Public link`}
+									onPress={openLinkMenu}
+									onLongPress={openLinkMenu}
+									trailing={<IconButton icon="copy" iconSize={20} label={t`Copy link`} onPress={() => void copy()} />}
+								/>
+							</Anchor>
 						</Animated.View>
 					)}
 					<ListRow
