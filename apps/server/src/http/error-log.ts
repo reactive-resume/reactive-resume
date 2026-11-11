@@ -1,15 +1,15 @@
 import { ORPCError } from "@orpc/server";
 
-const REQUEST_ID_HEADERS = ["cf-ray", "x-vercel-id"];
 const SAFE_REQUEST_ID = /^[\w:.-]{1,128}$/;
 
-/** The hosting platform's request ID, when one fronts this server. A client can send these headers too, so check them. */
+/**
+ * The hosting platform's own request ID. Read only on the platform that sets the header; anywhere else the header
+ * is whatever the caller sent, so it's left out.
+ */
 export function platformRequestId(headers: Headers | undefined) {
-	for (const name of REQUEST_ID_HEADERS) {
-		const value = headers?.get(name);
-		if (value && SAFE_REQUEST_ID.test(value)) return value;
-	}
-	return undefined;
+	const header = process.env.CLOUDFLARE === "1" ? "cf-ray" : process.env.VERCEL === "1" ? "x-vercel-id" : undefined;
+	const value = header ? headers?.get(header) : undefined;
+	return value && SAFE_REQUEST_ID.test(value) ? value : undefined;
 }
 
 // V8 starts a stack with "<name>: <message>"; the message can hold SQL parameters or submitted text. Frames only.
