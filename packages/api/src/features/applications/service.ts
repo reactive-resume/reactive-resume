@@ -525,18 +525,25 @@ async function followInterviewSchedules(
 				inArray(schema.careerJob.status, ["queued", "running"]),
 			),
 		);
-	for (const schedule of schedules)
+	const now = Date.now();
+	for (const schedule of schedules) {
+		const nextRunAt = at
+			? prepareRunAt(at, (schedule.lead ?? "24h") as "24h" | "2h" | "morning", schedule.timezone)
+			: null;
 		await tx
 			.update(schema.careerSchedule)
 			.set(
-				at
+				nextRunAt
 					? {
-							nextRunAt: prepareRunAt(at, (schedule.lead ?? "24h") as "24h" | "2h" | "morning", schedule.timezone),
+							nextRunAt,
 							lastQueuedAt: null,
+							// As when a schedule is saved: a lead that has already passed never becomes an immediate paid run.
+							...(nextRunAt.getTime() <= now ? { enabled: false } : {}),
 						}
 					: { enabled: false },
 			)
 			.where(eq(schema.careerSchedule.id, schedule.id));
+	}
 	if (at || !schedules.some((schedule) => schedule.enabled)) return;
 	await tx.insert(schema.careerNotification).values({
 		userId,

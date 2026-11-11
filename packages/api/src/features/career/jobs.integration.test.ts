@@ -1818,6 +1818,39 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 		},
 	);
 
+	it("pauses a briefing instead of running it at once when the interview moves inside its lead", async () => {
+		await interviewApplication(new Date(Date.now() + 5 * 3_600_000));
+		const saved = await jobs.save(
+			"alice",
+			careerScheduleInputSchema.parse({
+				applicationId: "alice-app",
+				interviewId: "interview-round",
+				kind: "prepare",
+				lead: "2h",
+				aiProviderId: "preparation-provider",
+				timezone: "Europe/Berlin",
+				nextRunAt: new Date("2031-01-01T00:00:00Z"),
+			}),
+		);
+		expect(saved.enabled).toBe(true);
+		const moved = new Date(Date.now() + 30 * 60_000);
+		const applications = (await import("../applications/service")).applicationService;
+		await applications.updateInterview({
+			userId: "alice",
+			id: "alice-app",
+			entryId: "interview-round",
+			at: moved.toISOString(),
+		});
+		await run();
+		await run();
+		expect(fixture.generate).not.toHaveBeenCalled();
+		expect(await getDb().select().from(tables.careerJob)).toEqual([]);
+		expect(await jobs.list("alice")).toMatchObject([
+			{ id: saved.id, enabled: false, nextRunAt: new Date(moved.getTime() - 2 * 3_600_000), lastQueuedAt: null },
+		]);
+		expect(await jobs.notifications("alice")).toEqual([]);
+	});
+
 	it("tracks a discovered role once, and a tracked role stays quiet in later searches", async () => {
 		const careers = (await import("./service")).careerService;
 		const url = "https://example.test/jobs/42";
