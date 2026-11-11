@@ -7,7 +7,7 @@ import { useNavigationContainerRef, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { LogBox, View } from "react-native";
 import { create } from "zustand";
-import { CAPTURE_SERVER, collectDump, STORYBOARD, STORYBOARD_NOW, settle } from "./harness";
+import { CAPTURE_SERVER, collectDump, resetImageTracking, STORYBOARD, STORYBOARD_NOW, settle } from "./harness";
 import { scenarios } from "./scenarios";
 import { timeScale } from "@/ui/motion";
 import { useThemeStore } from "@/ui/theme";
@@ -56,6 +56,9 @@ const post = (path: string, body: string, json: boolean) =>
 		new Promise<void>((resolve) => setTimeout(resolve, 2000)),
 	]);
 
+/** Thrown by a capture run that a newer request replaced; never reported. */
+const SUPERSEDED = new Error("superseded");
+
 const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
 
 export function StoryboardController() {
@@ -75,44 +78,53 @@ export function StoryboardController() {
 		const { id, theme, scroll } = request;
 		// Busy while the fakes answer or any query or mutation is in flight (a page render, a scenario's refetch).
 		const busy = () => deps.isBusy() || queryClient.isFetching() > 0 || queryClient.isMutating() > 0;
+		// A newer request (the script gave up on this one, or moved on) stops this run at its next step, so a slow
+		// capture never keeps navigating and measuring beside the next one.
+		const superseded = () => useCaptureStore.getState().request?.nonce !== request.nonce;
+		const step = async <T,>(work: Promise<T> | T) => {
+			const value = await work;
+			if (superseded()) throw SUPERSEDED;
+			return value;
+		};
 		(async () => {
 			const scenario = scenarios[id];
 			if (!scenario) throw new Error(`No storyboard scenario for ${id}`);
+			resetImageTracking();
 			timeScale.value = 0;
 			// The shared value reaches the UI thread a frame later: on a cold start the first screen's entrance would still
 			// read 1 and run at full length. Wait for it to land before anything mounts.
-			await frame();
-			await frame();
-			await new Promise<void>((resolve) => setTimeout(resolve, 60));
+			await step(frame());
+			await step(frame());
+			await step(new Promise<void>((resolve) => setTimeout(resolve, 60)));
 			deps.setNow(STORYBOARD_NOW);
 			useThemeStore.getState().setOverride(theme);
-			await deps.seed(scenario.fixture ?? "storyboard");
+			await step(deps.seed(scenario.fixture ?? "storyboard"));
 			const [first, ...rest] = scenario.hrefs;
 			if (router.canDismiss()) router.dismissAll();
 			router.replace((first ?? "/") as never);
-			await frame();
+			await step(frame());
 			for (const href of rest) {
 				router.push(href as never);
-				await frame();
+				await step(frame());
 			}
-			await scenario.prepare?.();
-			await settle(busy);
+			await step(scenario.prepare?.());
+			await step(settle(busy));
 			if (scroll === "end") {
 				scrollToEnd?.();
-				await settle(busy);
+				await step(settle(busy));
 			}
 			// Measure until two dumps in a row agree with nothing in flight: anything still moving (an entrance that began
 			// before the time scale reached zero, a sheet settling) has then landed, and a query a screen started late
 			// has answered.
-			let dump = await collectDump(navigation.getRootState() as never);
+			let dump = await step(collectDump(navigation.getRootState() as never));
 			for (let attempt = 0; attempt < 20; attempt += 1) {
-				await new Promise<void>((resolve) => setTimeout(resolve, 150));
+				await step(new Promise<void>((resolve) => setTimeout(resolve, 150)));
 				if (busy()) {
-					await settle(busy);
-					dump = await collectDump(navigation.getRootState() as never);
+					await step(settle(busy));
+					dump = await step(collectDump(navigation.getRootState() as never));
 					continue;
 				}
-				const next = await collectDump(navigation.getRootState() as never);
+				const next = await step(collectDump(navigation.getRootState() as never));
 				const same = JSON.stringify(next.elements) === JSON.stringify(dump.elements);
 				dump = next;
 				if (same) break;
@@ -125,6 +137,7 @@ export function StoryboardController() {
 				setReady(request.nonce);
 			}, 4000);
 		})().catch((error) => {
+			if (error === SUPERSEDED) return;
 			void post("/error", JSON.stringify({ id, theme, error: String(error) }), false);
 			timeScale.value = 1;
 			setReady(request.nonce);

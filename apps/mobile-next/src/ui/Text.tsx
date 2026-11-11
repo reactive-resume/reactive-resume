@@ -133,6 +133,10 @@ export function Text({
 		<RNText
 			ref={after ? undefined : ref}
 			maxFontSizeMultiplier={maxScale(fontFamily)}
+			// Android balances paragraph lines by default ("highQuality"); CSS breaks greedily, as "simple" does (L1's
+			// letter wrapped "grow" a line early). Serif titles keep the default: "simple" split Instrument Serif words
+			// at their own measured width (J1's "Applie|d", the "d" clipped). Android-only prop: iOS never reads it.
+			textBreakStrategy={fontFamily === fonts.display ? "highQuality" : "simple"}
 			{...rest}
 			{...(clamp.active ? { accessibilityLabel: rest.accessibilityLabel ?? full } : {})}
 			style={textStyle}

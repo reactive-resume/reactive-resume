@@ -188,6 +188,7 @@ export function ProposalsScreen() {
 														? [
 																{ text: "Built " },
 																{ text: "the design system now used by", kind: "removed" },
+																{ text: " " },
 																{ text: "and scaled a design system adopted by", kind: "added" },
 																{ text: " six product teams; cut interface defects by a third." },
 															]

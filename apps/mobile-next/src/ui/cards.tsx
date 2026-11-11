@@ -1,7 +1,7 @@
 // Hero card, cards, question card, board card, chips, badges and small markers (COMPONENTS.md §7, §8, §12).
 import type { StyleProp, ViewStyle } from "react-native";
 import { type ReactNode, useState } from "react";
-import { Text as RNText, View } from "react-native";
+import { Platform, Text as RNText, View } from "react-native";
 import { Box, Ring, Touch } from "./base";
 import { Icon, type IconName } from "./Icon";
 import { hitSlopFor } from "./motion";
@@ -457,6 +457,9 @@ export function ProposalText({ parts }: { parts: ProposalPart[] }) {
 			<Text variant="body" tag={false}>
 				<Runs parts={parts} />
 			</Text>
+			{Platform.OS === "android"
+				? parts.map((p, i) => (p.kind === "removed" ? <StrikeLines key={i} parts={parts} index={i} /> : null))
+				: null}
 			{STORYBOARD
 				? parts.map((p, i) =>
 						p.kind === "removed" || p.kind === "added" ? (
@@ -471,10 +474,21 @@ export function ProposalText({ parts }: { parts: ProposalPart[] }) {
 type ProposalPart = { text: string; kind?: "same" | "removed" | "added" };
 
 /**
- * 2 dp of inline padding: an invisible separator (U+2063, breaks like a letter) with 2 dp letter spacing (nested Text
- * takes no padding). A zero-width space let the line break after it, leaving an empty highlight at a line's end (B4).
+/**
+ * 2 dp of inline padding (nested Text takes no padding). iOS: an invisible separator (U+2063, breaks like a letter) with
+ * 2 dp letter spacing; a zero-width space let the line break after it, leaving an empty highlight at a line's end (B4).
+ * Android gives such characters (not in Figtree, a default-ignorable fallback glyph) no advance and no spacing, so B4's
+ * added runs drew 2 dp left: there it is a no-break space (0.247 em in Figtree) sized to advance exactly 2 dp.
  */
-const pad = <RNText style={{ letterSpacing: 2 }}>{"\u2063"}</RNText>;
+const pad =
+	Platform.OS === "android" ? (
+		<RNText style={{ fontSize: 2 / 0.247, letterSpacing: 0 }}>{"\u00A0"}</RNText>
+	) : (
+		<RNText style={{ letterSpacing: 2 }}>{"\u2063"}</RNText>
+	);
+
+/** Android draws the strike-through itself (`StrikeLines`). */
+const strike = Platform.OS === "android" ? "none" : "line-through";
 
 /** The parts as nested runs; `upto` stops before that part, `lead` adds the start of the next one. */
 function Runs({ parts, upto, lead }: { parts: ProposalPart[]; upto?: number; lead?: string }) {
@@ -484,7 +498,7 @@ function Runs({ parts, upto, lead }: { parts: ProposalPart[]; upto?: number; lea
 		<>
 			{shown.map((p, i) =>
 				p.kind === "removed" ? (
-					<RNText key={i} style={{ color: colors.ink2, textDecorationLine: "line-through" }}>
+					<RNText key={i} style={{ color: colors.ink2, textDecorationLine: strike }}>
 						{p.text}
 					</RNText>
 				) : p.kind === "added" ? (
@@ -503,21 +517,57 @@ function Runs({ parts, upto, lead }: { parts: ProposalPart[]; upto?: number; lea
 }
 
 type LineEnd = { line: number; x: number };
-const lastLine = (lines: { x: number; width: number }[]): LineEnd => {
+type Line = { x: number; width: number };
+const lastLine = (lines: Line[]): LineEnd => {
 	const last = lines[lines.length - 1];
 	return { line: Math.max(0, lines.length - 1), x: last ? last.x + last.width : 0 };
 };
 
-/** Storyboard only: measures where a run's glyphs start and end inside its paragraph and tags that box. */
-function RunTag({ parts, index, color }: { parts: ProposalPart[]; index: number; color: ColorToken }) {
+/**
+ * Where a run's glyphs start and end inside its paragraph, from invisible probes of the paragraph's prefixes (they
+ * break lines greedily, as Text does, so prefixes wrap like the whole). `lines` are the lines up to the run's end.
+ */
+function useRunExtent(parts: ProposalPart[], index: number) {
 	const body = typeScale.body;
 	const part = parts[index];
 	const text = part?.text ?? "";
 	const padded = part?.kind === "added";
 	const [measured, setStart] = useState<LineEnd | null>(null);
-	const [end, setEnd] = useState<LineEnd | null>(null);
+	const [lines, setLines] = useState<Line[] | null>(null);
 	const [wrapLine, setWrapLine] = useState(0);
 	const start = measured && wrapLine > measured.line ? { line: wrapLine, x: padded ? 2 : 0 } : measured;
+	const end = lines ? lastLine(lines) : null;
+	const probe = [textDefaults, body, { position: "absolute" as const, left: 0, right: 0, top: 0, opacity: 0 }];
+	const firstWord = text.split(/\s/)[0] ?? "";
+	const lead = padded ? (Platform.OS === "android" ? "\u200B" : "\u2063") : "";
+	const probes = (
+		<>
+			<RNText style={probe} textBreakStrategy="simple" onTextLayout={(e) => setStart(lastLine(e.nativeEvent.lines))}>
+				<Runs parts={parts} upto={index} />
+				{padded ? pad : null}
+			</RNText>
+			{/* With the run's first word: a run that wraps whole starts at the next line's edge. */}
+			<RNText
+				style={probe}
+				textBreakStrategy="simple"
+				onTextLayout={(e) => setWrapLine(lastLine(e.nativeEvent.lines).line)}
+			>
+				<Runs parts={parts} upto={index} lead={lead + firstWord} />
+			</RNText>
+			<RNText style={probe} textBreakStrategy="simple" onTextLayout={(e) => setLines(e.nativeEvent.lines)}>
+				<Runs parts={parts} upto={index} />
+				{padded ? pad : null}
+				{text}
+			</RNText>
+		</>
+	);
+	return { start, end, lines, probes };
+}
+
+/** Storyboard only: tags a run's box (one line: its glyphs; several: the full lines it covers). */
+function RunTag({ parts, index, color }: { parts: ProposalPart[]; index: number; color: ColorToken }) {
+	const body = typeScale.body;
+	const { start, end, probes } = useRunExtent(parts, index);
 	const box =
 		start && end
 			? start.line === end.line
@@ -529,31 +579,57 @@ function RunTag({ parts, index, color }: { parts: ProposalPart[]; index: number;
 						height: (end.line - start.line + 1) * body.lineHeight,
 					}
 			: null;
-	const ref = useDesignTag({ kind: "text", text, style: body, color }, { hidden: !box });
-	const probe = [textDefaults, body, { position: "absolute" as const, left: 0, right: 0, top: 0, opacity: 0 }];
-	const firstWord = text.split(/\s/)[0] ?? "";
-	const lead = padded ? "\u2063" : "";
+	const ref = useDesignTag({ kind: "text", text: parts[index]?.text ?? "", style: body, color }, { hidden: !box });
 	return (
 		<>
-			<RNText style={probe} onTextLayout={(e) => setStart(lastLine(e.nativeEvent.lines))}>
-				<Runs parts={parts} upto={index} />
-				{padded ? pad : null}
-			</RNText>
-			{/* With the run's first word: a run that wraps whole starts at the next line's edge. */}
-			<RNText style={probe} onTextLayout={(e) => setWrapLine(lastLine(e.nativeEvent.lines).line)}>
-				<Runs parts={parts} upto={index} lead={lead + firstWord} />
-			</RNText>
-			<RNText style={probe} onTextLayout={(e) => setEnd(lastLine(e.nativeEvent.lines))}>
-				<Runs parts={parts} upto={index} />
-				{padded ? pad : null}
-				{text}
-			</RNText>
+			{probes}
 			<View
 				ref={ref}
 				collapsable={false}
 				pointerEvents="none"
 				style={[{ position: "absolute" }, box ?? { width: 0 }]}
 			/>
+		</>
+	);
+}
+
+/**
+ * Android only: the removed run's strike-through, drawn as 1 dp ink-2 lines through the middle of each line it covers
+ * (the boards' position). React Native 0.88 on Android drops a nested Text's line-through once its paragraph also holds
+ * a background run (B17: struck and added runs together); the same paragraph without the added run draws it.
+ */
+function StrikeLines({ parts, index }: { parts: ProposalPart[]; index: number }) {
+	const { colors } = useTheme();
+	const { lineHeight } = typeScale.body;
+	const { start, end, lines, probes } = useRunExtent(parts, index);
+	const segments: { line: number; x1: number; x2: number }[] = [];
+	if (start && end && lines)
+		for (let line = start.line; line <= end.line; line++) {
+			const l = lines[line];
+			if (!l) continue;
+			segments.push({
+				line,
+				x1: line === start.line ? start.x : l.x,
+				x2: line === end.line ? end.x : l.x + l.width,
+			});
+		}
+	return (
+		<>
+			{probes}
+			{segments.map((g) => (
+				<View
+					key={g.line}
+					pointerEvents="none"
+					style={{
+						position: "absolute",
+						top: g.line * lineHeight + lineHeight / 2,
+						left: g.x1,
+						width: Math.max(0, g.x2 - g.x1),
+						height: 1,
+						backgroundColor: colors.ink2,
+					}}
+				/>
+			))}
 		</>
 	);
 }
