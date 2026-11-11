@@ -6,6 +6,7 @@ import { buildMarkdown, htmlToMarkdown } from "@reactive-resume/resume/markdown"
 import { sanitizeFileName } from "@reactive-resume/utils/file";
 import { generateId, fnv1a } from "@reactive-resume/utils/string";
 import { letterBackup } from "./export-model";
+import { createFileIn } from "@/data/save-file";
 import { pageRenderer } from "@/render/page-renderer";
 
 export type ExportFormat = "pdf" | "docx" | "md" | "json" | "odt";
@@ -52,7 +53,7 @@ export async function deliverExports(files: File[], save: boolean) {
 	if (save) {
 		const directory = await Directory.pickDirectoryAsync();
 		for (const file of files) {
-			const destination = directory.createFile(file.name, file.type || null);
+			const destination = createFileIn(directory, file.name, file.type || null);
 			file.copy(destination);
 		}
 	} else {

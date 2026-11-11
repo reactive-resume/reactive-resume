@@ -5,6 +5,7 @@ import { usePlatformActions } from "./actions";
 import { isFake } from "./fixtures";
 import { useConnectedApps, useAPIKeys } from "./platform";
 import { useDataBackend, useResource } from "./provider";
+import { createFileIn } from "./save-file";
 import { activeDataScope, assertDataScope } from "./scope";
 import { getServer, getSession } from "@/auth/session";
 export type AccountSettingsSection = "passkeys" | "sessions" | "two-step" | "password" | "delete-account" | "api-keys";
@@ -35,7 +36,7 @@ export function useAccountActions() {
 			assertDataScope(scope);
 			const folder = await Directory.pickDirectoryAsync();
 			assertDataScope(scope);
-			const file = folder.createFile("reactive-resume-account.json", "application/json");
+			const file = createFileIn(folder, "reactive-resume-account.json", "application/json");
 			file.write(JSON.stringify(data));
 			return { uri: file.uri, data };
 		},

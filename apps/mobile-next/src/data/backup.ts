@@ -4,6 +4,7 @@ import { now } from "./clock";
 import { decode, encode } from "./codec";
 import { resume, letter } from "./draft/runtime";
 import { writeQueue, validateWrites } from "./queue";
+import { createFileIn } from "./save-file";
 import { getRetainedAccountScope } from "@/auth/session";
 
 export type QueueBundle = {
@@ -65,7 +66,7 @@ export async function saveQueuedBundle(): Promise<{ uri: string }> {
 	const bundle = await exportQueued();
 	const directory = await Directory.pickDirectoryAsync();
 	const name = `queued-changes-${now().getTime()}.json`;
-	const file = directory.createFile(name, "application/json");
+	const file = createFileIn(directory, name, "application/json");
 	file.write(JSON.stringify(encode(bundle)));
 	return { uri: file.uri };
 }
