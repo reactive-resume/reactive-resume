@@ -485,7 +485,9 @@ function timingSpec(ms: number, easing: (t: number) => number): TransitionSpec {
 		animation: "timing",
 		config: {
 			get duration() {
-				return Math.round(ms * timeScale.value);
+				// At least one frame: a 0 ms stack transition (storyboard captures run at time scale 0) left the pushed
+				// card's gestures dead for its first touch.
+				return Math.max(16, Math.round(ms * timeScale.value));
 			},
 			easing,
 		},
