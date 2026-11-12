@@ -14,6 +14,7 @@ import {
 	Form,
 	TextField,
 	SheetScreen,
+	SheetScrollView,
 	PushScreen,
 	Text,
 	Spinner,
@@ -192,7 +193,8 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 		</PushScreen>
 	) : (
 		<SheetScreen title={t`Other formats`} height={620} footer={footer}>
-			{body}
+			{/* With More formats open the list outgrows the fixed-height sheet: scroll to the file name. */}
+			<SheetScrollView>{body}</SheetScrollView>
 		</SheetScreen>
 	);
 }
