@@ -312,7 +312,7 @@ export function useApplicationActions() {
 				description: t`Moved to Trash`,
 				actionProps: {
 					children: t`Trash`,
-					onClick: () => void router.navigate({ to: "/dashboard/applications/trash" }),
+					onClick: () => void router.navigate({ to: "/dashboard/trash", search: { kind: "applications" } }),
 				},
 			});
 		},

@@ -3,19 +3,23 @@ import { Trans } from "@lingui/react/macro";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { useRouteContext } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
-import { Command, CommandEmpty, CommandInput, CommandList } from "@reactive-resume/ui/components/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList } from "@reactive-resume/ui/components/command";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import { Icon } from "@reactive-resume/ui/components/icon";
+import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { AskCommandGroup } from "./pages/ask";
-import { NavigationCommandGroup } from "./pages/navigation";
-import { PreferencesCommandGroup } from "./pages/preferences";
-import { ResumesCommandGroup } from "./pages/resumes";
+import { CreateItems, JumpItems, MoreItems } from "./pages/navigation";
+import { openShortcutsFromPalette, PreferenceItems, PreferencePages } from "./pages/preferences";
+import { RecentItems, ResumesCommandGroup } from "./pages/resumes";
 import { useCommandPaletteStore } from "./store";
+import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 
 export default function CommandPaletteContent() {
 	const { session } = useRouteContext({ strict: false });
@@ -32,7 +36,9 @@ export default function CommandPaletteContent() {
 		goBack,
 	} = useCommandPaletteStore();
 
+	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const isFirstPage = pages.length === 0;
+	const typing = search.trim().length > 0;
 	const currentPage = pages[pages.length - 1];
 	const commandListPage = currentPage ?? "root";
 
@@ -84,28 +90,30 @@ export default function CommandPaletteContent() {
 		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogHeader className="sr-only print:hidden">
 				<DialogTitle>
-					<Trans comment="Screen-reader dialog title for the command palette">Command palette</Trans>
+					<Trans comment="Screen-reader dialog title for the command palette">Search and commands</Trans>
 				</DialogTitle>
 				<DialogDescription>
 					<Trans comment="Screen-reader dialog description instructing users how to use the command palette">
-						Type a command or search…
+						Search documents, applications and commands
 					</Trans>
 				</DialogDescription>
 			</DialogHeader>
 
 			<DialogContent
-				closeLabel={t`Close`}
+				data-design="pal"
+				showCloseButton={false}
 				instant
-				className="overflow-hidden p-0"
+				// 600 wide, 120 from the top; the whole screen on phones.
+				className="gap-0 overflow-hidden p-0 max-sm:top-0 max-sm:h-dvh max-sm:max-h-none max-sm:rounded-none sm:top-[120px] sm:max-w-[600px] sm:translate-y-0"
 				aria-label={
 					isFirstPage
 						? t({
 								comment: "Accessible label for the command palette dialog",
-								message: "Command palette",
+								message: "Search and commands",
 							})
 						: t({
 								comment: "Accessible label for command palette dialog when browsing a nested command page",
-								message: `Command palette: ${currentPage}`,
+								message: `Search and commands: ${currentPage}`,
 							})
 				}
 			>
@@ -124,9 +132,8 @@ export default function CommandPaletteContent() {
 					}}
 					aria-label={t({
 						comment: "Accessible label for command list region inside command palette",
-						message: "Command palette",
+						message: "Search and commands",
 					})}
-					className="[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-ink-3 **:[[cmdk-group]]:px-2 **:[[cmdk-input]]:h-12 **:[[cmdk-item]]:px-2 **:[[cmdk-item]]:py-3"
 				>
 					<CommandInput
 						ref={inputRef}
@@ -136,7 +143,7 @@ export default function CommandPaletteContent() {
 							isFirstPage
 								? t({
 										comment: "Placeholder in command palette input on root page",
-										message: "Type a command or search…",
+										message: "Search documents, applications and commands",
 									})
 								: t({
 										comment: "Placeholder in command palette input on nested pages",
@@ -145,13 +152,26 @@ export default function CommandPaletteContent() {
 						}
 						aria-label={t({
 							comment: "Accessible label for command palette search input",
-							message: "Search commands",
+							message: "Search documents, applications and commands",
 						})}
+						hint={
+							<DialogClose
+								aria-label={t`Close`}
+								className="grid min-h-8 min-w-8 place-items-center rounded-sm text-ink-2"
+							>
+								<Kbd className="max-sm:hidden">esc</Kbd>
+								<Icon name="x" className="sm:hidden" />
+							</DialogClose>
+						}
 					/>
 
-					<CommandList key={commandListPage} data-command-page={commandListPage}>
-						{/* The Ask row is always offered on the first screen once something is typed, so nothing is empty there. */}
-						{!(isFirstPage && session && search.trim()) && (
+					<CommandList
+						key={commandListPage}
+						data-command-page={commandListPage}
+						className="max-h-[min(680px,calc(100svh-236px))] max-sm:max-h-none max-sm:flex-1"
+					>
+						{/* Signed in, the first screen answers a search itself: results, then "Nothing found" with Create. */}
+						{!(isFirstPage && session && typing) && (
 							<CommandEmpty>
 								<Trans comment="Empty-state message when no command palette results match the search query">
 									No commands match that search.
@@ -159,11 +179,68 @@ export default function CommandPaletteContent() {
 							</CommandEmpty>
 						)}
 
+						{/* Typing replaces the groups with results by kind: documents, applications, commands, then Ask. */}
 						<ResumesCommandGroup />
-						<PreferencesCommandGroup />
-						<NavigationCommandGroup />
+						{isFirstPage &&
+							(typing ? (
+								<CommandGroup heading={<Trans>Commands</Trans>}>
+									<JumpItems />
+									<CreateItems />
+									<MoreItems />
+									<PreferenceItems />
+								</CommandGroup>
+							) : (
+								<>
+									<CommandGroup heading={<Trans>Jump to</Trans>}>
+										<JumpItems />
+									</CommandGroup>
+									<CommandGroup heading={<Trans>Create</Trans>}>
+										<CreateItems />
+									</CommandGroup>
+									{session && (
+										<CommandGroup heading={<Trans>Recent</Trans>}>
+											<RecentItems />
+										</CommandGroup>
+									)}
+									<CommandGroup heading={<Trans>Preferences</Trans>}>
+										<PreferenceItems />
+									</CommandGroup>
+								</>
+							))}
+						<PreferencePages />
 						<AskCommandGroup />
 					</CommandList>
+
+					{/* The keys, and the way to the full list. */}
+					<div className="flex items-center gap-4 border-t border-line px-[18px] py-2.5 text-[13px] leading-[18px] text-ink-3 max-sm:hidden">
+						<span className="inline-flex items-center gap-1.5">
+							<Kbd>
+								<Icon name="arrow-up" size={12} />
+							</Kbd>
+							<Kbd>
+								<Icon name="arrow-down" size={12} />
+							</Kbd>
+							<Trans comment="Command palette key hint: arrow keys move the selection">move</Trans>
+						</span>
+						<span className="inline-flex items-center gap-1.5">
+							<Kbd>
+								<Icon name="arrow-elbow-down-left" size={12} />
+							</Kbd>
+							<Trans comment="Command palette key hint: Enter opens the selected row">open</Trans>
+						</span>
+						<span className="inline-flex items-center gap-1.5">
+							<Kbd>esc</Kbd>
+							<Trans comment="Command palette key hint: Escape closes the palette">close</Trans>
+						</span>
+						<button
+							type="button"
+							onClick={openShortcutsFromPalette}
+							className="ms-auto inline-flex items-center gap-1.5 rounded-xs text-ink-2 hover:text-ink"
+						>
+							<Trans>All shortcuts</Trans>
+							{characterShortcuts && <Kbd>?</Kbd>}
+						</button>
+					</div>
 				</Command>
 			</DialogContent>
 		</Dialog>

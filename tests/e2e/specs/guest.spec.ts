@@ -13,6 +13,8 @@ test("keeps a guest's resume after creating an account", async ({ page, account 
 	const resumeName = await createSampleResumeFromDashboard(page, testInfo);
 
 	await registerViaUi(page, account);
+	// Signing up lands on Today; the resume is in Documents.
+	await page.goto("/dashboard/documents");
 	await expect(page.getByText(resumeName)).toBeVisible();
 	await expect(page.getByText("You're using a guest account")).toBeHidden();
 });

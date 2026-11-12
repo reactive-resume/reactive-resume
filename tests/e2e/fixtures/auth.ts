@@ -27,12 +27,12 @@ export async function loginViaUi(page: Page, account: E2EAccount, path = "/auth/
 }
 
 export async function logoutViaUi(page: Page, account: E2EAccount) {
-	// The avatar row at the foot of the sidebar opens the account menu.
+	// The account row at the foot of the sidebar opens Settings; Sign out is under its section list.
 	await page
-		.getByRole("complementary")
-		.getByRole("button", { name: new RegExp(account.name) })
+		.getByRole("navigation", { name: "Main" })
+		.getByRole("link", { name: new RegExp(account.name) })
 		.click();
-	await page.getByRole("menuitem", { name: "Sign out" }).click();
+	await page.getByRole("button", { name: "Sign out", exact: true }).first().click();
 	await page.waitForURL((url) => url.pathname === "/");
 }
 

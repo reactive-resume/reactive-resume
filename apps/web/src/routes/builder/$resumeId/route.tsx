@@ -75,7 +75,7 @@ function UnavailableResume() {
 			if (!active || notified.current) return;
 			notified.current = true;
 			toast.add({ type: "error", description: t`That resume isn't available. It may have been deleted.` });
-			void navigate({ to: "/dashboard", replace: true });
+			void navigate({ to: "/dashboard/documents", replace: true });
 		});
 		return () => {
 			active = false;

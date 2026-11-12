@@ -69,17 +69,16 @@ export function SettingsRoot() {
 					<Row icon="user-circle" label={<Trans>Account</Trans>} />
 				</Link>
 				<Link to="/dashboard/settings/profile" viewTransition={pushTransition} className={rowClass}>
-					<Row icon="clipboard-text" label={<Trans>Profile</Trans>} />
+					<Row icon="clipboard-text" label={<Trans>Application profile</Trans>} />
 				</Link>
 				<Link to="/dashboard/settings/preferences" viewTransition={pushTransition} className={rowClass}>
 					<Row icon="sliders-horizontal" label={<Trans>Preferences</Trans>} value={i18n.t(themeMap[theme])} />
 				</Link>
 				<Link to="/dashboard/settings/ai" viewTransition={pushTransition} className={rowClass}>
-					<Row
-						icon="sparkle"
-						label={<Trans>AI & developer</Trans>}
-						value={provider?.label ?? <Trans>Not set up</Trans>}
-					/>
+					<Row icon="sparkle" label={<Trans>AI</Trans>} value={provider?.label ?? <Trans>Not set up</Trans>} />
+				</Link>
+				<Link to="/dashboard/settings/developer" viewTransition={pushTransition} className={rowClass}>
+					<Row icon="code" label={<Trans>Developer</Trans>} />
 				</Link>
 			</nav>
 

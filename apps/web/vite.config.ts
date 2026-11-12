@@ -146,7 +146,7 @@ const serverPaths = [
 	"/cards",
 	// A resume's web page, `/<username>` (the primary resume) or `/<username>/<slug>`, is rendered by the server: any
 	// one- or two-segment address outside the app's own sections, without a file extension.
-	`^/(?!(?:${ownSegments})(?:/|$))[^/.]+(?:/[^/.]+)?/?(?:\\?.*)?$`,
+	`^/(?!(?:${ownSegments})(?:/|\\?|$))[^/.]+(?:/[^/.]+)?/?(?:\\?.*)?$`,
 ] as const;
 
 const serverProxy = serverPaths.reduce(

@@ -21,7 +21,6 @@ import { useDocumentHistory } from "./library-session";
 import { PageNavigation } from "./page-navigation";
 import { useDocumentRemovalMotion } from "./removal-motion";
 import { PageHeader } from "@/components/layout/page-header";
-import { TrashNav } from "@/components/layout/trash-nav";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
 
@@ -155,7 +154,7 @@ export function TrashPage() {
 			<PageHeader
 				back={
 					<Link
-						to="/dashboard"
+						to="/dashboard/documents"
 						className={buttonVariants({ variant: "ghost", size: "sm", className: "-ms-2.5 w-fit gap-1.5 text-ink-2" })}
 					>
 						<Icon name="arrow-left" size={18} />
@@ -179,7 +178,6 @@ export function TrashPage() {
 					) : undefined
 				}
 			/>
-			<TrashNav current="documents" />
 
 			{isError && <LibraryError retrying={isFetching} onRetry={() => void refetch()} />}
 

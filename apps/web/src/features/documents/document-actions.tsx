@@ -128,7 +128,7 @@ export function useDocumentActions() {
 						onClick: () => {
 							useNewDocumentsStore.getState().requestRename(id);
 							void navigate({
-								to: "/dashboard",
+								to: "/dashboard/documents",
 								search: (previous: DocumentsSearch) => ({
 									...previous,
 									q: name,

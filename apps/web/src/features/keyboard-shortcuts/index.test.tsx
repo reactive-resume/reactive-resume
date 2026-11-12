@@ -7,7 +7,7 @@ import { I18nProvider } from "@lingui/react";
 import { HotkeyManager, HotkeysProvider, useHotkey } from "@tanstack/react-hotkeys";
 import { KeyboardShortcuts } from ".";
 import { useShortcutSettings } from "./settings";
-import { useShortcutHelp } from "./store";
+import { showKeyboardShortcuts, useShortcutHelp } from "./store";
 
 beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
@@ -48,6 +48,10 @@ function Page({ editor = false, run = () => {} }: PageProps) {
 	return (
 		<>
 			<button type="button">Page control</button>
+			{/* The sidebar's Shortcuts row: the way in without a keyboard. */}
+			<button type="button" onClick={(event) => showKeyboardShortcuts(event.currentTarget)}>
+				Shortcuts
+			</button>
 			<input aria-label="Name" />
 			<textarea aria-label="Notes" />
 			<div contentEditable aria-label="Editor" />
@@ -89,7 +93,7 @@ it("lists current registration names, suspends background actions, closes with ?
 	key(editorDialog);
 	await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
 	act(() => i18n.loadAndActivate({ locale: "de", messages: { "77Emn0": "Tastenkombinationen" } }));
-	fireEvent.click(screen.getByRole("button", { name: "Tastenkombinationen" }));
+	key(control);
 	const translated = await screen.findByRole("dialog", { name: "Tastenkombinationen" });
 	expect(Array.from(translated.querySelectorAll("dt"), (element) => element.textContent)).toContain(
 		"Tastenkombinationen",
@@ -136,7 +140,7 @@ it("leaves text entry, IME, modifier chords and other overlays alone", () => {
 it("offers a non-keyboard entry and persists the off switch without disabling modifier commands", async () => {
 	const run = vi.fn();
 	render(page({ run }));
-	const trigger = screen.getByRole("button", { name: "Keyboard shortcuts" });
+	const trigger = screen.getByRole("button", { name: "Shortcuts" });
 	trigger.focus();
 	fireEvent.click(trigger);
 	await screen.findByRole("dialog");

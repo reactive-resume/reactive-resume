@@ -22,18 +22,13 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
+import { useApplicationsNeedingAttention } from "./needs-you";
 import { PrepareNow } from "./prepare-now";
 import { rollForward, ScheduleSheet, scheduleKind } from "./schedule-sheet";
 import { CollapseRow, Eyebrow, flash, InfoChip, Swap, useCareerTime, useNow, withQueryUndo } from "./shared";
 import { formatDuration, interviewKindOf } from "@/features/applications/interviews";
-import {
-	compareNextStepSortKeys,
-	describeNextStep,
-	getNextStep,
-	needsAttention,
-	nextStepSortKey,
-} from "@/features/applications/next-step";
-import { offerHintFor, savedOffersQueryOptions, useOfferHints } from "@/features/applications/queries";
+import { describeNextStep } from "@/features/applications/next-step";
+import { savedOffersQueryOptions } from "@/features/applications/queries";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useSaveTimezone } from "@/features/settings/use-save-timezone";
 import { toastError } from "@/libs/error-message";
@@ -181,9 +176,8 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	const dayOffset = useDayOffset();
 	const queryKey = orpc.career.notifications.queryKey({ input: {} });
 	const { data, isError, refetch } = useQuery(orpc.career.notifications.queryOptions({ input: {} }));
-	const applicationQuery = useQuery(applicationsListQueryOptions());
+	const { query: applicationQuery, attention } = useApplicationsNeedingAttention(now);
 	const applications = applicationQuery.data;
-	const hints = useOfferHints();
 	const [showRead, setShowRead] = useState(false);
 	const [pending, setPending] = useState<string[]>([]);
 	const setReadAt = (id: string, readAt: Date | null) =>
@@ -193,15 +187,6 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	const unread = data?.filter(isUnread) ?? [];
 	const read = data?.filter((row) => !isUnread(row)) ?? [];
 	const rows = showRead ? (data ?? []).filter((row) => !pending.includes(row.id)) : unread;
-	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
-	const attention = (applications ?? [])
-		.flatMap((application) => {
-			const step = getNextStep(application, now, timeZone, offerHintFor(hints, application.id));
-			return needsAttention(step, now)
-				? [{ application, step, key: nextStepSortKey(application, now, timeZone, offerHintFor(hints, application.id)) }]
-				: [];
-		})
-		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.application.id, b.application.id));
 
 	// Hidden at once; the server hears about it when the toast closes. The cache edit drops the sidebar count too,
 	// while `pending` keeps the row hidden through any refetch.

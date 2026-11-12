@@ -14,7 +14,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import { createRootRouteWithContext, HeadContent, Outlet, redirect, useMatch } from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Outlet, redirect } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { LazyMotion, MotionConfig } from "motion/react";
 import { useEffect } from "react";
@@ -71,7 +71,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootComponent() {
 	const { theme, locale, queryClient, session } = Route.useRouteContext();
 	const dir = isRTL(locale) ? "rtl" : "ltr";
-	const onMarketingPage = useMatch({ from: "/_home", shouldThrow: false }) !== undefined;
 
 	// WebMCP: browser agents can list and open the signed-in user's documents from any page.
 	useDocumentWebMcpTools(session !== null);
@@ -102,7 +101,7 @@ function RootComponent() {
 
 													<DialogManager />
 													<CommandPalette />
-													<KeyboardShortcuts showTrigger={!onMarketingPage} />
+													<KeyboardShortcuts />
 													<LocalizedToaster />
 
 													{import.meta.env.DEV && <BreakpointIndicator />}

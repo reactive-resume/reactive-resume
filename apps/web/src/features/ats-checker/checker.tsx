@@ -614,14 +614,14 @@ function StartInstead({ signedIn }: { signedIn: boolean }) {
 			<Button
 				className="h-10"
 				loading={creating}
-				onClick={() => (signedIn ? void startBlank() : signUp("/dashboard?new=resume"))}
+				onClick={() => (signedIn ? void startBlank() : signUp("/dashboard/documents?new=resume"))}
 			>
 				<Trans>Start a blank resume</Trans>
 			</Button>
 			<Button
 				variant="secondary"
 				className="h-10"
-				onClick={() => (signedIn ? void navigate({ to: "/dashboard" }) : signUp("/dashboard"))}
+				onClick={() => (signedIn ? void navigate({ to: "/dashboard/documents" }) : signUp("/dashboard/documents"))}
 			>
 				<Trans>Import a Word file instead</Trans>
 			</Button>

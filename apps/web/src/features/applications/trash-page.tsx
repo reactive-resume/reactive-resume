@@ -7,7 +7,6 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { PageHeader } from "@/components/layout/page-header";
-import { TrashNav } from "@/components/layout/trash-nav";
 import { LibraryError } from "@/features/documents/library-error";
 import { PageNavigation } from "@/features/documents/page-navigation";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -61,7 +60,6 @@ export function ApplicationTrashPage() {
 				title={<Trans>Trash</Trans>}
 				description={<Trans>Applications stay in Trash until you delete them permanently.</Trans>}
 			/>
-			<TrashNav current="applications" />
 			{list.isError ? (
 				<LibraryError retrying={list.isFetching} onRetry={() => void list.refetch()} />
 			) : list.isPending ? (

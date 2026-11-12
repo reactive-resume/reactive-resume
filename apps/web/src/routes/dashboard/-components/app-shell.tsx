@@ -1,16 +1,15 @@
 import type { NewDocumentContext } from "@/features/documents/new-document-dialog";
 import type { IconName } from "@reactive-resume/ui/components/icon";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useMatchRoute, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useMatchRoute, useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
-import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { ariaShortcut, formatShortcut, Kbd } from "@reactive-resume/ui/components/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
@@ -18,33 +17,41 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
+import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
 import { useDialogStore } from "@/dialogs/store";
 import { GuestBanner } from "@/features/auth/components/guest-banner";
+import { useNeedsYouCount } from "@/features/career/needs-you";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
 import { DocumentLibraryProvider } from "@/features/documents/library-session";
 import { shortcutOverlayOpen } from "@/features/keyboard-shortcuts/blocking";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
+import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
-import { UserDropdownMenu } from "@/features/user/dropdown-menu";
+import { trashedApplicationsQueryOptions } from "@/features/trash/queries";
 import { orpc } from "@/libs/orpc/client";
 
 type NavItem = {
-	to: "/dashboard" | "/dashboard/applications" | "/dashboard/career" | "/dashboard/trash" | "/dashboard/settings";
+	to: "/dashboard" | "/dashboard/documents" | "/dashboard/applications" | "/dashboard/career" | "/dashboard/trash";
 	icon: IconName;
 	label: string;
+	/** A quiet number at the end of the row. */
 	count?: number;
+	/** A warn badge instead: something here is waiting for the user. */
+	badge?: number;
 };
 
+/** The four places, then Trash. Counts appear once loaded; a zero shows nothing. */
 function useNavItems() {
-	const matchRoute = useMatchRoute();
+	const needsYou = useNeedsYouCount();
 	const { data: counts } = useQuery(orpc.documents.counts.queryOptions());
 	const { data: applicationStats } = useQuery(orpc.applications.stats.queryOptions({}));
-	const { data: notifications } = useQuery(orpc.career.notifications.queryOptions({ input: {} }));
+	const { data: trashedApplications } = useQuery(trashedApplicationsQueryOptions());
 
 	const items: NavItem[] = [
+		{ to: "/dashboard", icon: "house-simple", label: t`Today`, ...(needsYou ? { badge: needsYou } : {}) },
 		{
-			to: "/dashboard",
-			icon: "file-text",
+			to: "/dashboard/documents",
+			icon: "files",
 			label: t`Documents`,
 			...(counts ? { count: counts.resume + counts.letter } : {}),
 		},
@@ -60,22 +67,20 @@ function useNavItems() {
 					}
 				: {}),
 		},
+		{ to: "/dashboard/career", icon: "compass", label: t`Career` },
 	];
-	const unread = notifications?.filter((notification) => !notification.readAt).length ?? 0;
-	// Career counts what's waiting for the user (unread notifications), so nothing shows at zero.
-	items.push({ to: "/dashboard/career", icon: "compass", label: t`Career`, ...(unread ? { count: unread } : {}) });
-	const settings: NavItem = { to: "/dashboard/settings", icon: "gear-six", label: t`Settings` };
-	// Trash shows while it holds something, and stays while it's open, even once its last document is restored.
-	const inTrash = Boolean(matchRoute({ to: "/dashboard/trash" }));
-	const trash: NavItem | null =
-		counts?.trash || inTrash
-			? { to: "/dashboard/trash", icon: "trash", label: t`Trash`, ...(counts?.trash ? { count: counts.trash } : {}) }
-			: null;
+	// Always shown; documents and applications share it.
+	const trash: NavItem = {
+		to: "/dashboard/trash",
+		icon: "trash",
+		label: t`Trash`,
+		count: (counts?.trash ?? 0) + (trashedApplications?.total ?? 0),
+	};
 
-	return { items, settings, trash };
+	return { items, trash };
 }
 
-/** Whether the item is the current page: Documents is exact, the others match their section. */
+/** Whether the item is the current page: Today is exact, the others match their section. */
 function useIsCurrent() {
 	const matchRoute = useMatchRoute();
 	return (to: NavItem["to"]) => Boolean(matchRoute({ to, fuzzy: to !== "/dashboard" }));
@@ -89,7 +94,10 @@ type ApplicationsSearch = {
 	applicationId?: string;
 };
 
-/** New follows the section: Applications saves a job, Letters starts a letter, and the rest offers every object. */
+/**
+ * N follows the section: Applications saves a job, Letters starts a letter, and the rest offers every object. The
+ * sidebar has no New button; each page owns its one primary action.
+ */
 function useNewAction() {
 	const navigate = useNavigate();
 	const matchRoute = useMatchRoute();
@@ -123,9 +131,9 @@ function useNewAction() {
 }
 
 /**
- * The app shell for Documents, Trash, Applications and Settings: a 240px sidebar at ≥1024, an icon rail at
- * 640–1023 and a bottom tab bar below 640. An application's workspace is full screen on phones, with its own back
- * link and action bar, so it has no tab bar. N opens New anywhere outside a field.
+ * The app shell for every dashboard page: a 248px sidebar at ≥1024, a 64px icon rail at 640–1023 and a 64px tab
+ * bar below 640. An application's workspace is full screen on phones, with its own back link and action bar, so it
+ * has no tab bar. N opens New anywhere outside a field.
  */
 type AppShellProps = { children: ReactNode };
 
@@ -153,11 +161,12 @@ export function AppShell({ children }: AppShellProps) {
 				"grid min-h-svh bg-bg",
 				breakpoint === "mobile"
 					? tabs
-						? "grid-rows-[minmax(0,1fr)_auto]"
+						? // The bar's height, for anything a page pins above it.
+							"grid-rows-[minmax(0,1fr)_auto] [--app-tabbar:calc(65px+env(safe-area-inset-bottom))]"
 						: ""
 					: breakpoint === "tablet"
 						? "grid-cols-[64px_minmax(0,1fr)]"
-						: "grid-cols-[240px_minmax(0,1fr)]",
+						: "grid-cols-[var(--app-sidebar)_minmax(0,1fr)]",
 			)}
 		>
 			<a
@@ -167,8 +176,15 @@ export function AppShell({ children }: AppShellProps) {
 				<Trans>Skip to main content</Trans>
 			</a>
 			{breakpoint !== "mobile" && (breakpoint === "tablet" ? <Rail /> : <Sidebar />)}
-			<main id="main-content" className="min-w-0">
+			<main id="main-content" data-design="main" className="group/main flex min-w-0 flex-col">
 				<GuestBanner />
+				{/* calm: remove once every page with tabs places PhoneHeaderActions in its own header. */}
+				{tabs && (
+					<PhoneHeaderActions
+						fallback
+						className="me-1.5 h-12 justify-end group-has-[[data-phone-header-actions=page]]/main:hidden"
+					/>
+				)}
 				<DocumentLibraryProvider>{children}</DocumentLibraryProvider>
 			</main>
 			{tabs && <MobileTabs />}
@@ -176,84 +192,83 @@ export function AppShell({ children }: AppShellProps) {
 	);
 }
 
+const count = "ms-auto font-mono text-xs font-medium";
+const badge =
+	"h-[18px] min-w-[18px] rounded-full bg-warn px-[5px] text-center font-mono text-[11px] leading-[18px] font-semibold text-warn-ink";
+// The label is the row's own text, so a long one is clipped rather than wrapped.
+const row =
+	"flex h-10 items-center gap-3 overflow-hidden rounded-md px-2.5 text-start text-sm font-medium whitespace-nowrap transition-[background-color,color,scale] duration-quick ease-enter active:scale-[0.97]";
+const idle = "text-ink-2 hover:bg-hover hover:text-ink";
+
 function Sidebar() {
+	const { t } = useLingui();
+	const { session } = useRouteContext({ from: "/dashboard" });
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
-	const { items, settings, trash } = useNavItems();
+	const { items, trash } = useNavItems();
 	const isCurrent = useIsCurrent();
+	const matchRoute = useMatchRoute();
 	const openPalette = useCommandPaletteStore((state) => state.setOpen);
-	const openNew = useNewAction();
 
 	return (
-		<aside
-			aria-label={t`App navigation`}
-			className="sticky top-0 flex h-svh flex-col gap-3 border-e border-line bg-surface p-3 [view-transition-name:app-nav]"
+		<nav
+			data-design="side"
+			aria-label={t`Main`}
+			className="sticky top-0 flex h-svh flex-col gap-1 border-e border-line bg-bg px-3 pt-4 pb-3 [view-transition-name:app-nav]"
 		>
-			<Link to="/" className="flex h-9 items-center gap-2.5 px-1.5">
+			<Link to="/" className="mb-2 flex h-9 items-center gap-2.5 px-2 text-[15px] leading-5 font-semibold">
 				<BrandIcon variant="icon" alt="" className="size-6 shrink-0" />
-				<span className="text-sm font-semibold">Reactive Resume</span>
+				Reactive Resume
 			</Link>
 
 			<button
 				type="button"
-				aria-label={t`Search or run a command…`}
+				data-design="srch"
 				aria-keyshortcuts={ariaShortcut("⌘K")}
 				onClick={() => openPalette(true)}
-				className="flex h-[34px] items-center gap-2 rounded-lg border border-line bg-bg px-2.5 text-sm text-ink-3 transition-colors duration-quick hover:text-ink-2"
+				className="mb-3 flex h-9 items-center gap-2 overflow-hidden rounded-md bg-sunken ps-2.5 pe-2 text-start text-sm whitespace-nowrap text-ink-3 transition-colors duration-quick hover:text-ink-2"
 			>
 				<Icon name="magnifying-glass" size={18} />
-				<span className="flex-1 text-start">
-					<Trans>Search</Trans>
-				</span>
-				<Kbd>{formatShortcut("⌘K")}</Kbd>
+				<Trans>Search or jump to…</Trans>
+				<Kbd className="ms-auto bg-bg">{formatShortcut("⌘K")}</Kbd>
 			</button>
 
-			<nav aria-label={t`App`} className="grid gap-0.5">
-				{items.map((item) => (
-					<NavLink key={item.to} item={item} current={isCurrent(item.to)} />
-				))}
-				<div className="mt-2 border-t border-line pt-2">
-					<NavLink item={settings} current={isCurrent(settings.to)} />
-				</div>
-			</nav>
+			{items.map((item) => (
+				<NavLink key={item.to} item={item} current={isCurrent(item.to)} />
+			))}
 
-			<div className="mt-auto grid gap-2">
-				{trash && <NavLink item={trash} current={isCurrent(trash.to)} />}
-				{/* Secondary, so each view's own primary action is the one accent button on screen. */}
-				<Button
-					data-document-new-trigger=""
-					variant="secondary"
-					aria-label={t`New`}
-					aria-keyshortcuts={characterShortcuts ? "N" : undefined}
-					className="h-9 justify-between"
-					onClick={openNew}
-				>
-					<span className="flex items-center gap-1.5">
-						<Icon name="plus" />
-						<Trans>New</Trans>
+			<div className="flex-1" />
+
+			<NavLink item={trash} current={isCurrent(trash.to)} />
+			<button
+				type="button"
+				id="keyboard-shortcuts-trigger"
+				aria-keyshortcuts={characterShortcuts ? "?" : undefined}
+				onClick={(event) => showKeyboardShortcuts(event.currentTarget)}
+				className={cn(row, idle)}
+			>
+				<Icon name="keyboard" />
+				<Trans>Shortcuts</Trans>
+				{characterShortcuts && <Kbd>?</Kbd>}
+			</button>
+			<Link
+				to="/dashboard/settings"
+				data-design="acct"
+				aria-current={matchRoute({ to: "/dashboard/settings", fuzzy: true }) ? "page" : undefined}
+				className="mt-1 flex h-12 items-center gap-2.5 rounded-md px-2 transition-colors duration-quick hover:bg-hover aria-[current=page]:bg-hover"
+			>
+				<Avatar className="after:hidden">
+					<AvatarImage src={session.user.image ?? undefined} alt="" />
+					<AvatarFallback className="bg-accent-soft text-accent-text">{getInitials(session.user.name)}</AvatarFallback>
+				</Avatar>
+				<span className="flex min-w-0 flex-1 flex-col">
+					<span className="truncate text-sm leading-[18px] font-medium">{session.user.name}</span>
+					<span className="text-xs leading-4 text-ink-3">
+						<Trans>Settings</Trans>
 					</span>
-					{characterShortcuts && <Kbd>N</Kbd>}
-				</Button>
-				<UserDropdownMenu>
-					{({ session }) => (
-						<button
-							type="button"
-							className="flex h-11 items-center gap-2.5 rounded-lg px-1.5 text-start transition-colors duration-quick hover:bg-hover"
-						>
-							<Avatar className="size-7">
-								<AvatarImage src={session.user.image ?? undefined} />
-								<AvatarFallback>{getInitials(session.user.name)}</AvatarFallback>
-							</Avatar>
-							<span className="grid min-w-0">
-								<span className="truncate text-sm font-medium">{session.user.name}</span>
-								<span className="text-xs text-ink-3">
-									<Trans>Account</Trans>
-								</span>
-							</span>
-						</button>
-					)}
-				</UserDropdownMenu>
-			</div>
-		</aside>
+				</span>
+				<Icon name="gear-six" size={18} className="text-ink-3" />
+			</Link>
+		</nav>
 	);
 }
 
@@ -262,162 +277,167 @@ function NavLink({ item, current }: { item: NavItem; current: boolean }) {
 		<Link
 			to={item.to}
 			aria-current={current ? "page" : undefined}
-			className={cn(
-				"flex h-[34px] items-center gap-2.5 rounded-lg px-2.5 text-sm transition-[background-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
-				current ? "bg-sunken font-medium text-ink" : "text-ink-2 hover:bg-hover hover:text-ink",
-			)}
+			className={cn(row, current ? "bg-accent-soft text-accent-text" : idle)}
 		>
 			<Icon name={item.icon} filled={current} />
-			<span className="flex-1">{item.label}</span>
-			{item.count ? <span className="font-mono text-xs text-ink-3">{i18n.number(item.count)}</span> : null}
+			{item.label}
+			{item.badge ? (
+				<span className={cn(badge, "ms-auto")}>{i18n.number(item.badge)}</span>
+			) : item.count ? (
+				<span className={cn(count, !current && "text-ink-3")}>{i18n.number(item.count)}</span>
+			) : null}
 		</Link>
 	);
 }
 
-/** Tablets: the same destinations as icons, with their names in tooltips. */
+const railButton =
+	"relative grid size-10 place-items-center rounded-md transition-[background-color,color,scale] duration-quick ease-enter active:scale-[0.97]";
+
+/** Tablets: the same places as icons, with their names (and counts) in tooltips. */
 function Rail() {
-	const { items, settings, trash } = useNavItems();
+	const { t } = useLingui();
+	const { session } = useRouteContext({ from: "/dashboard" });
+	const { items, trash } = useNavItems();
 	const isCurrent = useIsCurrent();
 	const openPalette = useCommandPaletteStore((state) => state.setOpen);
-	const openNew = useNewAction();
 
-	return (
-		<aside
-			aria-label={t`App navigation`}
-			className="sticky top-0 flex h-svh flex-col items-center gap-2 border-e border-line bg-surface py-3 [view-transition-name:app-nav]"
-		>
-			<Link to="/" aria-label="Reactive Resume" className="mb-1 grid size-8 place-items-center rounded-md">
-				<BrandIcon variant="icon" alt="" className="size-6" />
-			</Link>
-			<RailTip label={t`Search`} icon="magnifying-glass">
-				<button
-					type="button"
-					aria-label={t`Search or run a command…`}
-					onClick={() => openPalette(true)}
-					className="grid size-10 place-items-center rounded-lg text-ink-2 transition-[background-color,scale] duration-quick ease-enter hover:bg-hover active:scale-[0.97]"
+	const place = (item: NavItem) => {
+		const current = isCurrent(item.to);
+		return (
+			<RailTip
+				key={item.to}
+				label={item.label}
+				icon={item.icon}
+				filled={current}
+				count={item.count}
+				waiting={item.badge}
+			>
+				<Link
+					to={item.to}
+					aria-label={item.label}
+					aria-current={current ? "page" : undefined}
+					className={cn(railButton, current ? "bg-accent-soft text-accent-text" : idle)}
 				/>
 			</RailTip>
-			<nav aria-label={t`App`} className="grid gap-1">
-				{[...items, settings].map((item) => (
-					<RailTip key={item.to} label={item.label} icon={item.icon} filled={isCurrent(item.to)}>
-						<Link
-							to={item.to}
-							aria-label={item.label}
-							aria-current={isCurrent(item.to) ? "page" : undefined}
-							className={cn(
-								"grid size-10 place-items-center rounded-lg transition-[background-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
-								isCurrent(item.to) ? "bg-sunken text-ink" : "text-ink-2 hover:bg-hover",
-							)}
-						/>
-					</RailTip>
-				))}
-			</nav>
-			<div className="mt-auto grid justify-items-center gap-2">
-				{trash && (
-					<RailTip label={trash.label} icon={trash.icon}>
-						<Link
-							to={trash.to}
-							aria-label={t`Trash`}
-							className="grid size-10 place-items-center rounded-lg text-ink-2 transition-[background-color,scale] duration-quick ease-enter hover:bg-hover active:scale-[0.97]"
-						/>
-					</RailTip>
-				)}
-				<RailTip label={t`New`} icon="plus">
-					<Button data-document-new-trigger="" size="icon" aria-label={t`New`} onClick={openNew} />
-				</RailTip>
-				<UserDropdownMenu>
-					{({ session }) => (
-						<button type="button" aria-label={t`Account`} className="rounded-sm">
-							<Avatar className="size-8">
-								<AvatarImage src={session.user.image ?? undefined} />
-								<AvatarFallback>{getInitials(session.user.name)}</AvatarFallback>
-							</Avatar>
-						</button>
-					)}
-				</UserDropdownMenu>
-			</div>
-		</aside>
-	);
-}
-
-/** A rail button: its icon inside the given trigger, and its name in a tooltip. */
-function RailTip({
-	label,
-	icon,
-	filled = false,
-	children,
-}: {
-	label: string;
-	icon: IconName;
-	filled?: boolean;
-	children: React.ReactElement;
-}) {
-	return (
-		<Tooltip>
-			<TooltipTrigger render={children}>
-				<Icon name={icon} filled={filled} />
-			</TooltipTrigger>
-			<TooltipContent side="right">{label}</TooltipContent>
-		</Tooltip>
-	);
-}
-
-/** Phones: Documents · Applications · New · Career · Settings, with New as an accent pill in the middle. */
-function MobileTabs() {
-	const isCurrent = useIsCurrent();
-	const openNew = useNewAction();
-	const tabs: Pick<NavItem, "to" | "icon" | "label">[] = [
-		{ to: "/dashboard", icon: "file-text", label: t`Documents` },
-		{ to: "/dashboard/applications", icon: "briefcase", label: t`Applications` },
-		{ to: "/dashboard/career", icon: "compass", label: t`Career` },
-		{ to: "/dashboard/settings", icon: "gear-six", label: t`Settings` },
-	];
-
-	const link = ({ to, icon, label }: (typeof tabs)[number]) => {
-		const current = isCurrent(to);
-
-		return (
-			<Link
-				key={to}
-				to={to}
-				aria-current={current ? "page" : undefined}
-				viewTransition={false}
-				className="relative flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
-			>
-				{current && <MobileTabIndicator />}
-				<Icon name={icon} size={24} filled={current} />
-				<span
-					className={cn(
-						"text-center text-xs [overflow-wrap:anywhere]",
-						current ? "font-semibold text-ink" : "text-ink-2",
-					)}
-				>
-					{label}
-				</span>
-			</Link>
 		);
 	};
 
 	return (
 		<nav
-			aria-label={t`App`}
-			className="sticky bottom-0 z-30 grid grid-cols-5 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] [view-transition-name:app-nav]"
+			data-design="side"
+			aria-label={t`Main`}
+			className="sticky top-0 flex h-svh flex-col items-center gap-1 border-e border-line bg-bg pt-4 pb-3 [view-transition-name:app-nav]"
 		>
-			{tabs.slice(0, 2).map(link)}
-			<button
-				type="button"
-				data-document-new-trigger=""
-				onClick={openNew}
-				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
-			>
-				<span className="grid h-[26px] w-[34px] place-items-center rounded-sm bg-accent text-on-accent">
-					<Icon name="plus" size={20} />
-				</span>
-				<span className="text-center text-xs [overflow-wrap:anywhere] text-ink-2">
-					<Trans>New</Trans>
-				</span>
-			</button>
-			{tabs.slice(2).map(link)}
+			<Link to="/" aria-label="Reactive Resume" className="mb-2 grid size-9 place-items-center rounded-md">
+				<BrandIcon variant="icon" alt="" className="size-6" />
+			</Link>
+			<RailTip label={t`Search or jump to…`} icon="magnifying-glass">
+				<button
+					type="button"
+					data-design="srch"
+					aria-label={t`Search or jump to…`}
+					onClick={() => openPalette(true)}
+					className={cn(railButton, idle, "mb-1")}
+				/>
+			</RailTip>
+			{items.map(place)}
+			<div className="flex-1" />
+			{place(trash)}
+			<RailTip label={t`Shortcuts`} icon="keyboard">
+				<button
+					type="button"
+					id="keyboard-shortcuts-trigger"
+					aria-label={t`Shortcuts`}
+					onClick={(event) => showKeyboardShortcuts(event.currentTarget)}
+					className={cn(railButton, idle)}
+				/>
+			</RailTip>
+			<Tooltip>
+				<TooltipTrigger
+					render={
+						<Link
+							to="/dashboard/settings"
+							data-design="acct"
+							aria-label={t`Settings`}
+							className="mt-1 grid size-10 place-items-center rounded-md"
+						/>
+					}
+				>
+					<Avatar className="after:hidden">
+						<AvatarImage src={session.user.image ?? undefined} alt="" />
+						<AvatarFallback className="bg-accent-soft text-accent-text">
+							{getInitials(session.user.name)}
+						</AvatarFallback>
+					</Avatar>
+				</TooltipTrigger>
+				<TooltipContent side="right">
+					<Trans>Settings</Trans>
+				</TooltipContent>
+			</Tooltip>
+		</nav>
+	);
+}
+
+type RailTipProps = {
+	label: string;
+	icon: IconName;
+	filled?: boolean;
+	/** Said in the tooltip after the name. */
+	count?: number | undefined;
+	/** Drawn on the icon's corner. */
+	waiting?: number | undefined;
+	children: ReactElement;
+};
+
+/** A rail button: its icon inside the given trigger, and its name in a tooltip. */
+function RailTip({ label, icon, filled = false, count: value, waiting, children }: RailTipProps) {
+	return (
+		<Tooltip>
+			<TooltipTrigger render={children}>
+				<Icon name={icon} filled={filled} />
+				{waiting ? <span className={cn(badge, "absolute -end-1 -top-1")}>{i18n.number(waiting)}</span> : null}
+			</TooltipTrigger>
+			<TooltipContent side="right">
+				{label}
+				{value ? <span className="ms-2 font-mono text-xs opacity-70">{i18n.number(value)}</span> : null}
+			</TooltipContent>
+		</Tooltip>
+	);
+}
+
+/** Phones: Today · Documents · Applications · Career. Search and the account are in each page's header. */
+function MobileTabs() {
+	const { t } = useLingui();
+	const { items } = useNavItems();
+	const isCurrent = useIsCurrent();
+
+	return (
+		<nav
+			aria-label={t`Main`}
+			className="sticky bottom-0 z-30 grid grid-cols-4 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] [view-transition-name:app-nav]"
+		>
+			{items.map(({ to, icon, label, badge: waiting }) => {
+				const current = isCurrent(to);
+				return (
+					<Link
+						key={to}
+						to={to}
+						aria-current={current ? "page" : undefined}
+						viewTransition={false}
+						className={cn(
+							"relative flex min-h-16 min-w-0 flex-col items-center justify-center gap-0.5 text-center text-xs [overflow-wrap:anywhere] transition-[scale] duration-quick ease-enter active:scale-[0.97]",
+							current ? "font-semibold text-accent-text" : "font-medium text-ink-2",
+						)}
+					>
+						{current && <MobileTabIndicator />}
+						<Icon name={icon} size={24} filled={current} />
+						{label}
+						{waiting ? (
+							<span className={cn(badge, "absolute start-[calc(50%+7px)] top-1.5")}>{i18n.number(waiting)}</span>
+						) : null}
+					</Link>
+				);
+			})}
 		</nav>
 	);
 }

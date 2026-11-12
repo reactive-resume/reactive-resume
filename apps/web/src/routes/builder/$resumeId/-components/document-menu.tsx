@@ -230,7 +230,7 @@ function DocumentMenuItems({ onOpenDialog, onHelp }: DocumentMenuItemsProps) {
 			{ type: "resume", id },
 			{
 				onSuccess: () => {
-					void navigate({ to: "/dashboard" });
+					void navigate({ to: "/dashboard/documents" });
 					toast.add({
 						description: t`“${ph({ name: isolate(name) })}” moved to Trash`,
 						actionProps: {

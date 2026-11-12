@@ -62,7 +62,7 @@ function UnavailableConversation() {
 					? t`That conversation's document was deleted.`
 					: t`That conversation isn't available. It may have been deleted.`,
 			});
-			void navigate({ to: "/dashboard", replace: true });
+			void navigate({ to: "/dashboard/documents", replace: true });
 		});
 		return () => {
 			active = false;

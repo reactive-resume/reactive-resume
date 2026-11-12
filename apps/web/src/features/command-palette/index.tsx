@@ -13,7 +13,7 @@ export function CommandPalette() {
 	useHotkeys([
 		{
 			hotkey: "Mod+K",
-			options: { meta: { name: t`Command palette` }, requireReset: true },
+			options: { meta: { name: t`Search or jump` }, requireReset: true },
 			callback: () => setOpen(!open),
 		},
 	]);

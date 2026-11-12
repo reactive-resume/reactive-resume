@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-// Settings became three pages in 6.0; the old address redirects (through 6.0.x).
+// API keys live under Developer now; the old address (the dsh plugin documents it) keeps working.
 export const Route = createFileRoute("/dashboard/settings/api-keys")({
 	beforeLoad: () => {
-		throw redirect({ to: "/dashboard/settings/ai", hash: "api-keys", replace: true });
+		throw redirect({ to: "/dashboard/settings/developer", hash: "api-keys", replace: true });
 	},
 });

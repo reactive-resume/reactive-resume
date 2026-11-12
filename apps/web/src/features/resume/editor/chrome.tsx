@@ -288,7 +288,7 @@ export function BackLink() {
 			<TooltipTrigger
 				render={
 					<Link
-						to={application ? "/dashboard/applications" : "/dashboard"}
+						to={application ? "/dashboard/applications" : "/dashboard/documents"}
 						search={application ? { applicationId: application.id } : {}}
 						aria-label={label}
 						className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}

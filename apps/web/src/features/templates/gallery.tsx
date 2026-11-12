@@ -104,7 +104,7 @@ export function TemplateGallery() {
 										{/* Signed out, through sign-up; signed in, straight to a blank resume in this template. */}
 										<Link
 											to="/auth/register"
-											search={{ callbackURL: `/dashboard?new=resume&template=${id}` }}
+											search={{ callbackURL: `/dashboard/documents?new=resume&template=${id}` }}
 											className={cn(linkClass, "inline-flex min-h-11 items-center text-sm font-semibold")}
 											aria-label={t`Use the ${name} template`}
 										>

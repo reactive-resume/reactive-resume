@@ -1,219 +1,277 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useNavigate, useRouteContext } from "@tanstack/react-router";
-import { CommandItem } from "@reactive-resume/ui/components/command";
+import { useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
+import { CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { useCommandPaletteStore } from "../store";
-import { BaseCommandGroup } from "./base";
 import { useDialogStore } from "@/dialogs/store";
 import { useStartDocument } from "@/features/documents/use-start-document";
+import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 
-export function NavigationCommandGroup() {
+function useGo() {
 	const navigate = useNavigate();
-	const { session } = useRouteContext({ strict: false });
 	const reset = useCommandPaletteStore((state) => state.reset);
-	const pushPage = useCommandPaletteStore((state) => state.pushPage);
-	const { newLetter, creating } = useStartDocument();
-
-	const onNavigate = async (path: string) => {
+	return async (path: string) => {
 		await navigate({ to: path });
 		reset();
 	};
+}
+
+/** Jump to: the sidebar's own places, by the sidebar's own names. */
+export function JumpItems() {
+	const go = useGo();
+	const { session } = useRouteContext({ strict: false });
 
 	return (
 		<>
-			<BaseCommandGroup heading={<Trans>Go to…</Trans>}>
-				<CommandItem
-					disabled={!session}
-					keywords={[t`AI`, t`AI providers`, t`Web access`, t`API keys`]}
-					value="navigation.ai"
-					onSelect={() => onNavigate("/dashboard/settings/ai")}
-				>
-					<Icon name="key" size={16} />
-					<Trans>AI &amp; developer</Trans>
-				</CommandItem>
-				<CommandItem keywords={[t`Home`]} value="navigation.home" onSelect={() => onNavigate("/")}>
-					<Icon name="house" size={16} />
-					<Trans>Home</Trans>
-				</CommandItem>
+			<CommandItem
+				disabled={!session}
+				keywords={[t`Today`, t`Needs you`, t`Home`]}
+				value="navigation.today"
+				onSelect={() => go("/dashboard")}
+			>
+				<Icon name="house-simple" />
+				<Trans>Today</Trans>
+			</CommandItem>
+			<CommandItem
+				disabled={!session}
+				keywords={[t`Documents`, t`Resumes`, t`Cover letters`]}
+				value="navigation.documents"
+				onSelect={() => go("/dashboard/documents")}
+			>
+				<Icon name="files" />
+				<Trans>Documents</Trans>
+			</CommandItem>
+			<CommandItem
+				disabled={!session}
+				keywords={[t`Applications`, t`Jobs`]}
+				value="navigation.applications"
+				onSelect={() => go("/dashboard/applications")}
+			>
+				<Icon name="briefcase" />
+				<Trans>Applications</Trans>
+			</CommandItem>
+			<CommandItem
+				disabled={!session}
+				keywords={[t`Career`, t`Coach`, t`Knowledge`, t`Offers`]}
+				value="navigation.career"
+				onSelect={() => go("/dashboard/career")}
+			>
+				<Icon name="compass" />
+				<Trans>Career</Trans>
+			</CommandItem>
+			<CommandItem
+				disabled={!session}
+				keywords={[t`Trash`, t`Deleted`]}
+				value="navigation.trash"
+				onSelect={() => go("/dashboard/trash")}
+			>
+				<Icon name="trash" />
+				<Trans>Trash</Trans>
+			</CommandItem>
+			<CommandItem
+				disabled={!session}
+				keywords={[t`Settings`, t`Account`]}
+				value="navigation.settings"
+				onSelect={() => go("/dashboard/settings")}
+			>
+				<Icon name="gear-six" />
+				<Trans>Settings</Trans>
+			</CommandItem>
+		</>
+	);
+}
 
-				<CommandItem
-					disabled={!session}
-					keywords={[t`Documents`, t`Resumes`, t`Cover letters`]}
-					value="navigation.documents"
-					onSelect={() => onNavigate("/dashboard")}
-				>
-					<Icon name="file-text" size={16} />
-					<Trans>Documents</Trans>
-				</CommandItem>
+/** Create: a resume (the New document dialog), a cover letter, a saved job. `forceMount` keeps them through a search. */
+export function CreateItems({ forceMount = false }: { forceMount?: boolean }) {
+	const navigate = useNavigate();
+	const { session } = useRouteContext({ strict: false });
+	const reset = useCommandPaletteStore((state) => state.reset);
+	const { newLetter, creating } = useStartDocument();
+	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
+	// N opens whichever of these the current section's New is.
+	const inApplications = useRouterState({
+		select: (state) => state.location.pathname.startsWith("/dashboard/applications"),
+	});
+	const hint = (shown: boolean) =>
+		shown && characterShortcuts ? (
+			<CommandShortcut>
+				<Kbd>N</Kbd>
+			</CommandShortcut>
+		) : null;
 
-				<CommandItem
-					disabled={!session}
-					keywords={[t`New document`, t`Create`, t`Import`]}
-					value="navigation.documents.new"
-					onSelect={() => {
-						reset();
-						useDialogStore.getState().openDialog("document.new", undefined);
-					}}
-				>
-					<Icon name="plus" size={16} />
-					<Trans>New document</Trans>
-				</CommandItem>
+	return (
+		<>
+			<CommandItem
+				forceMount={forceMount}
+				disabled={!session}
+				keywords={[t`New document`, t`Create`, t`Import`, t`Resume`]}
+				value="navigation.documents.new"
+				onSelect={() => {
+					reset();
+					useDialogStore.getState().openDialog("document.new", undefined);
+				}}
+			>
+				<Icon name="file-text" />
+				<Trans>New resume</Trans>
+				{hint(!inApplications)}
+			</CommandItem>
+			<CommandItem
+				forceMount={forceMount}
+				disabled={!session || creating}
+				keywords={[t`Cover letter`, t`Letter`, t`Create`]}
+				value="navigation.letters.new"
+				onSelect={() => {
+					reset();
+					void newLetter();
+				}}
+			>
+				<Icon name="envelope-simple" />
+				<Trans>New cover letter</Trans>
+			</CommandItem>
+			<CommandItem
+				forceMount={forceMount}
+				disabled={!session}
+				keywords={[t`Save job`, t`New application`, t`Add application`, t`Job`]}
+				value="navigation.applications.new"
+				onSelect={async () => {
+					await navigate({ to: "/dashboard/applications", search: { create: true } });
+					reset();
+				}}
+			>
+				<Icon name="bookmark-simple" />
+				<Trans>Save a job</Trans>
+				{hint(inApplications)}
+			</CommandItem>
+		</>
+	);
+}
 
-				<CommandItem
-					disabled={!session || creating}
-					keywords={[t`Cover letter`, t`Letter`, t`Create`]}
-					value="navigation.letters.new"
-					onSelect={() => {
-						reset();
-						void newLetter();
-					}}
-				>
-					<Icon name="envelope-simple" size={16} />
-					<Trans>New cover letter</Trans>
-				</CommandItem>
+/** Places with no row in the sidebar. They show as commands once something is typed. */
+export function MoreItems() {
+	const go = useGo();
+	const { session } = useRouteContext({ strict: false });
+	const pushPage = useCommandPaletteStore((state) => state.pushPage);
 
-				<CommandItem
-					disabled={!session}
-					keywords={[t`Trash`, t`Deleted`]}
-					value="navigation.trash"
-					onSelect={() => onNavigate("/dashboard/trash")}
-				>
-					<Icon name="trash" size={16} />
-					<Trans>Trash</Trans>
-				</CommandItem>
+	return (
+		<>
+			<CommandItem keywords={[t`Home`, t`Website`]} value="navigation.home" onSelect={() => go("/")}>
+				<Icon name="house" />
+				<Trans>Home page</Trans>
+			</CommandItem>
+			<CommandItem
+				keywords={[t`ATS checker`, t`Check a PDF`]}
+				value="navigation.ats-checker"
+				onSelect={() => go("/ats-checker")}
+			>
+				<Icon name="seal-check" />
+				<Trans>ATS checker</Trans>
+			</CommandItem>
 
-				<CommandItem
-					keywords={[t`ATS checker`, t`Check a PDF`]}
-					value="navigation.ats-checker"
-					onSelect={() => onNavigate("/ats-checker")}
-				>
-					<Icon name="seal-check" size={16} />
-					<Trans>ATS checker</Trans>
-				</CommandItem>
+			{session && (
+				<>
+					{/* Career's own places, so ⌘K reaches them by name. */}
+					<CommandItem
+						keywords={[t`Coach`, t`Career coach`, t`Chat`]}
+						value="navigation.career.coach"
+						onSelect={() => go("/dashboard/career/coach")}
+					>
+						<Icon name="chat-text" />
+						<Trans>Coach</Trans>
+					</CommandItem>
+					<CommandItem
+						keywords={[t`Knowledge`, t`Facts`, t`Stories`]}
+						value="navigation.career.knowledge"
+						onSelect={() => go("/dashboard/career/knowledge/facts")}
+					>
+						<Icon name="brain" />
+						<Trans>Knowledge</Trans>
+					</CommandItem>
+					<CommandItem
+						keywords={[t`Offers`, t`Compare offers`, t`Salary`]}
+						value="navigation.career.offers"
+						onSelect={() => go("/dashboard/career/offers")}
+					>
+						<Icon name="scales" />
+						<Trans>Offers</Trans>
+					</CommandItem>
 
-				<CommandItem
-					disabled={!session}
-					keywords={[t`Applications`, t`Jobs`]}
-					value="navigation.applications"
-					onSelect={() => onNavigate("/dashboard/applications")}
-				>
-					<Icon name="briefcase" size={16} />
-					<Trans>Applications</Trans>
-				</CommandItem>
+					{/* The Settings sections. */}
+					<CommandItem
+						keywords={[
+							t`Name`,
+							t`Username`,
+							t`Photo`,
+							t`Password`,
+							t`Two-step verification`,
+							t`Passkeys`,
+							t`Export data`,
+							t`Delete account`,
+							t`Sign out`,
+						]}
+						value="navigation.settings.account"
+						onSelect={() => go("/dashboard/settings/account")}
+					>
+						<Icon name="user-circle" />
+						<Trans>Account</Trans>
+					</CommandItem>
+					<CommandItem
+						keywords={[t`Profile`, t`Application email`, t`References`, t`Requested salary`]}
+						value="navigation.settings.profile"
+						onSelect={() => go("/dashboard/settings/profile")}
+					>
+						<Icon name="clipboard-text" />
+						<Trans>Application profile</Trans>
+					</CommandItem>
+					<CommandItem
+						keywords={[t`Theme`, t`Language`, t`Timezone`]}
+						value="navigation.settings.preferences"
+						onSelect={() => go("/dashboard/settings/preferences")}
+					>
+						<Icon name="sliders-horizontal" />
+						<Trans>Preferences</Trans>
+					</CommandItem>
+					<CommandItem
+						keywords={[t`AI providers`, t`Web access`, t`Usage`]}
+						value="navigation.settings.ai"
+						onSelect={() => go("/dashboard/settings/ai")}
+					>
+						<Icon name="sparkle" />
+						<Trans>AI</Trans>
+					</CommandItem>
+					<CommandItem
+						keywords={[t`API keys`, t`MCP`, t`Connected applications`, t`Integrations`]}
+						value="navigation.settings.developer"
+						onSelect={() => go("/dashboard/settings/developer")}
+					>
+						<Icon name="code" />
+						<Trans>Developer</Trans>
+					</CommandItem>
 
-				<CommandItem
-					disabled={!session}
-					keywords={[t`Career`, t`Coach`, t`Knowledge`, t`Offers`, t`Today`]}
-					value="navigation.career"
-					onSelect={() => onNavigate("/dashboard/career")}
-				>
-					<Icon name="compass" size={16} />
-					<Trans>Career</Trans>
-				</CommandItem>
-
-				{/* Career's own places, so ⌘K reaches them by name. */}
-				<CommandItem
-					disabled={!session}
-					keywords={[t`Coach`, t`Career coach`, t`Chat`]}
-					value="navigation.career.coach"
-					onSelect={() => onNavigate("/dashboard/career/coach")}
-				>
-					<Icon name="chat-text" size={16} />
-					<Trans>Coach</Trans>
-				</CommandItem>
-
-				<CommandItem
-					disabled={!session}
-					keywords={[t`Knowledge`, t`Facts`, t`Stories`]}
-					value="navigation.career.knowledge"
-					onSelect={() => onNavigate("/dashboard/career/knowledge/facts")}
-				>
-					<Icon name="brain" size={16} />
-					<Trans>Knowledge</Trans>
-				</CommandItem>
-
-				<CommandItem
-					disabled={!session}
-					keywords={[t`Offers`, t`Compare offers`, t`Salary`]}
-					value="navigation.career.offers"
-					onSelect={() => onNavigate("/dashboard/career/offers")}
-				>
-					<Icon name="scales" size={16} />
-					<Trans>Offers</Trans>
-				</CommandItem>
-
-				<CommandItem
-					disabled={!session}
-					keywords={[t`Save job`, t`New application`, t`Add application`, t`Job`]}
-					value="navigation.applications.new"
-					onSelect={async () => {
-						await navigate({ to: "/dashboard/applications", search: { create: true } });
-						reset();
-					}}
-				>
-					<Icon name="plus" size={16} />
-					<Trans>Save job</Trans>
-				</CommandItem>
-
-				<CommandItem
-					disabled={!session}
-					keywords={[t`Settings`]}
-					value="navigation.settings"
-					onSelect={() => pushPage("settings")}
-				>
-					<Icon name="gear-six" size={16} />
-					<Trans>Settings</Trans>
-				</CommandItem>
-			</BaseCommandGroup>
-
-			<BaseCommandGroup page="settings" heading={<Trans>Settings</Trans>}>
-				<CommandItem
-					keywords={[
-						t`Name`,
-						t`Username`,
-						t`Photo`,
-						t`Account`,
-						t`Password`,
-						t`Two-step verification`,
-						t`Passkeys`,
-						t`Export data`,
-						t`Delete account`,
-					]}
-					value="navigation.settings.account"
-					onSelect={() => onNavigate("/dashboard/settings/account")}
-				>
-					<Icon name="user-circle" size={16} />
-					<Trans>Account</Trans>
-				</CommandItem>
-
-				<CommandItem
-					keywords={[t`Profile`, t`Application email`, t`References`, t`Requested salary`]}
-					value="navigation.settings.profile"
-					onSelect={() => onNavigate("/dashboard/settings/profile")}
-				>
-					<Icon name="clipboard-text" size={16} />
-					<Trans>Profile</Trans>
-				</CommandItem>
-
-				<CommandItem
-					keywords={[t`Preferences`, t`Theme`, t`Language`]}
-					value="navigation.settings.preferences"
-					onSelect={() => onNavigate("/dashboard/settings/preferences")}
-				>
-					<Icon name="gear-six" size={16} />
-					<Trans>Preferences</Trans>
-				</CommandItem>
-
-				<CommandItem
-					keywords={[t`AI & developer`, t`AI providers`, t`API keys`, t`MCP`, t`Integrations`]}
-					value="navigation.settings.ai"
-					onSelect={() => onNavigate("/dashboard/settings/ai")}
-				>
-					<Icon name="key" size={16} />
-					<Trans>AI & developer</Trans>
-				</CommandItem>
-			</BaseCommandGroup>
+					{/* Each kind's full list, searched on a page of its own. */}
+					<CommandItem keywords={[t`Resumes`]} value="search.resumes" onSelect={() => pushPage("resumes")}>
+						<Icon name="file-text" />
+						<Trans>Search resumes</Trans>
+					</CommandItem>
+					<CommandItem
+						keywords={[t`Applications`]}
+						value="search.applications"
+						onSelect={() => pushPage("applications")}
+					>
+						<Icon name="briefcase" />
+						<Trans>Search applications</Trans>
+					</CommandItem>
+					<CommandItem
+						keywords={[t`Conversations`, t`Assistant`, t`Threads`]}
+						value="search.threads"
+						onSelect={() => pushPage("threads")}
+					>
+						<Icon name="chat-text" />
+						<Trans>Search assistant conversations</Trans>
+					</CommandItem>
+				</>
+			)}
 		</>
 	);
 }
