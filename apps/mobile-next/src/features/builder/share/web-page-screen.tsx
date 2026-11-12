@@ -1,6 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { isValidSlug } from "@reactive-resume/resume/sharing";
 import { DocumentState, useDocumentId, useBuilderDocument } from "./document";
@@ -83,6 +83,12 @@ export function WebPageScreen() {
 		});
 		void draft.flush();
 	};
+	// Leaving with the field still focused saves too: Android doesn't blur a field before back.
+	const saveOnLeave = useRef(saveSlug);
+	useEffect(() => {
+		saveOnLeave.current = saveSlug;
+	});
+	useEffect(() => () => saveOnLeave.current(), []);
 	return (
 		<PushScreen
 			title={t`Web page`}
