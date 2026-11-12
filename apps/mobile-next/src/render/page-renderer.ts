@@ -1,7 +1,6 @@
 import type { RenderedPage } from "./types";
 import type { PageMap } from "@reactive-resume/pdf/native";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { Asset } from "expo-asset";
 import { CryptoDigestAlgorithm, digestStringAsync } from "expo-crypto";
 import { Directory, File, Paths } from "expo-file-system";
 import { Image, Platform } from "react-native";
@@ -10,6 +9,7 @@ import { rest } from "@/api/client";
 import { getAccountScope, getServer } from "@/auth/session";
 import { dataClient as client } from "@/data/client";
 import { isFake } from "@/data/fixtures";
+import { assetFile } from "@/dev/storyboard/asset-file";
 
 export type PageRenderRequest = {
 	kind: "resume" | "letter";
@@ -109,16 +109,11 @@ export const pageRenderer: PageRenderer = {
 			if (fake) {
 				const source =
 					fixtureImages[request.fixture ?? (request.kind === "letter" ? "thumb-letter-L2" : "page-resume-full")];
-				const asset = await Asset.fromModule(source).downloadAsync();
-				const uri = asset.localUri ?? asset.uri;
+				const uri = await assetFile(source);
 				const size = Image.resolveAssetSource(source);
 				if (!size?.width || !size.height) throw new Error("Fixture image size unavailable.");
 				const { printToFileAsync } = await import("expo-print");
-				// An Android release build embeds the fixture as a drawable and names it without a scheme; the print
-				// WebView reads drawables from android_res.
-				const src = uri.includes(":")
-					? `data:image/png;base64,${await new File(uri).base64()}`
-					: `file:///android_res/drawable/${uri}.png`;
+				const src = `data:image/png;base64,${await new File(uri).base64()}`;
 				const { width, height } = size;
 				const print = () =>
 					printToFileAsync({

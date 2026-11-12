@@ -2,7 +2,6 @@
 // Photo look (show or hide, size, shape, border) lives in Design (B6).
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
-import { Asset } from "expo-asset";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRef, useState } from "react";
@@ -18,6 +17,7 @@ import {
 } from "../shared/document";
 import { entryTitle } from "../shared/model";
 import { resumeFieldFocus, usePhotoUpload } from "@/data";
+import { assetFile } from "@/dev/storyboard/asset-file";
 import { STORYBOARD, trackImage } from "@/dev/storyboard/harness";
 import {
 	BottomSheet,
@@ -135,10 +135,7 @@ export function BasicsScreen() {
 		};
 		let uri: string | undefined;
 		if (STORYBOARD && photoPreset) {
-			uri =
-				photoPreset === "fixture"
-					? ((await Asset.fromModule(photoFixture).downloadAsync()).localUri ?? undefined)
-					: "file:///storyboard/unreadable.png";
+			uri = photoPreset === "fixture" ? await assetFile(photoFixture) : "file:///storyboard/unreadable.png";
 		} else {
 			const result = camera
 				? await ImagePicker.launchCameraAsync(options)
