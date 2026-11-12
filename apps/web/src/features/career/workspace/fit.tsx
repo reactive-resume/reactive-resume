@@ -17,6 +17,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
+import { LocalMatch } from "./fit-local";
 import { List, ListRow } from "@/components/calm/list-row";
 import { PageHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
@@ -37,7 +38,13 @@ export function AiNotice({
 }: { needs?: ReactNode; works?: ReactNode } = {}) {
 	const connection = useDefaultProvider();
 	if (connection.isUnavailable) return <AiProviderLoadState state={connection} />;
-	if (!connection.provider) return <SetUpAi needs={needs} works={works} />;
+	// N5–N9: the first row under the tab's title.
+	if (!connection.provider)
+		return (
+			<div className="pt-3.5">
+				<SetUpAi needs={needs} works={works} />
+			</div>
+		);
 	return null;
 }
 
@@ -98,7 +105,8 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 		}
 	};
 	const generate = useGenerate(application.id);
-	const { provider } = useDefaultProvider();
+	const connection = useDefaultProvider();
+	const { provider } = connection;
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
 	const evidenceState = useQuery(orpc.career.fitEvidence.queryOptions({ input: { applicationId: application.id } }));
 	const documents = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
@@ -111,6 +119,8 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 	const readOnly = version?.data.kind === "fit";
 	const item = (readOnly ? version : latest(saved.data, "fit")) as FitItem | undefined;
 
+	if (!item && !saved.isPending && !connection.isUnavailable && !connection.provider)
+		return <LocalMatch application={application} />;
 	if (saved.isPending)
 		return (
 			<div className="grid gap-4">
@@ -260,24 +270,21 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 	const resume = documents.data?.find((document) => document.id === application.resumeId);
 	const checked =
 		time.date(item.createdAt) === time.date(now) ? t`today ${time.time(item.createdAt)}` : time.when(item.createdAt);
-	const provenance = (
-		<>
-			<Trans>
-				The {application.company} posting · {item.evidence.factIds.length} Knowledge facts used · checked {checked}
-			</Trans>
-			{resume && (
-				<>
-					{" "}
-					·{" "}
-					<Trans>
-						Current resume:{" "}
-						<Link to="/builder/$resumeId" params={{ resumeId: resume.id }} className="font-medium text-ink-2">
-							{resume.name}
-						</Link>
-					</Trans>
-				</>
-			)}
-		</>
+	const factCount = item.evidence.factIds.length;
+	// The resume the check read is the one linked now; "sent" when it is the version that went to the employer.
+	const sent = resume && application.sentResumeVersionId ? time.date(application.appliedAt) : null;
+	const provenance = resume ? (
+		<Trans>
+			The {application.company} posting, checked against{" "}
+			<Link to="/builder/$resumeId" params={{ resumeId: resume.id }} className="font-medium text-ink-2">
+				{resume.name}
+			</Link>
+			{sent ? t` (sent ${sent})` : ""} and {factCount} Knowledge facts · {checked}
+		</Trans>
+	) : (
+		<Trans>
+			The {application.company} posting, checked against {factCount} Knowledge facts · {checked}
+		</Trans>
 	);
 
 	return (
@@ -299,10 +306,10 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 									<Trans>Check again</Trans>
 								</Button>
 							)}
-							{application.status === "interview" && missing + partial > 0 && (
+							{application.status === "interview" && missing > 0 && (
 								<Button onClick={() => go("prepare")}>
 									<Icon name="chalkboard-teacher" />
-									{plural(missing + partial, {
+									{plural(missing, {
 										one: "Prepare answers for the # gap",
 										other: "Prepare answers for the # gaps",
 									})}
@@ -319,7 +326,9 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 			/>
 			{expanded ? (
 				<p className="pt-1 text-sm/5 text-ink-3">
-					{t`${supported + partial} of ${item.data.requirements.length} requirements have evidence · checked ${checked} · ${item.evidence.factIds.length} Knowledge facts used`}
+					{resume
+						? t`${supported + partial} of ${item.data.requirements.length} requirements have evidence · checked ${checked} against ${resume.name} and ${factCount} Knowledge facts`
+						: t`${supported + partial} of ${item.data.requirements.length} requirements have evidence · checked ${checked} against ${factCount} Knowledge facts`}
 				</p>
 			) : (
 				<>
@@ -391,6 +400,7 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 								expanded={expanded === requirement.text}
 								onExpandedChange={(on) => setExpanded(on ? requirement.text : null)}
 								status={statusOf(requirement)}
+								showOrigin={Boolean(expanded)}
 								evidence={factId ? (factText(factId) ?? requirement.evidence) : requirement.evidence}
 								readOnly={readOnly}
 								onTailor={tailor}
@@ -428,7 +438,7 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 								<SectionHeading className="pt-[22px]">
 									<Trans>Against your requirements</Trans>
 								</SectionHeading>
-								<List>
+								<List tight={Boolean(expanded)}>
 									{item.data.checks.map((entry) => (
 										<ListRow
 											key={entry.label}
@@ -481,6 +491,8 @@ type RequirementRowProps = {
 	onTailor: () => void;
 	onPropose?: (() => void) | undefined;
 	proposalPending: boolean;
+	/** W9: with a requirement open, gaps also say where they came from. */
+	showOrigin?: boolean;
 };
 
 /** One requirement. Below 1024px From and Status sit under the name; on phones each row is a card. */
@@ -495,6 +507,7 @@ function RequirementRow({
 	onTailor,
 	onPropose,
 	proposalPending,
+	showOrigin = false,
 }: RequirementRowProps) {
 	const editing = expanded;
 	const setEditing = onExpandedChange;
@@ -546,6 +559,11 @@ function RequirementRow({
 									? t`Partly supported`
 									: t`No evidence yet`}
 						{evidence ? ` · ${evidence}` : ""}
+						{showOrigin && (status === "partial" || status === "missing")
+							? requirement.origin === "posting"
+								? t` · from the posting`
+								: t` · inferred from the posting`
+							: ""}
 					</>
 				}
 				trailing={
@@ -677,7 +695,10 @@ function WorthAsking({ ask, applicationId, readOnly }: WorthAskingProps) {
 			<SectionHeading className="w-full pt-6">
 				<Trans>Worth asking</Trans>
 			</SectionHeading>
-			<p className="text-sm leading-[21px] text-ink-2">{ask.text}</p>
+			<div className="grid gap-0.5">
+				<p className="text-sm leading-[21px] text-ink">{ask.text}</p>
+				{ask.person && <p className="text-[13px]/[18px] text-ink-3">{t`Ask ${ask.person}`}</p>}
+			</div>
 			{!readOnly && (
 				<Button
 					size="sm"
@@ -689,7 +710,7 @@ function WorthAsking({ ask, applicationId, readOnly }: WorthAskingProps) {
 					}
 				>
 					{added && <Icon name="check" size={16} />}
-					{added ? <Trans>Added to Interview prep</Trans> : <Trans>Add to questions</Trans>}
+					{added ? <Trans>In Interview prep</Trans> : <Trans>Add to questions</Trans>}
 				</Button>
 			)}
 		</section>

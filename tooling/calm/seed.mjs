@@ -6,10 +6,12 @@ import { pathToFileURL } from "node:url";
 import { request } from "@playwright/test";
 import { Pool } from "pg";
 import { aiBaseUrl, appUrl, database, env, healthy, now, root, state, timezone } from "./env.mjs";
+import { workspaces as seedWorkspaces } from "./workspace.mjs";
 
 // Resets the Calm capture database to the persona of the redesign boards (tests/e2e/fixtures/persona.ts): empties
 // every table, seeds alex / empty / noai through the running dev server's API, adds what only the server writes
-// (new roles, notifications, a fit check and a briefing), sets the dates the boards show, and writes each account's
+// (new roles, notifications), sets the dates the boards show, then writes the application workspaces' AI results
+// (fit, briefing, practice, debrief, replies) through career.generate against the AI stub, and writes each account's
 // signed-in Playwright storage state and the seeded ids to <work>/state/.
 //
 //   node tooling/calm/dev.mjs start && node tooling/calm/seed.mjs
@@ -35,7 +37,7 @@ const at = (date, time = "12:00") => `${date}T${time}:00.000Z`;
 
 /** What has no create API: rows only scheduled work and the AI write. Shapes follow career/jobs.ts and generate.ts. */
 async function serverOnly(seed) {
-	const { userId, applications, interviews, facts, stories } = seed;
+	const { userId, applications } = seed;
 	const query = "Senior product designer, Lisbon or remote";
 	const found = at("2026-11-07", "07:00");
 	const roles = [
@@ -123,141 +125,6 @@ async function serverOnly(seed) {
 		reminder.next_run_at,
 		// Read too: T1 draws Today at rest, with no unread schedule results (C11 is the state with them).
 		reminder.next_run_at,
-	);
-
-	// The fit check and the briefing for Lumen, as if written against the account as it is now.
-	const [probe] = await sql("delete from career_artifact where id = $1 returning input_version", [seed.versionProbeId]);
-	const evidence = [
-		[
-			"Five or more years designing business software",
-			"supported",
-			"Seven years at Northwind Labs and Harbour Studio.",
-			[4, 5],
-		],
-		[
-			"Has owned onboarding or activation for a product",
-			"supported",
-			"Redesigned onboarding; activation rose from 41% to 58%.",
-			[0],
-		],
-		[
-			"Has built or run a design system used by several teams",
-			"supported",
-			"Built the design system six product teams use.",
-			[1],
-		],
-		[
-			"Runs customer research and brings it to product decisions",
-			"supported",
-			"More than 40 customer interviews a year.",
-			[2],
-		],
-		[
-			"Plans work with product and engineering leads",
-			"supported",
-			"Plans each quarter's design work with both leads.",
-			[],
-		],
-		[
-			"Prototypes and tests before release",
-			"supported",
-			"Tested each release with shop owners at Harbour Studio.",
-			[3, 10],
-		],
-		["Designs to accessibility standards", "supported", "Accessibility is among your skills.", [6]],
-		["Works in Figma", "partial", "Figma is on your resume, with no example of its use.", []],
-		["Experience in a regulated industry", "missing", "", []],
-		["Has mentored or led other designers", "partial", "You lead the design system; mentoring isn't mentioned.", []],
-	];
-	const artifact = (interviewId, title, data, used, created) =>
-		sql(
-			`insert into career_artifact (id, user_id, application_id, interview_id, title, data, evidence, input_version, created_at, updated_at)
-			 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $9)`,
-			[randomUUID(), userId, applications.lumen, interviewId, title, data, used, probe.input_version, created],
-		);
-	await artifact(
-		null,
-		"A strong match, with one gap to prepare for",
-		{
-			kind: "fit",
-			headline: "A strong match, with one gap to prepare for",
-			summary: "7 of 10 requirements have evidence in your Knowledge. The gap is experience in a regulated industry.",
-			requirements: evidence.map(([text, status, proof, ids]) => ({
-				text,
-				origin: "posting",
-				status,
-				evidence: proof,
-				factIds: ids.map((index) => facts[index]),
-			})),
-			checks: [
-				{ label: "Location", met: true, text: "Lisbon, hybrid: within your 2 office days a week." },
-				{ label: "Salary", met: null, text: "Not listed in the posting." },
-			],
-			ask: { person: "Marta Costa", text: "How many days a week does the team spend in the Lisbon office?" },
-		},
-		{ factIds: facts.slice(0, 7), storyIds: [] },
-		at("2026-11-01", "10:00"),
-	);
-	await artifact(
-		interviews.lumenTechnical,
-		"Technical interview at Lumen",
-		{
-			kind: "briefing",
-			headline: "Technical interview at Lumen",
-			summary: "Likely questions, who you'll meet and three stories to tell.",
-			plan: [
-				{
-					minutes: 10,
-					title: "Read who you'll meet",
-					detail: "Priya Raman leads design systems; Tomás Silva manages engineering.",
-					action: "none",
-					storyId: null,
-				},
-				{
-					minutes: 20,
-					title: "Rehearse the design system story",
-					detail: "Six teams, one system: say how you moved one team at a time.",
-					action: "story",
-					storyId: stories[0],
-				},
-				{
-					minutes: 15,
-					title: "Practise the onboarding question",
-					detail: "Lead with 41% to 58%, then how you found the cause.",
-					action: "practise",
-					storyId: stories[1],
-				},
-				{
-					minutes: 5,
-					title: "Choose your questions",
-					detail: "Research budget, and days in the Lisbon office.",
-					action: "questions",
-					storyId: null,
-				},
-			],
-			questions: [
-				{ text: "How is the design system funded and staffed today?", origin: "posting" },
-				{ text: "What is the research budget for the team?", origin: "your notes" },
-				{ text: "How many days a week is the team in the Lisbon office?", origin: "your notes" },
-			],
-			focus: "They need someone to own onboarding and a shared design system: show both with numbers.",
-			opening:
-				"I'm a senior product designer at Northwind Labs, where I lead onboarding and the design system six teams use.",
-			stories: [
-				"A design system six teams use",
-				"Onboarding that lifted activation",
-				"Testing checkout with shop owners",
-			],
-			honesty: "You have no experience in a regulated industry. Say so, and say how you learn a domain.",
-			storyIds: stories,
-			missingStory: null,
-			practiceQuestions: [
-				"Walk us through how you got six teams onto one design system.",
-				"How did you find out why onboarding wasn't working?",
-			],
-		},
-		{ factIds: facts.slice(0, 4), storyIds: stories },
-		at("2026-11-06", "18:00"),
 	);
 }
 
@@ -498,6 +365,10 @@ async function boardData(seed) {
 	);
 }
 
+/** The workspace results, last: career.generate saves them against the account's dates as they now are. */
+const workspaces = (seeds) =>
+	seedWorkspaces({ seeds, sql, appUrl, state, storage: (name) => resolve(state, `${name}.json`) });
+
 async function saveSession(context, name) {
 	const session = await context.storageState();
 	// The session cookie's lifetime follows the real clock, the server's follows fake-clock.mjs: keep the cookie.
@@ -510,6 +381,14 @@ const seeds = {};
 for (const variant of ["alex", "empty", "noai"]) {
 	const context = await request.newContext({ baseURL: appUrl });
 	const seed = await seedPersona(context, { baseURL: appUrl, variant, aiBaseURL: aiBaseUrl });
+	// The persona's throwaway offer only marked the input version an SQL-written fit check needed; career.generate
+	// now writes those results itself.
+	if (seed.versionProbeId) {
+		const gone = await context.delete(`/api/openapi/career/saved/${seed.versionProbeId}`, {
+			headers: { origin: appUrl },
+		});
+		if (!gone.ok()) throw new Error(`Deleting the version probe failed with ${gone.status()}`);
+	}
 	await saveSession(context, variant);
 
 	if (variant !== "empty") {
@@ -564,8 +443,23 @@ const stamped = await sql(
 	 where table_schema = 'public' and data_type = 'timestamp with time zone'
 	 and column_name in ('created_at', 'updated_at', 'edited_at', 'first_seen_at', 'last_seen_at', 'reviewed_at', 'last_tested_at')`,
 );
-for (const { table_name: table, column_name: column } of stamped)
-	await sql(`update "${table}" set "${column}" = $1 where "${column}" > $1`, [now]);
+const clamp = async () => {
+	for (const { table_name: table, column_name: column } of stamped)
+		await sql(`update "${table}" set "${column}" = $1 where "${column}" > $1`, [now]);
+};
+await clamp();
+await workspaces(seeds);
+await clamp();
+// After the clamp: the boards date two rows after their own "now" (W4 "Today, 09:12"), and the Kiln letter was last
+// edited the evening before (W2), not when the seed linked it to its resume copy.
+await sql("update career_artifact set created_at = $2, updated_at = $2 where id = $1", [
+	seeds.alex.saved.lumenPractice[2],
+	"2026-11-07T09:12:00.000Z",
+]);
+await sql("update cover_letter set updated_at = $2, edited_at = $2 where id = $1", [
+	seeds.alex.letters.kiln,
+	"2026-11-06T18:30:00.000Z",
+]);
 await pool.end();
 
 writeFileSync(resolve(state, "ids.json"), JSON.stringify({ now, appUrl, ...seeds }, null, "\t"));

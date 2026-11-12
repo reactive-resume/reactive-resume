@@ -17,6 +17,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
 import { pendingCommits } from "./pending-commits";
+import { IconTile, List, ListRow } from "@/components/calm/list-row";
 import { deviceTimeZone } from "@/features/settings/use-save-timezone";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -575,6 +576,8 @@ type MemoryProposalProps = {
 	onRemember: (selected: number[]) => void;
 	onDismiss: () => void;
 	busy?: boolean;
+	/** "row": a list row with an icon tile (W5 Debrief); default: a card (coach answers). */
+	variant?: "card" | "row";
 };
 
 /** Offers to remember durable facts from an answer. Several facts become a checklist inside one proposal. */
@@ -588,9 +591,55 @@ export function MemoryProposal(props: MemoryProposalProps) {
 					<Icon name="check-circle" size={18} />
 					{props.remembered}
 				</p>
+			) : props.variant === "row" ? (
+				<List cap className="mt-[18px]">
+					<ListRow
+						className="flex-wrap"
+						leading={
+							<IconTile>
+								<Icon name="bookmark-simple" size={20} />
+							</IconTile>
+						}
+						title={props.question}
+						subtitle={
+							props.facts.length === 1 ? (
+								<q>{props.facts[0]}</q>
+							) : (
+								props.facts.map((fact, index) => (
+									<label key={fact} className="flex items-start gap-2 pt-1">
+										<Checkbox
+											checked={selected.includes(index)}
+											onCheckedChange={(checked) =>
+												setSelected((current) =>
+													checked ? [...current, index] : current.filter((item) => item !== index),
+												)
+											}
+										/>
+										<q>{fact}</q>
+									</label>
+								))
+							)
+						}
+						trailing={
+							<span className="flex items-center gap-3">
+								<Button
+									variant="link"
+									className="h-auto p-0 text-sm/5 font-medium text-accent-text"
+									loading={props.busy ?? false}
+									disabled={selected.length === 0}
+									onClick={() => props.onRemember(selected)}
+								>
+									<Trans>Remember</Trans>
+								</Button>
+								<Button size="sm" variant="ghost" onClick={props.onDismiss}>
+									<Trans>Not now</Trans>
+								</Button>
+							</span>
+						}
+					/>
+				</List>
 			) : (
 				<div className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-raised py-2.5 ps-3.5 pe-3">
-					<Icon name="books" size={20} className="shrink-0 text-ink-2" />
 					<div className="grid min-w-0 flex-1 basis-60 text-[13px]/[18px]">
 						<p className="font-semibold text-ink">{props.question}</p>
 						{props.facts.length === 1 ? (
@@ -612,9 +661,6 @@ export function MemoryProposal(props: MemoryProposalProps) {
 						)}
 					</div>
 					<div className="flex shrink-0 gap-3">
-						<Button size="sm" variant="ghost" onClick={props.onDismiss}>
-							<Trans>Not now</Trans>
-						</Button>
 						<Button
 							size="sm"
 							variant="secondary"
@@ -624,9 +670,16 @@ export function MemoryProposal(props: MemoryProposalProps) {
 						>
 							<Trans>Remember</Trans>
 						</Button>
+						<Button size="sm" variant="ghost" onClick={props.onDismiss}>
+							<Trans>Not now</Trans>
+						</Button>
 					</div>
 				</div>
 			)}
 		</Swap>
 	);
 }
+
+/** A meeting place in the middle of a sentence ("· video call."): the generic kinds read in lower case. */
+export const midSentence = (place: string | undefined) =>
+	place && /^(video|phone) call$/i.test(place.trim()) ? place.trim().toLocaleLowerCase() : place;

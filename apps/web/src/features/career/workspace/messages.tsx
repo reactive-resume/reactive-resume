@@ -43,6 +43,7 @@ import { AiNotice } from "./fit";
 import { ListRow } from "@/components/calm/list-row";
 import { PageHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
+import { StageDot } from "@/components/calm/stage-dot";
 import { getCategoryLane, getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { offerHintFor, useOfferHints } from "@/features/applications/queries";
@@ -77,6 +78,15 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 	const workspace = useWorkspace(application.id);
 	const readOnly = version?.data.kind === "reply";
 	const reply = (readOnly ? version : latest(saved.data, "reply")) as ReplyItem | undefined;
+	const [hidden, setHidden] = useState<string[]>([]);
+	const isDismissed = (id: string) => {
+		if (hidden.includes(id)) return true;
+		try {
+			return localStorage.getItem(`career-reply-dismissed:${id}`) === "1";
+		} catch {
+			return false;
+		}
+	};
 	const offer = application.status === "offer" ? latest(saved.data, "offer") : undefined;
 
 	if (workspace.isPending || saved.isPending)
@@ -88,6 +98,14 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 		);
 	const message = reply?.data.message ?? workspace.data.message;
 	const hasAside = Boolean(reply || message.trim() || offer);
+	const pending = Boolean(reply && reply.data.changes.length > 0 && !reply.data.applied && !isDismissed(reply.id));
+	const readBy = reply?.aiUsage?.models[0];
+	const wroteOn =
+		reply && time.date(reply.createdAt) === time.date(now) ? t`today` : reply ? time.date(reply.createdAt) : "";
+	// Pasted text minus the signature and quoted history: what the reply was read from.
+	const trimmed = Boolean(
+		reply && workspace.data.message.trim() && workspace.data.message.trim() !== reply.data.message.trim(),
+	);
 
 	return (
 		<div>
@@ -108,8 +126,10 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 					)
 				}
 				subtitle={
-					reply
-						? t`${application.company} wrote back ${time.date(reply.createdAt)}. Nothing changes until you apply it.`
+					reply && pending
+						? readBy
+							? t`${application.company} wrote back ${wroteOn}. Read by ${readBy.label} · ${readBy.model}. Nothing changes until you apply it.`
+							: t`${application.company} wrote back ${wroteOn}. Nothing changes until you apply it.`
 						: offer?.data.respondBy
 							? t`Reply to the offer by ${time.format(offer.data.respondBy, { weekday: "long", day: "numeric", month: "short" })} · ${time.relative(offer.data.respondBy, now).toLocaleLowerCase(time.locale)}. You send from your own email; nothing is sent from here.`
 							: t`You send from your own email; nothing is sent from here.`
@@ -134,8 +154,22 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 					{!readOnly && offerForm?.open && (
 						<OfferEntry application={application} initialOpen onDone={offerForm.onDone} />
 					)}
-					{reply && reply.data.changes.length > 0 && (
-						<ProposalCard key={reply.id} reply={reply} application={application} now={now} readOnly={readOnly} />
+					{reply && reply.data.changes.length > 0 && !(isDismissed(reply.id) && !reply.data.applied) && (
+						<ProposalCard
+							key={reply.id}
+							reply={reply}
+							application={application}
+							now={now}
+							readOnly={readOnly}
+							onDismiss={() => {
+								setHidden((list) => [...list, reply.id]);
+								try {
+									localStorage.setItem(`career-reply-dismissed:${reply.id}`, "1");
+								} catch {
+									// Storage is blocked: it stays hidden for this visit.
+								}
+							}}
+						/>
 					)}
 					{reply ? (
 						<ReplyCard key={reply.id} reply={reply} application={application} readOnly={readOnly} />
@@ -149,9 +183,9 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 							<>
 								<SectionHeading
 									className="pt-[22px]"
-									note={reply ? time.date(reply.createdAt) : undefined}
+									note={reply ? wroteOn : undefined}
 								>{t`From ${application.company}`}</SectionHeading>
-								<p className="mt-0.5 rounded-lg bg-sunken px-3.5 py-3 text-[13px]/[18px] whitespace-pre-wrap">
+								<p className="mt-0.5 rounded-lg bg-sunken px-3.5 py-3 text-[13px]/[18px] whitespace-pre-wrap text-ink-2">
 									{message}
 								</p>
 							</>
@@ -172,9 +206,11 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 										</li>
 									))}
 								</ul>
-								<p className="pt-3 text-[13px]/[18px] text-ink-3">
-									<Trans>Saved with this application. Leave signatures out before reading a message.</Trans>
-								</p>
+								{trimmed && (
+									<p className="pt-3 text-[13px]/[18px] text-ink-3">
+										<Trans>Saved with this application. The signature was left out.</Trans>
+									</p>
+								)}
 							</>
 						)}
 						{!readOnly && offer && (
@@ -368,7 +404,27 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 			{(reply?.data.reply || !reply) && (
 				<>
 					<div className="grid gap-1.5">
-						<SectionHeading className={reply?.data.changes.length ? "pt-7" : "pt-[22px]"} note={t`edit before sending`}>
+						<SectionHeading
+							className={reply?.data.changes.length ? "pt-7" : "pt-[22px]"}
+							note={t`edit before sending`}
+							action={
+								reply &&
+								!readOnly &&
+								provider && (
+									<Button
+										size="sm"
+										variant="ghost"
+										loading={generate.isPending}
+										onClick={() =>
+											void generate.run({ task: "reply", message: reply.data.message }).catch(() => undefined)
+										}
+									>
+										<Icon name="sparkle" size={16} />
+										<Trans>Redraft</Trans>
+									</Button>
+								)
+							}
+						>
 							{reply?.data.changes.length ? t`Suggested reply` : t`Your reply`}
 						</SectionHeading>
 						<label htmlFor={`${reply?.id ?? application.id}-reply`} className="sr-only">
@@ -445,6 +501,8 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 }
 
 type ProposalCardProps = {
+	/** Hides the proposal in this browser; nothing on the application changes. */
+	onDismiss?: (() => void) | undefined;
 	reply: ReplyItem;
 	application: WorkspaceTabProps["application"];
 	now: Date;
@@ -455,7 +513,7 @@ type ProposalCardProps = {
  * W16–W17: changes the message implies, each one ticked by default. Nothing changes until Apply; Apply saves at once,
  * and its toast's Undo reverses exactly what it changed while nothing else has changed it since.
  */
-function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) {
+function ProposalCard({ reply, application, now, readOnly, onDismiss }: ProposalCardProps) {
 	const { i18n } = useLingui();
 	const account = getAccountGeneration();
 	const { when, day, timeZone } = useCareerTime();
@@ -488,7 +546,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 		(reply.data.applied ? { changes: reply.data.applied.changes, at: new Date(reply.data.applied.at) } : null);
 	const selected = applied ? applied.changes : ticked;
 
-	const contact = application.contacts[0]?.name.split(" ")[0];
+	const contact = application.contacts[0]?.name;
 	const current =
 		application.followUpNote ||
 		describeNextStep(
@@ -498,6 +556,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 			timeZone,
 		).title;
 
+	const overdue = Boolean(application.followUpAt && new Date(application.followUpAt) < now);
 	const describe = (change: (typeof changes)[number], index: number) => {
 		switch (change.type) {
 			case "stage": {
@@ -515,7 +574,9 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 					};
 				return {
 					title: t`Move to ${stage}`,
-					detail: t`Moves the application from ${getLaneLabel(getDisplayLane(lanes, application))}.`,
+					detail: t`Moves the application from ${getLaneLabel(getDisplayLane(lanes, application))}`,
+					from: getDisplayLane(lanes, application),
+					to: getCategoryLane(lanes, change.stage),
 				};
 			}
 			// One change carries the next step and, when a reply is due, its reminder.
@@ -523,6 +584,13 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				if (!change.at)
 					return { title: t`Next step: ${change.note}`, detail: t`Replaces “${current}” on the application.` };
 				// The date is the application's next step, shown with it in Applications; it doesn't schedule a reminder.
+				if (change.note)
+					return {
+						title: t`Next step: ${change.note}`,
+						detail: overdue
+							? t`By ${day(change.at)} · replaces the overdue “${current}”`
+							: t`By ${day(change.at)} · replaces “${current}”`,
+					};
 				return {
 					title: t`Follow up on ${when(change.at)}`,
 					detail: change.note
@@ -703,26 +771,30 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 
 	return (
 		<section className="grid gap-0">
-			<div className="flex items-center gap-2 pt-[22px] pb-2.5">
-				<h2 className="flex-1 t-section-title">
-					<Trans>Proposed changes</Trans>
-				</h2>
-				<span className="text-xs text-ink-3">
-					{applied
+			<SectionHeading
+				className="pt-[22px]"
+				note={
+					applied
 						? t({ message: "Applied", context: "A proposed change has been applied" })
 						: readOnly
 							? t`Not applied`
-							: t`Waiting for you`}
-				</span>
-			</div>
+							: t`from this message`
+				}
+			>
+				<Trans>Proposed changes</Trans>
+			</SectionHeading>
 
 			<ul className="grid">
 				{changes.map((change, index) => {
-					const { title, detail } = describe(change, index);
+					const described = describe(change, index);
+					const { title, detail } = described;
 					const isFixed = fixed(index);
 					const id = `${reply.id}-change-${index}`;
 					return (
-						<li key={id} className={cn("flex gap-2.5 border-b border-line py-3", isFixed && "opacity-70")}>
+						<li
+							key={id}
+							className={cn("flex items-start gap-3.5 border-b border-line py-2.5", isFixed && "opacity-70")}
+						>
 							<Checkbox
 								id={id}
 								className="mt-px"
@@ -732,10 +804,21 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 									setTicked((rows) => (checked ? [...rows, index] : rows.filter((row) => row !== index)))
 								}
 							/>
-							<label htmlFor={id} className="grid gap-0.5 text-[13px] leading-[19px]">
-								<span className="font-semibold">{title}</span>
-								{detail && <span className="text-ink-2">{detail}</span>}
+							<label htmlFor={id} className="grid flex-1 gap-px">
+								<span className="text-[15px]/[22px] font-medium">{title}</span>
+								{detail && <span className="text-[13px]/[18px] text-ink-3">{detail}</span>}
 							</label>
+							{"from" in described && described.from && described.to && (
+								<span className="flex shrink-0 items-center gap-1.5 pt-0.5 text-[13px]/[18px] text-ink-2">
+									<StageDot status={described.from.category} color={described.from.color}>
+										{getLaneLabel(described.from)}
+									</StageDot>
+									<Icon name="arrow-right" size={14} className="text-ink-3" />
+									<StageDot status={described.to.category} color={described.to.color}>
+										{getLaneLabel(described.to)}
+									</StageDot>
+								</span>
+							)}
 						</li>
 					);
 				})}
@@ -759,11 +842,28 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 
 			{/* Only a message about scheduling can tempt adding an interview from an unconfirmed time. */}
 			{reply.data.unconfirmed.length > 0 && !reply.data.changes.some((change) => change.type === "offer") && (
-				<p className="text-xs text-ink-3">
-					{contact
-						? t`Confirm the time with ${contact} before adding a new interview.`
-						: t`Confirm the time before adding a new interview.`}
-				</p>
+				<div className="flex items-start gap-3.5 border-b border-line py-2.5 ps-8">
+					<div className="grid flex-1 gap-px">
+						<p className="text-[15px]/[22px] font-medium">
+							<Trans>No interview added</Trans>
+						</p>
+						<p className="text-[13px]/[18px] text-ink-3">
+							{contact
+								? t`The message gives no time. Confirm one with ${contact}, then schedule the call.`
+								: t`The message gives no time. Confirm one, then schedule the call.`}
+						</p>
+					</div>
+					{!readOnly && (
+						<Link
+							to="/dashboard/applications/$applicationId/{-$tab}"
+							params={{ applicationId: application.id, tab: "messages" }}
+							search={{ edit: "interview" }}
+							className="shrink-0 pt-0.5 text-[13px]/[18px] font-medium text-accent-text"
+						>
+							<Trans>Schedule…</Trans>
+						</Link>
+					)}
+				</div>
 			)}
 
 			{!readOnly && (
@@ -776,14 +876,19 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 								: t`Applied. The application is updated.`}
 						</p>
 					) : (
-						<Button
-							className="mt-4 justify-self-start"
-							disabled={count === 0}
-							loading={apply.isPending}
-							onClick={() => void onApply()}
-						>
-							{count === 0 ? t`Nothing to apply` : plural(count, { one: "Apply # change", other: "Apply # changes" })}
-						</Button>
+						<div className="mt-4 flex flex-wrap items-center gap-2">
+							<Button disabled={count === 0} loading={apply.isPending} onClick={() => void onApply()}>
+								{count === 0 ? t`Nothing to apply` : plural(count, { one: "Apply # change", other: "Apply # changes" })}
+							</Button>
+							{onDismiss && (
+								<Button variant="ghost" onClick={onDismiss}>
+									<Trans>Dismiss</Trans>
+								</Button>
+							)}
+							<span className="ps-2 text-xs text-ink-3">
+								<Trans>Undo is offered afterwards.</Trans>
+							</span>
+						</div>
 					)}
 				</Swap>
 			)}

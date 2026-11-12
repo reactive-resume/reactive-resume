@@ -120,6 +120,12 @@ export function DebriefTab({ application, version, now, go, interview }: Workspa
 					)
 				}
 			/>
+			{!viewing && (
+				<AiNotice
+					needs={<Trans>A review of your answer needs AI.</Trans>}
+					works={<Trans>Your notes on each question save without it.</Trans>}
+				/>
+			)}
 			<div className="grid items-start gap-10 pt-[22px] @3xl:grid-cols-[minmax(0,1fr)_264px]">
 				<div className="grid min-w-0 gap-4">
 					{saved.isPending ? (
@@ -262,61 +268,88 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 				<p id={`${id}-landed`} className="text-[13px]/[18px] font-medium text-ink-2">
 					<Trans>How did it land?</Trans>
 				</p>
-				<fieldset disabled={readOnly} aria-labelledby={`${id}-landed`} className="flex flex-wrap gap-1.5">
-					{landed.map((option) => (
-						<FilterChip
-							key={option.value}
-							className={cn("h-7 text-[13px]/[18px]", draft.landed !== option.value && "text-ink-2")}
-							pressed={draft.landed === option.value}
-							onClick={() => change({ landed: draft.landed === option.value ? null : option.value })}
-						>
-							{option.label}
-						</FilterChip>
-					))}
-				</fieldset>
+				<div className="flex flex-wrap items-center gap-1.5">
+					<fieldset disabled={readOnly} aria-labelledby={`${id}-landed`} className="flex flex-1 flex-wrap gap-1.5">
+						{landed.map((option) => (
+							<FilterChip
+								key={option.value}
+								className={cn("h-7 text-[13px]/[18px]", draft.landed !== option.value && "text-ink-2")}
+								pressed={draft.landed === option.value}
+								onClick={() => change({ landed: draft.landed === option.value ? null : option.value })}
+							>
+								{option.label}
+							</FilterChip>
+						))}
+					</fieldset>
+					{!readOnly && hasReview && (
+						<span className="flex items-center gap-1">
+							<Button
+								size="sm"
+								variant="ghost"
+								disabled={!ready}
+								loading={note.isPending}
+								onClick={() =>
+									note.mutate({
+										id: application.id,
+										text: [
+											draft.question.trim(),
+											draft.answer.trim(),
+											landed.find((option) => option.value === draft.landed)?.label,
+										]
+											.filter(Boolean)
+											.join("\n\n"),
+									})
+								}
+							>
+								<Trans>Save to notes</Trans>
+							</Button>
+							{provider && (
+								<Button size="sm" variant="ghost" disabled={!ready} loading={generate.isPending} onClick={submit}>
+									{generate.isPending ? (
+										<Working steps={workingSteps("debrief")} />
+									) : (
+										<>
+											<Icon name="arrow-clockwise" size={16} />
+											<Trans>Review again</Trans>
+										</>
+									)}
+								</Button>
+							)}
+						</span>
+					)}
+				</div>
 			</div>
 			{!readOnly && (
 				<div className="grid justify-items-start gap-2.5">
-					{provider && (
-						<Button
-							variant={hasReview ? "secondary" : "primary"}
-							disabled={!ready}
-							loading={generate.isPending}
-							onClick={submit}
-						>
-							{generate.isPending ? (
-								<Working steps={workingSteps("debrief")} />
-							) : hasReview ? (
-								<Trans>Review again</Trans>
-							) : (
-								<Trans>Review my answer</Trans>
+					{!hasReview && (
+						<div className="flex flex-wrap gap-2.5">
+							{provider && (
+								<Button disabled={!ready} loading={generate.isPending} onClick={submit}>
+									{generate.isPending ? <Working steps={workingSteps("debrief")} /> : <Trans>Review my answer</Trans>}
+								</Button>
 							)}
-						</Button>
+							<Button
+								variant={provider ? "secondary" : "primary"}
+								disabled={!ready}
+								loading={note.isPending}
+								onClick={() =>
+									note.mutate({
+										id: application.id,
+										text: [
+											draft.question.trim(),
+											draft.answer.trim(),
+											landed.find((option) => option.value === draft.landed)?.label,
+										]
+											.filter(Boolean)
+											.join("\n\n"),
+									})
+								}
+							>
+								<Trans>Save to notes</Trans>
+							</Button>
+						</div>
 					)}
-					<Button
-						variant={provider ? "secondary" : "primary"}
-						disabled={!ready}
-						loading={note.isPending}
-						onClick={() =>
-							note.mutate({
-								id: application.id,
-								text: [
-									draft.question.trim(),
-									draft.answer.trim(),
-									landed.find((option) => option.value === draft.landed)?.label,
-								]
-									.filter(Boolean)
-									.join("\n\n"),
-							})
-						}
-					>
-						<Trans>Save to notes</Trans>
-					</Button>
 					<GenerateNotice generate={generate} onRetry={submit} />
-					<AiNotice
-						needs={<Trans>A review of your answer needs AI.</Trans>}
-						works={<Trans>Your notes on each question save without it.</Trans>}
-					/>
 				</div>
 			)}
 		</section>
@@ -399,6 +432,7 @@ function ReviewCard({ application, review, readOnly }: ReviewCardProps) {
 			)}
 			{data.remember && !readOnly && (
 				<MemoryProposal
+					variant="row"
 					question={t`Remember for ${company} only?`}
 					facts={[data.remember]}
 					state={remembered ? "remembered" : dismissed ? "dismissed" : "pending"}

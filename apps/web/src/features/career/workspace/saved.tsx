@@ -21,7 +21,7 @@ import { useSavedItems } from "../hooks";
 import { CareerLoadError } from "../load-state";
 import { formatMoney } from "../offer-compare";
 import { useRemoving } from "../removing";
-import { CollapseRow, tabLabel, useCareerTime, withQueryUndo } from "../shared";
+import { CollapseRow, tabLabel, useCareerTime, useNow, withQueryUndo } from "../shared";
 import { Chip } from "@/components/calm/filter-bar";
 import { HeroCard } from "@/components/calm/hero-card";
 import { ListRow, IconTile, revealOnRowClassName } from "@/components/calm/list-row";
@@ -121,7 +121,7 @@ export function SavedTab({ application, interview, go }: WorkspaceTabProps) {
 			{current && (
 				<HeroCard
 					wide
-					className="relative mt-5 gap-4 py-4 ps-[76px] pe-5 sm:gap-4 [&_h2]:t-label [&>div:first-child]:gap-0 [&>div:first-child>p:last-child]:max-w-none [&>div:first-child>p:last-child]:text-[13px]/[18px] [&>div:first-child>p:last-child]:text-ink-3 [&>div:last-child]:flex-none"
+					className="relative mt-5 gap-4 py-4 ps-[76px] pe-5 sm:gap-4 sm:py-4 sm:ps-[76px] sm:pe-5 [&_h2]:t-label [&>div:first-child]:gap-0 [&>div:first-child>p:last-child]:max-w-none [&>div:first-child>p:last-child]:text-[13px]/[18px] [&>div:first-child>p:last-child]:text-ink-3 [&>div:last-child]:flex-none"
 					title={current.data.kind === "briefing" ? current.data.headline : current.title}
 					kicker={
 						<>
@@ -189,13 +189,31 @@ type SavedRowProps = {
 };
 
 function SavedRow({ item, applicationId, expanded, onToggle, onOpen, onDelete }: SavedRowProps) {
-	const { when } = useCareerTime();
+	const { when, day, time } = useCareerTime();
+	const now = useNow();
 	const { i18n } = useLingui();
+	const sent = item.data.kind === "answers" && item.submission;
+	// "today, 09:12" mid-line; answers sent with the application carry their day only.
+	const at = sent
+		? day(item.createdAt)
+		: day(item.createdAt) === day(now)
+			? t`today, ${time(item.createdAt)}`
+			: when(item.createdAt);
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId } }));
 	const meta = KINDS.find(({ kind }) => kind === item.data.kind) ?? KINDS[0];
 	const used = sourcesOf(item);
 	const usedFacts = item.evidence.factIds.flatMap((id) => facts?.find((fact) => fact.id === id)?.text ?? []);
 	const summaryId = `${item.id}-summary`;
+	// One line, so it reads (and wraps) as one: "Practice · today, 09:12 · typed · used 2 facts, 1 story".
+	const line = [
+		kindLabel(item.data.kind),
+		at,
+		item.data.kind === "answers" ? plural(item.data.answers.length, { one: "# answer", other: "# answers" }) : null,
+		item.data.kind === "practice" ? (item.data.mode === "typed" ? t`typed` : t`spoken`) : null,
+		used && !sent ? t`used ${used}` : null,
+	]
+		.filter(Boolean)
+		.join(" · ");
 
 	return (
 		<ListRow
@@ -214,39 +232,29 @@ function SavedRow({ item, applicationId, expanded, onToggle, onOpen, onDelete }:
 					onClick={onToggle}
 					className="text-start hover:underline"
 				>
-					{item.title}
+					{sent ? t`Answers sent with the application` : item.title}
 				</button>
 			}
 			subtitle={
 				<>
-					{kindLabel(item.data.kind)} · {when(item.createdAt)}
-					{item.data.kind === "practice" && <> · {item.data.mode === "typed" ? t`typed` : t`spoken`}</>}
-					{used && (
-						<>
-							{" "}
-							·{" "}
-							{usedFacts.length > 0 ? (
-								<Tooltip>
-									<TooltipTrigger
-										render={<span className="cursor-help underline decoration-dotted underline-offset-3" />}
-									>{t`used ${used}`}</TooltipTrigger>
-									<TooltipContent className="grid max-w-sm gap-1">
-										{usedFacts.map((text) => (
-											<span key={text}>{text}</span>
-										))}
-									</TooltipContent>
-								</Tooltip>
-							) : (
-								t`used ${used}`
-							)}
-						</>
+					{usedFacts.length > 0 && !sent ? (
+						<Tooltip>
+							<TooltipTrigger render={<span className="block cursor-help" />}>{line}</TooltipTrigger>
+							<TooltipContent className="grid max-w-sm gap-1">
+								{usedFacts.map((text) => (
+									<span key={text}>{text}</span>
+								))}
+							</TooltipContent>
+						</Tooltip>
+					) : (
+						<span className="block">{line}</span>
 					)}
 					{expanded && (
 						<span id={summaryId} className="block pt-1.5 text-sm/[21px] whitespace-normal text-ink-2">
 							{summaryOf(item, i18n.locale)}
 						</span>
 					)}
-					<AiResultUsage usage={item.aiUsage} />
+					{expanded && <AiResultUsage usage={item.aiUsage} />}
 				</>
 			}
 			trailing={

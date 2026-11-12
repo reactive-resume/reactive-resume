@@ -126,7 +126,6 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 	const query = useQuery(orpc.applications.getById.queryOptions({ input: { id: applicationId } }));
 	const saved = useSavedItems(applicationId);
 	// Items being deleted (Undo still offered) are already gone from the list: leave them out of the badge too.
-	const savedCount = saved.data?.length ?? 0;
 	const workspace = useQuery(orpc.career.workspace.queryOptions({ input: { applicationId } }));
 	const overlay = useOverlayHistory();
 	const application = query.data;
@@ -237,6 +236,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 						onRetrySaved={() => void saved.refetch()}
 						go={go}
 						onDetails={() => openSearch({ details: true })}
+						detailsOpen={Boolean(search.details)}
 						onEdit={() => openSearch({ edit: "interview" })}
 					/>
 				) : (
@@ -274,7 +274,6 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 										{value === "messages" && unreadMessages > 0 && (
 											<span className="text-xs text-ink-3">{unreadMessages}</span>
 										)}
-										{value === "saved" && savedCount > 0 && <span className="text-xs text-ink-3">{savedCount}</span>}
 									</SectionRailItem>
 								))}
 							</SectionRail>

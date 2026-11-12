@@ -12,7 +12,7 @@ import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { formatList } from "@reactive-resume/utils/locale";
 import { latest } from "../hooks";
 import { CareerLoadError } from "../load-state";
-import { tabLabel, useCareerTime } from "../shared";
+import { midSentence, tabLabel, useCareerTime } from "../shared";
 import { HeroCard } from "@/components/calm/hero-card";
 import { IconTile, List, ListRow } from "@/components/calm/list-row";
 import { Columns } from "@/components/calm/page";
@@ -45,6 +45,8 @@ type Props = Pick<WorkspaceTabProps, "application" | "interview" | "now" | "go">
 	savedPending: boolean;
 	savedFailed: boolean;
 	onRetrySaved: () => void;
+	/** The details sheet is open over the page (J7). */
+	detailsOpen?: boolean;
 };
 
 /** One job's next step and its seven work areas. All summaries come from the current application. */
@@ -59,6 +61,7 @@ export function ApplicationOverview({
 	savedPending,
 	savedFailed,
 	onRetrySaved,
+	detailsOpen = false,
 }: Props) {
 	const time = useCareerTime();
 	const { lanes } = useApplicationLanes();
@@ -81,8 +84,13 @@ export function ApplicationOverview({
 			application.sentCoverLetterVersionId || application.coverLetterUrl ? t`letter` : "",
 		].filter(Boolean),
 	);
+	// The Notes field holds one note per line; dated notes from Debrief are counted when there are none.
 	const notes =
-		application.activity.filter((entry) => entry.type === "note").length + (application.notes?.trim() ? 1 : 0);
+		(application.notes ?? "").split("\n").filter((line) => line.trim()).length ||
+		application.activity.filter((entry) => entry.type === "note").length;
+	const debriefed = debrief?.interviewId
+		? application.activity.find((entry) => entry.type === "interview" && entry.id === debrief.interviewId)
+		: undefined;
 	const summaries: Record<WorkspaceTab, string> = {
 		fit: fit ? t`${supported} of ${count} requirements have evidence` : t`Check the posting against your experience`,
 		apply:
@@ -95,7 +103,13 @@ export function ApplicationOverview({
 				? t`Practised today`
 				: t`Practised ${time.date(practice.createdAt)}`
 			: t`Rehearse an answer, typed or spoken`,
-		debrief: debrief ? t`Debrief saved ${time.date(debrief.createdAt)}` : t`Write down what happened after a round`,
+		debrief: !debrief
+			? t`Write down what happened after a round`
+			: debriefed?.type !== "interview"
+				? t`Debrief saved ${time.date(debrief.createdAt)}`
+				: debriefed.kind === "screening"
+					? t`Screening call debriefed ${time.date(debrief.createdAt)}`
+					: t`${interviewKindOf(debriefed.kind)?.label ?? ""} interview debriefed ${time.date(debrief.createdAt)}`,
 		messages: reply ? t`Last message ${time.date(reply.createdAt)}` : t`Save a message and write your reply`,
 		saved: t`Saved briefings, fit results and drafts`,
 	};
@@ -168,8 +182,9 @@ export function ApplicationOverview({
 				title={heroInterview ? t`${interviewKindOf(heroInterview.kind)?.label ?? ""} interview` : text.title}
 				actions={
 					<>
+						{/* J7: with the details sheet open over the page, the sheet holds the view's one accent. */}
 						{action ? (
-							<Button size="lg" className="leading-5" onClick={action}>
+							<Button size="lg" className="leading-5" variant={detailsOpen ? "secondary" : "primary"} onClick={action}>
 								{application.status === "closed" ? (
 									<Trans>Open Library</Trans>
 								) : application.status === "saved" ? (
@@ -212,7 +227,7 @@ export function ApplicationOverview({
 				}
 			>
 				{heroInterview
-					? t`With ${heroInterview.participants.map((person) => person.name).join(t` and `)} · ${heroInterview.location ?? t`Interview`}.${briefing ? t` Your briefing is ready: likely questions and stories to tell.` : ""}`
+					? t`With ${heroInterview.participants.map((person) => person.name).join(t` and `)} · ${midSentence(heroInterview.location) ?? t`Interview`}.${briefing ? t` Your briefing is ready: likely questions and stories to tell.` : ""}`
 					: text.sub}
 			</HeroCard>
 			<Columns

@@ -3,7 +3,7 @@ import type { WorkspaceTabProps } from "./shell";
 import type { PracticeQuestion as Question } from "@reactive-resume/schema/career-practice";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
-import { ph, t } from "@lingui/core/macro";
+import { ph, plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
@@ -205,6 +205,12 @@ export function PractiseTab({ application, version, interview, speak, story, war
 							: t`Practice your story. Questions are simulated.`
 				}
 			/>
+			{!viewing && (
+				<AiNotice
+					needs={<Trans>Feedback on an answer needs AI.</Trans>}
+					works={<Trans>The questions, typing, speaking and Hear it work without it.</Trans>}
+				/>
+			)}
 			<div className={cn("grid items-start gap-12", !speaking && "@3xl:grid-cols-[minmax(0,1fr)_232px]")}>
 				{viewing ? (
 					<div className="grid gap-3">
@@ -614,7 +620,15 @@ function Session({
 				</div>
 
 				{mode === "typed" ? (
-					answerField
+					<>
+						{answerField}
+						<p className="-mt-2.5 pt-1.5 text-xs/4 text-ink-3">
+							{plural(answer.trim() ? answer.trim().split(/\s+/).length : 0, {
+								one: "# word · aim for about 90 seconds when spoken",
+								other: "# words · aim for about 90 seconds when spoken",
+							})}
+						</p>
+					</>
 				) : connection.isUnavailable ? (
 					<AiProviderLoadState state={connection} />
 				) : !canTalk ? (
@@ -829,18 +843,17 @@ function Session({
 						</p>
 					</div>
 					<GenerateNotice generate={generate} onRetry={getFeedback} className="w-fit" />
-					<AiNotice
-						needs={<Trans>Feedback on an answer needs AI.</Trans>}
-						works={<Trans>The questions, typing, speaking and Hear it work without it.</Trans>}
-					/>
 				</div>
 			</section>
 
 			{feedback && showFeedback && (
 				<FeedbackCard data={feedback.data}>
 					<div className="flex flex-wrap items-center gap-2">
+						<Button disabled={index >= questions.length - 1} onClick={() => changeQuestion(1)}>
+							<Trans>Next question</Trans>
+							<Icon name="arrow-right" size={16} />
+						</Button>
 						<Button
-							size="sm"
 							variant="secondary"
 							onClick={() => {
 								chooseMode("typed");
@@ -850,12 +863,8 @@ function Session({
 						>
 							<Trans>Try again with this opening</Trans>
 						</Button>
-						<Button disabled={index >= questions.length - 1} onClick={() => changeQuestion(1)}>
-							<Trans>Next question</Trans>
-							<Icon name="arrow-right" size={16} />
-						</Button>
-						<span className="ms-auto flex items-center gap-1 text-xs text-ink-3">
-							<Icon name="check-circle" size={15} />
+						<span className="ms-auto flex items-center gap-1.5 text-[13px]/[18px] text-ink-3">
+							<Icon name="check-circle" size={16} />
 							<Trans>Saved to Library</Trans>
 						</span>
 					</div>
@@ -1188,19 +1197,19 @@ function FeedbackCard({ data, children }: FeedbackCardProps) {
 				<Trans>Feedback · compared with your stories and the posting</Trans>
 			</p>
 			<div className="grid gap-6 sm:grid-cols-2">
-				<div className="grid content-start gap-1.5">
-					<p className="flex items-center gap-1.5 text-[13px]/[18px] font-semibold text-accent-text">
+				<div className="grid content-start gap-0">
+					<p className="flex items-center gap-1.5 text-[13px]/[22px] font-semibold text-accent-text">
 						<Icon name="thumbs-up" size={16} />
 						<Trans>What works</Trans>
 					</p>
-					<p className="text-sm leading-[21px]">{data.works}</p>
+					<p className="text-sm/5">{data.works}</p>
 				</div>
-				<div className="grid content-start gap-1.5">
-					<p className="flex items-center gap-1.5 text-[13px]/[18px] font-semibold text-warn-text">
+				<div className="grid content-start gap-0">
+					<p className="flex items-center gap-1.5 text-[13px]/[22px] font-semibold text-warn-text">
 						<Icon name="wrench" size={16} />
 						<Trans>Strengthen</Trans>
 					</p>
-					<p className="text-sm leading-[21px]">{data.strengthen}</p>
+					<p className="text-sm/5">{data.strengthen}</p>
 				</div>
 			</div>
 			<div className="mt-[18px] mb-[22px] grid gap-1 border-s-[3px] border-line-2 py-0.5 ps-4">

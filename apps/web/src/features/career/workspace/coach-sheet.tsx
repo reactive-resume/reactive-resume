@@ -188,38 +188,47 @@ function CoachSheetBody({
 		return thread.id;
 	};
 
+	const model = provider ? aiModelForTask(provider, "capable") : null;
+	// W12: a serif title, what the conversation is about and who answers, and what the coach reads.
 	const header = (
-		<header className="flex h-14 shrink-0 items-center gap-1 border-b border-line ps-4 pe-14">
-			<Icon name="sparkle" size={20} className="me-1.5 shrink-0 text-accent-text" />
-			<div className="grid min-w-0 flex-1">
-				<SheetTitle className="font-sans text-[15px] leading-5 font-semibold">
-					<Trans>Coach</Trans>
-				</SheetTitle>
-				<SheetDescription className="truncate text-xs text-ink-3">
-					{application.company} · {tabLabel(tab)}
-				</SheetDescription>
-			</div>
-			{(usable.length > 0 || summary) && (
-				<ModelMenu
-					open={modelMenuOpen}
-					onOpenChange={setModelMenuOpen}
-					onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
-					providers={usable}
-					current={provider}
-					label={label}
-					onChoose={(id) => void chooseProvider(id)}
+		<header data-design="coach-head" className="grid shrink-0 gap-2.5 px-6 pt-5">
+			<div className="flex items-start gap-1 pe-[30px]">
+				<div className="grid min-w-0 flex-1">
+					<SheetTitle className="t-section-title">
+						<Trans>Coach</Trans>
+					</SheetTitle>
+					<SheetDescription className="truncate text-[13px]/[18px] text-ink-3">
+						{provider && model
+							? t`About ${application.company} · ${label} · ${model}`
+							: t`About ${application.company}`}
+					</SheetDescription>
+				</div>
+				{/* With one connection there is nothing to choose; the subtitle names it. */}
+				{(usable.length > 1 || stranded) && (
+					<ModelMenu
+						open={modelMenuOpen}
+						onOpenChange={setModelMenuOpen}
+						onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
+						providers={usable}
+						current={provider}
+						label={label}
+						onChoose={(id) => void chooseProvider(id)}
+					/>
+				)}
+				{list.length > 0 && <ConversationMenu threads={list} currentId={threadId} onOpen={open} onDelete={remove} />}
+				<IconButton
+					icon="note-pencil"
+					label={t`New conversation`}
+					size="icon-sm"
+					iconSize={20}
+					className="text-ink-2"
+					disabled={threadId === null}
+					onClick={() => open("new")}
 				/>
-			)}
-			{list.length > 0 && <ConversationMenu threads={list} currentId={threadId} onOpen={open} onDelete={remove} />}
-			<IconButton
-				icon="note-pencil"
-				label={t`New conversation`}
-				size="icon-sm"
-				iconSize={20}
-				className="text-ink-2"
-				disabled={threadId === null}
-				onClick={() => open("new")}
-			/>
+			</div>
+			<p className="border-b border-line pb-3.5 text-[13px]/[18px] text-ink-3">
+				<Trans>It reads the posting, your notes and what you sent, and knows you are on {tabName}.</Trans>
+			</p>
 		</header>
 	);
 

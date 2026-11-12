@@ -1,11 +1,13 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { createServer } from "node:http";
+import { COACH_ANSWER, careerJson, letterText } from "./ai-stub-career.ts";
 
 /**
  * A scripted OpenAI-compatible provider for the assistant spec. It answers the connection test, and plays a small
  * conversation: read the document, propose an edit to its first passage, then say what changed. A message asking
- * for "a question" makes it ask one first; "slowly" streams a long reply that can be stopped.
+ * for "a question" makes it ask one first; "slowly" streams a long reply that can be stopped. Structured career work,
+ * letter drafts and the workspace coach get the persona's words from ai-stub-career.ts.
  */
 
 type ChatMessage = { role: string; content?: unknown; tool_call_id?: string; tool_calls?: unknown[] };
@@ -63,6 +65,12 @@ function streamToolCall(response: ServerResponse, name: string, args: unknown) {
 	response.end("data: [DONE]\n\n");
 }
 
+const systemText = (messages: ChatMessage[]) =>
+	messages
+		.filter((message) => message.role === "system" || message.role === "developer")
+		.map((message) => text(message.content))
+		.join("\n");
+
 function reply(request: ChatRequest, response: ServerResponse) {
 	const messages = request.messages;
 	const tools = new Set((request.tools ?? []).map((tool) => tool.function.name));
@@ -73,6 +81,8 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	const readTool = tools.has("read_letter") ? "read_letter" : "read_resume";
 
 	response.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-cache" });
+	const letter = letterText(systemText(messages), text(lastUser?.content));
+	if (letter) return streamText(response, letter.split(/(?<= )/));
 	if (said.includes("slowly"))
 		return streamText(
 			response,
@@ -89,6 +99,13 @@ function reply(request: ChatRequest, response: ServerResponse) {
 			question: "The posting mentions accessibility. Have you done accessibility work?",
 			choices: ["Yes, I have", "No, skip it"],
 		});
+	// The career coach: propose remembering what the user said about Harbour Studio, then answer.
+	if (tools.has("remember_fact") && !tools.has("propose_edits")) {
+		const remembered = sinceUser.some((message) => message.role === "tool");
+		const quote = text(lastUser?.content).match(/I designed invoicing[^.?!]*[.?!]?/)?.[0];
+		if (quote && !remembered) return streamToolCall(response, "remember_fact", { quote, category: "experience" });
+		return streamText(response, COACH_ANSWER.split(/(?<= )/));
+	}
 	if (!tools.has("propose_edits"))
 		return streamText(response, [
 			asked ? "Thanks. I'll use your answer as we continue." : "You left the document out.",
@@ -151,8 +168,10 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 		}
 		const parsed = JSON.parse(body || "{}") as ChatRequest;
 		requests.push(parsed);
-		// The connection test asks for a single character, without streaming.
+		// The connection test asks for a single character, without streaming; structured career work asks for JSON.
 		if (!parsed.stream) {
+			const prompt = text([...parsed.messages].reverse().find((message) => message.role === "user")?.content);
+			const structured = careerJson(prompt);
 			response.writeHead(200, { "content-type": "application/json" });
 			response.end(
 				JSON.stringify({
@@ -163,7 +182,7 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 					choices: [
 						{
 							index: 0,
-							message: { role: "assistant", content: "1" },
+							message: { role: "assistant", content: structured ? JSON.stringify(structured) : "1" },
 							finish_reason: "stop",
 						},
 					],

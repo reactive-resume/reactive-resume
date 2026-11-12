@@ -1042,24 +1042,25 @@ function Checklist({
 					<Trans>Before you send</Trans>
 				</h2>
 				{!submitted && !readOnly && (
-					<span className="text-xs text-ink-2 tabular-nums">{t`${ph({ done: i18n.number(done) })} of ${i18n.number(items.length)}`}</span>
+					<span className="font-mono text-xs/4 font-medium text-ink-3 tabular-nums">{t`${ph({ done: i18n.number(done) })} of ${i18n.number(items.length)}`}</span>
 				)}
 			</div>
 			<ul className="grid gap-2.5">
 				{items.map(({ label, index }) => (
 					<li key={label}>
-						<label className="flex cursor-pointer gap-2.5 text-[13px] leading-[18px]">
+						<label
+							className={cn(
+								"flex cursor-pointer gap-2.5 text-[13px] leading-[18px] transition-colors duration-quick",
+								ticked.includes(index) ? "text-ink-2" : "text-ink",
+							)}
+						>
 							<Checkbox
 								className="mt-px"
 								checked={ticked.includes(index)}
 								disabled={readOnly || submitted || submitting}
 								onCheckedChange={(checked) => toggle(index, checked)}
 							/>
-							<span
-								className={cn("transition-colors duration-quick", ticked.includes(index) ? "text-ink-2" : "text-ink")}
-							>
-								{label}
-							</span>
+							{label}
 						</label>
 					</li>
 				))}

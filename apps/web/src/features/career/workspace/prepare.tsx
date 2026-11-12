@@ -7,7 +7,7 @@ import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
-import { useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 import { firstFutureLead, PREPARE_LEADS } from "@reactive-resume/schema/career-schedule";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -21,7 +21,16 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks, useWorkspace } from "../hooks";
-import { Eyebrow, flash, minutesUntil, useCareerTime, useNow, GenerateNotice, Working, workingSteps } from "../shared";
+import {
+	Eyebrow,
+	midSentence,
+	minutesUntil,
+	useCareerTime,
+	useNow,
+	GenerateNotice,
+	Working,
+	workingSteps,
+} from "../shared";
 import { AiNotice } from "./fit";
 import { List, ListRow } from "@/components/calm/list-row";
 import { PageHeader } from "@/components/calm/page";
@@ -39,8 +48,8 @@ const isBriefing = (item: SavedItem | undefined): item is Briefing => item?.data
 /** Before start − 10 min: the plan (W6). Until the end: the 10-minute checklist (W7/W21). After: "How did it go?". */
 export function PrepareTab({ application, version, interview, now, go }: WorkspaceTabProps) {
 	const [checklist, setChecklist] = useState(false);
-	const time = useCareerTime();
 	const saved = useSavedItems(application.id);
+	const provider = useDefaultProvider();
 
 	if (!interview && !isBriefing(version))
 		return (
@@ -90,6 +99,8 @@ export function PrepareTab({ application, version, interview, now, go }: Workspa
 
 	if (!briefing) {
 		if (saved.isPending) return <Skeleton className="h-64 rounded-xl" />;
+		if (interview && !provider.isUnavailable && !provider.provider)
+			return <PrepWithoutAi application={application} interview={interview} now={now} go={go} />;
 		return interview ? (
 			<>
 				<PageHeader title={t`Interview prep`} />
@@ -111,7 +122,7 @@ export function PrepareTab({ application, version, interview, now, go }: Workspa
 		<>
 			<PageHeader
 				title={t`Interview prep`}
-				className="[&>div]:min-h-9 [&>p]:pt-0 [&>p]:text-sm/6"
+				className="[&>div]:min-h-9 [&>p]:py-0.5 [&>p]:text-sm/5"
 				actions={
 					!version &&
 					interview && (
@@ -130,26 +141,7 @@ export function PrepareTab({ application, version, interview, now, go }: Workspa
 						</>
 					)
 				}
-				subtitle={
-					interview && (
-						<>
-							{t`${interviewTypeLabel(interview.kind)} interview`} ·{" "}
-							{time.format(interview.at, { weekday: "long", day: "numeric", month: "short" })},{" "}
-							{time.time(interview.at)} · {t`${interview.durationMinutes} min`} · {interview.location} ·{" "}
-							{time.relative(interview.at, now).toLocaleLowerCase(time.locale)}
-							{!version && (
-								<Button
-									variant="link"
-									size="sm"
-									className="ms-1 h-auto px-0 text-[13px]/5"
-									onClick={() => go("prepare", { edit: "interview" })}
-								>
-									<Trans>Edit interview</Trans>
-								</Button>
-							)}
-						</>
-					)
-				}
+				subtitle={interview && <InterviewLine interview={interview} now={now} go={!version ? go : undefined} />}
 			/>
 			<Plan application={application} interview={interview} briefing={briefing} readOnly={!!version} go={go} />
 			{interview && !version && (
@@ -161,6 +153,201 @@ export function PrepareTab({ application, version, interview, now, go }: Workspa
 					onOpenChange={setChecklist}
 				/>
 			)}
+		</>
+	);
+}
+
+type InterviewLineProps = { interview: InterviewTimelineEntry; now: Date; go?: WorkspaceTabProps["go"] | undefined };
+
+/** "Technical interview · Tuesday 10 Nov, 10:00 · 60 min · video call · in 3 days  Edit interview" */
+function InterviewLine({ interview, now, go }: InterviewLineProps) {
+	const time = useCareerTime();
+	return (
+		<>
+			{t`${interviewTypeLabel(interview.kind)} interview`} ·{" "}
+			{time.format(interview.at, { weekday: "long", day: "numeric", month: "short" })}, {time.time(interview.at)} ·{" "}
+			{t`${interview.durationMinutes} min`} · {midSentence(interview.location)} ·{" "}
+			{time.relative(interview.at, now).toLocaleLowerCase(time.locale)}
+			{go && (
+				<Button
+					variant="link"
+					size="sm"
+					className="ms-1 h-auto px-0 text-[13px]/5"
+					onClick={() => go("prepare", { edit: "interview" })}
+				>
+					<Trans>Edit interview</Trans>
+				</Button>
+			)}
+		</>
+	);
+}
+
+type PrepWithoutAiProps = {
+	application: Application;
+	interview: InterviewTimelineEntry;
+	now: Date;
+	go: WorkspaceTabProps["go"];
+};
+
+/** N6: without AI, the fixed checklist becomes the plan, with what was sent, the people and the stories. */
+function PrepWithoutAi({ application, interview, now, go }: PrepWithoutAiProps) {
+	const time = useCareerTime();
+	const ticks = useTicks(application.id, `now:${interview.id}`);
+	const documents = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	const { data: stories } = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: application.id } }));
+	const rows = steps();
+	const total = rows.reduce((sum, row) => sum + row.minutes, 0);
+	const done = rows.reduce((sum, row, index) => sum + (ticks.ticked.includes(String(index)) ? row.minutes : 0), 0);
+	const sent = [
+		application.sentResumeVersionId && application.resumeId
+			? { id: application.resumeId, kind: "resume" as const, label: t`Resume · kept as sent` }
+			: null,
+		application.sentCoverLetterVersionId && application.coverLetterId
+			? { id: application.coverLetterId, kind: "letter" as const, label: t`Cover letter · kept as sent` }
+			: null,
+	].flatMap((entry) => {
+		const document = entry && documents.data?.find((item) => item.id === entry.id);
+		return entry && document ? [{ ...entry, name: document.name }] : [];
+	});
+	const action = (index: number) =>
+		index === 1 ? (
+			<Button
+				variant="link"
+				className="h-auto p-0 text-sm/5 text-accent-text"
+				onClick={() => go("practise", { speak: true })}
+			>
+				<Trans context="Button: rehearse interview answers">Practice</Trans>
+			</Button>
+		) : index === 2 ? (
+			<Link to="/dashboard/career/knowledge/stories/{-$storyId}" className="text-sm/5 font-medium text-accent-text">
+				<Trans>Open stories</Trans>
+			</Link>
+		) : null;
+
+	return (
+		<>
+			<PageHeader
+				title={t`Interview prep`}
+				className="[&>div]:min-h-9 [&>p]:py-0.5 [&>p]:text-sm/5"
+				actions={
+					<Button onClick={() => go("practise", { warmup: true, round: interview.id })}>
+						<Icon name="microphone" />
+						<Trans>Practice 3 general questions</Trans>
+					</Button>
+				}
+				subtitle={<InterviewLine interview={interview} now={now} go={go} />}
+			/>
+			<AiNotice
+				needs={<Trans>A timed plan, your opening and likely questions need AI.</Trans>}
+				works={<Trans>The checklist, people and stories work without it.</Trans>}
+			/>
+			<div className="grid items-start gap-10 @3xl:grid-cols-[minmax(0,1fr)_264px]">
+				<div>
+					<SectionHeading className="pt-[22px]" note={t`${done} of ${total} min done`}>
+						<Trans>Before the call</Trans>
+					</SectionHeading>
+					{rows.map((row, index) => (
+						<div
+							key={row.title}
+							className="grid grid-cols-[18px_minmax(0,1fr)] items-start gap-x-3.5 gap-y-px border-b border-line py-2.5 last:border-b-0 @xl:grid-cols-[18px_40px_minmax(0,1fr)_auto]"
+						>
+							<Checkbox
+								className="mt-px"
+								aria-label={row.title}
+								checked={ticks.ticked.includes(String(index))}
+								onCheckedChange={(checked) => ticks.toggle(String(index), checked)}
+							/>
+							<span className="font-mono text-xs/4 font-medium text-ink-3">
+								<Trans>{i18n.number(row.minutes)} min</Trans>
+							</span>
+							<div className="col-start-2 grid gap-px @xl:col-start-auto">
+								<p
+									className={cn(
+										"text-[15px]/[22px] font-medium transition-colors duration-quick",
+										ticks.ticked.includes(String(index)) ? "text-ink-3" : "text-ink",
+									)}
+								>
+									{row.title}
+								</p>
+								<p className="text-[13px]/[18px] text-ink-3">{row.detail}</p>
+							</div>
+							<div className="col-start-2 @xl:col-start-auto">{action(index)}</div>
+						</div>
+					))}
+					{sent.length > 0 && (
+						<>
+							<SectionHeading
+								className="pt-6"
+								note={application.appliedAt ? time.date(application.appliedAt) : undefined}
+							>
+								<Trans>What you sent</Trans>
+							</SectionHeading>
+							<List>
+								{sent.map((entry) => (
+									<ListRow
+										key={entry.id}
+										render={
+											entry.kind === "resume" ? (
+												<Link to="/builder/$resumeId" params={{ resumeId: entry.id }} />
+											) : (
+												<Link to="/builder/letter/$coverLetterId" params={{ coverLetterId: entry.id }} />
+											)
+										}
+										leading={<Icon name={entry.kind === "resume" ? "file-text" : "envelope-simple"} size={20} />}
+										title={entry.name}
+										subtitle={entry.label}
+										caret
+									/>
+								))}
+							</List>
+						</>
+					)}
+				</div>
+				<aside>
+					<SectionHeading className="pt-[22px]">
+						<Trans>Who you'll meet</Trans>
+					</SectionHeading>
+					<List>
+						{interview.participants.map((person) => (
+							<ListRow
+								key={person.name}
+								leading={
+									<span className="grid size-8 shrink-0 place-items-center rounded-sm bg-sunken text-xs font-semibold text-ink-2">
+										{person.name
+											.split(/\s+/)
+											.map((part) => part[0])
+											.slice(0, 2)
+											.join("")}
+									</span>
+								}
+								title={person.name}
+								subtitle={person.role}
+							/>
+						))}
+					</List>
+					{stories && stories.length > 0 && (
+						<>
+							<SectionHeading className="pt-6" note={stories.length}>
+								<Trans>Your stories</Trans>
+							</SectionHeading>
+							<List tight>
+								{stories.map((story) => (
+									<ListRow
+										key={story.id}
+										render={
+											<Link to="/dashboard/career/knowledge/stories/{-$storyId}" params={{ storyId: story.id }} />
+										}
+										leading={<Icon name="book-open" size={20} />}
+										title={story.data.title}
+										className="[&_span.truncate]:whitespace-normal"
+										caret
+									/>
+								))}
+							</List>
+						</>
+					)}
+				</aside>
+			</div>
 		</>
 	);
 }
@@ -221,7 +408,6 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 	const ticks = useTicks(application.id, `plan:${briefing.id}`);
 	const workspace = useWorkspace(application.id);
 	const [reading, setReading] = useState(false);
-	const questionsRef = useRef<HTMLDivElement>(null);
 	const done = (index: number) => ticks.ticked.includes(String(index));
 	const total = data.plan.reduce((sum, row) => sum + row.minutes, 0);
 	const doneMinutes = data.plan.reduce((sum, row, index) => sum + (done(index) ? row.minutes : 0), 0);
@@ -256,12 +442,9 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 						<Trans>Draft story</Trans>
 					</Link>
 				);
+			// The questions are the next section down (W3 draws no action here).
 			case "questions":
-				return (
-					<Button size="sm" variant="secondary" onClick={() => flash(questionsRef.current)}>
-						<Trans>See below</Trans>
-					</Button>
-				);
+				return null;
 			case "practise":
 				return (
 					<Button
@@ -303,7 +486,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 					{data.plan.map((row, index) => (
 						<div
 							key={`${row.title}-${index}`}
-							className="grid grid-cols-[18px_minmax(0,1fr)] items-start gap-x-3.5 gap-y-1.5 border-b border-line py-2.5 last:border-b-0 @xl:grid-cols-[18px_44px_minmax(0,1fr)_auto]"
+							className="grid grid-cols-[18px_minmax(0,1fr)] items-start gap-x-3.5 gap-y-px border-b border-line py-2.5 last:border-b-0 @xl:grid-cols-[18px_44px_minmax(0,1fr)_auto]"
 						>
 							<Checkbox
 								className="mt-px"
@@ -315,7 +498,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 							<span className="font-mono text-xs/4 font-medium text-ink-3">
 								<Trans>{i18n.number(row.minutes)} min</Trans>
 							</span>
-							<div className="col-start-2 grid gap-0.5 @xl:col-start-auto">
+							<div className="col-start-2 grid gap-px @xl:col-start-auto">
 								<p
 									className={cn(
 										"text-[15px]/[22px] font-medium transition-colors duration-quick",
@@ -324,7 +507,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 								>
 									{row.title}
 								</p>
-								<p className="text-[13px] leading-[19px] text-ink-2">{row.detail}</p>
+								<p className="text-[13px]/[18px] text-ink-3">{row.detail}</p>
 							</div>
 							<div className="col-start-2 @xl:col-start-auto">{action(row)}</div>
 						</div>
@@ -340,7 +523,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 					</>
 				)}
 				{questions.length > 0 && (
-					<div ref={questionsRef}>
+					<div>
 						<SectionHeading className="pt-6" note={questions.length}>
 							<Trans>Questions to ask</Trans>
 						</SectionHeading>
@@ -354,7 +537,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 										{i18n.number(index + 1)}
 									</span>
 									<span className="min-w-0 flex-1">{question.text}</span>
-									<span className="shrink-0 text-xs leading-5 text-ink-3">{question.origin}</span>
+									<span className="shrink-0 text-[13px]/[18px] text-ink-3">{question.origin}</span>
 								</li>
 							))}
 						</ol>
@@ -529,7 +712,7 @@ function StoriesToBring({ application, briefing }: StoriesToBringProps) {
 				{briefing.data.missingStory && (
 					<ListRow
 						leading={<Icon name="question" size={20} className="text-warn-text" />}
-						subtitle={briefing.data.missingStory}
+						subtitle={t`No story yet for ${briefing.data.missingStory}`}
 						className="[&_span.truncate]:whitespace-normal"
 					/>
 				)}

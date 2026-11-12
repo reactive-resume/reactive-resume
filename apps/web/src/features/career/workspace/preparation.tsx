@@ -205,7 +205,9 @@ export function Preparation({ application, disabled }: PreparationProps) {
 												·{" "}
 												{time.date(document.editedAt) === time.date(now)
 													? t`edited today`
-													: t`edited ${time.date(document.editedAt)}`}
+													: time.date(document.editedAt) === time.date(new Date(+new Date(now) - 86_400_000))
+														? t`edited yesterday`
+														: t`edited ${time.date(document.editedAt)}`}
 											</>
 										)}
 									</p>
