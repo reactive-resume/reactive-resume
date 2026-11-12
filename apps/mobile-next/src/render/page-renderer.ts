@@ -107,8 +107,13 @@ export const pageRenderer: PageRenderer = {
 				const size = Image.resolveAssetSource(source);
 				if (!size?.width || !size.height) throw new Error("Fixture image size unavailable.");
 				const { printToFileAsync } = await import("expo-print");
+				// An Android release build embeds the fixture as a drawable and names it without a scheme; the print
+				// WebView reads drawables from android_res.
+				const src = uri.includes(":")
+					? `data:image/png;base64,${await new File(uri).base64()}`
+					: `file:///android_res/drawable/${uri}.png`;
 				const output = await printToFileAsync({
-					html: `<html><head><style>@page{margin:0}html,body{margin:0;padding:0}img{display:block;width:100%}</style></head><body><img src="data:image/png;base64,${await new File(uri).base64()}" /></body></html>`,
+					html: `<html><head><style>@page{margin:0}html,body{margin:0;padding:0}img{display:block;width:100%}</style></head><body><img src="${src}" /></body></html>`,
 					width: size.width,
 					height: size.height,
 					margins: { left: 0, right: 0, top: 0, bottom: 0 },
