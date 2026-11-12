@@ -41,6 +41,14 @@ function oneAtATime<T>(task: () => Promise<T>): Promise<T> {
 	androidPrints = run;
 	return run;
 }
+/** A print that never answers fails after `ms` instead of holding the queue (and the storyboard) forever. */
+function within<T>(task: () => Promise<T>, ms: number): () => Promise<T> {
+	return () =>
+		Promise.race([
+			task(),
+			new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Print timed out")), ms)),
+		]);
+}
 
 const fixtureImages = {
 	"page-resume-B1": require("../../assets/fixtures/page-resume-B1.png"),
@@ -122,9 +130,13 @@ export const pageRenderer: PageRenderer = {
 						height,
 						margins: { left: 0, right: 0, top: 0, bottom: 0 },
 					});
-				// Android's print WebView sometimes never answers when several prints start at once (a builder screen
-				// renders four fixtures together), which left the storyboard waiting forever: print one at a time there.
-				const output = await (Platform.OS === "android" ? oneAtATime(print) : print());
+				// Android's print WebView sometimes never answers, most often when several prints start at once (a builder
+				// screen renders four fixtures together), which left the storyboard waiting forever: print one at a time
+				// there, and give up on a print that hangs.
+				// ponytail: one retry; a second hang surfaces as the render's error state.
+				const output = await (Platform.OS === "android"
+					? oneAtATime(within(print, 15_000)).catch(() => oneAtATime(within(print, 15_000)))
+					: print());
 				new File(output.uri).copy(pdf);
 				pages = [{ index: 0, uri, width: size.width, height: size.height }];
 				pageMap = fixturePageMap(size.width, size.height);
