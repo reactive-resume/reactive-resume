@@ -146,7 +146,11 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 				render ?? (
 					<Button
 						variant="secondary"
-						className={cn("justify-start text-start font-normal hover:bg-sunken/20", className)}
+						// Calm Combobox: a 40px input-like trigger (raised, control-border edge), not a button.
+						className={cn(
+							"h-10 justify-start bg-raised px-3 text-start font-normal shadow-[inset_0_0_0_1px_var(--control-border)] hover:bg-raised",
+							className,
+						)}
 					/>
 				)
 			}
