@@ -14,6 +14,7 @@ import { availableApplicationContext } from "../applications/access";
 import { activeApplications } from "../applications/access";
 import { syncFollowUp } from "../applications/follow-up";
 import { readOpenPosting, searchJobPostings } from "../applications/posting";
+import { applicationService } from "../applications/service";
 import { lockUser } from "../documents/ownership";
 import { documentsService } from "../documents/service";
 import { webAccessService } from "../web-access/credentials";
@@ -959,6 +960,9 @@ export async function runCareerJobs() {
 	await documentsService
 		.purgeExpiredTrash()
 		.catch((error: unknown) => console.error("[documents] Expired Trash purge failed", error));
+	await applicationService
+		.purgeExpiredTrash()
+		.catch((error: unknown) => console.error("[applications] Expired Trash purge failed", error));
 	// Released usernames are reserved for 30 days; older rows no longer matter.
 	await db
 		.delete(tables.releasedUsername)

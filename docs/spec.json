@@ -16666,13 +16666,20 @@
 														"type": "string",
 														"format": "date-time",
 														"x-native-type": "date"
+													},
+													"expiresAt": {
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date",
+														"description": "When Trash deletes this application permanently (30 days)."
 													}
 												},
 												"required": [
 													"id",
 													"company",
 													"role",
-													"trashedAt"
+													"trashedAt",
+													"expiresAt"
 												]
 											}
 										},
@@ -16839,13 +16846,102 @@
 						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/trash\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"ids\": [\n    \"<string>\"\n  ]\n}'"
 					}
 				]
+			},
+			"delete": {
+				"operationId": "emptyApplicationTrash",
+				"summary": "Empty the application Trash",
+				"description": "Permanently deletes every application in this account's Trash, not only the ones the client has loaded. Active applications, and linked resumes and letters, are kept.",
+				"tags": [
+					"Applications"
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"deleted": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										}
+									},
+									"required": [
+										"deleted"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/applications/trash\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
+				]
 			}
 		},
 		"/applications/{id}/trash": {
 			"post": {
 				"operationId": "trashApplication",
 				"summary": "Move an application to Trash",
-				"description": "Retains the timeline, relationships and files until explicitly permanently deleted. Restore from Trash after reload.",
+				"description": "Retains the timeline, relationships and files in Trash for 30 days, then deletes them permanently. Restore from Trash before then.",
 				"tags": [
 					"Applications"
 				],
@@ -24946,7 +25042,7 @@
 			"delete": {
 				"operationId": "deleteApplication",
 				"summary": "Delete a job application",
-				"description": "Moves a job application to Trash, retaining its timeline, relationships and files. Restore from Trash after reload. Requires authentication.",
+				"description": "Moves a job application to Trash, retaining its timeline, relationships and files for 30 days. Restore from Trash before then. Requires authentication.",
 				"tags": [
 					"Applications"
 				],
