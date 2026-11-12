@@ -122,6 +122,7 @@ const config: ExpoConfig = {
 		"@react-native-community/datetimepicker",
 		"expo-background-task",
 		"expo-quick-actions",
+		"./plugins/android-new-intent",
 		[
 			"expo-build-properties",
 			{
