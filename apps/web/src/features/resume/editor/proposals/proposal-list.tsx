@@ -54,16 +54,19 @@ type ProposalListProps = {
 	data: ResumeData;
 	/** "Suggest again" on an out-of-date proposal. */
 	onSuggestAgain: () => void;
+	/** The narrow-panel cards (see ChangeSet). */
+	compact?: boolean | undefined;
 };
 
 /** Check → Writing's change set, applied to the resume. */
-export function ProposalList({ proposals, data, onSuggestAgain }: ProposalListProps) {
+export function ProposalList({ proposals, data, onSuggestAgain, compact }: ProposalListProps) {
 	const setProposalStatus = useEditorStore((state) => state.setProposalStatus);
 	const locked = useIsResumeLocked();
 	const applications = useResumeStore((state) => state.proposalApplications);
 
 	return (
 		<ChangeSet
+			compact={compact}
 			proposals={proposals}
 			states={proposals.map((proposal) => getProposalState(data, proposal, applications))}
 			locked={locked}
@@ -112,6 +115,11 @@ type ChangeSetProps = {
 	requirements?: readonly RequirementCoverage[] | undefined;
 	/** A cited Knowledge fact's text while it's still switched on; null once it's gone. */
 	factText?: ((id: string) => string | null) | undefined;
+	/**
+	 * Narrow panels (Check's Writing tab, the workspace's prepare review): tighter cards and 14px text. Every safeguard
+	 * stays: sources, the "New detail" tag, Accept, Edit and Reject.
+	 */
+	compact?: boolean | undefined;
 };
 
 /**
@@ -194,7 +202,11 @@ export function ChangeSet(props: ChangeSetProps) {
 
 			{requirements.length > 0 && <Coverage requirements={requirements} factText={props.factText} />}
 
-			<ol aria-label={t`Proposed edits`} onKeyDown={onKeyDown} className="grid gap-3">
+			<ol
+				aria-label={t`Proposed edits`}
+				onKeyDown={onKeyDown}
+				className={cn("grid", props.compact ? "gap-2" : "gap-3")}
+			>
 				{proposals.map((proposal, index) => (
 					<ProposalItem
 						key={proposal.id}
@@ -220,6 +232,7 @@ export function ChangeSet(props: ChangeSetProps) {
 						}
 						factText={props.factText}
 						onSuggestAgain={onSuggestAgain}
+						compact={props.compact}
 					/>
 				))}
 			</ol>
@@ -259,6 +272,7 @@ type ProposalItemProps = {
 	onDrafting: (open: boolean) => void;
 	factText?: ((id: string) => string | null) | undefined;
 	onSuggestAgain?: (() => void) | undefined;
+	compact?: boolean | undefined;
 };
 
 function ProposalItem(props: ProposalItemProps) {
@@ -369,7 +383,10 @@ function ProposalItem(props: ProposalItemProps) {
 			tabIndex={focusable ? 0 : -1}
 			aria-labelledby={labelId}
 			onFocus={props.onFocus}
-			className="grid gap-2 rounded-xl border border-line bg-raised p-3.5 focus-visible:-outline-offset-2"
+			className={cn(
+				"grid rounded-xl border border-line bg-raised focus-visible:-outline-offset-2",
+				props.compact ? "gap-1.5 p-3" : "gap-2 p-3.5",
+			)}
 		>
 			<div className="flex items-center gap-2">
 				<span
@@ -386,7 +403,7 @@ function ProposalItem(props: ProposalItemProps) {
 				</span>
 			</div>
 
-			<div className="grid gap-1.5 text-[15px]/[22px] whitespace-pre-wrap">
+			<div className={cn("grid gap-1.5 whitespace-pre-wrap", props.compact ? "text-sm/5" : "text-[15px]/[22px]")}>
 				{addition ? (
 					<p className="text-ink-3">
 						<Trans>Adds after: {addition.anchor}</Trans>

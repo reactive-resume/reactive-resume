@@ -327,6 +327,7 @@ function ReviewForm({ application, disabled }: PrepareReviewProps) {
 						return (
 							<ChangeSet
 								key={set.toolCallId}
+								compact
 								resumeId={review.resume.id}
 								title={set.title}
 								proposals={proposals}

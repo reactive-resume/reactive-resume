@@ -299,7 +299,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 				icon="books"
 				pressed={chips.memory}
 				onPressedChange={(memory) => setChips({ ...chips, memory })}
-				label={plural(knowledge.active.length, { one: "Knowledge · # fact", other: "Knowledge · # facts" })}
+				label={plural(knowledge.kept, { one: "Knowledge · # fact", other: "Knowledge · # facts" })}
 				tooltip={
 					chips.memory
 						? t`Facts, stories and preferences that are switched on in Knowledge`
@@ -370,6 +370,8 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 				// The trigger caps itself at half its container, which here is only as wide as the trigger.
 				<div className="flex min-w-0 [&>button]:max-w-[320px]">
 					<ModelMenu
+						variant="ghost"
+						size="default"
 						open={modelMenuOpen}
 						onOpenChange={setModelMenuOpen}
 						onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
@@ -711,7 +713,7 @@ function Remembering({ onNavigate }: { onNavigate: () => void }) {
 	const mode = profile?.memoryMode;
 	const modeLabel =
 		mode === "auto" ? t`Automatically` : mode === "off" ? t`Never` : mode === "ask" ? t`Ask first` : null;
-	const facts = plural(knowledge.active.length, { one: "# fact", other: "# facts" });
+	const facts = plural(knowledge.kept, { one: "# fact", other: "# facts" });
 	const storyCount = stories.data ? plural(stories.data.length, { one: "# story", other: "# stories" }) : null;
 	return (
 		<>

@@ -22,6 +22,7 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import {
 	MessageScroller,
 	MessageScrollerButton,
@@ -37,6 +38,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { Composer, contentClass, copyToClipboard, usedFor, usedSchema } from "./coach-thread";
 import { StoryEditor } from "./knowledge/stories";
 import { MemoryProposal, useCareerTime, Working, workingSteps } from "./shared";
+import { Chip } from "@/components/calm/filter-bar";
 import { attachmentPart } from "@/features/assistant/chat";
 import { handToAssistant } from "@/features/assistant/handoff";
 import { AssistantMarkdown } from "@/features/assistant/markdown";
@@ -350,6 +352,15 @@ export function ChatView(props: ChatViewProps) {
 				</div>
 			</MessageScrollerProvider>
 
+			{props.suggestions && props.suggestions.length > 0 && messages.length > 0 && !busy && !readOnly && (
+				<div className={cn("flex flex-wrap gap-1.5 pt-2", variant === "sheet" && "px-6")}>
+					{props.suggestions.map((suggestion) => (
+						<Chip key={suggestion} onClick={() => send(suggestion)}>
+							{suggestion}
+						</Chip>
+					))}
+				</div>
+			)}
 			<Composer
 				{...props}
 				privacy={(attached) => props.privacy({ earlier, withheld: messages.length - earlier, attached })}
@@ -426,7 +437,10 @@ const MessageView = memo(function MessageView({
 				{text && (
 					<p
 						dir="auto"
-						className="max-w-[80%] rounded-lg bg-sunken px-3.5 py-2.5 text-sm leading-[21px] whitespace-pre-wrap"
+						className={cn(
+							"max-w-[80%] rounded-lg bg-sunken px-3.5 py-2.5 text-sm whitespace-pre-wrap",
+							scoped ? "leading-5" : "leading-[21px]",
+						)}
 					>
 						{text}
 					</p>
@@ -469,7 +483,7 @@ const MessageView = memo(function MessageView({
 			)}
 			{text && (
 				// min-w-0 lets a wide table scroll inside its own box instead of stretching the column.
-				<div className="min-w-0 text-[15px] text-ink">
+				<div className={cn("min-w-0 text-ink", scoped ? "text-sm/[22px]" : "text-[15px]")}>
 					<AssistantMarkdown text={text} />
 				</div>
 			)}
@@ -484,7 +498,7 @@ const MessageView = memo(function MessageView({
 				/>
 			))}
 
-			{sources.length > 0 && (
+			{sources.length > 0 && !scoped && (
 				<div className="grid gap-1 text-xs">
 					<span className="font-medium text-ink-3">
 						<Trans>Sources</Trans>
@@ -519,27 +533,58 @@ const MessageView = memo(function MessageView({
 				</p>
 			))}
 
-			{!streaming && <MemoryNotes message={message} knowledge={knowledge} company={company} />}
+			{!streaming && !scoped && <MemoryNotes message={message} knowledge={knowledge} company={company} />}
 
 			{/* What went with the question, then Copy at the end of the same row. */}
 			{!streaming && (text || (used && stories.length > 0)) && (
 				<div className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
+					{/* W12: in the workspace sheet the pages read and what was sent are one row of chips. */}
+					{scoped && sources.length > 0 && (
+						<>
+							<span className="me-0.5 text-xs font-medium text-ink-3">
+								<Trans>Sources</Trans>
+							</span>
+							{sources.map((source) => (
+								<a
+									key={source.url}
+									href={source.url}
+									target="_blank"
+									rel="noreferrer"
+									title={source.title?.trim() || source.url}
+									className="inline-flex h-6 max-w-[220px] items-center gap-1 rounded-xs border border-line-2 px-2 text-xs font-medium text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink"
+								>
+									<Icon name="globe-simple" size={14} className="shrink-0" />
+									<span className="truncate">{sourceHost(source.url)}</span>
+								</a>
+							))}
+						</>
+					)}
 					{/* An answer that never came was sent nothing; a stopped one still shows what it was given. Repeats of
 					    the answer before stay one click away, so a long thread doesn't list the same row under every answer. */}
 					{used && (!sentRepeats || applications.length > 0 || showSent) && (
-						<UsedChips used={used} applications={scoped ? [] : applications} knowledge={knowledge} />
+						<UsedChips used={used} applications={scoped ? [] : applications} knowledge={knowledge} short={scoped} />
 					)}
 					{text && (
 						<div className="ms-auto flex gap-1">
-							<Button
-								size="sm"
-								variant="ghost"
-								className="text-ink-2"
-								onClick={() => void copyToClipboard(text, t`Answer copied`)}
-							>
-								<Icon name="copy" size={16} />
-								<Trans>Copy</Trans>
-							</Button>
+							{scoped ? (
+								<IconButton
+									icon="copy"
+									label={t`Copy`}
+									size="icon-sm"
+									className="text-ink-2"
+									onClick={() => void copyToClipboard(text, t`Answer copied`)}
+								/>
+							) : (
+								<Button
+									size="sm"
+									variant="ghost"
+									className="text-ink-2"
+									onClick={() => void copyToClipboard(text, t`Answer copied`)}
+								>
+									<Icon name="copy" size={16} />
+									<Trans>Copy</Trans>
+								</Button>
+							)}
 							{sentRepeats && used && applications.length === 0 && (
 								<Button
 									size="sm"
@@ -551,11 +596,14 @@ const MessageView = memo(function MessageView({
 									<Trans>What was sent</Trans>
 								</Button>
 							)}
-							<AddToResume text={text} applicationId={applicationId} company={company} />
+							<AddToResume text={text} applicationId={applicationId} company={company} iconOnly={scoped} />
 						</div>
 					)}
 				</div>
 			)}
+
+			{/* W12: in the workspace sheet the offer to remember follows the sources. */}
+			{!streaming && scoped && <MemoryNotes message={message} knowledge={knowledge} company={company} />}
 		</div>
 	);
 });
@@ -566,9 +614,21 @@ type UsedChipsProps = {
 	used: Used["context"];
 	applications: z.infer<typeof opportunitiesSchema>;
 	knowledge: Knowledge;
+	/** "Sent" instead of "Sent with your message", where the row also lists sources (W12). */
+	short?: boolean;
 };
 
-function UsedChips({ used, applications, knowledge }: UsedChipsProps) {
+/** "lumen.example/customers": the host and path a source chip shows. */
+const sourceHost = (url: string) => {
+	try {
+		const parsed = new URL(url);
+		return `${parsed.host.replace(/^www\./, "")}${parsed.pathname === "/" ? "" : parsed.pathname}`;
+	} catch {
+		return url;
+	}
+};
+
+function UsedChips({ used, applications, knowledge, short }: UsedChipsProps) {
 	const chips: ReactNode[] = [];
 	const linkClass = "text-[13px] leading-[19px] text-ink hover:underline underline-offset-2";
 
@@ -672,8 +732,12 @@ function UsedChips({ used, applications, knowledge }: UsedChipsProps) {
 	if (chips.length === 0) return null;
 	return (
 		<div className="flex flex-wrap items-center gap-1.5">
-			<span className="me-0.5 text-xs text-ink-3">
-				<Trans context="What went to the AI provider with a message">Sent with your message</Trans>
+			<span className={cn("me-0.5 text-xs text-ink-3", short && "font-medium")}>
+				{short ? (
+					<Trans context="What went to the AI provider with a message">Sent</Trans>
+				) : (
+					<Trans context="What went to the AI provider with a message">Sent with your message</Trans>
+				)}
 			</span>
 			{chips}
 		</div>
@@ -873,6 +937,7 @@ function Proposal({ items, knowledge, company }: ProposalProps) {
 			}
 			onRemember={(selected) => void remember(selected)}
 			onDismiss={dismiss}
+			note={company ? t`Private to this application` : undefined}
 		/>
 	);
 }
@@ -968,13 +1033,19 @@ function AutoRemembered({ id, text, knowledge, company }: AutoRememberedProps) {
 
 // ---- Hand an answer to a resume's assistant: it proposes the edits there, for review ----
 
-type AddToResumeProps = { text: string; applicationId: string | null; company: string | undefined };
+type AddToResumeProps = {
+	text: string;
+	applicationId: string | null;
+	company: string | undefined;
+	/** The workspace sheet's narrow row: the icon, with the words as its name. */
+	iconOnly?: boolean;
+};
 
 /**
  * Opens a resume's assistant with the answer in its message box, unsent. In a job's workspace, that job's copies come
  * first. The text is handed over in memory for this account and resume, never in the URL.
  */
-function AddToResume({ text, applicationId, company }: AddToResumeProps) {
+function AddToResume({ text, applicationId, company, iconOnly }: AddToResumeProps) {
 	const navigate = useNavigate();
 	const { session } = useRouteContext({ strict: false });
 	const { data } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
@@ -995,9 +1066,17 @@ function AddToResume({ text, applicationId, company }: AddToResumeProps) {
 	);
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger render={<Button size="sm" variant="ghost" className="text-ink-2" />}>
+			<DropdownMenuTrigger
+				render={
+					iconOnly ? (
+						<Button size="icon-sm" variant="ghost" className="text-ink-2" aria-label={t`Add to resume`} />
+					) : (
+						<Button size="sm" variant="ghost" className="text-ink-2" />
+					)
+				}
+			>
 				<Icon name="file-plus" size={16} />
-				<Trans>Add to resume</Trans>
+				{!iconOnly && <Trans>Add to resume</Trans>}
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="start" className="w-64">
 				{forJob.length > 0 && (

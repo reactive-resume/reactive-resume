@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { ph, plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
@@ -44,12 +45,13 @@ import {
 import { PageHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
 import { interviewTypeLabel } from "@/features/applications/components/interview-dialog";
+import { useInvalidateApplications } from "@/features/applications/use-application-actions";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { toastError } from "@/libs/error-message";
 import { D2, EASE, ENTER_CLASS } from "@/libs/motion";
-import { client } from "@/libs/orpc/client";
+import { client, orpc } from "@/libs/orpc/client";
 
 type Practice = SavedData<"practice">;
 type Attempt = SavedItem & { data: Practice };
@@ -111,6 +113,8 @@ export function PractiseTab({ application, version, interview, speak, story, war
 	const knowledge = useCoachKnowledge(application?.id ?? null);
 	const voice = useVoiceSettings();
 	const time = useCareerTime();
+	const connection = useDefaultProvider();
+	const noAi = !connection.isUnavailable && !connection.provider;
 	if (warmup && !interview)
 		return (
 			<Notice icon="warning-circle">
@@ -131,6 +135,9 @@ export function PractiseTab({ application, version, interview, speak, story, war
 				},
 			]
 		: practiceQuestions(saved.data, interview?.id, application?.company ?? "", warmup);
+	const briefed = latest(saved.data, "briefing", interview?.id)?.data.practiceQuestions ?? [];
+	const general =
+		!selectedStory && questions.every((item) => item.origin !== "recalled" && !briefed.includes(item.text));
 	if (story && knowledge.isError)
 		return (
 			<Notice icon="warning-circle">
@@ -200,7 +207,9 @@ export function PractiseTab({ application, version, interview, speak, story, war
 							: t`Practising your story “${selectedStory.data.title}”. The question is simulated.`
 						: application
 							? interview
-								? t`Likely questions for ${time.format(interview.at, { weekday: "long" })}'s ${interviewTypeLabel(interview.kind).toLocaleLowerCase(time.locale)} interview. They are simulated, not from ${application.company}.`
+								? general && questions.length === 3
+									? t`Three general questions for ${time.format(interview.at, { weekday: "long" })}'s ${interviewTypeLabel(interview.kind).toLocaleLowerCase(time.locale)} interview. They are simulated, not from ${application.company}.`
+									: t`Likely questions for ${time.format(interview.at, { weekday: "long" })}'s ${interviewTypeLabel(interview.kind).toLocaleLowerCase(time.locale)} interview. They are simulated, not from ${application.company}.`
 								: t`Practice for ${application.company}. Questions are simulated, not from ${application.company}.`
 							: t`Practice your story. Questions are simulated.`
 				}
@@ -239,16 +248,21 @@ export function PractiseTab({ application, version, interview, speak, story, war
 						initialMode={speak ? "spoken" : "typed"}
 						warmup={warmup === true}
 						onModeChange={setSpeaking}
+						briefed={briefed}
 					/>
 				)}
 				{!speaking && (
 					<aside className="grid gap-0">
 						<SectionHeading className="pt-[22px]" note={attempts.length}>
-							<Trans>Your attempts</Trans>
+							{noAi ? <Trans>Your answers</Trans> : <Trans>Your attempts</Trans>}
 						</SectionHeading>
 						{attempts.length === 0 ? (
 							<p className="text-[13px] leading-[19px] text-ink-3">
-								<Trans>Each answer you get feedback on is kept here, newest first.</Trans>
+								{noAi && application ? (
+									<Trans>An answer you keep is saved to this application's notes, with its question.</Trans>
+								) : (
+									<Trans>Each answer you get feedback on is kept here, newest first.</Trans>
+								)}
 							</p>
 						) : (
 							<ul className="grid">
@@ -264,9 +278,11 @@ export function PractiseTab({ application, version, interview, speak, story, war
 								))}
 							</ul>
 						)}
-						<p className="pt-3 text-[13px]/[18px] text-ink-3">
-							<Trans>Open an attempt to compare it with this one and see what improved.</Trans>
-						</p>
+						{(attempts.length > 0 || !noAi) && (
+							<p className="pt-3 text-[13px]/[18px] text-ink-3">
+								<Trans>Open an attempt to compare it with this one and see what improved.</Trans>
+							</p>
+						)}
 					</aside>
 				)}
 			</div>
@@ -330,6 +346,8 @@ type SessionProps = {
 	initialMode: Mode;
 	warmup: boolean;
 	onModeChange: (speaking: boolean) => void;
+	/** The questions the briefing wrote; the rest are the app's general ones or recalled from a debrief. */
+	briefed: readonly string[];
 };
 
 function Session({
@@ -343,8 +361,19 @@ function Session({
 	storyTitle,
 	warmup,
 	onModeChange,
+	briefed,
 }: SessionProps) {
 	const id = useId();
+	const invalidate = useInvalidateApplications();
+	// N7: without AI an answer is kept in the application's notes, with its question.
+	const keep = useMutation({
+		...orpc.applications.addNote.mutationOptions(),
+		onSuccess: () => {
+			void invalidate();
+			toast.add({ description: t`Kept in this application's notes` });
+		},
+		onError: (error) => toastError(error, t`Couldn't keep this answer. Try again.`),
+	});
 	const generate = useGenerate(applicationId);
 	const connection = useDefaultProvider();
 	const { provider } = connection;
@@ -570,7 +599,13 @@ function Session({
 			<section className="grid gap-0 pt-[22px]">
 				<div className="flex min-h-7 items-center justify-between gap-2">
 					<p className="flex-1 text-[13px]/[18px] text-ink-3">
-						{storyTitle ? t`From your story` : question.origin === "recalled" ? t`Recalled` : t`From your briefing`}
+						{storyTitle
+							? t`From your story`
+							: question.origin === "recalled"
+								? t`Recalled`
+								: briefed.includes(question.text)
+									? t`From your briefing`
+									: t`General question`}
 					</p>
 					{!storyTitle && (
 						<div className="absolute end-0 top-0 flex items-center gap-0.5">
@@ -824,6 +859,24 @@ function Session({
 
 				<div className="grid gap-2.5">
 					<div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+						{!provider && !connection.isUnavailable && !recordingNow && !storyTitle && (
+							<>
+								<Button disabled={index >= questions.length - 1 || busy} onClick={() => changeQuestion(1)}>
+									<Trans>Next question</Trans>
+									<Icon name="arrow-right" size={16} />
+								</Button>
+								{applicationId && (
+									<Button
+										variant="secondary"
+										disabled={answer.trim().length < 10 || busy || keep.isSuccess}
+										loading={keep.isPending}
+										onClick={() => keep.mutate({ id: applicationId, text: `${question.text}\n\n${answer.trim()}` })}
+									>
+										<Trans>Keep this answer</Trans>
+									</Button>
+								)}
+							</>
+						)}
 						{provider && !recordingNow && !showFeedback && (
 							<Button
 								variant={feedback && showFeedback ? "secondary" : "primary"}
@@ -834,7 +887,7 @@ function Session({
 								{generate.isPending ? <Working steps={workingSteps("practice")} /> : <Trans>Get feedback</Trans>}
 							</Button>
 						)}
-						<p className={cn("text-xs text-ink-2", (recordingNow || showFeedback) && "sr-only")}>
+						<p className={cn("text-xs text-ink-2", (recordingNow || showFeedback || !provider) && "sr-only")}>
 							{application ? (
 								<Trans>Compared with your stories and the posting.</Trans>
 							) : (

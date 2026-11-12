@@ -40,7 +40,7 @@ import { formatBonus, formatMoney } from "../offer-compare";
 import { OfferEntry } from "../offer-entry";
 import { Swap, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
-import { ListRow } from "@/components/calm/list-row";
+import { List, ListRow } from "@/components/calm/list-row";
 import { PageHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
 import { StageDot } from "@/components/calm/stage-dot";
@@ -213,15 +213,45 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 								)}
 							</>
 						)}
+						{/* N9: a message saved without AI says so, and what AI would have read out is shown as set by hand. */}
+						{!reply && message.trim() && (
+							<p className="pt-2 text-xs text-ink-3">
+								<Trans>Saved with this application · not sent to any AI</Trans>
+							</p>
+						)}
 						{!readOnly && offer && (
-							<ListRow
-								className="mt-5 border-t border-line"
-								leading={<Icon name="scales" size={20} className="text-ink-3" />}
-								title={t`Offer terms`}
-								subtitle={t`Saved ${time.date(offer.createdAt)} · compare in Offers`}
-								render={<Link to="/dashboard/career/offers" search={{ a: offer.id }} />}
-								caret
-							/>
+							<List cap className="mt-3.5">
+								{offer.data.respondBy && (
+									<ListRow
+										leading={<Icon name="calendar-blank" size={20} className="text-ink-3" />}
+										title={
+											<span className="block text-sm/5">
+												{t`Reply by ${time.format(offer.data.respondBy, { weekday: "short", day: "numeric", month: "short" })}`}
+											</span>
+										}
+										subtitle={offer.aiUsage ? t`Read from their message` : t`Set by you`}
+										trailing={
+											<Link
+												to="/dashboard/career/offers"
+												search={{ a: offer.id }}
+												className="text-sm/5 font-medium text-accent-text"
+												aria-label={t`Edit the reply-by date`}
+											>
+												<Trans>Edit</Trans>
+											</Link>
+										}
+									/>
+								)}
+								<ListRow
+									leading={<Icon name="scales" size={20} className="text-ink-3" />}
+									title={<span className="block text-sm/5">{t`Offer terms`}</span>}
+									subtitle={
+										offer.aiUsage ? t`Saved ${time.date(offer.createdAt)} · compare in Offers` : t`Entered by you`
+									}
+									render={<Link to="/dashboard/career/offers" search={{ a: offer.id }} />}
+									caret
+								/>
+							</List>
 						)}
 					</aside>
 				)}

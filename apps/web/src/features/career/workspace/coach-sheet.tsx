@@ -192,7 +192,7 @@ function CoachSheetBody({
 	// W12: a serif title, what the conversation is about and who answers, and what the coach reads.
 	const header = (
 		<header data-design="coach-head" className="grid shrink-0 gap-2.5 px-6 pt-5">
-			<div className="flex items-start gap-1 pe-[30px]">
+			<div className="flex items-start gap-2 pe-9">
 				<div className="grid min-w-0 flex-1">
 					<SheetTitle className="t-section-title">
 						<Trans>Coach</Trans>
@@ -219,7 +219,7 @@ function CoachSheetBody({
 				<IconButton
 					icon="note-pencil"
 					label={t`New conversation`}
-					size="icon-sm"
+					size="icon"
 					iconSize={20}
 					className="text-ink-2"
 					disabled={threadId === null}
@@ -331,6 +331,8 @@ function CoachSheetBody({
 				chips={
 					<>
 						<ContextChip
+							tone="on"
+							icon="books"
 							pressed={chips.memory}
 							onPressedChange={(memory) => setChips({ ...chips, memory })}
 							label={t`Knowledge`}
@@ -341,6 +343,7 @@ function CoachSheetBody({
 							}
 						/>
 						<WebResearchChip
+							tone="on"
 							status={webAccess}
 							fallbackLabel={web.fallbackLabel}
 							pressed={chips.web}
@@ -366,6 +369,7 @@ function CoachSheetBody({
 				placeholder={t`Ask about this application…`}
 				draftKey={`application:${application.id}`}
 				disabled={!provider}
+				suggestions={provider ? coachStarters(application.status) : []}
 				variant="sheet"
 			/>
 		</>
@@ -390,7 +394,7 @@ function ConversationMenu({ threads, currentId, onOpen, onDelete }: Conversation
 					<IconButton
 						icon="clock-counter-clockwise"
 						label={t`Conversations`}
-						size="icon-sm"
+						size="icon"
 						iconSize={20}
 						className="text-ink-2"
 					/>

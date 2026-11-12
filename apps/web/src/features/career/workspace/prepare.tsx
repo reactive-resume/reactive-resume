@@ -744,9 +744,6 @@ function BriefingNotes({ briefing }: { briefing: Briefing }) {
 	);
 }
 
-const FULL_SCREEN_ON_PHONES =
-	"max-sm:inset-s-0 max-sm:top-0 max-sm:h-dvh max-sm:max-h-none max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none";
-
 type BriefingDialogProps = {
 	application: Application;
 	interview: InterviewTimelineEntry | undefined;
@@ -759,7 +756,7 @@ function BriefingDialog({ application, interview, briefing, open, onOpenChange }
 	const ticks = useTicks(application.id, `now:${interview?.id ?? briefing.interviewId}`);
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent closeLabel={t`Close`} className={cn("content-start sm:max-w-[560px]", FULL_SCREEN_ON_PHONES)}>
+			<DialogContent closeLabel={t`Close`} className="content-start sm:max-w-[560px]">
 				<DialogHeader>
 					<DialogTitle className="text-2xl leading-8">
 						<Trans>10-minute briefing</Trans>

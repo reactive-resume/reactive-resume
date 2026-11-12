@@ -60,7 +60,7 @@ export function LocalMatch({ application }: { application: Application }) {
 	const found = terms?.filter((term) => term.resumeCount > 0) ?? [];
 	const missing = terms?.filter((term) => term.resumeCount === 0) ?? [];
 	const sent = application.sentResumeVersionId ? time.date(application.appliedAt) : null;
-	const activeFacts = facts.data?.filter((fact) => fact.status === "active").length ?? 0;
+	const activeFacts = facts.data?.filter((fact) => fact.status !== "forgotten").length ?? 0;
 
 	return (
 		<div>

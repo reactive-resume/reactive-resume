@@ -79,6 +79,7 @@ const knowledge = {
 	retry: vi.fn(),
 	all: [],
 	active: [],
+	kept: 0,
 	stories: [],
 	allStories: [],
 };

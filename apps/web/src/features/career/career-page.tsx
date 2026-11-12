@@ -26,9 +26,8 @@ import { ContextChip, useCareerTime } from "./shared";
 import { List, ListRow } from "@/components/calm/list-row";
 import { Columns, Page, PageBody, RootHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
-import { SetUpAiLine } from "@/components/calm/set-up-ai-line";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
-import { SetUpAiDialog } from "@/features/ai/set-up-ai";
+import { SetUpAi } from "@/features/ai/set-up-ai";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { ModelMenu } from "@/features/assistant/chat-chrome";
@@ -59,17 +58,17 @@ export function CareerPage({ schedule, onScheduleChange }: ScheduleUrl) {
 
 	const providers = useHasUsableAiProvider();
 	const noAi = !providers.isLoading && !providers.isUnavailable && !providers.hasUsableProvider;
-	const [setupOpen, setSetupOpen] = useState(false);
 
 	return (
 		<Page>
 			<PageBody>
 				<RootHeader title={<Trans>Career</Trans>} actions={<PhoneHeaderActions />} />
-				{noAi && (
-					<SetUpAiLine className="mt-5" lead={<Trans>The coach needs AI.</Trans>} onSetUp={() => setSetupOpen(true)}>
-						<Trans>Knowledge, Offers and Schedules work without it.</Trans>
-					</SetUpAiLine>
-				)}
+				{/* Stays mounted once connected, so its dialog can say AI is ready. */}
+				<SetUpAi
+					className="mt-3"
+					needs={<Trans>The coach needs AI.</Trans>}
+					works={<Trans>Today, Knowledge, offers and schedules work without it.</Trans>}
+				/>
 				{empty ? (
 					<EmptyState
 						className="mt-5"
@@ -114,7 +113,6 @@ export function CareerPage({ schedule, onScheduleChange }: ScheduleUrl) {
 				)}
 			</PageBody>
 			<ScheduleSheetFor schedule={schedule} onScheduleChange={onScheduleChange} onDelete={schedules.remove} />
-			<SetUpAiDialog open={setupOpen} onOpenChange={setSetupOpen} />
 		</Page>
 	);
 }
@@ -160,7 +158,7 @@ function CoachInvitation() {
 		}
 	};
 
-	const facts = knowledge.active.length;
+	const facts = knowledge.kept;
 
 	return (
 		<section aria-labelledby="career-coach-title">
@@ -180,6 +178,8 @@ function CoachInvitation() {
 				<Composer
 					variant="sheet"
 					attach={false}
+					accentSend
+					tall
 					draftKey="career-home"
 					placeholder={t`Ask about your next career step…`}
 					streaming={sending}
@@ -209,6 +209,7 @@ function CoachInvitation() {
 					actions={
 						usable.length > 0 && (
 							<ModelMenu
+								variant="ghost"
 								open={menuOpen}
 								onOpenChange={setMenuOpen}
 								onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}

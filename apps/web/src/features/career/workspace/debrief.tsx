@@ -19,12 +19,13 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks } from "../hooks";
-import { FilterChip, MemoryProposal, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
+import { FilterChip, MemoryProposal, tabLabel, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
+import { List, ListRow } from "@/components/calm/list-row";
 import { PageHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
 import { buildIcs } from "@/features/applications/ics";
-import { isInterview } from "@/features/applications/interviews";
+import { interviewTypeLabel, isInterview } from "@/features/applications/interviews";
 import { useInvalidateApplications } from "@/features/applications/use-application-actions";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
@@ -66,6 +67,8 @@ export function DebriefTab({ application, version, now, go, interview }: Workspa
 	const plan = viewing ?? fresh ?? latest(saved.data, "debrief");
 	// A debrief is written after the round: before it starts, the form waits, and Interview prep is the place to go.
 	const upcoming = !viewing && !forRound && round && +new Date(round.at) > +now ? round : undefined;
+	const connection = useDefaultProvider();
+	const nextRound = interview && interview.id !== round?.id && +new Date(interview.at) > +now ? interview : undefined;
 	if (upcoming)
 		return (
 			<>
@@ -147,6 +150,35 @@ export function DebriefTab({ application, version, now, go, interview }: Workspa
 				</div>
 				{plan ? (
 					<WeekPlan key={plan.id} application={application} review={plan} now={now} readOnly={!!viewing} />
+				) : !connection.isUnavailable && !connection.provider ? (
+					// N8: without AI the aside says what saving does, and where the next round is prepared.
+					<aside className="grid content-start">
+						<SectionHeading className="pt-[22px]">
+							<Trans>Once saved</Trans>
+						</SectionHeading>
+						<List>
+							<ListRow
+								leading={<Icon name="note-pencil" size={20} className="text-ink-2" />}
+								title={<span className="block text-sm/5">{t`Kept in your notes`}</span>}
+								subtitle={t`On this application, with the question, your answer and how it landed`}
+							/>
+						</List>
+						{nextRound && (
+							<>
+								<SectionHeading>
+									<Trans>Next round</Trans>
+								</SectionHeading>
+								<List>
+									<ListRow
+										render={<button type="button" onClick={() => go("prepare")} />}
+										title={<span className="block text-sm/5">{interviewTypeLabel(nextRound.kind)}</span>}
+										subtitle={`${time.format(nextRound.at, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} · ${tabLabel("prepare")}`}
+										caret
+									/>
+								</List>
+							</>
+						)}
+					</aside>
 				) : (
 					<aside className="rounded-xl border border-dashed border-line-2 p-4 text-[13px] leading-[19px] text-ink-3">
 						<Trans>After your first review, a light plan for this week appears here.</Trans>

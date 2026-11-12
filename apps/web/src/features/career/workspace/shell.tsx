@@ -8,11 +8,12 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { m } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { WORKSPACE_TABS } from "@reactive-resume/schema/career";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
@@ -130,12 +131,31 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 	const overlay = useOverlayHistory();
 	const application = query.data;
 	const offer = latest(saved.data, "offer");
+	// Motion's reduced-motion setting keeps opacity fades; the tab swap ends at once instead.
+	const reduceMotion = useReducedMotion();
 
 	if (query.isPending)
 		return (
-			<div className="grid min-h-svh place-items-center">
-				<Spinner />
-			</div>
+			// E3: the page at its final size, the crumb real, the rest still grey, and the loader with its words.
+			<Page className="h-svh flex-none overflow-y-auto">
+				<PageBody>
+					<div className="flex min-h-7 items-center">
+						<Crumb>
+							<CrumbLink to="/dashboard/applications">
+								<Trans>Applications</Trans>
+							</CrumbLink>
+						</Crumb>
+					</div>
+					<Skeleton className="mt-3 h-9 w-72 max-w-full" />
+					<p role="status" className="mt-3 flex items-center gap-2 text-sm text-ink-2">
+						<Spinner decorative />
+						<Trans>Loading application…</Trans>
+					</p>
+					<Skeleton className="mt-8 h-40 w-full rounded-xl" />
+					<Skeleton className="mt-6 h-14 w-full" />
+					<Skeleton className="mt-2 h-14 w-full" />
+				</PageBody>
+			</Page>
 		);
 	if (!application)
 		return (
@@ -240,7 +260,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 						onEdit={() => openSearch({ edit: "interview" })}
 					/>
 				) : (
-					<div className="mt-3 flex min-w-0 flex-col items-start gap-6 lg:flex-row lg:gap-12">
+					<div className="mt-3 flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start lg:gap-12">
 						<div className="w-full shrink-0 lg:w-[200px]">
 							<Link
 								to="/dashboard/applications/$applicationId/{-$tab}"
@@ -284,7 +304,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 									{value === tab && (
 										<m.div
 											className="relative"
-											initial={{ opacity: 0, transform: "translateY(4px)" }}
+											initial={reduceMotion ? false : { opacity: 0, transform: "translateY(4px)" }}
 											animate={{ opacity: 1, transform: "translateY(0px)" }}
 											transition={{ duration: D1, ease: EASE }}
 										>

@@ -13,9 +13,9 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { cn } from "@reactive-resume/utils/style";
 import { isImeComposing } from "@/libs/keyboard";
 import { ENTER_CLASS, stagger } from "@/libs/motion";
-import "./chat-chrome.css";
 
 type ChatStarter = {
 	icon: IconName;
@@ -70,55 +70,93 @@ type ChatComposerProps = {
 	onStop: () => void;
 	chips: ReactNode;
 	actions: ReactNode;
+	/** Career draws the text first with the chips beside Send; the builder puts the chips above the text. */
+	chipsBelow?: boolean | undefined;
+	/** Send takes the accent only where it is the page's one action (Career); everywhere else it is ink. */
+	accentSend?: boolean | undefined;
+	/** A box that starts two lines tall (C1). */
+	tall?: boolean | undefined;
 };
 
 /** Drafts, uploads, context switches and privacy disclosures stay with the conversation owner. */
 export function ChatComposer(props: ChatComposerProps) {
 	const { t } = useLingui();
 	const id = useId();
+	const empty = !props.streaming && props.sendDisabled;
+	const send = (
+		<Button
+			size="icon-sm"
+			className={cn(
+				"size-8 shrink-0 rounded-md",
+				props.accentSend
+					? empty
+						? "bg-accent-soft text-accent-text data-disabled:opacity-100"
+						: "bg-accent text-on-accent hover:bg-accent/90"
+					: "bg-ink text-bg hover:bg-ink/85 disabled:opacity-45",
+			)}
+			aria-label={props.streaming ? t`Stop` : t`Send`}
+			disabled={empty}
+			onClick={props.streaming ? props.onStop : props.onSend}
+		>
+			<Icon name={props.streaming ? "stop" : "arrow-up"} filled={props.streaming} size={18} />
+		</Button>
+	);
+	const text = (
+		<>
+			<label htmlFor={id} className="sr-only">
+				{props.label}
+			</label>
+			<textarea
+				id={id}
+				dir="auto"
+				rows={1}
+				value={props.value}
+				disabled={props.disabled}
+				placeholder={props.placeholder}
+				onChange={(event) => props.onValueChange(event.target.value)}
+				onKeyDown={(event) => {
+					if (event.key === "Enter" && !event.shiftKey && !isImeComposing(event)) {
+						event.preventDefault();
+						if (!props.sendDisabled && !props.streaming) props.onSend();
+					}
+					if (event.key === "Escape" && props.streaming) {
+						event.preventDefault();
+						props.onStop();
+					}
+				}}
+				className={cn(
+					"field-sizing-content max-h-[200px] min-w-0 flex-1 resize-none bg-transparent t-body outline-none placeholder:text-ink-3 disabled:opacity-60 pointer-coarse:text-base",
+					props.tall ? "min-h-12" : "min-h-6",
+				)}
+			/>
+		</>
+	);
 	return (
 		<div
 			data-slot="chat-composer"
 			data-design="composer"
-			className="grid rounded-xl border border-control-border bg-raised transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft"
+			// Board padding 12 10 10 14, less the 1px border.
+			className="flex flex-col gap-2.5 rounded-xl border border-control-border bg-raised ps-[13px] pe-[9px] pt-[11px] pb-[9px] transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft"
 		>
-			{props.chips && <div className="flex min-w-0 flex-wrap items-center gap-1 px-3 pt-[11px]">{props.chips}</div>}
-			<div className="flex items-end gap-1.5 pe-2 pb-2">
-				<label htmlFor={id} className="sr-only">
-					{props.label}
-				</label>
-				<textarea
-					id={id}
-					dir="auto"
-					rows={1}
-					value={props.value}
-					disabled={props.disabled}
-					placeholder={props.placeholder}
-					onChange={(event) => props.onValueChange(event.target.value)}
-					onKeyDown={(event) => {
-						if (event.key === "Enter" && !event.shiftKey && !isImeComposing(event)) {
-							event.preventDefault();
-							if (!props.sendDisabled && !props.streaming) props.onSend();
-						}
-						if (event.key === "Escape" && props.streaming) {
-							event.preventDefault();
-							props.onStop();
-						}
-					}}
-					className="field-sizing-content max-h-[200px] min-h-10 min-w-0 flex-1 resize-none bg-transparent ps-3.5 pt-2.5 pb-1.5 text-[15px]/6 outline-none placeholder:text-ink-3 disabled:opacity-60 pointer-coarse:text-base"
-				/>
-				<span className="flex shrink-0 items-center gap-1 pb-0.5">{props.actions}</span>
-				<Button
-					size="icon-sm"
-					// Send is ink, not accent: the panel's accent belongs to the page.
-					className="mb-0.5 shrink-0 rounded-lg bg-ink text-bg hover:bg-ink/85 disabled:bg-ink-3 disabled:opacity-60"
-					aria-label={props.streaming ? t`Stop` : t`Send`}
-					disabled={!props.streaming && props.sendDisabled}
-					onClick={props.streaming ? props.onStop : props.onSend}
-				>
-					<Icon name={props.streaming ? "stop" : "arrow-up"} filled={props.streaming} size={18} />
-				</Button>
-			</div>
+			{props.chipsBelow ? (
+				<>
+					{text}
+					<div className="flex min-w-0 items-center gap-1.5">
+						<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">{props.chips}</div>
+						{props.actions}
+						{send}
+					</div>
+				</>
+			) : (
+				<>
+					{props.chips && <div className="flex min-w-0 flex-wrap items-center gap-1">{props.chips}</div>}
+					<div className="flex items-end gap-1.5">
+						{text}
+						<span className="flex shrink-0 items-center gap-1">{props.actions}</span>
+						{send}
+					</div>
+				</>
+			)}
 		</div>
 	);
 }
@@ -132,26 +170,44 @@ type ModelMenuProps = {
 	label: string;
 	onChoose: (id: string) => void;
 	onConnect: () => void;
+	/** `chip` in the builder's panel header (B6); `ghost` with a sparkle on Career (C1 in the composer, C4 in the header). */
+	variant?: "chip" | "ghost";
+	size?: "sm" | "default";
 };
 
-export function ModelMenu({ open, onOpenChange, providers, current, label, onChoose, onConnect }: ModelMenuProps) {
+export function ModelMenu({
+	open,
+	onOpenChange,
+	providers,
+	current,
+	label,
+	onChoose,
+	onConnect,
+	variant = "chip",
+	size = "sm",
+}: ModelMenuProps) {
 	const { t } = useLingui();
 	const text = current ? `${current.label} · ${aiModelForTask(current, "capable")}` : label;
 	return (
 		<DropdownMenu open={open} onOpenChange={onOpenChange}>
 			<DropdownMenuTrigger
 				render={
-					<button
-						type="button"
-						aria-label={t`Connection: ${text}`}
-						className="flex h-[26px] max-w-[200px] min-w-0 items-center gap-1 rounded-md bg-sunken ps-2 pe-1.5 text-xs font-medium text-ink-2 transition-colors hover:bg-hover"
-					/>
+					variant === "ghost" ? (
+						<Button variant="ghost" size={size} aria-label={t`Connection: ${text}`} className="max-w-[260px] min-w-0" />
+					) : (
+						<button
+							type="button"
+							aria-label={t`Connection: ${text}`}
+							className="flex h-[26px] max-w-[200px] min-w-0 items-center gap-1 rounded-md bg-sunken ps-2 pe-1.5 text-xs font-medium text-ink-2 transition-colors hover:bg-hover"
+						/>
+					)
 				}
 			>
+				{variant === "ghost" && <Icon name="sparkle" />}
 				<span title={text} className="truncate">
 					{text}
 				</span>
-				<Icon name="caret-down" size={16} />
+				<Icon name="caret-down" size={14} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-64">
 				{providers.map((item) => (

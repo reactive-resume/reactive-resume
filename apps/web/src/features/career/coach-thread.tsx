@@ -64,6 +64,8 @@ export function useCoachKnowledge(applicationId: string | null) {
 		(fact) => fact.status === "active" && (fact.applicationId === null || fact.applicationId === applicationId),
 	);
 	const usable = (stories.data ?? []).filter((story) => canUseCareerStory(story, active, applicationId));
+	// The count people read everywhere (Career, Coach, Knowledge): every fact kept, switched off or not.
+	const kept = all.filter((fact) => fact.status !== "forgotten").length;
 	return {
 		loaded: facts.isSuccess && stories.isSuccess,
 		/** Changes whenever Knowledge is read again, so what depends on it can be read again too. */
@@ -76,6 +78,7 @@ export function useCoachKnowledge(applicationId: string | null) {
 		},
 		all,
 		active,
+		kept,
 		stories: usable,
 		allStories: stories.data ?? [],
 	};
@@ -174,6 +177,8 @@ type CoachThreadProps = {
 	variant: "page" | "sheet";
 	/** A first message written elsewhere (Career's composer) for a thread that already exists: sent as it opens. */
 	initialPrompt?: Prompt | undefined;
+	/** Questions that stay above the composer once a conversation has started (W12); one click sends it. */
+	suggestions?: readonly string[];
 };
 
 /** The coach's chat, shared by Career → Coach and the workspace sheet: messages, writing state, composer. */
@@ -260,7 +265,7 @@ function Empty({ render, send }: EmptyProps) {
 
 export const contentClass = {
 	page: "grid w-full content-start gap-3.5 py-5",
-	sheet: "grid content-start gap-4 p-[18px]",
+	sheet: "grid content-start gap-3.5 px-6 py-4",
 };
 
 export type SessionProps = Omit<CoachThreadProps, "threadId"> & {
@@ -325,6 +330,10 @@ type ComposerProps = Pick<CoachThreadProps, "placeholder" | "chips" | "notice" |
 	actions?: ReactNode;
 	/** Career's page composer has no thread to attach files to until the first message: it leaves the button out. */
 	attach?: boolean;
+	/** Send in the accent: on Career it is the page's one action (C1, C4); the workspace sheet keeps it ink (W12). */
+	accentSend?: boolean;
+	/** C1 starts the box two lines tall. */
+	tall?: boolean | undefined;
 	/** The privacy line, given how many files are attached. */
 	privacy: (attached: number) => ReactNode;
 	streaming: boolean;
@@ -391,8 +400,8 @@ export function Composer(props: ComposerProps) {
 	const page = props.variant === "page";
 
 	return (
-		<div className={page ? "shrink-0 pt-3.5 pb-5 max-sm:pb-3" : "px-3.5 pt-2 pb-3.5"}>
-			<div data-design="composer" className="grid gap-2">
+		<div className={page ? "shrink-0 pt-3.5 pb-5 max-sm:pb-3" : "px-4 pt-3 pb-4"}>
+			<div className="grid gap-2">
 				{props.notice}
 				<ChatComposer
 					label={t`Message the coach`}
@@ -404,6 +413,9 @@ export function Composer(props: ComposerProps) {
 					streaming={props.streaming}
 					onSend={() => void submit()}
 					onStop={props.onStop}
+					chipsBelow
+					accentSend={props.accentSend ?? page}
+					tall={props.tall}
 					chips={
 						<>
 							{props.attach !== false && (
@@ -475,13 +487,15 @@ type WebResearchChipProps = {
 	status: { data?: { search: boolean } | undefined; isPending: boolean; isError: boolean; refetch: () => unknown };
 	pressed: boolean;
 	onPressedChange: (pressed: boolean) => void;
+	/** "on" in the workspace sheet (W12). */
+	tone?: "ctx" | "on";
 };
 
 /**
  * Web research needs a search service. Without one the chip is a way to set it up, not a switch that claims to send
  * searches anywhere; reading links the user pastes doesn't need it.
  */
-export function WebResearchChip({ status, pressed, onPressedChange, fallbackLabel }: WebResearchChipProps) {
+export function WebResearchChip({ status, pressed, onPressedChange, fallbackLabel, tone }: WebResearchChipProps) {
 	const nativeSearchLabel = fallbackLabel ?? "";
 	if (status.data?.search || fallbackLabel)
 		return (
@@ -495,6 +509,8 @@ export function WebResearchChip({ status, pressed, onPressedChange, fallbackLabe
 						: t`Lets the coach search public pages through your web search service`
 				}
 				offIcon="globe-simple"
+				icon="globe-simple"
+				{...(tone ? { tone } : {})}
 			/>
 		);
 	const chip =
