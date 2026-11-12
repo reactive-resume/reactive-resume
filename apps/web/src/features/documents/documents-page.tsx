@@ -1,35 +1,30 @@
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
-import type { DocumentGroup } from "@reactive-resume/schema/applications/document-groups";
 import type { QueryClient } from "@tanstack/react-query";
-import type { KeyboardEvent, Ref } from "react";
+import type { KeyboardEvent } from "react";
 import { i18n } from "@lingui/core";
-import { ph, t } from "@lingui/core/macro";
+import { t } from "@lingui/core/macro";
 import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
-import { groupDocumentsByApplication, groupIsExpanded } from "@reactive-resume/schema/applications/document-groups";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { IconButton } from "@reactive-resume/ui/components/icon-button";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@reactive-resume/ui/components/input-group";
-import { Kbd } from "@reactive-resume/ui/components/kbd";
-import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tabs, TabsCount, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
-import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
 import { cn } from "@reactive-resume/utils/style";
 import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
@@ -40,7 +35,17 @@ import { useNewDocumentsStore } from "./new-documents";
 import { PageNavigation } from "./page-navigation";
 import { useDocumentRemovalMotion } from "./removal-motion";
 import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
-import { PageHeader } from "@/components/layout/page-header";
+import {
+	DataTable,
+	DataTableBody,
+	DataTableHead,
+	DataTableHeaderCell,
+	DataTableRow,
+} from "@/components/calm/data-table";
+import { Chip, FilterBar, FilterField } from "@/components/calm/filter-bar";
+import { Page, PageBody, RootHeader } from "@/components/calm/page";
+import { SelectionBar } from "@/components/calm/selection-bar";
+import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
 import { useDialogStore } from "@/dialogs/store";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
@@ -63,8 +68,8 @@ type DocumentsPageProps = {
 };
 
 /**
- * Documents: every resume and letter in one library, with type tabs, search (/), sort, grid or list, and tag
- * chips once tags exist. A file dropped anywhere on the page opens import confirmation.
+ * Documents: every resume and letter in one library, with type tabs, a filter (/), chips from the data, sort, and
+ * a grid or a list. A file dropped anywhere on the page opens import confirmation.
  */
 export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const { t } = useLingui();
@@ -86,9 +91,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const markOpened = useNewDocumentsStore((state) => state.markOpened);
 	const [tagsFor, setTagsFor] = useState<DocumentSummary[] | null>(null);
 	const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
-	// Only explicit toggles that differ from the default: a closed job starts collapsed, every other group expanded.
-	const [groupOverrides, setGroupOverrides] = useState<ReadonlyMap<string, boolean>>(() => new Map());
-	const { ref: selectionBarRef, space: selectionBarSpace } = useFloatingToolbarSpace();
+	const clearSelection = useCallback(() => setSelected(new Set()), []);
 	const [linkFor, setLinkFor] = useState<DocumentSummary | null>(null);
 	// Grid and list animate in only after a switch, never on the page's first render.
 	const [viewSwitched, setViewSwitched] = useState(false);
@@ -167,7 +170,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			event.preventDefault();
 			searchRef.current?.focus();
 		},
-		{ enabled: characterShortcuts, meta: { name: t`Search documents` } },
+		{ enabled: characterShortcuts, meta: { name: t`Filter documents` } },
 	);
 
 	if (page.filterKey !== filterKey || (pageData && !isPlaceholderData && offset > 0 && offset >= pageData.total)) {
@@ -182,20 +185,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	}
 
 	const shown = displayed?.items ?? [];
-	const groups = groupDocumentsByApplication(shown);
-	const expandedGroup = (group: DocumentGroup<DocumentSummary>) =>
-		group.kind === "document" || groupIsExpanded(group.closed, groupOverrides, group.key);
-	const toggleGroup = (group: DocumentGroup<DocumentSummary>) => {
-		if (group.kind !== "application") return;
-		setGroupOverrides((current) => {
-			const next = new Map(current);
-			next.set(group.key, !groupIsExpanded(group.closed, current, group.key));
-			return next;
-		});
-	};
-	// A closed group's documents are out of the page until it opens, so selection and Select this page follow what is shown.
-	const visibleShown = groups.flatMap((group) => (expandedGroup(group) ? group.documents : []));
-	const shownIndex = new Map(visibleShown.map((document, index) => [documentKey(document), index]));
+	const shownIndex = new Map(shown.map((document, index) => [documentKey(document), index]));
 	const failed = isError && !displayed;
 	const filtered = search.type !== "all" || search.q.trim() !== "" || search.tags.length > 0 || search.public === true;
 	const {
@@ -227,10 +217,18 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		counts[search.type] === 0
 			? search.type
 			: null;
-	// Actions apply to the selected documents the filters and open groups show.
-	const selection = rowsCurrent ? visibleShown.filter((document) => selected.has(documentKey(document))) : [];
+	// A job with more than one document here gets a chip, in place of the group headings the library had.
+	// calm: request to lead — the chip narrows by the job's name through the filter text; a real application filter
+	// on `documents.page` would be exact.
+	const jobs = [
+		...new Map(shown.flatMap((item) => (item.application ? [[item.application.id, item.application]] : []))).values(),
+	]
+		.filter((job) => shown.filter((item) => item.application?.id === job.id).length > 1)
+		.slice(0, 3);
+	// Actions apply to the selected documents the filters show.
+	const selection = rowsCurrent ? shown.filter((document) => selected.has(documentKey(document))) : [];
 	const selecting = selection.length > 0;
-	const allSelected = selecting && selection.length === visibleShown.length;
+	const allSelected = selecting && selection.length === shown.length;
 	const setSelectedFor = (document: DocumentSummary, on: boolean) => {
 		if (!rowsCurrent) return;
 		setSelected((current) => {
@@ -242,7 +240,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	};
 	const selectAll = (on: boolean) => {
 		if (on && !rowsCurrent) return;
-		setSelected(new Set(on ? visibleShown.map(documentKey) : []));
+		setSelected(new Set(on ? shown.map(documentKey) : []));
 	};
 	const itemProps = (document: DocumentSummary) => ({
 		onTags: (document: DocumentSummary) => {
@@ -256,15 +254,6 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		onSelectedChange: (on: boolean) => setSelectedFor(document, on),
 		selecting,
 	});
-
-	useHotkey(
-		"Escape",
-		() => {
-			if (!selecting || tagsFor || linkFor || isEditableElementFocused()) return;
-			selectAll(false);
-		},
-		{ meta: selecting ? { name: t`Clear selection` } : {} },
-	);
 
 	const openDocument = (document: DocumentSummary) => {
 		markOpened(document.id);
@@ -303,10 +292,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			setQuery.flush();
 		} else if (event.key === "ArrowDown") {
 			openOnResults.current = null;
-			// A page of collapsed job groups has no open result links; its headings are the first stop.
-			const first =
-				resultsRef.current?.querySelector<HTMLElement>("a[href]") ??
-				resultsRef.current?.querySelector<HTMLElement>("button[aria-expanded]");
+			const first = resultsRef.current?.querySelector<HTMLElement>("a[href]");
 			if (!first) return;
 			event.preventDefault();
 			first.focus();
@@ -318,87 +304,48 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		}
 	};
 
+	const sortLabels: Record<DocumentSort, string> = { edited: t`Last edited`, name: t`Name`, created: t`Created` };
+	const clearFilters = () => onSearchChange({ q: "", tags: [], type: "all", public: false });
+
 	return (
-		<div
-			className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5"
-			style={{ paddingBottom: selecting ? selectionBarSpace : undefined }}
-		>
-			<PageHeader
-				title={<Trans>Documents</Trans>}
-				actions={
-					!firstRun && (
-						<div className="ms-auto flex flex-wrap items-center gap-2 max-sm:ms-0 max-sm:w-full">
-							<InputGroup className="w-60 max-sm:w-full">
-								<InputGroupAddon>
-									<Icon name="magnifying-glass" size={18} />
-								</InputGroupAddon>
-								<InputGroupInput
-									ref={searchRef}
-									type="search"
-									// The browser's own clear button is hidden; the one below matches the app's icons.
-									className="[&::-webkit-search-cancel-button]:appearance-none"
-									value={searchText}
-									maxLength={500}
-									aria-label={t`Search documents`}
-									aria-describedby={searchHintId}
-									enterKeyHint="go"
-									placeholder={t`Search`}
-									onChange={(event) => onSearchChange({ q: event.target.value.slice(0, 500) })}
-									onKeyDown={onSearchKeyDown}
-								/>
-								<span id={searchHintId} className="sr-only">
-									<Trans>Enter opens the first result. Down arrow moves to the results. Escape clears.</Trans>
-								</span>
-								{searchText ? (
-									<InputGroupAddon align="inline-end">
-										<IconButton
-											icon="x"
-											size="icon-xs"
-											variant="ghost"
-											label={t`Clear search`}
-											onClick={() => {
-												onSearchChange({ q: "" });
-												searchRef.current?.focus();
-											}}
-										/>
-									</InputGroupAddon>
-								) : characterShortcuts ? (
-									<InputGroupAddon align="inline-end" className="max-sm:hidden pointer-coarse:hidden">
-										<Kbd>/</Kbd>
-									</InputGroupAddon>
-								) : null}
-							</InputGroup>
-							<div className="w-[150px]">
-								<NativeSelect
-									aria-label={t`Sort`}
-									value={search.sort}
-									onChange={(event) => onSearchChange({ sort: event.target.value as DocumentSort })}
-								>
-									<option value="edited">{t`Last edited`}</option>
-									<option value="name">{t`Name`}</option>
-									<option value="created">{t`Created`}</option>
-								</NativeSelect>
-							</div>
-							<SegmentedControl
-								aria-label={t`View`}
-								value={view}
-								onValueChange={(next) => setView(next as "grid" | "list")}
-							>
-								<SegmentedControlItem value="grid" aria-label={t`Grid`}>
-									<Icon name="squares-four" size={18} />
-								</SegmentedControlItem>
-								<SegmentedControlItem value="list" aria-label={t`List`}>
-									<Icon name="list-dashes" size={18} />
-								</SegmentedControlItem>
-							</SegmentedControl>
-						</div>
-					)
-				}
-			>
+		<Page>
+			{/* The grid's cards and the table end the page themselves; the margin keeps the selection bar's anchor at the window's edge. */}
+			<PageBody className="mb-12 pb-0">
+				<RootHeader
+					title={<Trans>Documents</Trans>}
+					actions={
+						<>
+							{!firstRun && (
+								<>
+									<Button
+										variant="ghost"
+										nativeButton={false}
+										render={<Link to="/dashboard/documents/import" />}
+										className="max-sm:hidden"
+									>
+										<Icon name="upload-simple" />
+										<Trans>Import</Trans>
+									</Button>
+									{/* The page's one accent button. New document's dialog returns focus here. */}
+									<Button data-document-new-trigger onClick={() => openDialog("document.new", undefined)}>
+										<Icon name="plus" />
+										<Trans>New document</Trans>
+									</Button>
+								</>
+							)}
+							<PhoneHeaderActions />
+						</>
+					}
+				/>
+
 				{!firstRun && (
 					<>
-						<Tabs value={search.type} onValueChange={(type) => onSearchChange({ type: type as DocumentTypeFilter })}>
-							<TabsList variant="line" aria-label={t`Document type`}>
+						<Tabs
+							value={search.type}
+							onValueChange={(type) => onSearchChange({ type: type as DocumentTypeFilter })}
+							className="mt-4"
+						>
+							<TabsList variant="line" aria-label={t`Document type`} className="w-full justify-start">
 								<TabsTrigger value="all">
 									<Trans>All</Trans>
 									<TabsCount>{i18n.number(counts.all)}</TabsCount>
@@ -413,195 +360,251 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 								</TabsTrigger>
 							</TabsList>
 						</Tabs>
+
+						<FilterBar
+							end={
+								<>
+									<DropdownMenu>
+										<DropdownMenuTrigger
+											render={
+												<Button variant="ghost" aria-label={t`Sort: ${sortLabels[search.sort]}`}>
+													<Icon name="arrows-down-up" />
+													{sortLabels[search.sort]}
+													<Icon name="caret-down" />
+												</Button>
+											}
+										/>
+										<DropdownMenuContent align="end">
+											<DropdownMenuRadioGroup
+												value={search.sort}
+												onValueChange={(sort) => onSearchChange({ sort: sort as DocumentSort })}
+											>
+												{(Object.keys(sortLabels) as DocumentSort[]).map((sort) => (
+													<DropdownMenuRadioItem key={sort} value={sort}>
+														{sortLabels[sort]}
+													</DropdownMenuRadioItem>
+												))}
+											</DropdownMenuRadioGroup>
+										</DropdownMenuContent>
+									</DropdownMenu>
+									<SegmentedControl
+										aria-label={t`View`}
+										value={view}
+										onValueChange={(next) => setView(next as "grid" | "list")}
+									>
+										<SegmentedControlItem value="grid" aria-label={t`Grid`} className="px-2.5">
+											<Icon name="squares-four" />
+										</SegmentedControlItem>
+										<SegmentedControlItem value="list" aria-label={t`List`} className="px-2.5">
+											<Icon name="list" />
+										</SegmentedControlItem>
+									</SegmentedControl>
+								</>
+							}
+						>
+							{/* calm: request to lead — FilterField has no slot for a clear button; Esc clears the field. */}
+							<FilterField
+								ref={searchRef}
+								label={t`Filter documents`}
+								{...(characterShortcuts && !searchText ? { shortcut: "/" } : {})}
+								value={searchText}
+								maxLength={500}
+								aria-describedby={searchHintId}
+								enterKeyHint="go"
+								onChange={(event) => onSearchChange({ q: event.target.value.slice(0, 500) })}
+								onKeyDown={onSearchKeyDown}
+							/>
+							<span id={searchHintId} className="sr-only">
+								<Trans>Enter opens the first result. Down arrow moves to the results. Escape clears.</Trans>
+							</span>
+							{/* Chips come from the data: Public once any link is on, the tags in use, a job with several documents. */}
+							{hasPublic && (
+								<Chip
+									pressed={search.public ?? false}
+									className="ms-2"
+									onClick={() => onSearchChange({ public: !search.public })}
+								>
+									<Icon name="globe-simple" size={16} />
+									<Trans>Public</Trans>
+								</Chip>
+							)}
+							{tags.map((tag) => {
+								const isActive = search.tags.includes(tag);
+								return (
+									<Chip
+										key={tag}
+										pressed={isActive}
+										onClick={() =>
+											onSearchChange({
+												tags: isActive
+													? search.tags.filter((known) => known !== tag)
+													: [...search.tags, tag].slice(0, 20),
+											})
+										}
+									>
+										#{tag}
+									</Chip>
+								);
+							})}
+							{jobs.map((job) => {
+								const isActive = search.q.trim() === job.company;
+								return (
+									<Chip
+										key={job.id}
+										pressed={isActive}
+										onClick={() => onSearchChange({ q: isActive ? "" : job.company })}
+									>
+										<Icon name="briefcase" size={16} />
+										<Trans comment="A filter chip: the documents for one job">For {job.company}</Trans>
+									</Chip>
+								);
+							})}
+						</FilterBar>
 					</>
 				)}
-			</PageHeader>
 
-			{(isError || countsError) && (
-				<div className="grid justify-items-start gap-2">
-					<LibraryError
-						retrying={isFetching || countsFetching}
-						onRetry={() => {
-							void refetch();
-							void refetchCounts();
-						}}
+				{(isError || countsError) && (
+					<div className="mt-4 grid justify-items-start gap-2">
+						<LibraryError
+							retrying={isFetching || countsFetching}
+							onRetry={() => {
+								void refetch();
+								void refetchCounts();
+							}}
+						/>
+						{filtered && (
+							<Button variant="secondary" onClick={clearFilters}>
+								<Trans>Clear search and filters</Trans>
+							</Button>
+						)}
+					</div>
+				)}
+
+				{failed ? null : firstRun && trashCount === 0 && libraryCounts ? (
+					<FirstRun trashCount={trashCount} onFile={(file) => openDialog("document.new", { file })} />
+				) : isPending || (firstRun && countsPending) || (!rowsCurrent && !isError && shown.length === 0) ? (
+					<LibrarySkeleton view={view} />
+				) : shown.length === 0 ? (
+					isError ? null : !filtered && offset === 0 ? (
+						<EmptyState
+							className="mt-5"
+							title={<Trans>No documents</Trans>}
+							description={
+								trashCount > 0 ? (
+									<Plural value={trashCount} one="Trash has # document." other="Trash has # documents." />
+								) : undefined
+							}
+						/>
+					) : emptyType ? (
+						<TypeEmpty type={emptyType} />
+					) : (
+						<div className="grid justify-items-center gap-2 py-16 text-center">
+							<Icon name="funnel" size={28} className="text-ink-3" />
+							<p className="t-section-title">
+								{search.q.trim() ? (
+									<Trans>Nothing matches “{search.q.trim()}”</Trans>
+								) : (
+									<Trans>Nothing matches these filters</Trans>
+								)}
+							</p>
+							<p className="text-sm text-ink-2">
+								<Trans>The filter covers titles, tags and linked applications.</Trans>
+							</p>
+							{filtered && (
+								<Button variant="secondary" className="mt-2" onClick={clearFilters}>
+									<Trans>Clear search and filters</Trans>
+								</Button>
+							)}
+						</div>
+					)
+				) : view === "list" ? (
+					<DataTable
+						ref={resultsRef}
+						aria-label={t`Documents`}
+						columns="var(--cols)"
+						className={cn(
+							"mt-3 [--cols:36px_minmax(0,1fr)_96px_28px] sm:[--cols:36px_minmax(0,1.7fr)_104px_minmax(0,1fr)_132px_28px]",
+							viewEnter,
+						)}
+					>
+						<DataTableHead>
+							<DataTableRow variant="header">
+								<DataTableHeaderCell className="justify-center">
+									<Checkbox
+										disabled={!rowsCurrent}
+										checked={allSelected}
+										indeterminate={selecting && !allSelected}
+										onCheckedChange={(on) => selectAll(on)}
+										aria-label={t`Select this page`}
+									/>
+								</DataTableHeaderCell>
+								<DataTableHeaderCell>
+									<Trans>Name</Trans>
+								</DataTableHeaderCell>
+								<DataTableHeaderCell className="max-sm:hidden">
+									<Trans>Type</Trans>
+								</DataTableHeaderCell>
+								<DataTableHeaderCell className="max-sm:hidden">
+									<Trans>Application</Trans>
+								</DataTableHeaderCell>
+								<DataTableHeaderCell
+									className="text-ink-3"
+									{...(search.sort === "edited" ? { sort: "descending" as const } : {})}
+								>
+									<Trans>Edited</Trans>
+								</DataTableHeaderCell>
+								<DataTableHeaderCell>
+									<span className="sr-only">
+										<Trans>Options</Trans>
+									</span>
+								</DataTableHeaderCell>
+							</DataTableRow>
+						</DataTableHead>
+						<DataTableBody>
+							{shown.map((document) => (
+								<DocumentRow
+									key={documentKey(document)}
+									document={document}
+									introIndex={intro ? shownIndex.get(documentKey(document)) : undefined}
+									{...itemProps(document)}
+								/>
+							))}
+						</DataTableBody>
+					</DataTable>
+				) : (
+					<div ref={resultsRef} className={cn(GRID_CLASS, viewEnter)}>
+						{shown.map((document) => (
+							<DocumentCard
+								key={documentKey(document)}
+								document={document}
+								introIndex={intro ? shownIndex.get(documentKey(document)) : undefined}
+								{...itemProps(document)}
+							/>
+						))}
+					</div>
+				)}
+
+				<TrashLink />
+				<PageNavigation
+					offset={displayedOffset}
+					total={displayed?.total ?? page.total}
+					busy={isFetching || !rowsCurrent}
+					onChange={changePage}
+				/>
+			</PageBody>
+			{selecting && (
+				// Bottom centre of the window's main column, over the list, however far the page has scrolled.
+				<div className="sticky bottom-0 z-20 mt-auto h-0 max-sm:bottom-(--app-tabbar)">
+					<DocumentsSelectionBar
+						key={`selection:${filterKey}:${offset}`}
+						selection={selection}
+						total={shown.length}
+						onSelectAll={() => selectAll(true)}
+						onClear={clearSelection}
+						onTags={() => setTagsFor(selection)}
 					/>
-					{filtered && (
-						<Button variant="secondary" onClick={() => onSearchChange({ q: "", tags: [], type: "all", public: false })}>
-							<Trans>Clear search and filters</Trans>
-						</Button>
-					)}
 				</div>
 			)}
-
-			{failed ? null : firstRun && trashCount === 0 && libraryCounts ? (
-				<FirstRun trashCount={trashCount} onFile={(file) => openDialog("document.new", { file })} />
-			) : (
-				<>
-					{(tags.length > 0 || hasPublic) && (
-						<TagFilter
-							tags={tags}
-							active={search.tags}
-							onChange={(next) => onSearchChange({ tags: next })}
-							showPublic={hasPublic}
-							publicOnly={search.public ?? false}
-							onPublicChange={(next) => onSearchChange({ public: next })}
-						/>
-					)}
-
-					{isPending || (firstRun && countsPending) || (!rowsCurrent && !isError && shown.length === 0) ? (
-						<LibrarySkeleton view={view} />
-					) : shown.length === 0 ? (
-						isError ? null : !filtered && offset === 0 ? (
-							<EmptyState
-								title={<Trans>No documents</Trans>}
-								description={
-									trashCount > 0 ? (
-										<Plural value={trashCount} one="Trash has # document." other="Trash has # documents." />
-									) : undefined
-								}
-								action={
-									<Button onClick={() => openDialog("document.new", undefined)}>
-										<Trans>New document</Trans>
-									</Button>
-								}
-							/>
-						) : emptyType ? (
-							<TypeEmpty type={emptyType} />
-						) : (
-							<div className="grid justify-items-center gap-2 py-16 text-center">
-								<Icon name="magnifying-glass" size={28} className="text-ink-3" />
-								<p className="font-display text-[22px] leading-7">
-									{search.q.trim() ? (
-										<Trans>Nothing matches “{search.q.trim()}”</Trans>
-									) : (
-										<Trans>Nothing matches these filters</Trans>
-									)}
-								</p>
-								<p className="text-sm text-ink-2">
-									<Trans>Search covers titles, tags and linked applications.</Trans>
-								</p>
-								{filtered && (
-									<Button
-										variant="secondary"
-										className="mt-2"
-										onClick={() => onSearchChange({ q: "", tags: [], type: "all", public: false })}
-									>
-										<Trans>Clear search and filters</Trans>
-									</Button>
-								)}
-							</div>
-						)
-					) : view === "list" ? (
-						<table ref={resultsRef} className={cn("w-full table-fixed border-collapse", viewEnter)}>
-							<caption className="sr-only">
-								<Trans>Documents</Trans>
-							</caption>
-							<thead>
-								<tr className="border-b border-line text-start text-xs font-medium text-ink-3">
-									<th className={cn("w-10 ps-3", !selecting && "pointer-coarse:hidden")}>
-										<Checkbox
-											disabled={!rowsCurrent}
-											checked={allSelected}
-											indeterminate={selecting && !allSelected}
-											onCheckedChange={(on) => selectAll(on)}
-											aria-label={t`Select this page`}
-										/>
-									</th>
-									<th className="h-10 ps-3 text-start font-medium">
-										<Trans>Name</Trans>
-									</th>
-									<th className="w-24 px-2 text-start font-medium max-sm:hidden">
-										<Trans>Type</Trans>
-									</th>
-									<th className="w-1/4 px-2 text-start font-medium max-sm:hidden">
-										<Trans>Application</Trans>
-									</th>
-									<th className="w-28 px-2 text-start font-medium max-sm:w-24">
-										<Trans>Edited</Trans>
-									</th>
-									<th className="w-12">
-										<span className="sr-only">
-											<Trans>Options</Trans>
-										</span>
-									</th>
-								</tr>
-							</thead>
-							{groups.map((group) => {
-								const expanded = expandedGroup(group);
-								return (
-									<tbody key={group.key}>
-										{group.kind === "application" && (
-											<GroupHeadingRow group={group} expanded={expanded} onToggle={() => toggleGroup(group)} />
-										)}
-										{expanded &&
-											group.documents.map((document) => (
-												<DocumentRow
-													key={documentKey(document)}
-													document={document}
-													introIndex={intro ? shownIndex.get(documentKey(document)) : undefined}
-													{...itemProps(document)}
-												/>
-											))}
-									</tbody>
-								);
-							})}
-						</table>
-					) : (
-						<div ref={resultsRef} className={cn(GRID_CLASS, viewEnter)}>
-							{groups.map((group) => {
-								const expanded = expandedGroup(group);
-								if (group.kind === "document") {
-									const document = group.documents[0];
-									return (
-										<DocumentCard
-											key={group.key}
-											document={document}
-											introIndex={intro ? shownIndex.get(documentKey(document)) : undefined}
-											{...itemProps(document)}
-										/>
-									);
-								}
-								// display: contents lets the group's heading span every column while its cards keep flowing in
-								// the library's grid with the ungrouped documents around them.
-								return (
-									<div key={group.key} className="contents">
-										<div className="col-span-full">
-											<GroupHeading group={group} expanded={expanded} onToggle={() => toggleGroup(group)} />
-										</div>
-										{expanded &&
-											group.documents.map((document) => (
-												<DocumentCard
-													key={documentKey(document)}
-													document={document}
-													introIndex={intro ? shownIndex.get(documentKey(document)) : undefined}
-													{...itemProps(document)}
-												/>
-											))}
-									</div>
-								);
-							})}
-						</div>
-					)}
-				</>
-			)}
-
-			<TrashLink />
-			<PageNavigation
-				offset={displayedOffset}
-				total={displayed?.total ?? page.total}
-				busy={isFetching || !rowsCurrent}
-				onChange={changePage}
-			/>
-			<SelectionBar
-				ref={selectionBarRef}
-				key={`selection:${filterKey}:${offset}`}
-				selection={selection}
-				allSelected={allSelected}
-				onSelectAll={() => selectAll(true)}
-				onClear={() => selectAll(false)}
-				onTags={() => setTagsFor(selection)}
-			/>
 			<DropToImport />
 			<TagsDialog
 				key={`tags:${filterKey}:${offset}`}
@@ -613,64 +616,15 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				document={rowsCurrent ? linkFor : null}
 				onClose={() => setLinkFor(null)}
 			/>
-		</div>
+		</Page>
 	);
 }
 
 const VIEW_KEY = "documents-view";
 // Longest stagger (150ms) plus the D2 entrance (200ms), with room to spare: then the intro classes come off.
 const INTRO_MS = 400;
-const GRID_CLASS =
-	"grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4";
-
-type GroupHeadingProps = {
-	group: Extract<DocumentGroup<DocumentSummary>, { kind: "application" }>;
-	expanded: boolean;
-	onToggle: () => void;
-};
-
-/** The job a group's resume and letter share: a disclosure with the company, role, stage and document count. */
-function GroupHeading({ group, expanded, onToggle }: GroupHeadingProps) {
-	const { company, role } = group.application;
-	return (
-		<button
-			type="button"
-			aria-expanded={expanded}
-			onClick={onToggle}
-			className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 text-start transition-colors duration-quick hover:bg-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
-		>
-			<Icon name={expanded ? "caret-down" : "caret-right"} size={16} className="shrink-0 text-ink-3" />
-			<Icon name="briefcase" size={16} className="shrink-0 text-ink-2" />
-			<span className="min-w-0 truncate text-sm font-semibold" dir="auto">
-				{company}
-			</span>
-			{role && (
-				<span className="min-w-0 truncate text-sm text-ink-2" dir="auto">
-					· {role}
-				</span>
-			)}
-			{group.closed && (
-				<span className="shrink-0 rounded-sm bg-sunken px-1.5 text-xs leading-[18px] font-medium text-ink-2">
-					<Trans>Closed</Trans>
-				</span>
-			)}
-			<span className="ms-auto shrink-0 text-xs text-ink-3">
-				<Plural value={group.documents.length} one="# document" other="# documents" />
-			</span>
-		</button>
-	);
-}
-
-/** The list view's heading, spanning every column, with the same disclosure as the grid's. */
-function GroupHeadingRow({ group, expanded, onToggle }: GroupHeadingProps) {
-	return (
-		<tr className="border-b border-line bg-sunken/40">
-			<th colSpan={6} className="p-0">
-				<GroupHeading group={group} expanded={expanded} onToggle={onToggle} />
-			</th>
-		</tr>
-	);
-}
+// Two to a row on phones, three from 640, four from 1280 (BUILD.md §3.14). Cards span four rows of the grid.
+const GRID_CLASS = "mt-5 grid grid-cols-2 gap-x-4 sm:grid-cols-3 sm:gap-x-6 xl:grid-cols-4";
 
 // The last view picked on this device; storage can be unavailable, and then it's the grid.
 function readStoredView(): "grid" | "list" {
@@ -701,7 +655,7 @@ function FirstRun({ onFile, trashCount }: FirstRunProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	return (
-		<section className="pt-4 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
+		<section className="pt-5 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
 			<input
 				ref={inputRef}
 				type="file"
@@ -800,24 +754,24 @@ function TypeEmpty({ type }: { type: "resume" | "letter" }) {
 
 	return type === "letter" ? (
 		<EmptyState
-			className="mt-4"
+			className="mt-5"
 			title={<Trans>No cover letters yet</Trans>}
 			description={<Trans>Write one for a job, or start from your latest resume.</Trans>}
 			action={
-				<Button disabled={creating} onClick={() => void newLetter()}>
-					<Icon name="envelope-simple" size={18} />
+				<Button variant="secondary" disabled={creating} onClick={() => void newLetter()}>
+					<Icon name="envelope-simple" />
 					<Trans>New cover letter</Trans>
 				</Button>
 			}
 		/>
 	) : (
 		<EmptyState
-			className="mt-4"
+			className="mt-5"
 			title={<Trans>No resumes yet</Trans>}
 			description={<Trans>Import the one you have, or start blank.</Trans>}
 			action={
-				<Button onClick={() => openDialog("document.new", undefined)}>
-					<Icon name="plus" size={18} />
+				<Button variant="secondary" onClick={() => openDialog("document.new", undefined)}>
+					<Icon name="plus" />
 					<Trans>New resume</Trans>
 				</Button>
 			}
@@ -825,76 +779,24 @@ function TypeEmpty({ type }: { type: "resume" | "letter" }) {
 	);
 }
 
-type TagFilterProps = {
-	tags: string[];
-	active: string[];
-	onChange: (tags: string[]) => void;
-	/** Public appears first once any resume's link is on. */
-	showPublic: boolean;
-	publicOnly: boolean;
-	onPublicChange: (publicOnly: boolean) => void;
-};
-
-const chipClassName = (isActive: boolean) =>
-	cn(
-		"touch-target relative min-h-7 shrink-0 rounded-sm border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97] pointer-coarse:min-h-[30px]",
-		isActive ? "border-accent bg-accent-soft text-accent-text" : "border-line-2 text-ink-2 hover:bg-hover",
-	);
-
-function TagFilter({ tags, active, onChange, showPublic, publicOnly, onPublicChange }: TagFilterProps) {
-	return (
-		// Phones: one row that scrolls sideways, so tags never push the documents down.
-		<fieldset className="m-0 flex min-w-0 flex-wrap gap-1.5 border-0 p-0 max-sm:-mx-4 max-sm:[scrollbar-width:none] max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:px-4 max-sm:py-2">
-			<legend className="sr-only">
-				<Trans>Filter by tag</Trans>
-			</legend>
-			{showPublic && (
-				<button
-					type="button"
-					aria-pressed={publicOnly}
-					onClick={() => onPublicChange(!publicOnly)}
-					className={cn(chipClassName(publicOnly), "inline-flex items-center gap-1")}
-				>
-					<Icon name="globe" size={14} />
-					<Trans>Public</Trans>
-				</button>
-			)}
-			{tags.map((tag) => {
-				const isActive = active.includes(tag);
-				return (
-					<button
-						key={tag}
-						type="button"
-						aria-pressed={isActive}
-						onClick={() => onChange(isActive ? active.filter((known) => known !== tag) : [...active, tag].slice(0, 20))}
-						className={chipClassName(isActive)}
-					>
-						#{tag}
-					</button>
-				);
-			})}
-		</fieldset>
-	);
-}
-
-type SelectionBarProps = {
-	ref: Ref<HTMLDivElement>;
+type DocumentsSelectionBarProps = {
 	selection: DocumentSummary[];
-	allSelected: boolean;
+	/** How many documents the page shows, for "Select all N". */
+	total: number;
 	onSelectAll: () => void;
 	onClear: () => void;
 	onTags: () => void;
 };
 
 /**
- * Floats over the library while documents are selected: tags, visibility, locking and Trash for all of them. On phones
- * it sits above the tab bar, as the Applications list's bar does.
+ * One bar acts on the selection (board D4): Tags, Sharing, Lock editing and Move to Trash. The accent stays on New
+ * document: these are quiet, and Trash is red text because its toast can undo it.
  */
-function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTags }: SelectionBarProps) {
-	const lettersOnly = selection.length > 0 && selection.every((document) => document.type === "letter");
+function DocumentsSelectionBar({ selection, total, onSelectAll, onClear, onTags }: DocumentsSelectionBarProps) {
+	const resumes = selection.filter((document) => document.type === "resume").length;
+	const allLocked = selection.every((document) => document.isLocked);
 	const batch = useBatchActions();
 	const [busy, setBusy] = useState(false);
-	const count = selection.length;
 	// Toasts sit bottom centre, where this bar is: lift them above it while it's on screen, so a result never hides it.
 	useEffect(() => {
 		const root = document.documentElement;
@@ -905,7 +807,6 @@ function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTag
 		};
 	}, []);
 	const run = async (action: () => Promise<unknown>, { clear = false } = {}) => {
-		if (!selection.length) return;
 		setBusy(true);
 		try {
 			await action();
@@ -916,102 +817,104 @@ function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTag
 	};
 
 	return (
-		<div
-			ref={ref}
-			role="toolbar"
-			aria-label={t`Selected documents`}
-			aria-hidden={count === 0}
-			inert={count === 0}
-			className={cn(
-				"fixed inset-x-0 bottom-6 z-30 mx-auto flex w-fit max-w-[calc(100vw-32px)] items-center gap-1 rounded-xl border border-line bg-raised p-1.5 shadow-e3 transition-[opacity,translate] duration-standard ease-enter max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]",
-				count === 0 && "pointer-events-none translate-y-2 opacity-0",
-			)}
+		<SelectionBar
+			label={t`Selected documents`}
+			count={selection.length}
+			total={total}
+			onSelectAll={onSelectAll}
+			onClear={onClear}
 		>
-			<span className="px-2 text-sm font-semibold whitespace-nowrap" aria-live="polite">
-				<Trans>{ph({ count: i18n.number(count) })} selected</Trans>
-			</span>
-			{!allSelected && (
-				<Button variant="ghost" size="sm" onClick={onSelectAll} className="max-sm:hidden">
-					<Trans>Select this page</Trans>
-				</Button>
-			)}
 			<Button variant="ghost" size="sm" disabled={busy} onClick={onTags}>
 				<Icon name="tag" />
-				<span className="max-sm:sr-only">
-					<Trans>Tags…</Trans>
-				</span>
+				<Trans>Tags…</Trans>
 			</Button>
 			<DropdownMenu>
 				<DropdownMenuTrigger
 					render={
-						<Button variant="ghost" size="sm" disabled={busy}>
-							<Icon name={lettersOnly ? "lock" : "globe"} />
-							<span className="max-sm:sr-only">{lettersOnly ? <Trans>Editing</Trans> : <Trans>Sharing</Trans>}</span>
-							<Icon name="caret-down" size={14} />
+						<Button
+							variant="ghost"
+							size="sm"
+							disabled={busy}
+							className="data-popup-open:bg-hover data-popup-open:text-ink"
+						>
+							<Icon name="globe-simple" />
+							<Trans>Sharing</Trans>
+							<Icon name="caret-down" />
 						</Button>
 					}
 				/>
-				<DropdownMenuContent side="top" align="center" className="w-48">
-					{/* Letters have no public link, so a letters-only selection is offered locking alone. */}
-					{lettersOnly ? null : (
-						<>
-							<DropdownMenuItem onClick={() => void run(() => batch.setPublic(selection, true))}>
-								<Icon name="globe" />
-								<Trans>Make public</Trans>
-							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => void run(() => batch.setPublic(selection, false))}>
-								<Icon name="eye-slash" />
-								<Trans>Make private</Trans>
-							</DropdownMenuItem>
-							<DropdownMenuSeparator />
-						</>
-					)}
-					<DropdownMenuItem onClick={() => void run(() => batch.setLocked(selection, true))}>
-						<Icon name="lock" />
-						<Trans>Lock editing</Trans>
+				<DropdownMenuContent side="top" align="start" alignOffset={-4} sideOffset={14} className="w-62">
+					<DropdownMenuItem disabled={resumes === 0} onClick={() => void run(() => batch.setPublic(selection, true))}>
+						<Icon name="globe-simple" />
+						<Trans>Make public</Trans>
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => void run(() => batch.setLocked(selection, false))}>
-						<Icon name="lock-open" />
-						<Trans>Unlock editing</Trans>
+					<DropdownMenuItem disabled={resumes === 0} onClick={() => void run(() => batch.setPublic(selection, false))}>
+						<Icon name="eye-slash" />
+						<Trans>Make private</Trans>
 					</DropdownMenuItem>
+					<DropdownMenuSeparator />
+					{/* Says what it reaches before it runs, instead of reporting skipped letters afterwards. */}
+					<p className="px-2.5 pt-1.5 pb-2 text-ink-3 t-small">
+						{resumes === selection.length ? (
+							<Plural
+								value={resumes}
+								one="Applies to the # resume selected."
+								other="Applies to the # resumes selected."
+							/>
+						) : (
+							<Plural
+								value={resumes}
+								_0="Letters have no public link."
+								one="Applies to the # resume selected. Letters have no public link."
+								other="Applies to the # resumes selected. Letters have no public link."
+							/>
+						)}
+					</p>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			<IconButton icon="x" size="icon-sm" label={t`Clear selection`} className="text-ink-2" onClick={onClear} />
 			<Button
 				variant="ghost"
 				size="sm"
 				disabled={busy}
-				className="text-danger-text hover:bg-danger-soft"
+				onClick={() => void run(() => batch.setLocked(selection, !allLocked))}
+			>
+				<Icon name={allLocked ? "lock-simple-open" : "lock-simple"} />
+				{allLocked ? <Trans>Unlock editing</Trans> : <Trans>Lock editing</Trans>}
+			</Button>
+			<Button
+				variant="danger-text"
+				size="sm"
+				disabled={busy}
 				onClick={() => void run(() => batch.trash(selection), { clear: true })}
 			>
 				<Icon name="trash" />
-				<span className="max-sm:sr-only">
-					<Trans>Move to Trash</Trans>
-				</span>
+				<Trans>Move to Trash</Trans>
 			</Button>
-		</div>
+		</SelectionBar>
 	);
 }
 
-export function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
+/** The library's shape while it loads: rows or cards at their final size. */
+function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
 	if (view === "list") {
 		return (
-			<div className="grid">
-				<div className="h-10 border-b border-line" />
-				{Array.from({ length: 6 }, (_, index) => (
-					<div key={index} className="flex h-[45px] items-center border-b border-line ps-3">
-						<Skeleton className="h-4 w-1/3" />
+			<div className="mt-3 grid" aria-busy="true">
+				<div className="h-8 border-b border-line" />
+				{Array.from({ length: 5 }, (_, index) => (
+					<div key={index} className="flex h-[61px] items-center gap-3.5 border-b border-line ps-[52px]">
+						<Skeleton className="h-11 w-8 rounded-paper" />
+						<Skeleton className="h-4 w-56" />
 					</div>
 				))}
 			</div>
 		);
 	}
 	return (
-		<div className="grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4">
-			{Array.from({ length: 6 }, (_, index) => (
-				<div key={index} className="grid gap-2">
-					<Skeleton className="aspect-page rounded-md" />
-					<Skeleton className="h-4 w-3/4 rounded" />
+		<div className={GRID_CLASS} aria-busy="true">
+			{Array.from({ length: 4 }, (_, index) => (
+				<div key={index} className="grid content-start gap-3 pb-8">
+					<Skeleton className="aspect-page rounded-paper" />
+					<Skeleton className="h-4 w-3/4" />
 				</div>
 			))}
 		</div>
@@ -1019,7 +922,7 @@ export function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
 }
 
 /** A file dragged anywhere over the page shows the drop target, and dropping it opens import confirmation. */
-function DropToImport() {
+export function DropToImport() {
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const [dragging, setDragging] = useState(false);
 

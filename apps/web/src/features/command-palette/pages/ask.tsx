@@ -7,7 +7,7 @@ import { CommandItem } from "@reactive-resume/ui/components/command";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useCommandPaletteStore } from "../store";
-import { BaseCommandGroup } from "./base";
+import { BaseCommandGroup, RowNote } from "./base";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { ProviderSetup } from "@/features/assistant/provider-setup";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -81,12 +81,12 @@ function AccountAskCommandGroup() {
 						}}
 						disabled={providers.isLoading}
 					>
-						<Icon name="sparkle" size={16} />
+						<Icon name="sparkle" />
 						<span className="min-w-0 truncate">
 							<Trans>Ask the assistant “{question}”</Trans>
 						</span>
 						{!providers.hasUsableProvider && (
-							<span className="ms-auto shrink-0 text-xs text-ink-2">
+							<RowNote>
 								{providers.isLoading ? (
 									<Trans>Loading…</Trans>
 								) : providers.error ? (
@@ -94,7 +94,7 @@ function AccountAskCommandGroup() {
 								) : (
 									<Trans>Connect an AI provider</Trans>
 								)}
-							</span>
+							</RowNote>
 						)}
 					</CommandItem>
 				</BaseCommandGroup>
@@ -122,7 +122,7 @@ function AccountAskCommandGroup() {
 								keywords={[document.name]}
 								onSelect={() => void choose(document)}
 							>
-								<Icon name={document.type === "letter" ? "envelope-simple" : "file-text"} size={16} />
+								<Icon name={document.type === "letter" ? "envelope-simple" : "file-text"} />
 								{document.name}
 							</CommandItem>
 						))

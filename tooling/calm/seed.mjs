@@ -120,7 +120,8 @@ async function serverOnly(seed) {
 		{ type: "followup", company: "Fieldnote", role: "Staff designer", note: "Send a follow-up" },
 		`/dashboard/applications/${applications.fieldnote}`,
 		reminder.next_run_at,
-		null,
+		// Read too: T1 draws Today at rest, with no unread schedule results (C11 is the state with them).
+		reminder.next_run_at,
 	);
 
 	// The fit check and the briefing for Lumen, as if written against the account as it is now.

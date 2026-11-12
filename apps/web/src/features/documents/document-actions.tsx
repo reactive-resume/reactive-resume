@@ -6,9 +6,10 @@ import { ph, plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { lazy, Suspense, useRef, useState } from "react";
+import { lazy, Suspense, useId, useRef, useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { publicResumeUrl } from "@reactive-resume/resume/sharing";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from "@reactive-resume/ui/components/context-menu";
 import {
@@ -25,18 +26,23 @@ import {
 	DropdownMenuSeparator,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { menuLabelClassName } from "@reactive-resume/ui/components/menu-styles";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { isolate } from "@reactive-resume/utils/string";
+import { useDocumentSentDate } from "./document-status";
 import { useDocumentEffect } from "./library-session";
 import { useNewDocumentsStore } from "./new-documents";
 import { useExistingTags } from "./tag-suggestions";
+import { IconTile, List, ListRow } from "@/components/calm/list-row";
+import { StageDot } from "@/components/calm/stage-dot";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
+import { companyInitials } from "@/features/applications/components/list-view";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useDocumentDownload } from "@/features/applications/use-document-download";
 import { useShareOrigin } from "@/features/resume/share/use-share-origin";
 import { useClosingValue } from "@/hooks/use-closing-value";
-import { useConfirm, usePrompt } from "@/hooks/use-confirm";
+import { usePrompt } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -57,7 +63,6 @@ function useRefreshDocuments() {
 
 export function useDocumentActions() {
 	const onEffect = useDocumentEffect();
-	const confirm = useConfirm();
 	const prompt = usePrompt();
 	const navigate = useNavigate();
 	const openDialog = useDialogStore((state) => state.openDialog);
@@ -76,12 +81,6 @@ export function useDocumentActions() {
 			onSettled: refresh,
 		}),
 	);
-	const restore = useMutation(
-		orpc.documents.restore.mutationOptions({
-			onSuccess: (_result, document) => onEffect("restore", [document]),
-			onSettled: refresh,
-		}),
-	);
 	// Undo counts what it brought back: restoring one that's already back (another tab) or gone changes nothing.
 	const restoreMany = useMutation(
 		orpc.documents.restoreMany.mutationOptions({
@@ -90,14 +89,26 @@ export function useDocumentActions() {
 			onSettled: refresh,
 		}),
 	);
-	const purge = useMutation(
-		orpc.documents.purge.mutationOptions({
-			onSuccess: (_result, document) => onEffect("purge", [document]),
-			onSettled: refresh,
-		}),
-	);
 	const duplicateResume = useMutation(orpc.resume.duplicate.mutationOptions({ onSettled: refresh }));
 	const duplicateLetter = useMutation(orpc.coverLetters.duplicate.mutationOptions({ onSettled: refresh }));
+
+	// Reversible, so it happens at once and its toast offers the way back (ruling P3). The menu that called this
+	// unmounts on select, and a mutation's per-call callbacks with it: catch the promise.
+	const lock = (document: DocumentSummary, isLocked: boolean, undo = true) =>
+		void setLocked
+			.mutateAsync({ ...ref(document), isLocked })
+			.then(() =>
+				toast.add({
+					description: isLocked ? t`“${isolate(document.name)}” locked` : t`“${isolate(document.name)}” unlocked`,
+					...(undo ? { actionProps: { children: t`Undo`, onClick: () => lock(document, !isLocked, false) } } : {}),
+				}),
+			)
+			.catch((error: unknown) =>
+				toastError(
+					error,
+					isLocked ? t`Couldn't lock the document. Try again.` : t`Couldn't unlock the document. Try again.`,
+				),
+			);
 
 	return {
 		rename: (document: DocumentSummary, name: string) => {
@@ -149,16 +160,7 @@ export function useDocumentActions() {
 		copyForJob: (document: DocumentSummary) =>
 			openDialog("document.new", { step: "copy", sourceResumeId: document.id }),
 
-		// The menu that called this unmounts on select, and a mutation's per-call callbacks with it: catch the promise.
-		setLocked: (document: DocumentSummary, isLocked: boolean) =>
-			void setLocked
-				.mutateAsync({ ...ref(document), isLocked })
-				.catch((error: unknown) =>
-					toastError(
-						error,
-						isLocked ? t`Couldn't lock the document. Try again.` : t`Couldn't unlock the document. Try again.`,
-					),
-				),
+		setLocked: lock,
 
 		/** Undoable, so it doesn't ask first. */
 		trash: async (document: DocumentSummary) => {
@@ -182,32 +184,6 @@ export function useDocumentActions() {
 				});
 			} catch (error) {
 				toastError(error, t`Couldn't move the document to Trash. Try again.`);
-			}
-		},
-
-		restore: async (document: DocumentSummary) => {
-			try {
-				await restore.mutateAsync(ref(document));
-				toast.add({ description: t`Restored “${document.name}”` });
-			} catch (error) {
-				toastError(error, t`Couldn't restore the document. Try again.`);
-			}
-		},
-
-		/** The only permanent action here; it asks once. */
-		purge: async (document: DocumentSummary) => {
-			const confirmed = await confirm(t`Delete “${document.name}” now?`, {
-				description: t`It will be deleted for good and can't be restored.`,
-				confirmText: t`Hold to delete`,
-				cancelText: t`Keep in Trash`,
-				hold: true,
-			});
-			if (!confirmed) return;
-			try {
-				await purge.mutateAsync(ref(document));
-				toast.add({ description: t`Deleted “${document.name}”` });
-			} catch (error) {
-				toastError(error, t`Couldn't delete the document. Try again.`);
 			}
 		},
 	};
@@ -262,14 +238,7 @@ export function useBatchActions() {
 		return targets.filter((_, index) => results[index]?.status === "fulfilled");
 	};
 
-	const report = (done: number, total: number) =>
-		toast.add({
-			type: done === 0 ? "error" : undefined,
-			description:
-				done === total
-					? plural(done, { one: "# document updated", other: "# documents updated" })
-					: t`Updated ${ph({ done: i18n.number(done) })} of ${ph({ total: i18n.number(total) })}. Locked documents, and letters for public links, were skipped.`,
-		});
+	const number = (value: number) => i18n.number(value);
 
 	return {
 		setPublic: async (documents: readonly DocumentSummary[], isPublic: boolean) => {
@@ -279,16 +248,61 @@ export function useBatchActions() {
 				(document) => updateResume.mutateAsync({ id: document.id, isPublic }),
 			);
 			// Already in that state counts as done.
-			report(done.length + documents.filter((document) => document.isPublic === isPublic).length, documents.length);
+			const made = done.length + documents.filter((document) => document.isPublic === isPublic).length;
+			const total = documents.length;
+			toast.add({
+				type: made === 0 ? "error" : undefined,
+				description:
+					made === total
+						? isPublic
+							? plural(made, { one: "# made public", other: "# made public" })
+							: plural(made, { one: "# made private", other: "# made private" })
+						: isPublic
+							? t`Made ${number(made)} of ${number(total)} public. Letters have no public link, and locked documents are left as they are.`
+							: t`Made ${number(made)} of ${number(total)} private. Letters have no public link, and locked documents are left as they are.`,
+			});
 		},
 
+		/** Reversible, so it happens at once; Undo puts back the documents this changed (ruling P3). */
 		setLocked: async (documents: readonly DocumentSummary[], isLocked: boolean) => {
 			const done = await run(
 				documents,
 				(document) => document.isLocked !== isLocked,
 				(document) => setLocked.mutateAsync({ type: document.type, id: document.id, isLocked }),
 			);
-			report(done.length + documents.filter((document) => document.isLocked === isLocked).length, documents.length);
+			const failed = documents.filter((document) => document.isLocked !== isLocked).length - done.length;
+			if (failed > 0 && done.length === 0)
+				return toast.add({
+					type: "error",
+					description: isLocked
+						? t`Couldn't lock the documents. Try again.`
+						: t`Couldn't unlock the documents. Try again.`,
+				});
+			const count = documents.length - failed;
+			toast.add({
+				description: isLocked
+					? plural(count, { one: "# locked", other: "# locked" })
+					: plural(count, { one: "# unlocked", other: "# unlocked" }),
+				...(done.length > 0
+					? {
+							actionProps: {
+								children: t`Undo`,
+								onClick: () =>
+									void run(
+										done,
+										() => true,
+										(document) => setLocked.mutateAsync({ type: document.type, id: document.id, isLocked: !isLocked }),
+									).then((undone) =>
+										toast.add({
+											description: isLocked
+												? plural(undone.length, { one: "# unlocked", other: "# unlocked" })
+												: plural(undone.length, { one: "# locked", other: "# locked" }),
+										}),
+									),
+							},
+						}
+					: {}),
+			});
 		},
 
 		/** Undoable, so it doesn't ask first. */
@@ -298,11 +312,15 @@ export function useBatchActions() {
 				(document) => !document.isLocked,
 				(document) => trash.mutateAsync({ type: document.type, id: document.id }),
 			);
-			if (done.length === 0) return report(0, documents.length);
+			if (done.length === 0)
+				return toast.add({
+					type: "error",
+					description: t`Nothing moved to Trash. Locked documents were skipped.`,
+				});
 			toast.add({
 				description:
 					done.length === documents.length
-						? plural(done.length, { one: "# document moved to Trash", other: "# documents moved to Trash" })
+						? plural(done.length, { one: "# moved to Trash", other: "# moved to Trash" })
 						: t`Moved ${i18n.number(done.length)} of ${i18n.number(documents.length)} to Trash. Locked documents were skipped.`,
 				actionProps: {
 					children: t`Undo`,
@@ -402,7 +420,8 @@ export function useBatchActions() {
 	};
 }
 
-type MenuEntry = { icon: IconName; label: string; onSelect: () => void; disabled?: boolean; danger?: boolean };
+type MenuEntry = { icon: IconName; label: string; onSelect: () => void; disabled?: boolean };
+type MenuGroup = { label?: string; entries: MenuEntry[] };
 
 type DocumentMenuProps = {
 	document: DocumentSummary;
@@ -410,15 +429,15 @@ type DocumentMenuProps = {
 	onRename: () => void;
 	onTags: () => void;
 	onLink: () => void;
-	/** Starts a selection with this document; absent in the list, which always shows its checkboxes, and in Trash. */
+	/** Starts a selection with this document. */
 	onSelect?: (() => void) | undefined;
 	/** The same items as a context menu (right-click and long-press) instead of the ⋯ menu. */
 	variant?: "dropdown" | "context";
 };
 
 /**
- * Open, Share… and Copy public link (resumes), Download PDF, Select, Rename, Duplicate, Copy for a job (or Link to
- * application), Tags, Lock, then Move to Trash.
+ * The document menu (board X5): Open and Select, then Share, For a job and Organize, then Move to Trash after a
+ * rule. A locked document keeps every item in its place, dimmed, and says why once at the top.
  */
 export function DocumentMenuContent({
 	document,
@@ -436,105 +455,129 @@ export function DocumentMenuContent({
 	const { data: session } = authClient.useSession();
 	const [, copy] = useCopyToClipboard();
 	const origin = useShareOrigin();
+	const sentOn = useDocumentSentDate(document);
 	const username = session?.user.username;
+	const isResume = document.type === "resume";
 	// A resume's public address, or null while its link is off.
 	const url =
-		document.type === "resume" && document.isPublic && document.slug && username
+		isResume && document.isPublic && document.slug && username
 			? publicResumeUrl(origin, { username, slug: document.slug })
 			: null;
 
-	const trashEntries: MenuEntry[] = [
-		{ icon: "arrow-counter-clockwise", label: t`Restore`, onSelect: () => void actions.restore(document) },
-		{ icon: "trash", label: t`Delete now…`, onSelect: () => void actions.purge(document), danger: true },
-	];
-	const liveEntries: MenuEntry[] = [
-		{ icon: "arrow-square-out", label: t`Open`, onSelect: onOpen },
-		...(document.type === "resume"
-			? [
-					{
-						icon: "share-network",
-						label: t`Share…`,
-						// The editor's Share view: public link, password, web page and download settings.
-						onSelect: () =>
-							void navigate({ to: "/builder/$resumeId", params: { resumeId: document.id }, search: { mode: "share" } }),
-					} satisfies MenuEntry,
-				]
-			: []),
+	const groups: MenuGroup[] = [
 		{
-			icon: "file-pdf",
-			label: t`Download PDF`,
-			onSelect: () => void download(document.type, document.id),
-			disabled: downloading === document.id,
+			entries: [
+				{ icon: "arrow-square-out", label: t`Open`, onSelect: onOpen },
+				...(onSelect ? [{ icon: "check-square", label: t`Select`, onSelect } satisfies MenuEntry] : []),
+			],
 		},
-		...(url
-			? [
-					{
-						icon: "link-simple-horizontal",
-						label: t`Copy public link`,
-						onSelect: () => void copy(url).then((copied) => copied && toast.add({ description: t`Link copied` })),
-					} satisfies MenuEntry,
-				]
-			: []),
-		...(onSelect ? [{ icon: "check-square", label: t`Select`, onSelect } satisfies MenuEntry] : []),
-		{ icon: "pencil-simple", label: t`Rename`, onSelect: onRename, disabled: document.isLocked },
-		{ icon: "copy", label: t`Duplicate`, onSelect: () => void actions.duplicate(document) },
-		document.type === "resume"
-			? { icon: "briefcase", label: t`Copy for a job…`, onSelect: () => actions.copyForJob(document) }
-			: { icon: "briefcase", label: t`Link to application…`, onSelect: onLink, disabled: document.isLocked },
-		...(document.type === "resume"
-			? [
-					{
-						icon: "link-simple-horizontal",
-						label: t`Link to application…`,
-						onSelect: onLink,
-						disabled: document.isLocked,
-					} satisfies MenuEntry,
-				]
-			: []),
-		...(document.type === "resume"
-			? [
-					{
-						icon: "envelope-simple",
-						label: t`Write a letter…`,
-						onSelect: () => openDialog("document.new", { context: "letters", sourceResumeId: document.id }),
-					} satisfies MenuEntry,
-				]
-			: []),
-		{ icon: "tag", label: t`Tags…`, onSelect: onTags, disabled: document.isLocked },
-		document.isLocked
-			? { icon: "lock-open", label: t`Unlock editing`, onSelect: () => actions.setLocked(document, false) }
-			: { icon: "lock", label: t`Lock editing`, onSelect: () => actions.setLocked(document, true) },
 		{
-			icon: "trash",
-			label: t`Move to Trash`,
-			onSelect: () => void actions.trash(document),
-			danger: true,
-			disabled: document.isLocked,
+			label: t`Share`,
+			entries: [
+				...(isResume
+					? [
+							{
+								icon: "share-network",
+								label: t`Share…`,
+								// The editor's Share view: public link, password, web page and download settings.
+								onSelect: () =>
+									void navigate({
+										to: "/builder/$resumeId",
+										params: { resumeId: document.id },
+										search: { mode: "share" },
+									}),
+							} satisfies MenuEntry,
+						]
+					: []),
+				...(url
+					? [
+							{
+								icon: "link",
+								label: t`Copy public link`,
+								onSelect: () => void copy(url).then((copied) => copied && toast.add({ description: t`Link copied` })),
+							} satisfies MenuEntry,
+						]
+					: []),
+				{
+					icon: "download-simple",
+					label: t`Download PDF`,
+					onSelect: () => void download(document.type, document.id),
+					disabled: downloading === document.id,
+				},
+			],
+		},
+		{
+			label: t`For a job`,
+			entries: [
+				...(isResume
+					? ([
+							{ icon: "briefcase", label: t`Copy for a job…`, onSelect: () => actions.copyForJob(document) },
+							{
+								icon: "envelope-simple",
+								label: t`Write a letter…`,
+								onSelect: () => openDialog("document.new", { context: "letters", sourceResumeId: document.id }),
+							},
+						] satisfies MenuEntry[])
+					: []),
+				{
+					icon: "link-simple-horizontal",
+					label: t`Link to application…`,
+					onSelect: onLink,
+					disabled: document.isLocked,
+				},
+			],
+		},
+		{
+			label: t`Organize`,
+			entries: [
+				{ icon: "pencil-simple", label: t`Rename`, onSelect: onRename, disabled: document.isLocked },
+				{ icon: "copy", label: t`Duplicate`, onSelect: () => void actions.duplicate(document) },
+				{ icon: "tag", label: t`Tags…`, onSelect: onTags, disabled: document.isLocked },
+				document.isLocked
+					? { icon: "lock-simple-open", label: t`Unlock editing`, onSelect: () => actions.setLocked(document, false) }
+					: { icon: "lock-simple", label: t`Lock editing`, onSelect: () => actions.setLocked(document, true) },
+			],
 		},
 	];
-	const entries = document.trashedAt ? trashEntries : liveEntries;
 
 	const Content = variant === "context" ? ContextMenuContent : DropdownMenuContent;
 	const Item = variant === "context" ? ContextMenuItem : DropdownMenuItem;
 	const Separator = variant === "context" ? ContextMenuSeparator : DropdownMenuSeparator;
 
 	return (
-		<Content align="end" className="w-60">
+		<Content align="end" className="w-62">
 			{/* Visible, not a tooltip: keyboard and touch users never see a title. */}
-			{entries.some((entry) => entry.disabled) && (
-				<p className="px-2 pt-1 pb-1.5 text-xs text-ink-3">
-					<Trans>Locked. Unlock it to rename, tag or move it to Trash.</Trans>
+			{document.isLocked && (
+				<p className="px-2.5 pt-2 pb-1.5 text-ink-3 t-small">
+					{sentOn ? (
+						<Trans>Sent on {sentOn} and locked. Unlock it to rename, tag, relink or move it to Trash.</Trans>
+					) : (
+						<Trans>Locked. Unlock it to rename, tag, relink or move it to Trash.</Trans>
+					)}
 				</p>
 			)}
-			{entries.map((entry) => (
-				<div key={entry.label} className="contents">
-					{entry.danger && <Separator />}
-					<Item variant={entry.danger ? "destructive" : "default"} disabled={entry.disabled} onClick={entry.onSelect}>
-						<Icon name={entry.icon} />
-						{entry.label}
-					</Item>
+			{groups.map((group) => (
+				// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a fieldset can't sit inside a menu
+				<div key={group.label ?? "open"} role="group" aria-label={group.label}>
+					{group.label && (
+						<div aria-hidden="true" className={menuLabelClassName}>
+							{group.label}
+						</div>
+					)}
+					{group.entries.map((entry) => (
+						<Item key={entry.label} disabled={entry.disabled} onClick={entry.onSelect}>
+							<Icon name={entry.icon} />
+							{entry.label}
+						</Item>
+					))}
 				</div>
 			))}
+			<Separator />
+			{/* Undoable from its toast, so it never asks (ruling P2). */}
+			<Item variant="destructive" disabled={document.isLocked} onClick={() => void actions.trash(document)}>
+				<Icon name="trash" />
+				<Trans>Move to Trash</Trans>
+			</Item>
 		</Content>
 	);
 }
@@ -555,6 +598,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 	const [documents, onDocumentsOpenChangeComplete] = useClosingValue(requested);
 	const [tags, setTags] = useState<string[] | null>(null);
 	const commitTags = useRef<(() => string[]) | null>(null);
+	const limitsId = useId();
 	const setDocumentTags = useMutation(orpc.documents.setTags.mutationOptions());
 	const shared = documents ? sharedTags(documents) : [];
 	const suggestions = useExistingTags(documents?.map((document) => document.type) ?? [], requested !== null);
@@ -605,24 +649,34 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 					</DialogTitle>
 					<DialogDescription>
 						{documents && documents.length > 1 ? (
-							<Trans>
-								Shows the tags they all share. Tags you add go on every document; tags you remove come off every one.
-								Locked documents are left as they are.
-							</Trans>
+							<Plural
+								value={documents.length}
+								_2="These are the tags both share. A tag you add goes on both; a tag you remove comes off both. Locked documents are left as they are."
+								other="These are the tags they all share. A tag you add goes on every one; a tag you remove comes off every one. Locked documents are left as they are."
+							/>
 						) : (
-							<Trans>Tags group documents in the library; pick one above the grid to filter by it.</Trans>
+							<Trans>Tags group documents. Pick one above the list to filter by it.</Trans>
 						)}
 					</DialogDescription>
 				</DialogHeader>
-				<ChipInput
-					commitRef={commitTags}
-					value={tags ?? shared}
-					onChange={setTags}
-					placeholder={t`Add a tag…`}
-					suggestions={suggestions}
-					suggestionsLabel={t`Your tags`}
-				/>
+				<div className="grid gap-1.5">
+					<ChipInput
+						commitRef={commitTags}
+						value={tags ?? shared}
+						onChange={setTags}
+						placeholder={t`Add a tag…`}
+						suggestions={suggestions}
+						suggestionsLabel={t`Your tags`}
+						aria-describedby={limitsId}
+					/>
+					<p id={limitsId} className="text-ink-3 t-small">
+						<Trans>Up to 20 tags per document, 40 characters each.</Trans>
+					</p>
+				</div>
 				<DialogFooter>
+					<Button variant="ghost" onClick={onClose}>
+						<Trans>Cancel</Trans>
+					</Button>
 					<Button onClick={() => void save()} disabled={setDocumentTags.isPending}>
 						<Trans>Save tags</Trans>
 					</Button>
@@ -641,7 +695,7 @@ const AddApplicationDialog = lazy(() =>
 
 type LinkApplicationDialogProps = { document: DocumentSummary | null; onClose: () => void };
 
-/** Link to application… for letters: the job the letter is for. */
+/** Link to application…: the job the document is for. Rows are buttons; choosing one links it and closes. */
 export function LinkApplicationDialog({ document: requested, onClose }: LinkApplicationDialogProps) {
 	const queryClient = useQueryClient();
 	// Closing keeps the list, its highlight and Unlink on screen until the dialog has faded out.
@@ -682,7 +736,11 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 						<Trans>Link to application</Trans>
 					</DialogTitle>
 					<DialogDescription>
-						<Trans>The application this document is for.</Trans>
+						{document?.type === "letter" ? (
+							<Trans>The job this letter is for. Choosing one links it and closes.</Trans>
+						) : (
+							<Trans>The job this resume is for. Choosing one links it and closes.</Trans>
+						)}
 					</DialogDescription>
 				</DialogHeader>
 				{submitted && (
@@ -690,46 +748,61 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 						<Trans>This letter is recorded as sent. Its application link stays with that submission.</Trans>
 					</p>
 				)}
-				<div className="grid max-h-72 gap-1 overflow-y-auto">
-					{jobs.map((application) => (
-						<Button
-							key={application.id}
-							variant={document?.application?.id === application.id ? "secondary" : "ghost"}
-							className="h-auto justify-start py-2 text-start"
-							disabled={
-								link.isPending ||
-								Boolean(submitted) ||
-								Boolean(
-									document?.type === "letter" &&
-									application.sentCoverLetterVersionId &&
-									application.coverLetterId !== document.id,
-								)
-							}
-							onClick={() => void choose(application.id)}
-						>
-							<Icon name="briefcase" className="text-ink-2" />
-							<span className="grid min-w-0">
-								<span className="truncate font-medium">{application.role}</span>
-								<span className="truncate text-xs text-ink-3">{application.company}</span>
-								{document?.type === "letter" &&
-									application.sentCoverLetterVersionId &&
-									application.coverLetterId !== document.id && (
-										<span className="text-xs text-ink-3">
-											<Trans>Letter already sent</Trans>
-										</span>
-									)}
-							</span>
-						</Button>
-					))}
-					{jobs.length === 0 && (
-						<p className="text-sm text-ink-2">
-							<Trans>No applications yet.</Trans>
-						</p>
-					)}
-				</div>
+				{jobs.length === 0 ? (
+					<p className="text-sm text-ink-2">
+						<Trans>No applications yet.</Trans>
+					</p>
+				) : (
+					// The rows' hover ground bleeds 12px past the text; the scroller makes room for it.
+					<List cap className="-mx-3 max-h-80 overflow-y-auto px-3">
+						{jobs.map((application) => {
+							// Another letter already went out with this job, so it keeps that one.
+							const taken = Boolean(
+								document?.type === "letter" &&
+								application.sentCoverLetterVersionId &&
+								application.coverLetterId !== document.id,
+							);
+							return (
+								<ListRow
+									key={application.id}
+									render={
+										<button
+											type="button"
+											disabled={link.isPending || Boolean(submitted) || taken}
+											onClick={() => void choose(application.id)}
+										/>
+									}
+									className="disabled:pointer-events-none"
+									variant={taken || submitted ? "dim" : "default"}
+									leading={
+										<IconTile aria-hidden="true" className="size-8 rounded-sm text-xs">
+											{companyInitials(application.company)}
+										</IconTile>
+									}
+									title={application.company}
+									subtitle={taken ? t`${application.role} · letter already sent` : application.role}
+									value={<StageDot status={application.status} />}
+									trailing={
+										document?.application?.id === application.id && (
+											<Badge variant="accent">
+												<Icon name="check" />
+												<Trans comment="Marks the application a document is already linked to">Linked</Trans>
+											</Badge>
+										)
+									}
+								/>
+							);
+						})}
+					</List>
+				)}
 				<DialogFooter>
 					{document?.application && (
-						<Button variant="ghost" disabled={link.isPending || Boolean(submitted)} onClick={() => void choose(null)}>
+						<Button
+							variant="ghost"
+							className="-ms-3.5 me-auto"
+							disabled={link.isPending || Boolean(submitted)}
+							onClick={() => void choose(null)}
+						>
 							<Trans>Unlink</Trans>
 						</Button>
 					)}

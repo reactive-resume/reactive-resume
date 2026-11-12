@@ -36,6 +36,7 @@ vi.mock("@/libs/orpc/client", () => ({
 }));
 vi.mock("./document-actions", () => ({ DocumentMenuContent: () => null, useDocumentActions: () => ({}) }));
 vi.mock("./resume-thumbnail", () => ({ ResumeThumbnail: () => null }));
+vi.mock("./document-status", () => ({ DocumentStatusBadge: () => null, useDocumentSentAt: () => null }));
 
 const letter = (editedAt: Date): DocumentSummary =>
 	({

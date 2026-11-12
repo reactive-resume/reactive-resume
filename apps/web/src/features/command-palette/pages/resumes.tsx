@@ -6,9 +6,8 @@ import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { CommandLoading, useCommandState } from "cmdk";
 import { useEffect, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
-import { CommandGroup, CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
+import { CommandGroup, CommandItem } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { useCommandPaletteStore } from "../store";
 import { BaseCommandGroup, RowNote } from "./base";
 import { CreateItems } from "./navigation";
@@ -157,7 +156,7 @@ function RootMatches() {
 			}}
 			className="text-ink-2"
 		>
-			<Icon name="arrow-right" size={16} className="rtl:-scale-x-100" />
+			<Icon name="arrow-right" className="rtl:-scale-x-100" />
 			{label}
 		</CommandItem>
 	);
@@ -173,9 +172,11 @@ function RootMatches() {
 							keywords={documentKeywords(document)}
 							onSelect={() => void openDocument(document)}
 						>
-							<Icon name="file-text" size={16} />
+							<Icon name="file-text" />
 							<span className="min-w-0 truncate">{document.name}</span>
-							<RowNote>{document.application?.company ?? <Trans>Resume</Trans>}</RowNote>
+							<RowNote>
+								<Trans>Resume</Trans>
+							</RowNote>
 						</CommandItem>
 					))}
 					{resumes.documents.length > PREVIEW && more("resumes", t`Show all resumes`)}
@@ -187,7 +188,7 @@ function RootMatches() {
 								void letters.refetch();
 							}}
 						>
-							<Icon name="arrow-clockwise" size={16} />
+							<Icon name="arrow-clockwise" />
 							<Trans>Couldn't load letters. Try again.</Trans>
 						</CommandItem>
 					)}
@@ -198,9 +199,11 @@ function RootMatches() {
 							keywords={documentKeywords(document)}
 							onSelect={() => void openDocument(document)}
 						>
-							<Icon name="envelope-simple" size={16} />
+							<Icon name="envelope-simple" />
 							<span className="min-w-0 truncate">{document.name}</span>
-							<RowNote>{document.application?.company ?? <Trans>Cover letter</Trans>}</RowNote>
+							<RowNote>
+								<Trans>Cover letter</Trans>
+							</RowNote>
 						</CommandItem>
 					))}
 					{letters.documents.length > LETTER_PREVIEW && (
@@ -216,7 +219,7 @@ function RootMatches() {
 							}}
 							className="text-ink-2"
 						>
-							<Icon name="arrow-right" size={16} className="rtl:-scale-x-100" />
+							<Icon name="arrow-right" className="rtl:-scale-x-100" />
 							<Trans>Show all letters</Trans>
 						</CommandItem>
 					)}
@@ -231,9 +234,13 @@ function RootMatches() {
 							keywords={applicationValues(application).filter((value): value is string => !!value)}
 							onSelect={() => void openApplication(application)}
 						>
-							<Icon name="briefcase" size={16} />
-							<span className="min-w-0 truncate">{application.company}</span>
-							<span className="truncate text-xs text-ink-3">{application.role}</span>
+							<Icon name="briefcase" />
+							<span className="min-w-0 truncate">
+								{application.company} · {application.role}
+							</span>
+							<RowNote>
+								<Trans>Application</Trans>
+							</RowNote>
 						</CommandItem>
 					))}
 					{matchingApplications.length > PREVIEW && more("applications", t`Show all applications`)}
@@ -341,7 +348,7 @@ function ResumesPage({ page }: SearchPageProps) {
 	return (
 		<BaseCommandGroup page={page} heading={<Trans>Resumes</Trans>}>
 			<CommandItem value="resumes.create" onSelect={onCreate}>
-				<Icon name="plus" size={16} />
+				<Icon name="plus" />
 				<Trans>Create a new resume</Trans>
 			</CommandItem>
 
@@ -357,14 +364,8 @@ function ResumesPage({ page }: SearchPageProps) {
 						keywords={documentKeywords(resume)}
 						onSelect={() => onNavigate(`/builder/${resume.id}`)}
 					>
-						<Icon name="file-text" size={16} />
-						{resume.name}
-
-						<CommandShortcut className="opacity-0 group-data-[selected=true]/command-item:opacity-100">
-							<Trans comment="Command palette hint that pressing Enter opens the selected resume">
-								Press <Kbd>Enter</Kbd> to open
-							</Trans>
-						</CommandShortcut>
+						<Icon name="file-text" />
+						<span className="min-w-0 truncate">{resume.name}</span>
 					</CommandItem>
 				))
 			)}
@@ -375,7 +376,7 @@ function ResumesPage({ page }: SearchPageProps) {
 					disabled={query.loading}
 					onSelect={() => setPaging({ search, offset: Math.max(0, offset - 100) })}
 				>
-					<Icon name="arrow-left" size={16} />
+					<Icon name="arrow-left" />
 					<Trans>Previous</Trans>
 				</CommandItem>
 			)}
@@ -386,7 +387,7 @@ function ResumesPage({ page }: SearchPageProps) {
 					disabled={query.loading}
 					onSelect={() => setPaging({ search, offset: offset + 100 })}
 				>
-					<Icon name="arrow-right" size={16} />
+					<Icon name="arrow-right" />
 					<Trans>Next</Trans>
 				</CommandItem>
 			)}
@@ -419,7 +420,7 @@ function ApplicationsPage({ page }: SearchPageProps) {
 	return (
 		<BaseCommandGroup page={page} heading={<Trans>Applications</Trans>}>
 			<CommandItem value="applications.create" onSelect={onCreateApplication}>
-				<Icon name="plus" size={16} />
+				<Icon name="plus" />
 				<Trans>Save job</Trans>
 			</CommandItem>
 
@@ -435,9 +436,10 @@ function ApplicationsPage({ page }: SearchPageProps) {
 						keywords={applicationValues(application).filter((value): value is string => !!value)}
 						onSelect={() => onOpenApplication(application)}
 					>
-						<Icon name="briefcase" size={16} />
-						<span className="min-w-0 truncate">{application.company}</span>
-						<span className="truncate text-xs text-ink-3">{application.role}</span>
+						<Icon name="briefcase" />
+						<span className="min-w-0 truncate">
+							{application.company} · {application.role}
+						</span>
 					</CommandItem>
 				))
 			)}
@@ -490,9 +492,9 @@ function ThreadItem({ thread, onOpen }: ThreadItemProps) {
 
 	return (
 		<CommandItem value={`thread.${thread.id}`} keywords={[thread.title, documentName]} onSelect={() => void open()}>
-			<Icon name="chat-text" size={16} />
+			<Icon name="chat-text" />
 			<span className="min-w-0 truncate">{thread.title}</span>
-			<span className="truncate text-xs text-ink-3">{documentName}</span>
+			<RowNote>{documentName}</RowNote>
 		</CommandItem>
 	);
 }

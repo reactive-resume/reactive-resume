@@ -148,16 +148,16 @@ export function IconTile({ accent = false, className, ...props }: IconTileProps)
 type DateColumnProps = Omit<ComponentProps<"span">, "children"> & {
 	/** The day of the month, already formatted for the locale. */
 	day: ReactNode;
-	/** The short month or weekday under it. */
+	/** The short weekday or month above it. */
 	label: ReactNode;
 };
 
-/** Calm date column (`.datecol`): a serif day over a short month, 40px wide, at the start of a row. */
+/** Calm date column (`.datecol`): a short weekday or month over a serif day, 40px wide, at the start of a row. */
 export function DateColumn({ day, label, className, ...props }: DateColumnProps) {
 	return (
 		<span className={cn("flex w-10 shrink-0 flex-col items-center", className)} {...props}>
-			<span className="font-display text-[22px]/[26px]">{day}</span>
 			<span className="text-xs font-medium text-ink-3">{label}</span>
+			<span className="font-display text-[22px]/[26px]">{day}</span>
 		</span>
 	);
 }

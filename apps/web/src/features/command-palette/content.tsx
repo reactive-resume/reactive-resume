@@ -3,7 +3,14 @@ import { Trans } from "@lingui/react/macro";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { useRouteContext } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList } from "@reactive-resume/ui/components/command";
+import {
+	Command,
+	CommandEmpty,
+	CommandFooter,
+	CommandGroup,
+	CommandInput,
+	CommandList,
+} from "@reactive-resume/ui/components/command";
 import {
 	Dialog,
 	DialogClose,
@@ -165,6 +172,21 @@ export default function CommandPaletteContent() {
 						}
 					/>
 
+					{/* A second step (theme, language, a kind's full list) says how to return; Backspace in the empty field does too. */}
+					{!isFirstPage && (
+						<button
+							type="button"
+							onClick={() => {
+								goBack();
+								inputRef.current?.focus();
+							}}
+							className="mx-2 mt-2 inline-flex h-8 items-center gap-1.5 self-start rounded-sm px-2.5 text-[13px] leading-[18px] text-ink-2 [--icon-size:16px] hover:bg-hover hover:text-ink"
+						>
+							<Icon name="arrow-left" className="rtl:-scale-x-100" />
+							<Trans comment="Command palette: return from a second step to the first list">Back</Trans>
+						</button>
+					)}
+
 					<CommandList
 						key={commandListPage}
 						data-command-page={commandListPage}
@@ -212,8 +234,8 @@ export default function CommandPaletteContent() {
 					</CommandList>
 
 					{/* The keys, and the way to the full list. */}
-					<div className="flex items-center gap-4 border-t border-line px-[18px] py-2.5 text-[13px] leading-[18px] text-ink-3 max-sm:hidden">
-						<span className="inline-flex items-center gap-1.5">
+					<CommandFooter className="max-sm:hidden">
+						<span>
 							<Kbd>
 								<Icon name="arrow-up" size={12} />
 							</Kbd>
@@ -222,25 +244,25 @@ export default function CommandPaletteContent() {
 							</Kbd>
 							<Trans comment="Command palette key hint: arrow keys move the selection">move</Trans>
 						</span>
-						<span className="inline-flex items-center gap-1.5">
+						<span>
 							<Kbd>
 								<Icon name="arrow-elbow-down-left" size={12} />
 							</Kbd>
 							<Trans comment="Command palette key hint: Enter opens the selected row">open</Trans>
 						</span>
-						<span className="inline-flex items-center gap-1.5">
+						<span>
 							<Kbd>esc</Kbd>
 							<Trans comment="Command palette key hint: Escape closes the palette">close</Trans>
 						</span>
 						<button
 							type="button"
 							onClick={openShortcutsFromPalette}
-							className="ms-auto inline-flex items-center gap-1.5 rounded-xs text-ink-2 hover:text-ink"
+							className="ms-auto rounded-xs text-ink-2 hover:text-ink"
 						>
 							<Trans>All shortcuts</Trans>
 							{characterShortcuts && <Kbd>?</Kbd>}
 						</button>
-					</div>
+					</CommandFooter>
 				</Command>
 			</DialogContent>
 		</Dialog>

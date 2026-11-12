@@ -8,7 +8,7 @@ export function CharacterShortcutSetting() {
 	return (
 		<SwitchRow
 			label={t`Single-character shortcuts`}
-			description={t`Allow keys such as ?, N, / and editor mode numbers outside text fields. Turn off when using speech input.`}
+			description={t`Keys such as ?, N, / and 1 to 4 work outside text fields. Turn this off if you use speech input.`}
 			checked={characterShortcuts}
 			onCheckedChange={setCharacterShortcuts}
 		/>

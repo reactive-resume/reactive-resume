@@ -1,408 +1,226 @@
-import type { ImportKind } from "@/features/resume/import/read-file";
-import type { ImportReview } from "@reactive-resume/import/review";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Locale } from "@reactive-resume/utils/locale";
-import type { CSSProperties, Dispatch, ReactNode, SetStateAction } from "react";
+import type { ReactNode } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
-import { Plural, Trans } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
-import { reviewImport, withLeftoverSection, withLinkTargets } from "@reactive-resume/import/review";
 import { Button } from "@reactive-resume/ui/components/button";
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import {
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
+import { RadioGroup, RadioGroupItem } from "@reactive-resume/ui/components/radio-group";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { SheetContent } from "@reactive-resume/ui/components/sheet";
-import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { formatFileSize } from "@reactive-resume/utils/file";
-import { localeSchema } from "@reactive-resume/utils/locale";
+import { getLanguageName, localeSchema } from "@reactive-resume/utils/locale";
 import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
-import { defaultCopySource } from "./filter";
+import { defaultCopySource, formatEdited } from "./filter";
+import { handOverImportFile } from "./import/pending-file";
 import { useNewDocumentsStore } from "./new-documents";
-import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
+import { useStartDocument } from "./use-start-document";
+import { DocumentThumb } from "@/components/calm/document-thumb";
+import { List, ListRow, rowLinkClassName } from "@/components/calm/list-row";
+import { StageDot } from "@/components/calm/stage-dot";
 import { Combobox } from "@/components/ui/combobox";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
-import { SetUpAi } from "@/features/assistant/provider-setup";
 import { getLocaleOptions } from "@/features/locale/locale-options";
-import { getSectionName } from "@/features/resume/editor/check/issues";
-import {
-	detectImportKind,
-	ImportError,
-	readImportSource,
-	readResumeFile,
-	summarizeImport,
-} from "@/features/resume/import/read-file";
-import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getAccountGeneration, getAccountId } from "@/libs/auth/account-scope";
-import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { formatRelativeTime } from "@/libs/locale";
-import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
-import { client, orpc } from "@/libs/orpc/client";
+import { ENTER_CLASS } from "@/libs/motion";
+import { orpc } from "@/libs/orpc/client";
 
 export type NewDocumentContext = "documents" | "letters" | "applications" | "career";
 
 export type NewDocumentDialogData = {
-	/** The section New was opened from, so the dialog leads with its own kind of object. */
+	/** The section New was opened from: Cover letter leads when it was opened for a letter. */
 	context?: NewDocumentContext;
-	/** Open on a step other than the three choices. */
+	/** Open on a step other than the choices. */
 	step?: "copy";
 	destination?: "job-match";
-	/** Copy for a job: the resume to start from. */
+	/** Copy for a job: the resume to start from. A letter: the resume it goes with. */
 	sourceResumeId?: string;
-	/** Copy for a job: the application it's for. */
+	/** The application the new document is for. */
 	applicationId?: string;
-	/** A file dropped on the page, awaiting import confirmation. */
+	/** A file dropped on the page: it goes to the Import page, which waits for it to be confirmed. */
 	file?: File;
 };
 
-type Step =
-	| { name: "choose" }
-	| { name: "import-ready"; file: File }
-	| { name: "import-choice"; file: File; kind: "pdf" | "docx" }
-	| { name: "importing"; file: File; stage: number; notes: string[] }
-	| {
-			name: "review";
-			file: File;
-			data: ResumeData;
-			aiOperationIds: string[];
-			owner: { accountId: string; generation: number };
-			review: ImportReview;
-			/** How much of the file's own text the import was compared with. */
-			comparison: "full" | "partial" | "none";
-	  }
-	| { name: "imported"; file: File; resumeId: string; sections: number; entries: number; flagged: number }
-	| { name: "failed"; file: File; message: string }
-	| { name: "copy" };
+type OpenResumeOptions = { withAssistant?: boolean; checkTab?: "match" };
 
-type OpenResumeOptions = { withAssistant?: boolean; importedFrom?: string; checkTab?: "match" };
-
-function requireImportKind(kind: ImportKind | null, file: File): ImportKind {
-	if (!kind) {
-		// JSON is a supported type: say what's wrong with this JSON, not that the type is.
-		if (file.name.toLowerCase().endsWith(".json"))
-			throw new ImportError(t`This JSON isn't a Reactive Resume or JSON Resume file.`);
-		throw new ImportError(
-			t`This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip).`,
-		);
-	}
-	return kind;
-}
-
-/** Runs an import and reports each stage into the dialog's step; a newer run or a cancel drops the older one's updates. */
-function useResumeImport(
-	setStep: Dispatch<SetStateAction<Step>>,
-	openLetter: (coverLetterId: string) => void,
-	applicationId?: string,
-	locale?: Locale,
-) {
-	const { i18n } = useLingui();
-	const queryClient = useQueryClient();
-	const markNew = useNewDocumentsStore((state) => state.markNew);
-	const providerState = useHasUsableAiProvider();
-	const { hasUsableProvider } = providerState;
-	const run = useRef(0);
-	const account = useRef({ id: getAccountId(), generation: getAccountGeneration() });
-	const controller = useRef<AbortController | null>(null);
-	useEffect(
-		() => () => {
-			run.current++;
-			controller.current?.abort();
-		},
-		[],
-	);
-	const refreshDocuments = () => queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
-
-	const importFile = async (file: File, mode?: "local" | "ai") => {
-		const accountId = getAccountId();
-		if (!accountId || account.current.id !== accountId || account.current.generation !== getAccountGeneration()) return;
-		const owner = { accountId, generation: getAccountGeneration() };
-		controller.current?.abort();
-		controller.current = new AbortController();
-		const signal = controller.current.signal;
-		const attempt = ++run.current;
-		const current = () =>
-			run.current === attempt &&
-			!signal.aborted &&
-			getAccountId() === owner.accountId &&
-			getAccountGeneration() === owner.generation;
-		const advance = (stage: number, note: string) => {
-			const index = stage - 1;
-			setStep((previous) =>
-				previous.name === "importing" && current()
-					? { ...previous, stage, notes: Object.assign([...previous.notes], { [index]: note }) }
-					: previous,
-			);
-		};
-
-		setStep({ name: "importing", file, stage: 0, notes: [] });
-		try {
-			const kind = requireImportKind(await detectImportKind(file), file);
-			if (!current()) return;
-			if ((kind === "pdf" || kind === "docx") && !mode) {
-				setStep({ name: "import-choice", file, kind });
-				return;
-			}
-
-			if (kind === "cover-letter-json") {
-				const document = JSON.parse(await file.text());
-				if (!current()) return;
-				const letter = await client.coverLetters.import({ document }, { signal, context: { accountId } });
-				if (!current()) return;
-				markNew(letter.id);
-				void refreshDocuments();
-				toast.add({ description: t`Cover letter imported` });
-				openLetter(letter.id);
-				return;
-			}
-
-			let aiAvailable = mode === "ai" && hasUsableProvider;
-			if (mode === "ai" && (kind === "docx" || kind === "pdf") && providerState.isUnavailable) {
-				try {
-					const providers = await queryClient.fetchQuery({ ...orpc.aiProviders.list.queryOptions(), staleTime: 0 });
-					aiAvailable = providers.some((provider) => provider.enabled && provider.testStatus === "success");
-				} catch {
-					// PDFs have a browser-only reader; a connection outage must not block that local path.
-					if (kind !== "pdf")
-						throw new ImportError(t`Couldn't load AI connections. Try again before importing this file.`);
-					aiAvailable = false;
-				}
-			}
-			if (!current()) return;
-			let aiOperationIds: string[] = [];
-			const resume = await readResumeFile(file, kind, {
-				aiAvailable,
-				signal,
-				accountId,
-				onProvenance: (ids) => {
-					aiOperationIds = ids;
-				},
-				onRead: (note) => advance(1, note),
-			});
-			if (!current()) return;
-			// A PDF or Word file is read by a model or a heuristic: the user sees what came in, and what didn't,
-			// before anything is created. Structured files (JSON, LinkedIn) come in as they are.
-			if (kind === "pdf" || kind === "docx") {
-				advance(1, t`file read`);
-				const source = await readImportSource(file, kind);
-				if (!current()) return;
-				const data = source ? withLinkTargets(resume, source.links) : resume;
-				setStep({
-					name: "review",
-					file,
-					data,
-					aiOperationIds,
-					owner,
-					review: reviewImport(data, source?.lines),
-					comparison: !source?.lines.length ? "none" : source.partial ? "partial" : "full",
-				});
-				return;
-			}
-			await create(file, resume, owner, aiOperationIds, kind === "reactive-resume-json", attempt);
-		} catch (error) {
-			if (current()) fail(file, error);
-		}
-	};
-
-	const fail = (file: File, error: unknown) => {
-		const message =
-			error instanceof ImportError
-				? error.message
-				: getOrpcErrorMessage(error, {
-						byCode: {
-							BAD_GATEWAY: t`Couldn't reach the AI provider. Try again in a moment.`,
-						},
-						// The server says why a file couldn't be read ("The AI returned resume data in the wrong format…").
-						allowServerMessage: true,
-						fallback: t`The file couldn't be read as a resume.`,
-					});
-		setStep({ name: "failed", file, message });
-	};
-
-	const create = async (
-		file: File,
-		resume: ResumeData,
-		owner: { accountId: string; generation: number },
-		aiOperationIds: string[],
-		preserveLocale = false,
-		attempt = ++run.current,
-	) => {
-		const signal = controller.current?.signal;
-		const current = () =>
-			run.current === attempt &&
-			!signal?.aborted &&
-			getAccountId() === owner.accountId &&
-			getAccountGeneration() === owner.generation;
-		if (!current()) return;
-		const options = { ...(signal ? { signal } : {}), context: { accountId: owner.accountId } };
-		const selectedLocale = locale ?? (preserveLocale ? resume.metadata.page.locale : localeSchema.parse(i18n.locale));
-		const data = {
-			...resume,
-			metadata: { ...resume.metadata, page: { ...resume.metadata.page, locale: selectedLocale } },
-		};
-		const summary = summarizeImport(data);
-		setStep({
-			name: "importing",
-			file,
-			stage: 2,
-			notes: [t`file read`, plural(summary.sections, { one: "# section", other: "# sections" })],
-		});
-		try {
-			const resumeId = await client.resume.import({ data, aiOperationIds }, options);
-			if (!current()) return;
-			if (applicationId)
-				await client.documents.linkApplication({ type: "resume", id: resumeId, applicationId }, options);
-			if (!current()) return;
-			markNew(resumeId);
-			void refreshDocuments();
-			setStep({ name: "imported", file, resumeId, ...summary });
-		} catch (error) {
-			if (current()) fail(file, error);
-		}
-	};
-
-	/** Creates the reviewed resume, with what the reader couldn't place kept as a section when the user chose to. */
-	const confirm = (step: Extract<Step, { name: "review" }>, keepLeftovers: boolean) =>
-		create(
-			step.file,
-			keepLeftovers ? withLeftoverSection(step.data, step.review.notImported, t`More from your file`) : step.data,
-			step.owner,
-			step.aiOperationIds,
-		);
-
-	const cancel = () => {
-		run.current++;
-		controller.current?.abort();
-		setStep({ name: "choose" });
-	};
-
-	return { importFile, confirm, cancel, refreshDocuments };
-}
-
-/**
- * New: import a file, copy a resume for a job, or start blank; no name, slug or tags are asked for first.
- * Importing shows three labelled steps rather than a spinner, so a slow parse still looks like progress.
- */
 type NewDocumentDialogProps = { data?: NewDocumentDialogData | undefined; mobileSheet?: boolean };
 
+/** A text action at the end of a row (`.ttb`). */
+const textActionClassName = "rounded-xs text-sm font-medium text-accent-text hover:underline disabled:opacity-45";
+
+/**
+ * New document: Resume or Cover letter first, then how to start. A file is imported on its own page
+ * (`/dashboard/documents/import`); this dialog only sends you there.
+ */
 export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDialogProps) {
+	if (data?.file) return <ImportHandOver file={data.file} />;
+	return <NewDocument data={data} mobileSheet={mobileSheet} />;
+}
+
+/** A dropped file never shows this dialog: it is handed to the Import page. */
+function ImportHandOver({ file }: { file: File }) {
+	const navigate = useNavigate();
+	const closeDialog = useDialogStore((state) => state.closeDialog);
+	useEffect(() => {
+		handOverImportFile(file);
+		closeDialog();
+		void navigate({ to: "/dashboard/documents/import" });
+	}, [file, closeDialog, navigate]);
+	return null;
+}
+
+const PAGE_SIZES = { a4: "A4", letter: "Letter" } as const;
+type PageSize = keyof typeof PAGE_SIZES;
+
+function NewDocument({ data, mobileSheet = false }: NewDocumentDialogProps) {
 	const Content = mobileSheet ? SheetContent : DialogContent;
 	const [opener] = useState(() => document.activeElement);
 	const navigate = useNavigate();
-	const providerState = useHasUsableAiProvider();
-	const { hasUsableProvider } = providerState;
+	const { i18n } = useLingui();
+	const queryClient = useQueryClient();
+	const { hasUsableProvider } = useHasUsableAiProvider();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const markNew = useNewDocumentsStore((state) => state.markNew);
-	const [step, setStep] = useState<Step>(() =>
-		data?.file ? { name: "import-ready", file: data.file } : { name: data?.step ?? "choose" },
-	);
-	const inputRef = useRef<HTMLInputElement>(null);
-	const importDescriptionId = useId();
-	const languageId = useId();
+	const context = data?.context ?? "documents";
+	const id = useId();
+	const nameRef = useRef<HTMLInputElement>(null);
+
+	const [step, setStep] = useState<"choose" | "copy">(data?.step ?? "choose");
+	const [kind, setKind] = useState<"resume" | "letter">(context === "letters" ? "letter" : "resume");
+	const [from, setFrom] = useState<"blank" | "copy" | "import">("blank");
+	/** `null` until typed: the field follows the suggested name. */
+	const [name, setName] = useState<string | null>(null);
+	const [moreOpen, setMoreOpen] = useState(false);
 	const [locale, setLocale] = useState<Locale>();
+	const [pageSize, setPageSize] = useState<PageSize>("a4");
+	const [jobId, setJobId] = useState(data?.applicationId ?? "");
+	const [letterResumeId, setLetterResumeId] = useState(data?.sourceResumeId ?? "");
+	const [letterFrom, setLetterFrom] = useState<"blank" | "letter">("blank");
+	const [letterSourceId, setLetterSourceId] = useState("");
+	const [choosingLetter, setChoosingLetter] = useState(false);
+
+	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const resumes = (documents ?? []).filter((document) => document.type === "resume");
+	const letters = (documents ?? []).filter((document) => document.type === "letter");
+	const jobs = (applications ?? []).filter(
+		(application) => application.status !== "closed" || application.id === data?.applicationId,
+	);
+	const copySource = defaultCopySource(resumes);
+	const letterSource = letters.find((letter) => letter.id === letterSourceId) ?? letters[0];
+	const job = jobs.find((application) => application.id === jobId);
+
+	const { startBlank, trySample, newLetter, creating } = useStartDocument(data?.applicationId, locale);
+	const { mutateAsync: copyResume, isPending: copying } = useMutation(orpc.documents.copyForJob.mutationOptions());
+	const busy = creating || copying;
+
+	const suggestedName =
+		kind === "letter"
+			? job
+				? [job.company, job.role.trim()].filter(Boolean).join(" · ")
+				: t`Untitled letter`
+			: from === "copy" && copySource
+				? t`${copySource.name.split(" — ")[0] ?? ""} (copy)`
+				: t`Untitled resume`;
+	const typedName = name?.trim().slice(0, 100) ?? "";
+	const finalName = typedName || suggestedName;
+	const importing = kind === "resume" && from === "import";
 
 	// A copy made for a job opens with the assistant ready to tailor it.
-	const openResume = (resumeId: string, { withAssistant = false, importedFrom, checkTab }: OpenResumeOptions = {}) => {
+	const openResume = (resumeId: string, { withAssistant = false, checkTab }: OpenResumeOptions = {}) => {
 		closeDialog();
 		void navigate({
 			to: "/builder/$resumeId",
 			params: { resumeId },
-			search: {
-				...(withAssistant ? { assistant: "new" } : {}),
-				mode: checkTab ? "check" : undefined,
-				checkTab,
-				...(importedFrom ? { imported: importedFrom } : {}),
-			},
+			search: { ...(withAssistant ? { assistant: "new" } : {}), mode: checkTab ? "check" : undefined, checkTab },
 		});
 	};
-	const openLetter = (coverLetterId: string) => {
-		closeDialog();
-		void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId } });
-	};
-	const context = data?.context ?? "documents";
 	// Save job reuses Applications' own Add dialog through its one-shot ?create link.
 	const saveJob = () => {
 		closeDialog();
 		void navigate({ to: "/dashboard/applications", search: { create: true } });
 	};
+	const refreshDocuments = () => queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 
-	const { importFile, confirm, cancel, refreshDocuments } = useResumeImport(
-		setStep,
-		openLetter,
-		data?.applicationId,
-		locale,
-	);
+	const copy = async () => {
+		if (!copySource) return;
+		const forJob = data?.applicationId;
+		const input = { resumeId: copySource.id, ...(forJob ? { applicationId: forJob } : {}), name: finalName };
+		// A retry of the same copy (a lost response, a second press) sends the same ID, so it's made once.
+		const key = `copy-for-job:${JSON.stringify(input)}`;
+		try {
+			const resumeId = await copyResume({ ...input, newId: pendingRequestId(key) });
+			settleRequestId(key);
+			toast.add({ description: t`Created “${finalName}”` });
+			markNew(resumeId);
+			void refreshDocuments();
+			openResume(resumeId, { withAssistant: Boolean(forJob) && hasUsableProvider });
+		} catch (error) {
+			toastError(error, t`Couldn't copy the resume. Try again.`);
+		}
+	};
 
-	const { startBlank, trySample, newLetter, creating } = useStartDocument(data?.applicationId, locale);
-	const { data: letterResumes } = useQuery(orpc.resume.list.queryOptions());
-	const { data: sourceLetters } = useQuery(
-		orpc.documents.list.queryOptions({ input: { type: "letter", trashed: false } }),
-	);
-	const [letterResumeId, setLetterResumeId] = useState(data?.sourceResumeId ?? "");
-	const [letterSourceId, setLetterSourceId] = useState("");
-	const letterSourceFieldId = useId();
+	const create = () => {
+		if (kind === "letter") {
+			void newLetter(letterResumeId || null, (letterFrom === "letter" && letterSource?.id) || null, {
+				applicationId: jobId || undefined,
+				// A letter with no job and no typed name is numbered ("Untitled letter 2") like before.
+				name: typedName || (job ? suggestedName : undefined),
+			});
+		} else if (from === "import") {
+			closeDialog();
+			void navigate({
+				to: "/dashboard/documents/import",
+				search: data?.applicationId ? { application: data.applicationId } : {},
+			});
+		} else if (from === "copy") void copy();
+		else void startBlank(undefined, { name: typedName || undefined, pageSize });
+	};
 
-	const chooseFile = () => inputRef.current?.click();
-	const languagePicker = (
-		<div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1">
-			<label htmlFor={languageId} className="text-xs font-medium text-ink-2">
-				<Trans>Resume language</Trans>
-			</label>
-			<Combobox
-				id={languageId}
-				className="h-8 min-w-0 text-xs"
-				options={[{ value: "", label: t`Default` }, ...getLocaleOptions()]}
-				value={locale ?? ""}
-				placeholder={t`Default`}
-				disabled={creating}
-				onValueChange={(value) => setLocale(localeSchema.safeParse(value).data)}
-			/>
-			<p className="col-span-2 text-xs text-ink-3">
-				<Trans>Sets section titles, date words and text direction. Your content isn't translated.</Trans>
-			</p>
-		</div>
-	);
+	const languageName = getLanguageName(locale ?? localeSchema.parse(i18n.locale));
 
 	return (
 		<Content
 			closeLabel={t`Close`}
+			// The name is the first thing to type; on a phone the keyboard would cover the choices.
+			{...(mobileSheet ? {} : { initialFocus: nameRef })}
 			finalFocus={() => {
 				if (opener instanceof HTMLElement && opener.isConnected && opener.getClientRects().length) return opener;
 				// Responsive navigation replaces the opener; return to the current New action.
 				return document.querySelector<HTMLElement>("[data-document-new-trigger]") ?? true;
 			}}
 			{...(mobileSheet ? { side: "bottom" as const } : {})}
-			className={mobileSheet ? "overflow-y-auto px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]" : "sm:max-w-[640px]"}
+			className={
+				mobileSheet
+					? "gap-5 overflow-y-auto px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+					: "gap-5 sm:max-w-[560px]"
+			}
 		>
-			{step.name !== "choose" && <AiProviderLoadState state={providerState} />}
-			<input
-				ref={inputRef}
-				type="file"
-				accept={IMPORT_ACCEPT}
-				className="hidden"
-				aria-label={t`Choose a file to import`}
-				onChange={(event) => {
-					const file = event.target.files?.[0];
-					event.target.value = "";
-					if (file) void importFile(file);
-				}}
-			/>
-
 			{/* Each step enters as it replaces the last; reduced motion keeps only its opacity fade. */}
-			{step.name === "copy" ? (
+			{step === "copy" ? (
 				<div key="copy" className={cn(ENTER_CLASS, "grid gap-4")}>
 					<CopyForJob
 						initialSourceId={data?.sourceResumeId}
 						initialJobId={data?.applicationId}
-						onBack={() => setStep({ name: "choose" })}
+						onBack={() => setStep("choose")}
 						// Opened straight on this step (a card's Copy for a job…): there's no choice to go back to.
 						onCancel={data?.step === "copy" ? closeDialog : undefined}
 						onCreated={(resumeId, forJob) => {
@@ -417,514 +235,374 @@ export function NewDocumentDialog({ data, mobileSheet = false }: NewDocumentDial
 						}}
 					/>
 				</div>
-			) : step.name === "import-ready" ? (
-				<div className="grid gap-4">
-					<DialogHeader>
-						<DialogTitle>
-							<Trans>Import a resume</Trans>
-						</DialogTitle>
-						<DialogDescription>{step.file.name}</DialogDescription>
-					</DialogHeader>
-					{languagePicker}
-					<Button onClick={() => void importFile(step.file)}>
-						<Trans>Import</Trans>
-					</Button>
-					<Button variant="ghost" onClick={cancel}>
-						<Trans>Cancel</Trans>
-					</Button>
-				</div>
-			) : step.name === "import-choice" ? (
-				<div className="grid gap-4">
-					<DialogHeader>
-						<DialogTitle>
-							<Trans>Choose how to read this file</Trans>
-						</DialogTitle>
-						<DialogDescription>{step.file.name}</DialogDescription>
-					</DialogHeader>
-					{languagePicker}
-					{step.kind === "pdf" ? (
-						<Button type="button" variant="secondary" onClick={() => void importFile(step.file, "local")}>
-							<Trans>Read on this device (free)</Trans>
-						</Button>
-					) : (
-						<p className="text-sm text-ink-2">
-							<Trans>Word import needs AI. For a local import, export a PDF or JSON file instead.</Trans>
-						</p>
-					)}
-					{hasUsableProvider ? (
-						<>
-							<Button type="button" onClick={() => void importFile(step.file, "ai")}>
-								<Trans>Read with AI</Trans>
-							</Button>
-						</>
-					) : (
-						<SetUpAi />
-					)}
-					<Button type="button" variant="ghost" onClick={cancel}>
-						<Trans>Back</Trans>
-					</Button>
-				</div>
-			) : step.name === "review" ? (
-				<ReviewStep
-					key="review"
-					step={step}
-					languagePicker={languagePicker}
-					onCreate={(keepLeftovers) => void confirm(step, keepLeftovers)}
-					onChooseFile={chooseFile}
-				/>
-			) : step.name !== "choose" ? (
-				<ImportStep
-					key="progress"
-					step={step}
-					creating={creating}
-					onCancel={cancel}
-					onStartBlank={() => void startBlank()}
-					onChooseFile={chooseFile}
-					onClose={closeDialog}
-					onOpen={(resumeId, importedFrom) => openResume(resumeId, { importedFrom })}
-				/>
 			) : (
-				<div key="choose" className={cn(ENTER_CLASS, "grid gap-4")}>
-					<DialogHeader>
-						<DialogTitle className="font-display text-[22px]">
-							<Trans>New</Trans>
+				<form
+					key="choose"
+					className={cn(ENTER_CLASS, "contents")}
+					onSubmit={(event) => {
+						event.preventDefault();
+						if (!busy) create();
+					}}
+				>
+					<DialogHeader className="pe-9">
+						<DialogTitle>
+							<Trans>New document</Trans>
 						</DialogTitle>
 						<DialogDescription className="sr-only">
-							<Trans>Import a resume, start a letter, save a job, copy one for a job, or start blank.</Trans>
+							<Trans>Start a resume or a cover letter: blank, from a copy, or from a file.</Trans>
 						</DialogDescription>
 					</DialogHeader>
-					{languagePicker}
 
-					<label className="grid gap-1.5 text-sm">
-						<Trans>Resume for a new letter</Trans>
-						<NativeSelect
-							value={letterResumeId}
-							onChange={(event) => setLetterResumeId(event.target.value)}
-							disabled={creating}
-						>
-							<option value="">{t`No resume`}</option>
-							{letterResumes?.map((resume) => (
-								<option key={resume.id} value={resume.id}>
-									{resume.name}
-								</option>
-							))}
-						</NativeSelect>
-					</label>
-					<label htmlFor={letterSourceFieldId} className="grid gap-1.5 text-sm">
-						<Trans>Start from an earlier letter</Trans>
-						<NativeSelect
-							id={letterSourceFieldId}
-							value={letterSourceId}
-							onChange={(event) => setLetterSourceId(event.target.value)}
-							disabled={creating}
-						>
-							<option value="">{t`Blank letter`}</option>
-							{sourceLetters?.map((letter) => (
-								<option key={letter.id} value={letter.id}>
-									{letter.application ? t`${letter.name} — ${letter.application.company}` : letter.name}
-								</option>
-							))}
-						</NativeSelect>
-						<span className="text-xs text-ink-3">
-							<Trans>Copies the body. The new letter keeps its own recipient, date and history.</Trans>
-						</span>
-					</label>
-					{context === "letters" && (
-						<ChoiceTile
-							icon="envelope-simple"
-							title={t`New cover letter`}
-							description={t`Start a letter for a job, or write one from scratch.`}
-							disabled={creating}
-							onClick={() => void newLetter(letterResumeId || null, letterSourceId || null)}
-						/>
-					)}
-					{(context === "applications" || context === "career") && (
-						<ChoiceTile
-							icon="briefcase"
-							title={t`Save a job`}
-							description={t`Paste a job link or posting to track it in Applications.`}
-							onClick={saveJob}
-						/>
-					)}
-
-					<button
-						type="button"
-						onClick={chooseFile}
-						aria-label={t`Import a resume`}
-						aria-describedby={importDescriptionId}
-						onDragOver={(event) => event.preventDefault()}
-						onDrop={(event) => {
-							event.preventDefault();
-							const file = event.dataTransfer.files[0];
-							if (file) void importFile(file);
+					<RadioGroup
+						aria-label={t`Kind`}
+						value={kind}
+						onValueChange={(value) => {
+							setKind(value as typeof kind);
+							setName(null);
 						}}
-						className="flex items-start gap-4 rounded-xl border-[1.5px] border-dashed border-line-2 p-5 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-accent hover:bg-accent-soft active:scale-[0.98]"
+						className="grid grid-cols-1 gap-3 sm:grid-cols-2"
 					>
-						<span className="grid size-11 shrink-0 place-items-center rounded-lg bg-sunken text-ink-2">
-							{providerState.isLoading ? (
-								<Spinner className="size-6" aria-label={t`Loading AI connections…`} />
-							) : (
-								<Icon name="file-arrow-up" size={24} />
-							)}
-						</span>
-						<span className="grid gap-1">
-							<span className="text-[15px] font-semibold">
-								<Trans>Import a resume</Trans>
-							</span>
-							<span id={importDescriptionId} className="text-[13px] leading-[19px] text-ink-2">
-								<Trans>
-									Drop a file here or browse. PDF, Word (needs AI), Reactive Resume, JSON Resume or a LinkedIn export
-									(.zip). Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is
-									listed before you create the resume.
-								</Trans>
-							</span>
-						</span>
-					</button>
+						<KindCard
+							id={`${id}-resume`}
+							value="resume"
+							title={<Trans>Resume</Trans>}
+							description={<Trans>Your experience, laid out on a page.</Trans>}
+						/>
+						<KindCard
+							id={`${id}-letter`}
+							value="letter"
+							title={<Trans>Cover letter</Trans>}
+							description={<Trans>A letter for one job, matched to a resume.</Trans>}
+						/>
+					</RadioGroup>
 
-					<div className="grid gap-3 sm:grid-cols-2">
-						<ChoiceTile
-							icon="copy"
-							title={t`Copy a resume for a job`}
-							description={t`Start from one you have and link the application.`}
-							onClick={() => setStep({ name: "copy" })}
-						/>
-						<ChoiceTile
-							icon="file-plus"
-							title={t`Start blank`}
-							description={t`Opens the editor on your name. Nothing else to fill in first.`}
-							disabled={creating}
-							onClick={() => void startBlank()}
-						/>
+					{kind === "letter" && (
+						<>
+							<Field
+								id={`${id}-job`}
+								label={<Trans>For which job</Trans>}
+								hint={<Trans>The letter is linked to the application, so its posting is at hand.</Trans>}
+							>
+								<NativeSelect
+									id={`${id}-job`}
+									value={jobId}
+									disabled={busy}
+									onChange={(event) => {
+										setJobId(event.target.value);
+										setName(null);
+									}}
+								>
+									<option value="">{t`No job yet`}</option>
+									{jobs.map((application) => (
+										<option key={application.id} value={application.id}>
+											{[application.company, application.role.trim()].filter(Boolean).join(" · ")}
+										</option>
+									))}
+								</NativeSelect>
+							</Field>
+							<Field
+								id={`${id}-letter-resume`}
+								label={<Trans>Resume</Trans>}
+								hint={<Trans>Your name and contact details come from it, and the letter can match its design.</Trans>}
+							>
+								<NativeSelect
+									id={`${id}-letter-resume`}
+									value={letterResumeId}
+									disabled={busy}
+									onChange={(event) => setLetterResumeId(event.target.value)}
+								>
+									<option value="">{t`No resume`}</option>
+									{resumes.map((resume) => (
+										<option key={resume.id} value={resume.id}>
+											{resume.name}
+										</option>
+									))}
+								</NativeSelect>
+							</Field>
+						</>
+					)}
+
+					{kind === "resume" && (
+						<Field id={`${id}-name`} label={<Trans>Name</Trans>}>
+							<Input
+								ref={nameRef}
+								id={`${id}-name`}
+								value={importing ? "" : (name ?? suggestedName)}
+								placeholder={importing ? t`Named from the file` : undefined}
+								maxLength={100}
+								disabled={importing}
+								onChange={(event) => setName(event.target.value)}
+							/>
+						</Field>
+					)}
+
+					<div className="flex min-w-0 flex-col gap-1.5">
+						<Label id={`${id}-from`}>
+							<Trans>Start from</Trans>
+						</Label>
+						{kind === "resume" ? (
+							<RadioGroup
+								aria-labelledby={`${id}-from`}
+								value={from}
+								onValueChange={(value) => {
+									setFrom(value as typeof from);
+									setName(null);
+								}}
+								className="block"
+							>
+								<List cap>
+									<StartRow
+										id={`${id}-blank`}
+										value="blank"
+										title={<Trans>Blank</Trans>}
+										subtitle={<Trans>Opens on your name and contact details. Nothing to fill in first.</Trans>}
+									/>
+									{copySource && (
+										<StartRow
+											id={`${id}-copy`}
+											value="copy"
+											title={<Trans>A copy of “{copySource.name}”</Trans>}
+											subtitle={<Trans>Resume · edited {formatRelativeTime(copySource.editedAt, i18n.locale)}</Trans>}
+											action={
+												<button type="button" className={textActionClassName} onClick={() => setStep("copy")}>
+													<Trans>Choose another</Trans>
+												</button>
+											}
+										/>
+									)}
+									<StartRow
+										id={`${id}-import`}
+										value="import"
+										title={<Trans>Import a PDF, Word or JSON file</Trans>}
+										subtitle={<Trans>Anything that can't be placed is listed before you create it.</Trans>}
+									/>
+								</List>
+							</RadioGroup>
+						) : (
+							<RadioGroup
+								aria-labelledby={`${id}-from`}
+								value={letterFrom}
+								onValueChange={(value) => setLetterFrom(value as typeof letterFrom)}
+								className="block"
+							>
+								<List cap>
+									<StartRow
+										id={`${id}-blank-letter`}
+										value="blank"
+										title={<Trans>Blank letter</Trans>}
+										subtitle={<Trans>Recipient, date and greeting are filled in. The body is yours.</Trans>}
+									/>
+									{letterSource && (
+										<StartRow
+											id={`${id}-from-letter`}
+											value="letter"
+											title={<Trans>The body of “{letterSource.name}”</Trans>}
+											subtitle={<Trans>The new letter keeps its own recipient, date and history.</Trans>}
+											action={
+												letters.length > 1 && (
+													<button
+														type="button"
+														className={textActionClassName}
+														aria-expanded={choosingLetter}
+														onClick={() => {
+															setLetterFrom("letter");
+															setChoosingLetter(true);
+														}}
+													>
+														<Trans>Choose another</Trans>
+													</button>
+												)
+											}
+										/>
+									)}
+								</List>
+							</RadioGroup>
+						)}
+						{kind === "letter" && choosingLetter && letterSource && (
+							<NativeSelect
+								aria-label={t`Start from an earlier letter`}
+								value={letterSource.id}
+								disabled={busy}
+								onChange={(event) => setLetterSourceId(event.target.value)}
+							>
+								{letters.map((letter) => (
+									<option key={letter.id} value={letter.id}>
+										{letter.application ? t`${letter.name} — ${letter.application.company}` : letter.name}
+									</option>
+								))}
+							</NativeSelect>
+						)}
 					</div>
 
-					<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4 text-[13px]">
-						{context !== "letters" && (
+					{kind === "letter" && (
+						<Field id={`${id}-name`} label={<Trans>Name</Trans>}>
+							<Input
+								ref={nameRef}
+								id={`${id}-name`}
+								value={name ?? suggestedName}
+								maxLength={100}
+								onChange={(event) => setName(event.target.value)}
+							/>
+						</Field>
+					)}
+
+					{kind === "resume" && (
+						<div className="flex flex-col gap-3">
 							<button
 								type="button"
-								className="flex items-center gap-1.5 text-ink-2 hover:text-ink disabled:opacity-60"
-								disabled={creating}
-								onClick={() => void newLetter(letterResumeId || null, letterSourceId || null)}
+								aria-expanded={moreOpen}
+								aria-controls={`${id}-more`}
+								onClick={() => setMoreOpen((open) => !open)}
+								className="flex h-7 items-center gap-2.5 rounded-xs text-start text-sm text-ink-2 hover:text-ink"
 							>
-								<Icon name="envelope-simple" size={18} />
-								<Trans>New cover letter instead</Trans>
+								<Icon
+									name="caret-right"
+									size={16}
+									className={cn("transition-[rotate] duration-quick rtl:-scale-x-100", moreOpen && "rotate-90")}
+								/>
+								<span className="flex-1">
+									<Trans>More options</Trans>
+								</span>
+								{from === "blank" && (
+									<span className="text-[13px]/[18px] text-ink-3">
+										{languageName} · {PAGE_SIZES[pageSize]}
+									</span>
+								)}
 							</button>
-						)}
-						{context !== "career" && context !== "applications" && (
-							<button type="button" className="flex items-center gap-1.5 text-ink-2 hover:text-ink" onClick={saveJob}>
-								<Icon name="briefcase" size={18} />
+							{moreOpen && (
+								<div id={`${id}-more`} className={cn(ENTER_CLASS, "grid gap-4 ps-[26px]")}>
+									<Field
+										id={`${id}-language`}
+										label={<Trans>Resume language</Trans>}
+										hint={
+											from === "blank" ? (
+												<Trans>
+													Sets section titles, date words and text direction. Your content isn't translated.
+												</Trans>
+											) : from === "copy" ? (
+												<Trans>A copy keeps the language and page size of the resume it's made from.</Trans>
+											) : (
+												<Trans>For a file, the language is chosen when you import it.</Trans>
+											)
+										}
+									>
+										<Combobox
+											id={`${id}-language`}
+											className="min-w-0"
+											options={[
+												{ value: "", label: getLanguageName(localeSchema.parse(i18n.locale)) },
+												...getLocaleOptions().filter((option) => option.value !== i18n.locale),
+											]}
+											value={locale ?? ""}
+											disabled={busy || from !== "blank"}
+											onValueChange={(value) => setLocale(localeSchema.safeParse(value).data)}
+										/>
+									</Field>
+									<div className="flex flex-col gap-1.5">
+										<Label id={`${id}-size`}>
+											<Trans>Page size</Trans>
+										</Label>
+										<SegmentedControl
+											aria-labelledby={`${id}-size`}
+											value={pageSize}
+											disabled={busy || from !== "blank"}
+											onValueChange={(value) => setPageSize(value as PageSize)}
+											className="w-fit"
+										>
+											<SegmentedControlItem value="a4">{PAGE_SIZES.a4}</SegmentedControlItem>
+											<SegmentedControlItem value="letter">{PAGE_SIZES.letter}</SegmentedControlItem>
+										</SegmentedControl>
+									</div>
+									<div className="flex flex-wrap gap-x-5 gap-y-2">
+										<button
+											type="button"
+											className={textActionClassName}
+											disabled={busy}
+											onClick={() => void trySample()}
+										>
+											<Trans>Try with a sample resume</Trans>
+										</button>
+										<button type="button" className={textActionClassName} onClick={saveJob}>
+											<Trans>Save a job instead</Trans>
+										</button>
+									</div>
+								</div>
+							)}
+						</div>
+					)}
+
+					<DialogFooter className="mt-1 sm:items-center">
+						{/* Opened from Applications or Career, saving a job is as likely as a document. */}
+						{(context === "applications" || context === "career") && !moreOpen && (
+							<Button type="button" variant="ghost" className="sm:me-auto" onClick={saveJob}>
 								<Trans>Save a job instead</Trans>
-							</button>
+							</Button>
 						)}
-						<button
-							type="button"
-							className="text-ink-2 underline underline-offset-2 hover:text-ink"
-							disabled={creating}
-							onClick={() => void trySample()}
-						>
-							<Trans>Try with a sample resume</Trans>
-						</button>
-					</div>
-					<AiProviderLoadState state={providerState} reserveErrorSpace />
-				</div>
+						<Button type="button" variant="ghost" onClick={closeDialog}>
+							<Trans>Cancel</Trans>
+						</Button>
+						<Button type="submit" disabled={busy || (!importing && finalName.length === 0)}>
+							{kind === "letter" ? (
+								<Trans>Create letter</Trans>
+							) : importing ? (
+								<Trans>Continue</Trans>
+							) : (
+								<Trans>Create resume</Trans>
+							)}
+						</Button>
+					</DialogFooter>
+				</form>
 			)}
 		</Content>
 	);
 }
 
-type ReviewStepProps = {
-	languagePicker: ReactNode;
-	step: Extract<Step, { name: "review" }>;
-	onCreate: (keepLeftovers: boolean) => void;
-	onChooseFile: () => void;
-};
+type KindCardProps = { id: string; value: "resume" | "letter"; title: ReactNode; description: ReactNode };
 
-/** What the reader found, section by section, and the lines it couldn't place, before the resume is created. */
-function ReviewStep({ step, onCreate, onChooseFile, languagePicker }: ReviewStepProps) {
-	const { review, data } = step;
-	const [keepLeftovers, setKeepLeftovers] = useState(true);
-	const leftoversId = useId();
+/** Resume or Cover letter: a card that is one radio, with the sheet it makes at the start. */
+function KindCard({ id, value, title, description }: KindCardProps) {
 	return (
-		<div className={cn(ENTER_CLASS, "grid gap-4")}>
-			<DialogHeader>
-				<DialogTitle className="font-display text-[22px]">
-					<Trans>Check what was found</Trans>
-				</DialogTitle>
-				<DialogDescription>{step.file.name}</DialogDescription>
-			</DialogHeader>
-			{languagePicker}
-
-			{review.sections.length > 0 ? (
-				<ul aria-label={t`Sections found`} className="grid gap-1 rounded-lg border border-line p-3 text-[13px]">
-					{review.sections.map((section) => (
-						<li key={section.key} className="flex justify-between gap-3">
-							<span className="truncate">{section.title.trim() || getSectionName(data, section.key)}</span>
-							<span className="shrink-0 text-ink-3">
-								{section.key === "summary" ? (
-									<Trans>text</Trans>
-								) : (
-									<Plural value={section.entries} one="# entry" other="# entries" />
-								)}
-							</span>
-						</li>
-					))}
-				</ul>
-			) : (
-				<p className="text-[13px] text-ink-2">
-					<Trans>No sections were found in this file.</Trans>
-				</p>
-			)}
-
-			{step.comparison !== "full" && (
-				<p className="text-[13px] leading-[19px] text-ink-2">
-					{step.comparison === "partial" ? (
-						<Trans>
-							Only part of this file could be compared with what came in. Check each section against your file in the
-							editor.
-						</Trans>
-					) : (
-						<Trans>
-							This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each
-							section against your file in the editor.
-						</Trans>
-					)}
-				</p>
-			)}
-
-			{review.missingContact && (
-				<p className="flex gap-2 rounded-lg bg-warn-soft p-3 text-[13px] leading-[19px] text-warn-text">
-					<Icon name="warning-circle" size={20} className="shrink-0" />
-					<Trans>Name and contact details weren't found. Add them in Basics.</Trans>
-				</p>
-			)}
-
-			{review.notImported.length > 0 && (
-				<div className="grid gap-2 rounded-lg bg-sunken p-3 text-[13px] leading-[19px]">
-					<p className="font-medium">
-						<Plural
-							value={review.notImported.length}
-							one="# line wasn't placed in any section:"
-							other="# lines weren't placed in any section:"
-						/>
-					</p>
-					<ul className="grid max-h-40 gap-0.5 overflow-y-auto ps-4 text-ink-2">
-						{review.notImported.map((line) => (
-							<li key={line} className="list-disc">
-								{line}
-							</li>
-						))}
-					</ul>
-					<label htmlFor={leftoversId} className="flex items-center gap-2">
-						<input
-							id={leftoversId}
-							type="checkbox"
-							checked={keepLeftovers}
-							onChange={(event) => setKeepLeftovers(event.target.checked)}
-							className="size-4 accent-accent"
-						/>
-						<Trans>Add them as a section called “More from your file” to sort later</Trans>
-					</label>
-				</div>
-			)}
-
-			<div className="flex flex-wrap justify-end gap-2">
-				<Button variant="secondary" onClick={onChooseFile}>
-					<Trans>Choose another file</Trans>
-				</Button>
-				<Button onClick={() => onCreate(keepLeftovers && review.notImported.length > 0)}>
-					<Trans>Create resume</Trans>
-				</Button>
-			</div>
-		</div>
-	);
-}
-
-type ImportStepProps = {
-	step: Extract<Step, { name: "importing" | "imported" | "failed" }>;
-	creating: boolean;
-	onCancel: () => void;
-	onStartBlank: () => void;
-	onChooseFile: () => void;
-	onClose: () => void;
-	onOpen: (resumeId: string, importedFrom: string) => void;
-};
-
-/** The import's progress, then its outcome: found counts with Open in editor, or the error with a way forward. */
-function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onClose, onOpen }: ImportStepProps) {
-	const { hasUsableProvider } = useHasUsableAiProvider();
-	const { i18n } = useLingui();
-	return (
-		<div className={cn(ENTER_CLASS, "grid gap-4")}>
-			<DialogHeader>
-				<DialogTitle className="font-display text-[22px]">
-					{step.name === "failed" ? (
-						<Trans>Couldn't import</Trans>
-					) : step.name === "imported" ? (
-						<Trans>Imported</Trans>
-					) : (
-						<Trans>Importing</Trans>
-					)}
-				</DialogTitle>
-			</DialogHeader>
-			<div className="flex items-center gap-3 rounded-lg border border-line p-3">
-				<Icon name={step.file.name.toLowerCase().endsWith(".pdf") ? "file-pdf" : "file-text"} className="text-ink-2" />
-				<span className="grid min-w-0 flex-1">
-					<span className="truncate text-sm font-medium">{step.file.name}</span>
-					<span className="text-xs text-ink-3">{formatFileSize(step.file.size, i18n.locale)}</span>
-				</span>
-				{step.name === "importing" && (
-					<Button variant="ghost" size="sm" onClick={onCancel}>
-						<Trans>Cancel</Trans>
-					</Button>
-				)}
-			</div>
-
-			{/* One ImportProgress for importing and imported, so its checks don't replay when the import finishes. */}
-			{step.name !== "failed" && (
-				<ImportProgress
-					stage={step.name === "imported" ? 3 : step.stage}
-					notes={
-						step.name === "imported"
-							? [
-									t`file read`,
-									plural(step.sections, { one: "# section", other: "# sections" }),
-									plural(step.entries, { one: "# entry", other: "# entries" }),
-								]
-							: step.notes
-					}
-				/>
-			)}
-
-			{step.name === "failed" && (
-				<>
-					<div
-						role="alert"
-						className={cn(
-							ENTER_CLASS,
-							"flex gap-2.5 rounded-lg bg-danger-soft p-3 text-[13px] leading-[19px] text-danger-text",
-						)}
-					>
-						<Icon name="warning-circle" size={20} />
-						<span>{step.message}</span>
-					</div>
-					<div className={cn(ENTER_CLASS, "flex flex-wrap justify-end gap-2")}>
-						{/* A Word file needs AI: offer the way to set it up, not only a way around it. */}
-						{/\.docx?$/i.test(step.file.name) && !hasUsableProvider && (
-							<Button variant="ghost" nativeButton={false} render={<Link to="/dashboard/settings/ai" />}>
-								<Trans>Set up AI</Trans>
-							</Button>
-						)}
-						<Button variant="secondary" onClick={onStartBlank} disabled={creating}>
-							<Trans>Start blank</Trans>
-						</Button>
-						<Button onClick={onChooseFile}>
-							<Trans>Choose another file</Trans>
-						</Button>
-					</div>
-				</>
-			)}
-
-			{step.name === "imported" && (
-				<>
-					<p role="status" className={cn(ENTER_CLASS, "flex gap-2 text-[13px] leading-[19px]")}>
-						<Icon
-							name="check-circle"
-							size={20}
-							className="text-accent-text transition-[opacity,scale] duration-standard ease-enter starting:scale-80 starting:opacity-0"
-						/>
-						<span>
-							<Trans>
-								Found <Plural value={step.sections} one="# section" other="# sections" /> and{" "}
-								<Plural value={step.entries} one="# entry" other="# entries" />.
-							</Trans>{" "}
-							{step.flagged > 0 && (
-								<Plural
-									value={step.flagged}
-									one="# field is flagged for a quick look in the editor."
-									other="# fields are flagged for a quick look in the editor."
-								/>
-							)}
-						</span>
-					</p>
-					<div className={cn(ENTER_CLASS, "flex flex-wrap justify-end gap-2")}>
-						<Button variant="secondary" onClick={onClose}>
-							<Trans>Stay here</Trans>
-						</Button>
-						<Button onClick={() => onOpen(step.resumeId, step.file.name)}>
-							<Trans>Open in editor</Trans>
-						</Button>
-					</div>
-				</>
-			)}
-		</div>
-	);
-}
-
-type ChoiceTileProps = {
-	icon: IconName;
-	title: string;
-	description: string;
-	onClick: () => void;
-	disabled?: boolean;
-};
-
-function ChoiceTile({ icon, title, description, onClick, disabled }: ChoiceTileProps) {
-	return (
-		<button
-			type="button"
-			disabled={disabled}
-			onClick={onClick}
-			className="flex items-start gap-3 rounded-xl border border-line p-4 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-line-2 hover:bg-hover enabled:active:scale-[0.97] disabled:opacity-60"
+		<label
+			htmlFor={id}
+			className="flex min-w-0 cursor-pointer items-center gap-3.5 rounded-lg bg-raised py-3.5 ps-3.5 pe-4 shadow-[inset_0_0_0_1px_var(--line-2)] transition-[background-color,box-shadow] duration-quick has-data-checked:bg-accent-soft has-data-checked:shadow-[inset_0_0_0_2px_var(--accent)]"
 		>
-			<Icon name={icon} size={22} className="mt-0.5 text-ink-2" />
-			<span className="grid gap-0.5">
-				<span className="text-sm font-semibold">{title}</span>
-				<span className="text-[13px] leading-[18px] text-ink-2">{description}</span>
+			<DocumentThumb kind={value} className="h-14 w-10" />
+			<span className="flex min-w-0 flex-1 flex-col">
+				<span className="t-label">{title}</span>
+				<span className="text-[13px]/[18px] text-ink-3">{description}</span>
 			</span>
-		</button>
+			<RadioGroupItem id={id} value={value} className="self-start" />
+		</label>
 	);
 }
 
-/** Reading the file → Finding sections → Filling in entries, each with a note once done. */
-function ImportProgress({ stage, notes }: { stage: number; notes: string[] }) {
-	const steps = [t`Reading the file`, t`Finding sections`, t`Filling in entries`];
+type StartRowProps = { id: string; value: string; title: ReactNode; subtitle?: ReactNode; action?: ReactNode };
 
+/** One way to start, as a radio row: the whole row chooses it, and its text action stays its own target. */
+function StartRow({ id, value, title, subtitle, action }: StartRowProps) {
 	return (
-		<div className="grid gap-3">
-			<ol className="grid gap-2.5" aria-label={t`Import steps`}>
-				{steps.map((label, index) => {
-					const done = stage > index;
-					const current = stage === index;
-					return (
-						<li
-							key={label}
-							className={cn("flex items-center gap-2.5 text-sm", done || current ? "text-ink" : "text-ink-3")}
-						>
-							{done ? (
-								<Icon name="check-circle" size={18} className={cn(POP_CLASS, "text-accent-text")} />
-							) : current ? (
-								<Spinner decorative className={cn(POP_CLASS, "size-[18px]")} />
-							) : (
-								<span className="size-[18px] rounded-full border-[1.5px] border-control-border" />
-							)}
-							<span className="font-medium">{label}</span>
-							{done && notes[index] && <span className="text-xs text-ink-3">{notes[index]}</span>}
-						</li>
-					);
-				})}
-			</ol>
-			<div
-				role="progressbar"
-				aria-label={t`Import progress`}
-				aria-valuemin={0}
-				aria-valuemax={3}
-				aria-valuenow={stage}
-				className="h-1 overflow-hidden rounded-sm bg-sunken"
-			>
-				<div
-					className="h-full translate-x-(--fill) bg-accent transition-[translate] duration-standard ease-enter rtl:-translate-x-(--fill)"
-					style={{ "--fill": `${(stage / 3) * 100 - 100}%` } as CSSProperties}
-				/>
-			</div>
+		<ListRow
+			interactive
+			leading={<RadioGroupItem id={id} value={value} />}
+			title={
+				<label htmlFor={id} className={cn(rowLinkClassName, "block cursor-pointer truncate")}>
+					{title}
+				</label>
+			}
+			subtitle={subtitle}
+			trailing={action}
+		/>
+	);
+}
+
+type FieldProps = { id: string; label: ReactNode; hint?: ReactNode; children: ReactNode };
+
+function Field({ id, label, hint, children }: FieldProps) {
+	return (
+		<div className="flex min-w-0 flex-col gap-1.5">
+			<Label htmlFor={id}>{label}</Label>
+			{children}
+			{hint && <p className="text-[13px]/[18px] text-ink-3">{hint}</p>}
 		</div>
 	);
 }
@@ -961,6 +639,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 	const [changingSource, setChangingSource] = useState(!initialSourceId);
 	const [jobId, setJobId] = useState<string | null>(initialJobId ?? null);
 	const [adding, setAdding] = useState(false);
+	const [allJobs, setAllJobs] = useState(false);
 	const [newJob, setNewJob] = useState({ company: "", role: "", posting: "" });
 	const [name, setName] = useState<string | null>(null);
 	const { mutateAsync: copyForJob, isPending } = useMutation(orpc.documents.copyForJob.mutationOptions());
@@ -970,8 +649,9 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 	const job = adding ? null : jobs.find((application) => application.id === jobId);
 	const waitingForJob = !adding && Boolean(jobId) && !job && applications.isFetching;
 	const company = adding ? newJob.company.trim() : job?.company;
-	const base = (source?.name ?? "").split(" — ")[0] ?? "";
-	const suggested = (company ? `${base} — ${company}` : t`${base} (copy)`).slice(0, 100);
+	// "Product designer · Kiln Studio": a copy of a copy keeps the base name, whichever separator it was named with.
+	const base = (source?.name ?? "").split(/ [—·] /)[0] ?? "";
+	const suggested = (company ? `${base} · ${company}` : t`${base} (copy)`).slice(0, 100);
 	const finalName = (name ?? suggested).trim();
 	const newJobReady = !adding || (newJob.company.trim().length > 0 && newJob.role.trim().length > 0);
 
@@ -1043,16 +723,18 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 					</p>
 				)}
 				{!changingSource && source ? (
-					<div className="flex items-center gap-3 rounded-lg border border-accent bg-accent-soft px-3 py-2.5">
-						<Icon name="file-text" className="text-ink-2" />
-						<span className="grid min-w-0 flex-1">
-							<span className="truncate text-sm font-medium">{source.name}</span>
-							<span className="text-xs text-ink-3">{formatRelativeTime(source.editedAt, i18n.locale)}</span>
-						</span>
-						<Button variant="ghost" size="sm" onClick={() => setChangingSource(true)}>
-							<Trans>Change</Trans>
-						</Button>
-					</div>
+					<List cap>
+						<ListRow
+							leading={<DocumentThumb kind="resume" />}
+							title={source.name}
+							subtitle={<Trans>Resume · edited {formatEdited(source.editedAt, i18n.locale)} · it stays as it is</Trans>}
+							trailing={
+								<button type="button" className={textActionClassName} onClick={() => setChangingSource(true)}>
+									<Trans>Change</Trans>
+								</button>
+							}
+						/>
+					</List>
 				) : (
 					<div className="grid max-h-56 gap-1 overflow-y-auto">
 						{resumes.map((resume) => (
@@ -1099,57 +781,71 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 			</fieldset>
 
 			<fieldset className="grid gap-1.5">
-				<legend className="mb-1.5 text-xs font-medium text-ink-2">
-					<Trans>For which job?</Trans>
-				</legend>
-				<div className="flex flex-wrap gap-1.5">
-					{[
-						// Two roles at one company stay apart.
-						...jobs.map((application) => ({
-							id: application.id,
-							label: application.role.trim() ? `${application.role} · ${application.company}` : application.company,
-						})),
-						{ id: null, label: t`No job yet` },
-					].map((option) => {
-						const selected = !adding && jobId === option.id;
-						return (
-							<button
-								key={option.id ?? "none"}
-								type="button"
-								aria-pressed={selected}
-								onClick={() => {
-									setAdding(false);
-									setJobId(option.id);
-									setName(null);
-								}}
-								className={cn(
-									"flex h-8 items-center gap-1.5 rounded-sm border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
-									selected
-										? "border-accent bg-accent-soft text-accent-text"
-										: "border-line-2 text-ink-2 hover:bg-hover",
-								)}
-							>
-								{option.id && <Icon name="briefcase" size={16} />}
-								{option.label}
-							</button>
-						);
-					})}
+				<div className="flex items-baseline justify-between">
+					<legend className="text-[13px]/[18px] font-medium text-ink-2">
+						<Trans>For which job?</Trans>
+					</legend>
 					<button
 						type="button"
 						aria-pressed={adding}
+						className={textActionClassName}
 						onClick={() => {
 							setAdding(true);
 							setName(null);
 						}}
-						className={cn(
-							"flex h-8 items-center gap-1.5 rounded-sm border border-dashed px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
-							adding ? "border-accent bg-accent-soft text-accent-text" : "border-line-2 text-ink-2 hover:bg-hover",
-						)}
 					>
-						<Icon name="plus" size={16} />
 						<Trans>Add a job</Trans>
 					</button>
 				</div>
+				<RadioGroup
+					aria-label={t`For which job?`}
+					value={adding ? "" : (jobId ?? "none")}
+					onValueChange={(value) => {
+						setAdding(false);
+						setJobId(value === "none" ? null : (value as string));
+						setName(null);
+					}}
+					className="block"
+				>
+					<List cap tight>
+						{(allJobs || jobs.length <= 4
+							? jobs
+							: // The chosen job stays in view when the rest fold away.
+								jobs.slice(0, 3).concat(jobs.slice(3).filter((application) => application.id === jobId))
+						).map((application) => (
+							<StartRow
+								key={application.id}
+								id={`${nameId}-job-${application.id}`}
+								value={application.id}
+								// Two roles at one company stay apart.
+								title={application.role.trim() ? `${application.company} · ${application.role}` : application.company}
+								action={<StageDot status={application.status} className="text-[13px]/[18px] text-ink-3" />}
+							/>
+						))}
+						{!allJobs && jobs.length > 4 && (
+							<button
+								type="button"
+								className="flex min-h-11 items-center border-b border-line ps-8 text-[13px]/[18px] text-ink-3 hover:text-ink-2"
+								onClick={() => setAllJobs(true)}
+							>
+								{plural(jobs.length - 3, {
+									one: "Show # more application",
+									other: "Show # more applications",
+								})}
+							</button>
+						)}
+						<StartRow
+							id={`${nameId}-job-none`}
+							value="none"
+							title={<Trans>No job yet</Trans>}
+							action={
+								<span className="text-[13px]/[18px] text-ink-3">
+									<Trans>Link one later</Trans>
+								</span>
+							}
+						/>
+					</List>
+				</RadioGroup>
 				{adding ? (
 					<div className={cn(ENTER_CLASS, "grid gap-2 rounded-lg border border-line p-3")}>
 						<div className="grid gap-2 sm:grid-cols-2">
@@ -1194,13 +890,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 							<Trans>Saved to Applications as a saved job, then linked to the copy. No AI request is made.</Trans>
 						</span>
 					</div>
-				) : (
-					job && (
-						<span className="text-xs text-ink-3">
-							<Trans>The copy is linked to the application, so Check and the assistant use its posting.</Trans>
-						</span>
-					)
-				)}
+				) : null}
 			</fieldset>
 
 			<div className="grid gap-1.5">
@@ -1213,8 +903,15 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 					maxLength={100}
 					onChange={(event) => setName(event.target.value)}
 				/>
-				<span className="text-xs text-ink-3">
-					<Trans>Suggested from the source and the job. Change it anytime.</Trans>
+				<span className="text-[13px]/[18px] text-ink-3">
+					{job ? (
+						<Trans>
+							Suggested from the resume and the job. The copy is linked to the application, so Check and the assistant
+							use its posting.
+						</Trans>
+					) : (
+						<Trans>Suggested from the resume. Change it anytime.</Trans>
+					)}
 				</span>
 			</div>
 

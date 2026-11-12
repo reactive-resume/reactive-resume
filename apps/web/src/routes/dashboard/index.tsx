@@ -6,7 +6,7 @@ import { Page, PageBody, RootHeader } from "@/components/calm/page";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
 import { useOverlayHistory } from "@/features/career/hooks";
 import { useCareerTime, useNow } from "@/features/career/shared";
-import { TodayPage } from "@/features/career/today";
+import { TodayPage, TodayTimezoneNote } from "@/features/career/today";
 import { getPageTitle } from "@/libs/seo";
 
 export const Route = createFileRoute("/dashboard/")({
@@ -26,7 +26,6 @@ export const Route = createFileRoute("/dashboard/")({
 	component: RouteComponent,
 });
 
-// calm: area A rebuilds this page to board T1; the frame and header are final.
 function RouteComponent() {
 	const { i18n } = useLingui();
 	const { schedule } = Route.useSearch();
@@ -45,12 +44,15 @@ function RouteComponent() {
 			<PageBody>
 				<RootHeader
 					title={<Trans>Today</Trans>}
-					subtitle={i18n.date(now, { weekday: "long", day: "numeric", month: "long", timeZone })}
+					subtitle={
+						<>
+							{i18n.date(now, { weekday: "long", day: "numeric", month: "long", timeZone })}
+							<TodayTimezoneNote />
+						</>
+					}
 					actions={<PhoneHeaderActions />}
 				/>
-				<div className="mt-5">
-					<TodayPage schedule={schedule} onScheduleChange={onScheduleChange} />
-				</div>
+				<TodayPage schedule={schedule} onScheduleChange={onScheduleChange} />
 			</PageBody>
 		</Page>
 	);

@@ -1,4 +1,5 @@
 import type { RouterOutput } from "@/libs/orpc/client";
+import { formatRelativeTime } from "@/libs/locale";
 
 export type DocumentSummary = RouterOutput["documents"]["list"][number];
 export type DocumentTypeFilter = "all" | "resume" | "letter";
@@ -24,3 +25,19 @@ export function defaultCopySource<
 }
 
 export const documentKey = (document: Pick<DocumentSummary, "type" | "id">) => `${document.type}:${document.id}`;
+
+const startOfDay = (value: number | Date) => new Date(value).setHours(0, 0, 0, 0);
+
+/**
+ * When a document was last edited, as the library says it: "16 minutes ago" today, then "yesterday", the weekday
+ * for the few days before that ("Tuesday"), then the date ("2 Nov", with the year once it differs).
+ */
+export function formatEdited(editedAt: Date | string, locale: string, now = Date.now()) {
+	const date = new Date(editedAt);
+	const days = Math.round((startOfDay(now) - startOfDay(date)) / 86_400_000);
+	if (Number.isNaN(days) || days <= 0) return formatRelativeTime(date, locale);
+	if (days === 1) return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(-1, "day");
+	if (days < 5) return date.toLocaleDateString(locale, { weekday: "long" });
+	const sameYear = date.getFullYear() === new Date(now).getFullYear();
+	return date.toLocaleDateString(locale, { day: "numeric", month: "short", year: sameYear ? undefined : "numeric" });
+}

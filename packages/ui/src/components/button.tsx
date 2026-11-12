@@ -29,7 +29,7 @@ const baseButtonVariants = cva(
 			size: {
 				default: "h-9 rounded-md px-3.5 [--icon-size:18px]",
 				sm: "h-7 gap-1.5 rounded-sm px-2.5 text-[13px] leading-[18px] [--icon-size:16px]",
-				lg: "h-11 rounded-lg px-[18px] text-[15px] [--icon-size:20px]",
+				lg: "h-11 rounded-lg px-[18px] text-[15px]/5 [--icon-size:20px]",
 				icon: "size-9 rounded-md [--icon-size:20px]",
 				"icon-sm": "size-7 rounded-sm [--icon-size:16px]",
 				"icon-xs": "size-7 rounded-sm [--icon-size:16px]",

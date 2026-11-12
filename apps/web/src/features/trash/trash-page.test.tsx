@@ -85,7 +85,7 @@ const brightwell = {
 	company: "Brightwell",
 	role: "Product designer",
 	trashedAt: ago(4),
-	expiresAt: new Date(Date.now() + 26 * DAY - 1000),
+	expiresAt: new Date(Date.now() + 26 * DAY),
 };
 
 beforeEach(() => {
@@ -160,7 +160,7 @@ it("asks once, with a plain danger button, before deleting a document permanentl
 	await waitFor(() => expect(batch.purge).toHaveBeenCalledWith([oldDraft]));
 	expect(confirm).toHaveBeenCalledWith("Delete “Old draft” permanently?", {
 		description:
-			"This resume, its version history and its feedback links are deleted permanently. Keeping it leaves it in Trash for 30 more days.",
+			"This resume, its version history and its feedback links are deleted for good. Keeping it leaves it in Trash for 30 more days.",
 		confirmText: "Delete permanently",
 		cancelText: "Keep in Trash",
 		variant: "danger",
@@ -201,7 +201,7 @@ it("empties both kinds after a confirmation that counts each", async () => {
 		"Empty Trash?",
 		expect.objectContaining({
 			description:
-				"2 documents and 1 application will be deleted permanently now, with their history and timelines, instead of after 30 days. This can't be undone.",
+				"2 documents and 1 application are deleted for good now, with their history and timelines, instead of after 30 days. This can't be undone.",
 			confirmText: "Empty Trash",
 			variant: "danger",
 		}),

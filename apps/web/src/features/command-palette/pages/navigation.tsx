@@ -3,7 +3,6 @@ import { Trans } from "@lingui/react/macro";
 import { useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
 import { CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { useCommandPaletteStore } from "../store";
 import { useDialogStore } from "@/dialogs/store";
 import { useStartDocument } from "@/features/documents/use-start-document";
@@ -90,15 +89,15 @@ export function CreateItems({ forceMount = false }: { forceMount?: boolean }) {
 	const reset = useCommandPaletteStore((state) => state.reset);
 	const { newLetter, creating } = useStartDocument();
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
-	// N opens whichever of these the current section's New is.
+	// N opens whichever of these the current section's New is, at once. The board's N R / N L / N J chords are not
+	// bound: a chord that starts with N would either fire N first or make N wait for a second key.
 	const inApplications = useRouterState({
 		select: (state) => state.location.pathname.startsWith("/dashboard/applications"),
 	});
 	const hint = (shown: boolean) =>
 		shown && characterShortcuts ? (
-			<CommandShortcut>
-				<Kbd>N</Kbd>
-			</CommandShortcut>
+			// The shortcut slot is the key's own chip.
+			<CommandShortcut>N</CommandShortcut>
 		) : null;
 
 	return (

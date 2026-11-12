@@ -64,12 +64,11 @@ it("explains a missing source resume and offers import or creation when copying 
 	expect(screen.getByText(/You don't have a resume to copy yet/)).toBeVisible();
 	expect(screen.getByRole("button", { name: "Create and open" })).toBeDisabled();
 	fireEvent.click(screen.getByRole("button", { name: "Import or create a resume" }));
-	expect(screen.getByRole("heading", { name: "New" })).toBeVisible();
-	expect(screen.getByRole("button", { name: /^Import a resume/ })).toBeEnabled();
-	expect(screen.getByRole("button", { name: /^Start blank/ })).toBeEnabled();
-
-	fireEvent.click(screen.getByRole("button", { name: /^Copy a resume for a job/ }));
-	expect(screen.getByRole("button", { name: "ABOUT YOU" })).toHaveAttribute("aria-pressed", "true");
+	expect(screen.getByRole("heading", { name: "New document" })).toBeVisible();
+	expect(screen.getByRole("radio", { name: "Blank" })).toBeChecked();
+	expect(screen.getByRole("radio", { name: "Import a PDF, Word or JSON file" })).toBeEnabled();
+	// With nothing to copy, a copy isn't offered.
+	expect(screen.queryByRole("radio", { name: /^A copy of/ })).toBeNull();
 });
 
 it("waits for a newly selected job to load before offering an unlinked copy", async () => {
@@ -109,7 +108,7 @@ it("waits for a newly selected job to load before offering an unlinked copy", as
 	await act(async () =>
 		finish([{ id: "new-job", company: "Example", role: "Engineer", status: "saved" } as Application]),
 	);
-	expect(await screen.findByRole("button", { name: "Engineer · Example" })).toHaveAttribute("aria-pressed", "true");
+	expect(await screen.findByRole("radio", { name: "Example · Engineer" })).toBeChecked();
 	expect(screen.getByRole("button", { name: "Create and open" })).toBeEnabled();
 	queryClient.clear();
 });
@@ -117,8 +116,6 @@ it("waits for a newly selected job to load before offering an unlinked copy", as
 it("routes Save a job from New through Applications' own dialog", () => {
 	navigate.mockClear();
 	mountDialog("career");
-	const save = screen.getByRole("button", { name: /^Save a job/ });
-	expect(save).toHaveAccessibleName(/Paste a job link/);
-	fireEvent.click(save);
+	fireEvent.click(screen.getByRole("button", { name: "Save a job instead" }));
 	expect(navigate).toHaveBeenCalledWith({ to: "/dashboard/applications", search: { create: true } });
 });

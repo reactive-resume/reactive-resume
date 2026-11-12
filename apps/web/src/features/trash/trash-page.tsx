@@ -5,7 +5,7 @@ import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -13,24 +13,28 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tabs, TabsCount, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { getInitials } from "@reactive-resume/utils/string";
+import { cn } from "@reactive-resume/utils/style";
 import { TRASH_PAGE, trashedApplicationsQueryOptions } from "./queries";
 import { DocumentThumb } from "@/components/calm/document-thumb";
-import { IconTile, List, ListRow } from "@/components/calm/list-row";
+import { IconTile, List, ListRow, revealOnRowClassName } from "@/components/calm/list-row";
 import { Page, PageBody, RootHeader } from "@/components/calm/page";
 import { SelectionBar } from "@/components/calm/selection-bar";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
+import { companyInitials } from "@/features/applications/components/list-view";
 import { useBatchActions } from "@/features/documents/document-actions";
-import { daysLeftInTrash, documentKey } from "@/features/documents/filter";
+import { documentKey } from "@/features/documents/filter";
 import { useDocumentHistory } from "@/features/documents/library-session";
 import { PageNavigation } from "@/features/documents/page-navigation";
+import { useDocumentRemovalMotion } from "@/features/documents/removal-motion";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
@@ -44,10 +48,17 @@ type Item = { key: string; name: string; trashedAt: Date; daysLeft: number } & (
 );
 
 const DAY = 24 * 60 * 60 * 1000;
+const startOfDay = (time: number) => new Date(time).setHours(0, 0, 0, 0);
+/** Whole calendar days until the day Trash deletes a row: moved today reads 30, on its last day 0. */
+const daysUntil = (expiresAt: number, now: number) =>
+	Math.max(0, Math.round((startOfDay(expiresAt) - startOfDay(now)) / DAY));
 const documentsOf = (items: readonly Item[]) =>
 	items.flatMap((item) => (item.kind === "document" ? [item.document] : []));
 const applicationsOf = (items: readonly Item[]) =>
 	items.flatMap((item) => (item.kind === "application" ? [item.application] : []));
+
+/** The company a letter was written for: its job's, else its recipient. */
+const writtenFor = (letter: DocumentSummary) => letter.application?.company ?? letter.recipient;
 
 type TrashPageProps = { kind: TrashKind; onKindChange: (kind: TrashKind) => void };
 
@@ -68,8 +79,9 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 	// Days left are counted from when the page opened.
 	const [now] = useState(() => Date.now());
 
-	// ponytail: both kinds page together by one offset, so the order is exact only while each kind fits one page
-	// (100). Past that, a server-side merged list is the upgrade.
+	// ponytail: under All, both kinds page together by one offset, so the mixed order is exact only while each kind
+	// fits one page (100); the Documents and Applications tabs are always exact. A server-side merged list is the
+	// upgrade.
 	const documents = useQuery({
 		...orpc.documents.page.queryOptions({ input: { trashed: true, limit: TRASH_PAGE, offset } }),
 		gcTime: 0,
@@ -86,6 +98,16 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 	const loaded = Boolean(documents.data && applications.data);
 	const failed = documents.isError || applications.isError;
 	const fetching = documents.isFetching || applications.isFetching;
+	// Restored and deleted documents fade out before the list refreshes.
+	const listRef = useRef<HTMLDivElement>(null);
+	useDocumentRemovalMotion({
+		container: listRef,
+		scope: `${kind}:${offset}`,
+		trashed: true,
+		data: documents.data,
+		fetching: documents.isFetching,
+		failed: documents.isError,
+	});
 	const all: Item[] = [
 		...(documents.data?.items ?? []).flatMap((document): Item[] =>
 			document.trashedAt
@@ -95,7 +117,7 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 							key: documentKey(document),
 							name: document.name,
 							trashedAt: document.trashedAt,
-							daysLeft: daysLeftInTrash(document.trashedAt, now),
+							daysLeft: daysUntil(document.trashedAt.getTime() + 30 * DAY, now),
 							document,
 						},
 					]
@@ -106,7 +128,7 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 			key: `application:${application.id}`,
 			name: application.company,
 			trashedAt: application.trashedAt,
-			daysLeft: Math.max(0, Math.ceil((application.expiresAt.getTime() - now) / DAY)),
+			daysLeft: daysUntil(application.expiresAt.getTime(), now),
 			application,
 		})),
 	].sort((a, b) => b.trashedAt.getTime() - a.trashedAt.getTime());
@@ -198,20 +220,20 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 		const confirmed = await confirm(
 			!only
 				? plural(rows.length, {
-						one: "Delete # selected item permanently?",
-						other: "Delete # selected items permanently?",
+						one: "Delete # item permanently?",
+						other: "Delete # items permanently?",
 					})
 				: only.kind === "application"
 					? t`Delete the ${only.name} application permanently?`
 					: t`Delete “${only.name}” permanently?`,
 			{
 				description: !only
-					? t`They are deleted permanently now, with their history and timelines. Keeping them leaves them in Trash. This can't be undone.`
+					? t`They are deleted for good now, with their history and timelines. Keeping them leaves them in Trash. This can't be undone.`
 					: only.kind === "application"
 						? t`Its timeline, notes and contacts go with it. Linked documents are kept. Keeping it leaves it in Trash for ${kept}.`
 						: only.document.type === "resume"
-							? t`This resume, its version history and its feedback links are deleted permanently. Keeping it leaves it in Trash for ${kept}.`
-							: t`This cover letter and its version history are deleted permanently. Keeping it leaves it in Trash for ${kept}.`,
+							? t`This resume, its version history and its feedback links are deleted for good. Keeping it leaves it in Trash for ${kept}.`
+							: t`This cover letter and its version history are deleted for good. Keeping it leaves it in Trash for ${kept}.`,
 				confirmText: t`Delete permanently`,
 				cancelText: t`Keep in Trash`,
 				variant: "danger",
@@ -242,8 +264,8 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 		const confirmed = await confirm(t`Empty Trash?`, {
 			description:
 				totals.documents && totals.applications
-					? t`${documentCount} and ${applicationCount} will be deleted permanently now, with their history and timelines, instead of after 30 days. This can't be undone.`
-					: t`${totals.documents ? documentCount : applicationCount} will be deleted permanently now, with their history and timelines, instead of after 30 days. This can't be undone.`,
+					? t`${documentCount} and ${applicationCount} are deleted for good now, with their history and timelines, instead of after 30 days. This can't be undone.`
+					: t`${totals.documents ? documentCount : applicationCount} are deleted for good now, with their history and timelines, instead of after 30 days. This can't be undone.`,
 			confirmText: t`Empty Trash`,
 			cancelText: t`Keep in Trash`,
 			variant: "danger",
@@ -273,13 +295,19 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 
 	const movedToday = new Date(now).toDateString();
 	const disabled = busy || fetching;
+	const empty = loaded && !failed && total === 0;
+	const selecting = selection.length > 0;
 
 	return (
 		<Page>
 			<PageBody>
 				<RootHeader
 					title={<Trans>Trash</Trans>}
-					subtitle={<Trans>Documents and applications stay here for 30 days, then are deleted permanently.</Trans>}
+					subtitle={
+						empty ? undefined : (
+							<Trans>Documents and applications stay here for 30 days, then are deleted for good.</Trans>
+						)
+					}
 					actions={
 						<>
 							{total > 0 && (
@@ -292,30 +320,32 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 					}
 				/>
 
-				<Tabs
-					value={kind}
-					onValueChange={(value: TrashKind) => {
-						clearSelection();
-						setOffset(0);
-						onKindChange(value);
-					}}
-					className="mt-5"
-				>
-					<TabsList variant="line" aria-label={t`Show`} className="w-full justify-start">
-						<TabsTrigger value="all">
-							<Trans>All</Trans>
-							{loaded && <TabsCount>{i18n.number(total)}</TabsCount>}
-						</TabsTrigger>
-						<TabsTrigger value="documents">
-							<Trans>Documents</Trans>
-							{loaded && <TabsCount>{i18n.number(totals.documents)}</TabsCount>}
-						</TabsTrigger>
-						<TabsTrigger value="applications">
-							<Trans>Applications</Trans>
-							{loaded && <TabsCount>{i18n.number(totals.applications)}</TabsCount>}
-						</TabsTrigger>
-					</TabsList>
-				</Tabs>
+				{!empty && (
+					<Tabs
+						value={kind}
+						onValueChange={(value: TrashKind) => {
+							clearSelection();
+							setOffset(0);
+							onKindChange(value);
+						}}
+						className="mt-5"
+					>
+						<TabsList variant="line" aria-label={t`Show`} className="w-full justify-start">
+							<TabsTrigger value="all">
+								<Trans>All</Trans>
+								{loaded && <TabsCount>{i18n.number(total)}</TabsCount>}
+							</TabsTrigger>
+							<TabsTrigger value="documents">
+								<Trans>Documents</Trans>
+								{loaded && <TabsCount>{i18n.number(totals.documents)}</TabsCount>}
+							</TabsTrigger>
+							<TabsTrigger value="applications">
+								<Trans>Applications</Trans>
+								{loaded && <TabsCount>{i18n.number(totals.applications)}</TabsCount>}
+							</TabsTrigger>
+						</TabsList>
+					</Tabs>
+				)}
 
 				{failed ? (
 					<Alert variant="error" className="mt-4">
@@ -351,36 +381,52 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 						))}
 					</div>
 				) : items.length === 0 ? (
-					<div data-design="empty" className="grid justify-items-center gap-2 py-16 text-center">
-						<h2 className="t-section-title">
-							<Trans>Trash is empty</Trans>
-						</h2>
-						<p className="text-sm text-ink-3">
-							<Trans>What you move here stays for 30 days.</Trans>
-						</p>
-					</div>
+					<EmptyState
+						className="mt-5"
+						title={<Trans>Trash is empty</Trans>}
+						description={
+							<Trans>Documents and applications you move here stay for 30 days, then are deleted for good.</Trans>
+						}
+					/>
 				) : (
-					<List className="mt-2" aria-label={t`Trash`} role="list">
+					<List ref={listRef} className="mt-2" aria-label={t`Trash`} role="list">
 						{items.map((item) => (
 							<ListRow
 								key={item.key}
 								role="listitem"
+								data-document-key={item.kind === "document" ? item.key : undefined}
 								interactive
 								selected={selected.has(item.key)}
 								leading={
-									<>
+									// The checkbox takes the picture's place on hover and focus, and on every row while selecting.
+									// Touch screens have no hover: they show both.
+									<span className="relative flex w-8 shrink-0 items-center justify-center pointer-coarse:w-auto pointer-coarse:gap-3.5">
 										<Checkbox
 											disabled={disabled}
 											checked={selected.has(item.key)}
 											onCheckedChange={(on) => select(item, on)}
 											aria-label={t`Select ${item.name}`}
+											className={cn(
+												"absolute z-10 pointer-coarse:static",
+												!selecting &&
+													"opacity-0 group-focus-within/row:opacity-100 group-hover/row:opacity-100 pointer-coarse:opacity-100",
+											)}
 										/>
-										{item.kind === "document" ? (
-											<DocumentThumb kind={item.document.type} />
-										) : (
-											<IconTile className="size-8 text-xs">{getInitials(item.name)}</IconTile>
-										)}
-									</>
+										<span
+											className={cn(
+												"flex pointer-coarse:visible",
+												selecting ? "invisible" : "group-focus-within/row:invisible group-hover/row:invisible",
+											)}
+										>
+											{item.kind === "document" ? (
+												<DocumentThumb kind={item.document.type} />
+											) : (
+												<IconTile aria-hidden="true" className="size-8 rounded-sm text-xs">
+													{companyInitials(item.name)}
+												</IconTile>
+											)}
+										</span>
+									</span>
 								}
 								title={item.name}
 								subtitle={
@@ -388,29 +434,27 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 										? t`Application · ${item.application.role}`
 										: item.document.type === "resume"
 											? t`Resume · last edited ${i18n.date(item.document.editedAt, { day: "numeric", month: "short" })}`
-											: t`Cover letter · last edited ${i18n.date(item.document.editedAt, { day: "numeric", month: "short" })}`
+											: writtenFor(item.document)
+												? t`Cover letter · written for ${writtenFor(item.document)}`
+												: t`Cover letter · last edited ${i18n.date(item.document.editedAt, { day: "numeric", month: "short" })}`
 								}
 								value={
 									<>
-										<span className="w-28 max-md:hidden">
+										<span className="w-[120px] max-md:hidden">
 											{item.trashedAt.toDateString() === movedToday
 												? t`Moved today`
 												: t`Moved ${i18n.date(item.trashedAt, { day: "numeric", month: "short" })}`}
 										</span>
-										<span className="w-24 max-sm:w-auto">
-											{plural(item.daysLeft, { one: "# day left", other: "# days left" })}
+										<span className="ms-2 w-[168px] max-lg:w-24 max-sm:w-auto">
+											{item.daysLeft === 0
+												? t`Deleted today`
+												: plural(item.daysLeft, { one: "# day left", other: "# days left" })}
 										</span>
 									</>
 								}
 								trailing={
 									<>
-										<Button
-											variant="ghost"
-											size="sm"
-											disabled={disabled}
-											className="text-accent-text"
-											onClick={() => void restore([item])}
-										>
+										<Button variant="link" disabled={disabled} onClick={() => void restore([item])}>
 											<Trans>Restore</Trans>
 										</Button>
 										<DropdownMenu>
@@ -420,11 +464,20 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 														icon="dots-three"
 														size="icon-sm"
 														label={t`More for ${item.name}`}
-														className="text-ink-2"
+														className={cn(
+															"ms-5 text-ink-2 aria-expanded:opacity-100",
+															revealOnRowClassName,
+															selecting && "invisible",
+														)}
 													/>
 												}
 											/>
-											<DropdownMenuContent align="end">
+											<DropdownMenuContent align="end" className="w-62">
+												<DropdownMenuItem disabled={disabled} onClick={() => void restore([item])}>
+													<Icon name="arrow-counter-clockwise" />
+													<Trans>Restore</Trans>
+												</DropdownMenuItem>
+												<DropdownMenuSeparator />
 												<DropdownMenuItem variant="destructive" disabled={disabled} onClick={() => void purge([item])}>
 													<Icon name="trash" />
 													<Trans>Delete permanently…</Trans>
@@ -447,7 +500,7 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 						setOffset(next);
 					}}
 				/>
-				{selection.length > 0 && (
+				{selecting && (
 					<SelectionBar
 						label={t`Selected in Trash`}
 						count={selection.length}

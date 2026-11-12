@@ -90,17 +90,18 @@ function ShortcutContent({ shortcuts, onClose, opener }: ShortcutContentProps) {
 				</DialogTitle>
 				<DialogDescription>
 					<Trans>
-						Shortcuts available on this page. <Kbd>?</Kbd> opens this list on any page. List commands require focus
-						inside their list.
+						Shortcuts on this page. <Kbd>?</Kbd> opens this list on any page.
 					</Trans>
 				</DialogDescription>
 			</DialogHeader>
-			<dl className="grid gap-x-8 sm:grid-cols-2">
+			{/* Two columns read down, then across, so related keys (the editor's 1 to 4) stay together. */}
+			<dl className="gap-x-8 sm:columns-2">
 				{named.map((shortcut) => (
-					<div key={shortcut.id} className="flex min-h-[30px] items-center justify-between gap-4">
+					<div key={shortcut.id} className="flex min-h-[30px] break-inside-avoid items-center justify-between gap-4">
 						<dt className="min-w-0 truncate">{shortcut.options.meta?.name}</dt>
 						<dd>
-							<Kbd>{formatForDisplay(shortcut.hotkey)}</Kbd>
+							{/* "⌘K", as every other key hint in the app writes it. */}
+							<Kbd>{formatForDisplay(shortcut.hotkey).replaceAll(" ", "")}</Kbd>
 						</dd>
 					</div>
 				))}
