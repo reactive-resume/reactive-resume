@@ -239,7 +239,6 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 				}}
 				document={document}
 				connection={label}
-				privacy={(history) => disclosure(t, document, context, label, history.earlier > 0)}
 				placeholder={t`Ask, or describe a change…`}
 				assistantName={t`Assistant`}
 				disabled={!provider}
@@ -402,43 +401,6 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 			</SafeAreaView>
 		</SafeAreaProvider>
 	);
-}
-
-type Translate = ReturnType<typeof useLingui>["t"];
-
-/** What a send shares, and with whom (web's disclosure line). */
-function disclosure(
-	t: Translate,
-	document: AssistantDocument,
-	context: MessageContext,
-	provider: string,
-	hasHistory: boolean,
-) {
-	const posting = context.posting && document.posting;
-	const sends = context.document
-		? document.kind === "letter"
-			? posting
-				? t`Sends this letter and the posting to ${provider} with your key, only when you tap send.`
-				: t`Sends this letter to ${provider} with your key, only when you tap send.`
-			: posting
-				? t`Sends this resume and the posting to ${provider} with your key, only when you tap send.`
-				: t`Sends this resume to ${provider} with your key, only when you tap send.`
-		: posting
-			? t`Sends your message and the posting to ${provider} with your key, only when you tap send.`
-			: t`Sends your message to ${provider} with your key, only when you tap send.`;
-	// Said only once there is history to send or to leave out.
-	const history = !hasHistory
-		? ""
-		: !context.document || !context.posting
-			? ` ${t`Each send starts fresh with this message and selected files. Previous conversation history stays here.`}`
-			: ` ${t`Previous messages, including document details, are also sent.`}`;
-	const knowledge =
-		context.memory === true ? ` ${t`Knowledge facts and stories the assistant looks up are sent too.`}` : "";
-	const copy =
-		needsJobCopy(document, context) && document.posting
-			? ` ${t`Edits that use the ${document.posting.company} posting go to a copy made for that job, so this resume stays unchanged.`}`
-			: "";
-	return `${sends}${knowledge}${history}${copy}`;
 }
 
 /** Tailoring needs the job's own copy: the server refuses edits that use the posting on a resume other jobs share. */

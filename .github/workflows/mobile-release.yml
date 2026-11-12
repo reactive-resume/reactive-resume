@@ -1,18 +1,20 @@
 name: Mobile release
-run-name: Mobile ${{ inputs.upload && 'submit' || 'build' }} · ${{ inputs.platform }} · ${{ inputs.format }} · ${{ github.ref_name }}
+run-name: Mobile ${{ github.event_name == 'push' && 'internal testing' || (inputs.upload && 'submit' || 'build') }} · ${{ inputs.platform || 'android-native' }} · ${{ inputs.format || 'store' }} · ${{ github.ref_name }}
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       platform:
-        description: Platforms to build
+        description: Platforms to build (android-native is the Kotlin app in apps/android)
         type: choice
-        options: [all, android, ios]
+        options: [all, android, ios, android-native]
         default: all
       format:
-        description: Store binaries (AAB/IPA), or a downloadable Android APK
+        description: Store binaries (AAB/IPA), a downloadable Android APK, or a native preview APK (any branch)
         type: choice
-        options: [store, apk]
+        options: [store, apk, preview]
         default: store
       abi:
         description: Android architecture for APK builds (ignored for store binaries)
@@ -30,9 +32,10 @@ permissions:
 concurrency:
   group: mobile-release
   cancel-in-progress: false
+  queue: max
 
 env:
-  FORMAT: ${{ inputs.format }}
+  FORMAT: ${{ inputs.format || 'store' }}
   ABI: ${{ inputs.abi }}
   MOBILE_UPDATE_CHANNEL: ${{ inputs.format == 'apk' && 'preview' || 'production' }}
   CI: "1"
@@ -44,7 +47,8 @@ env:
 jobs:
   prepare:
     name: Prepare release
-    if: github.ref == 'refs/heads/main'
+    # Preview APKs use no secrets, so any branch can build one for testing.
+    if: github.ref == 'refs/heads/main' || inputs.format == 'preview'
     runs-on: blacksmith-32vcpu-ubuntu-2404
     timeout-minutes: 5
     outputs:
@@ -62,14 +66,15 @@ jobs:
       - name: Validate release inputs and allocate build number
         id: release
         env:
-          PLATFORM: ${{ inputs.platform }}
-          UPLOAD: ${{ inputs.upload }}
+          PLATFORM: ${{ github.event_name == 'push' && 'android-native' || inputs.platform }}
+          UPLOAD: ${{ github.event_name == 'push' && 'true' || inputs.upload }}
           MOBILE_BUILD_NUMBER_BASE: ${{ vars.MOBILE_BUILD_NUMBER_BASE }}
         run: node tooling/mobile/release.ts --prepare
 
   build:
     name: Build ${{ matrix.platform }} (${{ inputs.format }})
     needs: prepare
+    if: github.event_name != 'push' && inputs.platform != 'android-native'
     environment: mobile-signing
     strategy:
       fail-fast: false
@@ -215,10 +220,173 @@ jobs:
           echo "### $PLATFORM build $MOBILE_BUILD_NUMBER" >> "$GITHUB_STEP_SUMMARY"
           echo "Commit: $GITHUB_SHA. Format: $FORMAT. OTA channel: $MOBILE_UPDATE_CHANNEL. Release evidence retained for 90 days." >> "$GITHUB_STEP_SUMMARY"
 
+  build-native:
+    name: Build native Android (${{ inputs.format || 'store' }})
+    needs: prepare
+    if: github.event_name == 'push' || (inputs.platform == 'android-native' && inputs.format != 'preview')
+    environment: mobile-signing
+    runs-on: blacksmith-32vcpu-ubuntu-2404
+    timeout-minutes: 60
+    env:
+      PLATFORM: android-native
+      MOBILE_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"'
+    defaults:
+      run:
+        working-directory: apps/android
+    steps:
+      - name: Check out source (Blacksmith)
+        uses: useblacksmith/checkout@v1
+        with:
+          persist-credentials: false
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies for the bundled local import reader
+        working-directory: .
+        run: pnpm install --frozen-lockfile
+      - name: Validate signing credentials
+        working-directory: .
+        env:
+          UPLOAD: "false"
+          MOBILE_BUILD_NUMBER_BASE: ${{ vars.MOBILE_BUILD_NUMBER_BASE }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: node tooling/mobile/release.ts
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          packages: platform-tools platforms;android-37.0 build-tools;37.0.0
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+      - name: Run lint and unit tests (screenshots render; goldens are compared on macOS only)
+        run: ./gradlew lint testDebugUnitTest --max-workers=1
+      - name: Build signed binary
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          keystore="$(mktemp -d "$RUNNER_TEMP/android-signing-XXXXXX")/upload.jks"
+          trap 'rm -f "$keystore"' EXIT
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$keystore"
+          task=$([[ "$FORMAT" == apk ]] && echo assembleRelease || echo bundleRelease)
+          ./gradlew ":app:$task" --max-workers=1 "-Prr.versionCode=$MOBILE_BUILD_NUMBER" \
+            "-Pandroid.injected.signing.store.file=$keystore" \
+            "-Pandroid.injected.signing.store.password=$ANDROID_KEYSTORE_PASSWORD" \
+            "-Pandroid.injected.signing.key.alias=$ANDROID_KEY_ALIAS" \
+            "-Pandroid.injected.signing.key.password=$ANDROID_KEY_PASSWORD"
+          out="$RUNNER_TEMP/mobile-release"
+          mkdir -p "$out"
+          if [[ "$FORMAT" == apk ]]; then
+            cp app/build/outputs/apk/release/app-release.apk "$out/reactive-resume-native.apk"
+            "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose --print-certs "$out/reactive-resume-native.apk"
+          else
+            # The store lane in tooling/mobile/fastlane uploads this file name.
+            cp app/build/outputs/bundle/release/app-release.aab "$out/ReactiveResume.aab"
+          fi
+          cp -r app/build/outputs/mapping/release "$out/mapping"
+          jq -n --arg sha "$GITHUB_SHA" --arg build "$MOBILE_BUILD_NUMBER" --arg format "$FORMAT" \
+            '{commit: $sha, platform: "android-native", buildNumber: $build, format: $format}' > "$out/release.json"
+      - name: Upload signed binary
+        uses: actions/upload-artifact@v7
+        with:
+          # Same name as the Expo Android build, so the submit job uploads either app to Play.
+          name: mobile-android-${{ needs.prepare.outputs.build_number }}
+          path: |
+            ${{ runner.temp }}/mobile-release/*.apk
+            ${{ runner.temp }}/mobile-release/*.aab
+          if-no-files-found: error
+          retention-days: ${{ inputs.format == 'apk' && 14 || 90 }}
+      - name: Upload release evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-android-${{ needs.prepare.outputs.build_number }}-evidence
+          path: |
+            ${{ runner.temp }}/mobile-release/
+            !${{ runner.temp }}/mobile-release/*.apk
+            !${{ runner.temp }}/mobile-release/*.aab
+          if-no-files-found: error
+          retention-days: 90
+
+  preview-native:
+    name: Build native Android preview APK
+    needs: prepare
+    if: inputs.platform == 'android-native' && inputs.format == 'preview'
+    runs-on: blacksmith-32vcpu-ubuntu-2404
+    timeout-minutes: 60
+    env:
+      MOBILE_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"'
+    defaults:
+      run:
+        working-directory: apps/android
+    steps:
+      - name: Check out source (Blacksmith)
+        uses: useblacksmith/checkout@v1
+        with:
+          persist-credentials: false
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies for the bundled local import reader
+        working-directory: .
+        run: pnpm install --frozen-lockfile
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          packages: platform-tools platforms;android-37.0 build-tools;37.0.0
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+      - name: Run unit tests (screenshots render; goldens are compared on macOS only)
+        run: ./gradlew testDebugUnitTest --max-workers=1
+      - name: Build preview APK
+        run: |
+          set -euo pipefail
+          ./gradlew :app:assemblePreview --max-workers=1 "-Prr.versionCode=$MOBILE_BUILD_NUMBER"
+          mkdir -p "$RUNNER_TEMP/mobile-release"
+          apk="$RUNNER_TEMP/mobile-release/reactive-resume-preview-$MOBILE_BUILD_NUMBER.apk"
+          cp app/build/outputs/apk/preview/app-preview.apk "$apk"
+          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --print-certs "$apk"
+      - name: Upload preview APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-preview-${{ needs.prepare.outputs.build_number }}
+          path: ${{ runner.temp }}/mobile-release/*.apk
+          if-no-files-found: error
+          retention-days: 14
+      - name: Summarize build
+        run: |
+          echo "### Native Android preview $MOBILE_BUILD_NUMBER" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: $GITHUB_SHA on ${GITHUB_REF_NAME}. Installs beside the Play app as me.rxresu.preview." >> "$GITHUB_STEP_SUMMARY"
+
   submit:
-    name: Submit ${{ matrix.platform }} for production review
-    needs: [prepare, build]
-    if: inputs.upload && inputs.format == 'store'
+    name: Publish ${{ matrix.platform }} to ${{ github.event_name == 'push' && 'Internal Testing' || 'production review' }}
+    needs: [prepare, build, build-native]
+    # One of the two build jobs is skipped; submit when the other succeeded.
+    if: ${{ !cancelled() && !failure() && (github.event_name == 'push' || (inputs.upload && inputs.format == 'store')) }}
     permissions:
       actions: read
       contents: read
@@ -236,7 +404,8 @@ jobs:
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
-      - name: Require successful main CI for source commit
+      - name: Require successful main CI for production source commit
+        if: github.event_name != 'push'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         with:
           script: |
@@ -257,10 +426,11 @@ jobs:
         with:
           name: mobile-${{ matrix.platform }}-${{ needs.prepare.outputs.build_number }}
           path: ${{ runner.temp }}/mobile-release
-      - name: Submit binary for production review
+      - name: Publish signed binary
         working-directory: tooling/mobile
         env:
           PLATFORM: ${{ matrix.platform }}
+          GOOGLE_PLAY_TRACK: ${{ github.event_name == 'push' && 'internal' || 'production' }}
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ matrix.platform == 'android' && secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON || '' }}
           ASC_KEY_ID: ${{ matrix.platform == 'ios' && secrets.ASC_KEY_ID || '' }}
           ASC_ISSUER_ID: ${{ matrix.platform == 'ios' && secrets.ASC_ISSUER_ID || '' }}

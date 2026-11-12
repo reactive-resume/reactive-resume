@@ -128,6 +128,28 @@ describe("saving", () => {
 		expect(store().letter?.style.basics).toEqual(letter.style.basics);
 	});
 
+	it("reports saved to a caller that waited while a follow-up save started", async () => {
+		store().load({ ...letter, senderLinked: false });
+		const request = deferred<CoverLetter>();
+		mocks.update
+			.mockReturnValueOnce(request.promise)
+			.mockImplementation(async () => ({ ...store().letter, revision: 3 }));
+		store().edit({ sender: { name: "Jordan" } });
+		const saving = store().flush();
+		store().edit({ sender: { location: "Berlin" } });
+		const waiting = store().flush();
+		request.resolve({
+			...letter,
+			senderLinked: false,
+			style: { ...letter.style, basics: { ...letter.style.basics, name: "Jordan" } },
+			revision: 2,
+		});
+		await expect(saving).resolves.toBe(true);
+		await expect(waiting).resolves.toBe(true);
+		expect(mocks.update).toHaveBeenCalledTimes(2);
+		expect(store().status).toBe("saved");
+	});
+
 	it("shows and saves the header details an unlinked letter edits, including leaving its photo off", async () => {
 		const style = structuredClone(letter.style);
 		style.picture.url = "https://example.test/photo.png";

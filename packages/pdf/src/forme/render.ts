@@ -32,6 +32,8 @@ export type RenderResumeInput = {
 	readImage?: ((source: string) => Promise<Uint8Array>) | undefined;
 	/** Computer Modern mirror supplied by the server entry; browser callers leave it unset. */
 	webFontBaseUrl?: string | undefined;
+	/** Full catalog mirror, including browser/native rendering and Google fallback fonts. */
+	fontMirrorUrl?: string | undefined;
 };
 
 export type RenderedResume = {
@@ -46,12 +48,18 @@ export type RenderedResume = {
 	warnings: string[];
 };
 
-/** A failed font download would print the resume in other fonts: the file waits for a retry instead. */
-export function assertPdfFonts({ missingFonts }: Pick<RenderedResume, "missingFonts">) {
-	if (missingFonts.length > 0)
-		throw new Error(`Fonts could not be loaded: ${missingFonts.join(", ")}. Retry the export.`, {
-			cause: "pdf-text-loss",
+/**
+ * A failed font download would print the resume in other fonts: the file waits for a retry instead. With a mirror,
+ * a retry rarely helps (the file is usually absent), so the error names the mirror for its administrator.
+ */
+export function assertPdfFonts({ missingFonts }: Pick<RenderedResume, "missingFonts">, fontMirrorUrl?: string) {
+	if (missingFonts.length === 0) return;
+	const families = missingFonts.join(", ");
+	if (fontMirrorUrl)
+		throw new Error(`Fonts could not be loaded from the font mirror: ${families}. Add them to the mirror.`, {
+			cause: "pdf-font-mirror",
 		});
+	throw new Error(`Fonts could not be loaded: ${families}. Retry the export.`, { cause: "pdf-text-loss" });
 }
 
 /**
@@ -136,7 +144,10 @@ function documentText(document: FormeDocument): string {
 	const visit = (value: unknown, key?: string) => {
 		if (typeof value === "string") {
 			// Pictures are data URIs: base64 adds no character a font needs.
-			if (key !== "src") for (const character of value) characters.add(character);
+			// Forme applies `textTransform` itself, so the capitals of an uppercase heading needn't be in any string.
+			if (key !== "src")
+				for (const text of [value, value.toUpperCase(), value.toLowerCase()])
+					for (const character of text) characters.add(character);
 		} else if (Array.isArray(value)) for (const item of value) visit(item);
 		else if (value && typeof value === "object") for (const [name, item] of Object.entries(value)) visit(item, name);
 	};
@@ -363,6 +374,7 @@ export function renderResume(engine: FormeEngine, input: RenderResumeInput): Pro
 		}),
 		input.readImage,
 		input.webFontBaseUrl,
+		input.fontMirrorUrl,
 	);
 }
 
@@ -375,10 +387,11 @@ export async function renderResumeElement(
 	element: ReactElement,
 	readImage?: (source: string) => Promise<Uint8Array>,
 	webFontBaseUrl?: string,
+	fontMirrorUrl?: string,
 ): Promise<RenderedResume> {
 	const data = (element.props as { data?: ResumeData }).data;
 	// Font downloads start first: they're the largest wait, and the tree needs only the icons.
-	const fontsLoaded = loadFonts(data ? resumeFontRequests(data) : [], webFontBaseUrl);
+	const fontsLoaded = loadFonts(data ? resumeFontRequests(data) : [], webFontBaseUrl, fontMirrorUrl);
 	let tree = renderHostTree(element);
 	// Icons load on first use: a tree that asked for new ones is drawn again once they arrive.
 	if (await loadRequestedIcons()) tree = renderHostTree(element);

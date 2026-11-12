@@ -222,10 +222,8 @@ msgstr "{0, plural, one {Δεν ήταν δυνατή η πραγματοποί�
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# καταχώριση} other {# καταχωρίσεις}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, one {# ιστορία} other {# ιστορίες}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# σημείο για έλεγχο.} other {# σημεία για έλεγχο.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {Στέλνεται επίσης {1}.} other {Στέλνονται επίσης # αρχεία: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# απάντηση} other {# απαντήσεις}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}. Στέλνει αυτήν την αίτηση και τη Γνώση σας· ο πάροχος ενδέχεται να χρεώσει."
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "Δεν ήταν δυνατή η φόρτωση των παρόχων τ�
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "Δεν ήταν δυνατή η φόρτωση των παρόχων τεχνητής νοημοσύνης. Δοκιμάστε ξανά ή συμπληρώστε τα στοιχεία χειροκίνητα."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "Το AI διαβάζει επικολλημένο κείμενο μόνο όταν το ζητάτε. Οι σύνδεσμοι μπορούν να χρησιμοποιούν τα δεδομένα εργασίας της σελίδας χωρίς το AI."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "Το ιστορικό αιτημάτων AI δεν είναι διαθέ
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "Ρυθμίσεις AI"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "Προτάσεις AI, όχι επαληθευμένα προσόντα ή προβλέψεις πρόσληψης. Οι παρακάτω πηγές είναι οι δηλώσεις σας."
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "Εμφανίζεται πάντα στο Σήμερα. Το email απα
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "Αμχαρικά"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "Μια ανάγνωση AI για να σας βοηθήσει να επεξεργαστείτε, όχι μια πρόβλεψη του πώς θα ανταποκριθεί κανείς εργοδότης ή σύστημα αξιολόγησης."
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "Email αίτησης"
 msgid "Application phone"
 msgstr "Τηλέφωνο αιτήσης"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "περιλήψεις αιτήσεων"
@@ -5055,10 +5033,6 @@ msgstr "Γενέστερο αποτέλεσμα αναζήτησης. Το ερ�
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Τα προηγούμενα μηνύματα και συνημμένα αυτής της συνομιλίας θα σταλούν σε αυτόν τον προορισμό όταν στείλετε ξανά."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "προηγούμενα μηνύματα σε αυτή τη συνομιλία"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "Άδειασμα κάδου απορριμμάτων"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "Να αδειάσει ο κάδος απορριμμάτων;"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "την ενεργοποιημένη Γνώση"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "Τα μηνύματα και τα συνημμένα του διαγρά
 msgid "Its own design ({summary})."
 msgstr "Το δικό του σχέδιο ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "τις απαιτήσεις της"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "Διαχείριση από διακομιστή"
 msgid "Managed by your server"
 msgstr "Διαχειρίζεται ο διακομιστής σας"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "Οι χειροκίνητες θέσεις και οι προτιμήσεις λειτουργούν χωρίς AI. Οι προτάσεις δεν κάνουν ποτέ αναζήτηση ή προγραμματισμό."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "Πολλές κουκκίδες ξεκινούν με την ίδια φράση."
@@ -7685,11 +7647,6 @@ msgstr "Μηνύματα"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Τα μηνύματα πριν από την αλλαγή της Γνώσης δεν στέλνονται πλέον στο AI, οπότε δεν θα τα θυμάται. Ξεκινήστε νέα συνομιλία για να κρατήσετε το πλαίσιο μαζί."
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Τα μηνύματα πριν από την αλλαγή της Γνώσης δεν στέλνονται."
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "Δεν υπάρχει τίποτα στη βιβλιοθήκη σας α
 msgid "Nothing is applied for or created until you choose."
 msgstr "Δεν υποβάλλεται ούτε δημιουργείται τίποτα μέχρι να το επιλέξετε."
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "Δεν αποστέλλεται τίποτα μέχρι να επιλέξετε σύνδεση για αυτή τη συνομιλία."
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "Τίποτα δεν επισημαίνει έναν ρόλο ως συνεχιζόμενο."
@@ -9586,10 +9538,6 @@ msgstr "Εξασκηθείτε για τις συνεντεύξεις σας σ�
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "Εξασκηθείτε στον χώρο εργασίας της {company}"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "Προτεραιότητες εξάσκησης, όχι συμπεράσματα για το γιατί αποφάσισε κάτι ένας εργοδότης."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11539,11 +11487,6 @@ msgstr "Αναζήτηση ή εκτέλεση…"
 msgid "Search saved answers"
 msgstr "Αναζήτηση αποθηκευμένων απαντήσεων"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Οι όροι αναζήτησης αποστέλλονται στην υπηρεσία αναζήτησης ιστού σας."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Αναζήτηση στον ιστό"
@@ -11683,87 +11626,9 @@ msgstr "Τα στοιχεία του αποστολέα αντιγράφηκαν
 msgid "Sending…"
 msgstr "Αποστολή…"
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "Στέλνει {0} στο {label}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Στέλνει μόνο το επιλεγμένο σας βιογραφικό και έως 20 ενεργά κοινοποιημένα γεγονότα σε αυτή τη σύνδεση. Χωρίς προφίλ αιτήσεων, αποθηκευμένες απαντήσεις ή ιδιωτικά γεγονότα αιτήσεων. Ο πάροχός σας ενδέχεται να χρεώνει."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Στέλνει την αγγελία της {0} στο {1} · {2} για να συντάξει το σώμα κειμένου. Ο πάροχός σας ενδέχεται να χρεώνει."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Στέλνει το κείμενο της αγγελίας στο {0} για να το διαβάσει."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "Στέλνει αυτή την αίτηση και την ενεργοποιημένη Γνώση σε αυτή τη σύνδεση. Ο πάροχός σας ενδέχεται να χρεώνει. Το προγραμματισμένο έργο δεν αλλάζει ποτέ αυτόματα σε άλλη σύνδεση."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Στέλνει το βιογραφικό αυτής της επιστολής και την αγγελία της {0} στο {1} · {2} για να συντάξει το σώμα κειμένου. Ο πάροχός σας ενδέχεται να χρεώνει."
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "Στέλνει το βιογραφικό αυτής της επιστολής στο {0} · {1} για να συντάξει το σώμα κειμένου. Ο πάροχός σας ενδέχεται να χρεώνει."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Στέλνει αυτή τη γραμμή, το γύρω κείμενο του πεδίου και τις οδηγίες σας στο {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Στέλνει αυτή την παράγραφο, την υπόλοιπη επιστολή και τις οδηγίες σας στο {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Στέλνει αυτή την παράγραφο, την υπόλοιπη επιστολή, τη συνδεδεμένη αγγελία εργασίας και τις οδηγίες σας στο {0} · {1}."
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "Στέλνει αυτό το PDF στον διαμορφωμένο πάροχο AI αντί να διαβάζει το επίπεδο κειμένου του."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Στέλνει το μήνυμά σας και αυτή την αίτηση (αγγελία, σημειώσεις, έγγραφα, τις απαντήσεις φόρμας σας, την αποθηκευμένη προσφορά και τα πρόσφατα μηνύματα) στο {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Στέλνει το μήνυμά σας, τα προηγούμενα μηνύματα και αυτή την αίτηση (αγγελία, σημειώσεις, έγγραφα, τις απαντήσεις φόρμας σας, την αποθηκευμένη προσφορά και τα πρόσφατα μηνύματα) στο {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Στέλνει το μήνυμά σας, τα προηγούμενα μηνύματα εδώ, αυτή την αίτηση (αγγελία, σημειώσεις, έγγραφα, τις απαντήσεις σας στις φόρμες, την αποθηκευμένη προσφορά και τα πρόσφατα μηνύματα) και την ενεργοποιημένη Γνώση στο {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Στέλνει το μήνυμά σας, αυτή την αίτηση (αγγελία, σημειώσεις, έγγραφα, τις απαντήσεις σας στις φόρμες, την αποθηκευμένη προσφορά και τα πρόσφατα μηνύματα) και την ενεργοποιημένη Γνώση στο {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Στέλνει το κείμενο του βιογραφικού σας μόνο στο {0} · {1}, με το κλειδί σας."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -12347,6 +12212,11 @@ msgstr "Δεν ήταν δυνατή η απόδοση ορισμένων χαρ
 #: src/features/workspace/prepare-review.tsx
 msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
 msgstr "Μερικά προσχέδια δεν ολοκληρώθηκαν. Κρατήστε τα ολοκληρωμένα πριν δοκιμάσετε ξανά."
+
+#: src/features/letters/page.tsx
+#: src/preview/page.tsx
+msgid "Some fonts are missing from this server's font mirror. Ask the administrator to add them."
+msgstr "Ορισμένες γραμματοσειρές λείπουν από το είδωλο γραμματοσειρών αυτού του διακομιστή. Ζητήστε από τον διαχειριστή να τις προσθέσει."
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -13102,17 +12972,9 @@ msgstr "Ο ενσωματωμένος αναγνώστης παραμένει ε
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Οι έλεγχοι είναι μηχανικοί. Αυτό ρωτά ένα μοντέλο γλώσσας πώς μπορεί να αντιδράσει ένας αναγνώστης στις καταχωρίσεις της λίστας σας και προτείνει επανεγγραφή. Δεν είναι μέρος του σκορ."
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "Ο σύμβουλος ζητά άδεια πριν θυμηθεί γεγονότα που αναφέρετε."
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Ο σύμβουλος δεν θυμάται τίποτα από τα μηνύματά σας."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "Ο σύμβουλος δεν θυμάται ό,τι γράφετε."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13125,10 +12987,6 @@ msgstr "Ο σύμβουλος δεν έχει ρυθμιστεί σε αυτόν
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "Ο σύμβουλος προτείνει κάθε γεγονός στη συνομιλία. Δεν αποθηκεύεται τίποτα μέχρι να συμφωνήσετε."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "Ο σύμβουλος θυμάται γεγονότα που αναφέρετε και σας ενημερώνει."
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13150,10 +13008,6 @@ msgstr "Η σύνδεση λειτουργεί. Ενεργοποιήστε το 
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "Το αντίγραφο λαμβάνει την αγγελία της εργασίας και κρατά αυτό το βιογραφικό όπως είναι για τις άλλες εργασίες."
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "η συνοδευτική επιστολή για αυτή την εργασία"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13171,10 +13025,6 @@ msgstr "Ο επεξεργαστής ανοίγει στον Έλεγχο, που
 msgid "The employer may have changed it since."
 msgstr "Ο εργοδότης μπορεί να το έχει αλλάξει έκτοτε."
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "το μήνυμα του εργοδότη"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "Η ημερομηνία λήξης είναι πριν από την ημερομηνία έναρξης. Ελέγξτε και τις δύο ημερομηνίες."
@@ -13187,10 +13037,6 @@ msgstr "Η επανεπικοινωνία αποθηκεύτηκε. Για υπ�
 msgid "The greeting follows the name."
 msgstr "Ο χαιρετισμός ακολουθεί το όνομα."
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "τα στοιχεία της συνέντευξης"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "Η συνέντευξη αποθηκεύτηκε. Για να λάβετε υπενθύμιση, επιτρέψτε τις ειδοποιήσεις στις ρυθμίσεις της συσκευής σας."
@@ -13202,10 +13048,6 @@ msgstr "Το κλειδί είναι κρυπτογραφημένο στον δ�
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "Το κλειδί απορρίφθηκε. Ελέγξτε το κλειδί και δοκιμάστε ξανά."
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "τα τελευταία μηνύματα"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13292,14 +13134,6 @@ msgstr "Ο πάροχος περιόρισε αυτό το αίτημα. Περ�
 msgid "The provider reported a server error. Try again later."
 msgstr "Ο πάροχος ανέφερε σφάλμα διακομιστή. Δοκιμάστε ξανά αργότερα."
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "η ερώτηση και όσα είπατε"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "η ερώτηση και η απάντησή σας"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Ο λόγος διατηρείται για το Insights. Τα συνδεδεμένα έγγραφα δεν αγγίζονται."
@@ -13316,10 +13150,6 @@ msgstr "Το υπόλοιπο αρχείο δεν περιλαμβάνεται �
 msgid "The resume as it is"
 msgstr "Το βιογραφικό ως έχει"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "το βιογραφικό για αυτή την εργασία"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "Ο κριτής βλέπει το στάδιο και τις ημερομηνίες του καθενός. Σημειώσεις, επαφές και αμοιβές παραμένουν ιδιωτικά."
@@ -13335,10 +13165,6 @@ msgstr "Το αποθηκευμένο κλειδί δεν αποστέλλετα
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Το αποθηκευμένο κλειδί δεν αποστέλλεται σε νέα διεύθυνση URL βάσης. Εισάγετε ξανά το κλειδί."
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "η αποθηκευμένη προσφορά"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13711,10 +13537,6 @@ msgstr "Αυτό το PDF είναι μια σαρωμένη εικόνα. Δε�
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Αυτό το PDF προστατεύεται με κωδικό πρόσβασης. Αποθηκεύστε ένα μη προστατευμένο αντίγραφο και δοκιμάστε ξανά."
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "αυτή η αγγελία"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14975,10 +14797,6 @@ msgstr "Πότε πρέπει να κάνω επανεπικοινωνία κα�
 msgid "When would you start?"
 msgstr "Πότε θα μπορούσατε να ξεκινήσετε;"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "Όταν πατήσετε αποστολή, τα {list} πηγαίνουν στο {connection}."
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "Όταν τελειώσετε, το πρόγραμμα περιήγησης κλείνει και επιστρέφετε εδώ."
@@ -15033,10 +14851,6 @@ msgstr "Πλάτος"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "Διάθεση για μετοικασία"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "Με τη Γνώση απενεργοποιημένη, δεν θυμάται τίποτα από όσα γράφετε."
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15372,10 +15186,6 @@ msgstr "Οι αλλαγές σας σε αυτήν τη συσκευή θα αν
 msgid "Your contact details are not on the first page."
 msgstr "Τα στοιχεία επικοινωνίας σας δεν βρίσκονται στην πρώτη σελίδα."
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "οι επαφές σας"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "Τα δεδομένα σας"
@@ -15417,10 +15227,6 @@ msgstr "Τα γεγονότα, οι ιστορίες και οι προτιμή�
 msgid "Your focus"
 msgstr "Η εστίασή σας"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "οι απαντήσεις φόρμας σας"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Οι επικεφαλίδες σας μοιάζουν με το κύριο κείμενό σας."
@@ -15446,10 +15252,6 @@ msgstr "Οι γραμμές σας είναι γεμάτες πολύ σφιχτ
 msgid "Your margins are very narrow."
 msgstr "Τα περιθώριά σας είναι πολύ στενά."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "το μήνυμά σας"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "Το μήνυμά σας κρατήθηκε."
@@ -15466,7 +15268,6 @@ msgstr "Το όνομά σας ως διεύθυνσή σας, από το OlaCV
 msgid "Your name is missing"
 msgstr "Το όνομά σας λείπει"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "οι σημειώσεις σας"
@@ -15487,9 +15288,7 @@ msgstr "Δικό σας σώμα κειμένου, χωρίς προηγούμε
 msgid "Your phone number is written in an unusual shape."
 msgstr "Ο αριθμός τηλεφώνου σας είναι γραμμένος σε ασυνήθιστη μορφή."
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "οι προτιμήσεις σας"
 
@@ -15508,10 +15307,6 @@ msgstr "Οι δημόσιοι σύνδεσμοί σας ξεκινούν με {s
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "Οι δημόσιοι σύνδεσμοί σας θα αλλάξουν"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "Η εγγραφή σας πηγαίνει στο {transcriberName} αφού σταματήσετε, για μεταγραφή. Ο πάροχος μπορεί να χρεώσει. Ο διακομιστής διατηρεί μεταγραφές, ποτέ ηχογραφήσεις."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15596,10 +15391,6 @@ msgstr "Ο σύντομος σύνδεσμός σας δείχνει το «{0}�
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "Ο σύντομος σύνδεσμός σας λέει ότι αυτό το βιογραφικό δεν είναι κοινοποιημένο μέχρι να το δημοσιεύσετε ξανά."
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "οι ιστορίες σας"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

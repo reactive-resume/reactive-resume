@@ -222,10 +222,8 @@ msgstr "{0, plural, one {# muokkausta ei voitu sijoittaa: sen tekstiä muutettii
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# merkintä} other {# merkintää}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, one {# tarina} other {# tarinaa}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# tarkistettava asia.} other {# tarkistettavaa asiaa.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {Lähettää myös {1}.} other {Lähettää myös # tiedostoa: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# vastaus} other {# vastausta}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}. Lähettää tämän hakemuksen ja tietopankkisi sisällön. Palveluntarjoajasi voi veloittaa."
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "AI-palveluntarjoajia ei voitu ladata. Lataa uudelleen ja yritä uudellee
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "Tekoälypalveluntarjoajia ei voitu ladata. Yritä uudelleen tai täytä tiedot itse."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "AI lukee liitetyn tekstin vain pyynnöstäsi. Linkit voivat käyttää sivulle upotettuja työtietoja ilman AI:ää."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "Tämän tuloksen tekoälypyyntöhistoria ei ole saatavilla."
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "Tekoälyasetukset"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "Tekoälyehdotuksia, ei vahvistettuja pätevyystietoja tai palkkausennusteita. Lähteet alempana ovat omia väitteitäsi."
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "Näkyy aina Tänään-osiossa. Sähköposti vaatii vahvistetun osoitteen
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "amhara"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "Tekoälyn analyysi auttaa sinua muokkaamaan; se ei ennusta työnantajan tai seulontajärjestelmän reaktiota."
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "Hakemuksen sähköposti"
 msgid "Application phone"
 msgstr "Hakemuksen puhelinnumero"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "hakemusten yhteenvedot"
@@ -5055,10 +5033,6 @@ msgstr "Aiempi hakutulos. Hakukysely ja ilmoituksen tarkistusaika eivät ole tie
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Tämän keskustelun aiemmat viestit ja liitteet lähetetään tähän kohteeseen, kun lähetät uudelleen."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "aiemmat viestit tässä keskustelussa"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "Tyhjennä roskakori"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "Tyhjennetäänkö roskakori?"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "käytössä olevat Tiedot"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "Sen viestit ja liitteet poistetaan. Hyväksytyt muokkaukset pysyvät asi
 msgid "Its own design ({summary})."
 msgstr "Sen oma muotoilu ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "sen vaatimukset"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "Palvelimen hallinnoima"
 msgid "Managed by your server"
 msgstr "Palvelimesi hallinnoima"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "Manuaaliset roolit ja asetukset toimivat ilman tekoälyä. Ehdotukset eivät koskaan hae tai ajasta mitään."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "Monet luettelokohdat alkavat samalla ilmauksella."
@@ -7685,11 +7647,6 @@ msgstr "Viestit"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Viestejä ajalta ennen Tietopankin muutosta ei enää lähetetä tekoälylle, joten se ei muista niitä. Aloita uusi keskustelu pitääksesi kontekstin koossa."
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Viestejä ajalta ennen Tietopankin muutosta ei lähetetä."
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "Kirjastosi on vielä tyhjä"
 msgid "Nothing is applied for or created until you choose."
 msgstr "Mitään ei haeta tai luoda ennen kuin valitset."
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "Mitään ei lähetetä, ennen kuin valitset keskustelulle yhteyden."
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "Mikään ei merkitse roolia yhä käynnissä olevaksi."
@@ -9586,10 +9538,6 @@ msgstr "Harjoitusta yrityksen {company} haastatteluihin."
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "Harjoittele yrityksen {company} työtilassa"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "Harjoittelun painopisteitä, ei päätelmiä siitä, miksi työnantaja päätti mitään."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11539,11 +11487,6 @@ msgstr "Etsi tai juokse…"
 msgid "Search saved answers"
 msgstr "Hae tallennetuista vastauksista"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Hakusanat lähetetään verkkohakupalveluusi."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Hae verkosta"
@@ -11683,87 +11626,9 @@ msgstr "Lähettäjän tiedot kopioitu kirjeeseen"
 msgid "Sending…"
 msgstr "Lähetetään…"
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "Lähettää tiedot {0} kohteeseen {label}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Lähettää vain valitsemasi ansioluettelon ja enintään 20 aktiivista jaettua faktan tähän yhteyteen. Ei hakemusprofiilia, tallennettuja vastauksia tai yksityisiä hakemusfaktoja. Palveluntarjoajasi voi veloittaa."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Lähettää ilmoituksen {0} palveluun {1} · {2} tekstin kirjoittamista varten. Palveluntarjoajasi voi veloittaa."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Lähettää ilmoituksen tekstin palveluun {0} luettavaksi."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "Lähettää tämän hakemuksen ja käytössä olevan Tietopankin tähän yhteyteen. Palveluntarjoajasi voi veloittaa. Ajastettu työ ei vaihda koskaan automaattisesti toiseen yhteyteen."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Lähettää tämän kirjeen ansioluettelon ja ilmoituksen {0} palveluun {1} · {2} tekstin kirjoittamista varten. Palveluntarjoajasi voi veloittaa."
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "Lähettää tämän kirjeen ansioluettelon palveluun {0} · {1} tekstin kirjoittamista varten. Palveluntarjoajasi voi veloittaa."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Lähettää tämän rivin, ympäröivän kenttätekstin ja ohjeesi palveluun {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Lähettää tämän kappaleen, muun kirjeen ja ohjeesi palveluun {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Lähettää tämän kappaleen, muun kirjeen, linkitetyn työpaikkailmoituksen ja ohjeesi palveluun {0} · {1}."
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "Lähettää tämän PDF:n määritetylle tekoälypalveluntarjoajalle sen tekstikerroksen lukemisen sijaan."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Lähettää viestisi ja tämän hakemuksen (ilmoitus, muistiinpanot, asiakirjat, lomakevastauksesi, tallennettu tarjous ja viimeaikaiset viestit) kohteeseen {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Lähettää viestisi, aiemmat viestit ja tämän hakemuksen (ilmoitus, muistiinpanot, asiakirjat, lomakevastauksesi, tallennettu tarjous ja viimeaikaiset viestit) kohteeseen {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Lähettää viestisi, aiemmat viestit täällä, tämän hakemuksen (työpaikkailmoituksen, muistiinpanot, asiakirjat, lomakevastauksesi, tallennetun tarjouksen ja viimeaikaiset viestit) sekä käytössä olevat Tiedot palveluntarjoajalle {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Lähettää viestisi, tämän hakemuksen (työpaikkailmoituksen, muistiinpanot, asiakirjat, lomakevastauksesi, tallennetun tarjouksen ja viimeaikaiset viestit) sekä käytössä olevat Tiedot palveluntarjoajalle {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Lähettää ansioluettelosi tekstin vain numeroon {0} · {1} avaimesi kanssa."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -12347,6 +12212,11 @@ msgstr "Joitakin merkkejä ei voitu piirtää. Tarkista sivu ennen vientiä."
 #: src/features/workspace/prepare-review.tsx
 msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
 msgstr "Joitakin luonnoksia ei voitu viimeistellä. Säilytä valmiit luonnokset ennen uutta yritystä."
+
+#: src/features/letters/page.tsx
+#: src/preview/page.tsx
+msgid "Some fonts are missing from this server's font mirror. Ask the administrator to add them."
+msgstr "Tämän palvelimen fonttipeilistä puuttuu joitakin fontteja. Pyydä ylläpitäjää lisäämään ne."
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -13102,17 +12972,9 @@ msgstr "Sisäänrakennettu lukija pysyy aktiivisena."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Tarkastukset ovat mekaanisia. Tämä kysyy kielimallilta, kuinka lukija voi reagoida luettelomerkintöihisi, ja ehdottaa uudelleenkirjoituksia. Se ei ole osa tulosta."
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "Valmentaja kysyy luvan ennen kuin muistaa kertomasi faktat."
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Valmentaja ei muista mitään viesteistäsi."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "Valmentaja ei muista mitään kirjoittamaasi."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13125,10 +12987,6 @@ msgstr "Valmentajaa ei ole otettu käyttöön tällä palvelimella. Palvelimen y
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "Valmentaja ehdottaa jokaista faktaa keskustelussa. Mitään ei tallenneta ennen kuin hyväksyt."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "Valmentaja muistaa kertomasi faktat ja kertoo sinulle."
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13150,10 +13008,6 @@ msgstr "Yhteys toimii. Ota käyttöön Käytä tätä palveluntarjoajaa aloittaa
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "Kopio saa työpaikan ilmoituksen ja säilyttää tämän ansioluettelon muille töille sellaisenaan."
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "tämän työn saatekirje"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13171,10 +13025,6 @@ msgstr "Editori avaa Tarkistus-paneelin, joka tarkistaa tuodun ansioluettelon uu
 msgid "The employer may have changed it since."
 msgstr "Työnantaja on voinut muuttaa ilmoitusta sen jälkeen."
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "työnantajan viesti"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "Päättymispäivä on alkamispäivää aiemmin. Tarkista molemmat päivämäärät."
@@ -13187,10 +13037,6 @@ msgstr "Seurantamuistutus tallennettu. Salli ilmoitukset laitteen asetuksista sa
 msgid "The greeting follows the name."
 msgstr "Tervehdys seuraa nimeä."
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "haastattelun tiedot"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "Haastattelu on tallennettu. Jos haluat saada muistutuksen, salli ilmoitukset laitteen asetuksista."
@@ -13202,10 +13048,6 @@ msgstr "Avain on salattu palvelimella, eikä sitä koskaan näytetä uudelleen. 
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "Avain hylättiin. Tarkista avain ja testaa uudelleen."
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "viimeisimmät viestit"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13292,14 +13134,6 @@ msgstr "Palveluntarjoaja rajoitti tätä pyyntöä. Odota ja yritä uudelleen; t
 msgid "The provider reported a server error. Try again later."
 msgstr "Palveluntarjoaja ilmoitti palvelinvirheestä. Yritä myöhemmin uudelleen."
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "kysymys ja sanomasi"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "kysymys ja vastauksesi"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Syy säilytetään Insightsissa. Linkitettyihin asiakirjoihin ei kosketa."
@@ -13316,10 +13150,6 @@ msgstr "Loput tiedostosta eivät ole tässä raportissa."
 msgid "The resume as it is"
 msgstr "Ansioluettelo sellaisena kuin se on"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "tämän työn ansioluettelo"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "Arvioija näkee kunkin vaiheen ja päivämäärät. Muistiinpanot, yhteystiedot ja palkka pysyvät yksityisinä."
@@ -13335,10 +13165,6 @@ msgstr "Tallennettua avainta ei lähetetä uuteen perus-URL-osoitteeseen. Anna a
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Tallennettua avainta ei lähetetä uuteen perus-URL-osoitteeseen. Anna avain uudelleen."
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "tallennettu tarjous"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13711,10 +13537,6 @@ msgstr "Tämä PDF on skannattu kuva. Ei ole luettavaa tekstiä. Kokeile Word-ve
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Tämä PDF on salasanasuojattu. Tallenna suojaamaton kopio ja yritä uudelleen."
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "tämä ilmoitus"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14975,10 +14797,6 @@ msgstr "Milloin minun pitäisi ottaa uudelleen yhteyttä, ja mitä minun pitäis
 msgid "When would you start?"
 msgstr "Milloin aloittaisit?"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "Kun napautat lähetä, {list} lähetetään yhteyteen {connection}."
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "Kun olet valmis, selain sulkeutuu ja palaat tänne."
@@ -15033,10 +14851,6 @@ msgstr "Leveys"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "Valmis muuttamaan asuinpaikkaa"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "Kun Tietopankki on pois käytöstä, mitään kirjoittamaasi ei muisteta."
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15372,10 +15186,6 @@ msgstr "Tässä laitteessa tekemäsi muutokset korvataan tallennetulla versiolla
 msgid "Your contact details are not on the first page."
 msgstr "Yhteystietosi eivät ole ensimmäisellä sivulla."
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "yhteystietosi"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "Tietosi"
@@ -15417,10 +15227,6 @@ msgstr "Faktasi, tarinasi ja mieltymyksesi. Tietopankin muokkaaminen ei lähetä
 msgid "Your focus"
 msgstr "Painopisteesi"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "lomakevastauksesi"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Otsikkosi näyttävät samalta kuin leipätekstisi."
@@ -15446,10 +15252,6 @@ msgstr "Sinun rivisi on pakattu erittäin tiukasti."
 msgid "Your margins are very narrow."
 msgstr "Marginaalisi ovat hyvin kapeat."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "viestisi"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "Viestisi säilytetään."
@@ -15466,7 +15268,6 @@ msgstr "Nimesi osoitteeksesi OlaCV:ltä, .cv-verkkotunnusten rekisterinpitäjäl
 msgid "Your name is missing"
 msgstr "Nimesi puuttuu"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "muistiinpanosi"
@@ -15487,9 +15288,7 @@ msgstr "Oma leipäteksti, ei aiempaa kirjettä"
 msgid "Your phone number is written in an unusual shape."
 msgstr "Puhelinnumerosi on kirjoitettu epätavallisessa muodossa."
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "toiveesi"
 
@@ -15508,10 +15307,6 @@ msgstr "Julkiset linkit alkavat {server}/"
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "Julkiset linkkisi muuttuvat"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "Tallentuksesi siirtyy {transcriberName}:ään litteroitavaksi lopettamisen jälkeen. Palveluntarjoajasi saattaa veloittaa. Palvelin säilyttää transkriptioita, ei koskaan tallenteita."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15596,10 +15391,6 @@ msgstr "Lyhytlinkkisi osoittaa kohteeseen ”{0}”, joka ei ole julkaistu."
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "Lyhytlinkkisi mukaan tätä ansioluetteloa ei ole jaettu, ennen kuin julkaiset sen uudelleen."
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "tarinasi"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

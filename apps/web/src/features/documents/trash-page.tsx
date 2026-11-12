@@ -21,6 +21,7 @@ import { useDocumentHistory } from "./library-session";
 import { PageNavigation } from "./page-navigation";
 import { useDocumentRemovalMotion } from "./removal-motion";
 import { PageHeader } from "@/components/layout/page-header";
+import { TrashNav } from "@/components/layout/trash-nav";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
 
@@ -178,14 +179,7 @@ export function TrashPage() {
 					) : undefined
 				}
 			/>
-			<nav aria-label={t`Trash`} className="flex gap-2">
-				<Button aria-current="page">
-					<Trans>Documents</Trans>
-				</Button>
-				<Link to="/dashboard/applications/trash" className={buttonVariants({ variant: "ghost" })}>
-					<Trans>Applications</Trans>
-				</Link>
-			</nav>
+			<TrashNav current="documents" />
 
 			{isError && <LibraryError retrying={isFetching} onRetry={() => void refetch()} />}
 

@@ -25,7 +25,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { cn } from "@reactive-resume/utils/style";
 import { useCoachKnowledge } from "../coach-thread";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useSessionDraft } from "../hooks";
-import { CollapseRow, PrivacyLine, useCareerTime, useNow, GenerateNotice, Working, workingSteps } from "../shared";
+import { CollapseRow, useCareerTime, useNow, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import {
 	acceptAudioFile,
@@ -721,13 +721,6 @@ function Session({
 					{announcement}
 				</p>
 
-				{mode === "spoken" && canTalk && (
-					<PrivacyLine>
-						{browserDictation
-							? t`Your browser turns your speech into text. Depending on the browser, its maker may process the audio (Google in Chrome, Apple in Safari).`
-							: t`Your recording goes to ${voice.settings.transcribe.label} to be transcribed, which may use tokens on that account.`}
-					</PrivacyLine>
-				)}
 				{mode === "spoken" && <VoiceSettingsPanel voice={voice} audio={audio} disabled={busy} />}
 
 				<div className="grid gap-2.5">
@@ -744,7 +737,7 @@ function Session({
 						</p>
 					</div>
 					<GenerateNotice generate={generate} onRetry={getFeedback} className="w-fit" />
-					<AiNotice task="practice" application={application} interview={interviewId !== null} />
+					<AiNotice />
 				</div>
 			</section>
 

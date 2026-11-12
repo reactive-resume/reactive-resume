@@ -433,16 +433,6 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 				void add(false);
 			}}
 		>
-			{!providerState.isUnavailable && !hasUsableProvider && <SetUpAi />}
-			{hasUsableProvider && (
-				<p className="text-xs text-ink-3">
-					<Trans>
-						Reading with AI sends this posting to {readAI?.label} · {readAI?.model}. Public links also go to the reader
-						and the site being read. You can fill details manually.
-					</Trans>
-				</p>
-			)}
-			<WebAccessAttention failure={searchFailure} />
 			<DialogHeader>
 				<DialogTitle>
 					<Trans>Save a job</Trans>
@@ -457,6 +447,17 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					<Trans>Download browser helper</Trans>
 				</a>
 			</p>
+			{/* Below the title, so the dialog opens on what it's for. */}
+			{!providerState.isUnavailable && !hasUsableProvider && <SetUpAi />}
+			{hasUsableProvider && (
+				<p className="text-xs text-ink-3">
+					<Trans>
+						Reading with AI sends this posting to {readAI?.label} · {readAI?.model}. Public links also go to the reader
+						and the site being read. You can fill details manually.
+					</Trans>
+				</p>
+			)}
+			<WebAccessAttention failure={searchFailure} />
 
 			{(webAccess?.search || query.length > 0) && (
 				<section className="grid gap-2" aria-labelledby={`${id}-search-label`}>
@@ -637,11 +638,6 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					>
 						<Trans>Read posting</Trans>
 					</Button>
-				)}
-				{readable && hasUsableProvider && (
-					<p className="text-xs text-ink-3">
-						<Trans>Sends the posting text to {providerState.usableProviders[0]?.label} to read it.</Trans>
-					</p>
 				)}
 				{(clipped || parsed?.postingSource.completeness === "incomplete") && (
 					<p className="text-xs text-warn-text" role="alert">

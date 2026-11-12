@@ -222,10 +222,8 @@ msgstr "{0, plural, one {# አርትዖት ሊቀመጥ አልቻለም፡ ጽ�
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# ግቤት} other {# ግቤቶች}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, one {# ታሪክ} other {# ታሪኮች}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {የሚገመገም # ነገር።} other {የሚገመገሙ # ነገሮች።}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {{1}ንም ይልካል።} other {# ፋይሎችንም ይልካል፦ {2}።}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# መልስ} other {# መልሶች}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}። ይህን የሥራ ማመልከቻ እና የእርስዎን እውቀት ይልካል; አቅራቢዎ ሊያስከፍል ይችላል።"
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "AI አቅራቢዎች ሊጫኑ አልቻሉም። እንደገና ለ�
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "AI አቅራቢዎችን መጫን አልተቻለም። እንደገና ሞክር ወይም ዝርዝሮቹን በእጅ ይሙሉ።"
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "AI የተለጠፈ ጽሑፍ የሚያነቡት ሲጠይቁ ብቻ ነው። አገናኞች ያለ AI የገጹን የስራ ውሂብ መጠቀም ይችላሉ።"
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "ለዚህ ውጤት የAI ጥያቄ ታሪክ አይገኝም።"
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "የAI ቅንብሮች"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "የAI ጥቆማዎች እንጂ የተረጋገጡ ብቃቶች ወይም የቅጥር ትንበያዎች አይደሉም። ከታች ያሉት ምንጮች የእርስዎ መግለጫዎች ናቸው።"
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "ሁልጊዜ በዛሬ ውስጥ ይታያል። ኢሜል የተረጋ�
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "አማርኛ"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "ለማስተካከል የሚረዳዎት የAI ንባብ እንጂ አሠሪ ወይም የማጣሪያ ሥርዓት እንዴት ምላሽ እንደሚሰጥ የሚተነብይ አይደለም።"
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "የማመልከቻ ኢሜይል"
 msgid "Application phone"
 msgstr "የማመልከቻ ስልክ"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "የማመልከቻ ማጠቃለያዎች"
@@ -5055,10 +5033,6 @@ msgstr "ቀደም ያለ የፍለጋ ውጤት። የፍለጋ ጥያቄው እ
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "እንደገና ሲልኩ በዚህ ውይይት ውስጥ ያሉ ቀደም ያሉ መልዕክቶች እና አባሪዎች ወደዚህ መድረሻ ይላካሉ።"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "በዚህ ውይይት ውስጥ ያሉ የቀድሞ መልዕክቶች"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "መጣያውን አጽዳ"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "መጣያው ባዶ ይሁን?"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "የነቃ እውቀት"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "መልእክቶቹ እና አባሪዎች ተሰርዘዋል። የተ�
 msgid "Its own design ({summary})."
 msgstr "የራሱ ንድፍ ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "መስፈርቶቹን"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "በአገልጋይ የሚተዳደር"
 msgid "Managed by your server"
 msgstr "በአገልጋይህ የሚተዳደር"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "በእጅ የሚገቡ የሥራ መደቦች እና ምርጫዎች ያለ AI ይሠራሉ። ጥቆማዎች በጭራሽ ምንም ነገር አይፈልጉም ወይም መርሐ ግብር አያስይዙም።"
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "ብዙ ነጥቦች በተመሳሳይ ሐረግ ይጀምራሉ።"
@@ -7685,11 +7647,6 @@ msgstr "መልዕክቶች"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "እውቀት ከመቀየሩ በፊት የነበሩ መልዕክቶች ከእንግዲህ ወደ AI አይላኩም፤ ስለዚህ አያስታውሳቸውም። አውዱን አንድ ላይ ለማቆየት አዲስ ውይይት ይጀምሩ።"
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "እውቀት ከመቀየሩ በፊት የነበሩ መልዕክቶች አይላኩም።"
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "በቤተ-መጽሐፍትዎ ውስጥ እስካሁን ምንም የለ�
 msgid "Nothing is applied for or created until you choose."
 msgstr "እርስዎ እስኪመርጡ ድረስ ምንም ማመልከቻ አይቀርብም ወይም አይፈጠርም።"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "ለዚህ ውይይት ግንኙነት እስኪመርጡ ድረስ ምንም አይላክም።"
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "ምንም ነገር ሚናን እንደ ቀጣይ አያመለክትም።"
@@ -9586,10 +9538,6 @@ msgstr "ለ{company} ቃለ መጠይቆችዎ ይለማመዱ።"
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "በ{company} የሥራ ቦታ ውስጥ ተለማመድ"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "የልምምድ ቅድሚያዎች ናቸው እንጂ አሠሪው ለምን አንድን ነገር እንደወሰነ የሚገልጹ መደምደሚያዎች አይደሉም።"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11539,11 +11487,6 @@ msgstr "ይፈልጉ ወይም ያሂዱ…"
 msgid "Search saved answers"
 msgstr "የተቀመጡ መልሶችን ፈልግ"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "የፍለጋ ቃላት ወደ ድር ፍለጋ አገልግሎትዎ ይሄዳሉ።"
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "ድሩን ይፈልጉ"
@@ -11683,87 +11626,9 @@ msgstr "የላኪ ዝርዝሮች ወደ ደብዳቤው ተቀድተዋል።"
 msgid "Sending…"
 msgstr "በመላክ ላይ…"
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "{0}ን ወደ {label} ይልካል።"
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "ወደዚህ ግንኙነት የሚልከው የመረጡትን የስራ ልምድ ማስረጃ እና እስከ 20 ንቁ የተጋሩ እውነታዎችን ብቻ ነው። የማመልከቻ መገለጫ፣ የተቀመጡ መልሶች ወይም የግል የማመልከቻ እውነታዎች አይላኩም። አቅራቢዎ ሊያስከፍል ይችላል።"
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "ዋናውን ጽሑፍ ለማርቀቅ የ{0} ማስታወቂያን ወደ {1} · {2} ይልካል። አቅራቢዎ ሊያስከፍል ይችላል።"
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "ለማንበብ የማስታወቂያውን ጽሑፍ ወደ {0} ይልካል።"
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "ይህንን ማመልከቻ እና የበራውን እውቀት ወደዚህ ግንኙነት ይልካል። አቅራቢዎ ሊያስከፍል ይችላል። በመርሐ ግብር የሚሠራ ሥራ በራሱ ወደ ሌላ ግንኙነት በጭራሽ አይቀየርም።"
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "ዋናውን ጽሑፍ ለማርቀቅ የዚህን ደብዳቤ የስራ ልምድ ማስረጃ እና የ{0} ማስታወቂያን ወደ {1} · {2} ይልካል። አቅራቢዎ ሊያስከፍል ይችላል።"
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "ዋናውን ጽሑፍ ለማርቀቅ የዚህን ደብዳቤ የስራ ልምድ ማስረጃ ወደ {0} · {1} ይልካል። አቅራቢዎ ሊያስከፍል ይችላል።"
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "ይህንን መስመር፣ በዙሪያው ያለውን የመስክ ጽሑፍ እና መመሪያዎችዎን ወደ {0} · {1} ይልካል።"
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "ይህን አንቀጽ፣ የቀረውን ደብዳቤ እና መመሪያዎትን ወደ {0} · {1} ይልካል።"
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "ይህን አንቀጽ፣ የቀረውን ደብዳቤ፣ የተገናኘውን የሥራ ማስታወቂያ እና መመሪያዎትን ወደ {0} · {1} ይልካል።"
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "ይህን PDF የጽሑፍ ንብርብሩን ከማንበብ ይልቅ ወደ የተዋቀረው የAI አቅራቢዎ ይልካል።"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "መልዕክትዎን እና ይህንን ማመልከቻ (ማስታወቂያ፣ ማስታወሻዎች፣ ሰነዶች፣ የቅጽ መልሶችዎ፣ የተቀመጠው ቅናሽ እና የቅርብ ጊዜ መልዕክቶች) ወደ {label} ይልካል።"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "መልዕክትዎን፣ ቀደም ያሉ መልዕክቶችን እና ይህንን ማመልከቻ (ማስታወቂያ፣ ማስታወሻዎች፣ ሰነዶች፣ የቅጽ መልሶችዎ፣ የተቀመጠው ቅናሽ እና የቅርብ ጊዜ መልዕክቶች) ወደ {label} ይልካል።"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "መልእክትዎን፣ እዚህ ያሉ ቀደምት መልእክቶችን፣ ይህን ማመልከቻ (የሥራ ማስታወቂያ፣ ማስታወሻዎች፣ ሰነዶች፣ የቅጽ መልሶችዎ፣ የተቀመጠው ቅጥር ጥያቄ እና የቅርብ ጊዜ መልእክቶች) እና የነቃውን እውቀት ወደ {label} ይልካል።"
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "መልእክትዎን፣ ይህን ማመልከቻ (የሥራ ማስታወቂያ፣ ማስታወሻዎች፣ ሰነዶች፣ የቅጽ መልሶችዎ፣ የተቀመጠው ቅጥር ጥያቄ እና የቅርብ ጊዜ መልእክቶች) እና የነቃውን እውቀት ወደ {label} ይልካል።"
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "የመመዝገቢያ ጽሁፍዎን ከቁልፍዎ ጋር ወደ {0} · {1} ብቻ ይልካል።"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -12347,6 +12212,11 @@ msgstr "አንዳንድ ቁምፊዎችን መስራት አልተቻለም። �
 #: src/features/workspace/prepare-review.tsx
 msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
 msgstr "አንዳንድ ረቂቆች አልተጠናቀቁም። እንደገና ከመሞከርዎ በፊት የተጠናቀቁትን ረቂቆች ያስቀምጡ።"
+
+#: src/features/letters/page.tsx
+#: src/preview/page.tsx
+msgid "Some fonts are missing from this server's font mirror. Ask the administrator to add them."
+msgstr "አንዳንድ ፊደሎች በዚህ አገልጋይ የፊደል መስታወት ውስጥ የሉም። አስተዳዳሪውን እንዲያክላቸው ይጠይቁ።"
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -13102,17 +12972,9 @@ msgstr "አብሮ የተሰራው አንባቢ ንቁ ሆኖ ይቆያል።"
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "ቼኮች ሜካኒካል ናቸው። ይህ አንድ አንባቢ ለዝርዝር ግቤቶችዎ እንዴት ምላሽ ሊሰጥ እንደሚችል የቋንቋ ሞዴል ይጠይቃል እና እንደገና መፃፍን ይጠቁማል። የውጤቱ አካል አይደለም።"
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "አሰልጣኙ የሚገልጿቸውን እውነታዎች ከማስታወሱ በፊት ይጠይቃል።"
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "አሰልጣኙ ከመልዕክቶችዎ ምንም ነገር አያስታውስም።"
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "አሰልጣኙ የሚጽፉትን ምንም ነገር አያስታውስም።"
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13125,10 +12987,6 @@ msgstr "አሰልጣኙ በዚህ አገልጋይ ላይ አልተዋቀረም�
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "አሰልጣኙ እያንዳንዱን እውነታ በውይይቱ ውስጥ ያቀርባል። እርስዎ እስኪስማሙ ድረስ ምንም ነገር አይቀመጥም።"
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "አሰልጣኙ የሚገልጿቸውን እውነታዎች ያስታውሳል፤ ይነግርዎታልም።"
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13150,10 +13008,6 @@ msgstr "ግንኙነቱ ይሠራል። ለመጠቀም “ይህንን አቅ�
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "ቅጂው የሥራውን ማስታወቂያ ያገኛል፤ ይህንንም የስራ ልምድ ማስረጃ ለሌሎች ሥራዎች እንዳለ ያቆየዋል።"
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "ለዚህ ሥራ የሽፋን ደብዳቤውን"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13171,10 +13025,6 @@ msgstr "አርታዒው በምርመራ ላይ ይከፈታል፣ ይህም ከ�
 msgid "The employer may have changed it since."
 msgstr "አሠሪው ከዚያ በኋላ ቀይሮት ሊሆን ይችላል።"
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "የአሠሪውን መልዕክት"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "የማብቂያ ቀኑ ከመጀመሪያ ቀኑ በፊት ነው። ሁለቱንም ቀኖች ያረጋግጡ።"
@@ -13187,10 +13037,6 @@ msgstr "ክትትሉ ተቀምጧል። አስታዋሽ ለማግኘት በመ�
 msgid "The greeting follows the name."
 msgstr "ሰላምታው ስሙን ይከተላል።"
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "የቃለ መጠይቁን ዝርዝሮች"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "ቃለ መጠይቁ ተቀምጧል። አስታዋሽ ለማግኘት በመሣሪያዎ ቅንብሮች ውስጥ ማሳወቂያዎችን ይፍቀዱ።"
@@ -13202,10 +13048,6 @@ msgstr "ቁልፉ በአገልጋዩ ላይ ተመስጥሯል እና እንደ�
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "ቁልፉ ውድቅ ተደርጓል። ቁልፉን ያረጋግጡ እና እንደገና ይሞክሩ።"
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "የመጨረሻዎቹን መልዕክቶች"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13292,14 +13134,6 @@ msgstr "አቅራቢው ይህንን ጥያቄ ገድቧል። ይጠብቁ እ�
 msgid "The provider reported a server error. Try again later."
 msgstr "አቅራቢው የአገልጋይ ስህተት ሪፖርት አድርጓል። ቆይተው እንደገና ይሞክሩ።"
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "ጥያቄውን እና የተናገሩትን"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "ጥያቄውን እና መልስዎን"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "ምክንያቱ ለግንዛቤዎች ተቀምጧል። የተገናኙ ሰነዶች አልተነኩም።"
@@ -13316,10 +13150,6 @@ msgstr "የተቀረው ፋይል በዚህ ሪፖርት ውስጥ የለም።"
 msgid "The resume as it is"
 msgstr "የትምህርት ማስረጃው እንዳለ"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "ለዚህ ሥራ የስራ ልምድ ማስረጃውን"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "ገምጋሚው የእያንዳንዱን ደረጃ እና ቀኖች ያያል። ማስታወሻዎች፣ እውቂያዎች እና ክፍያ የግል ሆነው ይቆያሉ።"
@@ -13335,10 +13165,6 @@ msgstr "የተቀመጠው ቁልፍ ወደ አዲስ የመሠረት ዩአር�
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "የተቀመጠው ቁልፍ ወደ አዲስ የመሠረት ዩአርኤል አይላክም። ቁልፉን እንደገና ያስገቡ።"
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "የተቀመጠውን ቅናሽ"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13711,10 +13537,6 @@ msgstr "ይህ PDF የተቃኘ ምስል ነው። የሚነበብ ጽሑፍ �
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "ይህ PDF በይለፍ ቃል የተጠበቀ ነው። ያልተጠበቀ ቅጂ ያስቀምጡ እና እንደገና ይሞክሩ።"
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "ይህንን ማስታወቂያ"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14975,10 +14797,6 @@ msgstr "መቼ ክትትል ማድረግ አለብኝ፣ ምንስ ልበል?"
 msgid "When would you start?"
 msgstr "መቼ ይጀምራሉ?"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "ላክን ሲነኩ {list} ወደ {connection} ይሄዳሉ።"
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "ሲጨርሱ አሳሹ ይዘጋል እና ወደዚህ ይመለሳሉ።"
@@ -15033,10 +14851,6 @@ msgstr "ስፋት"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "ለመዛወር ፈቃደኛ"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "እውቀት ሲጠፋ፣ የሚጽፉት ምንም ነገር አይታወስም።"
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15372,10 +15186,6 @@ msgstr "በዚህ መሣሪያ ላይ ያደረጓቸው ለውጦች በተቀ�
 msgid "Your contact details are not on the first page."
 msgstr "የመገኛ ዝርዝሮችዎ በመጀመሪያው ገጽ ላይ የሉም።"
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "እውቂያዎችዎን"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "የእርስዎ ውሂብ"
@@ -15417,10 +15227,6 @@ msgstr "የእርስዎ እውነታዎች፣ ታሪኮች እና ምርጫዎ�
 msgid "Your focus"
 msgstr "የእርስዎ ትኩረት"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "የቅጽ መልሶችዎን"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "ርዕሶችዎ ከዋናው ጽሁፍዎ ጋር ተመሳሳይ ይመስላሉ።"
@@ -15446,10 +15252,6 @@ msgstr "መስመሮችዎ በጣም በጥብቅ የታሸጉ ናቸው።"
 msgid "Your margins are very narrow."
 msgstr "ማርጂኖችዎ በጣም ጠባብ ናቸው።"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "መልዕክትዎ"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "መልዕክትዎ ተቀምጧል።"
@@ -15466,7 +15268,6 @@ msgstr "ስምዎ እንደ አድራሻዎ፣ የ.cv ጎራ አስተዳዳሪ 
 msgid "Your name is missing"
 msgstr "ስምህ ጠፍቷል"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "ማስታወሻዎችዎ"
@@ -15487,9 +15288,7 @@ msgstr "የራስዎ ጽሑፍ፣ ያለ ቀድሞ ደብዳቤ"
 msgid "Your phone number is written in an unusual shape."
 msgstr "ስልክ ቁጥርዎ ባልተለመደ ቅርጽ ተጽፏል።"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "ምርጫዎችዎ"
 
@@ -15508,10 +15307,6 @@ msgstr "ይፋዊ ማገናኛዎ የሚጀምረው በ{server}/ ነው"
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "ይፋዊ አገናኞችዎ ይቀየራሉ"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "ቀረጻህ ካቆምክ በኋላ ለመገለበጥ ወደ {transcriberName} ይሄዳል። አቅራቢዎ ሊያስከፍል ይችላል። አገልጋዩ ግልባጮችን ያቆያል እንጂ አይቀዳም።"
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15596,10 +15391,6 @@ msgstr "አጭር አገናኝዎ ወደ “{0}” ያመለክታል፤ እሱ 
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "እንደገና እስኪያትሙት ድረስ አጭር አገናኝዎ ይህ የስራ ልምድ ማስረጃ እንዳልተጋራ ያሳያል።"
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "ታሪኮችዎ"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

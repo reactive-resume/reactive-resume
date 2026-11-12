@@ -10,19 +10,27 @@ export function AiUsageSection() {
 	const { t, i18n } = useLingui();
 	const query = useQuery(orpc.ai.usage.queryOptions({ input: { includeWebSearch: true } }));
 	const report = query.data;
+	// With nothing recorded, the explanations of how attempts are counted are noise: one line says it all.
+	const quiet = report?.requests === 0;
 	const date = (value: Date) => i18n.date(value, { dateStyle: "medium", timeZone: report?.timezone ?? "UTC" });
 	return (
 		<SettingsSection
 			title={t`AI usage this week`}
 			id="ai-usage"
-			description={t`Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not.`}
+			description={
+				quiet
+					? undefined
+					: t`Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not.`
+			}
 			action={
-				<Button
-					variant="secondary"
-					size="sm"
-					disabled={query.isFetching}
-					onClick={() => void query.refetch()}
-				>{t`Refresh usage`}</Button>
+				!quiet && (
+					<Button
+						variant="secondary"
+						size="sm"
+						disabled={query.isFetching}
+						onClick={() => void query.refetch()}
+					>{t`Refresh usage`}</Button>
+				)
 			}
 		>
 			<div className="grid gap-3" aria-live="polite" aria-busy={query.isFetching}>
@@ -35,7 +43,7 @@ export function AiUsageSection() {
 					<p className="text-sm text-ink-3">{t`Loading usage…`}</p>
 				) : (
 					<>
-						<p className="text-sm">{t`AI request attempts: ${i18n.number(report.requests)}`}</p>
+						{!quiet && <p className="text-sm">{t`AI request attempts: ${i18n.number(report.requests)}`}</p>}
 						<p className="text-xs text-ink-3">
 							{date(report.start)} – {date(new Date(report.end.getTime() - 1))} · {report.timezone}
 						</p>
@@ -62,8 +70,12 @@ export function AiUsageSection() {
 						))}
 					</>
 				)}
-				<p className="text-xs text-ink-3">{t`Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed.`}</p>
-				<p className="text-xs text-ink-3">{t`These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt.`}</p>
+				{!quiet && (
+					<>
+						<p className="text-xs text-ink-3">{t`Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed.`}</p>
+						<p className="text-xs text-ink-3">{t`These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt.`}</p>
+					</>
+				)}
 			</div>
 		</SettingsSection>
 	);

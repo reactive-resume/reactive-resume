@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name=".SmokeActivity"
+            android:exported="true"
+            android:label="@string/fictional_smoke_app_name"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="me.rxresu.DEBUG_SMOKE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

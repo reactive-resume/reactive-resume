@@ -89,6 +89,23 @@ it.each([{ PLATFORM: "ios" }, { PLATFORM: "all" }, { ABI: "invalid" }, { UPLOAD:
 	},
 );
 
+it("builds the native Android app on the shared counter and store lane, without Expo or iOS credentials", () => {
+	const native = { ...android, PLATFORM: "android-native", EXPO_TOKEN: "" };
+	expect(validateRelease(native)).toBe(100);
+	expect(() => validateRelease({ ...native, ANDROID_KEYSTORE_BASE64: "" })).toThrow("ANDROID_KEYSTORE_BASE64");
+	expect(() => validateRelease({ ...android, EXPO_TOKEN: "" })).toThrow("EXPO_TOKEN");
+	expect(prepareRelease({ ...version, PLATFORM: "android-native", UPLOAD: "false" }).platforms).toEqual(["android"]);
+	expect(prepareRelease({ ...version, PLATFORM: "android-native", FORMAT: "preview", UPLOAD: "false" })).toEqual({
+		buildNumber: 100,
+		platforms: ["android"],
+	});
+	for (const override of [{ PLATFORM: "android" }, { UPLOAD: "true" }]) {
+		expect(() =>
+			prepareRelease({ ...version, PLATFORM: "android-native", FORMAT: "preview", UPLOAD: "false", ...override }),
+		).toThrow("Preview builds");
+	}
+});
+
 it("validates store uploads independently of signing and rejects APK uploads", () => {
 	expect(() => validateUpload({ PLATFORM: "android", GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: "fixture" })).not.toThrow();
 	expect(() => validateUpload({ PLATFORM: "ios" })).toThrow("ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY");

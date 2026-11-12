@@ -10,6 +10,7 @@ colors:
     sunken: "#F0EFEB"
     line: "#DFDEDA"
     line-2: "#C5C4BE"
+    control-border: "#888680"
     ink: "#1C1B15"
     ink-2: "#4F4D47"
     ink-3: "#6D6C65"
@@ -34,6 +35,7 @@ colors:
     sunken: "#0B0A08"
     line: "#2C2B27"
     line-2: "#494843"
+    control-border: "#73726C"
     ink: "#EFEEEB"
     ink-2: "#BCBAB5"
     ink-3: "#979590"
@@ -125,7 +127,7 @@ marketing:
 
 Reactive Resume uses “Desk & Paper”: a warm, quiet interface around a bright resume or letter. Low-contrast surfaces, thin rules, and a moss-green accent keep attention on the document.
 
-This reference covers the current app and homepage. Implementation details live in the source files named below; [REDESIGN_PLAN.md](REDESIGN_PLAN.md) records the redesign milestones and deviations from the original handoff.
+This reference covers the current app, its AI features and the homepage. Implementation details live in the source files named below.
 
 Five principles guide decisions:
 
@@ -142,6 +144,7 @@ Resume templates retain their Pokémon names, fonts, and palettes. App typograph
 `packages/ui/src/styles/globals.css` defines light tokens on `:root` and dark overrides on `.dark`. OKLCH values are authoritative; the front matter lists approximate sRGB equivalents. Tailwind exposes semantic utilities such as `bg-bg`, `bg-surface`, `border-line`, `text-ink`, and `bg-accent`.
 
 - **Surfaces:** `bg` for the app desk; `surface` for panels and cards; `raised` for menus, dialogs, and inputs; `sunken` for wells, tracks, and the page canvas.
+- **Borders:** `line` for dividers and every element's default border; `line-2` for decorative rules and quiet outlines (secondary buttons, outline badges, dashed empty states, chips); `control-border` for the edges people must find: inputs, checkboxes, radios, code boxes, the chat composer, and the off switch and slider tracks. `control-border` holds 3:1 on every surface in both themes; `line-2` does not, so it is never a control's only edge.
 - **Text:** `ink` for primary text, `ink-2` for secondary text, and `ink-3` for metadata and placeholders. Use no lighter text token, and check contrast on tinted backgrounds.
 - **Signals:** `danger` for errors and irreversible actions; `warn` for issues to review; `warn-ink` for text on a solid `warn` fill, such as issue-marker numbers; `info-soft` and `info-text` for neutral guidance. Success uses `accent-soft` and `accent-text`.
 - **Overlays:** `hover` and `press` are translucent interaction states; `scrim` and `scrim-sheet` dim the background behind layers.
@@ -159,7 +162,7 @@ The front matter records the app type scale. Field labels use the separate `fiel
 - **Geist Mono:** shortcuts, URLs, slugs, filenames and counts. Use `font-mono`.
 - No all-caps labels or title caps: headings, eyebrows, group labels and buttons are sentence case at 12px or larger, with normal tracking.
 - Field labels are 12px, medium weight, in `ink-2`, with a 6px gap above the control. Group eyebrows are 12px, semibold, in `ink-3`.
-- Rendered rich text (assistant and coach replies, the rich-text editor) uses shadcn Typeset: `packages/ui/src/styles/typeset.css`, an owned copy reading the app tokens. Wrap content in `typeset` plus a preset: `typeset-chat` or `typeset-field`. It styles only the elements those surfaces render (no images, `kbd`, `details`, definition lists or math). Opt a component out with `not-typeset`.
+- Rendered rich text (assistant and coach replies, the rich-text editor) uses shadcn Typeset: `packages/ui/src/styles/typeset.css`, an owned copy reading the app tokens. Wrap content in `typeset` plus a preset: `typeset-chat` or `typeset-field`. It styles only the elements those surfaces render (no images, `kbd`, `details`, definition lists or math). Opt a component out with `not-typeset`. Always add a preset: both set headings in Figtree, while the bare class would set them in Instrument Serif at 600, a weight the browser fakes. In both presets each block keeps the direction of its first letter.
 - Touch inputs use at least 16px text to prevent iOS zoom.
 - Fonts are self-hosted through `@fontsource-variable/figtree`, `@fontsource/instrument-serif` and `@fontsource-variable/geist-mono`.
 
@@ -178,7 +181,7 @@ Icons inside resumes use Phosphor names stored in resume data, drawn by the Phos
 - **Spacing:** use the 4px scale in the front matter. Cards typically have 16px padding, panels 16–24px, mobile pages 16px margins, and desktop pages 32–40px margins.
 - **Radius:** 2px (`rounded-sm`) for chips, tags, avatars, switches and small marks; 3px (`rounded-md`) for inputs and controls; 4px (`rounded-lg` and up) for cards, menus, dialogs and sheets. Nothing is rounder than 4px; no pills. Only data-viz rings, radio buttons, spinners and landing illustrations stay circular.
 - **Elevation:** `shadow-e1` for cards; `shadow-e2` for menus and popovers; `shadow-e3` for dialogs, sheets, and toasts; `shadow-page` for editor paper.
-- **Controls:** button heights are 28px (`sm`), 36px (`default`), and 44px (`lg`). Icon button sizes range from 28px to 44px. Inputs grow from 36px to 44px on touch devices; `touch-target` expands smaller controls' hit areas to at least 44×44px.
+- **Controls:** button heights are 28px (`sm`), 36px (`default`), and 44px (`lg`). Icon button sizes range from 28px to 44px. Inputs and default buttons grow from 36px to 44px on touch devices (a button that sets its own height keeps it; a control beside an input matches it); `touch-target` expands smaller controls' hit areas to at least 44×44px and needs a positioned host (`relative`), or its overlay covers the nearest positioned ancestor and steals taps. Keyboard-shortcut help entries hide on touch screens.
 - **Layout variables:** `--editor-bar: 56px`, `--editor-panel: 400px`, `--app-sidebar: 240px`, `--sheet-share: 440px`, `--sheet-detail: 480px`, and `--assistant: 400px`.
 
 ## Motion
@@ -203,23 +206,48 @@ The homepage has separate motion rules below.
 
 Generic primitives live in `packages/ui/src/components`, using Base UI and cmdk for the command palette. Feature-specific UI belongs in its owning `apps/web` feature.
 
-- **Buttons:** `primary`, `secondary`, `ghost`, `danger`, and `link`. `loading` adds a spinner, sets `aria-busy`, and blocks activation. Use a progress label such as “Preparing…”.
-- **Inputs:** `raised` background and `line-2` border; focus adds an accent border and a 3px `accent-soft` ring. Invalid fields use danger styling. Show errors after blur or submission, with an icon and a specific remedy.
-- **Switches:** prefer `SwitchRow` so the label is part of the target. Checkboxes are 18px with a 3px radius; radios are 18px with an 8px accent dot.
+- **Buttons:** `primary`, `secondary`, `ghost`, `danger`, and `link`. `loading` adds a spinner, sets `aria-busy`, and blocks activation. Use a progress label such as “Preparing…”. A button rendered as a link (`nativeButton={false}` with an `<a href>` or router `Link`) keeps `role="link"`, so screen readers list it with links.
+- **Hold to confirm:** `HoldButton` acts only after a 1.2-second hold of the pointer, Space or Enter. A fill in the text color rises from the start edge and snaps back if released early; it follows the clock, so it still shows progress under reduced motion. Use it inside the confirmation for permanent deletes (Delete forever, Empty Trash) with the label “Hold to delete”. An assistive-technology click confirms at once, since the dialog already asked.
+- **Loading:** `Spinner` is a 14px `circle-notch` turning once a second in the text color. Pair it with words that say what is happening; mark it `decorative` when the control already says it is busy.
+- **Inputs:** `raised` background and `control-border` border; focus adds an accent border and a 3px `accent-soft` ring. Invalid fields use danger styling. Show errors after blur or submission, with an icon and a specific remedy.
+- **Switches:** prefer `SwitchRow` so the label is part of the target. The off track is `control-border`, the on track `accent`. Checkboxes are 18px with a 3px radius and a 1.5px `control-border` edge; radios are 18px with an 8px accent dot.
+- **Codes:** `OTPField` boxes are 36px, 44px on phones; pass a translated `digitLabel` (“Digit 2 of 6”) so each box has a name.
+- **Shortcuts:** write shortcuts with Mac glyphs (“⌘K”, “⇧⌘Z”). `Kbd` always reads left to right; `formatShortcut` shows them as “Ctrl+K” and “Ctrl+Shift+Z” off Apple devices (`IconButton` tooltips already do), and `ariaShortcut` gives the matching `aria-keyshortcuts` value.
 - **Segments and tabs:** use `SegmentedControl` for 2–4 options in a radio group. Use `Tabs` to switch panels; set `TabsList variant="line"` for underline tabs.
 - **Menus:** 4px radius and 36px items. Size popups for their content and trigger; put destructive items last, after a separator.
-- **Layers:** menus and popovers provide lightweight choices; sheets hold tasks beside the document and use the bottom variant on mobile; dialogs hold decisions. Use `AlertDialog` for destructive confirmation and name what cancel keeps.
+- **Layers:** menus and popovers provide lightweight choices; sheets hold tasks beside the document and use the bottom variant on mobile; dialogs hold decisions. Use `AlertDialog` for destructive confirmation and name what cancel keeps. Dialog and sheet close buttons need a translated `closeLabel` whenever they show. `right` and `left` sheets open from the inline end and start, so they swap sides in RTL.
 - **Creating things:** a short create form (up to about six fields, such as New document or Save a job) is a dialog. New document uses a bottom sheet on phones, matching the native creation form; its presentation stays fixed while open so a resize cannot discard work. A long form, or one that needs the page behind it, is a sheet (New schedule, Add offer on Offers). A form tied to one item already on screen opens in place beside it (Add fact, Add offer in a job's Offer stage).
-- **Toasts:** one visible at a time, bottom center, with `bg-ink` and `text-bg`. The default timeout is six seconds; `timeout: 0` keeps a toast visible. Undo is an optional underlined action. Pressing an action closes its toast after the action's handler runs, and a second press while it leaves does nothing.
+- **Toasts:** one visible at a time, bottom center, with `bg-ink` and `text-bg`. The default timeout is six seconds; `timeout: 0` keeps a toast visible. Undo is an optional underlined action. Pressing an action closes its toast after the action's handler runs, and a second press while it leaves does nothing. A toast with an action burns a 2px fuse along its bottom edge for the time it has left; the fuse pauses while the toast is hovered or focused and is hidden under reduced motion. Pass translated `closeLabel` and `regionLabel` to `Toaster`; a view with floating bottom controls lifts toasts above them with `--toast-bottom`.
 - **Chats:** the assistant and career coach transcripts use `MessageScroller` (shadcn, behaviour from `@shadcn/react`): it follows a streaming reply only while the reader is at the latest message, settles each question near the top, reopens a saved thread on its last question, and shows a “Latest” button after scrolling away. Agent steps are `Trace` lines: spinner and shimmer while running, check when done, danger when failed, dimmed dash when unfinished. Mobile mirrors both.
 - **Alerts:** `info`, `success`, `warn`, and `error`; only the error variant adds `role="alert"` by default.
-- **Empty states:** a 22px Instrument Serif headline, concise 14px body text, and a primary action. Add a secondary action only when useful.
+- **Empty states:** use `EmptyState`: a dashed `line-2` card with a 22px Instrument Serif headline, concise 14px body text (at most 340px wide) and one primary action; add a `secondary` action only when useful. Notices go in its children, above the actions. Inside a list, `variant="compact"` is a single 13px row instead of the card.
+
+## AI features
+
+AI is optional and runs on a provider the person connects. Every AI surface follows “AI proposes, you decide”: say what will be sent and where, show progress, return proposals to review, and keep the person's words when something fails. Shared parts live in `apps/web/src/features/assistant/chat-chrome.tsx` and `apps/web/src/features/career/shared.tsx`.
+
+- **Mark:** `sparkle` is the AI glyph: 20px in `accent-text` beside the Assistant and Coach titles, and 16–18px before the label of a button that starts AI work (the button's spinner replaces it while the work runs). Don't use it for anything that makes no AI request.
+- **Disclosure:** no standing disclaimers. Context chips show what goes and the connection menu shows where. `PrivacyLine` (12px `ink-3` with a 15px `lock`) appears only when a send is blocked or waits: a conversation whose connection was switched off, or Knowledge still loading or failed. The `cost` variant is a `warn-soft` callout with a `key` icon for billing reminders, and the connection-changed notice stays. Nothing leaves before the person presses send or approves.
+- **Approvals:** a request the model makes on its own, such as a web search query or saving a story to Knowledge, waits in a `raised` card with a `line` border that shows the exact text and explicit verbs: “Search the web”, “Save story”, “Edit first”, “Skip” (`apps/web/src/features/assistant/tool-approvals.tsx`).
+- **Composer:** `ChatComposer` is a `raised` box with a `control-border` edge and the input focus treatment. Enter sends, Shift+Enter adds a line, and Escape stops a reply; the send button becomes a filled stop button while a reply streams. Context chips are 26px: included context is `sunken` with an icon and a remove button; context left out stays as a dashed `line-2` outline in `ink-3`, and selecting it includes it again. A 12px `ink-3` line under the box appears only when sending is blocked. The connection menu in the header reads “Name · model” on a 28px `sunken` chip.
+- **Starting points:** an empty conversation opens with a 22px Instrument Serif question, a 14px `ink-2` line and starter rows: 44px, `raised`, `line` border, a 20px `ink-2` icon, a 14px medium label and a 12px `ink-3` hint (“Suggests cuts, never deletes on its own”).
+- **Progress:** agent steps are `Trace` lines. A 10–30 second task shows `Working`: its label moves through the task's steps every 2.2 seconds (“Reading the posting”, “Matching your facts”) and then rests on “Still working”, and the button keeps the width of its longest phrase. Stop stays available while work runs.
+- **Questions:** when the assistant needs something the document doesn't say, it asks on an `info-soft` card in `info-text` (`apps/web/src/features/assistant/question-card.tsx`): the question in 14px medium, choices as small secondary buttons and an “Or in your own words…” field. Answered, passed-over and failed questions say so in 13px.
+- **Proposed edits:** edits arrive as a numbered list to review (`apps/web/src/features/resume/editor/proposals/proposal-list.tsx`). The header sits on `bg` with the count, Reject all and Accept all; each edit is numbered on a 20px `accent` square; only the changed words are marked, removed words struck through in `ink-2` and added words on `accent-soft`; the reason follows in 12px `ink-2`. Tailoring adds “Posting asks for:”, the sources the model cites (“check they say this”), and a `warn-soft` box, “Nothing checked backs these. Confirm each before accepting:”, for figures and words the resume doesn't contain. An edit that adds a detail carries a `warn-soft` “New detail: check it's true” tag and is accepted on its own. Each edit offers Accept, Edit (rewrite the wording first) and Reject; A and R act on the focused edit, ↑ and ↓ move between edits. A decided edit folds to one line (“Applied” or “Rejected”, with Undo and Show); an edit whose passage has changed says it is out of date and offers “Suggest again”.
+- **Improve:** on the line holding the caret, Improve offers presets (Stronger verb, Add a result, Make it shorter) and a free request. The original sits on `sunken` and the suggestion on `accent-soft`, with Replace, Keep mine and Try another.
+- **Evidence:** status pills pair color, icon and words: Supported and Added by you on `accent-soft`, Partly supported on `warn-soft`, No evidence yet on `sunken`. A gap is missing evidence, never missing ability; the assistant leaves it open rather than invent experience.
+- **Memory:** an offer to remember facts is an `info-soft` row with a `bookmark-simple` icon, the quoted fact (a checklist for several) and Remember / Not now.
+- **What an answer used:** under a reply, “Used” chips (24px, `line-2` outline, 12px medium `ink-2`) open a popover listing the exact facts, stories or documents it relied on; web results list as “Sources” links in `accent-text`. A citation is a pointer to check, not proof.
+- **Failures and stops:** a failed request is a `danger-soft` card with `role="alert"`: what failed, “Your message is kept.”, Retry (secondary) and, when the provider caused it, Switch model (ghost). A stopped reply says “Stopped. No edits were proposed.” with Continue. A conversation whose connection was switched off shows a `warn-soft` notice to choose the next one; a locked document shows an `info-soft` note that questions still work and edits wait for Unlock.
+- **Usage:** a result that came from AI keeps a receipt in 12px `ink-3`: the request attempts, then the connection, provider and model (`apps/web/src/features/ai/usage.tsx`).
+- **Voice:** the assistant and coach may say “I” in their own replies and notices; the app around them stays in the second person.
 
 ## Accessibility
 
 Target WCAG 2.2 AA:
 
-- Show a 2px accent focus outline with a 2px gap on `:focus-visible`. Inputs use their border and soft ring instead.
+- Show a 2px accent focus outline with a 2px gap on `:focus-visible`, only while navigating by keyboard: after a tap or click `data-pointer` on `<html>` (`apps/web/src/libs/input-modality.ts`) hides rings on focus the app moves itself, and the first Tab, arrow or Escape brings them back. `focus-visible:` utilities follow the same rule. Inputs use their border and soft ring instead.
+- On touch screens a long press on a document card or row selects it, as in the mobile app; selection checkboxes appear only once selecting starts, and the ⋯ menu keeps every action.
 - Provide at least 24px pointer targets and 44px touch targets. Every drag operation needs keyboard and menu alternatives. Each `DndContext` takes `dndContextProps()` (`apps/web/src/libs/dnd.ts`): drags are announced in the UI language by the item's visible name and its page or column, never by an id.
 - Pair color signals with text; add icons where they clarify status.
 - Trap focus in modal sheets and dialogs. Escape closes the top layer; closing returns focus to its trigger.
@@ -236,6 +264,7 @@ The shared `theme` cookie stores `light`, `dark`, or `system` (the default). Sys
 - Supported locales come from `packages/utils/src/locale.ts`. The root route updates `<html lang>` and `<html dir>` and passes direction to Base UI's `DirectionProvider`.
 - Prefer logical properties and utilities (`ps`, `pe`, `ms`, `me`, `start`, `end`, `inset-s`, `inset-e`).
 - Allow 30–50% text expansion; avoid fixed widths for translated labels.
+- What people type keeps its own direction: inputs, textareas and Typeset blocks use `unicode-bidi: plaintext`, so German stays left to right in the Arabic interface and Arabic right to left in an English one. Email, URL and phone inputs and `Kbd` always read left to right.
 
 ## Marketing site
 
@@ -319,4 +348,5 @@ Reduced motion fixes scenes at their end state and collapses pinned sections to 
 - **Don't** introduce arbitrary app colors or palette classes such as `amber-600`; use semantic tokens.
 - **Don't** use Instrument Serif for small functional app text or at bold weights, set labels in all caps, or round anything past 4px. Homepage prose follows its separate type rules.
 - **Don't** confirm reversible actions; offer undo.
+- **Don't** send anything to an AI provider without naming what goes where, or apply an AI edit the person hasn't accepted.
 - **Don't** omit `data-slot` on UI primitives; styles and tests rely on it.

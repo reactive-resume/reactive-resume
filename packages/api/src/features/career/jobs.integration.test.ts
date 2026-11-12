@@ -1818,6 +1818,39 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 		},
 	);
 
+	it("pauses a briefing instead of running it at once when the interview moves inside its lead", async () => {
+		await interviewApplication(new Date(Date.now() + 5 * 3_600_000));
+		const saved = await jobs.save(
+			"alice",
+			careerScheduleInputSchema.parse({
+				applicationId: "alice-app",
+				interviewId: "interview-round",
+				kind: "prepare",
+				lead: "2h",
+				aiProviderId: "preparation-provider",
+				timezone: "Europe/Berlin",
+				nextRunAt: new Date("2031-01-01T00:00:00Z"),
+			}),
+		);
+		expect(saved.enabled).toBe(true);
+		const moved = new Date(Date.now() + 30 * 60_000);
+		const applications = (await import("../applications/service")).applicationService;
+		await applications.updateInterview({
+			userId: "alice",
+			id: "alice-app",
+			entryId: "interview-round",
+			at: moved.toISOString(),
+		});
+		await run();
+		await run();
+		expect(fixture.generate).not.toHaveBeenCalled();
+		expect(await getDb().select().from(tables.careerJob)).toEqual([]);
+		expect(await jobs.list("alice")).toMatchObject([
+			{ id: saved.id, enabled: false, nextRunAt: new Date(moved.getTime() - 2 * 3_600_000), lastQueuedAt: null },
+		]);
+		expect(await jobs.notifications("alice")).toEqual([]);
+	});
+
 	it("tracks a discovered role once, and a tracked role stays quiet in later searches", async () => {
 		const careers = (await import("./service")).careerService;
 		const url = "https://example.test/jobs/42";
@@ -2065,6 +2098,68 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 		expect(fixture.email).toHaveBeenCalledOnce();
 		await run();
 		expect(fixture.email).toHaveBeenCalledOnce();
+	});
+
+	it.each([
+		["unverified", { emailVerified: false }],
+		["banned", { emailVerified: true, banned: true }],
+	] as const)("skips an %s owner's emails without spending the tick's claims on them", async (_state, owner) => {
+		await getDb()
+			.insert(tables.user)
+			.values({
+				id: "bob",
+				name: "Bob Example",
+				email: "bob@example.test",
+				username: `${schemaName}-bob`,
+				displayUsername: `${schemaName}-bob`,
+				...owner,
+			});
+		const later = new Date(Date.now() + 86_400_000);
+		const hoursAgo = (hours: number) => new Date(Date.now() - hours * 3_600_000);
+		await getDb()
+			.insert(tables.careerSchedule)
+			.values(
+				["bob", "alice"].map((userId) => ({
+					id: `${userId}-schedule`,
+					userId,
+					kind: "discovery",
+					query: "Roles",
+					timezone: "UTC",
+					enabled: true,
+					email: true,
+					nextRunAt: later,
+				})),
+			);
+		await getDb()
+			.insert(tables.careerJob)
+			.values([
+				{ id: "bob-job-1", userId: "bob", scheduleId: "bob-schedule", dueAt: hoursAgo(3), status: "completed" },
+				{ id: "bob-job-2", userId: "bob", scheduleId: "bob-schedule", dueAt: hoursAgo(2), status: "completed" },
+				{ id: "alice-job", userId: "alice", scheduleId: "alice-schedule", dueAt: hoursAgo(1), status: "completed" },
+			]);
+		const notice = { type: "opportunities" as const, count: 1, query: "Roles" };
+		await getDb()
+			.insert(tables.careerNotification)
+			.values([
+				{ userId: "bob", key: "bob-job-1", notice, createdAt: hoursAgo(3) },
+				{ userId: "bob", key: "bob-job-2", notice, createdAt: hoursAgo(2) },
+				{ userId: "alice", key: "alice-job", notice, createdAt: hoursAgo(1) },
+			]);
+		await run();
+		expect(fixture.email).toHaveBeenCalledOnce();
+		expect(fixture.email).toHaveBeenCalledWith(expect.objectContaining({ to: "alice@example.test", key: "alice-job" }));
+		const held = await getDb()
+			.select()
+			.from(tables.careerNotification)
+			.where(eq(tables.careerNotification.userId, "bob"));
+		expect(held.map((row) => [row.emailAttemptedAt, row.emailedAt])).toEqual([
+			[null, null],
+			[null, null],
+		]);
+		// Suspended, not dropped: delivery resumes once the owner can receive email again.
+		await getDb().update(tables.user).set({ emailVerified: true, banned: false }).where(eq(tables.user.id, "bob"));
+		await run();
+		expect(fixture.email).toHaveBeenCalledTimes(3);
 	});
 
 	it("deletes notifications read more than 90 days ago and keeps unread and recently read ones", async () => {

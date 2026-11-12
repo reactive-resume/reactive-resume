@@ -211,12 +211,10 @@ msgstr "{0, plural, one {No s'ha pogut fer l'edició de #: el seu text ha canvia
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# entrada} other {# entrades}}"
 
-#. placeholder {0}: knowledge.active.length
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: used.facts.length
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
-#: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# fet} other {# fets}}"
 
@@ -290,13 +288,6 @@ msgstr "{0, plural, one {# història} other {# històries}}"
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {S'ha afegit # fet a Coneixements.} other {S'han afegit # fets a Coneixements.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {També s'envia {1}.} other {També s'envien # fitxers: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -426,8 +417,8 @@ msgstr "{0} — {1}"
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
-msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{0} · {providerLabel}. Envia aquesta candidatura i els vostres Coneixements; el proveïdor us pot cobrar."
+msgid "{0} · {providerLabel}"
+msgstr "{0} · {providerLabel}"
 
 #. Mode tab tooltip: the mode, then the key that opens it
 #. placeholder {0}: labels[mode]
@@ -637,14 +628,6 @@ msgstr "{added, plural, one {# frase nova o reformulada} other {# frases noves o
 #: src/features/career/workspace/apply.tsx
 msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# resposta} other {# respostes}}"
-
-#: src/features/career/coach.tsx
-msgid "{attached, plural, one {# attached file} other {# attached files}}"
-msgstr "{attached, plural, one {# fitxer adjunt} other {# fitxers adjunts}}"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "{attached, plural, one {The attached file goes too.} other {The # attached files go too.}}"
-msgstr "{attached, plural, one {El fitxer adjunt també s'envia.} other {Els # fitxers adjunts també s'envien.}}"
 
 #: src/features/resume/editor/design/fit.ts
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
@@ -2168,12 +2151,6 @@ msgstr "Els proveïdors d'IA no estan disponibles en aquest servidor fins que s'
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "No s'han pogut carregar els proveïdors d'IA. Torna a carregar per tornar-ho a provar."
 
-#. placeholder {0}: read?.label
-#. placeholder {1}: read?.model
-#: src/features/documents/new-document-dialog.tsx
-msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
-msgstr "La lectura amb IA envia el contingut d'aquest fitxer a {0} · {1}. El teu proveïdor et pot cobrar."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -2189,10 +2166,6 @@ msgstr "L’historial de sol·licituds d’IA no està disponible per a aquest r
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr "Configuració de la IA"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "Suggeriments d'IA, no titulacions verificades ni prediccions de contractació. Les fonts següents són les teves declaracions."
 
 #: src/features/settings/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -2337,10 +2310,6 @@ msgstr "També mostra les icones sobre habilitats, perfils i interessos."
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "Amhàric"
-
-#: src/features/resume/editor/proposals/proposal-list.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "Una lectura amb IA per ajudar-te a editar, no una predicció de com respondrà una empresa o un sistema de preselecció."
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "An edit addresses it"
@@ -2570,10 +2539,6 @@ msgstr "Preparació de la candidatura"
 msgid "Application progress"
 msgstr "Progrés de la candidatura"
 
-#: src/features/career/coach.tsx
-msgid "application summaries"
-msgstr "resums de candidatures"
-
 #: src/features/homepage/prepare.tsx
 msgid "Application tabs"
 msgstr "Pestanyes de la candidatura"
@@ -2583,14 +2548,13 @@ msgstr "Pestanyes de la candidatura"
 msgid "Application updated"
 msgstr "S'ha actualitzat la candidatura"
 
+#: src/components/layout/trash-nav.tsx
 #: src/features/applications/components/list-view.tsx
-#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
@@ -3355,11 +3319,6 @@ msgstr "Certificacions"
 msgid "Change"
 msgstr "Canviar"
 
-#: src/features/career/coach-thread.tsx
-msgctxt "Change what the coach remembers"
-msgid "Change"
-msgstr "Canvia"
-
 #: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Change connection"
@@ -3908,6 +3867,7 @@ msgstr "tancada"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/documents/documents-page.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Closed"
 msgstr "Tancat"
 
@@ -6005,10 +5965,9 @@ msgstr "Tipus de document"
 msgid "Documentation"
 msgstr "Documentació"
 
-#: src/features/applications/trash-page.tsx
+#: src/components/layout/trash-nav.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
-#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -6325,10 +6284,6 @@ msgstr "Cada resposta sobre la qual rebeu comentaris es conserva aquí, de la m�
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "Cada requisit de l'anunci es contrasta amb els fets i les històries dels vostres Coneixements. Les mancances es mostren com a proves que falten, mai com a capacitats que falten."
 
-#: src/features/assistant/conversation.tsx
-msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
-msgstr "Cada enviament comença de nou amb aquest missatge i els fitxers seleccionats. L'historial de converses anteriors es manté aquí."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Each visitor counts once an hour."
 msgstr "Cada visitant compta una vegada per hora."
@@ -6340,10 +6295,6 @@ msgstr "Resultat de descobriment anterior. La consulta de cerca i l'hora de comp
 #: src/libs/orpc/ai-consent.ts
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Els missatges i fitxers adjunts anteriors d'aquesta conversa s'enviaran a aquesta destinació quan tornis a enviar."
-
-#: src/features/career/coach.tsx
-msgid "earlier messages in this chat"
-msgstr "missatges anteriors d'aquest xat"
 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -6596,10 +6547,6 @@ msgstr "Vols buidar la paperera de reciclatge?"
 #: src/features/documents/trash-page.tsx
 msgid "Empty Trash…"
 msgstr "Buida la paperera de reciclatge…"
-
-#: src/features/career/disclosure.tsx
-msgid "enabled Knowledge"
-msgstr "els Coneixements activats"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -8373,14 +8320,6 @@ msgstr "Problemes"
 msgid "Issues and Job match still work without AI."
 msgstr "Els problemes i la concordança de treball encara funcionen sense IA."
 
-#: src/features/assistant/conversation.tsx
-msgid "It can also search Knowledge available to this application (facts and stories) and send what it finds."
-msgstr "També pot cercar als Coneixements disponibles per a aquesta candidatura (fets i històries) i enviar el que trobi."
-
-#: src/features/assistant/conversation.tsx
-msgid "It can also search your shared Knowledge (facts and stories) and send what it finds."
-msgstr "També pot cercar als teus Coneixements compartits (fets i històries) i enviar el que trobi."
-
 #: src/features/resume/editor/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "Té entrades però no es col·loca en una pàgina."
@@ -8436,10 +8375,6 @@ msgstr "S'eliminen els seus missatges i fitxers adjunts. Les modificacions que v
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Its own design ({summary})."
 msgstr "Disseny propi ({summary})."
-
-#: src/features/career/disclosure.tsx
-msgid "its requirements"
-msgstr "els seus requisits"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -9738,11 +9673,6 @@ msgstr "Missatges · Resposta a Sam de Fieldnote"
 #: src/features/career/coach-chat.tsx
 msgid "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Els missatges anteriors ja no s'envien a la IA, així que no els recordarà. Inicia una conversa nova per mantenir el context junt."
-
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Els missatges d'abans del canvi dels Coneixements no s'envien."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Microphone blocked. Allow it in your browser settings, or type your answer."
@@ -12031,7 +11961,6 @@ msgstr "Assaig per a les vostres entrevistes a {company}."
 msgid "Practice in {company}’s workspace"
 msgstr "Practica a l'espai de treball de {company}"
 
-#: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
 msgstr "Prioritats d'assaig, no conclusions sobre per què una empresa ha decidit res."
@@ -12184,10 +12113,6 @@ msgstr "Candidatura anterior"
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Previous issue"
 msgstr "Edició anterior"
-
-#: src/features/assistant/conversation.tsx
-msgid "Previous messages, including document details, are also sent."
-msgstr "També s'envien missatges anteriors, inclosos els detalls del document."
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
@@ -14304,11 +14229,6 @@ msgstr "Cerca o executa una ordre…"
 msgid "Search saved answers"
 msgstr "Cerca respostes desades"
 
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Els termes de cerca s'envien al vostre servei de cerca web."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Cerca al web"
@@ -14525,113 +14445,13 @@ msgstr "Les dades del remitent s'han copiat a la carta"
 msgid "Sending password reset email…"
 msgstr "S’està enviant el correu per restablir la contrasenya…"
 
-#: src/features/career/disclosure.tsx
-msgid "Sends {list} to {providerLabel}."
-msgstr "Envia {list} a {providerLabel}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Envia només el currículum seleccionat i fins a 20 fets compartits actius a aquesta connexió. Cap perfil de candidatura, respostes desades ni fets privats de candidatures. El teu proveïdor pot cobrar."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the {0} posting to {1} to draft the body."
-msgstr "Envia l'anunci de {0} a {1} per redactar el cos."
-
-#. placeholder {0}: draft?.label
-#. placeholder {1}: draft?.model
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
-msgstr "Envia el currículum enllaçat, l'anunci i els detalls de la carta a {0} · {1}. El teu proveïdor pot cobrar."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Envia el text de l'anunci a {0} per llegir-lo."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
 msgstr "Envia l'anunci, les notes i els documents d'aquesta candidatura, més els Coneixements activats, a aquesta connexió. El teu proveïdor pot cobrar. La feina programada mai no canvia automàticament a una altra connexió."
 
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
-msgstr "Envia aquesta carta i la publicació de feina a {provider} amb la vostra clau, només quan premeu enviar."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter to {provider} with your key, only when you press send."
-msgstr "Envia aquesta carta a {provider} amb la vostra clau, només quan premeu enviar."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
-msgstr "Envia el currículum d'aquesta carta i l'anunci de {0} a {1} per redactar el cos."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume to {0} to draft the body."
-msgstr "Envia el currículum d'aquesta carta a {0} per redactar el cos."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Envia aquesta línia, el text dels camps del voltant i les teves instruccions a {0} · {1}."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Envia aquest paràgraf, la resta de la carta i les teves instruccions a {0} · {1}."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Envia aquest paràgraf, la resta de la carta, l'oferta de feina vinculada i les teves instruccions a {0} · {1}."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
-msgstr "Envia aquest currículum i l'oferta de feina a {provider} amb la vostra clau, només quan premeu enviar."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume to {provider} with your key, only when you press send."
-msgstr "Envia aquest currículum a {provider} amb la vostra clau, només quan premeu enviar."
-
 #: src/features/homepage/remember.tsx
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Envia aquesta història i els fets activats a la vostra connexió d'IA. Sense connexió, no s'envia res."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message and the posting to {provider} with your key, only when you press send."
-msgstr "Envia el vostre missatge i la publicació de feina a {provider} amb la vostra clau, només quan premeu enviar."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Envia el teu missatge i aquesta candidatura (anunci, notes, documents, les teves respostes del formulari, l'oferta desada i els missatges recents) a {label}."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message to {provider} with your key, only when you press send."
-msgstr "Envia el vostre missatge a {provider} amb la vostra clau, només quan premeu enviar."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Envia el teu missatge, els missatges anteriors d'aquí i aquesta candidatura (anunci, notes, documents, les teves respostes del formulari, l'oferta desada i els missatges recents) a {label}."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Envia el teu missatge, els missatges anteriors d'aquí, aquesta candidatura (oferta de feina, notes, documents, les teves respostes als formularis, l'oferta desada i els missatges recents) i els Coneixements activats a {label}."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Envia el teu missatge, aquesta candidatura (oferta de feina, notes, documents, les teves respostes als formularis, l'oferta desada i els missatges recents) i els Coneixements activats a {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/resume/editor/check/writing-tab.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Envia el text del vostre currículum només a {0} · {1}, amb la vostra clau."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -15273,6 +15093,10 @@ msgstr "Algunes comprovacions necessiten informació que aquest fitxer no conté
 msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
 msgstr "Alguns esborranys no s’han pogut completar. Conserva els completats abans de tornar-ho a provar."
 
+#: src/libs/error-message.ts
+msgid "Some fonts are missing from this server's font mirror. Ask the administrator to add them."
+msgstr "Falten algunes fonts al mirall de fonts d'aquest servidor. Demaneu a l'administrador que les afegeixi."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Alguns glifs no tenen cap significat fora d'aquest fitxer."
@@ -15836,8 +15660,8 @@ msgid "Switched to one column"
 msgstr "S'ha canviat a una columna"
 
 #: src/features/resume/builder/draft.ts
-msgid "Synced changes made in another tab."
-msgstr "Canvis sincronitzats fets en una altra pestanya."
+msgid "Synced changes made elsewhere."
+msgstr "S'han sincronitzat canvis fets en un altre lloc."
 
 #. Appearance theme option that follows the operating system
 #: src/features/user/dropdown-menu.tsx
@@ -16257,17 +16081,9 @@ msgstr "El lector integrat roman actiu."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Els controls són mecànics. Això pregunta a un model d'idioma com pot reaccionar un lector a les entrades de la vostra llista i suggereix reescriptures. No forma part de la puntuació."
 
-#: src/features/career/coach-thread.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "L'orientador pregunta abans de recordar els fets que dius."
-
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "L'orientador no recorda res dels vostres missatges."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "L'orientador no recorda res del que escrius."
 
 #: src/features/career/coach.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers and your applications work without it."
@@ -16280,10 +16096,6 @@ msgstr "L'orientador proposa cada fet al xat. No es desa res fins que hi esteu d
 #: src/features/career/workspace/shell.tsx
 msgid "The coach reads these for this application only."
 msgstr "L'orientador només ho llegeix per a aquesta candidatura."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "L'orientador recorda els fets que dius, i t'ho fa saber."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -16309,17 +16121,9 @@ msgstr "La còpia rep l'anunci de la feina i manté aquest currículum tal com �
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "La còpia està enllaçada a la sol·licitud de feina, de manera que Check i l'assistent utilitzen la seva publicació de feina."
 
-#: src/features/career/disclosure.tsx
-msgid "the cover letter for this job"
-msgstr "la carta de presentació d'aquesta feina"
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The employer may have changed it since."
 msgstr "L'empresa pot haver-lo canviat des d'aleshores."
-
-#: src/features/career/disclosure.tsx
-msgid "the employer's message"
-msgstr "el missatge de l'empresa"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end date is before the start date. Check both dates."
@@ -16341,10 +16145,6 @@ msgstr "No s'ha pogut llegir el fitxer com a currículum."
 msgid "The greeting follows the name."
 msgstr "La salutació segueix el nom."
 
-#: src/features/career/disclosure.tsx
-msgid "the interview details"
-msgstr "els detalls de l'entrevista"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "La clau està xifrada al servidor i no es mostra mai més. Desar prova la connexió."
@@ -16352,10 +16152,6 @@ msgstr "La clau està xifrada al servidor i no es mostra mai més. Desar prova l
 #: src/features/settings/ai/test-error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "S'ha rebutjat la clau. Comprova-la i torna a provar-ho."
-
-#: src/features/career/disclosure.tsx
-msgid "the last messages"
-msgstr "els últims missatges"
 
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
@@ -16494,14 +16290,6 @@ msgstr "El proveïdor ha retornat una ressenya que no s'ha pogut llegir. Torna-h
 msgid "The provider's response couldn't be verified. Try again."
 msgstr "No s'ha pogut verificar la resposta del proveïdor. Torneu-ho a provar."
 
-#: src/features/career/disclosure.tsx
-msgid "the question and what you said"
-msgstr "la pregunta i el que has dit"
-
-#: src/features/career/disclosure.tsx
-msgid "the question and your answer"
-msgstr "la pregunta i la teva resposta"
-
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Es manté el motiu d'Insights. Els documents enllaçats no es toquen."
@@ -16518,10 +16306,6 @@ msgstr "el currículum"
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "El currículum tal com és"
-
-#: src/features/career/disclosure.tsx
-msgid "the resume for this job"
-msgstr "el currículum d'aquesta feina"
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
@@ -16542,10 +16326,6 @@ msgstr "La clau desada no s'envia a un URL base nou. Torneu a introduir la clau 
 #: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "La clau desada no s'envia a un URL base nou. Torneu a introduir la clau."
-
-#: src/features/career/disclosure.tsx
-msgid "the saved offer"
-msgstr "l'oferta desada"
 
 #: src/libs/error-message.ts
 msgid "The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer."
@@ -16948,10 +16728,6 @@ msgstr "Aquest PDF sembla malmès. Exporta'l de nou des del teu editor i tria el
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr "Aquesta foto pesa més de 10 MB. Utilitza Retalla i penja per reduir-la."
 
-#: src/features/career/disclosure.tsx
-msgid "this posting"
-msgstr "aquest anunci"
-
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr "Aquesta pregunta no s'ha pogut fer. Envia un missatge nou per continuar."
@@ -17294,6 +17070,7 @@ msgstr "Traduït a {languageCount} idiomes."
 msgid "Translations"
 msgstr "Traduccions"
 
+#: src/components/layout/trash-nav.tsx
 #: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
@@ -18517,10 +18294,6 @@ msgstr "Quan hauria de fer el seguiment, i què hauria de dir?"
 msgid "When would you start?"
 msgstr "Quan començaries?"
 
-#: src/features/career/coach.tsx
-msgid "When you press send, {shared} go to your {connection}."
-msgstr "Quan premeu Envia, {shared} s'envien a {connection}."
-
 #: src/features/applications/components/insights-view.tsx
 msgid "Where applications come from"
 msgstr "D'on provenen les sol·licituds"
@@ -18615,10 +18388,6 @@ msgstr "El meu currículum superarà els sistemes de seguiment dels sol·licitan
 #: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr "Disposat a traslladar-te"
-
-#: src/features/career/coach-thread.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "Amb els Coneixements desactivats, res del que escrius no es recorda."
 
 #: src/features/homepage/remember.tsx
 msgid "Within a quarter, activation went from 31% to 44%."
@@ -18975,10 +18744,6 @@ msgstr "La vostra IA"
 msgid "Your AI connection"
 msgstr "La vostra connexió d'IA"
 
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "your AI provider"
-msgstr "el teu proveïdor d'IA"
-
 #: src/libs/orpc/ai-consent.ts
 msgid "Your AI settings changed. Nothing was sent; try again."
 msgstr "La configuració de la IA ha canviat. No s'ha enviat res; torna-ho a provar."
@@ -19020,10 +18785,6 @@ msgstr "El vostre navegador"
 msgid "Your browser can't take dictation here. Type your answer instead."
 msgstr "El navegador no admet el dictat aquí. Escriviu la resposta."
 
-#: src/features/career/workspace/practise.tsx
-msgid "Your browser turns your speech into text. Depending on the browser, its maker may process the audio (Google in Chrome, Apple in Safari)."
-msgstr "El navegador converteix la vostra veu en text. Segons el navegador, el fabricant pot processar l'àudio (Google a Chrome, Apple a Safari)."
-
 #: src/features/letters/webmcp.ts
 msgid "Your browser's AI agent edited this letter."
 msgstr "L'agent d'IA del vostre navegador ha editat aquesta carta."
@@ -19056,10 +18817,6 @@ msgstr "Els teus canvis s'han conservat a «{name}»."
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Les teves dades de contacte no són a la primera pàgina."
-
-#: src/features/career/disclosure.tsx
-msgid "your contacts"
-msgstr "els teus contactes"
 
 #: src/features/settings/account/data.tsx
 msgid "Your data"
@@ -19130,10 +18887,6 @@ msgstr "El teu fitxer"
 msgid "Your focus"
 msgstr "El vostre focus"
 
-#: src/features/career/disclosure.tsx
-msgid "your form answers"
-msgstr "les teves respostes del formulari"
-
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your guest documents and applications are in this account."
 msgstr "Els teus documents i candidatures de convidat són en aquest compte."
@@ -19174,10 +18927,6 @@ msgstr "La teva ubicació ha canviat al currículum. La carta també s'ha actual
 msgid "Your margins are very narrow."
 msgstr "Els teus marges són molt estrets."
 
-#: src/features/career/coach.tsx
-msgid "your message"
-msgstr "el vostre missatge"
-
 #: src/features/assistant/conversation.tsx
 msgid "Your message is kept."
 msgstr "El teu missatge es conserva."
@@ -19199,7 +18948,6 @@ msgstr "El teu nom ha canviat al currículum. La carta també s'ha actualitzat."
 msgid "Your name is missing"
 msgstr "Falta el teu nom"
 
-#: src/features/career/disclosure.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "les vostres notes"
@@ -19224,11 +18972,6 @@ msgstr "El teu número de telèfon ha canviat al currículum. La carta també s'
 msgid "Your phone number is written in an unusual shape."
 msgstr "El teu número de telèfon està escrit d'una forma inusual."
 
-#: src/features/career/coach.tsx
-#: src/features/career/disclosure.tsx
-msgid "your preferences"
-msgstr "les vostres preferències"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "el vostre proveïdor"
@@ -19240,11 +18983,6 @@ msgstr "El teu proveïdor pot cobrar al teu compte les sol·licituds fetes amb l
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"
 msgstr "Els teus enllaços públics canviaran"
-
-#. placeholder {0}: voice.settings.transcribe.label
-#: src/features/career/workspace/practise.tsx
-msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
-msgstr "La gravació s'envia a {0} per transcriure-la, cosa que pot consumir tokens d'aquest compte."
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
@@ -19345,10 +19083,6 @@ msgstr "El teu enllaç curt indica que aquest currículum no està compartit fin
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."
 msgstr "Les vostres etapes han canviat en un altre lloc. S'han actualitzat; torneu-ho a provar."
-
-#: src/features/career/coach.tsx
-msgid "your stories"
-msgstr "les vostres històries"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."

@@ -16,7 +16,11 @@ beforeEach(() => {
 		"AI_BASE_URL",
 		"REDIS_URL",
 		"WEB_FONT_BASE_URL",
+		"FONT_MIRROR_URL",
 		"STORAGE_HEALTHCHECK_TIMEOUT_MS",
+		"AI_AGENT_STEP_TIMEOUT_MS",
+		"AI_AGENT_RUN_TIMEOUT_MS",
+		"VERCEL",
 	])
 		vi.stubEnv(name, undefined);
 });
@@ -39,6 +43,28 @@ afterEach(() => {
 });
 
 describe("web font mirror configuration", () => {
+	it("normalizes the complete mirror without changing the legacy setting", async () => {
+		vi.stubEnv("FONT_MIRROR_URL", " https://fonts.example.com/resume/// ");
+		vi.stubEnv("WEB_FONT_BASE_URL", "https://old.example.com/cm");
+		const { env } = await import("./server");
+		expect(env.FONT_MIRROR_URL).toBe("https://fonts.example.com/resume");
+		expect(env.WEB_FONT_BASE_URL).toBe("https://old.example.com/cm");
+	});
+	it("accepts an HTTP full mirror", async () => {
+		vi.stubEnv("FONT_MIRROR_URL", "http://fonts.example.com/resume");
+		expect((await import("./server")).env.FONT_MIRROR_URL).toBe("http://fonts.example.com/resume");
+	});
+	it.each([
+		"https://user:password@fonts.example.com",
+		"/fonts",
+		"https://fonts.example.com?token=a",
+		"https://fonts.example.com#fonts",
+		"file:///fonts",
+	])("rejects a full mirror that cannot be shared with clients: %s", async (value) => {
+		vi.stubEnv("FONT_MIRROR_URL", value);
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
 	it.each([undefined, "", "https://fonts.example.com", "https://fonts.example.com/cm/", "http://localhost:8080"])(
 		"accepts %s",
 		async (value) => {
@@ -127,6 +153,65 @@ describe("storage health check timeout", () => {
 
 	it.each(["0", "-1", "1.5", "not-a-number", "2147483648"])("rejects invalid timer duration %s", async (value) => {
 		vi.stubEnv("STORAGE_HEALTHCHECK_TIMEOUT_MS", value);
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
+});
+
+describe("Assistant timeout budgets", () => {
+	it.each([undefined, ""])(
+		"defaults to two minutes per step and four minutes per run when unset or blank (%s)",
+		async (value) => {
+			vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", value);
+			vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", value);
+			const { env } = await import("./server");
+			expect(env.AI_AGENT_STEP_TIMEOUT_MS).toBe(120_000);
+			expect(env.AI_AGENT_RUN_TIMEOUT_MS).toBe(240_000);
+		},
+	);
+
+	it("accepts custom step and run timeouts in milliseconds", async () => {
+		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", "300000");
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "600000");
+		const { env } = await import("./server");
+		expect(env.AI_AGENT_STEP_TIMEOUT_MS).toBe(300_000);
+		expect(env.AI_AGENT_RUN_TIMEOUT_MS).toBe(600_000);
+	});
+
+	it("rejects a run timeout above the self-hosted maximum", async () => {
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "600001");
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
+
+	it("rejects a run timeout that leaves no cleanup minute inside the Vercel function limit", async () => {
+		// Padded like deploymentEnvironment accepts, so the cap can't miss a Vercel deployment.
+		vi.stubEnv("VERCEL", " 1 ");
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "240001");
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
+
+	it("rejects a step timeout above Node's 300-second fetch limit", async () => {
+		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", "300001");
+		vi.stubEnv("AI_AGENT_RUN_TIMEOUT_MS", "600000");
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+	});
+
+	it("rejects a step timeout above the run timeout", async () => {
+		vi.stubEnv("AI_AGENT_STEP_TIMEOUT_MS", "300000");
+		await expect(import("./server")).rejects.toThrow(
+			"AI_AGENT_STEP_TIMEOUT_MS must not exceed AI_AGENT_RUN_TIMEOUT_MS",
+		);
+	});
+
+	it.each(
+		["AI_AGENT_STEP_TIMEOUT_MS", "AI_AGENT_RUN_TIMEOUT_MS"].flatMap((name) =>
+			["0", "-1", "1.5", "not-a-number"].map((value) => [name, value]),
+		),
+	)("rejects invalid %s %s", async (name, value) => {
+		vi.stubEnv(name, value);
 		vi.spyOn(console, "error").mockImplementation(() => {});
 		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
 	});

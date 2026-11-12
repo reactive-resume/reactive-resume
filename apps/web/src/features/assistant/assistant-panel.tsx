@@ -312,7 +312,6 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						document={document}
 						context={context}
 						onContextChange={setContext}
-						providerLabel={providerLabel}
 						streaming={starting}
 						disabled={false}
 						notice={document.locked ? <LockedNotice document={document} /> : undefined}

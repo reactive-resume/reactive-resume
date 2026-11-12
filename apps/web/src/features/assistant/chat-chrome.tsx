@@ -116,6 +116,7 @@ export function ChatComposer(props: ChatComposerProps) {
 					icon="keyboard"
 					label={t`Keyboard shortcuts`}
 					size="icon-sm"
+					className="pointer-coarse:hidden"
 					onClick={() => showKeyboardShortcuts()}
 				/>
 				<Button

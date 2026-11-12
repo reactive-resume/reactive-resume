@@ -46,7 +46,8 @@ type TodayPageProps = { schedule: string | undefined; onScheduleChange: (schedul
 
 /**
  * Career → Today: what needs you, roles found by discovery, the next interview and the schedules that produce them.
- * Below 1024px it's one column: Coming up, Needs you, New roles, Schedules.
+ * Below 1024px it's one column: Coming up, Needs you, New roles, Schedules. Phones drop Coming up: stacked above
+ * Needs you it repeats the same interviews and offers.
  */
 export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 	const { session } = useRouteContext({ strict: false });
@@ -92,7 +93,7 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 			</div>
 			{/* Starts level with the first card on the left, below the "Needs you" heading (24px line + 10px gap). */}
 			<div className="contents lg:flex lg:flex-col lg:gap-[18px] lg:pt-[34px]">
-				<ComingUp now={now} className="order-1 lg:order-none" />
+				<ComingUp now={now} className="order-1 max-sm:hidden lg:order-none" />
 				<Schedules deleted={deleted} onOpenSchedule={onScheduleChange} className="order-4 lg:order-none" />
 			</div>
 			<ScheduleSheet
@@ -824,7 +825,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 				}}
 			/>
 		);
-	if (applicationQuery.isPending) return <Skeleton className="h-36 rounded-xl" />;
+	if (applicationQuery.isPending) return <Skeleton className={cn("h-36 rounded-xl", className)} />;
 	const events = upcomingApplicationEvents(
 		applications ?? [],
 		offerQuery.data ? latestOfferHints(offerQuery.data) : undefined,

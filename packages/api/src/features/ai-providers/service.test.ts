@@ -277,6 +277,28 @@ describe("aiProvidersService", () => {
 			);
 		}
 	});
+
+	it("leaves the saved state alone when the caller abandons a test", async () => {
+		queryState.rows = [providerRow()];
+		const controller = new AbortController();
+		vi.mocked(testConnection).mockImplementation(async () => {
+			controller.abort();
+			return { ok: false, message: "This operation was aborted", kind: "unknown" };
+		});
+		await expect(
+			aiProvidersService.test({ id: "provider-1", userId: "user-1", signal: controller.signal }),
+		).rejects.toThrow();
+		expect(dbMock.update().set).not.toHaveBeenCalledWith(expect.objectContaining({ testStatus: "failure" }));
+	});
+
+	it("records a failure the provider reported while the caller is still waiting", async () => {
+		queryState.rows = [providerRow()];
+		vi.mocked(testConnection).mockResolvedValue({ ok: false, message: "Invalid API key", kind: "unknown" });
+		await aiProvidersService.test({ id: "provider-1", userId: "user-1", signal: new AbortController().signal });
+		expect(dbMock.update().set).toHaveBeenCalledWith(
+			expect.objectContaining({ enabled: false, testStatus: "failure", testError: "Invalid API key" }),
+		);
+	});
 });
 
 it("keeps a deliberately switched-off provider off after a passing health check", async () => {

@@ -235,7 +235,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 						{generate.isPending ? <Working steps={workingSteps("debrief")} /> : <Trans>Review my answer</Trans>}
 					</Button>
 					<GenerateNotice generate={generate} onRetry={submit} />
-					<AiNotice task="debrief" application={application} interview={Boolean(round)} />
+					<AiNotice />
 				</div>
 			)}
 		</section>
@@ -465,9 +465,6 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 					<Trans>Add to calendar</Trans>
 				</Button>
 			)}
-			<p className="text-xs leading-[17px] text-ink-3">
-				<Trans>Practice priorities, not conclusions about why an employer decided anything.</Trans>
-			</p>
 		</aside>
 	);
 }

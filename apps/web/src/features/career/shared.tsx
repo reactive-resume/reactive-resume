@@ -451,7 +451,7 @@ export function FilterChip({ pressed, onClick, children, className }: FilterChip
 			aria-pressed={pressed}
 			onClick={onClick}
 			className={cn(
-				"touch-target inline-flex h-[30px] items-center rounded-sm border px-2.5 text-xs font-medium transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
+				"touch-target relative inline-flex h-[30px] items-center rounded-sm border px-2.5 text-xs font-medium transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
 				// Accent marks a selection, as in the template filter (DESIGN.md).
 				pressed ? "border-accent bg-accent-soft text-accent-text" : "border-line-2 text-ink hover:bg-hover",
 				className,
@@ -482,7 +482,7 @@ export function ContextChip({ pressed, onPressedChange, label, tooltip, offIcon 
 						aria-pressed={pressed}
 						onClick={() => onPressedChange(!pressed)}
 						className={cn(
-							"touch-target inline-flex h-7 items-center gap-1 rounded-sm border px-[9px] text-xs font-medium transition-[background-color,border-color,color] duration-quick",
+							"touch-target relative inline-flex h-7 items-center gap-1 rounded-sm border px-[9px] text-xs font-medium transition-[background-color,border-color,color] duration-quick",
 							pressed ? "border-line-2 bg-sunken text-ink" : "border-line text-ink-3 hover:text-ink-2",
 						)}
 					/>

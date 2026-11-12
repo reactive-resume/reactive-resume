@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 const mocks = vi.hoisted(() => ({
-	env: { APP_URL: "https://rxresu.me" },
+	env: { APP_URL: "https://rxresu.me", FONT_MIRROR_URL: undefined as string | undefined },
 	serveStatic: vi.fn(() => vi.fn()),
 }));
 
@@ -25,7 +25,20 @@ vi.mock("@reactive-resume/env/server", () => ({
 	env: mocks.env,
 }));
 
-const { handleWebApp, isPublicResumePath } = await import("./web");
+const { handleWebApp, isPublicResumePath, contentSecurityPolicy } = await import("./web");
+
+it("builds font-src with the application and configured mirror origins", () => {
+	mocks.env.FONT_MIRROR_URL = "http://fonts.example.test:8080/resume";
+	try {
+		const policy = contentSecurityPolicy();
+		expect(policy.split("; ").find((part) => part.startsWith("font-src"))).toBe(
+			"font-src 'self' data: http://fonts.example.test:8080",
+		);
+		expect(policy).toContain("connect-src 'self' data: blob: https: http://fonts.example.test:8080");
+	} finally {
+		mocks.env.FONT_MIRROR_URL = undefined;
+	}
+});
 
 const searchLink =
 	'<https://context7.com/api/v2/ask?siteKey=ask_b3fd9335a63f1b21b1a814ac>; rel="search"; type="text/plain"; title="Search rxresu.me"';

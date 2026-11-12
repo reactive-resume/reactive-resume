@@ -4,7 +4,9 @@
 	"type": "module",
 	"private": true,
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/index.ts",
+		"./sources": "./src/sources.ts",
+		"./files": "./src/files.ts"
 	},
 	"scripts": {
 		"typecheck": "tsrs --noEmit",
@@ -13,7 +15,8 @@
 		"test:ci": "vp test run --reporter=default --reporter=github-actions --reporter=json --reporter=junit --outputFile.json=reports/vitest-results.json --outputFile.junit=reports/vitest-junit.xml --passWithNoTests"
 	},
 	"dependencies": {
-		"@reactive-resume/utils": "workspace:*"
+		"@reactive-resume/utils": "workspace:*",
+		"fflate": "catalog:"
 	},
 	"devDependencies": {
 		"@reactive-resume/config": "workspace:*",

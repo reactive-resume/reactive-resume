@@ -211,12 +211,10 @@ msgstr "{0, plural, one {# düzenlemesi yerleştirilemedi: metni değiştirildi.
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# kayıt} other {# kayıt}}"
 
-#. placeholder {0}: knowledge.active.length
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: used.facts.length
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
-#: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# bilgi} other {# bilgi}}"
 
@@ -290,13 +288,6 @@ msgstr "{0, plural, one {# hikaye} other {# hikaye}}"
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {Bilgi Bankasına # bilgi eklendi.} other {Bilgi Bankasına # bilgi eklendi.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {Ayrıca {1} dosyasını da gönderir.} other {Ayrıca # dosya gönderir: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -426,8 +417,8 @@ msgstr "{0} — {1}"
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
-msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{0} · {providerLabel}. Bu başvuruyu ve Bilgi Bankanızı gönderir; sağlayıcınız ücret alabilir."
+msgid "{0} · {providerLabel}"
+msgstr "{0} · {providerLabel}"
 
 #. Mode tab tooltip: the mode, then the key that opens it
 #. placeholder {0}: labels[mode]
@@ -637,14 +628,6 @@ msgstr "{added, plural, one {# yeni veya yeniden yazılmış cümle} other {# ye
 #: src/features/career/workspace/apply.tsx
 msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# cevap} other {# cevap}}"
-
-#: src/features/career/coach.tsx
-msgid "{attached, plural, one {# attached file} other {# attached files}}"
-msgstr "{attached, plural, one {# ekli dosya} other {# ekli dosya}}"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "{attached, plural, one {The attached file goes too.} other {The # attached files go too.}}"
-msgstr "{attached, plural, one {Ekli dosya da gider.} other {# ekli dosya da gider.}}"
 
 #: src/features/resume/editor/design/fit.ts
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
@@ -2168,12 +2151,6 @@ msgstr "ENCRYPTION_SECRET ayarlanana kadar AI sağlayıcıları bu sunucuda kull
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI sağlayıcıları yüklenemedi. Tekrar denemek için yeniden yükleyin."
 
-#. placeholder {0}: read?.label
-#. placeholder {1}: read?.model
-#: src/features/documents/new-document-dialog.tsx
-msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
-msgstr "Yapay zeka okuma işlemi bu dosyanın içeriğini {0} · {1} tarafına gönderir. Sağlayıcınız ücret uygulayabilir."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -2189,10 +2166,6 @@ msgstr "Bu sonuç için yapay zekâ istek geçmişi kullanılamıyor."
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr "Yapay zeka ayarları"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "Yapay zeka önerileridir; doğrulanmış nitelikler ya da işe alım tahminleri değildir. Aşağıdaki kaynaklar sizin ifadelerinizdir."
 
 #: src/features/settings/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -2337,10 +2310,6 @@ msgstr "Ayrıca becerilere, profillere ve ilgi alanlarına ilişkin simgeleri de
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "Amharca"
-
-#: src/features/resume/editor/proposals/proposal-list.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "Düzenlemenize yardımcı olan bir yapay zeka okumasıdır; bir işverenin ya da ön eleme sisteminin nasıl karşılık vereceğine dair bir tahmin değildir."
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "An edit addresses it"
@@ -2570,10 +2539,6 @@ msgstr "Başvuru hazırlığı"
 msgid "Application progress"
 msgstr "Başvuru ilerlemesi"
 
-#: src/features/career/coach.tsx
-msgid "application summaries"
-msgstr "başvuru özetleri"
-
 #: src/features/homepage/prepare.tsx
 msgid "Application tabs"
 msgstr "Başvuru sekmeleri"
@@ -2583,14 +2548,13 @@ msgstr "Başvuru sekmeleri"
 msgid "Application updated"
 msgstr "Başvuru güncellendi"
 
+#: src/components/layout/trash-nav.tsx
 #: src/features/applications/components/list-view.tsx
-#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
@@ -3355,11 +3319,6 @@ msgstr "Sertifikalar"
 msgid "Change"
 msgstr "Değiştirmek"
 
-#: src/features/career/coach-thread.tsx
-msgctxt "Change what the coach remembers"
-msgid "Change"
-msgstr "Değiştir"
-
 #: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Change connection"
@@ -3908,6 +3867,7 @@ msgstr "kapalı"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/documents/documents-page.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Closed"
 msgstr "Kapalı"
 
@@ -6005,10 +5965,9 @@ msgstr "Belge türü"
 msgid "Documentation"
 msgstr "Dökümantasyon"
 
-#: src/features/applications/trash-page.tsx
+#: src/components/layout/trash-nav.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
-#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -6325,10 +6284,6 @@ msgstr "Geri bildirim aldığınız her cevap burada saklanır, en yenisi önce.
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "İlandaki her gereksinim, Bilgi Bankanızdaki bilgiler ve hikayelerle karşılaştırılır. Boşluklar yetenek eksikliği olarak değil, yalnızca kanıt eksikliği olarak gösterilir."
 
-#: src/features/assistant/conversation.tsx
-msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
-msgstr "Her gönderim bu mesajla ve seçilen dosyalarla yeniden başlar. Önceki görüşme geçmişi burada kalır."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Each visitor counts once an hour."
 msgstr "Her ziyaretçi saatte bir kez sayılır."
@@ -6340,10 +6295,6 @@ msgstr "Önceki keşif sonucu. Arama sorgusu ve ilan kontrol zamanı bilinmiyor.
 #: src/libs/orpc/ai-consent.ts
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Yeniden gönder yaptığınızda, bu konuşmadaki önceki mesajlar ve ekler bu hedefe gönderilir."
-
-#: src/features/career/coach.tsx
-msgid "earlier messages in this chat"
-msgstr "bu sohbetteki önceki mesajlar"
 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -6596,10 +6547,6 @@ msgstr "Çöp Kutusu boşaltılsın mı?"
 #: src/features/documents/trash-page.tsx
 msgid "Empty Trash…"
 msgstr "Çöp Kutusu'nu boşalt…"
-
-#: src/features/career/disclosure.tsx
-msgid "enabled Knowledge"
-msgstr "etkin Bilgiler"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -8373,14 +8320,6 @@ msgstr "Sorunlar"
 msgid "Issues and Job match still work without AI."
 msgstr "Sorunlar ve İş eşleştirme yapay zeka olmadan da çalışmaya devam ediyor."
 
-#: src/features/assistant/conversation.tsx
-msgid "It can also search Knowledge available to this application (facts and stories) and send what it finds."
-msgstr "Ayrıca bu başvurunun erişebildiği Bilgi Bankası'nı (bilgiler ve hikayeler) arayabilir ve bulduklarını gönderebilir."
-
-#: src/features/assistant/conversation.tsx
-msgid "It can also search your shared Knowledge (facts and stories) and send what it finds."
-msgstr "Ayrıca paylaştığınız Bilgi Bankası'nı (bilgiler ve hikayeler) arayabilir ve bulduklarını gönderebilir."
-
 #: src/features/resume/editor/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "Girişleri var ancak bir sayfaya yerleştirilmiyor."
@@ -8436,10 +8375,6 @@ msgstr "Mesajları ve ekleri silinir. Kabul ettiğiniz düzenlemeler belgede kal
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Its own design ({summary})."
 msgstr "Kendi tasarımı ({summary})."
-
-#: src/features/career/disclosure.tsx
-msgid "its requirements"
-msgstr "gereksinimleri"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -9738,11 +9673,6 @@ msgstr "Mesajlar · Fieldnote'tan Sam'e yanıt"
 #: src/features/career/coach-chat.tsx
 msgid "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Yukarıdaki mesajlar artık yapay zekaya gönderilmiyor, bu yüzden onları hatırlamaz. Bağlamı birlikte tutmak için yeni bir konuşma başlatın."
-
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Bilgi Bankası değişmeden önceki mesajlar gönderilmez."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Microphone blocked. Allow it in your browser settings, or type your answer."
@@ -12031,7 +11961,6 @@ msgstr "{company} görüşmeleriniz için pratik."
 msgid "Practice in {company}’s workspace"
 msgstr "{company} çalışma alanında pratik yap"
 
-#: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
 msgstr "Bunlar pratik öncelikleridir; bir işverenin neden bir karar verdiğine dair sonuçlar değildir."
@@ -12184,10 +12113,6 @@ msgstr "Önceki başvuru"
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Previous issue"
 msgstr "Önceki sayı"
-
-#: src/features/assistant/conversation.tsx
-msgid "Previous messages, including document details, are also sent."
-msgstr "Belge ayrıntılarını içeren önceki mesajlar da gönderilir."
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
@@ -14304,11 +14229,6 @@ msgstr "Ara veya bir komut çalıştır…"
 msgid "Search saved answers"
 msgstr "Kayıtlı cevapları ara"
 
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Arama terimleri web arama hizmetinize gider."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Web'de ara"
@@ -14525,113 +14445,13 @@ msgstr "Gönderenin ayrıntıları mektuba kopyalandı"
 msgid "Sending password reset email…"
 msgstr "Şifre sıfırlama e-postası gönderiliyor…"
 
-#: src/features/career/disclosure.tsx
-msgid "Sends {list} to {providerLabel}."
-msgstr "{list} verilerini {providerLabel} tarafına gönderir."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Yalnızca seçtiğiniz özgeçmişi ve en fazla 20 etkin paylaşımlı bilgiyi bu bağlantıya gönderir. Hiçbir başvuru profili, kayıtlı cevap ya da özel başvuru bilgisi gönderilmez. Sağlayıcınız ücret uygulayabilir."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the {0} posting to {1} to draft the body."
-msgstr "Gövdeyi taslaklamak için {0} ilanını {1} tarafına gönderir."
-
-#. placeholder {0}: draft?.label
-#. placeholder {1}: draft?.model
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
-msgstr "Bağlı özgeçmişi, ilanı ve mektup ayrıntılarını {0} · {1} tarafına gönderir. Sağlayıcınız ücret uygulayabilir."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "İlanı okumak için ilanın metnini {0} tarafına gönderir."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
 msgstr "Bu başvurunun ilanını, notlarını ve belgelerini, ayrıca etkinleştirilen Bilgi Bankası'nı bu bağlantıya gönderir. Sağlayıcınız bunun için ücret uygulayabilir. Zamanlanmış işler hiçbir zaman otomatik olarak başka bir bağlantıya geçmez."
 
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
-msgstr "Yalnızca gönder tuşuna bastığınızda bu mektubu ve iş ilanını anahtarınızla birlikte {provider}'ya gönderir."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter to {provider} with your key, only when you press send."
-msgstr "Bu mektubu yalnızca gönder tuşuna bastığınızda anahtarınızla birlikte {provider}'ya gönderir."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
-msgstr "Gövdeyi taslaklamak için bu mektubun özgeçmişini ve {0} ilanını {1} tarafına gönderir."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume to {0} to draft the body."
-msgstr "Gövdeyi taslaklamak için bu mektubun özgeçmişini {0} tarafına gönderir."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Bu satırı, çevresindeki alan metnini ve talimatlarınızı {0} · {1} tarafına gönderir."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Bu paragrafı, mektubun geri kalanını ve talimatlarınızı {0} · {1} hizmetine gönderir."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Bu paragrafı, mektubun geri kalanını, bağlantılı iş ilanını ve talimatlarınızı {0} · {1} hizmetine gönderir."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
-msgstr "Yalnızca gönder tuşuna bastığınızda bu özgeçmişi ve iş ilanını anahtarınızla birlikte {provider}'ya gönderir."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume to {provider} with your key, only when you press send."
-msgstr "Bu özgeçmişi yalnızca gönder tuşuna bastığınızda anahtarınızla birlikte {provider}'ya gönderir."
-
 #: src/features/homepage/remember.tsx
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Bu hikayeyi ve açık olan bilgileri yapay zeka bağlantınıza gönderir. Bağlantı yoksa hiçbir şey gönderilmez."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message and the posting to {provider} with your key, only when you press send."
-msgstr "Yalnızca gönder tuşuna bastığınızda mesajınızı ve iş ilanınızı anahtarınızla birlikte {provider}'ya gönderir."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Mesajınızı ve bu başvuruyu (ilan, notlar, belgeler, form cevaplarınız, kayıtlı teklif ve son mesajlar) {label} tarafına gönderir."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message to {provider} with your key, only when you press send."
-msgstr "Yalnızca gönder tuşuna bastığınızda mesajınızı anahtarınızla birlikte {provider}'ya gönderir."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Mesajınızı, buradaki önceki mesajları ve bu başvuruyu (ilan, notlar, belgeler, form cevaplarınız, kayıtlı teklif ve son mesajlar) {label} tarafına gönderir."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Mesajınızı, buradaki önceki mesajları, bu başvuruyu (ilan, notlar, belgeler, form yanıtlarınız, kaydedilmiş teklif ve son mesajlar) ve etkin Bilgileri {label} hizmetine gönderir."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Mesajınızı, bu başvuruyu (ilan, notlar, belgeler, form yanıtlarınız, kaydedilmiş teklif ve son mesajlar) ve etkin Bilgileri {label} hizmetine gönderir."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/resume/editor/check/writing-tab.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Özgeçmişinizin metnini anahtarınızla birlikte yalnızca {0} · {1} adresine gönderir."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -15273,6 +15093,10 @@ msgstr "Bazı kontroller bu dosyanın taşımadığı bilgilere ihtiyaç duyar: 
 msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
 msgstr "Bazı taslaklar tamamlanamadı. Yeniden denemeden önce tamamlanan taslakları saklayın."
 
+#: src/libs/error-message.ts
+msgid "Some fonts are missing from this server's font mirror. Ask the administrator to add them."
+msgstr "Bu sunucunun yazı tipi yansısında bazı yazı tipleri eksik. Yöneticiden bunları eklemesini isteyin."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Bazı glifler bu dosya dışında bir anlam taşımıyor."
@@ -15836,8 +15660,8 @@ msgid "Switched to one column"
 msgstr "Tek sütuna geçildi"
 
 #: src/features/resume/builder/draft.ts
-msgid "Synced changes made in another tab."
-msgstr "Başka bir sekmede yapılan değişiklikler senkronize edildi."
+msgid "Synced changes made elsewhere."
+msgstr "Başka bir yerde yapılan değişiklikler senkronize edildi."
 
 #. Appearance theme option that follows the operating system
 #: src/features/user/dropdown-menu.tsx
@@ -16257,17 +16081,9 @@ msgstr "Yerleşik okuyucu etkin kalır."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Kontroller mekaniktir. Bu, bir dil modeline okuyucunun liste girişlerinize nasıl tepki verebileceğini sorar ve yeniden yazma önerilerinde bulunur. Puanın bir parçası değil."
 
-#: src/features/career/coach-thread.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "Koç, belirttiğiniz bilgileri hatırlamadan önce size sorar."
-
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Koç mesajlarınızdan hiçbir şey hatırlamaz."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "Koç yazdığınız hiçbir şeyi hatırlamaz."
 
 #: src/features/career/coach.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers and your applications work without it."
@@ -16280,10 +16096,6 @@ msgstr "Koç her bilgiyi sohbette önerir. Siz onaylamadan hiçbir şey kaydedil
 #: src/features/career/workspace/shell.tsx
 msgid "The coach reads these for this application only."
 msgstr "Koç bunları yalnızca bu başvuru için okur."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "Koç, belirttiğiniz bilgileri hatırlar ve bunu size bildirir."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -16309,17 +16121,9 @@ msgstr "Kopya, işin ilanını alır; bu özgeçmiş diğer işler için olduğu
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "Kopya iş başvurusuna bağlı olduğundan Check ve asistan iş ilanını kullanır."
 
-#: src/features/career/disclosure.tsx
-msgid "the cover letter for this job"
-msgstr "bu iş için ön yazı"
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The employer may have changed it since."
 msgstr "İşveren o zamandan beri ilanı değiştirmiş olabilir."
-
-#: src/features/career/disclosure.tsx
-msgid "the employer's message"
-msgstr "işverenin mesajı"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end date is before the start date. Check both dates."
@@ -16341,10 +16145,6 @@ msgstr "Dosya özgeçmiş olarak okunamadı."
 msgid "The greeting follows the name."
 msgstr "Selamlama ismin ardından gelir."
 
-#: src/features/career/disclosure.tsx
-msgid "the interview details"
-msgstr "görüşme ayrıntıları"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Anahtar sunucuda şifrelenir ve bir daha asla gösterilmez. Kaydetme bağlantıyı test eder."
@@ -16352,10 +16152,6 @@ msgstr "Anahtar sunucuda şifrelenir ve bir daha asla gösterilmez. Kaydetme ba�
 #: src/features/settings/ai/test-error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "Anahtar reddedildi. Anahtarı kontrol edip yeniden test edin."
-
-#: src/features/career/disclosure.tsx
-msgid "the last messages"
-msgstr "son mesajlar"
 
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
@@ -16494,14 +16290,6 @@ msgstr "Sağlayıcı okunamayan bir inceleme döndürdü. Tekrar deneyin."
 msgid "The provider's response couldn't be verified. Try again."
 msgstr "Sağlayıcının yanıtı doğrulanamadı. Tekrar deneyin."
 
-#: src/features/career/disclosure.tsx
-msgid "the question and what you said"
-msgstr "soru ve söyledikleriniz"
-
-#: src/features/career/disclosure.tsx
-msgid "the question and your answer"
-msgstr "soru ve cevabınız"
-
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Nedeni Insights için tutulur. Bağlantılı belgelere dokunulmaz."
@@ -16518,10 +16306,6 @@ msgstr "özgeçmiş"
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "Özgeçmiş bu şekilde"
-
-#: src/features/career/disclosure.tsx
-msgid "the resume for this job"
-msgstr "bu iş için özgeçmiş"
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
@@ -16542,10 +16326,6 @@ msgstr "Kaydedilen anahtar yeni bir temel URL'ye gönderilmez. Bu sunucu bir ana
 #: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Kaydedilen anahtar yeni bir temel URL'ye gönderilmez. Anahtarı tekrar girin."
-
-#: src/features/career/disclosure.tsx
-msgid "the saved offer"
-msgstr "kayıtlı teklif"
 
 #: src/libs/error-message.ts
 msgid "The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer."
@@ -16948,10 +16728,6 @@ msgstr "Bu PDF bozuk görünüyor. Düzenleyicinizden yeniden dışa aktarın ve
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr "Bu fotoğraf 10 MB'dan büyük. Küçültmek için Kırp ve yükle'yi kullanın."
 
-#: src/features/career/disclosure.tsx
-msgid "this posting"
-msgstr "bu ilan"
-
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr "Bu soru sorulamadı. Devam etmek için yeni bir mesaj gönderin."
@@ -17294,6 +17070,7 @@ msgstr "{languageCount} dile çevrildi."
 msgid "Translations"
 msgstr "Çeviriler"
 
+#: src/components/layout/trash-nav.tsx
 #: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
@@ -18517,10 +18294,6 @@ msgstr "Ne zaman takip etmeliyim ve ne demeliyim?"
 msgid "When would you start?"
 msgstr "Ne zaman başlayabilirsiniz?"
 
-#: src/features/career/coach.tsx
-msgid "When you press send, {shared} go to your {connection}."
-msgstr "Gönder'e bastığınızda şunlar {connection} bağlantısına gider: {shared}."
-
 #: src/features/applications/components/insights-view.tsx
 msgid "Where applications come from"
 msgstr "Başvuruların geldiği yerler"
@@ -18615,10 +18388,6 @@ msgstr "Özgeçmişim aday takip sistemlerinden geçecek mi?"
 #: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr "Taşınmaya istekli"
-
-#: src/features/career/coach-thread.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "Bilgi Bankası kapalıyken yazdığınız hiçbir şey hatırlanmaz."
 
 #: src/features/homepage/remember.tsx
 msgid "Within a quarter, activation went from 31% to 44%."
@@ -18975,10 +18744,6 @@ msgstr "Yapay zekanız"
 msgid "Your AI connection"
 msgstr "Yapay zeka bağlantınız"
 
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "your AI provider"
-msgstr "yapay zeka sağlayıcınız"
-
 #: src/libs/orpc/ai-consent.ts
 msgid "Your AI settings changed. Nothing was sent; try again."
 msgstr "Yapay zeka ayarlarınız değişti. Hiçbir şey gönderilmedi; yeniden deneyin."
@@ -19020,10 +18785,6 @@ msgstr "Tarayıcınız"
 msgid "Your browser can't take dictation here. Type your answer instead."
 msgstr "Tarayıcınız burada sesle yazmayı desteklemiyor. Bunun yerine cevabınızı yazın."
 
-#: src/features/career/workspace/practise.tsx
-msgid "Your browser turns your speech into text. Depending on the browser, its maker may process the audio (Google in Chrome, Apple in Safari)."
-msgstr "Tarayıcınız konuşmanızı metne dönüştürür. Tarayıcıya bağlı olarak, üreticisi sesi işleyebilir (Chrome'da Google, Safari'de Apple)."
-
 #: src/features/letters/webmcp.ts
 msgid "Your browser's AI agent edited this letter."
 msgstr "Tarayıcınızdaki yapay zeka ajanı bu ön yazıyı düzenledi."
@@ -19056,10 +18817,6 @@ msgstr "Değişiklikleriniz “{name}” içinde korundu."
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "İletişim bilgileriniz ilk sayfada değil."
-
-#: src/features/career/disclosure.tsx
-msgid "your contacts"
-msgstr "kişileriniz"
 
 #: src/features/settings/account/data.tsx
 msgid "Your data"
@@ -19130,10 +18887,6 @@ msgstr "Dosyanız"
 msgid "Your focus"
 msgstr "Odağınız"
 
-#: src/features/career/disclosure.tsx
-msgid "your form answers"
-msgstr "form cevaplarınız"
-
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your guest documents and applications are in this account."
 msgstr "Misafir belgeleriniz ve başvurularınız bu hesapta."
@@ -19174,10 +18927,6 @@ msgstr "Özgeçmişteki konumunuz değişti. Mektup da güncellendi."
 msgid "Your margins are very narrow."
 msgstr "Kenar boşluklarınız çok dar."
 
-#: src/features/career/coach.tsx
-msgid "your message"
-msgstr "mesajınız"
-
 #: src/features/assistant/conversation.tsx
 msgid "Your message is kept."
 msgstr "Mesajınız korundu."
@@ -19199,7 +18948,6 @@ msgstr "Özgeçmişte adınız değişti. Mektup da güncellendi."
 msgid "Your name is missing"
 msgstr "Adınız eksik"
 
-#: src/features/career/disclosure.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "notlarınız"
@@ -19224,11 +18972,6 @@ msgstr "Özgeçmişte telefon numaranız değişti. Mektup da güncellendi."
 msgid "Your phone number is written in an unusual shape."
 msgstr "Telefon numaranız alışılmadık bir biçimde yazılmış."
 
-#: src/features/career/coach.tsx
-#: src/features/career/disclosure.tsx
-msgid "your preferences"
-msgstr "tercihleriniz"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "sağlayıcınız"
@@ -19240,11 +18983,6 @@ msgstr "Sağlayıcınız, API anahtarınızla yapılan istekler için hesabını
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"
 msgstr "Herkese açık bağlantılarınız değişecek"
-
-#. placeholder {0}: voice.settings.transcribe.label
-#: src/features/career/workspace/practise.tsx
-msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
-msgstr "Kaydınız yazıya dökülmek üzere {0} hizmetine gönderilir; bu, o hesaptaki token'ları kullanabilir."
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
@@ -19345,10 +19083,6 @@ msgstr "Kısa bağlantınız, bu özgeçmişin siz yeniden yayınlamadan paylaş
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."
 msgstr "Aşamalarınız başka bir yerde değiştirildi. Yenilendiler; tekrar deneyin."
-
-#: src/features/career/coach.tsx
-msgid "your stories"
-msgstr "hikayeleriniz"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."

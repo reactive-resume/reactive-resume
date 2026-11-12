@@ -15,14 +15,12 @@ import { supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { canUseCareerStory } from "@reactive-resume/schema/career-practice";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
-import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { formatFileSize } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { useSessionDraft } from "./hooks";
-import { MemoryCard } from "./knowledge/facts";
 import { ContextChip, useCareerTime, useNow, withQueryUndo } from "./shared";
 import { attachmentErrorMessages, fileToBase64 } from "@/features/assistant/chat";
 import { ChatComposer } from "@/features/assistant/chat-chrome";
@@ -144,7 +142,7 @@ export function deleteConversation(queryClient: QueryClient, id: string, hide: (
 // ---- The thread ----
 
 /** `attached` counts the files in the composer, which go with the message. */
-export type ChatHistory = { earlier: number; withheld: number; attached: number };
+type ChatHistory = { earlier: number; withheld: number; attached: number };
 
 export type Prompt = { text: string; attachments: ChatAttachment[]; used: Used };
 
@@ -455,36 +453,6 @@ export function Composer(props: ComposerProps) {
 
 // ---- Composer parts shared by Career → Coach and the workspace sheet ----
 
-/** What the coach may keep from this message, where the user types, with the mode one tap away. */
-export function MemoryNote({ knowledge }: { knowledge: boolean }) {
-	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
-	if (!profile) return null;
-	const note = !knowledge
-		? t`With Knowledge off, nothing you write is remembered.`
-		: {
-				ask: t`The coach asks before remembering facts you state.`,
-				auto: t`The coach remembers facts you state, and tells you.`,
-				off: t`The coach doesn't remember anything you write.`,
-			}[profile.memoryMode];
-	return (
-		<>
-			{note}{" "}
-			<Popover>
-				<PopoverTrigger
-					render={
-						<button type="button" className="font-medium text-ink-2 underline underline-offset-2 hover:text-ink" />
-					}
-				>
-					<Trans context="Change what the coach remembers">Change</Trans>
-				</PopoverTrigger>
-				<PopoverContent align="start" className="w-[min(420px,calc(100vw-2rem))] p-2">
-					<MemoryCard />
-				</PopoverContent>
-			</Popover>
-		</>
-	);
-}
-
 /** A failed configured service can still be retried through an explicitly approved native AI search. */
 export function useWebSearch(provider: RouterOutput["aiProviders"]["list"][number] | undefined) {
 	const status = useQuery(orpc.webAccess.status.queryOptions());
@@ -523,7 +491,7 @@ export function WebResearchChip({ status, pressed, onPressedChange, fallbackLabe
 			/>
 		);
 	const chip =
-		"touch-target inline-flex h-7 items-center gap-1 rounded-sm border border-dashed border-line px-[9px] text-xs font-medium text-ink-3";
+		"touch-target relative inline-flex h-7 items-center gap-1 rounded-sm border border-dashed border-line px-[9px] text-xs font-medium text-ink-3";
 	if (status.isPending || status.isError)
 		return (
 			<Tooltip>

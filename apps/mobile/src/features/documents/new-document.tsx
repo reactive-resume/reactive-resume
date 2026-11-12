@@ -691,10 +691,6 @@ export function NewDocument() {
 											disabled={busy}
 										/>
 									</View>
-									<Text
-										variant="caption"
-										color="ink2"
-									>{t`Sends this PDF to your configured AI provider instead of reading its text layer.`}</Text>
 									{ai.error && (
 										<Banner
 											tone="warn"

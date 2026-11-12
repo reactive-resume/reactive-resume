@@ -1,7 +1,7 @@
 # Reactive Resume: agent instructions
 
-This is the index for coding agents. It holds hard rules and pointers; detail lives in the linked files. The only other
-area guide is `apps/mobile/AGENTS.md`, read it before mobile work. Agent reference docs are in `.agents/docs/` (start at
+This is the index for coding agents. It holds hard rules and pointers; detail lives in the linked files. The other area
+guides are `apps/mobile/AGENTS.md` (read it before Expo work) and `apps/android/AGENTS.md` (native Android app). Agent reference docs are in `.agents/docs/` (start at
 its `README.md`); contributor docs are in `docs/contributing/`. Scripts and config win when a doc disagrees with them.
 
 <!-- caveman-begin -->
@@ -144,7 +144,8 @@ files).
 - `drizzle-kit` reads `DATABASE_URL` from the environment only; run it through the root `db:*` scripts.
 - Startup applies migrations and verifies the schema; `STRICT_SCHEMA_CHECK=true` makes drift fatal.
 - `.env.example` ships SeaweedFS S3 defaults: run SeaweedFS or set `STORAGE_BACKEND=local`.
-- Without SMTP, emails (verification links included) are printed to the server log.
+- Without SMTP no email is sent. Production logs only the recipient and subject; `pnpm dev` prints the full email,
+  links included.
 - Vercel module-loading failures: bundle CommonJS server dependencies through `bundledInteropPackages` in
   `apps/server/tsdown.config.ts`; Vercel's service builder drops their pnpm links.
 - Playwright starts `node apps/server/dist/index.mjs` directly; build first, and keep that direct command.

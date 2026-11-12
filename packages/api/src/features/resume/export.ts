@@ -36,7 +36,7 @@ export async function createResumePdfDownload(input: CreateResumePdfDownloadInpu
 			body,
 		};
 	} catch (error) {
-		if (error instanceof Error && error.cause === "pdf-text-loss") {
+		if (error instanceof Error && (error.cause === "pdf-text-loss" || error.cause === "pdf-font-mirror")) {
 			throw new ORPCError("BAD_REQUEST", { message: error.message });
 		}
 		console.error("[PDF API] Failed to render resume PDF", { resumeId: input.id, error });

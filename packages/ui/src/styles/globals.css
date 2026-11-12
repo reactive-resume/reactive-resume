@@ -10,6 +10,9 @@
 @import "@phosphor-icons/web/regular/style.css";
 @import "./typeset.css";
 
+/* `focus-visible:` utilities follow the same keyboard-only rule as the global focus ring below. */
+@custom-variant focus-visible (&:focus-visible:not([data-pointer] *));
+
 @source "../**/*.{ts,tsx}";
 @source "../../../../apps/**/*.{ts,tsx}";
 
@@ -220,10 +223,19 @@
 		@apply font-display;
 	}
 
-	/* A 2px accent ring with a 2px gap on every interactive element; never removed. */
-	:focus-visible {
+	/*
+	 * A 2px accent ring with a 2px gap on every interactive element while navigating by keyboard. After a tap or click
+	 * the app sets `data-pointer` on <html> (apps/web/src/libs/input-modality.ts), so focus the app moves itself shows
+	 * no ring.
+	 */
+	:focus-visible:not([data-pointer] *) {
 		outline: 2px solid var(--accent);
 		outline-offset: 2px;
+	}
+
+	/* The browser's own ring too: its default style would otherwise take over. */
+	[data-pointer] :focus-visible {
+		outline: none;
 	}
 
 	input[type="number"] {

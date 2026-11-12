@@ -45,7 +45,7 @@ export function PrepareNow({ applicationId, interviewId, now }: PrepareNowProps)
 			<Text variant="caption" color="ink3">
 				{when(round.at)}
 			</Text>
-			<AiNotice task="briefing" application={application.data} interview />
+			<AiNotice />
 			<Button
 				variant="secondary"
 				label={t`Generate briefing now`}

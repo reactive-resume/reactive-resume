@@ -5,7 +5,7 @@ import { isValidElement } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 
-const buttonVariants = cva(
+const baseButtonVariants = cva(
 	"group/button touch-target relative inline-flex shrink-0 items-center justify-center gap-2 border border-transparent text-sm font-medium whitespace-nowrap transition-[background-color,border-color,color,filter,scale] duration-quick ease-enter select-none disabled:pointer-events-none aria-busy:cursor-progress [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 	{
 		variants: {
@@ -40,8 +40,29 @@ const buttonVariants = cva(
 	},
 );
 
+const OWN_HEIGHT = /(?:^|\s)(?:[\w-[\]&*>]+:)*(?:h|size)-/;
+
+type ButtonVariantProps = VariantProps<typeof baseButtonVariants> & { className?: string | undefined };
+
+/**
+ * Touch inputs are 44px, so on touch screens a default button, and a bordered icon button that sits beside inputs,
+ * grow to match. A caller that sets its own height or size keeps it.
+ */
+function buttonVariants({ variant, size, className }: ButtonVariantProps = {}) {
+	const ownHeight = !!className && OWN_HEIGHT.test(className);
+	const touch =
+		ownHeight || variant === "link"
+			? undefined
+			: (size ?? "default") === "default"
+				? "pointer-coarse:h-11"
+				: size === "icon" && variant === "secondary"
+					? "pointer-coarse:size-11"
+					: undefined;
+	return cn(baseButtonVariants({ variant, size }), touch, className);
+}
+
 type ButtonProps = ButtonPrimitive.Props &
-	VariantProps<typeof buttonVariants> & {
+	VariantProps<typeof baseButtonVariants> & {
 		/** Shows a spinner and blocks activation. Pair it with a present-participle label ("Preparing…"). */
 		loading?: boolean;
 	};
@@ -66,7 +87,7 @@ function Button({
 			type={type}
 			{...(isLink ? { role: "link" } : {})}
 			aria-busy={loading || undefined}
-			className={cn(buttonVariants({ variant, size, className }))}
+			className={buttonVariants({ variant, size, className: typeof className === "string" ? className : undefined })}
 			onClick={loading ? (event) => event.preventDefault() : onClick}
 			{...props}
 		>

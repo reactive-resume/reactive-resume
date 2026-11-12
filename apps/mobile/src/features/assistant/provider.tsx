@@ -275,8 +275,8 @@ export function WebResearchChip({ web, pressed, onPress }: WebResearchChipProps)
 	);
 }
 
-/** What the coach may keep from a message, said where the user types, with the setting one tap away. */
-export function useMemoryNote(knowledge: boolean) {
+/** The coach's memory setting as a chip by the composer, with the setting one tap away. */
+export function useMemoryNote() {
 	const { t } = useLingui();
 	const router = useRouter();
 	const session = useSession();
@@ -286,18 +286,8 @@ export function useMemoryNote(knowledge: boolean) {
 		queryKey: [...orpc.career.profile.key(), session.server],
 	});
 	const mode = profile.data?.memoryMode;
-	const note = !knowledge
-		? t`With Knowledge off, nothing you write is remembered.`
-		: mode === "auto"
-			? t`The coach remembers facts you state, and tells you.`
-			: mode === "off"
-				? t`The coach doesn't remember anything you write.`
-				: mode === "ask"
-					? t`The coach asks before remembering facts you state.`
-					: "";
 	const label = mode === "auto" ? t`Memory: Automatically` : mode === "off" ? t`Memory: Never` : t`Memory: Ask first`;
 	return {
-		note,
 		chip: mode ? (
 			<Button
 				variant="link"

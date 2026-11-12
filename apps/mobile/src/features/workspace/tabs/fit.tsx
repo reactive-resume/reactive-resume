@@ -110,7 +110,7 @@ function Fit({ application, version }: WorkspaceTabProps) {
 				title={t`Check this role against your evidence`}
 				message={t`Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability.`}
 			>
-				<AiNotice task="fit" application={application} centered />
+				<AiNotice />
 				{evidenceState.isError && (
 					<Banner
 						tone="danger"
@@ -213,7 +213,7 @@ function Fit({ application, version }: WorkspaceTabProps) {
 						<Button variant="secondary" label={againLabel} loading={generate.isPending} onPress={check} />
 					) : null}
 					<GenerateNotice generate={generate} onRetry={check} />
-					<AiNotice task="fit" application={application} />
+					<AiNotice />
 				</View>
 			) : null}
 

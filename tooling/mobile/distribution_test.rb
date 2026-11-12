@@ -1,5 +1,6 @@
 require "json"
 require "tmpdir"
+require "yaml"
 
 # Exercise the real lanes at the store SDK boundary without credentials or network calls.
 class DistributionContract
@@ -31,7 +32,6 @@ class DistributionContract
   end
 
   def upload_to_play_store(**options)
-    raise "Play must upload only to production" unless options[:track] == "production"
     # The lane removes its metadata tree after upload, so read the release notes while it exists.
     changelogs = Dir[File.join(options[:metadata_path], "*/changelogs/default.txt")]
       .to_h { |path| [path.split("/")[-3], File.read(path)] }
@@ -44,11 +44,13 @@ class DistributionContract
 end
 
 ENV["RUNNER_TEMP"] = Dir.tmpdir
+ENV.delete("GOOGLE_PLAY_TRACK")
 %w[GOOGLE_PLAY_SERVICE_ACCOUNT_JSON ASC_KEY_ID ASC_ISSUER_ID ASC_PRIVATE_KEY].each { |name| ENV[name] = "fixture" }
 contract = DistributionContract.new
 contract.publish(:android)
 play = contract.uploads.first
 raise "Play must upload once" unless contract.uploads.length == 1
+raise "Manual Play releases must default to production" unless play[:track] == "production"
 raise "Play must submit a full production release for review" unless
   play[:release_status] == "completed" && !play[:changes_not_sent_for_review] &&
     play[:rescue_changes_not_sent_for_review] == false
@@ -74,4 +76,82 @@ raise "App Store must upload and select this run's signed artifact" unless
 raise "App Store must send each listing locale's release notes" unless app_store[:release_notes] == notes.call("appleLocale")
 raise "App Store API-key precheck must exclude unsupported in-app purchase checks" unless
   app_store[:precheck_include_in_app_purchases] == false
-puts "Production distribution contracts passed"
+ENV["GOOGLE_PLAY_TRACK"] = "internal"
+internal = DistributionContract.new
+internal.publish(:android)
+testing = internal.uploads.fetch(0)
+raise "Internal Testing must publish this artifact, not create a draft or promote production" unless
+  internal.uploads.length == 1 && testing[:track] == "internal" && testing[:release_status] == "completed" &&
+    !testing[:track_promote_to] && testing[:aab] == play[:aab] && testing[:package_name] == play[:package_name] &&
+    testing[:changes_not_sent_for_review] == false && testing[:rescue_changes_not_sent_for_review] == false
+raise "Internal uploads must preserve listing metadata" unless
+  testing[:skip_upload_metadata] && testing[:skip_upload_images] && testing[:skip_upload_screenshots]
+ENV["GOOGLE_PLAY_TRACK"] = "untrusted-track"
+begin
+  internal.publish(:android)
+  raise "Invalid track accepted"
+rescue RuntimeError => error
+  raise unless error.message == "Unsupported Google Play track"
+end
+raise "Invalid track must not upload" unless internal.uploads.length == 1
+ENV.delete("GOOGLE_PLAY_TRACK")
+puts "Production and Internal Testing distribution contracts passed"
+
+# The workflow's routing expressions use this shared Ruby/GitHub boolean/property subset.
+def workflow_expression(source, event:, platform: "all", format: "store", upload: false,
+  ref: "refs/heads/main", failure: false, cancelled: false)
+  github = Struct.new(:event_name, :ref).new(event, ref)
+  inputs = Struct.new(:platform, :format, :upload).new(platform, format, upload)
+  expression = source.strip.delete_prefix("${{").delete_suffix("}}").gsub(/\b(failure|cancelled)\(\)/, '\1')
+  eval(expression, binding)
+end
+
+workflow = YAML.load_file(File.join(__dir__, "../../.github/workflows/mobile-release.yml"))
+events = workflow["on"] || workflow[true] # Psych's YAML 1.1 parser treats `on` as a boolean.
+raise "Every main push must trigger release without path filters" unless events.fetch("push") == { "branches" => ["main"] }
+raise "Releases must queue rather than cancel pending uploads" unless
+  workflow.fetch("concurrency").values_at("group", "cancel-in-progress", "queue") == ["mobile-release", false, "max"]
+jobs = workflow.fetch("jobs")
+%w[build-native preview-native].each do |name|
+  job = jobs.fetch(name)
+  raise "Native CI must override the modest local build heap" unless
+    job.fetch("env").fetch("GRADLE_OPTS").include?('-Dorg.gradle.jvmargs="-Xmx8g ')
+  gradle_commands = job.fetch("steps").filter_map { |step| step["run"] }
+    .flat_map(&:lines).select { |line| line.include?("./gradlew") }
+  raise "Native CI must bound resource/test concurrency" unless
+    gradle_commands.length == 2 && gradle_commands.all? { |line| line.include?("--max-workers=1") }
+end
+push = { event: "push", platform: nil, format: nil, upload: nil }
+dispatch = { event: "workflow_dispatch" }
+raise "Push must build only the Kotlin AAB" unless
+  workflow_expression(jobs.fetch("build-native").fetch("if"), **push) &&
+    !workflow_expression(jobs.fetch("build").fetch("if"), **push) &&
+    !workflow_expression(jobs.fetch("preview-native").fetch("if"), **push) &&
+    workflow_expression(workflow.fetch("env").fetch("FORMAT"), **push) == "store"
+prepare = jobs.fetch("prepare").fetch("steps").find { |step| step["id"] == "release" }.fetch("env")
+raise "Push must use the shared native release counter" unless
+  workflow_expression(prepare.fetch("PLATFORM"), **push) == "android-native" &&
+    workflow_expression(prepare.fetch("UPLOAD"), **push) == "true"
+submit = jobs.fetch("submit")
+upload_step = submit.fetch("steps").find { |step| step["env"]&.key?("GOOGLE_PLAY_TRACK") }
+raise "Every successful push must publish only to Internal Testing" unless
+  workflow_expression(submit.fetch("if"), **push) &&
+    workflow_expression(upload_step.fetch("env").fetch("GOOGLE_PLAY_TRACK"), **push) == "internal"
+raise "Failed or canceled builds must not upload" if
+  workflow_expression(submit.fetch("if"), **push, failure: true) ||
+    workflow_expression(submit.fetch("if"), **push, cancelled: true)
+raise "Manual uploads must remain opt-in production releases" unless
+  !workflow_expression(submit.fetch("if"), **dispatch) &&
+    workflow_expression(submit.fetch("if"), **dispatch, upload: true) &&
+    !workflow_expression(submit.fetch("if"), **dispatch, upload: true, format: "apk") &&
+    workflow_expression(upload_step.fetch("env").fetch("GOOGLE_PLAY_TRACK"), **dispatch) == "production"
+ci_gate = submit.fetch("steps").find { |step| step["name"]&.include?("successful main CI") }
+raise "Manual production must retain its exact-source main-CI gate" unless
+  workflow_expression(ci_gate.fetch("if"), **dispatch) && !workflow_expression(ci_gate.fetch("if"), **push)
+raise "Untrusted branches must never reach signing or uploads" if
+  workflow_expression(jobs.fetch("prepare").fetch("if"), **dispatch, ref: "refs/heads/untrusted")
+raise "Native previews must remain available without signing secrets" unless
+  workflow_expression(jobs.fetch("prepare").fetch("if"), **dispatch, format: "preview", ref: "refs/heads/preview") &&
+    workflow_expression(jobs.fetch("preview-native").fetch("if"), **dispatch, platform: "android-native", format: "preview") &&
+    !workflow_expression(jobs.fetch("build-native").fetch("if"), **dispatch, platform: "android-native", format: "preview")
+puts "Main-push Internal Testing and manual release workflow routing passed"

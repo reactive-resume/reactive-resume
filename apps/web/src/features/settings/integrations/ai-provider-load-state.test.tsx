@@ -28,15 +28,6 @@ import { AiNotice } from "@/features/career/workspace/fit";
 
 let client: QueryClient;
 const provider = { id: "saved", label: "Saved DeepSeek", enabled: true, testStatus: "success" };
-const application = {
-	id: "app",
-	resumeId: null,
-	coverLetterId: null,
-	jobDescription: "Build reliable services.",
-	requirements: [],
-	notes: null,
-	contacts: [],
-};
 function Wrapper({ children }: { children: ReactNode }) {
 	return (
 		<QueryClientProvider client={client}>
@@ -56,14 +47,13 @@ afterEach(() => {
 
 it("shows a recoverable lookup error instead of setup, then restores the saved provider after Retry", async () => {
 	api.list.mockRejectedValueOnce(new Error("Offline")).mockResolvedValueOnce([provider]);
-	render(<AiNotice task="fit" application={application} />, { wrapper: Wrapper });
+	render(<AiNotice />, { wrapper: Wrapper });
 	expect(screen.getByRole("status").textContent).toContain("Loading AI connections");
 	expect(screen.queryByRole("button", { name: "Set up AI" })).toBeNull();
 	expect((await screen.findByRole("alert")).textContent).toContain("saved connections haven't changed");
 	expect(screen.queryByRole("button", { name: "Set up AI" })).toBeNull();
 	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
-	await screen.findByText(/to Saved DeepSeek/);
-	expect(screen.queryByRole("alert")).toBeNull();
+	await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
 	expect(api.list).toHaveBeenCalledTimes(2);
 });
 

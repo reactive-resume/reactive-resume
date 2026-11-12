@@ -129,21 +129,28 @@ export function FactsPage({ highlight }: FactsPageProps) {
 						className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-ink-3"
 					/>
 				</label>
-				<FilterChip pressed={type === null} onClick={() => setType(null)}>
-					<Trans>All</Trans>
-				</FilterChip>
-				{CATEGORIES.map((category) => (
-					<FilterChip key={category} pressed={type === category} onClick={() => setType(category)}>
-						{categoryLabel(category)}
+				{/* Phones: the type filters stay on one row that scrolls sideways. */}
+				<div className="flex flex-wrap gap-2 max-sm:-mx-4 max-sm:w-[calc(100%+2rem)] max-sm:[scrollbar-width:none] max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:px-4 max-sm:py-1.5 max-sm:*:shrink-0">
+					<FilterChip pressed={type === null} onClick={() => setType(null)}>
+						<Trans>All</Trans>
 					</FilterChip>
-				))}
+					{CATEGORIES.map((category) => (
+						<FilterChip key={category} pressed={type === category} onClick={() => setType(category)}>
+							{categoryLabel(category)}
+						</FilterChip>
+					))}
+				</div>
 			</div>
 
 			<ResumeFacts />
 			<div ref={addRef}>
 				<AddFact onAdded={added} />
 			</div>
-			<FilterChip pressed={showForgotten} onClick={() => setShowForgotten((shown) => !shown)}>
+			<FilterChip
+				pressed={showForgotten}
+				onClick={() => setShowForgotten((shown) => !shown)}
+				className="justify-self-start"
+			>
 				<Trans>Show forgotten</Trans>
 			</FilterChip>
 			{showForgotten && <ForgottenFacts />}
@@ -214,7 +221,7 @@ function ForgottenFacts() {
 
 // ---- Memory mode ----
 
-export function MemoryCard() {
+function MemoryCard() {
 	const { profile, save, isError, retry } = useProfile();
 	const labelId = useId();
 	const mode = profile?.memoryMode;
@@ -330,7 +337,7 @@ function AddFact({ onAdded }: AddFactProps) {
 					onClick={add}
 					loading={save.isPending}
 					aria-disabled={!ready}
-					className={cn("h-8 px-3", !ready && "text-ink-3")}
+					className={cn("h-8 px-3 pointer-coarse:h-11", !ready && "text-ink-3")}
 				>
 					<Trans>Add</Trans>
 				</Button>

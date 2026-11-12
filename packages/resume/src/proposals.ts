@@ -129,6 +129,74 @@ const SHORT_GLUE = new Set([
 	"use",
 ]);
 const isSubject = (word: string) => !SHORT_GLUE.has(word.toLowerCase());
+// Grammar words say nothing a reader could check, so a rewrite that adds "who" or "that" isn't flagged for them.
+const FUNCTION_WORDS = new Set([
+	...SHORT_GLUE,
+	"about",
+	"after",
+	"all",
+	"also",
+	"are",
+	"been",
+	"before",
+	"being",
+	"both",
+	"but",
+	"can",
+	"could",
+	"did",
+	"do",
+	"each",
+	"from",
+	"had",
+	"has",
+	"have",
+	"her",
+	"his",
+	"into",
+	"its",
+	"may",
+	"more",
+	"most",
+	"my",
+	"no",
+	"not",
+	"onto",
+	"other",
+	"over",
+	"she",
+	"so",
+	"some",
+	"such",
+	"than",
+	"that",
+	"their",
+	"them",
+	"then",
+	"there",
+	"these",
+	"they",
+	"this",
+	"those",
+	"through",
+	"under",
+	"up",
+	"very",
+	"were",
+	"what",
+	"when",
+	"where",
+	"which",
+	"while",
+	"who",
+	"whom",
+	"whose",
+	"will",
+	"with",
+	"within",
+	"would",
+	"your",
+]);
 const contentWords = (text: string) =>
 	new Set(wordsIn(text).flatMap((word) => (isSubject(word) ? [singular(word)] : [])));
 
@@ -162,6 +230,7 @@ export function unverifiedClaims(text: string, known: { entry: string; document:
 			if (!claims.has(number.key)) claims.set(number.key, { kind: number.date ? "date" : "figure", text: number.text });
 	}
 	for (const word of wordsIn(text)) {
+		if (FUNCTION_WORDS.has(word.toLowerCase())) continue;
 		const key = singular(word);
 		if (!words.has(key) && !claims.has(key)) claims.set(key, { kind: "term", text: word });
 	}

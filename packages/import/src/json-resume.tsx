@@ -199,7 +199,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 			id: generateId(),
 			hidden: false,
 			school: edu.institution || "",
-			degree: [edu.studyType, edu.area].filter(Boolean).join(" in ") || "",
+			degree: edu.studyType || "",
 			area: edu.area || "",
 			grade: edu.score || "",
 			location: "",

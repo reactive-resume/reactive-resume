@@ -460,6 +460,10 @@ export const aiProvidersService = {
 				}
 			}
 
+			// An abandoned request says nothing about the provider: its saved state stays as it was. The test's own timeout
+			// is a result and is still recorded, because it does not abort the caller's signal.
+			if (!result.ok) input.signal?.throwIfAborted();
+
 			// A provider that answers "no" is a completed test, not a failed request: it comes back as
 			// data so the client can show why, instead of a generic transport error.
 			const [updated] = await db
@@ -491,6 +495,7 @@ export const aiProvidersService = {
 			return toResponse(await getOwnedProvider(input));
 		} catch (error) {
 			if (error instanceof ORPCError && error.code === "CONFLICT") throw error;
+			if (input.signal?.aborted) throw error;
 			// Only unexpected failures reach here now: provider-side outcomes come back as data above.
 			await db
 				.update(schema.aiProvider)

@@ -332,7 +332,7 @@ export function isEditableElementFocused(): boolean {
 function externalUpdateMessage(mutation: ResumeUpdateMutation): string {
 	if (mutation === "patch") return t`This resume was updated by an AI agent.`;
 	if (mutation === "lock" || mutation === "password") return t`This resume's sharing settings changed elsewhere.`;
-	return t`Synced changes made in another tab.`;
+	return t`Synced changes made elsewhere.`;
 }
 
 function notifyExternalUpdate(mutation: ResumeUpdateMutation) {

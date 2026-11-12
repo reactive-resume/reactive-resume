@@ -211,12 +211,10 @@ msgstr "{0, plural, one {# ಸಂಪಾದನೆಯನ್ನು ಇರಿಸಲ�
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# ನಮೂದು} other {# ನಮೂದುಗಳು}}"
 
-#. placeholder {0}: knowledge.active.length
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: used.facts.length
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
-#: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# ಸಂಗತಿ} other {# ಸಂಗತಿಗಳು}}"
 
@@ -290,13 +288,6 @@ msgstr "{0, plural, one {# ಕಥೆ} other {# ಕಥೆಗಳು}}"
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {ಜ್ಞಾನಕ್ಕೆ # ಸಂಗತಿಯನ್ನು ಸೇರಿಸಲಾಗಿದೆ.} other {ಜ್ಞಾನಕ್ಕೆ # ಸಂಗತಿಗಳನ್ನು ಸೇರಿಸಲಾಗಿದೆ.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {ಜೊತೆಗೆ {1} ಅನ್ನು ಕಳುಹಿಸಲಾಗುತ್ತದೆ.} other {ಜೊತೆಗೆ # ಫೈಲ್ ಅನ್ನು ಕಳುಹಿಸಲಾಗುತ್ತದೆ: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -426,8 +417,8 @@ msgstr "{0} — {1}"
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
-msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{0} · {providerLabel}. ಈ ಅರ್ಜಿ ಮತ್ತು ನಿಮ್ಮ ಜ್ಞಾನವನ್ನು ಕಳುಹಿಸುತ್ತದೆ; ನಿಮ್ಮ ಪೂರೈಕೆದಾರರು ಶುಲ್ಕ ವಿಧಿಸಬಹುದು."
+msgid "{0} · {providerLabel}"
+msgstr "{0} · {providerLabel}"
 
 #. Mode tab tooltip: the mode, then the key that opens it
 #. placeholder {0}: labels[mode]
@@ -637,14 +628,6 @@ msgstr "{added, plural, one {# ಹೊಸ ಅಥವಾ ಮಾರ್ಪಾಡಾ�
 #: src/features/career/workspace/apply.tsx
 msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# ಉತ್ತರ} other {# ಉತ್ತರಗಳು}}"
-
-#: src/features/career/coach.tsx
-msgid "{attached, plural, one {# attached file} other {# attached files}}"
-msgstr "{attached, plural, one {# ಲಗತ್ ಫೈಲ್} other {# ಲಗತ್ ಫೈಲ್}}"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "{attached, plural, one {The attached file goes too.} other {The # attached files go too.}}"
-msgstr "{attached, plural, one {ಲಗತ್ ಫೈಲ್ ಕೂಡ ಹೋಗುತ್ತದೆ.} other {ಲಗತ್ ಆದ # ಫೈಲ್ ಕೂಡ ಹೋಗುತ್ತದೆ.}}"
 
 #: src/features/resume/editor/design/fit.ts
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
@@ -2168,12 +2151,6 @@ msgstr "ENCRYPTION_SECRET ಹೊಂದಿಸುವವರೆಗೆ AI ಪೂರ�
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI ಪೂರೈಕೆದಾರರನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಲು ಮರುಲೋಡ್ ಮಾಡಿ."
 
-#. placeholder {0}: read?.label
-#. placeholder {1}: read?.model
-#: src/features/documents/new-document-dialog.tsx
-msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
-msgstr "AI ಓದುವಿಕೆ ಈ ಫೈಲ್‌ನ ವಿಷಯವನ್ನು {0} · {1} ಗೆ ಕಳುಹಿಸುತ್ತದೆ. ನಿಮ್ಮ ಪ್ರೊವೈಡರ್ ಶುಲ್ಕ ವಸೂಲಿ ಮಾಡಬಹುದು."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -2189,10 +2166,6 @@ msgstr "ಈ ಫಲಿತಾಂಶಕ್ಕೆ AI ವಿನಂತಿ ಇತಿಹ
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr "AI ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "ಇವು AI ಸಲಹೆಗಳು, ಪರಿಶೀಲಿಸಿದ ಅರ್ಹತೆಗಳಲ್ಲ ಅಥವಾ ನೇಮಕಾಂಗ ಮುನ್ಸೂಚನೆಗಳಲ್ಲ. ಕೆಳಗಿನ ಆಕರಗಳು ನಿಮ್ಮ ಹೇಳಿಕೆಗಳು."
 
 #: src/features/settings/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -2337,10 +2310,6 @@ msgstr "ಕೌಶಲ್ಯಗಳು, ಪ್ರೊಫೈಲ್‌ಗಳು ಮತ
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "ಅಂಹಾರಿಕ್"
-
-#: src/features/resume/editor/proposals/proposal-list.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "ಇದು ಸಂಪಾದನೆಗೆ ನೆರವಾಗಲು AI ಓದು, ಉದ್ಯೋಗದಾತ ಅಥವಾ ಸ್ಕ್ರೀನಿಂಗ್ ವ್ಯವಸ್ಥೆ ಹೇಗೆ ಪ್ರತಿಕ್ರಿಯಿಸುತ್ತದೆ ಎಂಬ ಮುನ್ಸೂಚನೆ ಅಲ್ಲ."
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "An edit addresses it"
@@ -2570,10 +2539,6 @@ msgstr "ಅರ್ಜಿ ತಯಾರಿ"
 msgid "Application progress"
 msgstr "ಅರ್ಜಿ ಪ್ರಗತಿ"
 
-#: src/features/career/coach.tsx
-msgid "application summaries"
-msgstr "ಅರ್ಜಿಗಳ ಸಾರಾಂಶಗಳು"
-
 #: src/features/homepage/prepare.tsx
 msgid "Application tabs"
 msgstr "ಅರ್ಜಿಯ ಟ್ಯಾಬ್‌ಗಳು"
@@ -2583,14 +2548,13 @@ msgstr "ಅರ್ಜಿಯ ಟ್ಯಾಬ್‌ಗಳು"
 msgid "Application updated"
 msgstr "ಅರ್ಜಿಯನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ"
 
+#: src/components/layout/trash-nav.tsx
 #: src/features/applications/components/list-view.tsx
-#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
@@ -3355,11 +3319,6 @@ msgstr "ಪ್ರಮಾಣಪತ್ರಗಳು"
 msgid "Change"
 msgstr "ಬದಲಾವಣೆ"
 
-#: src/features/career/coach-thread.tsx
-msgctxt "Change what the coach remembers"
-msgid "Change"
-msgstr "ಬದಲಾಯಿಸಿ"
-
 #: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Change connection"
@@ -3908,6 +3867,7 @@ msgstr "ಮುಚ್ಚಿದೆ"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/documents/documents-page.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Closed"
 msgstr "ಮುಚ್ಚಲಾಗಿದೆ"
 
@@ -6005,10 +5965,9 @@ msgstr "ಡಾಕ್ಯುಮೆಂಟ್ ಪ್ರಕಾರ"
 msgid "Documentation"
 msgstr "ದಾಖಲೀಕರಣ"
 
-#: src/features/applications/trash-page.tsx
+#: src/components/layout/trash-nav.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
-#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -6325,10 +6284,6 @@ msgstr "ನೀವು ಪ್ರತಿಕ್ರಿಯೆ ಪಡೆದ ಪ್ರತ
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "ಉದ್ಯೋಗ ಜಾಹೀರಾತಿನ ಪ್ರತಿಯೊಂದು ಅವಶ್ಯಕತೆಯನ್ನು ನಿಮ್ಮ ಜ್ಞಾನದಲ್ಲಿರುವ ಸಂಗತಿಗಳು ಮತ್ತು ಕಥೆಗಳೊಂದಿಗೆ ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ. ಕೊರತೆಗಳು ಪುರಾವೆಯ ಕೊರತೆಯಾಗಿ ತೋರುತ್ತವೆ, ಸಾಮರ್ಥ್ಯದ ಕೊರತೆಯಾಗಿ ಎಂದಿಗೂ ಅಲ್ಲ."
 
-#: src/features/assistant/conversation.tsx
-msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
-msgstr "ಪ್ರತಿ ಕಳುಹಿಸುವಿಕೆಯು ಈ ಸಂದೇಶ ಮತ್ತು ಆಯ್ಕೆಮಾಡಿದ ಫೈಲ್‌ಗಳೊಂದಿಗೆ ಹೊಸದಾಗಿ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ. ಹಿಂದಿನ ಸಂಭಾಷಣೆಯ ಇತಿಹಾಸವು ಇಲ್ಲಿಯೇ ಇರುತ್ತದೆ."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Each visitor counts once an hour."
 msgstr "ಪ್ರತಿ ಸಂದರ್ಶಕರನ್ನು ಗಂಟೆಗೆ ಒಮ್ಮೆ ಮಾತ್ರ ಎಣಿಸಲಾಗುತ್ತದೆ."
@@ -6340,10 +6295,6 @@ msgstr "ಹಿಂದೆ ಸಿಕ್ಕ ಫಲಿತಾಂಶ. ಹುಡುಕ�
 #: src/libs/orpc/ai-consent.ts
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "ನೀವು ಮತ್ತೆ ಕಳುಹಿಸಿದಾಗ, ಈ ಸಂಭಾಷಣೆಯ ಹಿಂದಿನ ಸಂದೇಶಗಳು ಮತ್ತು ಲಗತ್‌ಗಳು ಈ ಗುರಿಗೆ ಕಳುಹಿಸಲಾಗುತ್ತವೆ."
-
-#: src/features/career/coach.tsx
-msgid "earlier messages in this chat"
-msgstr "ಈ ಚಾಟ್‌ನ ಹಿಂದಿನ ಸಂದೇಶಗಳು"
 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -6596,10 +6547,6 @@ msgstr "ಟ್ರಾಶ್ ಖಾಲಿ ಮಾಡಬೇಕೆ?"
 #: src/features/documents/trash-page.tsx
 msgid "Empty Trash…"
 msgstr "ಟ್ರಾಶ್ ಖಾಲಿ ಮಾಡಿ…"
-
-#: src/features/career/disclosure.tsx
-msgid "enabled Knowledge"
-msgstr "ಸಕ್ರಿಯಗೊಳಿಸಿದ ಜ್ಞಾನ"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -8373,14 +8320,6 @@ msgstr "ಸಮಸ್ಯೆಗಳು"
 msgid "Issues and Job match still work without AI."
 msgstr "ಸಮಸ್ಯೆಗಳು ಮತ್ತು ಕೆಲಸದ ಹೊಂದಾಣಿಕೆಯು ಇನ್ನೂ AI ಇಲ್ಲದೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ."
 
-#: src/features/assistant/conversation.tsx
-msgid "It can also search Knowledge available to this application (facts and stories) and send what it finds."
-msgstr "ಈ ಅರ್ಜಿಗೆ ಲಭ್ಯವಿರುವ ಜ್ಞಾನವನ್ನು (ಸಂಗತಿಗಳು ಮತ್ತು ಕಥೆಗಳು) ಕೂಡ ಅದು ಹುಡುಕಬಲ್ಲದು ಮತ್ತು ಸಿಕ್ಕಿದ್ದನ್ನು ಕಳುಹಿಸಬಲ್ಲದು."
-
-#: src/features/assistant/conversation.tsx
-msgid "It can also search your shared Knowledge (facts and stories) and send what it finds."
-msgstr "ನೀವು ಹಂಚಿದ ಜ್ಞಾನವನ್ನು (ಸಂಗತಿಗಳು ಮತ್ತು ಕಥೆಗಳು) ಕೂಡ ಅದು ಹುಡುಕಬಲ್ಲದು ಮತ್ತು ಸಿಕ್ಕಿದ್ದನ್ನು ಕಳುಹಿಸಬಲ್ಲದು."
-
 #: src/features/resume/editor/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "ಇದು ನಮೂದುಗಳನ್ನು ಹೊಂದಿದೆ ಆದರೆ ಪುಟದಲ್ಲಿ ಇರಿಸಲಾಗಿಲ್ಲ."
@@ -8436,10 +8375,6 @@ msgstr "ಅದರ ಸಂದೇಶಗಳು ಮತ್ತು ಲಗತ್ತುಗ
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Its own design ({summary})."
 msgstr "ಅದರ ಸ್ವಂತ ವಿನ್ಯಾಸ ({summary})."
-
-#: src/features/career/disclosure.tsx
-msgid "its requirements"
-msgstr "ಅದರ ಅಗತ್ಯತೆಗಳು"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -9738,11 +9673,6 @@ msgstr "ಸಂದೇಶಗಳು · Fieldnote ನ Sam ಅವರಿಗೆ ಪ್�
 #: src/features/career/coach-chat.tsx
 msgid "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "ಮೇಲಿನ ಸಂದೇಶಗಳು ಇನ್ನು AI ಗೆ ಕಳುಹಿಸಲ್ಪಡುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಅದು ಅವನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುವುದಿಲ್ಲ. ಕಾಂಟೆಕ್ಸ್ಟ್ ಅನ್ನು ಒಟ್ಟಾಗಿ ಇಡಲು ಹೊಸ ಸಂಭಾಷಣೆ ಪ್ರಾರಂಭಿಸಿ."
-
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "ಜ್ಞಾನ ಬದಲಾದ ಮೊದಲಿನ ಸಂದೇಶಗಳು ಕಳುಹಿಸಲ್ಪಡುವುದಿಲ್ಲ."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Microphone blocked. Allow it in your browser settings, or type your answer."
@@ -12031,7 +11961,6 @@ msgstr "ನಿಮ್ಮ {company} ಸಂದರ್ಶನಗಳಿಗಾಗಿ ಅ
 msgid "Practice in {company}’s workspace"
 msgstr "{company} ಕಾರ್ಯಸ್ಥಳದಲ್ಲಿ ಅಭ್ಯಾಸ ಮಾಡಿ"
 
-#: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
 msgstr "ಅಭ್ಯಾಸದ ಆದ್ಯತೆಗಳು, ಉದ್ಯೋಗದಾತರು ಯಾವುದೇ ನಿರ್ಧಾರವನ್ನು ಏಕೆ ತೆಗೆದುಕೊಂಡರು ಎಂಬುದರ ಕುರಿತ ತೀರ್ಮಾನಗಳಲ್ಲ."
@@ -12184,10 +12113,6 @@ msgstr "ಹಿಂದಿನ ಉದ್ಯೋಗ ಅರ್ಜಿ"
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Previous issue"
 msgstr "ಹಿಂದಿನ ಸಂಚಿಕೆ"
-
-#: src/features/assistant/conversation.tsx
-msgid "Previous messages, including document details, are also sent."
-msgstr "ದಾಖಲೆ ವಿವರಗಳನ್ನು ಒಳಗೊಂಡಂತೆ ಹಿಂದಿನ ಸಂದೇಶಗಳನ್ನು ಸಹ ಕಳುಹಿಸಲಾಗಿದೆ."
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
@@ -14304,11 +14229,6 @@ msgstr "ಹುಡುಕಿ ಅಥವಾ ಆಜ್ಞೆಯನ್ನು ಚಲಾ
 msgid "Search saved answers"
 msgstr "ಉಳಿಸಿದ ಉತ್ತರಗಳನ್ನು ಹುಡುಕಿ"
 
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "ಹುಡುಕಾಟ ಪದಗಳು ನಿಮ್ಮ ವೆಬ್ ಹುಡುಕಾಟ ಸೇವೆಗೆ ಹೋಗುತ್ತವೆ."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "ವೆಬ್‌ನಲ್ಲಿ ಹುಡುಕಿ"
@@ -14525,113 +14445,13 @@ msgstr "ಕಳುಹಿಸುವವರ ವಿವರಗಳನ್ನು ಪತ್�
 msgid "Sending password reset email…"
 msgstr "ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸುವ ಇಮೇಲ್ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ…"
 
-#: src/features/career/disclosure.tsx
-msgid "Sends {list} to {providerLabel}."
-msgstr "{list} ಅನ್ನು {providerLabel} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "ಈ ಕನೆಕ್ಷನ್‌ಗೆ ನಿಮ್ಮ ಆಯ್ದ ರೆಸ್ಯೂಮ್ ಮತ್ತು 20 ರವರೆಗಿನ ಸಕ್ರಿಯ ಹಂಚಿದ ಸಂಗತಿಗಳನ್ನು ಮಾತ್ರ ಕಳುಹಿಸುತ್ತದೆ. ಅರ್ಜಿ ಪ್ರೊಫೈಲ್, ಉಳಿಸಿದ ಉತ್ತರಗಳು ಅಥವಾ ಖಾಸಗಿ ಅರ್ಜಿ ಸಂಗತಿಗಳು ಇಲ್ಲ. ನಿಮ್ಮ ಪ್ರೊವೈಡರ್ ಶುಲ್ಕ ವಸೂಲಿ ಮಾಡಬಹುದು."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the {0} posting to {1} to draft the body."
-msgstr "ಮುಖ್ಯ ಭಾಗವನ್ನು ಡ್ರಾಫ್ಟ್ ಮಾಡಲು {0} ಪೋಸ್ಟಿಂಗ್ ಅನ್ನು {1} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#. placeholder {0}: draft?.label
-#. placeholder {1}: draft?.model
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
-msgstr "ಲಿಂಕ್ ಆದ ರೆಸ್ಯೂಮ್, ಪೋಸ್ಟಿಂಗ್ ಮತ್ತು ಲೆಟರ್ ವಿವರಗಳನ್ನು {0} · {1} ಗೆ ಕಳುಹಿಸುತ್ತದೆ. ನಿಮ್ಮ ಪ್ರೊವೈಡರ್ ಶುಲ್ಕ ವಸೂಲಿ ಮಾಡಬಹುದು."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "ಅದನ್ನು ಓದಲು ಪೋಸ್ಟಿಂಗ್ ಪಠ್ಯವನ್ನು {0} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
 msgstr "ಈ ಅರ್ಜಿಯ ಪೋಸ್ಟಿಂಗ್, ಟಿಪ್ಪಣಿಗಳು ಮತ್ತು ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳನ್ನು, ಜೊತೆಗೆ ಆನ್ ಮಾಡಿರುವ ಜ್ಞಾನವನ್ನು, ಈ ಕನೆಕ್ಷನ್‌ಗೆ ಕಳುಹಿಸುತ್ತದೆ. ಅದಕ್ಕೆ ನಿಮ್ಮ ಪ್ರೊವೈಡರ್ ಶುಲ್ಕ ವಸೂಲಿ ಮಾಡಬಹುದು. ಶೆಡ್ಯೂಲ್ ಮಾಡಿದ ಕೆಲಸ ಎಂದಿಗೂ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಬೇರೆ ಕನೆಕ್ಷನ್‌ಗೆ ಬದಲಾಗುವುದಿಲ್ಲ."
 
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
-msgstr "ನೀವು ಕಳುಹಿಸು ಒತ್ತಿದಾಗ ಮಾತ್ರ ಈ ಪತ್ರ ಮತ್ತು ಕೆಲಸವನ್ನು ಪೋಸ್ಟ್ ಮಾಡುವ ಕೆಲಸವನ್ನು ನಿಮ್ಮ ಕೀಲಿಯೊಂದಿಗೆ {provider} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter to {provider} with your key, only when you press send."
-msgstr "ನೀವು ಕಳುಹಿಸು ಒತ್ತಿದಾಗ ಮಾತ್ರ ಈ ಪತ್ರವನ್ನು ನಿಮ್ಮ ಕೀಲಿಯೊಂದಿಗೆ {provider} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
-msgstr "ಮುಖ್ಯ ಭಾಗವನ್ನು ಡ್ರಾಫ್ಟ್ ಮಾಡಲು ಈ ಲೆಟರ್‌ನ ರೆಸ್ಯೂಮ್ ಮತ್ತು {0} ಪೋಸ್ಟಿಂಗ್ ಅನ್ನು {1} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume to {0} to draft the body."
-msgstr "ಮುಖ್ಯ ಭಾಗವನ್ನು ಡ್ರಾಫ್ಟ್ ಮಾಡಲು ಈ ಲೆಟರ್‌ನ ರೆಸ್ಯೂಮ್ ಅನ್ನು {0} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "ಈ ಸಾಲನ್ನು, ಸುತ್ತಮುತ್ತಲಿನ ಫೀಲ್ಡ್ ಪಠ್ಯ ಮತ್ತು ನಿಮ್ಮ ಸೂಚನೆಗಳನ್ನು {0} · {1} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "ಈ ಪ್ಯಾರಾಗ್ರಾಫ್, ಪತ್ರದ ಉಳಿದ ಭಾಗ ಮತ್ತು ನಿಮ್ಮ ಸೂಚನೆಗಳನ್ನು {0} · {1} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "ಈ ಪ್ಯಾರಾಗ್ರಾಫ್, ಪತ್ರದ ಉಳಿದ ಭಾಗ, ಲಿಂಕ್ ಮಾಡಿದ ಉದ್ಯೋಗ ಜಾಹೀರಾತು ಮತ್ತು ನಿಮ್ಮ ಸೂಚನೆಗಳನ್ನು {0} · {1} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
-msgstr "ನೀವು ಕಳುಹಿಸು ಒತ್ತಿದಾಗ ಮಾತ್ರ ಈ ರೆಸ್ಯೂಮೆ ಮತ್ತು ಪೋಸ್ಟ್ ಮಾಡುವ ಕೆಲಸವನ್ನು ನಿಮ್ಮ ಕೀಲಿಯೊಂದಿಗೆ {provider} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume to {provider} with your key, only when you press send."
-msgstr "ನೀವು ಕಳುಹಿಸು ಒತ್ತಿದಾಗ ಮಾತ್ರ ಈ ರೆಸ್ಯೂಮೆಯನ್ನು ನಿಮ್ಮ ಕೀಲಿಯೊಂದಿಗೆ {provider} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
 #: src/features/homepage/remember.tsx
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "ಈ ಕಥೆ ಮತ್ತು ಆನ್ ಮಾಡಿರುವ ಸಂಗತಿಗಳನ್ನು ನಿಮ್ಮ AI ಸಂಪರ್ಕಕ್ಕೆ ಕಳುಹಿಸುತ್ತದೆ. ಸಂಪರ್ಕವಿಲ್ಲದಿದ್ದರೆ, ಏನನ್ನೂ ಕಳುಹಿಸಲಾಗುವುದಿಲ್ಲ."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message and the posting to {provider} with your key, only when you press send."
-msgstr "ನಿಮ್ಮ ಕೀಲಿಯೊಂದಿಗೆ {provider} ಗೆ ನಿಮ್ಮ ಸಂದೇಶ ಮತ್ತು ಪೋಸ್ಟ್ ಮಾಡುವ ಕೆಲಸವನ್ನು ಕಳುಹಿಸುತ್ತದೆ, ನೀವು ಕಳುಹಿಸು ಒತ್ತಿದಾಗ ಮಾತ್ರ."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "ನಿಮ್ಮ ಸಂದೇಶ ಮತ್ತು ಈ ಅರ್ಜಿಯನ್ನು (ಪೋಸ್ಟಿಂಗ್, ಟಿಪ್ಪಣಿಗಳು, ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳು, ನಿಮ್ಮ ಫಾರ್ಮ್ ಉತ್ತರಗಳು, ಉಳಿಸಿದ ಆಫರ್ ಮತ್ತು ಇತ್ತೀಚಿನ ಸಂದೇಶಗಳು) {label} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message to {provider} with your key, only when you press send."
-msgstr "ನೀವು ಕಳುಹಿಸು ಒತ್ತಿದಾಗ ಮಾತ್ರ ನಿಮ್ಮ ಕೀಲಿಯೊಂದಿಗೆ ನಿಮ್ಮ ಸಂದೇಶವನ್ನು {provider} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "ನಿಮ್ಮ ಸಂದೇಶ, ಇಲ್ಲಿನ ಹಿಂದಿನ ಸಂದೇಶಗಳು ಮತ್ತು ಈ ಅರ್ಜಿಯನ್ನು (ಪೋಸ್ಟಿಂಗ್, ಟಿಪ್ಪಣಿಗಳು, ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳು, ನಿಮ್ಮ ಫಾರ್ಮ್ ಉತ್ತರಗಳು, ಉಳಿಸಿದ ಆಫರ್ ಮತ್ತು ಇತ್ತೀಚಿನ ಸಂದೇಶಗಳು) {label} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "ನಿಮ್ಮ ಸಂದೇಶ, ಇಲ್ಲಿನ ಹಿಂದಿನ ಸಂದೇಶಗಳು, ಈ ಅರ್ಜಿ (ಉದ್ಯೋಗ ಪ್ರಕಟಣೆ, ಟಿಪ್ಪಣಿಗಳು, ದಾಖಲೆಗಳು, ಫಾರ್ಮ್‌ನಲ್ಲಿನ ನಿಮ್ಮ ಉತ್ತರಗಳು, ಉಳಿಸಿದ ಕೊಡುಗೆ ಮತ್ತು ಇತ್ತೀಚಿನ ಸಂದೇಶಗಳು) ಮತ್ತು ಸಕ್ರಿಯಗೊಳಿಸಿದ ಜ್ಞಾನವನ್ನು {label} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "ನಿಮ್ಮ ಸಂದೇಶ, ಈ ಅರ್ಜಿ (ಉದ್ಯೋಗ ಪ್ರಕಟಣೆ, ಟಿಪ್ಪಣಿಗಳು, ದಾಖಲೆಗಳು, ಫಾರ್ಮ್‌ನಲ್ಲಿನ ನಿಮ್ಮ ಉತ್ತರಗಳು, ಉಳಿಸಿದ ಕೊಡುಗೆ ಮತ್ತು ಇತ್ತೀಚಿನ ಸಂದೇಶಗಳು) ಮತ್ತು ಸಕ್ರಿಯಗೊಳಿಸಿದ ಜ್ಞಾನವನ್ನು {label} ಗೆ ಕಳುಹಿಸುತ್ತದೆ."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/resume/editor/check/writing-tab.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "ನಿಮ್ಮ ಕೀಲಿಯೊಂದಿಗೆ {0} · {1} ಗೆ ಮಾತ್ರ ನಿಮ್ಮ ರೆಸ್ಯೂಮೆಯ ಪಠ್ಯವನ್ನು ಕಳುಹಿಸುತ್ತದೆ."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -15273,6 +15093,10 @@ msgstr "ಕೆಲವು ಪರಿಶೀಲನೆಗಳಿಗೆ ಈ ಫೈಲ್
 msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
 msgstr "ಕೆಲವು ಕರಡುಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುವ ಮೊದಲು ಪೂರ್ಣಗೊಂಡ ಕರಡುಗಳನ್ನು ಉಳಿಸಿ."
 
+#: src/libs/error-message.ts
+msgid "Some fonts are missing from this server's font mirror. Ask the administrator to add them."
+msgstr "ಈ ಸರ್ವರ್‌ನ ಫಾಂಟ್ ಮಿರರ್‌ನಲ್ಲಿ ಕೆಲವು ಫಾಂಟ್‌ಗಳು ಇಲ್ಲ. ಅವುಗಳನ್ನು ಸೇರಿಸಲು ನಿರ್ವಾಹಕರನ್ನು ಕೇಳಿ."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "ಕೆಲವು ಗ್ಲಿಫ್‌ಗಳಿಗೆ ಈ ಫೈಲ್‌ನ ಹೊರಗೆ ಯಾವುದೇ ಅರ್ಥವಿಲ್ಲ."
@@ -15836,8 +15660,8 @@ msgid "Switched to one column"
 msgstr "ಒಂದು ಕಾಲಮ್‌ಗೆ ಬದಲಾಯಿಸಲಾಗಿದೆ"
 
 #: src/features/resume/builder/draft.ts
-msgid "Synced changes made in another tab."
-msgstr "ಮತ್ತೊಂದು ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಸಿಂಕ್ ಮಾಡಿದ ಬದಲಾವಣೆಗಳು."
+msgid "Synced changes made elsewhere."
+msgstr "ಬೇರೆಡೆ ಮಾಡಿದ ಬದಲಾವಣೆಗಳನ್ನು ಸಿಂಕ್ ಮಾಡಲಾಗಿದೆ."
 
 #. Appearance theme option that follows the operating system
 #: src/features/user/dropdown-menu.tsx
@@ -16257,17 +16081,9 @@ msgstr "ಅಂತರ್ನಿರ್ಮಿತ ರೀಡರ್ ಸಕ್ರಿಯ�
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "ಚೆಕ್‌ಗಳು ಯಾಂತ್ರಿಕವಾಗಿವೆ. ನಿಮ್ಮ ಪಟ್ಟಿ ನಮೂದುಗಳಿಗೆ ಓದುಗರು ಹೇಗೆ ಪ್ರತಿಕ್ರಿಯಿಸಬಹುದು ಎಂಬುದನ್ನು ಇದು ಭಾಷಾ ಮಾದರಿಯನ್ನು ಕೇಳುತ್ತದೆ ಮತ್ತು ಪುನಃ ಬರೆಯುವಂತೆ ಸೂಚಿಸುತ್ತದೆ. ಇದು ಸ್ಕೋರ್‌ನ ಭಾಗವಲ್ಲ."
 
-#: src/features/career/coach-thread.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "ನೀವು ಹೇಳುವ ಸಂಗತಿಗಳನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುವ ಮೊದಲು ಕೋಚ್ ಕೇಳುತ್ತದೆ."
-
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "ಕೋಚ್ ನಿಮ್ಮ ಸಂದೇಶಗಳಿಂದ ಏನನ್ನೂ ನೆನಪಿಟ್ಟುಕೊಳ್ಳುವುದಿಲ್ಲ."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "ನೀವು ಬರೆಯುವುದೇನನ್ನೂ ಕೋಚ್ ನೆನಪಿಟ್ಟುಕೊಳ್ಳುವುದಿಲ್ಲ."
 
 #: src/features/career/coach.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers and your applications work without it."
@@ -16280,10 +16096,6 @@ msgstr "ಕೋಚ್ ಪ್ರತಿಯೊಂದು ಸಂಗತಿಯನ್ನ�
 #: src/features/career/workspace/shell.tsx
 msgid "The coach reads these for this application only."
 msgstr "ಕೋಚ್ ಇವುಗಳನ್ನು ಈ ಅರ್ಜಿಗಾಗಿ ಮಾತ್ರ ಓದುತ್ತದೆ."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "ನೀವು ಹೇಳುವ ಸಂಗತಿಗಳನ್ನು ಕೋಚ್ ನೆನಪಿಟ್ಟುಕೊಳ್ಳುತ್ತದೆ, ಮತ್ತು ಅದನ್ನು ನಿಮಗೆ ತಿಳಿಸುತ್ತದೆ."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -16309,17 +16121,9 @@ msgstr "ನಕಲಿಗೆ ಹುದ್ದೆಯ ಪೋಸ್ಟಿಂಗ್ ಸ
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "ನಕಲನ್ನು ಉದ್ಯೋಗ ಅರ್ಜಿಗೆ ಲಿಂಕ್ ಮಾಡಲಾಗಿದೆ, ಆದ್ದರಿಂದ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಸಹಾಯಕ ಅದರ ಉದ್ಯೋಗ ಪೋಸ್ಟ್ ಅನ್ನು ಬಳಸುತ್ತಾರೆ."
 
-#: src/features/career/disclosure.tsx
-msgid "the cover letter for this job"
-msgstr "ಈ ಹುದ್ದೆಗಾಗಿ ಕವರ್ ಲೆಟರ್"
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The employer may have changed it since."
 msgstr "ಉದ್ಯೋಗದಾತರು ಆ ನಂತರ ಅದನ್ನು ಬದಲಾಯಿಸಿರಬಹುದು."
-
-#: src/features/career/disclosure.tsx
-msgid "the employer's message"
-msgstr "ಉದ್ಯೋಗದಾತನ ಸಂದೇಶ"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end date is before the start date. Check both dates."
@@ -16341,10 +16145,6 @@ msgstr "ಫೈಲ್ ಅನ್ನು ರೆಸ್ಯೂಮ್ ಆಗಿ ಓದ�
 msgid "The greeting follows the name."
 msgstr "ಶುಭಾಶಯವು ಹೆಸರನ್ನು ಅನುಸರಿಸುತ್ತದೆ."
 
-#: src/features/career/disclosure.tsx
-msgid "the interview details"
-msgstr "ಸಂದರ್ಶನ ವಿವರಗಳು"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "ಕೀಯನ್ನು ಸರ್ವರ್‌ನಲ್ಲಿ ಎನ್‌ಕ್ರಿಪ್ಟ್ ಮಾಡಲಾಗಿದೆ ಮತ್ತು ಮತ್ತೆ ತೋರಿಸುವುದಿಲ್ಲ. ಉಳಿಸುವಿಕೆಯು ಸಂಪರ್ಕವನ್ನು ಪರೀಕ್ಷಿಸುತ್ತದೆ."
@@ -16352,10 +16152,6 @@ msgstr "ಕೀಯನ್ನು ಸರ್ವರ್‌ನಲ್ಲಿ ಎನ್‌�
 #: src/features/settings/ai/test-error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "ಕೀ ತಿರಸ್ಕರಿಸಲಾಗಿದೆ. ಕೀಯನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಟೆಸ್ಟ್ ಮಾಡಿ."
-
-#: src/features/career/disclosure.tsx
-msgid "the last messages"
-msgstr "ಕೊನೆಯ ಸಂದೇಶಗಳು"
 
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
@@ -16494,14 +16290,6 @@ msgstr "ಓದಲು ಸಾಧ್ಯವಾಗದ ವಿಮರ್ಶೆಯನ್�
 msgid "The provider's response couldn't be verified. Try again."
 msgstr "ಪೂರೈಕೆದಾರರ ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಪರಿಶೀಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
-#: src/features/career/disclosure.tsx
-msgid "the question and what you said"
-msgstr "ಪ್ರಶ್ನೆ ಮತ್ತು ನೀವು ಹೇಳಿದ್ದು"
-
-#: src/features/career/disclosure.tsx
-msgid "the question and your answer"
-msgstr "ಪ್ರಶ್ನೆ ಮತ್ತು ನಿಮ್ಮ ಉತ್ತರ"
-
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "ಕಾರಣವನ್ನು ಒಳನೋಟಗಳಿಗಾಗಿ ಇರಿಸಲಾಗಿದೆ. ಲಿಂಕ್ ಮಾಡಲಾದ ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳನ್ನು ಸ್ಪರ್ಶಿಸಲಾಗಿಲ್ಲ."
@@ -16518,10 +16306,6 @@ msgstr "ರೆಸ್ಯೂಮೆ"
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "ರೆಸ್ಯೂಮೆ ಇದ್ದ ಹಾಗೆ"
-
-#: src/features/career/disclosure.tsx
-msgid "the resume for this job"
-msgstr "ಈ ಹುದ್ದೆಗಾಗಿ ರೆಸ್ಯೂಮ್"
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
@@ -16542,10 +16326,6 @@ msgstr "ಉಳಿಸಿದ ಕೀಲಿಯನ್ನು ಹೊಸ ಮೂಲ URL �
 #: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "ಉಳಿಸಿದ ಕೀಲಿಯನ್ನು ಹೊಸ ಮೂಲ URL ಗೆ ಕಳುಹಿಸಲಾಗಿಲ್ಲ. ಮತ್ತೆ ಕೀಲಿಯನ್ನು ನಮೂದಿಸಿ."
-
-#: src/features/career/disclosure.tsx
-msgid "the saved offer"
-msgstr "ಉಳಿಸಿದ ಆಫರ್"
 
 #: src/libs/error-message.ts
 msgid "The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer."
@@ -16948,10 +16728,6 @@ msgstr "ಈ PDF ಹಾಳಾಗಿರುವಂತೆ ಕಾಣುತ್ತದೆ
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr "ಈ ಫೋಟೋ 10 MB ಗಿಂತ ದೊಡ್ಡದಾಗಿದೆ. ಸಣ್ಣದಾಗಿಸಲು ಕತ್ತರಿಸಿ ಮತ್ತು ಅಪ್‌ಲೋಡ್ ಬಳಸಿ."
 
-#: src/features/career/disclosure.tsx
-msgid "this posting"
-msgstr "ಈ ಪೋಸ್ಟಿಂಗ್"
-
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr "ಈ ಪ್ರಶ್ನೆಯನ್ನು ಕೇಳಲಾಗಲಿಲ್ಲ. ಮುಂದುವರಿಸಲು ಹೊಸ ಸಂದೇಶ ಕಳುಹಿಸಿ."
@@ -17294,6 +17070,7 @@ msgstr "{languageCount} ಭಾಷೆಗಳಿಗೆ ಅನುವಾದಿಸಲ�
 msgid "Translations"
 msgstr "ಅನುವಾದಗಳು"
 
+#: src/components/layout/trash-nav.tsx
 #: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
@@ -18517,10 +18294,6 @@ msgstr "ನಾನು ಯಾವಾಗ ಫಾಲೋ-ಅಪ್ ಮಾಡಬೇಕ�
 msgid "When would you start?"
 msgstr "ನೀವು ಯಾವಾಗ ಪ್ರಾರಂಭಿಸುತ್ತೀರಿ?"
 
-#: src/features/career/coach.tsx
-msgid "When you press send, {shared} go to your {connection}."
-msgstr "ನೀವು ಕಳುಹಿಸಿ ಒತ್ತಿದಾಗ, {shared} {connection} ಗೆ ಹೋಗುತ್ತವೆ."
-
 #: src/features/applications/components/insights-view.tsx
 msgid "Where applications come from"
 msgstr "ಅರ್ಜಿಗಳು ಎಲ್ಲಿಂದ ಬರುತ್ತವೆ"
@@ -18615,10 +18388,6 @@ msgstr "ನನ್ನ ರೆಸ್ಯೂಮೆ ಹಿಂದಿನ ಅರ್ಜಿ
 #: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr "ಸ್ಥಳಾಂತರಕ್ಕೆ ಸಿದ್ಧ"
-
-#: src/features/career/coach-thread.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "ಜ್ಞಾನ ಆಫ್ ಆಗಿದ್ದರೆ, ನೀವು ಬರೆಯುವುದೇನನ್ನೂ ನೆನಪಿಟ್ಟುಕೊಳ್ಳಲಾಗುವುದಿಲ್ಲ."
 
 #: src/features/homepage/remember.tsx
 msgid "Within a quarter, activation went from 31% to 44%."
@@ -18975,10 +18744,6 @@ msgstr "ನಿಮ್ಮ AI"
 msgid "Your AI connection"
 msgstr "ನಿಮ್ಮ AI ಸಂಪರ್ಕ"
 
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "your AI provider"
-msgstr "ನಿಮ್ಮ AI ಪ್ರೊವೈಡರ್"
-
 #: src/libs/orpc/ai-consent.ts
 msgid "Your AI settings changed. Nothing was sent; try again."
 msgstr "ನಿಮ್ಮ AI ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಬದಲಾಗಿವೆ. ಏನನ್ನೂ ಕಳುಹಿಸಲಾಗಿಲ್ಲ; ಮರುಪ್ರಯತ್ನಿಸಿ."
@@ -19020,10 +18785,6 @@ msgstr "ನಿಮ್ಮ ಬ್ರೌಸರ್"
 msgid "Your browser can't take dictation here. Type your answer instead."
 msgstr "ನಿಮ್ಮ ಬ್ರೌಸರ್ ಇಲ್ಲಿ ಡಿಕ್ಟೇಶನ್ ತೆಗೆದುಕೊಳ್ಳಲು ಸಾಧ್ಯವಿಲ್ಲ. ಬದಲಿಗೆ ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಟೈಪ್ ಮಾಡಿ."
 
-#: src/features/career/workspace/practise.tsx
-msgid "Your browser turns your speech into text. Depending on the browser, its maker may process the audio (Google in Chrome, Apple in Safari)."
-msgstr "ನಿಮ್ಮ ಬ್ರೌಸರ್ ನಿಮ್ಮ ಮಾತನ್ನು ಪಠ್ಯವಾಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ. ಬ್ರೌಸರ್ ಅನ್ನು ಅವಲಂಬಿಸಿ, ಅದರ ತಯಾರಕರು ಆಡಿಯೊವನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಬಹುದು (Chrome ನಲ್ಲಿ Google, Safari ನಲ್ಲಿ Apple)."
-
 #: src/features/letters/webmcp.ts
 msgid "Your browser's AI agent edited this letter."
 msgstr "ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನ AI ಏಜೆಂಟ್ ಈ ಪತ್ರವನ್ನು ಸಂಪಾದಿಸಿದೆ."
@@ -19056,10 +18817,6 @@ msgstr "ನಿಮ್ಮ ಬದಲಾವಣೆಗಳನ್ನು “{name}” ನ
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "ನಿಮ್ಮ ಸಂಪರ್ಕ ವಿವರಗಳು ಮೊದಲ ಪುಟದಲ್ಲಿಲ್ಲ."
-
-#: src/features/career/disclosure.tsx
-msgid "your contacts"
-msgstr "ನಿಮ್ಮ ಸಂಪರ್ಕಗಳು"
 
 #: src/features/settings/account/data.tsx
 msgid "Your data"
@@ -19130,10 +18887,6 @@ msgstr "ನಿಮ್ಮ ಫೈಲ್"
 msgid "Your focus"
 msgstr "ನಿಮ್ಮ ಗಮನ"
 
-#: src/features/career/disclosure.tsx
-msgid "your form answers"
-msgstr "ನಿಮ್ಮ ಫಾರ್ಮ್ ಉತ್ತರಗಳು"
-
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your guest documents and applications are in this account."
 msgstr "ನಿಮ್ಮ ಅತಿಥಿ ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳು ಮತ್ತು ಅರ್ಜಿಗಳು ಈ ಖಾತೆಯಲ್ಲಿವೆ."
@@ -19174,10 +18927,6 @@ msgstr "ರೆಸ್ಯೂಮೆಯಲ್ಲಿ ನಿಮ್ಮ ಸ್ಥಳ ಬ
 msgid "Your margins are very narrow."
 msgstr "ನಿಮ್ಮ ಅಂಚುಗಳು ಬಹಳ ಕಿರಿದಾಗಿವೆ."
 
-#: src/features/career/coach.tsx
-msgid "your message"
-msgstr "ನಿಮ್ಮ ಸಂದೇಶ"
-
 #: src/features/assistant/conversation.tsx
 msgid "Your message is kept."
 msgstr "ನಿಮ್ಮ ಸಂದೇಶ ಉಳಿಸಲಾಗಿದೆ."
@@ -19199,7 +18948,6 @@ msgstr "ರೆಸ್ಯೂಮೆಯಲ್ಲಿ ನಿಮ್ಮ ಹೆಸರು 
 msgid "Your name is missing"
 msgstr "ನಿಮ್ಮ ಹೆಸರು ಕಾಣೆಯಾಗಿದೆ"
 
-#: src/features/career/disclosure.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "ನಿಮ್ಮ ಟಿಪ್ಪಣಿಗಳು"
@@ -19224,11 +18972,6 @@ msgstr "ರೆಸ್ಯೂಮೆಯಲ್ಲಿ ನಿಮ್ಮ ಫೋನ್ ಸ
 msgid "Your phone number is written in an unusual shape."
 msgstr "ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಅಸಾಮಾನ್ಯ ರೂಪದಲ್ಲಿ ಬರೆಯಲಾಗಿದೆ."
 
-#: src/features/career/coach.tsx
-#: src/features/career/disclosure.tsx
-msgid "your preferences"
-msgstr "ನಿಮ್ಮ ಆದ್ಯತೆಗಳು"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "ನಿಮ್ಮ ಪೂರೈಕೆದಾರ"
@@ -19240,11 +18983,6 @@ msgstr "ನಿಮ್ಮ API ಕೀಲಿಯೊಂದಿಗೆ ಮಾಡಿದ �
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"
 msgstr "ನಿಮ್ಮ ಸಾರ್ವಜನಿಕ ಲಿಂಕ್‌ಗಳು ಬದಲಾಗುತ್ತವೆ"
-
-#. placeholder {0}: voice.settings.transcribe.label
-#: src/features/career/workspace/practise.tsx
-msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
-msgstr "ನಿಮ್ಮ ರೆಕಾರ್ಡಿಂಗ್ ಪ್ರತಿಲೇಖನಕ್ಕಾಗಿ {0} ಗೆ ಹೋಗುತ್ತದೆ, ಇದು ಆ ಖಾತೆಯ ಟೋಕನ್‌ಗಳನ್ನು ಬಳಸಬಹುದು."
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
@@ -19345,10 +19083,6 @@ msgstr "ನೀವು ಮತ್ತೆ ಪ್ರಕಟಿಸುವವರೆಗೆ 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."
 msgstr "ನಿಮ್ಮ ಹಂತಗಳು ಬೇರೆಡೆ ಬದಲಾಗಿವೆ. ಅವುಗಳನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ; ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
-
-#: src/features/career/coach.tsx
-msgid "your stories"
-msgstr "ನಿಮ್ಮ ಕಥೆಗಳು"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."

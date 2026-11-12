@@ -1223,7 +1223,6 @@ function ProposalReview({ proposal, factText }: { proposal: Proposal; factText: 
 
 /** Every posting requirement as the assistant read it, gaps included (web proposal-list). */
 function Coverage({ requirements, factText }: { requirements: readonly RequirementCoverage[]; factText: FactText }) {
-	const { t } = useLingui();
 	const { colors, space } = useTheme();
 	const labels = useReviewLabels();
 	const gaps = requirements.filter((item) => item.status === "missing" || item.status === "unassessed").length;
@@ -1253,9 +1252,8 @@ function Coverage({ requirements, factText }: { requirements: readonly Requireme
 					})}${gaps > 0 ? ` ${plural(gaps, { one: "· # gap", other: "· # gaps" })}` : ""}`}
 				</Text>
 			</Pressable>
-			{open ? (
-				<>
-					{requirements.map((item, index) => (
+			{open
+				? requirements.map((item, index) => (
 						<View key={index} style={{ gap: 2 }}>
 							{item.status === "missing" || item.status === "unassessed" ? (
 								<Pressable
@@ -1296,12 +1294,8 @@ function Coverage({ requirements, factText }: { requirements: readonly Requireme
 								</Text>
 							) : null}
 						</View>
-					))}
-					<Text variant="caption" color="ink3">
-						{t`An AI reading to help you edit, not a prediction of how an employer or screening system will respond.`}
-					</Text>
-				</>
-			) : null}
+					))
+				: null}
 		</View>
 	);
 }

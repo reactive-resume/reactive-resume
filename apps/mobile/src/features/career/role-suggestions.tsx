@@ -48,7 +48,6 @@ export function RoleSuggestions({ onUse, locale }: RoleSuggestionsProps) {
 	return (
 		<View style={{ gap: space.s3 }}>
 			<Button variant="ghost" label={t`Suggest target roles (optional AI)`} onPress={() => setOpen(!open)} />
-			<Text color="ink3">{t`Manual roles and preferences work without AI. Suggestions never search or schedule anything.`}</Text>
 			{open ? (
 				<>
 					{ai.isUnavailable || error ? (
@@ -109,7 +108,6 @@ export function RoleSuggestions({ onUse, locale }: RoleSuggestionsProps) {
 									clear();
 								}}
 							/>
-							<Text color="ink3">{t`Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge.`}</Text>
 							<Button
 								variant="secondary"
 								label={t`Generate role suggestions`}
@@ -143,7 +141,6 @@ export function RoleSuggestions({ onUse, locale }: RoleSuggestionsProps) {
 					{error ? <Banner tone="danger" message={error} /> : null}
 					{suggestions ? (
 						<>
-							<Text color="ink3">{t`AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements.`}</Text>
 							{suggestions.suggestions.map((item) => (
 								<View key={item.role} style={{ gap: space.s2 }}>
 									<Text variant="title">{item.role}</Text>

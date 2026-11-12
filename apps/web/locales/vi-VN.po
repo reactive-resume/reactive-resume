@@ -211,12 +211,10 @@ msgstr "{0, plural, one {Không thể đặt bản chỉnh sửa #: văn bản c
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, other {# mục}}"
 
-#. placeholder {0}: knowledge.active.length
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: used.facts.length
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
-#: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, other {# dữ kiện}}"
 
@@ -290,13 +288,6 @@ msgstr "{0, plural, other {# câu chuyện}}"
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, other {Đã thêm # dữ kiện vào Kiến thức.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {Đồng thời gửi {1}.} other {Đồng thời gửi # tệp: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -426,8 +417,8 @@ msgstr "{0} — {1}"
 
 #. placeholder {0}: when(runAt)
 #: src/features/career/workspace/prepare.tsx
-msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{0} · {providerLabel}. Gửi hồ sơ ứng tuyển này và Kiến thức của bạn; nhà cung cấp có thể tính phí."
+msgid "{0} · {providerLabel}"
+msgstr "{0} · {providerLabel}"
 
 #. Mode tab tooltip: the mode, then the key that opens it
 #. placeholder {0}: labels[mode]
@@ -637,14 +628,6 @@ msgstr "{added, plural, other {# câu mới hoặc được viết lại}}"
 #: src/features/career/workspace/apply.tsx
 msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, other {# câu trả lời}}"
-
-#: src/features/career/coach.tsx
-msgid "{attached, plural, one {# attached file} other {# attached files}}"
-msgstr "{attached, plural, other {# tệp đính kèm}}"
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "{attached, plural, one {The attached file goes too.} other {The # attached files go too.}}"
-msgstr "{attached, plural, one {Tệp đính kèm cũng sẽ bị xóa.} other {# tệp đính kèm cũng sẽ bị xóa.}}"
 
 #: src/features/resume/editor/design/fit.ts
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
@@ -2168,12 +2151,6 @@ msgstr "Nhà cung cấp AI không khả dụng trên máy chủ này cho đến 
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "Không thể tải nhà cung cấp AI. Hãy tải lại để thử lại."
 
-#. placeholder {0}: read?.label
-#. placeholder {1}: read?.model
-#: src/features/documents/new-document-dialog.tsx
-msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
-msgstr "Đọc bằng AI sẽ gửi nội dung tệp này đến {0} · {1}. Nhà cung cấp của bạn có thể tính phí."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -2189,10 +2166,6 @@ msgstr "Không có lịch sử yêu cầu AI cho kết quả này."
 #: src/features/career/shared.tsx
 msgid "AI settings"
 msgstr "Cài đặt AI"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "Gợi ý của AI, không phải trình độ đã được xác minh hay dự đoán tuyển dụng. Các nguồn bên dưới là những gì bạn đã khai."
 
 #: src/features/settings/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -2337,10 +2310,6 @@ msgstr "Cũng hiển thị các biểu tượng về kỹ năng, hồ sơ và s�
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "Tiếng Amharic"
-
-#: src/features/resume/editor/proposals/proposal-list.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "Một bản đọc của AI để giúp bạn chỉnh sửa, không phải dự đoán về cách nhà tuyển dụng hay hệ thống sàng lọc sẽ phản hồi."
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "An edit addresses it"
@@ -2570,10 +2539,6 @@ msgstr "Chuẩn bị ứng tuyển"
 msgid "Application progress"
 msgstr "Tiến độ ứng tuyển"
 
-#: src/features/career/coach.tsx
-msgid "application summaries"
-msgstr "tóm tắt hồ sơ ứng tuyển"
-
 #: src/features/homepage/prepare.tsx
 msgid "Application tabs"
 msgstr "Các thẻ của hồ sơ ứng tuyển"
@@ -2583,14 +2548,13 @@ msgstr "Các thẻ của hồ sơ ứng tuyển"
 msgid "Application updated"
 msgstr "Đã cập nhật hồ sơ ứng tuyển"
 
+#: src/components/layout/trash-nav.tsx
 #: src/features/applications/components/list-view.tsx
-#: src/features/applications/trash-page.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
@@ -3355,11 +3319,6 @@ msgstr "Chứng chỉ"
 msgid "Change"
 msgstr "Thay đổi"
 
-#: src/features/career/coach-thread.tsx
-msgctxt "Change what the coach remembers"
-msgid "Change"
-msgstr "Thay đổi"
-
 #: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Change connection"
@@ -3908,6 +3867,7 @@ msgstr "đã đóng"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/documents/documents-page.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Closed"
 msgstr "Đã đóng"
 
@@ -6005,10 +5965,9 @@ msgstr "Loại tài liệu"
 msgid "Documentation"
 msgstr "Tài liệu"
 
-#: src/features/applications/trash-page.tsx
+#: src/components/layout/trash-nav.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
-#: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/index.tsx
 msgid "Documents"
@@ -6325,10 +6284,6 @@ msgstr "Mỗi câu trả lời bạn nhận được nhận xét đều được
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "Mỗi yêu cầu trong tin tuyển dụng được đối chiếu với các dữ kiện và câu chuyện trong Kiến thức của bạn. Khoảng trống được hiển thị là thiếu bằng chứng, không bao giờ là thiếu năng lực."
 
-#: src/features/assistant/conversation.tsx
-msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
-msgstr "Mỗi lần gửi sẽ bắt đầu mới với tin nhắn này và các tệp đã chọn. Lịch sử cuộc trò chuyện trước đó vẫn ở đây."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Each visitor counts once an hour."
 msgstr "Mỗi khách truy cập chỉ được tính một lần mỗi giờ."
@@ -6340,10 +6295,6 @@ msgstr "Kết quả tìm kiếm trước đó. Không rõ truy vấn tìm kiếm
 #: src/libs/orpc/ai-consent.ts
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Các tin nhắn và tệp đính kèm trước đó trong cuộc trò chuyện này sẽ được gửi đến đích này khi bạn gửi lại."
-
-#: src/features/career/coach.tsx
-msgid "earlier messages in this chat"
-msgstr "các tin nhắn trước trong cuộc trò chuyện này"
 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -6596,10 +6547,6 @@ msgstr "Dọn sạch Thùng rác?"
 #: src/features/documents/trash-page.tsx
 msgid "Empty Trash…"
 msgstr "Dọn sạch Thùng rác…"
-
-#: src/features/career/disclosure.tsx
-msgid "enabled Knowledge"
-msgstr "Kiến thức đang bật"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -8373,14 +8320,6 @@ msgstr "Vấn đề"
 msgid "Issues and Job match still work without AI."
 msgstr "Sự cố và kết quả tìm việc vẫn hoạt động mà không cần AI."
 
-#: src/features/assistant/conversation.tsx
-msgid "It can also search Knowledge available to this application (facts and stories) and send what it finds."
-msgstr "Nó cũng có thể tìm trong Kiến thức dành cho hồ sơ ứng tuyển này (dữ kiện và câu chuyện) và gửi những gì tìm được."
-
-#: src/features/assistant/conversation.tsx
-msgid "It can also search your shared Knowledge (facts and stories) and send what it finds."
-msgstr "Nó cũng có thể tìm trong Kiến thức được chia sẻ của bạn (dữ kiện và câu chuyện) và gửi những gì tìm được."
-
 #: src/features/resume/editor/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "Nó có các mục nhưng không được đặt trên một trang."
@@ -8436,10 +8375,6 @@ msgstr "Tin nhắn và tệp đính kèm của nó sẽ bị xóa. Các chỉnh 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Its own design ({summary})."
 msgstr "Thiết kế riêng của nó ({summary})."
-
-#: src/features/career/disclosure.tsx
-msgid "its requirements"
-msgstr "các yêu cầu của nó"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -9738,11 +9673,6 @@ msgstr "Tin nhắn · Trả lời Sam tại Fieldnote"
 #: src/features/career/coach-chat.tsx
 msgid "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "Các tin nhắn phía trên không còn được gửi đến AI nữa, nên nó sẽ không nhớ chúng. Hãy bắt đầu cuộc trò chuyện mới để giữ ngữ cảnh liền mạch."
-
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "Các tin nhắn trước khi Kiến thức thay đổi sẽ không được gửi."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Microphone blocked. Allow it in your browser settings, or type your answer."
@@ -12031,7 +11961,6 @@ msgstr "Luyện tập cho các buổi phỏng vấn tại {company}."
 msgid "Practice in {company}’s workspace"
 msgstr "Luyện tập trong không gian làm việc của {company}"
 
-#: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Practice priorities, not conclusions about why an employer decided anything."
 msgstr "Ưu tiên luyện tập, không phải kết luận về lý do nhà tuyển dụng đưa ra quyết định."
@@ -12184,10 +12113,6 @@ msgstr "Đơn ứng tuyển trước"
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Previous issue"
 msgstr "Số trước"
-
-#: src/features/assistant/conversation.tsx
-msgid "Previous messages, including document details, are also sent."
-msgstr "Các tin nhắn trước đó, bao gồm cả chi tiết tài liệu, cũng được gửi đi."
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
@@ -14304,11 +14229,6 @@ msgstr "Tìm kiếm hoặc chạy lệnh…"
 msgid "Search saved answers"
 msgstr "Tìm câu trả lời đã lưu"
 
-#: src/features/career/coach.tsx
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "Từ khóa tìm kiếm được gửi tới dịch vụ tìm kiếm web của bạn."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "Tìm kiếm trên web"
@@ -14525,113 +14445,13 @@ msgstr "Chi tiết người gửi được sao chép vào thư"
 msgid "Sending password reset email…"
 msgstr "Đang gửi email đặt lại mật khẩu…"
 
-#: src/features/career/disclosure.tsx
-msgid "Sends {list} to {providerLabel}."
-msgstr "Gửi {list} đến {providerLabel}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "Chỉ gửi sơ yếu lý lịch bạn đã chọn và tối đa 20 dữ kiện được chia sẻ đang hoạt động đến kết nối này. Không gửi hồ sơ thông tin ứng tuyển, câu trả lời đã lưu hay dữ kiện riêng của hồ sơ ứng tuyển. Nhà cung cấp của bạn có thể tính phí."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the {0} posting to {1} to draft the body."
-msgstr "Gửi tin tuyển dụng {0} đến {1} để soạn phần nội dung."
-
-#. placeholder {0}: draft?.label
-#. placeholder {1}: draft?.model
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
-msgstr "Gửi sơ yếu lý lịch được liên kết, tin tuyển dụng và thông tin thư đến {0} · {1}. Nhà cung cấp của bạn có thể tính phí."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Gửi nội dung tin tuyển dụng đến {0} để đọc."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
 msgstr "Gửi tin tuyển dụng, ghi chú và tài liệu của hồ sơ ứng tuyển này, cùng phần Kiến thức đang bật, đến kết nối này. Nhà cung cấp của bạn có thể tính phí. Tác vụ theo lịch không bao giờ tự động chuyển sang kết nối khác."
 
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
-msgstr "Gửi thư này và tin tuyển dụng tới {provider} bằng chìa khóa của bạn, chỉ khi bạn nhấn gửi."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this letter to {provider} with your key, only when you press send."
-msgstr "Gửi thư này tới {provider} bằng chìa khóa của bạn, chỉ khi bạn nhấn gửi."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
-msgstr "Gửi sơ yếu lý lịch của thư này và tin tuyển dụng {0} đến {1} để soạn phần nội dung."
-
-#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume to {0} to draft the body."
-msgstr "Gửi sơ yếu lý lịch của thư này đến {0} để soạn phần nội dung."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "Gửi dòng này, văn bản xung quanh trong trường và hướng dẫn của bạn đến {0} · {1}."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "Gửi đoạn này, phần còn lại của thư và hướng dẫn của bạn đến {0} · {1}."
-
-#. placeholder {0}: improveProvider?.label
-#. placeholder {1}: improveProvider?.model
-#: src/features/resume/editor/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "Gửi đoạn này, phần còn lại của thư, tin tuyển dụng được liên kết và hướng dẫn của bạn đến {0} · {1}."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
-msgstr "Gửi bản lý lịch này và tin tuyển dụng tới {provider} bằng chìa khóa của bạn, chỉ khi bạn nhấn gửi."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends this resume to {provider} with your key, only when you press send."
-msgstr "Gửi bản lý lịch này tới {provider} bằng chìa khóa của bạn, chỉ khi bạn nhấn gửi."
-
 #: src/features/homepage/remember.tsx
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Gửi câu chuyện này và các dữ kiện đang bật tới kết nối AI của bạn. Nếu không có kết nối, không có gì được gửi."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message and the posting to {provider} with your key, only when you press send."
-msgstr "Gửi tin nhắn và tin tuyển dụng tới {provider} bằng chìa khóa của bạn, chỉ khi bạn nhấn gửi."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Gửi tin nhắn của bạn và hồ sơ ứng tuyển này (tin tuyển dụng, ghi chú, tài liệu, câu trả lời biểu mẫu, lời đề nghị đã lưu và các tin nhắn gần đây) đến {label}."
-
-#: src/features/assistant/conversation.tsx
-msgid "Sends your message to {provider} with your key, only when you press send."
-msgstr "Gửi tin nhắn của bạn đến {provider} bằng phím của bạn, chỉ khi bạn nhấn gửi."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Gửi tin nhắn của bạn, các tin nhắn trước đó ở đây và hồ sơ ứng tuyển này (tin tuyển dụng, ghi chú, tài liệu, câu trả lời biểu mẫu, lời đề nghị đã lưu và các tin nhắn gần đây) đến {label}."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Gửi tin nhắn của bạn, các tin nhắn trước đó tại đây, hồ sơ ứng tuyển này (tin tuyển dụng, ghi chú, tài liệu, câu trả lời biểu mẫu của bạn, lời mời đã lưu và các tin nhắn gần đây) cùng Kiến thức đang bật đến {label}."
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "Gửi tin nhắn của bạn, hồ sơ ứng tuyển này (tin tuyển dụng, ghi chú, tài liệu, câu trả lời biểu mẫu của bạn, lời mời đã lưu và các tin nhắn gần đây) cùng Kiến thức đang bật đến {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/resume/editor/check/writing-tab.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "Chỉ gửi văn bản sơ yếu lý lịch của bạn tới {0} · {1} bằng chìa khóa của bạn."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -15273,6 +15093,10 @@ msgstr "Một số kiểm tra cần thông tin mà tệp này không mang theo: 
 msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
 msgstr "Một số bản nháp chưa hoàn tất. Giữ các bản đã hoàn tất trước khi thử lại."
 
+#: src/libs/error-message.ts
+msgid "Some fonts are missing from this server's font mirror. Ask the administrator to add them."
+msgstr "Một số phông chữ không có trong bản sao phông chữ của máy chủ này. Hãy yêu cầu quản trị viên thêm chúng."
+
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
 msgstr "Một số ký hiệu không có ý nghĩa bên ngoài tệp này."
@@ -15836,8 +15660,8 @@ msgid "Switched to one column"
 msgstr "Đã chuyển sang một cột"
 
 #: src/features/resume/builder/draft.ts
-msgid "Synced changes made in another tab."
-msgstr "Các thay đổi được thực hiện trong tab khác đã được đồng bộ hóa."
+msgid "Synced changes made elsewhere."
+msgstr "Các thay đổi được thực hiện ở nơi khác đã được đồng bộ hóa."
 
 #. Appearance theme option that follows the operating system
 #: src/features/user/dropdown-menu.tsx
@@ -16257,17 +16081,9 @@ msgstr "Trình đọc tích hợp vẫn hoạt động."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Việc kiểm tra mang tính cơ học. Điều này hỏi mô hình ngôn ngữ cách người đọc có thể phản ứng với các mục trong danh sách của bạn và đề xuất viết lại. Nó không phải là một phần của điểm số."
 
-#: src/features/career/coach-thread.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "Cố vấn sẽ hỏi trước khi ghi nhớ các dữ kiện bạn nêu."
-
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Cố vấn không ghi nhớ gì từ tin nhắn của bạn."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "Cố vấn không ghi nhớ bất cứ điều gì bạn viết."
 
 #: src/features/career/coach.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers and your applications work without it."
@@ -16280,10 +16096,6 @@ msgstr "Cố vấn đề xuất từng dữ kiện trong cuộc trò chuyện. K
 #: src/features/career/workspace/shell.tsx
 msgid "The coach reads these for this application only."
 msgstr "Cố vấn chỉ đọc những tài liệu này cho hồ sơ ứng tuyển này."
-
-#: src/features/career/coach-thread.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "Cố vấn ghi nhớ các dữ kiện bạn nêu và cho bạn biết."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -16309,17 +16121,9 @@ msgstr "Bản sao nhận tin tuyển dụng của công việc và giữ nguyên
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "Bản sao được liên kết với đơn xin việc nên Check và trợ lý sẽ sử dụng tin tuyển dụng của nó."
 
-#: src/features/career/disclosure.tsx
-msgid "the cover letter for this job"
-msgstr "thư xin việc cho công việc này"
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The employer may have changed it since."
 msgstr "Nhà tuyển dụng có thể đã thay đổi tin kể từ đó."
-
-#: src/features/career/disclosure.tsx
-msgid "the employer's message"
-msgstr "tin nhắn của nhà tuyển dụng"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end date is before the start date. Check both dates."
@@ -16341,10 +16145,6 @@ msgstr "Không thể đọc tệp này dưới dạng sơ yếu lý lịch."
 msgid "The greeting follows the name."
 msgstr "Lời chào theo sau tên."
 
-#: src/features/career/disclosure.tsx
-msgid "the interview details"
-msgstr "thông tin buổi phỏng vấn"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Khóa được mã hóa trên máy chủ và không bao giờ hiển thị lại. Việc lưu sẽ kiểm tra kết nối."
@@ -16352,10 +16152,6 @@ msgstr "Khóa được mã hóa trên máy chủ và không bao giờ hiển th�
 #: src/features/settings/ai/test-error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "Khóa đã bị từ chối. Hãy kiểm tra khóa và kiểm tra lại."
-
-#: src/features/career/disclosure.tsx
-msgid "the last messages"
-msgstr "các tin nhắn gần nhất"
 
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
@@ -16494,14 +16290,6 @@ msgstr "Nhà cung cấp đã trả lại một đánh giá không thể đọc �
 msgid "The provider's response couldn't be verified. Try again."
 msgstr "Không thể xác minh phản hồi của nhà cung cấp. Hãy thử lại."
 
-#: src/features/career/disclosure.tsx
-msgid "the question and what you said"
-msgstr "câu hỏi và những gì bạn đã nói"
-
-#: src/features/career/disclosure.tsx
-msgid "the question and your answer"
-msgstr "câu hỏi và câu trả lời của bạn"
-
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Lý do được giữ lại cho Thông tin chi tiết. Các tài liệu được liên kết không được chạm vào."
@@ -16518,10 +16306,6 @@ msgstr "sơ yếu lý lịch"
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "Sơ yếu lý lịch như vậy"
-
-#: src/features/career/disclosure.tsx
-msgid "the resume for this job"
-msgstr "sơ yếu lý lịch cho công việc này"
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
@@ -16542,10 +16326,6 @@ msgstr "Khóa đã lưu không được gửi tới URL cơ sở mới. Nhập l
 #: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Khóa đã lưu không được gửi tới URL cơ sở mới. Nhập lại khóa."
-
-#: src/features/career/disclosure.tsx
-msgid "the saved offer"
-msgstr "lời đề nghị đã lưu"
 
 #: src/libs/error-message.ts
 msgid "The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer."
@@ -16948,10 +16728,6 @@ msgstr "Tệp PDF này có vẻ bị hỏng. Hãy xuất lại từ trình chỉ
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr "Ảnh này lớn hơn 10 MB. Hãy dùng Cắt và tải lên để thu nhỏ."
 
-#: src/features/career/disclosure.tsx
-msgid "this posting"
-msgstr "tin tuyển dụng này"
-
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr "Không thể đặt câu hỏi này. Hãy gửi tin nhắn mới để tiếp tục."
@@ -17294,6 +17070,7 @@ msgstr "Đã được dịch sang {languageCount} ngôn ngữ."
 msgid "Translations"
 msgstr "Bản dịch"
 
+#: src/components/layout/trash-nav.tsx
 #: src/features/applications/trash-page.tsx
 #: src/features/applications/use-application-actions.ts
 #: src/features/command-palette/pages/navigation.tsx
@@ -18517,10 +18294,6 @@ msgstr "Khi nào tôi nên liên hệ lại, và nên nói gì?"
 msgid "When would you start?"
 msgstr "Khi nào bạn có thể bắt đầu?"
 
-#: src/features/career/coach.tsx
-msgid "When you press send, {shared} go to your {connection}."
-msgstr "Khi bạn nhấn gửi, {shared} sẽ được gửi tới {connection}."
-
 #: src/features/applications/components/insights-view.tsx
 msgid "Where applications come from"
 msgstr "Hồ sơ ứng tuyển đến từ đâu"
@@ -18615,10 +18388,6 @@ msgstr "Liệu sơ yếu lý lịch của tôi có vượt qua được hệ th�
 #: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr "Sẵn sàng chuyển nơi ở"
-
-#: src/features/career/coach-thread.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "Khi Kiến thức tắt, không có gì bạn viết được ghi nhớ."
 
 #: src/features/homepage/remember.tsx
 msgid "Within a quarter, activation went from 31% to 44%."
@@ -18975,10 +18744,6 @@ msgstr "AI của bạn"
 msgid "Your AI connection"
 msgstr "Kết nối AI của bạn"
 
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "your AI provider"
-msgstr "nhà cung cấp AI của bạn"
-
 #: src/libs/orpc/ai-consent.ts
 msgid "Your AI settings changed. Nothing was sent; try again."
 msgstr "Cài đặt AI của bạn đã thay đổi. Không có gì được gửi; hãy thử lại."
@@ -19020,10 +18785,6 @@ msgstr "Trình duyệt của bạn"
 msgid "Your browser can't take dictation here. Type your answer instead."
 msgstr "Trình duyệt của bạn không thể đọc chính tả ở đây. Hãy nhập câu trả lời."
 
-#: src/features/career/workspace/practise.tsx
-msgid "Your browser turns your speech into text. Depending on the browser, its maker may process the audio (Google in Chrome, Apple in Safari)."
-msgstr "Trình duyệt của bạn chuyển giọng nói thành văn bản. Tùy trình duyệt, nhà phát triển có thể xử lý âm thanh (Google trên Chrome, Apple trên Safari)."
-
 #: src/features/letters/webmcp.ts
 msgid "Your browser's AI agent edited this letter."
 msgstr "Tác nhân AI trong trình duyệt của bạn đã chỉnh sửa thư này."
@@ -19056,10 +18817,6 @@ msgstr "Các thay đổi của bạn đã được giữ trong “{name}”."
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Thông tin liên hệ của bạn không nằm ở trang một."
-
-#: src/features/career/disclosure.tsx
-msgid "your contacts"
-msgstr "người liên hệ của bạn"
 
 #: src/features/settings/account/data.tsx
 msgid "Your data"
@@ -19130,10 +18887,6 @@ msgstr "Tập tin của bạn"
 msgid "Your focus"
 msgstr "Trọng tâm của bạn"
 
-#: src/features/career/disclosure.tsx
-msgid "your form answers"
-msgstr "câu trả lời biểu mẫu của bạn"
-
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your guest documents and applications are in this account."
 msgstr "Các tài liệu và hồ sơ ứng tuyển của tài khoản khách đã nằm trong tài khoản này."
@@ -19174,10 +18927,6 @@ msgstr "Vị trí của bạn đã thay đổi trên bản lý lịch. Bức th�
 msgid "Your margins are very narrow."
 msgstr "Lề trang của bạn rất hẹp."
 
-#: src/features/career/coach.tsx
-msgid "your message"
-msgstr "tin nhắn của bạn"
-
 #: src/features/assistant/conversation.tsx
 msgid "Your message is kept."
 msgstr "Tin nhắn của bạn vẫn được giữ."
@@ -19199,7 +18948,6 @@ msgstr "Tên của bạn đã thay đổi trong sơ yếu lý lịch. Bức thư
 msgid "Your name is missing"
 msgstr "Tên của bạn bị thiếu"
 
-#: src/features/career/disclosure.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "ghi chú của bạn"
@@ -19224,11 +18972,6 @@ msgstr "Số điện thoại của bạn đã thay đổi trên bản lý lịch
 msgid "Your phone number is written in an unusual shape."
 msgstr "Số điện thoại của bạn được viết theo định dạng khác thường."
 
-#: src/features/career/coach.tsx
-#: src/features/career/disclosure.tsx
-msgid "your preferences"
-msgstr "mong muốn của bạn"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "nhà cung cấp của bạn"
@@ -19240,11 +18983,6 @@ msgstr "Nhà cung cấp có thể tính phí vào tài khoản của bạn cho c
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"
 msgstr "Các liên kết công khai của bạn sẽ thay đổi"
-
-#. placeholder {0}: voice.settings.transcribe.label
-#: src/features/career/workspace/practise.tsx
-msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
-msgstr "Bản ghi âm của bạn được gửi tới {0} để chép lời, có thể dùng token trên tài khoản đó."
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
@@ -19345,10 +19083,6 @@ msgstr "Liên kết ngắn của bạn cho biết sơ yếu lý lịch này chư
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."
 msgstr "Các giai đoạn của bạn đã được thay đổi ở nơi khác. Chúng đã được làm mới; hãy thử lại."
-
-#: src/features/career/coach.tsx
-msgid "your stories"
-msgstr "các câu chuyện của bạn"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Your story couldn't be loaded."

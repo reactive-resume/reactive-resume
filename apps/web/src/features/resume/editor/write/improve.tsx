@@ -4,7 +4,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useId, useRef, useState } from "react";
-import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -48,7 +47,6 @@ type ImprovePanelProps = {
 export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: ImprovePanelProps) {
 	const providers = useHasUsableAiProvider();
 	const provider = providers.usableProviders[0];
-	const improveProvider = provider ? { label: provider.label, model: aiModelForTask(provider, "fast") } : undefined;
 	// "custom" asks what to change; "result" asks what the result was, since only the user knows it.
 	const [asking, setAsking] = useState<"custom" | "result" | null>(null);
 	const [request, setRequest] = useState("");
@@ -127,30 +125,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 				<Trans>Original</Trans>
 			</p>
 			<blockquote className="rounded bg-sunken p-2 text-sm whitespace-pre-wrap">{line.text}</blockquote>
-			{!provider ? (
-				<SetUpAi />
-			) : (
-				<p className="px-2 text-xs text-ink-3">
-					{letter ? (
-						applicationId ? (
-							<Trans>
-								Sends this paragraph, the rest of the letter, the linked job posting and your instructions to{" "}
-								{improveProvider?.label} · {improveProvider?.model}.
-							</Trans>
-						) : (
-							<Trans>
-								Sends this paragraph, the rest of the letter and your instructions to {improveProvider?.label} ·{" "}
-								{improveProvider?.model}.
-							</Trans>
-						)
-					) : (
-						<Trans>
-							Sends this line, surrounding field text and your instructions to {improveProvider?.label} ·{" "}
-							{improveProvider?.model}.
-						</Trans>
-					)}
-				</p>
-			)}
+			{!provider && <SetUpAi />}
 			{!provider ? null : improve.data ? (
 				<div className="grid gap-2 rounded-lg bg-bg p-2.5">
 					<p role="status" className="w-fit rounded-sm bg-accent-soft px-1 py-0.5 text-[13px] leading-[19px]">

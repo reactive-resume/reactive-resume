@@ -132,7 +132,7 @@ Verify a due reminder after deployment and check Cron Trigger event status. Minu
 - Uploaded images retain their original format. Workers does not run native Sharp, so automatic server resizing/conversion stays disabled. Upload PNG, JPEG or WebP pictures; these formats work in PDF exports.
 - Assistant replies stream live, and cancellation works across Worker instances. An in-progress stream cannot reconnect after a reload in this Redis-free setup; completed messages remain in PostgreSQL.
 - Workers has a 128 MB memory limit. Large resumes, large images, or multiple concurrent server PDF renders can exceed it. Normal browser downloads render in the browser, reducing server CPU cost. Monitor Worker CPU/memory errors before increasing limits or serving a large public installation.
-- SMTP port 25 is blocked by Cloudflare. Use a provider on port 465/587, or another supported submission port. Without SMTP, verification/reset emails appear in logs.
+- SMTP port 25 is blocked by Cloudflare. Use a provider on port 465/587, or another supported submission port. Without SMTP, verification and reset emails aren't sent, and their links are never logged.
 - Private-network image and job-posting URLs are refused. Public images and page redirects are checked before fetching. Operator-configured external AI/search providers still require reachable public endpoints.
 - The Worker does not run PostgreSQL migrations or the Node startup schema check. Apply migrations before every upgrade and verify `/api/health` after deployment.
 

@@ -16,7 +16,7 @@
 	"engines": {
 		"node": "24.x"
 	},
-	"packageManager": "pnpm@12.16.1",
+	"packageManager": "pnpm@12.18.0",
 	"workspaces": [
 		"apps/*",
 		"packages/*",
@@ -59,13 +59,14 @@
 		"lint:agent": "vp lint --deny-warnings --format=agent",
 		"format": "vp fmt --write",
 		"format:check": "vp fmt --check",
-		"test:cloudflare": "node tooling/cloudflare/smoke.mjs"
+		"test:cloudflare": "node tooling/cloudflare/smoke.mjs",
+		"fonts:mirror": "pnpm --filter @reactive-resume/tooling exec tsx fonts/mirror.ts"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^21.2.4",
 		"@commitlint/config-conventional": "^21.2.4",
 		"@dotenvx/dotenvx": "^2.38.2",
-		"@playwright/test": "^1.64.1",
+		"@playwright/test": "^1.65.0",
 		"@reactive-resume/config": "workspace:*",
 		"@reactive-resume/schema": "workspace:*",
 		"@reactive-resume/utils": "catalog:",

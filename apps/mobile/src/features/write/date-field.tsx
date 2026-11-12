@@ -9,7 +9,15 @@ import {
 	hasUnreadableDateText,
 	readLegacyDates,
 } from "@reactive-resume/schema/resume/dates";
-import { editDates, fromPickerDate, isReversed, pickerDate, readTypedDate, showYearMonth } from "./dates";
+import {
+	editDates,
+	fromPickerDate,
+	isReversed,
+	pickerDate,
+	readTypedDate,
+	showEditableYearMonth,
+	showYearMonth,
+} from "./dates";
 import { resumeFieldFocus } from "@/draft";
 import { Button, Icon, IconButton, Sheet, Switch, Text, TextField, useTheme } from "@/ui";
 
@@ -28,7 +36,8 @@ type MonthInputProps = {
 
 /**
  * One date, typed the way people write it ("Mar 2022", "03/2022", "2022-03", "2022") or picked from the month
- * picker. A readable value saves as you type; on blur the field shows it in the resume's date format.
+ * picker. A readable value saves as you type; on blur the field shows it in the resume's date format. While focused
+ * it shows text it can read back, so editing a printed date in any locale saves.
  */
 function MonthInput({
 	label,
@@ -44,8 +53,11 @@ function MonthInput({
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const [typed, setTyped] = useState<string | null>(null);
+	const [focused, setFocused] = useState(false);
 	const [picking, setPicking] = useState(false);
 	const [picked, setPicked] = useState(() => pickerDate(value));
+
+	const showValue = focused ? showEditableYearMonth : showYearMonth;
 
 	const commit = (next: YearMonth | null) => {
 		setTyped(null);
@@ -58,12 +70,15 @@ function MonthInput({
 			<TextField
 				label={label}
 				placeholder={t`Mar 2022`}
-				value={placeholderValue ?? typed ?? showYearMonth(value, locale, format)}
+				value={placeholderValue ?? typed ?? showValue(value, locale, format)}
 				editable={!disabled && placeholderValue === undefined}
 				autoFocus={autoFocus && !disabled}
 				autoComplete="off"
 				autoCorrect={false}
-				onFocus={resumeFieldFocus.onFocus}
+				onFocus={() => {
+					setFocused(true);
+					resumeFieldFocus.onFocus();
+				}}
 				onChangeText={(text) => {
 					setTyped(text);
 					const next = readTypedDate(text, locale);
@@ -71,6 +86,7 @@ function MonthInput({
 					if (next !== undefined && next !== value) onCommit(next);
 				}}
 				onBlur={() => {
+					setFocused(false);
 					resumeFieldFocus.onBlur();
 					if (typed === null) return;
 					const next = readTypedDate(typed, locale);

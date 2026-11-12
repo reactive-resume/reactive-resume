@@ -363,7 +363,7 @@ function RouteComponent() {
 							</TabsList>
 						</Tabs>
 
-						<div className="relative max-w-72 min-w-40 flex-1">
+						<div className="relative max-w-72 min-w-40 flex-1 max-sm:max-w-none max-sm:basis-full">
 							<Icon
 								name="magnifying-glass"
 								size={18}
@@ -381,26 +381,33 @@ function RouteComponent() {
 							/>
 						</div>
 
-						<Button
-							variant="secondary"
-							aria-pressed={needsYou}
-							onClick={() => setSearch({ needsYou: !needsYou })}
-							className={cn(needsYou && "bg-sunken")}
-						>
-							<Icon name={needsYou ? "check-square" : "square"} size={18} />
-							<Trans>Needs you</Trans>
-						</Button>
-						{shown !== "insights" && (
+						{/* Phones: both filters share one row under the search. */}
+						<div className="flex gap-2 max-sm:w-full max-sm:*:flex-1">
 							<Button
 								variant="secondary"
-								aria-pressed={closed}
-								onClick={() => setSearch({ closed: !closed })}
-								className={cn(closed && "bg-sunken")}
+								aria-pressed={needsYou}
+								onClick={() => setSearch({ needsYou: !needsYou })}
+								className={cn(needsYou && "bg-sunken")}
 							>
-								<Icon name={closed ? "check-square" : "square"} size={18} />
-								<Trans>Show closed applications</Trans>
+								<Icon name={needsYou ? "check-square" : "square"} size={18} />
+								<Trans>Needs you</Trans>
 							</Button>
-						)}
+							{shown !== "insights" && (
+								<Button
+									variant="secondary"
+									aria-pressed={closed}
+									onClick={() => setSearch({ closed: !closed })}
+									className={cn(closed && "bg-sunken")}
+								>
+									<Icon name={closed ? "check-square" : "square"} size={18} />
+									{/* The full label doesn't fit beside Needs you on a phone; the stage name says the same there. */}
+									<span className="sm:hidden">{t`Closed`}</span>
+									<span className="max-sm:hidden">
+										<Trans>Show closed applications</Trans>
+									</span>
+								</Button>
+							)}
+						</div>
 					</>
 				)}
 			</PageHeader>

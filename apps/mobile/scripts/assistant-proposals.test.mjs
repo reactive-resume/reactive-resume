@@ -527,7 +527,6 @@ test("native chat records real successes and explicit history changes, never ref
 					context: { document: true, posting: true },
 					document: documents.useResumeAssistantDocument("resume"),
 					connection: "Local",
-					privacy: "",
 					placeholder: "",
 					assistantName: "Assistant",
 				}),

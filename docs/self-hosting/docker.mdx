@@ -27,7 +27,7 @@ separate printer service.
 | ---------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | PostgreSQL                   | Yes      | Stores accounts, resumes, cover letters and applications. Runs as its own container or managed database.                                |
 | Upload storage               | Yes      | A folder mounted at `/app/data`, or an S3-compatible bucket instead.                                                                    |
-| SMTP server                  | No       | Sends verification and password reset emails. Without it, emails are written to the app log.                                            |
+| SMTP server                  | No       | Sends verification and password reset emails. Without it, no email is sent, so neither can be completed.                                |
 | Redis                        | No       | Shares state between several app processes and lets Assistant replies survive a page reload.                                            |
 | Firecrawl and an AI provider | No       | Enable keyword job search, read posting URLs and extract application details. See [Job search and AI](/self-hosting/job-search-and-ai). |
 
@@ -160,11 +160,9 @@ Pi 4 or newer running a 64-bit operating system.
     Open your `APP_URL` in a browser and create an account; see [Creating an account](/guides/creating-an-account).
 
     You're signed in right away. Reactive Resume also sends a verification email, but you don't have to open it to
-    use the app. Without SMTP settings the email isn't sent; its link is written to the app log instead:
-
-    ```bash
-    docker compose logs reactive-resume | grep verify-email
-    ```
+    use the app. Without SMTP settings the email isn't sent and the address stays unverified; the app log records
+    only the recipient and subject, never the link. See [Email](/self-hosting/environment-variables#email) for what
+    that turns off.
 
   </Step>
 </Steps>
@@ -173,8 +171,7 @@ Your instance is running. Next, you might want to:
 
 - **Keep it private.** After your own account exists, add `FLAG_DISABLE_SIGNUPS="true"` to `.env` and run
   `docker compose up -d`. Nobody else can sign up; existing accounts keep working.
-- **Mirror Computer Modern fonts for server PDFs.** See [Font mirroring](/self-hosting/fonts) for configuration and
-  current browser and Google-font limitations.
+- **Self-host resume fonts.** Set `FONT_MIRROR_URL` after preparing a static font mirror. See [Font mirroring](/self-hosting/fonts) for Docker setup, client coverage and verification.
 - **Send real emails.** Add the `SMTP_*` settings from the [reference](/self-hosting/environment-variables#email).
 - **Turn on job search and AI.** Connect shared Firecrawl and AI services, or enable personal keys with
   `ENCRYPTION_SECRET`. See [Job search and AI](/self-hosting/job-search-and-ai).
@@ -346,9 +343,10 @@ There is no official app template. Use your platform's generic container setting
 </Accordion>
 
 <Accordion title="Verification or password reset emails never arrive">
-  Emails are only sent when `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM` are all set. Until then they're
-  written to the app log. If they're set, check `SMTP_PORT` and `SMTP_SECURE` against your provider's settings and look
-  for SMTP errors in the log.
+  Emails are only sent when `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM` are all set. Until then nothing is
+  sent, and the app log shows only each email's recipient and subject. If they're set, check `SMTP_PORT` and
+  `SMTP_SECURE` against your provider's settings. A failed send logs `There was an error sending mail.` without the
+  cause, because SMTP errors can contain credentials.
 </Accordion>
 
 <Accordion title="/api/health returns 503">

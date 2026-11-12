@@ -1,0 +1,109 @@
+// Tap a block to edit it. The page is a server-rendered PDF with no layout tree, so blocks are rebuilt from the text
+// the PDF draws: runs that read as a section title, an entry's name or the person's name become anchors, and every
+// other run joins the nearest anchor above it in the same column. Outline (B3) stays the precise path.
+package me.rxresu.feature.builder
+
+import java.io.File
+
+/** What a tap opens. */
+internal sealed interface BlockTarget {
+    data object Header : BlockTarget
+    data class Section(val key: String) : BlockTarget
+    data class Item(val section: String, val itemId: String) : BlockTarget
+}
+
+/** A line of text on the page (shared with letters through :core:page). */
+internal typealias TextRun = me.rxresu.core.page.PageTextRun
+
+/** A tappable block on one page, in fractions of the page. */
+internal data class PageBlock(val target: BlockTarget, val page: Int, val left: Float, val top: Float, val right: Float, val bottom: Float) {
+    val area get() = (right - left) * (bottom - top)
+    fun contains(x: Float, y: Float, slop: Float = 0.006f) = x in (left - slop)..(right + slop) && y in (top - slop)..(bottom + slop)
+}
+
+internal object PageBlocks {
+    private fun norm(text: String) = text.lowercase().replace(Regex("\\s+"), " ").trim()
+
+    /**
+     * Builds blocks for every page. [pages] holds each page's runs. Columns come from the layout: in two-column
+     * templates a run left of (or right of) the sidebar edge belongs to the sidebar.
+     */
+    fun build(doc: ResumeDoc, pages: List<List<TextRun>>, twoColumns: Boolean): List<PageBlock> {
+        val runs = pages.flatMapIndexed { page, list -> list.sortedWith(compareBy({ it.top }, { it.left })).map { page to it } }
+        val used = BooleanArray(runs.size)
+        val anchors = mutableListOf<Pair<Int, BlockTarget>>() // run index → target
+        fun claim(from: Int, match: (String) -> Boolean): Int? =
+            (from until runs.size).firstOrNull { !used[it] && match(norm(runs[it].second.text)) }?.also { used[it] = true }
+
+        val name = norm(doc.basics["name"].str())
+        if (name.isNotEmpty()) claim(0) { it == name || it.startsWith(name) }?.let { anchors += it to BlockTarget.Header }
+        val visible = doc.sections.filter { !doc.hidden(it) && doc.pageOf(it.key) != null }
+        // An empty title prints the type's name in the resume's language; English is matched here (see report).
+        val titles = visible.associateWith { ref -> norm(doc.title(ref).ifBlank { ref.kind.englishTitle }).let { title -> claim(0) { it == title } } }
+        titles.forEach { (ref, index) -> if (index != null) anchors += index to BlockTarget.Section(ref.key) }
+        for (ref in visible) {
+            if (ref.kind == SectionKind.Summary) {
+                // Without a matched heading, the summary's first words anchor it.
+                if (titles[ref] == null) norm(htmlText(doc.sectionJson(ref)["content"].str()).firstOrNull().orEmpty()).take(24).takeIf { it.length >= 8 }
+                    ?.let { start -> claim(0) { it.startsWith(start) } }?.let { anchors += it to BlockTarget.Section(ref.key) }
+                continue
+            }
+            val from = titles[ref] ?: 0
+            for (item in doc.items(ref)) {
+                if (item["hidden"].bool()) continue
+                val anchor = norm(ref.kind.itemTitle(item)).takeIf { it.length >= 2 } ?: continue
+                claim(from) { it == anchor || it.startsWith("$anchor ") || it.startsWith(anchor) }
+                    ?.let { anchors += it to BlockTarget.Item(ref.key, item["id"].str()) }
+            }
+        }
+        if (anchors.isEmpty()) return emptyList()
+
+        val layout = doc.metadata["layout"].obj()
+        val sidebarWidth = (layout["sidebarWidth"].num() ?: 35.0).toFloat() / 100f
+        val sidebarLeft = layout["sidebarSide"].str().ifBlank { "left" } == "left"
+        fun column(page: Int, run: TextRun): Int {
+            val fullWidth = doc.pages.getOrNull(page)?.fullWidth ?: true
+            if (!twoColumns || fullWidth) return 0
+            return if (sidebarLeft) (if (run.left < sidebarWidth) 1 else 0) else (if (run.left >= 1 - sidebarWidth) 1 else 0)
+        }
+
+        // Every run joins the closest anchor above it on its page and column; runs above all anchors join none.
+        val anchorAt = anchors.toMap()
+        val members = anchors.associate { (index, _) -> index to mutableListOf(index) }
+        runs.indices.filter { it !in anchorAt }.forEach { i ->
+            val (page, run) = runs[i]
+            val owner = anchors.map { it.first }
+                .filter { a -> runs[a].first == page && runs[a].second.top <= run.top + 0.002f && column(page, runs[a].second) == column(page, run) }
+                .maxByOrNull { runs[it].second.top }
+            if (owner != null) members.getValue(owner) += i
+        }
+
+        fun box(target: BlockTarget, indexes: List<Int>): List<PageBlock> = indexes.groupBy { runs[it].first }.map { (page, list) ->
+            val r = list.map { runs[it].second }
+            PageBlock(target, page, r.minOf { it.left }, r.minOf { it.top }, r.maxOf { it.right }, r.maxOf { it.bottom })
+        }
+        val blocks = anchors.flatMap { (index, target) -> box(target, members.getValue(index)) }.toMutableList()
+        // A section's block also covers its entries, so a tap on the gap between entries still finds the section.
+        for ((ref, title) in titles) {
+            if (title == null) continue
+            val itemIndexes = anchors.filter { (it.second as? BlockTarget.Item)?.section == ref.key }.flatMap { members.getValue(it.first) }
+            if (itemIndexes.isEmpty()) continue
+            blocks.removeAll { it.target == BlockTarget.Section(ref.key) }
+            blocks += box(BlockTarget.Section(ref.key), members.getValue(title) + itemIndexes)
+        }
+        return blocks
+    }
+
+    /** The smallest block under the point; else the nearest block on that page (a tap between blocks opens the closest one). */
+    fun hit(blocks: List<PageBlock>, page: Int, x: Float, y: Float): PageBlock? {
+        val onPage = blocks.filter { it.page == page }
+        return onPage.filter { it.contains(x, y) }.minByOrNull { it.area }
+            ?: onPage.filter { it.target !is BlockTarget.Header || y < 0.2f }
+                .minByOrNull { b -> (if (y < b.top) b.top - y else if (y > b.bottom) y - b.bottom else 0f) + (if (x < b.left) b.left - x else if (x > b.right) x - b.right else 0f) / 4 }
+    }
+}
+
+/** Reads a rendered PDF's lines (see `PdfText` in :core:page). */
+internal object PdfTextReader {
+    fun read(file: File) = me.rxresu.core.page.PdfText.read(file)
+}

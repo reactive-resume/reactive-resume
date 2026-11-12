@@ -4,7 +4,6 @@ import { ORPCError } from "@orpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { View } from "react-native";
-import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { isNetworkError } from "@reactive-resume/utils/http";
 import { orpc } from "@/api/client";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
@@ -33,9 +32,6 @@ export function ImprovePanel({ line, where, context, letter, onClose, onReplace 
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const ai = useHasAIProvider();
-	const improveProvider = ai.defaultProvider
-		? { label: ai.defaultProvider.label, model: aiModelForTask(ai.defaultProvider, "fast") }
-		: undefined;
 	// "custom" asks what to change; "result" asks what the result was, since only the user knows it (web improve).
 	const [asking, setAsking] = useState<"custom" | "result" | null>(null);
 	const [request, setRequest] = useState("");
@@ -104,15 +100,6 @@ export function ImprovePanel({ line, where, context, letter, onClose, onReplace 
 				{line.text}
 			</Text>
 
-			{improveProvider && (
-				<Text variant="caption" color="ink3">
-					{letter
-						? letter.applicationId
-							? t`Sends this paragraph, the rest of the letter, the linked job posting and your instructions to ${improveProvider.label} · ${improveProvider.model}.`
-							: t`Sends this paragraph, the rest of the letter and your instructions to ${improveProvider.label} · ${improveProvider.model}.`
-						: t`Sends this line, surrounding field text and your instructions to ${improveProvider.label} · ${improveProvider.model}.`}
-				</Text>
-			)}
 			{ai.isLoading ? (
 				<Text color="ink2">{t`Loading…`}</Text>
 			) : !ai.hasAIProvider ? (

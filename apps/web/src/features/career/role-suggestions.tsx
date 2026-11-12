@@ -120,12 +120,6 @@ export function RoleSuggestions({ onUse }: RoleSuggestionsProps) {
 									clear();
 								}}
 							/>
-							<p className="text-xs text-ink-3">
-								<Trans>
-									Sends only your selected resume and up to 20 active shared facts to this connection. No application
-									profile, saved answers or private application facts. Your provider may charge.
-								</Trans>
-							</p>
 							<Button
 								variant="secondary"
 								disabled={!provider?.recipientVersion || (!resumeId && !includeKnowledge)}
@@ -164,11 +158,6 @@ export function RoleSuggestions({ onUse }: RoleSuggestionsProps) {
 					)}
 					{suggestions && (
 						<>
-							<p className="text-xs text-ink-3">
-								<Trans>
-									AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements.
-								</Trans>
-							</p>
 							{suggestions.suggestions.map((item) => (
 								<div key={item.role} className="text-xs">
 									<strong>{item.role}</strong>

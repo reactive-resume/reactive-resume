@@ -81,7 +81,12 @@ export const session = pg.pgTable(
 			.defaultNow()
 			.$onUpdate(() => /* @__PURE__ */ new Date()),
 	},
-	(t) => [pg.index().on(t.token, t.userId), pg.index().on(t.expiresAt)],
+	(t) => [
+		pg.index().on(t.token, t.userId),
+		pg.index().on(t.expiresAt),
+		// Sessions are listed and deleted by user, and a user delete cascades to them.
+		pg.index().on(t.userId),
+	],
 );
 
 export const account = pg.pgTable(
@@ -332,7 +337,11 @@ export const oauthClient = pg.pgTable(
 		referenceId: pg.text("reference_id"),
 		metadata: pg.jsonb("metadata"),
 	},
-	(t) => [pg.index().on(t.clientId)],
+	(t) => [
+		pg.index().on(t.clientId),
+		// Deleting an account deletes the clients it registered.
+		pg.index().on(t.userId),
+	],
 );
 
 export const oauthRefreshToken = pg.pgTable(
@@ -369,7 +378,13 @@ export const oauthRefreshToken = pg.pgTable(
 		authTime: pg.timestamp("auth_time", { withTimezone: true }),
 		scopes: pg.text("scopes").array().notNull(),
 	},
-	(t) => [pg.index().on(t.token)],
+	(t) => [
+		pg.index().on(t.token),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.sessionId),
+		pg.index().on(t.userId),
+		pg.index().on(t.clientId),
+	],
 );
 
 export const oauthAccessToken = pg.pgTable(
@@ -400,7 +415,14 @@ export const oauthAccessToken = pg.pgTable(
 		createdAt: pg.timestamp("created_at", { withTimezone: true }).defaultNow(),
 		scopes: pg.text("scopes").array().notNull(),
 	},
-	(t) => [pg.index().on(t.token)],
+	(t) => [
+		pg.index().on(t.token),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.sessionId),
+		pg.index().on(t.userId),
+		pg.index().on(t.refreshId),
+		pg.index().on(t.clientId),
+	],
 );
 
 export const oauthConsent = pg.pgTable(
@@ -428,7 +450,11 @@ export const oauthConsent = pg.pgTable(
 			.defaultNow()
 			.$onUpdate(() => /* @__PURE__ */ new Date()),
 	},
-	(t) => [pg.index().on(t.userId, t.clientId)],
+	(t) => [
+		pg.index().on(t.userId, t.clientId),
+		// Looked up when the client it points to is deleted.
+		pg.index().on(t.clientId),
+	],
 );
 
 export const oauthResource = pg.pgTable("oauth_resource", {

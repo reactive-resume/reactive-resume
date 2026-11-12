@@ -16,6 +16,8 @@ export type PreviewState = {
 	result: RenderedPages | null;
 	rendering: boolean;
 	error: boolean;
+	/** The failure was fonts missing from the server's font mirror, which only its administrator can fix. */
+	missingMirrorFonts: boolean;
 	retry: () => void;
 	/** Layout points per PDF point, for matching tap overlays to the raster. */
 	displayScale: number;
@@ -23,7 +25,12 @@ export type PreviewState = {
 
 /** Data and template are the wave contract; optional viewport settings also serve thumbnails and letters. */
 export function usePreview(data: ResumeData | null, template?: Template, options: PreviewOptions = {}): PreviewState {
-	const [state, setState] = useState({ result: null as RenderedPages | null, error: false, job: null as unknown });
+	const [state, setState] = useState({
+		result: null as RenderedPages | null,
+		error: false,
+		missingMirrorFonts: false,
+		job: null as unknown,
+	});
 	const [attempt, setAttempt] = useState(0);
 	const worker = useRef<PreviewScheduler | null>(null);
 	const { focused, pages, renderOptions, viewport } = options;
@@ -77,10 +84,11 @@ export function usePreview(data: ResumeData | null, template?: Template, options
 				pages: job.pageKey === undefined ? undefined : job.pageKey.split(",").filter(Boolean).map(Number),
 			})
 			.then((result) => {
-				if (active && result) setState({ result, error: false, job });
+				if (active && result) setState({ result, error: false, missingMirrorFonts: false, job });
 			})
-			.catch(() => {
-				if (active) setState((previous) => ({ ...previous, error: true, job }));
+			.catch((error: unknown) => {
+				const missingMirrorFonts = error instanceof Error && error.cause === "pdf-font-mirror";
+				if (active) setState((previous) => ({ ...previous, error: true, missingMirrorFonts, job }));
 			});
 		return () => {
 			active = false;
@@ -90,6 +98,7 @@ export function usePreview(data: ResumeData | null, template?: Template, options
 	return {
 		result: data ? state.result : null,
 		error: state.job === job && state.error,
+		missingMirrorFonts: state.job === job && state.error && state.missingMirrorFonts,
 		rendering: !!data && state.job !== job,
 		displayScale,
 		retry: () => setAttempt((value) => value + 1),

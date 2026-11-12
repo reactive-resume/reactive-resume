@@ -803,10 +803,15 @@ async function sendPendingEmail() {
 				.from(tables.careerNotification)
 				.innerJoin(tables.careerJob, eq(tables.careerNotification.key, tables.careerJob.id))
 				.innerJoin(tables.careerSchedule, eq(tables.careerJob.scheduleId, tables.careerSchedule.id))
+				.innerJoin(tables.user, eq(tables.careerNotification.userId, tables.user.id))
 				.where(
 					and(
 						eq(tables.careerJob.status, "completed"),
 						eq(tables.careerSchedule.email, true),
+						// An owner who can't be emailed is skipped like a closed application, so their rows never use a
+						// tick's claims. Delivery resumes if they verify or the ban ends.
+						eq(tables.user.emailVerified, true),
+						sql`(${tables.user.banned} is not true or ${tables.user.banExpires} <= now())`,
 						sql`(${tables.careerNotification.applicationId} is null or exists (select 1 from application a where a.id = ${tables.careerNotification.applicationId} and a.user_id = ${tables.careerNotification.userId} and a.status <> 'closed' and a.trashed_at is null))`,
 						eq(tables.careerSchedule.enabled, true),
 						isNull(tables.careerNotification.emailedAt),

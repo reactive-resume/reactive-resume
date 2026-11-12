@@ -222,10 +222,8 @@ msgstr "{0, plural, one {לא ניתן היה למקם את העריכה #: הט
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# רשומה} other {# רשומות}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, one {סיפור אחד} two {שני סיפורים} other {#
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# פריט לבדיקה.} other {# פריטים לבדיקה.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {נשלח גם {1}.} other {נשלחים גם # קבצים: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {תשובה אחת} two {שתי תשובות} other {# תשובות}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}. שולח את המועמדות ואת מאגר הידע שלך; הספק עשוי לגבות תשלום."
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "לא ניתן היה לטעון ספקי AI. טען מחדש כדי לנ
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "לא ניתן היה לטעון ספקי AI. נסה שוב או מלא את הפרטים באופן ידני."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "AI קורא טקסט מודבק רק כשאתה שואל. קישורים יכולים להשתמש בנתוני העבודה של הדף עצמו ללא AI."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "היסטוריית בקשות AI אינה זמינה לתוצאה זו."
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "הגדרות AI"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "הצעות AI, לא כישורים מאומתים או תחזיות גיוס. המקורות למטה הם ההצהרות שלך."
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "מופיע תמיד בהיום. דוא״ל דורש כתובת מאומ�
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "אמהרית"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "קריאת AI שתעזור לך לערוך, לא תחזית של איך מעסיק או מערכת סינון יגיבו."
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "דוא״ל למועמדויות"
 msgid "Application phone"
 msgstr "טלפון למועמדויות"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "סיכומי מועמדויות"
@@ -5055,10 +5033,6 @@ msgstr "תוצאת גילוי קודמת. שאילתת החיפוש ומועד �
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "הודעות וקבצים מצורפים קודמים בשיחה הזו יישלחו ליעד הזה כשתשלח שוב."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "הודעות קודמות בצ'אט הזה"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "ריקון האשפה"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "לרוקן את האשפה?"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "הידע המופעל"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "ההודעות והקבצים המצורפים שלה נמחקים. ער
 msgid "Its own design ({summary})."
 msgstr "עיצוב משלו ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "הדרישות שלה"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "מנוהל על ידי שרת"
 msgid "Managed by your server"
 msgstr "מנוהל על ידי השרת שלך"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "תפקידים והעדפות ידניים עובדים בלי AI. הצעות אף פעם לא מחפשות או מתזמנות דבר."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "תבליטים רבים מתחילים באותו ביטוי."
@@ -7685,11 +7647,6 @@ msgstr "הודעות"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "הודעות מלפני השינוי במאגר הידע כבר לא נשלחות ל-AI, ולכן הוא לא יזכור אותן. התחל שיחה חדשה כדי לשמור על ההקשר יחד."
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "הודעות מלפני השינוי במאגר הידע אינן נשלחות."
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "אין עדיין דבר בספרייה שלך"
 msgid "Nothing is applied for or created until you choose."
 msgstr "שום מועמדות לא מוגשת ושום דבר לא נוצר עד שתבחר."
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "שום דבר לא נשלח עד שתבחר חיבור לשיחה הזו."
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "שום דבר לא מסמן תפקיד כנמשך."
@@ -9586,10 +9538,6 @@ msgstr "תרגול לראיונות שלך ב-{company}."
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "תרגול בסביבת העבודה של {company}"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "סדרי עדיפויות לתרגול, לא מסקנות לגבי הסיבות להחלטות של מעסיק."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11539,11 +11487,6 @@ msgstr "חפש או הרץ..."
 msgid "Search saved answers"
 msgstr "חפש בתשובות השמורות"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "מונחי החיפוש נשלחים לשירות חיפוש הרשת שלך."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "חיפוש באינטרנט"
@@ -11683,87 +11626,9 @@ msgstr "פרטי השולח הועתקו למכתב"
 msgid "Sending…"
 msgstr "שולח..."
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "שולח את {0} אל {label}."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "שולח לחיבור הזה רק את קורות החיים שבחרת ועד 20 עובדות משותפות פעילות. ללא פרופיל מועמדות, תשובות שמורות או עובדות פרטיות של מועמדויות. הספק שלך עשוי לחייב."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "שולח את מודעת הדרושים של {0} אל {1} · {2} כדי לנסח את גוף המכתב. הספק שלך עשוי לחייב."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "שולח את טקסט מודעת הדרושים אל {0} כדי לקרוא אותו."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "שולח לחיבור הזה את המועמדות הזו ואת מאגר הידע המופעל. הספק שלך עשוי לחייב. עבודה מתוזמנת לעולם לא עוברת אוטומטית לחיבור אחר."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "שולח את קורות החיים של המכתב הזה ואת מודעת הדרושים של {0} אל {1} · {2} כדי לנסח את גוף המכתב. הספק שלך עשוי לחייב."
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "שולח את קורות החיים של המכתב הזה אל {0} · {1} כדי לנסח את גוף המכתב. הספק שלך עשוי לחייב."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "שולח את השורה הזו, את טקסט השדה שמסביב ואת ההוראות שלך אל {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "שולח את הפסקה הזו, את שאר המכתב ואת ההנחיות שלך אל {0} · {1}."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "שולח את הפסקה הזו, את שאר המכתב, את מודעת המשרה המקושרת ואת ההנחיות שלך אל {0} · {1}."
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "שולח את ה-PDF הזה לספק ה-AI המוגדר שלך במקום לקרוא את שכבת הטקסט שלו."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "שולח את ההודעה שלך ואת המועמדות הזו (מודעת דרושים, הערות, מסמכים, התשובות שלך לטופס, ההצעה השמורה והודעות אחרונות) אל {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "שולח את ההודעה שלך, הודעות קודמות ואת המועמדות הזו (מודעת דרושים, הערות, מסמכים, התשובות שלך לטופס, ההצעה השמורה והודעות אחרונות) אל {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "שולח את ההודעה שלך, את ההודעות הקודמות כאן, את המועמדות הזו (מודעת המשרה, הערות, מסמכים, התשובות שלך בטפסים, ההצעה השמורה וההודעות האחרונות) ואת הידע המופעל אל {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "שולח את ההודעה שלך, את המועמדות הזו (מודעת המשרה, הערות, מסמכים, התשובות שלך בטפסים, ההצעה השמורה וההודעות האחרונות) ואת הידע המופעל אל {label}."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "שולח את הטקסט של קורות החיים שלך רק אל {0} · {1}, עם המפתח שלך."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -12347,6 +12212,11 @@ msgstr "לא ניתן היה לעבד חלק מהתווים. בדוק את הד�
 #: src/features/workspace/prepare-review.tsx
 msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
 msgstr "חלק מהטיוטות לא הושלמו. שמרו את הטיוטות המוכנות לפני ניסיון נוסף."
+
+#: src/features/letters/page.tsx
+#: src/preview/page.tsx
+msgid "Some fonts are missing from this server's font mirror. Ask the administrator to add them."
+msgstr "חלק מהגופנים חסרים במראת הגופנים של שרת זה. בקש מהמנהל להוסיף אותם."
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -13102,17 +12972,9 @@ msgstr "הקורא המובנה נשאר פעיל."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "הבדיקות הן מכניות. זה שואל מודל שפה כיצד קורא עשוי להגיב לערכי הרשימה שלך ומציע שכתובים. זה לא חלק מהניקוד."
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "המאמן שואל לפני שהוא זוכר עובדות שאתה מציין."
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "המאמן לא זוכר שום דבר מההודעות שלך."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "המאמן לא זוכר שום דבר שאתה כותב."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13125,10 +12987,6 @@ msgstr "המאמן לא מוגדר בשרת הזה. מי שמפעיל אותו �
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "המאמן מציע כל עובדה בצ'אט. שום דבר לא נשמר עד שתסכים."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "המאמן זוכר עובדות שאתה מציין, ומודיע לך."
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13150,10 +13008,6 @@ msgstr "החיבור עובד. הפעל את „השתמש בספק זה” כד
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "העותק מקבל את מודעת הדרושים של המשרה, וקורות החיים האלה נשארים כפי שהם למשרות אחרות."
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "המכתב המקדים למשרה הזו"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13171,10 +13025,6 @@ msgstr "העורך נפתח בבדיקה, שבודקת שוב את קורות ה
 msgid "The employer may have changed it since."
 msgstr "ייתכן שהמעסיק שינה את המודעה מאז."
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "ההודעה של המעסיק"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "תאריך הסיום מוקדם מתאריך ההתחלה. בדוק את שני התאריכים."
@@ -13187,10 +13037,6 @@ msgstr "המעקב נשמר. כדי לקבל תזכורת, אפשר הודעות
 msgid "The greeting follows the name."
 msgstr "הברכה מלווה את השם."
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "פרטי הראיון"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "הראיון נשמר. כדי לקבל תזכורת, אפשר הודעות בהגדרות המכשיר שלך."
@@ -13202,10 +13048,6 @@ msgstr "המפתח מוצפן בשרת ולא מוצג שוב. שמירה בוד
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "המפתח נדחה. בדוק את המפתח ובדוק שוב."
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "ההודעות האחרונות"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13292,14 +13134,6 @@ msgstr "הספק הגביל את הבקשה הזו. המתן ונסה שוב; ב
 msgid "The provider reported a server error. Try again later."
 msgstr "הספק דיווח על שגיאת שרת. נסה שוב מאוחר יותר."
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "השאלה ומה שאמרת"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "השאלה והתשובה שלך"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "הסיבה נשמרת לתובנות. לא נוגעים במסמכים מקושרים."
@@ -13316,10 +13150,6 @@ msgstr "שאר הקובץ אינו בדוח זה."
 msgid "The resume as it is"
 msgstr "קורות החיים כפי שהם"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "קורות החיים למשרה הזו"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "הבודק רואה את השלב והתאריכים של כל אחת. הערות, אנשי קשר ושכר נשארים פרטיים."
@@ -13335,10 +13165,6 @@ msgstr "המפתח השמור לא נשלח לכתובת אתר בסיס חדש�
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "המפתח השמור לא נשלח לכתובת אתר בסיס חדשה. הזן שוב את המפתח."
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "ההצעה השמורה"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13711,10 +13537,6 @@ msgstr "PDF זה הוא תמונה סרוקה. אין טקסט לקרוא. נס�
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "ה־PDF הזה מוגן בסיסמה. שמור עותק לא מוגן ונסה שוב."
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "מודעת הדרושים הזו"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14975,10 +14797,6 @@ msgstr "מתי כדאי לי ליצור קשר שוב, ומה לומר?"
 msgid "When would you start?"
 msgstr "מתי תתחיל?"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "כשתקיש על שליחה, {list} יישלחו אל {connection}."
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "כשתסיים, הדפדפן נסגר ואתה חוזר לכאן."
@@ -15033,10 +14851,6 @@ msgstr "רוֹחַב"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "מוכן/ה לרילוקיישן"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "כשמאגר הידע כבוי, שום דבר שאתה כותב לא נזכר."
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15372,10 +15186,6 @@ msgstr "השינויים שלך במכשיר זה יוחלפו בגרסה השמ
 msgid "Your contact details are not on the first page."
 msgstr "פרטי הקשר שלך לא נמצאים בעמוד הראשון."
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "אנשי הקשר שלך"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "הנתונים שלך"
@@ -15417,10 +15227,6 @@ msgstr "העובדות, הסיפורים וההעדפות שלך. עריכת מ�
 msgid "Your focus"
 msgstr "המיקוד שלך"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "התשובות שלך לטופס"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "הכותרות שלך נראות כמו טקסט הגוף שלך."
@@ -15446,10 +15252,6 @@ msgstr "השורות שלך צפופות מאוד."
 msgid "Your margins are very narrow."
 msgstr "השוליים שלך צרים מאוד."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "ההודעה שלך"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "ההודעה שלך נשמרה."
@@ -15466,7 +15268,6 @@ msgstr "השם שלך ככתובת שלך, מ-OlaCV, מפעילת הסיומת �
 msgid "Your name is missing"
 msgstr "השם שלך חסר"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "ההערות שלך"
@@ -15487,9 +15288,7 @@ msgstr "גוף משלך, בלי מכתב קודם"
 msgid "Your phone number is written in an unusual shape."
 msgstr "מספר הטלפון שלך כתוב בצורה חריגה."
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "ההעדפות שלך"
 
@@ -15508,10 +15307,6 @@ msgstr "הקישורים הציבוריים שלך מתחילים ב-{server}/"
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "הקישורים הציבוריים שלך ישתנו"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "ההקלטה שלך עוברת אל {transcriberName} לאחר שתפסיק, לתמלול. הספק שלך עשוי לגבות תשלום. השרת שומר תמלילים, לעולם לא הקלטות."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15596,10 +15391,6 @@ msgstr "הקישור המקוצר שלך מפנה אל “{0}”, שאינם מ�
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "הקישור המקוצר שלך מציג שקורות החיים האלה אינם משותפים עד שתפרסם אותם שוב."
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "הסיפורים שלך"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

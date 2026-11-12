@@ -222,10 +222,8 @@ msgstr "{0, plural, one {# എഡിറ്റ് സ്ഥാപിക്കാ�
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# എൻട്രി} other {# എൻട്രികൾ}}"
 
-#. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: sent.facts.length
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -306,13 +304,6 @@ msgstr "{0, plural, one {# കഥ} other {# കഥകൾ}}"
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {അവലോകനം ചെയ്യേണ്ട # കാര്യം.} other {അവലോകനം ചെയ്യേണ്ട # കാര്യങ്ങൾ.}}"
-
-#. placeholder {0}: names.length
-#. placeholder {1}: listFormat(names)
-#. placeholder {2}: listFormat(names)
-#: src/features/assistant/chat-view.tsx
-msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
-msgstr "{0, plural, one {കൂടാതെ {1} അയയ്ക്കുന്നു.} other {കൂടാതെ # ഫയലുകൾ അയയ്ക്കുന്നു: {2}.}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -629,8 +620,8 @@ msgid "{answerCount, plural, one {# answer} other {# answers}}"
 msgstr "{answerCount, plural, one {# ഉത്തരം} other {# ഉത്തരങ്ങൾ}}"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
-msgstr "{at} · {providerLabel}. ഈ അപേക്ഷയും നിങ്ങളുടെ അറിവ് അയയ്ക്കുന്നു; നിങ്ങളുടെ ദാതാവ് നിരക്ക് ഈടാക്കാം."
+msgid "{at} · {providerLabel}"
+msgstr "{at} · {providerLabel}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
@@ -1731,10 +1722,6 @@ msgstr "AI ദാതാക്കളെ ലോഡുചെയ്യാനായ�
 msgid "AI providers couldn't be loaded. Retry or fill the details manually."
 msgstr "AI ദാതാക്കളെ ലോഡ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക അല്ലെങ്കിൽ വിശദാംശങ്ങൾ സ്വയം പൂരിപ്പിക്കുക."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
-msgstr "നിങ്ങൾ ചോദിക്കുമ്പോൾ മാത്രം ഒട്ടിച്ച വാചകം AI വായിക്കുന്നു. AI ഇല്ലാതെ തന്നെ വെബ്‌പേജ് നൽകുന്ന ജോലി വിശദാംശങ്ങൾ ലിങ്കുകൾക്ക് ഉപയോഗിക്കാനാകും."
-
 #. placeholder {0}: i18n.number(provider.requests)
 #. placeholder {0}: i18n.number(report.requests)
 #. placeholder {0}: i18n.number(usage.requests)
@@ -1749,10 +1736,6 @@ msgstr "ഈ ഫലത്തിന് AI അഭ്യർത്ഥന ചരിത
 #: src/features/workspace/parts.tsx
 msgid "AI settings"
 msgstr "AI ക്രമീകരണങ്ങൾ"
-
-#: src/features/career/role-suggestions.tsx
-msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
-msgstr "AI നിർദ്ദേശങ്ങളാണ്; പരിശോധിച്ച യോഗ്യതകളോ ജോലി ലഭിക്കുമെന്ന പ്രവചനങ്ങളോ അല്ല. താഴെയുള്ള ഉറവിടങ്ങൾ നിങ്ങളുടെ പ്രസ്താവനകളാണ്."
 
 #: src/features/ai/usage.tsx
 msgid "AI usage couldn't be loaded. Try refreshing. Older servers may need an update."
@@ -1879,10 +1862,6 @@ msgstr "എല്ലായ്പ്പോഴും ഇന്ന്-ൽ ദൃശ
 #: src/features/settings/locale-names.ts
 msgid "Amharic"
 msgstr "അംഹാരിക്"
-
-#: src/features/assistant/messages.tsx
-msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
-msgstr "നിങ്ങൾ തിരുത്താൻ സഹായിക്കുന്ന ഒരു AI വായനയാണിത്; തൊഴിലുടമയോ സ്ക്രീനിംഗ് സിസ്റ്റമോ എങ്ങനെ പ്രതികരിക്കുമെന്ന പ്രവചനമല്ല."
 
 #: src/features/assistant/messages.tsx
 msgid "An edit addresses it"
@@ -2065,7 +2044,6 @@ msgstr "അപേക്ഷാ ഇമെയിൽ"
 msgid "Application phone"
 msgstr "അപേക്ഷാ ഫോൺ"
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "അപേക്ഷാ സംഗ്രഹങ്ങൾ"
@@ -5055,10 +5033,6 @@ msgstr "മുമ്പുള്ള ഡിസ്കവറി ഫലം. തി�
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "നിങ്ങൾ വീണ്ടും അയയ്ക്കുമ്പോൾ, ഈ സംഭാഷണത്തിലെ മുമ്പത്തെ സന്ദേശങ്ങളും അറ്റാച്ച്മെൻ്റുകളും ഈ ലക്ഷ്യസ്ഥാനത്തേക്ക് അയയ്ക്കപ്പെടും."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "earlier messages in this chat"
-msgstr "ഈ ചാറ്റിലെ മുൻ സന്ദേശങ്ങൾ"
-
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/assistant/messages.tsx
@@ -5246,10 +5220,6 @@ msgstr "ട്രാഷ് ശൂന്യമാക്കുക"
 #: src/features/documents/library.tsx
 msgid "Empty Trash?"
 msgstr "ട്രാഷ് ശൂന്യമാക്കണോ?"
-
-#: src/features/workspace/parts.tsx
-msgid "enabled Knowledge"
-msgstr "സജീവമാക്കിയ അറിവ്"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -6570,10 +6540,6 @@ msgstr "അതിലെ സന്ദേശങ്ങളും അറ്റാച�
 msgid "Its own design ({summary})."
 msgstr "അതിൻ്റെ സ്വന്തം ഡിസൈൻ ({summary})."
 
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "അതിൻ്റെ ആവശ്യകതകൾ"
-
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
@@ -7505,10 +7471,6 @@ msgstr "സെർവർ നിയന്ത്രിക്കുന്നത്"
 msgid "Managed by your server"
 msgstr "നിങ്ങളുടെ സെർവർ നിയന്ത്രിക്കുന്നത്"
 
-#: src/features/career/role-suggestions.tsx
-msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
-msgstr "AI ഇല്ലാതെ തന്നെ സ്വയം നൽകിയ റോളുകളും പ്രിഫറൻസുകളും പ്രവർത്തിക്കുന്നു. നിർദ്ദേശങ്ങൾ ഒന്നും തിരയുകയോ ഷെഡ്യൂൾ ചെയ്യുകയോ ചെയ്യില്ല."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "പല ബുള്ളറ്റുകളും ഒരേ വാക്യശകലത്തിലാണ് തുടങ്ങുന്നത്."
@@ -7685,11 +7647,6 @@ msgstr "സന്ദേശങ്ങൾ"
 #: src/features/assistant/chat-view.tsx
 msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 msgstr "അറിവ് മാറുന്നതിന് മുമ്പുള്ള സന്ദേശങ്ങൾ ഇനി AI-ക്ക് അയയ്ക്കപ്പെടുന്നില്ല; അതിനാൽ അവ ഓർമ്മയിൽ നിലനിൽക്കില്ല. കോൺടെക്സ്റ്റ് ഒന്നിച്ച് നിർത്താൻ ഒരു പുതിയ സംഭാഷണം തുടങ്ങുക."
-
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Messages from before Knowledge changed aren't sent."
-msgstr "അറിവ് മാറുന്നതിന് മുമ്പുള്ള സന്ദേശങ്ങൾ അയയ്ക്കപ്പെടുന്നില്ല."
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -8646,11 +8603,6 @@ msgstr "നിങ്ങളുടെ ലൈബ്രറിയിൽ ഇതുവ�
 msgid "Nothing is applied for or created until you choose."
 msgstr "നിങ്ങൾ തിരഞ്ഞെടുക്കുന്നത് വരെ ഒന്നിനും അപേക്ഷിക്കുകയോ ഒന്നും സൃഷ്ടിക്കുകയോ ചെയ്യില്ല."
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Nothing is sent until you choose a connection for this conversation."
-msgstr "ഈ സംഭാഷണത്തിന് ഒരു കണക്ഷൻ തിരഞ്ഞെടുക്കുംവരെ ഒന്നും അയയ്ക്കപ്പെടുന്നില്ല."
-
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
 msgstr "ഒരു റോൾ തുടരുന്നതായി ഒന്നും സൂചിപ്പിക്കുന്നില്ല."
@@ -9586,10 +9538,6 @@ msgstr "നിങ്ങളുടെ {company} അഭിമുഖങ്ങൾക�
 #: src/features/career/prepare-now.tsx
 msgid "Practice in {company}’s workspace"
 msgstr "{company} എന്ന സ്ഥാപനത്തിന്റെ വർക്ക്‌സ്‌പേസിൽ പരിശീലിക്കുക"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Practice priorities, not conclusions about why an employer decided anything."
-msgstr "പരിശീലന മുൻഗണനകൾ മാത്രം, ഒരു തൊഴിലുടമ എന്തുകൊണ്ട് എന്തെങ്കിലും തീരുമാനിച്ചു എന്നതിനെക്കുറിച്ചുള്ള നിഗമനങ്ങളല്ല."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice priority:"
@@ -11539,11 +11487,6 @@ msgstr "തിരയുക അല്ലെങ്കിൽ പ്രവർത്�
 msgid "Search saved answers"
 msgstr "സേവ് ചെയ്ത ഉത്തരങ്ങൾ തിരയുക"
 
-#: src/features/assistant/coach-screen.tsx
-#: src/features/workspace/coach-sheet.tsx
-msgid "Search terms go to your web search service."
-msgstr "തിരയൽ പദങ്ങൾ നിങ്ങളുടെ വെബ് തിരയൽ സേവനത്തിലേക്ക് പോകുന്നു."
-
 #: src/features/assistant/tool-approvals.tsx
 msgid "Search the web"
 msgstr "വെബിൽ തിരയുക"
@@ -11683,87 +11626,9 @@ msgstr "അയച്ചയാളുടെ വിശദാംശങ്ങൾ ക�
 msgid "Sending…"
 msgstr "അയയ്ക്കുന്നു..."
 
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "{0}, {label}-ലേക്ക് അയയ്ക്കുന്നു."
-
-#: src/features/career/role-suggestions.tsx
-msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
-msgstr "നിങ്ങൾ തിരഞ്ഞെടുത്ത റെസ്യൂമെയും 20 സജീവ പങ്കിട്ട വസ്തുതകളും മാത്രം ഈ കണക്ഷനിലേക്ക് അയയ്ക്കുന്നു. അപേക്ഷാ പ്രൊഫൈലോ സേവ് ചെയ്ത ഉത്തരങ്ങളോ സ്വകാര്യ അപേക്ഷാ വസ്തുതകളോ ഇല്ല. നിങ്ങളുടെ പ്രൊവൈഡർ നിരക്ക് ഈടാക്കിയേക്കാം."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "ബോഡി ഡ്രാഫ്റ്റ് ചെയ്യാൻ {0} പോസ്റ്റിംഗ് {1} · {2}-ലേക്ക് അയയ്ക്കുന്നു. നിങ്ങളുടെ പ്രൊവൈഡർ നിരക്ക് ഈടാക്കിയേക്കാം."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "വായിക്കാൻ പോസ്റ്റിംഗ് ടെക്സ്റ്റ് {0}-ലേക്ക് അയയ്ക്കുന്നു."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "ഈ അപേക്ഷയും പ്രവർത്തനസജ്ജമാക്കിയ അറിവും ഈ കണക്ഷനിലേക്ക് അയയ്ക്കുന്നു. നിങ്ങളുടെ പ്രൊവൈഡർ നിരക്ക് ഈടാക്കിയേക്കാം. ഷെഡ്യൂൾ ചെയ്ത ജോലികൾ ഒരിക്കലും സ്വയമേവ മറ്റൊരു കണക്ഷനിലേക്ക് മാറുന്നില്ല."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: draftProvider.label
-#. placeholder {2}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "ബോഡി ഡ്രാഫ്റ്റ് ചെയ്യാൻ ഈ ലെറ്ററിൻ്റെ റെസ്യൂമെയും {0} പോസ്റ്റിംഗും {1} · {2}-ലേക്ക് അയയ്ക്കുന്നു. നിങ്ങളുടെ പ്രൊവൈഡർ നിരക്ക് ഈടാക്കിയേക്കാം."
-
-#. placeholder {0}: draftProvider.label
-#. placeholder {1}: draftProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "ബോഡി ഡ്രാഫ്റ്റ് ചെയ്യാൻ ഈ ലെറ്ററിൻ്റെ റെസ്യൂമെ {0} · {1}-ലേക്ക് അയയ്ക്കുന്നു. നിങ്ങളുടെ പ്രൊവൈഡർ നിരക്ക് ഈടാക്കിയേക്കാം."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
-msgstr "ഈ വരി, ചുറ്റുമുള്ള ഫീൽഡ് ടെക്സ്റ്റ്, നിങ്ങളുടെ നിർദ്ദേശങ്ങൾ എന്നിവ {0} · {1}-ലേക്ക് അയയ്ക്കുന്നു."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
-msgstr "ഈ ഖണ്ഡികയും കത്തിന്റെ ബാക്കി ഭാഗവും നിങ്ങളുടെ നിർദ്ദേശങ്ങളും {0} · {1}-ലേക്ക് അയയ്ക്കുന്നു."
-
-#. placeholder {0}: improveProvider.label
-#. placeholder {1}: improveProvider.model
-#: src/features/write/improve.tsx
-msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
-msgstr "ഈ ഖണ്ഡികയും കത്തിന്റെ ബാക്കി ഭാഗവും ലിങ്ക് ചെയ്ത ജോലി പരസ്യവും നിങ്ങളുടെ നിർദ്ദേശങ്ങളും {0} · {1}-ലേക്ക് അയയ്ക്കുന്നു."
-
-#: src/features/documents/new-document.tsx
-msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
-msgstr "ഈ PDF ടെക്സ്റ്റ് ലെയർ വായിക്കുന്നതിന് പകരം നിങ്ങളുടെ കോൺഫിഗർ ചെയ്‌ത AI ദാതാവിന് അയയ്‌ക്കുന്നു."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "നിങ്ങളുടെ സന്ദേശവും ഈ അപേക്ഷയും (പോസ്റ്റിംഗ്, കുറിപ്പുകൾ, പ്രമാണങ്ങൾ, നിങ്ങളുടെ ഫോം ഉത്തരങ്ങൾ, സേവ് ചെയ്ത ഓഫർ, സമീപകാല സന്ദേശങ്ങൾ) {label}-ലേക്ക് അയയ്ക്കുന്നു."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "നിങ്ങളുടെ സന്ദേശവും മുമ്പത്തേതും ഈ അപേക്ഷയും (പോസ്റ്റിംഗ്, കുറിപ്പുകൾ, പ്രമാണങ്ങൾ, നിങ്ങളുടെ ഫോം ഉത്തരങ്ങൾ, സേവ് ചെയ്ത ഓഫർ, സമീപകാല സന്ദേശങ്ങൾ) {label}-ലേക്ക് അയയ്ക്കുന്നു."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "നിങ്ങളുടെ സന്ദേശം, ഇവിടെയുള്ള മുൻ സന്ദേശങ്ങൾ, ഈ അപേക്ഷ (ജോലി പരസ്യം, കുറിപ്പുകൾ, രേഖകൾ, ഫോമിലെ നിങ്ങളുടെ ഉത്തരങ്ങൾ, സംരക്ഷിച്ച ഓഫർ, സമീപകാല സന്ദേശങ്ങൾ) എന്നിവയും സജീവമാക്കിയ അറിവും {label}-ലേക്ക് അയയ്ക്കുന്നു."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
-msgstr "നിങ്ങളുടെ സന്ദേശം, ഈ അപേക്ഷ (ജോലി പരസ്യം, കുറിപ്പുകൾ, രേഖകൾ, ഫോമിലെ നിങ്ങളുടെ ഉത്തരങ്ങൾ, സംരക്ഷിച്ച ഓഫർ, സമീപകാല സന്ദേശങ്ങൾ) എന്നിവയും സജീവമാക്കിയ അറിവും {label}-ലേക്ക് അയയ്ക്കുന്നു."
-
-#. placeholder {0}: provider?.label
-#. placeholder {1}: provider?.model
-#: src/features/check/writing.tsx
-msgid "Sends your resume's text only to {0} · {1}, with your key."
-msgstr "നിങ്ങളുടെ കീ ഉപയോഗിച്ച് {0} · {1} എന്നതിലേക്ക് മാത്രം നിങ്ങളുടെ റെസ്യൂമെയുടെ ടെക്‌സ്‌റ്റ് അയയ്‌ക്കുന്നു."
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -12347,6 +12212,11 @@ msgstr "ചില അക്ഷരങ്ങൾ റെൻഡർ ചെയ്യാ
 #: src/features/workspace/prepare-review.tsx
 msgid "Some drafts couldn't finish. Keep completed drafts before trying again."
 msgstr "ചില കരടുകൾ പൂർത്തിയാക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുന്നതിന് മുമ്പ് പൂർത്തിയായ കരടുകൾ സൂക്ഷിക്കുക."
+
+#: src/features/letters/page.tsx
+#: src/preview/page.tsx
+msgid "Some fonts are missing from this server's font mirror. Ask the administrator to add them."
+msgstr "ഈ സെർവറിന്റെ ഫോണ്ട് മിററിൽ ചില ഫോണ്ടുകൾ ഇല്ല. അവ ചേർക്കാൻ അഡ്മിനിസ്ട്രേറ്ററോട് ആവശ്യപ്പെടുക."
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -13102,17 +12972,9 @@ msgstr "ബിൽറ്റ്-ഇൻ റീഡർ സജീവമായി ത�
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "പരിശോധനകൾ മെക്കാനിക്കൽ ആണ്. നിങ്ങളുടെ ലിസ്റ്റ് എൻട്രികളോട് ഒരു വായനക്കാരൻ എങ്ങനെ പ്രതികരിക്കുമെന്ന് ഇത് ഒരു ഭാഷാ മോഡലിനോട് ചോദിക്കുകയും വീണ്ടും എഴുതാൻ നിർദ്ദേശിക്കുകയും ചെയ്യുന്നു. അത് സ്‌കോറിൻ്റെ ഭാഗമല്ല."
 
-#: src/features/assistant/provider.tsx
-msgid "The coach asks before remembering facts you state."
-msgstr "നിങ്ങൾ പറയുന്ന വസ്തുതകൾ ഓർമ്മിക്കും മുമ്പ് കോച്ച് അനുവാദം ചോദിക്കുന്നു."
-
 #: src/features/career/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "നിങ്ങളുടെ സന്ദേശങ്ങളിൽ നിന്ന് കോച്ച് ഒന്നും ഓർമ്മിക്കുന്നില്ല."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach doesn't remember anything you write."
-msgstr "നിങ്ങൾ എഴുതുന്നതൊന്നും കോച്ച് ഓർമ്മിക്കില്ല."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -13125,10 +12987,6 @@ msgstr "ഈ സെർവറിൽ കോച്ച് സജ്ജമാക്ക
 #: src/features/career/facts.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "കോച്ച് ഓരോ വസ്തുതയും ചാറ്റിൽ നിർദ്ദേശിക്കുന്നു. നിങ്ങൾ സമ്മതിക്കുന്നത് വരെ ഒന്നും സേവ് ചെയ്യില്ല."
-
-#: src/features/assistant/provider.tsx
-msgid "The coach remembers facts you state, and tells you."
-msgstr "നിങ്ങൾ പറയുന്ന വസ്തുതകൾ കോച്ച് ഓർമ്മിക്കുന്നു, അത് നിങ്ങളോട് പറയുകയും ചെയ്യും."
 
 #: src/features/career/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -13150,10 +13008,6 @@ msgstr "കണക്ഷൻ പ്രവർത്തിക്കുന്നു. 
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "കോപ്പിയ്ക്ക് ജോലിയുടെ പോസ്റ്റിംഗ് ലഭിക്കുന്നു; ഈ റെസ്യൂമെ മറ്റ് ജോലികൾക്ക് അതേപടി തുടരുന്നു."
 
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "ഈ ജോലിക്കുള്ള കവർ ലെറ്റർ"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -13171,10 +13025,6 @@ msgstr "ഇറക്കുമതി ചെയ്ത റെസ്യൂമെ വ
 msgid "The employer may have changed it since."
 msgstr "അതിനുശേഷം തൊഴിലുടമ ഇത് മാറ്റിയിരിക്കാം."
 
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "തൊഴിലുടമയുടെ സന്ദേശം"
-
 #: src/features/write/date-field.tsx
 msgid "The end date is before the start date. Check both dates."
 msgstr "അവസാന തീയതി ആരംഭ തീയതിയ്ക്ക് മുമ്പാണ്. രണ്ട് തീയതികളും പരിശോധിക്കുക."
@@ -13187,10 +13037,6 @@ msgstr "ഫോളോ-അപ്പ് സംരക്ഷിച്ചു. ഒര�
 msgid "The greeting follows the name."
 msgstr "പേരിന് പിന്നാലെയാണ് ആശംസ."
 
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "അഭിമുഖ വിവരങ്ങൾ"
-
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "അഭിമുഖം സംരക്ഷിച്ചു. ഒരു റിമൈൻഡർ ലഭിക്കാൻ, നിങ്ങളുടെ ഉപകരണ ക്രമീകരണത്തിൽ അറിയിപ്പുകൾ അനുവദിക്കുക."
@@ -13202,10 +13048,6 @@ msgstr "കീ സെർവറിൽ എൻക്രിപ്റ്റ് ചെ
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "കീ നിരസിക്കപ്പെട്ടു. കീ പരിശോധിച്ച് വീണ്ടും ടെസ്റ്റ് ചെയ്യുക."
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "അവസാനത്തെ സന്ദേശങ്ങൾ"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -13292,14 +13134,6 @@ msgstr "പ്രൊവൈഡർ ഈ അഭ്യർത്ഥന പരിമി
 msgid "The provider reported a server error. Try again later."
 msgstr "പ്രൊവൈഡർ ഒരു സെർവർ പിഴ റിപ്പോർട്ട് ചെയ്തു. പിന്നീട് വീണ്ടും ശ്രമിക്കുക."
 
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "ചോദ്യവും നിങ്ങൾ പറഞ്ഞതും"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "ചോദ്യവും നിങ്ങളുടെ ഉത്തരവും"
-
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "കാരണം ഇൻസൈറ്റുകൾക്കായി സൂക്ഷിച്ചിരിക്കുന്നു. ലിങ്ക് ചെയ്‌ത ഡോക്യുമെൻ്റുകൾ സ്പർശിക്കില്ല."
@@ -13316,10 +13150,6 @@ msgstr "ബാക്കിയുള്ള ഫയലുകൾ ഈ റിപ്പ
 msgid "The resume as it is"
 msgstr "റെസ്യൂമെ അതേപടി"
 
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "ഈ ജോലിക്കുള്ള റെസ്യൂമെ"
-
 #: src/features/share/feedback.tsx
 msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr "അവലോകകൻ ഓരോന്നിൻ്റെയും ഘട്ടവും തീയതികളും കാണുന്നു. കുറിപ്പുകളും കോൺടാക്റ്റുകളും ശമ്പളവും സ്വകാര്യമായി തുടരും."
@@ -13335,10 +13165,6 @@ msgstr "സംരക്ഷിച്ച കീ ഒരു പുതിയ അട�
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "സംരക്ഷിച്ച കീ ഒരു പുതിയ അടിസ്ഥാന URL-ലേക്ക് അയച്ചിട്ടില്ല. കീ വീണ്ടും നൽകുക."
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "സേവ് ചെയ്ത ഓഫർ"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -13711,10 +13537,6 @@ msgstr "ഈ PDF ഒരു സ്കാൻ ചെയ്ത ചിത്രമാ�
 #: src/features/ats-checker/check.ts
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "ഈ PDF പാസ്‌വേഡ് സംരക്ഷിതമാണ്. സംരക്ഷിക്കപ്പെടാത്ത ഒരു പകർപ്പ് സേവ് ചെയ്ത് വീണ്ടും ശ്രമിക്കുക."
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "ഈ പോസ്റ്റിംഗ്"
 
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14975,10 +14797,6 @@ msgstr "ഞാൻ എപ്പോൾ ഫോളോ-അപ്പ് ചെയ്�
 msgid "When would you start?"
 msgstr "നിങ്ങൾ എപ്പോഴാണ് ആരംഭിക്കുക?"
 
-#: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to your {connection}."
-msgstr "അയയ്ക്കുക ടാപ്പ് ചെയ്യുമ്പോൾ, {list} {connection}-ലേക്ക് അയയ്ക്കും."
-
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
 msgstr "നിങ്ങൾ പൂർത്തിയാക്കുമ്പോൾ, ബ്രൗസർ ക്ലോസ് ചെയ്യുന്നു, നിങ്ങൾ ഇവിടെ തിരിച്ചെത്തും."
@@ -15033,10 +14851,6 @@ msgstr "വീതി"
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
 msgstr "മാറ്റാനുള്ള തയ്യാറാണ്"
-
-#: src/features/assistant/provider.tsx
-msgid "With Knowledge off, nothing you write is remembered."
-msgstr "അറിവ് ഓഫാക്കിയാൽ, നിങ്ങൾ എഴുതുന്നതൊന്നും ഓർമ്മിക്കപ്പെടുന്നില്ല."
 
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
@@ -15372,10 +15186,6 @@ msgstr "ഈ ഉപകരണത്തിലെ നിങ്ങളുടെ മാ
 msgid "Your contact details are not on the first page."
 msgstr "നിങ്ങളുടെ ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ ആദ്യ പേജിലില്ല."
 
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "നിങ്ങളുടെ കോൺടാക്റ്റുകൾ"
-
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
 msgstr "നിങ്ങളുടെ ഡാറ്റ"
@@ -15417,10 +15227,6 @@ msgstr "നിങ്ങളുടെ വസ്തുതകൾ, കഥകൾ, മ�
 msgid "Your focus"
 msgstr "നിങ്ങളുടെ ശ്രദ്ധ"
 
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "നിങ്ങളുടെ ഫോം ഉത്തരങ്ങൾ"
-
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "നിങ്ങളുടെ തലക്കെട്ടുകൾ ബോഡി ടെക്സ്റ്റ് പോലെ തന്നെ കാണപ്പെടുന്നു."
@@ -15446,10 +15252,6 @@ msgstr "നിങ്ങളുടെ വരികൾ വളരെ കർശനമ
 msgid "Your margins are very narrow."
 msgstr "നിങ്ങളുടെ മാർജിനുകൾ വളരെ ഇടുങ്ങിയതാണ്."
 
-#: src/features/assistant/coach-screen.tsx
-msgid "your message"
-msgstr "നിങ്ങളുടെ സന്ദേശം"
-
 #: src/features/assistant/chat-view.tsx
 msgid "Your message is kept."
 msgstr "നിങ്ങളുടെ സന്ദേശം നിലനിർത്തി."
@@ -15466,7 +15268,6 @@ msgstr "നിങ്ങളുടെ പേര് തന്നെ നിങ്ങ
 msgid "Your name is missing"
 msgstr "നിങ്ങളുടെ പേര് കാണാനില്ല"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "നിങ്ങളുടെ കുറിപ്പുകൾ"
@@ -15487,9 +15288,7 @@ msgstr "നിങ്ങളുടെ സ്വന്തം ബോഡി, മു�
 msgid "Your phone number is written in an unusual shape."
 msgstr "നിങ്ങളുടെ ഫോൺ നമ്പർ അസാധാരണമായ രീതിയിലാണ് എഴുതിയിരിക്കുന്നത്."
 
-#: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/sent.ts
-#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "നിങ്ങളുടെ പ്രിഫറൻസുകൾ"
 
@@ -15508,10 +15307,6 @@ msgstr "നിങ്ങളുടെ പൊതു ലിങ്കുകൾ ആര
 #: src/features/settings/profile.tsx
 msgid "Your public links will change"
 msgstr "നിങ്ങളുടെ പബ്ലിക് ലിങ്കുകൾ മാറും"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
-msgstr "നിങ്ങൾ നിർത്തിയ ശേഷം നിങ്ങളുടെ റെക്കോർഡിംഗ് ട്രാൻസ്‌ക്രൈബുചെയ്യുന്നതിന് {transcriberName} എന്നതിലേക്ക് പോകുന്നു. നിങ്ങളുടെ ദാതാവ് നിരക്ക് ഈടാക്കാം. സെർവർ ട്രാൻസ്‌ക്രിപ്റ്റുകൾ സൂക്ഷിക്കുന്നു, ഒരിക്കലും റെക്കോർഡിംഗില്ല."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -15596,10 +15391,6 @@ msgstr "നിങ്ങളുടെ ഷോർട്ട് ലിങ്ക് “
 #: src/features/share/web-page.tsx
 msgid "Your short link says this resume isn't shared until you publish it again."
 msgstr "നിങ്ങൾ വീണ്ടും പ്രസിദ്ധീകരിക്കും വരെ നിങ്ങളുടെ ഷോർട്ട് ലിങ്ക് ഈ റെസ്യൂമെ പങ്കിട്ടിട്ടില്ല എന്ന് കാണിക്കുന്നു."
-
-#: src/features/assistant/coach-screen.tsx
-msgid "your stories"
-msgstr "നിങ്ങളുടെ കഥകൾ"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your story couldn't be loaded."

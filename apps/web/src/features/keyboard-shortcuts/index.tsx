@@ -16,7 +16,10 @@ import { CharacterShortcutSetting } from "./character-shortcuts";
 import { useShortcutSettings } from "./settings";
 import { showKeyboardShortcuts, useShortcutHelp } from "./store";
 
-/** `showTrigger` hides the floating button (marketing pages); the `?` shortcut and dialog stay. */
+/**
+ * `showTrigger` hides the floating button (marketing pages); the `?` shortcut and dialog stay.
+ * The button also stays hidden on phone and tablet screens, where it covers the UI.
+ */
 export function KeyboardShortcuts({ showTrigger = true }: { showTrigger?: boolean }) {
 	const { t } = useLingui();
 	const { shortcuts, opener, close } = useShortcutHelp();
@@ -44,7 +47,7 @@ export function KeyboardShortcuts({ showTrigger = true }: { showTrigger?: boolea
 				<Button
 					id="keyboard-shortcuts-trigger"
 					variant="secondary"
-					className="fixed end-3 bottom-[max(5rem,var(--floating-toolbar-clearance,0px))] z-30 gap-2 sm:bottom-[max(0.75rem,var(--floating-toolbar-clearance,0px))] print:hidden"
+					className="fixed end-3 bottom-[max(0.75rem,var(--floating-toolbar-clearance,0px))] z-30 gap-2 max-lg:hidden print:hidden pointer-coarse:hidden"
 					onClick={() => showKeyboardShortcuts()}
 					aria-keyshortcuts={characterShortcuts ? "?" : undefined}
 				>

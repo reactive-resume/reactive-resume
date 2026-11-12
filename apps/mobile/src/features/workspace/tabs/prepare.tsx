@@ -102,7 +102,7 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 		>
 			{provider ? <Button label={label} loading={generate.isPending} onPress={plan} /> : null}
 			<GenerateNotice generate={generate} onRetry={plan} />
-			<AiNotice task="briefing" application={application} interview centered />
+			<AiNotice />
 		</EmptyState>
 	);
 }
@@ -308,7 +308,7 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 			: !providerId
 				? t`Connect an AI provider in Settings to refresh it automatically.`
 				: at
-					? t`${at} · ${providerLabel}. Sends this application and your Knowledge; your provider may charge.`
+					? t`${at} · ${providerLabel}`
 					: t`Too close to the interview to schedule a refresh.`;
 
 	return (

@@ -2,20 +2,26 @@ import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { nativeEngine } from "@reactive-resume/forme-native";
 import { renderResumePdf } from "@reactive-resume/pdf/native";
+import { getFontMirrorUrl } from "./font-source";
 import { configurePreviewResources, readPreviewImage } from "./resources";
+import { getServer } from "@/auth/session";
 
 /** Layout measurement uses the same engine, fonts and images as the native preview. */
 export async function measureResume(data: ResumeData): Promise<PageMap> {
 	configurePreviewResources();
+	const server = getServer();
+	const fontMirrorUrl = await getFontMirrorUrl(server);
+	if (server !== getServer()) throw new Error("Preview server changed");
 	let pageMap: PageMap | undefined;
 	await renderResumePdf(nativeEngine, {
 		data,
-		readImage: readPreviewImage,
+		readImage: (source) => readPreviewImage(source, server),
+		fontMirrorUrl,
 		onPageMap: (map) => {
 			pageMap = map;
 		},
 	});
-	if (!pageMap) throw new Error("Page map unavailable");
+	if (!pageMap || server !== getServer()) throw new Error("Page map unavailable");
 	return pageMap;
 }
 

@@ -85,8 +85,8 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 
 	const resume = documents?.find((document) => document.type === "resume" && document.id === application.resumeId);
 	const letter = documents?.find((document) => document.type === "letter" && document.id === application.coverLetterId);
-	const date =
-		applicationSentAt(application)?.toLocaleDateString(i18n.locale, { month: "short", day: "numeric" }) ?? "—";
+	const sentAt = applicationSentAt(application);
+	const date = sentAt?.toLocaleDateString(i18n.locale, { month: "short", day: "numeric" }) ?? "—";
 
 	// The New dialog can start from an owned earlier letter; the server fills the recipient from this application.
 	const writeLetter = () =>
@@ -145,15 +145,18 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 					<h2 id="application-sent" className="text-lg leading-6 font-semibold">
 						<Trans>What you sent</Trans>
 					</h2>
-					<p className="flex items-start gap-1.5 text-[13px] leading-[18px] text-ink-2">
-						<Icon name="check-circle" size={16} className="mt-px shrink-0 text-accent-text" />
-						<span>
-							<Trans>
-								Submission recorded {date}. The sent versions never change; current drafts stay editable. This record
-								does not confirm employer receipt.
-							</Trans>
-						</span>
-					</p>
+					{/* Only a recorded submission gets the line; without one it would claim a send that never happened. */}
+					{sentAt && (
+						<p className="flex items-start gap-1.5 text-[13px] leading-[18px] text-ink-2">
+							<Icon name="check-circle" size={16} className="mt-px shrink-0 text-accent-text" />
+							<span>
+								<Trans>
+									Submission recorded {date}. The sent versions never change; current drafts stay editable. This record
+									does not confirm employer receipt.
+								</Trans>
+							</span>
+						</p>
+					)}
 				</div>
 			) : (
 				<h3 id="application-sent" className="text-xs font-semibold text-ink-3">

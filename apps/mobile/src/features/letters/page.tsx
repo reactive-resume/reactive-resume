@@ -61,7 +61,11 @@ export function LetterPages({ data, zoomBar = true }: { data: ResumeData | null;
 			{preview.error ? (
 				<Banner
 					tone="danger"
-					message={t`Couldn't render the preview. Retry, or try another template or font in Design.`}
+					message={
+						preview.missingMirrorFonts
+							? t`Some fonts are missing from this server's font mirror. Ask the administrator to add them.`
+							: t`Couldn't render the preview. Retry, or try another template or font in Design.`
+					}
 					action={{ label: t`Retry`, onPress: preview.retry }}
 				/>
 			) : null}

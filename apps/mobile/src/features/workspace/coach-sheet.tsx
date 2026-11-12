@@ -11,7 +11,7 @@ import { client, orpc } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { useThreads } from "@/features/assistant/chat";
-import { ChatView, ContextChip, type ChatHistory } from "@/features/assistant/chat-view";
+import { ChatView, ContextChip } from "@/features/assistant/chat-view";
 import { ChatWelcome } from "@/features/assistant/chat-welcome";
 import {
 	ConnectionNotice,
@@ -68,7 +68,7 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 	const web = useWebSearch(provider);
 	// The same choices as Career → Coach, for this sheet: Knowledge on, Web research off until turned on.
 	const [chips, setChips] = useState({ memory: true, web: false });
-	const memory = useMemoryNote(chips.memory);
+	const memory = useMemoryNote();
 	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
 	const stories = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: application.id } }));
 	const title = useThreadTitle();
@@ -91,23 +91,6 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 	};
 	const company = application.company;
 	const tabName = tabLabel(tab);
-	const privacy = ({ earlier, withheld }: ChatHistory) =>
-		[
-			stranded
-				? t`Nothing is sent until you choose a connection for this conversation.`
-				: earlier > 0
-					? chips.memory
-						? t`Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to ${label}.`
-						: t`Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`
-					: chips.memory
-						? t`Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to ${label}.`
-						: t`Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`,
-			...(withheld > 0 ? [t`Messages from before Knowledge changed aren't sent.`] : []),
-			...(context.web ? [t`Search terms go to your web search service.`] : []),
-			memory.note,
-		]
-			.filter(Boolean)
-			.join(" ");
 
 	return (
 		<View style={{ height: height * 0.7 }}>
@@ -211,7 +194,6 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 						document={null}
 						disabled={!providers.hasAIProvider || stranded}
 						connection={label}
-						privacy={privacy}
 						remember={{ applicationId: application.id }}
 						facts={facts.data ?? []}
 						stories={stories.data ?? []}
