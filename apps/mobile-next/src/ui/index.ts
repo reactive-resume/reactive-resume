@@ -36,5 +36,6 @@ export * from "./SnapCarousel";
 export * from "./BoardDrag";
 export * from "./ExpandingStrip";
 export * from "./Crossfade";
+export * from "./ChatFollow";
 export * from "./large-text";
 export * from "./Logo";
