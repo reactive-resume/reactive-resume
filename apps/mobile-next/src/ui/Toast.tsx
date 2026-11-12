@@ -7,7 +7,7 @@
 // or dismissed (the escape gesture dismisses it); pauseToast()/resumeToast() hold the fuse as a touch does.
 // Nothing exists only in a toast: every action is also where its item lives.
 import { useEffect, useState } from "react";
-import { AccessibilityInfo, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, I18nManager, Platform, StyleSheet, View } from "react-native";
 import Animated, {
 	cancelAnimation,
 	runOnJS,
@@ -101,6 +101,8 @@ export function useToastOffset(bottom: number) {
 		return () => useToasts.setState((s) => ({ offsets: s.offsets.filter((o) => o.id !== id) }));
 	}, [bottom]);
 }
+
+const ANDROID_FUSE = Platform.OS === "android";
 
 export function ToastHost() {
 	const current = useToasts((s) => s.current);
@@ -203,7 +205,11 @@ function ToastView({
 		transform: [{ translateY: toastRise(shown.value, rise) }],
 	}));
 	const riseOnly = useAnimatedStyle(() => ({ transform: [{ translateY: toastRise(shown.value, rise) }] }));
-	const fuseStyle = useAnimatedStyle(() => ({ width: `${fuse.value * 100}%` }));
+	// Android: a width animated every frame relays out the toast and sends accessibility a content change each frame,
+	// which made every UiAutomator read seconds slow while a toast was up. Scaling draws the same bar without layout.
+	const fuseStyle = useAnimatedStyle(() =>
+		ANDROID_FUSE ? { width: "100%", transform: [{ scaleX: fuse.value }] } : { width: `${fuse.value * 100}%` },
+	);
 	const place = [{ bottom }, lab?.height ? { height: lab.height } : null];
 
 	return (
@@ -283,6 +289,11 @@ const styles = StyleSheet.create({
 	},
 	message: { flex: 1 },
 	action: { height: 44, marginVertical: -12, paddingHorizontal: 12, justifyContent: "center" },
-	fuse: { position: "absolute", start: 0, bottom: 0 },
+	fuse: {
+		position: "absolute",
+		start: 0,
+		bottom: 0,
+		...(ANDROID_FUSE ? { transformOrigin: I18nManager.isRTL ? "right" : "left" } : null),
+	},
 	labCentre: { position: "absolute", left: space.s3, right: space.s3, alignItems: "center", justifyContent: "center" },
 });
