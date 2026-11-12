@@ -35,6 +35,7 @@ import { documentKey } from "@/features/documents/filter";
 import { useDocumentHistory } from "@/features/documents/library-session";
 import { PageNavigation } from "@/features/documents/page-navigation";
 import { useDocumentRemovalMotion } from "@/features/documents/removal-motion";
+import { useShortcutsPage } from "@/features/keyboard-shortcuts/store";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
@@ -69,6 +70,7 @@ type TrashPageProps = { kind: TrashKind; onKindChange: (kind: TrashKind) => void
  */
 export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 	const { t } = useLingui();
+	useShortcutsPage(t`Trash`);
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const confirm = useConfirm();

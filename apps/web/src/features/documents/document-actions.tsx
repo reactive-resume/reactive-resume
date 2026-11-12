@@ -42,7 +42,6 @@ import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useDocumentDownload } from "@/features/applications/use-document-download";
 import { useShareOrigin } from "@/features/resume/share/use-share-origin";
 import { useClosingValue } from "@/hooks/use-closing-value";
-import { usePrompt } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -63,7 +62,6 @@ function useRefreshDocuments() {
 
 export function useDocumentActions() {
 	const onEffect = useDocumentEffect();
-	const prompt = usePrompt();
 	const navigate = useNavigate();
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const markNew = useNewDocumentsStore((state) => state.markNew);
@@ -119,14 +117,8 @@ export function useDocumentActions() {
 
 		duplicate: async (document: DocumentSummary) => {
 			try {
-				const suggested = await orpc.documents.suggestDuplicateName.call(ref(document));
-				const answer = await prompt(t`Duplicate`, {
-					defaultValue: suggested,
-					maxLength: 100,
-					confirmText: t`Duplicate`,
-				});
-				const name = answer?.trim().slice(0, 100);
-				if (!name) return;
+				// Reversible by renaming or trashing, so it happens at once; the toast offers Rename (D5).
+				const name = (await orpc.documents.suggestDuplicateName.call(ref(document))).trim().slice(0, 100);
 				const id =
 					document.type === "resume"
 						? await duplicateResume.mutateAsync({ id: document.id, name, tags: document.tags })
@@ -548,7 +540,7 @@ export function DocumentMenuContent({
 		<Content align="end" className="w-62">
 			{/* Visible, not a tooltip: keyboard and touch users never see a title. */}
 			{document.isLocked && (
-				<p className="px-2.5 pt-2 pb-1.5 text-ink-3 t-small">
+				<p className="px-2.5 pt-2 pb-1.5 t-small text-ink-3">
 					{sentOn ? (
 						<Trans>Sent on {sentOn} and locked. Unlock it to rename, tag, relink or move it to Trash.</Trans>
 					) : (
@@ -669,7 +661,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 						suggestionsLabel={t`Your tags`}
 						aria-describedby={limitsId}
 					/>
-					<p id={limitsId} className="text-ink-3 t-small">
+					<p id={limitsId} className="t-small text-ink-3">
 						<Trans>Up to 20 tags per document, 40 characters each.</Trans>
 					</p>
 				</div>

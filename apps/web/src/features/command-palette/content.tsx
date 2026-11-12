@@ -150,7 +150,7 @@ export default function CommandPaletteContent() {
 							isFirstPage
 								? t({
 										comment: "Placeholder in command palette input on root page",
-										message: "Search or jump to…",
+										message: "Search documents, applications and commands",
 									})
 								: t({
 										comment: "Placeholder in command palette input on nested pages",
@@ -163,11 +163,14 @@ export default function CommandPaletteContent() {
 						})}
 						hint={
 							<DialogClose
-								aria-label={t`Close`}
-								className="grid min-h-11 min-w-11 place-items-center rounded-sm text-ink-2"
+								aria-label={t`Cancel`}
+								className="grid min-h-11 min-w-11 place-items-center rounded-sm text-ink-2 max-sm:-me-2 max-sm:px-2 max-sm:text-[15px] max-sm:font-medium max-sm:text-ink"
 							>
 								<Kbd className="max-sm:hidden">esc</Kbd>
-								<Icon name="x" className="sm:hidden" />
+								{/* Phones: the palette fills the screen, and Cancel says how to leave it (M1). */}
+								<span aria-hidden="true" className="sm:hidden">
+									<Trans>Cancel</Trans>
+								</span>
 							</DialogClose>
 						}
 					/>

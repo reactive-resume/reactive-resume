@@ -13,8 +13,11 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
 	DropdownMenu,
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
+	DropdownMenuLabel,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
@@ -22,6 +25,7 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tabs, TabsCount, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
@@ -49,6 +53,7 @@ import { SelectionBar } from "@/components/calm/selection-bar";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
 import { useDialogStore } from "@/dialogs/store";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
+import { useShortcutsPage } from "@/features/keyboard-shortcuts/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
 import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
@@ -74,6 +79,7 @@ type DocumentsPageProps = {
  */
 export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const { t } = useLingui();
+	useShortcutsPage(t`Documents`);
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const searchRef = useRef<HTMLInputElement>(null);
 	const resultsRef = useRef<HTMLTableElement & HTMLDivElement>(null);
@@ -373,10 +379,100 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 						<FilterBar
 							end={
 								<>
+									{/* Phones: sort, view and the chips share one button beside the filter (M1). */}
 									<DropdownMenu>
 										<DropdownMenuTrigger
 											render={
-												<Button variant="ghost" aria-label={t`Sort: ${sortLabels[search.sort]}`}>
+												<IconButton
+													icon="sliders-horizontal"
+													variant="secondary"
+													label={t`Sort, view and filters`}
+													className="size-11 sm:hidden"
+												/>
+											}
+										/>
+										<DropdownMenuContent align="end">
+											<DropdownMenuGroup>
+												<DropdownMenuLabel>
+													<Trans>Sort</Trans>
+												</DropdownMenuLabel>
+												<DropdownMenuRadioGroup
+													value={search.sort}
+													onValueChange={(sort) => onSearchChange({ sort: sort as DocumentSort })}
+												>
+													{(Object.keys(sortLabels) as DocumentSort[]).map((sort) => (
+														<DropdownMenuRadioItem key={sort} value={sort}>
+															{sortLabels[sort]}
+														</DropdownMenuRadioItem>
+													))}
+												</DropdownMenuRadioGroup>
+											</DropdownMenuGroup>
+											<DropdownMenuSeparator />
+											<DropdownMenuGroup>
+												<DropdownMenuLabel>
+													<Trans>View</Trans>
+												</DropdownMenuLabel>
+												<DropdownMenuRadioGroup value={view} onValueChange={(next) => setView(next as "grid" | "list")}>
+													<DropdownMenuRadioItem value="list">
+														<Trans>Rows</Trans>
+													</DropdownMenuRadioItem>
+													<DropdownMenuRadioItem value="grid">
+														<Trans>Grid</Trans>
+													</DropdownMenuRadioItem>
+												</DropdownMenuRadioGroup>
+											</DropdownMenuGroup>
+											{(hasPublic || tags.length > 0 || jobs.length > 0) && (
+												<>
+													<DropdownMenuSeparator />
+													<DropdownMenuGroup>
+														<DropdownMenuLabel>
+															<Trans>Show</Trans>
+														</DropdownMenuLabel>
+														{hasPublic && (
+															<DropdownMenuCheckboxItem
+																checked={search.public ?? false}
+																onCheckedChange={(on) => onSearchChange({ public: on })}
+															>
+																<Trans>Public</Trans>
+															</DropdownMenuCheckboxItem>
+														)}
+														{tags.map((tag) => (
+															<DropdownMenuCheckboxItem
+																key={tag}
+																checked={search.tags.includes(tag)}
+																onCheckedChange={(on) =>
+																	onSearchChange({
+																		tags: on
+																			? [...search.tags, tag].slice(0, 20)
+																			: search.tags.filter((known) => known !== tag),
+																	})
+																}
+															>
+																#{tag}
+															</DropdownMenuCheckboxItem>
+														))}
+														{jobs.map((job) => (
+															<DropdownMenuCheckboxItem
+																key={job.id}
+																checked={search.q.trim() === job.company}
+																onCheckedChange={(on) => onSearchChange({ q: on ? job.company : "" })}
+															>
+																<Trans comment="A filter chip: the documents for one job">For {job.company}</Trans>
+															</DropdownMenuCheckboxItem>
+														))}
+													</DropdownMenuGroup>
+												</>
+											)}
+										</DropdownMenuContent>
+									</DropdownMenu>
+									<DropdownMenu>
+										<DropdownMenuTrigger
+											render={
+												<Button
+													variant="ghost"
+													aria-label={t`Sort: ${sortLabels[search.sort]}`}
+													className="max-sm:hidden"
+												>
 													<Icon name="arrows-down-up" />
 													{sortLabels[search.sort]}
 													<Icon name="caret-down" />
@@ -397,6 +493,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 										</DropdownMenuContent>
 									</DropdownMenu>
 									<SegmentedControl
+										className="max-sm:hidden"
 										aria-label={t`View`}
 										value={view}
 										onValueChange={(next) => setView(next as "grid" | "list")}
@@ -415,6 +512,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							<FilterField
 								ref={searchRef}
 								label={t`Filter documents`}
+								className="max-sm:w-auto max-sm:min-w-0 max-sm:flex-1 max-sm:shrink max-sm:[&_kbd]:hidden"
 								{...(characterShortcuts && !searchText ? { shortcut: "/" } : {})}
 								value={searchText}
 								maxLength={500}
@@ -426,48 +524,52 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							<span id={searchHintId} className="sr-only">
 								<Trans>Enter opens the first result. Down arrow moves to the results. Escape clears.</Trans>
 							</span>
-							{/* Chips come from the data: Public once any link is on, the tags in use, a job with several documents. */}
-							{hasPublic && (
-								<Chip
-									pressed={search.public ?? false}
-									className="ms-2"
-									onClick={() => onSearchChange({ public: !search.public })}
-								>
-									<Icon name="globe-simple" size={16} />
-									<Trans>Public</Trans>
-								</Chip>
-							)}
-							{tags.map((tag) => {
-								const isActive = search.tags.includes(tag);
-								return (
+							{/* Desktop: the chips follow the field. Tablets: their own line under the field, sort and view (M2).
+							    Phones: inside the one button. */}
+							<div className="flex flex-wrap items-center gap-2 max-lg:order-last max-lg:w-full max-sm:hidden lg:contents">
+								{/* Chips come from the data: Public once any link is on, the tags in use, a job with several documents. */}
+								{hasPublic && (
 									<Chip
-										key={tag}
-										pressed={isActive}
-										onClick={() =>
-											onSearchChange({
-												tags: isActive
-													? search.tags.filter((known) => known !== tag)
-													: [...search.tags, tag].slice(0, 20),
-											})
-										}
+										pressed={search.public ?? false}
+										className="lg:ms-2"
+										onClick={() => onSearchChange({ public: !search.public })}
 									>
-										#{tag}
+										<Icon name="globe-simple" size={16} />
+										<Trans>Public</Trans>
 									</Chip>
-								);
-							})}
-							{jobs.map((job) => {
-								const isActive = search.q.trim() === job.company;
-								return (
-									<Chip
-										key={job.id}
-										pressed={isActive}
-										onClick={() => onSearchChange({ q: isActive ? "" : job.company })}
-									>
-										<Icon name="briefcase" size={16} />
-										<Trans comment="A filter chip: the documents for one job">For {job.company}</Trans>
-									</Chip>
-								);
-							})}
+								)}
+								{tags.map((tag) => {
+									const isActive = search.tags.includes(tag);
+									return (
+										<Chip
+											key={tag}
+											pressed={isActive}
+											onClick={() =>
+												onSearchChange({
+													tags: isActive
+														? search.tags.filter((known) => known !== tag)
+														: [...search.tags, tag].slice(0, 20),
+												})
+											}
+										>
+											#{tag}
+										</Chip>
+									);
+								})}
+								{jobs.map((job) => {
+									const isActive = search.q.trim() === job.company;
+									return (
+										<Chip
+											key={job.id}
+											pressed={isActive}
+											onClick={() => onSearchChange({ q: isActive ? "" : job.company })}
+										>
+											<Icon name="briefcase" size={16} />
+											<Trans comment="A filter chip: the documents for one job">For {job.company}</Trans>
+										</Chip>
+									);
+								})}
+							</div>
 						</FilterBar>
 					</>
 				)}
@@ -516,7 +618,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 									<Trans>Nothing matches these filters</Trans>
 								)
 							}
-							description={<Trans>The filter covers titles, tags and linked applications.</Trans>}
+							description={<Trans>Search covers titles, tags and linked applications.</Trans>}
 							action={
 								filtered ? (
 									<Button variant="secondary" onClick={clearFilters}>
@@ -988,7 +1090,7 @@ export function DropToImport() {
 					<Trans>Drop to import</Trans>
 				</p>
 				<p className="text-sm text-ink-2">
-					<Trans>PDF, Word or JSON. We'll build a resume from it.</Trans>
+					<Trans>PDF, Word or JSON. A resume is built from it.</Trans>
 				</p>
 			</div>
 		</div>

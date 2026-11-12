@@ -13,6 +13,7 @@ import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { formatFileSize } from "@reactive-resume/utils/file";
 import { getLanguageName, localeSchema } from "@reactive-resume/utils/locale";
@@ -693,30 +694,39 @@ type ProgressProps = {
 
 /** The import's progress, then its outcome: found counts with Open in editor, or the error with two ways on. */
 function Progress({ step, creating, onCancel, onChooseFile, onStartBlank, onStay, onOpen }: ProgressProps) {
+	const { i18n } = useLingui();
+	const kind = fileKind(step.file.name);
+	const title = step.name === "failed" ? t`Couldn't import` : step.name === "imported" ? t`Imported` : t`Importing`;
+
+	// A card of its own while the file is read (D5): the title, a close button and the file, then the steps.
 	return (
-		<div className={cn(ENTER_CLASS, "flex flex-col")}>
-			<SectionHeading first>
-				{step.name === "failed" ? (
-					<Trans>Couldn't import</Trans>
-				) : step.name === "imported" ? (
-					<Trans>Imported</Trans>
-				) : (
-					<Trans>Importing</Trans>
-				)}
-			</SectionHeading>
-			<List cap>
-				<FileRow
-					file={step.file}
-					trailing={
-						step.name === "importing" && (
-							<Button variant="ghost" onClick={onCancel}>
-								<Trans>Cancel</Trans>
-							</Button>
-						)
-					}
-					last
+		<section
+			aria-label={title}
+			data-design="import-card"
+			className={cn(ENTER_CLASS, "grid gap-4 self-start rounded-2xl border border-line bg-raised p-7 shadow-e2")}
+		>
+			<div className="flex items-center gap-2">
+				<h2 className="flex-1 t-section-title">{title}</h2>
+				<IconButton
+					icon="x"
+					variant="ghost"
+					label={t`Close`}
+					className="-my-1 -me-2 text-ink-2"
+					onClick={step.name === "imported" ? onStay : onCancel}
 				/>
-			</List>
+			</div>
+			<div className="flex items-center gap-3 rounded-md border border-line px-3 py-2.5">
+				<Icon name={kind.icon} size={20} className="shrink-0 text-ink-2" />
+				<span className="flex min-w-0 flex-1 flex-col">
+					<span className="truncate t-ui font-medium">{step.file.name}</span>
+					<span className="t-caption text-ink-3">{formatFileSize(step.file.size, i18n.locale)}</span>
+				</span>
+				{step.name === "importing" && (
+					<Button size="sm" variant="ghost" onClick={onCancel}>
+						<Trans>Cancel</Trans>
+					</Button>
+				)}
+			</div>
 
 			{/* One list for importing and imported, so its checks don't replay when the import finishes. */}
 			{step.name !== "failed" && (
@@ -738,25 +748,25 @@ function Progress({ step, creating, onCancel, onChooseFile, onStartBlank, onStay
 				<>
 					<div
 						role="alert"
-						className={cn(ENTER_CLASS, "mt-4 flex gap-2.5 rounded-lg bg-danger-soft px-4 py-3 t-ui text-danger-text")}
+						className={cn(ENTER_CLASS, "flex gap-2.5 rounded-lg bg-danger-soft px-4 py-3 t-ui text-danger-text")}
 					>
 						<Icon name="warning-circle" size={20} className="shrink-0" />
 						<span>{step.message}</span>
 					</div>
-					<Footer>
-						<Button size="lg" onClick={onChooseFile}>
-							<Trans>Choose another file</Trans>
-						</Button>
+					<div className="flex flex-wrap items-center justify-end gap-2">
 						<Button size="lg" variant="ghost" onClick={onStartBlank} disabled={creating}>
 							<Trans>Start blank</Trans>
 						</Button>
-					</Footer>
+						<Button size="lg" onClick={onChooseFile}>
+							<Trans>Choose another file</Trans>
+						</Button>
+					</div>
 				</>
 			)}
 
 			{step.name === "imported" && (
 				<>
-					<p role="status" className={cn(ENTER_CLASS, "mt-4 flex gap-2 t-ui")}>
+					<p role="status" className={cn(ENTER_CLASS, "flex gap-2 t-ui")}>
 						<Icon name="check-circle" size={20} className="shrink-0 text-accent-text" />
 						<span>
 							<Trans>
@@ -772,17 +782,17 @@ function Progress({ step, creating, onCancel, onChooseFile, onStartBlank, onStay
 							)}
 						</span>
 					</p>
-					<Footer>
-						<Button size="lg" onClick={() => onOpen(step.resumeId)}>
-							<Trans>Open in editor</Trans>
-						</Button>
+					<div className="flex flex-wrap items-center justify-end gap-2">
 						<Button size="lg" variant="ghost" onClick={onStay}>
 							<Trans>Stay here</Trans>
 						</Button>
-					</Footer>
+						<Button size="lg" onClick={() => onOpen(step.resumeId)}>
+							<Trans>Open in editor</Trans>
+						</Button>
+					</div>
 				</>
 			)}
-		</div>
+		</section>
 	);
 }
 
@@ -791,7 +801,7 @@ function Steps({ stage, notes }: { stage: number; notes: string[] }) {
 	const steps = [t`Reading the file`, t`Finding sections`, t`Filling in entries`];
 
 	return (
-		<div className="grid gap-3 pt-4">
+		<div className="grid gap-3">
 			<ol className="grid gap-2.5" aria-label={t`Import steps`}>
 				{steps.map((label, index) => {
 					const done = stage > index;

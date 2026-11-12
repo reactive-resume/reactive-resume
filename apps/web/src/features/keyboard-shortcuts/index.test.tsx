@@ -1,13 +1,14 @@
 // @vitest-environment happy-dom
 
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
-import { HotkeyManager, HotkeysProvider, useHotkey } from "@tanstack/react-hotkeys";
+import { HotkeyManager, HotkeysProvider, useHotkey, useHotkeys } from "@tanstack/react-hotkeys";
+import { useRef } from "react";
 import { KeyboardShortcuts } from ".";
 import { useShortcutSettings } from "./settings";
-import { showKeyboardShortcuts, useShortcutHelp } from "./store";
+import { showKeyboardShortcuts, useShortcutHelp, useShortcutsPage } from "./store";
 
 beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
@@ -92,12 +93,12 @@ it("lists current registration names, suspends background actions, closes with ?
 	expect(editorDialog.textContent).toContain("Download PDF");
 	key(editorDialog);
 	await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
-	act(() => i18n.loadAndActivate({ locale: "de", messages: { "77Emn0": "Tastenkombinationen" } }));
+	act(() =>
+		i18n.loadAndActivate({ locale: "de", messages: { "77Emn0": "Tastenkombinationen", "-rGgtX": "Diese Liste" } }),
+	);
 	key(control);
 	const translated = await screen.findByRole("dialog", { name: "Tastenkombinationen" });
-	expect(Array.from(translated.querySelectorAll("dt"), (element) => element.textContent)).toContain(
-		"Tastenkombinationen",
-	);
+	expect(Array.from(translated.querySelectorAll("dt"), (element) => element.textContent)).toContain("Diese Liste");
 });
 
 it("leaves text entry, IME, modifier chords and other overlays alone", () => {
@@ -156,4 +157,44 @@ it("offers a non-keyboard entry and persists the off switch without disabling mo
 	expect(run).toHaveBeenCalledOnce();
 	fireEvent.click(trigger);
 	expect(await screen.findByRole("dialog")).toBeTruthy();
+});
+
+it("names the page, lists keys that need a focused row under On a row and folds a run of digit keys into one line", async () => {
+	function RowPage() {
+		useShortcutsPage("Applications");
+		const row = useRef<HTMLAnchorElement>(null);
+		useHotkey("N", () => {}, { meta: { name: "Save a job" } });
+		useHotkeys(
+			["Saved", "Applied", "Screening", "Interview", "Offer"].map((stage, index) => ({
+				hotkey: `${index + 1}` as "1",
+				callback: () => {},
+				options: { meta: { name: `Move to ${stage}` } },
+			})),
+			{ target: row },
+		);
+		return (
+			<>
+				<a ref={row} href="#lumen">
+					Lumen
+				</a>
+				<button type="button" onClick={(event) => showKeyboardShortcuts(event.currentTarget)}>
+					Shortcuts
+				</button>
+				<KeyboardShortcuts />
+			</>
+		);
+	}
+	render(
+		<I18nProvider i18n={i18n}>
+			<HotkeysProvider defaultOptions={{ hotkey: { platform: "mac" } }}>
+				<RowPage />
+			</HotkeysProvider>
+		</I18nProvider>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Shortcuts" }));
+	const dialog = await screen.findByRole("dialog", { name: "Shortcuts on Applications" });
+	const rows = within(dialog).getByRole("region", { name: "On a row" });
+	expect(Array.from(rows.querySelectorAll("dt"), (element) => element.textContent)).toEqual(["Move to Saved … Offer"]);
+	expect(rows.querySelector("dd")?.textContent).toBe("1–5");
+	expect(Array.from(dialog.querySelectorAll("dt"), (element) => element.textContent)).toContain("Save a job");
 });

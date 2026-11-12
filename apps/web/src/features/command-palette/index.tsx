@@ -2,6 +2,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { lazy, Suspense } from "react";
 import { useCommandPaletteStore } from "./store";
+import { APP_GROUP } from "@/features/keyboard-shortcuts/groups";
 
 const Content = lazy(() => import("./content"));
 
@@ -13,7 +14,7 @@ export function CommandPalette() {
 	useHotkeys([
 		{
 			hotkey: "Mod+K",
-			options: { meta: { name: t`Search or jump` }, requireReset: true },
+			options: { meta: { name: t`Search or jump`, group: APP_GROUP }, requireReset: true },
 			callback: () => setOpen(!open),
 		},
 	]);

@@ -281,24 +281,40 @@ function NewDocument({ data, mobileSheet = false }: NewDocumentDialogProps) {
 							<Field
 								id={`${id}-job`}
 								label={<Trans>For which job</Trans>}
-								hint={<Trans>The letter is linked to the application, so its posting is at hand.</Trans>}
+								hint={
+									<Trans>
+										The letter is linked to the application, so its posting is at hand. “No job yet” is on the list.
+									</Trans>
+								}
 							>
-								<NativeSelect
-									id={`${id}-job`}
-									value={jobId}
-									disabled={busy}
-									onChange={(event) => {
-										setJobId(event.target.value);
-										setName(null);
-									}}
-								>
-									<option value="">{t`No job yet`}</option>
-									{jobs.map((application) => (
-										<option key={application.id} value={application.id}>
-											{[application.company, application.role.trim()].filter(Boolean).join(" · ")}
-										</option>
-									))}
-								</NativeSelect>
+								{/* The chosen job's stage dot sits in the field, before its name, as in the list's rows. */}
+								<div className="relative w-full">
+									{job && (
+										<StageDot
+											status={job.status}
+											className="pointer-events-none absolute inset-s-3 top-1/2 z-10 -translate-y-1/2"
+										>
+											{null}
+										</StageDot>
+									)}
+									<NativeSelect
+										id={`${id}-job`}
+										value={jobId}
+										disabled={busy}
+										className={cn(job && "ps-7")}
+										onChange={(event) => {
+											setJobId(event.target.value);
+											setName(null);
+										}}
+									>
+										<option value="">{t`No job yet`}</option>
+										{jobs.map((application) => (
+											<option key={application.id} value={application.id}>
+												{[application.company, application.role.trim()].filter(Boolean).join(" · ")}
+											</option>
+										))}
+									</NativeSelect>
+								</div>
 							</Field>
 							<Field
 								id={`${id}-letter-resume`}

@@ -24,7 +24,7 @@ export function PageNavigation({ offset, total, busy, onChange }: PageNavigation
 				<Icon name="caret-left" />
 				<Trans>Previous</Trans>
 			</Button>
-			<span className="text-ink-2 t-mono" aria-live="polite">
+			<span className="t-mono text-ink-2" aria-live="polite">
 				<Trans>
 					{ph({ start: i18n.number(start) })}–{ph({ end: i18n.number(end) })} of {ph({ total: i18n.number(total) })}
 				</Trans>

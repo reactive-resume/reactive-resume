@@ -225,23 +225,30 @@ function DocumentNotes({ document, isNew, showFor }: { document: DocumentSummary
 					<Trans>Locked</Trans>
 				</span>
 			)}
-			{showFor &&
-				(document.application ? (
-					<span className={quiet} dir="auto">
-						<Icon name="briefcase" size={14} className={icon} />
-						<Trans comment="The job a document is for, under its name in the library">
-							For {document.application.company}
-						</Trans>
-					</span>
-				) : (
-					document.recipient && (
-						<span className={quiet}>
-							<Icon name="envelope-simple" size={14} className={icon} />
-							<Trans comment="A letter's recipient under its name in the library">To {document.recipient}</Trans>
-						</span>
-					)
-				))}
+			{showFor && <ForNote document={document} />}
 		</>
+	);
+}
+
+/** "For Lumen" (the job it is linked to) or a letter's "To Kiln Studio". */
+function ForNote({ document, className }: { document: DocumentSummary; className?: string }) {
+	const quiet = cn("min-w-0 truncate text-[13px]/5 font-normal text-ink-3", className);
+	const icon = "me-[5px] inline-block align-[-2px]";
+	if (document.application)
+		return (
+			<span className={quiet} dir="auto">
+				<Icon name="briefcase" size={14} className={icon} />
+				<Trans comment="The job a document is for, under its name in the library">
+					For {document.application.company}
+				</Trans>
+			</span>
+		);
+	if (!document.recipient) return null;
+	return (
+		<span className={quiet}>
+			<Icon name="envelope-simple" size={14} className={icon} />
+			<Trans comment="A letter's recipient under its name in the library">To {document.recipient}</Trans>
+		</span>
 	);
 }
 
@@ -399,6 +406,7 @@ export function DocumentRow({
 	const longPress = useLongPressSelect(onSelectedChange);
 	// A column value starts its cell: "Yesterday", "Tuesday".
 	const edited = formatEdited(document.editedAt, i18n.locale);
+	const meta = useDocumentMeta(document);
 
 	return (
 		<ContextMenu onOpenChange={longPress.onOpenChange}>
@@ -452,12 +460,12 @@ export function DocumentRow({
 								{document.name}
 							</OpenLink>
 						)}
-						<span className="t-small text-ink-3 sm:hidden">
-							{document.type === "resume" ? t`Resume` : t`Cover letter`} · {edited}
-						</span>
-						<span className="flex shrink-0 items-center gap-2.5">
+						{/* Phones have no columns: the kind, the edit and the job go under the name (M1). */}
+						<span className="t-small text-ink-3 sm:hidden">{meta}</span>
+						<span className="flex max-w-full shrink-0 items-center gap-2.5 max-sm:mt-1">
 							<DocumentStatusBadge document={document} />
 							<DocumentNotes document={document} isNew={isNew} showFor={false} />
+							<ForNote document={document} className="sm:hidden" />
 						</span>
 					</span>
 				</DataTableCell>

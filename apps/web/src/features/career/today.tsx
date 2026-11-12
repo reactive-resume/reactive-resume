@@ -42,6 +42,7 @@ import { DocumentStatusBadge } from "@/features/documents/document-status";
 import { DropToImport } from "@/features/documents/documents-page";
 import { formatEdited } from "@/features/documents/filter";
 import { useStartDocument } from "@/features/documents/use-start-document";
+import { useShortcutsPage } from "@/features/keyboard-shortcuts/store";
 import { useSaveTimezone } from "@/features/settings/use-save-timezone";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { toastError } from "@/libs/error-message";
@@ -80,6 +81,7 @@ function useStamp() {
  * instead, with Needs you and the schedules beside them. A new account (E1) gets the first-run hero.
  */
 export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
+	useShortcutsPage(t`Today`);
 	const { session } = useRouteContext({ strict: false });
 	const now = useNow();
 	const queryClient = useQueryClient();
@@ -178,7 +180,7 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 			) : (
 				<div className="grid items-start gap-x-12 xl:grid-cols-[minmax(0,1fr)_360px]">
 					<div className="min-w-0">
-						<NeedsYou now={now} />
+						<NeedsYou now={now} readCount={readCount} onShowRead={() => setShowRead(true)} />
 					</div>
 					<aside className="min-w-0 xl:col-start-2 xl:row-span-2 xl:row-start-1">
 						<ComingUp now={now} />
@@ -268,7 +270,8 @@ function InterviewHero({ now }: { now: Date }) {
 				<>
 					<Button
 						size="lg"
-						className={LG}
+						// Phones: each action takes the whole line, the accent first (M4).
+						className={cn(LG, "max-sm:w-full")}
 						nativeButton={false}
 						render={
 							<Link
@@ -280,7 +283,7 @@ function InterviewHero({ now }: { now: Date }) {
 					>
 						{hasBriefing ? <Trans>Open briefing</Trans> : <Trans>Prepare</Trans>}
 					</Button>
-					<Button size="lg" variant="ghost" className={LG} onClick={calendar.onClick}>
+					<Button size="lg" variant="ghost" className={cn(LG, "max-sm:w-full")} onClick={calendar.onClick}>
 						<Icon name="calendar-plus" />
 						<Trans>Add to calendar</Trans>
 					</Button>
@@ -331,10 +334,17 @@ function useNeedLine() {
 	};
 }
 
-type NeedsYouProps = { now: Date; compact?: boolean; first?: boolean };
+type NeedsYouProps = {
+	now: Date;
+	compact?: boolean;
+	first?: boolean;
+	/** Resting Today with nothing owed and nothing new: the caught-up block offers the read results back. */
+	readCount?: number;
+	onShowRead?: () => void;
+};
 
 /** The steps you owe on your applications: replies to offers and follow-ups. Interviews are in Coming up. */
-function NeedsYou({ now, compact = false, first = false }: NeedsYouProps) {
+function NeedsYou({ now, compact = false, first = false, readCount = 0, onShowRead }: NeedsYouProps) {
 	const { attention: owed } = useApplicationsNeedingAttention(now);
 	// Offers lead: they carry a deadline the other side set. The rest keep Applications' order.
 	const attention = owed.toSorted((a, b) => Number(b.step.kind === "offer") - Number(a.step.kind === "offer"));
@@ -351,7 +361,21 @@ function NeedsYou({ now, compact = false, first = false }: NeedsYouProps) {
 				<Trans>Needs you</Trans>
 			</SectionHeading>
 			{attention.length === 0 ? (
-				<EmptyState variant="compact" title={<Trans>You're up to date</Trans>} />
+				compact || !onShowRead ? (
+					<EmptyState variant="compact" title={<Trans>You're up to date</Trans>} />
+				) : (
+					<EmptyState
+						title={<Trans>You're up to date</Trans>}
+						description={<Trans>New roles, reminders and finished briefings appear here.</Trans>}
+						action={
+							readCount > 0 && (
+								<Button variant="ghost" onClick={onShowRead}>
+									<Trans>Show {i18n.number(readCount)} read</Trans>
+								</Button>
+							)
+						}
+					/>
+				)
 			) : (
 				<List>
 					{attention.map(({ application, step }) => {
