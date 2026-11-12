@@ -29,32 +29,108 @@ appId: me.rxresu.storyboard
 - assertVisible: Onyx
 - assertNotVisible: Azurill
 - tapOn: All
-- swipe:
-    start: 350, 300
-    end: 20, 300
-    duration: 300
-- repeat:
-    times: 8
+- runFlow:
+    when:
+      platform: iOS
     commands:
       - swipe:
           start: 350, 300
           end: 20, 300
-          duration: 200
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "1050,900"
+          end: "60,900"
+          duration: 300
+- repeat:
+    times: 8
+    commands:
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - swipe:
+                start: 350, 300
+                end: 20, 300
+                duration: 200
+      - runFlow:
+          when:
+            platform: Android
+          commands:
+            - swipe:
+                start: "1050,900"
+                end: "60,900"
+                duration: 200
+# Android's swipes page fewer cards: keep going to the carousel's end.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - repeat:
+          while:
+            notVisible: ATS-safe only
+          times: 30
+          commands:
+            - swipe:
+                start: "1050,900"
+                end: "60,900"
+                duration: 200
+      - assertVisible: ATS-safe only
 # The label and the switch share the name; the switch is the second.
 - tapOn:
     text: ATS-safe only
     index: 1
-- swipe:
-    start: 40, 300
-    end: 370, 300
-    duration: 200
-- repeat:
-    times: 8
+- runFlow:
+    when:
+      platform: iOS
     commands:
       - swipe:
           start: 40, 300
           end: 370, 300
           duration: 200
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "120,900"
+          end: "1110,900"
+          duration: 200
+- repeat:
+    times: 8
+    commands:
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - swipe:
+                start: 40, 300
+                end: 370, 300
+                duration: 200
+      - runFlow:
+          when:
+            platform: Android
+          commands:
+            - swipe:
+                start: "120,900"
+                end: "1110,900"
+                duration: 200
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - repeat:
+          while:
+            notVisible: Onyx
+          times: 30
+          commands:
+            - swipe:
+                start: "120,900"
+                end: "1110,900"
+                duration: 200
 - assertVisible: Onyx
 - assertNotVisible: Azurill
 - tapOn:
@@ -62,6 +138,10 @@ appId: me.rxresu.storyboard
     waitToSettleTimeoutMs: 1000
 - assertVisible: Colour changed
 - assertVisible: "Teal, selected"
+# The toast sits over the second row of swatches; Custom colour is reachable once it has gone.
+- extendedWaitUntil:
+    notVisible: Colour changed
+    timeout: 40000
 - tapOn: Custom colour
 - extendedWaitUntil:
     visible: Hex

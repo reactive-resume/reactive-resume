@@ -17,11 +17,24 @@ appId: me.rxresu.storyboard
     timeout: 20000
 - waitForAnimationToEnd
 - assertVisible: "Berlin time \\(CEST\\).*"
-- tapOn:
-    text: Starts
-    index: 1
-- waitForAnimationToEnd
-- tapOn: Done
+# iOS: the sheet's picker, then Done. Android: the system date dialog, then its time dialog, each confirmed with OK.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: Starts
+          index: 1
+      - waitForAnimationToEnd
+      - tapOn: Done
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      # Android reads the field as its label and value together.
+      - tapOn: "Starts, .*"
+      - tapOn: (?i)ok
+      - tapOn: (?i)ok
 - assertVisible: Which 02:30?
 - assertVisible: 02:30 CEST, UTC+02 (first)
 - assertVisible: 02:30 CET, UTC+01 (second)

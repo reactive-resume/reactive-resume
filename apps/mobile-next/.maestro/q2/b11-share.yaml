@@ -31,9 +31,15 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: "Alex Morgan Resume.*"
     timeout: 30000
+# iOS's share sheet offers Save to Files; Android's reads "Sharing 1 file".
 - extendedWaitUntil:
-    visible: Save to Files
+    visible: Save to Files|Sharing 1 file
     timeout: 30000
 - tapOn:
     id: header.closeButton
     optional: true
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back

@@ -62,8 +62,9 @@ appId: me.rxresu.storyboard
 - tapOn:
     id: first-send-send
     optional: true
-- extendedWaitUntil:
-    visible: Redraft this letter from the posting
+# The sent message lands below the fold; Android only reports what is on screen.
+- scrollUntilVisible:
+    element: Redraft this letter from the posting
     timeout: 15000
 - tapOn: Close
 # ⋯ is the document menu (B19) for the letter: Lock editing locks it, and tapping the letter says so.
@@ -76,8 +77,10 @@ appId: me.rxresu.storyboard
     visible: Unlock editing
     timeout: 10000
 - tapOn: Close
-- extendedWaitUntil:
-    visible: Locked
+# The status line sits above where the letter is scrolled to; Android only reports what is on screen.
+- scrollUntilVisible:
+    element: Locked
+    direction: UP
     timeout: 10000
 - scrollUntilVisible:
     element: "Dear .*"

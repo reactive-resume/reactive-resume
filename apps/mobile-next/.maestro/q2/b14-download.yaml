@@ -18,4 +18,7 @@ appId: me.rxresu.storyboard
 - assertVisible: ".json"
 - tapOn: More formats
 - tapOn: OpenDocument
+# With every format listed the file name sits below the sheet's fold (Android reports only what is on screen).
+- scrollUntilVisible:
+    element: ".odt"
 - assertVisible: ".odt"

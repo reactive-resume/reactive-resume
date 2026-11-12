@@ -29,11 +29,24 @@ appId: me.rxresu.storyboard
     timeout: 10000
 # Points, not percentages: after a pushed screen comes back, Maestro resolves percentages against a different frame.
 # Swipe toward the end: Lumen (Interviewing) moves to Offer; Undo puts it back.
-- swipe:
-    start: "58,245"
-    end: "330,245"
-    duration: 600
-    waitToSettleTimeoutMs: 1
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "58,245"
+          end: "330,245"
+          duration: 600
+          waitToSettleTimeoutMs: 1
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "174,735"
+          end: "990,735"
+          duration: 600
+          waitToSettleTimeoutMs: 1
 - assertVisible: Moved to Offer\.
 - tapOn:
     text: Undo
@@ -45,11 +58,24 @@ appId: me.rxresu.storyboard
       above: Offer
     timeout: 10000
 # Swipe toward the start: Orbital Health moves to Trash; Undo restores it.
-- swipe:
-    start: "330,320"
-    end: "58,320"
-    duration: 600
-    waitToSettleTimeoutMs: 1
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "330,320"
+          end: "58,320"
+          duration: 600
+          waitToSettleTimeoutMs: 1
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "990,960"
+          end: "174,960"
+          duration: 600
+          waitToSettleTimeoutMs: 1
 - assertVisible: Moved to Trash
 - assertNotVisible: Orbital Health
 - tapOn:
@@ -61,7 +87,10 @@ appId: me.rxresu.storyboard
 # Long-press → the row's actions, Select enters selection with checkboxes and the bar.
 - longPressOn:
     id: application-row-parcel
-- tapOn: Select
+- tapOn:
+    text: Select
+    childOf:
+      id: sheet
 - assertVisible: Done
 - assertVisible: Move…
 - assertVisible: Tags…
@@ -87,8 +116,18 @@ appId: me.rxresu.storyboard
     timeout: 10000
 - waitForAnimationToEnd
 # Tap → J6. A point: after a modal or pushed screen goes, Maestro's iOS element frames can be stale.
-- tapOn:
-    point: "195,250"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,250"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,750"
 - extendedWaitUntil:
     visible: Work on it
     timeout: 10000

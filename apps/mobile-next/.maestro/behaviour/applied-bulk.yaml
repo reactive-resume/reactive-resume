@@ -25,7 +25,10 @@ appId: me.rxresu.storyboard
 - tapOn:
     id: application-row-orbital-health
 - tapOn: Move…
-- tapOn: Applied
+- tapOn:
+    text: Applied
+    childOf:
+      id: sheet
 - assertVisible: What did you send?
 - tapOn: Close
 - assertNotVisible: What did you send?

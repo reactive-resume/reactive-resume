@@ -26,8 +26,9 @@ appId: me.rxresu.storyboard
 - tapOn:
     id: first-send-send
     optional: true
-- extendedWaitUntil:
-    visible: "Translate every visible text field of this language copy into de-DE.*"
+# The sent message lands below the fold; Android only reports what is on screen.
+- scrollUntilVisible:
+    element: "Translate every visible text field of this language copy into de-DE.*"
     timeout: 15000
 - tapOn: Close
 - extendedWaitUntil:

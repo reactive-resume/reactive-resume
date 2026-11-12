@@ -26,10 +26,22 @@ appId: me.rxresu.storyboard
     visible: 2 of 3 open
     timeout: 5000
 # Reject the first edit by swiping it toward the start.
-- swipe:
-    start: 360, 330
-    end: 20, 330
-    duration: 500
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 360, 330
+          end: 20, 330
+          duration: 500
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "990,990"
+          end: "60,990"
+          duration: 500
 - extendedWaitUntil:
     visible: ".*Northwind Labs › line 2 · Rejected"
     timeout: 5000

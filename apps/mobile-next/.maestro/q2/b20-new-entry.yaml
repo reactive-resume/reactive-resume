@@ -18,9 +18,21 @@ appId: me.rxresu.storyboard
     timeout: 10000
 - assertNotVisible: Entry options
 - assertNotVisible: See it on the page
-- assertVisible: Discard
-# The keyboard is on the first field: typing goes straight into Company.
-- inputText: "   "
+# The keyboard is on the first field: typing goes straight into Company. Discard sits under the keyboard, which
+# Android's hierarchy leaves out, so there it is checked after typing with the keyboard down.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - assertVisible: Discard
+      - inputText: "   "
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - inputText: "   "
+      - hideKeyboard
+      - assertVisible: Discard
 - tapOn:
     id: top-bar-back
 - extendedWaitUntil:
@@ -33,6 +45,11 @@ appId: me.rxresu.storyboard
     timeout: 10000
 - inputText: Kiln
 - assertVisible: Entry options
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
 - assertVisible: See it on the page
 - assertVisible: Delete entry
 - tapOn:
@@ -46,9 +63,10 @@ appId: me.rxresu.storyboard
 # Discard with nothing typed keeps nothing and says nothing.
 - tapOn: Add experience
 - extendedWaitUntil:
-    visible: Discard
+    visible: "Experience · saved once you start typing"
     timeout: 10000
 - hideKeyboard
+- assertVisible: Discard
 - tapOn: Discard
 - extendedWaitUntil:
     visible: "3 entries · on page 1.*"

@@ -24,8 +24,9 @@ appId: me.rxresu.storyboard
 - assertVisible: Read as text
 - tapOn: Share
 - waitForAnimationToEnd
+# The system share sheet: Copy on iOS, "Sharing link" on Android.
 - extendedWaitUntil:
-    visible: Copy
+    visible: "Copy|Sharing link"
     timeout: 10000
 # Dismiss the share sheet by tapping above it.
 - tapOn:

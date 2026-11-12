@@ -37,10 +37,25 @@ appId: me.rxresu.storyboard
 - tapOn: Preferences
 - waitForAnimationToEnd
 - assertVisible: Notify me about
-- swipe:
-    start: "50%,12%"
-    end: "50%,90%"
-    duration: 300
+# iOS closes the whole modal by swiping it down; Android has no such gesture (MOTION.md §6.1): back pops
+# Preferences, back again closes Settings.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "50%,12%"
+          end: "50%,90%"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+      - extendedWaitUntil:
+          visible: Account and security
+          timeout: 5000
+      - back
 - extendedWaitUntil:
     notVisible: Notify me about
     timeout: 5000

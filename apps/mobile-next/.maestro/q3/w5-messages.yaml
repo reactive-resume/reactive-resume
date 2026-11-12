@@ -24,17 +24,40 @@ appId: me.rxresu.storyboard
 - tapOn: ".*Thank you for your time today.*"
 - inputText: " P.S. Thanks again."
 # Dragging the form puts the keyboard away and ends the edit.
-- swipe:
-    start: "195,250"
-    end: "195,420"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,250"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,750"
+          end: "585,1260"
+          duration: 300
 - waitForAnimationToEnd
 - assertVisible: ".*P\\.S\\. Thanks again\\..*"
 - tapOn:
     text: Copy
     waitToSettleTimeoutMs: 1
+# Android 13+ puts its clipboard preview over the app after a copy; while it is up every read takes ~20 s.
+# Swipe it away (it sits over the bottom start corner).
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "200,2190"
+          end: "0,2190"
+          duration: 150
 - assertVisible: Copied
 - tapOn:
+    id: toast-action
     text: Log follow-up
     waitToSettleTimeoutMs: 1
 - assertVisible: Followed up
@@ -68,10 +91,22 @@ appId: me.rxresu.storyboard
 - inputText: They made an offer with a base salary of 70000 a year and 10% bonus.
 - assertVisible: Save these offer terms to compare\. Opens in Career → Offers\.
 # Review it sits under the keyboard: scrolling the form up brings it into view and puts the keyboard away.
-- swipe:
-    start: "195,450"
-    end: "195,250"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,450"
+          end: "195,250"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,1350"
+          end: "585,750"
+          duration: 300
 - waitForAnimationToEnd
 - tapOn: Review it
 # The first send to this connection asks first; wait for the sheet to rise.
@@ -101,7 +136,18 @@ appId: me.rxresu.storyboard
 - tapOn:
     text: Copy
     waitToSettleTimeoutMs: 1
+# Android 13+ puts its clipboard preview over the app after a copy; while it is up every read takes ~20 s.
+# Swipe it away (it sits over the bottom start corner).
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "200,2190"
+          end: "0,2190"
+          duration: 150
 - tapOn:
+    id: toast-action
     text: Log follow-up
     waitToSettleTimeoutMs: 1
 - assertVisible: Couldn't log the follow-up\. Check the timeline before trying again\.

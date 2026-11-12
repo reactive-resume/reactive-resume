@@ -11,7 +11,19 @@ appId: me.rxresu.storyboard
       id: storyboard-ready
     timeout: 30000
 - waitForAnimationToEnd
-- tapOn: product-designer
+# Android puts the cursor where the tap lands; tap the field's empty end so the erase takes the whole address.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: product-designer
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          text: product-designer
+          point: "98%,50%"
 - eraseText: 20
 - inputText: product-designer1
 - extendedWaitUntil:

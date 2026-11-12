@@ -12,11 +12,17 @@ appId: me.rxresu.storyboard
 - waitForAnimationToEnd
 - longPressOn:
     id: document-resume-lead
-- tapOn: Move to Trash
+- tapOn:
+    text: Move to Trash
+    waitToSettleTimeoutMs: 1
 - assertVisible: “Design lead” moved to Trash
 - tapOn: Trash · 3
 - tapOn:
     text: Restore
     index: 0
+    waitToSettleTimeoutMs: 1
 - assertVisible: Restored “Design lead”
-- tapOn: Open
+- tapOn:
+    id: toast-action
+    text: Open
+    waitToSettleTimeoutMs: 1

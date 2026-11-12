@@ -14,6 +14,12 @@ appId: me.rxresu.storyboard
     visible: Print
     timeout: 10000
 - tapOn: Print
+# The system print preview: Options on iOS, the printer picker (Save as PDF) on Android.
 - extendedWaitUntil:
-    visible: ".*Options.*"
+    visible: ".*Options.*|Save as PDF|Select a printer"
     timeout: 20000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back

@@ -20,16 +20,28 @@ appId: me.rxresu.storyboard
     visible: Why do you want to work at Lumen\?
     timeout: 10000
 # The row's Copy button (a point: the row is one accessibility element).
-- tapOn:
-    point: "336,282"
-    waitToSettleTimeoutMs: 1
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "336,282"
+          waitToSettleTimeoutMs: 1
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "1008,846"
+          waitToSettleTimeoutMs: 1
 - assertVisible: Copied
 - tapOn: Close
 - tapOn: "Where.*"
+# The in-app browser: Done on iOS, the custom tab's close button on Android.
 - extendedWaitUntil:
-    visible: Done
+    visible: "Done|Close tab"
     timeout: 15000
-- tapOn: Done
+- tapOn: "Done|Close tab"
 - extendedWaitUntil:
     visible: What you sent
     timeout: 10000

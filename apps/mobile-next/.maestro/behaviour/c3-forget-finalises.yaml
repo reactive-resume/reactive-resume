@@ -10,7 +10,9 @@ appId: me.rxresu.storyboard
       id: storyboard-ready
     timeout: 30000
 - tapOn: Led the onboarding redesign at Northwind Labs
-- tapOn: Forget
+- tapOn:
+    text: Forget
+    waitToSettleTimeoutMs: 1
 - assertVisible: Fact forgotten
 - assertVisible: Show forgotten
 - extendedWaitUntil:

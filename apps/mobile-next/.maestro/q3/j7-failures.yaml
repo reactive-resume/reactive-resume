@@ -52,9 +52,21 @@ appId: me.rxresu.storyboard
 - inputText: They chose an internal candidate
 - waitForAnimationToEnd
 # Close application, just above the keyboard (a point: the sheet has moved up with the keyboard).
-- tapOn:
-    point: "195,482"
-    waitToSettleTimeoutMs: 1
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,482"
+          waitToSettleTimeoutMs: 1
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      # Android keeps the button's frame current: tap it by name (the iOS point is above it here).
+      - tapOn:
+          text: Close application
+          waitToSettleTimeoutMs: 1
 - assertVisible: Couldn't close the application\. Try again\.
 - assertVisible: They chose an internal candidate
 - assertVisible:

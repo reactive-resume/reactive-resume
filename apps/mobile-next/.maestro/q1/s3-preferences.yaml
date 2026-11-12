@@ -2,8 +2,11 @@
 # asks for the system permission; the Haptics switch plays toggleOn when turned back on.
 appId: me.rxresu.storyboard
 ---
+# Maestro grants every permission at launch on Android unless told otherwise; the prompt is what this proves.
 - launchApp:
     clearState: true
+    permissions:
+      notifications: unset
 - openLink: me.rxresu.storyboard://storyboard/S3-Preferences?theme=light
 - extendedWaitUntil:
     visible:
@@ -26,7 +29,7 @@ appId: me.rxresu.storyboard
 - tapOn: New roles
 - waitForAnimationToEnd
 - extendedWaitUntil:
-    visible: ".*Would Like to Send You Notifications"
+    visible: '.*(Would Like to Send You Notifications|to send you notifications\?)'
     timeout: 10000
 - tapOn:
     text: Allow

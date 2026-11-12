@@ -15,9 +15,28 @@ appId: me.rxresu.storyboard
     visible: Link an application
     timeout: 10000
 - assertVisible: Lumen
-- scrollUntilVisible:
-    element: "Paste a job posting…"
-    direction: DOWN
+# Maestro's gentle scroll doesn't move this sheet's list on Android; a firmer swipe does.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - scrollUntilVisible:
+          element: "Paste a job posting…"
+          direction: DOWN
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - repeat:
+          while:
+            notVisible: "Paste a job posting…"
+          times: 10
+          commands:
+            - swipe:
+                start: "50%,79%"
+                end: "50%,36%"
+                duration: 400
+      - assertVisible: "Paste a job posting…"
 - tapOn: Close
 - waitForAnimationToEnd
 - scrollUntilVisible:

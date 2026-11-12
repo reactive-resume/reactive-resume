@@ -33,13 +33,15 @@ appId: me.rxresu.storyboard
     id: outcome-accepted
 - tapOn:
     id: close-confirm
+    waitToSettleTimeoutMs: 1
+# The toast first: on Android the steps below take longer than its lifetime.
+- assertVisible: Closed
 - extendedWaitUntil:
     visible: This application is closed
     timeout: 10000
 - assertVisible:
     id: haptic-log
     text: "selection selection success"
-- assertVisible: Closed
 - tapOn:
     text: Reopen
     index: 0
@@ -60,13 +62,14 @@ appId: me.rxresu.storyboard
     id: outcome-accepted-other
 - tapOn:
     id: close-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Closed
 - extendedWaitUntil:
     visible: This application is closed
     timeout: 10000
 - assertVisible:
     id: haptic-log
     text: "selection"
-- assertVisible: Closed
 - tapOn:
     text: Reopen
     index: 0
@@ -87,13 +90,14 @@ appId: me.rxresu.storyboard
     id: outcome-not-selected
 - tapOn:
     id: close-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Closed
 - extendedWaitUntil:
     visible: This application is closed
     timeout: 10000
 - assertVisible:
     id: haptic-log
     text: "selection"
-- assertVisible: Closed
 - tapOn:
     text: Reopen
     index: 0
@@ -114,13 +118,14 @@ appId: me.rxresu.storyboard
     id: outcome-withdrew
 - tapOn:
     id: close-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Closed
 - extendedWaitUntil:
     visible: This application is closed
     timeout: 10000
 - assertVisible:
     id: haptic-log
     text: "selection"
-- assertVisible: Closed
 - tapOn:
     text: Reopen
     index: 0
@@ -141,13 +146,14 @@ appId: me.rxresu.storyboard
     id: outcome-no-response
 - tapOn:
     id: close-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Closed
 - extendedWaitUntil:
     visible: This application is closed
     timeout: 10000
 - assertVisible:
     id: haptic-log
     text: "selection"
-- assertVisible: Closed
 - tapOn:
     text: Reopen
     index: 0

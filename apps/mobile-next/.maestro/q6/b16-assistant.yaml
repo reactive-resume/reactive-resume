@@ -29,9 +29,13 @@ appId: me.rxresu.storyboard
 - tapOn:
     id: first-send-send
     optional: true
-- extendedWaitUntil:
-    visible: Make it shorter
+# The sent message lands below the fold (the list doesn't follow it yet); Android only reports what is on screen.
+- scrollUntilVisible:
+    element: Make it shorter
     timeout: 10000
+- scrollUntilVisible:
+    element: Tailor this to the Lumen posting
+    direction: UP
 - tapOn: Tailor this to the Lumen posting
 - scrollUntilVisible:
     element:
@@ -65,8 +69,8 @@ appId: me.rxresu.storyboard
 - tapOn:
     text: Stop
     waitToSettleTimeoutMs: 300
-- extendedWaitUntil:
-    visible: Stopped. No edits were proposed.
+- scrollUntilVisible:
+    element: Stopped. No edits were proposed.
     timeout: 10000
 - assertVisible: Continue
 - tapOn:
@@ -85,8 +89,8 @@ appId: me.rxresu.storyboard
     visible: Send
     timeout: 10000
 - tapOn: Send
-- extendedWaitUntil:
-    visible: Couldn't send your message. Your message is kept.
+- scrollUntilVisible:
+    element: Couldn't send your message. Your message is kept.
     timeout: 15000
 - scrollUntilVisible:
     element: Switch model

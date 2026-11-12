@@ -16,10 +16,11 @@ appId: me.rxresu.storyboard
     timeout: 20000
 # The meeting link on J6 opens in the system browser.
 - tapOn: "With Priya Raman and Tomás Silva · video call"
+# The in-app browser: Done on iOS, the custom tab's close button on Android.
 - extendedWaitUntil:
-    visible: Done
+    visible: "Done|Close tab"
     timeout: 15000
-- tapOn: Done
+- tapOn: "Done|Close tab"
 # A new interview for Fieldnote: contacts as suggestions; briefing off with its connection line.
 - openLink: me.rxresu.storyboard://applications/fieldnote/interview
 - extendedWaitUntil:
@@ -42,8 +43,18 @@ appId: me.rxresu.storyboard
     visible: Save interview
     timeout: 10000
 - waitForAnimationToEnd
-- tapOn:
-    point: "195,190"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,190"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,570"
 - waitForAnimationToEnd
 - tapOn: Behavioral interview
 - tapOn:
@@ -65,8 +76,18 @@ appId: me.rxresu.storyboard
     visible: Save interview
     timeout: 20000
 - waitForAnimationToEnd
-- tapOn:
-    point: "195,190"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,190"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,570"
 - waitForAnimationToEnd
 - tapOn: Onsite interview
 - tapOn:

@@ -36,9 +36,19 @@ appId: me.rxresu.storyboard
 - inputText: X
 - assertVisible: "Senior product designerX"
 - hideKeyboard
-- tapOn:
-    text: End
-    index: 1
+# The field after the label of the same name; Android reads the field as its label and value together.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: End
+          index: 1
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "End, .*"
 - extendedWaitUntil:
     visible: January
     timeout: 10000
@@ -46,9 +56,18 @@ appId: me.rxresu.storyboard
 - tapOn: "2026"
 - tapOn: Close
 - waitForAnimationToEnd
-- tapOn:
-    text: Start
-    index: 1
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: Start
+          index: 1
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Start, .*"
 - extendedWaitUntil:
     visible: January
     timeout: 10000

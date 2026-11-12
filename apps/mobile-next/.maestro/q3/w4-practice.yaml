@@ -75,6 +75,12 @@ appId: me.rxresu.storyboard
     visible: Record again|Record your answer
     timeout: 10000
 - tapOn: Start recording
+# Android asks again after a plain deny; refuse there too.
+- runFlow:
+    when:
+      visible: Don’t allow|Don't allow
+    commands:
+      - tapOn: Don’t allow|Don't allow
 - extendedWaitUntil:
     visible: The microphone is off for Reactive Resume\. Type your answer, or turn it on in Settings\.
     timeout: 10000

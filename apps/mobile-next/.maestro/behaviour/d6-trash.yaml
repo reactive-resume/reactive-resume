@@ -19,6 +19,8 @@ appId: me.rxresu.storyboard
 - assertVisible: Delete permanently…
 - tapOn:
     text: Restore
+    childOf:
+      id: dialog
     waitToSettleTimeoutMs: 1
 - assertVisible: Restored “Junior designer 2021”
 # Tap Open at once: Maestro waits about 3 s for the screen to settle before each command while the toast's fuse runs,

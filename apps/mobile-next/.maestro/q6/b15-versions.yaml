@@ -42,8 +42,9 @@ appId: me.rxresu.storyboard
     visible: Sections
     timeout: 10000
 - tapOn: Share
-- extendedWaitUntil:
-    visible: Versions
+# Versions sits below Share's fold on this screen; Android only reports what is on screen.
+- scrollUntilVisible:
+    element: Versions
     timeout: 10000
 - scrollUntilVisible:
     element:

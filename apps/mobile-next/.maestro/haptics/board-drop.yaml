@@ -13,14 +13,42 @@ appId: me.rxresu.storyboard
 - assertVisible: "Kiln Studio.*"
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
 - waitForAnimationToEnd
-- swipe:
-    start: 156, 320
-    end: 352, 322
-    duration: 11000
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 156, 320
+          end: 352, 322
+          duration: 11000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "468,960"
+          end: "1056,966"
+          duration: 11000
 # The swipe's end hold varies by a few hundred ms, so the board may page once or twice: `selection` per page.
-- extendedWaitUntil:
-    visible:
-      id: haptic-log
-      text: "medium (selection )+rigid"
-    timeout: 10000
-- assertVisible: "Moved to .*\\."
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - extendedWaitUntil:
+          visible:
+            id: haptic-log
+            text: "medium (selection )+rigid"
+          timeout: 10000
+      - assertVisible: "Moved to .*\\."
+# Android's drag pages only once and lands on Applied, whose gate holds the drop (and its `rigid`) until confirmed:
+# lift and paging are proved here, the drop by the gate opening.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - extendedWaitUntil:
+          visible:
+            id: haptic-log
+            text: "medium selection"
+          timeout: 10000
+      - assertVisible: What did you send?
