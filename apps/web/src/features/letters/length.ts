@@ -1,5 +1,5 @@
-/** Most recruiters read 180 to 320 words; the bar runs to 450. */
-export const LETTER_LENGTH = { min: 180, max: 320, scale: 450 } as const;
+/** Most recruiters read 180 to 320 words; the bar runs to 400 (L4), longer letters pin to its end. */
+export const LETTER_LENGTH = { min: 180, max: 320, scale: 400 } as const;
 
 export type LetterLength = "empty" | "short" | "comfortable" | "long";
 

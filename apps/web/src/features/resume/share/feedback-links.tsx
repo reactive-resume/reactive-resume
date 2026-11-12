@@ -4,7 +4,6 @@ import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
-import { formatTimeSince } from "@reactive-resume/resume/sharing";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -19,11 +18,12 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
-import { NativeSelect } from "@reactive-resume/ui/components/native-select";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { CopyLinkButton } from "./copy-link-button";
+import { List, ListRow } from "@/components/calm/list-row";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -39,7 +39,31 @@ const expiryLabel = (expiry: Expiry) =>
 	expiry === "never" ? t`Never` : expiry === "7" ? t`In 7 days` : expiry === "30" ? t`In 30 days` : t`In 90 days`;
 
 const statusLabel = (status: FeedbackLink["status"]) =>
-	status === "active" ? t`Active` : status === "expired" ? t`Expired` : t`Revoked`;
+	status === "active" ? t`Active` : status === "expired" ? t`Expired` : t`Turned off`;
+
+const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+
+/** "yesterday", "3 days ago" within a week, otherwise the day: "12 Oct". */
+const dayLabel = (date: Date, locale: string) => {
+	const days = Math.round((startOfDay(new Date()) - startOfDay(date)) / (24 * 60 * 60 * 1000));
+	return days >= 0 && days < 7
+		? new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(-days, "day")
+		: date.toLocaleDateString(locale, { day: "numeric", month: "short" });
+};
+
+/** What a link collected: new comments while any wait, otherwise how many were left and that they're done. */
+function CommentsNote({ link }: { link: FeedbackLink }) {
+	if (link.openCommentCount > 0)
+		return <Plural value={link.openCommentCount} one="# new comment" other="# new comments" />;
+	if (link.commentCount === 0) return null;
+	return link.commentCount === 1 ? (
+		<Trans>1 comment, done</Trans>
+	) : link.commentCount === 2 ? (
+		<Trans>2 comments, both done</Trans>
+	) : (
+		<Trans>{link.commentCount} comments, all done</Trans>
+	);
+}
 
 type FeedbackLinksSectionProps = {
 	resumeId: string /** Draws its own heading; off where the page title already names it. */;
@@ -78,31 +102,40 @@ export function FeedbackLinksSection({ resumeId, titled = true }: FeedbackLinksS
 					</button>
 				</p>
 			) : links.data && links.data.length > 0 ? (
-				<ul className="grid gap-2">
+				<List>
 					{links.data.map((link) => (
-						<li key={link.id}>
-							<button
-								type="button"
-								onClick={() => setOpenId(link.id)}
-								className="grid w-full gap-0.5 rounded-lg border border-line p-3 text-start transition-colors duration-quick hover:bg-hover"
-							>
-								<span className="flex min-w-0 items-center gap-2">
-									<span className="truncate text-sm font-semibold">{link.label}</span>
-									<Badge variant={link.status === "active" ? "accent" : "outline"}>{statusLabel(link.status)}</Badge>
-								</span>
-								<span className="text-xs text-ink-3">
+						<ListRow
+							key={link.id}
+							variant={link.status === "active" ? "default" : "dim"}
+							render={<button type="button" onClick={() => setOpenId(link.id)} />}
+							title={link.label}
+							subtitle={
+								<>
 									{link.lastViewedAt ? (
-										<Trans>Opened {formatTimeSince(link.lastViewedAt, i18n.locale)} ago</Trans>
+										<Trans>Opened {dayLabel(link.lastViewedAt, i18n.locale)}</Trans>
 									) : (
-										<Trans>Not opened yet</Trans>
+										<Trans>Never opened</Trans>
 									)}
-									{" · "}
-									<Plural value={link.openCommentCount} one="# new comment" other="# new comments" />
-								</span>
-							</button>
-						</li>
+									{link.revokedAt ? (
+										<>
+											{" · "}
+											<Trans>turned off {i18n.date(link.revokedAt, { day: "numeric", month: "short" })}</Trans>
+										</>
+									) : link.commentCount > 0 ? (
+										<>
+											{" · "}
+											<CommentsNote link={link} />
+										</>
+									) : null}
+								</>
+							}
+							trailing={
+								<Badge variant={link.status === "active" ? "accent" : "outline"}>{statusLabel(link.status)}</Badge>
+							}
+							caret
+						/>
 					))}
-				</ul>
+				</List>
 			) : null}
 
 			<Button variant="secondary" className="w-fit" onClick={() => setCreating(true)}>
@@ -172,7 +205,7 @@ function NewFeedbackLinkDialog({ resumeId, open, onOpenChange, onCreated }: NewF
 
 	return (
 		<Dialog open={open} onOpenChange={(next) => !create.isPending && onOpenChange(next)}>
-			<DialogContent closeLabel={t`Close`} className="sm:max-w-[520px]">
+			<DialogContent closeLabel={t`Close`}>
 				<form
 					className="grid gap-4"
 					onSubmit={(event) => {
@@ -216,20 +249,21 @@ function NewFeedbackLinkDialog({ resumeId, open, onOpenChange, onCreated }: NewF
 					/>
 
 					<div className="grid gap-1.5">
-						<Label htmlFor={`${id}-expiry`}>
+						<span id={`${id}-expiry`} className="text-[13px]/[18px] font-medium text-ink-2">
 							<Trans>Link expires</Trans>
-						</Label>
-						<NativeSelect
-							id={`${id}-expiry`}
+						</span>
+						<SegmentedControl
+							aria-labelledby={`${id}-expiry`}
 							value={expiry}
-							onChange={(event) => setExpiry(event.target.value as Expiry)}
+							onValueChange={(value) => setExpiry(value as Expiry)}
+							className="w-full"
 						>
 							{EXPIRY_DAYS.map((value) => (
-								<option key={value} value={value}>
+								<SegmentedControlItem key={value} value={value} className="flex-1">
 									{expiryLabel(value)}
-								</option>
+								</SegmentedControlItem>
 							))}
-						</NativeSelect>
+						</SegmentedControl>
 					</div>
 
 					<fieldset className="grid gap-2">
@@ -329,8 +363,10 @@ function FeedbackLinkDialog({ id, onClose }: FeedbackLinkDialogProps) {
 					<DialogDescription>
 						{link ? (
 							<Trans>
-								“{link.resumeName}” as saved {date(link.createdAt)}. {statusLabel(link.status)}
-								{link.expiresAt && link.status === "active" ? ` · ${t`expires ${date(link.expiresAt)}`}` : ""}
+								“{link.resumeName}” as saved {date(link.createdAt)} · {statusLabel(link.status)}
+								{link.expiresAt && link.status === "active"
+									? `, ${t`expires ${i18n.date(link.expiresAt, { dateStyle: "medium" })}`}`
+									: ""}
 							</Trans>
 						) : (
 							<Trans>Loading…</Trans>
@@ -362,9 +398,9 @@ function FeedbackLinkDialog({ id, onClose }: FeedbackLinkDialogProps) {
 									<Trans>No comments yet.</Trans>
 								</p>
 							) : (
-								<ol className="grid gap-2">
+								<ol className="grid divide-y divide-line">
 									{link.comments.map((comment) => (
-										<li key={comment.id} className="grid gap-1.5 rounded-lg bg-sunken p-3">
+										<li key={comment.id} className="grid gap-1.5 py-3 first:pt-0 last:pb-0">
 											<p className="text-xs text-ink-3">
 												<span className="font-semibold text-ink-2">{comment.authorName}</span> ·{" "}
 												{date(comment.createdAt)}
@@ -394,9 +430,9 @@ function FeedbackLinkDialog({ id, onClose }: FeedbackLinkDialogProps) {
 							<h3 id={`${id}-activity`} className="text-sm font-semibold">
 								<Trans>Activity</Trans>
 							</h3>
-							<ol className="grid gap-1 text-xs text-ink-2">
+							<ol className="grid gap-1 text-[13px]/[18px] text-ink-2">
 								{link.events.map((event) => (
-									<li key={event.id}>
+									<li key={event.id} className="flex items-baseline justify-between gap-4">
 										{event.type === "created" ? (
 											<Trans>Link made</Trans>
 										) : event.type === "viewed" ? (
@@ -406,8 +442,14 @@ function FeedbackLinkDialog({ id, onClose }: FeedbackLinkDialogProps) {
 										) : (
 											<Trans>Link turned off</Trans>
 										)}
-										{" · "}
-										{date(event.createdAt)}
+										<span className="shrink-0 t-mono text-ink-3">
+											{i18n.date(event.createdAt, {
+												day: "numeric",
+												month: "short",
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
+										</span>
 									</li>
 								))}
 							</ol>
@@ -419,7 +461,7 @@ function FeedbackLinkDialog({ id, onClose }: FeedbackLinkDialogProps) {
 					{link?.status === "active" && (
 						<Button
 							variant="ghost"
-							className="text-danger-text hover:bg-danger-soft"
+							className="me-auto text-danger-text hover:bg-danger-soft"
 							disabled={revoke.isPending}
 							onClick={() => void askRevoke()}
 						>

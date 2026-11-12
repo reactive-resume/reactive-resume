@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { produce } from "immer";
 import { useEffect, useId, useMemo, useState } from "react";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { templateLayouts, templateSchema } from "@reactive-resume/schema/templates";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
@@ -152,7 +152,7 @@ export function LetterDesignPanel() {
 			view: "template" as const,
 			icon: "layout" as const,
 			title: <Trans>Template</Trans>,
-			subtitle: templates[metadata.template].name,
+			subtitle: `${templates[metadata.template].name} · ${templateLayouts[metadata.template].columns === 1 ? t`One column` : t`Two columns`}`,
 		},
 		{
 			view: "typography" as const,
@@ -181,7 +181,13 @@ export function LetterDesignPanel() {
 						className="size-2.5 rounded-[3px]"
 						style={{ background: metadata.design.colors.primary }}
 					/>
-					{accent ? <Trans>{i18n._(accent.label)} accent</Trans> : (rgbaToHex(metadata.design.colors.primary) ?? "")}
+					{/* The resume's Design (B3) words it the same way. */}
+					{`${accent ? t`${i18n._(accent.label)} accent` : (rgbaToHex(metadata.design.colors.primary) ?? "")} · ${
+						["#000000", "#1D1D1F"].includes(rgbaToHex(metadata.design.colors.text) ?? "") &&
+						rgbaToHex(metadata.design.colors.background) === "#FFFFFF"
+							? t`near-black text on white`
+							: t`${rgbaToHex(metadata.design.colors.text) ?? metadata.design.colors.text} text`
+					}`}
 				</span>
 			),
 		},

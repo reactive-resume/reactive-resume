@@ -1,4 +1,5 @@
 import { ph, plural, t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -175,7 +176,7 @@ function LetterMenu() {
 	const ref = { type: "letter" as const, id };
 
 	const rename = async () => {
-		const next = await prompt(t`Rename letter`, { defaultValue: name });
+		const next = await prompt(t`Rename letter`, { defaultValue: name, confirmText: t`Rename` });
 		const trimmed = next?.trim().slice(0, 100);
 		if (trimmed && trimmed !== name) useLetterEditorStore.getState().edit({ name: trimmed });
 	};
@@ -262,12 +263,13 @@ function LetterSaveStatus() {
 		enabled: !!letter?.sourceApplicationId,
 	});
 	const application = applications?.find((item) => item.id === letter?.sourceApplicationId);
+	const { i18n } = useLingui();
 	const company = application?.company;
-	const standing = company
-		? application.coverLetterId === letter?.id && application.sentCoverLetterVersionId
-			? t`Sent to ${company}`
-			: t`For ${company}`
-		: t`Draft`;
+	const sent = Boolean(application?.sentCoverLetterVersionId && application.coverLetterId === letter?.id);
+	// "Sent 2 Nov", as the resume's line says it; the panel names where it went.
+	const sentOn =
+		sent && application?.appliedAt ? i18n.date(application.appliedAt, { day: "numeric", month: "short" }) : null;
+	const standing = sent ? (sentOn ? t`Sent ${sentOn}` : t`Sent`) : company ? t`For ${company}` : t`Draft`;
 	const facts = [pageCount > 0 ? plural(pageCount, { one: "# page", other: "# pages" }) : null, standing]
 		.filter(Boolean)
 		.join(" · ");
@@ -325,7 +327,7 @@ function LetterSaveStatus() {
 			</span>
 			{status === "saving" && (
 				<>
-					<Spinner decorative className="size-3" />
+					<Spinner decorative className="size-3.5" />
 					<Trans>Saving…</Trans>
 				</>
 			)}

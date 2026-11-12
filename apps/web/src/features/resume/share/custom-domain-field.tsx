@@ -3,13 +3,13 @@ import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
-import { formatTimeSince } from "@reactive-resume/resume/sharing";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { CvDomainCard } from "./cv-domain-card";
 import { DnsRecordsDialog } from "./dns-records-dialog";
+import { formatTimeAgo } from "./format";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -153,7 +153,7 @@ export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
 			)}
 			{domain.lastCheckedAt && !domain.verified && (
 				<p className="mt-2 t-caption text-ink-3">
-					<Trans>Last checked {formatTimeSince(domain.lastCheckedAt, i18n.locale)} ago</Trans>
+					<Trans>Last checked {formatTimeAgo(domain.lastCheckedAt, i18n.locale)}</Trans>
 				</p>
 			)}
 			<DnsRecordsDialog

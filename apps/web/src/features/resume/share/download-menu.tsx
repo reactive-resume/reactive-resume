@@ -85,7 +85,11 @@ export function DownloadMenu<Id extends string>({
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
-			<PopoverTrigger render={trigger} />
+			{/* The ▾ turns to ▴ while the menu is open (B16). */}
+			<PopoverTrigger
+				render={trigger}
+				className="[&_[data-slot=icon]]:transition-transform data-popup-open:[&_[data-slot=icon]]:rotate-180"
+			/>
 			<PopoverContent
 				align="end"
 				sideOffset={14}

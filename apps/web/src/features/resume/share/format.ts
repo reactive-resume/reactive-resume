@@ -63,3 +63,19 @@ export function getVersionDetail(version: Pick<VersionSummary, "kind" | "name">)
 			return t`saved`;
 	}
 }
+
+const SINCE_UNITS = [
+	{ unit: "second", ms: 1000, below: 60 },
+	{ unit: "minute", ms: 60 * 1000, below: 60 },
+	{ unit: "hour", ms: 60 * 60 * 1000, below: 24 },
+	{ unit: "day", ms: DAY_MS, below: 7 },
+	{ unit: "week", ms: 7 * DAY_MS, below: 52 },
+	{ unit: "year", ms: 365 * DAY_MS, below: Number.POSITIVE_INFINITY },
+] as const;
+
+/** Time since a moment in words, for sentences: "4 minutes ago", "yesterday". */
+export function formatTimeAgo(date: Date, locale: string, now = Date.now()) {
+	const elapsed = Math.max(0, now - date.getTime());
+	const { unit, ms } = SINCE_UNITS.find(({ ms, below }) => elapsed / ms < below) ?? SINCE_UNITS[5];
+	return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(-Math.floor(elapsed / ms), unit);
+}

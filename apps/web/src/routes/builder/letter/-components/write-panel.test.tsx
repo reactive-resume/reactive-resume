@@ -49,6 +49,7 @@ vi.mock("@/features/letters/compose", () => ({
 		greeting: () => "Hi",
 		teamGreeting: "Hi",
 		signOff: "Regards",
+		formatDate: (date: string) => date,
 	}),
 }));
 vi.mock("@/features/letters/use-letter-mode", () => ({ useLetterMode: () => ["write", vi.fn()] }));

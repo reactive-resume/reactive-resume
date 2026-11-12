@@ -331,10 +331,12 @@ export function HistoryVersionBar({ source, showingNow, onCompare }: VersionBarP
 				<Icon name="arrow-counter-clockwise" />
 				<Trans>Restore this version</Trans>
 			</Button>
+			{/* From 1024 the History panel beside the page closes it (B15); narrower, History is a sheet, so the bar does. */}
 			<IconButton
 				icon="x"
 				label={t`Back to now`}
 				size="icon-sm"
+				className="lg:hidden"
 				onClick={() => useEditorStore.setState({ historyVersionId: null })}
 			/>
 		</div>

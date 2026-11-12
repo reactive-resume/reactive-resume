@@ -148,7 +148,8 @@ export function LetterWritePanel() {
 				// While a draft shows, the length is the draft's.
 				lengthOf={draft.phase === "streaming" || draft.phase === "ready" ? draft.text : letter.content}
 			/>
-			<DesignNote letter={letter} />
+			{/* While a draft is up the panel holds only the decision (L4). */}
+			{draft.phase === "idle" && <DesignNote letter={letter} />}
 		</PanelBody>
 	);
 }
@@ -368,11 +369,11 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 					letter={letter}
 					color={lane?.color}
 					stage={lane ? getLaneLabel(lane) : undefined}
-					change={menu(<IconButton icon="caret-down" label={t`Change application`} size="icon-sm" />)}
+					change={menu}
 				/>
 			) : (
-				<div className="flex items-center gap-3 border-b border-line pb-3">
-					<Icon name="briefcase" size={20} className="shrink-0 text-ink-3" />
+				<div className="flex items-start gap-3 border-b border-line pb-3">
+					<span aria-hidden="true" className="mt-[7px] size-2 shrink-0 rounded-full bg-line-2" />
 					<span className="flex min-w-0 flex-1 flex-col">
 						<span className="text-[15px]/[22px] font-medium text-ink">
 							<Trans>Not linked to a job</Trans>
@@ -383,7 +384,7 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 					</span>
 					{menu(
 						<Button size="sm" variant="secondary">
-							<Trans>Link</Trans>
+							<Trans>Link an application</Trans>
 						</Button>,
 					)}
 				</div>
@@ -397,7 +398,8 @@ type ApplicationRowProps = {
 	letter: CoverLetter;
 	color: string | undefined;
 	stage: string | undefined;
-	change?: ReactNode;
+	/** Wraps the title in the menu that changes the application. */
+	change?: (trigger: ReactElement) => ReactNode;
 };
 
 /** The job the letter is for: stage dot, company and role, where it stands, and Open (J3). */
@@ -413,11 +415,25 @@ function ApplicationRow({ application, letter, color, stage, change }: Applicati
 		<div className="flex items-center gap-3 border-b border-line pt-0.5 pb-3">
 			<span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-line-2" style={{ background: color }} />
 			<span className="flex min-w-0 flex-1 flex-col">
-				<span className="truncate text-[15px]/[22px] font-medium text-ink">
-					<Trans>
-						For {company} · {role}
-					</Trans>
-				</span>
+				{change ? (
+					change(
+						<button
+							type="button"
+							title={t`Change application`}
+							className="truncate rounded-xs text-start text-[15px]/[22px] font-medium text-ink hover:underline"
+						>
+							<Trans>
+								For {company} · {role}
+							</Trans>
+						</button>,
+					)
+				) : (
+					<span className="truncate text-[15px]/[22px] font-medium text-ink">
+						<Trans>
+							For {company} · {role}
+						</Trans>
+					</span>
+				)}
 				<span className="truncate t-small text-ink-3">
 					{sentOn ? (
 						<Trans>
@@ -428,7 +444,6 @@ function ApplicationRow({ application, letter, color, stage, change }: Applicati
 					)}
 				</span>
 			</span>
-			{change}
 			<Link
 				to="/dashboard/applications/$applicationId"
 				params={{ applicationId: application.id }}
@@ -493,6 +508,7 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 					/>
 				</div>
 			</div>
+			<LetterDateField letter={letter} disabled={disabled} />
 			<p className="-mt-1.5 text-xs/4 text-ink-3">
 				{greetingName(letter.recipientName) ? (
 					application ? (
@@ -508,31 +524,56 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 	);
 }
 
-/** The letter's date, with Today: a letter reused later should carry the day it's sent. */
+/**
+ * The letter's date as it prints ("7 November 2026"), with Today: a letter reused later should carry the day it's
+ * sent. The native date input lies over the field, so typing and the browser's picker still work.
+ */
 function LetterDateField({ letter, disabled }: { letter: CoverLetter; disabled: boolean }) {
 	const id = useId();
 	const edit = useLetterEditorStore((state) => state.edit);
+	const words = useLetterWords(letter.style.metadata.page.locale);
 	return (
-		<div className="flex items-center gap-3">
-			<Label htmlFor={`${id}-date`} className="w-16 shrink-0">
+		<div className="grid gap-2">
+			<Label htmlFor={`${id}-date`}>
 				<Trans>Date</Trans>
 			</Label>
-			<Input
-				id={`${id}-date`}
-				type="date"
-				value={letter.letterDate ?? ""}
-				disabled={disabled}
-				onChange={(event) => edit({ letterDate: event.target.value || null })}
-			/>
-			<Button
-				variant="ghost"
-				size="sm"
-				className="shrink-0"
-				disabled={disabled}
-				onClick={() => edit({ letterDate: todayDate() })}
-			>
-				<Trans>Today</Trans>
-			</Button>
+			<div className="flex items-center gap-2">
+				<div
+					className={cn(
+						"relative flex h-10 min-w-0 flex-1 items-center gap-2.5 rounded-md border border-control-border bg-raised px-[11px] text-sm text-ink transition-[border-color,box-shadow] duration-quick pointer-coarse:h-11",
+						"has-[input:focus]:border-accent has-[input:focus]:shadow-[0_0_0_3px_var(--accent-soft)]",
+						disabled && "bg-sunken text-ink-3",
+					)}
+				>
+					<Icon name="calendar-blank" size={18} className="shrink-0 text-ink-3" />
+					<span aria-hidden="true" className={cn("truncate", !letter.letterDate && "text-ink-3")}>
+						{letter.letterDate ? words.formatDate(letter.letterDate) : t`No date`}
+					</span>
+					<input
+						id={`${id}-date`}
+						type="date"
+						value={letter.letterDate ?? ""}
+						disabled={disabled}
+						className="absolute inset-0 cursor-pointer opacity-0"
+						onClick={(event) => {
+							try {
+								event.currentTarget.showPicker();
+							} catch {
+								// Some browsers open it themselves, or not at all; typing still works.
+							}
+						}}
+						onChange={(event) => edit({ letterDate: event.target.value || null })}
+					/>
+				</div>
+				<Button
+					variant="secondary"
+					className="shrink-0"
+					disabled={disabled}
+					onClick={() => edit({ letterDate: todayDate() })}
+				>
+					<Trans>Today</Trans>
+				</Button>
+			</div>
 		</div>
 	);
 }
@@ -776,7 +817,7 @@ function BodySection({ letter, application, disabled, lengthOf }: LetterSectionP
 			</>
 		);
 
-	return (
+	const body = (
 		<Section
 			id="letter-body"
 			title={<Trans>Letter</Trans>}
@@ -800,15 +841,6 @@ function BodySection({ letter, application, disabled, lengthOf }: LetterSectionP
 						<Trans>Proposes a draft. Your text stays until you accept.</Trans>
 					</p>
 				</div>
-			)}
-			{structured && <LetterDateField letter={letter} disabled={disabled} />}
-			{structured && (
-				<LetterFramingField
-					letter={letter}
-					field="greeting"
-					defaultValue={name ? words.greeting(name) : words.teamGreeting}
-					disabled={disabled}
-				/>
 			)}
 
 			{showEditor ? (
@@ -854,23 +886,35 @@ function BodySection({ letter, application, disabled, lengthOf }: LetterSectionP
 
 			{(letter.aiOperationIds?.length ?? 0) > 0 && <AiResultUsage usage={letter.aiUsage} />}
 
-			{structured && (
-				<>
-					<LetterFramingField
-						letter={letter}
-						field="signOff"
-						defaultValue={defaultCoverLetterSignOff(letter, words)}
-						disabled={disabled}
-					/>
-					<p className="text-xs text-ink-3">
-						<Trans>
-							Clear the greeting or sign-off to omit it. Clearing the sign-off also removes the automatic signature.
-						</Trans>
-					</p>
-				</>
-			)}
 			<LengthLine content={lengthOf} />
 		</Section>
+	);
+
+	return structured ? (
+		<>
+			{body}
+			<Section id="letter-framing" title={<Trans>Greeting and sign-off</Trans>}>
+				<LetterFramingField
+					letter={letter}
+					field="greeting"
+					defaultValue={name ? words.greeting(name) : words.teamGreeting}
+					disabled={disabled}
+				/>
+				<LetterFramingField
+					letter={letter}
+					field="signOff"
+					defaultValue={defaultCoverLetterSignOff(letter, words)}
+					disabled={disabled}
+				/>
+				<p className="-mt-1.5 text-xs/4 text-ink-3">
+					<Trans>
+						Clear the greeting or sign-off to omit it. Clearing the sign-off also removes the automatic signature.
+					</Trans>
+				</p>
+			</Section>
+		</>
+	) : (
+		body
 	);
 }
 
@@ -893,15 +937,14 @@ function LetterFramingField({ letter, field, defaultValue, disabled, compact = f
 					{field === "greeting" ? <Trans>Greeting</Trans> : <Trans>Sign-off</Trans>}
 				</Label>
 				{letter[field] !== null && !compact && (
-					<Button
-						variant="ghost"
-						size="sm"
-						className="-me-2.5"
+					<button
+						type="button"
 						disabled={disabled}
+						className="rounded-xs text-[13px]/[18px] font-medium text-accent-text hover:underline disabled:opacity-60"
 						onClick={() => edit({ [field]: null })}
 					>
 						<Trans>Use default</Trans>
-					</Button>
+					</button>
 				)}
 			</div>
 			{compact ? (
@@ -942,8 +985,8 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 	const canDraft = hasResume || Boolean(application);
 
 	return (
-		<div className="grid justify-items-start gap-3 rounded-lg bg-sunken p-4">
-			<p className="t-small text-ink-2">
+		<div className="grid justify-items-start gap-3">
+			<p className="t-body text-ink-2">
 				{/* Without a provider, drafting isn't on offer yet: say what would make it so. */}
 				{canDraft && !providerState.isUnavailable && !hasUsableProvider ? (
 					company && hasResume ? (
@@ -954,24 +997,19 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 						<Trans>Start typing, or connect an AI provider to draft from your resume.</Trans>
 					)
 				) : company && hasResume ? (
-					<Trans>Start typing, or draft from what we know: the {company} posting and your resume.</Trans>
+					<Trans>Start typing, or draft from the {company} posting and your resume.</Trans>
 				) : company ? (
-					<Trans>Start typing, or draft from what we know: the {company} posting.</Trans>
+					<Trans>Start typing, or draft from the {company} posting.</Trans>
 				) : hasResume ? (
-					<Trans>Start typing, or draft from what we know: your resume.</Trans>
+					<Trans>Start typing, or draft from your resume.</Trans>
 				) : (
 					<Trans>Start typing. To draft one, link a resume or an application first.</Trans>
 				)}
 			</p>
 			<div className="flex flex-wrap gap-1.5">
 				{canDraft && hasUsableProvider && (
-					<Button
-						size="sm"
-						disabled={disabled}
-						className="bg-accent-soft text-accent-text hover:bg-accent-soft hover:brightness-95"
-						onClick={() => void startLetterDraft("draft")}
-					>
-						<Icon name="sparkle" size={16} />
+					<Button size="sm" variant="soft" disabled={disabled} onClick={() => void startLetterDraft("draft")}>
+						<Icon name="sparkle" />
 						{application ? <Trans>Draft from the posting</Trans> : <Trans>Draft from your resume</Trans>}
 					</Button>
 				)}

@@ -1,7 +1,6 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { formatTimeSince } from "@reactive-resume/resume/sharing";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -13,6 +12,7 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { CopyText } from "./copy-text";
+import { formatTimeAgo } from "./format";
 
 const cellClass =
 	"py-2.5 pe-4 last:pe-0 max-sm:grid max-sm:py-0 max-sm:pe-0 max-sm:before:text-xs max-sm:before:text-ink-3 max-sm:before:content-[attr(data-label)]";
@@ -29,7 +29,7 @@ type DnsRecordsDialogProps = {
 export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck }: DnsRecordsDialogProps) {
 	const { i18n } = useLingui();
 	const hasCname = domain.records.some((record) => record.type === "CNAME");
-	const lastChecked = domain.lastCheckedAt ? formatTimeSince(domain.lastCheckedAt, i18n.locale) : null;
+	const lastChecked = domain.lastCheckedAt ? formatTimeAgo(domain.lastCheckedAt, i18n.locale) : null;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -90,13 +90,18 @@ export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck
 				<DialogFooter className="items-center">
 					{lastChecked && (
 						<p className="me-auto text-xs text-ink-3">
-							<Trans>Last checked {lastChecked} ago</Trans>
+							<Trans>Last checked {lastChecked}</Trans>
 						</p>
 					)}
 					<DialogClose render={<Button variant="ghost" />}>
 						<Trans>Close</Trans>
 					</DialogClose>
-					<Button loading={checking} onClick={onCheck}>
+					{/* Ink, not accent: the bar's Download PDF stays the view's one accent behind the dialog. */}
+					<Button
+						loading={checking}
+						className="bg-ink text-bg hover:bg-[color-mix(in_oklab,var(--ink),var(--bg)_14%)]"
+						onClick={onCheck}
+					>
 						<Trans>Check DNS</Trans>
 					</Button>
 				</DialogFooter>

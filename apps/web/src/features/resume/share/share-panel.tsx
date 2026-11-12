@@ -26,7 +26,7 @@ import { CustomDomainField } from "./custom-domain-field";
 import { FeedbackLinksSection } from "./feedback-links";
 import { useShareOrigin } from "./use-share-origin";
 import { Crumb, CrumbButton } from "@/components/calm/crumb";
-import { List, ListRow } from "@/components/calm/list-row";
+import { List, ListRow, rowGroundClassName } from "@/components/calm/list-row";
 import { SectionHeading } from "@/components/calm/section-heading";
 import {
 	useCurrentResume,
@@ -298,8 +298,13 @@ type SettingRowProps = {
 function SettingRow({ label, description, checked, disabled, onCheckedChange, children }: SettingRowProps) {
 	const id = useId();
 	return (
-		<div className="flex min-h-14 items-start gap-3.5 border-b border-line pt-3 pb-3.5 last:border-b-0">
-			<span className="flex min-w-0 flex-1 flex-col gap-0.5">
+		<div
+			className={cn(
+				rowGroundClassName,
+				"flex min-h-14 items-start gap-3.5 border-b border-line pt-3 pb-3.5 before:-inset-x-3 last:border-b-0 hover:before:bg-hover has-[:focus-visible]:before:bg-hover",
+			)}
+		>
+			<span className="relative flex min-w-0 flex-1 flex-col gap-0.5">
 				<span id={`${id}-label`} className="text-[15px]/[22px] font-medium text-ink">
 					{label}
 				</span>
@@ -316,7 +321,7 @@ function SettingRow({ label, description, checked, disabled, onCheckedChange, ch
 				onCheckedChange={onCheckedChange}
 				aria-labelledby={`${id}-label`}
 				aria-describedby={description ? `${id}-description` : undefined}
-				className="mt-px"
+				className="relative mt-px"
 			/>
 		</div>
 	);
@@ -696,15 +701,13 @@ function QrCodeButton({ url }: { url: string }) {
 					</button>
 				}
 			/>
-			<PopoverContent className="grid w-auto gap-3 p-4">
+			<PopoverContent className="grid w-auto gap-2 p-4 pb-2">
 				<QRCodeSVG ref={svgRef} value={url} size={176} marginSize={2} title={t`QR code for ${url}`} />
-				<div className="flex gap-1">
-					<Button variant="ghost" size="sm" className="flex-1" onClick={savePng}>
-						<Icon name="arrow-down" size={16} />
+				<div className="-mx-2 flex">
+					<Button variant="ghost" size="sm" onClick={savePng}>
 						<Trans>Save PNG</Trans>
 					</Button>
-					<Button variant="ghost" size="sm" className="flex-1" onClick={saveSvg}>
-						<Icon name="arrow-down" size={16} />
+					<Button variant="ghost" size="sm" onClick={saveSvg}>
 						<Trans>Save SVG</Trans>
 					</Button>
 				</div>
@@ -743,7 +746,13 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 					</dl>
 					<div
 						role="img"
-						aria-label={t`Views per day, ${firstLabel} to today. The busiest day had ${i18n.number(summary.peak)}.`}
+						// When the last view counted rides on the chart's title, not a line of its own (B5).
+						aria-label={[
+							t`Views per day, ${firstLabel} to today. The busiest day had ${i18n.number(summary.peak)}.`,
+							lastView ? t`Last counted view ${lastView} ago. Each visitor counts once an hour.` : "",
+						]
+							.filter(Boolean)
+							.join(" ")}
 						title={lastView ? t`Last counted view ${lastView} ago. Each visitor counts once an hour.` : undefined}
 						className="mt-3 flex h-11 items-end gap-[3px]"
 					>
@@ -765,11 +774,6 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 							<Trans>Today</Trans>
 						</span>
 					</div>
-					{lastView && (
-						<p className="mt-2 t-caption text-ink-3">
-							<Trans>Last counted view {lastView} ago. Each visitor counts once an hour.</Trans>
-						</p>
-					)}
 				</>
 			) : (
 				<p className="t-small text-ink-2">

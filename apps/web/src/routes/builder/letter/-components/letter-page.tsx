@@ -6,15 +6,16 @@ import { useQuery } from "@tanstack/react-query";
 import { isEqual } from "es-toolkit";
 import { useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
-import { useDebounceValue } from "usehooks-ts";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { applyProposals } from "@reactive-resume/resume/proposals";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { LetterVersionBar } from "./download-sheet";
 import { templates } from "@/dialogs/resume/template/data";
 import { AiResultUsage } from "@/features/ai/usage";
 import { letterPageData, useLetterWords } from "@/features/letters/compose";
+import { DRAFT_THROTTLE_MS, useThrottledValue } from "@/features/letters/draft-page";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { useLetterMode } from "@/features/letters/use-letter-mode";
 import { CanvasStatusPill, usePageScale, ZoomBar } from "@/features/resume/editor/chrome";
@@ -25,10 +26,6 @@ import { ResumePreview } from "@/features/resume/preview/preview";
 import { orpc } from "@/libs/orpc/client";
 
 const NONE: readonly never[] = [];
-
-// A streaming draft re-renders the page a few times a second, not per word: the first change at once, then at most
-// every 400ms. A module constant, so the debounce isn't rebuilt each render.
-const DRAFT_THROTTLE = { leading: true, maxWait: 400 };
 
 /**
  * `value`, kept as the same object while it stays deep-equal. Each save hands back a new but identical letter; without
@@ -43,7 +40,7 @@ function useDeepStable<T>(value: T) {
 
 /**
  * The letter on the desk, as it prints: sender header, recipient and date, greeting, body and sign-off. A draft
- * shows in place on a green wash; History shows a version read-only; Design previews a hovered template.
+ * shows in place on a green wash, tagged; History shows a version read-only; Design previews a hovered template.
  */
 export function LetterPage() {
 	const letter = useLetterEditorStore((state) => state.letter);
@@ -76,7 +73,7 @@ export function LetterPage() {
 	// Reduced motion puts the whole draft on the page at once.
 	const draftText =
 		draft.phase === "ready" || (draft.phase === "streaming" && !reducedMotion) ? draft.text || null : null;
-	const [shownDraft] = useDebounceValue(draftText, 400, DRAFT_THROTTLE);
+	const shownDraft = useThrottledValue(draftText, DRAFT_THROTTLE_MS);
 
 	const pageData = useMemo(() => {
 		if (!letter) return undefined;
@@ -182,7 +179,7 @@ export function LetterPage() {
 								pageIndex={pageIndex}
 								pageMap={pageMap}
 								itemId={letter.style.itemId}
-								washed={Boolean(shownDraft)}
+								draft={Boolean(shownDraft)}
 							/>
 						)
 					}
@@ -200,13 +197,13 @@ export function LetterPage() {
 	);
 }
 
-type LetterOverlayProps = { pageIndex: number; pageMap: PageMap | undefined; itemId: string; washed: boolean };
+type LetterOverlayProps = { pageIndex: number; pageMap: PageMap | undefined; itemId: string; draft: boolean };
 
 /**
  * Pointer layer over the page: the sender's header leads to From, the letter to its body in the panel. A draft
- * lies on a green wash until it's kept.
+ * lies on a green wash, tagged "not kept yet", until it's kept.
  */
-function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProps) {
+function LetterOverlay({ pageIndex, pageMap, itemId, draft }: LetterOverlayProps) {
 	const [mode, setMode] = useLetterMode();
 	const page = pageMap?.pages[pageIndex];
 	if (!pageMap || !page || page.width <= 0 || page.height <= 0) return null;
@@ -214,6 +211,9 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 	const nodes = pageMap.nodes.filter(
 		(node) => node.page === pageIndex && (node.kind === "header" || (node.kind === "item" && node.itemId === itemId)),
 	);
+	// The tag sits on the letter's first line, at its end, on the first page the letter reaches.
+	const letterNode = draft ? nodes.find((node) => node.kind === "item") : undefined;
+	const firstLetterPage = pageMap.nodes.find((node) => node.kind === "item" && node.itemId === itemId)?.page;
 
 	const reveal = (target: "from" | "body") => {
 		if (mode !== "write") setMode("write");
@@ -230,27 +230,44 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 	};
 
 	return (
-		// A pointer shortcut, hidden from assistive tech: the panel reaches the same fields by keyboard.
-		<div aria-hidden="true" className="absolute inset-0">
-			{nodes.map((node) => (
-				// oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- hidden from assistive tech; the panel offers the same by keyboard.
-				<div
-					key={`${node.key}:${node.y}`}
-					onClick={() => reveal(node.kind === "header" ? "from" : "body")}
-					className={cn(
-						"absolute cursor-pointer rounded-lg outline-[1.5px] transition-[background-color,outline-color] duration-standard outline-solid",
-						washed && node.kind === "item"
-							? "bg-accent-soft/55 mix-blend-multiply outline-accent"
-							: "outline-transparent hover:bg-accent/6",
-					)}
+		<>
+			{/* A pointer shortcut, hidden from assistive tech: the panel reaches the same fields by keyboard. */}
+			<div aria-hidden="true" className="absolute inset-0">
+				{nodes.map((node) => (
+					// oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- hidden from assistive tech; the panel offers the same by keyboard.
+					<div
+						key={`${node.key}:${node.y}`}
+						onClick={() => reveal(node.kind === "header" ? "from" : "body")}
+						className={cn(
+							"absolute cursor-pointer rounded-lg outline-[1.5px] transition-[background-color,outline-color] duration-standard outline-solid",
+							// The PDF paints no text backgrounds, so the wash lies over the letter's box on the page. The paper is
+							// white in both themes, so the wash is the page mark's own green (proposals.ts), not a theme token.
+							draft && node.kind === "item"
+								? "bg-[#d4efd9]/60 mix-blend-multiply outline-accent"
+								: "outline-transparent hover:bg-accent/6",
+						)}
+						style={{
+							left: `calc(${(node.x / page.width) * 100}% - 4px)`,
+							top: `calc(${(node.y / page.height) * 100}% - 3px)`,
+							width: `calc(${(node.width / page.width) * 100}% + 8px)`,
+							height: `calc(${(node.height / page.height) * 100}% + 6px)`,
+						}}
+					/>
+				))}
+			</div>
+			{letterNode && letterNode.page === firstLetterPage && (
+				<Badge
+					variant="solid"
+					data-design="draft-tag"
+					className="pointer-events-none absolute -translate-y-full"
 					style={{
-						left: `calc(${(node.x / page.width) * 100}% - 4px)`,
-						top: `calc(${(node.y / page.height) * 100}% - 3px)`,
-						width: `calc(${(node.width / page.width) * 100}% + 8px)`,
-						height: `calc(${(node.height / page.height) * 100}% + 6px)`,
+						insetInlineEnd: `${((page.width - letterNode.x - letterNode.width) / page.width) * 100}%`,
+						top: `calc(${(letterNode.y / page.height) * 100}% - 4px)`,
 					}}
-				/>
-			))}
-		</div>
+				>
+					<Trans>Draft · not kept yet</Trans>
+				</Badge>
+			)}
+		</>
 	);
 }

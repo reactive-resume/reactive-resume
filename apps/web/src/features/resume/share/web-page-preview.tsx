@@ -14,6 +14,7 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { useShareOrigin } from "./use-share-origin";
 import { useCurrentResume, useResumeData } from "@/features/resume/builder/draft";
+import { ZoomBar } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { authClient } from "@/libs/auth/client";
@@ -108,9 +109,15 @@ export function WebPagePreview() {
 		"",
 	);
 	const isPublic = resume.isPublic ?? false;
+	// The corner zoom, as on the page canvas; "fit" is the page at its own width.
+	const zoom = useEditorStore((state) => state.zoom);
+	const scale = zoom === "fit" ? 1 : zoom;
 
 	return (
-		<div data-design="canvas" className="flex h-full min-h-0 flex-col items-center bg-sunken px-4 pt-4 dark:bg-raised">
+		<div
+			data-design="canvas"
+			className="relative flex h-full min-h-0 flex-col items-center bg-sunken px-4 pt-4 dark:bg-raised"
+		>
 			<SegmentedControl
 				aria-label={t`Preview size`}
 				value={device}
@@ -164,7 +171,8 @@ export function WebPagePreview() {
 							title={t`Web page preview`}
 							srcDoc={document}
 							sandbox="allow-popups allow-popups-to-escape-sandbox"
-							className="size-full border-0"
+							className="origin-top-left border-0 rtl:origin-top-right"
+							style={{ width: `${100 / scale}%`, height: `${100 / scale}%`, transform: `scale(${scale})` }}
 						/>
 					) : (
 						<div className="grid size-full place-items-center">
@@ -173,6 +181,7 @@ export function WebPagePreview() {
 					)}
 				</div>
 			</div>
+			{isPublic && <ZoomBar fitScale={1} />}
 		</div>
 	);
 }
