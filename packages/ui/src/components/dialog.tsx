@@ -33,6 +33,14 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
 	);
 }
 
+/**
+ * The dialog box, shared with AlertDialog: `raised`, 20px radius, e3, 28px padding, 16px between parts, as wide as
+ * `--dialog` (480) from 640px up. Under 640px it is a bottom sheet across the window that slides up.
+ * Padding is a variable so a caller's `p-0` still wins at every width.
+ */
+const dialogPopupClassName =
+	"fixed inset-s-0 inset-e-0 bottom-0 z-50 grid max-h-[calc(100svh-2rem)] w-full gap-4 overflow-y-auto overscroll-contain rounded-t-2xl bg-raised p-(--dialog-pad) text-sm text-ink shadow-e3 transition-[opacity,scale,translate] duration-standard ease-enter outline-none [--dialog-pad:20px] data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:opacity-0 max-sm:data-ending-style:translate-y-full max-sm:data-starting-style:translate-y-full sm:inset-s-1/2 sm:inset-e-auto sm:top-1/2 sm:bottom-auto sm:w-[calc(100%-2rem)] sm:max-w-(--dialog) sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:[--dialog-pad:28px] sm:data-ending-style:scale-[0.98] sm:data-starting-style:scale-[0.98] sm:rtl:translate-x-1/2";
+
 /** A close button needs a name in the interface language: required whenever the button shows. */
 type CloseButtonProps =
 	| { showCloseButton?: true; /** Accessible name of the close button; pass a translated string. */ closeLabel: string }
@@ -43,7 +51,7 @@ type DialogContentProps = DialogPrimitive.Popup.Props & {
 	instant?: boolean;
 } & CloseButtonProps;
 
-/** Centered, 16px radius, fades and scales in from 98% over 200ms. Use for decisions, not for tasks beside the page. */
+/** Centred over the scrim; fades and scales in from 98% over 200ms. Use for decisions, not for tasks beside the page. */
 function DialogContent({
 	className,
 	children,
@@ -57,11 +65,8 @@ function DialogContent({
 			<DialogOverlay className={cn(instant && "transition-none")} />
 			<DialogPrimitive.Popup
 				data-slot="dialog-content"
-				className={cn(
-					"fixed inset-s-1/2 top-1/2 z-50 grid max-h-[calc(100svh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto overscroll-contain rounded-2xl bg-raised p-6 text-sm text-ink shadow-e3 transition-[opacity,scale] duration-standard ease-enter outline-none data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:scale-[0.98] data-starting-style:opacity-0 sm:max-w-[480px] rtl:translate-x-1/2",
-					instant && "transition-none",
-					className,
-				)}
+				data-design="dialog"
+				className={cn(dialogPopupClassName, instant && "transition-none", className)}
 				{...props}
 			>
 				{children}
@@ -69,7 +74,13 @@ function DialogContent({
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
 						aria-label={closeLabel}
-						render={<Button variant="ghost" className="absolute inset-e-3 top-3 text-ink-2" size="icon" />}
+						render={
+							<Button
+								variant="ghost"
+								size="icon"
+								className="absolute inset-e-[calc(var(--dialog-pad)-8px)] top-[calc(var(--dialog-pad)-4px)]"
+							/>
+						}
 					>
 						<Icon name="x" />
 					</DialogPrimitive.Close>
@@ -80,7 +91,7 @@ function DialogContent({
 }
 
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="dialog-header" className={cn("flex flex-col gap-1.5 pe-8", className)} {...props} />;
+	return <div data-slot="dialog-header" className={cn("flex flex-col gap-4 pe-8", className)} {...props} />;
 }
 
 function DialogFooter({
@@ -141,6 +152,7 @@ export {
 	DialogHeader,
 	DialogOverlay,
 	DialogPortal,
+	dialogPopupClassName,
 	DialogTitle,
 	DialogTrigger,
 };

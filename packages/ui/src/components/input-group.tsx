@@ -30,7 +30,7 @@ function InputGroup({
 			aria-describedby={fieldsetDescribedBy}
 			aria-invalid={fieldsetInvalid}
 			className={cn(
-				"group/input-group relative flex h-9 w-full min-w-0 items-center rounded-md border border-control-border bg-raised text-ink transition-[border-color,box-shadow] duration-quick outline-none in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:shadow-none has-disabled:bg-sunken has-disabled:text-ink-3 has-[[data-slot=input-group-control]:focus]:border-accent has-[[data-slot=input-group-control]:focus]:shadow-[0_0_0_3px_var(--accent-soft)] has-[[data-slot][aria-invalid=true]]:border-danger has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto pointer-coarse:h-11 has-[>[data-align=block-end]]:[&>input]:pt-3 has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=inline-end]]:[&>input]:pe-1.5 has-[>[data-align=inline-start]]:[&>input]:ps-1.5",
+				"group/input-group relative flex h-10 w-full min-w-0 items-center rounded-md border border-control-border bg-raised text-ink transition-[border-color,box-shadow] duration-quick outline-none in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:shadow-none has-disabled:bg-sunken has-disabled:text-ink-3 has-[[data-slot=input-group-control]:focus]:border-accent has-[[data-slot=input-group-control]:focus]:shadow-[0_0_0_3px_var(--accent-soft)] has-[[data-slot][aria-invalid=true]]:border-danger has-[[data-slot][aria-invalid=true]]:shadow-[0_0_0_3px_var(--danger-soft)] has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto pointer-coarse:h-11 has-[>[data-align=block-end]]:[&>input]:pt-3 has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=inline-end]]:[&>input]:pe-2 has-[>[data-align=inline-start]]:[&>input]:ps-2",
 				className,
 			)}
 			{...props}
@@ -39,15 +39,16 @@ function InputGroup({
 }
 
 const inputGroupAddonVariants = cva(
-	"flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm text-ink-3 select-none group-data-[disabled=true]/input-group:opacity-50 [&>svg:not([class*='size-'])]:size-4",
+	"flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm text-ink-3 select-none [--icon-size:18px] group-data-[disabled=true]/input-group:opacity-45 [&>svg:not([class*='size-'])]:size-4",
 	{
 		variants: {
 			align: {
-				"inline-start": "order-first ps-2 has-[>button]:ms-[-0.3rem] has-[>kbd]:ms-[-0.15rem]",
-				"inline-end": "order-last pe-2 has-[>button]:me-[-0.3rem] has-[>kbd]:me-[-0.15rem]",
+				"inline-start": "order-first ps-[11px] has-[>button]:ms-[-0.3rem] has-[>kbd]:ms-[-0.15rem]",
+				"inline-end": "order-last pe-[11px] has-[>button]:me-[-0.3rem] has-[>kbd]:me-[-0.15rem]",
 				"block-start":
-					"order-first w-full justify-start px-2.5 pt-2 group-has-[>input]/input-group:pt-2 [.border-b]:pb-2",
-				"block-end": "order-last w-full justify-start px-2.5 pb-2 group-has-[>input]/input-group:pb-2 [.border-t]:pt-2",
+					"order-first w-full justify-start px-[11px] pt-2 group-has-[>input]/input-group:pt-2 [.border-b]:pb-2",
+				"block-end":
+					"order-last w-full justify-start px-[11px] pb-2 group-has-[>input]/input-group:pb-2 [.border-t]:pt-2",
 			},
 		},
 		defaultVariants: {
@@ -89,10 +90,10 @@ function InputGroupAddon({
 const inputGroupButtonVariants = cva("flex items-center gap-2 text-sm shadow-none", {
 	variants: {
 		size: {
-			xs: "h-6 gap-1 rounded-sm px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
+			xs: "h-6 gap-1 rounded-xs px-1.5 text-[13px] [--icon-size:16px] [&>svg:not([class*='size-'])]:size-3.5",
 			sm: "",
-			"icon-xs": "size-6 rounded-sm p-0 has-[>svg]:p-0",
-			"icon-sm": "size-8 p-0 has-[>svg]:p-0",
+			"icon-xs": "size-6 rounded-xs p-0 [--icon-size:16px] has-[>svg]:p-0",
+			"icon-sm": "size-7 rounded-sm p-0 [--icon-size:16px] has-[>svg]:p-0",
 		},
 	},
 	defaultVariants: {
@@ -125,7 +126,7 @@ function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
 	return (
 		<span
 			className={cn(
-				"flex items-center gap-2 text-sm text-ink-3 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+				"flex items-center gap-2 text-sm text-ink-3 [--icon-size:18px] [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
 				className,
 			)}
 			{...props}
@@ -152,7 +153,7 @@ function InputGroupInput({
 			aria-describedby={describedBy}
 			aria-invalid={invalid}
 			className={cn(
-				"h-full flex-1 rounded-none border-0 bg-transparent shadow-none focus:shadow-none disabled:bg-transparent aria-invalid:focus:shadow-none",
+				"h-full flex-1 rounded-none border-0 bg-transparent shadow-none focus:shadow-none disabled:bg-transparent aria-invalid:shadow-none",
 				className,
 			)}
 			{...props}

@@ -34,6 +34,7 @@ import {
 	CaretDownIcon,
 	CaretLeftIcon,
 	CaretRightIcon,
+	CaretUpDownIcon,
 	ChartLineUpIcon,
 	ChatCenteredTextIcon,
 	ChatTextIcon,
@@ -207,6 +208,7 @@ const icons = {
 	"caret-down": CaretDownIcon,
 	"caret-left": CaretLeftIcon,
 	"caret-right": CaretRightIcon,
+	"caret-up-down": CaretUpDownIcon,
 	"chart-line-up": ChartLineUpIcon,
 	"chat-centered-text": ChatCenteredTextIcon,
 	"chat-text": ChatTextIcon,
@@ -360,15 +362,16 @@ type IconProps = Omit<React.ComponentProps<"span">, "children"> & {
 	name: IconName;
 	/** The filled glyph. The design system reserves it for the selected navigation item. */
 	filled?: boolean | undefined;
-	/** Glyph size in CSS pixels: 20 on desktop, 24 on touch. */
+	/** Glyph size in CSS pixels. Left out, the icon takes its container's `--icon-size` (20 by default). */
 	size?: number | undefined;
 };
 
 /**
  * A Phosphor glyph sized by the span's font size, so containers can resize it with `text-*` like text.
+ * Controls set `--icon-size` (18 in a button or menu item, 16 in a small button); an explicit `size` wins.
  * Icons are decorative: the control they sit in carries the accessible name.
  */
-function Icon({ name, filled = false, size = 20, className, style, ...props }: IconProps) {
+function Icon({ name, filled = false, size, className, style, ...props }: IconProps) {
 	const Glyph = icons[name];
 
 	return (
@@ -376,8 +379,12 @@ function Icon({ name, filled = false, size = 20, className, style, ...props }: I
 			aria-hidden="true"
 			data-slot="icon"
 			{...props}
-			className={cn("inline-block size-[1em] shrink-0", DIRECTIONAL_ICONS.has(name) && "rtl:-scale-x-100", className)}
-			style={{ fontSize: size, ...style }}
+			className={cn(
+				"inline-block size-[1em] shrink-0 text-[length:var(--icon-size,20px)]",
+				DIRECTIONAL_ICONS.has(name) && "rtl:-scale-x-100",
+				className,
+			)}
+			style={size == null ? style : { fontSize: size, ...style }}
 		>
 			{/* Inline sizing, so the `size-4` rules buttons and menus give bare SVGs can't shrink the glyph. */}
 			<Glyph weight={filled ? "fill" : "regular"} style={{ display: "block", width: "100%", height: "100%" }} />

@@ -5,33 +5,43 @@ import { isValidElement } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 
+/**
+ * Calm buttons: 28 · 36 · 44 high with 8 · 10 · 12 corners, 13 · 14 · 15px medium labels and 16 · 18 · 20px icons.
+ * `primary` is the one accent button of a view; `soft` is Accept on a proposal; `danger-text` is a reversible removal
+ * (Move to Trash) and `danger` the permanent delete. A disabled button fades as a whole to 45%.
+ */
 const baseButtonVariants = cva(
-	"group/button touch-target relative inline-flex shrink-0 items-center justify-center gap-2 border border-transparent text-sm font-medium whitespace-nowrap transition-[background-color,border-color,color,filter,scale] duration-quick ease-enter select-none disabled:pointer-events-none aria-busy:cursor-progress [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+	"group/button touch-target relative inline-flex shrink-0 items-center justify-center gap-2 text-sm leading-5 font-medium whitespace-nowrap transition-[background-color,box-shadow,color,filter,opacity,scale] duration-quick ease-enter select-none disabled:pointer-events-none aria-busy:cursor-progress data-disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 	{
 		variants: {
 			variant: {
-				primary: "bg-accent font-semibold text-on-accent hover:bg-accent-hover disabled:bg-sunken disabled:text-ink-3",
+				primary: "bg-accent text-on-accent hover:bg-accent-hover",
 				secondary:
-					"border-line-2 bg-surface text-ink hover:bg-sunken active:bg-press disabled:border-line disabled:text-ink-3 aria-expanded:bg-sunken",
-				ghost: "text-ink hover:bg-hover active:bg-press disabled:text-ink-3 aria-expanded:bg-hover",
-				danger:
-					"bg-danger text-white hover:brightness-[0.92] focus-visible:outline-danger disabled:bg-sunken disabled:text-ink-3",
-				link: "h-auto! border-0 px-0! text-accent-text underline-offset-4 hover:underline",
+					"bg-surface text-ink shadow-[inset_0_0_0_1px_var(--line-2)] hover:bg-sunken active:bg-press aria-expanded:bg-sunken",
+				ghost:
+					"text-ink-2 hover:bg-hover hover:text-ink active:bg-press aria-expanded:bg-hover aria-pressed:bg-accent-soft aria-pressed:text-accent-text",
+				soft: "bg-accent-soft text-accent-text hover:bg-[color-mix(in_oklab,var(--accent-soft),var(--ink)_6%)] active:bg-[color-mix(in_oklab,var(--accent-soft),var(--ink)_10%)]",
+				// White on danger-fill, as the boards draw it: the fill is the same strength in both themes.
+				danger: "bg-danger-fill text-white hover:brightness-[0.92] focus-visible:outline-danger",
+				"danger-text": "text-danger-text hover:bg-danger-soft active:bg-danger-soft aria-expanded:bg-danger-soft",
+				link: "h-auto! px-0! text-accent-text underline-offset-4 hover:underline",
 			},
 			size: {
-				default: "h-9 rounded-md px-3.5",
-				sm: "h-7 gap-1.5 rounded-sm px-2.5 text-[13px]",
-				lg: "h-11 rounded-lg px-4 text-base",
-				icon: "size-9 rounded-md",
-				"icon-sm": "size-8 rounded-md",
-				"icon-xs": "size-7 rounded-sm",
-				"icon-lg": "size-11 rounded-lg",
+				default: "h-9 rounded-md px-3.5 [--icon-size:18px]",
+				sm: "h-7 gap-1.5 rounded-sm px-2.5 text-[13px] leading-[18px] [--icon-size:16px]",
+				lg: "h-11 rounded-lg px-[18px] text-[15px] [--icon-size:20px]",
+				icon: "size-9 rounded-md [--icon-size:20px]",
+				"icon-sm": "size-7 rounded-sm [--icon-size:16px]",
+				"icon-xs": "size-7 rounded-sm [--icon-size:16px]",
+				"icon-lg": "size-11 rounded-md [--icon-size:20px]",
 			},
 		},
 		compoundVariants: [
-			{ variant: "ghost", size: "default", className: "px-3" },
 			// Press feedback; a text link doesn't press, and a loading button blocks activation.
-			{ variant: ["primary", "secondary", "ghost", "danger"], className: "not-aria-busy:active:scale-[0.97]" },
+			{
+				variant: ["primary", "secondary", "ghost", "soft", "danger", "danger-text"],
+				className: "not-aria-busy:active:scale-[0.97]",
+			},
 		],
 		defaultVariants: {
 			variant: "primary",

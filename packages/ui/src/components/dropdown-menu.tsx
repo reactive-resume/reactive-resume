@@ -47,6 +47,7 @@ function DropdownMenuContent({
 			>
 				<MenuPrimitive.Popup
 					data-slot="dropdown-menu-content"
+					data-design="menu"
 					className={cn(menuPopupClassName, className)}
 					{...props}
 				/>
@@ -116,7 +117,7 @@ function DropdownMenuSubTrigger({
 			{...props}
 		>
 			{children}
-			<Icon name="caret-right" className="ms-auto" />
+			<Icon name="caret-right" size={16} className="ms-auto text-ink-3!" />
 		</MenuPrimitive.SubmenuTrigger>
 	);
 }
@@ -164,7 +165,7 @@ function DropdownMenuCheckboxItem({
 				data-slot="dropdown-menu-checkbox-item-indicator"
 			>
 				<MenuPrimitive.CheckboxItemIndicator>
-					<Icon name="check" className="text-accent-text!" />
+					<Icon name="check" className="text-ink!" />
 				</MenuPrimitive.CheckboxItemIndicator>
 			</span>
 			{children}
@@ -196,7 +197,7 @@ function DropdownMenuRadioItem({
 				data-slot="dropdown-menu-radio-item-indicator"
 			>
 				<MenuPrimitive.RadioItemIndicator>
-					<Icon name="check" className="text-accent-text!" />
+					<Icon name="check" className="text-ink!" />
 				</MenuPrimitive.RadioItemIndicator>
 			</span>
 			{children}

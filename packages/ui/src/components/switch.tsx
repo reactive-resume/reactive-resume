@@ -4,10 +4,10 @@ import { useId } from "react";
 import { cn } from "@reactive-resume/utils/style";
 
 const trackClassName =
-	"relative inline-flex shrink-0 items-center rounded-sm bg-control-border transition-colors duration-quick group-data-checked/switch:bg-accent group-data-disabled/switch:opacity-50 h-5 w-8";
+	"relative inline-flex h-[22px] w-9 shrink-0 items-center rounded-full bg-sunken shadow-[inset_0_0_0_1px_var(--control-border)] transition-[background-color,box-shadow] duration-quick group-data-checked/switch:bg-accent group-data-checked/switch:shadow-none group-data-disabled/switch:opacity-45";
 
 const thumbClassName =
-	"pointer-events-none block origin-left data-checked:origin-right rtl:origin-right rtl:data-checked:origin-left group-active/switch:not-data-disabled:scale-x-[1.15] rounded-sm bg-white shadow-e1 transition-transform duration-quick ease-enter ms-0.5 size-4 data-checked:translate-x-3 rtl:data-checked:-translate-x-3";
+	"pointer-events-none ms-[3px] block size-4 origin-left rounded-full bg-control-border transition-[transform,background-color] duration-quick ease-enter group-active/switch:not-data-disabled:scale-x-[1.15] data-checked:origin-right data-checked:translate-x-3.5 data-checked:bg-on-accent data-checked:shadow-e1 rtl:origin-right rtl:data-checked:origin-left rtl:data-checked:-translate-x-3.5";
 
 function SwitchTrack() {
 	return (
@@ -19,13 +19,13 @@ function SwitchTrack() {
 
 type SwitchProps = SwitchPrimitive.Root.Props;
 
-/** A bare 32×20 switch; `touch-target` enlarges its hit area. Prefer `SwitchRow` so the label is part of the target. */
+/** A bare 36×22 switch with a 16px thumb; `touch-target` enlarges its hit area. Prefer `SwitchRow` so the label is part of the target. */
 function Switch({ className, ...props }: SwitchProps) {
 	return (
 		<SwitchPrimitive.Root
 			data-slot="switch"
 			className={cn(
-				"group/switch peer touch-target relative inline-flex shrink-0 rounded-sm data-disabled:cursor-not-allowed",
+				"group/switch peer touch-target relative inline-flex shrink-0 rounded-full data-disabled:cursor-not-allowed",
 				className,
 			)}
 			{...props}
@@ -40,7 +40,10 @@ type SwitchRowProps = Omit<SwitchPrimitive.Root.Props, "children"> & {
 	description?: React.ReactNode;
 };
 
-/** The whole row is the switch: label (and optional description) on the left, the switch on the right. */
+/**
+ * The whole row is the switch: its name (and at most one quiet line) first, the switch last. This is the tight row of
+ * panels, sheets and dialogs: at least 44px, a 14px medium name.
+ */
 function SwitchRow({ className, label, description, ...props }: SwitchRowProps) {
 	const id = useId();
 	const labelId = `${id}-label`;
@@ -52,13 +55,13 @@ function SwitchRow({ className, label, description, ...props }: SwitchRowProps) 
 			aria-labelledby={labelId}
 			aria-describedby={description ? descriptionId : undefined}
 			className={cn(
-				"group/switch flex w-full items-center justify-between gap-4 rounded-md py-2 text-start data-disabled:cursor-not-allowed",
+				"group/switch flex min-h-11 w-full items-center justify-between gap-3 rounded-md py-1.5 text-start data-disabled:cursor-not-allowed",
 				className,
 			)}
 			{...props}
 		>
-			<span className="flex min-w-0 flex-col gap-0.5">
-				<span id={labelId} className="text-sm text-ink group-data-disabled/switch:text-ink-3">
+			<span className="flex min-w-0 flex-col gap-px">
+				<span id={labelId} className="text-sm leading-5 font-medium text-ink group-data-disabled/switch:text-ink-3">
 					{label}
 				</span>
 				{description && (
