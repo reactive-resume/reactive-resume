@@ -261,8 +261,8 @@ msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# item} other {# items}}"
 
 #. placeholder {0}: backing.length
-#. placeholder {0}: knowledge.active.length
 #. placeholder {0}: knowledge.facts.length
+#. placeholder {0}: knowledge.kept
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
@@ -485,7 +485,7 @@ msgstr "{0, plural, one {#-sollicitatie importeren} other {#-sollicitaties impor
 msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
 msgstr "{0, plural, one {# sollicitatie geïmporteerd.} other {# sollicitaties geïmporteerd.}}"
 
-#. placeholder {0}: knowledge.active.length
+#. placeholder {0}: knowledge.kept
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {Kennis · # feit} other {Kennis · # feiten}}"
@@ -1559,6 +1559,7 @@ msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {#-pagina} other {#-pagina's}}"
 
@@ -1851,6 +1852,10 @@ msgstr "<0>Niets te corrigeren.</0> Alle controles zijn geslaagd."
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "<0>Posting asks for:</0> {requirement}"
 msgstr "<0>De vacature vraagt om:</0> {requirement}"
+
+#: src/features/auth/components/guest-banner.tsx
+msgid "<0>You're using a guest account.</0> Everything you make is lost when you sign out or this session ends. Create an account and your resumes, cover letters, applications and Career knowledge move into it."
+msgstr ""
 
 #: src/features/auth/components/session-recovery.tsx
 msgid "<0>Your session ended.</0> Sign in again to keep working. Nothing on this page is lost."
@@ -3107,6 +3112,10 @@ msgstr ""
 msgid "Amharic"
 msgstr "Amhaars"
 
+#: src/features/career/workspace/practise.tsx
+msgid "An answer you keep is saved to this application's notes, with its question."
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "An edit addresses it"
 msgstr "Een bewerking lost dit op"
@@ -3476,6 +3485,10 @@ msgstr "Studiegebied"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Arrange its sections…"
+msgstr ""
+
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "Arrange sections"
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -5081,6 +5094,10 @@ msgstr ""
 msgid "Compare"
 msgstr "Vergelijken"
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Compare by switching"
+msgstr ""
+
 #: src/features/applications/next-step.ts
 msgid "Compare it with your other offers"
 msgstr "Vergelijk het met je andere aanbiedingen"
@@ -5762,6 +5779,10 @@ msgstr "Kan niet importeren"
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't import the file. Try again from Documents."
 msgstr "Kan het bestand niet importeren. Probeer het opnieuw vanuit Documenten."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Couldn't keep this answer. Try again."
+msgstr ""
 
 #: src/features/auth/pages/error.tsx
 msgid "Couldn't link that provider account."
@@ -7369,6 +7390,7 @@ msgstr ""
 #: src/features/resume/editor/save-status.tsx
 #: src/features/resume/editor/write/entry-row.tsx
 #: src/features/resume/editor/write/entry-view.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Draft"
 msgstr "Documentconcept"
 
@@ -7536,6 +7558,7 @@ msgstr "Eerdere berichten en bijlagen in dit gesprek worden naar deze bestemming
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/entry-row.tsx
@@ -7694,6 +7717,10 @@ msgstr "Bewerk de e-mail"
 #: src/features/resume/editor/check/issues.ts
 msgid "Edit the link"
 msgstr "Bewerk de link"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Edit the reply-by date"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Edit this interview…"
@@ -7989,6 +8016,7 @@ msgid "Enter your password."
 msgstr "Voer uw wachtwoord in."
 
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Entered by you"
 msgstr "Door jou ingevoerd"
 
@@ -8591,6 +8619,11 @@ msgstr ""
 msgid "For {0}"
 msgstr ""
 
+#: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "For {company}"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "For {company} · {role}"
 msgstr ""
@@ -8898,6 +8931,10 @@ msgstr ""
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "full-width levels"
+msgstr ""
+
+#: src/features/career/workspace/practise.tsx
+msgid "General question"
 msgstr ""
 
 #: src/features/career/prepare-now.tsx
@@ -9289,7 +9326,6 @@ msgid "Historical review checks unavailable."
 msgstr "Eerdere controlemarkeringen zijn niet beschikbaar."
 
 #: src/features/resume/share/history-tab.tsx
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
@@ -9645,6 +9681,10 @@ msgstr "Verbeter de geselecteerde lijn"
 #: src/features/resume/editor/write/improve.tsx
 msgid "Improve this paragraph"
 msgstr "Deze alinea verbeteren"
+
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Improve works on a line once you have written one."
+msgstr ""
 
 #: src/features/resume/editor/write/improve.tsx
 msgid "Improving…"
@@ -10199,6 +10239,10 @@ msgstr "Bewaar de opname in deze browser zodat ik hem kan downloaden"
 msgid "Keep them to roughly two lines, so a skim-reader finishes them."
 msgstr "Houd ze op ongeveer twee regels, zodat een snelle lezer ze afmaakt."
 
+#: src/features/career/workspace/practise.tsx
+msgid "Keep this answer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
 msgstr "Beperk je tot twee of drie families. Elk extra lettertype is weer een kans dat er een verkeerd wordt weergegeven."
@@ -10223,6 +10267,14 @@ msgstr "Behoudt de meest specifieke onderdelen"
 #: src/features/resume/editor/check/actions.ts
 msgid "Kept as it is"
 msgstr "Gehouden zoals het is"
+
+#: src/features/career/workspace/practise.tsx
+msgid "Kept in this application's notes"
+msgstr ""
+
+#: src/features/career/workspace/debrief.tsx
+msgid "Kept in your notes"
+msgstr ""
 
 #: src/features/homepage/write.tsx
 msgid "Kept yours"
@@ -10332,10 +10384,6 @@ msgstr ""
 msgid "Knowledge that's switched on: {0, plural, one {# fact} other {# facts}}, {1, plural, one {# story} other {# stories}} and your preferences"
 msgstr ""
 
-#: src/features/career/career-page.tsx
-msgid "Knowledge, Offers and Schedules work without it."
-msgstr ""
-
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
 msgstr "Kennis:"
@@ -10405,6 +10453,11 @@ msgstr "Laatst actief {active}"
 #: src/features/settings/account/security.tsx
 msgid "Last changed in {0}"
 msgstr "Laatst gewijzigd in {0}"
+
+#. placeholder {0}: formatTimeSince(domain.lastCheckedAt, i18n.locale)
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Last checked {0} ago"
+msgstr ""
 
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Last checked {lastChecked} ago"
@@ -10958,6 +11011,10 @@ msgstr "Laden"
 msgid "Loading AI connections…"
 msgstr "AI-verbindingen laden…"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Loading application…"
+msgstr ""
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
 msgstr "Sollicitaties laden…"
@@ -11081,11 +11138,11 @@ msgstr ""
 
 #: src/features/documents/document-card.tsx
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Locked"
 msgstr "Vergrendeld"
 
 #: src/features/resume/editor/save-status.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Locked · unlock to save"
 msgstr "Vergrendeld · ontgrendel om op te slaan"
 
@@ -12112,6 +12169,10 @@ msgstr "Volgende maand"
 msgid "Next question"
 msgstr "Volgende vraag"
 
+#: src/features/career/workspace/debrief.tsx
+msgid "Next round"
+msgstr ""
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/overview.tsx
@@ -12747,6 +12808,10 @@ msgstr "Niet opgeslagen — dit feit is eerder vergeten."
 msgid "Not saved · Sign in to save"
 msgstr "Niet opgeslagen · Meld je aan om op te slaan"
 
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "Not saved to an account"
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 #: src/features/settings/profile.tsx
 msgid "Not saved yet"
@@ -13097,6 +13162,10 @@ msgstr ""
 msgid "On the page"
 msgstr ""
 
+#: src/features/career/workspace/debrief.tsx
+msgid "On this application, with the question, your answer and how it landed"
+msgstr ""
+
 #: src/features/documents/import/import-page.tsx
 msgid "On this device"
 msgstr ""
@@ -13116,6 +13185,10 @@ msgstr "Onboardingverhaal"
 #: src/features/career/workspace/prepare.tsx
 msgid "Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask."
 msgstr "Zodra een ronde is gepland, maakt Gespreksvoorbereiding een plan met tijden, je opening en de vragen die je kunt stellen."
+
+#: src/features/career/workspace/debrief.tsx
+msgid "Once saved"
+msgstr ""
 
 #: src/features/resume/editor/design/template-group.tsx
 #: src/features/templates/gallery.tsx
@@ -14435,6 +14508,11 @@ msgstr "Druk op <0>{RETURN_KEY}</0> of <1>{COMMA_KEY}</1> om het huidige trefwoo
 msgid "Press <0>{RETURN_KEY}</0> to add or save the current keyword."
 msgstr "Druk op <0>{RETURN_KEY}</0> om het huidige trefwoord toe te voegen of op te slaan."
 
+#. placeholder {0}: templates[previewTemplate].name
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Preview · {0} · Page {page} of {pages} · {formatLabel}"
+msgstr ""
+
 #. placeholder {0}: templates[id].name
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Preview {0}"
@@ -14457,7 +14535,6 @@ msgid "Previewing"
 msgstr ""
 
 #. placeholder {0}: templates[previewTemplate].name
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Previewing {0} · click to apply"
 msgstr "Voorbeeld van {0} · klik om toe te passen"
@@ -14532,6 +14609,10 @@ msgstr "Privacybeleid"
 #: src/features/homepage/share.tsx
 msgid "Private"
 msgstr "Privé"
+
+#: src/features/career/coach-chat.tsx
+msgid "Private to this application"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Private. Only you can see it."
@@ -14887,6 +14968,10 @@ msgstr "Gelezen uit een bericht"
 #: src/features/career/offers.tsx
 msgid "Read from a message, edited by you"
 msgstr "Gelezen uit een bericht, door jou bewerkt"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Read from their message"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read it"
@@ -15653,6 +15738,11 @@ msgstr "Reactie"
 #. placeholder {0}: format(offer.data.respondBy, { weekday: "short", day: "numeric", month: "short" })
 #: src/features/career/career-page.tsx
 msgid "reply by {0}"
+msgstr ""
+
+#. placeholder {0}: time.format(offer.data.respondBy, { weekday: "short", day: "numeric", month: "short" })
+#: src/features/career/workspace/messages.tsx
+msgid "Reply by {0}"
 msgstr ""
 
 #: src/features/career/offers.tsx
@@ -16706,6 +16796,10 @@ msgid "Saved to Library"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
+msgid "Saved with this application · not sent to any AI"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
 msgid "Saved with this application. The signature was left out."
 msgstr ""
 
@@ -17222,14 +17316,14 @@ msgstr "Senior productontwerper"
 msgid "Sent"
 msgstr "Verstuurd"
 
-#. A document's status: the day it was sent with its application
-#: src/features/documents/document-status.tsx
-msgid "Sent {date}"
+#: src/features/career/coach-chat.tsx
+msgctxt "What went to the AI provider with a message"
+msgid "Sent"
 msgstr ""
 
 #. A document's status: the day it was sent with its application
-#: src/features/resume/editor/save-status.tsx
-msgid "Sent {sentOn}"
+#: src/features/documents/document-status.tsx
+msgid "Sent {date}"
 msgstr ""
 
 #: src/features/auth/pages/forgot-password.tsx
@@ -17244,6 +17338,11 @@ msgstr ""
 #: src/features/resume/share/format.ts
 msgid "Sent to {0}"
 msgstr "Verzonden naar {0}"
+
+#: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Sent to {company}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Sent to {company} on {date}. The version they received stays in History whatever you change."
@@ -17290,6 +17389,10 @@ msgstr "Stel een wachtwoord in"
 #: src/features/settings/account/security.tsx
 msgid "Set a password to turn on two-step verification."
 msgstr "Stel een wachtwoord in om verificatie in twee stappen in te schakelen."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Set by you"
+msgstr ""
 
 #. Primary action button to add a password to an account without one
 #: src/dialogs/auth/set-password.tsx
@@ -20006,6 +20109,10 @@ msgstr "Dit tijdstip bestaat niet in de gekozen tijdzone. Kies een ander tijdsti
 msgid "This time does not exist in your timezone. Choose another time."
 msgstr "Dit tijdstip bestaat niet in uw tijdzone. Kies een ander tijdstip."
 
+#: src/features/resume/share/history-tab.tsx
+msgid "This version"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 #: src/features/settings/ai/usage.tsx
 msgid "This week"
@@ -20018,6 +20125,13 @@ msgstr "Deze werkruimte kon niet worden geladen."
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Threads"
 msgstr "Draden"
+
+#. placeholder {0}: time.format(interview.at, { weekday: "long" })
+#. placeholder {1}: interviewTypeLabel(interview.kind).toLocaleLowerCase(time.locale)
+#. placeholder {2}: application.company
+#: src/features/career/workspace/practise.tsx
+msgid "Three general questions for {0}'s {1} interview. They are simulated, not from {2}."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Ticked facts can be sent to your AI connection when you use the coach, a fit check or interview prep. The rest stay here and are never sent."
@@ -20171,6 +20285,7 @@ msgstr "Vandaag, {hour}"
 msgid "today, {time}"
 msgstr ""
 
+#: src/features/career/career-page.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Today, Knowledge, offers and schedules work without it."
@@ -21178,6 +21293,10 @@ msgstr "Code controleren…"
 msgid "Version history"
 msgstr ""
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Version preview"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date}"
 msgstr "Versie verzonden {date}"
@@ -21228,13 +21347,6 @@ msgstr ""
 #: src/features/career/workspace/apply.tsx
 msgid "View recorded answers"
 msgstr "Vastgelegde antwoorden bekijken"
-
-#. placeholder {0}: formatVersionTime(viewing.createdAt, i18n.locale)
-#. placeholder {1}: getVersionTitle(viewing)
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-#: src/routes/builder/letter/-components/letter-page.tsx
-msgid "Viewing {0} · {1} · read-only"
-msgstr "{0} · {1} · alleen-lezen bekijken"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "views in the last 30 days"
@@ -22283,10 +22395,6 @@ msgstr ""
 msgid "You're up to date"
 msgstr "U bent helemaal bij"
 
-#: src/features/auth/components/guest-banner.tsx
-msgid "You're using a guest account"
-msgstr "Je gebruikt een gastaccount"
-
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "You're viewing an earlier version. Go back to now in History to edit."
 msgstr "Je bekijkt een eerdere versie. Ga in Geschiedenis terug naar nu om te bewerken."
@@ -22332,6 +22440,10 @@ msgstr "Je antwoord is gewijzigd terwijl het concept werd geschreven. Stel opnie
 #: src/features/career/workspace/apply.tsx
 msgid "Your answer changed while this was drafted. Draft again to review the newer version."
 msgstr "Je antwoord is gewijzigd terwijl dit concept werd gemaakt. Stel opnieuw op om de nieuwere versie te beoordelen."
+
+#: src/features/career/workspace/practise.tsx
+msgid "Your answers"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Your application profile and the checklist work without it."
@@ -22738,10 +22850,6 @@ msgstr "Jouw formulering"
 #: src/features/career/workspace/practise.tsx
 msgid "Your words appear as you speak. Nothing is sent until you stop; then you can correct the text before asking for feedback."
 msgstr ""
-
-#: src/features/auth/components/guest-banner.tsx
-msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."
-msgstr "Je werk gaat verloren als je uitlogt of de sessie afloopt. Maak een account aan of log in om je cv's, sollicitatiebrieven en sollicitaties te bewaren."
 
 #: src/features/homepage/sections.tsx
 #: src/features/resume/editor/write/improve.tsx
