@@ -1,7 +1,8 @@
 import type { DocumentSummary } from "@/features/documents/filter";
 import type { RouterOutput } from "@/libs/orpc/client";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { i18n } from "@lingui/core";
-import { plural } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -30,6 +31,7 @@ import { Page, PageBody, RootHeader } from "@/components/calm/page";
 import { SelectionBar } from "@/components/calm/selection-bar";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
 import { companyInitials } from "@/features/applications/components/list-view";
+import { getStageLabel } from "@/features/applications/stages";
 import { useBatchActions } from "@/features/documents/document-actions";
 import { documentKey } from "@/features/documents/filter";
 import { useDocumentHistory } from "@/features/documents/library-session";
@@ -57,6 +59,14 @@ const documentsOf = (items: readonly Item[]) =>
 	items.flatMap((item) => (item.kind === "document" ? [item.document] : []));
 const applicationsOf = (items: readonly Item[]) =>
 	items.flatMap((item) => (item.kind === "application" ? [item.application] : []));
+
+/** "Application · Product designer · Remote · was at Applied": what it was, where, and the stage it left. */
+const applicationLine = (application: { role: string; location: string | null; status: ApplicationStatus }) => {
+	const stage = getStageLabel(application.status);
+	return application.location
+		? t`Application · ${application.role} · ${application.location} · was at ${stage}`
+		: t`Application · ${application.role} · was at ${stage}`;
+};
 
 /** The company a letter was written for: its job's, else its recipient. */
 const writtenFor = (letter: DocumentSummary) => letter.application?.company ?? letter.recipient;
@@ -434,7 +444,7 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 								title={item.name}
 								subtitle={
 									item.kind === "application"
-										? t`Application · ${item.application.role}`
+										? applicationLine(item.application)
 										: item.document.type === "resume"
 											? t`Resume · last edited ${i18n.date(item.document.editedAt, { day: "numeric", month: "short" })}`
 											: writtenFor(item.document)

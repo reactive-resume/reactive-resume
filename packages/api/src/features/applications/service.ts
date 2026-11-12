@@ -1412,6 +1412,8 @@ export const applicationService = {
 					id: schema.application.id,
 					company: schema.application.company,
 					role: schema.application.role,
+					location: schema.application.location,
+					status: schema.application.status,
 					trashedAt: schema.application.trashedAt,
 				})
 				.from(schema.application)

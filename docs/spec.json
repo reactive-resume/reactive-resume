@@ -16667,6 +16667,29 @@
 													"role": {
 														"type": "string"
 													},
+													"location": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "Where the job is, as saved."
+													},
+													"status": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string",
+														"description": "The stage the application was at when it moved to Trash."
+													},
 													"trashedAt": {
 														"type": "string",
 														"format": "date-time",
@@ -16683,6 +16706,8 @@
 													"id",
 													"company",
 													"role",
+													"location",
+													"status",
 													"trashedAt",
 													"expiresAt"
 												]

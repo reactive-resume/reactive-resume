@@ -23,6 +23,10 @@ export const crudRouter = {
 						id: z.string(),
 						company: z.string(),
 						role: z.string(),
+						location: z.string().nullable().describe("Where the job is, as saved."),
+						status: z
+							.enum(["saved", "applied", "screening", "interview", "offer", "closed"])
+							.describe("The stage the application was at when it moved to Trash."),
 						trashedAt: z.date(),
 						expiresAt: z.date().describe("When Trash deletes this application permanently (30 days)."),
 					}),
