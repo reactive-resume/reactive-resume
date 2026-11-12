@@ -106,6 +106,7 @@ function MenuView({
 				ref={ref as never}
 				accessibilityViewIsModal
 				accessibilityRole="menu"
+				testID="menu"
 				style={[...frame, { backgroundColor: labMarker ?? colors.raised, boxShadow: shadows.sh2 }, style]}
 			>
 				<View style={labMarker ? { opacity: 0 } : null}>{children}</View>

@@ -318,6 +318,7 @@ export function BottomSheet({
 				<Animated.View
 					ref={sheetRef as never}
 					accessibilityViewIsModal
+					testID="sheet"
 					style={[
 						styles.sheet,
 						{ backgroundColor: colors.raised, boxShadow: shadows.sh3, paddingBottom: bottomPadding ?? insets.bottom },

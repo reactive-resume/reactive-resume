@@ -125,6 +125,7 @@ function DialogView({
 					ref={ref as never}
 					role="alertdialog"
 					accessibilityViewIsModal
+					testID="dialog"
 					style={[styles.dialog, { backgroundColor: labMarker ?? colors.raised, boxShadow: shadows.sh3 }, box]}
 				>
 					<View ref={titleRef} accessible accessibilityRole="header" style={hide}>
