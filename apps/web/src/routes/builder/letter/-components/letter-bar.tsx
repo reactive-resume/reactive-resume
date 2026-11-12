@@ -26,6 +26,7 @@ import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
 import { DownloadButtons, EditorBarFrame } from "@/features/resume/editor/chrome/bar";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useConfirm, usePrompt } from "@/hooks/use-confirm";
+import { sessionSignInURL, useSessionRecovery } from "@/libs/auth/session-recovery";
 import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -85,8 +86,8 @@ function LetterUndoRedo() {
 
 	return (
 		<>
-			<IconButton icon="arrow-counter-clockwise" label={t`Undo`} shortcut="⌘Z" disabled={!canUndo} onClick={undo} />
-			<IconButton icon="arrow-clockwise" label={t`Redo`} shortcut="⇧⌘Z" disabled={!canRedo} onClick={redo} />
+			<IconButton icon="arrow-u-up-left" label={t`Undo`} shortcut="⌘Z" disabled={!canUndo} onClick={undo} />
+			<IconButton icon="arrow-u-up-right" label={t`Redo`} shortcut="⇧⌘Z" disabled={!canRedo} onClick={redo} />
 		</>
 	);
 }
@@ -249,9 +250,10 @@ function LetterMenu() {
 	);
 }
 
-/** Saved, Saving…, Not saved · Retry, or Review saved version · Reload. */
+/** The same save line as the resume editor, with recovery actions beside the status. */
 function LetterSaveStatus() {
-	const status = useLetterEditorStore((state) => state.status);
+	const status = useLetterEditorStore((state) => (state.letter?.isLocked ? "locked" : state.status));
+	const sessionEnded = useSessionRecovery((state) => state.accountId !== null);
 	const confirm = useConfirm();
 	const queryClient = useQueryClient();
 	const [reloading, setReloading] = useState(false);
@@ -284,16 +286,20 @@ function LetterSaveStatus() {
 	const announcement =
 		status === "saving"
 			? t`Saving…`
-			: status === "saved"
-				? t`Saved`
+			: status === "offline"
+				? t`Offline · saved on this device`
 				: status === "error"
-					? t`Not saved`
-					: status === "conflict"
-						? t`Review saved version`
-						: "";
+					? sessionEnded
+						? t`Not saved · Sign in to save`
+						: t`Not saved`
+					: status === "locked"
+						? t`Locked · unlock to save`
+						: status === "conflict"
+							? t`Review saved version`
+							: t`Saved`;
 
 	return (
-		<span className="flex min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
+		<span className="flex max-w-full min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
 			<span
 				className="sr-only"
 				role={status === "error" ? "alert" : "status"}
@@ -307,25 +313,37 @@ function LetterSaveStatus() {
 					<Trans>Saving…</Trans>
 				</>
 			)}
-			{status === "saved" && (
-				<>
-					<Icon name="cloud-check" size={16} />
-					<Trans>Saved</Trans>
-				</>
+			{status === "saved" && <Trans>Saved</Trans>}
+			{(status === "offline" || status === "locked") && (
+				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-warn-text")}>
+					<Icon name={status === "offline" ? "cloud-slash" : "lock"} size={14} />
+					<span className="truncate">{announcement}</span>
+				</span>
 			)}
 			{status === "error" && (
 				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-danger-text")}>
 					<Icon name="cloud-warning" size={16} />
 					<Trans>Not saved</Trans>
 					<span aria-hidden="true">·</span>
-					<button
-						type="button"
-						onClick={() => void useLetterEditorStore.getState().flush()}
-						aria-label={t`Retry saving`}
-						className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
-					>
-						<Trans>Retry</Trans>
-					</button>
+					{sessionEnded ? (
+						<a
+							href={sessionSignInURL()}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="touch-target relative rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
+						>
+							<Trans>Sign in to save</Trans>
+						</a>
+					) : (
+						<button
+							type="button"
+							onClick={() => void useLetterEditorStore.getState().flush()}
+							aria-label={t`Retry saving`}
+							className="touch-target relative rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
+						>
+							<Trans>Retry</Trans>
+						</button>
+					)}
 				</span>
 			)}
 			{status === "conflict" && (
@@ -339,7 +357,7 @@ function LetterSaveStatus() {
 						type="button"
 						disabled={reloading}
 						onClick={() => void reload()}
-						className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80 disabled:opacity-50"
+						className="touch-target relative rounded-sm font-semibold underline underline-offset-2 hover:opacity-80 disabled:opacity-50"
 					>
 						<Trans>Reload</Trans>
 					</button>

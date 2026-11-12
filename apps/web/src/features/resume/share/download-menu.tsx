@@ -8,6 +8,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { getExportFormats, useLinkedLetter } from "./download-tab";
@@ -15,6 +16,7 @@ import { IconTile, rowGroundClassName } from "@/components/calm/list-row";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useCurrentResume } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
+import { useEditorStore } from "@/features/resume/editor/store";
 import {
 	createExportFile,
 	getDefaultFileName,
@@ -55,6 +57,7 @@ export function DownloadMenu<Id extends string>({
 	issues,
 }: DownloadMenuProps<Id>) {
 	const id = useId();
+	const phone = useBreakpoint() === "mobile";
 	const [open, setOpen] = useState(false);
 	const [fileName, setFileName] = useState<string | null>(null);
 	const [busy, setBusy] = useState<Id | null>(null);
@@ -156,6 +159,26 @@ export function DownloadMenu<Id extends string>({
 					</div>
 				)}
 
+				<div className="-mx-2 flex flex-col border-t border-line py-1 xl:hidden">
+					<FormatRow
+						format={{
+							id: "history",
+							label: t`Version history`,
+							extension: "",
+							icon: "clock-counter-clockwise",
+							description: t`Review earlier saved versions.`,
+						}}
+						busy={false}
+						disabled={busy !== null}
+						onHover={() => undefined}
+						onClick={() => {
+							setOpen(false);
+							if (phone) useEditorStore.getState().setSheetTab("history");
+							else useEditorStore.getState().setHistoryOpen(true);
+						}}
+					/>
+				</div>
+
 				{failed && failed.id !== "pdf" && pdf ? (
 					<p role="alert" className="flex items-center gap-2 border-t border-line pt-3 t-small text-danger-text">
 						<Icon name="warning-circle" size={16} />
@@ -230,14 +253,14 @@ function FormatRow<Id extends string>({ format, busy, disabled, onHover, onClick
 			onClick={onClick}
 			className={cn(
 				rowGroundClassName,
-				"mx-2 flex min-h-14 items-center gap-3 py-2 text-start outline-none before:-inset-x-2 hover:before:bg-hover focus-visible:before:bg-hover disabled:cursor-not-allowed disabled:opacity-60",
+				"mx-2 flex min-h-14 items-center gap-3 py-2 text-start before:-inset-x-2 hover:before:bg-hover focus-visible:before:bg-hover disabled:cursor-not-allowed disabled:opacity-60",
 			)}
 		>
 			<IconTile className="bg-surface shadow-[inset_0_0_0_1px_var(--line)]">
 				{busy ? <Spinner decorative className="size-4" /> : <Icon name={format.icon} size={20} />}
 			</IconTile>
 			<span className="flex min-w-0 flex-1 flex-col">
-				<span className="flex items-center gap-2 text-sm/5 font-medium text-ink">
+				<span className="flex flex-wrap items-center gap-2 text-sm/5 font-medium text-ink">
 					{format.label}
 					{format.extension && <span className="t-mono text-ink-3">{format.extension}</span>}
 					{format.id === "pdf" && (

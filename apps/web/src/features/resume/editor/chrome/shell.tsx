@@ -3,32 +3,28 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useEffect, useLayoutEffect, useRef } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
-import { AssistantOverlay, assistantPlaceFor } from "@/features/assistant/dock";
-import { useIsLandscape } from "@/features/resume/editor/chrome";
+import { AssistantOverlay } from "@/features/assistant/dock";
 import { useEditorStore } from "@/features/resume/editor/store";
 
 // The editor shell resumes and letters share: the layout for the screen, the one panel slot beside the page (the
 // mode's panel, or the assistant or History in its place) and the phone tab bar. Each editor brings its own bar,
 // panels, page and phone body. How another area mounts in the slot: `.agents` handoff, B/work/B/PANEL-SLOT.md.
 
-/** Desktop, tablet (the panel is a drawer, pinnable beside the page in landscape) or phone. */
+/** One panel beside the page from 640px; phones show one view at a time. */
 export function useEditorLayout() {
 	const breakpoint = useBreakpoint();
 	const layout = breakpoint === "mobile" ? "mobile" : breakpoint === "tablet" ? "tablet" : "desktop";
-	const landscape = useIsLandscape();
-	const pinnable = layout === "tablet" && landscape;
-	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
-
-	// The page never shrinks for the assistant: from 1024 up it takes the panel's place, as History does.
-	const place = assistantPlaceFor(breakpoint);
-
-	return { layout, pinnable, pinned, assistantPlace: place === "column" ? "replace" : place } as const;
+	return {
+		layout,
+		pinnable: false,
+		pinned: layout === "tablet",
+		assistantPlace: layout === "mobile" ? "screen" : "replace",
+	} as const;
 }
 
 type EditorFrameProps = {
@@ -62,7 +58,7 @@ export function EditorFrame({
 	mobile,
 	children,
 }: EditorFrameProps) {
-	const { layout, pinned, assistantPlace } = editorLayout;
+	const { layout, assistantPlace } = editorLayout;
 
 	return (
 		<div className="grid h-svh grid-rows-[var(--editor-bar)_minmax(0,1fr)] overflow-hidden bg-bg">
@@ -75,7 +71,7 @@ export function EditorFrame({
 
 			{bar}
 
-			{(layout === "desktop" || pinned) && (
+			{layout !== "mobile" && (
 				<DesktopBody
 					mode={mode}
 					panelLabel={panelLabel}
@@ -83,15 +79,12 @@ export function EditorFrame({
 					page={page}
 					assistant={assistantPlace === "replace" ? assistant : null}
 					history={history}
-					narrow={pinned}
+					narrow={layout === "tablet"}
 				/>
 			)}
-			{layout === "tablet" && !pinned && <TabletBody mode={mode} panelLabel={panelLabel} panel={panel} page={page} />}
 			{layout === "mobile" && mobile}
 
-			{(assistantPlace === "drawer" || assistantPlace === "screen") && (
-				<AssistantOverlay place={assistantPlace}>{assistant}</AssistantOverlay>
-			)}
+			{assistantPlace === "screen" && <AssistantOverlay place={assistantPlace}>{assistant}</AssistantOverlay>}
 
 			{children}
 		</div>
@@ -164,58 +157,6 @@ function DesktopBody({ mode, panelLabel, panel, page, assistant, history, narrow
 	);
 }
 
-/** The drawer and visible canvas share the available width; ResizeObserver refits the page. */
-function TabletBody({ mode, panelLabel, panel, page }: BodyProps) {
-	const drawerOpen = useEditorStore((state) => state.drawerOpen);
-	const panelRef = useRef<HTMLDivElement>(null);
-	useLayoutEffect(() => {
-		// All opening paths (including selecting page text) must refit to the narrower canvas.
-		if (drawerOpen) useEditorStore.getState().setZoom("fit");
-	}, [drawerOpen]);
-	useEffect(() => {
-		if (!drawerOpen) return;
-		const close = (event: KeyboardEvent) => {
-			if (
-				event.key !== "Escape" ||
-				event.defaultPrevented ||
-				document.querySelector('[role="dialog"][aria-modal="true"]')
-			)
-				return;
-			event.preventDefault();
-			const returnFocus = event.target instanceof Node && panelRef.current?.contains(event.target);
-			useEditorStore.setState({ drawerOpen: false });
-			if (returnFocus) document.getElementById("editor-panel-toggle")?.focus();
-		};
-		window.addEventListener("keydown", close);
-		return () => window.removeEventListener("keydown", close);
-	}, [drawerOpen]);
-
-	return (
-		<div className="relative min-h-0">
-			<main id="main-content" className={cn("h-full min-w-0", drawerOpen && "ps-[380px]")}>
-				{page}
-			</main>
-			{/* Inert with the closed drawer, so the landmark isn't reachable while its contents are. */}
-			<aside aria-label={t`Editor`} className="contents" inert={!drawerOpen}>
-				<TabsContent
-					key={mode}
-					value={mode}
-					aria-label={panelLabel}
-					ref={panelRef}
-					id="editor-panel"
-					inert={!drawerOpen}
-					className={cn(
-						"absolute inset-y-0 start-0 z-20 flex w-[380px] max-w-[calc(100%-3rem)] flex-col overflow-y-auto border-e border-line bg-bg shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
-						!drawerOpen && "-translate-x-full rtl:translate-x-full",
-					)}
-				>
-					{panel}
-				</TabsContent>
-			</aside>
-		</div>
-	);
-}
-
 type MobileTabBarProps<V extends MobileView> = {
 	tabs: { view: V; icon: IconName; label: string }[];
 	view: V;
@@ -240,8 +181,9 @@ export function MobileTabBar<V extends MobileView>({ tabs, view, onModeChange }:
 							if (tab !== "page") onModeChange(tab as Exclude<V, "page">);
 						}}
 						className={cn(
-							"relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 text-center text-xs [overflow-wrap:anywhere] transition-[color,scale] duration-quick ease-enter active:scale-[0.97]",
-							active ? "font-semibold text-ink" : "text-ink-2",
+							"relative flex min-h-16 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-center text-xs [overflow-wrap:anywhere] transition-[color,scale] duration-quick ease-enter active:scale-[0.97]",
+							tab === "page" && "ms-1 border-s border-line",
+							active ? "font-semibold text-accent-text" : "text-ink-2",
 						)}
 					>
 						{active && <MobileTabIndicator />}

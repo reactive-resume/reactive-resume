@@ -51,7 +51,11 @@ export function EditorBarFrame({
 			data-design="ebar"
 			className={cn(
 				"grid h-(--editor-bar) items-center gap-2 border-b border-line bg-bg px-3",
-				layout === "tablet" ? "grid-cols-[minmax(0,1fr)_auto_auto]" : "grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+				layout === "desktop"
+					? "grid-cols-[minmax(0,1fr)_auto_auto]"
+					: layout === "tablet"
+						? "grid-cols-[minmax(0,1fr)_auto_auto]"
+						: "grid-cols-[minmax(0,1fr)_auto] gap-0 px-1",
 			)}
 		>
 			<div className="flex min-w-0 items-center gap-2">
@@ -60,7 +64,7 @@ export function EditorBarFrame({
 				<div className="flex min-w-0 flex-col px-1">{menu}</div>
 			</div>
 
-			{layout === "mobile" ? <span /> : modes}
+			{layout !== "mobile" && modes}
 
 			<div className="flex items-center justify-end gap-1">
 				{history}
@@ -82,7 +86,7 @@ function HistoryButton({ inPanel }: { inPanel: boolean }) {
 			label={t`Version history`}
 			aria-pressed={inPanel ? open : undefined}
 			data-history-toggle=""
-			className="ms-2"
+			className="ms-2 max-xl:hidden"
 			onClick={() => {
 				const { setHistoryOpen, setSheetTab } = useEditorStore.getState();
 				if (inPanel) setHistoryOpen(!open);
@@ -179,6 +183,7 @@ export function DownloadButtons({
 				icon="download-simple"
 				label={t`Download PDF`}
 				shortcut="⌘P"
+				variant="primary"
 				disabled={disabled || busy}
 				onClick={onDownload}
 			/>

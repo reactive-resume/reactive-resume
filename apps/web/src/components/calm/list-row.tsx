@@ -89,7 +89,7 @@ export function ListRow({
 			{
 				className: cn(
 					rowGroundClassName,
-					"flex min-h-(--row) items-center gap-3.5 border-b border-line py-2.5 text-start group-data-tight/list:min-h-11 group-data-tight/list:gap-3 group-data-tight/list:py-1.5 group-data-cap/list:first:border-t last:border-b-0",
+					"flex min-h-16 items-center gap-3.5 border-b border-line py-2.5 text-start group-data-tight/list:min-h-11 group-data-tight/list:gap-3 group-data-tight/list:py-1.5 group-data-cap/list:first:border-t last:border-b-0 sm:min-h-(--row)",
 					hasGround && "hover:border-transparent hover:before:bg-hover",
 					selected && "border-transparent before:bg-accent-soft hover:before:bg-accent-soft",
 					className,
@@ -102,14 +102,24 @@ export function ListRow({
 								{title && (
 									<span
 										className={cn(
-											"truncate text-[15px]/[22px] font-medium group-data-tight/list:text-sm/5",
+											"text-[15px]/[22px] font-medium [overflow-wrap:anywhere] group-data-tight/list:text-sm/5",
 											variant === "danger" ? "text-danger-text" : variant === "dim" ? "text-ink-3" : "text-ink",
 										)}
 									>
 										{title}
 									</span>
 								)}
-								{subtitle && <span className="truncate text-[13px]/[18px] text-ink-3">{subtitle}</span>}
+								{subtitle && (
+									<span
+										title={typeof subtitle === "string" ? subtitle : undefined}
+										className={cn(
+											"text-[13px]/[18px] text-ink-3",
+											typeof subtitle === "string" ? "truncate" : "[overflow-wrap:anywhere]",
+										)}
+									>
+										{subtitle}
+									</span>
+								)}
 							</span>
 						)}
 						{children}

@@ -6,13 +6,13 @@ import { cn } from "@reactive-resume/utils/style";
 
 /**
  * Calm section rail (`.rail`): the navigation inside one page, 200px wide, for five to eight sibling sections. Under
- * 1024 it turns into a row that scrolls sideways. Give it an `aria-label`. Only destinations go in it.
+ * 640 it becomes wrapping page links. Give it an `aria-label`. Only destinations go in it.
  */
 export function SectionRail({ className, ...props }: ComponentProps<"nav">) {
 	return (
 		<nav
 			data-design="rail"
-			className={cn("flex shrink-0 gap-1 max-lg:overflow-x-auto lg:w-[200px] lg:flex-col", className)}
+			className={cn("flex min-w-0 shrink-0 flex-wrap gap-1 sm:w-[200px] sm:flex-col sm:flex-nowrap", className)}
 			{...props}
 		/>
 	);
@@ -24,7 +24,7 @@ function RailAnchor({ icon, className, children, ...props }: RailAnchorProps) {
 	return (
 		<a
 			className={cn(
-				"flex h-10 shrink-0 items-center gap-3 rounded-md px-2.5 text-sm font-medium whitespace-nowrap text-ink-2 transition-colors hover:bg-hover hover:text-ink aria-[current=page]:bg-hover aria-[current=page]:font-semibold aria-[current=page]:text-ink",
+				"touch-target relative flex min-h-10 min-w-0 items-center gap-3 rounded-md px-2.5 text-sm font-medium [overflow-wrap:anywhere] text-ink-2 transition-colors hover:bg-hover hover:text-ink aria-[current=page]:bg-hover aria-[current=page]:font-semibold aria-[current=page]:text-ink",
 				className,
 			)}
 			{...props}

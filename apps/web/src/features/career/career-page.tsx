@@ -7,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { coachStarters } from "@reactive-resume/schema/career-starters";
+import { Button } from "@reactive-resume/ui/components/button";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import {
 	Composer,
@@ -40,6 +42,21 @@ type ScheduleUrl = { schedule: string | undefined; onScheduleChange: (schedule: 
 /** C1: Career is one page. The coach leads as an invitation; Knowledge, Offers and Schedules are rows to their pages. */
 export function CareerPage({ schedule, onScheduleChange }: ScheduleUrl) {
 	const schedules = useSchedules();
+	const profile = useQuery(orpc.career.profile.queryOptions());
+	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: null, all: true } }));
+	const stories = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: null } }));
+	const empty =
+		profile.isSuccess &&
+		facts.isSuccess &&
+		stories.isSuccess &&
+		facts.data.every((fact) => fact.status === "forgotten") &&
+		stories.data.length === 0 &&
+		profile.data.targetRoles.length === 0 &&
+		profile.data.locations.length === 0 &&
+		!profile.data.priorities &&
+		profile.data.minBase.amount === null &&
+		profile.data.maxOfficeDays === null;
+
 	const providers = useHasUsableAiProvider();
 	const noAi = !providers.isLoading && !providers.isUnavailable && !providers.hasUsableProvider;
 	const [setupOpen, setSetupOpen] = useState(false);
@@ -53,10 +70,48 @@ export function CareerPage({ schedule, onScheduleChange }: ScheduleUrl) {
 						<Trans>Knowledge, Offers and Schedules work without it.</Trans>
 					</SetUpAiLine>
 				)}
-				<Columns className="mt-5" aside={<CareerAside schedules={schedules} onScheduleChange={onScheduleChange} />}>
-					{!noAi && <CoachInvitation />}
-					<RecentConversations first={noAi} />
-				</Columns>
+				{empty ? (
+					<EmptyState
+						className="mt-5"
+						title={<Trans>Say what you are looking for</Trans>}
+						description={
+							<Trans>
+								Add your preferences and a few facts about your work. The coach, Fit and interview prep use them, and
+								new roles are matched against them.
+							</Trans>
+						}
+						action={
+							<Button nativeButton={false} render={<Link to="/dashboard/career/knowledge/preferences" />}>
+								<Trans>Set your preferences</Trans>
+							</Button>
+						}
+						secondary={
+							<>
+								<Button
+									variant="secondary"
+									nativeButton={false}
+									render={<Link to="/dashboard/career/knowledge/facts" />}
+								>
+									<Trans>Add facts</Trans>
+								</Button>
+								<Button
+									variant="ghost"
+									nativeButton={false}
+									render={
+										<Link to="/dashboard/career/coach/{-$conversationId}" params={{ conversationId: undefined }} />
+									}
+								>
+									<Trans>Ask the coach</Trans>
+								</Button>
+							</>
+						}
+					/>
+				) : (
+					<Columns className="mt-5" aside={<CareerAside schedules={schedules} onScheduleChange={onScheduleChange} />}>
+						{!noAi && <CoachInvitation />}
+						<RecentConversations first={noAi} />
+					</Columns>
+				)}
 			</PageBody>
 			<ScheduleSheetFor schedule={schedule} onScheduleChange={onScheduleChange} onDelete={schedules.remove} />
 			<SetUpAiDialog open={setupOpen} onOpenChange={setSetupOpen} />

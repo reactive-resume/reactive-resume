@@ -132,7 +132,7 @@ export function SaveStatus() {
 							href={sessionSignInURL()}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
+							className="touch-target relative rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
 						>
 							<Trans>Sign in to save</Trans>
 						</a>
@@ -141,7 +141,7 @@ export function SaveStatus() {
 							type="button"
 							onClick={retrySave}
 							aria-label={t`Retry saving`}
-							className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
+							className="touch-target relative rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
 						>
 							<Trans>Retry</Trans>
 						</button>
@@ -167,7 +167,7 @@ export function SaveStatus() {
 						type="button"
 						disabled={reloading}
 						onClick={() => void reload()}
-						className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80 disabled:opacity-50"
+						className="touch-target relative rounded-sm font-semibold underline underline-offset-2 hover:opacity-80 disabled:opacity-50"
 					>
 						<Trans>Reload</Trans>
 					</button>

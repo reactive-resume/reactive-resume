@@ -18,7 +18,7 @@ export function Crumb({ className, ...props }: ComponentProps<"nav">) {
 	);
 }
 
-const itemClassName = "rounded-xs transition-colors hover:text-ink";
+const itemClassName = "touch-target relative rounded-xs transition-colors hover:text-ink";
 
 function CrumbAnchor({ className, ...props }: ComponentProps<"a">) {
 	return (

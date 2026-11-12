@@ -25,6 +25,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tabs, TabsCount, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
@@ -143,7 +144,8 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		const timeout = setTimeout(() => setIntro(false), INTRO_MS);
 		return () => clearTimeout(timeout);
 	}, [isPending]);
-	const view = search.view ?? readStoredView();
+	const phone = useBreakpoint() === "mobile";
+	const view = search.view ?? readStoredView() ?? (phone ? "list" : "grid");
 	const setView = (next: "grid" | "list") => {
 		setViewSwitched(true);
 		storeView(next);
@@ -327,9 +329,16 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 										<Trans>Import</Trans>
 									</Button>
 									{/* The page's one accent button. New document's dialog returns focus here. */}
-									<Button data-document-new-trigger onClick={() => openDialog("document.new", undefined)}>
+									<Button
+										aria-label={t`New document`}
+										className={cn("max-sm:size-11 max-sm:p-0", rowsCurrent && shown.length === 0 && "hidden")}
+										data-document-new-trigger
+										onClick={() => openDialog("document.new", undefined)}
+									>
 										<Icon name="plus" />
-										<Trans>New document</Trans>
+										<span className="max-sm:hidden">
+											<Trans>New document</Trans>
+										</span>
 									</Button>
 								</>
 							)}
@@ -498,24 +507,24 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 					) : emptyType ? (
 						<TypeEmpty type={emptyType} />
 					) : (
-						<div className="grid justify-items-center gap-2 py-16 text-center">
-							<Icon name="funnel" size={28} className="text-ink-3" />
-							<p className="t-section-title">
-								{search.q.trim() ? (
+						<EmptyState
+							className="mt-5"
+							title={
+								search.q.trim() ? (
 									<Trans>Nothing matches “{search.q.trim()}”</Trans>
 								) : (
 									<Trans>Nothing matches these filters</Trans>
-								)}
-							</p>
-							<p className="text-sm text-ink-2">
-								<Trans>The filter covers titles, tags and linked applications.</Trans>
-							</p>
-							{filtered && (
-								<Button variant="secondary" className="mt-2" onClick={clearFilters}>
-									<Trans>Clear search and filters</Trans>
-								</Button>
-							)}
-						</div>
+								)
+							}
+							description={<Trans>The filter covers titles, tags and linked applications.</Trans>}
+							action={
+								filtered ? (
+									<Button variant="secondary" onClick={clearFilters}>
+										<Trans>Clear search and filters</Trans>
+									</Button>
+								) : undefined
+							}
+						/>
 					)
 				) : view === "list" ? (
 					<DataTable
@@ -523,11 +532,11 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 						aria-label={t`Documents`}
 						columns="var(--cols)"
 						className={cn(
-							"mt-3 [--cols:36px_minmax(0,1fr)_96px_28px] sm:[--cols:36px_minmax(0,1.7fr)_104px_minmax(0,1fr)_132px_28px]",
+							"mt-3 [--cols:minmax(0,1fr)_44px] sm:[--cols:36px_minmax(0,1.7fr)_104px_minmax(0,1fr)_132px_28px]",
 							viewEnter,
 						)}
 					>
-						<DataTableHead>
+						<DataTableHead className="max-sm:hidden">
 							<DataTableRow variant="header">
 								<DataTableHeaderCell className="justify-center">
 									<Checkbox
@@ -627,11 +636,12 @@ const INTRO_MS = 400;
 const GRID_CLASS = "mt-5 grid grid-cols-2 gap-x-4 sm:grid-cols-3 sm:gap-x-6 xl:grid-cols-4";
 
 // The last view picked on this device; storage can be unavailable, and then it's the grid.
-function readStoredView(): "grid" | "list" {
+function readStoredView(): "grid" | "list" | null {
 	try {
-		return window.localStorage.getItem(VIEW_KEY) === "list" ? "list" : "grid";
+		const stored = window.localStorage.getItem(VIEW_KEY);
+		return stored === "list" || stored === "grid" ? stored : null;
 	} catch {
-		return "grid";
+		return null;
 	}
 }
 
@@ -669,20 +679,20 @@ function FirstRun({ onFile, trashCount }: FirstRunProps) {
 				}}
 			/>
 			<EmptyState
-				title={<Trans>Let's start with what you have</Trans>}
+				title={<Trans>Your resumes and cover letters live here</Trans>}
 				description={
 					// Touch can't drop files, so it reads "Choose" there.
 					<>
 						<span className="pointer-coarse:hidden">
 							<Trans>
-								Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a
-								PDF, Word or JSON file anywhere here.
+								Import the resume you have and every section is laid out for you to refine, or start from a blank page.
+								Drop a PDF, Word or JSON file anywhere here.
 							</Trans>
 						</span>
 						<span className="hidden pointer-coarse:inline">
 							<Trans>
-								Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a
-								PDF, Word or JSON file.
+								Import the resume you have and every section is laid out for you to refine, or start from a blank page.
+								Choose a PDF, Word or JSON file.
 							</Trans>
 						</span>
 					</>
@@ -758,7 +768,7 @@ function TypeEmpty({ type }: { type: "resume" | "letter" }) {
 			title={<Trans>No cover letters yet</Trans>}
 			description={<Trans>Write one for a job, or start from your latest resume.</Trans>}
 			action={
-				<Button variant="secondary" disabled={creating} onClick={() => void newLetter()}>
+				<Button disabled={creating} onClick={() => void newLetter()}>
 					<Icon name="envelope-simple" />
 					<Trans>New cover letter</Trans>
 				</Button>
@@ -770,7 +780,7 @@ function TypeEmpty({ type }: { type: "resume" | "letter" }) {
 			title={<Trans>No resumes yet</Trans>}
 			description={<Trans>Import the one you have, or start blank.</Trans>}
 			action={
-				<Button variant="secondary" onClick={() => openDialog("document.new", undefined)}>
+				<Button onClick={() => openDialog("document.new", undefined)}>
 					<Icon name="plus" />
 					<Trans>New resume</Trans>
 				</Button>
@@ -854,7 +864,7 @@ function DocumentsSelectionBar({ selection, total, onSelectAll, onClear, onTags 
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					{/* Says what it reaches before it runs, instead of reporting skipped letters afterwards. */}
-					<p className="px-2.5 pt-1.5 pb-2 text-ink-3 t-small">
+					<p className="px-2.5 pt-1.5 pb-2 t-small text-ink-3">
 						{resumes === selection.length ? (
 							<Plural
 								value={resumes}
@@ -899,11 +909,11 @@ function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
 	if (view === "list") {
 		return (
 			<div className="mt-3 grid" aria-busy="true">
-				<div className="h-8 border-b border-line" />
+				<div className="h-8 border-b border-line max-sm:hidden" />
 				{Array.from({ length: 5 }, (_, index) => (
-					<div key={index} className="flex h-[61px] items-center gap-3.5 border-b border-line ps-[52px]">
+					<div key={index} className="flex h-16 items-center gap-3.5 border-b border-line sm:h-[61px] sm:ps-[52px]">
 						<Skeleton className="h-11 w-8 rounded-paper" />
-						<Skeleton className="h-4 w-56" />
+						<Skeleton className="h-4 w-56 max-w-[60%]" />
 					</div>
 				))}
 			</div>

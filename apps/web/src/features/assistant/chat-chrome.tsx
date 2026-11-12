@@ -82,11 +82,7 @@ export function ChatComposer(props: ChatComposerProps) {
 			data-design="composer"
 			className="grid rounded-xl border border-control-border bg-raised transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft"
 		>
-			{props.chips && (
-				<div className="flex min-w-0 flex-wrap items-center gap-1 px-3 pt-[11px] max-sm:[scrollbar-width:none] max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:*:shrink-0">
-					{props.chips}
-				</div>
-			)}
+			{props.chips && <div className="flex min-w-0 flex-wrap items-center gap-1 px-3 pt-[11px]">{props.chips}</div>}
 			<div className="flex items-end gap-1.5 pe-2 pb-2">
 				<label htmlFor={id} className="sr-only">
 					{props.label}
@@ -152,15 +148,21 @@ export function ModelMenu({ open, onOpenChange, providers, current, label, onCho
 					/>
 				}
 			>
-				<span className="truncate">{text}</span>
+				<span title={text} className="truncate">
+					{text}
+				</span>
 				<Icon name="caret-down" size={16} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-64">
 				{providers.map((item) => (
 					<DropdownMenuItem key={item.id} onClick={() => onChoose(item.id)}>
 						<span className="grid min-w-0 flex-1">
-							<span className="truncate">{item.label}</span>
-							<span className="truncate text-xs text-ink-3">{aiModelForTask(item, "capable")}</span>
+							<span title={item.label} className="truncate">
+								{item.label}
+							</span>
+							<span title={aiModelForTask(item, "capable")} className="truncate text-xs text-ink-3">
+								{aiModelForTask(item, "capable")}
+							</span>
 						</span>
 						{item.id === current?.id && <Icon name="check" size={16} />}
 					</DropdownMenuItem>

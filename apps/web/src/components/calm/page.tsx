@@ -34,8 +34,8 @@ export function RootHeader({ title, subtitle, actions, className, ...props }: Ro
 				className={cn("flex min-h-11 flex-wrap items-center justify-between gap-x-4 gap-y-2", className)}
 				{...props}
 			>
-				<h1 className="t-root-title">{title}</h1>
-				{actions && <div className="flex items-center gap-2">{actions}</div>}
+				<h1 className="min-w-0 t-root-title [overflow-wrap:anywhere]">{title}</h1>
+				{actions && <div className="flex max-w-full flex-wrap items-center gap-2 max-sm:gap-0">{actions}</div>}
 			</header>
 			{subtitle && <p className="pt-0.5 text-sm text-ink-3">{subtitle}</p>}
 		</>
@@ -74,8 +74,8 @@ type ColumnsProps = ComponentProps<"div"> & {
 export function Columns({ aside, children, className, ...props }: ColumnsProps) {
 	return (
 		<div className={cn("grid items-start gap-12 xl:grid-cols-[minmax(0,1fr)_360px]", className)} {...props}>
-			<div>{children}</div>
-			<aside>{aside}</aside>
+			<div className="min-w-0">{children}</div>
+			<aside className="min-w-0">{aside}</aside>
 		</div>
 	);
 }

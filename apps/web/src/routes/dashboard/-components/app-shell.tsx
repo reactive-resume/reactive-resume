@@ -162,7 +162,7 @@ export function AppShell({ children }: AppShellProps) {
 				breakpoint === "mobile"
 					? tabs
 						? // The bar's height, for anything a page pins above it.
-							"grid-rows-[minmax(0,1fr)_auto] [--app-tabbar:calc(65px+env(safe-area-inset-bottom))]"
+							"grid-rows-[minmax(0,1fr)_auto] [--app-tabbar:calc(64px+env(safe-area-inset-bottom))]"
 						: ""
 					: breakpoint === "tablet"
 						? "grid-cols-[64px_minmax(0,1fr)]"
@@ -195,9 +195,9 @@ export function AppShell({ children }: AppShellProps) {
 const count = "ms-auto font-mono text-xs font-medium";
 const badge =
 	"h-[18px] min-w-[18px] rounded-full bg-warn px-[5px] text-center font-mono text-[11px] leading-[18px] font-semibold text-warn-ink";
-// The label is the row's own text, so a long one is clipped rather than wrapped.
+// Labels may wrap in longer locales; counts keep their own space.
 const row =
-	"flex h-10 items-center gap-3 overflow-hidden rounded-md px-2.5 text-start text-sm font-medium whitespace-nowrap transition-[background-color,color,scale] duration-quick ease-enter active:scale-[0.97]";
+	"flex min-h-10 items-center gap-3 rounded-md px-2.5 text-start text-sm font-medium transition-[background-color,color,scale] duration-quick ease-enter active:scale-[0.97]";
 const idle = "text-ink-2 hover:bg-hover hover:text-ink";
 
 function Sidebar() {
@@ -225,7 +225,7 @@ function Sidebar() {
 				data-design="srch"
 				aria-keyshortcuts={ariaShortcut("⌘K")}
 				onClick={() => openPalette(true)}
-				className="mb-3 flex h-9 items-center gap-2 overflow-hidden rounded-md bg-sunken ps-2.5 pe-2 text-start text-sm whitespace-nowrap text-ink-3 transition-colors duration-quick hover:text-ink-2"
+				className="mb-3 flex h-9 items-center gap-2 overflow-hidden rounded-md bg-sunken ps-2.5 pe-2 text-start text-sm text-ink-3 transition-colors duration-quick hover:text-ink-2"
 			>
 				<Icon name="magnifying-glass" size={18} />
 				<Trans>Search or jump to…</Trans>
@@ -414,7 +414,7 @@ function MobileTabs() {
 	return (
 		<nav
 			aria-label={t`Main`}
-			className="sticky bottom-0 z-30 grid grid-cols-4 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] [view-transition-name:app-nav]"
+			className="sticky bottom-0 z-30 grid min-h-16 grid-cols-4 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] [view-transition-name:app-nav]"
 		>
 			{items.map(({ to, icon, label, badge: waiting }) => {
 				const current = isCurrent(to);
@@ -425,7 +425,7 @@ function MobileTabs() {
 						aria-current={current ? "page" : undefined}
 						viewTransition={false}
 						className={cn(
-							"relative flex min-h-16 min-w-0 flex-col items-center justify-center gap-0.5 text-center text-xs [overflow-wrap:anywhere] transition-[scale] duration-quick ease-enter active:scale-[0.97]",
+							"relative flex min-h-[63px] min-w-0 flex-col items-center justify-center gap-0.5 text-center text-xs [overflow-wrap:anywhere] transition-[scale] duration-quick ease-enter active:scale-[0.97]",
 							current ? "font-semibold text-accent-text" : "font-medium text-ink-2",
 						)}
 					>

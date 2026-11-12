@@ -151,7 +151,7 @@ export function LetterPage() {
 									</CanvasStatusPill>
 								) : (
 									// Laid over the canvas's width, like the resume's page label.
-									<span className="absolute top-0 left-1/2 w-[100cqw] -translate-x-1/2 whitespace-nowrap">
+									<span className="absolute start-1/2 top-0 w-[100cqw] -translate-x-1/2 whitespace-nowrap rtl:translate-x-1/2">
 										{letter.isLocked ? (
 											<Trans>
 												Page 1 of {ph({ pages: i18n.number(Math.max(1, rendered.pageCount)) })} · {formatLabel} ·
@@ -206,7 +206,7 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 
 	const reveal = (target: "from" | "body") => {
 		if (mode !== "write") setMode("write");
-		useEditorStore.setState({ mobileView: "write", drawerOpen: true });
+		useEditorStore.setState({ mobileView: "write", panelHidden: false });
 		window.setTimeout(() => {
 			if (target === "body") {
 				const editor = document.getElementById("letter-body-editor");
@@ -229,8 +229,8 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 					className={cn(
 						"absolute cursor-pointer rounded-lg outline-[1.5px] transition-[background-color,outline-color] duration-standard outline-solid",
 						washed && node.kind === "item"
-							? "bg-[oklch(0.93_0.05_150/0.55)] mix-blend-multiply outline-[oklch(0.5_0.1_150)]"
-							: "outline-transparent hover:bg-[oklch(0.5_0.1_150/0.06)]",
+							? "bg-accent-soft/55 mix-blend-multiply outline-accent"
+							: "outline-transparent hover:bg-accent/6",
 					)}
 					style={{
 						left: `calc(${(node.x / page.width) * 100}% - 4px)`,

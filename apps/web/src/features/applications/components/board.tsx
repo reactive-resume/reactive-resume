@@ -120,7 +120,7 @@ export function ApplicationBoard({ applications, showClosed, onSaveJob }: BoardP
 			onDragStart={onDragStart}
 			onDragEnd={onDragEnd}
 		>
-			<div className="mt-3 flex items-stretch gap-3 overflow-x-auto">
+			<div className="mt-3 grid grid-cols-[repeat(auto-fit,minmax(min(100%,176px),1fr))] items-stretch gap-3">
 				{columns.map((lane) => (
 					<Column
 						key={lane.id}
@@ -196,13 +196,13 @@ function Column({ lane, applications, onSaveJob }: ColumnProps) {
 			aria-label={`${label}, ${i18n.number(applications.length)}`}
 			// Five open lanes share the page's width; more lanes, or a narrower window, scroll sideways.
 			className={cn(
-				"flex min-h-24 min-w-44 flex-1 basis-0 flex-col gap-2 rounded-lg bg-sunken p-2 dark:shadow-[inset_0_0_0_1px_var(--line)]",
+				"flex min-h-24 min-w-0 flex-col gap-2 rounded-lg bg-sunken p-2 dark:shadow-[inset_0_0_0_1px_var(--line)]",
 				active && "pb-10",
 			)}
 		>
 			<h2
 				title={label}
-				className="flex min-w-0 items-center gap-2 overflow-hidden px-1.5 pt-1.5 pb-0.5 text-sm font-semibold whitespace-nowrap"
+				className="flex min-w-0 flex-wrap items-center gap-2 px-1.5 pt-1.5 pb-0.5 text-sm font-semibold"
 			>
 				<StageDot status={lane.category} color={laneDotColor(lane)}>
 					{null}

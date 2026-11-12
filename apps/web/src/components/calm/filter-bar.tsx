@@ -102,7 +102,7 @@ export function Chip({
 					variant === "outline" && "shadow-[inset_0_0_0_1px_var(--line-2)]",
 					variant === "dash" && "border border-dashed border-line-2 px-[9px] text-ink-3",
 					variant === "ctx" && "h-[26px] bg-sunken ps-2 pe-1.5 text-xs",
-					!isStatic && "hover:text-ink",
+					!isStatic && "touch-target relative hover:text-ink",
 					pressed && "bg-accent-soft text-accent-text shadow-none hover:text-accent-text",
 					className,
 				),

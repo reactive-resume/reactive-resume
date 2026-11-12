@@ -5,14 +5,13 @@ import { useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams, useSearch } from "@tanstack/react-router";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
-import { cn } from "@reactive-resume/utils/style";
 import { clampZoom, FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
 import { anchoredScroll, wheelZoom, type ZoomAnchor } from "./zoom-wheel";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -21,22 +20,6 @@ import { usePreviewPausedStore, useResumeStore } from "@/features/resume/builder
 
 // The editor chrome resumes and letters share: the back link and drawer controls in the bar, the canvas width
 // and the zoom bar.
-
-const LANDSCAPE_QUERY = "(orientation: landscape)";
-
-function subscribeToOrientation(onChange: () => void) {
-	const list = window.matchMedia(LANDSCAPE_QUERY);
-	list.addEventListener("change", onChange);
-	return () => list.removeEventListener("change", onChange);
-}
-
-/** Tablets in landscape can pin the panel beside the page. */
-export const useIsLandscape = () =>
-	useSyncExternalStore(
-		subscribeToOrientation,
-		() => window.matchMedia(LANDSCAPE_QUERY).matches,
-		() => false,
-	);
 
 // Page widths in PDF points; 1pt renders as 1 CSS px at 100%.
 const PAGE_WIDTH = { a4: 595.28, letter: 612, "free-form": 595.28 } as const;
@@ -258,6 +241,7 @@ export function DocumentMenuTrigger({ name, isLocked: _isLocked, ...props }: Doc
 			dir="auto"
 			{...props}
 			aria-label={t`Document menu: ${name}`}
+			title={name}
 			className="touch-target relative isolate flex max-w-full min-w-0 items-center gap-1 truncate text-start text-[15px]/5 font-semibold text-ink before:absolute before:-inset-x-1.5 before:-inset-y-0.5 before:-z-10 before:rounded-sm before:transition-colors before:duration-quick hover:before:bg-hover aria-expanded:before:bg-hover"
 		>
 			{name}
@@ -313,37 +297,19 @@ export function BackLink() {
 	);
 }
 
-/** Tablet: show or hide the panel drawer and, in landscape, pin it beside the page. */
-export function DrawerControls({ pinnable }: { pinnable: boolean }) {
-	const open = useEditorStore((state) => state.drawerOpen);
-	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
-
+/** Tablet: hide the panel to give the page the whole canvas. */
+export function DrawerControls({ pinnable: _pinnable }: { pinnable: boolean }) {
+	const hidden = useEditorStore((state) => state.panelHidden);
 	return (
-		<>
-			{!pinned && (
-				<IconButton
-					icon={open ? "sidebar-simple" : "sidebar-simple"}
-					id="editor-panel-toggle"
-					aria-controls="editor-panel"
-					label={open ? t`Hide panel` : t`Show panel`}
-					aria-expanded={open}
-					className="text-ink-2"
-					onClick={() => useEditorStore.setState({ drawerOpen: !open })}
-				/>
-			)}
-			{pinnable && (open || pinned) && (
-				<IconButton
-					icon="square-split-horizontal"
-					label={t`Keep the panel beside the page`}
-					aria-pressed={pinned}
-					className={cn("text-ink-2", pinned && "bg-accent-soft text-accent-text")}
-					onClick={() => {
-						// Unpinning leaves the drawer open over the page.
-						useEditorStore.setState({ drawerPinned: !pinned, drawerOpen: true });
-					}}
-				/>
-			)}
-		</>
+		<IconButton
+			icon="sidebar-simple"
+			id="editor-panel-toggle"
+			aria-controls="editor-panel"
+			label={hidden ? t`Show panel` : t`Hide panel`}
+			aria-expanded={!hidden}
+			className="text-ink-2"
+			onClick={() => useEditorStore.setState({ panelHidden: !hidden })}
+		/>
 	);
 }
 

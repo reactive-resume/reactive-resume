@@ -85,11 +85,18 @@ export function ResumePreviewLoader({
 							}
 							style={pageSize}
 							className={cn(
-								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-white text-ink-3",
+								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-paper text-ink-3",
 								pageClassName,
 							)}
 						>
-							{failure ? pageNumber === 1 && failure : <Spinner className="size-10" />}
+							{failure ? (
+								pageNumber === 1 && failure
+							) : (
+								<span className="flex items-center gap-2 text-xs">
+									<Spinner decorative />
+									<Trans>Loading page…</Trans>
+								</span>
+							)}
 						</div>
 					</figure>
 				);

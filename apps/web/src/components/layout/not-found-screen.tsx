@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/react/macro";
 import { Link, useRouteContext } from "@tanstack/react-router";
-import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -17,23 +16,22 @@ export function NotFoundScreen({ inLayout = false }: NotFoundScreenProps) {
 	const signedIn = !!session?.user;
 
 	return (
-		<div className={cn("mx-auto flex max-w-md flex-col items-center justify-center gap-y-4", !inLayout && "h-svh")}>
+		<div
+			className={cn("mx-auto flex max-w-md flex-col items-center justify-center gap-y-4 px-4", !inLayout && "h-svh")}
+		>
 			{!inLayout && <BrandIcon variant="logo" className="size-12" />}
 
-			<Alert>
-				<Icon name="warning" size={16} />
-				<AlertTitle>
-					<Trans>Page not found</Trans>
-				</AlertTitle>
-				<AlertDescription>
-					<Trans>The page you're looking for may have been moved or no longer exists.</Trans>
-				</AlertDescription>
-			</Alert>
+			<h1 className="text-center t-page-title">
+				<Trans>Page not found</Trans>
+			</h1>
+			<p className="text-center text-ink-2">
+				<Trans>The page you're looking for may have been moved or no longer exists.</Trans>
+			</p>
 
-			<div className="flex items-center gap-x-2">
+			<div className="flex flex-wrap items-center justify-center gap-2">
 				{signedIn && (
 					<Link to="/dashboard" className={buttonVariants()}>
-						<Trans>Go to dashboard</Trans>
+						<Trans>Go to Today</Trans>
 						<Icon name="arrow-right" size={16} className="rtl:-scale-x-100" />
 					</Link>
 				)}

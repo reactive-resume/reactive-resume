@@ -3,6 +3,7 @@ import type { Breakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import type { Variants } from "motion/react";
 import type { ReactNode } from "react";
 import { useDirection } from "@base-ui/react/direction-provider";
+import { Trans } from "@lingui/react/macro";
 import { AnimatePresence, m } from "motion/react";
 import { lazy, Suspense } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
@@ -181,7 +182,10 @@ function Panel({ document }: { document: AssistantDocument }) {
 			fallback={
 				// Hidden for the first 150ms, so a quick load never flashes a spinner.
 				<div className="grid h-full flex-1 place-items-center transition-opacity delay-150 duration-standard ease-enter starting:opacity-0">
-					<Spinner />
+					<span className="flex items-center gap-2 t-small text-ink-3">
+						<Spinner decorative />
+						<Trans>Loading assistant…</Trans>
+					</span>
 				</div>
 			}
 		>

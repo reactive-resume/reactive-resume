@@ -36,7 +36,7 @@ export function EditorPending() {
 				mobile={
 					<div className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto]">
 						<PanelPlaceholder />
-						<div className="min-h-[52px] border-t border-line bg-bg pb-[env(safe-area-inset-bottom)]" />
+						<div className="min-h-16 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)]" />
 					</div>
 				}
 			>

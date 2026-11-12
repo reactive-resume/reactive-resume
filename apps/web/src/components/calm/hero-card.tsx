@@ -18,16 +18,18 @@ export function HeroCard({ kicker, title, actions, wide = false, className, chil
 		<section
 			data-design="hero"
 			className={cn(
-				"flex flex-col gap-2 rounded-xl border border-line bg-surface p-6 shadow-e1",
+				"flex flex-col gap-2 rounded-xl border border-line bg-surface p-5 shadow-e1 sm:p-6",
 				wide && "sm:flex-row sm:items-center sm:gap-6",
 				className,
 			)}
 			{...props}
 		>
 			<div className={cn("flex min-w-0 flex-col gap-2", wide && "flex-1")}>
-				{kicker && <p className="flex items-center gap-2 text-[13px]/[18px] font-medium text-ink-3">{kicker}</p>}
+				{kicker && (
+					<p className="flex flex-wrap items-center gap-2 text-[13px]/[18px] font-medium text-ink-3">{kicker}</p>
+				)}
 				<h2 className="t-heading">{title}</h2>
-				{children && <p className="max-w-[60ch] text-ink-2 t-body">{children}</p>}
+				{children && <p className="max-w-[60ch] t-body text-ink-2">{children}</p>}
 			</div>
 			{actions && (
 				<div className={cn("flex flex-wrap items-center gap-2", wide ? "max-sm:mt-3" : "mt-3")}>{actions}</div>

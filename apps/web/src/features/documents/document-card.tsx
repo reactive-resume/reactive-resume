@@ -89,6 +89,7 @@ function OpenLink({
 	const common = {
 		"aria-label": label,
 		"aria-describedby": describedBy,
+		title: document.name,
 		"data-design": paper ? "paper" : undefined,
 		className,
 		onClick,
@@ -321,7 +322,7 @@ export function DocumentCard({
 								onCheckedChange={onSelectedChange}
 								aria-label={t`Select ${document.name}`}
 								className={cn(
-									"not-data-checked:border-[#888680] not-data-checked:bg-paper",
+									"not-data-checked:border-control-border not-data-checked:bg-raised",
 									// Touch has no hover: there the box appears once a long press starts selecting.
 									!selecting && cn(revealOnCardClassName, "pointer-coarse:hidden"),
 								)}
@@ -336,7 +337,7 @@ export function DocumentCard({
 											icon="dots-three"
 											size="icon-sm"
 											label={t`Options for ${document.name}`}
-											className="bg-paper text-[#44423d] shadow-[inset_0_0_0_1px_#c9c6be] hover:bg-paper hover:text-[#1f1e1b]"
+											className="bg-raised text-ink-2 shadow-[inset_0_0_0_1px_var(--line-2)] hover:bg-sunken hover:text-ink"
 										/>
 									}
 								/>
@@ -352,11 +353,11 @@ export function DocumentCard({
 					</div>
 				) : (
 					// Right under the page's h1: an h2, so heading levels don't skip. Two lines, so a long name reads in full.
-					<h2 dir="auto" className="mt-3 line-clamp-2 [overflow-wrap:anywhere] t-row-title">
+					<h2 dir="auto" className="mt-3 line-clamp-2 t-row-title [overflow-wrap:anywhere]">
 						{document.name}
 					</h2>
 				)}
-				<span className="mt-0.5 truncate text-ink-3 t-small">{meta}</span>
+				<span className="mt-0.5 truncate t-small text-ink-3">{meta}</span>
 				<span className="mt-2 flex min-h-5 min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5">
 					<DocumentStatusBadge document={document} />
 					<DocumentNotes document={document} isNew={isNew} showFor />
@@ -409,12 +410,16 @@ export function DocumentRow({
 						data-document-key={documentKey(document)}
 						aria-disabled={disabled}
 						style={introIndex === undefined ? undefined : stagger(introIndex)}
-						className={cn(introIndex !== undefined && ENTER_CLASS)}
+						className={cn(
+							"max-sm:min-h-16",
+							selecting && "max-sm:[--cols:36px_minmax(0,1fr)_44px]",
+							introIndex !== undefined && ENTER_CLASS,
+						)}
 					/>
 				}
 			>
 				{onSelectedChange && (
-					<DataTableCell className="justify-center">
+					<DataTableCell className={cn("justify-center", !selecting && "max-sm:hidden")}>
 						<Checkbox
 							disabled={disabled}
 							checked={selected}
@@ -442,11 +447,14 @@ export function DocumentRow({
 								disabled={disabled}
 								dir="auto"
 								onSelect={selecting && onSelectedChange ? () => onSelectedChange(!selected) : undefined}
-								className={cn("max-w-full min-w-0 truncate t-row-title", rowLinkClassName)}
+								className={cn("line-clamp-2 max-w-full min-w-0 t-row-title sm:truncate", rowLinkClassName)}
 							>
 								{document.name}
 							</OpenLink>
 						)}
+						<span className="t-small text-ink-3 sm:hidden">
+							{document.type === "resume" ? t`Resume` : t`Cover letter`} · {edited}
+						</span>
 						<span className="flex shrink-0 items-center gap-2.5">
 							<DocumentStatusBadge document={document} />
 							<DocumentNotes document={document} isNew={isNew} showFor={false} />
@@ -464,16 +472,16 @@ export function DocumentRow({
 									{document.application.company}
 								</span>
 							</StageDot>
-							<span className="shrink-0 text-ink-3 t-small">· {getStageLabel(document.application.status)}</span>
+							<span className="shrink-0 t-small text-ink-3">· {getStageLabel(document.application.status)}</span>
 						</>
 					) : (
-						<span className="text-ink-3 t-small">
+						<span className="t-small text-ink-3">
 							<Trans>Not linked</Trans>
 						</span>
 					)}
 				</DataTableCell>
-				<DataTableCell>
-					<span className="whitespace-nowrap text-ink-3 t-small">
+				<DataTableCell className="max-sm:hidden">
+					<span className="t-small whitespace-nowrap text-ink-3">
 						{edited.charAt(0).toLocaleUpperCase(i18n.locale) + edited.slice(1)}
 					</span>
 				</DataTableCell>

@@ -64,6 +64,33 @@ afterEach(() => {
 });
 
 describe("saving", () => {
+	it.each([true, false])("only promises offline device recovery when storage succeeds (%s)", async (writable) => {
+		const entries = new Map<string, string>();
+		vi.stubGlobal("window", {
+			localStorage: {
+				getItem: (key: string) => entries.get(key) ?? null,
+				setItem: (key: string, value: string) => {
+					if (!writable) throw new Error("Storage blocked");
+					entries.set(key, value);
+				},
+				removeItem: (key: string) => entries.delete(key),
+			},
+		});
+		vi.stubGlobal("navigator", { onLine: false });
+		store().edit({ content: "<p>Offline edit</p>" });
+		expect(await store().flush()).toBe(false);
+		expect(store().status).toBe(writable ? "offline" : "error");
+		expect(store().pending).toEqual({ content: "<p>Offline edit</p>" });
+		expect(mocks.update).not.toHaveBeenCalled();
+		if (writable)
+			expect([...entries.values()].some((raw) => JSON.parse(raw).pending.content === "<p>Offline edit</p>")).toBe(true);
+		vi.stubGlobal("navigator", { onLine: true });
+		mocks.update.mockResolvedValue({ ...letter, content: "<p>Offline edit</p>", revision: 2 });
+		expect(await store().flush()).toBe(true);
+		expect(store().status).toBe("saved");
+		expect(store().pending).toEqual({});
+	});
+
 	it.each(["success", "failure"])("pauses sender edits throughout a relink request on %s", async (result) => {
 		store().load({ ...letter, senderLinked: false });
 		const request = deferred<CoverLetter>();

@@ -394,6 +394,7 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 							<ListRow
 								key={item.key}
 								role="listitem"
+								className="max-sm:grid max-sm:grid-cols-[auto_minmax(0,1fr)_auto] max-sm:gap-y-1 max-sm:[&>span:nth-child(2)]:col-span-2 max-sm:[&>span:nth-child(3)]:col-start-2"
 								data-document-key={item.kind === "document" ? item.key : undefined}
 								interactive
 								selected={selected.has(item.key)}
@@ -445,7 +446,7 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 												? t`Moved today`
 												: t`Moved ${i18n.date(item.trashedAt, { day: "numeric", month: "short" })}`}
 										</span>
-										<span className="ms-2 w-[168px] max-lg:w-24 max-sm:w-auto">
+										<span className="ms-2 w-[168px] max-lg:w-24 max-sm:ms-0 max-sm:w-auto">
 											{item.daysLeft === 0
 												? t`Deleted today`
 												: plural(item.daysLeft, { one: "# day left", other: "# days left" })}
@@ -465,7 +466,7 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 														size="icon-sm"
 														label={t`More for ${item.name}`}
 														className={cn(
-															"ms-5 text-ink-2 aria-expanded:opacity-100",
+															"ms-5 text-ink-2 aria-expanded:opacity-100 max-sm:ms-1",
 															revealOnRowClassName,
 															selecting && "invisible",
 														)}

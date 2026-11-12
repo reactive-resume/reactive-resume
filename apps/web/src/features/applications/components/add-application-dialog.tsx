@@ -145,14 +145,22 @@ export function AddApplicationDialog({ open, onOpenChange, onAdded, initialCaptu
 	// A new form mounts on every open (and stays while the dialog animates closed); it restores the kept draft.
 	const [instance, setInstance] = useState(0);
 	const [wasOpen, setWasOpen] = useState(open);
+	const [opener, setOpener] = useState<Element | null>(null);
 	if (open !== wasOpen) {
 		setWasOpen(open);
-		if (open) setInstance((count) => count + 1);
+		if (open) {
+			setInstance((count) => count + 1);
+			setOpener(document.activeElement);
+		}
 	}
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent closeLabel={t`Close`} className="sm:max-w-[560px]">
+			<DialogContent
+				closeLabel={t`Close`}
+				finalFocus={opener instanceof HTMLElement ? () => opener : undefined}
+				className="sm:max-w-[560px]"
+			>
 				<AddApplicationForm
 					initialCapture={initialCapture}
 					key={instance}
@@ -470,12 +478,12 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 				onValueChange={(value) => setTab(value as typeof tab)}
 				className={tab === "search" ? "gap-[18px]" : "gap-5"}
 			>
-				<TabsList aria-label={t`How to add it`} className="w-full">
-					<TabsTrigger value="link">
+				<TabsList aria-label={t`How to add it`} className="w-full max-sm:h-auto max-sm:min-h-11 max-sm:items-stretch">
+					<TabsTrigger value="link" className="max-sm:min-w-0 max-sm:py-2 max-sm:whitespace-normal">
 						<Icon name="link" />
 						<Trans>Link or posting text</Trans>
 					</TabsTrigger>
-					<TabsTrigger value="search">
+					<TabsTrigger value="search" className="max-sm:min-w-0 max-sm:py-2 max-sm:whitespace-normal">
 						<Icon name="magnifying-glass" />
 						<Trans>Search postings</Trans>
 					</TabsTrigger>

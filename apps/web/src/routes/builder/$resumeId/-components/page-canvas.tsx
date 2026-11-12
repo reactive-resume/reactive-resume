@@ -141,7 +141,7 @@ function ResumePageCanvas() {
 	const onSelect = (selection: EditorSelection) => {
 		useEditorStore.setState({ selection });
 		// Tablet: tapping a line opens the drawer on that entry.
-		if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: true });
+		if (breakpoint === "tablet") useEditorStore.setState({ panelHidden: false });
 		// Phones show the page and the panel one at a time; the selection bar opens the entry instead.
 		if (mode === "write" && !isPhone) revealSelectionInPanel(selection);
 	};
@@ -158,7 +158,7 @@ function ResumePageCanvas() {
 				// dismisses the selection bar.
 				onPointerDown={(event) => {
 					if ((event.target as HTMLElement).closest("[data-kind]")) return;
-					if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: false });
+					if (breakpoint === "tablet") useEditorStore.setState({ panelHidden: true });
 					if (isPhone) useEditorStore.setState({ selection: null });
 				}}
 				className={cn(
@@ -268,7 +268,7 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 	// The label spans the canvas (the container), so it stays centred over the page whatever the page's width.
 	const label = cn(
 		"mx-auto flex h-4 w-fit items-center justify-center gap-1.5 t-mono whitespace-nowrap text-ink-3",
-		!sideBySide && "absolute top-0 left-1/2 w-[100cqw] -translate-x-1/2",
+		!sideBySide && "absolute start-1/2 top-0 w-[100cqw] -translate-x-1/2 rtl:translate-x-1/2",
 	);
 
 	// A continuation of an authored page that runs over: marked where it starts.

@@ -106,7 +106,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	const pickIssue = (issue: CheckIssue) => {
 		useEditorStore.setState({ checkIssue: issue.key, checkTab: "issues" });
 		// Tablets: the drawer opens on the issue. Phones stay on the page, where the issue bar steps through them.
-		if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: true });
+		if (breakpoint === "tablet") useEditorStore.setState({ panelHidden: false });
 		if (breakpoint !== "mobile") scrollToIssue(issue.key, "panel");
 	};
 
@@ -204,7 +204,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 						title={getPdfFindingMessage(finding.code).title}
 						onClick={() => useEditorStore.setState({ exportReportOpen: true })}
 						style={marginStyle(box, page, 0, onPage)}
-						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-paper bg-info-text text-bg shadow-[0_1px_3px_oklch(0_0_0/0.25)]"
+						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-paper bg-info-text text-bg shadow-e1"
 					>
 						<Icon name="file-pdf" size={13} />
 					</button>

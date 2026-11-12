@@ -426,6 +426,7 @@ const ApplicationRow = memo(function ApplicationRow({
 			}}
 			data-application-open
 			aria-keyshortcuts="j k Enter 1 2 3 4 5 x f"
+			title={application.company}
 			dir="auto"
 			className={cn("truncate text-[15px]/[22px] font-medium text-ink", rowLinkClassName)}
 		>
@@ -440,15 +441,24 @@ const ApplicationRow = memo(function ApplicationRow({
 				data-application-id={application.id}
 				interactive
 				leading={<IconTile aria-hidden="true">{companyInitials(application.company)}</IconTile>}
-				title={link}
-				subtitle={
-					<>
-						<bdi>{application.role}</bdi> · {next.title}
-					</>
-				}
-				trailing={badge || undefined}
-				caret
-			/>
+			>
+				<span className="flex min-w-0 flex-1 flex-col gap-1">
+					<span className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+						{link}
+						<StageDot status={application.status} color={stage.color}>
+							{stage.label}
+						</StageDot>
+					</span>
+					<span dir="auto" className="t-small text-ink-3">
+						{place}
+					</span>
+					<span className="flex flex-wrap items-center gap-x-2 gap-y-1 t-small">
+						<span className={next.muted ? "text-ink-3" : "font-medium"}>{next.title}</span>
+						{next.sub && <span className="text-ink-3">{next.sub}</span>}
+						{badge}
+					</span>
+				</span>
+			</ListRow>
 		);
 	}
 
@@ -588,7 +598,7 @@ function BulkBar({ ids, total, onSelectAll, onDone }: BulkBarProps) {
 			total={total}
 			onSelectAll={onSelectAll}
 			onClear={onDone}
-			className="fixed max-sm:bottom-[calc(var(--app-tabbar,0px)+16px)] sm:left-[calc(50%+32px)] lg:left-[calc(50%+var(--app-sidebar)/2)]"
+			className="fixed max-sm:bottom-[calc(var(--app-tabbar,0px)+16px)] sm:start-[calc(50%+32px)] lg:start-[calc(50%+var(--app-sidebar)/2)]"
 		>
 			{count > 200 && (
 				<span role="status" className="px-2 text-sm text-warn-text">

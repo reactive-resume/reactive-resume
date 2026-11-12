@@ -22,7 +22,7 @@ const baseButtonVariants = cva(
 					"text-ink-2 hover:bg-hover hover:text-ink active:bg-press aria-expanded:bg-hover aria-pressed:bg-accent-soft aria-pressed:text-accent-text",
 				soft: "bg-accent-soft text-accent-text hover:bg-[color-mix(in_oklab,var(--accent-soft),var(--ink)_6%)] active:bg-[color-mix(in_oklab,var(--accent-soft),var(--ink)_10%)]",
 				// White on danger-fill, as the boards draw it: the fill is the same strength in both themes.
-				danger: "bg-danger-fill text-white hover:brightness-[0.92] focus-visible:outline-danger",
+				danger: "bg-danger-fill text-paper hover:brightness-[0.92] focus-visible:outline-danger",
 				"danger-text": "text-danger-text hover:bg-danger-soft active:bg-danger-soft aria-expanded:bg-danger-soft",
 				link: "h-auto! px-0! text-accent-text underline-offset-4 hover:underline",
 			},

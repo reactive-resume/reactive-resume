@@ -92,9 +92,12 @@ export function ProfileSettings() {
 			<Trans>Loading…</Trans>
 		</p>
 	) : query.isError && query.data === undefined ? (
-		<div className="pt-2">
-			<Button variant="secondary" onClick={() => void query.refetch()}>
-				<Trans>Couldn't load. Try again.</Trans>
+		<div role="alert" className="grid justify-items-start gap-2 pt-2">
+			<p className="t-small text-ink-2">
+				<Trans>Couldn't load your application profile. Your saved data hasn't changed.</Trans>
+			</p>
+			<Button variant="secondary" loading={query.isFetching} onClick={() => void query.refetch()}>
+				{query.isFetching ? <Trans>Retrying…</Trans> : <Trans>Try again</Trans>}
 			</Button>
 		</div>
 	) : (
@@ -232,8 +235,16 @@ function ApplicationProfile({ record }: ApplicationProfileProps) {
 			</p>
 			<List>
 				<ProfileRow label={t`Name`} value={name} onEdit={() => setEditing("name")} />
-				<ProfileRow label={t`Application email`} value={data.email} onEdit={() => setEditing("email")} />
-				<ProfileRow label={t`Application phone`} value={data.phone} onEdit={() => setEditing("phone")} />
+				<ProfileRow
+					label={t`Application email`}
+					value={data.email && <bdi dir="ltr">{data.email}</bdi>}
+					onEdit={() => setEditing("email")}
+				/>
+				<ProfileRow
+					label={t`Application phone`}
+					value={data.phone && <bdi dir="ltr">{data.phone}</bdi>}
+					onEdit={() => setEditing("phone")}
+				/>
 				<ProfileRow
 					label={t`Address`}
 					value={addressShown}
@@ -430,11 +441,11 @@ function ProfileRow({ label, value, note, empty, action, actionLabel, onEdit }: 
 				</TextAction>
 			}
 		>
-			<span className="w-[168px] shrink-0 text-sm/5 text-ink-3 max-sm:w-28">{label}</span>
-			<span className="min-w-0 flex-1 truncate text-[15px]/[22px]">
+			<span className="w-[168px] shrink-0 text-sm/5 [overflow-wrap:anywhere] text-ink-3 max-sm:w-24">{label}</span>
+			<span className="min-w-0 flex-1 text-[15px]/[22px] [overflow-wrap:anywhere]">
 				{value ? (
 					<>
-						{value}
+						<bdi>{value}</bdi>
 						{note && (
 							<>
 								{" "}

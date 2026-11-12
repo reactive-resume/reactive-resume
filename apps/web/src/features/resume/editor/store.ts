@@ -44,10 +44,6 @@ type EditorStore = {
 	selection: EditorSelection | null;
 	/** "fit" fits the page width to the canvas; otherwise an explicit scale between 60% and 300%. */
 	zoom: number | "fit";
-	/** Tablet only: the panel is a drawer over the page. */
-	drawerOpen: boolean;
-	/** Tablet in landscape: the panel sits beside the page instead of over it. */
-	drawerPinned: boolean;
 	/** The open tab of the Download & history sheet, or null while it's closed. */
 	sheetTab: SheetTab | null;
 	/** History: the version shown on the page, read-only, instead of the current resume. */
@@ -141,8 +137,6 @@ const initialState = {
 	pendingMode: null,
 	selection: null,
 	zoom: "fit",
-	drawerOpen: false,
-	drawerPinned: false,
 	sheetTab: null,
 	historyVersionId: null,
 	historyOpen: false,

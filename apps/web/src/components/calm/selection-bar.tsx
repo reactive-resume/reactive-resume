@@ -51,7 +51,7 @@ export function SelectionBar({
 			aria-label={label}
 			data-design="selbar"
 			className={cn(
-				"absolute bottom-6 left-1/2 z-20 flex max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-1 overflow-x-auto rounded-xl border border-line bg-raised py-1.5 ps-2 pe-1.5 whitespace-nowrap shadow-e3",
+				"absolute start-1/2 bottom-6 z-20 flex max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-1 overflow-x-auto rounded-xl border border-line bg-raised py-1.5 ps-2 pe-1.5 whitespace-nowrap shadow-e3 rtl:translate-x-1/2",
 				className,
 			)}
 			{...props}

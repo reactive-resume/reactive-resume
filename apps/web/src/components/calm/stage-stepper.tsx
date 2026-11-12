@@ -69,6 +69,7 @@ export function StageStepper({
 				const label = step.label ?? getStageLabel(step.status);
 				const stepClassName = cn(
 					"flex min-w-0 border-t-[3px] text-[13px]/[18px] font-medium",
+					!history && !onSelect && "max-sm:pt-0",
 					history
 						? "flex-col gap-px pt-2 text-start"
 						: "flex-wrap content-start items-center gap-x-1.5 gap-y-px pt-2.5",
@@ -125,7 +126,7 @@ export function StageStepper({
 						className={stepClassName}
 						style={style}
 					>
-						{content}
+						<span className={!history ? "max-sm:sr-only sm:contents" : "contents"}>{content}</span>
 					</li>
 				);
 			})}

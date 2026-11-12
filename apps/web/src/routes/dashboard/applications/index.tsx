@@ -82,7 +82,7 @@ export const Route = createFileRoute("/dashboard/applications/")({
 			replace: true,
 		});
 	},
-	// Arrive with the list, as Documents does: a new account sees "Track your first job" at once, not a toolbar and a
+	// Arrive with the list, as Documents does: a new account sees "Follow each job from saved to offer" at once, not a toolbar and a
 	// skeleton that then vanish. The lanes come with it when they're quick, so rows first draw in the owner's lane order;
 	// slow or failing requests never hold the page (it shows the defaults and the lanes' own error). A failed list still
 	// renders the page, which shows its error and retry.
@@ -244,8 +244,8 @@ function RouteComponent() {
 	const owedCount = matching.filter(owed).length;
 	const filtered = needsYou ? matching.filter(owed) : matching;
 	const closedCount = filtered.filter((application) => application.status === "closed").length;
-	// The board needs room to drag: phones get the list instead.
-	const shown: View = phone && view === "board" ? "list" : view;
+	// Columns wrap at narrow widths, so every view stays available on phones.
+	const shown: View = view;
 	const empty = !!applications && applications.length === 0;
 	const noMatches = !!applications && !empty && text && filtered.length === 0;
 	const noAttentionMatches = !!applications && !empty && needsYou && filtered.length === 0;
@@ -278,7 +278,7 @@ function RouteComponent() {
 			<button
 				type="button"
 				onClick={() => setSearch({ closed: !closed })}
-				className="rounded-xs text-[13px]/5 font-medium text-accent-text"
+				className="touch-target relative rounded-xs text-[13px]/5 font-medium text-accent-text"
 			>
 				{closed ? <Trans>Hide</Trans> : <Trans>Show</Trans>}
 			</button>
@@ -322,9 +322,13 @@ function RouteComponent() {
 								<Button
 									variant={adding || importing || exporting || managingLanes ? "secondary" : "primary"}
 									onClick={() => setAdding(true)}
+									aria-label={t`Save a job`}
+									className="max-sm:size-11 max-sm:p-0"
 								>
 									<Icon name="plus" />
-									<Trans>Save a job</Trans>
+									<span className="max-sm:hidden">
+										<Trans>Save a job</Trans>
+									</span>
 								</Button>
 							)}
 							<PhoneHeaderActions />
@@ -347,12 +351,10 @@ function RouteComponent() {
 								<Icon name="list" />
 								<Trans>List</Trans>
 							</SegmentedControlItem>
-							{!phone && (
-								<SegmentedControlItem value="board" className={segment}>
-									<Icon name="kanban" />
-									<Trans>Board</Trans>
-								</SegmentedControlItem>
-							)}
+							<SegmentedControlItem value="board" className={segment}>
+								<Icon name="kanban" />
+								<Trans>Board</Trans>
+							</SegmentedControlItem>
 							<SegmentedControlItem value="calendar" className={segment}>
 								<Icon name="calendar-blank" />
 								<Trans>Calendar</Trans>
@@ -394,7 +396,7 @@ function RouteComponent() {
 						<button
 							type="button"
 							onClick={() => setSearch({ followUp: false })}
-							className="rounded-xs text-[13px]/5 font-medium text-accent-text"
+							className="touch-target relative rounded-xs text-[13px]/5 font-medium text-accent-text"
 						>
 							<Trans>Show all</Trans>
 						</button>
@@ -404,10 +406,10 @@ function RouteComponent() {
 				{isError && (
 					<div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-b border-line py-3">
 						<p className="text-sm text-danger-text">
-							<Trans>Couldn't load applications. Try again.</Trans>
+							<Trans>Couldn't load applications. Your saved data hasn't changed.</Trans>
 						</p>
-						<Button variant="secondary" size="sm" disabled={isFetching} onClick={() => void refetch()}>
-							<Trans>Retry</Trans>
+						<Button variant="secondary" size="sm" loading={isFetching} onClick={() => void refetch()}>
+							{isFetching ? <Trans>Retrying…</Trans> : <Trans>Retry</Trans>}
 						</Button>
 					</div>
 				)}
@@ -425,11 +427,9 @@ function RouteComponent() {
 
 				{isError && !applications ? null : empty ? (
 					<EmptyState
-						title={<Trans>Track your first job</Trans>}
+						title={<Trans>Follow each job from saved to offer</Trans>}
 						description={
-							<Trans>
-								Paste a job link. We'll save the posting so Check, the assistant and your letter can use it.
-							</Trans>
+							<Trans>Paste a job link. The posting is kept, so Check, the assistant and your letter can use it.</Trans>
 						}
 						action={
 							<Button onClick={() => setAdding(true)}>

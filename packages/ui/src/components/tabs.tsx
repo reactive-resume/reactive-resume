@@ -100,7 +100,11 @@ function TabsCount({ className, ...props }: React.ComponentProps<"span">) {
 
 function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
 	return (
-		<TabsPrimitive.Panel data-slot="tabs-content" className={cn("flex-1 text-sm outline-none", className)} {...props} />
+		<TabsPrimitive.Panel
+			data-slot="tabs-content"
+			className={cn("flex-1 text-sm focus-visible:-outline-offset-2", className)}
+			{...props}
+		/>
 	);
 }
 

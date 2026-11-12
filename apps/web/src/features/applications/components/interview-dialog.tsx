@@ -154,9 +154,6 @@ type InterviewDialogProps = {
 	inline?: boolean;
 };
 
-const FULL_SCREEN_ON_PHONES =
-	"max-sm:inset-s-0 max-sm:top-0 max-sm:h-dvh max-sm:max-h-none max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none";
-
 /** W20: type, time, length, people and what they asked for. Date and time are wall-clock in the interview's timezone. */
 export function InterviewDialog({
 	open,
@@ -559,20 +556,21 @@ export function InterviewDialog({
 				</Field>
 			</div>
 
-			<div className="flex items-center gap-2 border-t border-line px-6 py-3.5 pb-[max(14px,env(safe-area-inset-bottom))]">
+			<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-6 py-3.5 pb-[max(14px,env(safe-area-inset-bottom))] max-sm:flex-col-reverse max-sm:items-stretch">
 				{editing && (
 					<Button variant="ghost" className="text-danger-text" disabled={pending} onClick={deleteInterview}>
 						<Icon name="trash" size={18} />
 						<Trans>Delete</Trans>
 					</Button>
 				)}
-				<span className="flex-1" />
-				<Button variant="secondary" onClick={() => onOpenChange(false)}>
-					<Trans>Cancel</Trans>
-				</Button>
-				<Button loading={pending} disabled={!canSave} onClick={() => void save()}>
-					<Trans>Save interview</Trans>
-				</Button>
+				<div className="ms-auto flex max-w-full flex-wrap items-center justify-end gap-2 max-sm:w-full max-sm:flex-col-reverse max-sm:items-stretch">
+					<Button variant="secondary" onClick={() => onOpenChange(false)}>
+						<Trans>Cancel</Trans>
+					</Button>
+					<Button loading={pending} disabled={!canSave} onClick={() => void save()}>
+						<Trans>Save interview</Trans>
+					</Button>
+				</div>
 			</div>
 		</>
 	);
@@ -597,10 +595,7 @@ export function InterviewDialog({
 		<Dialog open={open} onOpenChange={onOpenChange} onOpenChangeComplete={onOpenChangeComplete}>
 			<DialogContent
 				closeLabel={t`Close`}
-				className={cn(
-					"flex max-h-[min(820px,calc(100svh-2rem))] flex-col gap-0 overflow-hidden p-0 sm:max-w-[560px]",
-					FULL_SCREEN_ON_PHONES,
-				)}
+				className={cn("flex max-h-[min(820px,calc(100svh-2rem))] flex-col gap-0 overflow-hidden p-0 sm:max-w-[560px]")}
 			>
 				{body}
 			</DialogContent>

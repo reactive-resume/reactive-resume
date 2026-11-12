@@ -164,7 +164,7 @@ function SheetSection({
 	children: ReactNode;
 	render?: (className: string, content: ReactNode) => ReactNode;
 }) {
-	const className = "flex shrink-0 items-baseline gap-2 pt-5 pb-1.5 text-sm/5 font-semibold text-ink";
+	const className = "flex shrink-0 flex-wrap items-baseline gap-2 pt-5 pb-1.5 text-sm/5 font-semibold text-ink";
 	const content = (
 		<>
 			{children}
@@ -302,7 +302,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 				{/* No sticky footer: the sheet scrolls and fades at its edge. */}
 				<div className="relative min-h-0 flex-1">
 					<div className="h-full overflow-y-auto px-6 pb-10">
-						<div className="flex items-center gap-1 pb-2">
+						<div className="flex flex-wrap items-center gap-1 pb-2">
 							<h3 className="me-auto text-sm/5 font-semibold">
 								<Trans>Stage</Trans>
 							</h3>
@@ -552,6 +552,8 @@ function Facts({ application, onOpenPosting }: { application: Application; onOpe
 					<dd className="flex min-w-0 items-center gap-2">
 						<a
 							href={application.sourceUrl}
+							title={application.sourceUrl}
+							dir="ltr"
 							target="_blank"
 							rel="noreferrer"
 							className="flex min-w-0 items-center gap-2 font-mono text-[13px]/4 font-medium hover:underline"

@@ -57,7 +57,9 @@ export function SettingsRoot() {
 				</Avatar>
 				<span className="grid min-w-0">
 					<b className="truncate text-lg font-semibold">{session.user.name}</b>
-					<span className="truncate text-sm text-ink-3">{session.user.email}</span>
+					<span dir="ltr" className="truncate text-sm text-ink-3">
+						{session.user.email}
+					</span>
 				</span>
 			</div>
 

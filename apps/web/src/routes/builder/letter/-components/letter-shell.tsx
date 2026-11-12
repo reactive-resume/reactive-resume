@@ -109,8 +109,8 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 			<MobileTabBar
 				tabs={[
 					{ view: "write", icon: "pencil-simple", label: t`Write` },
-					{ view: "page", icon: "file-text", label: t`Page` },
 					{ view: "design", icon: "palette", label: t`Design` },
+					{ view: "page", icon: "file-text", label: t`Page` },
 				]}
 				view={view}
 				onModeChange={onModeChange}
@@ -174,8 +174,15 @@ function useUnsavedGuard() {
 			void useLetterEditorStore.getState().flush();
 			event.preventDefault();
 		};
+		const onOnline = () => {
+			if (useLetterEditorStore.getState().status === "offline") void useLetterEditorStore.getState().flush();
+		};
+		window.addEventListener("online", onOnline);
 		window.addEventListener("beforeunload", onBeforeUnload);
-		return () => window.removeEventListener("beforeunload", onBeforeUnload);
+		return () => {
+			window.removeEventListener("online", onOnline);
+			window.removeEventListener("beforeunload", onBeforeUnload);
+		};
 	}, []);
 }
 

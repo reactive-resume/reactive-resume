@@ -150,7 +150,7 @@ export default function CommandPaletteContent() {
 							isFirstPage
 								? t({
 										comment: "Placeholder in command palette input on root page",
-										message: "Search documents, applications and commands",
+										message: "Search or jump to…",
 									})
 								: t({
 										comment: "Placeholder in command palette input on nested pages",
@@ -164,7 +164,7 @@ export default function CommandPaletteContent() {
 						hint={
 							<DialogClose
 								aria-label={t`Close`}
-								className="grid min-h-8 min-w-8 place-items-center rounded-sm text-ink-2"
+								className="grid min-h-11 min-w-11 place-items-center rounded-sm text-ink-2"
 							>
 								<Kbd className="max-sm:hidden">esc</Kbd>
 								<Icon name="x" className="sm:hidden" />

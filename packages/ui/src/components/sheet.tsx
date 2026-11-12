@@ -2,6 +2,7 @@ import type * as React from "react";
 import { Drawer as SheetPrimitive } from "@base-ui/react/drawer";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
@@ -51,11 +52,13 @@ type SheetContentProps = SheetPrimitive.Popup.Props & {
 function SheetContent({
 	className,
 	children,
-	side = "right",
+	side: requestedSide = "right",
 	showCloseButton = true,
 	closeLabel = "Close",
 	...props
 }: SheetContentProps) {
+	const phone = useBreakpoint() === "mobile";
+	const side = phone && (requestedSide === "left" || requestedSide === "right") ? "bottom" : requestedSide;
 	const popup = (
 		<SheetPrimitive.Popup
 			data-slot="sheet-content"
@@ -117,7 +120,10 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="sheet-footer"
-			className={cn("mt-auto flex shrink-0 justify-end gap-2 border-t border-line px-6 py-4", className)}
+			className={cn(
+				"mt-auto flex shrink-0 flex-col-reverse gap-2 border-t border-line px-6 py-4 sm:flex-row sm:flex-wrap sm:justify-end",
+				className,
+			)}
 			{...props}
 		/>
 	);

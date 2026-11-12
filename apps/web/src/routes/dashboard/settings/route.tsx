@@ -58,7 +58,7 @@ function RouteComponent() {
 			<PageBody>
 				{/* Phones open the root list, which has its own title, and each section has a Back link. */}
 				<RootHeader title={<Trans>Settings</Trans>} className="max-sm:hidden" />
-				<div className="grid gap-x-12 gap-y-4 sm:mt-5 lg:grid-cols-[200px_minmax(0,1fr)] lg:items-start">
+				<div className="grid gap-x-12 gap-y-4 sm:mt-5 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-start">
 					<div className="flex flex-col [view-transition-name:settings-nav] max-sm:hidden lg:sticky lg:top-7">
 						<SectionRail aria-label={t`Settings sections`}>
 							{SECTIONS.map((section) => (

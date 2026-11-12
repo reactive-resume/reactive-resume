@@ -84,7 +84,7 @@ function senderStyle(style: CoverLetter["style"], { picture, ...basics }: NonNul
 }
 
 /** `conflict`: the letter changed somewhere else, so saving stops until it's reloaded. */
-type LetterSaveStatus = "saved" | "saving" | "error" | "conflict";
+type LetterSaveStatus = "saved" | "saving" | "offline" | "error" | "conflict";
 
 /**
  * A draft from the posting, kept apart from the letter: streaming, ready to keep, or failed. The body changes only
@@ -351,7 +351,7 @@ function readRecovery(id: string): LetterRecovery | undefined {
 /** The autosave owner retains authored edits and unsynchronized decisions in one recovery record. */
 function persistRecovery() {
 	const state = useLetterEditorStore.getState();
-	if (!state.letter) return;
+	if (!state.letter) return false;
 	const pending = mergeEdits(savingEdits?.sessionId === state.sessionId ? savingEdits.pending : {}, state.pending);
 	try {
 		const key = `${RECOVERY_PREFIX}${state.letter.id}:${state.sessionId}`;
@@ -376,8 +376,10 @@ function persistRecovery() {
 			window.localStorage.getItem(restoredRecovery.key) === restoredRecovery.raw
 		)
 			window.localStorage.removeItem(restoredRecovery.key);
+		return true;
 	} catch {
 		/* Full or blocked storage never discards the in-memory edits; autosave can still retry. */
+		return false;
 	}
 }
 
@@ -546,6 +548,10 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 			status === "conflict"
 		)
 			return status === "saved";
+		if (typeof navigator !== "undefined" && navigator.onLine === false) {
+			set({ status: persistRecovery() ? "offline" : "error" });
+			return false;
+		}
 		const current = (state: LetterEditorStore) => state.letter?.id === letter.id && state.sessionId === sessionId;
 
 		savingEdits = { sessionId, pending };
@@ -587,6 +593,14 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 						? { pending: mergeEdits(pending, state.pending), status: conflict ? "conflict" : "error" }
 						: state,
 				);
+				if (
+					current(get()) &&
+					!conflict &&
+					typeof navigator !== "undefined" &&
+					navigator.onLine === false &&
+					persistRecovery()
+				)
+					set({ status: "offline" });
 			} finally {
 				inflight = null;
 				if (savingEdits?.sessionId === sessionId) savingEdits = null;

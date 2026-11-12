@@ -116,7 +116,7 @@ export function AddSectionMenu() {
 				render={
 					<button
 						type="button"
-						className="flex shrink-0 items-center gap-1.5 rounded-xs text-sm/5 font-medium text-accent-text hover:underline aria-expanded:underline"
+						className="touch-target relative flex shrink-0 items-center gap-1.5 rounded-xs text-sm/5 font-medium text-accent-text hover:underline aria-expanded:underline"
 					>
 						<Icon name="plus" size={16} />
 						<Trans>Add section</Trans>

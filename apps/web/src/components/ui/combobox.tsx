@@ -36,6 +36,9 @@ type SingleComboboxProps<TValue extends string | number = string> = {
 	onValueChange?: (value: TValue | null) => void;
 	multiple?: false;
 	disabled?: boolean;
+	"aria-label"?: string;
+	"aria-describedby"?: string;
+	"aria-labelledby"?: string;
 	showClear?: boolean;
 	placeholder?: string;
 	emptyMessage?: React.ReactNode;
@@ -52,6 +55,9 @@ type MultiComboboxProps<TValue extends string | number = string> = {
 	onValueChange?: (value: TValue[] | null) => void;
 	multiple: true;
 	disabled?: boolean;
+	"aria-label"?: string;
+	"aria-describedby"?: string;
+	"aria-labelledby"?: string;
 	showClear?: boolean;
 	placeholder?: string;
 	emptyMessage?: React.ReactNode;
@@ -140,6 +146,9 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 	const triggerNode = (
 		<ComboboxTrigger
+			aria-label={props["aria-label"]}
+			aria-describedby={props["aria-describedby"]}
+			aria-labelledby={props["aria-labelledby"]}
 			id={id}
 			disabled={disabled}
 			render={

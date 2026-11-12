@@ -28,7 +28,7 @@ function CommandInput({ className, hint, ...props }: CommandInputProps) {
 			<CommandPrimitive.Input
 				data-slot="command-input"
 				className={cn(
-					"h-full w-full bg-transparent text-base leading-6 text-ink outline-hidden placeholder:text-ink-3 focus-visible:outline-none disabled:cursor-not-allowed",
+					"h-full w-full bg-transparent text-base leading-6 text-ink outline-hidden placeholder:text-ink-3 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed",
 					className,
 				)}
 				{...props}
@@ -90,7 +90,7 @@ function CommandItem({ className, children, ...props }: React.ComponentProps<typ
 		<CommandPrimitive.Item
 			data-slot="command-item"
 			className={cn(
-				"group/command-item relative flex min-h-9 cursor-default items-center gap-2.5 rounded-sm px-2.5 text-sm leading-5 text-ink outline-hidden select-none [--icon-size:18px] data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-45 data-selected:bg-hover [&_[data-slot=icon]]:text-ink-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+				"group/command-item relative flex min-h-12 cursor-default items-center gap-2.5 rounded-sm px-2.5 text-sm leading-5 text-ink outline-hidden select-none [--icon-size:18px] data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-45 sm:min-h-9 data-selected:bg-hover [&_[data-slot=icon]]:text-ink-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 				className,
 			)}
 			{...props}
@@ -101,7 +101,7 @@ function CommandItem({ className, children, ...props }: React.ComponentProps<typ
 				aria-hidden="true"
 				className={cn(
 					menuShortcutClassName,
-					"hidden group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:hidden group-data-selected/command-item:inline-flex",
+					"hidden group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:hidden group-data-selected/command-item:inline-flex max-sm:hidden",
 				)}
 			>
 				↵
@@ -111,7 +111,9 @@ function CommandItem({ className, children, ...props }: React.ComponentProps<typ
 }
 
 function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
-	return <span data-slot="command-shortcut" className={cn(menuShortcutClassName, className)} {...props} />;
+	return (
+		<span data-slot="command-shortcut" className={cn(menuShortcutClassName, "max-sm:hidden", className)} {...props} />
+	);
 }
 
 /** The footer of the palette: the keys that work here, and a link to all shortcuts. Each child is one hint. */

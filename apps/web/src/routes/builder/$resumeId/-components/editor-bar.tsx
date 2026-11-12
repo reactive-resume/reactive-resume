@@ -1,7 +1,6 @@
 import type { EditorMode } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
@@ -62,8 +61,8 @@ function UndoRedo() {
 
 	return (
 		<>
-			<IconButton icon="arrow-counter-clockwise" label={t`Undo`} shortcut="⌘Z" disabled={!canUndo} onClick={undo} />
-			<IconButton icon="arrow-clockwise" label={t`Redo`} shortcut="⇧⌘Z" disabled={!canRedo} onClick={redo} />
+			<IconButton icon="arrow-u-up-left" label={t`Undo`} shortcut="⌘Z" disabled={!canUndo} onClick={undo} />
+			<IconButton icon="arrow-u-up-right" label={t`Redo`} shortcut="⇧⌘Z" disabled={!canRedo} onClick={redo} />
 		</>
 	);
 }
@@ -76,7 +75,7 @@ const MODE_ICONS = {
 } as const;
 
 type ModeTabsProps = {
-	/** Tablets: icons, each with its name for assistive tech. */
+	/** Tablets keep the mode names with tighter padding. */
 	compact: boolean;
 	/** Share needs a connection: its tab is dimmed while offline. */
 	offline: boolean;
@@ -115,14 +114,7 @@ function ModeTabs({ compact, offline }: ModeTabsProps) {
 							: labels[mode]
 					}
 				>
-					{compact ? (
-						<>
-							<Icon name={MODE_ICONS[mode]} size={18} />
-							<span className="sr-only">{labels[mode]}</span>
-						</>
-					) : (
-						labels[mode]
-					)}
+					{labels[mode]}
 					{mode === "check" && (
 						<span className="sr-only">
 							{issueCount === 0 ? (

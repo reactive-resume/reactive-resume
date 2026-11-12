@@ -188,11 +188,12 @@ export function StoriesPage({ storyId, edit, practice = false, start: planStart 
 		);
 
 	return (
-		<KnowledgeFrame current="stories" actions={addStory}>
+		<KnowledgeFrame current="stories" actions={list.length > 0 ? addStory : undefined}>
 			{list.length === 0 && !storyId ? (
 				<EmptyState
 					className="mt-8"
 					title={<Trans>No stories yet</Trans>}
+					action={addStory}
 					description={
 						<Trans>
 							Write one about something you did, in five parts. Leave Result and Reflection blank until you can support
@@ -215,7 +216,7 @@ export function StoriesPage({ storyId, edit, practice = false, start: planStart 
 								))}
 							</AnimatePresence>
 						</List>
-						<p className="border-t border-line pt-4 text-ink-3 t-small">
+						<p className="border-t border-line pt-4 t-small text-ink-3">
 							<Trans>
 								A story has five parts: Situation, Task, Action, Result and Reflection. Leave Result and Reflection
 								blank until you can support them.
@@ -230,7 +231,7 @@ export function StoriesPage({ storyId, edit, practice = false, start: planStart 
 							<h2 className="t-section-title">
 								<Trans>Story not found</Trans>
 							</h2>
-							<p className="text-ink-2 t-ui">
+							<p className="t-ui text-ink-2">
 								<Trans>It may have been deleted. Choose another story or add a new one.</Trans>
 							</p>
 							<Button variant="secondary" onClick={() => open(undefined)}>
@@ -269,11 +270,11 @@ const StoryRow = memo(function StoryRow({ story, selected, changed }: StoryRowPr
 					<span className={cn("text-[15px]/[22px] text-ink", selected ? "font-semibold" : "font-medium")}>
 						{story.data.title}
 					</span>
-					<span className="text-ink-3 t-small">
+					<span className="t-small text-ink-3">
 						{t`${i18n.number(filled)} of 5 parts`} · {plural(factCount, { one: "# fact", other: "# facts" })}
 					</span>
 					{changed && (
-						<span className="flex items-center gap-1.5 pt-0.5 text-warn-text t-small">
+						<span className="flex items-center gap-1.5 pt-0.5 t-small text-warn-text">
 							<Icon name="warning-circle" size={16} />
 							<Trans>A fact changed. Review this story.</Trans>
 						</span>
@@ -296,10 +297,10 @@ function StoryReader({ story, facts, onEdit }: StoryReaderProps) {
 		<article aria-labelledby={titleId} className="flex min-w-0 flex-col">
 			<header className="flex flex-wrap items-start gap-2 pt-6">
 				<div className="flex min-w-0 flex-1 basis-60 flex-col">
-					<h2 id={titleId} className="text-pretty t-section-title">
+					<h2 id={titleId} className="t-section-title text-pretty">
 						{story.data.title}
 					</h2>
-					<p className="pt-0.5 text-ink-3 t-small">{story.data.tags.join(" · ") || t`No tags yet`}</p>
+					<p className="pt-0.5 t-small text-ink-3">{story.data.tags.join(" · ") || t`No tags yet`}</p>
 				</div>
 				<Button variant="ghost" onClick={onEdit}>
 					<Icon name="pencil-simple" />
@@ -315,7 +316,7 @@ function StoryReader({ story, facts, onEdit }: StoryReaderProps) {
 						<div key={part.key} className="flex items-start gap-4 border-b border-line py-3">
 							<h3 className="w-[104px] flex-none text-[13px]/6 font-medium text-ink-3 max-sm:w-20">{part.label}</h3>
 							{text ? (
-								<p className="min-w-0 flex-1 text-pretty whitespace-pre-line t-body">{text}</p>
+								<p className="min-w-0 flex-1 t-body text-pretty whitespace-pre-line">{text}</p>
 							) : (
 								<>
 									<p className="min-w-0 flex-1 text-sm/6 text-ink-3">
@@ -359,7 +360,7 @@ function StoryReader({ story, facts, onEdit }: StoryReaderProps) {
 				))}
 			</List>
 			{backing.length === 0 && (
-				<p className="flex items-center gap-1.5 text-warn-text t-small">
+				<p className="flex items-center gap-1.5 t-small text-warn-text">
 					<Icon name="warning" size={16} />
 					<Trans>No supporting facts. Link one before using this story.</Trans>
 				</p>
@@ -622,7 +623,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 			}}
 		>
 			{plan?.note && (
-				<p className="rounded-lg bg-info-soft px-3 py-2 text-info-text t-small">
+				<p className="rounded-lg bg-info-soft px-3 py-2 t-small text-info-text">
 					<Trans>From your interview plan: {plan.note}</Trans>
 				</p>
 			)}
@@ -642,7 +643,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 						onChange={(event) => setDraft({ ...draft, title: event.target.value })}
 					/>
 					{tried && missingTitle && (
-						<p id={`${errorId}-title`} role="alert" className="flex items-center gap-1.5 text-danger-text t-small">
+						<p id={`${errorId}-title`} role="alert" className="flex items-center gap-1.5 t-small text-danger-text">
 							<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
 							<Trans>Give the story a title before you can save.</Trans>
 						</p>
@@ -685,7 +686,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 							<span
 								id={`${errorId}-${part.key}`}
 								role="alert"
-								className="flex items-center gap-1.5 text-danger-text t-small"
+								className="flex items-center gap-1.5 t-small text-danger-text"
 							>
 								<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
 								{t`Complete ${part.label} before saving.`}
@@ -740,12 +741,12 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 					</button>
 				)}
 				{shared.length === 0 && (
-					<p className="text-ink-3 t-small">
+					<p className="t-small text-ink-3">
 						<Trans>No facts to link yet. Add them in Facts.</Trans>
 					</p>
 				)}
 				{unavailable.length > 0 && (
-					<p role="status" className="flex items-start gap-1.5 text-warn-text t-small">
+					<p role="status" className="flex items-start gap-1.5 t-small text-warn-text">
 						<Icon name="warning" size={16} className="mt-px shrink-0" />
 						{plural(unavailable.length, {
 							one: "# proposed fact isn't available here and won't back the story.",

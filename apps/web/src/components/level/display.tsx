@@ -53,7 +53,7 @@ export function LevelDisplay({ icon, type, level, className, decorationSizePx, i
 							data-active={isActive}
 							style={decorationStyle}
 							className={cn(
-								"flex-1 border border-x-0 border-(--page-primary-color) first:border-l last:border-r",
+								"flex-1 border border-x-0 border-(--page-primary-color) first:border-s last:border-e",
 								decorationSizePx === undefined && "h-2.5",
 								isActive && "bg-(--page-primary-color)",
 							)}

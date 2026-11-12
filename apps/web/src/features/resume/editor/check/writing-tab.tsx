@@ -350,7 +350,7 @@ function WritingNoteCard({ note }: { note: WritingNote }) {
 	const showOnPage = () => {
 		if (!note.target) return;
 		useEditorStore.setState({ selection: note.target, pageView: "page" });
-		if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: false });
+		if (breakpoint === "tablet") useEditorStore.setState({ panelHidden: true });
 		if (breakpoint === "mobile") useEditorStore.setState({ mobileView: "page" });
 	};
 

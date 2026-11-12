@@ -152,20 +152,16 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 	return (
 		<>
 			{!resultsLead && <InterviewHero now={now} />}
-			<Columns
-				className={resultsLead ? "mt-1" : undefined}
-				aside={
-					resultsLead ? (
+			{resultsLead ? (
+				<Columns
+					className="mt-1"
+					aside={
 						<>
 							<NeedsYou now={now} compact first />
 							<SchedulesPanel deleted={deleted} onOpenSchedule={onScheduleChange} />
 						</>
-					) : (
-						<ComingUp now={now} />
-					)
-				}
-			>
-				{resultsLead && (
+					}
+				>
 					<ScheduleResults
 						rows={results}
 						unread={unread.length}
@@ -177,11 +173,22 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 						onHide={(id) => setPending((current) => [...current, id])}
 						onRestore={(id) => setPending((current) => current.filter((item) => item !== id))}
 					/>
-				)}
-				{!resultsLead && <NeedsYou now={now} />}
-				<NewRoles now={now} selecting={resultsLead} accent={resultsLead} />
-				{!resultsLead && <PickUp documents={documents.data} />}
-			</Columns>
+					<NewRoles now={now} selecting accent />
+				</Columns>
+			) : (
+				<div className="grid items-start gap-x-12 xl:grid-cols-[minmax(0,1fr)_360px]">
+					<div className="min-w-0">
+						<NeedsYou now={now} />
+					</div>
+					<aside className="min-w-0 xl:col-start-2 xl:row-span-2 xl:row-start-1">
+						<ComingUp now={now} />
+					</aside>
+					<div className="min-w-0 xl:col-start-1">
+						<NewRoles now={now} selecting={false} accent={false} />
+						<PickUp documents={documents.data} />
+					</div>
+				</div>
+			)}
 			{sheet}
 		</>
 	);
@@ -205,7 +212,7 @@ export function TodayTimezoneNote() {
 			<button
 				type="button"
 				disabled={saving}
-				className="font-medium text-accent-text hover:underline disabled:opacity-50"
+				className="touch-target relative font-medium text-accent-text hover:underline disabled:opacity-50"
 				onClick={() => {
 					setSaving(true);
 					void save(deviceTimeZone).finally(() => setSaving(false));

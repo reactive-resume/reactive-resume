@@ -9,7 +9,7 @@ import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-
 import { cn } from "@reactive-resume/utils/style";
 import { DownloadSheet } from "./download-sheet";
 import { EditorBar } from "./editor-bar";
-import { DesignPanel, DesignSheet, ModePanel } from "./mode-panels";
+import { DesignPanel, ModePanel } from "./mode-panels";
 import { useEditorHotkeys } from "./use-editor-hotkeys";
 import { ResumeAssistant } from "@/features/assistant/dock";
 import { takeAssistantHandoff } from "@/features/assistant/handoff";
@@ -199,9 +199,8 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 	const view = useEditorStore((state) => state.mobileView) ?? mode;
 	const setPreviewPaused = usePreviewPausedStore((state) => state.setPaused);
 
-	// The page stays mounted so zoom survives switching views; it doesn't re-render while hidden. Design keeps
-	// it in view above its sheet.
-	const pageVisible = view === "page" || view === "design";
+	// The page stays mounted so zoom survives switching views; it does not render while hidden.
+	const pageVisible = view === "page";
 	useEffect(() => {
 		// oxlint-disable-next-line react/set-state-in-effect -- a shared store the preview renderer reads, reset on unmount
 		setPreviewPaused(!pageVisible);
@@ -224,12 +223,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 						}}
 					/>
 				)}
-				{view === "design" && (
-					<Suspense>
-						<DesignSheet />
-					</Suspense>
-				)}
-				{view !== "page" && view !== "design" && (
+				{view !== "page" && (
 					<TabsContent
 						key={mode}
 						value={mode}
@@ -243,10 +237,10 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 			<MobileTabBar
 				tabs={[
 					{ view: "write", icon: "pencil-simple", label: t`Write` },
-					{ view: "page", icon: "file-text", label: t`Page` },
 					{ view: "design", icon: "palette", label: t`Design` },
 					{ view: "check", icon: "list-checks", label: t`Check` },
 					{ view: "share", icon: "globe-hemisphere-west", label: t`Share` },
+					{ view: "page", icon: "file-text", label: t`Page` },
 				]}
 				view={view}
 				onModeChange={onModeChange}
@@ -264,7 +258,7 @@ function SelectionBar({ onEdit }: { onEdit: () => void }) {
 	return (
 		<div
 			ref={ref}
-			className="absolute bottom-[76px] left-1/2 z-10 flex -translate-x-1/2 items-center rounded-xl bg-ink p-1 text-bg shadow-e3 transition-[opacity,translate] duration-standard ease-enter starting:translate-y-2 starting:opacity-0"
+			className="absolute start-1/2 bottom-[76px] z-10 flex -translate-x-1/2 items-center rounded-xl bg-ink p-1 text-bg shadow-e3 transition-[opacity,translate] duration-standard ease-enter rtl:translate-x-1/2 starting:translate-y-2 starting:opacity-0"
 		>
 			<button
 				type="button"

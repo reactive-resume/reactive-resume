@@ -70,9 +70,9 @@ it("keeps documents load failures distinct from empty state and retries", async 
 	);
 
 	expect(await screen.findByRole("alert")).toHaveTextContent("Couldn't load documents");
-	expect(screen.queryByText("Let's start with what you have")).not.toBeInTheDocument();
+	expect(screen.queryByText("Your resumes and cover letters live here")).not.toBeInTheDocument();
 	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
-	expect(await screen.findByText("Let's start with what you have")).toBeVisible();
+	expect(await screen.findByText("Your resumes and cover letters live here")).toBeVisible();
 	expect(screen.queryByRole("alert")).not.toBeInTheDocument();
 	view.unmount();
 	queryClient.clear();
@@ -119,7 +119,7 @@ it("opens the file picker from first-run Choose a file and imports the picked fi
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
-	await screen.findByText("Let's start with what you have");
+	await screen.findByText("Your resumes and cover letters live here");
 	const picker = screen.getByLabelText("Choose a file to import") as HTMLInputElement;
 	const click = vi.spyOn(picker, "click");
 	fireEvent.click(screen.getByRole("button", { name: "Choose a file" }));
