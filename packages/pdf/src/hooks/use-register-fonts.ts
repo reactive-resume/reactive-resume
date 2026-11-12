@@ -176,6 +176,7 @@ const scriptDetectors: { script: Script; regex: RegExp }[] = [
 	{ script: "sinhala", regex: scriptRegex("Sinhala") },
 	{ script: "ethiopic", regex: scriptRegex("Ethiopic") },
 	{ script: "khmer", regex: scriptRegex("Khmer") },
+	{ script: "georgian", regex: scriptRegex("Georgian") },
 	{ script: "emoji", regex: emojiRegex },
 	{ script: "arrows", regex: arrowsRegex },
 	{ script: "symbols", regex: symbolsRegex },
