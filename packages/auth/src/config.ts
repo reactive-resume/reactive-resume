@@ -542,14 +542,44 @@ export async function linkAnonymousAccount({
 				.where(and(eq(schema.application.id, application.id), eq(schema.application.userId, fromUserId)));
 		}
 
+		// A guest fact the account already holds stays behind and is deleted with the guest, so moved work cites the
+		// account's copy. Fact ids are UUIDs: replacing their quoted form changes nothing else.
+		const facts = await tx
+			.select({ id: schema.careerFact.id, userId: schema.careerFact.userId, sourceKey: schema.careerFact.sourceKey })
+			.from(schema.careerFact)
+			.where(inArray(schema.careerFact.userId, [fromUserId, toUserId]));
+		const accountFacts = new Map(
+			facts.filter((fact) => fact.userId === toUserId).map((fact) => [fact.sourceKey, fact.id]),
+		);
+		const citeAccountFacts = (column: unknown) =>
+			sql`cast(${facts.reduce(
+				(text, fact) => {
+					const accountFact = fact.userId === fromUserId && accountFacts.get(fact.sourceKey);
+					return accountFact ? sql`replace(${text}, ${`"${fact.id}"`}, ${`"${accountFact}"`})` : text;
+				},
+				sql`cast(${column} as text)`,
+			)} as jsonb)`;
+
+		// Moved answers and documents cite these by operation id, and saving them checks the account owns each one.
+		await tx.update(schema.aiRequest).set({ userId: toUserId }).where(eq(schema.aiRequest.userId, fromUserId));
+
 		await tx
 			.update(schema.careerWorkspace)
-			.set({ userId: toUserId, updatedAt: schema.careerWorkspace.updatedAt })
+			.set({
+				userId: toUserId,
+				data: citeAccountFacts(schema.careerWorkspace.data),
+				updatedAt: schema.careerWorkspace.updatedAt,
+			})
 			.where(eq(schema.careerWorkspace.userId, fromUserId));
 
 		await tx
 			.update(schema.careerArtifact)
-			.set({ userId: toUserId, updatedAt: schema.careerArtifact.updatedAt })
+			.set({
+				userId: toUserId,
+				data: citeAccountFacts(schema.careerArtifact.data),
+				evidence: citeAccountFacts(schema.careerArtifact.evidence),
+				updatedAt: schema.careerArtifact.updatedAt,
+			})
 			.where(eq(schema.careerArtifact.userId, fromUserId));
 
 		await tx
@@ -567,21 +597,34 @@ export async function linkAnonymousAccount({
 		// Preserve wording; the Knowledge facts the answers cite move with them below.
 		await tx
 			.update(schema.careerAnswer)
-			.set({ userId: toUserId, updatedAt: schema.careerAnswer.updatedAt })
+			.set({
+				userId: toUserId,
+				factIds: citeAccountFacts(schema.careerAnswer.factIds),
+				evidence: citeAccountFacts(schema.careerAnswer.evidence),
+				updatedAt: schema.careerAnswer.updatedAt,
+			})
 			.where(eq(schema.careerAnswer.userId, fromUserId));
 
 		// The guest was invited to build Knowledge like any user: facts, stories and the career profile move too. A fact
 		// the account already holds from the same source stays the account's; the guest's copy goes with the guest.
+		// Saved answers' evidence revisions include fact and story timestamps, so the moves keep them.
 		await tx
 			.update(schema.careerFact)
-			.set({ userId: toUserId })
+			.set({ userId: toUserId, updatedAt: schema.careerFact.updatedAt })
 			.where(
 				and(
 					eq(schema.careerFact.userId, fromUserId),
 					sql`not exists (select 1 from career_fact f where f.user_id = ${toUserId} and f.source_key = career_fact.source_key)`,
 				),
 			);
-		await tx.update(schema.careerStory).set({ userId: toUserId }).where(eq(schema.careerStory.userId, fromUserId));
+		await tx
+			.update(schema.careerStory)
+			.set({
+				userId: toUserId,
+				data: citeAccountFacts(schema.careerStory.data),
+				updatedAt: schema.careerStory.updatedAt,
+			})
+			.where(eq(schema.careerStory.userId, fromUserId));
 		await tx
 			.update(schema.careerProfile)
 			.set({ userId: toUserId })

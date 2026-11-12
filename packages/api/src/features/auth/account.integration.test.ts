@@ -44,6 +44,7 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			"career_workspace",
 			"career_artifact",
 			"career_transcript",
+			"ai_request",
 			"resume_slug_redirect",
 			"feedback_link",
 			"feedback_comment",
@@ -204,42 +205,55 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 		}
 	});
 
-	it("transfers guest application workspace, artifacts and transcripts to destination user", async () => {
+	it("moves workspaces, saved items, transcripts and AI sources, citing the account's copy of a duplicate fact", async () => {
+		const updatedAt = new Date("2030-01-01T00:00:00Z");
+		const [guestFact, ownerFact] = [randomUUID(), randomUUID()];
+		const workspace = (factId: string) => ({
+			answers: [{ id: "answer", question: "Why?", answer: "Because", factIds: [factId], aiOperationIds: ["guest-op"] }],
+		});
 		await pool.query(
 			`INSERT INTO application (id, user_id, company, role) VALUES ('workspace-app', 'link-guest', 'Acme', 'Engineer')`,
 		);
 		await pool.query(
-			`INSERT INTO career_workspace (application_id, user_id, data) VALUES ('workspace-app', 'link-guest', $1)`,
-			[JSON.stringify({ answers: [{ id: "ans-1", question: "Why Acme?", answer: "Great culture" }] })],
+			`INSERT INTO career_fact (id, user_id, text, category, source, source_key) VALUES
+			($1, 'link-guest', 'Led', 'work', '{}', 'shared'), ($2, 'link-owner', 'Led', 'work', '{}', 'shared')`,
+			[guestFact, ownerFact],
 		);
 		await pool.query(
-			`INSERT INTO career_artifact (id, user_id, application_id, title, data, evidence, input_version) VALUES ('workspace-artifact', 'link-guest', 'workspace-app', 'Briefing', $1, $2, 'v1')`,
-			[JSON.stringify({ kind: "briefing" }), JSON.stringify({ factIds: [], storyIds: [] })],
+			`INSERT INTO career_workspace (application_id, user_id, data, updated_at) VALUES ('workspace-app', 'link-guest', $1, $2)`,
+			[JSON.stringify(workspace(guestFact)), updatedAt],
 		);
 		await pool.query(
-			`INSERT INTO career_transcript (id, user_id, application_id, original, edited, model) VALUES ('workspace-transcript', 'link-guest', 'workspace-app', 'orig', 'edit', 'test-model')`,
+			`INSERT INTO career_artifact (id, user_id, application_id, title, data, evidence, input_version, updated_at)
+			VALUES ('workspace-artifact', 'link-guest', 'workspace-app', 'Briefing', '{"kind":"briefing"}', $1, 'v1', $2)`,
+			[JSON.stringify({ factIds: [guestFact], storyIds: [] }), updatedAt],
+		);
+		await pool.query(
+			`INSERT INTO career_transcript (id, user_id, application_id, original, edited, model, updated_at)
+			VALUES ('workspace-transcript', 'link-guest', 'workspace-app', 'orig', 'edit', 'test-model', $1)`,
+			[updatedAt],
+		);
+		await pool.query(
+			`INSERT INTO ai_request (id, user_id, operation_id, action, provider_id, label, provider, model)
+			VALUES ('guest-request', 'link-guest', 'guest-op', 'answer', 'provider', 'Provider', 'openai', 'model')`,
 		);
 
 		try {
 			await withDatabasePool(pool, () => linkAnonymousAccount({ fromUserId: "link-guest", toUserId: "link-owner" }));
 
-			expect(
-				(
-					await pool.query(
-						"SELECT user_id, application_id FROM career_workspace WHERE application_id = 'workspace-app'",
-					)
-				).rows,
-			).toEqual([{ user_id: "link-owner", application_id: "workspace-app" }]);
-			expect(
-				(await pool.query("SELECT user_id, id FROM career_artifact WHERE id = 'workspace-artifact'")).rows,
-			).toEqual([{ user_id: "link-owner", id: "workspace-artifact" }]);
-			expect(
-				(await pool.query("SELECT user_id, id FROM career_transcript WHERE id = 'workspace-transcript'")).rows,
-			).toEqual([{ user_id: "link-owner", id: "workspace-transcript" }]);
+			for (const table of ["career_workspace", "career_artifact", "career_transcript"])
+				expect((await pool.query(`SELECT user_id, updated_at FROM ${table}`)).rows).toEqual([
+					{ user_id: "link-owner", updated_at: updatedAt },
+				]);
+			expect((await pool.query("SELECT data FROM career_workspace")).rows[0].data).toEqual(workspace(ownerFact));
+			expect((await pool.query("SELECT evidence FROM career_artifact")).rows[0].evidence).toEqual({
+				factIds: [ownerFact],
+				storyIds: [],
+			});
+			expect((await pool.query("SELECT user_id FROM ai_request")).rows).toEqual([{ user_id: "link-owner" }]);
 		} finally {
-			await pool.query("DELETE FROM career_workspace WHERE application_id = 'workspace-app'");
-			await pool.query("DELETE FROM career_artifact WHERE id = 'workspace-artifact'");
-			await pool.query("DELETE FROM career_transcript WHERE id = 'workspace-transcript'");
+			for (const table of ["career_workspace", "career_artifact", "career_transcript", "career_fact", "ai_request"])
+				await pool.query(`DELETE FROM ${table}`);
 			await pool.query("DELETE FROM application WHERE id = 'workspace-app'");
 		}
 	});
