@@ -607,9 +607,10 @@ export async function linkAnonymousAccount({
 
 		// The guest was invited to build Knowledge like any user: facts, stories and the career profile move too. A fact
 		// the account already holds from the same source stays the account's; the guest's copy goes with the guest.
+		// Saved answers' evidence revisions include fact and story timestamps, so the moves keep them.
 		await tx
 			.update(schema.careerFact)
-			.set({ userId: toUserId })
+			.set({ userId: toUserId, updatedAt: schema.careerFact.updatedAt })
 			.where(
 				and(
 					eq(schema.careerFact.userId, fromUserId),
@@ -618,7 +619,11 @@ export async function linkAnonymousAccount({
 			);
 		await tx
 			.update(schema.careerStory)
-			.set({ userId: toUserId, data: citeAccountFacts(schema.careerStory.data) })
+			.set({
+				userId: toUserId,
+				data: citeAccountFacts(schema.careerStory.data),
+				updatedAt: schema.careerStory.updatedAt,
+			})
 			.where(eq(schema.careerStory.userId, fromUserId));
 		await tx
 			.update(schema.careerProfile)

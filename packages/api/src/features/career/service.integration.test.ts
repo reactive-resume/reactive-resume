@@ -591,8 +591,8 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect((await reviewedAnswers.list("bob", "alice-app"))[0]).toMatchObject({
 			id: row.id,
 			answer: row.answer,
-			stale: true,
-			canReuse: false,
+			stale: false,
+			canReuse: true,
 		});
 	});
 
