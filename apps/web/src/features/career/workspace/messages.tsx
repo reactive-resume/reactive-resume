@@ -80,8 +80,8 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 		);
 
 	return (
-		<div className="grid items-start gap-5 @3xl:grid-cols-[minmax(0,1fr)_280px] @5xl:grid-cols-[minmax(0,1fr)_360px]">
-			<div className="grid gap-4">
+		<div className="grid items-start gap-8 @3xl:grid-cols-[minmax(0,1fr)_280px]">
+			<div className="grid gap-5">
 				{!readOnly && (
 					<OfferEntry
 						application={application}
@@ -89,17 +89,31 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 						{...(offerForm ? { onDone: offerForm.onDone } : {})}
 					/>
 				)}
-				<PasteBox
-					key={`paste-${version?.id ?? "live"}`}
-					application={application}
-					initial={readOnly ? (reply?.data.message ?? "") : workspace.data.message || (reply?.data.message ?? "")}
-					readOnly={readOnly}
-					onSave={(message) => workspace.save({ message })}
-				/>
-				{reply && <ReplyCard key={reply.id} reply={reply} application={application} readOnly={readOnly} />}
+				{reply && reply.data.changes.length > 0 && (
+					<ProposalCard key={reply.id} reply={reply} application={application} now={now} readOnly={readOnly} />
+				)}
+				{reply ? (
+					<ReplyCard key={reply.id} reply={reply} application={application} readOnly={readOnly} />
+				) : (
+					<PasteBox
+						key={`paste-${version?.id ?? "live"}`}
+						application={application}
+						initial={workspace.data.message}
+						readOnly={readOnly}
+						onSave={(message) => workspace.save({ message })}
+					/>
+				)}
 			</div>
-			{reply && reply.data.changes.length > 0 && (
-				<ProposalCard key={reply.id} reply={reply} application={application} now={now} readOnly={readOnly} />
+			{reply && (
+				<aside>
+					<PasteBox
+						key={`paste-${version?.id ?? "live"}`}
+						application={application}
+						initial={readOnly ? reply.data.message : workspace.data.message || reply.data.message}
+						readOnly={readOnly}
+						onSave={(message) => workspace.save({ message })}
+					/>
+				</aside>
 			)}
 		</div>
 	);
@@ -155,7 +169,10 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 			</div>
 			{!readOnly && (
 				<div className="grid justify-items-start gap-2">
-					<AiNotice />
+					<AiNotice
+						needs={<Trans>Reading a message and drafting a reply need AI.</Trans>}
+						works={<Trans>Saving, writing, copying and logging work without it.</Trans>}
+					/>
 					<Button
 						type="button"
 						size="sm"
@@ -257,7 +274,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	};
 
 	return (
-		<section className="grid gap-3 rounded-xl border border-line bg-surface p-4 md:p-[18px]">
+		<section className="grid gap-3 md:p-[18px]">
 			<h2 className="text-base font-semibold">{reply.data.title}</h2>
 			{(reply.data.asks.length > 0 || reply.data.unconfirmed.length > 0) && (
 				<ul className="grid gap-1.5">
@@ -306,7 +323,11 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 						</p>
 					)}
 					<div className="flex flex-wrap items-center gap-2">
-						<Button variant="secondary" size="sm" onClick={() => void copy()}>
+						<Button
+							variant={reply.data.changes.length > 0 && !reply.data.applied ? "secondary" : "primary"}
+							size="sm"
+							onClick={() => void copy()}
+						>
 							<Icon name="copy" size={16} />
 							<Trans>Copy reply</Trans>
 						</Button>
@@ -606,12 +627,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	};
 
 	return (
-		<aside
-			className={cn(
-				"grid gap-3 rounded-xl border bg-surface p-4 shadow-e1 transition-colors duration-standard",
-				applied || readOnly ? "border-line" : "border-info-text",
-			)}
-		>
+		<aside className={cn("grid gap-4", applied || readOnly ? "border-line" : "border-info-text")}>
 			<div className="flex items-center gap-2">
 				<Icon name="list-checks" size={18} className="text-info-text" />
 				<h2 className="flex-1 text-sm font-semibold">
@@ -632,7 +648,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 					const isFixed = fixed(index);
 					const id = `${reply.id}-change-${index}`;
 					return (
-						<li key={id} className={cn("flex gap-2.5 rounded-lg bg-bg px-3 py-2.5", isFixed && "opacity-70")}>
+						<li key={id} className={cn("flex gap-2.5 border-b border-line py-3", isFixed && "opacity-70")}>
 							<Checkbox
 								id={id}
 								className="mt-px"

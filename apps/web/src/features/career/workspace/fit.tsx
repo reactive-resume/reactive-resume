@@ -1,7 +1,8 @@
 import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
-import { t } from "@lingui/core/macro";
+import type { ReactNode } from "react";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -14,9 +15,10 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
-import { StatusPill, Swap, GenerateNotice, Working, workingSteps } from "../shared";
+import { GenerateNotice, Working, workingSteps } from "../shared";
+import { ListRow } from "@/components/calm/list-row";
 import { useDialogStore } from "@/dialogs/store";
-import { SetUpAi } from "@/features/assistant/provider-setup";
+import { SetUpAi } from "@/features/ai/set-up-ai";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { toastError } from "@/libs/error-message";
@@ -26,15 +28,18 @@ type FitItem = SavedItem & { data: SavedData<"fit"> };
 type Requirement = SavedData<"fit">["requirements"][number];
 
 /** With no usable AI connection, where to add one; otherwise nothing. Tabs show their AI buttons only when one is set. */
-export function AiNotice() {
+export function AiNotice({
+	needs = <Trans>This needs AI.</Trans>,
+	works,
+}: { needs?: ReactNode; works?: ReactNode } = {}) {
 	const connection = useDefaultProvider();
 	if (connection.isUnavailable) return <AiProviderLoadState state={connection} />;
-	if (!connection.provider) return <SetUpAi />;
+	if (!connection.provider) return <SetUpAi needs={needs} works={works} />;
 	return null;
 }
 
 /** W1–W3: each requirement from the posting against the user's evidence, with gaps closed in place. */
-export function FitTab({ application, version }: WorkspaceTabProps) {
+export function FitTab({ application, version, go }: WorkspaceTabProps) {
 	const navigate = useNavigate();
 	const proposing = useRef<AbortController | null>(null);
 	const proposalKey = JSON.stringify([getAccountGeneration(), application.id]);
@@ -95,6 +100,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 	const documents = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const linkResume = useMutation(orpc.applications.update.mutationOptions());
 	const [resumeChoice, setResumeChoice] = useState("");
+	const [expanded, setExpanded] = useState<string | null>(null);
 	const [evidenceFailure, setEvidenceFailure] = useState(false);
 	const hasEvidence = evidenceState.data?.usable === true;
 	const forget = useMutation(orpc.career.forgetFact.mutationOptions());
@@ -133,7 +139,10 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 					) : undefined
 				}
 			>
-				<AiNotice />
+				<AiNotice
+					needs={<Trans>A fit check needs AI.</Trans>}
+					works={<Trans>The posting's terms, your resume and your Knowledge work without it.</Trans>}
+				/>
 				<GenerateNotice generate={generate} onRetry={check} className="max-w-[420px]" />
 				{evidenceState.isError && (
 					<div role="alert">
@@ -242,121 +251,121 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 
 	return (
 		<div className="grid gap-5">
-			<div className="grid items-end gap-x-6 gap-y-2 @xl:grid-cols-[minmax(0,1fr)_auto]">
-				<div className="grid gap-1">
-					<h2 className="font-display text-[22px] leading-7">{item.data.headline}</h2>
-					<p className="max-w-[560px] text-sm leading-[19px] text-ink-2">{item.data.summary}</p>
-				</div>
-				<p className="flex flex-wrap items-baseline gap-x-2 font-mono text-xs font-medium text-ink-2">
-					{t`${supported} supported · ${partial} partly · ${missing} missing`}
-					{item.outdated && !readOnly && provider && (
-						<Button
-							variant="link"
-							size="sm"
-							className="font-sans text-[13px] tracking-normal normal-case"
-							loading={generate.isPending}
-							onClick={check}
-						>
-							{generate.isPending ? <Working steps={workingSteps("fit")} /> : <Trans>Check again</Trans>}
-						</Button>
-					)}
+			<div className={cn("flex flex-wrap items-center justify-between gap-3", expanded && "-mt-4")}>
+				<p className="flex flex-wrap items-baseline gap-3">
+					<span
+						className={expanded ? "text-sm" : "t-big-number"}
+					>{t`${supported + partial} of ${item.data.requirements.length}`}</span>
+					<span className="text-ink-2">
+						<Trans>requirements have evidence</Trans>
+					</span>
 				</p>
+				{!readOnly && application.status === "interview" && missing + partial > 0 && (
+					<Button className="sm:absolute sm:end-0 sm:top-0" onClick={() => go("prepare")}>
+						<Icon name="chalkboard-teacher" />
+						{plural(missing + partial, {
+							one: "Prepare answers for the # gap",
+							other: "Prepare answers for the # gaps",
+						})}
+					</Button>
+				)}
 			</div>
-			{item.outdated && !readOnly && <AiNotice />}
+			{!expanded && (
+				<p className="flex flex-wrap gap-5 text-[13px] text-ink-3">
+					<span>{plural(supported, { one: "# supported", other: "# supported" })}</span>
+					<span>{plural(partial, { one: "# partly supported", other: "# partly supported" })}</span>
+					<span>{plural(missing, { one: "# with no evidence yet", other: "# with no evidence yet" })}</span>
+				</p>
+			)}
+			<p className="text-xs text-ink-3">{item.data.summary}</p>
+			{item.outdated && !readOnly && (
+				<AiNotice
+					needs={<Trans>A fit check needs AI.</Trans>}
+					works={<Trans>The posting's terms, your resume and your Knowledge work without it.</Trans>}
+				/>
+			)}
 			{!readOnly && <GenerateNotice generate={generate} onRetry={check} className="-mt-2 w-fit" />}
 
-			<div
-				role="table"
-				aria-label={t`Requirements and your evidence`}
-				className="grid gap-3 @xl:gap-0 @xl:overflow-hidden @xl:rounded-xl @xl:border @xl:border-line @xl:bg-surface"
-			>
-				<div
-					role="row"
-					className="hidden grid-cols-[minmax(0,1.1fr)_90px_170px_minmax(0,1.6fr)] gap-x-4 px-4 py-3 text-[13px] text-ink-2 @3xl:grid"
-				>
-					<span role="columnheader">
-						<Trans>Requirement</Trans>
-					</span>
-					<span role="columnheader">
-						<Trans>From</Trans>
-					</span>
-					<span role="columnheader">
-						<Trans>Status</Trans>
-					</span>
-					<span role="columnheader">
-						<Trans>Your evidence</Trans>
-					</span>
+			<div className={cn("grid items-start gap-8", expanded && "@3xl:grid-cols-[minmax(0,1fr)_240px]")}>
+				<div role="table" aria-label={t`Requirements and your evidence`} className="grid">
+					{item.data.requirements.map((requirement) => {
+						const factId = added(requirement);
+						return (
+							<RequirementRow
+								key={requirement.text}
+								requirement={requirement}
+								expanded={expanded === requirement.text}
+								onExpandedChange={(on) => setExpanded(on ? requirement.text : null)}
+								status={statusOf(requirement)}
+								evidence={factId ? (factText(factId) ?? requirement.evidence) : requirement.evidence}
+								readOnly={readOnly}
+								onTailor={tailor}
+								onSaved={(id) => onSaved(requirement, id)}
+								onPropose={
+									provider &&
+									application.resumeId &&
+									factId &&
+									facts?.some((fact) => fact.id === factId && fact.status === "active")
+										? () => void proposeEvidence(factId)
+										: undefined
+								}
+								proposalPending={proposalPending}
+							/>
+						);
+					})}
 				</div>
-				{item.data.requirements.map((requirement) => {
-					const factId = added(requirement);
-					return (
-						<RequirementRow
-							key={requirement.text}
-							requirement={requirement}
-							status={statusOf(requirement)}
-							evidence={factId ? (factText(factId) ?? requirement.evidence) : requirement.evidence}
-							readOnly={readOnly}
-							onTailor={tailor}
-							onSaved={(id) => onSaved(requirement, id)}
-							onPropose={
-								application.resumeId && factId && facts?.some((fact) => fact.id === factId && fact.status === "active")
-									? () => void proposeEvidence(factId)
-									: undefined
-							}
-							proposalPending={proposalPending}
-						/>
-					);
-				})}
-			</div>
-			{proposalPending && (
-				<Button
-					variant="secondary"
-					onClick={() => {
-						proposing.current?.abort();
-						proposing.current = null;
-						setProposalOwner(null);
-					}}
-				>
-					<Trans>Stop</Trans>
-				</Button>
-			)}
+				{proposalPending && (
+					<Button
+						variant="secondary"
+						onClick={() => {
+							proposing.current?.abort();
+							proposing.current = null;
+							setProposalOwner(null);
+						}}
+					>
+						<Trans>Stop</Trans>
+					</Button>
+				)}
 
-			{(item.data.checks.length > 0 || item.data.ask) && (
-				<div className="grid items-start gap-4 @xl:grid-cols-2">
-					{item.data.checks.length > 0 && (
-						<section className="grid gap-2.5 rounded-xl border border-line bg-surface p-4">
-							<h3 className="text-sm font-semibold">
-								<Trans>Against your requirements</Trans>
-							</h3>
-							<ul className="grid gap-2">
-								{item.data.checks.map((entry) => (
-									<li key={entry.label} className="flex gap-2 text-sm leading-[21px]">
-										<Icon
-											name={entry.met === true ? "check-circle" : entry.met === false ? "x-circle" : "question"}
-											size={18}
-											className={cn(
-												"mt-px shrink-0",
-												entry.met === true && "text-accent-text",
-												entry.met === false && "text-danger-text",
-												entry.met === null && "text-warn-text",
-											)}
-										/>
-										<span>
-											<strong className="font-semibold">{entry.label}.</strong> {entry.text}
-										</span>
-									</li>
-								))}
-							</ul>
-						</section>
-					)}
-					{item.data.ask && <WorthAsking ask={item.data.ask} applicationId={application.id} readOnly={readOnly} />}
-				</div>
-			)}
+				{(item.data.checks.length > 0 || item.data.ask) && (
+					<div className={cn("grid items-start gap-8", !expanded && "@xl:grid-cols-2")}>
+						{item.data.checks.length > 0 && (
+							<section className="grid gap-2.5 border-t border-line pt-4">
+								<h3 className="t-section-title">
+									<Trans>Against your requirements</Trans>
+								</h3>
+								<ul className="grid gap-2">
+									{item.data.checks.map((entry) => (
+										<li key={entry.label} className="flex gap-2 text-sm leading-[21px]">
+											<Icon
+												name={entry.met === true ? "check-circle" : entry.met === false ? "x-circle" : "question"}
+												size={18}
+												className={cn(
+													"mt-px shrink-0",
+													entry.met === true && "text-accent-text",
+													entry.met === false && "text-danger-text",
+													entry.met === null && "text-warn-text",
+												)}
+											/>
+											<span>
+												<strong className="font-semibold">{entry.label}.</strong> {entry.text}
+											</span>
+										</li>
+									))}
+								</ul>
+							</section>
+						)}
+						{item.data.ask && <WorthAsking ask={item.data.ask} applicationId={application.id} readOnly={readOnly} />}
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }
 
 type RequirementRowProps = {
+	expanded: boolean;
+	onExpandedChange: (open: boolean) => void;
 	requirement: Requirement;
 	status: "supported" | "partial" | "missing" | "added";
 	evidence: string;
@@ -369,6 +378,8 @@ type RequirementRowProps = {
 
 /** One requirement. Below 1024px From and Status sit under the name; on phones each row is a card. */
 function RequirementRow({
+	expanded,
+	onExpandedChange,
 	requirement,
 	status,
 	evidence,
@@ -378,53 +389,87 @@ function RequirementRow({
 	onPropose,
 	proposalPending,
 }: RequirementRowProps) {
-	const [editing, setEditing] = useState(false);
+	const editing = expanded;
+	const setEditing = onExpandedChange;
 	const from = requirement.origin === "posting" ? t`Posting` : t`Inferred`;
 	const canAdd = !readOnly && (status === "missing" || status === "partial");
 
 	return (
-		<div
-			role="row"
-			className="grid gap-x-4 gap-y-2 border-line p-4 @max-xl:rounded-xl @max-xl:border @max-xl:bg-surface @xl:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] @xl:border-t @3xl:grid-cols-[minmax(0,1.1fr)_90px_170px_minmax(0,1.6fr)]"
-		>
-			<div role="cell" className="grid content-start gap-2">
-				<p className="text-sm leading-5 font-semibold">{requirement.text}</p>
-				<div className="flex flex-wrap items-center gap-2 @3xl:hidden">
-					<StatusPill status={status} />
-					<span className="text-[13px] text-ink-3">{from}</span>
-				</div>
-			</div>
-			<p role="cell" className="hidden text-[13px] leading-5 text-ink-2 @3xl:block">
-				{from}
-			</p>
-			<div role="cell" className="hidden @3xl:block">
-				<StatusPill status={status} />
-			</div>
-			<div role="cell" className="grid content-start justify-items-start gap-2.5">
-				<p className={cn("text-sm leading-5", status === "missing" ? "text-ink-2" : "text-ink")}>{evidence}</p>
-				{!readOnly && onPropose && (
-					<Button size="sm" variant="secondary" disabled={proposalPending} onClick={onPropose}>
-						{proposalPending ? <Trans>Preparing…</Trans> : <Trans>Propose a resume bullet</Trans>}
-					</Button>
-				)}
-				{(status === "missing" || status === "partial") && (
+		<div role="row" className="border-b border-line last:border-b-0">
+			<ListRow
+				role="cell"
+				className="border-0 py-2.5"
+				leading={
+					<Icon
+						name={
+							status === "supported" || status === "added"
+								? "check-circle"
+								: status === "partial"
+									? "circle-half"
+									: "question"
+						}
+						size={24}
+						className={cn(
+							"mx-2 shrink-0",
+							status === "supported" || status === "added"
+								? "text-accent-text"
+								: status === "partial"
+									? "text-warn-mark"
+									: "text-ink-3",
+						)}
+					/>
+				}
+				title={
+					<button type="button" className="text-start" aria-expanded={editing} onClick={() => setEditing(!editing)}>
+						{requirement.text}
+					</button>
+				}
+				subtitle={
+					<>
+						{status === "supported"
+							? t`Supported`
+							: status === "added"
+								? t`Added by you`
+								: status === "partial"
+									? t`Partly supported`
+									: t`No evidence yet`}
+						{evidence ? ` · ${evidence}` : ""}
+					</>
+				}
+				trailing={
+					canAdd ? (
+						<Button size="sm" variant="ghost" className="text-accent-text" onClick={() => setEditing(!editing)}>
+							{editing ? <Trans>Cancel</Trans> : <Trans>Add a fact</Trans>}
+						</Button>
+					) : (
+						<Icon name="caret-right" className="text-ink-3" />
+					)
+				}
+			/>
+			{editing && (
+				<div className="grid gap-2 ps-14 pb-4">
+					<p className="text-xs text-ink-3">{from}</p>
+					<p className="text-sm text-ink-2">{evidence}</p>
+					{canAdd && (
+						<EvidenceEditor
+							requirement={requirement}
+							onCancel={() => setEditing(false)}
+							onSaved={(id) => {
+								onSaved(id);
+								setEditing(false);
+							}}
+						/>
+					)}
+					{!readOnly && onPropose && (
+						<Button size="sm" variant="ghost" disabled={proposalPending} onClick={onPropose}>
+							<Trans>Propose a resume bullet</Trans>
+						</Button>
+					)}
 					<Button size="sm" variant="link" onClick={onTailor}>
 						<Trans>Tailor resume for this job</Trans>
 					</Button>
-				)}
-				{canAdd && (
-					<Swap id={editing ? "editor" : "action"} className="w-full">
-						{editing ? (
-							<EvidenceEditor requirement={requirement} onCancel={() => setEditing(false)} onSaved={onSaved} />
-						) : (
-							<Button size="sm" variant="secondary" onClick={() => setEditing(true)}>
-								<Icon name="plus" size={16} />
-								{status === "missing" ? <Trans>Add evidence</Trans> : <Trans>Clarify</Trans>}
-							</Button>
-						)}
-					</Swap>
-				)}
-			</div>
+				</div>
+			)}
 		</div>
 	);
 }
@@ -500,8 +545,8 @@ function WorthAsking({ ask, applicationId, readOnly }: WorthAskingProps) {
 	const added = workspace.data.questions.some((question) => question.text === ask.text);
 
 	return (
-		<section className="grid justify-items-start gap-2.5 rounded-xl border border-line bg-surface p-4">
-			<h3 className="text-sm font-semibold">{ask.person ? t`Worth asking ${ask.person}` : t`Worth asking`}</h3>
+		<section className="grid justify-items-start gap-2.5 border-t border-line pt-4">
+			<h3 className="t-section-title">{ask.person ? t`Worth asking ${ask.person}` : t`Worth asking`}</h3>
 			<p className="text-sm leading-[21px] text-ink-2">{ask.text}</p>
 			{!readOnly && (
 				<Button

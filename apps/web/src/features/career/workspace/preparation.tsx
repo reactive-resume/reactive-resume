@@ -91,12 +91,12 @@ export function Preparation({ application, disabled }: PreparationProps) {
 
 	// The step's own action sits beside the heading; at the review step the readiness card's button takes over.
 	const action: ReactNode = !editing ? null : next === "resume" ? (
-		<Button disabled={busy} onClick={copyResume}>
+		<Button variant="secondary" disabled={busy} onClick={copyResume}>
 			<Trans>Copy a base resume for this job</Trans>
 		</Button>
 	) : next === "tailor" && application.resumeId ? (
 		!isJobCopy(application, documents.data) ? (
-			<Button disabled={busy || !documents.data} onClick={copyResume}>
+			<Button variant="secondary" disabled={busy || !documents.data} onClick={copyResume}>
 				<Trans>Copy this resume for the job</Trans>
 			</Button>
 		) : (
@@ -105,17 +105,17 @@ export function Preparation({ application, disabled }: PreparationProps) {
 				to="/builder/$resumeId"
 				params={{ resumeId: application.resumeId }}
 				search={{ applicationId: application.id, ...(connection.provider ? { assistant: "new" } : {}) }}
-				className={buttonVariants()}
+				className={buttonVariants({ variant: "secondary" })}
 			>
 				<Trans>Tailor the resume</Trans>
 			</Link>
 		)
 	) : next === "letter" ? (
-		<Button disabled={busy} onClick={() => void writeLetter()}>
+		<Button variant="secondary" disabled={busy} onClick={() => void writeLetter()}>
 			<Trans>Write a letter</Trans>
 		</Button>
 	) : next === "answers" ? (
-		<a href="#application-answers" className={buttonVariants()}>
+		<a href="#application-answers" className={buttonVariants({ variant: "secondary" })}>
 			<Trans>Go to form answers</Trans>
 		</a>
 	) : null;
@@ -124,15 +124,12 @@ export function Preparation({ application, disabled }: PreparationProps) {
 	const postingText = application.jobDescription?.trim() ?? "";
 
 	return (
-		<section
-			aria-label={t`Application preparation`}
-			className="grid gap-4 rounded-xl border border-line bg-surface px-5 pt-5 pb-2"
-		>
+		<section aria-label={t`Application preparation`} className="grid gap-4">
 			<div className="grid gap-3">
 				<div className="flex flex-wrap items-start justify-between gap-x-5 gap-y-3">
 					<div className="grid min-w-0 gap-1">
-						<h2 aria-live="polite" aria-atomic="true" className="text-lg leading-6 font-semibold text-balance">
-							{editing ? labels[next] : <Trans>Current drafts</Trans>}
+						<h2 aria-live="polite" aria-atomic="true" className="t-section-title">
+							{editing ? <Trans>What you’ll send</Trans> : <Trans>Current drafts</Trans>}
 						</h2>
 						<p className="text-[13px] leading-[18px] text-ink-2">
 							{editing
@@ -204,12 +201,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 									onChange={(event) => setPosting(event.target.value)}
 								/>
 								<div className="flex gap-1.5">
-									<Button
-										size="sm"
-										variant={next === "posting" ? "primary" : "secondary"}
-										disabled={busy || posting === null}
-										onClick={savePosting}
-									>
+									<Button size="sm" variant="secondary" disabled={busy || posting === null} onClick={savePosting}>
 										<Trans>Save posting</Trans>
 									</Button>
 									{next !== "posting" && (

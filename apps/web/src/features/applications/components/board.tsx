@@ -8,6 +8,7 @@ import {
 	defaultDropAnimationSideEffects,
 	PointerSensor,
 	pointerWithin,
+	useDndContext,
 	useDraggable,
 	useDroppable,
 	useSensor,
@@ -26,20 +27,22 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { cn } from "@reactive-resume/utils/style";
-import { getDisplayLane, getLaneLabel } from "../lanes";
+import { getDisplayLane, getLaneLabel, laneDotColor } from "../lanes";
 import { CLOSED_REASONS, getClosedReasonLabel } from "../stages";
 import { useApplicationActions } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { ApplicationCard } from "./application-card";
+import { StageDot } from "@/components/calm/stage-dot";
 import { dndContextProps } from "@/libs/dnd";
 import { DRAG_SETTLE } from "@/libs/motion";
 
 type BoardProps = {
 	applications: ApplicationSummary[];
 	showClosed: boolean;
-	onOpen: (application: ApplicationSummary) => void;
-	onTagSelect?: ((tag: string) => void) | undefined;
+	/** The + on the Saved column. */
+	onSaveJob?: (() => void) | undefined;
 };
 
 // While the overlay settles, the real card waits hidden in its new slot and the overlay's tilt eases off.
@@ -49,10 +52,12 @@ const dropSideEffects = defaultDropAnimationSideEffects({
 });
 
 /**
- * A column per active lane in the owner's order (Closed lanes only when shown). Dropping a card on a column moves it, with the same toast as the
- * other ways to change stage; each card's menu has Move to… for the keyboard. Desktop and tablet only.
+ * A column per active lane in the owner's order (Closed lanes only when shown); the columns share the page's width.
+ * Dropping a card on a column moves it at once, with the same Undo toast as the other ways to change stage; each
+ * card's menu has Move to… for the keyboard. A drag shows both ends: a dashed slot where the card was and a tinted
+ * one where it will land. Desktop and tablet only.
  */
-export function ApplicationBoard({ applications, showClosed, onOpen, onTagSelect }: BoardProps) {
+export function ApplicationBoard({ applications, showClosed, onSaveJob }: BoardProps) {
 	const { moveTo, update } = useApplicationActions();
 	const { lanes, active: activeLanes } = useApplicationLanes();
 	const reduceMotion = useReducedMotion();
@@ -79,7 +84,7 @@ export function ApplicationBoard({ applications, showClosed, onOpen, onTagSelect
 	const laneOf = (application: ApplicationSummary) =>
 		pendingMove?.id === application.id ? pendingMove.to : laneIdOf(application);
 
-	// A small activation distance so a click still opens the detail sheet instead of starting a drag.
+	// A small activation distance so a click still opens the application instead of starting a drag.
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 	const columns = activeLanes.filter((lane) => showClosed || lane.category !== "closed");
 
@@ -115,14 +120,13 @@ export function ApplicationBoard({ applications, showClosed, onOpen, onTagSelect
 			onDragStart={onDragStart}
 			onDragEnd={onDragEnd}
 		>
-			<div className="flex h-full min-h-0 gap-3 overflow-x-auto pb-4">
+			<div className="mt-3 flex items-stretch gap-3 overflow-x-auto">
 				{columns.map((lane) => (
 					<Column
 						key={lane.id}
 						lane={lane}
 						applications={byLane.get(lane.id) ?? []}
-						onOpen={onOpen}
-						onTagSelect={onTagSelect}
+						onSaveJob={lane.systemKey === "saved" ? onSaveJob : undefined}
 					/>
 				))}
 			</div>
@@ -132,13 +136,13 @@ export function ApplicationBoard({ applications, showClosed, onOpen, onTagSelect
 				{active ? <ApplicationCard application={active} dragging /> : null}
 			</DragOverlay>
 			<Dialog open={Boolean(closing)} onOpenChange={(open) => !open && setClosing(null)}>
-				<DialogContent closeLabel={t`Close`} className="sm:max-w-sm">
+				<DialogContent closeLabel={t`Close`}>
 					<DialogHeader>
 						<DialogTitle>
 							<Trans>Mark as closed</Trans>
 						</DialogTitle>
 						<DialogDescription>
-							{closing?.application.role} · {closing?.application.company}
+							{closing?.application.company} · {closing?.application.role}
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid gap-2">
@@ -171,72 +175,85 @@ const COLUMN_PAGE_SIZE = 50;
 type ColumnProps = {
 	lane: ApplicationLane;
 	applications: ApplicationSummary[];
-	onOpen: (application: ApplicationSummary) => void;
-	onTagSelect?: ((tag: string) => void) | undefined;
+	onSaveJob?: (() => void) | undefined;
 };
 
-function Column({ lane, applications, onOpen, onTagSelect }: ColumnProps) {
+const slotClassName = "shrink-0 rounded-lg outline-1 -outline-offset-1 outline-dashed";
+
+function Column({ lane, applications, onSaveJob }: ColumnProps) {
 	const label = getLaneLabel(lane);
 	const { setNodeRef, isOver } = useDroppable({ id: lane.id, data: { label } satisfies DndLabel });
+	const { active } = useDndContext();
 	const [visible, setVisible] = useState(COLUMN_PAGE_SIZE);
 	const shown = applications.slice(0, visible);
 	const remaining = applications.length - shown.length;
+	// The card would land here: a tinted slot of its own height waits at the end of the column.
+	const landing = isOver && !!active && !applications.some((application) => application.id === active.id);
 
 	return (
 		<section
-			aria-label={label}
+			ref={setNodeRef}
+			aria-label={`${label}, ${i18n.number(applications.length)}`}
+			// Five open lanes share the page's width; more lanes, or a narrower window, scroll sideways.
 			className={cn(
-				// Five open lanes fit inside the padded desktop page; more lanes or narrower boards scroll.
-				"flex max-w-[320px] min-w-52 flex-1 basis-0 flex-col rounded-xl border bg-sunken transition-colors duration-quick",
-				isOver ? "border-accent bg-accent-soft" : "border-transparent",
+				"flex min-h-24 min-w-44 flex-1 basis-0 flex-col gap-2 rounded-lg bg-sunken p-2 dark:shadow-[inset_0_0_0_1px_var(--line)]",
+				active && "pb-10",
 			)}
 		>
-			<h2 className="flex min-w-0 items-center gap-2 px-3 py-2.5 text-sm font-semibold">
-				<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: lane.color }} />
-				<span className="truncate" title={label}>
-					{label}
-				</span>
-				<span className="font-mono text-xs font-normal text-ink-3">{i18n.number(applications.length)}</span>
-			</h2>
-			<div ref={setNodeRef} className="flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">
-				{shown.map((application) => (
-					<DraggableCard key={application.id} application={application} onOpen={onOpen} onTagSelect={onTagSelect} />
-				))}
-				{remaining > 0 && (
-					<button
-						type="button"
-						onClick={() => setVisible((count) => count + COLUMN_PAGE_SIZE)}
-						className="rounded-lg border border-dashed border-line py-2 text-xs text-ink-3 transition-colors hover:bg-hover"
-					>
-						{t`Show ${i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))} more`}
-					</button>
+			<h2
+				title={label}
+				className="flex min-w-0 items-center gap-2 overflow-hidden px-1.5 pt-1.5 pb-0.5 text-sm font-semibold whitespace-nowrap"
+			>
+				<StageDot status={lane.category} color={laneDotColor(lane)}>
+					{null}
+				</StageDot>
+				{label}
+				<span className="font-mono text-xs font-medium text-ink-3">{i18n.number(applications.length)}</span>
+				{onSaveJob && (
+					<IconButton
+						icon="plus"
+						size="icon-xs"
+						iconSize={16}
+						label={t`Save a job to ${label}`}
+						className="-my-1 ms-auto -me-0.5"
+						onClick={onSaveJob}
+					/>
 				)}
-			</div>
+			</h2>
+			{shown.map((application) => (
+				<DraggableCard key={application.id} application={application} />
+			))}
+			{remaining > 0 && (
+				<button
+					type="button"
+					onClick={() => setVisible((count) => count + COLUMN_PAGE_SIZE)}
+					className="rounded-lg border border-dashed border-line-2 py-2 text-xs text-ink-3 transition-colors hover:bg-hover"
+				>
+					{t`Show ${i18n.number(Math.min(remaining, COLUMN_PAGE_SIZE))} more`}
+				</button>
+			)}
+			{landing && (
+				<div
+					aria-hidden="true"
+					className={cn(slotClassName, "bg-accent-soft outline-accent")}
+					style={{ height: active.rect.current.initial?.height ?? 118 }}
+				/>
+			)}
 		</section>
 	);
 }
 
-type DraggableCardProps = {
-	application: ApplicationSummary;
-	onOpen: (application: ApplicationSummary) => void;
-	onTagSelect?: ((tag: string) => void) | undefined;
-};
-
-// Re-renders with every drag context change; the closure here stays stable, so the card itself doesn't.
-function DraggableCard({ application, onOpen, onTagSelect }: DraggableCardProps) {
+// Re-renders with every drag context change; the card's own props stay the same, so the card itself doesn't.
+function DraggableCard({ application }: { application: ApplicationSummary }) {
 	const { setNodeRef, listeners, isDragging } = useDraggable({
 		id: application.id,
-		data: { label: [application.role, application.company].filter(Boolean).join(", ") } satisfies DndLabel,
+		data: { label: [application.company, application.role].filter(Boolean).join(", ") } satisfies DndLabel,
 	});
 
 	return (
-		<div ref={setNodeRef} {...listeners} className={cn(isDragging && "opacity-40")}>
-			<ApplicationCard
-				application={application}
-				onClick={() => onOpen(application)}
-				onTagSelect={onTagSelect}
-				withMenu
-			/>
+		// Where the card was stays marked while it's in the air.
+		<div ref={setNodeRef} {...listeners} className={cn(isDragging && cn(slotClassName, "outline-ink-3 *:invisible"))}>
+			<ApplicationCard application={application} withMenu />
 		</div>
 	);
 }

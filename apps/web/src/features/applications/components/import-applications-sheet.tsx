@@ -16,6 +16,7 @@ import {
 	rowsToCsv,
 	suggestLane,
 } from "@reactive-resume/schema/applications/csv";
+import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Label } from "@reactive-resume/ui/components/label";
@@ -31,6 +32,7 @@ import {
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { cn } from "@reactive-resume/utils/style";
 import { getLaneLabel, LANE_COLORS } from "../lanes";
 import { getClosedReasonLabel, getStageLabel } from "../stages";
 import { useInvalidateApplications } from "../use-application-actions";
@@ -41,6 +43,10 @@ import { client } from "@/libs/orpc/client";
 const NEW_LANE = "new";
 
 const MAX_IMPORT = 500;
+
+// One mapping row: what the file calls it, an arrow, where it goes.
+const mapRowClassName = "grid grid-cols-[minmax(0,150px)_16px_minmax(0,1fr)] items-center gap-2.5";
+const mapHeadingClassName = "flex items-baseline justify-between gap-2 text-[13px]/[18px] font-medium text-ink-2";
 
 const fieldLabel = (field: CsvField) =>
 	({
@@ -73,8 +79,8 @@ const fieldLabel = (field: CsvField) =>
 type ImportSheetProps = { open: boolean; onOpenChange: (open: boolean) => void };
 
 /**
- * Import from CSV: paste or upload, confirm how the columns were matched (they're matched automatically), then
- * import. Rows with no company or role are skipped and can be downloaded to fix.
+ * Import from CSV: the file (or its rows pasted), where each column goes (matched automatically), where each stage
+ * named in the file goes, then what will happen. Rows with no company or role are skipped and can be downloaded to fix.
  */
 export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps) {
 	const invalidate = useInvalidateApplications();
@@ -85,6 +91,9 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	const [laneChoices, setLaneChoices] = useState<Record<string, string>>({});
 	const [needsStageRefresh, setNeedsStageRefresh] = useState(false);
 	const [reading, setReading] = useState(false);
+	// The chosen file's name, until its rows are edited or pasted over.
+	const [fileName, setFileName] = useState<string | null>(null);
+	const [pasting, setPasting] = useState(false);
 	const fileRef = useRef<HTMLInputElement>(null);
 
 	const table = text.trim() ? parseCsv(text) : null;
@@ -112,6 +121,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	const changeText = (value: string) => {
 		setOverrides({});
 		setLaneChoices({});
+		setFileName(null);
 		setText(value);
 	};
 
@@ -120,6 +130,8 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 		setOverrides({});
 		setLaneChoices({});
 		setNeedsStageRefresh(false);
+		setFileName(null);
+		setPasting(false);
 		if (fileRef.current) fileRef.current.value = "";
 	};
 
@@ -204,21 +216,45 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 				importMutation.reset();
 			}}
 		>
-			<SheetContent closeLabel={t`Close`} side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
-				<SheetHeader>
+			<SheetContent closeLabel={t`Close`} side="right">
+				<SheetHeader className="gap-1.5 pt-6 pb-4">
 					<SheetTitle>
 						<Trans>Import from CSV</Trans>
 					</SheetTitle>
-					<SheetDescription>
-						<Trans>
-							Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is
-							saved.
-						</Trans>
+					<SheetDescription className="text-ink-2">
+						<Trans>Columns are matched for you. Check the match before anything is saved.</Trans>
 					</SheetDescription>
 				</SheetHeader>
 
-				<div className="-mt-1 flex flex-1 flex-col gap-4 overflow-y-auto px-6 pt-1 pb-4">
-					<div className="flex items-center gap-2">
+				<div className="flex flex-1 flex-col gap-[18px] overflow-y-auto px-6 pb-4">
+					{/* The file: chosen, replaced, or its rows pasted instead. */}
+					<div className="flex items-center gap-x-3 gap-y-2 rounded-lg px-3 py-2.5 outline-1 -outline-offset-1 outline-line-2 outline-dashed max-sm:flex-wrap">
+						<Icon name="file-csv" size={20} className="shrink-0 text-ink-2" />
+						<span className="flex min-w-0 flex-1 flex-col max-sm:basis-32">
+							<span className="truncate text-sm/5 font-medium">
+								{table ? (fileName ?? <Trans>Pasted rows</Trans>) : <Trans>Choose a .csv file</Trans>}
+							</span>
+							<span className="truncate text-xs/4 text-ink-3">
+								{table ? (
+									<>
+										<Plural value={Math.max(table.length - 1, 0)} one="# row" other="# rows" />
+										{" · "}
+										<Plural value={headers.length} one="# column" other="# columns" />
+									</>
+								) : (
+									<Trans>Or paste its rows.</Trans>
+								)}
+							</span>
+						</span>
+						<Button
+							size="sm"
+							variant="ghost"
+							disabled={working}
+							aria-expanded={pasting}
+							onClick={() => setPasting((open) => !open)}
+						>
+							<Trans>Paste rows instead</Trans>
+						</Button>
 						<Button
 							size="sm"
 							variant="secondary"
@@ -226,11 +262,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 							aria-busy={reading}
 							onClick={() => fileRef.current?.click()}
 						>
-							<Icon name="file-arrow-up" size={16} />
-							<Trans>Upload .csv</Trans>
-						</Button>
-						<Button size="sm" variant="ghost" disabled={working} onClick={() => changeText(CSV_SAMPLE)}>
-							<Trans>Use sample</Trans>
+							{table && fileName ? <Trans>Replace</Trans> : <Trans>Upload .csv</Trans>}
 						</Button>
 						<input
 							ref={fileRef}
@@ -245,7 +277,11 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 								setReading(true);
 								void file
 									.text()
-									.then(changeText)
+									.then((value) => {
+										changeText(value);
+										setFileName(file.name);
+										setPasting(false);
+									})
 									.catch(() =>
 										toast.add({
 											type: "error",
@@ -257,60 +293,91 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 						/>
 					</div>
 
-					{stagesUnresolved && (
-						<div role="alert" className="grid gap-2 rounded-lg border border-line p-3 text-sm">
-							<p>
-								<Trans>Load your stages before importing named stages. Your CSV data is kept.</Trans>
-							</p>
-							<Button size="sm" variant="secondary" disabled={working} onClick={() => void refreshStages()}>
-								<Trans>Retry</Trans>
-							</Button>
+					{pasting && (
+						<div className="grid gap-1.5">
+							<Label htmlFor="import-csv-text" className="justify-between">
+								<Trans>CSV data</Trans>
+								<button
+									type="button"
+									disabled={working}
+									className="font-medium text-accent-text hover:underline"
+									onClick={() => changeText(CSV_SAMPLE)}
+								>
+									<Trans>Use sample</Trans>
+								</button>
+							</Label>
+							<Textarea
+								id="import-csv-text"
+								value={text}
+								rows={text ? 4 : 6}
+								disabled={working}
+								placeholder="Company,Role,Stage,…"
+								className="font-mono text-xs"
+								onChange={(event) => {
+									changeText(event.target.value);
+								}}
+							/>
 						</div>
 					)}
 
+					{stagesUnresolved && (
+						<Alert variant="warn" role="alert">
+							<Icon name="warning-circle" />
+							<AlertDescription className="flex flex-wrap items-center justify-between gap-2">
+								<Trans>Load your stages before importing named stages. Your CSV data is kept.</Trans>
+								<Button size="sm" variant="secondary" disabled={working} onClick={() => void refreshStages()}>
+									<Trans>Retry</Trans>
+								</Button>
+							</AlertDescription>
+						</Alert>
+					)}
+
 					{result && headers.length > 0 && (
-						<section aria-labelledby="import-columns" className="grid gap-2">
-							<h3 id="import-columns" className="text-sm font-semibold">
-								<Trans>Columns</Trans>
-							</h3>
-							<ul className="grid gap-1.5">
-								{headers.map((header, index) => (
-									<li
-										key={`${header}-${index}`}
-										className="grid grid-cols-[minmax(0,1fr)_16px_minmax(0,1fr)] items-center gap-2 text-sm"
-									>
-										<span className="truncate font-mono text-xs">{header || t`(no header)`}</span>
-										<Icon name="arrow-right" size={16} className="text-ink-3" />
-										<NativeSelect
-											disabled={working}
-											aria-label={t`Column ${header} goes to`}
-											value={mapping[index] ?? ""}
-											onChange={(event) =>
-												setOverrides((current) => ({
-													...current,
-													[index]: (event.target.value || null) as CsvField | null,
-												}))
-											}
-										>
-											<option value="">{t`Leave out`}</option>
-											{CSV_FIELDS.map((field) => (
-												<option key={field} value={field}>
-													{fieldLabel(field)}
-												</option>
-											))}
-										</NativeSelect>
-									</li>
-								))}
-							</ul>
+						<>
+							<section aria-labelledby="import-columns" className="grid gap-1.5">
+								<h3 id="import-columns" className={mapHeadingClassName}>
+									<Trans>Columns</Trans>
+									<span className="text-xs/4 font-normal text-ink-3">
+										<Trans>from the file → goes to</Trans>
+									</span>
+								</h3>
+								<ul className="grid gap-1.5">
+									{headers.map((header, index) => (
+										<li key={`${header}-${index}`} className={mapRowClassName}>
+											<span className="truncate font-mono text-xs/4">{header || t`(no header)`}</span>
+											<Icon name="arrow-right" size={16} className="text-ink-3 rtl:-scale-x-100" />
+											<NativeSelect
+												disabled={working}
+												aria-label={t`Column ${header} goes to`}
+												value={mapping[index] ?? ""}
+												className={cn("h-8 pointer-coarse:h-11", !mapping[index] && "text-ink-3")}
+												onChange={(event) =>
+													setOverrides((current) => ({
+														...current,
+														[index]: (event.target.value || null) as CsvField | null,
+													}))
+												}
+											>
+												<option value="">{t`Leave out`}</option>
+												{CSV_FIELDS.map((field) => (
+													<option key={field} value={field}>
+														{fieldLabel(field)}
+													</option>
+												))}
+											</NativeSelect>
+										</li>
+									))}
+								</ul>
+							</section>
 
 							{csvLanes.length > 0 && (
-								<div className="grid gap-1.5 pt-2">
-									<h3 className="text-sm font-semibold">
+								<section aria-labelledby="import-stages" className="grid gap-1.5">
+									<h3 id="import-stages" className={mapHeadingClassName}>
 										<Trans>Stages</Trans>
+										<span className="text-xs/4 font-normal text-ink-3">
+											<Trans>named in the file → your stage</Trans>
+										</span>
 									</h3>
-									<p className="text-xs text-ink-3">
-										<Trans>Choose where each stage named in the file goes, or add it as a new stage.</Trans>
-									</p>
 									<ul className="grid gap-1.5">
 										{csvLanes.map((lane) => {
 											const hint =
@@ -318,19 +385,17 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 													? `${getStageLabel("closed")} · ${getClosedReasonLabel(lane.closedReason)}`
 													: getStageLabel(lane.category);
 											return (
-												<li
-													key={lane.key}
-													className="grid grid-cols-[minmax(0,1fr)_16px_minmax(0,1fr)] items-center gap-2 text-sm"
-												>
+												<li key={lane.key} className={mapRowClassName}>
 													<span className="grid min-w-0">
-														<span className="truncate">{lane.label}</span>
-														<span className="truncate text-xs text-ink-3">{hint}</span>
+														<span className="truncate font-mono text-xs/4">{lane.label}</span>
+														<span className="truncate text-xs/4 text-ink-3">{hint}</span>
 													</span>
-													<Icon name="arrow-right" size={16} className="text-ink-3" />
+													<Icon name="arrow-right" size={16} className="text-ink-3 rtl:-scale-x-100" />
 													<NativeSelect
 														disabled={working}
 														aria-label={t`Stage ${lane.label} goes to`}
 														value={choiceFor(lane)}
+														className="h-8 pointer-coarse:h-11"
 														onChange={(event) =>
 															setLaneChoices((current) => ({ ...current, [lane.key]: event.target.value }))
 														}
@@ -349,16 +414,18 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 											);
 										})}
 									</ul>
-								</div>
+								</section>
 							)}
 
-							<div className="grid gap-1 rounded-lg border border-line p-3 text-sm">
-								{result.invalidValues.length > 0 && (
-									<div role="alert" className="grid gap-1 text-warn-text">
-										<p>
-											<Trans>Fix these values in the CSV, or leave their columns out, before importing.</Trans>
-										</p>
-										<ul className="list-disc ps-4">
+							{/* What will happen. Values that can't be read keep Import dimmed until they are fixed or left out. */}
+							{result.invalidValues.length > 0 && (
+								<Alert variant="error">
+									<Icon name="warning-circle" />
+									<AlertTitle>
+										<Trans>Fix these in the file, or leave their columns out</Trans>
+									</AlertTitle>
+									<AlertDescription>
+										<ul className="grid gap-1.5 pt-1">
 											{result.invalidValues.map(({ row, field, value }) => (
 												<li key={`${row}:${field}`}>
 													{field === "stageEnteredAt" ? (
@@ -378,87 +445,74 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 												</li>
 											))}
 										</ul>
-									</div>
-								)}
-								<p className="flex items-center gap-1.5 font-medium">
-									<Icon name="check-circle" size={18} className="text-accent-text" />
+									</AlertDescription>
+								</Alert>
+							)}
+							<div className="grid gap-1.5 border-t border-line pt-3.5">
+								<p className="flex items-center gap-2 text-sm/5 font-medium">
+									<Icon name="check-circle" size={18} className="shrink-0 text-accent-text" />
 									<Plural
 										value={importable.length}
 										one="# application ready to import"
 										other="# applications ready to import"
 									/>
 								</p>
-								{result.skipped > 0 && (
-									<p className="text-xs text-ink-2">
-										<Plural
-											value={result.skipped}
-											one="# row has no company or role and will be skipped."
-											other="# rows have no company or role and will be skipped."
-										/>{" "}
-										<button
-											type="button"
-											className="font-medium underline underline-offset-2"
-											onClick={downloadSkipped}
-										>
-											<Trans>Download them</Trans>
-										</button>
-									</p>
-								)}
-								{result.contactsSkipped > 0 && (
-									<p className="text-xs text-ink-3">
-										<Plural
-											value={result.contactsSkipped}
-											one="# contact has an invalid email or no name; its application still imports."
-											other="# contacts have an invalid email or no name; their applications still import."
-										/>
-									</p>
-								)}
-								{unmatched > 0 && (
-									<p className="text-xs text-warn-text">
-										<Plural
-											value={unmatched}
-											one="Choose where # stage goes before importing."
-											other="Choose where # stages go before importing."
-										/>
-									</p>
-								)}
-								{droppedLaneNames && (
-									<p className="text-xs text-ink-3">
-										<Trans>This server uses the standard stages, so stage names in the file aren't kept.</Trans>
-									</p>
-								)}
-								{overflow > 0 && (
-									<p className="text-xs text-warn-text">
-										<Trans>
-											Only the first {ph({ MAX_IMPORT: i18n.number(MAX_IMPORT) })} rows import at once, leaving out{" "}
-											{ph({ overflow: i18n.number(overflow) })}. Split the file to import the rest.
-										</Trans>
-									</p>
-								)}
+								<div className="grid gap-1 ps-[26px] text-[13px]/[18px] text-ink-3 empty:hidden">
+									{result.skipped > 0 && (
+										<p>
+											<Plural
+												value={result.skipped}
+												one="# row has no company or role and will be skipped."
+												other="# rows have no company or role and will be skipped."
+											/>{" "}
+											<button
+												type="button"
+												className="font-medium text-accent-text hover:underline"
+												onClick={downloadSkipped}
+											>
+												<Plural value={result.skipped} one="Download it" other="Download them" />
+											</button>
+										</p>
+									)}
+									{result.contactsSkipped > 0 && (
+										<p>
+											<Plural
+												value={result.contactsSkipped}
+												one="# contact has an invalid email or no name; its application still imports."
+												other="# contacts have an invalid email or no name; their applications still import."
+											/>
+										</p>
+									)}
+									{unmatched > 0 && (
+										<p className="text-warn-text">
+											<Plural
+												value={unmatched}
+												one="Choose where # stage goes before importing."
+												other="Choose where # stages go before importing."
+											/>
+										</p>
+									)}
+									{droppedLaneNames && (
+										<p>
+											<Trans>This server uses the standard stages, so stage names in the file aren't kept.</Trans>
+										</p>
+									)}
+									{overflow > 0 && (
+										<p className="text-warn-text">
+											<Trans>
+												Only the first {ph({ MAX_IMPORT: i18n.number(MAX_IMPORT) })} rows import at once, leaving out{" "}
+												{ph({ overflow: i18n.number(overflow) })}. Split the file to import the rest.
+											</Trans>
+										</p>
+									)}
+								</div>
 							</div>
-						</section>
+						</>
 					)}
-
-					<div className="grid gap-1.5">
-						<Label htmlFor="import-csv-text">
-							<Trans>CSV data</Trans>
-						</Label>
-						<Textarea
-							id="import-csv-text"
-							value={text}
-							rows={text ? 4 : 6}
-							disabled={working}
-							placeholder="Company,Role,Stage,…"
-							className="font-mono text-xs"
-							onChange={(event) => {
-								changeText(event.target.value);
-							}}
-						/>
-					</div>
 				</div>
 
-				<SheetFooter className="flex-row justify-end gap-2">
-					<Button variant="secondary" disabled={working} onClick={() => onOpenChange(false)}>
+				<SheetFooter>
+					<Button variant="ghost" disabled={working} onClick={() => onOpenChange(false)}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button
@@ -475,7 +529,11 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 								importMutation.mutate();
 						}}
 					>
-						<Plural value={importable.length} one="Import # application" other="Import # applications" />
+						{importable.length === 0 ? (
+							<Trans>Import</Trans>
+						) : (
+							<Plural value={importable.length} one="Import # application" other="Import # applications" />
+						)}
 					</Button>
 				</SheetFooter>
 			</SheetContent>

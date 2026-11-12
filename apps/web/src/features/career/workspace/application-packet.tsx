@@ -6,15 +6,46 @@ import { useQuery } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { ListRow } from "@/components/calm/list-row";
 import { createLetterWordsForLocale } from "@/features/letters/compose";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
 type ApplicationPacketPanelProps = { application: Application };
 export function ApplicationPacketPanel({ application }: ApplicationPacketPanelProps) {
+	const [open, setOpen] = useState(false);
+	return (
+		<>
+			<ListRow
+				title={t`Employer-form packet`}
+				subtitle={t`Documents, contact details and answers for one form`}
+				leading={<Icon name="file-text" />}
+				trailing={
+					<Button size="sm" variant="ghost" onClick={() => setOpen(true)}>
+						<Trans>Review packet</Trans>
+					</Button>
+				}
+			/>
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto sm:max-w-[560px]">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Employer-form packet</Trans>
+						</DialogTitle>
+					</DialogHeader>
+					<PacketForm application={application} />
+				</DialogContent>
+			</Dialog>
+		</>
+	);
+}
+
+function PacketForm({ application }: ApplicationPacketPanelProps) {
 	const id = useId();
 	const answers = useQuery(orpc.career.answers.list.queryOptions({ input: { applicationId: application.id } }));
 	const [targetUrl, setTargetUrl] = useState(application.sourceUrl ?? "");

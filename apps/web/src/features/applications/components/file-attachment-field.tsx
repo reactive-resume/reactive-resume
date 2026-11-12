@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { useRef } from "react";
+import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { AttachmentPreview } from "./attachment-preview";
@@ -42,8 +43,8 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 			{value ? (
 				<div className="grid gap-2 rounded-lg border border-line p-2.5">
 					<div className="flex items-center gap-3">
-						<span className="flex size-8 items-center justify-center rounded-md bg-accent/10 text-accent-text">
-							<Icon name="file-pdf" size={16} />
+						<span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-sunken text-ink-2">
+							<Icon name="file-pdf" size={18} />
 						</span>
 						{value instanceof File ? (
 							<span className="min-w-0 flex-1 truncate text-sm">{value.name}</span>
@@ -57,15 +58,17 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 								{value.name}
 							</a>
 						)}
-						<button
+						<Button
 							type="button"
+							size="icon-sm"
+							variant="ghost"
 							title={t`Remove file`}
+							aria-label={t`Remove file`}
 							disabled={disabled}
-							className="text-ink-3 hover:text-danger-text disabled:opacity-40"
 							onClick={() => onChange(null)}
 						>
-							<Icon name="x" size={16} />
-						</button>
+							<Icon name="x" />
+						</Button>
 					</div>
 					<AttachmentPreview source={value instanceof File ? value : value.url} name={value.name} />
 				</div>
@@ -74,9 +77,9 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 					type="button"
 					disabled={disabled}
 					onClick={() => inputRef.current?.click()}
-					className="flex w-full items-center gap-2 rounded-lg border border-dashed border-line p-2.5 text-sm text-ink-3 transition-[background-color,opacity] hover:bg-sunken/50 disabled:opacity-60"
+					className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm/5 text-ink-2 outline-1 -outline-offset-1 outline-line-2 transition-[background-color,opacity] duration-quick outline-dashed hover:bg-hover disabled:opacity-45"
 				>
-					<Icon name="upload-simple" size={16} />
+					<Icon name="upload-simple" size={18} className="shrink-0 text-ink-3" />
 					{attachLabel}
 				</button>
 			)}

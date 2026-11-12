@@ -60,6 +60,7 @@ vi.mock("@/libs/orpc/client", () => {
 	};
 });
 vi.mock("@tanstack/react-router", () => ({
+	createLink: (Component: React.ComponentType<{ children: ReactNode }>) => Component,
 	useNavigate: () => api.navigate,
 	useRouteContext: () => ({ session: { user: { id: "shell-user", timezone: api.timeZone } } }),
 	useRouter: () => ({ state: { location: { state: { __TSR_index: 0 } } } }),
@@ -72,6 +73,9 @@ vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () 
 vi.mock("@/features/applications/use-application-actions", () => ({ useInvalidateApplications: () => vi.fn() }));
 vi.mock("@/features/applications/components/application-notes", () => ({ ApplicationNotes: () => null }));
 vi.mock("@/features/applications/components/interview-dialog", () => ({ InterviewDialog: () => null }));
+vi.mock("@/features/applications/components/application-detail-sheet", () => ({ ApplicationDetailSheet: () => null }));
+vi.mock("@/features/applications/components/application-form-sheet", () => ({ ApplicationFormSheet: () => null }));
+vi.mock("@/features/applications/components/application-actions-menu", () => ({ ApplicationActionsMenu: () => null }));
 vi.mock("./coach-sheet", () => ({ CoachSheet: () => null }));
 vi.mock("./fit", () => ({ FitTab: () => null, AiNotice: () => null }));
 vi.mock("./prepare", () => ({ PrepareTab: () => null }));
@@ -140,7 +144,7 @@ const answers = () => archive({ kind: "answers", answers: [{ question: "Why this
 const clients: QueryClient[] = [];
 function mount(
 	version?: string,
-	options: { workspace?: boolean; resumeId?: string; application?: Partial<Application> } = {},
+	options: { workspace?: boolean; resumeId?: string; application?: Partial<Application>; overview?: boolean } = {},
 ) {
 	const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
 	clients.push(client);
@@ -149,7 +153,11 @@ function mount(
 	const view = render(
 		<QueryClientProvider client={client}>
 			<I18nProvider i18n={i18n}>
-				<Workspace applicationId={application.id} tab="apply" search={version ? { version } : {}} />
+				<Workspace
+					applicationId={application.id}
+					tab={options.overview ? undefined : "apply"}
+					search={version ? { version } : {}}
+				/>
 			</I18nProvider>
 		</QueryClientProvider>,
 	);
@@ -270,14 +278,14 @@ it("explains a missing linked document during loading and offers retry after fai
 	);
 	api.documents.mockRejectedValue(new Error("Offline"));
 	mount(undefined, { resumeId: "linked-resume" });
-	expect(screen.getByText("Loading linked documents…")).toHaveAttribute("role", "status");
+	expect(await screen.findByText("Loading linked documents…")).toHaveAttribute("role", "status");
 	await act(async () => reject(new Error("Offline")));
-	const details = within(screen.getByRole("complementary", { name: "Application details" }));
+	const details = within(screen.getByRole("region", { name: "Application preparation" }));
 	expect(await details.findByRole("alert")).toHaveTextContent("Linked documents couldn't be loaded");
 	const retry = await details.findByRole("button", { name: "Try again" });
 	api.documents.mockResolvedValue([{ id: "linked-resume", type: "resume", name: "Harbor resume" }]);
 	fireEvent.click(retry);
-	await waitFor(() => expect(screen.getByRole("link", { name: /Harbor resume/ })).toBeTruthy());
+	await waitFor(() => expect(screen.getByRole("combobox", { name: "Resume" })).toHaveTextContent("Harbor resume"));
 });
 
 it("keeps an unsaved posting scoped to its application", async () => {
@@ -313,7 +321,7 @@ it("gates contextual Compare offers during cold or failed saved-item reads and r
 			fail = reject;
 		}),
 	);
-	mount(undefined, { application: { status: "offer" } });
+	mount(undefined, { application: { status: "offer" }, overview: true });
 	expect(screen.queryByRole("link", { name: "Compare offers" })).toBeNull();
 	expect((screen.getByRole("button", { name: "Compare offers" }) as HTMLButtonElement).disabled).toBe(true);
 	await act(async () => fail(new Error("Synthetic saved-items failure")));
@@ -332,8 +340,39 @@ it("gates contextual Compare offers during cold or failed saved-item reads and r
 it("workspace projects the logical follow-up day on the account clock", async () => {
 	api.timeZone = "Pacific/Honolulu";
 	mount(undefined, {
-		application: { followUpAt: new Date("2030-01-03T00:00:00Z"), followUpDateOnly: true, followUpNote: "Logical date" },
+		application: {
+			status: "applied",
+			followUpAt: new Date("2030-01-03T00:00:00Z"),
+			followUpDateOnly: true,
+			followUpNote: "Logical date",
+		},
+		overview: true,
 	});
-	const section = screen.getByRole("heading", { name: "Next step" }).closest("section");
+	const section = screen.getByRole("heading", { name: "Logical date" }).closest("section");
 	expect(section?.textContent).toContain("Jan 3");
+});
+
+it("keeps the offer as the overview's next step when an interview is still on the timeline", async () => {
+	mount(undefined, {
+		overview: true,
+		application: {
+			status: "offer",
+			activity: [
+				{
+					id: "future-round",
+					type: "interview",
+					at: new Date(Date.now() + 86_400_000),
+					kind: "technical",
+					durationMinutes: 60,
+					participants: [],
+					location: "Video call",
+					notes: "",
+					audience: "panel",
+					timezone: "Europe/Lisbon",
+				},
+			],
+		},
+	});
+	expect(await screen.findByRole("link", { name: "Compare offers" })).toBeTruthy();
+	expect(screen.queryByRole("heading", { name: "Technical interview" })).toBeNull();
 });

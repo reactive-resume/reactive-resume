@@ -22,6 +22,8 @@ import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-sco
 const api = vi.hoisted(() => ({
 	data: {} as Record<string, unknown>,
 	save: vi.fn(),
+	note: vi.fn(),
+	ai: true,
 	submit: vi.fn(),
 	generate: vi.fn(),
 	apply: vi.fn(),
@@ -49,6 +51,7 @@ vi.mock("@/libs/orpc/client", () => {
 				listSummary: endpoint("applications"),
 				list: endpoint("applications"),
 				update: endpoint("updateApplication"),
+				addNote: endpoint("addNote", api.note),
 				logReply: endpoint("logReply", api.logReply),
 				lanes: { get: endpoint("lanes") },
 			},
@@ -87,7 +90,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
 	useHasUsableAiProvider: () => ({
-		usableProviders: [{ id: "voice-provider", provider: "openai", label: "Test AI" }],
+		usableProviders: api.ai ? [{ id: "voice-provider", provider: "openai", label: "Test AI" }] : [],
 		isLoading: false,
 	}),
 }));
@@ -235,6 +238,7 @@ function mount(children: ReactNode) {
 }
 beforeEach(() => {
 	vi.clearAllMocks();
+	api.ai = true;
 	api.data = {
 		stories: [],
 		lanes: [],
@@ -1011,4 +1015,27 @@ it("resumes autosave after a reviewed answer replaces a recovered draft", async 
 	await waitFor(() =>
 		expect(api.save.mock.lastCall?.[0]).toMatchObject({ answers: [{ id: "project", answer: "A later edit" }] }),
 	);
+});
+
+it("saves a manual debrief to application notes without AI and keeps its draft", async () => {
+	api.ai = false;
+	api.note.mockResolvedValue({});
+	mount(<DebriefTab {...props} />);
+	fireEvent.change(screen.getByRole("textbox", { name: "What did they ask?" }), {
+		target: { value: "What was your role?" },
+	});
+	fireEvent.change(screen.getByRole("textbox", { name: "What did you say, as close as you remember?" }), {
+		target: { value: "I built the migration plan." },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Went well" }));
+	expect(screen.queryByRole("button", { name: "Review my answer" })).toBeNull();
+	fireEvent.click(screen.getByRole("button", { name: "Save to notes" }));
+	await waitFor(() =>
+		expect(api.note).toHaveBeenCalledWith(
+			{ id: application.id, text: "What was your role?\n\nI built the migration plan.\n\nWent well" },
+			expect.anything(),
+		),
+	);
+	expect(api.generate).not.toHaveBeenCalled();
+	expect(screen.getByRole("textbox", { name: "What did they ask?" })).toHaveValue("What was your role?");
 });

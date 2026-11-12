@@ -10,7 +10,7 @@ import { AnimatePresence } from "motion/react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
-import { applicationReviewChecks, nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
+import { applicationReviewChecks } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -318,7 +318,12 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 
 				{!stored && (
 					<>
-						{shown.length > 0 && <AiNotice />}
+						{shown.length > 0 && (
+							<AiNotice
+								needs={<Trans>Drafting answers needs AI.</Trans>}
+								works={<Trans>Your application profile and the checklist work without it.</Trans>}
+							/>
+						)}
 						<button
 							type="button"
 							disabled={submitting || live.length >= 30}
@@ -500,7 +505,7 @@ function AnswerCard({
 	const stale = proposal !== null && text !== proposal.before.text;
 
 	return (
-		<section className="grid gap-3 rounded-xl border border-line bg-surface p-4">
+		<section className="grid gap-3">
 			<DraftRecovery {...textDraft} />
 			<DraftRecovery {...questionDraft} />
 			<div className="flex items-start gap-3">
@@ -843,7 +848,6 @@ function Checklist({
 	const items = recordedVersion ? review.indices.map((index) => ({ index, label: labels[index] })) : [];
 	const done = items.filter(({ index }) => ticked.includes(index)).length;
 	// Recording the submission is the one emphasised action only once preparation has nothing left to guide.
-	const primary = nextPreparationStep(application, workspace.data, documents) === "review";
 	const resumeName =
 		documents?.find((document) => document.type === "resume" && document.id === application.resumeId)?.name ??
 		(application.resumeFileUrl ? application.resumeFileName || t`Resume file` : null);
@@ -948,7 +952,7 @@ function Checklist({
 				<div className="grid gap-2 border-t border-line pt-3.5">
 					<Button
 						className="w-full"
-						variant={primary ? "primary" : "secondary"}
+						variant="primary"
 						disabled={!canSubmit}
 						loading={submitting}
 						onClick={() => void markApplied()}

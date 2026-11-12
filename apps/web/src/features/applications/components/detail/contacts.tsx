@@ -19,6 +19,7 @@ const EMPTY_CONTACT = { name: "", role: "", type: "", email: "", phone: "" };
 type ContactsProps = {
 	application: Pick<Application, "id" | "contacts" | "contactsVersion">;
 	disabled: boolean;
+	inline?: boolean;
 	onChange: (contacts: Contact[]) => void;
 };
 type Removing = { index: number; contact: Contact };
@@ -28,7 +29,7 @@ const contactKey = (contact: Contact) =>
 const sameContact = (a: Contact | undefined, b: Contact | undefined) => !!a && !!b && contactKey(a) === contactKey(b);
 
 /** The Contact cell: the primary contact (the first), and the full list, with add and remove, in a popover. */
-export function Contacts({ application, disabled, onChange }: ContactsProps) {
+export function Contacts({ application, disabled, onChange, inline = false }: ContactsProps) {
 	const { contacts } = application;
 	const queryClient = useQueryClient();
 	const [removing, setRemoving] = useState<Removing | null>(null);
@@ -67,6 +68,16 @@ export function Contacts({ application, disabled, onChange }: ContactsProps) {
 	};
 	const [primary, ...others] = shown;
 
+	if (inline)
+		return (
+			<ContactList
+				contacts={contacts}
+				disabled={disabled || preparing}
+				onChange={onChange}
+				removing={removing}
+				onRemove={remove}
+			/>
+		);
 	return (
 		<Popover>
 			{/* Named for the field, so "—" isn't read out as the button's name. */}

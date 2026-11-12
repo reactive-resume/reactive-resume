@@ -31,9 +31,9 @@ import {
 } from "../coach-thread";
 import { ContextChip, PrivacyLine, tabLabel } from "../shared";
 import { coachStarters } from "./coach-starters";
+import { SetUpAi as SetUpAiFor } from "@/features/ai/set-up-ai";
 import { ChatWelcome, ModelMenu } from "@/features/assistant/chat-chrome";
 import { ConnectionNotice } from "@/features/assistant/connection-notice";
-import { ProviderSetup } from "@/features/assistant/provider-setup";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { WebAccessAttention } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -84,11 +84,7 @@ export function CoachSheet({ application, tab, conversation, onConversationChang
 
 	return (
 		<Sheet open={conversation !== undefined} onOpenChange={(open) => onConversationChange(open ? true : undefined)}>
-			<SheetContent
-				side="right"
-				closeLabel={t`Close`}
-				className="gap-0 border-s border-line data-[side=right]:sm:max-w-none data-[side=right]:md:max-w-[420px]"
-			>
+			<SheetContent side="right" closeLabel={t`Close`} className="gap-0">
 				<CoachSheetBody
 					application={application}
 					tab={tab}
@@ -254,8 +250,11 @@ function CoachSheetBody({
 			<>
 				{header}
 				<WebAccessAttention />
-				<div className="min-h-0 flex-1 overflow-y-auto">
-					<ProviderSetup />
+				<div className="min-h-0 flex-1 overflow-y-auto p-4">
+					<SetUpAiFor
+						needs={<Trans>The coach needs AI.</Trans>}
+						works={<Trans>Today, Knowledge, offers and schedules work without it.</Trans>}
+					/>
 				</div>
 			</>
 		);

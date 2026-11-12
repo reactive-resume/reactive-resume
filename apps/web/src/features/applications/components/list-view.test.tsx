@@ -1,4 +1,5 @@
 import type { Application } from "../types";
+import type { ComponentProps } from "react";
 // @vitest-environment happy-dom
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -14,10 +15,21 @@ const mocks = vi.hoisted(() => ({
 	timeZone: "UTC",
 	invalidate: vi.fn(),
 	moveWithUndo: vi.fn(),
+	trashWithUndo: vi.fn(),
 	logFollowUp: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({
 	useRouteContext: () => ({ session: { user: { timezone: mocks.timeZone } } }),
+	Link: ({
+		to,
+		params,
+		children,
+		...props
+	}: ComponentProps<"a"> & { to: string; params: { applicationId: string } }) => (
+		<a href={to.replace("$applicationId", params.applicationId).replace("/{-$tab}", "")} {...props}>
+			{children}
+		</a>
+	),
 }));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
@@ -38,7 +50,13 @@ vi.mock("@/libs/orpc/client", () => ({
 vi.mock("../use-application-actions", () => ({
 	useInvalidateApplications: () => mocks.invalidate,
 	useMoveWithUndo: () => mocks.moveWithUndo,
-	useApplicationActions: () => ({ logFollowUp: { isPending: false, mutate: mocks.logFollowUp } }),
+	useTrashWithUndo: () => mocks.trashWithUndo,
+	useApplicationActions: () => ({
+		logFollowUp: { isPending: false, mutate: mocks.logFollowUp },
+		moveTo: vi.fn(),
+		close: vi.fn(),
+		remove: { mutate: vi.fn() },
+	}),
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => mocks.breakpoint }));
@@ -51,6 +69,7 @@ const application = (over: Partial<Application> = {}): Application =>
 		company: "Globex",
 		location: "San Francisco",
 		appliedAt: new Date("2026-10-01T00:00:00.000Z"),
+		createdAt: new Date("2026-10-01T00:00:00.000Z"),
 		updatedAt: new Date("2026-10-19T00:00:00.000Z"),
 		activity: [],
 		followUpAt: null,
@@ -62,7 +81,7 @@ const application = (over: Partial<Application> = {}): Application =>
 		...over,
 	}) as Application;
 
-function renderList(applications: Application[], breakpoint = "desktop", onOpen = vi.fn(), onTagSelect = vi.fn()) {
+function renderList(applications: Application[], breakpoint = "desktop", onTagSelect = vi.fn(), showClosed = true) {
 	mocks.breakpoint = breakpoint;
 	i18n.load("en", {});
 	i18n.activate("en");
@@ -71,7 +90,7 @@ function renderList(applications: Application[], breakpoint = "desktop", onOpen 
 	const tree = (rows: Application[]) => (
 		<QueryClientProvider client={client}>
 			<I18nProvider i18n={i18n}>
-				<ApplicationList applications={rows} showClosed selectedId={null} onOpen={onOpen} onTagSelect={onTagSelect} />
+				<ApplicationList applications={rows} showClosed={showClosed} onTagSelect={onTagSelect} />
 			</I18nProvider>
 		</QueryClientProvider>
 	);
@@ -79,9 +98,11 @@ function renderList(applications: Application[], breakpoint = "desktop", onOpen 
 	return { ...view, update: (rows: Application[]) => view.rerender(tree(rows)) };
 }
 
-const headers = (container: HTMLElement) => Array.from(container.querySelectorAll("thead th"));
 const header = (container: HTMLElement, label: string) =>
-	headers(container).find((th) => th.textContent === label) as HTMLElement;
+	Array.from(container.querySelectorAll("thead th")).find((th) => th.textContent === label) as HTMLElement;
+/** Companies, in the order the rows are drawn. */
+const order = (container: HTMLElement) =>
+	Array.from(container.querySelectorAll("[data-application-open]"), (link) => link.textContent);
 
 it("reorders Next step when an interview ends without any application update", () => {
 	vi.useFakeTimers();
@@ -97,6 +118,7 @@ it("reorders Next step when an interview ends without any application update", (
 					{
 						id: "interview",
 						type: "interview",
+						kind: "technical",
 						at: new Date(now.getTime() - 270_000),
 						durationMinutes: 5,
 					} as Application["activity"][number],
@@ -110,11 +132,9 @@ it("reorders Next step when an interview ends without any application update", (
 				followUpDateOnly: false,
 			}),
 		]);
-		const order = () =>
-			Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
-		expect(order()).toEqual(["Interview", "Follow-up"]);
+		expect(order(container)).toEqual(["Interview", "Follow-up"]);
 		act(() => vi.advanceTimersByTime(60_000));
-		expect(order()).toEqual(["Follow-up", "Interview"]);
+		expect(order(container)).toEqual(["Follow-up", "Interview"]);
 		unmount();
 	} finally {
 		vi.useRealTimers();
@@ -126,54 +146,78 @@ const twoApplications = () => [
 	application({ id: "app-2", role: "Product Designer", company: "Initech", location: "Austin" }),
 ];
 
-it.each(["desktop", "mobile"] as const)("opens the clicked row's application on %s", (breakpoint) => {
-	const onOpen = vi.fn();
-	renderList(twoApplications(), breakpoint, onOpen);
+it.each(["desktop", "mobile"] as const)("links each row to its application's page on %s", (breakpoint) => {
+	renderList(twoApplications(), breakpoint);
 
-	fireEvent.click(screen.getByText("Product Designer").closest("tr") as HTMLElement);
-
-	expect(onOpen).toHaveBeenCalledOnce();
-	expect(onOpen).toHaveBeenCalledWith(expect.objectContaining({ id: "app-2" }));
+	expect(screen.getByRole("link", { name: "Initech" })).toHaveAttribute("href", "/dashboard/applications/app-2");
+	expect(screen.getByRole("link", { name: "Globex" })).toHaveAttribute("href", "/dashboard/applications/app-1");
 });
 
-it.each(["desktop", "mobile"] as const)("opens once from the role button on %s", async (breakpoint) => {
-	const onOpen = vi.fn();
-	renderList(twoApplications(), breakpoint, onOpen);
-	const user = userEvent.setup();
-	const button = screen.getByRole("button", { name: /Product Designer/ });
+it("runs one flat table by next step whatever the stage, with closed applications under their own heading", () => {
+	const rows = [
+		application({ id: "a", company: "Saved Co", status: "saved" }),
+		application({ id: "b", company: "Closed Co", status: "closed", closedReason: "not-selected" }),
+		application({
+			id: "c",
+			company: "Dated Co",
+			status: "interview",
+			followUpAt: new Date("2099-01-01T00:00:00.000Z"),
+		}),
+	];
+	const { container, unmount } = renderList(rows);
+	// The dated step first, then the wait; the closed one last, after its heading.
+	expect(order(container)).toEqual(["Dated Co", "Saved Co", "Closed Co"]);
+	expect(screen.getByRole("rowheader", { name: "Closed 1" })).toBeTruthy();
+	expect(screen.getAllByText("Not selected")).toHaveLength(1);
+	unmount();
 
-	await user.click(button);
-	expect(onOpen).toHaveBeenCalledOnce();
-	onOpen.mockClear();
-	await user.keyboard("{Enter}");
-	expect(onOpen).toHaveBeenCalledOnce();
-	onOpen.mockClear();
-	await user.keyboard(" ");
-	expect(onOpen).toHaveBeenCalledOnce();
-	expect(onOpen).toHaveBeenCalledWith(expect.objectContaining({ id: "app-2" }));
+	const hidden = renderList(rows, "desktop", vi.fn(), false);
+	expect(order(hidden.container)).toEqual(["Dated Co", "Saved Co"]);
+	expect(screen.queryByRole("rowheader", { name: "Closed 1" })).toBeNull();
+});
+
+it("writes what was sent in words and marks only owed steps as Needs you", () => {
+	const sent = new Date(Date.now() - 20 * 86_400_000);
+	renderList([
+		application({
+			id: "owed",
+			company: "Owed Co",
+			resumeId: "resume",
+			coverLetterId: "letter",
+			appliedAt: sent,
+			activity: [{ id: "s", type: "stage", stage: "applied", at: sent }] as Application["activity"],
+		}),
+		application({ id: "saved", company: "Saved Co", status: "saved" }),
+	]);
+
+	expect(screen.getByText(/^Resume, letter · /)).toBeTruthy();
+	expect(screen.getByText("Not sent")).toBeTruthy();
+	expect(screen.getByText("Send a follow-up")).toBeTruthy();
+	expect(screen.getAllByText("Needs you")).toHaveLength(1);
 });
 
 it("selects a row without opening it", () => {
-	const onOpen = vi.fn();
-	renderList(twoApplications(), "desktop", onOpen);
+	const { container } = renderList(twoApplications());
+	const clicks = vi.fn();
+	for (const link of container.querySelectorAll("[data-application-open]")) link.addEventListener("click", clicks);
 
 	const checkbox = screen.getByRole("checkbox", { name: "Select Product Designer at Initech" });
 	fireEvent.click(checkbox);
-	fireEvent.click(checkbox.closest("td") as HTMLElement);
 
-	expect(onOpen).not.toHaveBeenCalled();
+	expect(clicks).not.toHaveBeenCalled();
 	expect(checkbox.getAttribute("aria-checked")).toBe("true");
 });
 
 it("passes a tag chip selection to onTagSelect without opening the row", () => {
-	const onOpen = vi.fn();
 	const onTagSelect = vi.fn();
-	renderList([application({ tags: ["remote", "design"] })], "desktop", onOpen, onTagSelect);
+	const { container } = renderList([application({ tags: ["remote", "design"] })], "desktop", onTagSelect);
+	const clicks = vi.fn();
+	container.querySelector("[data-application-open]")?.addEventListener("click", clicks);
 
 	fireEvent.click(screen.getByRole("button", { name: "Filter by remote" }));
 
 	expect(onTagSelect).toHaveBeenCalledExactlyOnceWith("remote");
-	expect(onOpen).not.toHaveBeenCalled();
+	expect(clicks).not.toHaveBeenCalled();
 });
 
 it("selects the visible rows from the header and shows an indeterminate state for a partial selection", () => {
@@ -195,48 +239,37 @@ it("selects the visible rows from the header and shows an indeterminate state fo
 	expect(screen.queryByText("2 selected")).toBeNull();
 });
 
-it("leaves collapsed groups out of the header selection", () => {
-	renderList([
-		application({ id: "app-1", role: "Alpha" }),
-		application({ id: "app-2", role: "Beta", status: "interview" }),
-	]);
-
-	fireEvent.click(screen.getByRole("button", { name: "Interview 1" }));
-	fireEvent.click(screen.getByRole("checkbox", { name: "Select all visible applications" }));
-	fireEvent.click(screen.getByRole("button", { name: "Interview 1" }));
-
-	expect(screen.getByRole("checkbox", { name: "Select Alpha at Globex" })).toHaveAttribute("aria-checked", "true");
-	expect(screen.getByRole("checkbox", { name: "Select Beta at Globex" })).toHaveAttribute("aria-checked", "false");
-});
-
-it("sorts by role with company as the tiebreak, and by soonest next step with none last", () => {
+it("sorts by company with role as the tiebreak, and by soonest next step with none last", () => {
 	const { container } = renderList([
-		application({ id: "a", role: "Designer", company: "Zeta", location: null }),
+		application({ id: "a", company: "Mid", role: "Zebra keeper", location: null }),
 		application({
 			id: "b",
-			role: "Designer",
-			company: "Acme",
+			company: "Mid",
+			role: "Analyst",
 			location: null,
 			followUpAt: new Date("2099-01-02T00:00:00.000Z"),
 		}),
 		application({
 			id: "c",
-			role: "Analyst",
-			company: "Mid",
+			company: "Acme",
+			role: "Designer",
 			location: null,
 			followUpAt: new Date("2099-01-01T00:00:00.000Z"),
 		}),
 	]);
-	const order = () =>
-		Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
+	const ids = () =>
+		Array.from(container.querySelectorAll("tbody [data-application-id]"), (row) =>
+			row.getAttribute("data-application-id"),
+		);
 
-	fireEvent.click(screen.getByRole("button", { name: "Role" }));
-	expect(order()).toEqual(["Mid", "Acme", "Zeta"]);
+	fireEvent.click(screen.getByRole("button", { name: "Application" }));
+	expect(ids()).toEqual(["c", "b", "a"]);
+	expect(header(container, "Application").getAttribute("aria-sort")).toBe("ascending");
 
 	fireEvent.click(screen.getByRole("button", { name: "Next step" }));
-	expect(order()).toEqual(["Mid", "Acme", "Zeta"]);
+	expect(ids()).toEqual(["c", "b", "a"]);
 	fireEvent.click(screen.getByRole("button", { name: "Next step" }));
-	expect(order()).toEqual(["Zeta", "Acme", "Mid"]);
+	expect(ids()).toEqual(["a", "b", "c"]);
 });
 
 it("moves and closes the checked rows with Undo instead of writing at once (J2-18)", async () => {
@@ -266,7 +299,19 @@ it("moves and closes the checked rows with Undo instead of writing at once (J2-1
 	);
 });
 
-it("orders a stage by its own stage dates, longest wait first, when every row was imported at once", () => {
+it("moves the checked rows to Trash at once, without asking, and clears the selection", () => {
+	mocks.trashWithUndo.mockClear();
+	renderList(twoApplications());
+	fireEvent.click(screen.getByRole("checkbox", { name: "Select all visible applications" }));
+
+	fireEvent.click(screen.getByRole("button", { name: "Move to Trash" }));
+
+	expect(mocks.trashWithUndo).toHaveBeenCalledExactlyOnceWith([{ id: "app-1" }, { id: "app-2" }]);
+	expect(screen.queryByRole("alertdialog")).toBeNull();
+	expect(screen.queryByText("2 selected")).toBeNull();
+});
+
+it("orders by each row's own stage date, longest wait first, when every row was imported at once", () => {
 	const importedAt = new Date("2026-10-19T00:00:00.000Z");
 	const appliedDaysAgo = (id: string, company: string, days: number) =>
 		application({
@@ -282,9 +327,8 @@ it("orders a stage by its own stage dates, longest wait first, when every row wa
 		appliedDaysAgo("b", "Bethesda", 35),
 		appliedDaysAgo("c", "Sucker Punch", 21),
 	]);
-	const order = Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
 
-	expect(order).toEqual(["Bethesda", "Sucker Punch", "Niantic"]);
+	expect(order(container)).toEqual(["Bethesda", "Sucker Punch", "Niantic"]);
 	expect(header(container, "Next step").getAttribute("aria-sort")).toBe("ascending");
 });
 
@@ -308,25 +352,31 @@ it("sorts legacy date-only follow-ups by their account-clock delivery time", () 
 			}),
 		]);
 		expect(header(container, "Next step").getAttribute("aria-sort")).toBe("ascending");
-		expect(
-			Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent),
-		).toEqual(["Exact", "Legacy"]);
+		expect(order(container)).toEqual(["Exact", "Legacy"]);
 	} finally {
 		mocks.timeZone = "UTC";
 	}
 });
 
-it("triages only focused rows in displayed order, preserving identity across lane moves and hiding", async () => {
+it("triages only focused rows in displayed order, preserving focus across stage moves and hiding", async () => {
 	mocks.moveWithUndo.mockClear();
 	mocks.logFollowUp.mockClear();
 	const user = userEvent.setup();
-	const onOpen = vi.fn();
-	const first = application({ id: "a", role: "Alpha", status: "applied" });
-	const second = application({ id: "b", role: "Beta", status: "interview" });
-	const rows = [first, second];
-	const view = renderList(rows, "desktop", onOpen);
-	const alpha = () => screen.getByRole("button", { name: /Alpha/ });
-	const beta = () => screen.getByRole("button", { name: /Beta/ });
+	// Beta's dated step puts it first.
+	const first = application({ id: "a", company: "Alpha", status: "applied" });
+	const second = application({
+		id: "b",
+		company: "Beta",
+		status: "interview",
+		followUpAt: new Date("2099-01-01T00:00:00.000Z"),
+	});
+	const view = renderList([first, second]);
+	const alpha = () => screen.getByRole("link", { name: "Alpha" });
+	const beta = () => screen.getByRole("link", { name: "Beta" });
+	const opened = vi.fn((event: Event) => event.preventDefault());
+	view.container.addEventListener("click", (event) => {
+		if ((event.target as Element).closest("[data-application-open]")) opened(event);
+	});
 	await user.keyboard("x");
 	expect(screen.queryByText("1 selected")).toBeNull();
 	beta().focus();
@@ -337,7 +387,10 @@ it("triages only focused rows in displayed order, preserving identity across lan
 	await user.keyboard("k");
 	expect(beta()).toHaveFocus();
 	await user.keyboard("x");
-	expect(screen.getByRole("checkbox", { name: "Select Beta at Globex" })).toHaveAttribute("aria-checked", "true");
+	expect(screen.getByRole("checkbox", { name: "Select Senior Frontend Engineer at Beta" })).toHaveAttribute(
+		"aria-checked",
+		"true",
+	);
 	await user.keyboard("2");
 	expect(mocks.moveWithUndo).toHaveBeenCalledExactlyOnceWith(
 		expect.objectContaining({ applications: [second], lane: expect.objectContaining({ systemKey: "applied" }) }),
@@ -347,23 +400,23 @@ it("triages only focused rows in displayed order, preserving identity across lan
 	await user.keyboard("f");
 	expect(mocks.logFollowUp).toHaveBeenCalledExactlyOnceWith({ id: "b" });
 	await user.keyboard("{Enter}");
-	expect(onOpen).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ id: "b" }));
+	expect(opened).toHaveBeenCalledOnce();
 	view.update([first]);
 	await user.keyboard("1");
 	expect(mocks.moveWithUndo).toHaveBeenCalledTimes(1);
 });
 
-it("ignores repeated, composing and modified row commands and follows changed sorting/collapses", async () => {
+it("ignores repeated, composing and modified row commands and follows changed sorting", async () => {
 	mocks.moveWithUndo.mockClear();
 	mocks.logFollowUp.mockClear();
 	const user = userEvent.setup();
 	renderList([
-		application({ id: "a", role: "Alpha" }),
-		application({ id: "b", role: "Beta" }),
-		application({ id: "c", role: "Gamma", status: "saved" }),
+		application({ id: "a", company: "Alpha" }),
+		application({ id: "b", company: "Beta" }),
+		application({ id: "c", company: "Gamma", status: "saved" }),
 	]);
-	await user.click(screen.getByRole("button", { name: "Role" }));
-	const alpha = screen.getByRole("button", { name: /Alpha/ });
+	await user.click(screen.getByRole("button", { name: "Application" }));
+	const alpha = screen.getByRole("link", { name: "Alpha" });
 	alpha.focus();
 	for (const extra of [
 		{ repeat: true },
@@ -379,11 +432,11 @@ it("ignores repeated, composing and modified row commands and follows changed so
 	}
 	expect(mocks.moveWithUndo).not.toHaveBeenCalled();
 	await user.keyboard("j");
-	expect(screen.getByRole("button", { name: /Beta/ })).toHaveFocus();
-	await user.click(screen.getByRole("button", { name: "Saved 1" }));
+	expect(screen.getByRole("link", { name: "Beta" })).toHaveFocus();
+	await user.click(screen.getByRole("button", { name: "Application" }));
 	alpha.focus();
-	await user.keyboard("jj");
-	expect(screen.getByRole("button", { name: /Beta/ })).toHaveFocus();
-	fireEvent.keyDown(screen.getByRole("button", { name: /Beta/ }), { key: "f", repeat: true });
+	await user.keyboard("k");
+	expect(screen.getByRole("link", { name: "Beta" })).toHaveFocus();
+	fireEvent.keyDown(screen.getByRole("link", { name: "Beta" }), { key: "f", repeat: true });
 	expect(mocks.logFollowUp).not.toHaveBeenCalled();
 });

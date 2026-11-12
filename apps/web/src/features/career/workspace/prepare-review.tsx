@@ -8,9 +8,11 @@ import { applicationReviewSchema, type ApplicationReview } from "@reactive-resum
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { appliedApplications, applyResumeProposals, getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
-import { useSessionDraft, useWorkspace } from "../hooks";
+import { useDefaultProvider, useSessionDraft, useWorkspace } from "../hooks";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { toastError } from "@/libs/error-message";
@@ -21,6 +23,36 @@ type PrepareReviewProps = { application: Application; disabled: boolean };
 
 /** Inline review uses guarded document updates, without opening or replacing another editor's dirty draft. */
 export function PrepareReview({ application, disabled }: PrepareReviewProps) {
+	const [open, setOpen] = useState(false);
+	const connection = useDefaultProvider();
+	if (!connection.provider) return null;
+	return (
+		<>
+			<Button
+				size="sm"
+				variant="ghost"
+				className="w-fit text-accent-text"
+				disabled={disabled}
+				onClick={() => setOpen(true)}
+			>
+				<Icon name="sparkle" />
+				<Trans>Prepare drafts</Trans>
+			</Button>
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto sm:max-w-[560px]">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Prepare application</Trans>
+						</DialogTitle>
+					</DialogHeader>
+					<ReviewForm application={application} disabled={disabled} />
+				</DialogContent>
+			</Dialog>
+		</>
+	);
+}
+
+function ReviewForm({ application, disabled }: PrepareReviewProps) {
 	const workspace = useWorkspace(application.id);
 	const questions = useSessionDraft(`prepare-questions:${application.id}`, "", (value) =>
 		typeof value === "string" ? value : undefined,
@@ -197,10 +229,7 @@ export function PrepareReview({ application, disabled }: PrepareReviewProps) {
 			});
 		});
 	return (
-		<section aria-label={t`Prepare application`} className="grid gap-4 rounded-xl border border-line bg-surface p-5">
-			<h2 className="font-semibold">
-				<Trans>Prepare application</Trans>
-			</h2>
+		<section aria-label={t`Prepare application`} className="grid gap-4">
 			<p className="text-sm text-ink-2">
 				<Trans>
 					Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer.

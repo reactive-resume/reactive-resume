@@ -23,6 +23,7 @@ import { FilterChip, MemoryProposal, useCareerTime, GenerateNotice, Working, wor
 import { AiNotice } from "./fit";
 import { buildIcs } from "@/features/applications/ics";
 import { isInterview } from "@/features/applications/interviews";
+import { useInvalidateApplications } from "@/features/applications/use-application-actions";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
@@ -89,10 +90,17 @@ export function DebriefTab({ application, version, now, go }: WorkspaceTabProps)
 						from={viewing ?? forRound}
 						readOnly={viewing !== undefined}
 						onReviewed={setFresh}
+						hasReview={!!review}
 					/>
 				)}
 				{review && (
-					<ReviewCard key={`review:${review.id}`} application={application} review={review} readOnly={!!viewing} />
+					<ReviewCard
+						key={`review:${review.id}`}
+						application={application}
+						review={review}
+						readOnly={!!viewing}
+						onPractice={() => go("practise")}
+					/>
 				)}
 			</div>
 			{plan ? (
@@ -113,10 +121,20 @@ type DebriefFormProps = {
 	from: Review | undefined;
 	readOnly: boolean;
 	onReviewed: (review: Review) => void;
+	hasReview: boolean;
 };
 
-function DebriefForm({ application, round, from, readOnly, onReviewed }: DebriefFormProps) {
+function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview }: DebriefFormProps) {
 	const id = useId();
+	const invalidate = useInvalidateApplications();
+	const note = useMutation({
+		...orpc.applications.addNote.mutationOptions(),
+		onSuccess: () => {
+			invalidate(application.id);
+			toast.add({ description: t`Debrief saved to notes` });
+		},
+		onError: (error) => toastError(error, t`Couldn't save the debrief. Your draft is kept.`),
+	});
 	const { day } = useCareerTime();
 	const generate = useGenerate(application.id);
 	const connection = useDefaultProvider();
@@ -176,7 +194,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 	] as const;
 
 	return (
-		<section aria-labelledby={`${id}-title`} className="grid gap-4 rounded-xl border border-line bg-surface p-4 md:p-5">
+		<section aria-labelledby={`${id}-title`} className="grid gap-4">
 			<div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
 				<h2 id={`${id}-title`} className="text-[15px] font-semibold">
 					{readOnly && !round ? from?.data.round || t`Interview debrief` : afterRound(round?.kind)}
@@ -231,21 +249,50 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 			</div>
 			{!readOnly && (
 				<div className="grid justify-items-start gap-2.5">
-					<Button disabled={!ready || !provider} loading={generate.isPending} onClick={submit}>
-						{generate.isPending ? <Working steps={workingSteps("debrief")} /> : <Trans>Review my answer</Trans>}
+					{provider && (
+						<Button
+							variant={hasReview ? "secondary" : "primary"}
+							disabled={!ready}
+							loading={generate.isPending}
+							onClick={submit}
+						>
+							{generate.isPending ? <Working steps={workingSteps("debrief")} /> : <Trans>Review my answer</Trans>}
+						</Button>
+					)}
+					<Button
+						variant={provider ? "secondary" : "primary"}
+						disabled={!ready}
+						loading={note.isPending}
+						onClick={() =>
+							note.mutate({
+								id: application.id,
+								text: [
+									draft.question.trim(),
+									draft.answer.trim(),
+									landed.find((option) => option.value === draft.landed)?.label,
+								]
+									.filter(Boolean)
+									.join("\n\n"),
+							})
+						}
+					>
+						<Trans>Save to notes</Trans>
 					</Button>
 					<GenerateNotice generate={generate} onRetry={submit} />
-					<AiNotice />
+					<AiNotice
+						needs={<Trans>A review of your answer needs AI.</Trans>}
+						works={<Trans>Your notes on each question save without it.</Trans>}
+					/>
 				</div>
 			)}
 		</section>
 	);
 }
 
-type ReviewCardProps = { application: Application; review: Review; readOnly: boolean };
+type ReviewCardProps = { onPractice: () => void; application: Application; review: Review; readOnly: boolean };
 
 /** What the evidence supports versus what was only observed, and one thing worth remembering for this job. */
-function ReviewCard({ application, review, readOnly }: ReviewCardProps) {
+function ReviewCard({ application, review, readOnly, onPractice }: ReviewCardProps) {
 	const queryClient = useQueryClient();
 	const { data } = review;
 	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
@@ -278,11 +325,8 @@ function ReviewCard({ application, review, readOnly }: ReviewCardProps) {
 	const company = application.company;
 
 	return (
-		<section
-			aria-label={t`Review`}
-			className={cn("grid gap-4 rounded-xl border border-line bg-surface p-4 md:p-5", ENTER_CLASS)}
-		>
-			<h2 className="text-base font-semibold">{data.title}</h2>
+		<section aria-label={t`Review`} className={cn("grid gap-4", ENTER_CLASS)}>
+			<h2 className="t-section-title">{data.title}</h2>
 			{data.verdicts.length > 0 && (
 				<ul className="grid gap-3">
 					{data.verdicts.map((verdict) => (
@@ -307,6 +351,12 @@ function ReviewCard({ application, review, readOnly }: ReviewCardProps) {
 					</strong>{" "}
 					{readable(data.nextRound)}
 				</p>
+			)}
+			{data.priority && !readOnly && (
+				<Button className="w-fit sm:absolute sm:end-0 sm:top-0" onClick={onPractice}>
+					<Icon name="microphone" />
+					<Trans>Practice this answer</Trans>
+				</Button>
 			)}
 			{data.priority && (
 				<p className="text-sm leading-[21px]">
@@ -417,10 +467,10 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 	};
 
 	return (
-		<aside className="grid gap-3 rounded-xl border border-line bg-surface p-4">
+		<aside className="grid gap-3">
 			<div className="grid gap-1">
-				<h2 className="text-sm font-semibold">
-					<Trans>This week: make your evidence easier to follow</Trans>
+				<h2 className="t-section-title">
+					<Trans>This week</Trans>
 				</h2>
 				<p className="text-xs text-ink-3">
 					{t`${ph({ done: i18n.number(done) })} of ${ph({ count: i18n.number(count) })} done`} ·{" "}

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import type { Application } from "../types";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
@@ -22,12 +22,23 @@ const api = vi.hoisted(() => ({
 	invalidate: vi.fn(),
 	confirm: vi.fn(),
 	moveWithUndo: vi.fn(),
+	trashWithUndo: vi.fn(),
 	searchPostings: vi.fn(),
 	webStatus: vi.fn(),
 	capabilities: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => vi.fn(),
+	Link: ({
+		to: _to,
+		params,
+		children,
+		...props
+	}: ComponentProps<"a"> & { to: string; params: { applicationId: string } }) => (
+		<a href={`/dashboard/applications/${params.applicationId}`} {...props}>
+			{children}
+		</a>
+	),
 	useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }),
 }));
 vi.mock("@/libs/orpc/client", () => ({
@@ -74,6 +85,7 @@ vi.mock("../use-application-actions", () => ({
 		logFollowUp: { isPending: false, mutate: vi.fn() },
 	}),
 	useMoveWithUndo: () => api.moveWithUndo,
+	useTrashWithUndo: () => api.trashWithUndo,
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => api.confirm }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => "desktop" }));
@@ -163,13 +175,14 @@ it("refreshes a rejected search connection in place without losing the query", a
 		throw new ORPCError("SEARCH_AUTH");
 	});
 	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
-	const query = await screen.findByRole("textbox", { name: "Search job postings" });
+	fireEvent.click(await screen.findByRole("tab", { name: "Search postings" }));
+	const query = await screen.findByRole("textbox", { name: "Role, company or location" });
 	fireEvent.change(query, { target: { value: "Fictional engineer" } });
 	fireEvent.click(screen.getByRole("button", { name: /^Search$/ }));
 
 	expect(await screen.findByText(/The service rejected the API key/)).toBeTruthy();
 	expect(screen.getByRole("button", { name: "Set up web access" })).toBeTruthy();
-	expect((screen.getByRole("textbox", { name: "Search job postings" }) as HTMLInputElement).value).toBe(
+	expect((screen.getByRole("textbox", { name: "Role, company or location" }) as HTMLInputElement).value).toBe(
 		"Fictional engineer",
 	);
 	await waitFor(() =>
@@ -194,10 +207,11 @@ it("keeps native-search recovery after declining approval without dropping autho
 			{ url: "https://jobs.example.com/design-engineer", title: "Fictional role", description: "" },
 		]);
 	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
-	fireEvent.change(await screen.findByRole("textbox", { name: "Search job postings" }), {
+	fireEvent.change(await screen.findByRole("textbox", { name: "Role" }), { target: { value: "Authored role" } });
+	fireEvent.click(screen.getByRole("tab", { name: "Search postings" }));
+	fireEvent.change(await screen.findByRole("textbox", { name: "Role, company or location" }), {
 		target: { value: "Fictional engineer" },
 	});
-	fireEvent.change(screen.getByRole("textbox", { name: "Role" }), { target: { value: "Authored role" } });
 	fireEvent.click(screen.getByRole("button", { name: /^Search$/ }));
 	fireEvent.click(await screen.findByRole("button", { name: "Retry with Fictional provider" }));
 	await screen.findByText("Declined");
@@ -206,39 +220,37 @@ it("keeps native-search recovery after declining approval without dropping autho
 	await waitFor(() => expect(retry).not.toBeDisabled());
 	fireEvent.click(retry);
 	await screen.findByText("Fictional role");
-	expect(screen.getByRole("textbox", { name: "Search job postings" })).toHaveValue("Fictional engineer");
-	expect(screen.getByRole("textbox", { name: "Role" })).toHaveValue("Authored role");
+	expect(screen.getByRole("textbox", { name: "Role, company or location" })).toHaveValue("Fictional engineer");
+	fireEvent.click(screen.getByRole("tab", { name: "Link or posting text" }));
+	expect(await screen.findByRole("textbox", { name: "Role" })).toHaveValue("Authored role");
 	expect(api.searchPostings.mock.calls[2]?.[0]).toEqual({ query: "Fictional engineer", aiProviderId: "local" });
 });
 
-it("removes hidden closed applications from bulk selection before deleting visible rows", async () => {
+it("removes hidden closed applications from bulk selection before moving visible rows to Trash", () => {
 	const rows = [application("open", "saved"), application("closed", "closed")];
-	const view = mount(<ApplicationList applications={rows} showClosed selectedId={null} onOpen={vi.fn()} />);
+	const view = mount(<ApplicationList applications={rows} showClosed />);
 	fireEvent.click(screen.getByRole("checkbox", { name: "Select Engineer at Open Co" }));
 	fireEvent.click(screen.getByRole("checkbox", { name: "Select Engineer at Closed Co" }));
 	expect(screen.getByText("2 selected")).toBeTruthy();
-	view.rerender(<ApplicationList applications={rows} showClosed={false} selectedId={null} onOpen={vi.fn()} />);
+	view.rerender(<ApplicationList applications={rows} showClosed={false} />);
 	expect(screen.queryByRole("checkbox", { name: "Select Engineer at Closed Co" })).toBeNull();
 	expect(screen.getByText("1 selected")).toBeTruthy();
 	fireEvent.click(screen.getByRole("button", { name: "Move to Trash" }));
-	await waitFor(() => expect(api.bulkTrash.mock.calls[0]?.[0]).toEqual({ ids: ["open"] }));
+	expect(api.trashWithUndo).toHaveBeenCalledExactlyOnceWith([{ id: "open" }]);
 });
 
-it("offers one board-card open control and a separate options control without a dead draggable tab stop", async () => {
+it("offers one board-card link and a separate options control without a dead draggable tab stop", async () => {
 	const row = application("open", "saved");
-	const onOpen = vi.fn();
-	const view = mount(<ApplicationBoard applications={[row]} showClosed={false} onOpen={onOpen} />);
-	const open = screen.getByRole("button", { name: "Engineer Open Co" });
+	const view = mount(<ApplicationBoard applications={[row]} showClosed={false} />);
+	const open = screen.getByRole("link", { name: "Open Co" });
 	const options = screen.getByRole("button", { name: "Options for Engineer at Open Co" });
-	expect(view.container.querySelector("button button, [role=button] button")).toBeNull();
+	expect(open).toHaveAttribute("href", "/dashboard/applications/open");
+	expect(view.container.querySelector("a button, button button, [role=button] button")).toBeNull();
 	for (let parent = open.parentElement; parent && parent !== view.container; parent = parent.parentElement) {
 		expect(parent.tabIndex).toBeLessThan(0);
 	}
-	fireEvent.click(open);
-	expect(onOpen).toHaveBeenCalledExactlyOnceWith(row);
 	fireEvent.click(options);
 	await screen.findByRole("menu");
-	expect(onOpen).toHaveBeenCalledTimes(1);
 });
 
 it("does not report successful extraction when role and company are blank", async () => {
@@ -258,7 +270,7 @@ it("does not report successful extraction when role and company are blank", asyn
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: "https://example.test/careers" },
 	});
-	fireEvent.click(screen.getByRole("button", { name: "Read posting" }));
+	fireEvent.click(screen.getByRole("button", { name: "Read the page without AI" }));
 	await screen.findByText(/Some job details couldn't be read/);
 	expect(screen.queryByText(/Found (the )?role,? (and )?company/)).toBeNull();
 	expect((screen.getByRole("button", { name: "Save job" }) as HTMLButtonElement).disabled).toBe(true);
@@ -337,8 +349,8 @@ it("offers only the explicit AI read for pasted text", async () => {
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: "Build tools for a fictional company." },
 	});
-	expect(screen.queryByRole("button", { name: "Read posting" })).toBeNull();
-	expect(screen.getByRole("button", { name: "Read with AI" })).toBeTruthy();
+	expect(screen.queryByRole("button", { name: "Read the page without AI" })).toBeNull();
+	expect(screen.getByRole("button", { name: "Read it" })).toBeTruthy();
 	expect(api.parsePosting).not.toHaveBeenCalled();
 });
 
@@ -358,10 +370,10 @@ it("never dispatches a no-AI parse to a server that cannot confirm support, whil
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: "https://example.test/role" },
 	});
-	fireEvent.click(screen.getByRole("button", { name: "Read posting" }));
+	fireEvent.click(screen.getByRole("button", { name: "Read the page without AI" }));
 	await screen.findByText(/Reading without AI couldn't be confirmed/);
 	expect(api.parsePosting).not.toHaveBeenCalled();
-	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	fireEvent.click(screen.getByRole("button", { name: "Read it" }));
 	await waitFor(() =>
 		expect(api.parsePosting).toHaveBeenCalledWith(
 			{ input: "https://example.test/role", useAI: true },
@@ -388,7 +400,7 @@ it("shows pasted text once when AI couldn't read it, and saves that text (J2-20)
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: posting },
 	});
-	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	fireEvent.click(screen.getByRole("button", { name: "Read it" }));
 	await screen.findByText(/AI couldn't fill the details/);
 	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();
 	expect(screen.queryByRole("textbox", { name: "Saved description" })).toBeNull();
@@ -418,9 +430,9 @@ it("shows the posting once when a link couldn't be read, its text was pasted and
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: "https://jobs.example.test/vp" },
 	});
-	fireEvent.click(screen.getByRole("button", { name: "Read posting" }));
+	fireEvent.click(screen.getByRole("button", { name: "Read the page without AI" }));
 	fireEvent.change(await screen.findByRole("textbox", { name: "Pasted description" }), { target: { value: posting } });
-	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	fireEvent.click(screen.getByRole("button", { name: "Read it" }));
 	await screen.findByText(/AI couldn't fill the details/);
 	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();
 
@@ -453,7 +465,7 @@ it("replaces prior posting autofill while preserving authored fields, including 
 	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
 	const input = await screen.findByRole("textbox", { name: "Job link or posting text" });
 	fireEvent.change(input, { target: { value: "First fictional posting text" } });
-	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	fireEvent.click(screen.getByRole("button", { name: "Read it" }));
 	await waitFor(() => expect(screen.getByRole("textbox", { name: "Role" })).toHaveValue("First role"));
 	let finish = (_result: ReturnType<typeof posting>) => {};
 	api.parsePosting.mockReturnValueOnce(
@@ -462,7 +474,7 @@ it("replaces prior posting autofill while preserving authored fields, including 
 		}),
 	);
 	fireEvent.change(input, { target: { value: "Second fictional posting text" } });
-	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	fireEvent.click(screen.getByRole("button", { name: "Read it" }));
 	fireEvent.change(screen.getByRole("textbox", { name: "Company" }), { target: { value: "My authored company" } });
 	fireEvent.change(screen.getByRole("textbox", { name: "Salary" }), { target: { value: "" } });
 	finish(posting("Second role", "Second Co", "Paris", "200"));
@@ -483,7 +495,7 @@ it("keeps the link's failure above paste recovery instead of replacing it with i
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: "https://jobs.lever.co/spotify" },
 	});
-	fireEvent.click(screen.getByRole("button", { name: "Read posting" }));
+	fireEvent.click(screen.getByRole("button", { name: "Read the page without AI" }));
 	await screen.findByRole("textbox", { name: "Pasted description" });
 	const error = await screen.findByRole("alert");
 	expect(error.textContent).toContain("That link is a list of jobs");
@@ -523,7 +535,7 @@ it("keeps one failure status when optional AI enrichment fails for a captured po
 			}}
 		/>,
 	);
-	fireEvent.click(await screen.findByRole("button", { name: "Read with AI" }));
+	fireEvent.click(await screen.findByRole("button", { name: "Read it" }));
 	await waitFor(() => expect(api.parsePosting).toHaveBeenCalledTimes(1));
 	expect(await screen.findAllByText(/AI couldn't fill the details/)).toHaveLength(1);
 	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();

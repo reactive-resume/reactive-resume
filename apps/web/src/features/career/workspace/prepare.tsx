@@ -35,6 +35,8 @@ const isBriefing = (item: SavedItem | undefined): item is Briefing => item?.data
 
 /** Before start − 10 min: the plan (W6). Until the end: the 10-minute checklist (W7/W21). After: "How did it go?". */
 export function PrepareTab({ application, version, interview, now, go }: WorkspaceTabProps) {
+	const [checklist, setChecklist] = useState(false);
+	const time = useCareerTime();
 	const saved = useSavedItems(application.id);
 
 	if (!interview && !isBriefing(version))
@@ -56,6 +58,16 @@ export function PrepareTab({ application, version, interview, now, go }: Workspa
 		);
 
 	const briefing = isBriefing(version) ? version : latest(saved.data, "briefing", interview?.id ?? null);
+
+	if (interview && checklist && !version)
+		return (
+			<>
+				<Button size="sm" variant="ghost" className="mb-4" onClick={() => setChecklist(false)}>
+					<Trans>Back to the plan</Trans>
+				</Button>
+				<Soon application={application} interview={interview} briefing={briefing} now={now} go={go} />
+			</>
+		);
 
 	if (interview && !isBriefing(version)) {
 		const start = new Date(interview.at).getTime();
@@ -82,10 +94,40 @@ export function PrepareTab({ application, version, interview, now, go }: Workspa
 
 	if (!briefing) {
 		if (saved.isPending) return <Skeleton className="h-64 rounded-xl" />;
-		return interview ? <PlanEmpty application={application} interview={interview} /> : null;
+		return interview ? (
+			<>
+				<Button variant="secondary" className="mb-4" onClick={() => setChecklist(true)}>
+					<Icon name="timer" />
+					<Trans>10-minute version</Trans>
+				</Button>
+				<PlanEmpty application={application} interview={interview} />
+			</>
+		) : null;
 	}
 
-	return <Plan application={application} interview={interview} briefing={briefing} readOnly={!!version} go={go} />;
+	return (
+		<>
+			{!version && interview && (
+				<div className="mb-4 flex flex-wrap gap-2 sm:absolute sm:end-0 sm:top-0 sm:mb-0">
+					<Button variant="secondary" onClick={() => setChecklist(true)}>
+						<Icon name="timer" />
+						<Trans>10-minute version</Trans>
+					</Button>
+					<Button onClick={() => go("practise")}>
+						<Icon name="microphone" />
+						<Trans>Practice 3 likely questions</Trans>
+					</Button>
+				</div>
+			)}
+			{interview && (
+				<p className="pt-0.5 pb-5 text-xs text-ink-3">
+					{interviewTypeLabel(interview.kind)} · {time.when(interview.at)} · {t`${interview.durationMinutes} min`} ·{" "}
+					{interview.location}
+				</p>
+			)}
+			<Plan application={application} interview={interview} briefing={briefing} readOnly={!!version} go={go} />
+		</>
+	);
 }
 
 type PlanEmptyProps = { application: Application; interview: InterviewTimelineEntry };
@@ -118,7 +160,10 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 				<AiProviderLoadState state={connection} />
 			) : provider ? (
 				<>
-					<AiNotice />
+					<AiNotice
+						needs={<Trans>A timed plan, your opening and likely questions need AI.</Trans>}
+						works={<Trans>The checklist, people and stories work without it.</Trans>}
+					/>
 					<GenerateNotice generate={generate} onRetry={plan} className="max-w-[360px]" />
 				</>
 			) : null}
@@ -232,7 +277,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 					))}
 				</div>
 
-				<div className="overflow-hidden rounded-xl border border-line bg-surface">
+				<div className="">
 					{data.plan.map((row, index) => (
 						<div
 							key={`${row.title}-${index}`}
@@ -265,8 +310,8 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 				</div>
 
 				{questions.length > 0 && (
-					<div ref={questionsRef} className="grid gap-2.5 rounded-xl border border-line bg-surface p-4">
-						<h3 className="text-sm font-semibold">
+					<div ref={questionsRef} className="grid gap-2.5">
+						<h3 className="t-section-title">
 							<Trans>Questions to ask</Trans>
 						</h3>
 						<ol className="grid gap-2">
@@ -285,7 +330,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 			</div>
 
 			<div className="grid gap-3.5">
-				<div className="grid gap-2.5 rounded-xl border border-line bg-surface p-4">
+				<div className="grid gap-2.5">
 					<div className="flex items-center gap-2">
 						<Icon name="clipboard-text" size={20} className="text-accent-text" />
 						<h3 className="flex-1 text-sm font-semibold">
@@ -308,7 +353,13 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 				{interview && !readOnly && <RefreshSwitch application={application} interview={interview} />}
 				<StoriesToBring application={application} briefing={briefing} />
 			</div>
-			<BriefingDialog briefing={briefing} open={reading} onOpenChange={setReading} />
+			<BriefingDialog
+				application={application}
+				interview={interview}
+				briefing={briefing}
+				open={reading}
+				onOpenChange={setReading}
+			/>
 		</div>
 	);
 }
@@ -370,7 +421,7 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 						: t`Too close to the interview to schedule a refresh.`;
 
 	return (
-		<div className="rounded-xl border border-line bg-surface px-4 py-2">
+		<div className="border-t border-line py-2">
 			<AiProviderLoadState state={connection} />
 			<SwitchRow
 				label={<span className="font-semibold">{label}</span>}
@@ -406,7 +457,7 @@ function StoriesToBring({ application, briefing }: StoriesToBringProps) {
 	const bring = briefing.data.storyIds.flatMap((id) => stories?.find((story) => story.id === id) ?? []);
 	if (!stories || (bring.length === 0 && !briefing.data.missingStory)) return null;
 	return (
-		<div className="grid gap-2 rounded-xl border border-line bg-surface p-4">
+		<div className="grid gap-2">
 			<h3 className="text-sm font-semibold">
 				<Trans>Stories to bring</Trans>
 			</h3>
@@ -457,9 +508,16 @@ function BriefingNotes({ briefing }: { briefing: Briefing }) {
 const FULL_SCREEN_ON_PHONES =
 	"max-sm:inset-s-0 max-sm:top-0 max-sm:h-dvh max-sm:max-h-none max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none";
 
-type BriefingDialogProps = { briefing: Briefing; open: boolean; onOpenChange: (open: boolean) => void };
+type BriefingDialogProps = {
+	application: Application;
+	interview: InterviewTimelineEntry | undefined;
+	briefing: Briefing;
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+};
 
-function BriefingDialog({ briefing, open, onOpenChange }: BriefingDialogProps) {
+function BriefingDialog({ application, interview, briefing, open, onOpenChange }: BriefingDialogProps) {
+	const ticks = useTicks(application.id, `now:${interview?.id ?? briefing.interviewId}`);
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent closeLabel={t`Close`} className={cn("content-start sm:max-w-[560px]", FULL_SCREEN_ON_PHONES)}>
@@ -468,7 +526,27 @@ function BriefingDialog({ briefing, open, onOpenChange }: BriefingDialogProps) {
 						<Trans>10-minute briefing</Trans>
 					</DialogTitle>
 				</DialogHeader>
-				<BriefingNotes briefing={briefing} />
+				<div className="grid">
+					{steps().map((step, index) => (
+						<label key={step.title} className="flex items-start gap-3 border-b border-line py-3">
+							<Checkbox
+								checked={ticks.ticked.includes(String(index))}
+								onCheckedChange={(checked) => ticks.toggle(String(index), checked)}
+							/>
+							<span className="grid flex-1 gap-1">
+								<span className="t-label">{step.title}</span>
+								<span className="text-[13px] text-ink-3">{index === 1 ? briefing.data.opening : step.detail}</span>
+							</span>
+							<span className="text-xs text-ink-3">{t`${step.minutes} min`}</span>
+						</label>
+					))}
+				</div>
+				<details>
+					<summary className="cursor-pointer text-[13px] text-accent-text">
+						<Trans>Read the full briefing</Trans>
+					</summary>
+					<BriefingNotes briefing={briefing} />
+				</details>
 			</DialogContent>
 		</Dialog>
 	);
@@ -590,7 +668,15 @@ function Soon({ application, interview, briefing, now, go }: SoonProps) {
 						<Trans>Rehearse aloud</Trans>
 					</Button>
 				</div>
-				{briefing && <BriefingDialog briefing={briefing} open={reading} onOpenChange={setReading} />}
+				{briefing && (
+					<BriefingDialog
+						application={application}
+						interview={interview}
+						briefing={briefing}
+						open={reading}
+						onOpenChange={setReading}
+					/>
+				)}
 			</div>
 		);
 

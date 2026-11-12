@@ -15,6 +15,7 @@ const workspace = vi.hoisted(() => ({
 
 vi.mock("../hooks", async (importOriginal) => ({
 	...(await importOriginal<typeof import("../hooks")>()),
+	useDefaultProvider: () => ({ provider: {} }),
 	useWorkspace: () => ({ settled: async () => ({ answers: workspace.answers }), save: workspace.save }),
 }));
 vi.mock("@tanstack/react-router", () => ({
@@ -43,7 +44,9 @@ it("keeps a prepared answer beside the existing answers", async () => {
 			<PrepareReview application={{ id: "job" } as Application} disabled={false} />
 		</I18nProvider>,
 	);
-	fireEvent.click(screen.getByRole("button", { name: "Keep answer" }));
+	fireEvent.click(screen.getByRole("button", { name: "Prepare drafts" }));
+	expect(workspace.save).not.toHaveBeenCalled();
+	fireEvent.click(await screen.findByRole("button", { name: "Keep answer" }));
 	await waitFor(() => expect(workspace.save).toHaveBeenCalled());
 	expect(workspace.save.mock.lastCall).toEqual([
 		{

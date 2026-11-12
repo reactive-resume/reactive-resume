@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import type { Application } from "../types";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
@@ -20,7 +20,11 @@ vi.mock("@reactive-resume/utils/file", async (importOriginal) => ({
 }));
 vi.mock("@tanstack/react-router", () => ({
 	useRouteContext: () => ({ session: { user: { timezone: account.timeZone } } }),
-	Link: ({ children }: { children: ReactNode }) => <a href="/dashboard/career/offers">{children}</a>,
+	Link: ({ children, to: _to, params: _params, ...props }: ComponentProps<"a"> & { to?: string; params?: object }) => (
+		<a href="/dashboard/career/offers" {...props}>
+			{children}
+		</a>
+	),
 }));
 vi.mock("./interview-dialog", () => ({
 	InterviewDialog: ({ day }: { day: string | null }) => <output data-testid="scheduled-day">{day}</output>,
@@ -142,7 +146,7 @@ it.each([
 		<>
 			<NextStepCard application={row} onScheduleInterview={vi.fn()} />
 			<Activity application={row} onOpenInterview={vi.fn()} />
-			<ApplicationCalendar compact={false} applications={[row]} allApplications={[row]} onOpen={vi.fn()} />
+			<ApplicationCalendar compact={false} applications={[row]} allApplications={[row]} />
 		</>,
 	);
 	expect(container.querySelector("#application-next-step")?.parentElement?.textContent).toContain(time);
@@ -160,16 +164,13 @@ it("keeps stage and note dates as UTC whole days even east of the date boundary"
 it.each([
 	["UTC", "October 2026", "2026-10-31"],
 	["Europe/Berlin", "November 2026", "2026-11-01"],
-])("uses %s for the current month, count, day and upcoming heading", (timeZone, month, day) => {
+])("uses %s for the current month, the day and what is coming up", (timeZone, month, day) => {
 	account.timeZone = timeZone;
 	vi.setSystemTime(new Date("2026-10-31T23:15:00Z"));
 	const row = application("2026-10-31T23:30:00Z");
-	const { container } = show(
-		<ApplicationCalendar compact={false} applications={[row]} allApplications={[row]} onOpen={vi.fn()} />,
-	);
+	const { container } = show(<ApplicationCalendar compact={false} applications={[row]} allApplications={[row]} />);
 	expect(screen.getByRole("heading", { name: month })).toBeDefined();
-	expect(screen.getByText("1 interview")).toBeDefined();
-	expect(screen.getByRole("heading", { name: "Today" })).toBeDefined();
+	expect(screen.getByRole("heading", { name: "Coming up 1" })).toBeDefined();
 	const cell = container.querySelector(`[data-day="${day}"]`);
 	expect(cell?.textContent).toContain("Northstar");
 	if (!cell) throw new Error("Missing account calendar day");
@@ -177,14 +178,12 @@ it.each([
 	expect(screen.getByTestId("scheduled-day").textContent).toBe(day);
 });
 
-it("labels tomorrow using the next civil day across the spring DST jump", () => {
+it("dates an interview on the next civil day across the spring DST jump", () => {
 	account.timeZone = "Europe/Berlin";
 	vi.setSystemTime(new Date("2026-03-28T23:15:00Z"));
 	const row = application("2026-03-29T22:30:00Z");
-	const { container } = show(
-		<ApplicationCalendar compact={false} applications={[row]} allApplications={[row]} onOpen={vi.fn()} />,
-	);
-	expect(screen.getByRole("heading", { name: "Tomorrow" })).toBeDefined();
+	const { container } = show(<ApplicationCalendar compact={false} applications={[row]} allApplications={[row]} />);
+	expect(container.querySelector("[data-upcoming-interview]")?.textContent).toContain("Mon30");
 	expect(container.querySelector('[data-day="2026-03-30"]')?.textContent).toContain("00:30");
 });
 
@@ -222,63 +221,38 @@ it("uses the calendar-selected civil day in the real interview editor", async ()
 });
 
 it.each([
-	["UTC", "October 2026", "November 2026", "23:30", "00:30", "Today", "Tomorrow", "3 interviews", "2 interviews"],
-	[
-		"Europe/Berlin",
-		"November 2026",
-		"December 2026",
-		"00:30",
-		"01:30",
-		"Today",
-		"Today",
-		"3 interviews",
-		"No interviews",
-	],
-])(
-	"keeps the phone agenda and month navigation on the %s account calendar",
-	(timeZone, month, nextMonth, firstTime, secondTime, firstDay, secondDay, count, nextCount) => {
-		account.timeZone = timeZone;
-		vi.setSystemTime(new Date("2026-10-31T23:15:00Z"));
-		const rows = ["2026-10-31T23:30:00Z", "2026-11-01T00:30:00Z", "2026-11-04T14:00:00Z"].map((at, index) => {
-			const row = application(at);
-			row.id = `application-${index}`;
-			row.company = `Northstar ${index}`;
-			row.activity = row.activity
-				.filter((entry) => entry.type === "interview")
-				.map((entry) => ({ ...entry, id: `interview-${index}` }));
-			return row;
-		});
-		const onOpen = vi.fn();
-		show(<ApplicationCalendar compact applications={rows} allApplications={rows} onOpen={onOpen} />);
-		const agenda = screen.getByTestId("interview-agenda");
-		expect(screen.queryByTestId("interview-month-grid")).toBeNull();
-		// Until a month is picked, the phone header titles the upcoming list rather than a month (G1B-17).
-		expect(screen.getByRole("heading", { name: "Upcoming" })).toBeDefined();
-		expect(screen.getByText(count, { exact: true })).toBeDefined();
-		expect(screen.queryByRole("heading", { name: month })).toBeNull();
-		expect(within(agenda).getAllByRole("heading", { level: 4 })).toHaveLength(timeZone === "UTC" ? 3 : 2);
-		for (const [index, time, day] of [
-			[0, firstTime, firstDay],
-			[1, secondTime, secondDay],
-		] as const) {
-			const card = within(agenda).getByText(`Northstar ${index}`).closest("[data-upcoming-interview]");
-			expect(card?.textContent).toContain(time);
-			expect(card?.parentElement?.querySelector("h4")?.textContent).toBe(day);
-		}
-		const openButton = within(agenda).getAllByRole("button", { name: "View application" })[0];
-		if (!openButton) throw new Error("Missing application action");
-		fireEvent.click(openButton);
-		expect(onOpen).toHaveBeenCalledWith(rows[0]);
-		fireEvent.click(screen.getByRole("button", { name: "Next month" }));
-		expect(screen.getByRole("heading", { name: nextMonth })).toBeDefined();
-		expect(screen.getByText(nextCount, { exact: true })).toBeDefined();
-		expect(within(agenda).queryByText("Northstar 0")).toBeNull();
-		fireEvent.click(screen.getByRole("button", { name: "This month" }));
-		expect(within(agenda).getByRole("heading", { name: "Upcoming interviews" })).toBeDefined();
-		expect(within(agenda).getByText("Northstar 0")).toBeDefined();
-		expect(within(agenda).getByText("Northstar 2")).toBeDefined();
-	},
-);
+	["UTC", "November 2026", ["Northstar 1", "Northstar 2"]],
+	["Europe/Berlin", "December 2026", []],
+])("keeps the phone list and month navigation on the %s account calendar", (timeZone, nextMonth, inNextMonth) => {
+	account.timeZone = timeZone;
+	vi.setSystemTime(new Date("2026-10-31T23:15:00Z"));
+	const rows = ["2026-10-31T23:30:00Z", "2026-11-01T00:30:00Z", "2026-11-04T14:00:00Z"].map((at, index) => {
+		const row = application(at);
+		row.id = `application-${index}`;
+		row.company = `Northstar ${index}`;
+		row.activity = row.activity
+			.filter((entry) => entry.type === "interview")
+			.map((entry) => ({ ...entry, id: `interview-${index}` }));
+		return row;
+	});
+	show(<ApplicationCalendar compact applications={rows} allApplications={rows} />);
+	const agenda = screen.getByTestId("interview-agenda");
+	const listed = () =>
+		Array.from(
+			agenda.querySelectorAll("[data-upcoming-interview]"),
+			(row) => row.textContent?.match(/Northstar \d/)?.[0],
+		);
+	expect(screen.queryByTestId("interview-month-grid")).toBeNull();
+	// Until a month is picked, the phone header titles the list rather than a month (G1B-17).
+	expect(screen.getByRole("heading", { name: "Coming up" })).toBeDefined();
+	expect(listed()).toEqual(["Northstar 0", "Northstar 1", "Northstar 2"]);
+	fireEvent.click(screen.getByRole("button", { name: "Next month" }));
+	expect(screen.getByRole("heading", { name: nextMonth })).toBeDefined();
+	expect(listed()).toEqual(inNextMonth);
+	fireEvent.click(screen.getByRole("button", { name: "Today" }));
+	expect(screen.getByRole("heading", { name: "Coming up" })).toBeDefined();
+	expect(listed()).toEqual(["Northstar 0", "Northstar 1", "Northstar 2"]);
+});
 
 it.each([false, true])("follows account-local month rollover until browsing (compact=%s)", (compact) => {
 	account.timeZone = "Europe/Berlin";
@@ -291,19 +265,17 @@ it.each([false, true])("follows account-local month rollover until browsing (com
 			.map((entry) => ({ ...entry, id: row.id }));
 		return row;
 	});
-	show(<ApplicationCalendar compact={compact} applications={rows} allApplications={rows} onOpen={vi.fn()} />);
-	// Phones title the unbrowsed view "Upcoming"; a browsed month is named on both.
-	const current = (month: string) => (compact ? "Upcoming" : month);
+	show(<ApplicationCalendar compact={compact} applications={rows} allApplications={rows} />);
+	// Phones title the unbrowsed view "Coming up"; a browsed month is named on both.
+	const current = (month: string) => (compact ? "Coming up" : month);
 	expect(screen.getByRole("heading", { name: current("October 2026") })).toBeDefined();
-	if (!compact) expect(screen.getByText("1 interview", { exact: true })).toBeDefined();
 	act(() => vi.advanceTimersByTime(60_000));
 	expect(screen.getByRole("heading", { name: current("November 2026") })).toBeDefined();
-	if (!compact) expect(screen.getByText("2 interviews", { exact: true })).toBeDefined();
 	fireEvent.click(screen.getByRole("button", { name: "Previous month" }));
 	vi.setSystemTime(new Date("2026-11-30T22:59:30Z"));
 	act(() => vi.advanceTimersByTime(60_000));
 	expect(screen.getByRole("heading", { name: "October 2026" })).toBeDefined();
-	fireEvent.click(screen.getByRole("button", { name: "This month" }));
+	fireEvent.click(screen.getByRole("button", { name: "Today" }));
 	expect(screen.getByRole("heading", { name: current("December 2026") })).toBeDefined();
 	vi.setSystemTime(new Date("2026-12-31T22:59:30Z"));
 	act(() => vi.advanceTimersByTime(60_000));

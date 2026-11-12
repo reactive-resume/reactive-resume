@@ -1,84 +1,90 @@
 import type { ApplicationSummary } from "../types";
-import { Icon } from "@reactive-resume/ui/components/icon";
+import { Trans } from "@lingui/react/macro";
+import { Link } from "@tanstack/react-router";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { cn } from "@reactive-resume/utils/style";
-import { describeNextStep, getNextStep } from "../next-step";
+import { describeNextStepLine, getNextStep } from "../next-step";
 import { offerHintFor, useOfferHints } from "../queries";
 import { ApplicationActionsMenu } from "./application-actions-menu";
-import { TagChips } from "./tag-chips";
-import { useCareerTime } from "@/features/career/shared";
+import { useCareerTime, useNow } from "@/features/career/shared";
 
 type ApplicationCardProps = {
 	application: ApplicationSummary;
-	onClick?: () => void;
-	/** A tag chip filters the page's existing search. */
-	onTagSelect?: ((tag: string) => void) | undefined;
-	/** The ⋯ menu (Move to…, Close…, Delete); cards dragged in the overlay go without. */
+	/** The ⋯ menu (Move to…, Close…, Move to Trash); cards dragged in the overlay go without. */
 	withMenu?: boolean;
 	dragging?: boolean;
 };
 
-/** A board card: the company's initial, role and company, and the next step (warn when it's overdue). */
-export function ApplicationCard({
-	application,
-	onClick,
-	onTagSelect,
-	withMenu = false,
-	dragging = false,
-}: ApplicationCardProps) {
+/**
+ * A board card: the company with its place, the role, then the next step as the list writes it. The card is a link
+ * to the application's page; its menu shows on hover and on focus.
+ */
+export function ApplicationCard({ application, withMenu = false, dragging = false }: ApplicationCardProps) {
 	const { locale, timeZone } = useCareerTime();
+	const now = useNow();
 	const hints = useOfferHints(application.status === "offer");
-	const next = describeNextStep(
-		getNextStep(application, undefined, timeZone, offerHintFor(hints, application.id)),
+	const next = describeNextStepLine(
+		getNextStep(application, now, timeZone, offerHintFor(hints, application.id)),
 		application,
 		locale,
 		timeZone,
+		now,
+		"short",
+	);
+	// "Lisbon · Hybrid" has room in the list; a card names the place only.
+	const place = application.location?.split(/\s*[·,]\s*/)[0];
+	const title = (
+		<span dir="auto" className="min-w-0 truncate text-sm font-medium text-ink">
+			{application.company}
+		</span>
 	);
 
 	return (
 		<div
 			data-application-id={application.id}
 			className={cn(
-				"group relative grid gap-2 rounded-lg border border-line bg-surface p-3 shadow-e1 transition-[border-color,scale] duration-quick ease-enter hover:border-line-2 active:not-has-[[data-slot=button]:active]:scale-[0.98]",
+				"group/row relative flex flex-col gap-1 rounded-lg border border-line bg-raised p-3 shadow-e1 transition-[border-color,scale] duration-quick ease-enter hover:border-line-2 active:not-has-[[data-slot=button]:active]:scale-[0.98]",
 				// The overlay card lifts as it's picked up and settles flat again while the drop animation flies it home.
 				dragging &&
-					"scale-[1.02] rotate-1 cursor-grabbing shadow-e3 transition-[rotate,scale,box-shadow] duration-quick ease-enter **:cursor-grabbing in-[.is-dropping]:scale-100 in-[.is-dropping]:rotate-0 in-[.is-dropping]:shadow-e1 starting:scale-100 starting:rotate-0 starting:shadow-e1",
+					"scale-[1.02] -rotate-2 cursor-grabbing shadow-[var(--shadow-3),0_0_0_2px_var(--accent)] transition-[rotate,scale,box-shadow] duration-quick ease-enter **:cursor-grabbing in-[.is-dropping]:scale-100 in-[.is-dropping]:rotate-0 in-[.is-dropping]:shadow-e1 starting:scale-100 starting:rotate-0 starting:shadow-e1",
 			)}
 		>
-			<div className="flex items-start gap-2.5">
-				<span
-					aria-hidden="true"
-					className="grid size-7 shrink-0 place-items-center rounded-lg bg-sunken text-xs font-semibold text-ink-2"
-				>
-					{application.company.slice(0, 1).toUpperCase()}
-				</span>
-				<div className="grid min-w-0 flex-1 gap-1">
-					<button
-						type="button"
+			<span className="flex items-baseline justify-between gap-2">
+				{dragging ? (
+					title
+				) : (
+					<Link
+						to="/dashboard/applications/$applicationId/{-$tab}"
+						params={{ applicationId: application.id }}
 						data-application-open
-						onClick={onClick}
-						className="grid min-w-0 text-start after:absolute after:inset-0 after:rounded-lg"
+						draggable={false}
+						className="flex min-w-0 after:absolute after:inset-0 after:rounded-lg"
 					>
-						<span dir="auto" className="truncate text-sm font-semibold">
-							{application.role}
-						</span>
-						<span dir="auto" className="truncate text-xs text-ink-3">
-							{application.company}
-						</span>
-					</button>
-					{/* Above the open button's stretched target, so filtering never opens the card. */}
-					<TagChips tags={application.tags} onSelect={onTagSelect} className="relative z-10 ms-0" />
-				</div>
-				{withMenu && <ApplicationActionsMenu application={application} className="relative z-10 -me-1.5 -mt-1.5" />}
-			</div>
-			<span
-				className={cn(
-					"flex items-center gap-1.5 text-xs",
-					next.tone === "warn" ? "text-warn-text" : next.tone === "muted" ? "text-ink-3" : "text-ink-2",
+						{title}
+					</Link>
 				)}
-			>
-				<Icon name={next.icon} size={15} className="shrink-0" />
-				<span className="truncate">{next.title}</span>
+				{place && (
+					<span dir="auto" className="shrink-0 text-[13px]/[18px] text-ink-3">
+						{place}
+					</span>
+				)}
 			</span>
+			<span dir="auto" className="truncate text-[13px]/[18px] text-ink-3">
+				{application.role}
+			</span>
+			<span className="mt-1.5 truncate text-[13px]/[18px] font-medium text-ink">{next.title}</span>
+			{next.sub && <span className="truncate text-[13px]/[18px] text-ink-3">{next.sub}</span>}
+			{next.needsYou && (
+				<Badge variant="warn" className="mt-1 self-start">
+					<Trans>Needs you</Trans>
+				</Badge>
+			)}
+			{withMenu && (
+				<ApplicationActionsMenu
+					application={application}
+					className="absolute end-1.5 bottom-1.5 z-10 rounded-sm bg-raised opacity-0 transition-opacity group-focus-within/row:opacity-100 group-hover/row:opacity-100 has-[[data-popup-open]]:opacity-100 pointer-coarse:opacity-100"
+				/>
+			)}
 		</div>
 	);
 }

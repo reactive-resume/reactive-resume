@@ -21,6 +21,7 @@ import { CareerLoadError } from "../load-state";
 import { formatMoney } from "../offer-compare";
 import { useRemoving } from "../removing";
 import { CollapseRow, FilterChip, tabLabel, useCareerTime, withQueryUndo } from "../shared";
+import { HeroCard } from "@/components/calm/hero-card";
 import { AiResultUsage } from "@/features/ai/usage";
 import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
@@ -68,7 +69,8 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 	// useSavedItems already leaves out items whose Undo is still showing.
 	const items = saved.data ?? [];
 	const present = KINDS.filter(({ kind }) => items.some((item) => item.data.kind === kind));
-	const shown = items.filter((item) => filter === null || item.data.kind === filter);
+	const current = application.status === "interview" ? items.find((item) => item.data.kind === "briefing") : undefined;
+	const shown = items.filter((item) => item.id !== current?.id && (filter === null || item.data.kind === filter));
 
 	if (items.length === 0)
 		return (
@@ -98,6 +100,20 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 
 	return (
 		<div className="grid gap-4">
+			{current && (
+				<HeroCard
+					wide
+					kicker={t`In use for the next interview`}
+					title={current.title}
+					actions={
+						<Button onClick={() => go("prepare", { version: current.id })}>
+							<Trans>Open briefing</Trans>
+						</Button>
+					}
+				>
+					{current.data.kind === "briefing" ? current.data.summary : ""}
+				</HeroCard>
+			)}
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<div className="flex flex-wrap gap-1.5">
 					<FilterChip pressed={filter === null} onClick={() => setFilter(null)}>
@@ -112,7 +128,7 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 				<p className="text-xs text-ink-3">{t`Library items for ${company}, newest first.`}</p>
 			</div>
 
-			<div role="list" className="overflow-hidden rounded-xl border border-line bg-surface">
+			<div role="list" className="">
 				<AnimatePresence initial={false}>
 					{shown.map((item) => (
 						<CollapseRow key={item.id} role="listitem" className="border-t border-line first:border-t-0">

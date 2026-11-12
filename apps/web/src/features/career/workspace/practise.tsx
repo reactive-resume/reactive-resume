@@ -14,6 +14,7 @@ import { threePracticeQuestions } from "@reactive-resume/schema/career-practice"
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
@@ -197,7 +198,7 @@ export function PractiseTab({ application, version, interview, speak, story, war
 					warmup={warmup === true}
 				/>
 			)}
-			<aside className="grid gap-3 rounded-xl border border-line bg-surface p-4">
+			<aside className="grid gap-3">
 				<h2 className="border-b border-line pb-3 text-sm font-semibold">
 					<Trans>Your attempts</Trans>
 				</h2>
@@ -475,8 +476,8 @@ function Session({
 		}
 		setMode(next);
 	};
-	const nextQuestion = () => {
-		const next = questions[(index + 1) % questions.length];
+	const changeQuestion = (offset: number) => {
+		const next = questions[(index + offset + questions.length) % questions.length];
 		if (next) draft.setValue({ question: next, mode, answer: "", spoken: null });
 		setFeedback(null);
 	};
@@ -522,12 +523,26 @@ function Session({
 
 	return (
 		<div className="grid min-w-0 gap-4">
-			<section className="grid gap-3 rounded-xl border border-line bg-surface p-5">
+			<section className="grid gap-3">
 				<div className="flex flex-wrap items-center justify-between gap-2">
 					<p className="text-xs font-medium text-ink-2">
 						{t`Question ${ph({ position: i18n.number(position) })} of ${ph({ total: i18n.number(total) })}`} ·{" "}
 						{question.origin === "recalled" ? t`Recalled` : t`Practice`}
 					</p>
+					<div className="flex items-center gap-1">
+						<IconButton
+							icon="caret-left"
+							label={t`Previous question`}
+							disabled={index === 0 || busy}
+							onClick={() => changeQuestion(-1)}
+						/>
+						<IconButton
+							icon="caret-right"
+							label={t`Next question`}
+							disabled={index >= questions.length - 1 || busy}
+							onClick={() => changeQuestion(1)}
+						/>
+					</div>
 					{canHear && (
 						<HearIt
 							key={`${question.text}:${voice.settings.speak.providerId}:${voice.settings.speak.model}`}
@@ -543,7 +558,7 @@ function Session({
 			{/* Space starts and stops recording while focus is in this card (the record button handles it natively). */}
 			<section
 				aria-labelledby={`${id}-heading`}
-				className="grid gap-4 rounded-xl border border-line bg-surface p-4 outline-none md:p-5"
+				className="grid gap-4 outline-none"
 				tabIndex={-1}
 				onKeyDown={(event) => {
 					if (event.key !== " " || mode !== "spoken" || !canTalk || spoken || event.target !== event.currentTarget)
@@ -621,7 +636,7 @@ function Session({
 						<div
 							className={cn(
 								"flex flex-wrap items-center gap-x-3.5 gap-y-3 rounded-lg p-3.5 transition-colors duration-quick",
-								recordingNow ? "bg-danger-soft" : "bg-sunken",
+								recordingNow ? "bg-raised ring-1 ring-accent ring-offset-2 ring-offset-accent-soft" : "bg-sunken",
 							)}
 						>
 							{/* One button for both, so focus stays on it and Space stops what Space started. */}
@@ -629,9 +644,12 @@ function Session({
 								type="button"
 								aria-label={recordingNow ? t`Stop recording` : t`Record your answer`}
 								onClick={toggleRecording}
-								className="touch-target relative grid size-[52px] shrink-0 place-items-center rounded-sm bg-danger text-white transition-[filter,scale] duration-quick ease-enter hover:brightness-95 active:scale-[0.97]"
+								className={cn(
+									"touch-target relative grid size-11 shrink-0 place-items-center rounded-lg transition-colors",
+									recordingNow ? "bg-accent text-on-accent" : "bg-sunken text-ink",
+								)}
 							>
-								<Icon name={recordingNow ? "stop" : "microphone"} filled={recordingNow} size={24} />
+								<Icon name={recordingNow ? "stop" : "microphone"} size={24} />
 							</button>
 							<div className="grid min-w-0 flex-1 basis-48 gap-0.5">
 								{recordingNow ? (
@@ -725,9 +743,16 @@ function Session({
 
 				<div className="grid gap-2.5">
 					<div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-						<Button disabled={!ready || !provider} loading={generate.isPending} onClick={getFeedback}>
-							{generate.isPending ? <Working steps={workingSteps("practice")} /> : <Trans>Get feedback</Trans>}
-						</Button>
+						{provider && !recordingNow && (
+							<Button
+								variant={feedback && showFeedback ? "secondary" : "primary"}
+								disabled={!ready}
+								loading={generate.isPending}
+								onClick={getFeedback}
+							>
+								{generate.isPending ? <Working steps={workingSteps("practice")} /> : <Trans>Get feedback</Trans>}
+							</Button>
+						)}
 						<p className="text-xs text-ink-2">
 							{application ? (
 								<Trans>Compared with your stories and the posting.</Trans>
@@ -737,7 +762,10 @@ function Session({
 						</p>
 					</div>
 					<GenerateNotice generate={generate} onRetry={getFeedback} className="w-fit" />
-					<AiNotice />
+					<AiNotice
+						needs={<Trans>Feedback on an answer needs AI.</Trans>}
+						works={<Trans>The questions, typing, speaking and Hear it work without it.</Trans>}
+					/>
 				</div>
 			</section>
 
@@ -755,7 +783,7 @@ function Session({
 						>
 							<Trans>Try again with this</Trans>
 						</Button>
-						<Button size="sm" variant="ghost" onClick={nextQuestion}>
+						<Button size="sm" onClick={() => changeQuestion(1)}>
 							<Trans>Next question</Trans>
 							<Icon name="arrow-right" size={16} />
 						</Button>
@@ -968,7 +996,7 @@ type VoiceSettingsPanelProps = { voice: VoiceSettings; audio: Audio | null; disa
 
 function VoiceSettingsPanel({ voice, audio, disabled }: VoiceSettingsPanelProps) {
 	const id = useId();
-	const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(true);
 	const { settings, update, transcribers, readers } = voice;
 	const browserTranscribes = settings.transcribe.providerId === BROWSER;
 	if (voice.providerState.isUnavailable) return null;
@@ -1097,20 +1125,17 @@ type FeedbackCardProps = { data: Practice; children?: ReactNode };
 /** Always the same shape, so attempts can be compared. Appears with a short rise when it arrives. */
 function FeedbackCard({ data, children }: FeedbackCardProps) {
 	return (
-		<section
-			aria-label={t`Feedback`}
-			className={cn("grid gap-4 rounded-xl border border-line bg-surface p-4 md:p-5", ENTER_CLASS)}
-		>
+		<section aria-label={t`Feedback`} className={cn("grid gap-4", ENTER_CLASS)}>
 			<h2 className="text-base font-semibold">{data.title}</h2>
 			<div className="grid gap-2.5 sm:grid-cols-2">
-				<div className="grid content-start gap-1.5 rounded-lg bg-accent-soft p-3.5">
+				<div className="grid content-start gap-1.5">
 					<p className="flex items-center gap-1.5 text-xs font-semibold text-accent-text">
 						<Icon name="thumbs-up" size={16} />
 						<Trans>What works</Trans>
 					</p>
 					<p className="text-sm leading-[21px]">{data.works}</p>
 				</div>
-				<div className="grid content-start gap-1.5 rounded-lg bg-warn-soft p-3.5">
+				<div className="grid content-start gap-1.5">
 					<p className="flex items-center gap-1.5 text-xs font-semibold text-warn-text">
 						<Icon name="wrench" size={16} />
 						<Trans>Strengthen</Trans>
@@ -1133,11 +1158,11 @@ function FeedbackCard({ data, children }: FeedbackCardProps) {
 function SavedAttempt({ item }: { item: Attempt }) {
 	return (
 		<div className="grid min-w-0 gap-4">
-			<section className="grid gap-3 rounded-xl border border-line bg-surface p-5">
+			<section className="grid gap-3">
 				<p className="text-xs font-medium text-ink-2">{item.data.origin === "recalled" ? t`Recalled` : t`Practice`}</p>
 				<h2 className="font-display text-[22px] leading-[29px]">{item.data.question}</h2>
 			</section>
-			<section className="grid gap-3 rounded-xl border border-line bg-surface p-4 md:p-5">
+			<section className="grid gap-3">
 				<h2 className="flex items-center gap-1.5 text-sm font-semibold">
 					<Trans>Your answer</Trans>
 					<span className="flex items-center gap-1 text-xs font-normal text-ink-3">

@@ -128,8 +128,8 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 
 	return (
 		<section aria-labelledby="application-activity" className="grid gap-2">
-			<h3 id="application-activity" className="text-xs font-semibold text-ink-3">
-				<Trans>Activity</Trans>
+			<h3 id="application-activity" className="t-label">
+				<Trans>Timeline</Trans>
 			</h3>
 			<form
 				className="flex gap-1.5"
