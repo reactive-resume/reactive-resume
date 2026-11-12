@@ -176,14 +176,17 @@ export function FactsPage({ highlight }: FactsPageProps) {
 			actions={
 				<>
 					<ResumeFacts />
-					<Button
-						variant={adding ? "secondary" : "primary"}
-						aria-expanded={adding}
-						onClick={() => setAdding((open) => !open)}
-					>
-						<Icon name="plus" />
-						<Trans>Add a fact</Trans>
-					</Button>
+					{/* With no facts yet, the empty block holds the one Add a fact. */}
+					{(shown.length > 0 || adding) && (
+						<Button
+							variant={adding ? "secondary" : "primary"}
+							aria-expanded={adding}
+							onClick={() => setAdding((open) => !open)}
+						>
+							<Icon name="plus" />
+							<Trans>Add a fact</Trans>
+						</Button>
+					)}
 				</>
 			}
 		>
@@ -261,13 +264,13 @@ export function FactsPage({ highlight }: FactsPageProps) {
 								title={shown.length === 0 ? t`No facts yet` : t`No facts match`}
 								description={
 									shown.length === 0
-										? t`Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them.`
+										? t`Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”.`
 										: t`Try another word or type.`
 								}
 								action={
 									shown.length === 0 ? (
 										!adding && (
-											<Button variant="secondary" onClick={() => setAdding(true)}>
+											<Button onClick={() => setAdding(true)}>
 												<Trans>Add a fact</Trans>
 											</Button>
 										)
@@ -314,7 +317,7 @@ function FactsAside() {
 			<SectionHeading className="pt-5">
 				<Trans>How it's used</Trans>
 			</SectionHeading>
-			<p className="pb-2 text-ink-2 t-ui">
+			<p className="pb-2 t-ui text-ink-2">
 				<Trans>
 					Ticked facts can be sent to your AI connection when you use the coach, a fit check or interview prep. The rest
 					stay here and are never sent.
@@ -359,7 +362,7 @@ function ForgottenFacts() {
 	return (
 		<div className="flex flex-col gap-2 rounded-lg bg-sunken px-3.5 py-3" aria-live="polite">
 			{history.data.length === 0 && (
-				<p className="text-ink-3 t-small">
+				<p className="t-small text-ink-3">
 					<Trans>No forgotten facts</Trans>
 				</p>
 			)}

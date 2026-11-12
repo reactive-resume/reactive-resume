@@ -15,6 +15,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import { Label } from "@reactive-resume/ui/components/label";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { handToAssistant } from "./handoff";
 import { Combobox } from "@/components/ui/combobox";
@@ -39,6 +40,8 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 	const [chosenLocale, setChosenLocale] = useState<Locale | null>(null);
 	const fallbackLocale: Locale = sourceLocale === "de-DE" ? "en-US" : "de-DE";
 	const locale = chosenLocale && chosenLocale !== sourceLocale ? chosenLocale : fallbackLocale;
+	const sourceName = useResumeStore((state) => (state.resume?.id === resumeId ? state.resume.name : ""));
+	const copyName = `${sourceName} — ${i18n._(localeMap[locale])}`;
 	const [busy, setBusy] = useState(false);
 	const active = useRef(false);
 	const create = async () => {
@@ -79,22 +82,32 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 						<Trans>Translate into…</Trans>
 					</DialogTitle>
 					<DialogDescription>
-						<Trans>
-							The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated.
-						</Trans>
+						<Trans>The original stays unchanged. Hidden content stays untranslated.</Trans>
 					</DialogDescription>
 				</DialogHeader>
-				<label htmlFor={languageId}>
-					<Trans>Language</Trans>
-				</label>
-				<Combobox
-					id={languageId}
-					value={locale}
-					disabled={busy}
-					onValueChange={setChosenLocale}
-					options={getLocaleOptions().filter(({ value }) => value !== sourceLocale)}
-				/>
+				<div className="grid gap-1.5">
+					<Label htmlFor={languageId}>
+						<Trans>Language</Trans>
+					</Label>
+					<Combobox
+						id={languageId}
+						value={locale}
+						disabled={busy}
+						onValueChange={setChosenLocale}
+						options={getLocaleOptions().filter(({ value }) => value !== sourceLocale)}
+						aria-describedby={`${languageId}-hint`}
+					/>
+					<p id={`${languageId}-hint`} className="text-[13px]/[18px] text-ink-3">
+						<Trans>
+							Makes a copy named “{copyName}” and opens it with a request ready for the assistant. Nothing is sent until
+							you send it.
+						</Trans>
+					</p>
+				</div>
 				<DialogFooter>
+					<Button variant="ghost" disabled={busy} onClick={onClose}>
+						<Trans>Cancel</Trans>
+					</Button>
 					<Button disabled={busy || !sourceLocale || locale === sourceLocale} onClick={() => void create()}>
 						<Trans>Create language copy</Trans>
 					</Button>

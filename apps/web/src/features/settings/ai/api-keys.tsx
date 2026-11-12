@@ -196,7 +196,7 @@ const EXPIRIES: Expiry[] = [
 ];
 
 /** A ready-to-paste MCP client entry for this instance, with the new key in its header. */
-const mcpConfig = (key: string) =>
+export const mcpConfig = (key: string) =>
 	JSON.stringify(
 		{ mcpServers: { "reactive-resume": { url: `${window.location.origin}/mcp`, headers: { "x-api-key": key } } } },
 		null,

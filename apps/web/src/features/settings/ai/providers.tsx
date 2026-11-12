@@ -557,12 +557,6 @@ function AddProviderDialog({ open, onOpenChange, onConnected }: AddProviderDialo
 						/>
 					</div>
 					<ProviderFieldsForm key={provider} provider={provider} value={fields} onChange={setFields} />
-					<p className="text-xs leading-5 text-ink-3">
-						<Trans>
-							Changing the key, model or address pauses scheduled AI work. Turn each schedule on again to approve where
-							it sends.
-						</Trans>
-					</p>
 					{failure && (
 						<p role="alert" className="text-sm text-danger-text">
 							{failure}
@@ -727,6 +721,12 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 						onCheckedChange={setEnabled}
 					/>
 				</div>
+				<p className="text-xs leading-5 text-ink-3">
+					<Trans>
+						Changing the key, model or address pauses scheduled AI work. Turn each schedule on again to approve where it
+						sends.
+					</Trans>
+				</p>
 				{failure && (
 					<p role="alert" className="text-sm text-danger-text">
 						{failure}

@@ -1,5 +1,6 @@
 import type { SavedData, SavedItem } from "./hooks";
 import type { CoachStarter } from "@reactive-resume/schema/career-starters";
+import type { ReactElement } from "react";
 import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -10,6 +11,7 @@ import { coachStarters } from "@reactive-resume/schema/career-starters";
 import { Button } from "@reactive-resume/ui/components/button";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { formatList } from "@reactive-resume/utils/locale";
 import {
 	Composer,
 	connectionName,
@@ -21,8 +23,9 @@ import {
 } from "./coach-thread";
 import { useProfile } from "./knowledge/preferences";
 import { CareerLoadError } from "./load-state";
+import { useApplicationsNeedingAttention } from "./needs-you";
 import { ScheduleRows, ScheduleSheetFor, useSchedules } from "./schedules";
-import { ContextChip, useCareerTime } from "./shared";
+import { ContextChip, useCareerTime, useNow } from "./shared";
 import { List, ListRow } from "@/components/calm/list-row";
 import { Columns, Page, PageBody, RootHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
@@ -106,9 +109,12 @@ export function CareerPage({ schedule, onScheduleChange }: ScheduleUrl) {
 						}
 					/>
 				) : (
-					<Columns className="mt-5" aside={<CareerAside schedules={schedules} onScheduleChange={onScheduleChange} />}>
-						{!noAi && <CoachInvitation />}
-						<RecentConversations first={noAi} />
+					<Columns
+						className="mt-5"
+						aside={<CareerAside schedules={schedules} onScheduleChange={onScheduleChange} noAi={noAi} />}
+					>
+						{noAi ? <StartersWithoutAi /> : <CoachInvitation />}
+						<RecentConversations noAi={noAi} />
 					</Columns>
 				)}
 			</PageBody>
@@ -237,23 +243,48 @@ function CoachInvitation() {
 	);
 }
 
-type Starter = { title: string; note: string };
+type Starter = {
+	title: string;
+	/** What the coach uses to answer it. */
+	note: string;
+	/** Without AI: the page that already answers it, and what it holds. */
+	page: { note: string; link: ReactElement };
+};
 
-/** The account's three starters (`coachStarters`), worded as questions with what each one uses. */
+type StarterKind = CoachStarter | { kind: "week" };
+
+/**
+ * The account's three starters, worded as questions with what each one uses. Web asks "What should I do this week?"
+ * whenever an application is open (follow-ups and deadlines), ahead of the new-roles question.
+ */
 function useStarters(): Starter[] {
 	const applications = useQuery(applicationsListQueryOptions());
 	const opportunities = useQuery(orpc.career.opportunities.queryOptions({ input: {} }));
+	const now = useNow();
+	const { attention } = useApplicationsNeedingAttention(now);
 	const { format } = useCareerTime();
 	const open = (applications.data ?? []).filter((application) => application.status !== "closed");
 	const next = upcomingInterviews(collectInterviews(open))[0];
 	const offered = open.filter((application) => application.status === "offer");
-	const word = (starter: CoachStarter): Starter => {
+	const today = <Link to="/dashboard" />;
+	const word = (starter: StarterKind): Starter => {
 		switch (starter.kind) {
 			case "interview": {
 				const day = next ? format(next.start, { weekday: "long" }) : "";
 				return {
 					title: t`Prepare for ${day}'s interview at ${starter.company}`,
 					note: t`Uses your briefing and stories`,
+					page: {
+						note: t`Interview prep · a checklist, the people, your stories`,
+						link: next ? (
+							<Link
+								to="/dashboard/applications/$applicationId/{-$tab}"
+								params={{ applicationId: next.application.id, tab: "prepare" }}
+							/>
+						) : (
+							today
+						),
+					},
 				};
 			}
 			case "offers": {
@@ -261,37 +292,134 @@ function useStarters(): Starter[] {
 				return {
 					title: company ? t`Should I take the ${company} offer?` : t`Which of my offers fits what I want?`,
 					note: t`Compares it with your requirements, never decides for you`,
+					page: {
+						note: t`Offers · its terms against your requirements, and what is still open`,
+						link: <Link to="/dashboard/career/offers" />,
+					},
+				};
+			}
+			case "week": {
+				const companies = formatList(
+					i18n.locale,
+					attention.map((item) => item.application.company),
+				);
+				return {
+					title: t`What should I do this week?`,
+					note: t`Ranks follow-ups and deadlines`,
+					page: {
+						note:
+							attention.length > 0
+								? plural(attention.length, {
+										one: `Today · # needs you: ${companies}`,
+										other: `Today · # need you: ${companies}`,
+									})
+								: t`Today · your follow-ups and deadlines`,
+						link: today,
+					},
 				};
 			}
 			case "opportunities":
-				return { title: t`Which new roles match my priorities?`, note: t`Uses your preferences and the roles found` };
+				return {
+					title: t`Which new roles match my priorities?`,
+					note: t`Uses your preferences and the roles found`,
+					page: { note: t`Today · the new roles found for you`, link: today },
+				};
 			case "story":
 				return {
 					title: t`Help me turn an accomplishment into a story`,
 					note: t`Situation, task, action, result and reflection`,
+					page: {
+						note: t`Stories · write one part by part`,
+						link: <Link to="/dashboard/career/knowledge/stories/{-$storyId}" params={{ storyId: undefined }} />,
+					},
 				};
 			case "practice":
-				return { title: t`What interview answers should I practise?`, note: t`Uses your stories and applications` };
+				return {
+					title: t`What interview answers should I practise?`,
+					note: t`Uses your stories and applications`,
+					page: {
+						note: t`Stories · ready to tell in interviews`,
+						link: <Link to="/dashboard/career/knowledge/stories/{-$storyId}" params={{ storyId: undefined }} />,
+					},
+				};
 			default:
-				return { title: t`What kinds of roles fit what I've done so far?`, note: t`Uses your facts and preferences` };
+				return {
+					title: t`What kinds of roles fit what I've done so far?`,
+					note: t`Uses your facts and preferences`,
+					page: {
+						note: t`Preferences · what you are looking for`,
+						link: <Link to="/dashboard/career/knowledge/preferences" />,
+					},
+				};
 		}
 	};
-	return coachStarters({
+	const base = coachStarters({
 		nextInterviewCompany: next?.application.company,
 		offers: offered.length,
-		opportunities: (opportunities.data ?? []).filter((row) => !row.trackedApplicationId).length,
-	}).map(word);
+		opportunities: 0,
+	});
+	const lead = base.filter((starter) => starter.kind === "interview" || starter.kind === "offers");
+	const rest = base.filter((starter) => starter.kind !== "interview" && starter.kind !== "offers");
+	const roles = (opportunities.data ?? []).some((row) => !row.trackedApplicationId);
+	const kinds: StarterKind[] = [
+		...lead,
+		...(open.length > 0 ? [{ kind: "week" } as const] : []),
+		...(roles ? [{ kind: "opportunities" } as const] : []),
+		...rest,
+	];
+	return kinds.slice(0, 3).map(word);
 }
 
-function RecentConversations({ first }: { first: boolean }) {
+/** N10: no AI, so no composer. The same three questions, each pointing to the page that answers it without AI. */
+function StartersWithoutAi() {
+	const starters = useStarters();
+	return (
+		<section aria-labelledby="career-starters-title">
+			<h2 id="career-starters-title" className="pt-2 t-section-title">
+				<Trans>What you might have asked</Trans>
+			</h2>
+			<p className="pt-1.5 text-sm text-ink-2">
+				<Trans>The coach's three starting questions, each answered by a page that needs no AI.</Trans>
+			</p>
+			<List className="mt-2" aria-label={t`Questions to start from`}>
+				{starters.map((starter) => (
+					<ListRow
+						key={starter.title}
+						render={starter.page.link}
+						title={starter.title}
+						subtitle={starter.page.note}
+						trailing={<Icon name="arrow-right" size={20} className="text-ink-3" />}
+					/>
+				))}
+			</List>
+		</section>
+	);
+}
+
+function RecentConversations({ noAi }: { noAi: boolean }) {
 	const threads = useQuery(orpc.agent.threads.list.queryOptions());
+	const applications = useQuery(applicationsListQueryOptions());
 	const when = useConversationDate();
 	const recent = (threads.data ?? []).filter((thread) => thread.scope === "career").slice(0, 2);
-	if (recent.length === 0) return null;
+	if (!threads.isSuccess) return null;
+	if (recent.length === 0)
+		return noAi ? (
+			<section>
+				<SectionHeading>
+					<Trans>Conversations</Trans>
+				</SectionHeading>
+				<p className="text-[13px]/[18px] text-ink-3">
+					<Trans>
+						None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed.
+					</Trans>
+				</p>
+			</section>
+		) : null;
+	const company = (id: string | null) =>
+		id ? applications.data?.find((application) => application.id === id)?.company : undefined;
 	return (
 		<section>
 			<SectionHeading
-				first={first}
 				action={
 					<Link to="/dashboard/career/coach/{-$conversationId}" params={{ conversationId: recent[0]?.id }}>
 						<Trans>See all</Trans>
@@ -301,15 +429,19 @@ function RecentConversations({ first }: { first: boolean }) {
 				<Trans>Recent conversations</Trans>
 			</SectionHeading>
 			<List>
-				{recent.map((thread) => (
-					<ListRow
-						key={thread.id}
-						render={<Link to="/dashboard/career/coach/{-$conversationId}" params={{ conversationId: thread.id }} />}
-						title={titleFor(thread)}
-						subtitle={when(new Date(thread.lastMessageAt))}
-						caret
-					/>
-				))}
+				{recent.map((thread) => {
+					const about = company(thread.applicationId);
+					const date = when(new Date(thread.lastMessageAt));
+					return (
+						<ListRow
+							key={thread.id}
+							render={<Link to="/dashboard/career/coach/{-$conversationId}" params={{ conversationId: thread.id }} />}
+							title={titleFor(thread)}
+							subtitle={about ? t`${date} · about ${about}` : date}
+							caret
+						/>
+					);
+				})}
 			</List>
 		</section>
 	);
@@ -320,9 +452,11 @@ function RecentConversations({ first }: { first: boolean }) {
 function CareerAside({
 	schedules,
 	onScheduleChange,
+	noAi,
 }: {
 	schedules: ReturnType<typeof useSchedules>;
 	onScheduleChange: (schedule: string | undefined) => void;
+	noAi: boolean;
 }) {
 	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: null, all: true } }));
 	const stories = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: null } }));
@@ -391,16 +525,22 @@ function CareerAside({
 			>
 				<Trans>Schedules</Trans>
 			</SectionHeading>
-			<ScheduleRows schedules={schedules} onOpen={onScheduleChange} />
-			<p className="pt-2.5 text-[13px]/[18px] text-ink-3">
-				<Trans>
-					What they produce waits in{" "}
-					<Link to="/dashboard" className="inline-block font-medium text-accent-text">
-						Today
-					</Link>
-					.
-				</Trans>
-			</p>
+			<ScheduleRows schedules={schedules} onOpen={onScheduleChange} hide={noAi ? ["prepare"] : undefined} />
+			{noAi ? (
+				<p className="pt-2.5 text-[13px]/[18px] text-ink-3">
+					<Trans>Reminders need no AI. A briefing refresh does.</Trans>
+				</p>
+			) : (
+				<p className="pt-2.5 text-[13px]/[18px] text-ink-3">
+					<Trans>
+						What they produce waits in{" "}
+						<Link to="/dashboard" className="inline-block font-medium text-accent-text">
+							Today
+						</Link>
+						.
+					</Trans>
+				</p>
+			)}
 		</>
 	);
 }

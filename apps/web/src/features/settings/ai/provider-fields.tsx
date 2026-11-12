@@ -100,55 +100,133 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 		</div>
 	);
 
-	return (
-		<div className="grid gap-[18px]">
-			<div className="grid gap-1.5">
-				<span className="flex items-baseline justify-between gap-3">
-					<Label htmlFor={`${id}-key`}>
-						<Trans>API key</Trans>
-					</Label>
-					{keyURL && (
-						<a
-							href={keyURL}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="text-[13px]/[18px] font-medium text-accent-text hover:underline"
-						>
-							<Trans>Get an API key</Trans>
-						</a>
+	const taskModelsFold = (
+		<Collapsible open={taskModels} onOpenChange={setTaskModels}>
+			<CollapsibleTrigger className={foldClassName}>
+				<Icon name="caret-right" size={16} className="text-ink-3 transition-transform group-aria-expanded:rotate-90" />
+				<span className="flex-1 text-start text-ink">
+					<Trans>Task models</Trans>
+				</span>
+				<span className="truncate text-ink-3">
+					{value.fastModel.trim() || value.capableModel.trim() ? (
+						<Trans>Fast and capable set</Trans>
+					) : (
+						<Trans>One model for everything</Trans>
 					)}
 				</span>
-				<Input
-					id={`${id}-key`}
-					type="password"
-					value={value.apiKey}
-					placeholder={
-						keyOptional && !keyAgain
-							? t`Leave empty to keep the saved key`
-							: provider === "ollama"
-								? t`Optional for local Ollama`
-								: undefined
-					}
-					required={provider !== "ollama" && (!keyOptional || keyAgain)}
-					aria-describedby={keyAgain ? `${id}-key-hint` : undefined}
-					onChange={(event) => set({ apiKey: event.target.value })}
-					{...secretInputProps}
-				/>
-				{!keyURL && (
-					<p className="text-xs text-ink-3">
-						<Trans>Get an API key from your endpoint operator.</Trans>
+			</CollapsibleTrigger>
+			<CollapsibleContent>
+				<div className="grid gap-3 pt-3">
+					<p className="text-xs leading-5 text-ink-3">
+						<Trans>
+							Leave either field empty to use the model above. Fast handles resume import, Improve and reading job
+							postings; capable handles the assistant and letter drafts.
+						</Trans>
 					</p>
+					<ProviderModel
+						id={`${id}-fast-model`}
+						label={t`Fast model`}
+						hint={false}
+						provider={provider}
+						value={value.fastModel}
+						onChange={(fastModel) => set({ fastModel })}
+					/>
+					<ProviderModel
+						id={`${id}-capable-model`}
+						label={t`Capable model`}
+						hint={false}
+						provider={provider}
+						value={value.capableModel}
+						onChange={(capableModel) => set({ capableModel })}
+					/>
+				</div>
+			</CollapsibleContent>
+		</Collapsible>
+	);
+	const keyField = (
+		<div className="grid gap-1.5">
+			<span className="flex items-baseline justify-between gap-3">
+				<Label htmlFor={`${id}-key`}>
+					<Trans>API key</Trans>
+				</Label>
+				{keyURL && (
+					<a
+						href={keyURL}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-[13px]/[18px] font-medium text-accent-text hover:underline"
+					>
+						<Trans>Get an API key</Trans>
+					</a>
 				)}
-				{keyAgain && (
-					<p id={`${id}-key-hint`} className="text-xs leading-5 text-ink-3">
-						{provider === "ollama" ? (
-							<Trans>The saved key isn't sent to a new base URL. Enter it again if this server needs one.</Trans>
-						) : (
-							<Trans>The saved key isn't sent to a new base URL. Enter it again.</Trans>
-						)}
+			</span>
+			<Input
+				id={`${id}-key`}
+				type="password"
+				value={value.apiKey}
+				placeholder={
+					keyOptional && !keyAgain
+						? t`Leave empty to keep the saved key`
+						: provider === "ollama"
+							? t`Optional for local Ollama`
+							: undefined
+				}
+				required={provider !== "ollama" && (!keyOptional || keyAgain)}
+				aria-describedby={keyAgain ? `${id}-key-hint` : undefined}
+				onChange={(event) => set({ apiKey: event.target.value })}
+				{...secretInputProps}
+			/>
+			{!keyURL && (
+				<p className="text-xs text-ink-3">
+					<Trans>Get an API key from your endpoint operator.</Trans>
+				</p>
+			)}
+			{keyAgain && (
+				<p id={`${id}-key-hint`} className="text-xs leading-5 text-ink-3">
+					{provider === "ollama" ? (
+						<Trans>The saved key isn't sent to a new base URL. Enter it again if this server needs one.</Trans>
+					) : (
+						<Trans>The saved key isn't sent to a new base URL. Enter it again.</Trans>
+					)}
+				</p>
+			)}
+		</div>
+	);
+
+	// Editing: what the connection is (name, provider), where it sends, a replacement key, then the model.
+	if (keyOptional)
+		return (
+			<div className="grid gap-[18px]">
+				<div className="grid gap-3 sm:grid-cols-2">
+					{nameField}
+					<div className="grid gap-1.5">
+						<Label htmlFor={`${id}-provider`}>
+							<Trans>Provider</Trans>
+						</Label>
+						<Input id={`${id}-provider`} value={providerLabel(provider)} disabled readOnly />
+					</div>
+				</div>
+				{urlField}
+				{keyField}
+				<ProviderModel
+					id={`${id}-model`}
+					hint={false}
+					provider={provider}
+					value={value.model}
+					onChange={(model) => set({ model })}
+				/>
+				{taskModelsFold}
+				{explanation && problem !== "apiKey" && !urlError && (
+					<p role="status" className="text-xs text-ink-3">
+						{explanation}
 					</p>
 				)}
 			</div>
+		);
+
+	return (
+		<div className="grid gap-[18px]">
+			{keyField}
 			<ProviderModel
 				id={`${id}-model`}
 				hint={false}
@@ -157,51 +235,7 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 				onChange={(model) => set({ model })}
 			/>
 			<div className="-my-2 grid">
-				<Collapsible open={taskModels} onOpenChange={setTaskModels}>
-					<CollapsibleTrigger className={foldClassName}>
-						<Icon
-							name="caret-right"
-							size={16}
-							className="text-ink-3 transition-transform group-aria-expanded:rotate-90"
-						/>
-						<span className="flex-1 text-start text-ink">
-							<Trans>Task models</Trans>
-						</span>
-						<span className="truncate text-ink-3">
-							{value.fastModel.trim() || value.capableModel.trim() ? (
-								<Trans>Fast and capable set</Trans>
-							) : (
-								<Trans>One model for everything</Trans>
-							)}
-						</span>
-					</CollapsibleTrigger>
-					<CollapsibleContent>
-						<div className="grid gap-3 pt-3">
-							<p className="text-xs leading-5 text-ink-3">
-								<Trans>
-									Leave either field empty to use the model above. Fast handles resume import, Improve and reading job
-									postings; capable handles the assistant and letter drafts.
-								</Trans>
-							</p>
-							<ProviderModel
-								id={`${id}-fast-model`}
-								label={t`Fast model`}
-								hint={false}
-								provider={provider}
-								value={value.fastModel}
-								onChange={(fastModel) => set({ fastModel })}
-							/>
-							<ProviderModel
-								id={`${id}-capable-model`}
-								label={t`Capable model`}
-								hint={false}
-								provider={provider}
-								value={value.capableModel}
-								onChange={(capableModel) => set({ capableModel })}
-							/>
-						</div>
-					</CollapsibleContent>
-				</Collapsible>
+				{taskModelsFold}
 				{compatible ? (
 					<div className="grid gap-[18px] pt-2.5">
 						{urlField}

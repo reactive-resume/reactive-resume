@@ -655,6 +655,12 @@ function ConversationRail({
 	onDelete,
 }: ConversationRailProps) {
 	const when = useConversationDate();
+	const applications = useQuery(applicationsListQueryOptions());
+	const dateOf = (thread: (typeof threads)[number]) => {
+		const date = when(new Date(thread.lastMessageAt));
+		const about = applications.data?.find((application) => application.id === thread.applicationId)?.company;
+		return about ? t`${date} · about ${about}` : date;
+	};
 
 	return (
 		<nav aria-label={t`Conversations`} className="flex min-h-0 flex-1 flex-col">
@@ -685,7 +691,7 @@ function ConversationRail({
 						key={thread.id}
 						thread={thread}
 						current={thread.id === currentId}
-						date={when(new Date(thread.lastMessageAt))}
+						date={dateOf(thread)}
 						renaming={renaming === thread.id}
 						onRenameStart={() => setRenaming(thread.id)}
 						onRenameEnd={(title) => {

@@ -157,9 +157,9 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 
 	return (
 		<section aria-label={t`Assistant`} className="relative flex h-full min-h-0 flex-col bg-surface">
-			<header className="flex shrink-0 items-center gap-2 px-6 pt-[11px]">
-				<Icon name="sparkle" size={20} className="text-accent-text" />
-				<h2 className="me-2 t-page-title">
+			<header className="flex shrink-0 items-center gap-1.5 ps-6 pe-2.5 pt-[11px]">
+				<Icon name="sparkle" size={20} className="me-0.5 text-accent-text" />
+				<h2 className="me-1 t-page-title">
 					<Trans>Assistant</Trans>
 				</h2>
 
@@ -175,7 +175,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 					/>
 				)}
 
-				<span className="ms-auto flex items-center gap-1">
+				<span className="ms-auto flex shrink-0 items-center">
 					{providers.hasUsableProvider && (
 						<IconButton
 							icon="chats"
@@ -192,7 +192,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						shortcut="⌘J"
 						// Alone in the header without AI, the close button is the full 36.
 						size={providers.hasUsableProvider ? "icon-sm" : "icon"}
-						className={cn("text-ink-2", !providers.hasUsableProvider && "-me-2")}
+						className="text-ink-2"
 						onClick={onClose}
 					/>
 				</span>

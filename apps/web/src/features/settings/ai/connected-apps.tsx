@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { SettingsSection, TextAction } from "../section";
@@ -90,6 +90,7 @@ export function ConnectedAppsSection() {
 												await confirm(t`Disconnect “${name}”?`, {
 													description: t`It loses access now. To use it again, connect it from the app. This cannot be undone.`,
 													confirmText: t`Disconnect`,
+													variant: "danger",
 												})
 											)
 												revoke.mutate({ id: connection.id, name });
@@ -110,6 +111,7 @@ export function ConnectedAppsSection() {
 											</Fragment>
 										))}
 									</span>
+									<PermissionDetails scopes={scopes} />
 									<span className="text-[13px]/[18px] text-ink-3">
 										<Trans>
 											Connected {i18n.date(new Date(connection.createdAt), { month: "short", day: "numeric" })}
@@ -165,5 +167,44 @@ function Permissions({ scopes }: { scopes: string[] }) {
 			{write && <Trans>Create and change documents, applications and your profile.</Trans>}{" "}
 			{remove && <Trans>Delete documents and account data.</Trans>}
 		</>
+	);
+}
+
+/** Each permission on its own line: what the application can do, then what it can't. */
+function PermissionDetails({ scopes }: { scopes: string[] }) {
+	const [open, setOpen] = useState(false);
+	if (!scopes.some((scope) => scope.startsWith("api:"))) return null;
+	const has = (scope: string) => scopes.includes(scope);
+	const lines: { can: boolean; text: string }[] = [
+		has("api:read")
+			? { can: true, text: t`Read your whole account, including exports and coaching conversations` }
+			: { can: false, text: t`Can't read your documents or applications` },
+		has("api:write")
+			? { can: true, text: t`Create and change documents, applications and your profile` }
+			: { can: false, text: t`Can't create or change anything` },
+		...(has("profile") || has("email")
+			? [{ can: true, text: t`Read your profile information and email address` }]
+			: []),
+		...(has("offline_access") ? [{ can: true, text: t`Keep access when you are not using it` }] : []),
+		has("api:delete")
+			? { can: true, text: t`Delete documents and account data` }
+			: { can: false, text: t`Can't delete documents or account data` },
+	].toSorted((a, b) => Number(b.can) - Number(a.can));
+	return (
+		<span className="grid justify-items-start gap-1">
+			<TextAction aria-expanded={open} className="h-auto p-0 text-[13px]/[18px]" onClick={() => setOpen(!open)}>
+				{open ? <Trans>Hide permissions</Trans> : <Trans>Show permissions</Trans>}
+			</TextAction>
+			{open && (
+				<ul className="grid gap-1.5 pb-1 text-sm/5">
+					{lines.map((line) => (
+						<li key={line.text} className={line.can ? "flex gap-2 text-ink" : "flex gap-2 text-ink-3"}>
+							<Icon name={line.can ? "check" : "prohibit"} size={18} className="mt-px shrink-0 text-ink-3" />
+							{line.text}
+						</li>
+					))}
+				</ul>
+			)}
+		</span>
 	);
 }

@@ -5,6 +5,7 @@ import type {
 	RequirementCoverage,
 	UnsupportedClaim,
 } from "@reactive-resume/resume/proposals";
+import type { WordDiffSegment } from "@reactive-resume/resume/word-diff";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { KeyboardEvent, ReactNode } from "react";
 import { i18n } from "@lingui/core";
@@ -48,6 +49,66 @@ const passageText = (html: string) => passageLines(html);
 /** What Edit starts from: the new passage, or only the added one (an addition repeats the passage it follows). */
 const addedText = ({ before, after }: Pick<Proposal, "before" | "after">) =>
 	passageText(before && after.startsWith(before) ? after.slice(before.length) : after);
+
+const WORD_CHAR = /[\p{L}\p{N}'’]/u;
+
+/**
+ * The change inside one passage, for the card: what both texts share at the start and end stays plain, and only the
+ * words in between are marked. A pure insertion (the common rewrite: a clause added to a bullet) reads as the
+ * sentence once with the new words tinted, even when the old text is short. Changes in several places fall back to
+ * the word-level comparison; null when the two share too little, so the card shows old and new whole.
+ */
+export function changeParts(before: string, after: string): WordDiffSegment[] | null {
+	let start = 0;
+	while (start < before.length && start < after.length && before[start] === after[start]) start++;
+	// Never split a word: back off to the last boundary both texts agree on.
+	const inWord = (text: string, at: number) => WORD_CHAR.test(text[at] ?? "");
+	while (start > 0 && inWord(before, start - 1) && (inWord(before, start) || inWord(after, start))) start--;
+	let end = 0;
+	const room = Math.min(before.length, after.length) - start;
+	while (end < room && before[before.length - 1 - end] === after[after.length - 1 - end]) end++;
+	while (
+		end > 0 &&
+		inWord(before, before.length - end) &&
+		(inWord(before, before.length - end - 1) || inWord(after, after.length - end - 1))
+	)
+		end--;
+
+	const removed = before.slice(start, before.length - end);
+	const added = after.slice(start, after.length - end);
+	if (removed === "" && added === "") return null;
+	const segments: WordDiffSegment[] = [];
+	if (start > 0) segments.push({ kind: "same", text: after.slice(0, start) });
+	if (removed) segments.push({ kind: "removed", text: removed });
+	if (added) segments.push({ kind: "added", text: added });
+	if (end > 0) segments.push({ kind: "same", text: after.slice(after.length - end) });
+	if (removed.trim() === "" || added.trim() === "") return segments;
+	// Changes in several places read better word by word; one changed run in a mostly kept sentence stays one run.
+	return wordDiff(before, after) ?? ((start + end) / Math.max(before.length, after.length) >= 0.4 ? segments : null);
+}
+
+const CONTEXT_WORDS = 6;
+
+/**
+ * The card's view of a change: long kept stretches shrink to a few words beside each change, so a one-clause
+ * edit to a long paragraph reads as that clause in context. Nothing changed is ever dropped.
+ */
+export function inContext(segments: readonly WordDiffSegment[]): WordDiffSegment[] {
+	return segments.map((segment, index) => {
+		if (segment.kind !== "same") return segment;
+		const words = segment.text.split(/(?<=\s)/u);
+		const first = index === 0;
+		const last = index === segments.length - 1;
+		const keep = first || last ? CONTEXT_WORDS : CONTEXT_WORDS * 2;
+		if (words.length <= keep + 2) return segment;
+		if (first) return { kind: "same", text: `…${words.slice(-CONTEXT_WORDS).join("")}` };
+		if (last) return { kind: "same", text: `${words.slice(0, CONTEXT_WORDS).join("")}…` };
+		return {
+			kind: "same",
+			text: `${words.slice(0, CONTEXT_WORDS).join("")}… ${words.slice(-CONTEXT_WORDS).join("")}`,
+		};
+	});
+}
 
 type ProposalListProps = {
 	proposals: readonly Proposal[];
@@ -279,10 +340,11 @@ function ProposalItem(props: ProposalItemProps) {
 	const { proposal, number, state, index, focusable, locked } = props;
 	const addition = additionParts(proposal);
 	// Wording edits show word by word; structural changes and additions keep their whole-text view.
-	const diff = useMemo(
-		() => (addition || proposal.snapshot ? null : wordDiff(passageText(proposal.before), passageText(proposal.after))),
-		[addition, proposal.snapshot, proposal.before, proposal.after],
-	);
+	const diff = useMemo(() => {
+		if (addition || proposal.snapshot) return null;
+		const parts = changeParts(passageText(proposal.before), passageText(proposal.after));
+		return parts && inContext(parts);
+	}, [addition, proposal.snapshot, proposal.before, proposal.after]);
 	const labelId = `proposal-${proposal.id}-location`;
 	const editId = useId();
 	const [draft, setDraftText] = useState<string | null>(null);
@@ -623,19 +685,23 @@ function ProposalReview({ proposal, factText }: ProposalReviewProps) {
 				</p>
 			)}
 			{unsupported.length > 0 && (
-				<div className="grid gap-1 rounded-md bg-warn-soft px-2 py-1.5 text-warn-text">
-					<p className="flex items-center gap-1.5 font-medium">
-						<Icon name="warning-circle" size={14} />
-						<Trans>Nothing checked backs these. Confirm each before accepting:</Trans>
-					</p>
-					<ul className="grid gap-0.5 ps-5">
+				// One quiet line: the "New detail" tag is the flag; this says exactly what to check, on request.
+				<details className="text-ink-3">
+					<summary className="w-fit cursor-pointer">
+						<Plural
+							value={unsupported.length}
+							one="# word or detail nothing checked backs"
+							other="# words or details nothing checked backs"
+						/>
+					</summary>
+					<ul className="mt-1 grid gap-0.5 ps-5 text-ink-2">
 						{unsupported.map((claim) => (
 							<li key={`${claim.kind}:${claim.text}`} className="list-disc">
 								{claimKindLabel(claim.kind)}: {claim.text}
 							</li>
 						))}
 					</ul>
-				</div>
+				</details>
 			)}
 		</div>
 	);

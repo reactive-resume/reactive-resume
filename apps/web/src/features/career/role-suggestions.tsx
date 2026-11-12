@@ -72,6 +72,9 @@ function SuggestRoles({ onUse, onClose }: SuggestRolesProps) {
 	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: null, all: true } }));
 	const stories = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: null } }));
 	const generate = useMutation(orpc.career.suggestTargetRoles.mutationOptions());
+	const resumes = (documents.data ?? []).filter((row) => row.type === "resume");
+	const [lastResume, setLastResume] = useState("");
+	const shownResume = resumes.find((row) => row.id === (resumeId || lastResume)) ?? resumes[0];
 	const clear = () => {
 		setSuggestions(null);
 		setDraft("");
@@ -164,24 +167,38 @@ function SuggestRoles({ onUse, onClose }: SuggestRolesProps) {
 						<legend className="mb-2 text-[13px]/[18px] font-medium text-ink-2">
 							<Trans>What it may read</Trans>
 						</legend>
-						<NativeSelect
-							aria-label={t`Resume to share for suggestions`}
-							value={resumeId}
-							disabled={!documents.isSuccess}
-							onChange={(event) => {
-								setResumeId(event.target.value);
-								clear();
-							}}
-						>
-							<option value="">{t`No resume`}</option>
-							{documents.data
-								?.filter((row) => row.type === "resume")
-								.map((row) => (
+						{/* One named resume to tick; with several, the one it names can be changed once it's ticked. */}
+						{resumes[0] && (
+							<label className="flex cursor-pointer items-start gap-2.5">
+								<Checkbox
+									checked={Boolean(resumeId)}
+									onCheckedChange={(value) => {
+										setResumeId(value ? (shownResume?.id ?? "") : "");
+										clear();
+									}}
+									className="mt-px"
+								/>
+								<span className="t-ui text-ink">{t`The resume “${shownResume?.name ?? ""}”`}</span>
+							</label>
+						)}
+						{resumeId && resumes.length > 1 && (
+							<NativeSelect
+								aria-label={t`Resume to share for suggestions`}
+								value={resumeId}
+								className="ms-7 w-auto"
+								onChange={(event) => {
+									setResumeId(event.target.value);
+									setLastResume(event.target.value);
+									clear();
+								}}
+							>
+								{resumes.map((row) => (
 									<option key={row.id} value={row.id}>
-										{t`The resume “${row.name}”`}
+										{row.name}
 									</option>
 								))}
-						</NativeSelect>
+							</NativeSelect>
+						)}
 						{documents.isError && (
 							<Button variant="secondary" className="justify-self-start" onClick={() => void documents.refetch()}>
 								<Trans>Retry documents</Trans>
@@ -197,7 +214,7 @@ function SuggestRoles({ onUse, onClose }: SuggestRolesProps) {
 								className="mt-px"
 							/>
 							<span className="grid gap-px">
-								<span className="text-ink t-ui">
+								<span className="t-ui text-ink">
 									<Trans>Knowledge that's switched on</Trans>
 								</span>
 								{factCount !== undefined && storyCount !== undefined && (

@@ -22,22 +22,21 @@ import {
 } from "@reactive-resume/schema/career-offer";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@reactive-resume/ui/components/collapsible";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetFooter,
-	SheetHeader,
-	SheetTitle,
-} from "@reactive-resume/ui/components/sheet";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CurrencySelect } from "./currency-select";
@@ -157,24 +156,19 @@ function ScopedOfferEntry({
 
 type OfferSheetProps = { open: boolean; onClose: () => void; children: ReactNode };
 
-/** The offer form beside the page: 560 wide, a bottom sheet on phones. The form inside names the dialog. */
+/** The offer form over the page: a 560 dialog, a bottom sheet on phones. The form inside names the dialog. */
 export function OfferSheet({ open, onClose, children }: OfferSheetProps) {
-	const phone = useBreakpoint() === "mobile";
 	return (
-		<Sheet
+		<Dialog
 			open={open}
 			onOpenChange={(next) => {
 				if (!next) onClose();
 			}}
 		>
-			<SheetContent
-				side={phone ? "bottom" : "right"}
-				closeLabel={t`Close`}
-				className="data-[side=right]:sm:max-w-[560px]"
-			>
+			<DialogContent closeLabel={t`Close`} className="sm:max-w-[560px]">
 				{children}
-			</SheetContent>
-		</Sheet>
+			</DialogContent>
+		</Dialog>
 	);
 }
 
@@ -488,9 +482,11 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 	const description = offer ? (
 		<Trans>Save corrected terms as a new version. The previous version stays available. No AI request is made.</Trans>
 	) : (
-		<Trans>You enter the terms yourself; no AI request is made. Leave anything you don't know blank.</Trans>
+		<Trans>You enter the terms yourself and no AI request is made. Leave unknown amounts blank.</Trans>
 	);
 
+	// In the dialog the note about how terms are entered is its description, under the fields as the board draws it.
+	const Caption = sheet ? DialogDescription : "p";
 	const fields = (
 		<>
 			<fieldset disabled={save.isPending} className="grid items-start gap-x-3 gap-y-4 sm:grid-cols-12">
@@ -555,23 +551,22 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 						onChange={(event) => setDate(event.target.value)}
 					/>
 				</div>
-				{date && (
-					<div className={cn(field, "sm:col-span-3")}>
-						<Label htmlFor={`${id}-time`}>
-							<Trans>Time</Trans>
-						</Label>
-						<Input
-							id={`${id}-time`}
-							type="time"
-							onBlur={() => touch("deadline")}
-							aria-invalid={showDeadlineError}
-							aria-describedby={`${id}-time-zone${showDeadlineError ? ` ${id}-deadline-error` : ""}`}
-							required
-							value={time}
-							onChange={(event) => setTime(event.target.value)}
-						/>
-					</div>
-				)}
+				<div className={cn(field, "sm:col-span-3")}>
+					<Label htmlFor={`${id}-time`}>
+						<Trans>Time</Trans>
+					</Label>
+					<Input
+						id={`${id}-time`}
+						type="time"
+						onBlur={() => touch("deadline")}
+						aria-invalid={showDeadlineError}
+						aria-describedby={`${id}-time-zone${showDeadlineError ? ` ${id}-deadline-error` : ""}`}
+						// The deadline's time only counts with a date; it is ready before one is chosen.
+						required={Boolean(date)}
+						value={time}
+						onChange={(event) => setTime(event.target.value)}
+					/>
+				</div>
 
 				{amountField("base", t`Base salary`, "sm:col-span-4 sm:col-start-1")}
 				<div className={cn(field, "sm:col-span-4")}>
@@ -639,14 +634,20 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 					</NativeSelect>
 				</div>
 
-				<Collapsible open={more} onOpenChange={setMore} className="col-span-full border-t border-line pt-4">
-					<CollapsibleTrigger className="group/more flex w-fit cursor-pointer items-center gap-2 rounded-xs text-sm font-medium text-ink">
+				<Collapsible open={more} onOpenChange={setMore} className="col-span-full">
+					<CollapsibleTrigger className="group/more flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-xs text-sm font-medium text-ink">
 						<Icon
 							name="caret-right"
 							size={16}
-							className="transition-transform duration-standard ease-enter group-data-panel-open/more:rotate-90"
+							className="shrink-0 transition-transform duration-standard ease-enter group-data-panel-open/more:rotate-90"
 						/>
-						<Trans>More terms</Trans>
+						<span className="shrink-0">
+							<Trans>More terms</Trans>
+						</span>
+						{/* What the fold holds, for the eye; its fields are read once it opens. */}
+						<span aria-hidden="true" className="ms-auto min-w-0 truncate text-[13px]/[18px] font-normal text-ink-3">
+							<Trans>Equity · bonus conditions · where you work · leave · other benefits</Trans>
+						</span>
 					</CollapsibleTrigger>
 					<CollapsibleContent hiddenUntilFound>
 						<div className="grid items-start gap-x-3 gap-y-4 pt-3 sm:grid-cols-12">
@@ -665,7 +666,8 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 					</CollapsibleContent>
 				</Collapsible>
 			</fieldset>
-			<p className="text-ink-3 t-caption">
+			<Caption className="t-caption text-ink-3">
+				{sheet && <>{description} </>}
 				<span id={`${id}-variable-hint`}>{t`Bonus takes an amount or a share of base, such as 10%.`}</span>
 				{date && (
 					<>
@@ -673,7 +675,7 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 						<span id={`${id}-time-zone`}>{t`Times are shown in ${timeZone}.`}</span>
 					</>
 				)}
-			</p>
+			</Caption>
 			{!application && applications.isError && <CareerLoadError onRetry={() => void applications.refetch()} />}
 			{!application && applications.data?.length === 0 && (
 				<Link
@@ -730,13 +732,12 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 
 	if (sheet)
 		return (
-			<form noValidate className="flex min-h-0 flex-1 flex-col text-start" onSubmit={onSubmit}>
-				<SheetHeader>
-					<SheetTitle>{title}</SheetTitle>
-					<SheetDescription>{description}</SheetDescription>
-				</SheetHeader>
-				<div className="grid min-h-0 flex-1 content-start gap-4 overflow-y-auto px-6 pt-2 pb-5">{fields}</div>
-				<SheetFooter>{actions}</SheetFooter>
+			<form noValidate className="grid min-w-0 gap-5 text-start" onSubmit={onSubmit}>
+				<DialogHeader>
+					<DialogTitle>{title}</DialogTitle>
+				</DialogHeader>
+				{fields}
+				<DialogFooter>{actions}</DialogFooter>
 			</form>
 		);
 

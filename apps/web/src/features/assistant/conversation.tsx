@@ -1144,7 +1144,8 @@ export function Composer(props: ComposerProps) {
 		{
 			key: "document" as const,
 			icon: document.kind === "letter" ? ("envelope-simple" as const) : ("file-text" as const),
-			label: document.name,
+			// The kind, as the board draws it: one short row of chips. The document's name is on the panel already.
+			label: document.kind === "letter" ? t`Letter` : t`Resume`,
 		},
 		...(document.posting
 			? [
@@ -1210,9 +1211,9 @@ export function Composer(props: ComposerProps) {
 					<>
 						{chips.map((chip) =>
 							context[chip.key] ? (
+								// No icon: the kind is the label, so the three chips fit one row in the panel.
 								<RemovableChip
 									key={chip.key}
-									icon={chip.icon}
 									label={chip.label}
 									maxWidth="max-w-[160px]"
 									removeLabel={t`Don't send ${chip.label}`}
@@ -1285,7 +1286,7 @@ export function Composer(props: ComposerProps) {
 }
 
 type RemovableChipProps = {
-	icon: IconName;
+	icon?: IconName | undefined;
 	label: string;
 	/** The label's max-width class (Tailwind needs the whole class name in the source). */
 	maxWidth: string;
@@ -1297,7 +1298,7 @@ type RemovableChipProps = {
 function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove, disabled }: RemovableChipProps) {
 	return (
 		<span className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-xs font-medium text-ink-2">
-			<Icon name={icon} size={15} />
+			{icon && <Icon name={icon} size={15} />}
 			<span className={cn(maxWidth, "truncate")}>{label}</span>
 			<button
 				type="button"

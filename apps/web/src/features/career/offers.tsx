@@ -162,7 +162,7 @@ function OfferStageApplications({ offers, applications }: OfferStageApplications
 					>
 						<div className="grid min-w-0 gap-px">
 							<p className="truncate t-row-title">{application.company}</p>
-							<p className="truncate text-ink-3 t-small">{application.role}</p>
+							<p className="truncate t-small text-ink-3">{application.role}</p>
 						</div>
 						<OfferEntry application={{ id: application.id, company: application.company, role: application.role }} />
 					</li>
@@ -474,7 +474,7 @@ type Cell = { value: ReactNode; plain: string | null; strong?: boolean; notes: N
 
 /** A worded badge beside or under a term: a gap to ask about, or what is better and by how much. */
 function TermNote({ note }: { note: Note }) {
-	if (note.tone === "muted") return <span className="text-ink-3 t-caption">{note.text}</span>;
+	if (note.tone === "muted") return <span className="t-caption text-ink-3">{note.text}</span>;
 	return (
 		<Badge variant={note.tone === "better" ? "accent" : "warn"} className="h-auto min-h-5 whitespace-normal">
 			<Icon name={note.icon} />
@@ -569,7 +569,8 @@ function OneOffer({ offer, menu, onPair }: OneOfferProps) {
 				<dl className="flex flex-col">
 					{TERM_ROWS().map((row) => {
 						const cell = column[row.key];
-						if (!cell) return null;
+						// Other benefits is rarely stated: without any, the row stays out and Open questions asks about it.
+						if (!cell || (row.key === "other" && cell.plain === null)) return null;
 						return (
 							<div
 								key={row.key}
@@ -669,7 +670,7 @@ function Versions({ versions, shown, onChoose, onEdit, onDelete }: VersionsProps
 								</span>
 								<span className="flex min-w-0 flex-col gap-px">
 									<span className="truncate t-row-title">{t`${versionLabel(item)} · saved ${saved}`}</span>
-									<span className="truncate text-ink-3 t-small">
+									<span className="truncate t-small text-ink-3">
 										{[originLabel(item), outcomeLabel(item)].filter(Boolean).join(" · ")}
 									</span>
 								</span>
@@ -730,11 +731,16 @@ function Changes({ head, base }: { head: Offer; base: Offer }) {
 		return old ? t`Was ${old}` : t`Was left blank`;
 	};
 
+	// More money than before reads in accent; less, or a changed word, stays quiet.
+	const gained = (key: string) =>
+		(key === "base" || key === "variable" || key === "learning") &&
+		(moneyDifference(head.data, base.data, key) ?? 0) > 0;
+
 	return (
 		<>
 			<SectionHeading>{t`Changes since ${versionLabel(base)}`}</SectionHeading>
 			{rows.length === 0 ? (
-				<p className="text-ink-3 t-small">
+				<p className="t-small text-ink-3">
 					<Trans>Nothing changed between these versions.</Trans>
 				</p>
 			) : (
@@ -746,7 +752,7 @@ function Changes({ head, base }: { head: Offer; base: Offer }) {
 						>
 							<dt className="w-[180px] shrink-0 text-sm/5 text-ink-3 max-sm:w-full">{row.label}</dt>
 							<dd className="min-w-0 flex-1 text-sm/5">{now[row.key]?.value}</dd>
-							<dd className="text-ink-3 t-small">{note(row.key)}</dd>
+							<dd className={cn("t-small", gained(row.key) ? "text-accent-text" : "text-ink-3")}>{note(row.key)}</dd>
 						</div>
 					))}
 				</dl>
@@ -810,7 +816,7 @@ function Comparison({ pair, menu, onPair }: ComparisonProps) {
 									<span className="col-start-2 flex min-w-0 flex-col gap-px">
 										<span className="truncate text-[15px]/[22px] font-semibold">{companyOf(offer)}</span>
 										{offer.application?.role && (
-											<span className="truncate text-ink-3 t-small">{offer.application.role}</span>
+											<span className="truncate t-small text-ink-3">{offer.application.role}</span>
 										)}
 										<OfferDate offer={offer} />
 									</span>
@@ -828,24 +834,26 @@ function Comparison({ pair, menu, onPair }: ComparisonProps) {
 							);
 						})}
 					</DataTableRow>
-					{TERM_ROWS().map((row) => (
-						<DataTableRow key={row.key} className={compareRow}>
-							<DataTableCell header className={compareLabel}>
-								{row.label}
-							</DataTableCell>
-							{columns.map((column, index) => {
-								const cell = column[row.key];
-								return (
-									<DataTableCell key={index} className="flex-col items-start gap-1">
-										<span className={cn("text-sm/5", cell?.strong && "font-semibold")}>{cell?.value}</span>
-										{cell?.notes.map((note) => (
-											<TermNote key={note.text} note={note} />
-										))}
-									</DataTableCell>
-								);
-							})}
-						</DataTableRow>
-					))}
+					{TERM_ROWS()
+						.filter((row) => row.key !== "other" || columns.some((column) => column.other?.plain != null))
+						.map((row) => (
+							<DataTableRow key={row.key} className={compareRow}>
+								<DataTableCell header className={compareLabel}>
+									{row.label}
+								</DataTableCell>
+								{columns.map((column, index) => {
+									const cell = column[row.key];
+									return (
+										<DataTableCell key={index} className="flex-col items-start gap-1">
+											<span className={cn("text-sm/5", cell?.strong && "font-semibold")}>{cell?.value}</span>
+											{cell?.notes.map((note) => (
+												<TermNote key={note.text} note={note} />
+											))}
+										</DataTableCell>
+									);
+								})}
+							</DataTableRow>
+						))}
 				</DataTableBody>
 			</DataTable>
 
@@ -896,7 +904,7 @@ function OfferDate({ offer }: { offer: Offer }) {
 	const saved = new Date(offer.createdAt);
 	const today = dayNumber(saved, timeZone) === dayNumber(now, timeZone);
 	return (
-		<span className="truncate text-ink-3 t-small">
+		<span className="truncate t-small text-ink-3">
 			{versionLabel(offer)} · {today ? t`today` : format(saved, { day: "numeric", month: "short" })}
 		</span>
 	);
@@ -1124,8 +1132,14 @@ function openQuestions(offers: Offer[], locale: string): Question[] {
 			[t`How many days of leave come with it?`, missing, !terms.leave.trim()],
 			[t`Is there a learning budget?`, missing, terms.learning === null],
 			[t`Which other benefits come with it, like pension or allowances?`, missing, !terms.other.trim()],
-			[t`When would you start?`, missing, terms.startDate === null],
-			[t`When do they need your answer?`, missing, terms.respondBy === null],
+			// Both unknown: one question, as a reply would ask it.
+			[
+				t`When would you start, and when do you need my answer?`,
+				missing,
+				terms.startDate === null && terms.respondBy === null,
+			],
+			[t`When would you start?`, missing, terms.startDate === null && terms.respondBy !== null],
+			[t`When do they need your answer?`, missing, terms.respondBy === null && terms.startDate !== null],
 		];
 	};
 	// In the order of the terms, so both companies' questions about one term sit together.
@@ -1198,7 +1212,7 @@ function Questions({ offers }: QuestionsProps) {
 	};
 
 	const totals = two ? (
-		<p className="mt-3.5 border-t border-line pt-3.5 text-ink-3 t-small">
+		<p className="mt-3.5 border-t border-line pt-3.5 t-small text-ink-3">
 			<Trans>
 				Totals aren't added up on purpose: bonus and equity depend on conditions. Read the offer documents before
 				comparing totals.
@@ -1232,7 +1246,7 @@ function Questions({ offers }: QuestionsProps) {
 				{two ? <Trans>Still to ask</Trans> : <Trans>Open questions</Trans>}
 			</SectionHeading>
 			{questions.length === 0 ? (
-				<p className="text-ink-3 t-small">
+				<p className="t-small text-ink-3">
 					<Trans>No questions to ask before deciding.</Trans>
 				</p>
 			) : (
@@ -1256,7 +1270,7 @@ function Questions({ offers }: QuestionsProps) {
 								</span>
 								<span className="flex min-w-0 flex-col gap-px">
 									<span className={two ? "text-sm/5" : "t-row-title"}>{item.question}</span>
-									<span className="text-ink-3 t-small">{two ? ask(item) : item.why}</span>
+									<span className="t-small text-ink-3">{two ? ask(item) : item.why}</span>
 								</span>
 							</li>
 						))}
@@ -1289,7 +1303,7 @@ function Questions({ offers }: QuestionsProps) {
 							</Button>
 						)}
 					</div>
-					<p className="pt-2.5 text-ink-3 t-small">
+					<p className="pt-2.5 t-small text-ink-3">
 						{two ? (
 							<Trans>
 								Each copies its questions and opens that application's Messages. Nothing is sent until you send it.
@@ -1313,7 +1327,7 @@ function Questions({ offers }: QuestionsProps) {
 			)}
 			{totals}
 			{said && questions.length > 0 && (
-				<p className="pt-3.5 text-ink-3 t-small">
+				<p className="pt-3.5 t-small text-ink-3">
 					{offers.filter(isDeciding).length > 1
 						? t`You said: “${said}” Ask both companies before deciding.`
 						: t`You said: “${said}” Ask before deciding.`}

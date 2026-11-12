@@ -208,11 +208,13 @@ type ScheduleRowsProps = {
 	onOpen: (schedule: string) => void;
 	/** The Schedules page: an icon tile and both quiet lines. Career's short list keeps one line. */
 	full?: boolean;
+	/** Without AI, schedules that need it (the interview briefing) are left out of the short list. */
+	hide?: readonly string[] | undefined;
 };
 
 /** One row per schedule: what runs, for what, and when next. One switch pauses it; a finished one opens instead. */
-export function ScheduleRows({ schedules, onOpen, full = false }: ScheduleRowsProps) {
-	const { rows } = schedules;
+export function ScheduleRows({ schedules, onOpen, full = false, hide = [] }: ScheduleRowsProps) {
+	const rows = schedules.rows?.filter((row) => !hide.includes(row.kind));
 	const rowClassName = cn(full && "items-start py-3.5");
 	const titleClassName = "text-[15px]/[22px] font-medium";
 	const tile = (kind: string) =>
@@ -236,21 +238,23 @@ export function ScheduleRows({ schedules, onOpen, full = false }: ScheduleRowsPr
 	if (rows.length === 0)
 		return (
 			<List cap={full}>
-				{kinds().map(({ kind, note }) => (
-					<ListRow key={kind} interactive leading={tile(kind)} className={rowClassName}>
-						<button
-							type="button"
-							onClick={() => onOpen(`new:${kind}`)}
-							className={cn("flex min-w-0 flex-1 flex-col gap-px rounded-xs text-start", rowLinkClassName)}
-						>
-							<span className={cn(titleClassName, "text-ink")}>{scheduleKind(kind).title}</span>
-							<span className="text-[13px]/[18px] text-ink-3">{note}</span>
-						</button>
-						<span className="text-sm font-medium text-accent-text">
-							<Trans>Set up</Trans>
-						</span>
-					</ListRow>
-				))}
+				{kinds()
+					.filter(({ kind }) => !hide.includes(kind))
+					.map(({ kind, note }) => (
+						<ListRow key={kind} interactive leading={tile(kind)} className={rowClassName}>
+							<button
+								type="button"
+								onClick={() => onOpen(`new:${kind}`)}
+								className={cn("flex min-w-0 flex-1 flex-col gap-px rounded-xs text-start", rowLinkClassName)}
+							>
+								<span className={cn(titleClassName, "text-ink")}>{scheduleKind(kind).title}</span>
+								<span className="text-[13px]/[18px] text-ink-3">{note}</span>
+							</button>
+							<span className="text-sm font-medium text-accent-text">
+								<Trans>Set up</Trans>
+							</span>
+						</ListRow>
+					))}
 			</List>
 		);
 

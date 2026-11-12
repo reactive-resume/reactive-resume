@@ -26,6 +26,7 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
+import { CareerCrumb } from "../career-crumb";
 import { useCoachKnowledge } from "../coach-thread";
 import { useSessionDraft } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
@@ -35,6 +36,7 @@ import { StoryPractice } from "../workspace/practise";
 import { KnowledgeFrame } from "./frame";
 import { ChipField } from "./preferences";
 import { List, ListRow } from "@/components/calm/list-row";
+import { Page, PageBody } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -157,21 +159,22 @@ export function StoriesPage({ storyId, edit, practice = false, start: planStart 
 		</Button>
 	);
 
+	// Practice is its own page under Career (W8-12): its header names it, and "Back to the story" sits in that header.
 	if (practice && storyId)
 		return (
-			<KnowledgeFrame current="stories">
-				<div className="grid gap-4 pt-5">
-					{back(storyId)}
+			<Page>
+				<PageBody>
+					<CareerCrumb />
 					<StoryPractice key={storyId} storyId={storyId} />
-				</div>
-			</KnowledgeFrame>
+				</PageBody>
+			</Page>
 		);
 
 	// Editing turns the story into a form in place, across the page: the list steps aside until it is saved or cancelled.
 	if (editing)
 		return (
 			<KnowledgeFrame current="stories">
-				<div className="grid max-w-[720px] gap-2 pt-5">
+				<div className="grid max-w-[560px] gap-2 pt-5">
 					{back(selected?.id)}
 					<h2 className="pb-2 t-section-title">{selected ? <Trans>Edit story</Trans> : <Trans>Add a story</Trans>}</h2>
 					<StoryEditor

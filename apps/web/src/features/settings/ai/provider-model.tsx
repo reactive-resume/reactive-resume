@@ -101,6 +101,11 @@ export function ProviderModel({ id, provider, value, onChange, label, hint = tru
 					<div ref={anchor}>
 						<ComboboxInput {...inputProps} className="w-full">
 							<InputGroupAddon align="inline-end">
+								{value === defaultModel && (
+									<span aria-hidden="true" className="truncate text-[13px]/[18px] text-ink-3 max-sm:hidden">
+										<Trans>Default · fast, low cost</Trans>
+									</span>
+								)}
 								<ComboboxTrigger
 									caret="down"
 									aria-label={t`Choose model`}

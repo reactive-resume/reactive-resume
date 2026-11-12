@@ -104,9 +104,9 @@ type ThreadSummary = RouterOutput["agent"]["threads"]["list"][number];
 export const titleFor = (thread: ThreadSummary | undefined) =>
 	thread && thread.title !== "New conversation" ? thread.title : t`New conversation`;
 
-/** "Now", "17:58", "Yesterday", "Mon 5 Oct", then "28 Sep". */
+/** "Now", "17:58", "Yesterday", "Thursday" within the week, then "28 Sep". */
 export function useConversationDate() {
-	const { format, time, day } = useCareerTime();
+	const { format, time } = useCareerTime();
 	const now = useNow();
 	const dayKey = (value: Date) => format(value, { year: "numeric", month: "numeric", day: "numeric" });
 	return (value: Date) => {
@@ -114,7 +114,7 @@ export function useConversationDate() {
 		if (age < 60_000) return t`Now`;
 		if (dayKey(value) === dayKey(now)) return time(value);
 		if (dayKey(value) === dayKey(new Date(now.getTime() - 86_400_000))) return t`Yesterday`;
-		if (age < 6 * 86_400_000) return day(value);
+		if (age < 6 * 86_400_000) return format(value, { weekday: "long" });
 		return format(value, {
 			day: "numeric",
 			month: "short",
