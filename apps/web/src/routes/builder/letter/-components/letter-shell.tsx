@@ -9,7 +9,7 @@ import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { LetterDesignPanel } from "./design-panel";
-import { LetterDownloadSheet } from "./download-sheet";
+import { LetterDownloadSheet, LetterHistoryPanel } from "./download-sheet";
 import { LetterBar, useDownloadLetter } from "./letter-bar";
 import { LetterPage } from "./letter-page";
 import { LetterWritePanel } from "./write-panel";
@@ -59,6 +59,7 @@ export function LetterShell() {
 				panel={<ModePanel mode={mode} />}
 				page={<LetterPage />}
 				assistant={<LetterAssistant />}
+				history={<LetterHistoryPanel />}
 				mobile={<MobileBody mode={mode} onModeChange={setMode} />}
 			>
 				<LetterDownloadSheet />
@@ -136,6 +137,16 @@ function LetterHotkeys({ onModeChange }: { onModeChange: (mode: LetterMode) => v
 	});
 	useHotkey("Mod+P", () => void download.run(), { meta: { name: t`Download PDF` } });
 	useHotkey("Mod+Shift+E", () => setSheetTab("download"), { meta: { name: t`Download & history` } });
+	// Outside a field: inside one, the field's own undo applies.
+	const outsideField = () => {
+		const target = document.activeElement;
+		return !(
+			target instanceof HTMLElement &&
+			(target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))
+		);
+	};
+	useHotkey("Mod+Z", () => outsideField() && useLetterEditorStore.getState().undo(), { meta: { name: t`Undo` } });
+	useHotkey("Mod+Shift+Z", () => outsideField() && useLetterEditorStore.getState().redo(), { meta: { name: t`Redo` } });
 	useHotkey("Mod+J", () => useEditorStore.getState().setAssistantOpen(!useEditorStore.getState().assistantOpen, true), {
 		enabled: assistantShortcutEnabled,
 		meta: { name: t`Assistant` },

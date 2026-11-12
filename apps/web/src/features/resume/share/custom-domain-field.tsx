@@ -70,7 +70,7 @@ export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
 						set.mutate({ hostname }, { onError });
 					}}
 				>
-					<label htmlFor={id} className="text-xs font-medium text-ink-2">
+					<label htmlFor={id} className="sr-only">
 						<Trans>Your domain</Trans>
 					</label>
 					<div className="flex gap-1.5">
@@ -81,15 +81,9 @@ export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
 							spellCheck={false}
 							autoCapitalize="none"
 							onChange={(event) => setHostname(event.target.value)}
-							className="h-[38px] font-mono text-[13px] pointer-coarse:h-[38px]"
+							className="font-mono text-[13px]"
 						/>
-						<Button
-							type="submit"
-							variant="secondary"
-							className="h-[38px]"
-							loading={set.isPending}
-							disabled={!hostname.trim()}
-						>
+						<Button type="submit" variant="secondary" loading={set.isPending} disabled={!hostname.trim()}>
 							<Trans>Connect</Trans>
 						</Button>
 					</div>
@@ -105,19 +99,20 @@ export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
 		);
 
 	return (
-		<div className="grid gap-2.5 rounded-xl border border-line p-3.5">
-			<div className="flex items-center gap-2">
+		<div className="flex flex-col">
+			<div className="flex items-center gap-2.5">
 				<Icon
 					name={domain.verified ? "check-circle" : "warning-circle"}
 					size={18}
 					className={domain.verified ? "text-accent-text" : "text-warn-text"}
 				/>
-				<span className="min-w-0 flex-1 truncate font-mono text-[13px] font-medium" dir="ltr">
+				<span className="min-w-0 flex-1 truncate font-mono text-[13px]/5 font-medium text-ink" dir="ltr">
 					{domain.hostname}
 				</span>
 				<Button
 					variant="ghost"
 					size="sm"
+					className="-me-2.5"
 					loading={remove.isPending}
 					disabled={set.isPending || verify.isPending}
 					onClick={async () => {
@@ -135,15 +130,15 @@ export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
 				</Button>
 			</div>
 			{domain.verified ? (
-				<p className="text-xs leading-4 text-ink-3">
+				<p className="mt-1.5 t-small text-ink-2">
 					<Trans>Connected. Your domain opens your primary resume.</Trans>
 				</p>
 			) : (
 				<>
-					<p className="text-xs leading-4 text-ink-2">
+					<p className="mt-1.5 t-small text-ink-2">
 						<Trans>Not connected yet. Add its DNS records where you manage the domain, then check.</Trans>
 					</p>
-					<div className="flex flex-wrap gap-2">
+					<div className="mt-3 flex flex-wrap gap-1">
 						<Button variant="secondary" size="sm" onClick={() => setRecordsOpen(true)}>
 							<Trans>Show DNS records</Trans>
 						</Button>

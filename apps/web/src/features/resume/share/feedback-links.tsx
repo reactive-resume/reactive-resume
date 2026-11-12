@@ -41,13 +41,16 @@ const expiryLabel = (expiry: Expiry) =>
 const statusLabel = (status: FeedbackLink["status"]) =>
 	status === "active" ? t`Active` : status === "expired" ? t`Expired` : t`Revoked`;
 
-type FeedbackLinksSectionProps = { resumeId: string };
+type FeedbackLinksSectionProps = {
+	resumeId: string /** Draws its own heading; off where the page title already names it. */;
+	titled?: boolean;
+};
 
 /**
  * Feedback links: a private link to this version of the resume for one reviewer, such as a coach. The owner sees who
  * each link is for, whether it was opened and what it collected, and can turn it off.
  */
-export function FeedbackLinksSection({ resumeId }: FeedbackLinksSectionProps) {
+export function FeedbackLinksSection({ resumeId, titled = true }: FeedbackLinksSectionProps) {
 	const { i18n } = useLingui();
 	const [creating, setCreating] = useState(false);
 	const [openId, setOpenId] = useState<string | null>(null);
@@ -55,7 +58,7 @@ export function FeedbackLinksSection({ resumeId }: FeedbackLinksSectionProps) {
 
 	return (
 		<section aria-labelledby="share-feedback-title" className="grid gap-3">
-			<div className="grid gap-1">
+			<div className={titled ? "grid gap-1" : "sr-only"}>
 				<h3 id="share-feedback-title" className="text-sm font-semibold">
 					<Trans>Feedback links</Trans>
 				</h3>

@@ -1,12 +1,13 @@
-import { createSampleResumeFromDashboard, makeResumePublic } from "../fixtures/resume";
+import { backToShare, createSampleResumeFromDashboard, makeResumePublic, openSharePrivacy } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 test("password-protects a public resume and unlocks it as a visitor", async ({ browser, authPage: page }, testInfo) => {
 	await createSampleResumeFromDashboard(page, testInfo);
 	const publicUrl = await makeResumePublic(page);
-	const unprotectedSummary = "On. Anyone with the link can see your web page.";
-	const protectedSummary = "On. Visitors need the link and password to see your web page.";
+	const unprotectedSummary = "Anyone with the link can see your web page.";
+	const protectedSummary = "Visitors need the link and password to see your web page.";
 	await expect(page.getByText(unprotectedSummary, { exact: true })).toBeVisible();
+	await openSharePrivacy(page);
 
 	const password = "e2e-secret-42";
 	const requirePassword = page.getByRole("switch", { name: "Require a password" });
@@ -19,6 +20,7 @@ test("password-protects a public resume and unlocks it as a visitor", async ({ b
 	await dialog.getByLabel("Confirm password", { exact: true }).fill(password);
 	await dialog.getByRole("button", { name: "Set password" }).click();
 	await expect(requirePassword).toBeChecked();
+	await backToShare(page);
 	await expect(page.getByText(protectedSummary, { exact: true })).toBeVisible();
 	await expect(page.getByText(unprotectedSummary, { exact: true })).toHaveCount(0);
 
@@ -45,12 +47,14 @@ test("password-protects a public resume and unlocks it as a visitor", async ({ b
 		await anonymous.close();
 	}
 
+	await openSharePrivacy(page);
 	await requirePassword.click();
 	await page
 		.getByRole("alertdialog", { name: "Remove the password?" })
 		.getByRole("button", { name: "Remove password" })
 		.click();
 	await expect(requirePassword).not.toBeChecked();
+	await backToShare(page);
 	await expect(page.getByText(unprotectedSummary, { exact: true })).toBeVisible();
 	await expect(page.getByText(protectedSummary, { exact: true })).toHaveCount(0);
 

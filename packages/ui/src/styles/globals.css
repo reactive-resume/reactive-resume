@@ -366,55 +366,101 @@ input[type="tel"] {
 }
 
 /*
- * Calm type styles: size / line-height, family and weight in one utility. Instrument Serif has one weight: never bold.
+ * Calm type styles: size / line-height, family and weight in one utility. Longhand on purpose: a later `font-medium`
+ * or `font-semibold` on the same element must still win, which the `font` shorthand would not allow. Instrument Serif has one weight: never bold.
  * `eyebrow` is for group labels inside menus and the command palette only.
  */
 @utility t-display {
-	font: 400 44px/48px var(--font-display);
+	font-family: var(--font-display);
+	font-size: 44px;
+	line-height: 48px;
+	font-weight: 400;
 	letter-spacing: -0.01em;
 }
 @utility t-big-number {
-	font: 400 40px/44px var(--font-display);
+	font-family: var(--font-display);
+	font-size: 40px;
+	line-height: 44px;
+	font-weight: 400;
 }
 @utility t-root-title {
-	font: 400 34px/40px var(--font-display);
+	font-family: var(--font-display);
+	font-size: 34px;
+	line-height: 40px;
+	font-weight: 400;
 	letter-spacing: -0.005em;
 }
 @utility t-page-title {
-	font: 400 28px/34px var(--font-display);
+	font-family: var(--font-display);
+	font-size: 28px;
+	line-height: 34px;
+	font-weight: 400;
 }
 @utility t-section-title {
-	font: 400 22px/28px var(--font-display);
+	font-family: var(--font-display);
+	font-size: 22px;
+	line-height: 28px;
+	font-weight: 400;
 }
 @utility t-heading {
-	font: 600 20px/28px var(--font-ui);
+	font-family: var(--font-ui);
+	font-size: 20px;
+	line-height: 28px;
+	font-weight: 600;
 }
 @utility t-section-heading {
-	font: 600 17px/24px var(--font-ui);
+	font-family: var(--font-ui);
+	font-size: 17px;
+	line-height: 24px;
+	font-weight: 600;
 }
 @utility t-label {
-	font: 600 15px/22px var(--font-ui);
+	font-family: var(--font-ui);
+	font-size: 15px;
+	line-height: 22px;
+	font-weight: 600;
 }
 @utility t-row-title {
-	font: 500 15px/22px var(--font-ui);
+	font-family: var(--font-ui);
+	font-size: 15px;
+	line-height: 22px;
+	font-weight: 500;
 }
 @utility t-body {
-	font: 400 15px/24px var(--font-ui);
+	font-family: var(--font-ui);
+	font-size: 15px;
+	line-height: 24px;
+	font-weight: 400;
 }
 @utility t-ui {
-	font: 400 14px/20px var(--font-ui);
+	font-family: var(--font-ui);
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 400;
 }
 @utility t-small {
-	font: 400 13px/18px var(--font-ui);
+	font-family: var(--font-ui);
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 400;
 }
 @utility t-caption {
-	font: 500 12px/16px var(--font-ui);
+	font-family: var(--font-ui);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 500;
 }
 @utility t-eyebrow {
-	font: 600 12px/16px var(--font-ui);
+	font-family: var(--font-ui);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
 }
 @utility t-mono {
-	font: 500 12px/16px var(--font-mono);
+	font-family: var(--font-mono);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 500;
 }
 
 /* The marketing homepage keeps the Desk & Paper corners (routes/_home index only; out of scope for Calm). */

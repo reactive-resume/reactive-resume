@@ -1,6 +1,7 @@
 import type { ExportFormat } from "@/features/resume/export/use-resume-export";
 import type { DownloadFormat, DownloadState } from "@/features/resume/share/download-tab";
 import type { HistorySource } from "@/features/resume/share/history-tab";
+import type { ReactElement } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,13 +13,14 @@ import { useLetterEditorStore } from "@/features/letters/store";
 import { DownloadSheetFrame } from "@/features/resume/editor/chrome/download-sheet";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { createExportFile, getDefaultFileName, sanitizeFileName } from "@/features/resume/export/use-resume-export";
+import { DownloadMenu } from "@/features/resume/share/download-menu";
 import {
 	DownloadActions,
 	FileNameField,
 	FormatRadioGroup,
 	getExportFormats,
 } from "@/features/resume/share/download-tab";
-import { HistoryTimeline } from "@/features/resume/share/history-tab";
+import { HistoryPanel, HistoryTimeline } from "@/features/resume/share/history-tab";
 import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -41,22 +43,15 @@ type LetterFormat = ExportFormat | "both";
 
 const PAUSE_BETWEEN_FILES_MS = 400;
 
-/**
- * Download: the letter as PDF (or Word, OpenDocument, Markdown, JSON), or, for a letter with a resume, both as two PDFs named to
- * match: First-Last-Resume.pdf and First-Last-Cover-Letter.pdf.
- */
-function LetterDownloadTab() {
-	const letter = useLetterEditorStore((state) => state.letter);
-	const { data: resumes } = useQuery(orpc.resume.list.queryOptions({ input: {} }));
-	const [format, setFormat] = useState<LetterFormat>("pdf");
-	const [fileName, setFileName] = useState<string | null>(null);
-	const [state, setState] = useState<DownloadState>("idle");
-	if (!letter) return null;
+type Letter = NonNullable<ReturnType<typeof useLetterEditorStore.getState>["letter"]>;
 
-	const resumeId = letter.sourceResumeId;
+/** The letter's formats: the resume's list, with "Resume + letter" when a resume is linked (L6). */
+function useLetterFormats(letter: Letter | null): DownloadFormat<LetterFormat>[] {
+	const { data: resumes } = useQuery(orpc.resume.list.queryOptions({ input: {} }));
+	const resumeId = letter?.sourceResumeId;
 	const resumeName = resumes?.find((item) => item.id === resumeId)?.name ?? t`your resume`;
 	const [pdf, ...others] = getExportFormats();
-	const formats: DownloadFormat<LetterFormat>[] = [
+	return [
 		...(pdf ? [pdf] : []),
 		...(resumeId
 			? [
@@ -64,7 +59,7 @@ function LetterDownloadTab() {
 						id: "both" as const,
 						label: t`Resume + letter`,
 						extension: t`2 files`,
-						icon: "file-pdf" as const,
+						icon: "files" as const,
 						description: t`This letter and “${resumeName}” as two PDFs, named to match.`,
 					},
 				]
@@ -78,26 +73,75 @@ function LetterDownloadTab() {
 					: option,
 		),
 	];
+}
+
+/** Makes and saves the file; "both" saves the resume's PDF and the letter's, named to match. Returns what it saved. */
+async function downloadLetter(letter: Letter, as: LetterFormat, formats: DownloadFormat<LetterFormat>[], name: string) {
+	if (as === "both" && letter.sourceResumeId) {
+		const resume = await client.resume.getById({ id: letter.sourceResumeId });
+		downloadWithAnchor(await createExportFile(resume, "pdf"), `${getDefaultFileName(resume)}.pdf`);
+		// Two downloads in a row are more reliable a moment apart.
+		await new Promise((resolve) => window.setTimeout(resolve, PAUSE_BETWEEN_FILES_MS));
+		downloadWithAnchor(await createLetterFile(letter, "pdf"), `${letterFileName(letter)}.pdf`);
+		return t`your resume and this letter`;
+	}
+	const extension = formats.find((option) => option.id === as)?.extension ?? ".pdf";
+	const file = `${sanitizeFileName(name) || letterFileName(letter)}${extension}`;
+	downloadWithAnchor(await createLetterFile(letter, as === "both" ? "pdf" : as), file);
+	return file;
+}
+
+/** L6 tile 13: the ▾ beside Download PDF on a letter. */
+export function LetterDownloadMenu({ trigger }: { trigger: ReactElement }) {
+	const letter = useLetterEditorStore((state) => state.letter);
+	const formats = useLetterFormats(letter);
+	if (!letter) return trigger;
+
+	return (
+		<DownloadMenu
+			trigger={trigger}
+			formats={formats}
+			defaultFileName={letterFileName(letter)}
+			download={(as, name) => downloadLetter(letter, as, formats, name)}
+		/>
+	);
+}
+
+/** B15 for letters: History in the panel's place, from the clock in the bar. */
+export function LetterHistoryPanel() {
+	const history = useLetterHistory(true);
+	return (
+		<HistoryPanel
+			onClose={() => {
+				useEditorStore.getState().setHistoryOpen(false);
+				requestAnimationFrame(() => document.querySelector<HTMLElement>("[data-history-toggle]")?.focus());
+			}}
+		>
+			<HistoryTimeline source={{ ...history, nameLabel: t`Name the letter as it is now` }} />
+		</HistoryPanel>
+	);
+}
+
+/**
+ * Download (phones and tablets, from the sheet): the letter as PDF (or Word, OpenDocument, Markdown, JSON), or, for a
+ * letter with a resume, both as two PDFs named to match: First-Last-Resume.pdf and First-Last-Cover-Letter.pdf.
+ */
+function LetterDownloadTab() {
+	const letter = useLetterEditorStore((state) => state.letter);
+	const formats = useLetterFormats(letter);
+	const [format, setFormat] = useState<LetterFormat>("pdf");
+	const [fileName, setFileName] = useState<string | null>(null);
+	const [state, setState] = useState<DownloadState>("idle");
+	if (!letter) return null;
+
 	const selected = formats.find((option) => option.id === format) ?? (formats[0] as DownloadFormat<LetterFormat>);
 	const name = fileName ?? letterFileName(letter);
 
 	const download = async (as: LetterFormat) => {
-		const bothId = as === "both" ? resumeId : null;
-		const extension = formats.find((option) => option.id === as)?.extension ?? ".pdf";
-		const file = `${sanitizeFileName(name) || letterFileName(letter)}${extension}`;
 		setState("busy");
 		try {
-			if (bothId) {
-				const resume = await client.resume.getById({ id: bothId });
-				downloadWithAnchor(await createExportFile(resume, "pdf"), `${getDefaultFileName(resume)}.pdf`);
-				// Two downloads in a row are more reliable a moment apart.
-				await new Promise((resolve) => window.setTimeout(resolve, PAUSE_BETWEEN_FILES_MS));
-				downloadWithAnchor(await createLetterFile(letter, "pdf"), `${letterFileName(letter)}.pdf`);
-				toast.add({ description: t`Downloaded your resume and this letter` });
-			} else if (as !== "both") {
-				downloadWithAnchor(await createLetterFile(letter, as), file);
-				toast.add({ description: t`Downloaded ${file}` });
-			}
+			const file = await downloadLetter(letter, as, formats, name);
+			toast.add({ description: t`Downloaded ${file}` });
 			setState("done");
 		} catch (error) {
 			setState("error");

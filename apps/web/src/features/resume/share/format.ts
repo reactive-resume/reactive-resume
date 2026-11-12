@@ -5,7 +5,7 @@ export type VersionSummary = RouterOutput["resume"]["listVersions"][number];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** "Today 14:02", "Yesterday 09:15", "Sep 16", or "Sep 16, 2025" for another year. */
+/** "Today 14:02", "Yesterday 09:15", "Tue 3 Nov", or "Tue 3 Nov 2025" for another year (in en-GB). */
 export function formatVersionTime(date: Date, locale: string, now = new Date()) {
 	const time = date.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
 	const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -13,6 +13,7 @@ export function formatVersionTime(date: Date, locale: string, now = new Date()) 
 	if (date.getTime() >= startOfToday) return t`Today ${time}`;
 	if (date.getTime() >= startOfToday - DAY_MS) return t`Yesterday ${time}`;
 	return date.toLocaleDateString(locale, {
+		weekday: "short",
 		month: "short",
 		day: "numeric",
 		...(date.getFullYear() === now.getFullYear() ? {} : { year: "numeric" }),
@@ -47,10 +48,12 @@ export function getVersionTitle(version: Pick<VersionSummary, "kind" | "name">) 
 }
 
 /** The line under a version's title: how it was saved. */
-export function getVersionDetail(version: Pick<VersionSummary, "kind">) {
+export function getVersionDetail(version: Pick<VersionSummary, "kind" | "name">) {
 	switch (version.kind) {
 		case "named":
-			return t`named`;
+			return t`named by you`;
+		case "sent":
+			return version.name ? t`what ${version.name} received` : t`what went out`;
 		case "auto":
 		case "before-restore":
 			return t`autosaved`;

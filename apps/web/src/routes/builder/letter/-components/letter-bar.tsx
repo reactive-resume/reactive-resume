@@ -18,6 +18,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { LetterDownloadMenu } from "./download-sheet";
 import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
@@ -49,14 +50,14 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 			layout={layout}
 			pinnable={pinnable}
 			menu={<LetterMenu />}
+			history={<LetterUndoRedo />}
+			historyInPanel
 			modes={
-				<TabsList aria-label={t`Editor mode`} className="h-9" data-mode-switch="">
-					<TabsTrigger value="write" className="px-4">
-						<Icon name="pencil-simple" size={18} />
+				<TabsList aria-label={t`Editor mode`} data-mode-switch="">
+					<TabsTrigger value="write">
 						<Trans>Write</Trans>
 					</TabsTrigger>
-					<TabsTrigger value="design" className="px-4">
-						<Icon name="palette" size={18} />
+					<TabsTrigger value="design">
 						<Trans>Design</Trans>
 					</TabsTrigger>
 				</TabsList>
@@ -69,8 +70,24 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 				onDownload={() => void download.run()}
 				compact={layout === "mobile"}
 				iconOnly={layout === "tablet"}
+				renderMore={(button) => <LetterDownloadMenu trigger={button} />}
 			/>
 		</EditorBarFrame>
+	);
+}
+
+/** P8: the letter's Undo and Redo, as on the resume bar; ⌘Z and ⇧⌘Z do the same outside a field. */
+function LetterUndoRedo() {
+	const undo = useLetterEditorStore((state) => state.undo);
+	const redo = useLetterEditorStore((state) => state.redo);
+	const canUndo = useLetterEditorStore((state) => state.undoStack.length > 0 && !state.letter?.isLocked);
+	const canRedo = useLetterEditorStore((state) => state.redoStack.length > 0 && !state.letter?.isLocked);
+
+	return (
+		<>
+			<IconButton icon="arrow-counter-clockwise" label={t`Undo`} shortcut="⌘Z" disabled={!canUndo} onClick={undo} />
+			<IconButton icon="arrow-clockwise" label={t`Redo`} shortcut="⇧⌘Z" disabled={!canRedo} onClick={redo} />
+		</>
 	);
 }
 
@@ -105,23 +122,13 @@ const failed = (error: unknown) =>
 		description: getOrpcErrorMessage(error, { fallback: t`Couldn't update the letter. Try again.` }),
 	});
 
-/** The name opens the letter's menu: rename, duplicate, lock and Move to Trash. The save state sits under it. */
-function LetterMenu() {
-	const helpRequested = useRef(false);
-	const menuTrigger = useRef<HTMLButtonElement>(null);
+/** Duplicate (asks for the copy's name, then opens it) and Lock, shared by the name's menu and the locked panel (L5). */
+export function useLetterActions() {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const prompt = usePrompt();
 	const id = useLetterEditorStore((state) => state.letter?.id ?? "");
-	const name = useLetterEditorStore((state) => state.letter?.name ?? "");
-	const isLocked = useLetterEditorStore((state) => state.letter?.isLocked ?? false);
 	const ref = { type: "letter" as const, id };
-
-	const rename = async () => {
-		const next = await prompt(t`Rename letter`, { defaultValue: name });
-		const trimmed = next?.trim().slice(0, 100);
-		if (trimmed && trimmed !== name) useLetterEditorStore.getState().edit({ name: trimmed });
-	};
 
 	const duplicate = async () => {
 		try {
@@ -149,6 +156,29 @@ function LetterMenu() {
 				return client.coverLetters.getById({ id });
 			})
 			.catch(failed);
+
+	return { duplicate, setLocked };
+}
+
+/** The name opens the letter's menu: rename, duplicate, lock and Move to Trash. The save state sits under it. */
+function LetterMenu() {
+	const helpRequested = useRef(false);
+	const menuTrigger = useRef<HTMLButtonElement>(null);
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const prompt = usePrompt();
+	const id = useLetterEditorStore((state) => state.letter?.id ?? "");
+	const name = useLetterEditorStore((state) => state.letter?.name ?? "");
+	const isLocked = useLetterEditorStore((state) => state.letter?.isLocked ?? false);
+	const ref = { type: "letter" as const, id };
+
+	const rename = async () => {
+		const next = await prompt(t`Rename letter`, { defaultValue: name });
+		const trimmed = next?.trim().slice(0, 100);
+		if (trimmed && trimmed !== name) useLetterEditorStore.getState().edit({ name: trimmed });
+	};
+
+	const { duplicate, setLocked } = useLetterActions();
 
 	// Undoable, so it doesn't ask first: the letter waits in Trash for 30 days.
 	const trash = async () => {

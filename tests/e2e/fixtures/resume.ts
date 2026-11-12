@@ -29,26 +29,37 @@ export async function openSidebarSection(page: Page, title: string) {
 		return;
 	}
 
-	// Write: the Basics card is open by default; every other section is an outline row that opens on click.
+	// Write has one level at a time: return to its outline, then open the requested section.
 	await page.getByRole("tab", { name: "Write", exact: true }).click();
-	if (title === "Basics") {
-		await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toBeVisible();
-		return;
-	}
-	// A custom section can share a built-in's title (the sample has two "Experience" sections); prefer the built-in.
+	const back = page.getByRole("button", { name: "Sections", exact: true });
+	if (await back.isVisible()) await back.click();
 	const builtIn = page.locator(`#sidebar-${title.toLowerCase()}`).getByRole("button", { name: title, exact: true });
 	const row = (await builtIn.count()) > 0 ? builtIn : page.getByRole("button", { name: title, exact: true }).first();
-	await row.scrollIntoViewIfNeeded();
-	if ((await row.getAttribute("aria-expanded")) !== "true") await row.click();
-	await expect(row).toHaveAttribute("aria-expanded", "true");
+	await row.click();
+	await expect(page.locator(`#sidebar-${title.toLowerCase()}`)).toBeVisible();
 }
 
-/** Opens Download & history on its Download tab, from the ▾ next to Download PDF. */
+/** Opens the Download menu, the ▾ next to Download PDF: each format is a row that downloads it. */
 export async function openDownloadDialog(page: Page) {
 	await page.getByRole("button", { name: "More download formats", exact: true }).click();
-	const sheet = page.getByRole("dialog", { name: "Download & history" });
-	await expect(sheet.getByRole("tab", { name: "Download", exact: true })).toHaveAttribute("aria-selected", "true");
-	return sheet;
+	const menu = page.getByRole("dialog", { name: "Download", exact: true });
+	await expect(menu.getByRole("textbox", { name: "File name" })).toBeVisible();
+	return menu;
+}
+
+/** From Share's first level, opens Privacy and downloads (password, search engines, downloads, credit). */
+export async function openSharePrivacy(page: Page) {
+	await page.getByRole("button", { name: /^Privacy and downloads/ }).click();
+	await expect(page.getByRole("heading", { name: "Privacy and downloads", level: 2 })).toBeVisible();
+}
+
+/** Back from a Share sub-page to its first level. */
+export async function backToShare(page: Page) {
+	await page
+		.getByRole("navigation", { name: "Breadcrumb" })
+		.getByRole("button", { name: "Share", exact: true })
+		.click();
+	await expect(page.getByRole("textbox", { name: "Address" })).toBeVisible();
 }
 
 /** Publishes the web page in Share mode and returns its address. */

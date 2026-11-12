@@ -109,7 +109,7 @@ export function LetterPage() {
 	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
 
 	return (
-		<div className="relative h-full min-h-0 bg-sunken">
+		<div data-design="canvas" className="@container relative h-full min-h-0 bg-sunken dark:bg-raised">
 			{/* The page has nothing to tab to, so the scroll area itself takes focus for keyboard scrolling. */}
 			<section
 				ref={canvasRef}
@@ -117,7 +117,7 @@ export function LetterPage() {
 				tabIndex={0}
 				aria-label={t`Letter page`}
 				className={cn(
-					"absolute inset-0 overflow-auto pt-7 pb-24 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent",
+					"absolute inset-0 overflow-auto pt-3.5 pb-24 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent",
 					isPhone ? "px-4" : "px-10",
 				)}
 			>
@@ -133,11 +133,11 @@ export function LetterPage() {
 						"mx-auto w-fit transition-transform duration-emphasized ease-enter",
 						shifted && "-translate-x-[120px] rtl:translate-x-[120px]",
 					)}
-					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}
+					pageClassName={cn("rounded-paper bg-paper shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}
 					onRender={setRendered}
 					renderPageCaption={({ pageNumber }) =>
 						pageNumber === 1 ? (
-							<figcaption className="mb-2.5 flex min-h-8 flex-wrap items-center justify-center gap-2.5 text-center text-xs font-medium text-ink-3">
+							<figcaption className="relative mb-2.5 flex min-h-4 flex-wrap items-center justify-center gap-2.5 text-center t-mono text-ink-3">
 								{viewing ? (
 									<CanvasStatusPill icon="clock-counter-clockwise">
 										<Trans>
@@ -150,11 +150,23 @@ export function LetterPage() {
 										<Trans>Previewing {templates[previewTemplate].name} · click to apply</Trans>
 									</CanvasStatusPill>
 								) : (
-									<Trans>Page 1 · {formatLabel}</Trans>
+									// Laid over the canvas's width, like the resume's page label.
+									<span className="absolute top-0 left-1/2 w-[100cqw] -translate-x-1/2 whitespace-nowrap">
+										{letter.isLocked ? (
+											<Trans>
+												Page 1 of {ph({ pages: i18n.number(Math.max(1, rendered.pageCount)) })} · {formatLabel} ·
+												read-only
+											</Trans>
+										) : (
+											<Trans>
+												Page 1 of {ph({ pages: i18n.number(Math.max(1, rendered.pageCount)) })} · {formatLabel}
+											</Trans>
+										)}
+									</span>
 								)}
 							</figcaption>
 						) : (
-							<figcaption className="mb-2.5 text-center text-xs font-medium text-ink-3">
+							<figcaption className="mb-2.5 text-center t-mono text-ink-3">
 								<Trans>Page {ph({ pageNumber: i18n.number(pageNumber) })}</Trans>
 							</figcaption>
 						)

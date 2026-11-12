@@ -10,6 +10,8 @@ msg`Download Word`;
 msg`Share`;
 msg`Link copied`;
 msg`Made with Reactive Resume, free and open source`;
+// The credit's short form (area H's public page).
+msg`Made with Reactive Resume`;
 msg`This resume is password-protected`;
 msg`Enter the password the resume owner shared with you.`;
 msg`Password`;

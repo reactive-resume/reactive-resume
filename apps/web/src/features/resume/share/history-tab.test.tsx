@@ -59,10 +59,10 @@ it.each(["name", "restore"])("stops History %s after the save barrier fails", as
 		</QueryClientProvider>,
 	);
 	if (action === "name") {
-		fireEvent.change(screen.getByRole("textbox", { name: "Name this version" }), {
+		fireEvent.change(screen.getByRole("textbox", { name: "Name the resume as it is now" }), {
 			target: { value: "Unsaved draft" },
 		});
-		fireEvent.click(screen.getByRole("button", { name: "Save" }));
+		fireEvent.click(screen.getByRole("button", { name: "Save version" }));
 	} else fireEvent.click(await screen.findByRole("button", { name: "Restore this version" }));
 	await waitFor(() =>
 		expect(mocks.toast).toHaveBeenCalledWith({
@@ -75,7 +75,7 @@ it.each(["name", "restore"])("stops History %s after the save barrier fails", as
 	expect(mocks.restore).not.toHaveBeenCalled();
 	expect(mocks.replace).not.toHaveBeenCalled();
 	if (action === "name")
-		expect((screen.getByRole("textbox", { name: "Name this version" }) as HTMLInputElement).value).toBe(
+		expect((screen.getByRole("textbox", { name: "Name the resume as it is now" }) as HTMLInputElement).value).toBe(
 			"Unsaved draft",
 		);
 	else expect(useEditorStore.getState().historyVersionId).toBe("version");

@@ -7,10 +7,9 @@ test("round-trips a JSON backup and splits a legacy embedded letter on import", 
 }, testInfo) => {
 	await createSampleResumeFromDashboard(page, testInfo);
 
-	const sheet = await openDownloadDialog(page);
-	await sheet.getByRole("radio", { name: /^JSON/ }).click();
+	const menu = await openDownloadDialog(page);
 	const downloadPromise = page.waitForEvent("download");
-	await sheet.getByRole("button", { name: "Download JSON" }).click();
+	await menu.getByRole("button", { name: /^JSON/ }).click();
 	const download = await downloadPromise;
 	expect(download.suggestedFilename()).toMatch(/\.json$/);
 

@@ -1,21 +1,27 @@
 import type { DesignSource } from "@/features/resume/editor/design/style-groups";
 import type { Template } from "@reactive-resume/schema/templates";
+import type { IconName } from "@reactive-resume/ui/components/icon";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { produce } from "immer";
-import { useEffect, useId, useMemo } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { Crumb, CrumbButton } from "@/components/calm/crumb";
+import { List, ListRow } from "@/components/calm/list-row";
 import { Combobox } from "@/components/ui/combobox";
 import { templates } from "@/dialogs/resume/template/data";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { getLocaleOptions } from "@/features/locale/locale-options";
+import { PanelBody, PanelHeader } from "@/features/resume/editor/chrome/panel";
+import { ACCENTS, matchDensity, matchMargins, rgbaToHex } from "@/features/resume/editor/design/presets";
 import { ColorGroup, DesignSourceProvider, PageGroup, TypeGroup } from "@/features/resume/editor/design/style-groups";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -54,22 +60,27 @@ function useLetterDesignSource() {
 	);
 }
 
+type DesignView = "design" | "template" | "typography" | "color" | "page" | "language";
+
 /**
- * Design for letters: by default a letter matches its resume's design, changed on the resume. Turned off, the
- * letter keeps a design of its own: its template (hovering one previews it on the page, a click applies it), then
- * its type, color and page.
+ * Design for letters (L2): one switch decides whether the letter matches its resume. The four things it takes from
+ * the resume are rows that state their values; matched, they are locked, and off, each opens the same groups as the
+ * resume's Design, set for this letter only (L6). Language never follows the resume.
  */
 export function LetterDesignPanel() {
 	const letter = useLetterEditorStore((state) => state.letter);
 	const designSource = useLetterDesignSource();
+	const [view, setView] = useState<DesignView>("design");
 	const { data: resumes } = useQuery(orpc.resume.list.queryOptions({ input: {} }));
 	// Leaving Design never leaves a preview on the page.
 	useEffect(() => () => useEditorStore.setState({ previewTemplate: null }), []);
 	if (!letter) return null;
 
 	const resume = resumes?.find((item) => item.id === letter.sourceResumeId);
-	const current = letter.style.metadata.template;
 	const disabled = letter.isLocked;
+	const locked = letter.designLinked && Boolean(letter.sourceResumeId);
+	const { metadata } = letter.style;
+	const back = () => setView("design");
 
 	const setLinked = (designLinked: boolean) =>
 		void updateDesign({ designLinked })
@@ -82,140 +93,263 @@ export function LetterDesignPanel() {
 			)
 			.catch(failed);
 
-	return (
-		<div className="divide-y divide-line">
-			<section aria-labelledby="letter-design-match" className="grid gap-3 px-4 py-5">
-				<h2 id="letter-design-match" className="text-[15px] font-semibold">
-					<Trans>Matching the resume</Trans>
-				</h2>
-				{letter.sourceResumeId ? (
-					<>
-						<SwitchRow
-							label={t`Match “${resume?.name ?? t`the resume`}”`}
-							description={
-								letter.designLinked
-									? t`Template, type and colors follow the resume, so the pair always matches.`
-									: t`The letter keeps a design of its own.`
-							}
-							checked={letter.designLinked}
-							disabled={disabled}
-							onCheckedChange={setLinked}
-						/>
-						{letter.designLinked && (
-							<Link
-								to="/builder/$resumeId"
-								params={{ resumeId: letter.sourceResumeId }}
-								search={{ mode: "design" }}
-								className={buttonVariants({ variant: "secondary", size: "sm", className: "w-fit" })}
-							>
-								<Icon name="palette" size={16} />
-								<Trans>Change the resume's design</Trans>
-							</Link>
-						)}
-					</>
-				) : (
-					<p className="text-sm text-ink-2">
-						<Trans>Choose a resume in Write to match its design. Until then, the letter has its own.</Trans>
-					</p>
-				)}
-			</section>
+	if (view !== "design") {
+		const titles = {
+			template: <Trans>Template</Trans>,
+			typography: <Trans>Typography</Trans>,
+			color: <Trans>Color</Trans>,
+			page: <Trans>Page</Trans>,
+			language: <Trans>Language</Trans>,
+		} as const;
+		return (
+			<PanelBody className="pb-6">
+				<PanelHeader
+					crumb={
+						<Crumb>
+							<CrumbButton onClick={back}>
+								<Trans>Design</Trans>
+							</CrumbButton>
+						</Crumb>
+					}
+					title={titles[view]}
+				/>
+				<div className="mt-4 flex flex-col gap-3">
+					{view === "language" ? (
+						<>
+							<LetterLanguageField disabled={disabled} />
+							<span className="text-xs/4 text-ink-3">
+								<Trans>
+									Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you
+									wrote them.
+								</Trans>
+							</span>
+						</>
+					) : view === "template" ? (
+						<TemplateGrid current={metadata.template} disabled={disabled} />
+					) : (
+						<DesignSourceProvider value={designSource}>
+							{view === "typography" ? (
+								<TypeGroup />
+							) : view === "color" ? (
+								<ColorGroup />
+							) : (
+								<PageGroup showLanguage={false} />
+							)}
+						</DesignSourceProvider>
+					)}
+				</div>
+			</PanelBody>
+		);
+	}
 
-			<section aria-labelledby="letter-design-language" className="grid gap-3 px-4 py-5">
-				<h2 id="letter-design-language" className="text-[15px] font-semibold">
-					<Trans>Language</Trans>
-				</h2>
-				<LetterLanguageField disabled={disabled} />
-				<span className="text-xs text-ink-3">
+	const accent = ACCENTS.find((option) => option.hex === rgbaToHex(metadata.design.colors.primary));
+	const { heading, body } = metadata.typography;
+	const margins = matchMargins(metadata);
+	const density = matchDensity(metadata);
+	const format = { a4: "A4", letter: t`US Letter`, "free-form": t`Free-form` }[metadata.page.format];
+	const rows = [
+		{
+			view: "template" as const,
+			icon: "layout" as const,
+			title: <Trans>Template</Trans>,
+			subtitle: templates[metadata.template].name,
+		},
+		{
+			view: "typography" as const,
+			icon: "text-aa" as const,
+			title: <Trans>Typography</Trans>,
+			subtitle: (
+				<>
 					<Trans>
-						Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote
-						them.
+						Headings in {heading.fontFamily}, {heading.fontSize} pt
 					</Trans>
+					<br />
+					<Trans>
+						Body in {body.fontFamily}, {body.fontSize} pt
+					</Trans>
+				</>
+			),
+		},
+		{
+			view: "color" as const,
+			icon: "palette" as const,
+			title: <Trans>Color</Trans>,
+			subtitle: (
+				<span className="inline-flex items-center gap-1.5">
+					<span
+						aria-hidden="true"
+						className="size-2.5 rounded-[3px]"
+						style={{ background: metadata.design.colors.primary }}
+					/>
+					{accent ? <Trans>{i18n._(accent.label)} accent</Trans> : (rgbaToHex(metadata.design.colors.primary) ?? "")}
 				</span>
-			</section>
+			),
+		},
+		{
+			view: "page" as const,
+			icon: "file" as const,
+			title: <Trans>Page</Trans>,
+			subtitle: [
+				format,
+				margins && { narrow: t`narrow margins`, normal: t`normal margins`, wide: t`wide margins` }[margins],
+				density && { compact: t`compact density`, normal: t`normal density`, roomy: t`roomy density` }[density],
+			]
+				.filter(Boolean)
+				.join(" · "),
+		},
+	];
 
-			{!letter.designLinked && (
-				<section aria-labelledby="letter-design-template" className="grid gap-3 px-4 py-5">
-					<h2 id="letter-design-template" className="text-[15px] font-semibold">
-						<Trans>Template</Trans>
-					</h2>
-					<fieldset
+	return (
+		<PanelBody className="pb-6">
+			<PanelHeader title={<Trans>Design</Trans>} />
+			{letter.sourceResumeId ? (
+				<div className="mt-5 flex items-start gap-3.5 pb-3.5">
+					<RowIcon name="link-simple" className="mt-0.5" />
+					<SwitchRow
+						label={t`Match “${resume?.name ?? t`the resume`}”`}
+						description={
+							letter.designLinked
+								? t`Template, type and colors follow the resume, so the pair always matches.`
+								: t`The letter keeps a design of its own.`
+						}
+						checked={letter.designLinked}
 						disabled={disabled}
-						className="m-0 grid min-w-0 grid-cols-2 gap-3 border-0 p-0"
-						onMouseLeave={() => useEditorStore.setState({ previewTemplate: null })}
-						onBlur={(event) => {
-							if (!event.currentTarget.contains(event.relatedTarget as Node | null))
-								useEditorStore.setState({ previewTemplate: null });
-						}}
-					>
-						<legend className="sr-only">
-							<Trans>Template</Trans>
-						</legend>
-						{templateSchema.options.map((id) => {
-							const selected = id === current;
-							return (
-								<button
-									key={id}
-									type="button"
-									aria-pressed={selected}
-									onMouseEnter={() => useEditorStore.setState({ previewTemplate: id === current ? null : id })}
-									onFocus={() => useEditorStore.setState({ previewTemplate: id === current ? null : id })}
-									onClick={() => {
-										useEditorStore.setState({ previewTemplate: null });
-										if (!selected) void updateDesign({ template: id }).catch(failed);
-									}}
-									className="group/template grid gap-1.5 text-start disabled:cursor-not-allowed disabled:opacity-60"
-								>
-									<span
-										className={cn(
-											"relative block aspect-[1/1.414] overflow-hidden rounded-md border bg-white transition-[translate,scale,box-shadow] duration-quick ease-enter group-hover/template:-translate-y-0.5 group-active/template:scale-[0.98]",
-											selected
-												? "border-accent shadow-[0_0_0_2px_var(--accent)]"
-												: "border-line group-hover/template:shadow-e2",
-										)}
-									>
-										<img
-											src={templates[id].imageUrl}
-											alt=""
-											loading="lazy"
-											className="size-full object-cover object-top"
-										/>
-										{selected && (
-											<span className="absolute end-1.5 top-1.5 grid size-5 place-items-center rounded-sm bg-accent text-on-accent">
-												<Icon name="check" size={14} />
-											</span>
-										)}
-									</span>
-									<span className="text-sm leading-4 font-medium">{templates[id].name}</span>
-								</button>
-							);
-						})}
-					</fieldset>
-				</section>
+						onCheckedChange={setLinked}
+						className="min-h-0 items-start py-0 [&_[id$=-description]]:text-ink-3 [&>span:first-child>span:first-child]:text-[15px]/[22px]"
+					/>
+				</div>
+			) : (
+				<p className="mt-3 t-small text-ink-2">
+					<Trans>Choose a resume in Write to match its design. Until then, the letter has its own.</Trans>
+				</p>
 			)}
 
-			{!letter.designLinked && (
-				<DesignSourceProvider value={designSource}>
-					<section aria-labelledby="letter-design-type" className="grid gap-3 px-4 py-5">
-						<h2 id="letter-design-type" className="text-[15px] font-semibold">
-							<Trans>Type</Trans>
-						</h2>
-						<TypeGroup />
-					</section>
-					<section aria-labelledby="letter-design-color" className="grid gap-3 px-4 py-5">
-						<h2 id="letter-design-color" className="text-[15px] font-semibold">
-							<Trans>Color</Trans>
-						</h2>
-						<ColorGroup />
-					</section>
-					<section aria-labelledby="letter-design-page" className="grid gap-3 px-4 py-5">
-						<h2 id="letter-design-page" className="text-[15px] font-semibold">
-							<Trans>Page</Trans>
-						</h2>
-						<PageGroup showLanguage={false} />
-					</section>
-				</DesignSourceProvider>
+			<List className="mt-0.5">
+				{rows.map((row) => (
+					<ListRow
+						key={row.view}
+						render={locked || disabled ? undefined : <button type="button" onClick={() => setView(row.view)} />}
+						leading={<RowIcon name={row.icon} />}
+						title={row.title}
+						subtitle={row.subtitle}
+						trailing={
+							locked ? (
+								<Icon name="lock-simple" size={18} className="text-ink-3" aria-label={t`Follows the resume`} />
+							) : undefined
+						}
+						caret={!locked && !disabled}
+						className="border-t-0"
+					/>
+				))}
+			</List>
+
+			{locked && letter.sourceResumeId && (
+				<div className="flex flex-col items-start gap-3 border-t border-line pt-3 pb-6">
+					<p className="text-xs/4 text-ink-3">
+						<Trans>
+							These four follow the resume. Turn matching off to set them for this letter only; it starts from the
+							values above.
+						</Trans>
+					</p>
+					<Link
+						to="/builder/$resumeId"
+						params={{ resumeId: letter.sourceResumeId }}
+						search={{ mode: "design" }}
+						className={buttonVariants({ variant: "secondary", size: "sm" })}
+					>
+						<Icon name="palette" />
+						<Trans>Change the resume's design</Trans>
+					</Link>
+				</div>
 			)}
-		</div>
+
+			<List cap>
+				<ListRow
+					render={<button type="button" onClick={() => setView("language")} />}
+					leading={<RowIcon name="translate" />}
+					title={<Trans>Language</Trans>}
+					subtitle={
+						<>
+							{languageName(metadata.page.locale, i18n.locale)}
+							<br />
+							<Trans>Sets the greeting, sign-off and date</Trans>
+						</>
+					}
+					caret
+				/>
+			</List>
+		</PanelBody>
+	);
+}
+
+/** A row's 20px icon, centred in the 24px column the rows' text lines up after. */
+function RowIcon({ name, className }: { name: IconName; className?: string }) {
+	return (
+		<span aria-hidden="true" className={cn("flex w-6 shrink-0 justify-center text-ink-2", className)}>
+			<Icon name={name} size={20} />
+		</span>
+	);
+}
+
+/** "British English" for en-GB, in the interface's language. */
+const languageName = (locale: string, uiLocale: string) => {
+	try {
+		return new Intl.DisplayNames([uiLocale], { type: "language" }).of(locale) ?? locale;
+	} catch {
+		return locale;
+	}
+};
+
+/** The letter's own template: hovering one previews it on the page, a click applies it. */
+function TemplateGrid({ current, disabled }: { current: Template; disabled: boolean }) {
+	return (
+		<fieldset
+			disabled={disabled}
+			className="m-0 grid min-w-0 grid-cols-2 gap-3 border-0 p-0"
+			onMouseLeave={() => useEditorStore.setState({ previewTemplate: null })}
+			onBlur={(event) => {
+				if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+					useEditorStore.setState({ previewTemplate: null });
+			}}
+		>
+			<legend className="sr-only">
+				<Trans>Template</Trans>
+			</legend>
+			{templateSchema.options.map((id) => {
+				const selected = id === current;
+				return (
+					<button
+						key={id}
+						type="button"
+						aria-pressed={selected}
+						onMouseEnter={() => useEditorStore.setState({ previewTemplate: id === current ? null : id })}
+						onFocus={() => useEditorStore.setState({ previewTemplate: id === current ? null : id })}
+						onClick={() => {
+							useEditorStore.setState({ previewTemplate: null });
+							if (!selected) void updateDesign({ template: id }).catch(failed);
+						}}
+						className="group/template grid gap-1.5 text-start disabled:cursor-not-allowed disabled:opacity-60"
+					>
+						<span
+							className={cn(
+								"relative block aspect-[1/1.414] overflow-hidden rounded-paper border bg-paper transition-[translate,scale,box-shadow] duration-quick ease-enter group-hover/template:-translate-y-0.5 group-active/template:scale-[0.98]",
+								selected
+									? "border-accent shadow-[0_0_0_2px_var(--accent)]"
+									: "border-line group-hover/template:shadow-e2",
+							)}
+						>
+							<img src={templates[id].imageUrl} alt="" loading="lazy" className="size-full object-cover object-top" />
+							{selected && (
+								<span className="absolute end-1.5 top-1.5 grid size-5 place-items-center rounded-xs bg-accent text-on-accent">
+									<Icon name="check" size={14} />
+								</span>
+							)}
+						</span>
+						<span className="text-sm leading-4 font-medium">{templates[id].name}</span>
+					</button>
+				);
+			})}
+		</fieldset>
 	);
 }
 

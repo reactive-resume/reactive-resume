@@ -499,3 +499,29 @@ describe("drafts", () => {
 		expect(store().draft).toEqual({ phase: "idle" });
 	});
 });
+
+describe("undo and redo", () => {
+	it("steps text edits back and forward, one step per field pause", () => {
+		vi.useFakeTimers();
+		try {
+			store().edit({ recipientName: "P" });
+			store().edit({ recipientName: "Priya" });
+			vi.advanceTimersByTime(1500);
+			store().edit({ recipientCompany: "Lumen" });
+			expect(store().undoStack).toHaveLength(2);
+
+			store().undo();
+			expect(store().letter?.recipientCompany).toBe("");
+			store().undo();
+			expect(store().letter?.recipientName).toBe("");
+			expect(store().undoStack).toHaveLength(0);
+
+			store().redo();
+			expect(store().letter?.recipientName).toBe("Priya");
+			store().edit({ greeting: "Hello," });
+			expect(store().redoStack).toHaveLength(0);
+		} finally {
+			vi.useRealTimers();
+		}
+	});
+});

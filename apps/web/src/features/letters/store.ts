@@ -136,6 +136,8 @@ type LetterEditorStore = {
 		options?: {
 			applied?: readonly Pick<Proposal, "id" | "after" | "snapshot" | "aiOperationIds">[];
 			restoreApplications?: ProposalApplications;
+			/** Undo or Redo itself: the stacks are theirs to change. */
+			history?: boolean;
 		},
 	) => void;
 	/** Saves everything typed so far. False on failure; edits remain for retry. */
@@ -148,7 +150,37 @@ type LetterEditorStore = {
 	/** Keeps conflicting edits as a standalone letter before replacing this visit with the saved version. */
 	reloadFromServer: () => Promise<CoverLetter | null>;
 	reset: () => void;
+	/** P8: what Undo and Redo put back, newest last. Text fields only (see `UNDOABLE`). */
+	undoStack: LetterEdits[];
+	redoStack: LetterEdits[];
+	undo: () => void;
+	redo: () => void;
 };
+
+// ponytail: Undo covers the letter's own text; sender, language and design changes are not stepped back.
+const UNDOABLE = [
+	"name",
+	"recipient",
+	"content",
+	"greeting",
+	"signOff",
+	"recipientName",
+	"recipientCompany",
+	"letterDate",
+	"aiOperationIds",
+] as const;
+const UNDO_LIMIT = 100;
+/** Typing in one field within this pause is one step. */
+const UNDO_GROUP_MS = 1000;
+let lastUndoAt = 0;
+let lastUndoKeys = "";
+
+/** The values `edits` replace, so applying the result undoes them. Undefined when nothing undoable changes. */
+export function inverseEdits(letter: CoverLetter, edits: LetterEdits): LetterEdits | undefined {
+	const inverse: Record<string, unknown> = {};
+	for (const key of UNDOABLE) if (key in edits && edits[key] !== letter[key]) inverse[key] = letter[key];
+	return Object.keys(inverse).length > 0 ? (inverse as LetterEdits) : undefined;
+}
 
 const idleDraft: LetterDraft = { phase: "idle" };
 
@@ -362,9 +394,32 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	pending: {},
 	sessionId: generateId(),
 	draft: idleDraft,
+	undoStack: [],
+	redoStack: [],
+
+	undo: () => {
+		const { letter, undoStack } = get();
+		const step = undoStack.at(-1);
+		if (!letter || !step || letter.isLocked) return;
+		const back = inverseEdits(letter, step) ?? {};
+		lastUndoAt = 0;
+		get().edit(step, { history: true });
+		set((state) => ({ undoStack: state.undoStack.slice(0, -1), redoStack: [...state.redoStack, back] }));
+	},
+
+	redo: () => {
+		const { letter, redoStack } = get();
+		const step = redoStack.at(-1);
+		if (!letter || !step || letter.isLocked) return;
+		const back = inverseEdits(letter, step) ?? {};
+		lastUndoAt = 0;
+		get().edit(step, { history: true });
+		set((state) => ({ redoStack: state.redoStack.slice(0, -1), undoStack: [...state.undoStack, back] }));
+	},
 
 	load: (letter, options = {}) => {
 		recoveryCopy = undefined;
+		lastUndoAt = 0;
 		if (options.recover === false) {
 			// Explicit Reload discards this visit, never another tab's independent recovery entry.
 			const current = get();
@@ -421,6 +476,8 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 			sessionId: generateId(),
 			// A ready draft from before a reload is shown again, never re-requested.
 			draft: readStoredDraft(letter.id, letter.revision) ?? idleDraft,
+			undoStack: [],
+			redoStack: [],
 		});
 		if (restore || Object.keys(get().pendingProposalApplications).length > 0)
 			timer = setTimeout(() => void get().flush(), SAVE_DELAY_MS);
@@ -438,6 +495,18 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		const { sender, ...otherEdits } = withSources;
 		const edits = sender && (changing || (letter?.sourceResumeId && letter.senderLinked)) ? otherEdits : withSources;
 		if (!hasEdits(edits) || letter?.isLocked) return;
+		const inverse = letter && !options.history ? inverseEdits(letter, edits) : undefined;
+		if (inverse) {
+			const keys = Object.keys(inverse).sort().join();
+			const now = Date.now();
+			const grouped = keys === lastUndoKeys && now - lastUndoAt < UNDO_GROUP_MS;
+			lastUndoAt = now;
+			lastUndoKeys = keys;
+			set((state) => ({
+				undoStack: grouped ? state.undoStack : [...state.undoStack, inverse].slice(-UNDO_LIMIT),
+				redoStack: [],
+			}));
+		}
 		set((state) =>
 			state.letter
 				? {
@@ -598,6 +667,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 
 	reset: () => {
 		recoveryCopy = undefined;
+		lastUndoAt = 0;
 		persistRecovery();
 		clearTimeout(timer);
 		drafting?.abort();
@@ -613,6 +683,8 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 			pending: {},
 			sessionId: generateId(),
 			draft: idleDraft,
+			undoStack: [],
+			redoStack: [],
 		});
 	},
 }));

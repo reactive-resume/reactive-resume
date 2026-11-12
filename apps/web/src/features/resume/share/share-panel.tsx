@@ -1,10 +1,11 @@
+import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import {
 	formatTimeSince,
 	publicResumeUrl,
@@ -12,11 +13,10 @@ import {
 	shortLinkOpens,
 	summarizeViews,
 } from "@reactive-resume/resume/sharing";
-import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
-import { Separator } from "@reactive-resume/ui/components/separator";
-import { SwitchRow } from "@reactive-resume/ui/components/switch";
+import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
@@ -25,7 +25,9 @@ import { CopyLinkButton } from "./copy-link-button";
 import { CustomDomainField } from "./custom-domain-field";
 import { FeedbackLinksSection } from "./feedback-links";
 import { useShareOrigin } from "./use-share-origin";
-import { templates } from "@/dialogs/resume/template/data";
+import { Crumb, CrumbButton } from "@/components/calm/crumb";
+import { List, ListRow } from "@/components/calm/list-row";
+import { SectionHeading } from "@/components/calm/section-heading";
 import {
 	useCurrentResume,
 	useIsResumeLocked,
@@ -35,6 +37,7 @@ import {
 	useUpdateResumeData,
 } from "@/features/resume/builder/draft";
 import { ResumePasswordDialog } from "@/features/resume/builder/password-dialog";
+import { PanelBody, PanelHeader } from "@/features/resume/editor/chrome/panel";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { toastError } from "@/libs/error-message";
@@ -44,14 +47,43 @@ import { orpc } from "@/libs/orpc/client";
 const toastShareError = (error: unknown) =>
 	toastError(error, t`Couldn't update sharing. Try again.`, { allowServerMessage: true });
 
+type ShareView = "share" | "privacy" | "domain" | "feedback";
+
 /**
- * Share: the web page and everything about who sees what. Publishing, the address, the primary resume, the web
- * page's footer, privacy and the numbers. Private is the default; turning the link off keeps the address.
+ * Share: the web page and everything about who sees what (B5). The first level holds the public link, the visitors
+ * and two rows that open Privacy and downloads (B27) and Short link and domain (B28); feedback links have their own
+ * level too. Private is the default; turning the link off keeps the address.
  */
 export function SharePanel() {
+	const [view, setView] = useState<ShareView>("share");
+	const setting = useShareSetting();
+	const back = () => setView("share");
+
+	return (
+		<PanelBody data-share-view={view} className={cn("pb-6", view !== "share" && "pt-3.5")}>
+			{view === "share" && <ShareHome setting={setting} open={setView} />}
+			{view === "privacy" && (
+				<ShareSubPage
+					title={<Trans>Privacy and downloads</Trans>}
+					description={<Trans>Who can find your web page, reach you from it and take a copy.</Trans>}
+					onBack={back}
+					next={{ label: <Trans>Short link and domain</Trans>, onClick: () => setView("domain") }}
+				>
+					<PrivacySettings setting={setting} />
+				</ShareSubPage>
+			)}
+			{view === "domain" && <DomainPage setting={setting} onBack={back} onNext={() => setView("privacy")} />}
+			{view === "feedback" && <FeedbackPage onBack={back} />}
+		</PanelBody>
+	);
+}
+
+type ShareHomeProps = { setting: ShareSetting; open: (view: ShareView) => void };
+
+/** B5: the public link, its address, the visitors and the ways into the web page's settings. */
+function ShareHome({ setting, open }: ShareHomeProps) {
 	const resume = useCurrentResume();
 	const { data: session } = authClient.useSession();
-	const setting = useShareSetting();
 	const { update, isPending } = setting;
 	const isPublic = resume.isPublic ?? false;
 	const origin = useShareOrigin();
@@ -64,69 +96,234 @@ export function SharePanel() {
 	};
 
 	return (
-		<div className="grid gap-[18px] p-4">
+		<>
 			{isPublic ? (
-				<SwitchRow
-					checked
-					disabled={isPending || resume.isLocked}
-					onCheckedChange={(checked) => void setPublic(checked)}
-					label={<span className="font-semibold">{t`Public link`}</span>}
-					description={
-						resume.hasPassword
-							? t`On. Visitors need the link and password to see your web page.`
-							: t`On. Anyone with the link can see your web page.`
-					}
-					className="items-start rounded-xl border border-line p-3.5 transition-colors duration-standard data-checked:border-accent data-checked:bg-accent-soft"
-				/>
+				<>
+					<SectionHeading first className="items-center">
+						<Trans>Public link</Trans>
+						<Switch
+							className="ms-auto"
+							checked
+							aria-label={t`Public link`}
+							disabled={isPending || resume.isLocked}
+							onCheckedChange={(checked) => void setPublic(checked)}
+						/>
+					</SectionHeading>
+					<p className="t-small text-ink-3">
+						{resume.hasPassword
+							? t`Visitors need the link and password to see your web page.`
+							: t`Anyone with the link can see your web page.`}
+					</p>
+				</>
 			) : (
 				<div className="grid gap-3 rounded-xl border border-line p-3.5">
 					<div className="grid gap-1">
-						<h3 className="text-sm font-semibold">
+						<h2 className="text-sm font-semibold">
 							<Trans>Your resume as a web page</Trans>
-						</h3>
-						<p className="text-[13px] leading-[19px] text-ink-2">
+						</h2>
+						<p className="t-small text-ink-2">
 							<Trans>Publish it to share a link that opens on any screen. Only you can see it until then.</Trans>
 						</p>
 					</div>
-					<Button className="w-fit" disabled={isPending || resume.isLocked} onClick={() => void setPublic(true)}>
-						<Icon name="globe-hemisphere-west" size={18} />
+					<Button
+						variant="secondary"
+						className="w-fit"
+						disabled={isPending || resume.isLocked}
+						onClick={() => void setPublic(true)}
+					>
+						<Icon name="globe-hemisphere-west" />
 						<Trans>Publish</Trans>
 					</Button>
 				</div>
 			)}
 
-			<AddressField url={url} username={username} update={update} />
+			<AddressField
+				url={url}
+				username={username}
+				update={update}
+				className={isPublic ? "mt-4" : "mt-5"}
+				actions={(copyDisabled) =>
+					isPublic && (
+						<div className={cn(ENTER_CLASS, "mt-3.5 flex flex-wrap items-center gap-5")}>
+							<CopyLinkButton url={url} disabled={copyDisabled} />
+							<a href={url} target="_blank" rel="noopener" className={textLinkClassName}>
+								<Trans>Open web page</Trans>
+							</a>
+							<QrCodeButton url={url} />
+						</div>
+					)
+				}
+			/>
 
-			{isPublic && (
-				<div className={cn(ENTER_CLASS, "flex flex-wrap gap-2")}>
-					<a
-						href={url}
-						target="_blank"
-						rel="noopener"
-						className={buttonVariants({ variant: "ghost", size: "sm", className: "gap-1.5" })}
-					>
-						<Icon name="arrow-square-out" size={18} />
-						<Trans>Open web page</Trans>
-					</a>
-					<QrCodeButton url={url} />
-				</div>
-			)}
-
-			<AddressesSection origin={origin} username={username} setting={setting} />
-
-			<Separator />
-			<WebPageSettings />
-
-			<Separator />
-			<PrivacySettings setting={setting} />
-
-			<Separator />
 			<ViewsAndDownloads isPublic={isPublic} />
+			<FeedbackRow onOpen={() => open("feedback")} />
 
-			<Separator />
-			<FeedbackLinksSection resumeId={resume.id} />
+			<SectionHeading className="pt-6">
+				<Trans>Web page</Trans>
+			</SectionHeading>
+			<List role="navigation" aria-label={t`Web page settings`}>
+				<ListRow
+					render={<button type="button" onClick={() => open("privacy")} />}
+					title={<Trans>Privacy and downloads</Trans>}
+					subtitle={<PrivacySummary />}
+					caret
+				/>
+				<ListRow
+					render={<button type="button" onClick={() => open("domain")} />}
+					title={<AddressesTitle />}
+					subtitle={<AddressesSummary origin={origin} username={username} />}
+					caret
+				/>
+			</List>
+		</>
+	);
+}
+
+const textLinkClassName =
+	"inline-flex items-center gap-1.5 rounded-xs text-sm font-medium text-accent-text [--icon-size:16px] hover:underline underline-offset-4";
+
+/** Two quiet lines: what the privacy settings are now. */
+function PrivacySummary() {
+	const resume = useCurrentResume();
+	return (
+		<>
+			<span>
+				{resume.hideContactDetails ? t`Contact details hidden` : t`Contact details shown`}
+				{" · "}
+				{resume.hasPassword ? t`password set` : t`no password`}
+			</span>
+			<br />
+			<span>
+				{resume.showDownloadButtons !== false ? t`PDF download on` : t`PDF download off`}
+				{" · "}
+				{resume.allowWordDownload === true ? t`Word on` : t`Word off`}
+			</span>
+		</>
+	);
+}
+
+function AddressesTitle() {
+	const { flags } = useRouteContext({ strict: false });
+	return flags?.customDomains ? <Trans>Short link and domain</Trans> : <Trans>Short link</Trans>;
+}
+
+/** Two quiet lines: what the short link opens, and where the custom domain stands. */
+function AddressesSummary({ origin, username }: { origin: string; username: string }) {
+	const resume = useCurrentResume();
+	const { flags } = useRouteContext({ strict: false });
+	const domains = flags?.customDomains ?? false;
+	const { data: resumes } = useQuery(orpc.resume.list.queryOptions());
+	const { data: domain } = useQuery({ ...orpc.customDomain.get.queryOptions(), enabled: domains });
+	const current = resumes?.find((item) => item.isPrimary && item.id !== resume.id);
+	const shortLink = publicResumeUrl(origin, { username, slug: resume.slug, isPrimary: true }).replace(
+		/^https?:\/\//,
+		"",
+	);
+
+	return (
+		<>
+			<span dir="auto">
+				{resume.isPrimary
+					? t`${shortLink} opens this resume`
+					: current
+						? t`${shortLink} opens “${current.name}”`
+						: t`${shortLink} opens no resume yet`}
+			</span>
+			{domains && <br />}
+			{domains && (
+				<span>
+					{domain
+						? domain.verified
+							? t`${domain.hostname} is connected`
+							: t`${domain.hostname} is not connected yet`
+						: t`No custom domain`}
+				</span>
+			)}
+		</>
+	);
+}
+
+type ShareSubPageProps = {
+	title: ReactNode;
+	description: ReactNode;
+	onBack: () => void;
+	/** The sibling page, offered at the crumb line's end. */
+	next?: { label: ReactNode; onClick: () => void };
+	children: ReactNode;
+};
+
+/** A second level of Share (B27, B28): the crumb back to Share, the sibling page, a title and its one quiet line. */
+function ShareSubPage({ title, description, onBack, next, children }: ShareSubPageProps) {
+	return (
+		<>
+			<PanelHeader
+				crumb={
+					<div className="flex w-full items-center justify-between">
+						<Crumb>
+							<CrumbButton onClick={onBack}>
+								<Trans>Share</Trans>
+							</CrumbButton>
+						</Crumb>
+						{next && (
+							<button
+								type="button"
+								onClick={next.onClick}
+								className="inline-flex h-7 items-center gap-1 rounded-xs text-[13px]/[18px] font-medium text-ink-3 transition-colors hover:text-ink"
+							>
+								{next.label}
+								<Icon name="arrow-right" size={16} className="rtl:-scale-x-100" />
+							</button>
+						)}
+					</div>
+				}
+				title={title}
+			/>
+			<p className="mt-0.5 t-small text-ink-3">{description}</p>
+			{children}
+		</>
+	);
+}
+
+type SettingRowProps = {
+	label: ReactNode;
+	description?: ReactNode;
+	checked: boolean;
+	disabled?: boolean;
+	onCheckedChange: (checked: boolean) => void;
+	/** Controls under the description (a password's Change). */
+	children?: ReactNode;
+};
+
+/** A Share setting: a 15px name, the app's sentence under it and the switch at the end, rows split by hairlines. */
+function SettingRow({ label, description, checked, disabled, onCheckedChange, children }: SettingRowProps) {
+	const id = useId();
+	return (
+		<div className="flex min-h-14 items-start gap-3.5 border-b border-line pt-3 pb-3.5 last:border-b-0">
+			<span className="flex min-w-0 flex-1 flex-col gap-0.5">
+				<span id={`${id}-label`} className="text-[15px]/[22px] font-medium text-ink">
+					{label}
+				</span>
+				{description && (
+					<span id={`${id}-description`} className="t-small text-ink-3">
+						{description}
+					</span>
+				)}
+				{children}
+			</span>
+			<Switch
+				checked={checked}
+				disabled={disabled}
+				onCheckedChange={onCheckedChange}
+				aria-labelledby={`${id}-label`}
+				aria-describedby={description ? `${id}-description` : undefined}
+				className="mt-px"
+			/>
 		</div>
 	);
+}
+
+function SubHeading({ children }: { children: ReactNode }) {
+	return <h3 className="pt-[22px] pb-2 t-section-title">{children}</h3>;
 }
 
 type ShareSettings = {
@@ -173,12 +370,16 @@ function useShareSetting() {
 	return { update, isPending };
 }
 
-type AddressesSectionProps = { origin: string; username: string; setting: ShareSetting };
+type DomainPageProps = { setting: ShareSetting; onBack: () => void; onNext: () => void };
 
-/** The short link (`/<username>`) and custom domain, both opening the primary resume. */
-function AddressesSection({ origin, username, setting }: AddressesSectionProps) {
+/** B28: the short link (`/<username>`) and custom domain, both opening the primary resume. */
+function DomainPage({ setting, onBack, onNext }: DomainPageProps) {
 	const resume = useCurrentResume();
+	const { data: session } = authClient.useSession();
+	const origin = useShareOrigin();
+	const username = session?.user.username ?? "";
 	const { flags } = useRouteContext({ strict: false });
+	const domains = flags?.customDomains ?? false;
 	const { data: resumes, isPending, isError } = useQuery(orpc.resume.list.queryOptions());
 	const current = resumes?.find((item) => item.isPrimary && item.id !== resume.id);
 	const listState = shareListState({ isPending, isError });
@@ -192,22 +393,44 @@ function AddressesSection({ origin, username, setting }: AddressesSectionProps) 
 	});
 
 	return (
-		<>
-			<Separator />
-			<section aria-labelledby="share-addresses-title" className="grid gap-3">
-				<h3 id="share-addresses-title" className="text-sm font-semibold">
-					{flags?.customDomains ? <Trans>Short link and domain</Trans> : <Trans>Short link</Trans>}
+		<ShareSubPage
+			title={domains ? <Trans>Short link and domain</Trans> : <Trans>Short link</Trans>}
+			description={
+				domains ? (
+					<Trans>Two shorter addresses. Both open your primary resume.</Trans>
+				) : (
+					<Trans>A shorter address that opens your primary resume.</Trans>
+				)
+			}
+			onBack={onBack}
+			next={{ label: <Trans>Privacy and downloads</Trans>, onClick: onNext }}
+		>
+			<section aria-labelledby="share-addresses-title" className="mt-2 flex flex-col">
+				<h3 id="share-addresses-title" className="sr-only">
+					{domains ? <Trans>Short link and domain</Trans> : <Trans>Short link</Trans>}
 				</h3>
-				<PrimaryRow setting={setting} current={current} listState={listState} domains={flags?.customDomains ?? false} />
-				<div className="flex items-center gap-1.5">
-					<span className="min-w-0 flex-1 truncate font-mono text-[13px] font-medium text-ink-2" dir="ltr">
-						{shortLink.replace(/^https?:\/\//, "")}
+				<PrimaryRow setting={setting} current={current} listState={listState} domains={domains} />
+				<div className="flex items-center justify-between gap-3 border-b border-line py-3">
+					<span className="flex min-w-0 flex-col">
+						<span className="text-xs/4 text-ink-3">
+							<Trans>Short link</Trans>
+						</span>
+						<span className="truncate font-mono text-[13px]/5 font-medium text-ink" dir="ltr">
+							{shortLink.replace(/^https?:\/\//, "")}
+						</span>
 					</span>
-					<CopyLinkButton url={shortLink} disabled={!opens} className="h-8 gap-1.5" />
+					<CopyLinkButton url={shortLink} disabled={!opens} size="sm" />
 				</div>
-				{flags?.customDomains && <CustomDomainField suggest={flags.olacvSuggestion ?? false} />}
+				{domains && (
+					<>
+						<h3 className="pt-[26px] pb-2 t-section-title">
+							<Trans>Your domain</Trans>
+						</h3>
+						<CustomDomainField suggest={flags?.olacvSuggestion ?? false} />
+					</>
+				)}
 			</section>
-		</>
+		</ShareSubPage>
 	);
 }
 
@@ -243,7 +466,7 @@ function PrimaryRow({ setting: { update, isPending }, current, listState, domain
 	};
 
 	return (
-		<SwitchRow
+		<SettingRow
 			checked={resume.isPrimary ?? false}
 			disabled={isPending || resume.isLocked || (!isPublic && !resume.isPrimary)}
 			onCheckedChange={(checked) => void setPrimary(checked)}
@@ -275,46 +498,31 @@ function PrimaryRow({ setting: { update, isPending }, current, listState, domain
 										: t`Turn this on to open this resume at your short link.`
 									: `${domains ? t`Publish this resume to open it at your short link and custom domain.` : t`Publish this resume to open it at your short link.`} ${t`If another resume holds Primary, turn it on for this one instead.`}`
 			}
-			className="items-start py-0"
 		/>
 	);
 }
 
 /** The web page uses the resume's template and Design; the footer credit is its one setting of its own. */
-function WebPageSettings() {
+function CreditRow() {
 	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();
 	const locked = useIsResumeLocked();
-	const template = data?.metadata.template ?? "onyx";
 
 	return (
-		<section aria-labelledby="share-web-page-title" className="grid gap-3">
-			<div className="grid gap-1">
-				<h3 id="share-web-page-title" className="text-sm font-semibold">
-					<Trans>Web page</Trans>
-				</h3>
-				<p className="text-xs leading-4 text-ink-3">
-					<Trans>
-						Uses your {templates[template].name} template and Design, and fits any screen. Change them in Design.
-					</Trans>
-				</p>
-			</div>
-			<SwitchRow
-				checked={data?.metadata.web?.showCredit !== false}
-				disabled={locked}
-				onCheckedChange={(checked) =>
-					updateResumeData((draft) => {
-						draft.metadata.web = { ...draft.metadata.web, showCredit: checked };
-					})
-				}
-				label={t`Show “Made with Reactive Resume”`}
-				className="py-0"
-			/>
-		</section>
+		<SettingRow
+			checked={data?.metadata.web?.showCredit !== false}
+			disabled={locked}
+			onCheckedChange={(checked) =>
+				updateResumeData((draft) => {
+					draft.metadata.web = { ...draft.metadata.web, showCredit: checked };
+				})
+			}
+			label={t`Show “Made with Reactive Resume”`}
+		/>
 	);
 }
 
-/** Who can find the page, open it, reach the author and download the PDF. */
+/** B27: who can find the page, open it, reach the author and take a copy, and the footer credit. */
 function PrivacySettings({ setting: { update, isPending } }: ShareSettingProps) {
 	const resume = useCurrentResume();
 	const isPublic = resume.isPublic ?? false;
@@ -322,50 +530,57 @@ function PrivacySettings({ setting: { update, isPending } }: ShareSettingProps) 
 	const searchBlocked = !isPublic || (resume.hasPassword ?? false);
 
 	return (
-		<section aria-labelledby="share-privacy-title" className="grid gap-3">
-			<h3 id="share-privacy-title" className="text-sm font-semibold">
+		<section aria-labelledby="share-privacy-title" className="mt-2 flex flex-col">
+			<h3 id="share-privacy-title" className="sr-only">
 				<Trans>Privacy</Trans>
 			</h3>
-			<PasswordRow />
-			<SwitchRow
-				checked={resume.hideContactDetails ?? false}
-				disabled={disabled}
-				onCheckedChange={(checked) => void update({ hideContactDetails: checked })}
-				label={t`Hide contact details`}
-				description={t`Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays.`}
-				className="items-start py-0"
-			/>
-			<SwitchRow
-				checked={(resume.showInSearchEngines ?? false) && !searchBlocked}
-				disabled={disabled || searchBlocked}
-				onCheckedChange={(checked) => void update({ showInSearchEngines: checked })}
-				label={t`Show in search engines`}
-				description={
-					searchBlocked
-						? resume.hasPassword
-							? t`Not available while the resume needs a password.`
-							: t`Publish the web page first.`
-						: resume.showInSearchEngines
-							? t`Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off.`
-							: t`Off. Let recruiters find you on Google by turning this on.`
-				}
-				className="items-start py-0"
-			/>
-			<SwitchRow
-				checked={resume.showDownloadButtons !== false}
-				disabled={disabled}
-				onCheckedChange={(checked) => void update({ showDownloadButtons: checked })}
-				label={t`Visitors can download the PDF`}
-				className="py-0"
-			/>
-			<SwitchRow
-				checked={resume.allowWordDownload === true}
-				disabled={disabled}
-				onCheckedChange={(checked) => void update({ allowWordDownload: checked })}
-				label={t`Visitors can download Word`}
-				description={t`Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified.`}
-				className="items-start py-0"
-			/>
+			<div className="flex flex-col">
+				<SettingRow
+					checked={resume.hideContactDetails ?? false}
+					disabled={disabled}
+					onCheckedChange={(checked) => void update({ hideContactDetails: checked })}
+					label={t`Hide contact details`}
+					description={t`Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays.`}
+				/>
+				<SettingRow
+					checked={(resume.showInSearchEngines ?? false) && !searchBlocked}
+					disabled={disabled || searchBlocked}
+					onCheckedChange={(checked) => void update({ showInSearchEngines: checked })}
+					label={t`Show in search engines`}
+					description={
+						searchBlocked
+							? resume.hasPassword
+								? t`Not available while the resume needs a password.`
+								: t`Publish the web page first.`
+							: resume.showInSearchEngines
+								? t`Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off.`
+								: t`Off. Let recruiters find you on Google by turning this on.`
+					}
+				/>
+				<PasswordRow />
+			</div>
+			<SubHeading>
+				<Trans>Downloads</Trans>
+			</SubHeading>
+			<div className="flex flex-col">
+				<SettingRow
+					checked={resume.showDownloadButtons !== false}
+					disabled={disabled}
+					onCheckedChange={(checked) => void update({ showDownloadButtons: checked })}
+					label={t`Visitors can download the PDF`}
+				/>
+				<SettingRow
+					checked={resume.allowWordDownload === true}
+					disabled={disabled}
+					onCheckedChange={(checked) => void update({ allowWordDownload: checked })}
+					label={t`Visitors can download Word`}
+					description={t`Off by default. Shares an editable Word file with the same visible content as your web page. Layout is simplified.`}
+				/>
+			</div>
+			<SubHeading>
+				<Trans>Credit</Trans>
+			</SubHeading>
+			<CreditRow />
 		</section>
 	);
 }
@@ -406,18 +621,19 @@ function PasswordRow() {
 
 	return (
 		<>
-			<SwitchRow
+			<SettingRow
 				checked={resume.hasPassword ?? false}
 				disabled={resume.isLocked}
 				onCheckedChange={(checked) => (checked ? setDialogOpen(true) : void turnOff())}
 				label={t`Require a password`}
-				description={
-					resume.hasPassword
-						? t`Visitors enter it before they see the resume. Share it only with people you trust.`
-						: undefined
-				}
-				className="py-0"
-			/>
+				description={t`Visitors enter it before they see the resume. Share it only with people you trust.`}
+			>
+				{resume.hasPassword && !resume.isLocked && (
+					<Button variant="secondary" size="sm" className="mt-2 w-fit" onClick={() => setDialogOpen(true)}>
+						<Trans>Change</Trans>
+					</Button>
+				)}
+			</SettingRow>
 			{dialogOpen && (
 				<ResumePasswordDialog
 					onClose={() => setDialogOpen(false)}
@@ -471,10 +687,10 @@ function QrCodeButton({ url }: { url: string }) {
 		<Popover>
 			<PopoverTrigger
 				render={
-					<Button variant="ghost" size="sm" className="gap-1.5">
-						<Icon name="qr-code" size={18} />
+					<button type="button" className={textLinkClassName}>
+						<Icon name="qr-code" />
 						<Trans>QR code</Trans>
-					</Button>
+					</button>
 				}
 			/>
 			<PopoverContent className="grid w-auto gap-3 p-4">
@@ -494,7 +710,7 @@ function QrCodeButton({ url }: { url: string }) {
 	);
 }
 
-/** Only the owner sees these; downloads count successful clicks, including repeats. */
+/** Only the owner sees these; downloads count successful clicks, including repeats. Dim while the link is off. */
 function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 	const resume = useCurrentResume();
 	const { i18n } = useLingui();
@@ -504,78 +720,109 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 		enabled: isPublic,
 	});
 	const summary = summarizeViews(daily ?? []);
-	const lastView = statistics?.lastViewedAt ? formatTimeSince(statistics.lastViewedAt, i18n.locale) : "—";
 	const firstDay = daily?.[0]?.date;
+	const lastView = statistics?.lastViewedAt ? formatTimeSince(statistics.lastViewedAt, i18n.locale) : undefined;
+	const firstLabel = firstDay
+		? new Date(`${firstDay}T00:00:00`).toLocaleDateString(i18n.locale, { month: "short", day: "numeric" })
+		: "";
 
 	return (
-		<section aria-labelledby="share-stats-title" className="grid gap-3">
-			<div className="flex items-baseline justify-between">
-				<h3 id="share-stats-title" className="text-sm font-semibold">
-					<Trans>Visitors</Trans>
-				</h3>
-				<span className="text-xs text-ink-3">
-					<Trans>Only you see these</Trans>
-				</span>
-			</div>
+		<section aria-labelledby="share-stats-title" className={cn(!isPublic && "opacity-50")}>
+			<SectionHeading id="share-stats-title" note={<Trans>only you see these</Trans>}>
+				<Trans>Visitors</Trans>
+			</SectionHeading>
 
 			{isPublic ? (
 				<>
-					<dl className="grid grid-cols-2 gap-2.5">
-						<Stat value={summary.views} label={t`views · 30 days`} />
-						<Stat value={summary.downloads} label={t`downloads`} />
-						<Stat value={lastView} label={t`since last counted view`} />
+					<dl className="flex flex-wrap items-baseline gap-x-2.5">
+						<Stat value={summary.views} label={t`views in the last 30 days`} />
+						<Stat value={summary.downloads} label={t`downloads`} className="ms-3.5" />
 					</dl>
 					<div
 						role="img"
-						aria-label={t`Daily views over 30 days, peak ${i18n.number(summary.peak)}`}
-						className="flex h-14 items-end gap-[3px] pt-1"
+						aria-label={t`Views per day, ${firstLabel} to today. The busiest day had ${i18n.number(summary.peak)}.`}
+						title={lastView ? t`Last counted view ${lastView} ago. Each visitor counts once an hour.` : undefined}
+						className="mt-3 flex h-11 items-end gap-[3px]"
 					>
-						{summary.bars.map((bar) => (
-							<span
-								key={bar.date}
-								className="flex-1 rounded-t-sm bg-line-2"
-								style={{ height: `${Math.max(6, Math.round(bar.height * 100))}%` }}
-							/>
-						))}
+						{summary.bars.map((bar) =>
+							bar.views > 0 ? (
+								<i
+									key={bar.date}
+									className="flex-1 rounded-t-[1px] bg-ink-3"
+									style={{ height: `${Math.round(bar.height * 100)}%` }}
+								/>
+							) : (
+								<i key={bar.date} className="h-0.5 flex-1 rounded-[1px] bg-line-2" />
+							),
+						)}
 					</div>
-					<div className="flex justify-between font-mono text-xs font-medium text-ink-3">
-						<span>
-							{firstDay
-								? new Date(`${firstDay}T00:00:00`).toLocaleDateString(i18n.locale, { month: "short", day: "numeric" })
-								: ""}
-						</span>
+					<div className="flex justify-between pt-1.5 t-mono text-ink-3">
+						<span>{firstLabel}</span>
 						<span>
 							<Trans>Today</Trans>
 						</span>
 					</div>
 				</>
 			) : (
-				<p className="text-[13px] leading-[19px] text-ink-2">
+				<p className="t-small text-ink-2">
 					<Trans>
 						Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted.
 					</Trans>
-				</p>
-			)}
-			{isPublic && (
-				<p className="text-xs text-ink-3">
-					<Trans>Each visitor counts once an hour.</Trans>
 				</p>
 			)}
 		</section>
 	);
 }
 
-type StatProps = { value: number | string; label: string };
+type StatProps = { value: number; label: string; className?: string };
 
-function Stat({ value, label }: StatProps) {
+function Stat({ value, label, className }: StatProps) {
 	const { i18n } = useLingui();
 	return (
-		<div className="flex flex-col-reverse gap-0.5">
-			<dt className="text-xs text-ink-3">{label}</dt>
+		<div className={cn("flex flex-row-reverse items-baseline gap-2.5", className)}>
+			<dt className="t-small text-ink-3">{label}</dt>
 			{/* Lining figures: in the display face an old-style "1" reads as "l". */}
-			<dd className="font-display text-[26px] leading-[30px] tabular-nums [font-variant-numeric:lining-nums_tabular-nums]">
-				{typeof value === "number" ? i18n.number(value) : value}
+			<dd className="t-big-number tabular-nums [font-variant-numeric:lining-nums_tabular-nums]">
+				{i18n.number(value)}
 			</dd>
 		</div>
+	);
+}
+
+/** One row that opens the feedback links (P4), with how many are active. */
+function FeedbackRow({ onOpen }: { onOpen: () => void }) {
+	const resume = useCurrentResume();
+	const { data: links } = useQuery(orpc.feedback.list.queryOptions({ input: { resumeId: resume.id } }));
+	const active = links?.filter((link) => link.status === "active").length ?? 0;
+
+	return (
+		<List cap className="mt-3.5">
+			<ListRow
+				render={<button type="button" onClick={onOpen} />}
+				title={<Trans>Feedback links</Trans>}
+				value={active > 0 ? <Trans>{active} active</Trans> : undefined}
+				caret
+			/>
+		</List>
+	);
+}
+
+function FeedbackPage({ onBack }: { onBack: () => void }) {
+	const resume = useCurrentResume();
+	return (
+		<ShareSubPage
+			title={<Trans>Feedback links</Trans>}
+			description={
+				<Trans>
+					Send a coach or friend a private link to this version. They can comment, but can't change it or see anything
+					else.
+				</Trans>
+			}
+			onBack={onBack}
+		>
+			<div className="mt-4">
+				<FeedbackLinksSection resumeId={resume.id} titled={false} />
+			</div>
+		</ShareSubPage>
 	);
 }

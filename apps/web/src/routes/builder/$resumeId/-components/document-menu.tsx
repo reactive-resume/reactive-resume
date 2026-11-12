@@ -302,9 +302,21 @@ function DocumentMenuItems({ onOpenDialog, onHelp }: DocumentMenuItemsProps) {
 				<Icon name="info" />
 				<Trans>Details</Trans>
 			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => void onPrint()}>
+			{/* P4: from 640 up Print sits in the Download menu on the split button; phones have no ▾, so it stays here. */}
+			<DropdownMenuItem className="sm:hidden" onClick={() => void onPrint()}>
 				<Icon name="printer" />
 				<Trans>Print</Trans>
+			</DropdownMenuItem>
+			<DropdownMenuItem
+				onClick={() =>
+					// The slot takes History from 1024 (B15); narrower layouts keep the sheet's History tab.
+					window.matchMedia("(min-width: 1024px)").matches
+						? useEditorStore.getState().setHistoryOpen(true)
+						: setSheetTab("history")
+				}
+			>
+				<Icon name="clock-counter-clockwise" />
+				<Trans>Version history</Trans>
 			</DropdownMenuItem>
 			{/* Download & history, from every layout: phones have no ▾ beside Download PDF and no clock in the bar. */}
 			<DropdownMenuItem disabled={offline} onClick={() => setSheetTab("download")}>
