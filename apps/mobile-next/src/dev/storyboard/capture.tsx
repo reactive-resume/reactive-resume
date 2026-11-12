@@ -5,7 +5,7 @@ import type { ThemeName } from "@/ui/tokens";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigationContainerRef, useRouter } from "expo-router";
 import { useEffect } from "react";
-import { LogBox, View } from "react-native";
+import { LogBox, Platform, View } from "react-native";
 import { create } from "zustand";
 import { CAPTURE_SERVER, collectDump, resetImageTracking, STORYBOARD, STORYBOARD_NOW, settle } from "./harness";
 import { scenarios } from "./scenarios";
@@ -158,7 +158,8 @@ export function StoryboardController() {
 			accessible
 			accessibilityLabel="Storyboard ready"
 			pointerEvents="none"
-			style={{ position: "absolute", top: 0, left: 0, width: 1, height: 1 }}
+			// Maestro's Android driver drops elements under the status bar, so the marker sits below it there.
+			style={{ position: "absolute", top: Platform.OS === "android" ? "50%" : 0, left: 0, width: 1, height: 1 }}
 		/>
 	);
 }
