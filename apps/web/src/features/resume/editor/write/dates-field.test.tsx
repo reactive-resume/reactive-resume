@@ -46,6 +46,39 @@ function Editor({ initial, single = false, locale = "en-US" }: EditorProps) {
 	return <DatesField dates={dates} locale={locale} format="short" single={single} onChange={setDates} />;
 }
 
+describe("editing a printed date", () => {
+	const mount = (locale: string) =>
+		render(
+			<I18nProvider i18n={i18n}>
+				<Editor initial={{ start: "2022-03", end: null, present: false }} single locale={locale} />
+			</I18nProvider>,
+		);
+
+	it("edits a date whose printed form can't be read back, then shows it printed again", () => {
+		mount("ja-JP");
+		const input = screen.getByRole<HTMLInputElement>("textbox", { name: "Date" });
+		expect(input.value).toBe("2022年3月");
+
+		fireEvent.focus(input);
+		expect(input.value).toBe("2022-03");
+
+		fireEvent.change(input, { target: { value: "2023-03" } });
+		expect(screen.queryByText(/This date hasn't been saved/)).toBeNull();
+
+		fireEvent.blur(input);
+		expect(input.value).toBe("2023年3月");
+	});
+
+	it("keeps the printed form while editing when it can be read back", () => {
+		mount("en-US");
+		const input = screen.getByRole<HTMLInputElement>("textbox", { name: "Date" });
+
+		fireEvent.focus(input);
+
+		expect(input.value).toBe("Mar 2022");
+	});
+});
+
 describe("custom date text", () => {
 	const mount = (initial: ResumeDates, single = false, locale = "en-US") =>
 		render(

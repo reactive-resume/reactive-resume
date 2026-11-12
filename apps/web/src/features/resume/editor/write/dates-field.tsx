@@ -3,6 +3,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useId, useState } from "react";
 import {
+	formatEditableYearMonth,
 	formatResumeDates,
 	formatYearMonth,
 	getPresentLabel,
@@ -40,7 +41,8 @@ type MonthYearInputProps = DateSettings & {
 
 /**
  * One date, typed the way people write it ("Mar 2022", "03/2022", "2022-03" or just "2022"). A readable value
- * saves as you type; on blur the field shows it in the resume's date format.
+ * saves as you type; on blur the field shows it in the resume's date format. While focused it shows text it can read
+ * back, so editing a printed date in any locale saves.
  */
 function MonthYearInput({
 	label,
@@ -53,7 +55,9 @@ function MonthYearInput({
 	onInvalid,
 }: MonthYearInputProps) {
 	const [typed, setTyped] = useState<string | null>(null);
-	const formatted = value ? formatYearMonth(value, { locale, format }) : "";
+	const [focused, setFocused] = useState(false);
+	const formatValue = focused ? formatEditableYearMonth : formatYearMonth;
+	const formatted = value ? formatValue(value, { locale, format }) : "";
 
 	return (
 		<div className="relative min-w-0 flex-1">
@@ -77,7 +81,9 @@ function MonthYearInput({
 					onInvalid(next === undefined);
 					if (next !== undefined && next !== value) onCommit(next);
 				}}
+				onFocus={() => setFocused(true)}
 				onBlur={() => {
+					setFocused(false);
 					if (typed === null) return;
 					const next = readTypedDate(typed, locale);
 					onInvalid(next === undefined);

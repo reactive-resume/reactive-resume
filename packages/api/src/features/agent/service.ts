@@ -1976,7 +1976,7 @@ export const agentService = {
 								message: draftUiMessage,
 								status: "streaming",
 							});
-							draftRowId = upserted.rowId;
+							if (upserted) draftRowId = upserted.rowId;
 						} catch (error) {
 							console.error("[agent] Failed to persist step draft", {
 								name: error instanceof Error ? error.name : "Error",

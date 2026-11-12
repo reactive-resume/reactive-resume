@@ -216,6 +216,19 @@ describe("resume write route validation", () => {
 		});
 		expect(mocks.create).toHaveBeenCalledTimes(1);
 	});
+
+	it("keeps the source page language when no copy language is given", async () => {
+		const source = structuredClone(defaultResumeData);
+		source.metadata.page.locale = "de-DE";
+		mocks.getById.mockResolvedValueOnce({ id: "resume-id", name: "Original", tags: [], data: source });
+		const client = createRouterClient(crudRouter, {
+			context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "owner" } } as never,
+		});
+		await client.duplicate({ id: "resume-id", name: "Copy" });
+		const created = mocks.create.mock.calls[0]?.[0];
+		expect(created.locale).toBeUndefined();
+		expect(created.data.metadata.page.locale).toBe("de-DE");
+	});
 });
 
 it.each([false, true])(

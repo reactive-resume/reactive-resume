@@ -110,6 +110,9 @@ export const agentThread = pg.pgTable(
 		pg.index().on(t.workingResumeId),
 		pg.index().on(t.coverLetterId),
 		pg.index().on(t.aiProviderId),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.sourceResumeId),
+		pg.index().on(t.applicationId),
 	],
 );
 
@@ -205,5 +208,11 @@ export const agentAction = pg.pgTable(
 			.defaultNow()
 			.$onUpdate(() => /* @__PURE__ */ new Date()),
 	},
-	(t) => [pg.index().on(t.threadId, t.createdAt.desc()), pg.index().on(t.resumeId), pg.index().on(t.messageId)],
+	(t) => [
+		pg.index().on(t.threadId, t.createdAt.desc()),
+		pg.index().on(t.resumeId),
+		pg.index().on(t.messageId),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.userId),
+	],
 );

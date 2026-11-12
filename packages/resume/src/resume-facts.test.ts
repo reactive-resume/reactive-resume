@@ -131,3 +131,16 @@ it("bounds review without clipping or duplicating visible skill statements", () 
 	expect(result.omitted).toBe(2);
 	expect(result.proposals[49]).toEqual({ text: "Skill 49", quote: "- **Skill 49**", category: "skill" });
 });
+
+it("proposes nothing from the sidebar of a full-width page", () => {
+	const data = structuredClone(defaultResumeData);
+	data.summary.content = "<p>Built reliable tools with a team of twelve.</p>";
+	data.sections.skills.items = [
+		{ id: "skill", hidden: false, icon: "", iconColor: "", name: "Zymurgy", proficiency: "", level: 0, keywords: [] },
+	];
+	data.metadata.layout.pages = [{ fullWidth: true, main: ["summary"], sidebar: ["skills"] }];
+	const result = resumeFactProposals(data);
+	expect(result.proposals.map((proposal) => proposal.quote)).toEqual(["Built reliable tools with a team of twelve."]);
+	const markdown = buildMarkdown(data);
+	for (const proposal of result.proposals) expect(markdown).toContain(proposal.quote);
+});

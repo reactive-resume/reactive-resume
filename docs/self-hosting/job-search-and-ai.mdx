@@ -168,7 +168,7 @@ Other [supported providers](/guides/using-ai#supported-providers) use the same s
 identifier and model. An OpenAI-compatible gateway also needs `AI_BASE_URL`. For a local model, see
 [Ollama setup](/self-hosting/examples#use-a-local-ai-model-with-ollama) and the
 [AI environment reference](/self-hosting/environment-variables#ai-and-redis). Local or private AI endpoints need
-`FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`; enable it only where you trust every user. Ollama can omit `AI_API_KEY`.
+`FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`; enable it only where you trust every user. Ollama and OpenAI-compatible servers, such as LM Studio, can omit `AI_API_KEY`.
 
 The AI key belongs to Reactive Resume for this workflow. Web services receive search queries and selected public URLs;
 they do not need the AI-provider key or candidate resume data.

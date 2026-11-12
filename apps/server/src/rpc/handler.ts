@@ -2,9 +2,16 @@ import { onError, ORPCError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { BatchHandlerPlugin, RequestHeadersPlugin, StrictGetMethodPlugin } from "@orpc/server/plugins";
 import router from "@reactive-resume/api/routers";
+import { describeError, platformRequestId } from "../http/error-log";
 import { mergeResponseHeaders } from "../http/headers";
 import { readAccountBinding } from "./account-header";
 import { getRequestLocale } from "./locale";
+
+// An RPC address is the procedure path itself (no parameters), and an error only gets here once a route matched.
+const rpcProcedure = (pathname: string, prefix?: string) => {
+	const path = (prefix ? pathname.replace(prefix, "") : pathname).replace(/^\/|\/$/g, "");
+	return path.length <= 128 && /^[\w-]+(\/[\w-]+)*$/.test(path) ? path.replaceAll("/", ".") : "unknown";
+};
 
 const rpcHandler = new RPCHandler(router, {
 	plugins: [new BatchHandlerPlugin(), new RequestHeadersPlugin(), new StrictGetMethodPlugin()],
@@ -23,11 +30,16 @@ const rpcHandler = new RPCHandler(router, {
 		},
 	],
 	interceptors: [
-		onError((error) => {
+		onError((error, { request, prefix, context }) => {
 			// Signed-out or expired callers are routine; their 401 still reaches the client.
 			if (error instanceof ORPCError && error.code === "UNAUTHORIZED") return;
+			const requestId = platformRequestId(context.reqHeaders);
 			// Validation errors can contain submitted profile values; keep payloads out of server logs.
-			console.error("[oRPC Server]", error instanceof ORPCError ? error.code : "INTERNAL_SERVER_ERROR");
+			console.error("[oRPC Server]", {
+				procedure: rpcProcedure(request.url.pathname, prefix),
+				...describeError(error),
+				...(requestId ? { requestId } : {}),
+			});
 		}),
 	],
 });

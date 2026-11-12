@@ -49,6 +49,19 @@ describe("htmlToMarkdown", () => {
 });
 
 describe("buildMarkdown", () => {
+	it("leaves out the sidebar of a full-width page, as the PDF, DOCX and ODT exports do", () => {
+		const withSidebar = (fullWidth: boolean) => {
+			const data = structuredClone(sampleResumeData);
+			const skill = data.sections.skills.items[0];
+			if (!skill) throw new Error("Missing skill fixture");
+			skill.name = "Zymurgy";
+			data.metadata.layout.pages = [{ fullWidth, main: ["experience"], sidebar: ["skills"] }];
+			return buildMarkdown(data);
+		};
+		expect(withSidebar(false)).toContain("- **Zymurgy**");
+		expect(withSidebar(true)).not.toContain("Zymurgy");
+	});
+
 	it("keeps experience descriptions when visible or blank roles are present", () => {
 		const data = structuredClone(sampleResumeData);
 		const item = data.sections.experience.items[0];

@@ -218,6 +218,47 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("database migration
 						})
 						.sort((a, b) => a.table_name.localeCompare(b.table_name) || a.column_name.localeCompare(b.column_name));
 					expect(actual.rows).toEqual(expected);
+
+					// Every foreign key has a valid index that starts with its column, apart from the listed exceptions
+					// (packages/db/src/foreign-key-indexes.test.ts). This reads the database, so it covers the SQL.
+					const unindexed = await pool.query(
+						`SELECT rel.relname AS "table", a.attname AS "column"
+							FROM pg_constraint c
+							JOIN pg_class rel ON rel.oid = c.conrelid
+							JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = c.conkey[1]
+							WHERE c.contype = 'f' AND c.connamespace = 'public'::regnamespace
+								AND NOT EXISTS (
+									SELECT 1 FROM pg_index i
+									WHERE i.indrelid = c.conrelid AND i.indkey[0] = c.conkey[1] AND i.indpred IS NULL AND i.indisvalid
+								)
+							ORDER BY 1, 2`,
+					);
+					expect(unindexed.rows.map((row) => `${row.table}.${row.column}`)).toEqual([
+						"ai_content_report.user_id",
+						"career_schedule.ai_provider_id",
+						"resume_writing_review.user_id",
+					]);
+
+					// A prebuilt index that is not valid stops the migration; a valid one makes it a no-op.
+					const indexMigration = (
+						await Promise.all(
+							(await readdir(migrationsFolder))
+								.filter((name) => /^\d+_/.test(name))
+								.map((name) => readFile(path.join(migrationsFolder, name, "migration.sql"), "utf8")),
+						)
+					).find((sql) => sql.includes("application_resume_id_index"));
+					if (!indexMigration) throw new Error("The foreign-key index migration is missing.");
+					const validity = (valid: boolean) =>
+						pool.query(
+							`UPDATE pg_index SET indisvalid = $1 WHERE indexrelid = 'application_resume_id_index'::regclass`,
+							[valid],
+						);
+					await validity(false);
+					await expect(pool.query(indexMigration)).rejects.toThrow(
+						/application_resume_id_index exists but is not valid/,
+					);
+					await validity(true);
+					await expect(pool.query(indexMigration)).resolves.toBeDefined();
 					if (upgrade) {
 						expect((await pool.query("SELECT id,status,closed_reason FROM application ORDER BY id")).rows).toEqual([
 							{ id: "active", status: "saved", closed_reason: null },

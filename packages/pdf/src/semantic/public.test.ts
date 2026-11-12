@@ -36,4 +36,16 @@ describe("@reactive-resume/pdf/semantic", () => {
 			expect.objectContaining({ code: "UNRESOLVED_VARIABLE", severity: "error" }),
 		);
 	});
+
+	it("hands a line-height length to the renderer with its unit", () => {
+		const data = structuredClone(sampleResumeData);
+		data.metadata.stylesheet = {
+			mode: "semantic",
+			source: { languageVersion: 1, text: "@version 1; name { line-height: 12pt; }" },
+		};
+
+		const inspection = resolveResumeRuntime({ data, template: data.metadata.template });
+
+		expect(inspection.presentation["page-1/region-header/header/name"]?.style?.lineHeight).toBe("12pt");
+	});
 });

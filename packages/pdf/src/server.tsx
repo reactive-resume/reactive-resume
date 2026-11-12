@@ -1,8 +1,12 @@
 import type { ResumeRenderOptions } from "./context";
+import type { FormeEngine } from "./forme/render";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
+import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import * as forme from "@formepdf/core";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
+import { createFontPreparer, createFontSubsetter } from "./forme/font-subset";
 import { loadFonts } from "./forme/fonts";
 import { loadImages } from "./forme/images";
 import { readServerImage } from "./forme/images.node.ts";
@@ -20,13 +24,38 @@ export type CreateResumePdfFileOptions = {
 	uploadOrigin?: string | undefined;
 };
 
+// Fonts cut to each document's characters, as in the browser (#3593): Forme takes every font as base64 in the JSON
+// of each layout pass, so whole CJK faces cost seconds and hundreds of megabytes per export. If harfbuzz can't
+// load, fonts go whole as before.
+let engine: Promise<FormeEngine> | undefined;
+async function createEngine(): Promise<FormeEngine> {
+	// Workers can't compile WebAssembly from bytes, so there fonts still go whole.
+	if (process.env.CLOUDFLARE === "1") return forme;
+	try {
+		// A built server carries the file beside its bundle (a Vercel Function has no node_modules entry for a file
+		// that is only read). From source, and in tests, it comes from the package.
+		const wasm = await readFile(new URL("./wasm/harfbuzz-subset.wasm", import.meta.url)).catch(() =>
+			readFile(fileURLToPath(import.meta.resolve("harfbuzzjs/dist/harfbuzz-subset.wasm"))),
+		);
+		return {
+			renderSerializedDocWithLayout: forme.renderSerializedDocWithLayout,
+			prepareFont: createFontPreparer(await createFontSubsetter(wasm)),
+		};
+	} catch (error) {
+		console.warn("[pdf] Font subsetting is unavailable; PDFs render from whole fonts.", {
+			name: error instanceof Error ? error.name : "Unknown",
+		});
+		return forme;
+	}
+}
+
 /** Creates a server PDF using deployment font mirroring and the server image reader. */
 export const createResumePdfFile = async ({
 	filename,
 	uploadOrigin,
 	...input
 }: CreateResumePdfFileOptions): Promise<File> => {
-	const result = await renderResume(forme, {
+	const result = await renderResume(await (engine ??= createEngine()), {
 		...input,
 		data: parseResumeData(input.data),
 		readImage: (source) => readServerImage(source, uploadOrigin),

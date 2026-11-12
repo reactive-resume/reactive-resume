@@ -144,7 +144,10 @@ function documentText(document: FormeDocument): string {
 	const visit = (value: unknown, key?: string) => {
 		if (typeof value === "string") {
 			// Pictures are data URIs: base64 adds no character a font needs.
-			if (key !== "src") for (const character of value) characters.add(character);
+			// Forme applies `textTransform` itself, so the capitals of an uppercase heading needn't be in any string.
+			if (key !== "src")
+				for (const text of [value, value.toUpperCase(), value.toLowerCase()])
+					for (const character of text) characters.add(character);
 		} else if (Array.isArray(value)) for (const item of value) visit(item);
 		else if (value && typeof value === "object") for (const [name, item] of Object.entries(value)) visit(item, name);
 	};

@@ -3,7 +3,7 @@ import type { AIProvider } from "@reactive-resume/ai/types";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useId, useState } from "react";
-import { AI_PROVIDER_KEY_URLS, getAIProviderSetupProblem } from "@reactive-resume/ai/defaults";
+import { AI_PROVIDER_KEY_URLS, getAIProviderSetupProblem, isAPIKeyOptional } from "@reactive-resume/ai/defaults";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -110,11 +110,11 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 					placeholder={
 						keyOptional && !keyAgain
 							? t`Leave empty to keep the saved key`
-							: provider === "ollama"
-								? t`Optional for local Ollama`
+							: isAPIKeyOptional(provider)
+								? t`Optional`
 								: undefined
 					}
-					required={provider !== "ollama" && (!keyOptional || keyAgain)}
+					required={!isAPIKeyOptional(provider) && (!keyOptional || keyAgain)}
 					aria-describedby={keyAgain ? `${id}-key-hint` : undefined}
 					onChange={(event) => set({ apiKey: event.target.value })}
 					{...secretInputProps}
@@ -135,7 +135,7 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 				)}
 				{keyAgain && (
 					<p id={`${id}-key-hint`} className="text-xs leading-5 text-ink-3">
-						{provider === "ollama" ? (
+						{isAPIKeyOptional(provider) ? (
 							<Trans>The saved key isn't sent to a new base URL. Enter it again if this server needs one.</Trans>
 						) : (
 							<Trans>The saved key isn't sent to a new base URL. Enter it again.</Trans>

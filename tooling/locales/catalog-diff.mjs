@@ -195,12 +195,9 @@ async function main() {
 		for (const file of files) {
 			const path = `${directory}/${file}`;
 			const locale = file.slice(0, -3);
-			let baseSource;
-			try {
-				baseSource = git("show", `${base}:${path}`);
-			} catch {
-				// New catalog: every entry counts as new.
-			}
+			// A catalog absent at the base is new: every entry counts as new. A failed read of an existing one must
+			// stop the run, or its lost translations go unreported.
+			const baseSource = atBase.includes(file) ? git("show", `${base}:${path}`) : undefined;
 			const headSource = present.includes(file) ? await readFile(join(root, path), "utf8") : undefined;
 			const result = compare(
 				await parse(baseSource, path, locale),

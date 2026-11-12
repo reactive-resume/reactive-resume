@@ -77,6 +77,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: ${{ matrix.suite == 'Unit' && '0' || '1' }}
+          # Full history without old file contents; Git fetches the few blobs a diff needs.
+          filter: ${{ matrix.suite == 'Unit' && 'blob:none' || '' }}
 
       - name: Check out source (Blacksmith)
         if: ${{ vars.USE_BLACKSMITH == 'true' }}
@@ -84,6 +86,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: ${{ matrix.suite == 'Unit' && '0' || '1' }}
+          # Full history without old file contents; Git fetches the few blobs a diff needs.
+          filter: ${{ matrix.suite == 'Unit' && 'blob:none' || '' }}
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
@@ -133,7 +137,8 @@ jobs:
         env:
           LOCALES_BASE_REF: ${{ github.event.pull_request.base.sha }}
         run: |
-          if git diff --quiet "$LOCALES_BASE_REF" HEAD -- apps/web/locales/ apps/mobile/locales/; then
+          # A full diff (not --quiet) fetches every changed catalog blob in one batch for locales:diff.
+          if git diff --exit-code "$LOCALES_BASE_REF" HEAD -- apps/web/locales/ apps/mobile/locales/ > /dev/null; then
             exit 0
           fi
           pnpm locales:diff --base "$LOCALES_BASE_REF"
@@ -157,6 +162,12 @@ jobs:
         if: matrix.suite == 'Browser'
         timeout-minutes: 20
         run: pnpm exec playwright install --with-deps chromium webkit
+
+      # The tooling unit tests include an Android import reader test that drives headless Chromium.
+      - name: Install headless Chromium for tooling tests
+        if: matrix.suite == 'Unit'
+        timeout-minutes: 10
+        run: pnpm exec playwright install --with-deps --only-shell chromium
 
       - name: Prepare test storage
         run: mkdir -p "$LOCAL_STORAGE_PATH"
@@ -215,12 +226,14 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+          filter: blob:none
       - name: Check out source (Blacksmith)
         if: ${{ vars.USE_BLACKSMITH == 'true' }}
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
           fetch-depth: 0
+          filter: blob:none
       # App, shared-package and dependency-resolution changes can alter the bundle.
       - name: Detect mobile changes
         id: changes
@@ -359,7 +372,7 @@ jobs:
         run: |
           node --no-experimental-require-module --input-type=module - <<'JS'
           import assert from 'node:assert/strict';
-          import { cpSync, readFileSync } from 'node:fs';
+          import { cpSync, existsSync, readFileSync } from 'node:fs';
           import { join } from 'node:path';
           const func = '.vercel/output/services/backend/functions/index.func';
           const config = JSON.parse(readFileSync(`${func}/.vc-config.json`));
@@ -374,6 +387,11 @@ jobs:
           const home = await app.fetch(new Request('http://localhost:3000/'));
           assert.equal(home.status, 200);
           assert.match(await home.text(), /application\/ld\+json/);
+          // The server reads these files at runtime; the build copies them beside the bundle. Without the first,
+          // PDFs quietly render from whole fonts; without the second, link-preview cards fall back to a banner.
+          for (const file of ['harfbuzz-subset.wasm', 'resvg.wasm']) {
+            assert.ok(existsSync(join(root, 'apps/server/dist/wasm', file)), `${file} is missing from the Function`);
+          }
           process.exit(0);
           JS
 

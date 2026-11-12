@@ -343,6 +343,31 @@ describe.skipIf(!databaseUrl)("resume addresses and the primary resume", () => {
 			expect((await read(first)).isPrimary).toBe(true);
 		});
 
+		it("takes the role from a primary resume in Trash, which comes back without it", async () => {
+			const first = await create("First");
+			await publish(first);
+			await documents.trash({ type: "resume", id: first, userId: "priya" });
+			expect(await opensAt({ primary: true })).toBeUndefined();
+
+			const second = await create("Second");
+			await expect(publish(second)).resolves.toMatchObject({ isPublic: true, isPrimary: true });
+			expect(await opensAt({ primary: true })).toBe(second);
+
+			// Restored, the first resume is published again, without the role it lost while in Trash.
+			await documents.restore({ type: "resume", id: first, userId: "priya" });
+			expect(await read(first)).toMatchObject({ isPublic: true, isPrimary: false });
+			expect(await opensAt({ primary: true })).toBe(second);
+		});
+
+		it("keeps the role through Trash and back when nothing else was published meanwhile", async () => {
+			const id = await create("Only");
+			await publish(id);
+			await documents.trash({ type: "resume", id, userId: "priya" });
+			await documents.restore({ type: "resume", id, userId: "priya" });
+			expect(await read(id)).toMatchObject({ isPublic: true, isPrimary: true });
+			expect(await opensAt({ primary: true })).toBe(id);
+		});
+
 		it("respects an explicit choice and only acts when a resume is first published", async () => {
 			const declined = await create("Declined");
 			await expect(publish(declined, { isPrimary: false })).resolves.toMatchObject({ isPrimary: false });

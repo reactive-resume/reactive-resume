@@ -180,6 +180,20 @@ describe("aiProvidersService", () => {
 		).resolves.toMatchObject({ id: "provider-1" });
 	});
 
+	it("accepts an empty key only for a provider that can run without one", async () => {
+		const update = { id: "provider-1", userId: "user-1", baseURL: "https://other.example/v1", apiKey: "" };
+		vi.mocked(resolveAiBaseUrl).mockReturnValue("https://other.example/v1");
+
+		queryState.rows = [providerRow()];
+		await expect(aiProvidersService.update(update)).rejects.toMatchObject({
+			code: "BAD_REQUEST",
+			message: "Enter an API key for this provider.",
+		});
+
+		queryState.rows = [providerRow({ provider: "openai-compatible" })];
+		await expect(aiProvidersService.update(update)).resolves.toMatchObject({ id: "provider-1" });
+	});
+
 	it("rejects an update if the destination or credential changed after the ownership read", async () => {
 		queryState.rows = [providerRow()];
 		queryState.updateRows = [];
@@ -262,6 +276,28 @@ describe("aiProvidersService", () => {
 				original?.recipientVersion,
 			);
 		}
+	});
+
+	it("leaves the saved state alone when the caller abandons a test", async () => {
+		queryState.rows = [providerRow()];
+		const controller = new AbortController();
+		vi.mocked(testConnection).mockImplementation(async () => {
+			controller.abort();
+			return { ok: false, message: "This operation was aborted", kind: "unknown" };
+		});
+		await expect(
+			aiProvidersService.test({ id: "provider-1", userId: "user-1", signal: controller.signal }),
+		).rejects.toThrow();
+		expect(dbMock.update().set).not.toHaveBeenCalledWith(expect.objectContaining({ testStatus: "failure" }));
+	});
+
+	it("records a failure the provider reported while the caller is still waiting", async () => {
+		queryState.rows = [providerRow()];
+		vi.mocked(testConnection).mockResolvedValue({ ok: false, message: "Invalid API key", kind: "unknown" });
+		await aiProvidersService.test({ id: "provider-1", userId: "user-1", signal: new AbortController().signal });
+		expect(dbMock.update().set).toHaveBeenCalledWith(
+			expect.objectContaining({ enabled: false, testStatus: "failure", testError: "Invalid API key" }),
+		);
 	});
 });
 

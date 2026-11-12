@@ -8,7 +8,7 @@ import * as schema from "@reactive-resume/db/schema";
 import { activeApplications } from "../applications/access";
 import { applicationService, insertApplication } from "../applications/service";
 import { coverLetterService } from "../cover-letters/service";
-import { resumeService, writeResumeFields } from "../resume/service";
+import { notifyResumeUpdated, resumeService, writeResumeFields } from "../resume/service";
 import { followNameWithSlug } from "../resume/slugs";
 import { listDocumentPage, listDocuments } from "./listing";
 import { isRetriedCreate, lockUser, recordCreateRequest } from "./ownership";
@@ -60,24 +60,39 @@ type LetterChanges = Partial<typeof schema.coverLetter.$inferInsert>;
 
 /** The same change to either table; `letter` differs only where the columns do (the linked application). */
 async function update(ref: DocumentRef, resume: ResumeChanges, letter: LetterChanges = resume as LetterChanges) {
-	await db.transaction(async (tx) => {
+	const updatedAt = await db.transaction(async (tx) => {
 		await lockUser(tx, ref.userId);
 		if (resume.applicationId) await assertOwnedApplication(ref.userId, resume.applicationId, tx);
 		// A private resume's app-made address follows a new name, like a rename in the editor.
 		if (ref.type === "resume" && resume.name !== undefined)
 			await followNameWithSlug(tx, { userId: ref.userId, resumeId: ref.id, name: resume.name });
-		const rows =
-			ref.type === "resume"
-				? await tx.update(schema.resume).set(resume).where(owned(ref)).returning({ id: schema.resume.id })
-				: await tx
-						.update(schema.coverLetter)
-						// Letters carry a revision for their editor's optimistic saves; any change moves it on.
-						.set({ ...letter, revision: sql`${schema.coverLetter.revision} + 1` })
-						.where(owned(ref))
-						.returning({ id: schema.coverLetter.id });
-
+		if (ref.type === "resume") {
+			const [row] = await tx
+				.update(schema.resume)
+				.set(resume)
+				.where(owned(ref))
+				.returning({ updatedAt: schema.resume.updatedAt });
+			if (!row) throw new ORPCError("NOT_FOUND");
+			return row.updatedAt;
+		}
+		const rows = await tx
+			.update(schema.coverLetter)
+			// Letters carry a revision for their editor's optimistic saves; any change moves it on.
+			.set({ ...letter, revision: sql`${schema.coverLetter.revision} + 1` })
+			.where(owned(ref))
+			.returning({ id: schema.coverLetter.id });
 		if (rows.length === 0) throw new ORPCError("NOT_FOUND");
+		return null;
 	});
+	// After commit, like every other resume write: an open editor reads the resume again and builds on this revision.
+	if (updatedAt)
+		await notifyResumeUpdated({
+			type: "resume.updated",
+			resumeId: ref.id,
+			userId: ref.userId,
+			updatedAt: updatedAt.toISOString(),
+			mutation: "update",
+		});
 }
 
 async function readState(ref: DocumentRef) {
@@ -306,9 +321,9 @@ export const documentsService = {
 	restoreMany: async (input: { userId: string; documents: DocumentSelection[] }) => {
 		const resumeIds = [...new Set(input.documents.filter(({ type }) => type === "resume").map(({ id }) => id))];
 		const letterIds = [...new Set(input.documents.filter(({ type }) => type === "letter").map(({ id }) => id))];
-		const restored = await db.transaction(async (tx) => {
+		const { resumes, count } = await db.transaction(async (tx) => {
 			await lockUser(tx, input.userId);
-			const resumes =
+			const resumes: { id: string; updatedAt: Date }[] =
 				resumeIds.length === 0
 					? []
 					: await tx
@@ -321,7 +336,7 @@ export const documentsService = {
 									isNotNull(schema.resume.trashedAt),
 								),
 							)
-							.returning({ id: schema.resume.id });
+							.returning({ id: schema.resume.id, updatedAt: schema.resume.updatedAt });
 			const letters =
 				letterIds.length === 0
 					? []
@@ -336,9 +351,24 @@ export const documentsService = {
 								),
 							)
 							.returning({ id: schema.coverLetter.id });
-			return resumes.length + letters.length;
+			return { resumes, count: resumes.length + letters.length };
 		});
-		return { restored };
+		// After commit, one event per restored resume, in batches: a selection can be thousands of documents.
+		const chunkSize = 100;
+		for (let start = 0; start < resumes.length; start += chunkSize) {
+			await Promise.allSettled(
+				resumes.slice(start, start + chunkSize).map((resume) =>
+					notifyResumeUpdated({
+						type: "resume.updated",
+						resumeId: resume.id,
+						userId: input.userId,
+						updatedAt: resume.updatedAt.toISOString(),
+						mutation: "update",
+					}),
+				),
+			);
+		}
+		return { restored: count };
 	},
 
 	/**

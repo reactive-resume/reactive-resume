@@ -92,5 +92,9 @@ export const feedbackEvent = pg.pgTable(
 		type: pg.text("type", { enum: FEEDBACK_EVENT_TYPES }).notNull(),
 		createdAt: pg.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	},
-	(t) => [pg.index().on(t.linkId, t.createdAt.desc())],
+	(t) => [
+		pg.index().on(t.linkId, t.createdAt.desc()),
+		// Looked up when the row it points to is deleted.
+		pg.index().on(t.userId),
+	],
 );
