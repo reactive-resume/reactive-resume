@@ -76,6 +76,28 @@ describe("special characters in exported PDFs (#3106)", () => {
 		},
 	);
 
+	it("embeds Georgian glyphs through the Noto fallback (#3969)", { timeout: 30_000 }, async () => {
+		const data = fixture();
+		data.metadata.typography.body.fontFamily = "IBM Plex Serif";
+		data.metadata.typography.heading.fontFamily = "IBM Plex Serif";
+		const text = "ქართული ენა";
+		data.summary.content = `<p>${text}</p>`;
+
+		const { glyphs } = await readPdf(data);
+		const drawn = glyphs
+			.map((glyph) => glyph.unicode)
+			.join("")
+			.replaceAll(" ", "");
+		expect(drawn).toContain(text.replaceAll(" ", ""));
+
+		const georgianGlyphs = glyphs.filter((glyph) => /[\u10A0-\u10FF]/.test(glyph.unicode));
+		expect(georgianGlyphs).toHaveLength(text.replaceAll(" ", "").length);
+		for (const glyph of georgianGlyphs) {
+			expect(glyph.isInFont).toBe(true);
+			expect(glyph.width).toBeGreaterThan(0);
+		}
+	});
+
 	it("exports a paragraph that ends in a line break in a standard PDF font (#3593)", { timeout: 30_000 }, async () => {
 		const data = fixture();
 		data.metadata.typography.body.fontFamily = "Helvetica";

@@ -137,6 +137,23 @@ describe("resolvePdfFonts", () => {
 		expect(registered).not.toContainEqual(expect.objectContaining({ family: "Noto Sans Symbols 2" }));
 	});
 
+	it("registers the Georgian Noto fallback for Georgian content", () => {
+		const georgianSource = getWebFontSource("Noto Serif Georgian", "400", false);
+		const { registered, registerFonts } = withRegistry();
+
+		const pdfTypography = registerFonts(typography, "en-US", new Set(["georgian"]));
+
+		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif Georgian", "Noto Serif"]);
+		expect(registered).toContainEqual(
+			expect.objectContaining({
+				family: "Noto Serif Georgian",
+				weight: 400,
+				italic: false,
+				src: georgianSource,
+			}),
+		);
+	});
+
 	it("registers the Noto Sans Symbols 2 fallback for text symbols like stars", () => {
 		const symbolsSource = getWebFontSource("Noto Sans Symbols 2", "400", false);
 		const { registered, registerFonts } = withRegistry();
@@ -275,6 +292,10 @@ describe("resumeContentScripts", () => {
 				"khmer",
 			]),
 		);
+	});
+
+	it("detects Georgian text", () => {
+		expect(resumeContentScripts(withSummary("ქართული ენა"))).toEqual(new Set(["georgian"]));
 	});
 
 	it("returns an empty set for Latin-only content", () => {
