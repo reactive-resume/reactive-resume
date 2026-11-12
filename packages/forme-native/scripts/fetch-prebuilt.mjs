@@ -9,10 +9,10 @@ async function main() {
 	const { values } = parseArgs({
 		options: { platform: { type: "string" }, manifest: { type: "string" } },
 	});
-	const platform = values.platform ?? process.env.EAS_BUILD_PLATFORM;
+	const platform = values.platform;
 	if (platform !== "ios" && platform !== "android") {
 		if (values.platform) throw new Error("--platform must be ios or android");
-		console.log("forme-native: skipped (not an EAS iOS/Android build).");
+		console.log("forme-native: skipped (no --platform).");
 		return;
 	}
 	const manifestPath = values.manifest
@@ -72,7 +72,7 @@ async function main() {
 
 main().catch((error) => {
 	console.error(
-		`forme-native: ${error.message}\nBuild locally on macOS: bash packages/forme-native/rust/build.sh\nFor EAS, publish CI's artifact and commit its reviewed checksum to packages/forme-native/scripts/prebuilt.json.`,
+		`forme-native: ${error.message}\nBuild locally on macOS: bash packages/forme-native/rust/build.sh\nFor release builds, publish CI's artifact and commit its reviewed checksum to packages/forme-native/scripts/prebuilt.json.`,
 	);
 	process.exitCode = 1;
 });

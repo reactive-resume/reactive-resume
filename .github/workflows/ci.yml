@@ -244,6 +244,9 @@ jobs:
       - name: Install dependencies
         if: steps.changes.outputs.changed == 'true'
         run: pnpm install --frozen-lockfile
+      - name: Check motion rules
+        if: steps.changes.outputs.changed == 'true'
+        run: sh apps/mobile/scripts/check-motion.sh
       - name: Export iOS and Android Hermes bundles
         if: steps.changes.outputs.changed == 'true'
         run: pnpm --filter mobile check:bundle

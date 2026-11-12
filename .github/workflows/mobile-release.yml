@@ -1,43 +1,38 @@
 name: Mobile release
-run-name: Mobile ${{ github.event_name == 'push' && 'internal testing' || (inputs.upload && 'submit' || 'build') }} · ${{ inputs.platform || 'android-native' }} · ${{ inputs.format || 'store' }} · ${{ github.ref_name }}
+run-name: Mobile ${{ inputs.task || 'release' }} · ${{ github.ref_name }}
 
+# Every push to main that can change the app builds signed iOS and Android binaries with one shared build number and
+# uploads them to TestFlight (internal testers) and Google Play Internal testing. There is no EAS and no OTA update:
+# every fix reaches users as a store build. Dispatch reruns the release, or rebuilds the Forme native libraries.
 on:
   push:
     branches: [main]
+    paths:
+      - apps/mobile/**
+      - packages/**
+      - patches/**
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - tooling/mobile/**
+      - .github/workflows/mobile-release.yml
   workflow_dispatch:
     inputs:
-      platform:
-        description: Platforms to build (android-native is the Kotlin app in apps/android)
+      task:
+        description: release uploads store builds (main only); forme-build packages the Forme native libraries; forme-publish also publishes them as a prerelease
         type: choice
-        options: [all, android, ios, android-native]
-        default: all
-      format:
-        description: Store binaries (AAB/IPA), a downloadable Android APK, or a native preview APK (any branch)
-        type: choice
-        options: [store, apk, preview]
-        default: store
-      abi:
-        description: Android architecture for APK builds (ignored for store binaries)
-        type: choice
-        options: [arm64-v8a, armeabi-v7a, x86_64]
-        default: arm64-v8a
-      upload:
-        description: Submit selected platforms directly to production after store review
-        type: boolean
-        default: false
+        options: [release, forme-build, forme-publish]
+        default: release
 
 permissions:
   contents: read
 
+# Queued, never cancelled: each run reads the stores' latest numbers, so runs must upload in order.
 concurrency:
   group: mobile-release
   cancel-in-progress: false
   queue: max
 
 env:
-  FORMAT: ${{ inputs.format || 'store' }}
-  ABI: ${{ inputs.abi }}
-  MOBILE_UPDATE_CHANNEL: ${{ inputs.format == 'apk' && 'preview' || 'production' }}
   CI: "1"
   EXPO_NO_TELEMETRY: "1"
   FASTLANE_SKIP_UPDATE_CHECK: "1"
@@ -46,14 +41,16 @@ env:
 
 jobs:
   prepare:
-    name: Prepare release
-    # Preview APKs use no secrets, so any branch can build one for testing.
-    if: github.ref == 'refs/heads/main' || inputs.format == 'preview'
+    name: Read store build numbers
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.task == 'release')
+    environment: mobile-store
     runs-on: blacksmith-32vcpu-ubuntu-2404
-    timeout-minutes: 5
+    timeout-minutes: 15
     outputs:
       build_number: ${{ steps.release.outputs.build_number }}
-      platforms: ${{ steps.release.outputs.platforms }}
+      version: ${{ steps.version.outputs.version }}
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/tooling/mobile/Gemfile
     steps:
       - name: Check out source (Blacksmith)
         uses: useblacksmith/checkout@v1
@@ -63,27 +60,64 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-      - name: Validate release inputs and allocate build number
+      - name: Set up Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: tooling/mobile
+      - name: Test release lanes and workflow routing
+        run: |
+          bundle exec ruby tooling/mobile/signing_test.rb
+          ruby tooling/mobile/build_test.rb
+          ruby tooling/mobile/ios_build_test.rb
+          ruby tooling/mobile/distribution_test.rb
+      - name: Read app version
+        id: version
+        run: node tooling/mobile/release.ts --version
+      - name: Read latest store build numbers
+        id: store
+        working-directory: tooling/mobile
+        env:
+          PLATFORM: all
+          VERSION: ${{ steps.version.outputs.version }}
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: |
+          node release.ts --store
+          bundle exec fastlane store_build_numbers version:"$VERSION"
+      - name: Allocate build number
         id: release
         env:
-          PLATFORM: ${{ github.event_name == 'push' && 'android-native' || inputs.platform }}
-          UPLOAD: ${{ github.event_name == 'push' && 'true' || inputs.upload }}
-          MOBILE_BUILD_NUMBER_BASE: ${{ vars.MOBILE_BUILD_NUMBER_BASE }}
+          IOS_BUILD_NUMBER: ${{ steps.store.outputs.ios }}
+          ANDROID_VERSION_CODE: ${{ steps.store.outputs.android }}
         run: node tooling/mobile/release.ts --prepare
+      - name: Summarize
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          IOS_BUILD_NUMBER: ${{ steps.store.outputs.ios }}
+          ANDROID_VERSION_CODE: ${{ steps.store.outputs.android }}
+          BUILD_NUMBER: ${{ steps.release.outputs.build_number }}
+        run: |
+          echo "### Version $VERSION, build $BUILD_NUMBER" >> "$GITHUB_STEP_SUMMARY"
+          echo "Latest on TestFlight: $IOS_BUILD_NUMBER. Highest on Google Play: $ANDROID_VERSION_CODE. Commit: $GITHUB_SHA." >> "$GITHUB_STEP_SUMMARY"
 
   build:
-    name: Build ${{ matrix.platform }} (${{ inputs.format }})
+    name: Build ${{ matrix.platform }}
     needs: prepare
-    if: github.event_name != 'push' && inputs.platform != 'android-native'
     environment: mobile-signing
     strategy:
-      fail-fast: false
+      # Both stores get the same number, so a failed platform stops the other and nothing uploads.
+      fail-fast: true
       matrix:
-        platform: ${{ fromJSON(needs.prepare.outputs.platforms) }}
+        platform: [android, ios]
     runs-on: ${{ matrix.platform == 'ios' && 'blacksmith-12vcpu-macos-latest' || 'blacksmith-32vcpu-ubuntu-2404' }}
     timeout-minutes: 90
     env:
       PLATFORM: ${{ matrix.platform }}
+      APP_VARIANT: production
       MOBILE_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
       BUNDLE_GEMFILE: ${{ github.workspace }}/tooling/mobile/Gemfile
     steps:
@@ -104,15 +138,6 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
           working-directory: tooling/mobile
-      - name: Test signing credential handling
-        run: |
-          bundle exec ruby tooling/mobile/signing_test.rb
-          ruby tooling/mobile/build_test.rb
-      - name: Test iOS multi-target signing configuration
-        if: matrix.platform == 'ios'
-        run: ruby tooling/mobile/ios_build_test.rb
-      - name: Test store distribution configuration
-        run: ruby tooling/mobile/distribution_test.rb
       - name: Set up Java
         uses: actions/setup-java@v5
         if: matrix.platform == 'android'
@@ -124,12 +149,23 @@ jobs:
         if: matrix.platform == 'android'
         with:
           packages: platform-tools platforms;android-37.0 build-tools;37.0.0 ndk;27.1.12297006 ndk;28.2.13676358 cmake;3.22.1
+      - name: Check signing secrets
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ matrix.platform == 'android' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ matrix.platform == 'android' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
+          ANDROID_KEY_ALIAS: ${{ matrix.platform == 'android' && secrets.ANDROID_KEY_ALIAS || '' }}
+          ANDROID_KEY_PASSWORD: ${{ matrix.platform == 'android' && secrets.ANDROID_KEY_PASSWORD || '' }}
+          IOS_DISTRIBUTION_P12_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_DISTRIBUTION_P12_BASE64 || '' }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ matrix.platform == 'ios' && secrets.IOS_DISTRIBUTION_P12_PASSWORD || '' }}
+          IOS_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_PROVISION_PROFILE_BASE64 || '' }}
+          IOS_SHARE_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_SHARE_PROVISION_PROFILE_BASE64 || '' }}
+        run: node tooling/mobile/release.ts --signing
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Typecheck and test mobile app
         run: |
           pnpm --filter mobile typecheck
-          pnpm --filter mobile test
+          pnpm --filter mobile test:ci
       - name: Test iOS pending-share lifecycle without signing
         if: matrix.platform == 'ios'
         run: |
@@ -138,29 +174,13 @@ jobs:
             apps/mobile/node_modules/expo-sharing/ios/shared/PendingPosting.swift \
             tooling/mobile/incoming_share_test.swift -o "$RUNNER_TEMP/incoming-share-test"
           "$RUNNER_TEMP/incoming-share-test"
-      - name: Set up EAS CLI
-        uses: expo/expo-github-action@v9
-        with:
-          eas-version: 25.2.0
-          token: ${{ secrets.EXPO_TOKEN }}
-      - name: Validate signing credentials
-        env:
-          UPLOAD: "false"
-          MOBILE_BUILD_NUMBER_BASE: ${{ vars.MOBILE_BUILD_NUMBER_BASE }}
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          ANDROID_KEYSTORE_BASE64: ${{ matrix.platform == 'android' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ matrix.platform == 'android' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
-          ANDROID_KEY_ALIAS: ${{ matrix.platform == 'android' && secrets.ANDROID_KEY_ALIAS || '' }}
-          ANDROID_KEY_PASSWORD: ${{ matrix.platform == 'android' && secrets.ANDROID_KEY_PASSWORD || '' }}
-          IOS_DISTRIBUTION_P12_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_DISTRIBUTION_P12_BASE64 || '' }}
-          IOS_DISTRIBUTION_P12_PASSWORD: ${{ matrix.platform == 'ios' && secrets.IOS_DISTRIBUTION_P12_PASSWORD || '' }}
-          IOS_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_PROVISION_PROFILE_BASE64 || '' }}
-          IOS_SHARE_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_SHARE_PROVISION_PROFILE_BASE64 || '' }}
-        run: node tooling/mobile/release.ts
       - name: Fetch reviewed Forme binaries
         run: node packages/forme-native/scripts/fetch-prebuilt.mjs --platform "$PLATFORM"
-      - name: Build signed binary
+      - name: Generate native project
         working-directory: apps/mobile
+        run: pnpm exec expo prebuild --platform "$PLATFORM" --clean --no-install
+      - name: Build signed binary
+        working-directory: tooling/mobile
         env:
           ANDROID_KEYSTORE_BASE64: ${{ matrix.platform == 'android' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
           ANDROID_KEYSTORE_PASSWORD: ${{ matrix.platform == 'android' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
@@ -170,247 +190,55 @@ jobs:
           IOS_DISTRIBUTION_P12_PASSWORD: ${{ matrix.platform == 'ios' && secrets.IOS_DISTRIBUTION_P12_PASSWORD || '' }}
           IOS_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_PROVISION_PROFILE_BASE64 || '' }}
           IOS_SHARE_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_SHARE_PROVISION_PROFILE_BASE64 || '' }}
+        run: bundle exec fastlane "$PLATFORM" build
+      - name: Record release manifest
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
         run: |
-          eas env:exec "$MOBILE_UPDATE_CHANNEL" --non-interactive \
-            'pnpm exec expo prebuild --platform "$PLATFORM" --clean --no-install && cd ../../tooling/mobile && if [ "$FORMAT" = apk ]; then bundle exec fastlane android build abi:"$ABI"; else bundle exec fastlane "$PLATFORM" build; fi'
-      - name: Verify APK signature and architecture
-        if: inputs.format == 'apk'
-        run: |
-          set -euo pipefail
-          apk="$RUNNER_TEMP/mobile-release/reactive-resume-$ABI.apk"
-          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose --print-certs "$apk"
-          abis=$(unzip -Z1 "$apk" | awk -F/ '/^lib\/[^/]+\/.*\.so$/ {print $2}' | sort -u)
-          [[ "$abis" == "$ABI" ]]
-          unzip -Z1 "$apk" > "$RUNNER_TEMP/apk-entries.txt"
-          grep -Fx "lib/$ABI/libforme_native.so" "$RUNNER_TEMP/apk-entries.txt"
-
-      - name: Record runtime fingerprint and release manifest
-        working-directory: apps/mobile
-        run: |
-          eas fingerprint:generate --platform "$PLATFORM" --environment "$MOBILE_UPDATE_CHANNEL" --json --non-interactive \
-            > "$RUNNER_TEMP/mobile-release/fingerprint.json"
-          jq -n --arg sha "$GITHUB_SHA" --arg platform "$PLATFORM" --arg build "$MOBILE_BUILD_NUMBER" \
-            --arg format "$FORMAT" --arg abi "$ABI" --arg channel "$MOBILE_UPDATE_CHANNEL" \
+          jq -n --arg sha "$GITHUB_SHA" --arg platform "$PLATFORM" --arg version "$VERSION" --arg build "$MOBILE_BUILD_NUMBER" \
             --arg xcode "$(if [[ "$PLATFORM" == ios ]]; then xcodebuild -version; fi)" \
-            '{commit: $sha, platform: $platform, buildNumber: $build, format: $format, abi: $abi, channel: $channel, xcode: $xcode}' \
+            '{commit: $sha, platform: $platform, version: $version, buildNumber: $build, xcode: $xcode}' \
             > "$RUNNER_TEMP/mobile-release/release.json"
       - name: Upload signed binary
         uses: actions/upload-artifact@v7
         with:
           name: mobile-${{ matrix.platform }}-${{ needs.prepare.outputs.build_number }}
           path: |
-            ${{ runner.temp }}/mobile-release/*.apk
             ${{ runner.temp }}/mobile-release/*.aab
             ${{ runner.temp }}/mobile-release/*.ipa
           if-no-files-found: error
-          retention-days: ${{ inputs.format == 'apk' && 14 || 90 }}
+          retention-days: 90
       - name: Upload release evidence
         uses: actions/upload-artifact@v7
         with:
           name: mobile-${{ matrix.platform }}-${{ needs.prepare.outputs.build_number }}-evidence
           path: |
             ${{ runner.temp }}/mobile-release/
-            !${{ runner.temp }}/mobile-release/*.apk
             !${{ runner.temp }}/mobile-release/*.aab
             !${{ runner.temp }}/mobile-release/*.ipa
           if-no-files-found: error
           retention-days: 90
-      - name: Summarize build
-        run: |
-          echo "### $PLATFORM build $MOBILE_BUILD_NUMBER" >> "$GITHUB_STEP_SUMMARY"
-          echo "Commit: $GITHUB_SHA. Format: $FORMAT. OTA channel: $MOBILE_UPDATE_CHANNEL. Release evidence retained for 90 days." >> "$GITHUB_STEP_SUMMARY"
 
-  build-native:
-    name: Build native Android (${{ inputs.format || 'store' }})
-    needs: prepare
-    if: github.event_name == 'push' || (inputs.platform == 'android-native' && inputs.format != 'preview')
-    environment: mobile-signing
-    runs-on: blacksmith-32vcpu-ubuntu-2404
-    timeout-minutes: 60
-    env:
-      PLATFORM: android-native
-      MOBILE_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"'
-    defaults:
-      run:
-        working-directory: apps/android
-    steps:
-      - name: Check out source (Blacksmith)
-        uses: useblacksmith/checkout@v1
-        with:
-          persist-credentials: false
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - name: Install dependencies for the bundled local import reader
-        working-directory: .
-        run: pnpm install --frozen-lockfile
-      - name: Validate signing credentials
-        working-directory: .
-        env:
-          UPLOAD: "false"
-          MOBILE_BUILD_NUMBER_BASE: ${{ vars.MOBILE_BUILD_NUMBER_BASE }}
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: node tooling/mobile/release.ts
-      - name: Set up Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: "21"
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
-        with:
-          packages: platform-tools platforms;android-37.0 build-tools;37.0.0
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
-      - name: Run lint and unit tests (screenshots render; goldens are compared on macOS only)
-        run: ./gradlew lint testDebugUnitTest --max-workers=1
-      - name: Build signed binary
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: |
-          set -euo pipefail
-          keystore="$(mktemp -d "$RUNNER_TEMP/android-signing-XXXXXX")/upload.jks"
-          trap 'rm -f "$keystore"' EXIT
-          printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$keystore"
-          task=$([[ "$FORMAT" == apk ]] && echo assembleRelease || echo bundleRelease)
-          ./gradlew ":app:$task" --max-workers=1 "-Prr.versionCode=$MOBILE_BUILD_NUMBER" \
-            "-Pandroid.injected.signing.store.file=$keystore" \
-            "-Pandroid.injected.signing.store.password=$ANDROID_KEYSTORE_PASSWORD" \
-            "-Pandroid.injected.signing.key.alias=$ANDROID_KEY_ALIAS" \
-            "-Pandroid.injected.signing.key.password=$ANDROID_KEY_PASSWORD"
-          out="$RUNNER_TEMP/mobile-release"
-          mkdir -p "$out"
-          if [[ "$FORMAT" == apk ]]; then
-            cp app/build/outputs/apk/release/app-release.apk "$out/reactive-resume-native.apk"
-            "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose --print-certs "$out/reactive-resume-native.apk"
-          else
-            # The store lane in tooling/mobile/fastlane uploads this file name.
-            cp app/build/outputs/bundle/release/app-release.aab "$out/ReactiveResume.aab"
-          fi
-          cp -r app/build/outputs/mapping/release "$out/mapping"
-          jq -n --arg sha "$GITHUB_SHA" --arg build "$MOBILE_BUILD_NUMBER" --arg format "$FORMAT" \
-            '{commit: $sha, platform: "android-native", buildNumber: $build, format: $format}' > "$out/release.json"
-      - name: Upload signed binary
-        uses: actions/upload-artifact@v7
-        with:
-          # Same name as the Expo Android build, so the submit job uploads either app to Play.
-          name: mobile-android-${{ needs.prepare.outputs.build_number }}
-          path: |
-            ${{ runner.temp }}/mobile-release/*.apk
-            ${{ runner.temp }}/mobile-release/*.aab
-          if-no-files-found: error
-          retention-days: ${{ inputs.format == 'apk' && 14 || 90 }}
-      - name: Upload release evidence
-        uses: actions/upload-artifact@v7
-        with:
-          name: mobile-android-${{ needs.prepare.outputs.build_number }}-evidence
-          path: |
-            ${{ runner.temp }}/mobile-release/
-            !${{ runner.temp }}/mobile-release/*.apk
-            !${{ runner.temp }}/mobile-release/*.aab
-          if-no-files-found: error
-          retention-days: 90
-
-  preview-native:
-    name: Build native Android preview APK
-    needs: prepare
-    if: inputs.platform == 'android-native' && inputs.format == 'preview'
-    runs-on: blacksmith-32vcpu-ubuntu-2404
-    timeout-minutes: 60
-    env:
-      MOBILE_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"'
-    defaults:
-      run:
-        working-directory: apps/android
-    steps:
-      - name: Check out source (Blacksmith)
-        uses: useblacksmith/checkout@v1
-        with:
-          persist-credentials: false
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - name: Install dependencies for the bundled local import reader
-        working-directory: .
-        run: pnpm install --frozen-lockfile
-      - name: Set up Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: "21"
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
-        with:
-          packages: platform-tools platforms;android-37.0 build-tools;37.0.0
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
-      - name: Run unit tests (screenshots render; goldens are compared on macOS only)
-        run: ./gradlew testDebugUnitTest --max-workers=1
-      - name: Build preview APK
-        run: |
-          set -euo pipefail
-          ./gradlew :app:assemblePreview --max-workers=1 "-Prr.versionCode=$MOBILE_BUILD_NUMBER"
-          mkdir -p "$RUNNER_TEMP/mobile-release"
-          apk="$RUNNER_TEMP/mobile-release/reactive-resume-preview-$MOBILE_BUILD_NUMBER.apk"
-          cp app/build/outputs/apk/preview/app-preview.apk "$apk"
-          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --print-certs "$apk"
-      - name: Upload preview APK
-        uses: actions/upload-artifact@v7
-        with:
-          name: android-preview-${{ needs.prepare.outputs.build_number }}
-          path: ${{ runner.temp }}/mobile-release/*.apk
-          if-no-files-found: error
-          retention-days: 14
-      - name: Summarize build
-        run: |
-          echo "### Native Android preview $MOBILE_BUILD_NUMBER" >> "$GITHUB_STEP_SUMMARY"
-          echo "Commit: $GITHUB_SHA on ${GITHUB_REF_NAME}. Installs beside the Play app as me.rxresu.preview." >> "$GITHUB_STEP_SUMMARY"
-
-  submit:
-    name: Publish ${{ matrix.platform }} to ${{ github.event_name == 'push' && 'Internal Testing' || 'production review' }}
-    needs: [prepare, build, build-native]
-    # One of the two build jobs is skipped; submit when the other succeeded.
-    if: ${{ !cancelled() && !failure() && (github.event_name == 'push' || (inputs.upload && inputs.format == 'store')) }}
-    permissions:
-      actions: read
-      contents: read
+  upload:
+    name: Upload ${{ matrix.platform == 'ios' && 'to TestFlight' || 'to Play Internal testing' }}
+    needs: [prepare, build]
+    # Runs only after both builds succeeded, and never from another branch.
+    if: github.ref == 'refs/heads/main'
     environment: mobile-store
     strategy:
       fail-fast: false
       matrix:
-        platform: ${{ fromJSON(needs.prepare.outputs.platforms) }}
+        platform: [android, ios]
     runs-on: ${{ matrix.platform == 'ios' && 'blacksmith-12vcpu-macos-latest' || 'blacksmith-32vcpu-ubuntu-2404' }}
     timeout-minutes: 60
     env:
+      PLATFORM: ${{ matrix.platform }}
       BUNDLE_GEMFILE: ${{ github.workspace }}/tooling/mobile/Gemfile
     steps:
       - name: Check out source (Blacksmith)
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
-      - name: Require successful main CI for production source commit
-        if: github.event_name != 'push'
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
-        with:
-          script: |
-            const { requireSuccessfulCI } = await import(`${process.env.GITHUB_WORKSPACE}/tooling/docker/check-ci.mjs`);
-            await requireSuccessfulCI({ github, repo: context.repo, sha: context.sha });
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
@@ -426,15 +254,107 @@ jobs:
         with:
           name: mobile-${{ matrix.platform }}-${{ needs.prepare.outputs.build_number }}
           path: ${{ runner.temp }}/mobile-release
-      - name: Publish signed binary
+      - name: Upload signed binary
         working-directory: tooling/mobile
         env:
-          PLATFORM: ${{ matrix.platform }}
-          GOOGLE_PLAY_TRACK: ${{ github.event_name == 'push' && 'internal' || 'production' }}
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ matrix.platform == 'android' && secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON || '' }}
           ASC_KEY_ID: ${{ matrix.platform == 'ios' && secrets.ASC_KEY_ID || '' }}
           ASC_ISSUER_ID: ${{ matrix.platform == 'ios' && secrets.ASC_ISSUER_ID || '' }}
           ASC_PRIVATE_KEY: ${{ matrix.platform == 'ios' && secrets.ASC_PRIVATE_KEY || '' }}
         run: |
-          node release.ts --upload
+          node release.ts --store
           bundle exec fastlane "$PLATFORM" upload
+
+  # Forme native libraries: releases never use this job's output. They fetch the archive pinned in the reviewed
+  # packages/forme-native/scripts/prebuilt.json; a rebuilt archive is used only after its manifest is committed.
+  forme-build:
+    name: Build Forme native binaries
+    if: github.event_name == 'workflow_dispatch' && inputs.task != 'release'
+    runs-on: blacksmith-12vcpu-macos-latest
+    timeout-minutes: 60
+    outputs:
+      tag: ${{ steps.artifact.outputs.tag }}
+    env:
+      CARGO_BUILD_JOBS: "4"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          packages: ndk;28.2.13676358
+      - name: Install pinned Rust toolchain and tools
+        working-directory: packages/forme-native/rust
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal \
+            --target aarch64-apple-ios,aarch64-apple-ios-sim,aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android
+          cargo install cbindgen --version 0.29.4 --locked
+          cargo install cargo-ndk --version 4.1.2 --locked
+      - name: Build native binaries and verify notices and headers
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/28.2.13676358"
+          bash packages/forme-native/rust/build.sh
+          node packages/forme-native/scripts/notices.mjs
+          git diff --exit-code -- packages/forme-native/THIRD_PARTY_NOTICES.md packages/forme-native/ios/include/forme_native.h
+      - name: Package content-addressed native binaries
+        id: artifact
+        env:
+          RELEASE_BASE: https://github.com/${{ github.repository }}/releases/download
+        run: |
+          node packages/forme-native/scripts/artifact.mjs pack "$RUNNER_TEMP/forme-native" "$RELEASE_BASE" > "$RUNNER_TEMP/forme-native-build.json"
+          node --input-type=module <<'JS'
+          import { appendFileSync, readFileSync } from 'node:fs';
+          const build = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/forme-native-build.json`));
+          appendFileSync(process.env.GITHUB_OUTPUT, `tag=${build.tag}\narchive=${build.archive}\nmanifest=${build.manifest}\n`);
+          JS
+      - name: Verify native binaries can be fetched without Cargo
+        env:
+          MANIFEST: ${{ steps.artifact.outputs.manifest }}
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          import { pathToFileURL } from 'node:url';
+          const manifest = JSON.parse(readFileSync(process.env.MANIFEST));
+          const build = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/forme-native-build.json`));
+          manifest.artifacts[0].url = pathToFileURL(build.archive).href;
+          writeFileSync(`${process.env.RUNNER_TEMP}/local-prebuilt.json`, JSON.stringify(manifest));
+          JS
+          node_bin="$(command -v node)"
+          PATH=/usr/bin:/bin "$node_bin" packages/forme-native/scripts/fetch-prebuilt.mjs --platform android --manifest "$RUNNER_TEMP/local-prebuilt.json"
+          PATH=/usr/bin:/bin "$node_bin" packages/forme-native/scripts/fetch-prebuilt.mjs --platform ios --manifest "$RUNNER_TEMP/local-prebuilt.json"
+      - name: Upload native binary artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.artifact.outputs.tag }}
+          path: ${{ runner.temp }}/forme-native/
+          if-no-files-found: error
+          retention-days: 30
+
+  forme-publish:
+    name: Publish Forme native binaries
+    needs: forme-build
+    if: inputs.task == 'forme-publish'
+    runs-on: blacksmith-32vcpu-ubuntu-2404
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Download native binary artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.forme-build.outputs.tag }}
+          path: ${{ runner.temp }}/forme-native
+      - name: Publish immutable native binary assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.forme-build.outputs.tag }}
+          ARTIFACT_DIR: ${{ runner.temp }}/forme-native
+        run: |
+          gh release create "$TAG" "$ARTIFACT_DIR/$TAG.tar.gz" "$ARTIFACT_DIR/prebuilt.json" --target "$GITHUB_SHA" --title "$TAG" --notes "Native Forme binaries. Review and commit prebuilt.json before building mobile apps." --prerelease

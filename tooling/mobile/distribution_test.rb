@@ -1,15 +1,25 @@
+require "fileutils"
 require "json"
 require "tmpdir"
 require "yaml"
 
+module UI
+  def self.user_error!(message); raise message; end
+  def self.message(_message); end
+end
+
 # Exercise the real lanes at the store SDK boundary without credentials or network calls.
 class DistributionContract
-  attr_reader :uploads
+  attr_reader :uploads, :testflight_queries
 
-  def initialize
+  def initialize(testflight: {}, play: [])
     @lanes = {}
     @uploads = []
+    @testflight_queries = []
     instance_eval(File.read(File.join(__dir__, "fastlane/Fastfile")), File.join(__dir__, "fastlane/Fastfile"))
+    # The Fastfile's helper replaces only the Supply client call; its parsing and selection stay under test.
+    define_singleton_method(:play_version_codes) { play }
+    @testflight = testflight
   end
 
   def desc(_description); end
@@ -17,18 +27,24 @@ class DistributionContract
   def platform(name)
     @platform = name
     yield
+    @platform = nil
   end
 
   def lane(name, &block)
     @lanes[[@platform, name]] = block
   end
 
-  def publish(platform)
-    instance_exec(&@lanes.fetch([platform, :upload]))
+  def run(platform, name, options = {})
+    instance_exec(options, &@lanes.fetch([platform, name]))
   end
 
   def app_store_connect_api_key(**_options)
     { fixture: true }
+  end
+
+  def latest_testflight_build_number(**options)
+    @testflight_queries << options
+    @testflight.fetch(options[:version], options[:initial_build_number])
   end
 
   def upload_to_play_store(**options)
@@ -38,120 +54,79 @@ class DistributionContract
     @uploads << options.merge(changelogs: changelogs)
   end
 
-  def upload_to_app_store(**options)
+  def upload_to_testflight(**options)
     @uploads << options
   end
 end
 
-ENV["RUNNER_TEMP"] = Dir.tmpdir
-ENV.delete("GOOGLE_PLAY_TRACK")
-%w[GOOGLE_PLAY_SERVICE_ACCOUNT_JSON ASC_KEY_ID ASC_ISSUER_ID ASC_PRIVATE_KEY].each { |name| ENV[name] = "fixture" }
-contract = DistributionContract.new
-contract.publish(:android)
-play = contract.uploads.first
-raise "Play must upload once" unless contract.uploads.length == 1
-raise "Manual Play releases must default to production" unless play[:track] == "production"
-raise "Play must submit a full production release for review" unless
-  play[:release_status] == "completed" && !play[:changes_not_sent_for_review] &&
-    play[:rescue_changes_not_sent_for_review] == false
-raise "Play must upload this run's signed artifact to the correct app" unless
-  play[:package_name] == "me.rxresu" && play[:aab] == File.join(Dir.tmpdir, "mobile-release/ReactiveResume.aab")
-localizations = JSON.parse(File.read(File.join(__dir__, "../../apps/mobile/store/metadata.json"))).fetch("localizations").values
-notes = ->(store) { localizations.to_h { |l| [l.fetch(store), l["releaseNotes"].to_s.strip] } }
-raise "Every listing locale needs release notes within Play's 500-character limit" if
-  localizations.any? { |l| l["releaseNotes"].to_s.strip.empty? || l["releaseNotes"].strip.length > 500 }
-raise "Play must send each locale's release notes without the store listing" unless
-  play[:changelogs] == notes.call("googleLocale") && play[:skip_upload_changelogs] == false && play[:skip_upload_metadata]
+Dir.mktmpdir do |directory|
+  ENV["RUNNER_TEMP"] = directory
+  output = ENV["GITHUB_OUTPUT"] = File.join(directory, "output")
+  %w[GOOGLE_PLAY_SERVICE_ACCOUNT_JSON ASC_KEY_ID ASC_ISSUER_ID ASC_PRIVATE_KEY].each { |name| ENV[name] = "fixture" }
 
-contract.publish(:ios)
-app_store = contract.uploads.last
-raise "iOS must upload once to the App Store" unless contract.uploads.length == 2
-raise "App Store must submit for review and release after approval" unless
-  app_store[:submit_for_review] && app_store[:automatic_release] && app_store[:skip_metadata] == false
-# Fastlane reads version/build from this IPA to create the version and await the matching processed build.
-raise "App Store must upload and select this run's signed artifact" unless
-  app_store[:app_identifier] == "me.rxresu" &&
-    app_store[:ipa] == File.join(Dir.tmpdir, "mobile-release/ReactiveResume.ipa") &&
-    !app_store[:skip_binary_upload] && !app_store[:build_number]
-raise "App Store must send each listing locale's release notes" unless app_store[:release_notes] == notes.call("appleLocale")
-raise "App Store API-key precheck must exclude unsupported in-app purchase checks" unless
-  app_store[:precheck_include_in_app_purchases] == false
-ENV["GOOGLE_PLAY_TRACK"] = "internal"
-internal = DistributionContract.new
-internal.publish(:android)
-testing = internal.uploads.fetch(0)
-raise "Internal Testing must publish this artifact, not create a draft or promote production" unless
-  internal.uploads.length == 1 && testing[:track] == "internal" && testing[:release_status] == "completed" &&
-    !testing[:track_promote_to] && testing[:aab] == play[:aab] && testing[:package_name] == play[:package_name] &&
-    testing[:changes_not_sent_for_review] == false && testing[:rescue_changes_not_sent_for_review] == false
-raise "Internal uploads must preserve listing metadata" unless
-  testing[:skip_upload_metadata] && testing[:skip_upload_images] && testing[:skip_upload_screenshots]
-ENV["GOOGLE_PLAY_TRACK"] = "untrusted-track"
-begin
-  internal.publish(:android)
-  raise "Invalid track accepted"
-rescue RuntimeError => error
-  raise unless error.message == "Unsupported Google Play track"
+  # Store readings: the highest of this version's and any version's latest TestFlight build, the highest Play code.
+  store = DistributionContract.new(testflight: { "1.0.1" => 7, nil => 41 }, play: %w[12 40 9])
+  store.run(nil, :store_build_numbers, version: "1.0.1")
+  raise "Store readings must be written for the build-number rule" unless File.read(output) == "ios=41\nandroid=40\n"
+  raise "TestFlight must be read for this version and overall, defaulting only an empty train to 0" unless
+    store.testflight_queries.map { |query| query[:version] } == ["1.0.1", nil] &&
+      store.testflight_queries.all? { |query| query[:app_identifier] == "me.rxresu" && query[:initial_build_number] == 0 }
+  File.delete(output)
+  DistributionContract.new(testflight: { "1.0.1" => 3 }, play: []).run(nil, :store_build_numbers, version: "1.0.1")
+  raise "An app with no Play releases reads as 0" unless File.read(output) == "ios=3\nandroid=0\n"
+  [{ testflight: { nil => "1.2" } }, { play: ["x"] }].each do |reading|
+    FileUtils.rm_f(output)
+    begin
+      DistributionContract.new(**reading).run(nil, :store_build_numbers, version: "1.0.1")
+      raise "Accepted #{reading}"
+    rescue RuntimeError => error
+      raise if error.message.start_with?("Accepted")
+      raise "An unreadable store must not write a number" if File.exist?(output)
+    end
+  end
+
+  contract = DistributionContract.new
+  contract.run(:android, :upload)
+  play = contract.uploads.last
+  raise "Play must publish this run's bundle to Internal testing only" unless
+    play[:package_name] == "me.rxresu" && play[:aab] == File.join(directory, "mobile-release/ReactiveResume.aab") &&
+      play[:track] == "internal" && play[:release_status] == "completed" && !play[:track_promote_to] &&
+      play[:changes_not_sent_for_review] == false && play[:rescue_changes_not_sent_for_review] == false
+  localizations = JSON.parse(File.read(File.join(__dir__, "../../apps/mobile/store/metadata.json"))).fetch("localizations").values
+  raise "Every listing locale needs release notes within Play's 500-character limit" if
+    localizations.any? { |l| l["releaseNotes"].to_s.strip.empty? || l["releaseNotes"].strip.length > 500 }
+  raise "Play must send each locale's release notes and leave the listing alone" unless
+    play[:changelogs] == localizations.to_h { |l| [l.fetch("googleLocale"), l["releaseNotes"].strip] } &&
+      play[:skip_upload_metadata] && play[:skip_upload_images] && play[:skip_upload_screenshots]
+
+  contract.run(:ios, :upload)
+  testflight = contract.uploads.last
+  raise "iOS must upload this run's IPA to TestFlight for internal testers and wait for processing" unless
+    testflight[:app_identifier] == "me.rxresu" && testflight[:ipa] == File.join(directory, "mobile-release/ReactiveResume.ipa") &&
+      testflight[:distribute_external] == false && testflight[:skip_waiting_for_build_processing] == false
 end
-raise "Invalid track must not upload" unless internal.uploads.length == 1
-ENV.delete("GOOGLE_PLAY_TRACK")
-puts "Production and Internal Testing distribution contracts passed"
+puts "Store build-number reading, Play Internal testing and TestFlight upload contracts passed"
 
-# The workflow's routing expressions use this shared Ruby/GitHub boolean/property subset.
-def workflow_expression(source, event:, platform: "all", format: "store", upload: false,
-  ref: "refs/heads/main", failure: false, cancelled: false)
-  github = Struct.new(:event_name, :ref).new(event, ref)
-  inputs = Struct.new(:platform, :format, :upload).new(platform, format, upload)
-  expression = source.strip.delete_prefix("${{").delete_suffix("}}").gsub(/\b(failure|cancelled)\(\)/, '\1')
-  eval(expression, binding)
-end
-
-workflow = YAML.load_file(File.join(__dir__, "../../.github/workflows/mobile-release.yml"))
+workflow_file = File.join(__dir__, "../../.github/workflows/mobile-release.yml")
+source = File.read(workflow_file)
+workflow = YAML.load_file(workflow_file)
 events = workflow["on"] || workflow[true] # Psych's YAML 1.1 parser treats `on` as a boolean.
-raise "Every main push must trigger release without path filters" unless events.fetch("push") == { "branches" => ["main"] }
+raise "Pushes to main must release when the app's inputs change" unless
+  events.fetch("push").fetch("branches") == ["main"] &&
+    %w[apps/mobile/** packages/** patches/** pnpm-lock.yaml pnpm-workspace.yaml tooling/mobile/**].all? { |path| events["push"]["paths"].include?(path) }
 raise "Releases must queue rather than cancel pending uploads" unless
-  workflow.fetch("concurrency").values_at("group", "cancel-in-progress", "queue") == ["mobile-release", false, "max"]
+  workflow.fetch("concurrency").values_at("group", "cancel-in-progress") == ["mobile-release", false]
+raise "No EAS, Expo token or OTA in the release" if source.match?(/\beas\b|EXPO_TOKEN|expo-updates|MOBILE_BUILD_NUMBER_BASE/)
 jobs = workflow.fetch("jobs")
-%w[build-native preview-native].each do |name|
-  job = jobs.fetch(name)
-  raise "Native CI must override the modest local build heap" unless
-    job.fetch("env").fetch("GRADLE_OPTS").include?('-Dorg.gradle.jvmargs="-Xmx8g ')
-  gradle_commands = job.fetch("steps").filter_map { |step| step["run"] }
-    .flat_map(&:lines).select { |line| line.include?("./gradlew") }
-  raise "Native CI must bound resource/test concurrency" unless
-    gradle_commands.length == 2 && gradle_commands.all? { |line| line.include?("--max-workers=1") }
-end
-push = { event: "push", platform: nil, format: nil, upload: nil }
-dispatch = { event: "workflow_dispatch" }
-raise "Push must build only the Kotlin AAB" unless
-  workflow_expression(jobs.fetch("build-native").fetch("if"), **push) &&
-    !workflow_expression(jobs.fetch("build").fetch("if"), **push) &&
-    !workflow_expression(jobs.fetch("preview-native").fetch("if"), **push) &&
-    workflow_expression(workflow.fetch("env").fetch("FORMAT"), **push) == "store"
-prepare = jobs.fetch("prepare").fetch("steps").find { |step| step["id"] == "release" }.fetch("env")
-raise "Push must use the shared native release counter" unless
-  workflow_expression(prepare.fetch("PLATFORM"), **push) == "android-native" &&
-    workflow_expression(prepare.fetch("UPLOAD"), **push) == "true"
-submit = jobs.fetch("submit")
-upload_step = submit.fetch("steps").find { |step| step["env"]&.key?("GOOGLE_PLAY_TRACK") }
-raise "Every successful push must publish only to Internal Testing" unless
-  workflow_expression(submit.fetch("if"), **push) &&
-    workflow_expression(upload_step.fetch("env").fetch("GOOGLE_PLAY_TRACK"), **push) == "internal"
-raise "Failed or canceled builds must not upload" if
-  workflow_expression(submit.fetch("if"), **push, failure: true) ||
-    workflow_expression(submit.fetch("if"), **push, cancelled: true)
-raise "Manual uploads must remain opt-in production releases" unless
-  !workflow_expression(submit.fetch("if"), **dispatch) &&
-    workflow_expression(submit.fetch("if"), **dispatch, upload: true) &&
-    !workflow_expression(submit.fetch("if"), **dispatch, upload: true, format: "apk") &&
-    workflow_expression(upload_step.fetch("env").fetch("GOOGLE_PLAY_TRACK"), **dispatch) == "production"
-ci_gate = submit.fetch("steps").find { |step| step["name"]&.include?("successful main CI") }
-raise "Manual production must retain its exact-source main-CI gate" unless
-  workflow_expression(ci_gate.fetch("if"), **dispatch) && !workflow_expression(ci_gate.fetch("if"), **push)
-raise "Untrusted branches must never reach signing or uploads" if
-  workflow_expression(jobs.fetch("prepare").fetch("if"), **dispatch, ref: "refs/heads/untrusted")
-raise "Native previews must remain available without signing secrets" unless
-  workflow_expression(jobs.fetch("prepare").fetch("if"), **dispatch, format: "preview", ref: "refs/heads/preview") &&
-    workflow_expression(jobs.fetch("preview-native").fetch("if"), **dispatch, platform: "android-native", format: "preview") &&
-    !workflow_expression(jobs.fetch("build-native").fetch("if"), **dispatch, platform: "android-native", format: "preview")
-puts "Main-push Internal Testing and manual release workflow routing passed"
+raise "Unexpected jobs" unless jobs.keys.sort == %w[build forme-build forme-publish prepare upload]
+raise "Store numbers and uploads must stay on main" unless
+  jobs.fetch("prepare").fetch("if").start_with?("github.ref == 'refs/heads/main' &&") &&
+    jobs.fetch("upload").fetch("if") == "github.ref == 'refs/heads/main'"
+raise "Uploads must wait for both builds" unless jobs.fetch("upload").fetch("needs") == %w[prepare build]
+raise "Builds must use the store-derived number for the production variant" unless
+  jobs.fetch("build").fetch("env").values_at("APP_VARIANT", "MOBILE_BUILD_NUMBER") ==
+    ["production", "${{ needs.prepare.outputs.build_number }}"]
+raise "Releases must not depend on an unreviewed Forme rebuild" if
+  [jobs["prepare"], jobs["build"], jobs["upload"]].any? { |job| Array(job["needs"]).any? { |name| name.start_with?("forme") } } ||
+    !jobs.fetch("forme-build").fetch("if").include?("workflow_dispatch")
+puts "Release workflow routing passed"

@@ -7,8 +7,8 @@ require "tmpdir"
 ROOT = File.expand_path("../../..", __dir__)
 MOBILE = File.join(ROOT, "apps/mobile")
 OUTPUT = File.join(ENV.fetch("RUNNER_TEMP"), "mobile-release")
-# Translated "What's new" text keyed by store locale ("appleLocale" or "googleLocale"). App Store Connect blocks
-# review while any listing locale lacks it and rejects it on an app's first version; Play caps each at 500 characters.
+# Translated "What's new" text keyed by store locale ("appleLocale" or "googleLocale"), sent to Play with each upload
+# (500 characters at most). App Store Connect needs the same text when a build is submitted for review.
 def release_notes(store)
   JSON.parse(File.read(File.join(MOBILE, "store/metadata.json"))).fetch("localizations").values
     .to_h { |localization| [localization.fetch(store), localization.fetch("releaseNotes").strip] }
@@ -20,17 +20,57 @@ def secret_file(directory, name, value, base64: false)
   path
 end
 
+def asc_api_key
+  app_store_connect_api_key(
+    key_id: ENV.fetch("ASC_KEY_ID"), issuer_id: ENV.fetch("ASC_ISSUER_ID"), key_content: ENV.fetch("ASC_PRIVATE_KEY")
+  )
+end
+
+# Every version code in every Play track (internal, testing, production and custom), read in one aborted edit.
+def play_version_codes
+  require "supply"
+  require "supply/options"
+  Supply.config = FastlaneCore::Configuration.create(
+    Supply::Options.available_options,
+    package_name: "me.rxresu", json_key_data: ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON")
+  )
+  client = Supply::Client.make_from_config
+  client.begin_edit(package_name: "me.rxresu")
+  begin
+    client.tracks.flat_map { |track| Array(track.releases).flat_map { |release| Array(release.version_codes) } }
+  ensure
+    client.abort_current_edit
+  end
+end
+
+def whole_number(value)
+  Integer(value.to_s, 10)
+rescue ArgumentError
+  UI.user_error!("Store returned a build number that is not a whole number")
+end
+
+desc "Write the latest TestFlight build number and the highest Play version code to GITHUB_OUTPUT"
+lane :store_build_numbers do |options|
+  version = options.fetch(:version)
+  # The upload must exceed both this version's latest build and the latest build of any version.
+  ios = [{ version: version }, {}].map do |filter|
+    whole_number(latest_testflight_build_number(api_key: asc_api_key, app_identifier: "me.rxresu",
+      initial_build_number: 0, **filter))
+  end.max
+  android = play_version_codes.map { |code| whole_number(code) }.max || 0
+  File.write(ENV.fetch("GITHUB_OUTPUT"), "ios=#{ios}\nandroid=#{android}\n", mode: "a")
+  UI.message("Latest store build numbers: TestFlight #{ios}, Google Play #{android}")
+end
+
 platform :android do
-  desc "Build a signed production App Bundle, or a manual APK for the requested ABI"
-  lane :build do |options|
-    abi = options[:abi]
-    UI.user_error!("Unsupported Android ABI") if abi && !%w[arm64-v8a armeabi-v7a x86_64].include?(abi)
+  desc "Build a signed App Bundle"
+  lane :build do
     FileUtils.mkdir_p(OUTPUT)
     Dir.mktmpdir("android-signing-", ENV.fetch("RUNNER_TEMP")) do |directory|
       keystore = secret_file(directory, "upload.jks", ENV.fetch("ANDROID_KEYSTORE_BASE64"), base64: true)
       gradle(
         project_dir: File.join(MOBILE, "android"),
-        task: abi ? "assemble" : "bundle", build_type: "Release", flags: "--no-daemon",
+        task: "bundle", build_type: "Release", flags: "--no-daemon",
         print_command: false,
         properties: {
           "android.enableMinifyInReleaseBuilds" => "true",
@@ -39,11 +79,9 @@ platform :android do
           "android.injected.signing.store.password" => ENV.fetch("ANDROID_KEYSTORE_PASSWORD"),
           "android.injected.signing.key.alias" => ENV.fetch("ANDROID_KEY_ALIAS"),
           "android.injected.signing.key.password" => ENV.fetch("ANDROID_KEY_PASSWORD")
-        }.merge(abi ? { "reactNativeArchitectures" => abi } : {})
+        }
       )
-      source = lane_context[abi ? SharedValues::GRADLE_APK_OUTPUT_PATH : SharedValues::GRADLE_AAB_OUTPUT_PATH]
-      name = abi ? "reactive-resume-#{abi}.apk" : "ReactiveResume.aab"
-      FileUtils.cp(source, File.join(OUTPUT, name))
+      FileUtils.cp(lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH], File.join(OUTPUT, "ReactiveResume.aab"))
       maps = File.join(MOBILE, "android/app/build/generated/sourcemaps/react/release")
       FileUtils.cp_r(maps, File.join(OUTPUT, "sourcemaps")) if Dir.exist?(maps)
       %w[mapping native-debug-symbols].each do |kind|
@@ -53,10 +91,8 @@ platform :android do
     end
   end
 
-  desc "Publish to Google Play Internal Testing or production"
+  desc "Publish to Google Play Internal testing"
   lane :upload do
-    track = ENV.fetch("GOOGLE_PLAY_TRACK", "production")
-    raise "Unsupported Google Play track" unless %w[internal production].include?(track)
     # supply reads release notes only from a metadata tree; listing text, images and screenshots stay skipped.
     Dir.mktmpdir("play-metadata-", ENV.fetch("RUNNER_TEMP")) do |metadata|
       release_notes("googleLocale").each do |locale, notes|
@@ -68,7 +104,7 @@ platform :android do
         package_name: "me.rxresu",
         json_key_data: ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
         aab: File.join(OUTPUT, "ReactiveResume.aab"),
-        track: track, release_status: "completed",
+        track: "internal", release_status: "completed",
         changes_not_sent_for_review: false, rescue_changes_not_sent_for_review: false,
         metadata_path: metadata,
         skip_upload_apk: true, skip_upload_metadata: true, skip_upload_changelogs: false,
@@ -143,19 +179,13 @@ platform :ios do
     end
   end
 
-  desc "Submit to App Review and release automatically after approval"
+  desc "Upload to TestFlight; internal testers get it once App Store Connect has processed it"
   lane :upload do
-    api_key = app_store_connect_api_key(
-      key_id: ENV.fetch("ASC_KEY_ID"), issuer_id: ENV.fetch("ASC_ISSUER_ID"),
-      key_content: ENV.fetch("ASC_PRIVATE_KEY")
-    )
-    upload_to_app_store(
-      api_key: api_key, app_identifier: "me.rxresu",
+    # Waiting for processing turns a build that App Store Connect rejects into a failed run.
+    upload_to_testflight(
+      api_key: asc_api_key, app_identifier: "me.rxresu",
       ipa: File.join(OUTPUT, "ReactiveResume.ipa"),
-      submit_for_review: true, automatic_release: true, release_notes: release_notes("appleLocale"),
-      # Metadata processing also applies automatic_release; existing listing fields stay in App Store Connect.
-      skip_metadata: false, skip_screenshots: true, force: true,
-      precheck_include_in_app_purchases: false
+      distribute_external: false, skip_waiting_for_build_processing: false
     )
   end
 end
