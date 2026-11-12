@@ -1,7 +1,7 @@
 import type { Scenario } from "../harness";
 // Storyboard scenarios owned by screen agent C (see PLAN.md): the builder's Edit, Design and Check screens.
 // `prepare` fills in what the storyboard draws and the shared fixture lacks (accent, type, languages, a profile, the
-// B9 findings, the B10 link) straight into the open draft, so no undo step or save comes of it.
+// B9 findings, the B10 link) straight into the open draft, so no undo step comes of it; the save is awaited.
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { overBackdrop } from "../backdrop";
 import { useResumeStore } from "@/data";
@@ -38,6 +38,8 @@ async function patch(extra?: (data: ResumeData) => void, document?: Record<strin
 		Object.assign(draft, document ?? {});
 		draft.data = data as never;
 	});
+	// The patch is saved like any edit: wait for it, so a capture never reads "Saving…" in the status line.
+	await s.flush();
 }
 
 function addProfile(data: ResumeData) {
