@@ -1,7 +1,7 @@
 ---
-version: 6.0.0
-name: Reactive Resume · Desk & Paper
-description: A warm, quiet interface around bright paper. Moss green marks primary actions, selection, and progress. Light and dark themes keep document paper white.
+version: 7.0.0
+name: Reactive Resume · Calm
+description: A quiet desk around a bright page, drawn with soft corners, flat lists, serif titles and one obvious next step per view. Moss green marks the one primary action, selection and progress. Light and dark themes keep document paper white.
 colors:
   light:
     bg: "#F8F7F3"
@@ -20,9 +20,11 @@ colors:
     accent-soft: "#DCF2DF"
     accent-text: "#195C2E"
     danger: "#BA3630"
+    danger-fill: "#BA3630"
     danger-soft: "#FFE7E4"
     danger-text: "#A92321"
     warn: "#D29922"
+    warn-mark: "#B37A1A"
     warn-soft: "#FCEDCD"
     warn-text: "#81520A"
     warn-ink: "#22190A"
@@ -45,9 +47,11 @@ colors:
     accent-soft: "#1A3520"
     accent-text: "#8FD89E"
     danger: "#D9544B"
+    danger-fill: "#C23F38"
     danger-soft: "#47211D"
     danger-text: "#FDA297"
     warn: "#E4B750"
+    warn-mark: "#E4B750"
     warn-soft: "#3E2D10"
     warn-text: "#EFCC83"
     warn-ink: "#22190A"
@@ -63,27 +67,43 @@ colors:
     closed: "#C67067"
 typography:
   display: { fontFamily: Instrument Serif, fontSize: 44px, lineHeight: 48px, fontWeight: 400, letterSpacing: -0.01em }
-  title: { fontFamily: Instrument Serif, fontSize: 30px, lineHeight: 36px, fontWeight: 400 }
-  sheet-title: { fontFamily: Instrument Serif, fontSize: 22px, lineHeight: 28px, fontWeight: 400 }
+  big-number: { fontFamily: Instrument Serif, fontSize: 40px, lineHeight: 44px, fontWeight: 400 }
+  root-title:
+    { fontFamily: Instrument Serif, fontSize: 34px, lineHeight: 40px, fontWeight: 400, letterSpacing: -0.005em }
+  page-title: { fontFamily: Instrument Serif, fontSize: 28px, lineHeight: 34px, fontWeight: 400 }
+  section-title: { fontFamily: Instrument Serif, fontSize: 22px, lineHeight: 28px, fontWeight: 400 }
   heading: { fontFamily: Figtree, fontSize: 20px, lineHeight: 28px, fontWeight: 600 }
   section-heading: { fontFamily: Figtree, fontSize: 17px, lineHeight: 24px, fontWeight: 600 }
   label: { fontFamily: Figtree, fontSize: 15px, lineHeight: 22px, fontWeight: 600 }
-  field-label: { fontFamily: Figtree, fontSize: 12px, lineHeight: 16px, fontWeight: 500 }
+  row-title: { fontFamily: Figtree, fontSize: 15px, lineHeight: 22px, fontWeight: 500 }
   body: { fontFamily: Figtree, fontSize: 15px, lineHeight: 24px, fontWeight: 400 }
   ui: { fontFamily: Figtree, fontSize: 14px, lineHeight: 20px, fontWeight: 400 }
   small: { fontFamily: Figtree, fontSize: 13px, lineHeight: 18px, fontWeight: 400 }
+  field-label: { fontFamily: Figtree, fontSize: 13px, lineHeight: 18px, fontWeight: 500 }
   caption: { fontFamily: Figtree, fontSize: 12px, lineHeight: 16px, fontWeight: 500 }
+  eyebrow: { fontFamily: Figtree, fontSize: 12px, lineHeight: 16px, fontWeight: 600 }
   mono: { fontFamily: Geist Mono, fontSize: 12px, lineHeight: 16px, fontWeight: 500 }
 rounded:
-  xs: 2px
-  sm: 2px
-  md: 3px
-  lg: 4px
-  xl: 4px
-  2xl: 4px
-  3xl: 4px
-  4xl: 4px
-spacing: [4, 8, 12, 16, 24, 32, 48, 64]
+  xs: 6px
+  sm: 8px
+  md: 10px
+  lg: 12px
+  xl: 16px
+  2xl: 20px
+  3xl: 20px
+  4xl: 20px
+  paper: 2px
+  full: 999px
+spacing: [4, 8, 12, 16, 20, 24, 32, 40, 48, 64]
+layout:
+  app-sidebar: 248px
+  content-max: 1040px
+  row: 56px
+  editor-bar: 56px
+  editor-panel: 400px
+  sheet: 440px
+  sheet-detail: 480px
+  dialog: 480px
 motion:
   quick: 120ms
   standard: 200ms
@@ -125,19 +145,30 @@ marketing:
 
 ## Overview
 
-Reactive Resume uses “Desk & Paper”: a warm, quiet interface around a bright resume or letter. Low-contrast surfaces, thin rules, and a moss-green accent keep attention on the document.
+Reactive Resume uses “Calm”: a quiet desk around a bright page, drawn with soft corners, flat lists and one obvious next step per view. It keeps the colours, type families, shadows, motion and voice of Desk & Paper (version 6) and replaces its shape, spacing, hierarchy and layout rules.
 
-This reference covers the current app, its AI features and the homepage. Implementation details live in the source files named below.
+This reference covers the app, its AI features and the homepage. The homepage keeps the Desk & Paper corners (see Marketing site). Implementation details live in the source files named below.
 
-Five principles guide decisions:
+Nine principles guide decisions:
 
-1. **The page is the interface.** Keep the live document visible while editing. Selecting a supported block opens its fields.
-2. **One obvious next step.** Each app view has one primary action. Reserve accent fills for that action, selection, and progress.
-3. **Nothing is lost.** Edits autosave, reversible changes offer undo, and confirmations are reserved for irreversible actions.
-4. **Detail on demand.** Make defaults useful; put advanced controls one disclosure deeper.
-5. **AI proposes, you decide.** Show AI edits as reviewable proposals before applying them.
+1. **One obvious next step.** One `accent` button per view. Root pages lead with a hero card when one thing matters most.
+2. **Serif carries hierarchy.** Instrument Serif titles order the page, so sections need no boxes and no eyebrow labels.
+3. **Flat lists, not boxes.** Content is rows on the page, split by hairlines: a title, one quiet line, one thing at the end.
+4. **Room to breathe.** 40px page margins, 56px rows, 32px above each section title.
+5. **The page is the interface.** The document stays visible and full size while you edit; panels take turns beside it and never cover it.
+6. **Nothing is lost.** Edits save as you type. Reversible actions happen at once with Undo; only permanent deletes ask.
+7. **Words over colour.** A stage is a dot plus its name; a status is a badge with a word.
+8. **AI proposes, you decide.** AI edits arrive as numbered proposals. A screen without AI shows what works without it and one “Set up AI” action.
+9. **Reachable by everyone.** Every control works by keyboard, shows its focus, and every drag has a menu alternative.
 
 Resume templates retain their Pokémon names, fonts, and palettes. App typography and control styling do not dictate template appearance.
+
+## Content
+
+- Sentence case everywhere. No all caps, no emoji, no exclamation marks.
+- Plain and specific: say what happened, then what to do next (“Couldn't export the PDF. Your changes are saved. Try again.”).
+- Second person. The product never says “we”; only the assistant and coach say “I” in their own replies.
+- Fixed vocabulary: Save a job · Move to Trash (reversible) · Delete permanently · Open · Write, Design, Check, Share · Set up AI. `GLOSSARY.md` wins where it disagrees.
 
 ## Tokens
 
@@ -146,22 +177,23 @@ Resume templates retain their Pokémon names, fonts, and palettes. App typograph
 - **Surfaces:** `bg` for the app desk; `surface` for panels and cards; `raised` for menus, dialogs, and inputs; `sunken` for wells, tracks, and the page canvas.
 - **Borders:** `line` for dividers and every element's default border; `line-2` for decorative rules and quiet outlines (secondary buttons, outline badges, dashed empty states, chips); `control-border` for the edges people must find: inputs, checkboxes, radios, code boxes, the chat composer, and the off switch and slider tracks. `control-border` holds 3:1 on every surface in both themes; `line-2` does not, so it is never a control's only edge.
 - **Text:** `ink` for primary text, `ink-2` for secondary text, and `ink-3` for metadata and placeholders. Use no lighter text token, and check contrast on tinted backgrounds.
-- **Signals:** `danger` for errors and irreversible actions; `warn` for issues to review; `warn-ink` for text on a solid `warn` fill, such as issue-marker numbers; `info-soft` and `info-text` for neutral guidance. Success uses `accent-soft` and `accent-text`.
+- **Signals:** `danger` for errors and irreversible actions; `danger-fill` fills the permanent-delete button; `warn-mark` is for warning marks that must hold 3:1 on `bg`; `warn` for issues to review; `warn-ink` for text on a solid `warn` fill, such as issue-marker numbers; `info-soft` and `info-text` for neutral guidance. Success uses `accent-soft` and `accent-text`.
 - **Overlays:** `hover` and `press` are translucent interaction states; `scrim` and `scrim-sheet` dim the background behind layers.
 - **Paper:** `--paper` remains white in both themes. Switching the app theme must not invert documents.
-- **Stages:** `stage-saved`, `stage-applied`, `stage-screening`, `stage-interview`, `stage-offer`, and `stage-closed` identify application stages. Use small dots or stepper bars beside stage names.
+- **Accent is scarce:** `accent` fills the one primary button of a view, checked controls and the focus ring. Selection uses `accent-soft` with `accent-text`, never the fill. On `accent-soft`, move `ink-3` up to `ink-2`.
+- **Stages:** `stage-saved`, `stage-applied`, `stage-screening`, `stage-interview`, `stage-offer`, and `stage-closed` identify application stages. They appear only as a dot (or the stepper's bar) beside the stage name.
 
 Use semantic tokens in app code. Legacy names such as `background`, `foreground`, `primary`, `muted`, and `sidebar-*` are no longer defined.
 
 ## Typography
 
-The front matter records the app type scale. Field labels use the separate `field-label` size.
+The front matter records the app type scale. Each style is one utility in `globals.css`: `t-display`, `t-big-number`, `t-root-title`, `t-page-title`, `t-section-title`, `t-heading`, `t-section-heading`, `t-label`, `t-row-title`, `t-body`, `t-ui`, `t-small`, `t-caption`, `t-eyebrow`, `t-mono`.
 
-- **Instrument Serif:** page, dialog, and sheet titles; empty-state headlines; large statistics. Use `font-display`. It has one weight (400 and italic): never set it semibold or bold, which the browser would fake.
-- **Figtree:** functional UI and body text. Use `font-sans` or `font-ui`.
+- **Instrument Serif** carries the hierarchy: `root-title` (34) on the five top-level pages (Today, Documents, Applications, Career, Settings), `page-title` (28) on a page reached from a list, `section-title` (22) for sections, dialog and sheet titles and empty states, `big-number` and `display` for statistics. It has one weight (400 and italic): never set it semibold or bold, which the browser would fake.
+- **Figtree:** everything functional. `ui` (14/20) by default, `body` (15/24) for reading, `row-title` and `label` (15) in rows and bars, `heading` (20) in the hero, `section-heading` (17) inside panels, `small` (13) for second lines, `caption` (12) for badges.
 - **Geist Mono:** shortcuts, URLs, slugs, filenames and counts. Use `font-mono`.
-- No all-caps labels or title caps: headings, eyebrows, group labels and buttons are sentence case at 12px or larger, with normal tracking.
-- Field labels are 12px, medium weight, in `ink-2`, with a 6px gap above the control. Group eyebrows are 12px, semibold, in `ink-3`.
+- No all-caps labels or title caps. No eyebrow labels on pages: `eyebrow` survives only as a group label inside menus and the command palette.
+- Field labels are 13px, medium weight, in `ink-2`, with a 6px gap above the 40px control.
 - Rendered rich text (assistant and coach replies, the rich-text editor) uses shadcn Typeset: `packages/ui/src/styles/typeset.css`, an owned copy reading the app tokens. Wrap content in `typeset` plus a preset: `typeset-chat` or `typeset-field`. It styles only the elements those surfaces render (no images, `kbd`, `details`, definition lists or math). Opt a component out with `not-typeset`. Always add a preset: both set headings in Figtree, while the bare class would set them in Instrument Serif at 600, a weight the browser fakes. In both presets each block keeps the direction of its first letter.
 - Touch inputs use at least 16px text to prevent iOS zoom.
 - Fonts are self-hosted through `@fontsource-variable/figtree`, `@fontsource/instrument-serif` and `@fontsource-variable/geist-mono`.
@@ -170,7 +202,7 @@ The front matter records the app type scale. Field labels use the separate `fiel
 
 App icons use **Phosphor** (regular weight) through `Icon` from `@reactive-resume/ui/components/icon`. `Icon` takes the glyph's Phosphor name (`x`, `gear-six`, `magnifying-glass`), the same names the [Phosphor catalog](https://phosphoricons.com) and resume icons use. To use another glyph, add it to the `icons` map in that file.
 
-Use 20px icons on desktop and 24px on touch interfaces. Regular weight is the default; reserve filled app icons for selected navigation. Marketing illustrations may use filled icons, such as the GitHub star.
+Use 20px icons on desktop and 24px on touch interfaces. Regular weight is the default; the filled weight appears only on the selected navigation item. `sparkle` marks AI and nothing else. Marketing illustrations may use filled icons, such as the GitHub star.
 
 Pair icons with text. Back, close, more, undo/redo, history, assistant, and zoom controls may use `IconButton`, which requires an accessible label and supplies a tooltip with an optional shortcut. `Icon` is decorative (`aria-hidden`) and sized by its font size, so containers can resize it with `text-*`. Directional arrows, chevrons, undo, and redo mirror in RTL layouts.
 
@@ -178,11 +210,42 @@ Icons inside resumes use Phosphor names stored in resume data, drawn by the Phos
 
 ## Space, shape, and elevation
 
-- **Spacing:** use the 4px scale in the front matter. Cards typically have 16px padding, panels 16–24px, mobile pages 16px margins, and desktop pages 32–40px margins.
-- **Radius:** 2px (`rounded-sm`) for chips, tags, avatars, switches and small marks; 3px (`rounded-md`) for inputs and controls; 4px (`rounded-lg` and up) for cards, menus, dialogs and sheets. Nothing is rounder than 4px; no pills. Only data-viz rings, radio buttons, spinners and landing illustrations stay circular.
-- **Elevation:** `shadow-e1` for cards; `shadow-e2` for menus and popovers; `shadow-e3` for dialogs, sheets, and toasts; `shadow-page` for editor paper.
-- **Controls:** button heights are 28px (`sm`), 36px (`default`), and 44px (`lg`). Icon button sizes range from 28px to 44px. Inputs and default buttons grow from 36px to 44px on touch devices (a button that sets its own height keeps it; a control beside an input matches it); `touch-target` expands smaller controls' hit areas to at least 44×44px and needs a positioned host (`relative`), or its overlay covers the nearest positioned ancestor and steals taps. Keyboard-shortcut help entries hide on touch screens.
-- **Layout variables:** `--editor-bar: 56px`, `--editor-panel: 400px`, `--app-sidebar: 240px`, `--sheet-share: 440px`, `--sheet-detail: 480px`, and `--assistant: 400px`.
+- **Spacing:** the 4px scale in the front matter. 40px page margins (32px at 640–1023, 16px below 640), 32px above a section title, 48px between a page's main column and its aside.
+- **Radius:** `rounded-xs` 6 badges, checkboxes and keys · `rounded-sm` 8 chips, small buttons, menu items and avatars · `rounded-md` 10 buttons, inputs, icon buttons and sidebar items · `rounded-lg` 12 large buttons, segmented controls, menus, toasts, callouts and board cards · `rounded-xl` 16 cards, the hero and the composer · `rounded-2xl` 20 dialogs, sheets and the command palette · `rounded-full` switches, radios and dots. **Paper stays square:** document pages and thumbnails use `rounded-paper` (2px).
+- **A card is allowed in three places:** the hero, dialogs and sheets, and board cards. Everything else is rows.
+- **Elevation:** `shadow-e1` for cards and the selected segment; `shadow-e2` for menus and popovers; `shadow-e3` for dialogs, sheets, and toasts; `shadow-page` for editor paper.
+- **Controls:** button heights are 28px (`sm`), 36px (`default`), and 44px (`lg`). Icon buttons 36px (28px small). Inputs 40px, segmented 36px, tab strip 40px, menu item 36px, sidebar item 40px, list row at least 56px (`--row`), builder bar 56px. Inputs and default buttons grow to 44px on touch devices (a button that sets its own height keeps it; a control beside an input matches it); `touch-target` expands smaller controls' hit areas to at least 44×44px and needs a positioned host (`relative`), or its overlay covers the nearest positioned ancestor and steals taps. Keyboard-shortcut help entries hide on touch screens.
+- **Layout variables:** `--app-sidebar: 248px`, `--content-max: 1040px`, `--row: 56px`, `--editor-bar: 56px`, `--editor-panel: 400px`, `--sheet: 440px`, `--sheet-detail: 480px`, `--dialog: 480px`, and `--assistant: 400px`.
+
+## Layout
+
+- **Dashboard:** the sidebar (248) plus a page with 40px margins. Reading content stops at `--content-max` (1040); tables and boards may run wider. The sidebar holds Search (⌘K), Today, Documents, Applications, Career, then Trash, Shortcuts (?) and the account row, which opens Settings. Each page owns its one primary action; there is no global New button.
+- **Builder:** the bar (56) on top, one panel (400) at the side, the canvas on `sunken` with the paper centred. One panel at a time: choosing a section replaces the outline, an entry replaces the section; the assistant and version history take the panel's place, so the page never shrinks.
+- **Design settings** live in seven named categories: Template, Layout, Entries, Typography, Colour, Page and Custom CSS. There is no “Advanced” bucket. Fonts are one searchable combobox, flat and A to Z.
+- **Section rail:** 200px navigation inside a page (Settings, an application's workspace), with a neutral selection (`hover` ground, `ink`), never green.
+- **Sheets** float 8px inside the window from the inline end; dialogs centre over `scrim` at 480px (560px with two fields to a row).
+- **Widths:** four ranges, one rule each.
+
+|                  | Under 640                                                                                            | 640 to 1023                                                                                  | 1024 to 1279                                  | 1280 and up                                                 |
+| ---------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------- |
+| Navigation       | Tab bar, 64 tall: Today, Documents, Applications, Career. Search and the account in each page header | Rail, 64 wide: the same places as icons with tooltips, then Trash, Shortcuts and the account | Sidebar, 248                                  | Sidebar, 248                                                |
+| Page             | 16 margins, one column                                                                               | 32 margins, one column                                                                       | 40 margins; the aside follows the main column | 40 margins, 1040 reading width, main column and a 360 aside |
+| Lists and tables | Rows of 64; a table becomes rows                                                                     | The table keeps its three main columns                                                       | The whole table                               | The whole table                                             |
+| Documents        | Rows with a thumbnail                                                                                | Grid, three to a row                                                                         | Grid, three to a row                          | Grid, four to a row                                         |
+| Builder          | The bar, then one view at a time; modes in a bottom bar                                              | A 380 panel beside the page                                                                  | The 400 panel; Assistant is an icon           | The 400 panel; every label shows                            |
+| Dialogs          | Bottom sheet, full width                                                                             | Centred, 480 or 560                                                                          | The same                                      | The same                                                    |
+| Side sheets      | Bottom sheet                                                                                         | From the inline end, 440 (Details 480)                                                       | The same                                      | The same                                                    |
+| Command palette  | Full screen                                                                                          | 600 wide, centred                                                                            | The same                                      | The same                                                    |
+
+## States and confirmation
+
+- **Empty** places say what they are for and offer one action; inside a list, one quiet line.
+- **Loading** placeholders keep their final size and stay still.
+- **Reversible** changes happen at once and offer Undo in a toast.
+- **Permanent** deletes ask in an `AlertDialog` that names what is destroyed and what the other button keeps. The button that deletes is a plain `danger-fill` button.
+- **One Trash** holds documents and applications under one rule: each stays 30 days, then is deleted permanently.
+- **Errors** say what failed and what was kept, next to where it happened.
+- **AI missing:** one “Set up AI” line as the first row under the title of the page, panel or tab. It says what needs AI and what works without it, and ends in one secondary “Set up AI” button that opens one dialog. AI-only buttons are left out, not greyed.
 
 ## Motion
 
@@ -204,17 +267,20 @@ The homepage has separate motion rules below.
 
 ## Components
 
-Generic primitives live in `packages/ui/src/components`, using Base UI and cmdk for the command palette. Feature-specific UI belongs in its owning `apps/web` feature.
+Generic primitives live in `packages/ui/src/components`, using Base UI and cmdk for the command palette. Shared Calm layout parts (Page, ListRow, SectionHeading, HeroCard, StageDot, StageStepper, SectionRail, Crumb, FilterBar, DataTable, SelectionBar, SetUpAiLine, DocumentThumb, CategoryStrip) live in `apps/web/src/components/calm`. Feature-specific UI belongs in its owning `apps/web` feature. The development-only `/kit` route lays every one of them out in both themes.
+
+- **Rows:** `ListRow` is the unit of every list: at least 56px, a `line` hairline below, a title, one quiet line, one thing at the end. Row actions that appear on hover also appear on focus and in the row's menu.
+- **Section headings:** `SectionHeading` is a 22px serif title with 32px above it and at most one text action.
+- **Hero:** `HeroCard` holds the single most important next step on a page, with the view's one accent button.
 
 - **Buttons:** `primary`, `secondary`, `ghost`, `danger`, and `link`. `loading` adds a spinner, sets `aria-busy`, and blocks activation. Use a progress label such as “Preparing…”. A button rendered as a link (`nativeButton={false}` with an `<a href>` or router `Link`) keeps `role="link"`, so screen readers list it with links.
-- **Hold to confirm:** `HoldButton` acts only after a 1.2-second hold of the pointer, Space or Enter. A fill in the text color rises from the start edge and snaps back if released early; it follows the clock, so it still shows progress under reduced motion. Use it inside the confirmation for permanent deletes (Delete forever, Empty Trash) with the label “Hold to delete”. An assistive-technology click confirms at once, since the dialog already asked.
 - **Loading:** `Spinner` is a 14px `circle-notch` turning once a second in the text color. Pair it with words that say what is happening; mark it `decorative` when the control already says it is busy.
 - **Inputs:** `raised` background and `control-border` border; focus adds an accent border and a 3px `accent-soft` ring. Invalid fields use danger styling. Show errors after blur or submission, with an icon and a specific remedy.
-- **Switches:** prefer `SwitchRow` so the label is part of the target. The off track is `control-border`, the on track `accent`. Checkboxes are 18px with a 3px radius and a 1.5px `control-border` edge; radios are 18px with an 8px accent dot.
+- **Switches:** prefer `SwitchRow` so the label is part of the target. The off track is `control-border`, the on track `accent`. Checkboxes are 18px with a 6px radius and a 1.5px `control-border` edge; radios are 18px with an 8px accent dot.
 - **Codes:** `OTPField` boxes are 36px, 44px on phones; pass a translated `digitLabel` (“Digit 2 of 6”) so each box has a name.
 - **Shortcuts:** write shortcuts with Mac glyphs (“⌘K”, “⇧⌘Z”). `Kbd` always reads left to right; `formatShortcut` shows them as “Ctrl+K” and “Ctrl+Shift+Z” off Apple devices (`IconButton` tooltips already do), and `ariaShortcut` gives the matching `aria-keyshortcuts` value.
 - **Segments and tabs:** use `SegmentedControl` for 2–4 options in a radio group. Use `Tabs` to switch panels; set `TabsList variant="line"` for underline tabs.
-- **Menus:** 4px radius and 36px items. Size popups for their content and trigger; put destructive items last, after a separator.
+- **Menus:** 12px radius and 36px items with 8px corners; past six items, groups get small labels. Size popups for their content and trigger; put destructive items last, after a separator.
 - **Layers:** menus and popovers provide lightweight choices; sheets hold tasks beside the document and use the bottom variant on mobile; dialogs hold decisions. Use `AlertDialog` for destructive confirmation and name what cancel keeps. Dialog and sheet close buttons need a translated `closeLabel` whenever they show. `right` and `left` sheets open from the inline end and start, so they swap sides in RTL.
 - **Creating things:** a short create form (up to about six fields, such as New document or Save a job) is a dialog. New document uses a bottom sheet on phones, matching the native creation form; its presentation stays fixed while open so a resize cannot discard work. A long form, or one that needs the page behind it, is a sheet (New schedule, Add offer on Offers). A form tied to one item already on screen opens in place beside it (Add fact, Add offer in a job's Offer stage).
 - **Toasts:** one visible at a time, bottom center, with `bg-ink` and `text-bg`. The default timeout is six seconds; `timeout: 0` keeps a toast visible. Undo is an optional underlined action. Pressing an action closes its toast after the action's handler runs, and a second press while it leaves does nothing. A toast with an action burns a 2px fuse along its bottom edge for the time it has left; the fuse pauses while the toast is hovered or focused and is hidden under reduced motion. Pass translated `closeLabel` and `regionLabel` to `Toaster`; a view with floating bottom controls lifts toasts above them with `--toast-bottom`.
@@ -342,11 +408,12 @@ Reduced motion fixes scenes at their end state and collapses pinned sections to 
 
 ## Do and don't
 
-- **Do** make the primary action obvious and reserve accent for actions and state.
+- **Do** give each view exactly one accent button; a second primary action is secondary or ghost.
+- **Do** build lists from flat rows and order pages with serif titles.
 - **Do** keep text readable and pair color signals with words.
 - **Do** provide empty, loading, error, and success states; keep loading placeholders at their final size.
 - **Don't** introduce arbitrary app colors or palette classes such as `amber-600`; use semantic tokens.
-- **Don't** use Instrument Serif for small functional app text or at bold weights, set labels in all caps, or round anything past 4px. Homepage prose follows its separate type rules.
+- **Don't** use Instrument Serif for small functional app text or at bold weights, set labels in all caps, box a list in a card, or round paper past 2px. Homepage prose follows its separate type rules.
 - **Don't** confirm reversible actions; offer undo.
 - **Don't** send anything to an AI provider without naming what goes where, or apply an AI edit the person hasn't accepted.
 - **Don't** omit `data-slot` on UI primitives; styles and tests rely on it.
