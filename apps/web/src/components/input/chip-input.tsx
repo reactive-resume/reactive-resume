@@ -100,7 +100,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 			<Badge
 				variant="outline"
 				className={cn(
-					"h-6 max-w-full cursor-grab justify-start gap-0 rounded-md border-line bg-sunken/55 px-2 text-xs font-medium text-ink transition-colors select-none hover:border-ink/20 hover:bg-sunken active:cursor-grabbing",
+					"h-[26px] max-w-full cursor-grab justify-start gap-0 rounded-sm border-transparent bg-sunken ps-2 pe-1 text-xs font-medium text-ink transition-colors select-none hover:bg-hover active:cursor-grabbing",
 					isEditing && "border-accent bg-accent/10 ring-1 ring-accent/40",
 					isDragging && "border-accent bg-sunken shadow-sm",
 				)}
@@ -342,14 +342,12 @@ export function ChipInput({
 				<div
 					role="none"
 					onClick={() => inputRef.current?.focus()}
-					className="overflow-hidden rounded-lg border border-control-border bg-bg/40 transition-colors focus-within:border-accent focus-within:ring-3 focus-within:ring-accent/50 dark:bg-line-2/20"
+					className="overflow-hidden rounded-md border border-control-border bg-raised transition-colors focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft"
 				>
-					<div className="flex flex-col">
-						<div
-							className={cn("max-h-24 overflow-y-auto px-2 py-1.5", hasChips ? "border-b border-line/70" : "hidden")}
-						>
+					<div className="flex min-h-10 flex-wrap items-center gap-1.5 p-1.5">
+						<div className={cn("contents", !hasChips && "hidden")}>
 							<SortableContext items={chips} strategy={rectSortingStrategy}>
-								<div className="flex flex-wrap gap-1">
+								<div className="contents">
 									{chips.map((chip, idx) => (
 										<ChipItem
 											key={chip}
@@ -364,7 +362,7 @@ export function ChipInput({
 								</div>
 							</SortableContext>
 						</div>
-						<div className={cn("flex items-center gap-1.5 px-2", hasChips ? "py-1.5" : "py-0")}>
+						<div className="flex min-w-24 flex-1 items-center gap-1.5 px-1">
 							<Input
 								ref={inputRef}
 								type="text"
@@ -381,7 +379,7 @@ export function ChipInput({
 								placeholder={isEditingKeyword ? t`Editing keyword…` : (placeholder ?? t`Add a keyword…`)}
 								onKeyDown={handleKeyDown}
 								onChange={handleInputChange}
-								className="h-9 flex-1 border-none p-0 focus-visible:border-none focus-visible:ring-0 dark:bg-transparent"
+								className="h-6 min-w-0 flex-1 border-none bg-transparent p-0 shadow-none focus-visible:border-none focus-visible:ring-0 dark:bg-transparent"
 							/>
 							{isEditingKeyword && (
 								<span className="flex h-6 shrink-0 items-center rounded-md border border-accent/30 bg-accent/10 px-1.5 text-xs font-medium text-accent-text">

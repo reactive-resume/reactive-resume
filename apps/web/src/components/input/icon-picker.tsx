@@ -15,7 +15,8 @@ type IconPickerProps = Omit<React.ComponentProps<typeof Button>, "value" | "onCh
 	popoverProps?: React.ComponentProps<typeof Popover>;
 };
 
-export function IconPicker({ value, onChange, popoverProps, ...props }: IconPickerProps) {
+/** `children` replaces the icon in the trigger, for a picker opened from a text action ("Change"). */
+export function IconPicker({ value, onChange, popoverProps, children, ...props }: IconPickerProps) {
 	const [search, setSearch] = useState("");
 
 	return (
@@ -30,7 +31,7 @@ export function IconPicker({ value, onChange, popoverProps, ...props }: IconPick
 						onFocus={preloadGrid}
 						{...props}
 					>
-						<i className={cn("ph size-4 text-base", `ph-${value}`)} />
+						{children ?? <i className={cn("ph size-4 text-base", `ph-${value}`)} />}
 					</Button>
 				}
 			/>

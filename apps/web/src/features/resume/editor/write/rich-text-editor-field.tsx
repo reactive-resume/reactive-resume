@@ -109,7 +109,6 @@ function useToolbarActions(): ToolbarAction[] {
 }
 
 // The first list button starts a new group in the toolbar.
-const LIST_GROUP_START = 4;
 
 const ALIGNMENTS = ["left", "center", "right", "justify"] as const;
 type Alignment = (typeof ALIGNMENTS)[number];
@@ -191,6 +190,7 @@ export type RichTextEditorProps = {
 	) => void;
 	/** Guidance under the text while editing, e.g. "2–3 sentences reads best". */
 	hint?: ReactNode;
+	placeholder?: string;
 	disabled?: boolean;
 	className?: string;
 	/** The text area's id, so other controls can focus it. */
@@ -212,6 +212,7 @@ export function RichTextEditor({
 	value,
 	onChange,
 	hint,
+	placeholder,
 	disabled = false,
 	className,
 	id,
@@ -282,7 +283,7 @@ export function RichTextEditor({
 				role: "textbox",
 				spellcheck: "true",
 				class: cn(
-					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none",
+					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none [&_li]:my-0.5 [&_li]:ps-0 [&_li>p]:my-0 [&_ol]:ps-[14px] [&_ul]:ps-[14px]",
 					heightClassName,
 					"[&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
 				),
@@ -365,7 +366,7 @@ export function RichTextEditor({
 	};
 
 	// Smaller buttons in a narrow field (the builder sidebar), so the toolbar stays one row under the text.
-	const buttonSize = mobile ? "size-11" : "size-8 @max-[24rem]:size-7";
+	const buttonSize = mobile ? "size-11" : "size-7 [--icon-size:16px]";
 	const toolbarButtons = (
 		<>
 			{actions.map((action, index) => (
@@ -378,12 +379,7 @@ export function RichTextEditor({
 					// Keep the caret in the text while formatting.
 					onMouseDown={(event) => event.preventDefault()}
 					onClick={() => editor && void action.run(editor)}
-					className={cn(
-						toolbarButtonClassName,
-						buttonSize,
-						state?.active[index] && "bg-accent-soft text-accent-text",
-						index === LIST_GROUP_START && "ms-1.5",
-					)}
+					className={cn(toolbarButtonClassName, buttonSize, state?.active[index] && "bg-accent-soft text-accent-text")}
 				>
 					<Icon name={action.icon} />
 				</Toolbar.Button>
@@ -405,13 +401,13 @@ export function RichTextEditor({
 				onMouseDown={(event) => event.preventDefault()}
 				onClick={() => (improving ? setImproving(null) : startImprove())}
 				className={cn(
-					"ms-auto flex shrink-0 items-center gap-1.5 rounded-md bg-accent-soft px-2.5 text-xs font-semibold text-accent-text transition-[filter] duration-quick hover:brightness-95 disabled:opacity-50",
-					mobile ? "h-11" : "h-8",
+					"ms-auto flex shrink-0 items-center gap-1.5 rounded-sm bg-surface px-2 text-[13px] font-medium text-ink-2 shadow-[inset_0_0_0_1px_var(--line-2)] transition-colors duration-quick hover:bg-hover disabled:opacity-45",
+					mobile ? "h-11" : "h-7",
 				)}
 			>
 				<Icon name="sparkle" size={16} />
 				{/* Icon only where the toolbar is narrow, so the formatting buttons keep one row. */}
-				<span className="@max-[24rem]:sr-only">
+				<span>
 					<Trans>Improve</Trans>
 				</span>
 			</Toolbar.Button>
@@ -419,69 +415,86 @@ export function RichTextEditor({
 	);
 
 	return (
-		<div
-			onFocus={() => setFocused(true)}
-			onBlur={(event) => {
-				const next = event.relatedTarget;
-				// Opening a toolbar menu moves focus into it; the menu reports leaving the field itself.
-				const inMenu = next instanceof Element && next.closest("[data-toolbar-menu]") !== null;
-				if (!event.currentTarget.contains(next) && !toolbar.current?.contains(next) && !inMenu) setFocused(false);
-			}}
-			className={cn(
-				"rounded-lg border border-control-border bg-raised transition-[border-color,box-shadow] duration-quick",
-				editing && "border-accent shadow-[0_0_0_3px_var(--accent-soft)]",
-				disabled && "bg-sunken",
-				className,
-			)}
-		>
-			{readOnlyTable && (
-				<p role="status" className="border-b border-line px-3 py-2 text-xs text-ink-2">
-					<Trans>
-						Original table formatting is preserved. This content is read-only because it cannot be edited safely.
-					</Trans>
-				</p>
-			)}
+		<>
+			<div
+				onFocus={() => setFocused(true)}
+				onBlur={(event) => {
+					const next = event.relatedTarget;
+					// Opening a toolbar menu moves focus into it; the menu reports leaving the field itself.
+					const inMenu = next instanceof Element && next.closest("[data-toolbar-menu]") !== null;
+					if (!event.currentTarget.contains(next) && !toolbar.current?.contains(next) && !inMenu) setFocused(false);
+				}}
+				className={cn(
+					"@container flex flex-col overflow-hidden rounded-md border border-control-border bg-raised transition-[border-color,box-shadow] duration-quick",
+					editing && "border-accent shadow-[0_0_0_3px_var(--accent-soft)]",
+					disabled && "bg-sunken",
+					className,
+				)}
+			>
+				{readOnlyTable && (
+					<p role="status" className="border-b border-line px-3 py-2 text-xs text-ink-2">
+						<Trans>
+							Original table formatting is preserved. This content is read-only because it cannot be edited safely.
+						</Trans>
+					</p>
+				)}
 
-			<EditorContent editor={editor} />
-			{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
-			{editing && !readOnlyTable && mobile && (
-				<Toolbar.Root
-					ref={toolbar}
-					aria-label={t`Formatting`}
-					style={{ bottom: keyboardInset }}
-					className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
-				>
-					<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
-					<Toolbar.Button
-						type="button"
-						onMouseDown={(event) => event.preventDefault()}
-						onClick={() => {
-							setImproving(null);
-							setFocused(false);
-							editor?.commands.blur();
-						}}
-						className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
+				<div className="relative">
+					<EditorContent editor={editor} />
+					{placeholder && editor && editor.getText().length === 0 && (
+						<span aria-hidden="true" className="pointer-events-none absolute start-3 top-2 text-sm/5 text-ink-3">
+							{placeholder}
+						</span>
+					)}
+				</div>
+				{/* Formatting sits above the focused text; keyboard and menu actions keep its selection. */}
+				{editing && !readOnlyTable && !mobile && (
+					<Toolbar.Root
+						ref={toolbar}
+						aria-label={t`Formatting`}
+						className="order-first flex gap-0.5 border-b border-line px-1 py-1"
 					>
-						<Trans>Done</Trans>
-					</Toolbar.Button>
-				</Toolbar.Root>
-			)}
+						{toolbarButtons}
+					</Toolbar.Root>
+				)}
 
-			{editing && <AiProviderLoadState state={ai} />}
-			{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
-			{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
+				{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
+				{editing && !readOnlyTable && mobile && (
+					<Toolbar.Root
+						ref={toolbar}
+						aria-label={t`Formatting`}
+						style={{ bottom: keyboardInset }}
+						className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
+					>
+						<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
+						<Toolbar.Button
+							type="button"
+							onMouseDown={(event) => event.preventDefault()}
+							onClick={() => {
+								setImproving(null);
+								setFocused(false);
+								editor?.commands.blur();
+							}}
+							className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
+						>
+							<Trans>Done</Trans>
+						</Toolbar.Button>
+					</Toolbar.Root>
+				)}
 
-			{/* Under the text, so focusing the field never moves the line you clicked. */}
-			{editing && !readOnlyTable && !mobile && (
-				<Toolbar.Root
-					ref={toolbar}
-					aria-label={t`Formatting`}
-					className="@container flex flex-wrap gap-0.5 border-t border-line px-1.5 py-1"
-				>
-					{toolbarButtons}
-				</Toolbar.Root>
-			)}
+				{editing && <AiProviderLoadState state={ai} />}
+				{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
+				{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
 
+				{editing && (
+					<div className="flex items-center justify-between gap-3 border-t border-line px-3 py-1.5 text-xs text-ink-3">
+						<span>{hint ?? <Trans>Markdown shortcuts on</Trans>}</span>
+						<span className="font-mono">
+							<Plural value={state?.characters ?? 0} one="# character" other="# characters" />
+						</span>
+					</div>
+				)}
+			</div>
 			{editor && improving && (
 				<ImprovePanel
 					key={improving.from}
@@ -493,16 +506,7 @@ export function RichTextEditor({
 					kind={improve}
 				/>
 			)}
-
-			{editing && (
-				<div className="flex items-center justify-between gap-3 border-t border-line px-3 py-1.5 text-xs text-ink-3">
-					<span>{hint ?? <Trans>Markdown shortcuts on</Trans>}</span>
-					<span className="font-mono">
-						<Plural value={state?.characters ?? 0} one="# character" other="# characters" />
-					</span>
-				</div>
-			)}
-		</div>
+		</>
 	);
 }
 
@@ -555,7 +559,7 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 					render={<DropdownMenuTrigger />}
 					aria-label={t`Text alignment`}
 					title={t`Text alignment`}
-					className={cn(buttonClassName, "ms-1.5", formatting.align !== "left" && "bg-accent-soft text-accent-text")}
+					className={cn(buttonClassName, formatting.align !== "left" && "bg-accent-soft text-accent-text")}
 				>
 					<Icon name={ALIGNMENT_ICONS[formatting.align]} />
 				</Toolbar.Button>

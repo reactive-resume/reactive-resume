@@ -1,16 +1,18 @@
 import type { EditorMode } from "@/features/resume/editor/store";
-import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
+import { cn } from "@reactive-resume/utils/style";
 import { DocumentMenu } from "./document-menu";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
-import { useCurrentBuilderResumeSelector, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
+import { useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
 import { DownloadButtons, EditorBarFrame } from "@/features/resume/editor/chrome/bar";
+import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { preloadDocumentExport, useResumeExport } from "@/features/resume/export/use-resume-export";
+import { ResumeDownloadMenu } from "@/features/resume/share/download-menu";
 
 type EditorBarProps = {
 	layout: "desktop" | "tablet" | "mobile";
@@ -19,22 +21,24 @@ type EditorBarProps = {
 };
 
 /**
- * The 56px editor bar. Desktop: back, name and save state · Write/Design/Check/Share · Undo, Redo, history, assistant
- * and Download PDF. The mode switch stays centered through a `1fr auto 1fr` grid.
+ * The 56px editor bar. Desktop: back, name and status line · Write/Design/Check/Share · Undo, Redo, History, Assistant
+ * and Download PDF, the one accent. The mode switch stays centred through a `1fr auto 1fr` grid.
  */
 export function EditorBar({ layout, pinnable }: EditorBarProps) {
 	// Download needs a connection.
 	const offline = useResumeStore((state) => state.saveStatus === "offline");
 	const resume = useCurrentResume();
 	const { onDownloadPDF, isExporting } = useResumeExport(resume);
+	const [, setMode] = useEditorMode();
 
 	return (
 		<EditorBarFrame
 			layout={layout}
 			pinnable={pinnable}
 			menu={<DocumentMenu />}
-			modes={<ModeTabs compact={layout === "tablet"} />}
+			modes={<ModeTabs compact={layout === "tablet"} offline={offline} />}
 			history={<UndoRedo />}
+			historyInPanel
 		>
 			<DownloadButtons
 				busy={isExporting}
@@ -43,6 +47,7 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 				compact={layout === "mobile"}
 				iconOnly={layout === "tablet"}
 				disabled={offline}
+				renderMore={(button) => <ResumeDownloadMenu trigger={button} onReview={() => void setMode("check")} />}
 			/>
 		</EditorBarFrame>
 	);
@@ -57,22 +62,8 @@ function UndoRedo() {
 
 	return (
 		<>
-			<IconButton
-				icon="arrow-counter-clockwise"
-				label={t`Undo`}
-				shortcut="⌘Z"
-				className="text-ink-2"
-				disabled={!canUndo}
-				onClick={undo}
-			/>
-			<IconButton
-				icon="arrow-clockwise"
-				label={t`Redo`}
-				shortcut="⇧⌘Z"
-				className="text-ink-2"
-				disabled={!canRedo}
-				onClick={redo}
-			/>
+			<IconButton icon="arrow-counter-clockwise" label={t`Undo`} shortcut="⌘Z" disabled={!canUndo} onClick={undo} />
+			<IconButton icon="arrow-clockwise" label={t`Redo`} shortcut="⇧⌘Z" disabled={!canRedo} onClick={redo} />
 		</>
 	);
 }
@@ -84,12 +75,17 @@ const MODE_ICONS = {
 	share: "globe-hemisphere-west",
 } as const;
 
-type ModeTabsProps = { compact: boolean };
+type ModeTabsProps = {
+	/** Tablets: icons, each with its name for assistive tech. */
+	compact: boolean;
+	/** Share needs a connection: its tab is dimmed while offline. */
+	offline: boolean;
+};
 
-function ModeTabs({ compact }: ModeTabsProps) {
+/** Write · Design · Check · Share, in words. What Check found and whether the resume is public are said beside it. */
+function ModeTabs({ compact, offline }: ModeTabsProps) {
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const issueCount = useOpenIssueCount();
-	const isPublic = useCurrentBuilderResumeSelector((resume) => resume.isPublic ?? false);
 	const labels: Record<EditorMode, string> = {
 		write: t`Write`,
 		design: t`Design`,
@@ -101,13 +97,14 @@ function ModeTabs({ compact }: ModeTabsProps) {
 	};
 
 	return (
-		<TabsList aria-label={t`Editor mode`} className="h-9" data-mode-switch="">
+		<TabsList aria-label={t`Editor mode`} data-mode-switch="">
 			{(Object.keys(MODE_ICONS) as EditorMode[]).map((mode, index) => (
 				// Keys 1–4 switch modes (outside text fields): said on hover and to assistive tech.
 				<TabsTrigger
 					key={mode}
 					value={mode}
-					className={compact ? "px-2" : "px-4"}
+					disabled={mode === "share" && offline}
+					className={cn("flex-none disabled:opacity-45", compact && "px-2.5")}
 					aria-keyshortcuts={characterShortcuts ? String(index + 1) : undefined}
 					title={
 						characterShortcuts
@@ -118,36 +115,25 @@ function ModeTabs({ compact }: ModeTabsProps) {
 							: labels[mode]
 					}
 				>
-					<Icon name={MODE_ICONS[mode]} size={18} />
-					<span className={compact ? "sr-only" : undefined}>{labels[mode]}</span>
-					{mode === "check" && <CheckBadge count={issueCount} />}
-					{mode === "share" && isPublic && (
-						<span className="size-1.5 rounded-sm bg-accent" aria-hidden="true" title={t`Public`} />
+					{compact ? (
+						<>
+							<Icon name={MODE_ICONS[mode]} size={18} />
+							<span className="sr-only">{labels[mode]}</span>
+						</>
+					) : (
+						labels[mode]
+					)}
+					{mode === "check" && (
+						<span className="sr-only">
+							{issueCount === 0 ? (
+								<Trans>No open issues</Trans>
+							) : (
+								<Plural value={issueCount} one="# open issue" other="# open issues" />
+							)}
+						</span>
 					)}
 				</TabsTrigger>
 			))}
 		</TabsList>
-	);
-}
-
-function CheckBadge({ count }: { count: number }) {
-	if (count === 0) {
-		return (
-			<span className="inline-flex text-accent-text">
-				<Icon name="check" size={16} />
-				<span className="sr-only">
-					<Trans>No open issues</Trans>
-				</span>
-			</span>
-		);
-	}
-
-	return (
-		<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-sm bg-warn-soft px-[5px] text-xs font-semibold text-warn-text">
-			<span aria-hidden="true">{i18n.number(count)}</span>
-			<span className="sr-only">
-				<Plural value={count} one="# open issue" other="# open issues" />
-			</span>
-		</span>
 	);
 }

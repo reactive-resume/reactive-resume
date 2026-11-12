@@ -3,12 +3,14 @@ import type { Editor } from "@tiptap/react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
+import { useEditorState } from "@tiptap/react";
 import { useId, useRef, useState } from "react";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { SetUpAi } from "@/features/ai/set-up-ai";
 import { AiResultUsage } from "@/features/ai/usage";
-import { SetUpAi } from "@/features/assistant/provider-setup";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -53,7 +55,11 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 	const [result, setResult] = useState("");
 	// The last request sent, with its words, so Try again and Try another send exactly that again.
 	const [last, setLast] = useState<{ action: Action; words: string } | null>(null);
-	const [changed, setChanged] = useState(false);
+	const changed = useEditorState({
+		editor,
+		selector: ({ editor }) =>
+			line.to > editor.state.doc.content.size || editor.state.doc.textBetween(line.from, line.to) !== line.text,
+	});
 	const replaced = useRef(false);
 	const improve = useMutation(orpc.ai.improve.mutationOptions());
 	const resultId = useId();
@@ -100,8 +106,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 
 	const replace = (text: string) => {
 		if (replaced.current) return;
-		const current = editor.state.doc.textBetween(line.from, line.to);
-		if (current !== line.text) return setChanged(true);
+		if (changed) return;
 		replaced.current = true;
 		onAccept(text, improve.data?.aiOperationIds);
 		onClose();
@@ -110,44 +115,68 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 	return (
 		// oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- Escape closes the panel from any control inside it.
 		<div
-			className="grid gap-1 border-t border-line p-1.5"
+			role="region"
+			aria-label={t`Suggestion`}
+			className="grid gap-2"
 			onKeyDown={(event) => {
 				if (event.key !== "Escape") return;
 				event.stopPropagation();
 				close();
 			}}
 		>
-			<span className="px-2 pt-1 pb-1.5 text-xs font-semibold text-ink-3">
-				{letter ? <Trans>Improve this paragraph</Trans> : <Trans>Improve selected line</Trans>}
-			</span>
-
-			<p className="px-2 text-xs text-ink-3">
-				<Trans>Original</Trans>
-			</p>
-			<blockquote className="rounded bg-sunken p-2 text-sm whitespace-pre-wrap">{line.text}</blockquote>
-			{!provider && <SetUpAi />}
+			<div className="flex items-center justify-between gap-2">
+				<span className="t-caption text-ink-2">
+					{letter ? <Trans>Improve this paragraph</Trans> : <Trans>Improve selected line</Trans>}
+				</span>
+				{provider && (
+					<span className="text-xs text-ink-3">
+						{provider.label} · {provider.model}
+					</span>
+				)}
+			</div>
+			<div className="rounded-lg bg-sunken px-3 py-2.5">
+				<span className="block t-caption text-ink-3">
+					<Trans>Yours</Trans>
+				</span>
+				<blockquote className="t-small whitespace-pre-wrap text-ink-2">{line.text}</blockquote>
+			</div>
+			{!provider && (
+				<SetUpAi
+					needs={<Trans>Improve needs AI.</Trans>}
+					works={<Trans>Editing and formatting work without it.</Trans>}
+				/>
+			)}
 			{!provider ? null : improve.data ? (
-				<div className="grid gap-2 rounded-lg bg-bg p-2.5">
-					<p role="status" className="w-fit rounded-sm bg-accent-soft px-1 py-0.5 text-[13px] leading-[19px]">
-						{improve.data.text}
+				<div className="grid gap-2">
+					<p
+						role="status"
+						className="flex items-start gap-2.5 rounded-lg bg-accent-soft px-3 py-2.5 text-[13px]/[18px]"
+					>
+						<Icon name="sparkle" size={18} className="shrink-0 text-accent-text" />
+						<span>{improve.data.text}</span>
 					</p>
-					<p className="text-xs text-ink-3">
-						{improve.data.why}
-						{improve.data.addsFacts && <> {t`Check it's accurate.`}</>}
-					</p>
-					<AiResultUsage usage={improve.data.aiUsage} />
+					<p className="text-xs text-ink-3">{improve.data.why}</p>
+					{improve.data.addsFacts && (
+						<Badge variant="warn" className="w-fit">
+							<Icon name="warning-circle" size={14} />
+							<Trans>New detail: check it's true</Trans>
+						</Badge>
+					)}
 					{changed && (
 						<p role="alert" className="text-xs text-danger-text">
-							<Trans>The line changed since you asked, so it wasn't replaced.</Trans>
+							<Trans>
+								You edited this line while the suggestion was loading. Nothing was replaced. Keep your wording or close
+								this and ask again.
+							</Trans>
 						</p>
 					)}
 					<div className="flex gap-1.5">
 						{!changed && (
-							<Button size="sm" onClick={() => replace(improve.data.text)}>
+							<Button size="sm" variant="soft" onClick={() => replace(improve.data.text)}>
 								<Trans>Replace</Trans>
 							</Button>
 						)}
-						<Button size="sm" variant="secondary" onClick={close}>
+						<Button size="sm" variant="ghost" onClick={close}>
 							<Trans>Keep mine</Trans>
 						</Button>
 						{last && !changed && (
@@ -156,6 +185,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 							</Button>
 						)}
 					</div>
+					<AiResultUsage usage={improve.data.aiUsage} />
 				</div>
 			) : improve.isPending ? (
 				<p role="status" className="flex items-center gap-2 p-2 text-sm text-ink-2">
@@ -181,7 +211,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 							maxLength={500}
 							onChange={(event) => setResult(event.target.value)}
 						/>
-						<Button type="submit" size="sm" disabled={!result.trim()}>
+						<Button type="submit" size="sm" variant="secondary" disabled={!result.trim()}>
 							<Trans>Add</Trans>
 						</Button>
 					</div>
@@ -209,7 +239,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 						maxLength={500}
 						onChange={(event) => setRequest(event.target.value)}
 					/>
-					<Button type="submit" size="sm" disabled={!request.trim()}>
+					<Button type="submit" size="sm" variant="secondary" disabled={!request.trim()}>
 						<Trans>Ask</Trans>
 					</Button>
 				</form>

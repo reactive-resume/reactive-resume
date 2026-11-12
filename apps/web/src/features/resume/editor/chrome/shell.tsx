@@ -9,19 +9,13 @@ import { TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
-import {
-	AssistantColumn,
-	AssistantOverlay,
-	AssistantReplace,
-	assistantGridTransition,
-	assistantPlaceFor,
-	columnsWithAssistant,
-} from "@/features/assistant/dock";
+import { AssistantOverlay, assistantPlaceFor } from "@/features/assistant/dock";
 import { useIsLandscape } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 
-// The editor shell resumes and letters share: the layout for the screen, the panel beside or over the page, the
-// assistant's place and the phone tab bar. Each editor brings its own bar, panels, page and phone body.
+// The editor shell resumes and letters share: the layout for the screen, the one panel slot beside the page (the
+// mode's panel, or the assistant or History in its place) and the phone tab bar. Each editor brings its own bar,
+// panels, page and phone body. How another area mounts in the slot: `.agents` handoff, B/work/B/PANEL-SLOT.md.
 
 /** Desktop, tablet (the panel is a drawer, pinnable beside the page in landscape) or phone. */
 export function useEditorLayout() {
@@ -31,7 +25,10 @@ export function useEditorLayout() {
 	const pinnable = layout === "tablet" && landscape;
 	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
 
-	return { layout, pinnable, pinned, assistantPlace: assistantPlaceFor(breakpoint) } as const;
+	// The page never shrinks for the assistant: from 1024 up it takes the panel's place, as History does.
+	const place = assistantPlaceFor(breakpoint);
+
+	return { layout, pinnable, pinned, assistantPlace: place === "column" ? "replace" : place } as const;
 }
 
 type EditorFrameProps = {
@@ -43,13 +40,16 @@ type EditorFrameProps = {
 	panel: ReactNode;
 	page: ReactNode;
 	assistant: ReactNode;
+	/** Version history, in the panel's place while `historyOpen` (the clock in the bar). Without it the clock keeps
+	 * opening the Download & history sheet. */
+	history?: ReactNode;
 	/** Phones show one view at a time; each editor brings its own. */
 	mobile: ReactNode;
 	/** The Download & history sheet and hotkeys. */
 	children: ReactNode;
 };
 
-/** A 56px bar over the panel and the page; the assistant joins as a column, in the panel's place, or over it all. */
+/** A 56px bar over the one panel slot and the page; the assistant and History take the panel's place. */
 export function EditorFrame({
 	editorLayout,
 	bar,
@@ -58,6 +58,7 @@ export function EditorFrame({
 	panel,
 	page,
 	assistant,
+	history,
 	mobile,
 	children,
 }: EditorFrameProps) {
@@ -80,9 +81,8 @@ export function EditorFrame({
 					panelLabel={panelLabel}
 					panel={panel}
 					page={page}
-					assistant={assistant}
-					column={assistantPlace === "column"}
-					replace={assistantPlace === "replace"}
+					assistant={assistantPlace === "replace" ? assistant : null}
+					history={history}
 					narrow={pinned}
 				/>
 			)}
@@ -101,54 +101,65 @@ export function EditorFrame({
 type BodyProps = { mode: string; panelLabel: string; panel: ReactNode; page: ReactNode };
 
 type DesktopBodyProps = BodyProps & {
+	/** Takes the panel's place while `assistantOpen`. */
 	assistant: ReactNode;
-	/** ≥1280: the assistant has its own column. */
-	column: boolean;
-	/** 1024–1279: the assistant takes the panel's place while open. */
-	replace: boolean;
+	/** Takes the panel's place while `historyOpen`. */
+	history: ReactNode;
 	/** Pinned on a tablet: a 380px panel. */
 	narrow: boolean;
 };
 
-/** The panel beside the page: 400px on desktop, 380px when pinned on a tablet; the assistant joins at ≥1280. */
-function DesktopBody({ mode, panelLabel, panel, page, assistant, column, replace, narrow }: DesktopBodyProps) {
+/**
+ * The panel slot beside the page: 400px on desktop, 380px when pinned on a tablet. It holds one thing at a time: the
+ * mode's panel, or the assistant or History in its place, so the page keeps its width. Hidden (`panelHidden`), the
+ * page has the whole canvas.
+ */
+function DesktopBody({ mode, panelLabel, panel, page, assistant, history, narrow }: DesktopBodyProps) {
 	const assistantOpen = useEditorStore((state) => state.assistantOpen);
-	const assistantInstant = useEditorStore((state) => state.assistantInstant);
+	const historyOpen = useEditorStore((state) => state.historyOpen);
+	const instant = useEditorStore((state) => state.assistantInstant);
+	const hidden = useEditorStore((state) => state.panelHidden);
+	const takeover = assistantOpen && assistant ? "assistant" : historyOpen && history ? "history" : null;
+	// Each thing fades up 4px as it takes the slot; ⌘J swaps at once.
+	const enter = instant
+		? undefined
+		: "transition-[opacity,translate] duration-standard ease-enter starting:translate-y-1 starting:opacity-0";
 
 	return (
-		<div
-			className={cn("relative grid min-h-0", assistantGridTransition(assistantOpen, assistantInstant))}
-			style={{
-				gridTemplateColumns: column
-					? columnsWithAssistant(assistantOpen)
-					: narrow
-						? "380px minmax(0,1fr)"
-						: "var(--editor-panel) minmax(0,1fr)",
-			}}
-		>
-			<AssistantReplace
-				replaced={replace && assistantOpen}
-				assistant={<div className="min-h-0 border-e border-line">{assistant}</div>}
-			>
-				{/* A landmark of its own beside the page's <main> (layout-neutral: `contents`). */}
-				<aside aria-label={t`Editor`} className="contents">
-					<TabsContent
-						key={mode}
-						value={mode}
-						aria-label={panelLabel}
-						// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
-						// stretching the document, which would let scrollIntoView shift the whole editor. Keyed by mode so each
-						// mode starts at its top; no scroll anchoring, which yanked the Design panel back while scrolling it.
-						className="relative min-h-0 overflow-y-auto border-e border-line bg-surface [overflow-anchor:none]"
-					>
-						{panel}
-					</TabsContent>
+		<div className="relative flex min-h-0">
+			{!hidden && (
+				<aside
+					id="editor-panel"
+					data-design="epanel"
+					data-panel={takeover ?? mode}
+					aria-label={takeover === "assistant" ? t`Assistant` : takeover === "history" ? t`Version history` : t`Editor`}
+					className={cn(
+						"grid min-h-0 shrink-0 grid-rows-[minmax(0,1fr)] overflow-hidden border-e border-line bg-bg",
+						narrow ? "w-[380px]" : "w-(--editor-panel)",
+					)}
+				>
+					{takeover ? (
+						<div key={takeover} className={cn("flex min-h-0 min-w-0 flex-col", enter)}>
+							{takeover === "assistant" ? assistant : history}
+						</div>
+					) : (
+						<TabsContent
+							key={mode}
+							value={mode}
+							aria-label={panelLabel}
+							// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
+							// stretching the document, which would let scrollIntoView shift the whole editor. Keyed by mode so each
+							// mode starts at its top; no scroll anchoring, which yanked the Design panel back while scrolling it.
+							className={cn("relative flex min-h-0 flex-col overflow-y-auto [overflow-anchor:none]", enter)}
+						>
+							{panel}
+						</TabsContent>
+					)}
 				</aside>
-			</AssistantReplace>
-			<main id="main-content" className="min-h-0 min-w-0">
+			)}
+			<main id="main-content" className="min-h-0 min-w-0 flex-1">
 				{page}
 			</main>
-			{column && <AssistantColumn>{assistant}</AssistantColumn>}
 		</div>
 	);
 }
@@ -194,7 +205,7 @@ function TabletBody({ mode, panelLabel, panel, page }: BodyProps) {
 					id="editor-panel"
 					inert={!drawerOpen}
 					className={cn(
-						"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-e border-line bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
+						"absolute inset-y-0 start-0 z-20 flex w-[380px] max-w-[calc(100%-3rem)] flex-col overflow-y-auto border-e border-line bg-bg shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
 						!drawerOpen && "-translate-x-full rtl:translate-x-full",
 					)}
 				>
@@ -215,7 +226,7 @@ type MobileTabBarProps<V extends MobileView> = {
 /** Phones: the views along the bottom, one showing at a time. */
 export function MobileTabBar<V extends MobileView>({ tabs, view, onModeChange }: MobileTabBarProps<V>) {
 	return (
-		<nav aria-label={t`Editor views`} className="flex border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
+		<nav aria-label={t`Editor views`} className="flex border-t border-line bg-bg pb-[env(safe-area-inset-bottom)]">
 			{tabs.map(({ view: tab, icon, label }) => {
 				const active = tab === view;
 

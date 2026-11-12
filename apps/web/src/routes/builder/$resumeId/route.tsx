@@ -24,6 +24,9 @@ const searchSchema = z.object({
 	ask: z.string().max(2_000).optional().catch(undefined),
 	// Prepare for next step keeps the application clicked, even when a base resume serves several jobs.
 	applicationId: z.string().optional().catch(undefined),
+	// What is open in Write and outlined on the page: a section id (or "basics"), and one of its entries.
+	section: z.string().max(64).optional().catch(undefined),
+	entry: z.string().max(64).optional().catch(undefined),
 	// The file a resume was just imported from; Write says what came in until it's dismissed.
 	imported: z.string().max(255).optional().catch(undefined),
 });

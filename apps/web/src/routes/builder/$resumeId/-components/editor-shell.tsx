@@ -2,7 +2,7 @@ import type { EditorMode } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { getRouteApi, Outlet } from "@tanstack/react-router";
-import { Suspense, useCallback, useEffect } from "react";
+import { Suspense, useCallback, useEffect, useRef } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
@@ -19,17 +19,19 @@ import { useMarkDocumentOpened } from "@/features/documents/new-documents";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { IssueStepper } from "@/features/resume/editor/check/page-layer";
 import { EditorFrame, MobileTabBar, useEditorLayout } from "@/features/resume/editor/chrome/shell";
-import { useEditorStore } from "@/features/resume/editor/store";
+import { isSameSelection, useEditorStore } from "@/features/resume/editor/store";
 import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { useResumeWebMcpTools } from "@/features/resume/editor/webmcp";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
 import { preloadRichTextEditor } from "@/features/resume/editor/write/rich-text-editor";
+import { searchOf, selectionOf } from "@/features/resume/editor/write/view";
 import { whenIdle } from "@/features/resume/preview/resume-thumbnail.shared";
+import { HistoryPanel, HistoryTab } from "@/features/resume/share/history-tab";
 
 /**
- * The editor: a 56px bar over a 400px panel and the page canvas (desktop). On tablets the panel is a 380px
- * drawer over the page, pinnable beside it in landscape; on phones one view shows at a time, switched by
- * Write · Page · Design · Check · Share tabs.
+ * The editor: a 56px bar over one 400px panel slot and the page canvas (desktop). The slot holds the mode's panel, or
+ * the assistant or History in its place. On tablets the panel is a 380px drawer over the page, pinnable beside it in
+ * landscape; on phones one view shows at a time, switched by Write · Page · Design · Check · Share tabs.
  */
 export function EditorShell() {
 	const [mode, setMode] = useEditorMode();
@@ -49,8 +51,9 @@ export function EditorShell() {
 	useEffect(() => {
 		if (checkTab) useEditorStore.setState({ checkTab });
 	}, [checkTab]);
-	useOpenVersionFromUrl();
+	useOpenVersionFromUrl(editorLayout.layout === "desktop" || editorLayout.pinned);
 	useOpenAssistantFromUrl();
+	useSelectionInUrl();
 	useResumeWebMcpTools(routeApi.useParams().resumeId);
 	useMarkDocumentOpened(routeApi.useParams().resumeId);
 
@@ -64,6 +67,7 @@ export function EditorShell() {
 				panel={<ModePanel mode={mode} />}
 				page={<Outlet />}
 				assistant={<ResumeAssistant />}
+				history={<History />}
 				mobile={<MobileBody mode={mode} onModeChange={setMode} />}
 			>
 				<DownloadSheet />
@@ -76,13 +80,15 @@ export function EditorShell() {
 const routeApi = getRouteApi("/builder/$resumeId");
 
 /** `?version=` opens History on that version (the page shows it read-only), then leaves the URL. */
-function useOpenVersionFromUrl() {
+function useOpenVersionFromUrl(panelBesidePage: boolean) {
 	const { version } = routeApi.useSearch();
 	const navigate = routeApi.useNavigate();
 
 	useEffect(() => {
 		if (!version) return;
-		useEditorStore.getState().setSheetTab("history");
+		// Beside the page, History takes the panel's place; on smaller screens it is still the sheet.
+		if (panelBesidePage) useEditorStore.getState().setHistoryOpen(true);
+		else useEditorStore.getState().setSheetTab("history");
 		useEditorStore.setState({ historyVersionId: version });
 		void navigate({
 			to: ".",
@@ -90,7 +96,7 @@ function useOpenVersionFromUrl() {
 			search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, version: undefined }),
 			replace: true,
 		});
-	}, [version, navigate]);
+	}, [version, navigate, panelBesidePage]);
 }
 
 /**
@@ -119,6 +125,61 @@ function useOpenAssistantFromUrl() {
 		[navigate],
 	);
 	useAssistantInUrl({ assistant, ask }, setSearch);
+}
+
+/**
+ * What is selected lives in the URL (`?section=experience&entry=…`, `?section=basics`), so Back steps up through the
+ * Write panel (entry, section, outline) and a link opens where it points. The store stays the one thing the panel and
+ * the page read; this keeps the two in step. Stepping to a neighbouring entry replaces the URL instead of adding to it.
+ */
+function useSelectionInUrl() {
+	const { section, entry } = routeApi.useSearch();
+	const navigate = routeApi.useNavigate();
+	const selection = useEditorStore((state) => state.selection);
+	/** Navigations of ours still on their way: the URL they leave behind is not news. */
+	const writing = useRef(0);
+
+	// The URL changed by itself (a link, Back, Forward): the selection follows.
+	useEffect(() => {
+		if (writing.current > 0) return;
+		const next = selectionOf({ section, entry });
+		if (!isSameSelection(useEditorStore.getState().selection, next)) useEditorStore.setState({ selection: next });
+	}, [section, entry]);
+
+	// The selection changed in the app: the URL follows.
+	useEffect(() => {
+		// Read now, not from this render: the effect above may have just taken a selection from the URL.
+		const next = searchOf(useEditorStore.getState().selection);
+		if (next.section === section && next.entry === entry) return;
+		const sibling = Boolean(entry && next.entry && next.section === section);
+		writing.current += 1;
+		void navigate({
+			to: ".",
+			resetScroll: false,
+			search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, ...next }),
+			replace: sibling,
+		}).finally(() => {
+			writing.current -= 1;
+		});
+		// Only the selection's own changes write the URL; the URL's changes are read above.
+		// oxlint-disable-next-line react-hooks/exhaustive-deps -- reading `section` and `entry` here must not re-run on URL changes.
+	}, [selection, navigate]);
+}
+
+/** Version history in the panel's place, from the clock in the bar. Its list and actions are area D's `HistoryTab`. */
+function History() {
+	return (
+		<HistoryPanel
+			onClose={() => {
+				useEditorStore.getState().setHistoryOpen(false);
+				requestAnimationFrame(() => document.querySelector<HTMLElement>("[data-history-toggle]")?.focus());
+			}}
+		>
+			<Suspense>
+				<HistoryTab />
+			</Suspense>
+		</HistoryPanel>
+	);
 }
 
 function EditorHotkeys({ onModeChange }: { onModeChange: (mode: EditorMode) => void }) {
@@ -172,7 +233,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 					<TabsContent
 						key={mode}
 						value={mode}
-						className="absolute inset-0 overflow-y-auto bg-surface [overflow-anchor:none]"
+						className="absolute inset-0 flex flex-col overflow-y-auto bg-bg [overflow-anchor:none]"
 					>
 						<ModePanel mode={mode} />
 					</TabsContent>

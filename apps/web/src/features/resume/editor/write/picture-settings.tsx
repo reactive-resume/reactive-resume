@@ -19,9 +19,11 @@ import {
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { InputGroup, InputGroupAddon, InputGroupText } from "@reactive-resume/ui/components/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { toast } from "@reactive-resume/ui/components/toast";
 import "react-easy-crop/react-easy-crop.css";
@@ -40,7 +42,6 @@ type PicturePreviewControlsProps = {
 	normalizedPictureUrl: string;
 	picture: PictureValues;
 	onAutoSave: () => void;
-	onDeletePicture: () => void;
 	onSelectPicture: () => void;
 };
 
@@ -49,15 +50,14 @@ function PicturePreviewControls({
 	normalizedPictureUrl,
 	picture,
 	onAutoSave,
-	onDeletePicture,
 	onSelectPicture,
 }: PicturePreviewControlsProps) {
 	return (
 		<div className="flex items-center gap-x-4">
 			<button
 				type="button"
-				onClick={picture.url ? onDeletePicture : onSelectPicture}
-				aria-label={picture.url ? t`Remove photo` : t`Upload photo`}
+				onClick={onSelectPicture}
+				aria-label={t`Change photo`}
 				className="group/picture relative size-18 cursor-pointer overflow-hidden rounded-md bg-sunken transition-colors hover:bg-sunken/50"
 			>
 				{normalizedPictureUrl && (
@@ -70,7 +70,7 @@ function PicturePreviewControls({
 				)}
 
 				<div className="absolute inset-0 z-0 flex size-full items-center justify-center">
-					{picture.url ? <Icon name="trash" size={24} /> : <Icon name="upload-simple" size={24} />}
+					<Icon name="upload-simple" size={24} />
 				</div>
 			</button>
 
@@ -94,18 +94,6 @@ function PicturePreviewControls({
 									/>
 								}
 							/>
-
-							<Button
-								size="icon"
-								variant="ghost"
-								aria-label={picture.hidden ? t`Show photo` : t`Hide photo`}
-								onClick={() => {
-									form.setFieldValue("hidden", !picture.hidden);
-									onAutoSave();
-								}}
-							>
-								{picture.hidden ? <Icon name="eye-slash" size={16} /> : <Icon name="eye" size={16} />}
-							</Button>
 						</div>
 					</FormItem>
 				)}
@@ -127,32 +115,21 @@ function PictureFitField({ form, onAutoSave }: PictureFieldProps) {
 					<div className="text-sm font-medium">
 						<Trans>Fit</Trans>
 					</div>
-					<ButtonGroup role="group" aria-label={t`Fit`} className="w-full">
-						<Button
-							type="button"
-							variant={field.state.value === "cover" ? "primary" : "secondary"}
-							aria-pressed={field.state.value === "cover"}
-							className="flex-1"
-							onClick={() => {
-								field.handleChange("cover");
-								onAutoSave();
-							}}
-						>
+					<SegmentedControl
+						aria-label={t`Fit`}
+						value={field.state.value}
+						onValueChange={(fit) => {
+							field.handleChange(fit as "cover" | "contain");
+							onAutoSave();
+						}}
+					>
+						<SegmentedControlItem value="cover">
 							<Trans>Cover</Trans>
-						</Button>
-						<Button
-							type="button"
-							variant={field.state.value === "contain" ? "primary" : "secondary"}
-							aria-pressed={field.state.value === "contain"}
-							className="flex-1"
-							onClick={() => {
-								field.handleChange("contain");
-								onAutoSave();
-							}}
-						>
+						</SegmentedControlItem>
+						<SegmentedControlItem value="contain">
 							<Trans>Contain</Trans>
-						</Button>
-					</ButtonGroup>
+						</SegmentedControlItem>
+					</SegmentedControl>
 				</div>
 			)}
 		</form.Field>
@@ -720,6 +697,7 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 				toast.close(toastId);
 				if (!current() || useResumeStore.getState().resume?.data.picture.url !== originalUrl) return;
 				form.setFieldValue("url", url);
+				toast.add({ description: t`Photo added` });
 				updateResumeData(
 					(draft) => {
 						draft.picture.url = url;
@@ -783,7 +761,7 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 	};
 
 	return (
-		<div id="sidebar-picture" className="col-span-full flex items-center gap-3 rounded-lg bg-bg p-2.5">
+		<div id="sidebar-picture" className="col-span-full flex items-center gap-3">
 			<input
 				ref={fileInputRef}
 				type="file"
@@ -817,7 +795,7 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 
 			{!picture.url && (
 				<Button variant="secondary" size="sm" disabled={locked} onClick={onSelectPicture}>
-					<Trans>Add</Trans>
+					<Trans>Add photo</Trans>
 				</Button>
 			)}
 			<Popover>
@@ -842,7 +820,6 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 							normalizedPictureUrl={normalizedPictureUrl}
 							picture={picture}
 							onAutoSave={handleAutoSave}
-							onDeletePicture={onDeletePicture}
 							onSelectPicture={onSelectPicture}
 						/>
 
@@ -850,7 +827,7 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 							<>
 								<PictureFitField form={form} onAutoSave={handleAutoSave} />
 
-								<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
+								<div className="grid grid-cols-2 gap-3">
 									<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
 
 									<ColorWidthFields
@@ -877,6 +854,21 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 					</form>
 				</PopoverContent>
 			</Popover>
+			{picture.url && (
+				<>
+					<IconButton
+						icon={picture.hidden ? "eye-slash" : "eye"}
+						label={picture.hidden ? t`Show photo` : t`Hide photo`}
+						size="icon-sm"
+						disabled={locked}
+						onClick={() => {
+							form.setFieldValue("hidden", !picture.hidden);
+							handleAutoSave();
+						}}
+					/>
+					<IconButton icon="trash" label={t`Remove photo`} size="icon-sm" disabled={locked} onClick={onDeletePicture} />
+				</>
+			)}
 		</div>
 	);
 }

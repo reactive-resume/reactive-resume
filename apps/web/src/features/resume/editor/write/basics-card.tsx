@@ -2,18 +2,17 @@ import type { Basics, CustomField } from "@reactive-resume/schema/resume/data";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
-import { generateId, getInitials } from "@reactive-resume/utils/string";
-import { cn } from "@reactive-resume/utils/style";
-import { useEditorStore } from "../store";
+import { generateId } from "@reactive-resume/utils/string";
 import { TextField, validateEmail, WebsiteField } from "./fields";
 import { PictureSettings } from "./picture-settings";
+import { SectionsCrumb } from "./section-view";
 import { IconPicker } from "@/components/input/icon-picker";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { PanelBody, PanelHeader } from "@/features/resume/editor/chrome/panel";
 
 type TextKey = "name" | "headline" | "email" | "phone" | "location";
 
@@ -24,14 +23,12 @@ function useBasicsWriter() {
 }
 
 /**
- * The Basics card: name and "headline · location" with an initials avatar, opening to the photo, contact
- * fields and custom fields. The page header selects it.
+ * Basics: who the resume is about. The photo, name and headline, then how to reach them and any extra fields. It is
+ * always first on the page, whose header selects it.
  */
-export function BasicsCard({ locked }: { locked: boolean }) {
+export function BasicsView({ locked }: { locked: boolean }) {
 	const basics = useCurrentBuilderResumeSelector((resume) => resume.data.basics);
 	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
-	const open = useEditorStore((state) => state.basicsOpen);
-	const selected = useEditorStore((state) => state.selection?.kind === "header");
 	const write = useBasicsWriter();
 	const updateResumeData = useUpdateResumeData();
 
@@ -44,90 +41,56 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 	});
 
 	return (
-		<section
-			id="sidebar-basics"
-			aria-label={t`Basics`}
-			className={cn(
-				"scroll-mt-[60px] rounded-xl border border-line bg-surface transition-[border-color] duration-quick",
-				selected && "border-accent",
-			)}
-		>
-			<button
-				type="button"
-				aria-expanded={open}
-				onClick={() => useEditorStore.setState({ basicsOpen: !open })}
-				className="flex w-full items-center gap-3 rounded-xl p-3 text-start"
-			>
-				<span
-					aria-hidden="true"
-					className="grid size-10 shrink-0 place-items-center rounded-sm bg-accent-soft text-sm font-semibold text-accent-text"
-				>
-					{getInitials(basics.name || "?")}
-				</span>
-				<span className="min-w-0 flex-1">
-					<span dir="auto" className={cn("block truncate text-sm font-semibold", !basics.name && "text-ink-3")}>
-						{basics.name || <Trans>Your name</Trans>}
-					</span>
-					<span dir="auto" className="block truncate text-xs text-ink-3">
-						{[basics.headline, basics.location].filter((part) => part.trim()).join(" · ")}
-					</span>
-				</span>
-				<Icon
-					name="caret-down"
-					className={cn("text-ink-2 transition-transform duration-standard ease-enter", open && "rotate-180")}
+		<PanelBody id="sidebar-basics" className="pb-6">
+			<PanelHeader crumb={<SectionsCrumb />} title={<Trans>Basics</Trans>} />
+			<fieldset disabled={locked} className="m-0 mt-3 grid min-w-0 grid-cols-2 items-start gap-3 border-0 p-0">
+				<PictureSettings key={resumeId} locked={locked} />
+				<TextField
+					label={<Trans>Full name</Trans>}
+					wide
+					autoComplete="name"
+					// A blank resume opens straight into the name field.
+					autoFocus={!locked && !basics.name}
+					{...text("name")}
 				/>
-			</button>
-
-			<Collapsible open={open}>
-				<CollapsibleContent>
-					<fieldset
-						disabled={locked}
-						className="m-0 grid min-w-0 grid-cols-2 items-start gap-x-3 gap-y-2.5 border-0 border-t border-line px-3 pt-3 pb-3.5"
-					>
-						<PictureSettings key={resumeId} locked={locked} />
-						<TextField
-							label={<Trans>Full name</Trans>}
-							wide
-							autoComplete="name"
-							// A blank resume opens straight into the name field.
-							autoFocus={!locked && !basics.name}
-							{...text("name")}
-						/>
-						<TextField label={<Trans>Headline</Trans>} wide {...text("headline")} />
-						{/* Addresses run long: Email and Phone get full rows, also in a narrow panel. */}
-						<TextField
-							label={<Trans>Email</Trans>}
-							wide
-							type="email"
-							autoComplete="email"
-							validate={validateEmail}
-							{...text("email")}
-						/>
-						<TextField label={<Trans>Phone</Trans>} wide type="tel" autoComplete="tel" {...text("phone")} />
-						<TextField label={<Trans>Location</Trans>} wide {...text("location")} />
-						<WebsiteField
-							label={<Trans>Website</Trans>}
-							value={basics.website}
-							allowInlineLink={false}
-							onChange={(website) =>
-								write("website", (target) => {
-									target.website = { url: website.url, label: website.label };
-								})
-							}
-						/>
-						<CustomFields
-							fields={basics.customFields}
-							locked={locked}
-							edit={(key, mutate) =>
-								updateResumeData((draft) => mutate(draft.basics.customFields), {
-									coalesceKey: `basics.customFields.${key}`,
-								})
-							}
-						/>
-					</fieldset>
-				</CollapsibleContent>
-			</Collapsible>
-		</section>
+				<TextField label={<Trans>Headline</Trans>} wide {...text("headline")} />
+				{/* Addresses run long: Email gets a full row, also in a narrow panel. */}
+				<TextField
+					label={<Trans>Email</Trans>}
+					wide
+					type="email"
+					autoComplete="email"
+					validate={validateEmail}
+					{...text("email")}
+				/>
+				<TextField label={<Trans>Phone</Trans>} type="tel" autoComplete="tel" {...text("phone")} />
+				<TextField label={<Trans>Location</Trans>} {...text("location")} />
+				<WebsiteField
+					label={<Trans>Website</Trans>}
+					value={basics.website}
+					allowInlineLink={false}
+					onChange={(website) =>
+						write("website", (target) => {
+							target.website = { url: website.url, label: website.label };
+						})
+					}
+				/>
+				<div className="col-span-full grid gap-1.5">
+					<span className="text-[13px]/[18px] font-medium">
+						<Trans>Custom fields</Trans>
+					</span>
+					<CustomFields
+						fields={basics.customFields}
+						locked={locked}
+						edit={(key, mutate) =>
+							updateResumeData((draft) => mutate(draft.basics.customFields), {
+								coalesceKey: `basics.customFields.${key}`,
+							})
+						}
+					/>
+				</div>
+			</fieldset>
+		</PanelBody>
 	);
 }
 
@@ -215,10 +178,10 @@ export function CustomFields({ fields, locked, edit }: CustomFieldsProps) {
 			<button
 				type="button"
 				disabled={locked}
-				className="flex h-9 w-fit items-center gap-1.5 rounded-lg px-2 text-sm text-accent-text hover:bg-hover disabled:pointer-events-none disabled:opacity-50"
+				className="flex h-7 w-fit items-center gap-1.5 rounded-xs text-sm/5 font-medium text-accent-text hover:underline disabled:pointer-events-none disabled:opacity-45"
 				onClick={() => edit("add", (list) => list.push({ id: generateId(), icon: "acorn", text: "", link: "" }))}
 			>
-				<Icon name="plus" size={18} />
+				<Icon name="plus" size={16} />
 				<Trans>Add field</Trans>
 			</button>
 		</div>

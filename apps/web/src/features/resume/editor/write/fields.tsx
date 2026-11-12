@@ -143,24 +143,35 @@ export function WebsiteField({ label, value, onChange, allowInlineLink = true }:
 	const inline = value.inlineLink ?? false;
 
 	return (
-		<div className="col-span-full grid gap-2">
+		<div className="col-span-full grid gap-1.5">
+			<div className="flex flex-wrap items-center justify-between gap-2">
+				<span className="t-small font-medium text-ink-2">{label ?? <Trans>Link</Trans>}</span>
+				{allowInlineLink && (
+					// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Checkbox is the wrapped control.
+					<label className="flex w-fit cursor-pointer items-center gap-1.5 text-xs text-ink-2">
+						<Checkbox
+							className="size-4"
+							checked={inline}
+							onCheckedChange={(checked) => onChange({ ...value, inlineLink: checked })}
+						/>
+						<Trans>Show link in title</Trans>
+					</label>
+				)}
+			</div>
 			<FormItem hasError={Boolean(error)}>
-				<FormLabel>{label ?? <Trans>Link</Trans>}</FormLabel>
 				<FormControl
 					render={
-						<URLInput value={value} onChange={onChange} hideLabelButton={inline} onBlur={() => setTouched(true)} />
+						<URLInput
+							aria-label={typeof label === "string" ? label : allowInlineLink ? t`Link` : t`Website`}
+							value={value}
+							onChange={onChange}
+							hideLabelButton={inline}
+							onBlur={() => setTouched(true)}
+						/>
 					}
 				/>
 				<FormMessage errors={error ? [error] : []} />
 			</FormItem>
-
-			{allowInlineLink && (
-				// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI's Checkbox is the control; wrapping it in a label is its documented pattern.
-				<label className="flex w-fit cursor-pointer items-center gap-2 text-sm">
-					<Checkbox checked={inline} onCheckedChange={(checked) => onChange({ ...value, inlineLink: checked })} />
-					<Trans>Show link in title</Trans>
-				</label>
-			)}
 		</div>
 	);
 }

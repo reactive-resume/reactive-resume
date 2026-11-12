@@ -52,3 +52,20 @@ it.each([false, true])(
 		expect(screen.queryByRole("toolbar")).toBeNull();
 	},
 );
+
+it("shows the placeholder only for empty content before the field receives focus", async () => {
+	i18n.load("en", {});
+	i18n.activate("en");
+	render(
+		<I18nProvider i18n={i18n}>
+			<RichTextEditor
+				label="Description"
+				value="<ul><li><p>Existing line</p></li></ul>"
+				placeholder="Describe your work"
+				onChange={vi.fn()}
+			/>
+		</I18nProvider>,
+	);
+	await screen.findByRole("textbox", { name: "Description" });
+	expect(screen.queryByText("Describe your work")).toBeNull();
+});

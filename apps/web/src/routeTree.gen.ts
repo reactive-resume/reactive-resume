@@ -45,6 +45,8 @@ import { Route as DashboardApplicationsTrashRouteImport } from "./routes/dashboa
 import { Route as DashboardCareerIndexRouteImport } from "./routes/dashboard/career/index";
 import { Route as DashboardCareerKnowledgeRouteRouteImport } from "./routes/dashboard/career/knowledge/route";
 import { Route as DashboardCareerOffersRouteImport } from "./routes/dashboard/career/offers";
+import { Route as DashboardCareerSchedulesRouteImport } from "./routes/dashboard/career/schedules";
+import { Route as DashboardDocumentsImportRouteImport } from "./routes/dashboard/documents_.import";
 import { Route as DashboardResumesIndexRouteImport } from "./routes/dashboard/resumes/index";
 import { Route as DashboardSettingsIndexRouteImport } from "./routes/dashboard/settings/index";
 import { Route as DashboardSettingsAccountRouteImport } from "./routes/dashboard/settings/account";
@@ -245,6 +247,18 @@ const DashboardCareerOffersRoute = DashboardCareerOffersRouteImport.update({
   path: "/offers",
   getParentRoute: () => DashboardCareerRouteRoute,
 } as any);
+const DashboardCareerSchedulesRoute =
+  DashboardCareerSchedulesRouteImport.update({
+    id: "/schedules",
+    path: "/schedules",
+    getParentRoute: () => DashboardCareerRouteRoute,
+  } as any);
+const DashboardDocumentsImportRoute =
+  DashboardDocumentsImportRouteImport.update({
+    id: "/documents_/import",
+    path: "/documents/import",
+    getParentRoute: () => DashboardRouteRoute,
+  } as any);
 const DashboardResumesIndexRoute = DashboardResumesIndexRouteImport.update({
   id: "/resumes/",
   path: "/resumes/",
@@ -373,6 +387,8 @@ export interface FileRoutesByFullPath {
   "/builder/letter/$coverLetterId": typeof BuilderLetterCoverLetterIdRoute;
   "/dashboard/applications/trash": typeof DashboardApplicationsTrashRoute;
   "/dashboard/career/offers": typeof DashboardCareerOffersRoute;
+  "/dashboard/career/schedules": typeof DashboardCareerSchedulesRoute;
+  "/dashboard/documents/import": typeof DashboardDocumentsImportRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/ai": typeof DashboardSettingsAiRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
@@ -420,6 +436,8 @@ export interface FileRoutesByTo {
   "/builder/letter/$coverLetterId": typeof BuilderLetterCoverLetterIdRoute;
   "/dashboard/applications/trash": typeof DashboardApplicationsTrashRoute;
   "/dashboard/career/offers": typeof DashboardCareerOffersRoute;
+  "/dashboard/career/schedules": typeof DashboardCareerSchedulesRoute;
+  "/dashboard/documents/import": typeof DashboardDocumentsImportRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/ai": typeof DashboardSettingsAiRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
@@ -475,6 +493,8 @@ export interface FileRoutesById {
   "/builder/letter/$coverLetterId": typeof BuilderLetterCoverLetterIdRoute;
   "/dashboard/applications/trash": typeof DashboardApplicationsTrashRoute;
   "/dashboard/career/offers": typeof DashboardCareerOffersRoute;
+  "/dashboard/career/schedules": typeof DashboardCareerSchedulesRoute;
+  "/dashboard/documents_/import": typeof DashboardDocumentsImportRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/ai": typeof DashboardSettingsAiRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
@@ -530,6 +550,8 @@ export interface FileRouteTypes {
     | "/builder/letter/$coverLetterId"
     | "/dashboard/applications/trash"
     | "/dashboard/career/offers"
+    | "/dashboard/career/schedules"
+    | "/dashboard/documents/import"
     | "/dashboard/settings/account"
     | "/dashboard/settings/ai"
     | "/dashboard/settings/api-keys"
@@ -577,6 +599,8 @@ export interface FileRouteTypes {
     | "/builder/letter/$coverLetterId"
     | "/dashboard/applications/trash"
     | "/dashboard/career/offers"
+    | "/dashboard/career/schedules"
+    | "/dashboard/documents/import"
     | "/dashboard/settings/account"
     | "/dashboard/settings/ai"
     | "/dashboard/settings/api-keys"
@@ -631,6 +655,8 @@ export interface FileRouteTypes {
     | "/builder/letter/$coverLetterId"
     | "/dashboard/applications/trash"
     | "/dashboard/career/offers"
+    | "/dashboard/career/schedules"
+    | "/dashboard/documents_/import"
     | "/dashboard/settings/account"
     | "/dashboard/settings/ai"
     | "/dashboard/settings/api-keys"
@@ -916,6 +942,20 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof DashboardCareerOffersRouteImport;
       parentRoute: typeof DashboardCareerRouteRoute;
     };
+    "/dashboard/career/schedules": {
+      id: "/dashboard/career/schedules";
+      path: "/schedules";
+      fullPath: "/dashboard/career/schedules";
+      preLoaderRoute: typeof DashboardCareerSchedulesRouteImport;
+      parentRoute: typeof DashboardCareerRouteRoute;
+    };
+    "/dashboard/documents_/import": {
+      id: "/dashboard/documents_/import";
+      path: "/documents/import";
+      fullPath: "/dashboard/documents/import";
+      preLoaderRoute: typeof DashboardDocumentsImportRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     "/dashboard/resumes/": {
       id: "/dashboard/resumes/";
       path: "/resumes";
@@ -1116,6 +1156,7 @@ const DashboardCareerKnowledgeRouteRouteWithChildren =
 interface DashboardCareerRouteRouteChildren {
   DashboardCareerKnowledgeRouteRoute: typeof DashboardCareerKnowledgeRouteRouteWithChildren;
   DashboardCareerOffersRoute: typeof DashboardCareerOffersRoute;
+  DashboardCareerSchedulesRoute: typeof DashboardCareerSchedulesRoute;
   DashboardCareerIndexRoute: typeof DashboardCareerIndexRoute;
   DashboardCareerCoachChar123ConversationIdChar125Route: typeof DashboardCareerCoachChar123ConversationIdChar125Route;
 }
@@ -1124,6 +1165,7 @@ const DashboardCareerRouteRouteChildren: DashboardCareerRouteRouteChildren = {
   DashboardCareerKnowledgeRouteRoute:
     DashboardCareerKnowledgeRouteRouteWithChildren,
   DashboardCareerOffersRoute: DashboardCareerOffersRoute,
+  DashboardCareerSchedulesRoute: DashboardCareerSchedulesRoute,
   DashboardCareerIndexRoute: DashboardCareerIndexRoute,
   DashboardCareerCoachChar123ConversationIdChar125Route:
     DashboardCareerCoachChar123ConversationIdChar125Route,
@@ -1174,6 +1216,7 @@ interface DashboardRouteRouteChildren {
   DashboardTrashRoute: typeof DashboardTrashRoute;
   DashboardIndexRoute: typeof DashboardIndexRoute;
   DashboardApplicationsTrashRoute: typeof DashboardApplicationsTrashRoute;
+  DashboardDocumentsImportRoute: typeof DashboardDocumentsImportRoute;
   DashboardApplicationsIndexRoute: typeof DashboardApplicationsIndexRoute;
   DashboardResumesIndexRoute: typeof DashboardResumesIndexRoute;
   DashboardApplicationsApplicationIdChar123TabChar125Route: typeof DashboardApplicationsApplicationIdChar123TabChar125Route;
@@ -1187,6 +1230,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardTrashRoute: DashboardTrashRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardApplicationsTrashRoute: DashboardApplicationsTrashRoute,
+  DashboardDocumentsImportRoute: DashboardDocumentsImportRoute,
   DashboardApplicationsIndexRoute: DashboardApplicationsIndexRoute,
   DashboardResumesIndexRoute: DashboardResumesIndexRoute,
   DashboardApplicationsApplicationIdChar123TabChar125Route:

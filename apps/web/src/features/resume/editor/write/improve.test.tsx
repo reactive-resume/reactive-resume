@@ -3,7 +3,10 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { Editor } from "@tiptap/react";
+import { ImprovePanel } from "./improve";
 import { RichTextEditor } from "./rich-text-editor-field";
+import { richTextExtensions } from "@/components/input/rich-text-extensions";
 
 const fixture = vi.hoisted(() => ({
 	requests: [] as unknown[],
@@ -125,4 +128,30 @@ it.each([false, true])("editor Undo and Redo carry the accepted source change (s
 		aiOperationIds: ["reviewed-improve"],
 	});
 	expect(fixture.requests).toHaveLength(1);
+});
+
+it("withdraws Replace and Try another when the source line changes, including a shorter document", async () => {
+	const editor = new Editor({ extensions: richTextExtensions, content: "<p>Original line</p>" });
+	const accept = vi.fn();
+	render(
+		<I18nProvider i18n={i18n}>
+			<ImprovePanel
+				editor={editor}
+				line={{ from: 1, to: 14, text: "Original line" }}
+				where="Description"
+				onClose={vi.fn()}
+				onAccept={accept}
+			/>
+		</I18nProvider>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Stronger verb" }));
+	expect(screen.getByRole("button", { name: "Replace" })).toBeVisible();
+	await act(async () => {
+		editor.commands.setContent("<p>x</p>");
+	});
+	expect(screen.queryByRole("button", { name: "Replace" })).toBeNull();
+	expect(screen.queryByRole("button", { name: "Try another" })).toBeNull();
+	expect(screen.getByRole("button", { name: "Keep mine" })).toBeVisible();
+	expect(accept).not.toHaveBeenCalled();
+	editor.destroy();
 });
