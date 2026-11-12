@@ -11,11 +11,13 @@ import { AccessibilityInfo, I18nManager, Platform, StyleSheet, View } from "reac
 import Animated, {
 	cancelAnimation,
 	runOnJS,
+	useAnimatedProps,
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Rect } from "react-native-svg";
 import { create } from "zustand";
 import { Touch } from "./base";
 import { enter, startFuse, toastLifetime, useMotionPolicy } from "./motion";
@@ -102,7 +104,11 @@ export function useToastOffset(bottom: number) {
 	}, [bottom]);
 }
 
+// Android: any per-frame layout or transform change sends accessibility a content change (through the toast's live
+// region too), so the screen never reads as idle to TalkBack or UiAutomator while a toast is up. There the fuse is an
+// SVG rect whose width only redraws.
 const ANDROID_FUSE = Platform.OS === "android";
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
 export function ToastHost() {
 	const current = useToasts((s) => s.current);
@@ -205,11 +211,11 @@ function ToastView({
 		transform: [{ translateY: toastRise(shown.value, rise) }],
 	}));
 	const riseOnly = useAnimatedStyle(() => ({ transform: [{ translateY: toastRise(shown.value, rise) }] }));
-	// Android: a width animated every frame relays out the toast and sends accessibility a content change each frame,
-	// which made every UiAutomator read seconds slow while a toast was up. Scaling draws the same bar without layout.
-	const fuseStyle = useAnimatedStyle(() =>
-		ANDROID_FUSE ? { width: "100%", transform: [{ scaleX: fuse.value }] } : { width: `${fuse.value * 100}%` },
-	);
+	const fuseStyle = useAnimatedStyle(() => ({ width: `${fuse.value * 100}%` }));
+	const fuseProps = useAnimatedProps(() => ({
+		x: I18nManager.isRTL ? `${(1 - fuse.value) * 100}%` : 0,
+		width: `${fuse.value * 100}%`,
+	}));
 	const place = [{ bottom }, lab?.height ? { height: lab.height } : null];
 
 	return (
@@ -248,14 +254,20 @@ function ToastView({
 						</Touch>
 					) : null,
 				)}
-				<Animated.View
-					pointerEvents="none"
-					style={[
-						styles.fuse,
-						{ backgroundColor: lab?.fuse ?? colors.accent, height: lab?.fuseHeight ?? 2 },
-						fuseStyle,
-					]}
-				/>
+				{ANDROID_FUSE ? (
+					<Svg pointerEvents="none" style={[styles.fuseTrack, { height: lab?.fuseHeight ?? 2 }]}>
+						<AnimatedRect y={0} height="100%" fill={lab?.fuse ?? colors.accent} animatedProps={fuseProps} />
+					</Svg>
+				) : (
+					<Animated.View
+						pointerEvents="none"
+						style={[
+							styles.fuse,
+							{ backgroundColor: lab?.fuse ?? colors.accent, height: lab?.fuseHeight ?? 2 },
+							fuseStyle,
+						]}
+					/>
+				)}
 			</Animated.View>
 			{lab?.centre ? (
 				<Animated.View pointerEvents="none" style={[styles.labCentre, ...place, riseOnly]}>
@@ -289,11 +301,7 @@ const styles = StyleSheet.create({
 	},
 	message: { flex: 1 },
 	action: { height: 44, marginVertical: -12, paddingHorizontal: 12, justifyContent: "center" },
-	fuse: {
-		position: "absolute",
-		start: 0,
-		bottom: 0,
-		...(ANDROID_FUSE ? { transformOrigin: I18nManager.isRTL ? "right" : "left" } : null),
-	},
+	fuse: { position: "absolute", start: 0, bottom: 0 },
+	fuseTrack: { position: "absolute", start: 0, end: 0, bottom: 0 },
 	labCentre: { position: "absolute", left: space.s3, right: space.s3, alignItems: "center", justifyContent: "center" },
 });
