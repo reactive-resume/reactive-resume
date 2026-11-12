@@ -41,6 +41,9 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			"career_fact",
 			"career_profile",
 			"career_story",
+			"career_workspace",
+			"career_artifact",
+			"career_transcript",
 			"resume_slug_redirect",
 			"feedback_link",
 			"feedback_comment",
@@ -198,6 +201,46 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			);
 		} finally {
 			await pool.query("DELETE FROM career_profile");
+		}
+	});
+
+	it("transfers guest application workspace, artifacts and transcripts to destination user", async () => {
+		await pool.query(
+			`INSERT INTO application (id, user_id, company, role) VALUES ('workspace-app', 'link-guest', 'Acme', 'Engineer')`,
+		);
+		await pool.query(
+			`INSERT INTO career_workspace (application_id, user_id, data) VALUES ('workspace-app', 'link-guest', $1)`,
+			[JSON.stringify({ answers: [{ id: "ans-1", question: "Why Acme?", answer: "Great culture" }] })],
+		);
+		await pool.query(
+			`INSERT INTO career_artifact (id, user_id, application_id, title, data, evidence, input_version) VALUES ('workspace-artifact', 'link-guest', 'workspace-app', 'Briefing', $1, $2, 'v1')`,
+			[JSON.stringify({ kind: "briefing" }), JSON.stringify({ factIds: [], storyIds: [] })],
+		);
+		await pool.query(
+			`INSERT INTO career_transcript (id, user_id, application_id, original, edited, model) VALUES ('workspace-transcript', 'link-guest', 'workspace-app', 'orig', 'edit', 'test-model')`,
+		);
+
+		try {
+			await withDatabasePool(pool, () => linkAnonymousAccount({ fromUserId: "link-guest", toUserId: "link-owner" }));
+
+			expect(
+				(
+					await pool.query(
+						"SELECT user_id, application_id FROM career_workspace WHERE application_id = 'workspace-app'",
+					)
+				).rows,
+			).toEqual([{ user_id: "link-owner", application_id: "workspace-app" }]);
+			expect(
+				(await pool.query("SELECT user_id, id FROM career_artifact WHERE id = 'workspace-artifact'")).rows,
+			).toEqual([{ user_id: "link-owner", id: "workspace-artifact" }]);
+			expect(
+				(await pool.query("SELECT user_id, id FROM career_transcript WHERE id = 'workspace-transcript'")).rows,
+			).toEqual([{ user_id: "link-owner", id: "workspace-transcript" }]);
+		} finally {
+			await pool.query("DELETE FROM career_workspace WHERE application_id = 'workspace-app'");
+			await pool.query("DELETE FROM career_artifact WHERE id = 'workspace-artifact'");
+			await pool.query("DELETE FROM career_transcript WHERE id = 'workspace-transcript'");
+			await pool.query("DELETE FROM application WHERE id = 'workspace-app'");
 		}
 	});
 

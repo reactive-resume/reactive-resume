@@ -542,6 +542,21 @@ export async function linkAnonymousAccount({
 				.where(and(eq(schema.application.id, application.id), eq(schema.application.userId, fromUserId)));
 		}
 
+		await tx
+			.update(schema.careerWorkspace)
+			.set({ userId: toUserId, updatedAt: schema.careerWorkspace.updatedAt })
+			.where(eq(schema.careerWorkspace.userId, fromUserId));
+
+		await tx
+			.update(schema.careerArtifact)
+			.set({ userId: toUserId, updatedAt: schema.careerArtifact.updatedAt })
+			.where(eq(schema.careerArtifact.userId, fromUserId));
+
+		await tx
+			.update(schema.careerTranscript)
+			.set({ userId: toUserId, updatedAt: schema.careerTranscript.updatedAt })
+			.where(eq(schema.careerTranscript.userId, fromUserId));
+
 		const sourceAnswers = await tx.select().from(schema.careerAnswer).where(eq(schema.careerAnswer.userId, fromUserId));
 		const targetAnswers = await tx.select().from(schema.careerAnswer).where(eq(schema.careerAnswer.userId, toUserId));
 		if (sourceAnswers.some((answer) => targetAnswers.some((target) => target.duplicateKey === answer.duplicateKey)))

@@ -96,7 +96,7 @@ describe("linkAnonymousAccount", () => {
 		warn.mockRestore();
 	});
 
-	it("moves the guest's Knowledge facts, stories and career profile with the documents", async () => {
+	it("moves the guest's Knowledge facts, stories, career profile and workspace data with the documents", async () => {
 		await linkAnonymousAccount({ fromUserId: "guest-123", toUserId: "user-456" });
 		const moved = (table: unknown) =>
 			mocks.update.mock.calls.some(
@@ -105,6 +105,9 @@ describe("linkAnonymousAccount", () => {
 		expect(moved(schema.careerFact)).toBe(true);
 		expect(moved(schema.careerStory)).toBe(true);
 		expect(moved(schema.careerProfile)).toBe(true);
+		expect(moved(schema.careerWorkspace)).toBe(true);
+		expect(moved(schema.careerArtifact)).toBe(true);
+		expect(moved(schema.careerTranscript)).toBe(true);
 	});
 
 	it("does nothing when fromUserId equals toUserId", async () => {
