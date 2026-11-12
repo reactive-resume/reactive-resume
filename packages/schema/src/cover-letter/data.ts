@@ -80,5 +80,6 @@ export const coverLetterDocumentSchema = coverLetterContentSchema.extend({
 });
 
 export type CoverLetterStyle = z.infer<typeof coverLetterStyleSchema>;
+export type CoverLetterContent = z.infer<typeof coverLetterContentSchema>;
 export type CoverLetter = z.infer<typeof coverLetterSchema>;
 export type CoverLetterDocument = z.infer<typeof coverLetterDocumentSchema>;
