@@ -7,9 +7,9 @@ The repository is `reactive-resume/reactive-resume`. Docker Hub remains
 ## Builds and release safety
 
 `.github/workflows/docker-publish.yml` builds AMD64 and ARM64 on matching native runners.
-Workflows that check `USE_BLACKSMITH` (CI, autofix, Docker publishing, issue maintenance, OTA updates) run on GitHub-hosted runners
-(`ubuntu-latest`, `ubuntu-24.04-arm`) by default, so forks work without setup. `mobile-release.yml` and
-`mobile-forme-build.yml` always run on Blacksmith Linux and macOS runners. Setting `USE_BLACKSMITH=true` switches
+Workflows that check `USE_BLACKSMITH` (CI, autofix, Docker publishing, issue maintenance) run on GitHub-hosted runners
+(`ubuntu-latest`, `ubuntu-24.04-arm`) by default, so forks work without setup. `mobile-release.yml` always
+runs on Blacksmith Linux and macOS runners. Setting `USE_BLACKSMITH=true` switches
 the other workflows' jobs to Blacksmith runners (32 vCPU for build/test jobs, 2 vCPU for lightweight jobs) and
 swaps in `useblacksmith/checkout`, `useblacksmith/setup-docker-builder`, and
 `useblacksmith/build-push-action`. Because `uses:` cannot be an expression, each swapped
@@ -35,17 +35,12 @@ builds. An older build still publishes its SHA and timestamped nightly aliases, 
 the current main HEAD updates the moving `nightly` alias. Architecture-specific build
 outputs use `sha-<full-commit>-amd64` and `sha-<full-commit>-arm64`.
 
-### Explicit product releases and manual APKs
+### Explicit product releases
 
-A push to `main` publishes container images only. OTA updates ship with stable production releases.
-It never builds Android APKs, creates Git tags, or creates GitHub Releases. Product
-GitHub Releases and `v*` tags are created only by an explicit versioned release operation.
-Docker promotion consumes an existing tag or commit; it does not create either.
-
-For a sideloadable APK, dispatch **Mobile release** on `main` with `platform=android`,
-`format=apk`, the desired `abi`, and `upload=false`. The preview APK is a downloadable Actions artifact for 14 days;
-release evidence is retained for 90 days. No GitHub tag or release is created.
-See [manual Android APKs](./mobile-releases.md#manual-android-apks).
+A push to `main` publishes container images only. It never builds mobile binaries, creates Git tags, or creates
+GitHub Releases; mobile store builds come from `mobile-release.yml` (see [mobile releases](./mobile-releases.md)).
+Product GitHub Releases and `v*` tags are created only by an explicit versioned release operation. Docker promotion
+consumes an existing tag or commit; it does not create either.
 
 Forme's manually published, checksum-pinned binary assets remain available at their
 existing URLs. Moving those rare artifacts to dedicated storage is deferred; never
@@ -94,39 +89,6 @@ gh workflow run docker-publish.yml --repo reactive-resume/reactive-resume --ref 
 SSH redeployment requires `SSH_KEY`, `SSH_HOST`, and `SSH_USER`; Cloudflare purging requires
 `CLOUDFLARE_ZONE_ID` and `CLOUDFLARE_API_TOKEN`. Each integration is skipped if any required
 secret is missing. Dispatch does not create a Git tag, GitHub release, or version bump.
-
-## Native mobile updates
-
-After a successful stable Docker promotion and SSH redeploy, `docker-publish.yml` calls
-`.github/workflows/mobile-ota-update.yml`. This reusable workflow checks out the image's
-exact full source commit and publishes an EAS Update to the `production` channel using
-the `production` EAS environment. Nightlies, manual canaries, and prereleases skip OTA.
-
-The workflow uses the `EXPO_TOKEN` Actions secret, which must have access to Expo account
-`reactive-resume` and project `5830280e-e1ba-45b7-b9c9-ba048fa3bd4d`. Missing credentials
-fail the mobile job without undoing the published Docker image.
-
-Before publishing, three consecutive probes of `https://rxresu.me/api/health` must identify
-this service, report healthy, and match the full source commit. Official Docker builds
-embed `APP_REVISION` for that check. A successful container publish alone cannot authorize OTA.
-
-New production OTA jobs cancel superseded OTA jobs; Docker image builds remain unaffected.
-Publishing and deployment are separate operations, so a failed mobile job can leave the
-backend ahead. Fix the failure and rerun failed jobs in the Docker release run. The reusable
-workflow runs within that release's dependency chain; it has no independent push or
-`workflow_run` trigger and receives only the source SHA and Expo secret from its caller.
-
-The app uses `expo-updates` with fingerprint runtime compatibility. Generated native
-projects and local Forme build output are excluded; the Rust sources and reviewed
-prebuilt pin are included. Native changes need a new compatible store build; publishing
-an OTA update alone cannot upgrade native code. JavaScript and asset changes are checked
-at launch, downloaded in the background, and applied on the next restart.
-
-Before first use, add `EXPO_TOKEN`, create the production EAS channel, and distribute
-new production builds with that channel and update configuration. Existing binaries without
-`expo-updates` cannot receive OTA updates. See [mobile releases](./mobile-releases.md)
-for setup, rollback, and remaining verification. Keep APIs compatible with older clients
-and self-hosted servers; runtime fingerprints only protect the JavaScript/native boundary.
 
 Manual canaries build, publish, merge, and sign images in enabled registries without
 running production integrations:

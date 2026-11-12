@@ -1,7 +1,7 @@
 # Reactive Resume: agent instructions
 
 This is the index for coding agents. It holds hard rules and pointers; detail lives in the linked files. The other area
-guides are `apps/mobile/AGENTS.md` (read it before Expo work) and `apps/android/AGENTS.md` (native Android app). Agent reference docs are in `.agents/docs/` (start at
+guide is `apps/mobile/AGENTS.md` (read it before mobile work). Agent reference docs are in `.agents/docs/` (start at
 its `README.md`); contributor docs are in `docs/contributing/`. Scripts and config win when a doc disagrees with them.
 
 <!-- caveman-begin -->
@@ -31,8 +31,8 @@ Boundaries: code/commits/PRs written normal.
 - **Web and mobile parity**: a user-facing change in `apps/web` gets the matching change in `apps/mobile` in the same
   work, and the reverse. Share logic through workspace packages. Owner-approved exceptions are listed in
   `apps/mobile/AGENTS.md`.
-- **Old clients keep working**: mobile binaries and OTA bundles stay installed for weeks. Keep API changes backward
-  compatible and deploy the backend before mobile changes that depend on it.
+- **Old clients keep working**: mobile binaries stay installed for weeks, and every mobile change ships as a store
+  build (no OTA). Keep API changes backward compatible and deploy the backend before mobile changes that depend on it.
 - Never add AI attribution, AI co-author trailers or session links to commits or PRs. Commits follow Conventional
   Commits (enforced by the commit-msg hook).
 - Keep credentials, personal resume data and production identifiers out of source, logs, fixtures and PRs.
@@ -59,7 +59,7 @@ Boundaries: code/commits/PRs written normal.
 pnpm check:affected                              # changed packages: typecheck, tests (DB suites included), boundaries, lint, format
 pnpm test:db exec -- pnpm --filter @reactive-resume/api test   # DB suites on per-worktree databases, no silent skips
 pnpm test:e2e:local --build [spec]               # Playwright on a per-worktree DB, port and storage
-pnpm --filter mobile test                        # mobile host tests (node --test, not Vitest)
+pnpm --filter mobile test                        # mobile Jest tests (jest-expo, not Vitest)
 pnpm lingui:extract                              # web, mobile and PDF catalogs; run before building
 pnpm lingui:check                                # catalogs match source (CI gate)
 pnpm locales:diff [--base <ref>]                 # lost translations, placeholder/tag mismatches vs base
@@ -82,7 +82,7 @@ pnpm docs:gen                                    # regenerate the OpenAPI spec a
 | Area                                                       | Owner                                                                                                                                                      |
 | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Web routes and workflows                                   | `apps/web/src/routes` (file-based; never hand-edit `routeTree.gen.ts`), `apps/web/src/features`                                                            |
-| Mobile screens and workflows                               | `apps/mobile/app` (Expo Router), `apps/mobile/src/features`; web-to-mobile map in `apps/mobile/AGENTS.md`                                                  |
+| Mobile screens and workflows                               | `apps/mobile/app` (Expo Router), `apps/mobile/src/features`; layout and checks in `apps/mobile/AGENTS.md`                                                  |
 | Server HTTP, startup, static pages, MCP transport, OpenAPI | `apps/server/src/{http,rpc,mcp,openapi,static,startup}`                                                                                                    |
 | Public resume web page (server-rendered)                   | `apps/server/src/static/resume-page.ts`; HTML shell and SEO in `apps/server/src/static/web.ts`                                                             |
 | API routers and business logic                             | `packages/api/src/features/<feature>` (`router.ts`, `service.ts`); use `protectedProcedure` from `packages/api/src/context.ts`                             |
@@ -127,6 +127,8 @@ files).
   `packages/pdf/src/templates/<name>/`, previews under `apps/web/public/templates/` (command in `apps/web/DESIGN.md`).
 - **Public marketing route**: the TanStack route plus its server fallback and SEO in `apps/server/src/static/web.ts`;
   Vite's dev fallback hides production 404s.
+- **Mobile release**: one workflow, `.github/workflows/mobile-release.yml` (Fastlane in `tooling/mobile`, no EAS);
+  procedure in `.agents/docs/runbooks/mobile-releases.md`.
 - **Career or workspace behaviour**: update the mapped user guides and screenshots; see "Keep product guides current"
   in `docs/contributing/career-platform.mdx`.
 

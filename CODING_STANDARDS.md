@@ -11,9 +11,9 @@ its file and line.
   `apps/mobile` in the same work, and the reverse. Shared logic lives in a workspace package (`packages/api`,
   `packages/schema`, `packages/resume`, `packages/pdf`), not duplicated per app. The only allowed gaps are the owner's
   exceptions listed in `apps/mobile/AGENTS.md`.
-- **Old clients keep working.** Installed mobile binaries and OTA bundles stay in use for weeks. API changes are
-  additive or backward compatible; nothing relies on clients updating first. A mobile change that needs new native
-  code is called out as a store build, never forced through a runtime-version bump.
+- **Old clients keep working.** Installed mobile binaries stay in use for weeks, and every mobile change ships as a
+  store build (there are no OTA updates). API changes are additive or backward compatible; nothing relies on clients
+  updating first.
 - **Migrations.** Generated SQL in `migrations/` matches the schema change, is safe on populated tables, and never
   drops or rewrites data without an explicit migration path.
 
