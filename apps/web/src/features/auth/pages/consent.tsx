@@ -1,11 +1,17 @@
+import type { IconName } from "@reactive-resume/ui/components/icon";
+import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
+import { AuthFoot, AuthLead, AuthTitle, authAction } from "../components/auth-page";
 import { isOAuthRedirect } from "../redirect";
+import { IconTile } from "@/components/calm/list-row";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
 
@@ -87,156 +93,198 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 		}
 	}
 
-	return (
-		<>
-			<div className="space-y-2 text-center">
-				<h1 className="text-[30px] leading-9">
-					<Trans>Connect an application</Trans>
-				</h1>
-				{!isAnonymous && (
-					<p className="text-sm wrap-anywhere text-ink-3">
-						<Trans>Signed in as {email}</Trans>
-					</p>
-				)}
-			</div>
-			{/* Settle the request before offering anything: sign-up links would only resume a dead request. */}
-			{!validRequest || isError ? (
-				<div key="invalid" className={cn(ENTER_CLASS, "grid justify-items-center gap-4 text-center")}>
-					<p role="alert" className="rounded-lg bg-warn-soft px-3 py-2.5 text-sm text-warn-text">
+	const api = { read: scopes.has("api:read"), write: scopes.has("api:write"), delete: scopes.has("api:delete") };
+	const callbackURL = `/api/auth/oauth?${oauthQuery}`;
+	const failure = error && (
+		<p role="alert" className={cn(ENTER_CLASS, "mt-4 text-danger-text t-small")}>
+			{error}
+		</p>
+	);
+	const title = (
+		<AuthTitle>
+			<Trans>Connect an application</Trans>
+		</AuthTitle>
+	);
+
+	// Settle the request before offering anything: sign-up links would only resume a dead request.
+	if (!validRequest || isError)
+		return (
+			<>
+				{title}
+				<Alert key="invalid" variant="warn" role="alert" className={cn(ENTER_CLASS, "mt-4")}>
+					<Icon name="warning-circle" />
+					<AlertDescription>
 						<Trans>
 							This connection request is invalid or has expired. Start the connection again from your client.
 						</Trans>
-					</p>
-					<Button variant="secondary" nativeButton={false} render={<Link to="/dashboard" />}>
-						<Trans>Go to dashboard</Trans>
-					</Button>
-				</div>
-			) : isPending ? (
-				<p role="status">
+					</AlertDescription>
+				</Alert>
+				<Link to="/dashboard" className={authAction("secondary", "mt-5")}>
+					<Trans>Go to Today</Trans>
+				</Link>
+			</>
+		);
+
+	if (isPending)
+		return (
+			<>
+				{title}
+				<AuthLead role="status">
 					<Trans>Loading connection request…</Trans>
-				</p>
-			) : isAnonymous ? (
-				<div className="space-y-4">
-					<p>
-						<Trans>Create an account to connect apps. Guest accounts are temporary.</Trans>
-					</p>
-					<div className="flex flex-wrap gap-2">
-						{!disableSignups && (
-							<Button
-								className="flex-1"
-								nativeButton={false}
-								render={<Link to="/auth/register" search={{ callbackURL: `/api/auth/oauth?${oauthQuery}` }} />}
-							>
-								<Trans>Create account</Trans>
-							</Button>
-						)}
-						<Button
-							className="flex-1"
-							nativeButton={false}
-							variant="secondary"
-							render={<Link to="/auth/login" search={{ callbackURL: `/api/auth/oauth?${oauthQuery}` }} />}
-						>
-							<Trans>Sign in</Trans>
-						</Button>
-					</div>
-					{client && (
-						<Button className="w-full" variant="ghost" disabled={pending} onClick={() => void submit(false)}>
-							<Trans>Cancel connection</Trans>
-						</Button>
+				</AuthLead>
+			</>
+		);
+
+	if (isAnonymous)
+		return (
+			<>
+				{title}
+				<AuthLead>
+					<Trans>Create an account to connect apps. Guest accounts are temporary.</Trans>
+				</AuthLead>
+				<div className="mt-7 flex flex-col gap-3">
+					{!disableSignups && (
+						<Link to="/auth/register" search={{ callbackURL }} className={authAction("primary")}>
+							<Trans>Create account</Trans>
+						</Link>
 					)}
-					{error && (
-						<p role="alert" className={cn(ENTER_CLASS, "text-sm text-danger-text")}>
-							{error}
-						</p>
-					)}
+					<Link
+						to="/auth/login"
+						search={{ callbackURL }}
+						className={authAction(disableSignups ? "primary" : "secondary")}
+					>
+						<Trans>Sign in</Trans>
+					</Link>
 				</div>
-			) : client ? (
-				<div className={cn(ENTER_CLASS, "space-y-4")}>
-					<div className="space-y-1 wrap-anywhere">
-						<p className="font-medium">{client.client_name || clientId}</p>
-						<p className="text-xs text-ink-3">
-							<Trans>Client ID</Trans>: {clientId}
-						</p>
+				{client && (
+					<AuthFoot>
+						<button type="button" disabled={pending} onClick={() => void submit(false)}>
+							<Trans>Cancel connection</Trans>
+						</button>
+					</AuthFoot>
+				)}
+				{failure}
+			</>
+		);
+
+	if (!client) return title;
+
+	return (
+		<>
+			{title}
+			<AuthLead>
+				<Trans>Signed in as {email}</Trans>
+			</AuthLead>
+
+			<div className={cn(ENTER_CLASS, "flex flex-col")}>
+				{/* Who is asking and where access goes: anyone can register a client under any name. */}
+				<div className="mt-6 flex items-center gap-3 border-y border-line py-3">
+					<IconTile>
+						<Icon name="plugs" size={20} />
+					</IconTile>
+					<span className="flex min-w-0 flex-1 flex-col wrap-anywhere">
+						<span className="t-label">{client.client_name || clientId}</span>
 						{destination && (
-							<p className="text-xs text-ink-3">
+							<span className="text-ink-3 t-small">
 								{/* One message, so translators can place the address where their language puts it. */}
 								<Trans>
-									Access is sent to <span className="font-medium text-ink">{destination}</span>
+									Access is sent to <span className="font-semibold text-ink">{destination}</span>
 								</Trans>
-							</p>
+							</span>
 						)}
-					</div>
-					<p className="text-sm">
-						<Trans>Only allow applications you trust. This application will be able to:</Trans>
-					</p>
-					<ul className="list-disc space-y-2 ps-5 text-sm">
-						{["api:read", "api:write", "api:delete"].some((scope) => scopes.has(scope)) ? (
-							<>
-								{scopes.has("api:read") && (
-									<li>
-										<Trans>
-											Read your whole account, including a full data export: your profile and email, documents, job
-											applications, career data and coaching conversations.
-										</Trans>
-									</li>
-								)}
-								{scopes.has("api:write") && (
-									<li>
-										<Trans>
-											Create and change your documents and job applications, seeing each one it changes in full, and
-											change your profile and username.
-										</Trans>
-									</li>
-								)}
-								{scopes.has("api:delete") && (
-									<li>
-										<Trans>Delete your documents and account data.</Trans>
-									</li>
-								)}
-							</>
-						) : (
-							<li>
-								<Trans>
-									Access your account through the API, including reading, changing and deleting your documents and job
-									applications.
-								</Trans>
-							</li>
-						)}
-						{/* Reading the whole account already covers the profile and email address. */}
-						{scopes.has("profile") && !scopes.has("api:read") && (
-							<li>
-								<Trans>Read your profile information.</Trans>
-							</li>
-						)}
-						{scopes.has("email") && !scopes.has("api:read") && (
-							<li>
-								<Trans>Read your email address.</Trans>
-							</li>
-						)}
-						{scopes.has("offline_access") && (
-							<li>
-								<Trans>Keep access when you are not using the application.</Trans>
-							</li>
-						)}
-					</ul>
-					<p className="text-xs text-ink-3">
-						<Trans>You can disconnect it anytime in Settings → AI & developer.</Trans>
-					</p>
-					{error && (
-						<p role="alert" className={cn(ENTER_CLASS, "text-sm text-danger-text")}>
-							{error}
-						</p>
-					)}
-					<div className="flex gap-2">
-						<Button className="flex-1" variant="secondary" disabled={pending} onClick={() => void submit(false)}>
-							<Trans>Deny access</Trans>
-						</Button>
-						<Button className="flex-1" disabled={pending} onClick={() => void submit(true)}>
-							<Trans>Allow access</Trans>
-						</Button>
-					</div>
+					</span>
+					<span className="max-w-[40%] shrink-0 truncate text-ink-3 t-mono" title={`${t`Client ID`}: ${clientId}`}>
+						<Trans comment="Short label before an application's client ID">ID {clientId}</Trans>
+					</span>
 				</div>
-			) : null}
+
+				<p className="mt-4 t-ui">
+					<Trans>Only allow applications you trust. This one will be able to:</Trans>
+				</p>
+				<ul className="mt-3 flex flex-col gap-2.5 t-ui">
+					{api.read || api.write || api.delete ? (
+						<>
+							{api.read && (
+								<Permission icon="eye">
+									<Trans>
+										Read your whole account, including a full export: profile and email, documents, applications, Career
+										data and coaching conversations.
+									</Trans>
+								</Permission>
+							)}
+							{api.write && (
+								<Permission icon="pencil-simple">
+									<Trans>
+										Create and change your documents and applications, seeing each one it changes in full, and change
+										your profile and username.
+									</Trans>
+								</Permission>
+							)}
+							{api.delete && (
+								<Permission icon="trash">
+									<Trans>Delete your documents and account data.</Trans>
+								</Permission>
+							)}
+						</>
+					) : (
+						<Permission icon="key">
+							<Trans>
+								Access your account through the API, including reading, changing and deleting your documents and
+								applications.
+							</Trans>
+						</Permission>
+					)}
+					{/* Reading the whole account already covers the profile and email address. */}
+					{scopes.has("profile") && !api.read && (
+						<Permission icon="user">
+							<Trans>Read your profile information.</Trans>
+						</Permission>
+					)}
+					{scopes.has("email") && !api.read && (
+						<Permission icon="envelope-simple">
+							<Trans>Read your email address.</Trans>
+						</Permission>
+					)}
+					{scopes.has("offline_access") && (
+						<Permission icon="clock">
+							<Trans>Keep access when you are not using it.</Trans>
+						</Permission>
+					)}
+				</ul>
+				<p className="mt-3.5 text-ink-3 t-small">
+					{/* Only true when the request names what it wants and leaves deleting out. */}
+					{(api.read || api.write) && !api.delete && (
+						<>
+							<Trans>It can't delete anything.</Trans>{" "}
+						</>
+					)}
+					<Trans>You can disconnect it anytime in Settings › Developer.</Trans>
+				</p>
+				{failure}
+				<div className="mt-5 grid grid-cols-2 gap-3">
+					<Button
+						variant="secondary"
+						size="lg"
+						className="leading-5"
+						disabled={pending}
+						onClick={() => void submit(false)}
+					>
+						<Trans>Deny access</Trans>
+					</Button>
+					<Button size="lg" className="leading-5" disabled={pending} onClick={() => void submit(true)}>
+						<Trans>Allow access</Trans>
+					</Button>
+				</div>
+			</div>
 		</>
+	);
+}
+
+function Permission({ icon, children }: { icon: IconName; children: ReactNode }) {
+	return (
+		<li className="flex items-start gap-3">
+			<Icon name={icon} size={18} className="mt-0.5 shrink-0 text-ink-2" />
+			<span>{children}</span>
+		</li>
 	);
 }

@@ -228,6 +228,9 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 						</enableForm.Field>
 
 						<DialogFooter>
+							<Button type="button" variant="ghost" onClick={requestClose}>
+								<Trans comment="Secondary action button to close two-factor setup dialog">Cancel</Trans>
+							</Button>
 							<Button type="submit" disabled={enableIsSubmitting}>
 								<Trans>Continue</Trans>
 							</Button>
@@ -305,8 +308,8 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 									)}
 								</verifyForm.Field>
 
-								<DialogFooter className="gap-x-2">
-									<Button type="button" variant="secondary" onClick={requestClose}>
+								<DialogFooter>
+									<Button type="button" variant="ghost" onClick={requestClose}>
 										<Trans comment="Secondary action button to close two-factor setup dialog">Cancel</Trans>
 									</Button>
 									<Button type="submit" disabled={verifyIsSubmitting}>
@@ -331,13 +334,13 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 
 								<div className="flex items-center gap-x-2">
 									<Button type="button" variant="secondary" onClick={handleDownloadBackupCodes} className="flex-1">
-										<Icon name="arrow-down" size={16} className="me-2" />
+										<Icon name="arrow-down" />
 										<Trans comment="Action button to download two-factor backup codes as a text file">
 											Download codes
 										</Trans>
 									</Button>
 									<Button type="button" variant="ghost" onClick={handleCopyBackupCodes} className="flex-1">
-										<Icon name="copy" size={16} className="me-2" />
+										<Icon name="copy" />
 										<Trans comment="Action button to copy two-factor backup codes to clipboard">Copy codes</Trans>
 									</Button>
 								</div>

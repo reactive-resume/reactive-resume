@@ -14,7 +14,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Label } from "@reactive-resume/ui/components/label";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
-import { SettingsRow } from "../section";
+import { SettingsRow, TextAction } from "../section";
 import { PasswordInput } from "@/components/input/password-input";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
@@ -30,9 +30,9 @@ export function BackupCodesRow() {
 			title={<Trans>Backup codes</Trans>}
 			description={<Trans>Make a new set if you've used them up or lost them. The old ones stop working.</Trans>}
 		>
-			<Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
-				<Trans>Generate new codes</Trans>
-			</Button>
+			<TextAction onClick={() => setOpen(true)}>
+				<Trans>New codes</Trans>
+			</TextAction>
 			<BackupCodesDialog open={open} onOpenChange={setOpen} />
 		</SettingsRow>
 	);
@@ -90,7 +90,10 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 					<div className="grid gap-4">
 						<div className="grid grid-cols-2 gap-2">
 							{codes.map((code) => (
-								<div key={code} className="rounded-md border border-line p-2 text-center font-mono text-sm">
+								<div
+									key={code}
+									className="flex h-9 items-center justify-center rounded-sm font-mono text-[13px]/4 font-medium shadow-[inset_0_0_0_1px_var(--line-2)]"
+								>
 									{code}
 								</div>
 							))}
@@ -106,7 +109,7 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 									)
 								}
 							>
-								<Icon name="arrow-down" size={16} />
+								<Icon name="download-simple" />
 								<Trans>Download codes</Trans>
 							</Button>
 							<Button
@@ -117,7 +120,7 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 									toast.add({ type: "success", description: t`Backup codes copied` });
 								}}
 							>
-								<Icon name="copy" size={16} />
+								<Icon name="copy" />
 								<Trans>Copy codes</Trans>
 							</Button>
 						</div>
@@ -151,13 +154,13 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 								}}
 							/>
 							{error && (
-								<p role="alert" className="text-sm text-danger-text">
+								<p role="alert" className="text-xs/4 text-danger-text">
 									{error}
 								</p>
 							)}
 						</div>
 						<DialogFooter>
-							<Button type="button" variant="secondary" disabled={pending} onClick={() => close(false)}>
+							<Button type="button" variant="ghost" disabled={pending} onClick={() => close(false)}>
 								<Trans>Keep my codes</Trans>
 							</Button>
 							<Button type="submit" disabled={!password} loading={pending}>

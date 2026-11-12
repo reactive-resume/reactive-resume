@@ -6,6 +6,8 @@ export type AtsCheckResult = {
 	report: PdfAtsReport;
 	/** Extracted text in reading order. Kept for the optional AI tier; never sent anywhere on its own. */
 	fullText: string;
+	/** Each page's size in points, in order: what a finding's box is measured against. */
+	pages: readonly { width: number; height: number }[];
 };
 
 export type RunAtsCheckOptions = {
@@ -36,7 +38,11 @@ export async function runAtsCheck(file: File, options: RunAtsCheckOptions = {}):
 		options.jobDescription?.trim() ? { jobDescription: options.jobDescription } : {},
 	);
 
-	return { report, fullText: buildExtractedDocument(raw).fullText };
+	return {
+		report,
+		fullText: buildExtractedDocument(raw).fullText,
+		pages: raw.pages.map(({ width, height }) => ({ width, height })),
+	};
 }
 
 /** Wraps a rendered PDF blob so the builder's deep check runs through exactly the same path. */

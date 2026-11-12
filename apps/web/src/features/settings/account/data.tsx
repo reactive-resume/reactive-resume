@@ -13,12 +13,13 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@reactive-resume/ui/components/alert-dialog";
-import { Button } from "@reactive-resume/ui/components/button";
 import { Input } from "@reactive-resume/ui/components/input";
+import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { AccountExportLimitError, buildAccountZip } from "@reactive-resume/utils/account-zip";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
-import { SettingsRow, SettingsSection } from "../section";
+import { SettingsRow, SettingsSection, TextAction } from "../section";
+import { ListRow } from "@/components/calm/list-row";
 import { getAccountGeneration, getAccountId } from "@/libs/auth/account-scope";
 import { clearAccountData } from "@/libs/auth/clear-account-data";
 import { authClient } from "@/libs/auth/client";
@@ -80,35 +81,33 @@ export function DataSection({ openDeletion = false }: DataSectionProps) {
 		<SettingsSection title={<Trans>Your data</Trans>}>
 			<SettingsRow
 				title={<Trans>Export everything</Trans>}
-				description={
-					<Trans>
-						Documents, applications, Career data, version history and uploaded files in one zip. Check the file manifest
-						for omissions.
-					</Trans>
-				}
+				description={<Trans>Documents, applications and Knowledge in one zip file</Trans>}
 			>
-				{exportAll.isPending && (
-					<Button size="sm" variant="ghost" onClick={() => exportRequest.current?.abort()}>
-						<Trans>Cancel</Trans>
-					</Button>
+				{exportAll.isPending ? (
+					<>
+						<span className="flex items-center gap-1.5 text-[13px]/[18px] text-ink-3" role="status">
+							<Spinner className="size-3.5" />
+							<Trans>Exporting…</Trans>
+						</span>
+						<TextAction onClick={() => exportRequest.current?.abort()}>
+							<Trans>Cancel</Trans>
+						</TextAction>
+					</>
+				) : (
+					<TextAction onClick={() => exportAll.mutate()}>
+						<Trans>Download</Trans>
+					</TextAction>
 				)}
-				<Button size="sm" variant="secondary" loading={exportAll.isPending} onClick={() => exportAll.mutate()}>
-					<Trans>Export</Trans>
-				</Button>
 			</SettingsRow>
-			<SettingsRow
+			<ListRow
+				render={<button type="button" />}
+				variant="danger"
+				caret
 				title={<Trans>Delete account</Trans>}
-				description={<Trans>Permanently removes everything. Export first if you want a copy.</Trans>}
-			>
-				<Button
-					size="sm"
-					variant="ghost"
-					className="border border-danger font-semibold text-danger-text hover:bg-danger-soft"
-					onClick={() => setDeleting(true)}
-				>
-					<Trans>Delete…</Trans>
-				</Button>
-			</SettingsRow>
+				subtitle={<Trans>Removes your documents, applications and Knowledge. This can't be undone.</Trans>}
+				className="[&>span.flex-col>span]:whitespace-normal"
+				onClick={() => setDeleting(true)}
+			/>
 			<DeleteAccountDialog open={deleting} onOpenChange={setDeleting} />
 		</SettingsSection>
 	);
@@ -157,7 +156,7 @@ function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<div className="grid gap-1.5">
-					<label htmlFor={id} className="text-[13px] font-medium">
+					<label htmlFor={id} className="text-[13px]/[18px] font-medium">
 						<Trans>
 							Type <b className="font-mono font-medium">{CONFIRMATION}</b> to confirm
 						</Trans>

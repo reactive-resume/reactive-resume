@@ -27,8 +27,8 @@ type Section = {
 };
 
 const SECTIONS: Section[] = [
-	{ to: "/dashboard/settings/account", icon: "user-circle", label: () => t`Account` },
-	{ to: "/dashboard/settings/profile", icon: "clipboard-text", label: () => t`Application profile` },
+	{ to: "/dashboard/settings/account", icon: "user", label: () => t`Account` },
+	{ to: "/dashboard/settings/profile", icon: "identification-card", label: () => t`Application profile` },
 	{ to: "/dashboard/settings/preferences", icon: "sliders-horizontal", label: () => t`Preferences` },
 	{ to: "/dashboard/settings/ai", icon: "sparkle", label: () => t`AI` },
 	{ to: "/dashboard/settings/developer", icon: "code", label: () => t`Developer` },
@@ -77,18 +77,6 @@ function RouteComponent() {
 							<Icon name="sign-out" />
 							<Trans>Sign out</Trans>
 						</button>
-						<p className="mt-6 px-2.5 text-xs leading-[18px] text-ink-3 max-lg:hidden">
-							<Trans>Reactive Resume {__APP_VERSION__} · MIT</Trans>
-							<br />
-							{getProjectLinks().map((link, index) => (
-								<Fragment key={link.href}>
-									{index > 0 && " · "}
-									<a className="underline" href={link.href} target="_blank" rel="noopener noreferrer">
-										{link.label}
-									</a>
-								</Fragment>
-							))}
-						</p>
 					</div>
 
 					<div className="min-w-0">
@@ -119,6 +107,18 @@ function RouteComponent() {
 								</>
 							)}
 						</div>
+						<p className="mt-12 text-xs leading-[18px] text-ink-3 max-sm:hidden">
+							<Trans>Reactive Resume {__APP_VERSION__} · MIT</Trans>
+							<br />
+							{getProjectLinks().map((link, index) => (
+								<Fragment key={link.href}>
+									{index > 0 && " · "}
+									<a className="underline" href={link.href} target="_blank" rel="noopener noreferrer">
+										{link.label}
+									</a>
+								</Fragment>
+							))}
+						</p>
 					</div>
 				</div>
 			</PageBody>

@@ -4,15 +4,15 @@ import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
-import { OTPField } from "@reactive-resume/ui/components/otp-field";
+import { OTPField, OTPFieldInput } from "@reactive-resume/ui/components/otp-field";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { AuthFoot, AuthLead, AuthTitle } from "../components/auth-page";
 import { authErrorMessage } from "../error";
 import { getAuthRedirectOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { authClient } from "@/libs/auth/client";
@@ -42,6 +42,9 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const navigate = useNavigate();
 
+	// A wrong code is said at the field and stays until the next digit.
+	const [wrongCode, setWrongCode] = useState<string>();
+
 	const form = useAppForm({
 		defaultValues: { code: "", trustDevice: false },
 		validators: { onSubmit: backupCode ? backupCodeSchema : totpSchema },
@@ -62,16 +65,16 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 				({ data, error } = await authClient.twoFactor.verifyBackupCode({ ...options, code: code.toUpperCase() }));
 
 			if (error) {
-				toast.add({
-					type: "error",
-					description: authErrorMessage(
-						error,
-						backupCode
-							? t`Couldn't verify your backup code. Check the code and try again.`
-							: t`Couldn't verify your code. Check the code and try again.`,
-					),
-					id: toastId,
-				});
+				const description = authErrorMessage(
+					error,
+					backupCode
+						? t`Couldn't verify your backup code. Check the code and try again.`
+						: t`Couldn't verify your code. Check the code and try again.`,
+				);
+				if (error.code === "INVALID_OTP" || error.code === "INVALID_BACKUP_CODE") {
+					toast.close(toastId);
+					setWrongCode(description);
+				} else toast.add({ type: "error", description, id: toastId });
 				if (error.code === "INVALID_TWO_FACTOR_COOKIE") {
 					void navigate({ to: "/auth/login", search: { callbackURL, reauthenticate: true }, replace: true });
 					return;
@@ -98,24 +101,25 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 		codeRef.current?.querySelector("input")?.focus();
 	}, []);
 
+	const changeCode = (handleChange: (value: string) => void) => (value: string) => {
+		if (value) setWrongCode(undefined);
+		handleChange(value);
+	};
+
 	return (
 		<>
-			<div className="space-y-1 text-center">
-				<h1 className="text-[30px] leading-9">
-					{backupCode ? <Trans>Verify with a backup code</Trans> : <Trans>Two-step verification</Trans>}
-				</h1>
-				<div className="text-ink-3">
-					{backupCode ? (
-						<Trans>Enter one of your saved backup codes to access your account.</Trans>
-					) : (
-						<Trans>Enter the verification code from your authenticator app.</Trans>
-					)}
-				</div>
-			</div>
+			<AuthTitle>{backupCode ? <Trans>Use a backup code</Trans> : <Trans>Two-step verification</Trans>}</AuthTitle>
+			<AuthLead>
+				{backupCode ? (
+					<Trans>Enter one of the backup codes you saved.</Trans>
+				) : (
+					<Trans>Enter the 6-digit code from your authenticator app.</Trans>
+				)}
+			</AuthLead>
 
 			<form
 				noValidate
-				className="grid gap-6"
+				className="mt-7 flex flex-col gap-5"
 				onSubmit={(event) => {
 					event.preventDefault();
 					event.stopPropagation();
@@ -123,117 +127,112 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 				}}
 			>
 				<form.Field name="code">
-					{(field) => (
-						<FormItem
-							ref={codeRef}
-							data-route-focus
-							className="justify-self-center"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-						>
-							<FormLabel className="sr-only">
-								{backupCode ? <Trans>Backup code</Trans> : <Trans>Verification code</Trans>}
-							</FormLabel>
-							<FormControl
-								render={
-									backupCode ? (
-										<Input
-											type="text"
-											maxLength={11}
-											className="max-w-xs"
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
-										/>
-									) : (
-										<OTPField
-											digitLabel={(position, total) =>
-												t`Digit ${ph({ position: i18n.number(position) })} of ${ph({ total: i18n.number(total) })}`
-											}
-											length={6}
-											autoSubmit
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onValueChange={field.handleChange}
-										/>
-									)
-								}
-							/>
-							<FormMessage errors={field.state.meta.errors} />
-						</FormItem>
-					)}
+					{(field) => {
+						const invalid = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+						return (
+							<FormItem ref={codeRef} data-route-focus hasError={!!wrongCode || invalid}>
+								<FormLabel className={backupCode ? undefined : "sr-only"}>
+									{backupCode ? <Trans>Backup code</Trans> : <Trans>Verification code</Trans>}
+								</FormLabel>
+								<FormControl
+									render={
+										backupCode ? (
+											<Input
+												type="text"
+												maxLength={11}
+												autoComplete="off"
+												autoCapitalize="characters"
+												spellCheck={false}
+												className="font-mono text-[15px] font-medium tracking-[0.06em]"
+												name={field.name}
+												value={field.state.value}
+												onBlur={field.handleBlur}
+												onChange={(event) => changeCode(field.handleChange)(event.target.value)}
+											/>
+										) : (
+											<OTPField
+												length={6}
+												autoSubmit
+												className="justify-between gap-2"
+												name={field.name}
+												value={field.state.value}
+												onBlur={field.handleBlur}
+												onValueChange={changeCode(field.handleChange)}
+											>
+												{Array.from({ length: 6 }, (_, index) => (
+													<OTPFieldInput
+														key={index}
+														aria-label={t`Digit ${ph({ position: i18n.number(index + 1) })} of ${ph({ total: i18n.number(6) })}`}
+														className="h-15 w-auto max-w-[54px] min-w-0 flex-1 text-2xl font-medium group-aria-invalid:focus:border-danger! group-aria-invalid:focus:shadow-[0_0_0_3px_var(--danger-soft)]! max-sm:h-15 max-sm:w-auto"
+													/>
+												))}
+											</OTPField>
+										)
+									}
+								/>
+								{wrongCode && !invalid ? (
+									<FormMessage role="alert" errors={[wrongCode]} />
+								) : (
+									<FormMessage errors={field.state.meta.errors} />
+								)}
+							</FormItem>
+						);
+					}}
 				</form.Field>
 
 				<form.Field name="trustDevice">
 					{(field) => (
-						<FormItem className="flex items-center gap-2.5 justify-self-center">
+						<FormItem className="flex items-center gap-2.5">
 							<FormControl
 								render={<Checkbox name={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />}
 							/>
-							<FormLabel>
+							<FormLabel className="text-sm leading-5 font-normal text-ink">
 								<Trans>Trust this device for 30 days</Trans>
 							</FormLabel>
 						</FormItem>
 					)}
 				</form.Field>
 
-				<div className="flex gap-x-2">
-					<Button
-						variant="secondary"
-						className="flex-1"
-						nativeButton={false}
-						render={
-							<Link to={backupCode ? "/auth/verify-2fa" : "/auth/login"} search={{ callbackURL, reauthenticate }}>
-								<Icon name="arrow-left" size={16} />
-								{backupCode ? (
-									<Trans comment="Secondary navigation button on backup-code verification screen">Go back</Trans>
-								) : (
-									<Trans comment="Secondary navigation button on 2FA verification screen">Back to sign in</Trans>
-								)}
-							</Link>
-						}
-					/>
-
-					<Button type="submit" className="flex-1" disabled={isSubmitting}>
-						<Icon name="check" size={16} />
-						{backupCode ? (
-							<Trans comment="Primary action button to submit backup code">Verify</Trans>
-						) : (
-							<Trans comment="Primary action button to submit 2FA code">Verify</Trans>
-						)}
-					</Button>
-				</div>
+				<Button type="submit" size="lg" className="mt-1 w-full leading-5" disabled={isSubmitting}>
+					{backupCode ? (
+						<Trans comment="Primary action button to submit backup code">Verify</Trans>
+					) : (
+						<Trans comment="Primary action button to submit 2FA code">Verify</Trans>
+					)}
+				</Button>
 			</form>
 
-			{backupCode && (
-				<details className="justify-self-center text-center text-sm text-ink-2">
-					<summary className="cursor-pointer underline underline-offset-2">
-						<Trans>No backup codes either?</Trans>
-					</summary>
-					<p className="mt-2 max-w-sm">
-						<Trans>
-							If you never verified your email address, a password reset turns two-step verification off. Otherwise a
-							reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account.
-							Then sign in with your password and turn it on again with a new authenticator.
-						</Trans>
-					</p>
-				</details>
-			)}
-
-			{!backupCode && (
-				<Button
-					variant="link"
-					nativeButton={false}
-					className="h-auto justify-self-center p-0 text-sm"
-					render={
-						<Link to="/auth/verify-2fa-backup" search={{ callbackURL, reauthenticate }}>
-							<Trans comment="Link to backup-code verification flow when authenticator app is unavailable">
-								Lost access to your authenticator?
-							</Trans>
+			{backupCode ? (
+				<>
+					<AuthFoot>
+						<Link to="/auth/verify-2fa" search={{ callbackURL, reauthenticate }}>
+							<Trans>Use your authenticator app</Trans>
 						</Link>
-					}
-				/>
+					</AuthFoot>
+					<div className="mt-5 rounded-lg bg-sunken px-4 py-3.5">
+						<p className="text-[13px] leading-[18px] font-semibold">
+							<Trans>No backup codes either?</Trans>
+						</p>
+						<p className="mt-1 text-ink-2 t-small">
+							<Trans>
+								If you never verified your email address, resetting your password turns two-step verification off.
+								Otherwise, ask the person who runs this server to turn it off for your account.
+							</Trans>
+						</p>
+					</div>
+				</>
+			) : (
+				<AuthFoot>
+					<Link to="/auth/verify-2fa-backup" search={{ callbackURL, reauthenticate }}>
+						<Trans comment="Link to backup-code verification flow when authenticator app is unavailable">
+							Use a backup code
+						</Trans>
+					</Link>
+					<span aria-hidden>·</span>
+					<Link to="/auth/login" search={{ callbackURL, reauthenticate }}>
+						<Trans comment="Navigation link on 2FA verification screen">Back to sign in</Trans>
+					</Link>
+				</AuthFoot>
 			)}
 		</>
 	);

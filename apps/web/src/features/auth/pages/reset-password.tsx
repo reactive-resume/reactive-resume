@@ -2,13 +2,15 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
+import { useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { AuthLead, AuthTitle } from "../components/auth-page";
 import { authErrorMessage } from "../error";
+import { ForgotPasswordPage } from "./forgot-password";
 import { PasswordInput } from "@/components/input/password-input";
 import { clearAccountData } from "@/libs/auth/clear-account-data";
 import { authClient } from "@/libs/auth/client";
@@ -80,41 +82,21 @@ export function ResetPasswordPage({ token }: Props) {
 	});
 
 	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
-	if (!token || invalidToken === token)
-		return (
-			<>
-				<h1 className="text-center text-[30px] leading-9">
-					<Trans>Reset your password</Trans>
-				</h1>
-				<p role="alert" className="text-center text-ink-2">
-					<Trans>This reset link expired or was already used.</Trans>
-				</p>
-				<Button
-					nativeButton={false}
-					render={<Link to="/auth/forgot-password" search={{ callbackURL, reauthenticate }} />}
-				>
-					<Trans>Send a new link</Trans>
-				</Button>
-			</>
-		);
+	// An expired link takes one step: the email field is on this page.
+	if (!token || invalidToken === token) return <ForgotPasswordPage expired />;
 
 	return (
 		<>
-			<div className="space-y-1 text-center">
-				<h1 className="text-[30px] leading-9">
-					<Trans>Reset your password</Trans>
-				</h1>
-
-				<div className="text-ink-3">
-					<Trans>
-						Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps.
-					</Trans>
-				</div>
-			</div>
+			<AuthTitle>
+				<Trans>Choose a new password</Trans>
+			</AuthTitle>
+			<AuthLead>
+				<Trans>This signs you out everywhere and removes your passkeys, API keys and connected apps.</Trans>
+			</AuthLead>
 
 			<form
 				noValidate
-				className="space-y-6"
+				className="mt-7 flex flex-col gap-5"
 				onSubmit={(event) => {
 					event.preventDefault();
 					event.stopPropagation();
@@ -123,7 +105,7 @@ export function ResetPasswordPage({ token }: Props) {
 			>
 				<form.Field name="password">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem data-route-focus hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 							<FormLabel>
 								<Trans comment="Label for new password input on reset-password form">New password</Trans>
 							</FormLabel>
@@ -140,12 +122,15 @@ export function ResetPasswordPage({ token }: Props) {
 									/>
 								}
 							/>
+							<FormDescription>
+								<Trans comment="Password rule shown under the new password field">At least 8 characters.</Trans>
+							</FormDescription>
 							<FormMessage errors={field.state.meta.errors} />
 						</FormItem>
 					)}
 				</form.Field>
 
-				<Button type="submit" className="w-full" disabled={isSubmitting}>
+				<Button type="submit" size="lg" className="mt-1 w-full leading-5" disabled={isSubmitting}>
 					<Trans comment="Primary action button label on reset-password form">Reset password</Trans>
 				</Button>
 			</form>

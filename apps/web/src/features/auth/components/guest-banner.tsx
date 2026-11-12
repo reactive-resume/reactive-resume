@@ -79,18 +79,26 @@ export function GuestBanner() {
  * Career knowledge move, except facts the account already holds; conflicting profiles stop the move, and assistant
  * conversations are deleted with the guest after a successful move).
  */
-export function GuestTransferNote() {
+export function GuestTransferNote({ signUp = false }: { signUp?: boolean }) {
 	useEffect(() => writeTransfer(Date.now()), []);
 
 	return (
-		<Alert variant="info">
+		<Alert variant="info" className="mt-5">
 			<Icon name="info" />
 			<AlertDescription>
-				<Trans>
-					Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it
-					already has. Different Career profiles stop sign-in and keep your guest work. Assistant conversations don't
-					move.
-				</Trans>
+				{signUp ? (
+					// A new account has no facts or Career profile of its own, so those clauses don't apply.
+					<Trans>
+						Your guest resumes, cover letters, applications and Career knowledge move to this account. Assistant
+						conversations don't move.
+					</Trans>
+				) : (
+					<Trans>
+						Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it
+						already has. Different Career profiles stop sign-in and keep your guest work. Assistant conversations don't
+						move.
+					</Trans>
+				)}
 			</AlertDescription>
 		</Alert>
 	);
