@@ -52,7 +52,7 @@ export function EditorBarFrame({
 			className={cn(
 				"grid h-(--editor-bar) items-center gap-2 border-b border-line bg-bg px-3",
 				layout === "desktop"
-					? "grid-cols-[minmax(0,1fr)_auto_auto]"
+					? "grid-cols-[minmax(0,1fr)_auto_auto] xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
 					: layout === "tablet"
 						? "grid-cols-[minmax(0,1fr)_auto_auto]"
 						: "grid-cols-[minmax(0,1fr)_auto] gap-0 px-1",

@@ -1,6 +1,6 @@
-import { ph, t } from "@lingui/core/macro";
+import { ph, plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import {
@@ -19,6 +19,7 @@ import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { LetterDownloadMenu } from "./download-sheet";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
@@ -239,6 +240,7 @@ function LetterMenu() {
 						<Icon name="keyboard" />
 						<Trans>Keyboard shortcuts</Trans>
 					</DropdownMenuItem>
+					<DropdownMenuSeparator className="pointer-coarse:hidden" />
 					<DropdownMenuItem variant="destructive" disabled={isLocked} onClick={() => void trash()}>
 						<Icon name="trash" />
 						<Trans>Move to Trash</Trans>
@@ -252,7 +254,23 @@ function LetterMenu() {
 
 /** The same save line as the resume editor, with recovery actions beside the status. */
 function LetterSaveStatus() {
-	const status = useLetterEditorStore((state) => (state.letter?.isLocked ? "locked" : state.status));
+	const letter = useLetterEditorStore((state) => state.letter);
+	const status = useLetterEditorStore((state) => state.status);
+	const pageCount = useEditorStore((state) => state.rendered.pageCount);
+	const { data: applications } = useQuery({
+		...applicationsListQueryOptions(),
+		enabled: !!letter?.sourceApplicationId,
+	});
+	const application = applications?.find((item) => item.id === letter?.sourceApplicationId);
+	const company = application?.company;
+	const standing = company
+		? application.coverLetterId === letter?.id && application.sentCoverLetterVersionId
+			? t`Sent to ${company}`
+			: t`For ${company}`
+		: t`Draft`;
+	const facts = [pageCount > 0 ? plural(pageCount, { one: "# page", other: "# pages" }) : null, standing]
+		.filter(Boolean)
+		.join(" · ");
 	const sessionEnded = useSessionRecovery((state) => state.accountId !== null);
 	const confirm = useConfirm();
 	const queryClient = useQueryClient();
@@ -292,11 +310,9 @@ function LetterSaveStatus() {
 					? sessionEnded
 						? t`Not saved · Sign in to save`
 						: t`Not saved`
-					: status === "locked"
-						? t`Locked · unlock to save`
-						: status === "conflict"
-							? t`Review saved version`
-							: t`Saved`;
+					: status === "conflict"
+						? t`Review saved version`
+						: [letter?.isLocked ? t`Locked` : t`Saved`, facts].join(" · ");
 
 	return (
 		<span className="flex max-w-full min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
@@ -313,10 +329,10 @@ function LetterSaveStatus() {
 					<Trans>Saving…</Trans>
 				</>
 			)}
-			{status === "saved" && <Trans>Saved</Trans>}
-			{(status === "offline" || status === "locked") && (
+			{status === "saved" && <span className="truncate">{announcement}</span>}
+			{status === "offline" && (
 				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-warn-text")}>
-					<Icon name={status === "offline" ? "cloud-slash" : "lock"} size={14} />
+					<Icon name="cloud-slash" size={14} />
 					<span className="truncate">{announcement}</span>
 				</span>
 			)}

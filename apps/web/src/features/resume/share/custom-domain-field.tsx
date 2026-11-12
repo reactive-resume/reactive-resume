@@ -1,8 +1,9 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
+import { formatTimeSince } from "@reactive-resume/resume/sharing";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -20,6 +21,7 @@ type CustomDomainFieldProps = {
 
 /** Connects the account's own domain: the domain, the DNS records to add in a dialog, a check, and the result. */
 export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
+	const { i18n } = useLingui();
 	const confirm = useConfirm();
 	const id = useId();
 	const queryClient = useQueryClient();
@@ -121,6 +123,7 @@ export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
 								description: t`Your domain will stop opening your primary resume. You can reconnect it later.`,
 								confirmText: t`Remove domain`,
 								cancelText: t`Keep domain`,
+								variant: "danger",
 							})
 						)
 							remove.mutate(undefined, { onError });
@@ -147,6 +150,11 @@ export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
 						</Button>
 					</div>
 				</>
+			)}
+			{domain.lastCheckedAt && !domain.verified && (
+				<p className="mt-2 t-caption text-ink-3">
+					<Trans>Last checked {formatTimeSince(domain.lastCheckedAt, i18n.locale)} ago</Trans>
+				</p>
 			)}
 			<DnsRecordsDialog
 				domain={domain}

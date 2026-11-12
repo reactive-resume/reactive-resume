@@ -33,8 +33,9 @@ function useCanvasSize() {
 	useEffect(() => {
 		const element = ref.current;
 		if (!element) return;
+		// Fit subtracts the horizontal gutters once; contentRect already excludes that padding.
 		const observer = new ResizeObserver(([entry]) =>
-			setSize({ width: entry?.contentRect.width ?? 0, height: entry?.contentRect.height ?? 0 }),
+			setSize({ width: element.clientWidth, height: entry?.contentRect.height ?? 0 }),
 		);
 		observer.observe(element);
 		return () => observer.disconnect();

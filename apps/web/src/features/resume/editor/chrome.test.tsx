@@ -6,9 +6,9 @@ import { usePageScale } from "./chrome";
 import { useEditorStore } from "./store";
 
 function Canvas({ pages = 0, loaderPages = 0 }: { pages?: number; loaderPages?: number }) {
-	const { canvasRef } = usePageScale("a4");
+	const { canvasRef, fitScale } = usePageScale("a4");
 	return (
-		<section ref={canvasRef} data-testid="canvas">
+		<section ref={canvasRef} data-testid="canvas" data-fit={fitScale}>
 			{Array.from({ length: pages }, (_, index) => (
 				<div key={index} data-testid={`page-${index + 1}`}>
 					<canvas />
@@ -234,7 +234,8 @@ describe("canvas zoom", () => {
 			"ResizeObserver",
 			class {
 				constructor(private readonly callback: ResizeObserverCallback) {}
-				observe() {
+				observe(element: HTMLElement) {
+					Object.defineProperty(element, "clientWidth", { value: 398 });
 					this.callback([{ contentRect: { width: 318 } } as ResizeObserverEntry], this as never);
 				}
 				disconnect() {}
@@ -242,6 +243,7 @@ describe("canvas zoom", () => {
 		);
 
 		const { getByTestId } = render(<Canvas />);
+		expect(Number(getByTestId("canvas").dataset.fit)).toBeCloseTo((398 - 80) / 595.28);
 		const event = wheel(getByTestId("canvas"), { deltaY: 100, ctrlKey: true });
 
 		expect(event.defaultPrevented).toBe(true);

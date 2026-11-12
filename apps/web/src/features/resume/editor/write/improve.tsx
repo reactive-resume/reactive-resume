@@ -155,7 +155,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 						<Icon name="sparkle" size={18} className="shrink-0 text-accent-text" />
 						<span>{improve.data.text}</span>
 					</p>
-					<p className="text-xs text-ink-3">{improve.data.why}</p>
+
 					{improve.data.addsFacts && (
 						<Badge variant="warn" className="w-fit">
 							<Icon name="warning-circle" size={14} />
@@ -185,6 +185,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 							</Button>
 						)}
 					</div>
+					<p className="text-xs text-ink-3">{improve.data.why}</p>
 					<AiResultUsage usage={improve.data.aiUsage} />
 				</div>
 			) : improve.isPending ? (

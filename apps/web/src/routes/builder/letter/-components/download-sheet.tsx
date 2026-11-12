@@ -20,7 +20,7 @@ import {
 	FormatRadioGroup,
 	getExportFormats,
 } from "@/features/resume/share/download-tab";
-import { HistoryPanel, HistoryTimeline } from "@/features/resume/share/history-tab";
+import { HistoryPanel, HistoryTimeline, HistoryVersionBar } from "@/features/resume/share/history-tab";
 import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -220,4 +220,8 @@ function useLetterHistory(open: boolean): HistorySource {
 			void refresh();
 		},
 	};
+}
+
+export function LetterVersionBar(props: { showingNow: boolean; onCompare: (now: boolean) => void }) {
+	return <HistoryVersionBar source={useLetterHistory(true)} {...props} />;
 }

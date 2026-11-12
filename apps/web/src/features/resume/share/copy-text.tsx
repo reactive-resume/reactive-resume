@@ -1,16 +1,17 @@
 import { t } from "@lingui/core/macro";
 import { useEffect, useRef, useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
 
 const COPIED_MS = 1600;
 
-type CopyTextProps = { value: string; className?: string };
+type CopyTextProps = { value: string; icon?: boolean; className?: string };
 
 /** Text that copies itself when clicked. The tooltip offers the copy, then confirms it, on touch screens too. */
-export function CopyText({ value, className }: CopyTextProps) {
+export function CopyText({ value, icon = false, className }: CopyTextProps) {
 	const [hovered, setHovered] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [, copyToClipboard] = useCopyToClipboard();
@@ -39,12 +40,20 @@ export function CopyText({ value, className }: CopyTextProps) {
 						onClick={() => void copy()}
 						className={cn(
 							"-mx-1 rounded-sm px-1 text-start break-all transition-colors duration-quick hover:bg-hover active:bg-press",
+							icon && "inline-flex items-center gap-2",
 							className,
 						)}
 					/>
 				}
 			>
-				{value}
+				{icon ? (
+					<>
+						<code className="rounded-xs bg-sunken px-1.5 py-1 t-mono text-ink">{value}</code>
+						<Icon name={copied ? "check" : "copy"} size={14} className="shrink-0 text-ink-2" />
+					</>
+				) : (
+					value
+				)}
 			</TooltipTrigger>
 			<TooltipContent>{copied ? t`Copied` : t`Copy`}</TooltipContent>
 			<span className="sr-only" aria-live="polite">

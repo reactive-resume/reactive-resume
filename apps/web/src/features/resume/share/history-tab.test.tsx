@@ -4,8 +4,9 @@ import { beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 import { useEditorStore } from "../editor/store";
-import { HistoryTab } from "./history-tab";
+import { HistoryTab, ResumeVersionBar } from "./history-tab";
 
 const mocks = vi.hoisted(() => ({
 	save: vi.fn(),
@@ -48,13 +49,13 @@ beforeEach(() => {
 	i18n.activate("en");
 });
 
-it.each(["name", "restore"])("stops History %s after the save barrier fails", async (action) => {
-	if (action === "restore") useEditorStore.setState({ historyVersionId: "version" });
+it.each(["name", "restore", "canvas restore"])("stops History %s after the save barrier fails", async (action) => {
+	if (action !== "name") useEditorStore.setState({ historyVersionId: "version" });
 	const client = new QueryClient();
 	render(
 		<QueryClientProvider client={client}>
 			<I18nProvider i18n={i18n}>
-				<HistoryTab />
+				{action === "canvas restore" ? <ResumeVersionBar showingNow={false} onCompare={() => {}} /> : <HistoryTab />}
 			</I18nProvider>
 		</QueryClientProvider>,
 	);
@@ -79,5 +80,29 @@ it.each(["name", "restore"])("stops History %s after the save barrier fails", as
 			"Unsaved draft",
 		);
 	else expect(useEditorStore.getState().historyVersionId).toBe("version");
+	client.clear();
+});
+
+function CompareVersion() {
+	const [showingNow, onCompare] = useState(false);
+	return <ResumeVersionBar showingNow={showingNow} onCompare={onCompare} />;
+}
+
+it("compares with Now without restoring or losing the picked version, then leaves the preview", async () => {
+	useEditorStore.setState({ historyVersionId: "version", historyOpen: true });
+	const client = new QueryClient();
+	render(
+		<QueryClientProvider client={client}>
+			<I18nProvider i18n={i18n}>
+				<CompareVersion />
+			</I18nProvider>
+		</QueryClientProvider>,
+	);
+	fireEvent.click(await screen.findByRole("radio", { name: "Now" }));
+	expect(screen.getByRole("radio", { name: "Now" })).toBeChecked();
+	expect(useEditorStore.getState().historyVersionId).toBe("version");
+	expect(mocks.restore).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Back to now" }));
+	expect(useEditorStore.getState().historyVersionId).toBeNull();
 	client.clear();
 });

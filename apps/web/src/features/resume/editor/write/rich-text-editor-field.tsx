@@ -204,7 +204,7 @@ export type RichTextEditorProps = {
 /**
  * Loaded on demand by ./rich-text-editor.tsx, which keeps Tiptap out of the builder's first render.
  *
- * Rich text for descriptions: the toolbar and footer show while the text has focus, the toolbar never
+ * Rich text for descriptions: empty desktop fields keep formatting visible; otherwise focus shows it. The toolbar never
  * takes focus from it, and Markdown shortcuts work ("- " starts a list, "**bold**").
  */
 export function RichTextEditor({
@@ -283,7 +283,7 @@ export function RichTextEditor({
 				role: "textbox",
 				spellcheck: "true",
 				class: cn(
-					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none [&_li]:my-0.5 [&_li]:ps-0 [&_li>p]:my-0 [&_ol]:ps-[14px] [&_ul]:ps-[14px]",
+					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none [&_li]:my-1.5 [&_li]:ps-0 [&_li>p]:my-0 [&_ol]:ps-[14px] [&_ol]:pe-0 [&_ul]:ps-[14px] [&_ul]:pe-0",
 					heightClassName,
 					"[&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
 				),
@@ -414,6 +414,15 @@ export function RichTextEditor({
 		</>
 	);
 
+	const footer = (
+		<div className="flex items-center justify-between gap-3 border-t border-line px-3 py-1.5 text-xs text-ink-3">
+			<span>{hint ?? <Trans>Markdown shortcuts on</Trans>}</span>
+			<span className="font-mono">
+				<Plural value={state?.characters ?? 0} one="# character" other="# characters" />
+			</span>
+		</div>
+	);
+
 	return (
 		<>
 			<div
@@ -448,7 +457,7 @@ export function RichTextEditor({
 					)}
 				</div>
 				{/* Formatting sits above the focused text; keyboard and menu actions keep its selection. */}
-				{editing && !readOnlyTable && !mobile && (
+				{(editing || (!disabled && state?.characters === 0)) && !readOnlyTable && !mobile && (
 					<Toolbar.Root
 						ref={toolbar}
 						aria-label={t`Formatting`}
@@ -486,15 +495,13 @@ export function RichTextEditor({
 				{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
 				{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
 
-				{editing && (
-					<div className="flex items-center justify-between gap-3 border-t border-line px-3 py-1.5 text-xs text-ink-3">
-						<span>{hint ?? <Trans>Markdown shortcuts on</Trans>}</span>
-						<span className="font-mono">
-							<Plural value={state?.characters ?? 0} one="# character" other="# characters" />
-						</span>
-					</div>
-				)}
+				{editing && !improving && footer}
 			</div>
+			{!editing && !disabled && state?.characters === 0 && !mobile && (
+				<p className="mt-2 text-xs/4 text-ink-3">
+					<Trans>Improve works on a line once you have written one.</Trans>
+				</p>
+			)}
 			{editor && improving && (
 				<ImprovePanel
 					key={improving.from}
@@ -506,6 +513,7 @@ export function RichTextEditor({
 					kind={improve}
 				/>
 			)}
+			{editing && improving && footer}
 		</>
 	);
 }

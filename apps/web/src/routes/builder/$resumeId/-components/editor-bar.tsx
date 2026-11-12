@@ -103,7 +103,10 @@ function ModeTabs({ compact, offline }: ModeTabsProps) {
 					key={mode}
 					value={mode}
 					disabled={mode === "share" && offline}
-					className={cn("flex-none disabled:opacity-45", compact && "px-2.5")}
+					className={cn(
+						"flex-none disabled:text-ink-2 disabled:opacity-100 data-disabled:text-ink-2 data-disabled:opacity-100",
+						compact && "px-2.5",
+					)}
 					aria-keyshortcuts={characterShortcuts ? String(index + 1) : undefined}
 					title={
 						characterShortcuts

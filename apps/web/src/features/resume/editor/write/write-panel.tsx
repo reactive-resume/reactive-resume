@@ -3,6 +3,7 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useRouteContext, useSearch } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -69,6 +70,17 @@ function OutlineView({ locked }: { locked: boolean }) {
 					suggestions={remaining}
 					onImport={rows.length === 0 ? () => openDialog("document.new", undefined) : undefined}
 				/>
+			)}
+
+			{!locked && (
+				<Link
+					to="."
+					search={(previous: Record<string, unknown>) => ({ ...previous, mode: "design", designCategory: "layout" })}
+					className="mt-3 flex w-fit items-center gap-2 t-small text-ink-2 hover:text-ink"
+				>
+					<Icon name="columns" size={18} />
+					<Trans>Arrange sections</Trans>
+				</Link>
 			)}
 
 			<PanelFoot className={locked ? undefined : "items-center"}>

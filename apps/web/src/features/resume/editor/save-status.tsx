@@ -1,14 +1,13 @@
-import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useRouteContext } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
-import { useDocumentSentAt } from "@/features/documents/document-status";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -18,27 +17,21 @@ import { ENTER_CLASS } from "@/libs/motion";
 
 /**
  * What the status line adds to the save state while there is nothing to do: how long the resume runs and where it
- * stands, as Documents says it ("1 page · Public", "2 pages · Draft", "1 page · Sent 2 Nov").
+ * stands, as Documents says it ("1 page · Public", "2 pages · Draft", "1 page · Sent to Lumen").
  */
 function useDocumentFacts() {
 	const pageCount = useEditorStore((state) => state.rendered.pageCount);
 	const id = useResumeStore((state) => state.resume?.id ?? "");
 	const isPublic = useResumeStore((state) => state.resume?.isPublic ?? false);
 	const applicationId = useResumeStore((state) => state.resume?.applicationId ?? null);
-	const { session } = useRouteContext({ strict: false });
-	const sentAt = useDocumentSentAt({
-		type: "resume",
-		id,
-		isPublic,
-		hasPassword: false,
-		application: applicationId ? { id: applicationId } : null,
-	} as Parameters<typeof useDocumentSentAt>[0]);
+	const { data: applications } = useQuery({ ...applicationsListQueryOptions(), enabled: !!applicationId });
+	const application = applications?.find((item) => item.id === applicationId);
 	const pages = pageCount > 0 ? plural(pageCount, { one: "# page", other: "# pages" }) : null;
-	const sentOn = sentAt
-		? i18n.date(sentAt, { day: "numeric", month: "short", timeZone: session?.user.timezone ?? "UTC" })
-		: null;
-	const standing = sentOn
-		? t({ comment: "A document's status: the day it was sent with its application", message: `Sent ${sentOn}` })
+	const company = application?.company;
+	const standing = company
+		? application.resumeId === id && application.sentResumeVersionId
+			? t`Sent to ${company}`
+			: t`For ${company}`
 		: isPublic
 			? t`Public`
 			: t`Draft`;

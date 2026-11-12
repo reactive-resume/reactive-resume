@@ -15,6 +15,10 @@ import { getPageTitle, createNoindexFollowMeta } from "@/libs/seo";
 const searchSchema = z.object({
 	// Write is the default and stays out of the URL.
 	mode: z.enum(EDITOR_MODES).optional().catch(undefined),
+	designCategory: z
+		.enum(["template", "layout", "entries", "typography", "color", "page", "css"])
+		.optional()
+		.catch(undefined),
 	checkTab: z.enum(["issues", "match", "writing"]).optional().catch(undefined),
 	// Opens History on this version, read-only; Applications' "Open" on what was sent links here.
 	version: z.string().optional().catch(undefined),

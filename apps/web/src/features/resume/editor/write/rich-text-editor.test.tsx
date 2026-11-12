@@ -69,3 +69,18 @@ it("shows the placeholder only for empty content before the field receives focus
 	await screen.findByRole("textbox", { name: "Description" });
 	expect(screen.queryByText("Describe your work")).toBeNull();
 });
+
+it("keeps empty desktop entry formatting visible before typing, with Improve disabled", async () => {
+	mocks.mobile = false;
+	i18n.load("en", {});
+	i18n.activate("en");
+	render(
+		<I18nProvider i18n={i18n}>
+			<RichTextEditor label="Description" value="" onChange={vi.fn()} />
+		</I18nProvider>,
+	);
+	await screen.findByRole("textbox", { name: "Description" });
+	expect(await screen.findByRole("toolbar", { name: "Formatting" })).toBeVisible();
+	expect(screen.getByRole("button", { name: "Improve" })).toHaveAttribute("aria-disabled", "true");
+	expect(screen.getByText("Improve works on a line once you have written one.")).toBeVisible();
+});

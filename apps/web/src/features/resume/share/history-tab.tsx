@@ -16,6 +16,7 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { formatVersionMoment, formatVersionTime, getVersionDetail, getVersionTitle } from "./format";
@@ -66,7 +67,7 @@ export function HistoryTab() {
 	const selected = versionId && version.data?.id === versionId ? version.data : null;
 	return (
 		<>
-			{selected ? (
+			{selected?.aiUsage ? (
 				<AiResultUsage usage={selected.aiUsage} />
 			) : !versionId && (resume.aiOperationIds?.length ?? 0) > 0 ? (
 				<AiResultUsage usage={resume.aiUsage} />
@@ -156,16 +157,8 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 		});
 	};
 
-	const restore = (version: HistoryVersion) =>
-		void run(async () => {
-			await source.restore(version.id);
-			useEditorStore.setState({ historyVersionId: null });
-			toast.add({
-				description: version.name
-					? t`Restored “${version.name}”. Your previous state is saved as “Before restoring “${version.name}””.`
-					: t`Restored the version from ${formatVersionMoment(version.createdAt, i18n.locale)}. Your previous state is saved as “Before restore”.`,
-			});
-		});
+	const { restore, restoring } = useRestoreVersion(source);
+	const historyOpen = useEditorStore((state) => state.historyOpen);
 
 	return (
 		<div className="flex min-h-0 flex-1 flex-col">
@@ -194,7 +187,7 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 				</div>
 			</form>
 
-			{selected && (
+			{selected && !historyOpen && (
 				<div role="status" className="mt-4 grid gap-2.5 rounded-lg bg-sunken p-3">
 					<span className="flex items-start gap-2.5">
 						<Icon name={versionIcon(selected) ?? "clock-counter-clockwise"} size={18} className="mt-px text-ink-2" />
@@ -212,7 +205,12 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 						</span>
 					</span>
 					<span className="flex flex-wrap gap-2">
-						<Button size="sm" variant="secondary" disabled={source.locked || busy} onClick={() => restore(selected)}>
+						<Button
+							size="sm"
+							variant="secondary"
+							disabled={source.locked || busy || restoring}
+							onClick={() => void restore(selected)}
+						>
 							<Icon name="arrow-counter-clockwise" />
 							<Trans>Restore this version</Trans>
 						</Button>
@@ -242,7 +240,7 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 						trailing={
 							version.kind === "named" ? (
 								<NamedVersionMenu version={version} source={source} />
-							) : version.kind === "sent" ? (
+							) : version.kind === "sent" && version.id === selectedId ? (
 								<Badge variant="outline">
 									<Icon name="lock-simple" size={14} />
 									<Trans>Frozen</Trans>
@@ -259,6 +257,86 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 					current state first, so nothing is lost.
 				</Trans>
 			</p>
+		</div>
+	);
+}
+
+function useRestoreVersion(source: HistorySource) {
+	const { i18n } = useLingui();
+	const [restoring, setRestoring] = useState(false);
+	const restore = async (version: HistoryVersion) => {
+		if (restoring || source.locked) return;
+		setRestoring(true);
+		try {
+			await source.restore(version.id);
+			useEditorStore.setState({ historyVersionId: null });
+			toast.add({
+				description: version.name
+					? t`Restored “${version.name}”. Your previous state is saved as “Before restoring “${version.name}””.`
+					: t`Restored the version from ${formatVersionMoment(version.createdAt, i18n.locale)}. Your previous state is saved as “Before restore”.`,
+			});
+		} catch (error) {
+			toast.add({ type: "error", description: source.errorMessage(error) });
+		} finally {
+			setRestoring(false);
+		}
+	};
+	return { restore, restoring };
+}
+
+type VersionBarProps = { showingNow: boolean; onCompare: (now: boolean) => void };
+
+export function ResumeVersionBar(props: VersionBarProps) {
+	return <HistoryVersionBar source={useResumeHistory()} {...props} />;
+}
+
+/** Compare without changing selection; restoring uses the same guarded write as the History sheet. */
+export function HistoryVersionBar({ source, showingNow, onCompare }: VersionBarProps & { source: HistorySource }) {
+	const { i18n } = useLingui();
+	const selectedId = useEditorStore((state) => state.historyVersionId);
+	const selected = source.versions?.find((version) => version.id === selectedId);
+	const { restore, restoring } = useRestoreVersion(source);
+	if (!selected) return null;
+	return (
+		<div
+			aria-label={t`Version preview`}
+			className="absolute start-1/2 top-3 z-10 flex min-h-14 w-[760px] max-w-[calc(100%-32px)] -translate-x-1/2 flex-wrap items-center gap-3 rounded-lg border border-line bg-raised py-2 ps-4 pe-2.5 shadow-e2 rtl:translate-x-1/2"
+		>
+			<Icon name={versionIcon(selected) ?? "clock-counter-clockwise"} size={20} className="text-ink-2" />
+			<div className="flex min-w-0 flex-1 flex-col">
+				<span className="t-ui font-semibold">
+					{getVersionTitle(selected)} · {formatVersionTime(selected.createdAt, i18n.locale)}
+				</span>
+				<span className="text-xs/4 font-normal text-ink-3">
+					{selected.kind === "sent" ? (
+						<Trans>What went out with your application. Read-only.</Trans>
+					) : (
+						<Trans>Shown on the page, read-only.</Trans>
+					)}
+				</span>
+			</div>
+			<SegmentedControl
+				value={showingNow ? "now" : "version"}
+				onValueChange={(value) => onCompare(value === "now")}
+				aria-label={t`Compare by switching`}
+			>
+				<SegmentedControlItem className="flex-none" value="version">
+					<Trans>This version</Trans>
+				</SegmentedControlItem>
+				<SegmentedControlItem className="flex-none" value="now">
+					<Trans>Now</Trans>
+				</SegmentedControlItem>
+			</SegmentedControl>
+			<Button variant="secondary" disabled={source.locked || restoring} onClick={() => void restore(selected)}>
+				<Icon name="arrow-counter-clockwise" />
+				<Trans>Restore this version</Trans>
+			</Button>
+			<IconButton
+				icon="x"
+				label={t`Back to now`}
+				size="icon-sm"
+				onClick={() => useEditorStore.setState({ historyVersionId: null })}
+			/>
 		</div>
 	);
 }

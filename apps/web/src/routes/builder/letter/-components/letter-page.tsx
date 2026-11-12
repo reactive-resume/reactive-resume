@@ -11,6 +11,7 @@ import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { applyProposals } from "@reactive-resume/resume/proposals";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { LetterVersionBar } from "./download-sheet";
 import { templates } from "@/dialogs/resume/template/data";
 import { AiResultUsage } from "@/features/ai/usage";
 import { letterPageData, useLetterWords } from "@/features/letters/compose";
@@ -21,7 +22,6 @@ import { markChange } from "@/features/resume/editor/proposals/proposals";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getScrollBehavior } from "@/features/resume/editor/write/reveal";
 import { ResumePreview } from "@/features/resume/preview/preview";
-import { formatVersionTime, getVersionTitle } from "@/features/resume/share/format";
 import { orpc } from "@/libs/orpc/client";
 
 const NONE: readonly never[] = [];
@@ -53,6 +53,7 @@ export function LetterPage() {
 	const { i18n } = useLingui();
 	const reducedMotion = useReducedMotion();
 	const previewTemplate = useEditorStore((state) => state.previewTemplate);
+	const [compareId, setCompareId] = useState<string | null>(null);
 	const historyVersionId = useEditorStore((state) => state.historyVersionId);
 	const sheetOpen = useEditorStore((state) => state.sheetTab !== null);
 	const rendered = useEditorStore((state) => state.rendered);
@@ -79,7 +80,7 @@ export function LetterPage() {
 
 	const pageData = useMemo(() => {
 		if (!letter) return undefined;
-		if (viewing) return letterPageData({ ...letter, ...viewing.data }, words);
+		if (viewing && compareId !== historyVersionId) return letterPageData({ ...letter, ...viewing.data }, words);
 		// The assistant's pending edits show in the body: the old text struck through, the new highlighted.
 		let content = shownDraft ? coverLetterTextToHtml(shownDraft) : letter.content;
 		if (!shownDraft)
@@ -93,7 +94,17 @@ export function LetterPage() {
 			);
 		const page = letterPageData({ ...letter, content }, words);
 		return previewTemplate ? { ...page, metadata: { ...page.metadata, template: previewTemplate } } : page;
-	}, [letter, viewing, shownDraft, previewTemplate, words, assistantProposals, applications]);
+	}, [
+		letter,
+		viewing,
+		compareId,
+		historyVersionId,
+		shownDraft,
+		previewTemplate,
+		words,
+		assistantProposals,
+		applications,
+	]);
 	const data = useDeepStable(pageData);
 
 	if (!letter || !data) return null;
@@ -119,6 +130,7 @@ export function LetterPage() {
 				className={cn(
 					"absolute inset-0 overflow-auto pt-3.5 pb-24 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent",
 					isPhone ? "px-4" : "px-10",
+					viewing && "pt-[88px]",
 				)}
 			>
 				{viewing && <AiResultUsage usage={viewing.aiUsage} />}
@@ -136,16 +148,9 @@ export function LetterPage() {
 					pageClassName={cn("rounded-paper bg-paper shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}
 					onRender={setRendered}
 					renderPageCaption={({ pageNumber }) =>
-						pageNumber === 1 ? (
+						viewing ? null : pageNumber === 1 ? (
 							<figcaption className="relative mb-2.5 flex min-h-4 flex-wrap items-center justify-center gap-2.5 text-center t-mono text-ink-3">
-								{viewing ? (
-									<CanvasStatusPill icon="clock-counter-clockwise">
-										<Trans>
-											Viewing {formatVersionTime(viewing.createdAt, i18n.locale)} · {getVersionTitle(viewing)} ·
-											read-only
-										</Trans>
-									</CanvasStatusPill>
-								) : previewTemplate ? (
+								{viewing ? null : previewTemplate ? (
 									<CanvasStatusPill icon="eye">
 										<Trans>Previewing {templates[previewTemplate].name} · click to apply</Trans>
 									</CanvasStatusPill>
@@ -184,6 +189,12 @@ export function LetterPage() {
 				/>
 			</section>
 
+			{viewing && (
+				<LetterVersionBar
+					showingNow={compareId === historyVersionId}
+					onCompare={(now) => setCompareId(now ? historyVersionId : null)}
+				/>
+			)}
 			<ZoomBar fitScale={fitScale} pageCount={Math.max(1, rendered.pageCount)} />
 		</div>
 	);

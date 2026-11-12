@@ -1,3 +1,4 @@
+import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -13,6 +14,8 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { useShareOrigin } from "./use-share-origin";
 import { useCurrentResume, useResumeData } from "@/features/resume/builder/draft";
+import { useEditorStore } from "@/features/resume/editor/store";
+import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { authClient } from "@/libs/auth/client";
 import { getFontMirrorUrl } from "@/libs/font-source";
 // The page's own text, declared for translators; see the module.
@@ -66,6 +69,24 @@ export function WebPagePreview() {
 	// Typing renders once it pauses, not on every keystroke.
 	const [debouncedData] = useDebounceValue(data, 200);
 	const fontMirrorUrl = getFontMirrorUrl();
+	useEffect(() => {
+		if (!debouncedData) return;
+		let current = true;
+		let pageMap: PageMap | undefined;
+		void createResumePdfBlob(debouncedData, undefined, {
+			onPageMap: (map) => {
+				pageMap = map;
+			},
+		})
+			.then((file) => {
+				if (current && pageMap)
+					useEditorStore.getState().setRendered({ pageCount: pageMap.pages.length, pageMap, file });
+			})
+			.catch(() => undefined);
+		return () => {
+			current = false;
+		};
+	}, [debouncedData]);
 
 	useEffect(() => {
 		if (!debouncedData) return;

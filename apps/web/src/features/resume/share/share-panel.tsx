@@ -480,23 +480,25 @@ function PrimaryRow({ setting: { update, isPending }, current, listState, domain
 						: domains
 							? t`Your short link and custom domain say this resume isn't shared until you publish it again.`
 							: t`Your short link says this resume isn't shared until you publish it again.`
-					: listState === "pending"
-						? t`Checking which resume opens your short link…`
-						: listState === "error"
-							? t`Couldn't check which resume opens your short link. Reload the page and try again.`
-							: current
-								? current.isPublic
-									? domains
-										? t`Your short link and custom domain open “${current.name}”.`
-										: t`Your short link opens “${current.name}”.`
-									: domains
-										? t`Your short link and custom domain point to “${current.name}”, which isn't published.`
-										: t`Your short link points to “${current.name}”, which isn't published.`
-								: isPublic
-									? domains
-										? t`Turn this on to open this resume at your short link and custom domain.`
-										: t`Turn this on to open this resume at your short link.`
-									: `${domains ? t`Publish this resume to open it at your short link and custom domain.` : t`Publish this resume to open it at your short link.`} ${t`If another resume holds Primary, turn it on for this one instead.`}`
+					: !isPublic
+						? `${domains ? t`Publish this resume to open it at your short link and custom domain.` : t`Publish this resume to open it at your short link.`} ${t`If another resume holds Primary, turn it on for this one instead.`}`
+						: listState === "pending"
+							? t`Checking which resume opens your short link…`
+							: listState === "error"
+								? t`Couldn't check which resume opens your short link. Reload the page and try again.`
+								: current
+									? current.isPublic
+										? domains
+											? t`Your short link and custom domain open “${current.name}”.`
+											: t`Your short link opens “${current.name}”.`
+										: domains
+											? t`Your short link and custom domain point to “${current.name}”, which isn't published.`
+											: t`Your short link points to “${current.name}”, which isn't published.`
+									: isPublic
+										? domains
+											? t`Turn this on to open this resume at your short link and custom domain.`
+											: t`Turn this on to open this resume at your short link.`
+										: `${domains ? t`Publish this resume to open it at your short link and custom domain.` : t`Publish this resume to open it at your short link.`} ${t`If another resume holds Primary, turn it on for this one instead.`}`
 			}
 		/>
 	);
@@ -606,6 +608,7 @@ function PasswordRow() {
 			description: t`Anyone with the link will be able to view your resume.`,
 			confirmText: t`Remove password`,
 			cancelText: t`Keep password`,
+			variant: "danger",
 		});
 		if (!confirmed) return;
 		try {
@@ -762,6 +765,11 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 							<Trans>Today</Trans>
 						</span>
 					</div>
+					{lastView && (
+						<p className="mt-2 t-caption text-ink-3">
+							<Trans>Last counted view {lastView} ago. Each visitor counts once an hour.</Trans>
+						</p>
+					)}
 				</>
 			) : (
 				<p className="t-small text-ink-2">

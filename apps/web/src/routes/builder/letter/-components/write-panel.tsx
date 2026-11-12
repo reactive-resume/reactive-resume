@@ -1,7 +1,7 @@
 import type { ApplicationSummary } from "@/features/applications/types";
 import type { LetterDraft } from "@/features/letters/store";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
-import type { CSSProperties, ReactElement, ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -524,17 +524,15 @@ function LetterDateField({ letter, disabled }: { letter: CoverLetter; disabled: 
 				disabled={disabled}
 				onChange={(event) => edit({ letterDate: event.target.value || null })}
 			/>
-			{letter.letterDate !== todayDate() && (
-				<Button
-					variant="ghost"
-					size="sm"
-					className="shrink-0"
-					disabled={disabled}
-					onClick={() => edit({ letterDate: todayDate() })}
-				>
-					<Trans>Today</Trans>
-				</Button>
-			)}
+			<Button
+				variant="ghost"
+				size="sm"
+				className="shrink-0"
+				disabled={disabled}
+				onClick={() => edit({ letterDate: todayDate() })}
+			>
+				<Trans>Today</Trans>
+			</Button>
 		</div>
 	);
 }
@@ -1152,43 +1150,32 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 function LengthLine({ content, scale = false }: { content: string; scale?: boolean }) {
 	const words = countWords(content);
 	const length = letterLength(words);
-	const color = length === "empty" ? "text-ink-3" : length === "comfortable" ? "text-accent-text" : "text-warn-text";
-	const fill = length === "empty" ? "bg-line-2" : length === "comfortable" ? "bg-accent" : "bg-warn";
 	const percent = (value: number) => `${(value / LETTER_LENGTH.scale) * 100}%`;
 
 	return (
 		<div className={cn("flex flex-col gap-1.5", !scale && "pt-1")}>
-			<div className="flex items-center gap-3">
-				{!scale && (
+			{!scale && (
+				<div className="flex items-center justify-between gap-3">
 					<span className="text-[13px]/[18px] font-medium text-ink-2">
 						<Trans>Length</Trans>
 					</span>
-				)}
-				<div aria-hidden="true" className="relative h-1.5 flex-1 overflow-hidden rounded-xs bg-sunken">
-					<span
-						className="absolute inset-y-0 bg-line-2"
-						style={{
-							insetInlineStart: percent(LETTER_LENGTH.min),
-							width: percent(LETTER_LENGTH.max - LETTER_LENGTH.min),
-						}}
-					/>
-					<span
-						className={cn(
-							"absolute inset-y-0 start-0 w-full translate-x-(--fill) rounded-xs transition-[translate] duration-quick ease-enter rtl:-translate-x-(--fill)",
-							fill,
-						)}
-						style={
-							{
-								"--fill": `${(Math.min(words, LETTER_LENGTH.scale) / LETTER_LENGTH.scale) * 100 - 100}%`,
-							} as CSSProperties
-						}
-					/>
-				</div>
-				{!scale && (
-					<span className={cn("t-mono", color)}>
+					<span className="t-mono text-ink-3">
 						<Plural value={words} one="# word" other="# words" />
 					</span>
-				)}
+				</div>
+			)}
+			<div aria-hidden="true" className="relative h-1.5 rounded-xs border border-control-border bg-sunken">
+				<span
+					className="absolute -inset-y-px border border-accent bg-accent-soft"
+					style={{
+						insetInlineStart: percent(LETTER_LENGTH.min),
+						width: percent(LETTER_LENGTH.max - LETTER_LENGTH.min),
+					}}
+				/>
+				<span
+					className="absolute top-1/2 h-3 w-0.5 -translate-y-1/2 bg-ink"
+					style={{ insetInlineStart: percent(Math.min(words, LETTER_LENGTH.scale)) }}
+				/>
 			</div>
 			{scale && (
 				<div aria-hidden="true" className="relative h-4 t-mono text-ink-3">

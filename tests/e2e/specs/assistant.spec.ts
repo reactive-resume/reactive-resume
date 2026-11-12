@@ -30,11 +30,18 @@ async function resumeJson(page: Page, resumeId: string) {
 /** D1: connects the stub through the assistant's inline setup. */
 async function connectStub(page: Page) {
 	const assistant = page.getByRole("region", { name: "Assistant" });
-	await assistant.getByRole("button", { name: "Other · OpenAI-compatible" }).click();
-	await assistant.getByLabel("Base URL").fill(stub.baseURL);
-	await assistant.getByLabel("API key").fill("stub-key");
-	await assistant.getByLabel("Model").fill("stub");
-	await assistant.getByRole("button", { name: "Connect" }).click();
+	await assistant.getByRole("button", { name: "Set up AI", exact: true }).click();
+	const setup = page.getByRole("dialog", { name: "Set up AI", exact: true });
+	await setup.getByRole("combobox", { name: "Provider", exact: true }).click();
+	await page.getByRole("option", { name: "OpenAI-compatible", exact: true }).click();
+	await setup.getByLabel("Base URL (required)", { exact: true }).fill(stub.baseURL);
+	await setup.getByLabel("API key", { exact: true }).fill("stub-key");
+	await setup.getByLabel("Model", { exact: true }).fill("stub");
+	await setup.getByRole("button", { name: "Save and test", exact: true }).click();
+	await page
+		.getByRole("dialog", { name: "AI is ready", exact: true })
+		.getByRole("button", { name: "Done", exact: true })
+		.click();
 	await expect(assistant.getByLabel("Message the assistant")).toBeVisible({ timeout: 20_000 });
 }
 
@@ -166,7 +173,10 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 
 	await edits.getByRole("button", { name: "Accept" }).click();
 	await expect(edits.getByText("Applied")).toBeVisible();
-	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).toContain("(tightened by the stub)");
+	await expect.poll(() => resumeIdOf(page), { timeout: 15_000 }).not.toBe(resumeId);
+	const workingResumeId = resumeIdOf(page);
+	await expect.poll(() => resumeJson(page, workingResumeId), { timeout: 15_000 }).toContain("(tightened by the stub)");
+	expect(await resumeJson(page, resumeId)).not.toContain("(tightened by the stub)");
 	await expect(page.locator("figcaption")).toHaveCount(predictedPages, { timeout: 30_000 });
 	await expect(page.getByText("1 proposed", { exact: true })).toBeHidden();
 	await expect(page.getByText(/Page 1 still runs over by about \d+ lines\./)).toBeVisible();

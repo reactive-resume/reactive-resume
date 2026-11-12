@@ -269,7 +269,7 @@ function FormatRow<Id extends string>({ format, busy, disabled, onHover, onClick
 						</span>
 					)}
 				</span>
-				<span className="truncate text-[13px]/[18px] text-ink-3">{format.description}</span>
+				<span className="text-[13px]/[18px] text-ink-3">{format.description}</span>
 			</span>
 		</button>
 	);

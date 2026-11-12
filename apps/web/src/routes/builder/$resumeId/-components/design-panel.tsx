@@ -3,6 +3,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { getRouteApi } from "@tanstack/react-router";
 import { Fragment, useEffect, useState } from "react";
 import { filterSections } from "@reactive-resume/pdf/filtering";
 import { entryHeaderOf } from "@reactive-resume/schema/resume/data";
@@ -44,7 +45,15 @@ const ICONS: Record<DesignCategory, IconName> = {
 export function DesignPanel() {
 	const data = useResumeData();
 	const locked = useIsResumeLocked();
-	const [category, setCategory] = useState<DesignCategory | null>(null);
+	const route = getRouteApi("/builder/$resumeId");
+	const { designCategory: category = null } = route.useSearch();
+	const navigate = route.useNavigate();
+	const setCategory = (designCategory: DesignCategory | null) =>
+		void navigate({
+			to: ".",
+			resetScroll: false,
+			search: (previous: Record<string, unknown>) => ({ ...previous, designCategory: designCategory ?? undefined }),
+		});
 	// The slot belongs to the frame; restore its width whenever this category leaves.
 	useEffect(() => {
 		if (category !== "template") return;

@@ -7,7 +7,7 @@ import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { lazyRouteComponent } from "@tanstack/react-router";
+import { useNavigate, lazyRouteComponent } from "@tanstack/react-router";
 import { Suspense, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { spillingSections } from "@reactive-resume/resume/spill";
@@ -29,7 +29,7 @@ import { useCurrentBuilderResumeSelector, useResumeData, useResumeStore } from "
 import { undoToast } from "@/features/resume/builder/undo-toast";
 import { CheckPageLayer, PageViewToggle } from "@/features/resume/editor/check/page-layer";
 import { ParserView } from "@/features/resume/editor/check/parser-view";
-import { CanvasStatusPill, usePageScale, ZoomBar } from "@/features/resume/editor/chrome";
+import { usePageScale, ZoomBar } from "@/features/resume/editor/chrome";
 import { addSpillPage, runFit } from "@/features/resume/editor/design/fit";
 import { PageOverlay } from "@/features/resume/editor/page-overlay";
 import { markProposals, pendingProposals } from "@/features/resume/editor/proposals/proposals";
@@ -37,7 +37,7 @@ import { useEditorStore } from "@/features/resume/editor/store";
 import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
 import { ResumePreview } from "@/features/resume/preview/preview";
-import { formatVersionTime, getVersionTitle } from "@/features/resume/share/format";
+import { ResumeVersionBar } from "@/features/resume/share/history-tab";
 import { orpc } from "@/libs/orpc/client";
 
 const NONE: readonly never[] = [];
@@ -71,6 +71,7 @@ function ResumePageCanvas() {
 	const data = useResumeData();
 	const format = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.format);
 	const previewTemplate = useEditorStore((state) => state.previewTemplate);
+	const [compareId, setCompareId] = useState<string | null>(null);
 	const historyVersionId = useEditorStore((state) => state.historyVersionId);
 	const pageView = useEditorStore((state) => state.pageView);
 	const checkTab = useEditorStore((state) => state.checkTab);
@@ -116,7 +117,9 @@ function ResumePageCanvas() {
 
 	// Design: a hovered or focused template is drawn on the page until it's applied or the pointer leaves.
 	const previewData = viewing
-		? viewing.data
+		? compareId === historyVersionId
+			? data
+			: viewing.data
 		: data && previewTemplate
 			? { ...data, metadata: { ...data.metadata, template: previewTemplate } }
 			: // Only undecided edits change the page: once every one is decided, it draws (and measures) as it is.
@@ -165,7 +168,7 @@ function ResumePageCanvas() {
 					// The region takes focus to scroll from the keyboard: it shows the ring, inset since it fills its container.
 					"absolute inset-0 overflow-auto pb-24 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent",
 					// Check keeps room above the page for the page-view toggle.
-					mode === "check" && !viewing ? "pt-[68px]" : "pt-3.5",
+					viewing ? "pt-[88px]" : mode === "check" ? "pt-[68px]" : "pt-3.5",
 					isPhone ? "px-4" : "px-10",
 				)}
 			>
@@ -179,30 +182,29 @@ function ResumePageCanvas() {
 							"w-fit transition-transform duration-emphasized ease-enter",
 							shifted && "-translate-x-[220px] rtl:translate-x-[220px]",
 						)}
-						pageClassName={cn(
-							"rounded-paper bg-paper shadow-page",
-							viewing && "outline-2 outline-offset-4 outline-ink",
-						)}
+						pageClassName={cn("rounded-paper bg-paper shadow-page")}
 						onRender={onRender}
-						renderPageCaption={({ pageNumber }) => (
-							<ResumePageCaption
-								pageNumber={pageNumber}
-								pageCount={Math.max(1, rendered.pageCount)}
-								viewing={viewing}
-								previewTemplate={previewTemplate}
-								pendingOnPage={pendingOnPage}
-								format={format}
-								overflow={overflow}
-								locked={locked}
-								sideBySide={sideBySide}
-								// A page's own menu, where the pages on screen are the pages of the layout (nothing spills).
-								menu={
-									sideBySide && !locked && !viewing && !overflow && layoutPages === rendered.pageCount ? (
-										<PageMenu pageIndex={pageNumber - 1} />
-									) : null
-								}
-							/>
-						)}
+						renderPageCaption={({ pageNumber }) =>
+							viewing ? null : (
+								<ResumePageCaption
+									pageNumber={pageNumber}
+									pageCount={Math.max(1, rendered.pageCount)}
+									viewing={viewing}
+									previewTemplate={previewTemplate}
+									pendingOnPage={pendingOnPage}
+									format={format}
+									overflow={overflow}
+									locked={locked}
+									sideBySide={sideBySide}
+									// A page's own menu, where the pages on screen are the pages of the layout (nothing spills).
+									menu={
+										sideBySide && !locked && !viewing && !overflow && layoutPages === rendered.pageCount ? (
+											<PageMenu pageIndex={pageNumber - 1} />
+										) : null
+									}
+								/>
+							)
+						}
 						renderPageOverlay={({ pageIndex, pageMap }) =>
 							// A version from History is read-only: its lines don't open entries.
 							viewing ? null : mode === "check" ? (
@@ -217,7 +219,14 @@ function ResumePageCanvas() {
 				{parser && <ParserView />}
 			</section>
 
-			{desktop && (
+			{viewing && (
+				<ResumeVersionBar
+					showingNow={compareId === historyVersionId}
+					onCompare={(now) => setCompareId(now ? historyVersionId : null)}
+				/>
+			)}
+
+			{desktop && !viewing && (
 				<Button
 					variant="secondary"
 					size="sm"
@@ -276,19 +285,11 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 
 	return (
 		<figcaption className={cn("relative mb-2.5 min-h-4", spill && "border-t-[1.5px] border-dashed border-warn")}>
-			{pageNumber === 1 && viewing ? (
-				<div className="flex justify-center">
-					<CanvasStatusPill icon="clock-counter-clockwise">
-						<Trans>
-							Viewing {formatVersionTime(viewing.createdAt, i18n.locale)} · {getVersionTitle(viewing)} · read-only
-						</Trans>
-					</CanvasStatusPill>
-				</div>
-			) : pageNumber === 1 && previewTemplate ? (
-				<div className="flex justify-center">
-					<CanvasStatusPill icon="eye">
-						<Trans>Previewing {templates[previewTemplate].name} · click to apply</Trans>
-					</CanvasStatusPill>
+			{viewing ? null : previewTemplate ? (
+				<div className={label}>
+					<Trans>
+						Preview · {templates[previewTemplate].name} · Page {page} of {pages} · {formatLabel}
+					</Trans>
 				</div>
 			) : (
 				<>
@@ -356,7 +357,7 @@ function AddPage({ height }: { height: number }) {
 				)
 			}
 		>
-			<Icon name="plus" size={24} />
+			<Icon name="plus" size={20} />
 			<Trans>Add page</Trans>
 			<span className="max-w-[104px] text-xs/4 font-normal text-ink-3">
 				<Trans>Sections move here from Layout, or by “Move to”</Trans>
@@ -367,7 +368,7 @@ function AddPage({ height }: { height: number }) {
 
 /** A page's own menu: full width, arrange its sections (Design), and Delete page, which says where its sections go. */
 function PageMenu({ pageIndex }: { pageIndex: number }) {
-	const [, setMode] = useEditorMode();
+	const navigate = useNavigate({ from: "/builder/$resumeId" });
 	const page = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.layout.pages[pageIndex] ?? null);
 	const pageCount = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.layout.pages.length);
 	const updateResumeData = useResumeStore((state) => state.updateResumeData);
@@ -391,6 +392,7 @@ function PageMenu({ pageIndex }: { pageIndex: number }) {
 			/>
 			<DropdownMenuContent align="start" aria-label={t`Page ${number}`} className="w-[250px]">
 				<DropdownMenuCheckboxItem
+					className="ps-9 pe-2.5 [&>[data-slot=dropdown-menu-checkbox-item-indicator]]:start-2.5 [&>[data-slot=dropdown-menu-checkbox-item-indicator]]:end-auto"
 					checked={page.fullWidth}
 					onCheckedChange={(checked) =>
 						updateResumeData(
@@ -415,7 +417,14 @@ function PageMenu({ pageIndex }: { pageIndex: number }) {
 				<DropdownMenuItem
 					onClick={() => {
 						useEditorStore.setState({ panelHidden: false });
-						setMode("design");
+						void navigate({
+							to: ".",
+							search: (previous: Record<string, unknown>) => ({
+								...previous,
+								mode: "design",
+								designCategory: "layout",
+							}),
+						});
 					}}
 				>
 					<Icon name="columns" />

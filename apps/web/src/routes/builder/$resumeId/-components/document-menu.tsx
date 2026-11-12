@@ -327,10 +327,6 @@ function DocumentMenuItems({ onOpenDialog, onHelp }: DocumentMenuItemsProps) {
 				<Icon name="keyboard" />
 				<Trans>Keyboard shortcuts</Trans>
 			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => setSheetTab("history")}>
-				<Icon name="clock-counter-clockwise" />
-				<Trans>History</Trans>
-			</DropdownMenuItem>
 			<DropdownMenuSeparator />
 			<DropdownMenuItem variant="destructive" disabled={isLocked} onClick={handleTrash}>
 				<Icon name="trash" />

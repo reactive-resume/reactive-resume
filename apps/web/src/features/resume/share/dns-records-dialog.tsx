@@ -6,6 +6,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
 	DialogContent,
+	DialogClose,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
@@ -33,8 +34,8 @@ export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent closeLabel={t`Close`} className="sm:max-w-[680px]">
-				<DialogHeader>
-					<DialogTitle>
+				<DialogHeader className="gap-1.5 pe-0">
+					<DialogTitle className="pe-9">
 						<Trans>Connect {domain.hostname}</Trans>
 					</DialogTitle>
 					<DialogDescription>
@@ -45,9 +46,9 @@ export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck
 				</DialogHeader>
 
 				{/* On a phone each record stacks: its type, then its name and value on their own labelled lines. */}
-				<table className="w-full text-[13px]" dir="ltr">
+				<table className="w-full table-fixed text-[13px]/[18px]" dir="ltr">
 					<thead className="max-sm:sr-only">
-						<tr className="text-xs text-ink-3">
+						<tr className="text-xs/4.5 text-ink-3">
 							<th scope="col" className="w-16 pb-2 text-start font-normal">
 								<Trans context="DNS record">Type</Trans>
 							</th>
@@ -67,10 +68,10 @@ export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck
 							>
 								<td className="py-2.5 font-medium max-sm:row-span-2 max-sm:py-0">{record.type}</td>
 								<td data-label={t({ message: "Name", context: "DNS record" })} className={cellClass}>
-									<CopyText value={record.name} className="font-mono" />
+									<CopyText icon value={record.name} className="font-mono" />
 								</td>
 								<td data-label={t`Value`} className={cellClass}>
-									<CopyText value={record.value} className="font-mono" />
+									<CopyText icon value={record.value} className="font-mono" />
 								</td>
 							</tr>
 						))}
@@ -92,6 +93,9 @@ export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck
 							<Trans>Last checked {lastChecked} ago</Trans>
 						</p>
 					)}
+					<DialogClose render={<Button variant="ghost" />}>
+						<Trans>Close</Trans>
+					</DialogClose>
 					<Button loading={checking} onClick={onCheck}>
 						<Trans>Check DNS</Trans>
 					</Button>
