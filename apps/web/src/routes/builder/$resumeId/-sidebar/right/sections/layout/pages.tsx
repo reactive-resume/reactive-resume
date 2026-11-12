@@ -20,6 +20,7 @@ import { useReducedMotion } from "motion/react";
 import { useCallback, useId, useState } from "react";
 import { match } from "ts-pattern";
 import { filterSections } from "@reactive-resume/pdf/filtering";
+import { shouldShowResumeHeader } from "@reactive-resume/pdf/semantic-tree";
 import { templateLayouts } from "@reactive-resume/schema/templates";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -34,10 +35,15 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { InputGroup } from "@reactive-resume/ui/components/input-group";
 import { Switch } from "@reactive-resume/ui/components/switch";
+import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { resolveLayoutSectionTitle } from "./title";
+import { NumberInput } from "@/components/input/number-input";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { undoToast } from "@/features/resume/builder/undo-toast";
+import { resolveSection, getSectionObject } from "@/features/resume/editor/write/model";
 import { dndContextProps } from "@/libs/dnd";
 import { DRAG_SETTLE } from "@/libs/motion";
 
@@ -104,7 +110,12 @@ export function LayoutPages() {
 
 	const resume = useCurrentResume();
 	const template = resume.data.metadata.template;
-	const templateSidebarPosition = templateLayouts[template].sidebarSide ?? "none";
+	const ownSide = templateLayouts[template].sidebarSide;
+	const defaultSide = isRTL(resume.data.metadata.page.locale) ? (ownSide === "left" ? "right" : "left") : ownSide;
+	const templateSidebarPosition =
+		templateLayouts[template].columns === 1
+			? "none"
+			: (resume.data.metadata.layout.sidebarSide ?? defaultSide ?? "none");
 
 	const layout = resume.data.metadata.layout;
 	const updateResumeData = useUpdateResumeData();
@@ -160,11 +171,15 @@ export function LayoutPages() {
 				if (oldIdx === -1 || oldIdx === newIdx) return;
 				if (newIdx === -1) newIdx = items.length - 1;
 
-				updateResumeData((draft) => {
-					const page = draft.metadata.layout.pages[activeLocation.pageIndex];
-					if (!page) return;
-					page[activeLocation.columnId] = arrayMove(page[activeLocation.columnId], oldIdx, newIdx);
-				});
+				updateResumeData(
+					(draft) => {
+						const page = draft.metadata.layout.pages[activeLocation.pageIndex];
+						if (!page) return;
+						page[activeLocation.columnId] = arrayMove(page[activeLocation.columnId], oldIdx, newIdx);
+					},
+					{ newStep: true },
+				);
+				undoToast(t`Section moved`);
 				return;
 			}
 
@@ -180,47 +195,59 @@ export function LayoutPages() {
 			let toIdx = toItems.indexOf(overIdStr);
 			if (toIdx === -1) toIdx = toItems.length;
 
-			updateResumeData((draft) => {
-				const fromPageDraft = draft.metadata.layout.pages[activeLocation.pageIndex];
-				const toPageDraft = draft.metadata.layout.pages[overLocation.pageIndex];
-				if (!fromPageDraft || !toPageDraft) return;
-				const from = fromPageDraft[activeLocation.columnId];
-				const to = toPageDraft[overLocation.columnId];
+			updateResumeData(
+				(draft) => {
+					const fromPageDraft = draft.metadata.layout.pages[activeLocation.pageIndex];
+					const toPageDraft = draft.metadata.layout.pages[overLocation.pageIndex];
+					if (!fromPageDraft || !toPageDraft) return;
+					const from = fromPageDraft[activeLocation.columnId];
+					const to = toPageDraft[overLocation.columnId];
 
-				from.splice(fromIdx, 1);
-				to.splice(Math.min(toIdx, to.length), 0, activeIdStr);
-			});
+					from.splice(fromIdx, 1);
+					to.splice(Math.min(toIdx, to.length), 0, activeIdStr);
+				},
+				{ newStep: true },
+			);
+			undoToast(t`Section moved`);
 		},
 		[findContainer, layout.pages, updateResumeData],
 	);
 
 	const handleAddPage = useCallback(() => {
-		updateResumeData((draft) => {
-			draft.metadata.layout.pages.push({
-				fullWidth: false,
-				main: [],
-				sidebar: [],
-			});
-		});
+		updateResumeData(
+			(draft) => {
+				draft.metadata.layout.pages.push({
+					fullWidth: false,
+					main: [],
+					sidebar: [],
+				});
+			},
+			{ newStep: true },
+		);
+		undoToast(t`Page added`);
 	}, [updateResumeData]);
 
 	const handleDeletePage = useCallback(
 		(pageIndex: number) => {
 			if (layout.pages.length <= 1) return; // Don't allow deleting the last page
 
-			updateResumeData((draft) => {
-				const pageToDelete = draft.metadata.layout.pages[pageIndex];
-				// Find the first available page that isn't being deleted
-				const targetPageIndex = pageIndex === 0 ? 1 : 0;
-				const targetPage = draft.metadata.layout.pages[targetPageIndex];
-				if (!pageToDelete || !targetPage) return;
+			updateResumeData(
+				(draft) => {
+					const pageToDelete = draft.metadata.layout.pages[pageIndex];
+					// Find the first available page that isn't being deleted
+					const targetPageIndex = pageIndex === 0 ? 1 : 0;
+					const targetPage = draft.metadata.layout.pages[targetPageIndex];
+					if (!pageToDelete || !targetPage) return;
 
-				// Move all sections from deleted page to target page
-				targetPage.main.push(...pageToDelete.main);
-				targetPage.sidebar.push(...pageToDelete.sidebar);
+					// Move all sections from deleted page to target page
+					targetPage.main.push(...pageToDelete.main);
+					targetPage.sidebar.push(...pageToDelete.sidebar);
 
-				draft.metadata.layout.pages.splice(pageIndex, 1);
-			});
+					draft.metadata.layout.pages.splice(pageIndex, 1);
+				},
+				{ newStep: true },
+			);
+			undoToast(t`Page removed. Its sections are kept.`);
 		},
 		[layout.pages.length, updateResumeData],
 	);
@@ -267,6 +294,8 @@ export function LayoutPages() {
 							main: filterSections(page.main, resume.data),
 							sidebar: filterSections(page.sidebar, resume.data),
 						}}
+						showHeader={shouldShowResumeHeader(resume.data, pageIndex)}
+						headerPlacement={templateLayouts[template].headerPlacement}
 						canDelete={layout.pages.length > 1}
 						sidebarPosition={templateSidebarPosition}
 						onDelete={handleDeletePage}
@@ -274,7 +303,7 @@ export function LayoutPages() {
 					/>
 				))}
 
-				<Button variant="secondary" className="self-end" onClick={handleAddPage}>
+				<Button variant="secondary" size="sm" className="self-start" onClick={handleAddPage}>
 					<Icon name="plus" size={16} />
 					<Trans>Add page</Trans>
 				</Button>
@@ -290,6 +319,8 @@ export function LayoutPages() {
 type PageContainerProps = {
 	pageIndex: number;
 	page: { fullWidth: boolean; main: string[]; sidebar: string[] };
+	showHeader: boolean;
+	headerPlacement: "full-width" | "main-only" | "sidebar-only";
 	canDelete: boolean;
 	sidebarPosition: "left" | "right" | "none";
 	onDelete: (pageIndex: number) => void;
@@ -299,6 +330,8 @@ type PageContainerProps = {
 function PageContainer({
 	pageIndex,
 	page,
+	showHeader,
+	headerPlacement,
 	canDelete,
 	sidebarPosition,
 	onDelete,
@@ -308,27 +341,29 @@ function PageContainer({
 	const fullWidthSwitchId = useId();
 
 	return (
-		<div className="space-y-3 rounded-md border border-dashed bg-bg/40">
-			<div className="@container bg-sunken/50 px-4 py-3">
-				<div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 @max-[22rem]:grid-cols-1">
-					<div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
+		<div className="space-y-2">
+			<div className="py-1">
+				<div className="flex items-center justify-between gap-2">
+					<div className="flex min-w-0 flex-1 items-center justify-between gap-2">
 						<span className="text-xs font-medium">
 							<Trans comment="Layout editor page label with 1-based page number">
 								Page {i18n.number(pageIndex + 1)}
 							</Trans>
 						</span>
 
-						<label htmlFor={fullWidthSwitchId} className="flex min-w-0 cursor-pointer items-center gap-2">
-							<Switch
-								id={fullWidthSwitchId}
-								checked={page.fullWidth}
-								onCheckedChange={(checked) => onToggleFullWidth(pageIndex, checked)}
-							/>
+						{sidebarPosition !== "none" && (
+							<label htmlFor={fullWidthSwitchId} className="flex min-w-0 cursor-pointer items-center gap-2">
+								<Switch
+									id={fullWidthSwitchId}
+									checked={page.fullWidth}
+									onCheckedChange={(checked) => onToggleFullWidth(pageIndex, checked)}
+								/>
 
-							<span className="text-xs font-medium text-ink-3">
-								<Trans comment="Layout editor toggle label that makes a page single-column">Full width</Trans>
-							</span>
-						</label>
+								<span className="text-xs font-medium text-ink-3">
+									<Trans comment="Layout editor toggle label that makes a page single-column">Full width</Trans>
+								</span>
+							</label>
+						)}
 					</div>
 
 					{canDelete && (
@@ -346,11 +381,17 @@ function PageContainer({
 
 			<div
 				className={cn(
-					"grid w-full gap-x-4 gap-y-2 p-4 pt-0 font-medium @md:grid-cols-2",
-					sidebarPosition === "none" && "@md:grid-cols-1",
+					"grid w-full gap-x-3 gap-y-2 rounded-lg border border-line bg-sunken p-2 font-medium",
+					sidebarPosition === "none" || isFullWidth ? "grid-cols-1" : "grid-cols-2",
 				)}
 			>
+				{showHeader && (headerPlacement === "full-width" || isFullWidth || sidebarPosition === "none") && (
+					<div className="col-span-full rounded-xs border border-dashed border-line-2 px-2 py-1.5 t-caption text-ink-3">
+						<Trans>Header · your name and contact details</Trans>
+					</div>
+				)}
 				<LayoutColumn
+					header={showHeader && headerPlacement === "main-only" && !isFullWidth && sidebarPosition !== "none"}
 					pageIndex={pageIndex}
 					columnId="main"
 					items={page.main}
@@ -360,6 +401,7 @@ function PageContainer({
 
 				{!isFullWidth && (
 					<LayoutColumn
+						header={showHeader && headerPlacement === "sidebar-only"}
 						pageIndex={pageIndex}
 						columnId="sidebar"
 						items={page.sidebar}
@@ -373,6 +415,7 @@ function PageContainer({
 }
 
 type LayoutColumnProps = {
+	header?: boolean;
 	pageIndex: number;
 	columnId: ColumnId;
 	items: string[];
@@ -382,6 +425,7 @@ type LayoutColumnProps = {
 };
 
 function LayoutColumn({
+	header = false,
 	pageIndex,
 	columnId,
 	items,
@@ -399,21 +443,26 @@ function LayoutColumn({
 	return (
 		<SortableContext id={droppableId} items={items} strategy={verticalListSortingStrategy}>
 			<div className={cn("space-y-1.5", disabled && "opacity-50", className)}>
-				{!hideLabel && <div className="ps-4 text-xs font-medium @md:row-start-1">{getColumnLabel(columnId)}</div>}
+				{!hideLabel && <div className="t-caption text-ink-3">{getColumnLabel(columnId)}</div>}
 
 				<div
 					ref={setNodeRef}
 					className={cn(
-						"space-y-2.5 rounded-md border border-dashed p-3 pb-8 transition-colors",
+						"min-h-8 space-y-2 transition-colors",
 						isOver && !disabled ? "border-accent/60 bg-accent/5" : "bg-bg/40",
 					)}
 				>
+					{header && (
+						<div className="rounded-xs border border-dashed border-line-2 px-2 py-1.5 t-caption text-ink-3">
+							<Trans>Header · your name and contact details</Trans>
+						</div>
+					)}
 					{items.map((id) => (
 						<SortableLayoutItem key={id} id={id} pageIndex={pageIndex} columnId={columnId} />
 					))}
 
 					{items.length === 0 && (
-						<div className="rounded-md border border-dashed p-4 text-xs font-medium text-ink-3">
+						<div className="py-2 t-caption text-ink-3">
 							<Trans>Drag and drop sections here to move them between columns</Trans>
 						</div>
 					)}
@@ -476,26 +525,34 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 	const sidebarCollapsed = templateLayouts[resume.data.metadata.template].columns === 1;
 
 	const moveTo = (targetPageIndex: number, targetColumnId: ColumnId) => {
-		updateResumeData((draft) => {
-			const from = draft.metadata.layout.pages[pageIndex]?.[columnId];
-			const to = draft.metadata.layout.pages[targetPageIndex]?.[targetColumnId];
-			if (!from || !to) return;
-			const index = from.indexOf(id);
-			if (index === -1) return;
-			from.splice(index, 1);
-			to.push(id);
-		});
+		updateResumeData(
+			(draft) => {
+				const from = draft.metadata.layout.pages[pageIndex]?.[columnId];
+				const to = draft.metadata.layout.pages[targetPageIndex]?.[targetColumnId];
+				if (!from || !to) return;
+				const index = from.indexOf(id);
+				if (index === -1) return;
+				from.splice(index, 1);
+				to.push(id);
+			},
+			{ newStep: true },
+		);
+		undoToast(t`Section moved`);
 	};
 
 	const moveToNewPage = () => {
-		updateResumeData((draft) => {
-			const from = draft.metadata.layout.pages[pageIndex]?.[columnId];
-			if (!from) return;
-			const index = from.indexOf(id);
-			if (index === -1) return;
-			from.splice(index, 1);
-			draft.metadata.layout.pages.push({ fullWidth: false, main: [id], sidebar: [] });
-		});
+		updateResumeData(
+			(draft) => {
+				const from = draft.metadata.layout.pages[pageIndex]?.[columnId];
+				if (!from) return;
+				const index = from.indexOf(id);
+				if (index === -1) return;
+				from.splice(index, 1);
+				draft.metadata.layout.pages.push({ fullWidth: false, main: [id], sidebar: [] });
+			},
+			{ newStep: true },
+		);
+		undoToast(t`Section moved to a new page`);
 	};
 
 	return (
@@ -660,7 +717,7 @@ function LayoutItemContent({
 			data-overlay={isOverlay ? "true" : undefined}
 			data-dragging={isDragging ? "true" : undefined}
 			className={cn(
-				"group/item flex cursor-grab touch-none items-center gap-x-2 rounded-md border border-line bg-bg px-2 py-1.5 text-sm font-medium transition-[background-color,border-color] duration-quick select-none",
+				"group/item flex min-h-9 cursor-grab touch-none items-center gap-x-1 rounded-sm border border-line bg-raised px-1.5 py-1 t-small transition-colors duration-quick select-none",
 				"hover:bg-sunken/40 active:cursor-grabbing active:border-accent/60 active:bg-sunken/40",
 				"data-[overlay=true]:cursor-grabbing data-[overlay=true]:border-accent/60 data-[overlay=true]:bg-bg data-[overlay=true]:shadow-md",
 				"data-[dragging=true]:cursor-grabbing data-[dragging=true]:opacity-40",
@@ -677,12 +734,13 @@ function LayoutItemContent({
 					<DropdownMenuTrigger
 						aria-label={t`Move section to another column or page`}
 						onPointerDown={(event) => event.stopPropagation()}
-						className="flex cursor-context-menu items-center rounded p-0.5 opacity-40 transition-opacity group-hover/item:opacity-100 hover:bg-sunken/40 focus:outline-none focus-visible:ring-1"
+						className="flex size-7 shrink-0 cursor-context-menu items-center justify-center rounded-sm text-ink-3 hover:bg-hover focus-visible:outline"
 					>
-						<Icon name="dots-three-vertical" size={16} />
+						<Icon name="dots-three" size={16} />
 					</DropdownMenuTrigger>
 
-					<DropdownMenuContent align="end">
+					<DropdownMenuContent side="right" align="start" sideOffset={16}>
+						<LayoutMenuItems id={id} pageIndex={pageIndex} columnId={columnId} />
 						<MoveToSubmenu id={id} pageIndex={pageIndex} columnId={columnId} />
 						<DropdownMenuSeparator />
 						<SectionBreakItems id={id} />
@@ -690,5 +748,82 @@ function LayoutItemContent({
 				</DropdownMenu>
 			)}
 		</div>
+	);
+}
+
+function LayoutMenuItems({ id, pageIndex, columnId }: MoveToSubmenuProps) {
+	const resume = useCurrentResume();
+	const update = useUpdateResumeData();
+	const items = resume.data.metadata.layout.pages[pageIndex]?.[columnId] ?? [];
+	const index = items.indexOf(id);
+	const section = resolveSection(resume.data, id);
+	const settings = section ? getSectionObject(resume.data, section) : null;
+	const move = (delta: number) => {
+		update(
+			(draft) => {
+				const page = draft.metadata.layout.pages[pageIndex];
+				if (page) page[columnId] = arrayMove(page[columnId], index, index + delta);
+			},
+			{ newStep: true },
+		);
+		undoToast(t`Section moved`);
+	};
+
+	return (
+		<>
+			<DropdownMenuItem disabled={index <= 0} onClick={() => move(-1)}>
+				<Icon name="arrow-up" />
+				<Trans>Move up</Trans>
+			</DropdownMenuItem>
+			<DropdownMenuItem disabled={index < 0 || index >= items.length - 1} onClick={() => move(1)}>
+				<Icon name="arrow-down" />
+				<Trans>Move down</Trans>
+			</DropdownMenuItem>
+			{settings && (
+				<>
+					<DropdownMenuSeparator />
+					<div className="flex items-center gap-3 px-2 py-1.5">
+						<span className="flex-1 t-small">
+							<Trans>Columns</Trans>
+						</span>
+						<InputGroup className="h-8 w-20">
+							<NumberInput
+								aria-label={t`Columns, 1 to 6`}
+								value={settings.columns}
+								min={1}
+								max={6}
+								step={1}
+								onValueChange={(value) =>
+									update(
+										(draft) => {
+											const target = resolveSection(draft, id);
+											const object = target ? getSectionObject(draft, target) : null;
+											if (object) object.columns = value;
+										},
+										{ newStep: true },
+									)
+								}
+							/>
+						</InputGroup>
+					</div>
+					<DropdownMenuItem
+						onClick={() => {
+							update(
+								(draft) => {
+									const target = resolveSection(draft, id);
+									const object = target ? getSectionObject(draft, target) : null;
+									if (object) object.hidden = true;
+								},
+								{ newStep: true },
+							);
+							undoToast(t`Section hidden from page`);
+						}}
+					>
+						<Icon name="eye-slash" />
+						<Trans>Hide from page</Trans>
+					</DropdownMenuItem>
+				</>
+			)}
+		</>
 	);
 }

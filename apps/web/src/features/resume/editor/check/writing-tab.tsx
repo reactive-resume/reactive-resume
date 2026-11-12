@@ -17,6 +17,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { ProposalList } from "../proposals/proposal-list";
 import { useEditorStore } from "../store";
 import { describeEntry } from "../write/model";
+import { CheckAiLine } from "./ai-line";
 import { getSectionName } from "./issues";
 import { mapWritingReview } from "./review";
 import { AiResultUsage } from "@/features/ai/usage";
@@ -79,6 +80,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 			entry.review.suggestions,
 			current ? passages : [],
 			entry.passages,
+			inputText,
 		);
 		useEditorStore.setState({
 			proposals: next.map((proposal) => ({
@@ -127,33 +129,23 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 				<p>
 					<Trans>Couldn't load the saved review.</Trans>
 				</p>
-				<Button onClick={() => void saved.refetch()}>
+				<Button variant="secondary" onClick={() => void saved.refetch()}>
 					<Trans>Retry</Trans>
 				</Button>
 			</div>
 		);
 	if (providerState.isUnavailable && !review) return <AiProviderLoadState state={providerState} />;
 
-	if (!hasUsableProvider && !review) {
+	if (!hasUsableProvider && !review)
 		return (
-			<div className="grid gap-3 rounded-xl border border-line p-4">
-				<strong className="text-sm font-semibold">
-					<Trans>A second opinion on your wording</Trans>
-				</strong>
-				<p className="text-[13px] leading-[19px] text-ink-2">
-					<Trans>
-						Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job
-						match need no provider.
-					</Trans>
-				</p>
-				<SetUpAi />
-			</div>
+			<CheckAiLine lead={<Trans>Writing review needs AI.</Trans>}>
+				<Trans>Issues and Job match work without it.</Trans>
+			</CheckAiLine>
 		);
-	}
 
 	if (isPending) {
 		return (
-			<div aria-busy="true" className="flex items-center gap-2.5 rounded-xl border border-line p-4 text-sm text-ink-2">
+			<div aria-busy="true" className="flex items-center gap-2.5 py-4 text-sm text-ink-2">
 				<Spinner />
 				<Plural
 					value={passages.length}
@@ -184,7 +176,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 					</span>
 				</div>
 				<div className="flex gap-1.5">
-					<Button size="sm" onClick={run}>
+					<Button size="sm" variant="secondary" onClick={run}>
 						<Trans>Retry</Trans>
 					</Button>
 					<SetUpAi />
@@ -198,14 +190,14 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 
 	if (!review) {
 		return (
-			<div className="grid gap-3 rounded-xl border border-line p-4">
+			<div className="grid gap-3 py-3">
 				<strong className="text-sm font-semibold">
 					<Trans>A second opinion on your wording</Trans>
 				</strong>
 				<p className="text-[13px] leading-[19px] text-ink-2">
 					<Trans>
 						The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests
-						rewrites. It isn't part of the score.
+						rewrites. It isn't part of the checks.
 					</Trans>
 				</p>
 				<div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-ink-3">
@@ -282,7 +274,12 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 
 			<p className="text-xs leading-[17px] text-ink-3">
 				<Trans>A model's opinion, not a verdict. It can be wrong.</Trans>{" "}
-				<button type="button" className="font-medium text-ink-2 underline underline-offset-2" onClick={run}>
+				<button
+					type="button"
+					disabled={!hasUsableProvider || isPending}
+					className="font-medium text-ink-2 underline underline-offset-2 disabled:opacity-45"
+					onClick={run}
+				>
 					<Trans>Run again</Trans>
 				</button>
 			</p>
@@ -303,7 +300,7 @@ function WritingNoteCard({ note }: { note: WritingNote }) {
 	};
 
 	return (
-		<article className="grid gap-1.5 rounded-lg border border-line p-3">
+		<article className="grid gap-1.5 border-b border-line py-3">
 			<div className="flex justify-between gap-2">
 				<span className="font-mono text-xs text-ink-3">{note.location}</span>
 				<span
@@ -320,7 +317,7 @@ function WritingNoteCard({ note }: { note: WritingNote }) {
 			</p>
 			{note.rewrite && <p className="text-[13px] leading-[19px] text-accent-text">{note.rewrite}</p>}
 			{note.target && (
-				<Button size="sm" variant="secondary" className="w-fit" onClick={showOnPage}>
+				<Button size="sm" variant="ghost" className="-ms-2 w-fit" onClick={showOnPage}>
 					<Trans>Show on page</Trans>
 				</Button>
 			)}

@@ -48,3 +48,26 @@ it("keeps stale original and rewrite readable without an applicable proposal", (
 		},
 	]);
 });
+
+it("flags new writing claims for individual confirmation using the shared proposal guard", () => {
+	const passages = [
+		{
+			id: "bullet",
+			target: { sectionId: "experience", itemId: "role", field: "description" },
+			html: "<li>Built systems.</li>",
+			text: "Built systems.",
+			location: "Experience",
+		},
+	];
+	const review = (rewrite: string) =>
+		mapWritingReview(
+			[{ section: "Experience", passageId: "bullet", issue: "Be specific", rewrite, impact: "medium" }],
+			passages,
+		).proposals[0];
+	expect(review("Built systems for 40 engineers.")).toMatchObject({
+		addsClaims: true,
+		unsupported: expect.arrayContaining([expect.objectContaining({ kind: "figure" })]),
+	});
+	expect(review("Built systems.")).toBeUndefined();
+	expect(review("Built systems")).not.toHaveProperty("addsClaims");
+});

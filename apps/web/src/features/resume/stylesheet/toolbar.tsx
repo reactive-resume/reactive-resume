@@ -1,4 +1,5 @@
 import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
@@ -50,7 +51,7 @@ export function StylesheetToolbar({
 	onFocusToggle,
 }: StylesheetToolbarProps) {
 	return (
-		<div className="flex flex-wrap items-center gap-1" role="toolbar" aria-label={t`Stylesheet editor`}>
+		<div className="flex flex-wrap items-center gap-0.5" role="toolbar" aria-label={t`Stylesheet editor`}>
 			<ToolbarButton label={t`Undo resume change`} disabled={disabled || !canUndo} onClick={onUndo}>
 				<Icon name="arrow-u-up-left" size={16} />
 			</ToolbarButton>
@@ -60,12 +61,20 @@ export function StylesheetToolbar({
 			<ToolbarButton label={t`Copy stylesheet`} onClick={() => void copySourceToClipboard(source)}>
 				<Icon name="copy" size={16} />
 			</ToolbarButton>
-			<ToolbarButton label={t`Format stylesheet`} disabled={disabled} onClick={onFormat}>
+			<Button variant="ghost" size="sm" aria-label={t`Format stylesheet`} disabled={disabled} onClick={onFormat}>
 				<Icon name="magic-wand" size={16} />
-			</ToolbarButton>
-			<ToolbarButton label={focused ? t`Exit focus mode` : t`Open focus mode`} onClick={onFocusToggle}>
+				<Trans>Format</Trans>
+			</Button>
+			<Button
+				variant="ghost"
+				size="sm"
+				className="ms-auto"
+				aria-label={focused ? t`Exit focus mode` : t`Open focus mode`}
+				onClick={onFocusToggle}
+			>
 				{focused ? <Icon name="arrows-in-simple" size={16} /> : <Icon name="arrows-out-simple" size={16} />}
-			</ToolbarButton>
+				<Trans>Focus mode</Trans>
+			</Button>
 		</div>
 	);
 }

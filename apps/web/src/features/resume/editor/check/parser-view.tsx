@@ -78,7 +78,7 @@ export function ParserView() {
 	});
 
 	return (
-		<div className="mx-auto grid min-h-[792px] w-[612px] max-w-full content-start gap-[18px] rounded-lg border border-line bg-surface px-8 py-7 font-mono text-[12px] leading-[19px] text-ink max-sm:px-4">
+		<div className="mx-auto grid min-h-[792px] w-[612px] max-w-full content-start gap-[18px] rounded-paper border border-line bg-bg px-8 py-7 font-mono text-[12px] leading-[19px] text-ink max-sm:px-4">
 			{isError ? (
 				<p className="font-sans text-sm text-danger-text">
 					<Trans>The page's PDF couldn't be read. Edit anything to render it again.</Trans>
@@ -146,7 +146,9 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 				<span>
 					<Trans>Extracted from the PDF on the page · reading order</Trans>
 				</span>
-				<span>{columns === 1 ? <Trans>text layer ✓ · 1 column</Trans> : <Trans>text layer ✓ · 2 columns</Trans>}</span>
+				<span>
+					{columns === 1 ? <Trans>text layer found · 1 column</Trans> : <Trans>text layer found · 2 columns</Trans>}
+				</span>
 			</div>
 
 			<dl className="grid grid-cols-[110px_minmax(0,1fr)] gap-x-4 gap-y-1.5 max-sm:grid-cols-[84px_minmax(0,1fr)]">
@@ -169,7 +171,7 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 			{groups.map((group, index) =>
 				group.heading === null && group.lines.length === 0 ? null : (
 					<section key={`${index}:${group.heading ?? ""}`} className="grid gap-1">
-						{group.heading !== null && <h3 className="text-accent-text">▸ {group.heading.toUpperCase()}</h3>}
+						{group.heading !== null && <h3 className="text-accent-text">▸ {group.heading}</h3>}
 						{group.lines.map((line, lineIndex) => {
 							const issue = issueOnLine(issues, line);
 							return (

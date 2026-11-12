@@ -381,6 +381,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	const [compiled, setCompiled] = useState<{
 		source: StylesheetSource;
 		tokens: readonly SemanticCssColorToken[];
+		ruleCount: number;
 		diagnostics: readonly SemanticCssDiagnostic[];
 	}>();
 	const [compiler, setCompiler] = useState<ReturnType<typeof createCompileWorkerClient>>();
@@ -455,6 +456,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 					if (cancelled || result.editGeneration !== compileGenerationRef.current) return;
 					setCompiled({
 						source,
+						ruleCount: result.program?.rules.length ?? 0,
 						tokens: result.colorTokens ?? [],
 						diagnostics: result.diagnostics.filter(isFatalStylesheetDiagnostic),
 					});
@@ -516,6 +518,19 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				}}
 				onFocusToggle={toggleFocus}
 			/>
+			<div className={focusOpen ? "h-[55svh] sm:h-[calc(100svh-14rem)]" : "h-[220px]"}>{editor}</div>
+			{compiled?.source === source && compiled.diagnostics.length === 0 && (
+				<div role="status" className="flex items-center justify-between gap-2 t-caption">
+					<span className="flex items-center gap-1.5 text-accent-text">
+						<Icon name="check-circle" size={16} />
+						<Trans>Applied · {compiled.ruleCount} rules, no errors</Trans>
+					</span>
+					<span className="text-ink-3">
+						<Trans>{text.split("\n").length} lines</Trans>
+					</span>
+				</div>
+			)}
+
 			{compiled?.source === source && compiled.diagnostics.length > 0 && (
 				<div role="alert" className="text-xs text-danger-text">
 					<p>
@@ -560,8 +575,6 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 					</a>
 				</span>
 			</p>
-
-			<div className={focusOpen ? "h-[55svh] sm:h-[calc(100svh-14rem)]" : "h-72"}>{editor}</div>
 		</div>
 	);
 

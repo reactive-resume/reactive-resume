@@ -1,122 +1,217 @@
-import type z from "zod";
+import type { DensityId, MarginId } from "@/features/resume/editor/design/presets";
+import type { DateFormat } from "@reactive-resume/schema/resume/dates";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { pageSchema } from "@reactive-resume/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { InputGroup, InputGroupAddon, InputGroupText } from "@reactive-resume/ui/components/input-group";
-import { Switch } from "@reactive-resume/ui/components/switch";
-import { SectionBase } from "../shared/section-base";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
+import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { NumberInput } from "@/components/input/number-input";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { useSyncFormValues } from "@/hooks/use-sync-form-values";
-import { useAppForm } from "@/libs/tanstack-form";
+import { Combobox } from "@/components/ui/combobox";
+import { getLocaleOptions } from "@/features/locale/locale-options";
+import { applyDensity, applyMargins, matchDensity, matchMargins } from "@/features/resume/editor/design/presets";
+import { useDesign } from "@/features/resume/editor/design/style-groups";
+
+const DATE_FORMATS = (): { value: DateFormat; label: string }[] => [
+	{ value: "short", label: t`Mar 2022` },
+	{ value: "long", label: t`March 2022` },
+	{ value: "numeric", label: "03/2022" },
+	{ value: "iso", label: "2022-03" },
+];
 
 export function PageSectionBuilder() {
-	return (
-		<SectionBase type="page">
-			<PageSectionForm />
-		</SectionBase>
+	const { metadata, write } = useDesign();
+	if (!metadata) return null;
+	const { page } = metadata;
+	const margin = matchMargins(metadata);
+	const density = matchDensity(metadata);
+	const numbers = (names: readonly ("marginX" | "marginY" | "gapX" | "gapY")[], labels: string[]) => (
+		<div className="grid grid-cols-2 gap-2">
+			{names.map((name, index) => (
+				<InputGroup key={name} className="h-9">
+					<InputGroupAddon>
+						<InputGroupText className="t-caption">{labels[index]}</InputGroupText>
+					</InputGroupAddon>
+					<NumberInput
+						aria-label={labels[index]}
+						className="min-w-0 px-1 text-end font-mono text-xs"
+						value={page[name]}
+						min={0}
+						max={name.startsWith("margin") ? 100 : undefined}
+						step={1}
+						onValueChange={(next) =>
+							write(name, (draft) => {
+								draft.page[name] = next;
+							})
+						}
+					/>
+					<InputGroupAddon align="inline-end">
+						<InputGroupText>pt</InputGroupText>
+					</InputGroupAddon>
+				</InputGroup>
+			))}
+		</div>
 	);
-}
-
-const formSchema = pageSchema;
-
-type FormValues = z.infer<typeof formSchema>;
-
-const CLAMP_MIN = 0;
-const CLAMP_MAX = 100;
-
-function PageSectionForm() {
-	const resume = useCurrentResume();
-	const page = resume.data.metadata.page;
-	const updateResumeData = useUpdateResumeData();
-
-	const persist = (data: FormValues) => {
-		updateResumeData((draft) => {
-			draft.metadata.page = data;
-		});
-	};
-
-	const form = useAppForm({
-		defaultValues: page,
-		validators: { onChange: formSchema },
-	});
-	useSyncFormValues(form, page);
-
-	const handleAutoSave = () => {
-		persist(form.state.values);
-	};
-
-	const pageNumberFields = [
-		{ name: "marginX" as const, label: <Trans>Horizontal margin</Trans>, min: CLAMP_MIN, max: CLAMP_MAX },
-		{ name: "marginY" as const, label: <Trans>Vertical margin</Trans>, min: CLAMP_MIN, max: CLAMP_MAX },
-		{ name: "gapX" as const, label: <Trans>Horizontal spacing</Trans>, min: 0, max: undefined },
-		{ name: "gapY" as const, label: <Trans>Vertical spacing</Trans>, min: 0, max: undefined },
-	];
-
-	const pageSwitchFields = [
-		{ name: "hideLinkUnderline" as const, label: <Trans>Underline links</Trans> },
-		{ name: "hideIcons" as const, label: <Trans>Icons in contact line</Trans> },
-		{ name: "hideSectionIcons" as const, label: <Trans>Show section icons</Trans> },
-	];
-
 	return (
-		<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
-			{pageNumberFields.map(({ name, label, min, max }) => (
-				<form.Field key={name} name={name}>
-					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-							<FormLabel>{label}</FormLabel>
-							<InputGroup>
-								<FormControl
-									render={
-										<NumberInput
-											name={field.name}
-											value={field.state.value}
-											min={min}
-											max={max}
-											step={1}
-											onBlur={field.handleBlur}
-											onValueChange={(value) => {
-												field.handleChange(value);
-												handleAutoSave();
-											}}
-										/>
-									}
-								/>
-								<InputGroupAddon align="inline-end">
-									<InputGroupText>pt</InputGroupText>
-								</InputGroupAddon>
-							</InputGroup>
-							<FormMessage errors={field.state.meta.errors} />
-						</FormItem>
-					)}
-				</form.Field>
-			))}
-
-			{pageSwitchFields.map(({ name, label }) => (
-				<form.Field key={name} name={name}>
-					{(field) => (
-						<FormItem
-							className="col-span-full flex items-center gap-x-3 py-1"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-						>
-							<FormControl
-								render={
-									<Switch
-										// Labels describe the ON state; the stored flags are hide*, so the switch is inverted.
-										checked={!field.state.value}
-										onCheckedChange={(checked) => {
-											field.handleChange(!checked);
-											handleAutoSave();
-										}}
-									/>
-								}
-							/>
-							<FormLabel>{label}</FormLabel>
-						</FormItem>
-					)}
-				</form.Field>
-			))}
+		<div className="grid gap-3.5 pt-3.5 pb-6">
+			<div className="grid gap-1.5">
+				<span className="t-small font-medium">
+					<Trans>Paper</Trans>
+				</span>
+				<SegmentedControl
+					aria-label={t`Paper`}
+					className="w-full"
+					value={page.format}
+					onValueChange={(value) =>
+						write(
+							"format",
+							(draft) => {
+								draft.page.format = value as typeof page.format;
+							},
+							true,
+						)
+					}
+				>
+					<SegmentedControlItem value="letter">
+						<Trans context="US Letter paper size (8.5 × 11 in), shown beside A4">Letter</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="a4">A4</SegmentedControlItem>
+					<SegmentedControlItem value="free-form">
+						<Trans>Free-form</Trans>
+					</SegmentedControlItem>
+				</SegmentedControl>
+			</div>
+			<div className="grid gap-2">
+				<span className="t-small font-medium">
+					<Trans>Margins</Trans>
+				</span>
+				<SegmentedControl
+					aria-label={t`Margins`}
+					className="w-full"
+					value={margin ?? ""}
+					onValueChange={(value) => write("margins", (draft) => applyMargins(draft, value as MarginId), true)}
+				>
+					<SegmentedControlItem value="narrow">
+						<Trans>Narrow</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="normal">
+						<Trans>Normal</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="wide">
+						<Trans>Wide</Trans>
+					</SegmentedControlItem>
+				</SegmentedControl>
+				{numbers(["marginX", "marginY"], [t`Left and right`, t`Top and bottom`])}
+			</div>
+			<div className="grid gap-2">
+				<div className="flex items-center justify-between gap-2">
+					<span className="t-small font-medium">
+						<Trans>Density</Trans>
+					</span>
+					<span className="t-caption text-ink-3">
+						<Trans>Also sets body line height, now {metadata.typography.body.lineHeight}</Trans>
+					</span>
+				</div>
+				<SegmentedControl
+					aria-label={t`Density`}
+					className="w-full"
+					value={density ?? ""}
+					onValueChange={(value) => write("density", (draft) => applyDensity(draft, value as DensityId), true)}
+				>
+					<SegmentedControlItem value="compact">
+						<Trans>Compact</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="normal">
+						<Trans>Normal</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="roomy">
+						<Trans>Roomy</Trans>
+					</SegmentedControlItem>
+				</SegmentedControl>
+				{numbers(["gapY", "gapX"], [t`Between sections`, t`Between columns`])}
+			</div>
+			<h3 className="pt-1.5 t-section-title">
+				<Trans>Language and dates</Trans>
+			</h3>
+			<div className="grid gap-1.5">
+				<label htmlFor="page-language" className="t-small font-medium">
+					<Trans>Language</Trans>
+				</label>
+				<Combobox
+					id="page-language"
+					options={getLocaleOptions()}
+					value={page.locale}
+					onValueChange={(value) => {
+						if (value)
+							write(
+								"locale",
+								(draft) => {
+									draft.page.locale = value;
+								},
+								true,
+							);
+					}}
+				/>
+				<p className="t-caption text-ink-3">
+					<Trans>Sets section titles, date words and text direction. Your content isn't translated.</Trans>
+				</p>
+			</div>
+			<div className="grid gap-1.5">
+				<span className="t-small font-medium">
+					<Trans>Date format</Trans>
+				</span>
+				<SegmentedControl
+					aria-label={t`Date format`}
+					value={page.dateFormat ?? "short"}
+					className="w-full [&_button]:px-1"
+					onValueChange={(value) =>
+						write(
+							"dateFormat",
+							(draft) => {
+								draft.page.dateFormat = value as DateFormat;
+							},
+							true,
+						)
+					}
+				>
+					{DATE_FORMATS().map((format) => (
+						<SegmentedControlItem key={format.value} value={format.value}>
+							{format.label}
+						</SegmentedControlItem>
+					))}
+				</SegmentedControl>
+			</div>
+			<h3 className="pt-1.5 t-section-title">
+				<Trans>Icons and links</Trans>
+			</h3>
+			<div>
+				{(
+					[
+						{
+							name: "hideIcons",
+							label: t`Icons in the contact line`,
+							description: t`Also on skills, profiles and interests`,
+						},
+						{ name: "hideSectionIcons", label: t`Icons beside section titles` },
+						{ name: "hideLinkUnderline", label: t`Underline links` },
+					] as const
+				).map((option) => (
+					<SwitchRow
+						key={option.name}
+						label={option.label}
+						description={"description" in option ? option.description : undefined}
+						checked={!page[option.name]}
+						onCheckedChange={(checked) =>
+							write(
+								option.name,
+								(draft) => {
+									draft.page[option.name] = !checked;
+								},
+								true,
+							)
+						}
+					/>
+				))}
+			</div>
 		</div>
 	);
 }

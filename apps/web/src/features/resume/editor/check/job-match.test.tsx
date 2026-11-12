@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const api = vi.hoisted(() => ({
+	navigate: vi.fn(),
 	application: { id: "job-a", company: "Example", role: "Engineer", jobDescription: null as string | null },
 	load: vi.fn(async () => api.application),
 	update: vi.fn(async (input: { jobDescription: string }) => {
@@ -30,7 +31,11 @@ vi.mock("@/libs/orpc/client", () => ({
 			},
 			update: { mutationOptions: () => ({ mutationFn: api.update }) },
 		},
-		documents: { linkApplication: { mutationOptions: () => ({ mutationFn: vi.fn() }) } },
+		documents: {
+			key: () => ["documents"],
+			copyForJob: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			linkApplication: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+		},
 	},
 }));
 vi.mock("@/features/resume/builder/draft", () => ({
@@ -40,10 +45,17 @@ vi.mock("@/features/resume/builder/draft", () => ({
 	usePatchResume: () => vi.fn(),
 }));
 vi.mock("@/features/assistant/open", () => ({ openAssistantFrom: vi.fn() }));
-vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn(), useSearch: () => ({}) }));
+vi.mock("@tanstack/react-router", () => ({
+	useNavigate: () => api.navigate,
+	useSearch: () => ({}),
+	Link: ({ children }: { children: React.ReactNode }) => <a href="/dashboard/applications/fixture/fit">{children}</a>,
+}));
 vi.mock("./actions", () => ({ checkStateOf: vi.fn(), editWithUndo: vi.fn() }));
 vi.mock("@reactive-resume/resume/ats-pdf", () => ({ matchJobDescription: () => ({ terms: [] }) }));
 
+vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
+	useHasUsableAiProvider: () => ({ hasUsableProvider: true }),
+}));
 import { useEditorStore } from "../store";
 import { JobMatchTab, useJobMatch } from "./job-match";
 
@@ -85,6 +97,13 @@ it("keeps the selected application's posting isolated from a different stored li
 	useEditorStore.setState({ pastedPosting: "Unrelated pasted posting" });
 	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
 	client.setQueryData(["applications", "detail", { id: "job-a" }], api.application);
+	client.setQueryData(
+		["applications", "summary"],
+		[
+			{ id: "job-b", company: "Selected company", role: "Analyst", status: "saved" },
+			{ id: "job-c", company: "Other company", role: "Designer", status: "saved" },
+		],
+	);
 	let resolve!: (value: typeof api.application) => void;
 	api.load.mockImplementationOnce(
 		() =>
@@ -103,9 +122,18 @@ it("keeps the selected application's posting isolated from a different stored li
 	expect(screen.getByTestId("posting").textContent).toBe("");
 	resolve({ id: "job-b", company: "Selected company", role: "Analyst", jobDescription: "Selected posting" });
 	await waitFor(() => expect(screen.getByTestId("posting").textContent).toBe("Selected posting"));
-	expect(screen.getByText("Analyst · Selected company")).toBeTruthy();
-	expect(screen.getByText("For this visit only")).toBeTruthy();
-	expect(screen.queryByRole("button", { name: "Change" })).toBeNull();
+	expect(screen.getByText("Selected company")).toBeTruthy();
+	expect(screen.getByText("Analyst · For this visit only")).toBeTruthy();
+
+	fireEvent.click(screen.getByRole("button", { name: "Change" }));
+	fireEvent.change(screen.getByRole("combobox", { name: "Link an application" }), { target: { value: "job-c" } });
+	expect(api.navigate).toHaveBeenCalled();
+	const navigation = api.navigate.mock.calls.at(-1)?.[0];
+	expect(navigation.search({ mode: "check", checkTab: "match", applicationId: "job-b" })).toEqual({
+		mode: "check",
+		checkTab: "match",
+		applicationId: "job-c",
+	});
 	client.clear();
 });
 

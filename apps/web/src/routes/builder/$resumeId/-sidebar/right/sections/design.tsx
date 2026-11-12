@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type z from "zod";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { useState } from "react";
@@ -46,7 +47,7 @@ function useColorSectionForm(colors: ColorValues, persist: (data: ColorValues) =
 
 type ColorSectionForm = ReturnType<typeof useColorSectionForm>;
 
-function ColorSectionForm() {
+export function ColorSectionForm({ includePrimary = true }: { includePrimary?: boolean }) {
 	const resume = useCurrentResume();
 	const colors = resume.data.metadata.design.colors;
 	const updateResumeData = useUpdateResumeData();
@@ -60,10 +61,10 @@ function ColorSectionForm() {
 	const form = useColorSectionForm(colors, persist);
 
 	return (
-		<div className="space-y-4">
-			<ColorFormField form={form} name="primary" label={<Trans>Primary color</Trans>} controlled />
-			<ColorFormField form={form} name="text" label={<Trans>Text color</Trans>} />
-			<ColorFormField form={form} name="background" label={<Trans>Background color</Trans>} />
+		<div className={includePrimary ? "space-y-4" : "grid grid-cols-2 gap-3"}>
+			{includePrimary && <ColorFormField form={form} name="primary" label={<Trans>Primary color</Trans>} />}
+			<ColorFormField form={form} name="text" label={<Trans>Text</Trans>} />
+			<ColorFormField form={form} name="background" label={<Trans>Background</Trans>} />
 		</div>
 	);
 }
@@ -72,7 +73,6 @@ type ColorFormFieldProps = {
 	form: ColorSectionForm;
 	name: keyof ColorValues;
 	label: ReactNode;
-	controlled?: boolean;
 };
 
 /** An opaque colour reads as hex, as Color shows it; one with transparency keeps its rgba(). */
@@ -81,16 +81,24 @@ const displayColor = (value: string) => {
 	return alpha === undefined || Number(alpha) === 1 ? (rgbaToHex(value) ?? value) : value;
 };
 
-function ColorFormField({ form, name, label, controlled }: ColorFormFieldProps) {
+function ColorFormField({ form, name, label }: ColorFormFieldProps) {
 	const [typed, setTyped] = useState<string | null>(null);
 	return (
 		<form.Field name={name}>
 			{(field) => (
-				<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+				<FormItem className="gap-1.5" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 					<FormLabel>{label}</FormLabel>
-					<div className="flex items-center gap-3">
+					<div className="flex items-center gap-2">
 						<ColorPicker
-							{...(controlled ? { value: field.state.value } : { defaultValue: field.state.value })}
+							aria-label={
+								name === "text"
+									? t`Pick the text color`
+									: name === "background"
+										? t`Pick the background color`
+										: t`Choose accent color`
+							}
+							className="[&>div]:size-10 [&>div]:rounded-md pointer-coarse:[&>div]:size-11"
+							value={field.state.value}
 							onChange={(color) => {
 								field.handleChange(color);
 							}}
@@ -126,7 +134,7 @@ function ColorFormField({ form, name, label, controlled }: ColorFormFieldProps) 
 type LevelValues = z.infer<typeof levelDesignSchema>;
 type LevelType = LevelValues["type"];
 
-function LevelSectionForm() {
+export function LevelSectionForm() {
 	const resume = useCurrentResume();
 	const colors = resume.data.metadata.design.colors;
 	const levelDesign = resume.data.metadata.design.level;
@@ -175,7 +183,7 @@ function LevelSectionForm() {
 				/>
 			</div>
 
-			<div className="flex items-center gap-3">
+			<div className="flex items-center gap-2">
 				<form.Field name="icon">
 					{(field) => (
 						<FormItem className="shrink-0" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>

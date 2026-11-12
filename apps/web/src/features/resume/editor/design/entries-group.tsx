@@ -4,13 +4,15 @@ import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { m } from "motion/react";
 import { entryHeaderOf } from "@reactive-resume/schema/resume/data";
-import { IconButton } from "@reactive-resume/ui/components/icon-button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { cn } from "@reactive-resume/utils/style";
+import { describeEntry } from "../write/model";
 import { useDesign } from "./style-groups";
-import { D2, EASE_MOVE } from "@/libs/motion";
+import { IconPicker } from "@/components/input/icon-picker";
+import { LevelDisplay } from "@/components/level/display";
+import { useResumeData } from "@/features/resume/builder/draft";
 
 type BarProps = { tone?: "lead" | "accent"; className: string };
 
@@ -110,6 +112,7 @@ const LAYOUTS: { id: EntryHeader["layout"]; label: () => string; wireframe: Reac
  */
 export function EntriesGroup() {
 	const { metadata, write } = useDesign();
+	const data = useResumeData();
 	if (!metadata) return null;
 
 	const entry = entryHeaderOf(metadata.design);
@@ -123,35 +126,36 @@ export function EntriesGroup() {
 			true,
 		);
 
-	// The rows as the chosen layout prints them, so swapping shows what the page will do.
-	const leadRow = entry.lead === "role" ? { id: "role", name: t`Position` } : { id: "organization", name: t`Company` };
-	const otherRow = entry.lead === "role" ? { id: "organization", name: t`Company` } : { id: "role", name: t`Position` };
-	const rows: { id: string; name: string; detail: string; eyebrow?: boolean }[] =
-		entry.layout === "eyebrow"
-			? // The rest sits above the lead, as a small accent line; the date stays with the lead.
-				[
-					{ ...otherRow, detail: t`Location`, eyebrow: true },
-					{ ...leadRow, detail: t`Date` },
-				]
-			: entry.layout === "date-column"
-				? // The date has a column of its own.
-					[
-						{ ...leadRow, detail: t`Location` },
-						{ ...otherRow, detail: "" },
-					]
-				: [
-						{ ...leadRow, detail: entry.lead === "role" ? t`Date` : t`Location` },
-						{ ...otherRow, detail: entry.lead === "role" ? t`Location` : t`Date` },
-					];
-
+	const descriptions = {
+		stacked: t`Two rows: company, then position`,
+		inline: t`Everything on one row`,
+		compact: t`Company and dates on top, the rest below`,
+		"date-column": t`Dates in a column on the left`,
+		eyebrow: t`A small accent line above a larger company`,
+	};
+	const level = metadata.design.level;
+	const levelOptions = [
+		{ value: "hidden", label: t`Hidden` },
+		{ value: "circle", label: t`Circle` },
+		{ value: "square", label: t`Square` },
+		{ value: "rectangle", label: t`Rectangle` },
+		{ value: "rectangle-full", label: t`Full width` },
+		{ value: "progress-bar", label: t`Progress bar` },
+		{ value: "icon", label: t`Icon` },
+	] as const;
+	const first = data?.sections.experience.items.find((item) => !item.hidden);
+	const preview = first ? describeEntry("experience", first) : null;
 	return (
-		<div className="grid gap-4">
+		<div className="grid gap-4 pt-1 pb-6">
+			<p className="t-small text-ink-3">
+				<Trans>One setting for every entry on the resume.</Trans>
+			</p>
 			<div className="grid gap-2">
 				<div className="flex items-baseline justify-between gap-2">
-					<span className="shrink-0 text-[13px] font-medium">
+					<span className="t-small font-medium">
 						<Trans>Header layout</Trans>
 					</span>
-					<span className="truncate text-xs text-ink-3">
+					<span className="t-caption text-ink-3">
 						<Trans>Experience, Education and more</Trans>
 					</span>
 				</div>
@@ -159,72 +163,65 @@ export function EntriesGroup() {
 					aria-label={t`Header layout`}
 					value={entry.layout}
 					onValueChange={(value) => set({ layout: value as EntryHeader["layout"] })}
-					className="grid grid-cols-3 gap-1.5"
+					className="border-y border-line"
 				>
 					{LAYOUTS.map((option) => (
 						<Radio.Root
 							key={option.id}
 							value={option.id}
-							className="group/layout grid cursor-pointer content-start gap-1.5 rounded-md border border-line bg-bg px-1.5 pt-1.5 pb-1 transition-colors duration-quick hover:bg-hover data-checked:border-accent data-checked:ring-1 data-checked:ring-accent"
+							className="group/layout flex min-h-[46px] cursor-pointer items-center gap-3 border-b border-line text-start last:border-0"
 						>
-							<span aria-hidden="true" className="flex h-7.5 flex-col justify-center gap-1 px-0.5">
+							<span className="grid size-4 shrink-0 place-items-center rounded-full border border-control-border group-data-checked/layout:border-accent">
+								{entry.layout === option.id && <span className="size-2 rounded-full bg-accent" />}
+							</span>
+							<span
+								aria-hidden="true"
+								className="flex h-[30px] w-16 shrink-0 flex-col justify-center gap-1 rounded-xs border border-line-2 bg-raised px-2 group-data-checked/layout:border-accent"
+							>
 								{option.wireframe}
 							</span>
-							<span className="text-center text-xs leading-4 text-ink-2 group-data-checked/layout:font-semibold group-data-checked/layout:text-ink">
-								{option.label()}
+							<span className="grid">
+								<span className="t-ui font-medium">{option.label()}</span>
+								<span className="t-caption text-ink-3">{descriptions[option.id]}</span>
 							</span>
 						</Radio.Root>
 					))}
 				</RadioGroup>
 			</div>
-
 			<div className="grid gap-2">
-				<span className="text-[13px] font-medium">
+				<span className="t-small font-medium">
 					<Trans>Row order</Trans>
 				</span>
-				<div className="flex items-center gap-2 rounded-lg border border-line bg-bg p-1.5">
-					{entry.layout === "date-column" && (
-						<span className="shrink-0 self-start rounded-sm bg-sunken px-2 py-1 text-xs text-ink-3">
-							<Trans>Date</Trans>
-						</span>
-					)}
-					<div className="grid min-w-0 flex-1 gap-1">
-						{rows.map((row) => (
-							<m.div
-								key={row.id}
-								layout="position"
-								// Measured only when the order changes, so the panel moving around it doesn't slide the chips.
-								layoutDependency={`${entry.lead}:${entry.layout}`}
-								transition={{ duration: D2, ease: EASE_MOVE }}
-								className={cn(
-									"flex items-center justify-between gap-2 rounded-sm bg-sunken px-2 py-1 text-xs",
-									row.eyebrow && "py-0.5 text-accent-text",
-								)}
-							>
-								<span className={cn("truncate", !row.eyebrow && "font-semibold")}>
-									{row.eyebrow ? `${row.name} · ${row.detail}` : row.name}
-								</span>
-								{!row.eyebrow && row.detail && <span className="truncate text-ink-3">{row.detail}</span>}
-							</m.div>
-						))}
+				<SegmentedControl
+					aria-label={t`Row order`}
+					value={entry.lead}
+					onValueChange={(value) => set({ lead: value as EntryHeader["lead"] })}
+					className="w-full"
+				>
+					<SegmentedControlItem value="organization">
+						<Trans>Company first</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="role">
+						<Trans>Position first</Trans>
+					</SegmentedControlItem>
+				</SegmentedControl>
+				{preview && (
+					<div className="grid gap-1 t-caption">
+						<div className="rounded-sm bg-sunken px-2.5 py-1.5 font-semibold">
+							{entry.lead === "organization" ? first?.company : first?.position}
+						</div>
+						<div className="rounded-sm bg-sunken px-2.5 py-1.5 text-ink-3">
+							{entry.lead === "organization" ? first?.position : first?.company}
+							{first?.location ? ` · ${first.location}` : ""}
+						</div>
 					</div>
-					<IconButton
-						icon="arrows-down-up"
-						iconSize={16}
-						variant="secondary"
-						size="icon-sm"
-						tooltipSide="top"
-						label={entry.lead === "role" ? t`Swap rows: lead with company` : t`Swap rows: lead with position`}
-						onClick={() => set({ lead: entry.lead === "role" ? "organization" : "role" })}
-					/>
-				</div>
-				<span className="text-xs text-ink-3">
+				)}
+				<p className="t-caption text-ink-3">
 					<Trans>Education swaps school and field of study the same way.</Trans>
-				</span>
+				</p>
 			</div>
-
 			<div className="grid gap-2">
-				<span className="text-[13px] font-medium">
+				<span className="t-small font-medium">
 					<Trans>Accent</Trans>
 				</span>
 				<SegmentedControl
@@ -246,7 +243,70 @@ export function EntriesGroup() {
 						<Trans context="Entry header accent: a tinted background behind the header">Band</Trans>
 					</SegmentedControlItem>
 				</SegmentedControl>
+				<p className="t-caption text-ink-3">
+					<Trans>A line under each header, a bar beside it, or a tint behind it.</Trans>
+				</p>
 			</div>
+			<section>
+				<h3 className="mb-2 flex items-baseline gap-3 t-section-title">
+					<Trans>Levels</Trans>
+					<span className="t-caption text-ink-3">
+						<Trans>How a skill or language level is drawn</Trans>
+					</span>
+				</h3>
+				<RadioGroup
+					aria-label={t`Level style`}
+					value={level.type}
+					onValueChange={(value) =>
+						write(
+							"level.type",
+							(draft) => {
+								draft.design.level.type = value as typeof level.type;
+							},
+							true,
+						)
+					}
+					className="grid grid-cols-2 gap-x-4"
+				>
+					{levelOptions.map((option) => (
+						<Radio.Root
+							key={option.value}
+							value={option.value}
+							className="flex min-h-9 cursor-pointer items-center gap-2 border-b border-line text-start t-small"
+						>
+							<Icon
+								name={level.type === option.value ? "check-circle" : "circle"}
+								size={16}
+								className={level.type === option.value ? "text-accent-text" : "text-ink-3"}
+							/>
+							{option.label}
+							<span aria-hidden="true" className="ms-auto w-[52px] [--page-primary-color:var(--ink-2)]">
+								<LevelDisplay level={3} type={option.value} icon={level.icon} decorationSizePx={8} iconSizePx={10} />
+							</span>
+						</Radio.Root>
+					))}
+					<span className="flex items-center t-caption text-ink-3">
+						<Trans>Samples show 3 of 5</Trans>
+					</span>
+				</RadioGroup>
+				{level.type === "icon" && (
+					<div className="mt-3 flex items-center gap-3 t-small">
+						<Trans>Icon</Trans>
+						<IconPicker
+							value={level.icon}
+							onChange={(value) =>
+								write(
+									"level.icon",
+									(draft) => {
+										draft.design.level.icon = value;
+									},
+									true,
+								)
+							}
+						/>
+					</div>
+				)}
+			</section>
 		</div>
 	);
 }

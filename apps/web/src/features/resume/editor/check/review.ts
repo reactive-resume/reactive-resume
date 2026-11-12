@@ -1,7 +1,7 @@
 import type { WritingNote } from "../store";
 import type { PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { Passage, Proposal } from "@reactive-resume/resume/proposals";
-import { replaceBlockText } from "@reactive-resume/resume/proposals";
+import { replaceBlockText, unverifiedClaims } from "@reactive-resume/resume/proposals";
 import { generateId } from "@reactive-resume/utils/string";
 
 type ReviewSuggestion = {
@@ -25,6 +25,7 @@ export function mapWritingReview(
 	suggestions: readonly ReviewSuggestion[],
 	passages: readonly Passage[],
 	savedPassages: readonly { id: string; where: string; text: string }[] = [],
+	documentText = passages.map((passage) => passage.text).join("\n"),
 ) {
 	const byId = new Map(passages.map((passage) => [passage.id, passage]));
 	const proposals: Proposal[] = [];
@@ -36,6 +37,16 @@ export function mapWritingReview(
 		const saved = savedPassages.find((entry) => entry.id === suggestion.passageId);
 
 		if (passage && rewrite && rewrite !== passage.text) {
+			const entryText = passages
+				.filter(
+					(entry) =>
+						entry.target.sectionId === passage.target.sectionId &&
+						entry.target.itemId === passage.target.itemId &&
+						entry.target.roleId === passage.target.roleId,
+				)
+				.map((entry) => entry.text)
+				.join("\n");
+			const unsupported = unverifiedClaims(rewrite, { entry: entryText, document: documentText });
 			proposals.push({
 				id: generateId(),
 				target: passage.target,
@@ -45,6 +56,7 @@ export function mapWritingReview(
 				why: suggestion.issue,
 				status: "pending",
 				source: "check",
+				...(unsupported.length ? { unsupported, addsClaims: true } : {}),
 			});
 			continue;
 		}

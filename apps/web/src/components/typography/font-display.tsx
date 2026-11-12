@@ -9,6 +9,7 @@ interface FontDisplayProps {
 	label: string;
 	type: "standard" | "web";
 	url?: string | undefined;
+	highlight?: string;
 }
 
 const loadedFonts = new Set<string>();
@@ -39,7 +40,8 @@ async function readPreview(source: string, signal: AbortSignal): Promise<ArrayBu
 	return new Blob(chunks as BlobPart[]).arrayBuffer();
 }
 
-export function FontDisplay({ family, label, type, url }: FontDisplayProps) {
+export function FontDisplay({ family, label, type, url, highlight }: FontDisplayProps) {
+	const match = highlight?.trim() ? label.toLocaleLowerCase().indexOf(highlight.trim().toLocaleLowerCase()) : -1;
 	const fontMirrorUrl = getFontMirrorUrl();
 	const source = url ? resolveFontSource(url, fontMirrorUrl) : undefined;
 	const previewName = type === "standard" ? family : `rr-preview-${encodeURIComponent(`${family}:${source ?? ""}`)}`;
@@ -77,7 +79,15 @@ export function FontDisplay({ family, label, type, url }: FontDisplayProps) {
 				style={{ fontFamily: isLoaded ? `${JSON.stringify(previewName)}, sans-serif` : "sans-serif" }}
 				className={cn(isSettled ? "opacity-100" : "opacity-50", "transition-opacity duration-quick ease-enter")}
 			>
-				{label}
+				{match >= 0 && highlight ? (
+					<>
+						{label.slice(0, match)}
+						<strong>{label.slice(match, match + highlight.trim().length)}</strong>
+						{label.slice(match + highlight.trim().length)}
+					</>
+				) : (
+					label
+				)}
 			</span>
 			{label !== family && <span className="text-xs text-ink-3">{family}</span>}
 		</div>

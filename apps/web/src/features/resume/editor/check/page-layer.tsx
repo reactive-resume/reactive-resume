@@ -8,7 +8,6 @@ import { Trans } from "@lingui/react/macro";
 import { getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { isSameSelection, useEditorStore } from "../store";
@@ -228,26 +227,16 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 /** "What a person sees / What a parser reads", floating over the canvas in Check. Switching is instant. */
 export function PageViewToggle() {
 	const view = useEditorStore((state) => state.pageView);
-	const options = [
-		{ value: "page", label: t`What a person sees`, icon: "file-text" },
-		{ value: "parser", label: t`What a parser reads`, icon: "brackets-curly" },
-	] as const;
-
-	// The product's one in-canvas switcher (Share's Computer / Phone uses it too), floating over the page.
 	return (
-		<SegmentedControl
-			aria-label={t`Page view`}
-			value={view}
-			onValueChange={(value) => useEditorStore.setState({ pageView: value as typeof view })}
-			className="absolute top-3.5 left-1/2 z-10 -translate-x-1/2 border border-line shadow-e1"
+		<Button
+			variant="ghost"
+			size="sm"
+			className="absolute end-10 top-3.5 z-10 text-accent-text"
+			onClick={() => useEditorStore.setState({ pageView: view === "page" ? "parser" : "page" })}
 		>
-			{options.map((option) => (
-				<SegmentedControlItem key={option.value} value={option.value}>
-					<Icon name={option.icon} size={18} />
-					<span className="max-sm:sr-only">{option.label}</span>
-				</SegmentedControlItem>
-			))}
-		</SegmentedControl>
+			<Icon name={view === "page" ? "code" : "file-text"} size={16} />
+			{view === "page" ? <Trans>See what a parser reads</Trans> : <Trans>Back to the page</Trans>}
+		</Button>
 	);
 }
 

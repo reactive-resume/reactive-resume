@@ -1,7 +1,6 @@
 import type { DensityId, FontPairingId, MarginId } from "./presets";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
-import type { CSSProperties } from "react";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { t } from "@lingui/core/macro";
@@ -14,7 +13,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
-import { contrastOnWhite } from "@reactive-resume/utils/color";
+import { contrastOnWhite, parseColorString } from "@reactive-resume/utils/color";
 import { cn } from "@reactive-resume/utils/style";
 import {
 	ACCENTS,
@@ -32,6 +31,7 @@ import {
 	rgbaToHex,
 	TEXT_SIZE,
 } from "./presets";
+import { ColorPicker } from "@/components/input/color-picker";
 import { Combobox } from "@/components/ui/combobox";
 import { getLocaleOptions } from "@/features/locale/locale-options";
 import { useResumeData, useUpdateResumeData } from "@/features/resume/builder/draft";
@@ -181,7 +181,9 @@ export function ColorGroup() {
 	const typedHex = normalizeHex(hex);
 	const valid = typedHex !== null;
 	const normalized = typedHex ?? current;
-	const ratio = contrastOnWhite(normalized);
+	const opaque = parseColorString(metadata.design.colors.primary)?.a === 1;
+	const selectedAccent = opaque ? ACCENTS.find((accent) => accent.hex === current) : undefined;
+	const ratio = contrastOnWhite(typed === null ? metadata.design.colors.primary : normalized);
 	const tooLight = valid && ratio < 4.5;
 
 	const setAccent = (next: string, discrete = true) =>
@@ -195,15 +197,19 @@ export function ColorGroup() {
 
 	return (
 		<div className="grid gap-3">
+			<h3 className="-mb-3 flex items-baseline gap-3 pt-[18px] pb-2 t-section-title">
+				<Trans>Accent</Trans>
+				<span className="t-small text-ink-3">{selectedAccent ? i18n._(selectedAccent.label) : t`Custom`}</span>
+			</h3>
 			<RadioGroup
 				aria-label={t`Accent color`}
-				value={ACCENTS.some((accent) => accent.hex === current) ? current : null}
+				value={selectedAccent ? current : null}
 				onValueChange={(value) => {
 					setTyped(null);
 					setAccent(value as string);
 				}}
 				// Touch: 48px swatches, four to a row.
-				className="grid grid-cols-8 gap-1.5 pointer-coarse:grid-cols-[repeat(4,3rem)] pointer-coarse:justify-between pointer-coarse:gap-y-3"
+				className="grid grid-cols-4 gap-x-2.5 gap-y-3.5"
 			>
 				{ACCENTS.map((accent) => (
 					<Radio.Root
@@ -211,34 +217,62 @@ export function ColorGroup() {
 						value={accent.hex}
 						aria-label={i18n._(accent.label)}
 						title={i18n._(accent.label)}
-						className="aspect-square cursor-pointer rounded-sm transition-[box-shadow,scale] duration-quick ease-enter active:scale-[0.97] data-checked:shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--swatch)]"
-						style={{ backgroundColor: accent.hex, "--swatch": accent.hex } as CSSProperties}
-					/>
+						className="group/swatch grid cursor-pointer gap-1.5 text-start t-caption"
+					>
+						<span
+							className="grid h-10 place-items-center rounded-md border border-line-2 group-data-checked/swatch:ring-2 group-data-checked/swatch:ring-accent group-data-checked/swatch:ring-offset-2 group-data-checked/swatch:ring-offset-bg"
+							style={{ backgroundColor: accent.hex }}
+						>
+							{selectedAccent?.hex === accent.hex && <Icon name="check" size={18} className="text-paper" />}
+						</span>
+						{i18n._(accent.label)}
+					</Radio.Root>
 				))}
 			</RadioGroup>
 
-			<div className="flex items-center gap-2">
-				<span className="size-9 shrink-0 rounded-lg border border-line-2" style={{ backgroundColor: normalized }} />
-				<Input
-					aria-label={t`Custom color (hex)`}
-					value={hex}
-					spellCheck={false}
-					className="font-mono"
-					aria-invalid={!valid}
-					aria-describedby={valid ? undefined : `${hexId}-error`}
-					onChange={(event) => {
-						setTyped(event.target.value);
-						const next = normalizeHex(event.target.value);
-						if (next) setAccent(next, false);
-					}}
-					onBlur={() => setTyped(null)}
-				/>
-				{/* An unreadable value has no ratio: the one shown would be the old colour's. */}
-				{valid && (
-					<span className={cn("shrink-0 font-mono text-xs", tooLight ? "text-warn-text" : "text-ink-3")}>
-						{i18n.number(ratio, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}:{i18n.number(1)}
+			<div className="mt-1 grid gap-1.5">
+				<div className="flex items-baseline justify-between t-small">
+					<span className="font-medium">
+						<Trans>Custom</Trans>
 					</span>
-				)}
+					<span className="t-caption text-ink-3">
+						<Trans>Contrast on white</Trans>
+					</span>
+				</div>
+				<div className="flex items-center gap-2">
+					{/* calm: request to lead: ColorPicker needs a compact popup beside the panel. */}
+					<ColorPicker
+						className="[&>div]:size-10 [&>div]:rounded-md pointer-coarse:[&>div]:size-11"
+						aria-label={t`Open the color picker`}
+						value={metadata.design.colors.primary}
+						onChange={(color) => {
+							setTyped(null);
+							write("accent", (draft) => {
+								draft.design.colors.primary = color;
+							});
+						}}
+					/>
+					<Input
+						aria-label={t`Custom color (hex)`}
+						value={hex}
+						spellCheck={false}
+						className="font-mono"
+						aria-invalid={!valid}
+						aria-describedby={valid ? undefined : `${hexId}-error`}
+						onChange={(event) => {
+							setTyped(event.target.value);
+							const next = normalizeHex(event.target.value);
+							if (next) setAccent(next, false);
+						}}
+						onBlur={() => setTyped(null)}
+					/>
+					{/* An unreadable value has no ratio: the one shown would be the old colour's. */}
+					{valid && (
+						<span className={cn("shrink-0 font-mono text-xs", tooLight ? "text-warn-text" : "text-ink-3")}>
+							{i18n.number(ratio, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}:{i18n.number(1)}
+						</span>
+					)}
+				</div>
 			</div>
 			{!valid && (
 				<p id={`${hexId}-error`} className="text-xs text-danger-text">
@@ -266,10 +300,8 @@ export function ColorGroup() {
 				</div>
 			)}
 
-			<p className="text-xs leading-4 text-ink-3">
-				<Trans>
-					Accent is used for headings, icons and the header band. Body text stays near-black for print and ATS.
-				</Trans>
+			<p className="-mt-1 text-xs leading-4 text-ink-3">
+				<Trans>Used for headings, icons and the header band.</Trans>
 			</p>
 		</div>
 	);

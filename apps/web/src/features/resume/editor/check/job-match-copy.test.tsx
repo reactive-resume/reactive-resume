@@ -56,6 +56,9 @@ vi.mock("@reactive-resume/resume/ats-pdf", () => ({
 	surfaceFormsOf: () => [],
 }));
 
+vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
+	useHasUsableAiProvider: () => ({ hasUsableProvider: true }),
+}));
 import { useEditorStore } from "../store";
 import { JobMatchTab, useJobMatch } from "./job-match";
 

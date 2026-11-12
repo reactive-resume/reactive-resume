@@ -1,255 +1,200 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
-import type { FocusEvent, KeyboardEvent, PointerEvent } from "react";
-import { Radio } from "@base-ui/react/radio";
-import { RadioGroup } from "@base-ui/react/radio-group";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useInView } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
 import { templateLayouts } from "@reactive-resume/schema/templates";
-import { Icon } from "@reactive-resume/ui/components/icon";
+import { Button } from "@reactive-resume/ui/components/button";
+import { InputGroup, InputGroupAddon, InputGroupText } from "@reactive-resume/ui/components/input-group";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { useTemplateThumbnail } from "./thumbnails";
+import { Chip, FilterField } from "@/components/calm/filter-bar";
+import { NumberInput } from "@/components/input/number-input";
 import { templates } from "@/dialogs/resume/template/data";
 import { useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { undoToast } from "@/features/resume/builder/undo-toast";
 
 type Filter = "all" | "one" | "two" | "ats";
-
 const TEMPLATE_IDS = Object.keys(templates) as Template[];
-
-const matchesFilter = (id: Template, filter: Filter) => {
-	const layout = templateLayouts[id];
-	if (filter === "one") return layout.columns === 1;
-	if (filter === "two") return layout.columns === 2;
-	if (filter === "ats") return layout.atsSafe;
-	return true;
-};
-
-const layoutTags = (id: Template) => {
-	const layout = templateLayouts[id];
-	return [layout.columns === 1 ? t`One column` : t`Two columns`, layout.atsSafe ? t`ATS-safe` : null]
+const matchesFilter = (id: Template, filter: Filter) =>
+	filter === "all" ||
+	(filter === "one"
+		? templateLayouts[id].columns === 1
+		: filter === "two"
+			? templateLayouts[id].columns === 2
+			: templateLayouts[id].atsSafe);
+const layoutTags = (id: Template) =>
+	[templateLayouts[id].columns === 1 ? t`One column` : t`Two columns`, templateLayouts[id].atsSafe ? t`ATS-safe` : null]
 		.filter(Boolean)
 		.join(" · ");
-};
 
-/** Applies a template with the page's cross-fade and an Undo toast. Font, size and colour carry across. */
-function applyTemplate(template: Template) {
-	const { resume, updateResumeData } = useResumeStore.getState();
-	useEditorStore.setState({ previewTemplate: null });
-	if (!resume || resume.data.metadata.template === template) return;
-
-	updateResumeData(
-		(draft) => {
-			draft.metadata.template = template;
-		},
-		{ newStep: true },
-	);
-	undoToast(t`Template changed to ${templates[template].name}`);
-}
-
-// Touch has no hover: holding a card this long previews it instead.
-const HOLD_TO_PREVIEW_MS = 400;
-
-type TemplateGroupProps = {
-	/** Phones: one horizontal strip of cards in the bottom sheet, instead of the two-column grid. */
-	layout?: "grid" | "strip";
-};
-
-/**
- * Template: filter chips, then thumbnails drawn from the user's own content. Hovering or focusing one (holding
- * it, on touch) previews it on the page; leaving the cards or pressing Esc restores the page; a click applies it.
- */
-// Where the pointer was at the last scroll. A pointer "entering" a card from that same spot is the card sliding under a
-// still pointer; one that has moved since entered it on purpose, whenever the scroll was.
-let pointer: { x: number; y: number } | null = null;
-let pointerAtScroll: { x: number; y: number } | null = null;
-const stillSinceScroll = (event: PointerEvent) =>
-	pointerAtScroll !== null && event.screenX === pointerAtScroll.x && event.screenY === pointerAtScroll.y;
-
-export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
+type TemplateGroupProps = { layout?: "grid" | "strip"; onUse?: () => void };
+export function TemplateGroup({ layout = "grid", onUse }: TemplateGroupProps) {
 	const data = useResumeData();
 	const [filter, setFilter] = useState<Filter>("all");
-	// Leaving Design (by shortcut, say) never leaves a preview on the page.
+	const [query, setQuery] = useState("");
+	const preview = useEditorStore((state) => state.previewTemplate);
 	useEffect(() => () => useEditorStore.setState({ previewTemplate: null }), []);
-	useEffect(() => {
-		const onScroll = () => {
-			pointerAtScroll = pointer;
-		};
-		const onMove = (event: globalThis.PointerEvent) => {
-			pointer = { x: event.screenX, y: event.screenY };
-			// Moved since the scroll: later entries are the pointer's own, even back at the same spot.
-			if (pointerAtScroll && (pointerAtScroll.x !== pointer.x || pointerAtScroll.y !== pointer.y))
-				pointerAtScroll = null;
-		};
-		document.addEventListener("scroll", onScroll, { capture: true, passive: true });
-		document.addEventListener("pointermove", onMove, { capture: true, passive: true });
-		return () => {
-			document.removeEventListener("scroll", onScroll, { capture: true });
-			document.removeEventListener("pointermove", onMove, { capture: true });
-		};
-	}, []);
 	if (!data) return null;
-
 	const current = data.metadata.template;
-	const shown = TEMPLATE_IDS.filter((id) => matchesFilter(id, filter));
+	const chosen = preview ?? current;
+	const shown = TEMPLATE_IDS.filter(
+		(id) =>
+			matchesFilter(id, filter) &&
+			[templates[id].name, i18n._(templates[id].description), ...templates[id].tags]
+				.join(" ")
+				.toLocaleLowerCase()
+				.includes(query.trim().toLocaleLowerCase()),
+	);
 	const filters: { id: Filter; label: string }[] = [
 		{ id: "all", label: t`All` },
 		{ id: "one", label: t`One column` },
 		{ id: "two", label: t`Two columns` },
 		{ id: "ats", label: t`ATS-safe` },
 	];
-
-	const onGridBlur = (event: FocusEvent<HTMLDivElement>) => {
-		if (!event.currentTarget.contains(event.relatedTarget as Node | null))
-			useEditorStore.setState({ previewTemplate: null });
-	};
-	const onGridKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-		if (event.key !== "Escape" || !useEditorStore.getState().previewTemplate) return;
-		event.stopPropagation();
-		useEditorStore.setState({ previewTemplate: null });
-	};
-
+	const cancel = () => useEditorStore.setState({ previewTemplate: null });
 	return (
-		<div className="grid gap-3">
-			<RadioGroup
-				aria-label={t`Show templates`}
-				value={filter}
-				onValueChange={(value) => setFilter(value as Filter)}
-				className="flex flex-wrap items-center gap-1.5"
-			>
-				{filters.map((option) => (
-					<Radio.Root
-						key={option.id}
-						value={option.id}
-						className="flex h-7 cursor-pointer items-center rounded-sm border border-line-2 px-3 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover data-checked:border-accent data-checked:bg-accent-soft data-checked:font-medium data-checked:text-accent-text"
-					>
-						{option.label}
-					</Radio.Root>
-				))}
-				<span className="ms-auto text-xs text-ink-3">
-					<Trans>
-						{i18n.number(shown.length)} of {i18n.number(TEMPLATE_IDS.length)} shown
-					</Trans>
-				</span>
-			</RadioGroup>
-
-			{/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- listens for Esc and pointer exit from the cards; each card is a button. */}
-			<div
-				className={
-					layout === "grid"
-						? "grid grid-cols-2 gap-3"
-						: "-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 *:w-28 *:shrink-0 *:snap-start"
+		<div
+			role="group"
+			aria-label={t`Template preview`}
+			className="flex min-h-0 grow flex-col gap-2 pt-3 pb-5"
+			onKeyDown={(event) => {
+				if (event.key === "Escape" && preview) {
+					event.stopPropagation();
+					cancel();
 				}
-				onPointerLeave={() => useEditorStore.setState({ previewTemplate: null })}
-				onBlur={onGridBlur}
-				onKeyDown={onGridKeyDown}
+			}}
+		>
+			<div className="flex flex-wrap items-center gap-1.5 min-[1280px]:ms-[212px] min-[1280px]:-mt-[42px]">
+				{filters.map((option) => (
+					<Chip key={option.id} pressed={filter === option.id} onClick={() => setFilter(option.id)}>
+						{option.label}{" "}
+						<span className="t-caption">{TEMPLATE_IDS.filter((id) => matchesFilter(id, option.id)).length}</span>
+					</Chip>
+				))}
+				<FilterField
+					label={t`Filter templates`}
+					icon="funnel"
+					value={query}
+					onChange={(event) => setQuery(event.target.value)}
+					className="min-w-40 flex-1"
+				/>
+			</div>
+			<div
+				aria-label={t`Templates`}
+				className={
+					layout === "strip"
+						? "flex gap-3 overflow-x-auto *:w-32 *:shrink-0"
+						: "grid grid-cols-2 gap-x-4 gap-y-4 min-[1280px]:grid-cols-6"
+				}
 			>
 				{shown.map((id) => (
 					<TemplateCard
 						key={id}
 						id={id}
 						data={data}
-						selected={id === current}
+						current={id === current}
+						previewing={id === preview}
 						onPreview={() => useEditorStore.setState({ previewTemplate: id === current ? null : id })}
 					/>
 				))}
 			</div>
-
-			{templateLayouts[current].columns === 2 && <SidebarPanel data={data} template={current} />}
+			{shown.length === 0 && (
+				<p className="py-4 t-small text-ink-3">
+					<Trans>No templates match your filter.</Trans>
+				</p>
+			)}
+			<div
+				className="mt-auto flex flex-wrap items-center gap-3 border-t border-line pt-3 min-[1280px]:fixed min-[1280px]:end-6 min-[1280px]:bottom-5 min-[1280px]:z-20 min-[1280px]:w-[456px] min-[1280px]:rounded-xl min-[1280px]:border min-[1280px]:bg-raised min-[1280px]:p-4 min-[1280px]:shadow-e2"
+				role="status"
+			>
+				<div className="min-w-0 flex-1">
+					<h3 className="t-section-title">
+						{templates[chosen].name}{" "}
+						<span className="t-caption text-ink-3">{preview ? t`Previewing` : t`Current`}</span>
+					</h3>
+					<p className="t-small text-ink-2">{i18n._(templates[chosen].description)}</p>
+					{!templateLayouts[chosen].atsSafe && (
+						<p className="mt-1 t-caption text-warn-text">
+							<Trans>Not ATS-safe: two columns can be read out of order.</Trans>
+						</p>
+					)}
+				</div>
+				<Button variant="secondary" onClick={cancel}>
+					<Trans>Keep {templates[current].name}</Trans>
+				</Button>
+				<Button
+					variant="secondary"
+					disabled={!preview}
+					onClick={() => {
+						if (!preview) return;
+						useResumeStore.getState().updateResumeData(
+							(draft) => {
+								draft.metadata.template = preview;
+							},
+							{ newStep: true },
+						);
+						undoToast(t`Template changed to ${templates[preview].name}`);
+						cancel();
+						onUse?.();
+					}}
+				>
+					<Trans>Use this template</Trans>
+				</Button>
+			</div>
 		</div>
 	);
 }
 
-type TemplateCardProps = { id: Template; data: ResumeData; selected: boolean; onPreview: () => void };
-
-function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
+type TemplateCardProps = {
+	id: Template;
+	data: ResumeData;
+	current: boolean;
+	previewing: boolean;
+	onPreview: () => void;
+};
+function TemplateCard({ id, data, current, previewing, onPreview }: TemplateCardProps) {
 	const ref = useRef<HTMLButtonElement>(null);
-	// Only cards on or near the screen render, so a font or colour change doesn't re-render every template.
-	const isInView = useInView(ref, { margin: "240px" });
+	const visible = useInView(ref, { margin: "240px" });
 	const resumeId = useResumeStore((state) => state.resume?.id ?? "");
-	const { data: thumbnail } = useTemplateThumbnail(id, data, isInView, resumeId);
-	const metadata = templates[id];
-	const hold = useRef<{ timer?: number; previewing: boolean }>({ previewing: false });
-	// Where the pointer was when a scroll slid the card under it: that previews only once the pointer moves. A
-	// pointer moved onto the card previews at once, even if it then stops.
-	const entered = useRef<{ x: number; y: number } | null>(null);
-	// The picker opens on the template in use, not at the top of the list.
-	const initiallySelected = useRef(selected);
-	useEffect(() => {
-		if (initiallySelected.current) ref.current?.scrollIntoView({ block: "center", inline: "center" });
-	}, []);
-
-	const endHold = () => {
-		window.clearTimeout(hold.current.timer);
-		if (hold.current.previewing) useEditorStore.setState({ previewTemplate: null });
-	};
-
+	const { data: thumbnail } = useTemplateThumbnail(id, data, visible, resumeId);
 	return (
 		<button
 			ref={ref}
 			type="button"
-			aria-pressed={selected}
-			onPointerEnter={(event: PointerEvent) => {
-				if (event.pointerType === "touch") return;
-				if (stillSinceScroll(event)) {
-					entered.current = { x: event.screenX, y: event.screenY };
-					return;
-				}
-				// Entered on purpose: nothing is left waiting to restore a preview Esc dismisses later.
-				entered.current = null;
-				onPreview();
-			}}
-			onPointerMove={(event: PointerEvent) => {
-				const from = entered.current;
-				if (event.pointerType === "touch" || !from) return;
-				if (event.screenX === from.x && event.screenY === from.y) return;
-				entered.current = null;
-				onPreview();
-			}}
-			onPointerDown={(event: PointerEvent) => {
-				if (event.pointerType !== "touch") return;
-				hold.current.previewing = false;
-				hold.current.timer = window.setTimeout(() => {
-					hold.current.previewing = true;
-					onPreview();
-				}, HOLD_TO_PREVIEW_MS);
-			}}
-			onPointerUp={endHold}
-			onPointerCancel={endHold}
-			// A long press shows the preview; it doesn't open the system menu or apply the template.
-			onContextMenu={(event) => event.preventDefault()}
-			onFocus={onPreview}
-			onClick={() => {
-				if (hold.current.previewing) {
-					hold.current.previewing = false;
-					return;
-				}
-				applyTemplate(id);
-			}}
-			className="group/card grid gap-1.5 rounded-lg text-start"
+			aria-pressed={previewing || current}
+			aria-label={t`Preview ${templates[id].name}`}
+			onClick={onPreview}
+			className="grid content-start gap-1.5 text-start"
 		>
 			<span
 				className={cn(
-					"relative block aspect-page overflow-hidden rounded-md border border-line bg-white shadow-e1 transition-[translate,scale,box-shadow] duration-quick ease-enter group-hover/card:-translate-y-0.5 group-hover/card:shadow-e2 group-active/card:scale-[0.98]",
-					selected && "ring-2 ring-accent ring-offset-2 ring-offset-surface",
+					"relative block aspect-page overflow-hidden rounded-paper border border-line bg-paper shadow-e1",
+					previewing && "ring-2 ring-accent ring-offset-2 ring-offset-bg",
 				)}
 			>
-				<img src={thumbnail ?? metadata.imageUrl} alt="" className="size-full object-cover object-top" />
-				{selected && (
-					<span className="absolute end-1.5 top-1.5 grid size-5 place-items-center rounded-sm bg-accent text-on-accent">
-						<Icon name="check" size={14} />
+				<img src={thumbnail ?? templates[id].imageUrl} alt="" className="size-full object-cover object-top" />
+			</span>
+			<span className="flex flex-wrap items-center gap-1 t-ui font-medium">
+				{templates[id].name}
+				{(current || previewing) && (
+					<span
+						className={cn(
+							"rounded-xs px-1 t-caption",
+							previewing ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-2",
+						)}
+					>
+						{previewing ? t`Previewing` : t`Current`}
 					</span>
 				)}
 			</span>
-			<span className="text-sm leading-4 font-medium">{metadata.name}</span>
-			<span className="text-xs leading-4 text-ink-3">{layoutTags(id)}</span>
+			<span className="t-caption text-ink-3">{layoutTags(id)}</span>
 		</button>
 	);
 }
@@ -257,20 +202,19 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 type SidebarPanelProps = { data: ResumeData; template: Template };
 
 /** Two-column templates: the sidebar's side and width. Write moves sections between columns. */
-function SidebarPanel({ data, template }: SidebarPanelProps) {
+export function SidebarPanel({ data, template }: SidebarPanelProps) {
 	const updateResumeData = useUpdateResumeData();
 	// The side the page shows now: the chosen one, else the template's own (mirrored on right-to-left pages).
 	const ownSide = templateLayouts[template].sidebarSide ?? "left";
 	const shownOwnSide = isRTL(data.metadata.page.locale) ? (ownSide === "left" ? "right" : "left") : ownSide;
 	const side = data.metadata.layout.sidebarSide ?? shownOwnSide;
 	const width = data.metadata.layout.sidebarWidth;
-	const titleId = useId();
 	const widthId = useId();
 
 	return (
-		<div className="grid gap-3 rounded-lg border border-line bg-bg p-3">
-			<p id={titleId} className="text-sm font-medium">
-				<Trans>Sidebar</Trans>
+		<div className="grid gap-3 pt-2">
+			<p className="t-small font-medium">
+				<Trans>Side</Trans>
 			</p>
 			<SegmentedControl
 				aria-label={t`Sidebar side`}
@@ -297,13 +241,33 @@ function SidebarPanel({ data, template }: SidebarPanelProps) {
 					<span id={widthId}>
 						<Trans>Width</Trans>
 					</span>
-					<span className="font-mono text-xs text-ink-2">{i18n.number(width)}%</span>
+					<InputGroup className="h-8 w-20">
+						<NumberInput
+							aria-label={t`Sidebar width`}
+							value={width}
+							min={10}
+							max={50}
+							step={0.1}
+							className="text-end font-mono text-xs"
+							onValueChange={(value) =>
+								updateResumeData(
+									(draft) => {
+										draft.metadata.layout.sidebarWidth = value;
+									},
+									{ coalesceKey: "design.sidebarWidth" },
+								)
+							}
+						/>
+						<InputGroupAddon align="inline-end">
+							<InputGroupText>%</InputGroupText>
+						</InputGroupAddon>
+					</InputGroup>
 				</div>
 				<Slider
-					aria-labelledby={`${titleId} ${widthId}`}
+					aria-label={t`Sidebar width`}
 					min={10}
 					max={50}
-					step={1}
+					step={0.01}
 					value={[width]}
 					onValueChange={(value) =>
 						updateResumeData(
