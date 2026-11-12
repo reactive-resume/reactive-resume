@@ -21,6 +21,8 @@ import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks } from "../hooks";
 import { FilterChip, MemoryProposal, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
+import { PageHeader } from "@/components/calm/page";
+import { SectionHeading } from "@/components/calm/section-heading";
 import { buildIcs } from "@/features/applications/ics";
 import { isInterview } from "@/features/applications/interviews";
 import { useInvalidateApplications } from "@/features/applications/use-application-actions";
@@ -50,10 +52,11 @@ const afterRound = (kind: InterviewKind | undefined) =>
 		other: t`After the interview`,
 	})[kind ?? "other"];
 
-export function DebriefTab({ application, version, now, go }: WorkspaceTabProps) {
+export function DebriefTab({ application, version, now, go, interview }: WorkspaceTabProps) {
 	const saved = useSavedItems(application.id);
 	const time = useCareerTime();
 	const [fresh, setFresh] = useState<Review | null>(null);
+	const [newQuestion, setNewQuestion] = useState(0);
 	const viewing = isDebrief(version) ? version : undefined;
 	const round = viewing
 		? application.activity.filter(isInterview).find((entry) => entry.id === viewing.interviewId)
@@ -65,51 +68,85 @@ export function DebriefTab({ application, version, now, go }: WorkspaceTabProps)
 	const upcoming = !viewing && !forRound && round && +new Date(round.at) > +now ? round : undefined;
 	if (upcoming)
 		return (
-			<EmptyState
-				title={t`Write this after your interview on ${time.day(upcoming.at)}`}
-				description={<Trans>Until then, Interview prep has your plan, your opening and the questions to ask.</Trans>}
-				action={
-					<Button variant="secondary" onClick={() => go("prepare")}>
-						<Icon name="calendar-dot" size={18} />
-						<Trans>Open Interview prep</Trans>
-					</Button>
-				}
-			/>
+			<>
+				<PageHeader title={t`Debrief`} />
+				<EmptyState
+					title={t`Write this after your interview on ${time.day(upcoming.at)}`}
+					description={<Trans>Until then, Interview prep has your plan, your opening and the questions to ask.</Trans>}
+					action={
+						<Button variant="secondary" onClick={() => go("prepare")}>
+							<Icon name="calendar-dot" size={18} />
+							<Trans>Open Interview prep</Trans>
+						</Button>
+					}
+				/>
+			</>
 		);
 
 	return (
-		<div className="grid items-start gap-5 @3xl:grid-cols-[minmax(0,1fr)_320px]">
-			<div className="grid min-w-0 gap-4">
-				{saved.isPending ? (
-					<Skeleton className="h-80 rounded-xl" />
+		<div>
+			<PageHeader
+				title={t`Debrief`}
+				className="[&>div]:min-h-9 [&>p]:pt-1 [&>p]:text-sm/5"
+				subtitle={
+					round ? (
+						<>
+							{afterRound(round.kind)} · {time.format(round.at, { weekday: "long", day: "numeric", month: "short" })}
+							{round.participants.length > 0 && t`, with ${round.participants.map((person) => person.name).join(", ")}`}
+							{!viewing &&
+								interview &&
+								interview.id !== round.id &&
+								+new Date(interview.at) > +now &&
+								t` · next round ${time.format(interview.at, { weekday: "long", day: "numeric", month: "short" })}`}
+						</>
+					) : (
+						viewing?.data.round
+					)
+				}
+				actions={
+					!viewing && (
+						<>
+							<Button variant="ghost" onClick={() => setNewQuestion((current) => current + 1)}>
+								<Icon name="plus" />
+								<Trans>Add another question</Trans>
+							</Button>
+							{review?.data.priority && (
+								<Button onClick={() => go("practise", { round: review.interviewId ?? undefined })}>
+									<Icon name="microphone" />
+									<Trans>Practice this answer</Trans>
+								</Button>
+							)}
+						</>
+					)
+				}
+			/>
+			<div className="grid items-start gap-10 pt-[22px] @3xl:grid-cols-[minmax(0,1fr)_264px]">
+				<div className="grid min-w-0 gap-4">
+					{saved.isPending ? (
+						<Skeleton className="h-80 rounded-xl" />
+					) : (
+						<DebriefForm
+							key={`form:${viewing?.id ?? round?.id ?? "none"}:${newQuestion}`}
+							application={application}
+							round={round}
+							from={newQuestion ? undefined : (viewing ?? forRound)}
+							readOnly={viewing !== undefined}
+							onReviewed={setFresh}
+							hasReview={!!review}
+						/>
+					)}
+					{review && (
+						<ReviewCard key={`review:${review.id}`} application={application} review={review} readOnly={!!viewing} />
+					)}
+				</div>
+				{plan ? (
+					<WeekPlan key={plan.id} application={application} review={plan} now={now} readOnly={!!viewing} />
 				) : (
-					<DebriefForm
-						key={`form:${viewing?.id ?? round?.id ?? "none"}`}
-						application={application}
-						round={round}
-						from={viewing ?? forRound}
-						readOnly={viewing !== undefined}
-						onReviewed={setFresh}
-						hasReview={!!review}
-					/>
-				)}
-				{review && (
-					<ReviewCard
-						key={`review:${review.id}`}
-						application={application}
-						review={review}
-						readOnly={!!viewing}
-						onPractice={() => go("practise")}
-					/>
+					<aside className="rounded-xl border border-dashed border-line-2 p-4 text-[13px] leading-[19px] text-ink-3">
+						<Trans>After your first review, a light plan for this week appears here.</Trans>
+					</aside>
 				)}
 			</div>
-			{plan ? (
-				<WeekPlan key={plan.id} application={application} review={plan} now={now} readOnly={!!viewing} />
-			) : (
-				<aside className="rounded-xl border border-dashed border-line-2 p-4 text-[13px] leading-[19px] text-ink-3">
-					<Trans>After your first review, a light plan for this week appears here.</Trans>
-				</aside>
-			)}
 		</div>
 	);
 }
@@ -135,7 +172,6 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 		},
 		onError: (error) => toastError(error, t`Couldn't save the debrief. Your draft is kept.`),
 	});
-	const { day } = useCareerTime();
 	const generate = useGenerate(application.id);
 	const connection = useDefaultProvider();
 	const { provider } = connection;
@@ -195,15 +231,6 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 
 	return (
 		<section aria-labelledby={`${id}-title`} className="grid gap-4">
-			<div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-				<h2 id={`${id}-title`} className="text-[15px] font-semibold">
-					{readOnly && !round ? from?.data.round || t`Interview debrief` : afterRound(round?.kind)}
-					{round && ` · ${day(round.at)}`}
-				</h2>
-				<p className="text-xs text-ink-3">
-					<Trans>Write it down while it's fresh</Trans>
-				</p>
-			</div>
 			<div className="grid gap-1.5">
 				<Label htmlFor={`${id}-question`}>
 					<Trans>What did they ask?</Trans>
@@ -228,17 +255,18 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 					readOnly={readOnly}
 					maxLength={6000}
 					onChange={(event) => change({ answer: event.target.value })}
-					className="min-h-21 px-3 py-2.5 text-sm leading-[21px] pointer-coarse:text-base"
+					className="min-h-21 px-3 py-2.5 text-sm/[22px] pointer-coarse:text-base"
 				/>
 			</div>
 			<div className="grid gap-1.5">
-				<p id={`${id}-landed`} className="text-xs leading-4 font-medium text-ink-2">
+				<p id={`${id}-landed`} className="text-[13px]/[18px] font-medium text-ink-2">
 					<Trans>How did it land?</Trans>
 				</p>
 				<fieldset disabled={readOnly} aria-labelledby={`${id}-landed`} className="flex flex-wrap gap-1.5">
 					{landed.map((option) => (
 						<FilterChip
 							key={option.value}
+							className={cn("h-7 text-[13px]/[18px]", draft.landed !== option.value && "text-ink-2")}
 							pressed={draft.landed === option.value}
 							onClick={() => change({ landed: draft.landed === option.value ? null : option.value })}
 						>
@@ -256,7 +284,13 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 							loading={generate.isPending}
 							onClick={submit}
 						>
-							{generate.isPending ? <Working steps={workingSteps("debrief")} /> : <Trans>Review my answer</Trans>}
+							{generate.isPending ? (
+								<Working steps={workingSteps("debrief")} />
+							) : hasReview ? (
+								<Trans>Review again</Trans>
+							) : (
+								<Trans>Review my answer</Trans>
+							)}
 						</Button>
 					)}
 					<Button
@@ -289,10 +323,10 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 	);
 }
 
-type ReviewCardProps = { onPractice: () => void; application: Application; review: Review; readOnly: boolean };
+type ReviewCardProps = { application: Application; review: Review; readOnly: boolean };
 
 /** What the evidence supports versus what was only observed, and one thing worth remembering for this job. */
-function ReviewCard({ application, review, readOnly, onPractice }: ReviewCardProps) {
+function ReviewCard({ application, review, readOnly }: ReviewCardProps) {
 	const queryClient = useQueryClient();
 	const { data } = review;
 	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
@@ -325,15 +359,18 @@ function ReviewCard({ application, review, readOnly, onPractice }: ReviewCardPro
 	const company = application.company;
 
 	return (
-		<section aria-label={t`Review`} className={cn("grid gap-4", ENTER_CLASS)}>
-			<h2 className="t-section-title">{data.title}</h2>
+		<section aria-label={t`Review`} className={cn("grid gap-0", ENTER_CLASS)}>
+			<SectionHeading className="pt-3">{data.title}</SectionHeading>
+			<p className="pb-1 text-[13px]/[18px] text-ink-3">
+				<Trans>Review · compared with your Knowledge and your notes</Trans>
+			</p>
 			{data.verdicts.length > 0 && (
-				<ul className="grid gap-3">
+				<ul className="grid">
 					{data.verdicts.map((verdict) => (
-						<li key={verdict.text} className="flex items-start gap-2.5">
+						<li key={verdict.text} className="flex items-center gap-3.5 border-b border-line py-3 last:border-0">
 							<span
 								className={cn(
-									"inline-flex h-[22px] shrink-0 items-center rounded-sm px-1.5 text-xs font-semibold",
+									"inline-flex h-[22px] w-[88px] shrink-0 items-center justify-center rounded-xs px-1.5 text-xs font-medium",
 									verdict.tag === "supported" ? "bg-accent-soft text-accent-text" : "bg-warn-soft text-warn-text",
 								)}
 							>
@@ -345,21 +382,15 @@ function ReviewCard({ application, review, readOnly, onPractice }: ReviewCardPro
 				</ul>
 			)}
 			{data.nextRound && (
-				<p className="text-sm leading-[21px]">
+				<p className="pt-3.5 text-sm/5">
 					<strong className="font-semibold">
 						<Trans>For the next round:</Trans>
 					</strong>{" "}
 					{readable(data.nextRound)}
 				</p>
 			)}
-			{data.priority && !readOnly && (
-				<Button className="w-fit sm:absolute sm:end-0 sm:top-0" onClick={onPractice}>
-					<Icon name="microphone" />
-					<Trans>Practice this answer</Trans>
-				</Button>
-			)}
 			{data.priority && (
-				<p className="text-sm leading-[21px]">
+				<p className="pt-2 text-sm/5">
 					<strong className="font-semibold">
 						<Trans>Practice priority:</Trans>
 					</strong>{" "}
@@ -467,12 +498,12 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 	};
 
 	return (
-		<aside className="grid gap-3">
+		<aside className="grid gap-0">
 			<div className="grid gap-1">
-				<h2 className="t-section-title">
+				<SectionHeading first>
 					<Trans>This week</Trans>
-				</h2>
-				<p className="text-xs text-ink-3">
+				</SectionHeading>
+				<p className="text-[13px]/[18px] text-ink-3">
 					{t`${ph({ done: i18n.number(done) })} of ${ph({ count: i18n.number(count) })} done`} ·{" "}
 					{plural(minutes, { one: "# minute in total", other: "# minutes in total" })}
 				</p>
@@ -484,7 +515,7 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 					const length = row.minutes;
 					return (
 						<li key={row.key} className="border-t border-line py-3 first:border-t-0 first:pt-1">
-							<label className="grid cursor-pointer grid-cols-[18px_40px_minmax(0,1fr)] items-start gap-3">
+							<label className="grid cursor-pointer grid-cols-[18px_34px_minmax(0,1fr)] items-start gap-3">
 								<Checkbox
 									disabled={readOnly}
 									checked={checked}
@@ -510,7 +541,7 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 				})}
 			</ul>
 			{rows.length > 0 && (
-				<Button size="sm" variant="secondary" className="h-8 w-fit" onClick={addToCalendar}>
+				<Button size="sm" variant="secondary" className="mt-3 w-fit" onClick={addToCalendar}>
 					<Icon name="calendar-plus" size={16} />
 					<Trans>Add to calendar</Trans>
 				</Button>

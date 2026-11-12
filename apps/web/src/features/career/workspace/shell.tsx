@@ -16,8 +16,8 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
-import { useOverlayHistory, useSavedItems } from "../hooks";
-import { tabLabel, useNow } from "../shared";
+import { latest, useOverlayHistory, useSavedItems } from "../hooks";
+import { tabLabel, useCareerTime, useNow } from "../shared";
 import { ApplyTab } from "./apply";
 import { CoachSheet } from "./coach-sheet";
 import { DebriefTab } from "./debrief";
@@ -35,6 +35,7 @@ import { ApplicationDetailSheet } from "@/features/applications/components/appli
 import { ApplicationFormSheet } from "@/features/applications/components/application-form-sheet";
 import { InterviewDialog } from "@/features/applications/components/interview-dialog";
 import { isInterview } from "@/features/applications/interviews";
+import { getStageLabel } from "@/features/applications/stages";
 import { D1, EASE } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
@@ -118,6 +119,7 @@ type WorkspaceProps = {
 export function Workspace({ applicationId, tab: requested, search }: WorkspaceProps) {
 	const navigate = useNavigate();
 	const now = useNow();
+	const time = useCareerTime();
 	// The round being edited is fixed when the dialog opens; "next interview" can move on while it's open.
 	const [editing, setEditing] = useState<{ id: string | null } | null>(null);
 	const [editDetails, setEditDetails] = useState<Application | null>(null);
@@ -128,6 +130,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 	const workspace = useQuery(orpc.career.workspace.queryOptions({ input: { applicationId } }));
 	const overlay = useOverlayHistory();
 	const application = query.data;
+	const offer = latest(saved.data, "offer");
 
 	if (query.isPending)
 		return (
@@ -245,19 +248,17 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 								className="mb-4 hidden gap-0.5 px-2.5 pt-1 lg:grid"
 							>
 								<span className="t-label">{application.company}</span>
-								<span className="flex flex-wrap items-center gap-1 text-xs text-ink-3">
-									<StageDot status={application.status} />
-									{interview && (
-										<>
-											{" "}
-											·{" "}
-											{new Intl.DateTimeFormat(i18n.locale, {
-												weekday: "short",
-												day: "numeric",
-												month: "short",
-											}).format(new Date(interview.at))}
-										</>
-									)}
+								<span className="flex items-center gap-1.5 text-[13px]/[18px] text-ink-3">
+									<StageDot status={application.status}>{null}</StageDot>
+									{application.status === "saved"
+										? t`Saved · not applied yet`
+										: application.status === "offer" && offer?.data.respondBy
+											? t`Offer · reply by ${time.format(offer.data.respondBy, { weekday: "short", day: "numeric", month: "short" })}`
+											: interview
+												? t`${getStageLabel(application.status)} · ${new Intl.DateTimeFormat(i18n.locale, { weekday: "short", day: "numeric", month: "short" }).format(new Date(interview.at))}`
+												: application.status === "applied"
+													? t`Applied · ${new Intl.DateTimeFormat(i18n.locale, { day: "numeric", month: "short" }).format(new Date(application.appliedAt))}`
+													: getStageLabel(application.status)}
 								</span>
 							</Link>
 							<SectionRail aria-label={t`Application workspace`}>
@@ -335,19 +336,12 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 													{version && (
 														<div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg bg-sunken px-3.5 py-2.5 text-sm">
 															<Icon name="clock-counter-clockwise" size={18} className="text-ink-3" />
-															<span className="flex-1">
-																<Trans>You're looking at a saved version. It can't be edited.</Trans>
-															</span>
+															<span className="flex-1">{t`Saved ${time.when(version.createdAt)} · read-only`}</span>
 															<Button size="sm" variant="secondary" onClick={() => setSearch({ version: undefined })}>
 																<Trans>Back to current</Trans>
 															</Button>
 														</div>
 													)}
-													<h1
-														className={cn("t-page-title", value === "prepare" || value === "debrief" ? "mb-0" : "mb-5")}
-													>
-														{tabLabel(value)}
-													</h1>
 													<TabBody tab={value} {...props} />
 												</>
 											)}

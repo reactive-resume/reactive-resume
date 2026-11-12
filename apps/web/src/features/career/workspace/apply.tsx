@@ -10,6 +10,7 @@ import { AnimatePresence } from "motion/react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
+import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { applicationReviewChecks } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -39,11 +40,14 @@ import {
 	useSessionDraft,
 	useWorkspace,
 } from "../hooks";
-import { CollapseRow, Swap, withUndo, GenerateNotice, Working, workingSteps } from "../shared";
+import { CollapseRow, Swap, withUndo, GenerateNotice, Working, workingSteps, useCareerTime, useNow } from "../shared";
 import { AnswerLibrary } from "./answer-library";
+import { ApplicationPacketPanel } from "./application-packet";
 import { AiNotice } from "./fit";
 import { Preparation } from "./preparation";
-import { PrepareReview } from "./prepare-review";
+import { PageHeader } from "@/components/calm/page";
+import { SectionHeading } from "@/components/calm/section-heading";
+import { Combobox } from "@/components/ui/combobox";
 import { SentDocuments } from "@/features/applications/components/detail/sent-documents";
 import { useInvalidateApplications } from "@/features/applications/use-application-actions";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
@@ -66,15 +70,16 @@ const shortLabel = (text: string) => {
 /** The review checks, by their persisted checklist index. Submitting yourself (3) is moot once a submission is recorded. */
 const checklistItems = () =>
 	[
-		t`Review the selected resume and cover letter in their editors.`,
-		t`Check every claim, date and result against your experience.`,
-		t`Review required form answers and remove unsupported claims.`,
+		t`Read the resume and letter once more in their editors`,
+		t`Check every claim, date and result against your experience`,
+		t`Review the form answers and remove anything you can't support`,
 		t`Submit through the employer's application page yourself.`,
 	] as const;
 
 /** W4–W5: the written answers for the employer's form, and a checklist before submitting there yourself. */
 export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 	const queryClient = useQueryClient();
+	const documents = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
@@ -114,6 +119,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 	if (workspace.isPending || saved.isPending)
 		return (
 			<div className="grid gap-4">
+				<PageHeader title={t`Apply`} />
 				<Skeleton className="h-14 rounded-xl" />
 				<Skeleton className="h-48 rounded-xl" />
 			</div>
@@ -196,71 +202,174 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 		});
 	};
 
+	const copy = async () => {
+		const written = currentAnswers().filter((answer) => answer.answer.trim());
+		await navigator.clipboard.writeText(written.map((answer) => `${answer.question}\n${answer.answer}`).join("\n\n"));
+		toast.add({ description: t`Answers copied` });
+	};
+
+	const download = (format: "md" | "txt") => {
+		const written = currentAnswers().filter((answer) => answer.answer.trim());
+		const body =
+			format === "md"
+				? [
+						`# ${application.role} · ${application.company}`,
+						...written.map((answer) => `## ${answer.question}\n\n${answer.answer}`),
+					].join("\n\n")
+				: [
+						`${application.role} · ${application.company}`,
+						...written.map((answer) => `${answer.question}\n\n${answer.answer}`),
+					].join("\n\n\n");
+		downloadWithAnchor(
+			new Blob([`${body}\n`], { type: format === "md" ? "text/markdown" : "text/plain" }),
+			generateFilename(`${application.company} answers`, format),
+		);
+	};
+
+	const answerCount = shown.filter((answer) =>
+		stored ? answer.answer.trim() : (writtenDrafts.get(answer.id) ?? Boolean(answer.answer.trim())),
+	).length;
+	const addQuestion = (
+		<button
+			type="button"
+			disabled={submitting || live.length >= 30}
+			onClick={() =>
+				workspace.save({
+					answers: [...workspace.current().answers, { id: crypto.randomUUID(), question: "", answer: "", factIds: [] }],
+				})
+			}
+			className="touch-target relative flex h-7 w-fit items-center justify-center gap-1.5 rounded-sm border border-dashed border-line-2 px-2.5 text-[13px]/[18px] font-medium text-ink-3 transition-colors duration-quick hover:bg-hover hover:text-ink"
+		>
+			<Icon name="plus" size={16} />
+			<Trans>Add a question</Trans>
+		</button>
+	);
+	const steps = ["posting", "resume", "tailor", "letter", "answers", "review"] as const;
+	const next = nextPreparationStep(application, workspace.data, documents.data);
+	const stepIndex = steps.indexOf(next as (typeof steps)[number]);
+	const stepLabels = {
+		posting: t`Save the job posting`,
+		resume: t`Choose a base resume`,
+		tailor: t`Tailor and review your resume`,
+		letter: t`Write a cover letter if required`,
+		answers: t`Write and review your form answers`,
+		review: t`Review readiness and record your submission`,
+	};
 	return (
-		<div className="grid items-start gap-5 @3xl:grid-cols-[minmax(0,1fr)_280px] @5xl:grid-cols-[minmax(0,1fr)_320px]">
-			{!version && (
-				<div className="grid gap-4 @3xl:col-start-1">
-					{hasApplicationSubmission(application) ? (
-						<SentDocuments application={application} disabled={submitting} variant="workspace" />
-					) : (
-						<>
-							<Preparation key={application.id} application={application} disabled={submitting} />
-							<PrepareReview key={`review:${application.id}`} application={application} disabled={submitting} />
-						</>
-					)}
+		<div>
+			<PageHeader
+				title={t`Apply`}
+				className="[&>div]:min-h-9"
+				actions={
+					application.sourceUrl && (
+						<a
+							href={application.sourceUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="inline-flex h-9 items-center gap-2 px-3.5 text-sm font-medium text-ink-2"
+						>
+							<Icon name="arrow-square-out" />
+							<Trans>Open the posting</Trans>
+						</a>
+					)
+				}
+			/>
+			{stepIndex >= 0 && !version && (
+				<div className="flex flex-wrap items-center gap-3 pt-2">
+					<div className="flex h-1 w-36 gap-1" role="img" aria-label={t`Step ${stepIndex + 1} of 6`}>
+						{steps.map((step, index) => (
+							<span
+								key={step}
+								className={cn(
+									"h-full flex-1 rounded-full",
+									index < stepIndex ? "bg-ink-3" : index === stepIndex ? "bg-ink" : "bg-line",
+								)}
+							/>
+						))}
+					</div>
+					<span className="text-[13px]/[18px] text-ink-2">
+						{t`Step ${stepIndex + 1} of 6`} · {stepLabels[steps[stepIndex] ?? "posting"]}
+					</span>
 				</div>
 			)}
-
-			<Checklist
-				application={application}
-				answerCount={
-					shown.filter((answer) =>
-						stored ? answer.answer.trim() : (writtenDrafts.get(answer.id) ?? Boolean(answer.answer.trim())),
-					).length
-				}
-				currentAnswers={currentAnswers}
-				readOnly={!!readOnlyVersion}
-				versionId={readOnlyVersion ? version?.id : undefined}
-				canSubmit={canSubmit}
-				submitting={submitting}
-				onSubmittingChange={setSubmitting}
-			/>
-
-			<div className="grid gap-4 @3xl:col-start-1">
-				{stored && !readOnlyVersion && (
-					<div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-sunken px-3.5 py-2.5 text-sm">
-						<span>
-							{recorded ? (
-								<Trans>These are the answers saved when you applied.</Trans>
-							) : (
-								<Trans>These are saved draft answers.</Trans>
-							)}
-						</span>
-						<Button
-							size="sm"
-							variant="secondary"
-							onClick={() =>
-								workspace.save({
-									answers: stored.answers.map((answer) => ({
-										...answer,
-										id: crypto.randomUUID(),
-										factIds: [],
-									})),
-								})
-							}
-						>
-							<Trans>Use these answers</Trans>
-						</Button>
+			<div className="grid items-start gap-x-10 gap-y-0 @3xl:grid-cols-[minmax(0,1fr)_320px]">
+				{!version && (
+					<div className="grid gap-0 @3xl:col-start-1">
+						{hasApplicationSubmission(application) ? (
+							<SentDocuments application={application} disabled={submitting} variant="workspace" />
+						) : (
+							<>
+								<Preparation key={application.id} application={application} disabled={submitting} />
+							</>
+						)}
 					</div>
 				)}
 
-				<div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-					<h2 id="application-answers" tabIndex={-1} className="text-base font-semibold">
+				<Checklist
+					application={application}
+					answerCount={
+						shown.filter((answer) =>
+							stored ? answer.answer.trim() : (writtenDrafts.get(answer.id) ?? Boolean(answer.answer.trim())),
+						).length
+					}
+					currentAnswers={currentAnswers}
+					readOnly={!!readOnlyVersion}
+					versionId={readOnlyVersion ? version?.id : undefined}
+					canSubmit={canSubmit}
+					submitting={submitting}
+					onSubmittingChange={setSubmitting}
+				/>
+
+				<div className="grid gap-0 @3xl:col-start-1">
+					{stored && !readOnlyVersion && (
+						<div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-sunken px-3.5 py-2.5 text-sm">
+							<span>
+								{recorded ? (
+									<Trans>These are the answers saved when you applied.</Trans>
+								) : (
+									<Trans>These are saved draft answers.</Trans>
+								)}
+							</span>
+							<Button
+								size="sm"
+								variant="secondary"
+								onClick={() =>
+									workspace.save({
+										answers: stored.answers.map((answer) => ({
+											...answer,
+											id: crypto.randomUUID(),
+											factIds: [],
+										})),
+									})
+								}
+							>
+								<Trans>Use these answers</Trans>
+							</Button>
+						</div>
+					)}
+
+					<SectionHeading
+						id="application-answers"
+						tabIndex={-1}
+						className="pt-7"
+						note={t`${answerCount} of ${shown.length} written`}
+						action={
+							!stored && (
+								<AnswerLibrary
+									company={application.company}
+									applicationId={application.id}
+									disabled={submitting || live.length >= 30}
+									onUse={(answer) =>
+										workspace.save({
+											answers: [...workspace.current().answers, { ...answer, id: crypto.randomUUID() }],
+										})
+									}
+								/>
+							)
+						}
+					>
 						<Trans>Form answers</Trans>
-					</h2>
-					<Link to="/dashboard/settings/profile" className="text-sm underline">
-						<Trans>Edit profile</Trans>
-					</Link>
+					</SectionHeading>
 					{!version &&
 						hasApplicationSubmission(application) &&
 						(reviewed ? (
@@ -278,75 +387,83 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 								<Trans>No recorded answers are available.</Trans>
 							</span>
 						))}
-				</div>
-				{!stored && (
-					<AnswerLibrary
-						company={application.company}
-						applicationId={application.id}
-						disabled={submitting || live.length >= 30}
-						onUse={(answer) =>
-							workspace.save({ answers: [...workspace.current().answers, { ...answer, id: crypto.randomUUID() }] })
-						}
-					/>
-				)}
-				{shown.length > 0 && (
-					<div>
-						<AnimatePresence initial={false}>
-							{shown.map((answer) => (
-								<CollapseRow
-									key={stored ? `${version?.id ?? sentItem?.id}:${answer.id}` : answer.id}
-									className="pb-4 last:pb-0"
-								>
-									<AnswerCard
-										answer={answer}
-										facts={facts}
-										applicationId={application.id}
-										company={application.company}
-										readOnly={stored !== undefined}
-										disabled={submitting}
-										registerDraft={registerDraft}
-										onSave={(patch, accepted) => saveAnswer(answer.id, patch, accepted)}
-										onRemove={() => removeAnswer(answer.id)}
-										unit={unit}
-										onToggleUnit={() => setUnit(unit === "words" ? "characters" : "words")}
-									/>
-								</CollapseRow>
-							))}
-						</AnimatePresence>
-					</div>
-				)}
 
-				{!stored && (
-					<>
-						{shown.length > 0 && (
-							<AiNotice
-								needs={<Trans>Drafting answers needs AI.</Trans>}
-								works={<Trans>Your application profile and the checklist work without it.</Trans>}
-							/>
-						)}
-						<button
-							type="button"
-							disabled={submitting || live.length >= 30}
-							onClick={() =>
-								workspace.save({
-									answers: [
-										...workspace.current().answers,
-										{ id: crypto.randomUUID(), question: "", answer: "", factIds: [] },
-									],
-								})
-							}
-							className="touch-target relative flex h-9 items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-2 text-[13px] font-medium text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink"
-						>
-							<Icon name="plus" size={16} />
-							<Trans>Add a question from the form</Trans>
-						</button>
-						{live.length >= 30 && (
-							<p className="text-xs text-ink-3">
-								<Trans>You can keep up to 30 application questions.</Trans>
-							</p>
-						)}
-					</>
-				)}
+					{shown.length > 0 && (
+						<div>
+							<AnimatePresence initial={false}>
+								{shown.map((answer, index) => (
+									<CollapseRow
+										key={stored ? `${version?.id ?? sentItem?.id}:${answer.id}` : answer.id}
+										className={index === 0 ? "[&>section]:pt-1.5" : ""}
+									>
+										<AnswerCard
+											answer={answer}
+											facts={facts}
+											applicationId={application.id}
+											company={application.company}
+											readOnly={stored !== undefined}
+											disabled={submitting}
+											registerDraft={registerDraft}
+											onSave={(patch, accepted) => saveAnswer(answer.id, patch, accepted)}
+											onRemove={() => removeAnswer(answer.id)}
+											unit={unit}
+											onToggleUnit={() => setUnit(unit === "words" ? "characters" : "words")}
+										/>
+									</CollapseRow>
+								))}
+							</AnimatePresence>
+						</div>
+					)}
+
+					{!stored && (
+						<>
+							{shown.length > 0 && (
+								<AiNotice
+									needs={<Trans>Drafting answers needs AI.</Trans>}
+									works={<Trans>Your application profile and the checklist work without it.</Trans>}
+								/>
+							)}
+							{answerCount === 0 && addQuestion}
+							{live.length >= 30 && (
+								<p className="text-xs text-ink-3">
+									<Trans>You can keep up to 30 application questions.</Trans>
+								</p>
+							)}
+						</>
+					)}
+					{answerCount > 0 && (
+						<div className="flex flex-wrap items-center gap-2 pt-3.5">
+							{!stored && addQuestion}
+							<span className="flex-1" />
+							<Button variant="ghost" size="sm" disabled={answerCount === 0} onClick={() => void copy()}>
+								<Icon name="copy" size={16} />
+								<Trans>Copy answers</Trans>
+							</Button>
+							<DropdownMenu>
+								<DropdownMenuTrigger render={<Button variant="ghost" size="sm" disabled={answerCount === 0} />}>
+									<Icon name="download-simple" size={16} />
+									<Trans>Download</Trans>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<DropdownMenuItem onClick={() => download("md")}>
+										<Trans>Markdown (.md)</Trans>
+									</DropdownMenuItem>
+									<DropdownMenuItem onClick={() => download("txt")}>
+										<Trans>Plain text (.txt)</Trans>
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+					)}
+					{!version && (
+						<div className="mt-5">
+							<ApplicationPacketPanel application={application} />
+							<Link to="/dashboard/settings/profile" className="mt-2 inline-block text-[13px] text-ink-3 underline">
+								<Trans>Edit profile</Trans>
+							</Link>
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);
@@ -505,10 +622,10 @@ function AnswerCard({
 	const stale = proposal !== null && text !== proposal.before.text;
 
 	return (
-		<section className="grid gap-3">
+		<section className="grid gap-2 border-b border-line pt-3.5 pb-4">
 			<DraftRecovery {...textDraft} />
 			<DraftRecovery {...questionDraft} />
-			<div className="flex items-start gap-3">
+			<div className="flex items-center gap-2">
 				{editingQuestion && !readOnly ? (
 					<Textarea
 						// What people paste or write here can be in any language: its own text sets the direction.
@@ -535,13 +652,11 @@ function AnswerCard({
 							flushQuestion();
 							if (question.trim()) setEditingQuestion(false);
 						}}
-						className="field-sizing-content min-h-0 w-full min-w-0 flex-1 resize-none px-2.5 py-1.5 text-[15px] leading-[22px] font-semibold"
+						className="field-sizing-content min-h-0 w-full min-w-0 flex-1 resize-none px-2.5 py-1.5 text-[15px] leading-[22px] font-medium"
 					/>
 				) : (
 					// Same box as the field it replaces: swapping must not move Draft out from under the pointer.
-					<h2 className="min-w-0 flex-1 rounded-md border border-transparent px-2.5 py-1.5 text-[15px] leading-[22px] font-semibold">
-						{question}
-					</h2>
+					<h2 className="min-w-0 flex-1 text-[15px] leading-[22px] font-medium">{question}</h2>
 				)}
 				{/* Forms limit words or characters; the count switches between them, for every question at once. */}
 				<Tooltip>
@@ -551,7 +666,7 @@ function AnswerCard({
 								type="button"
 								onClick={onToggleUnit}
 								className={cn(
-									"touch-target relative shrink-0 rounded-sm font-mono text-xs leading-[22px] font-medium text-ink-2 transition-colors duration-quick hover:text-ink",
+									"touch-target relative shrink-0 rounded-sm font-mono text-xs leading-4 font-medium text-ink-3 transition-colors duration-quick hover:text-ink",
 									over && "text-warn-text hover:text-warn-text",
 								)}
 							/>
@@ -570,29 +685,56 @@ function AnswerCard({
 					<TooltipContent>{unit === "words" ? t`Count characters` : t`Count words`}</TooltipContent>
 				</Tooltip>
 				{!readOnly && (
-					<DropdownMenu>
-						<DropdownMenuTrigger
-							render={
-								<IconButton
-									icon="dots-three"
-									label={t`Question options`}
-									disabled={disabled}
-									size="icon-sm"
-									className="-my-1 -me-1.5 shrink-0 text-ink-2"
+					<AnswerLibrary
+						company={company}
+						applicationId={applicationId}
+						current={{ ...answer, question, answer: text }}
+						disabled={disabled}
+						renderActions={(open) => (
+							<DropdownMenu>
+								<DropdownMenuTrigger
+									render={
+										<IconButton
+											icon="dots-three"
+											label={t`Question options`}
+											disabled={disabled}
+											size="icon-sm"
+											iconSize={16}
+											className="shrink-0 text-ink-2"
+										/>
+									}
 								/>
-							}
-						/>
-						<DropdownMenuContent align="end" finalFocus={questionField}>
-							<DropdownMenuItem onClick={() => setEditingQuestion(true)}>
-								<Icon name="pencil-simple" size={18} />
-								<Trans>Edit question</Trans>
-							</DropdownMenuItem>
-							<DropdownMenuItem variant="destructive" onClick={onRemove}>
-								<Icon name="trash" size={18} />
-								<Trans>Remove question</Trans>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+								<DropdownMenuContent align="end" finalFocus={questionField}>
+									<DropdownMenuItem onClick={() => setEditingQuestion(true)}>
+										<Icon name="pencil-simple" size={18} />
+										<Trans>Edit question</Trans>
+									</DropdownMenuItem>
+									<DropdownMenuItem
+										disabled={disabled || !question.trim() || !text.trim()}
+										onClick={() => open("save")}
+									>
+										<Icon name="bookmark-simple" size={18} />
+										<Trans>Save for other applications</Trans>
+									</DropdownMenuItem>
+									<DropdownMenuItem disabled={disabled} onClick={() => open("list")}>
+										<Icon name="books" size={18} />
+										<Trans>Use a saved answer</Trans>
+									</DropdownMenuItem>
+									<DropdownMenuItem variant="destructive" onClick={onRemove}>
+										<Icon name="trash" size={18} />
+										<Trans>Remove question</Trans>
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						)}
+						onUse={(value) => {
+							setText(value.answer);
+							setQuestion(value.question);
+							textDraft.accept();
+							questionDraft.accept();
+							onSave(value);
+						}}
+					/>
 				)}
 			</div>
 
@@ -671,47 +813,36 @@ function AnswerCard({
 						placeholder={t`Write your answer, or draft one from your Knowledge.`}
 						onChange={(event) => setText(event.target.value)}
 						onBlur={flushAnswer}
-						className="min-h-[88px] px-3.5 py-3 text-sm leading-[22px] pointer-coarse:text-base"
+						className="min-h-16 px-3 py-2.5 text-sm leading-[22px] pointer-coarse:text-base"
 					/>
 				)}
 			</Swap>
 
-			{!readOnly && (
-				<AnswerLibrary
-					company={company}
-					applicationId={applicationId}
-					current={{ ...answer, question, answer: text }}
-					disabled={disabled}
-					onUse={(value) => {
-						setText(value.answer);
-						setQuestion(value.question);
-						textDraft.accept();
-						questionDraft.accept();
-						onSave(value);
-					}}
-				/>
-			)}
-			<div className="flex items-start gap-3">
-				{backing.length > 0 && (
-					<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
-						<span className="me-1 text-xs text-ink-3">
-							<Trans>Backed by</Trans>
-						</span>
-						{backing.map((fact) => (
-							<Tooltip key={fact.id}>
-								<TooltipTrigger
-									render={
-										<span className="inline-flex h-6 items-center gap-1 rounded-sm border border-line px-2 text-xs text-ink-2" />
-									}
-								>
-									<Icon name="link-simple-horizontal" size={14} />
-									{shortLabel(fact.text)}
-								</TooltipTrigger>
-								<TooltipContent>{fact.text}</TooltipContent>
-							</Tooltip>
-						))}
-					</div>
-				)}
+			<div className="flex items-center gap-3">
+				<Tooltip>
+					<TooltipTrigger
+						render={<span className="flex min-w-0 flex-1 items-center gap-1.5 text-[13px]/[18px] text-ink-3" />}
+					>
+						{backing.length ? (
+							<>
+								<Icon name="link-simple-horizontal" size={14} />
+								{plural(backing.length, {
+									one: "Backed by # fact in your Knowledge",
+									other: "Backed by # facts in your Knowledge",
+								})}
+							</>
+						) : (
+							<Trans>No facts linked yet</Trans>
+						)}
+					</TooltipTrigger>
+					{backing.length > 0 && (
+						<TooltipContent className="grid max-w-sm gap-1">
+							{backing.map((fact) => (
+								<span key={fact.id}>{fact.text}</span>
+							))}
+						</TooltipContent>
+					)}
+				</Tooltip>
 				{!readOnly && !proposal && provider && (
 					<Button
 						size="sm"
@@ -840,9 +971,18 @@ function Checklist({
 	const workspace = useWorkspace(application.id);
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const submit = useMutation(orpc.career.submitApplication.mutationOptions());
+	const time = useCareerTime();
+	const now = useNow();
+	const selectDocument = useMutation({
+		...orpc.applications.update.mutationOptions(),
+		onSuccess: () => invalidate(application.id),
+		onError: (error) => toastError(error, t`Couldn't save that change. Try again.`),
+	});
+
 	const review = applicationReviewChecks(application, workspace.data);
 	const { submitted, checklist: ticked } = review;
-	const labels = checklistItems();
+	const labels = [...checklistItems()];
+	labels[3] = t`Submit on ${application.company}'s application page yourself`;
 	const recordedVersion =
 		!readOnly || (versionId !== undefined && versionId === workspace.data.submissionReview?.answerVersionId);
 	const items = recordedVersion ? review.indices.map((index) => ({ index, label: labels[index] })) : [];
@@ -863,30 +1003,6 @@ function Checklist({
 	const toggle = (index: number, on: boolean) => {
 		const current = workspace.current().checklist;
 		workspace.save({ checklist: on ? [...new Set([...current, index])] : current.filter((item) => item !== index) });
-	};
-
-	const copy = async () => {
-		const written = currentAnswers().filter((answer) => answer.answer.trim());
-		await navigator.clipboard.writeText(written.map((answer) => `${answer.question}\n${answer.answer}`).join("\n\n"));
-		toast.add({ description: t`Answers copied` });
-	};
-
-	const download = (format: "md" | "txt") => {
-		const written = currentAnswers().filter((answer) => answer.answer.trim());
-		const body =
-			format === "md"
-				? [
-						`# ${application.role} · ${application.company}`,
-						...written.map((answer) => `## ${answer.question}\n\n${answer.answer}`),
-					].join("\n\n")
-				: [
-						`${application.role} · ${application.company}`,
-						...written.map((answer) => `${answer.question}\n\n${answer.answer}`),
-					].join("\n\n\n");
-		downloadWithAnchor(
-			new Blob([`${body}\n`], { type: format === "md" ? "text/markdown" : "text/plain" }),
-			generateFilename(`${application.company} answers`, format),
-		);
 	};
 
 	const markApplied = async () => {
@@ -919,11 +1035,11 @@ function Checklist({
 		<aside
 			id="application-readiness"
 			tabIndex={-1}
-			className="grid gap-3.5 rounded-xl border border-line bg-surface p-4 @3xl:sticky @3xl:top-6 @3xl:col-start-2 @3xl:row-span-2 @3xl:row-start-1 @3xl:self-start"
+			className="mt-6 grid gap-3.5 rounded-xl border border-line bg-surface p-5 @3xl:sticky @3xl:top-6 @3xl:col-start-2 @3xl:row-span-2 @3xl:row-start-1 @3xl:self-start"
 		>
 			<div className="flex items-baseline justify-between gap-3">
-				<h2 className="text-sm font-semibold">
-					<Trans>Review checks</Trans>
+				<h2 className="flex-1 t-label">
+					<Trans>Before you send</Trans>
 				</h2>
 				{!submitted && !readOnly && (
 					<span className="text-xs text-ink-2 tabular-nums">{t`${ph({ done: i18n.number(done) })} of ${i18n.number(items.length)}`}</span>
@@ -932,7 +1048,7 @@ function Checklist({
 			<ul className="grid gap-2.5">
 				{items.map(({ label, index }) => (
 					<li key={label}>
-						<label className="flex cursor-pointer gap-2.5 text-[13px] leading-[19px]">
+						<label className="flex cursor-pointer gap-2.5 text-[13px] leading-[18px]">
 							<Checkbox
 								className="mt-px"
 								checked={ticked.includes(index)}
@@ -949,7 +1065,49 @@ function Checklist({
 				))}
 			</ul>
 			{application.status === "saved" && !submitted && !readOnly && (
-				<div className="grid gap-2 border-t border-line pt-3.5">
+				<div className="grid border-t border-line pt-3.5">
+					<p className="pb-1 text-[13px]/[18px] text-ink-2">
+						<Trans>Recorded as sent</Trans>
+					</p>
+					{(["resume", "letter"] as const).map((kind) => (
+						<div key={kind} className="flex h-[30px] items-center gap-2">
+							<Icon name={kind === "resume" ? "file-text" : "envelope-simple"} size={16} className="text-ink-3" />
+							<label className="sr-only" htmlFor={`record-${application.id}-${kind}`}>
+								{kind === "resume" ? t`Resume recorded as sent` : t`Letter recorded as sent`}
+							</label>
+							<Combobox
+								id={`record-${application.id}-${kind}`}
+								value={kind === "resume" ? application.resumeId : application.coverLetterId}
+								options={(documents ?? [])
+									.filter((document) => document.type === kind)
+									.map((document) => ({ value: document.id, label: document.name }))}
+								placeholder={t`None selected`}
+								disabled={submitting || selectDocument.isPending}
+								onValueChange={(value) =>
+									selectDocument.mutate({
+										id: application.id,
+										...(kind === "resume" ? { resumeId: value } : { coverLetterId: value }),
+									})
+								}
+								className="h-[30px] min-w-0 flex-1 border-transparent bg-transparent p-0 text-[13px]/[18px] font-normal shadow-none"
+							/>
+						</div>
+					))}
+					<p className="flex h-[30px] items-center gap-2 text-[13px]/[18px]">
+						<Icon name="pencil-line" size={16} className="text-ink-3" />
+						<span className="flex-1">
+							{plural(answerCount, { one: "# written answer", other: "# written answers" })}
+						</span>
+					</p>
+					<p className="flex h-[30px] items-center gap-2 text-[13px]/[18px]">
+						<Icon name="calendar-blank" size={16} className="text-ink-3" />
+						<span className="flex-1">{t`Today, ${time.date(now)}`}</span>
+					</p>
+				</div>
+			)}
+
+			{application.status === "saved" && !submitted && !readOnly && (
+				<div className="grid gap-3.5">
 					<Button
 						className="w-full"
 						variant="primary"
@@ -960,8 +1118,11 @@ function Checklist({
 						<Trans>Mark as applied</Trans>
 					</Button>
 					{canSubmit ? (
-						<p className="text-xs leading-[17px] text-ink-3">
-							<Trans>Records {records.join(" · ")} as sent. You submit on the employer's site yourself.</Trans>
+						<p className="text-xs/4 text-ink-3">
+							<Trans>These versions are kept as sent and never change. Your drafts stay editable.</Trans>
+							<span className="sr-only">
+								<Trans>Records {records.join(" · ")} as sent. You submit on the employer's site yourself.</Trans>
+							</span>
 						</p>
 					) : (
 						<p role="alert" className="text-xs text-danger-text">
@@ -970,28 +1131,6 @@ function Checklist({
 							</Trans>
 						</p>
 					)}
-				</div>
-			)}
-			{answerCount > 0 && (
-				<div className="flex flex-wrap gap-1.5 border-t border-line pt-3.5">
-					<Button variant="secondary" size="sm" disabled={answerCount === 0} onClick={() => void copy()}>
-						<Icon name="copy" size={16} />
-						<Trans>Copy answers</Trans>
-					</Button>
-					<DropdownMenu>
-						<DropdownMenuTrigger render={<Button variant="ghost" size="sm" disabled={answerCount === 0} />}>
-							<Icon name="download-simple" size={16} />
-							<Trans>Download</Trans>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							<DropdownMenuItem onClick={() => download("md")}>
-								<Trans>Markdown (.md)</Trans>
-							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => download("txt")}>
-								<Trans>Plain text (.txt)</Trans>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
 				</div>
 			)}
 			{(submitted || readOnly) && (

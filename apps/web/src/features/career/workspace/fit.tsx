@@ -10,13 +10,16 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
-import { GenerateNotice, Working, workingSteps } from "../shared";
-import { ListRow } from "@/components/calm/list-row";
+import { useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
+import { List, ListRow } from "@/components/calm/list-row";
+import { PageHeader } from "@/components/calm/page";
+import { SectionHeading } from "@/components/calm/section-heading";
 import { useDialogStore } from "@/dialogs/store";
 import { SetUpAi } from "@/features/ai/set-up-ai";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -39,8 +42,9 @@ export function AiNotice({
 }
 
 /** W1–W3: each requirement from the posting against the user's evidence, with gaps closed in place. */
-export function FitTab({ application, version, go }: WorkspaceTabProps) {
+export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 	const navigate = useNavigate();
+	const time = useCareerTime();
 	const proposing = useRef<AbortController | null>(null);
 	const proposalKey = JSON.stringify([getAccountGeneration(), application.id]);
 	const [proposalOwner, setProposalOwner] = useState<string | null>(null);
@@ -110,6 +114,7 @@ export function FitTab({ application, version, go }: WorkspaceTabProps) {
 	if (saved.isPending)
 		return (
 			<div className="grid gap-4">
+				<PageHeader title={t`Fit`} />
 				<Skeleton className="h-14 w-2/3" />
 				<Skeleton className="h-80 rounded-xl" />
 			</div>
@@ -122,94 +127,97 @@ export function FitTab({ application, version, go }: WorkspaceTabProps) {
 
 	if (!item)
 		return (
-			<EmptyState
-				title={<Trans>Check this role against your evidence</Trans>}
-				description={
-					<Trans>
-						Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as
-						missing evidence, never missing ability.
-					</Trans>
-				}
-				action={
-					provider ? (
-						<Button disabled={!hasEvidence || evidenceState.isPending} loading={generate.isPending} onClick={check}>
-							<Icon name="list-checks" size={18} />
-							{generate.isPending ? <Working steps={workingSteps("fit")} /> : <Trans>Check fit</Trans>}
-						</Button>
-					) : undefined
-				}
-			>
-				<AiNotice
-					needs={<Trans>A fit check needs AI.</Trans>}
-					works={<Trans>The posting's terms, your resume and your Knowledge work without it.</Trans>}
-				/>
-				<GenerateNotice generate={generate} onRetry={check} className="max-w-[420px]" />
-				{evidenceState.isError && (
-					<div role="alert">
-						<p>
-							<Trans>Couldn't check your evidence.</Trans>
-						</p>
-						<Button onClick={() => void evidenceState.refetch()}>
-							<Trans>Retry</Trans>
-						</Button>
-					</div>
-				)}
-				{!hasEvidence && (
-					<div className="grid gap-2 text-sm">
-						<p>
-							<Trans>
-								Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request.
-							</Trans>
-						</p>
-						<Link to="/dashboard/career/knowledge">
-							<Trans>Add facts</Trans>
-						</Link>
-						<label htmlFor="fit-evidence">
-							<Trans>Resume to use as evidence</Trans>
-						</label>
-						<select
-							id="fit-evidence"
-							className="rounded border border-line bg-surface p-2"
-							value={resumeChoice}
-							onChange={(event) => setResumeChoice(event.target.value)}
-						>
-							<option value="">{t`Choose a resume`}</option>
-							{documents.data
-								?.filter((d) => d.type === "resume")
-								.map((d) => (
-									<option key={d.id} value={d.id}>
-										{d.name}
-									</option>
-								))}
-						</select>
-						<Button
-							type="button"
-							size="sm"
-							disabled={!resumeChoice || linkResume.isPending}
-							onClick={() =>
-								linkResume.mutate(
-									{ id: application.id, resumeId: resumeChoice },
-									{
-										onSuccess: () => {
-											setEvidenceFailure(false);
-											void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
-											void queryClient.invalidateQueries({ queryKey: orpc.career.fitEvidence.key() });
-										},
-										onError: () => setEvidenceFailure(true),
-									},
-								)
-							}
-						>
-							<Trans>Use this resume as evidence</Trans>
-						</Button>
-						{evidenceFailure && (
-							<p role="alert">
-								<Trans>Couldn't link the resume. Try again.</Trans>
+			<>
+				<PageHeader title={t`Fit`} />
+				<EmptyState
+					title={<Trans>Check this role against your evidence</Trans>}
+					description={
+						<Trans>
+							Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as
+							missing evidence, never missing ability.
+						</Trans>
+					}
+					action={
+						provider ? (
+							<Button disabled={!hasEvidence || evidenceState.isPending} loading={generate.isPending} onClick={check}>
+								<Icon name="list-checks" size={18} />
+								{generate.isPending ? <Working steps={workingSteps("fit")} /> : <Trans>Check fit</Trans>}
+							</Button>
+						) : undefined
+					}
+				>
+					<AiNotice
+						needs={<Trans>A fit check needs AI.</Trans>}
+						works={<Trans>The posting's terms, your resume and your Knowledge work without it.</Trans>}
+					/>
+					<GenerateNotice generate={generate} onRetry={check} className="max-w-[420px]" />
+					{evidenceState.isError && (
+						<div role="alert">
+							<p>
+								<Trans>Couldn't check your evidence.</Trans>
 							</p>
-						)}
-					</div>
-				)}
-			</EmptyState>
+							<Button onClick={() => void evidenceState.refetch()}>
+								<Trans>Retry</Trans>
+							</Button>
+						</div>
+					)}
+					{!hasEvidence && (
+						<div className="grid gap-2 text-sm">
+							<p>
+								<Trans>
+									Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request.
+								</Trans>
+							</p>
+							<Link to="/dashboard/career/knowledge">
+								<Trans>Add facts</Trans>
+							</Link>
+							<label htmlFor="fit-evidence">
+								<Trans>Resume to use as evidence</Trans>
+							</label>
+							<select
+								id="fit-evidence"
+								className="rounded border border-line bg-surface p-2"
+								value={resumeChoice}
+								onChange={(event) => setResumeChoice(event.target.value)}
+							>
+								<option value="">{t`Choose a resume`}</option>
+								{documents.data
+									?.filter((d) => d.type === "resume")
+									.map((d) => (
+										<option key={d.id} value={d.id}>
+											{d.name}
+										</option>
+									))}
+							</select>
+							<Button
+								type="button"
+								size="sm"
+								disabled={!resumeChoice || linkResume.isPending}
+								onClick={() =>
+									linkResume.mutate(
+										{ id: application.id, resumeId: resumeChoice },
+										{
+											onSuccess: () => {
+												setEvidenceFailure(false);
+												void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
+												void queryClient.invalidateQueries({ queryKey: orpc.career.fitEvidence.key() });
+											},
+											onError: () => setEvidenceFailure(true),
+										},
+									)
+								}
+							>
+								<Trans>Use this resume as evidence</Trans>
+							</Button>
+							{evidenceFailure && (
+								<p role="alert">
+									<Trans>Couldn't link the resume. Try again.</Trans>
+								</p>
+							)}
+						</div>
+					)}
+				</EmptyState>
+			</>
 		);
 
 	const evidence = readOnly ? {} : workspace.data.evidence;
@@ -249,45 +257,131 @@ export function FitTab({ application, version, go }: WorkspaceTabProps) {
 		});
 	};
 
-	return (
-		<div className="grid gap-5">
-			<div className={cn("flex flex-wrap items-center justify-between gap-3", expanded && "-mt-4")}>
-				<p className="flex flex-wrap items-baseline gap-3">
-					<span
-						className={expanded ? "text-sm" : "t-big-number"}
-					>{t`${supported + partial} of ${item.data.requirements.length}`}</span>
-					<span className="text-ink-2">
-						<Trans>requirements have evidence</Trans>
-					</span>
-				</p>
-				{!readOnly && application.status === "interview" && missing + partial > 0 && (
-					<Button className="sm:absolute sm:end-0 sm:top-0" onClick={() => go("prepare")}>
-						<Icon name="chalkboard-teacher" />
-						{plural(missing + partial, {
-							one: "Prepare answers for the # gap",
-							other: "Prepare answers for the # gaps",
-						})}
-					</Button>
-				)}
-			</div>
-			{!expanded && (
-				<p className="flex flex-wrap gap-5 text-[13px] text-ink-3">
-					<span>{plural(supported, { one: "# supported", other: "# supported" })}</span>
-					<span>{plural(partial, { one: "# partly supported", other: "# partly supported" })}</span>
-					<span>{plural(missing, { one: "# with no evidence yet", other: "# with no evidence yet" })}</span>
-				</p>
+	const resume = documents.data?.find((document) => document.id === application.resumeId);
+	const checked =
+		time.date(item.createdAt) === time.date(now) ? t`today ${time.time(item.createdAt)}` : time.when(item.createdAt);
+	const provenance = (
+		<>
+			<Trans>
+				The {application.company} posting · {item.evidence.factIds.length} Knowledge facts used · checked {checked}
+			</Trans>
+			{resume && (
+				<>
+					{" "}
+					·{" "}
+					<Trans>
+						Current resume:{" "}
+						<Link to="/builder/$resumeId" params={{ resumeId: resume.id }} className="font-medium text-ink-2">
+							{resume.name}
+						</Link>
+					</Trans>
+				</>
 			)}
-			<p className="text-xs text-ink-3">{item.data.summary}</p>
-			{item.outdated && !readOnly && (
-				<AiNotice
-					needs={<Trans>A fit check needs AI.</Trans>}
-					works={<Trans>The posting's terms, your resume and your Knowledge work without it.</Trans>}
-				/>
-			)}
-			{!readOnly && <GenerateNotice generate={generate} onRetry={check} className="-mt-2 w-fit" />}
+		</>
+	);
 
-			<div className={cn("grid items-start gap-8", expanded && "@3xl:grid-cols-[minmax(0,1fr)_240px]")}>
+	return (
+		<div>
+			<PageHeader
+				title={t`Fit`}
+				className="[&>div]:min-h-9"
+				actions={
+					!readOnly && (
+						<>
+							{provider && (
+								<Button
+									variant="ghost"
+									disabled={!hasEvidence || evidenceState.isPending}
+									loading={generate.isPending}
+									onClick={check}
+								>
+									<Icon name="arrow-clockwise" />
+									<Trans>Check again</Trans>
+								</Button>
+							)}
+							{application.status === "interview" && missing + partial > 0 && (
+								<Button onClick={() => go("prepare")}>
+									<Icon name="chalkboard-teacher" />
+									{plural(missing + partial, {
+										one: "Prepare answers for the # gap",
+										other: "Prepare answers for the # gaps",
+									})}
+								</Button>
+							)}
+							{application.status === "saved" && (
+								<Button onClick={tailor}>
+									<Trans>Tailor the resume to this job</Trans>
+								</Button>
+							)}
+						</>
+					)
+				}
+			/>
+			{expanded ? (
+				<p className="pt-1 text-sm/5 text-ink-3">
+					{t`${supported + partial} of ${item.data.requirements.length} requirements have evidence · checked ${checked} · ${item.evidence.factIds.length} Knowledge facts used`}
+				</p>
+			) : (
+				<>
+					<p className="flex flex-wrap items-baseline gap-3 pt-5">
+						<span className="t-big-number">{t`${supported + partial} of ${item.data.requirements.length}`}</span>
+						<span className="t-body text-ink-2">
+							<Trans>requirements have evidence</Trans>
+						</span>
+					</p>
+					<p className="flex flex-wrap gap-5 pt-2.5 text-[13px]/[18px] text-ink-2">
+						<span className="inline-flex items-center gap-1.5">
+							<Icon name="check-circle" size={16} className="text-accent-text" />
+							{plural(supported, { one: "# supported", other: "# supported" })}
+						</span>
+						<span className="inline-flex items-center gap-1.5">
+							<Icon name="circle-half" size={16} className="text-warn-text" />
+							{plural(partial, { one: "# partly supported", other: "# partly supported" })}
+						</span>
+						<span className="inline-flex items-center gap-1.5">
+							<Icon name="question" size={16} className="text-ink-3" />
+							{plural(missing, { one: "# with no evidence yet", other: "# with no evidence yet" })}
+						</span>
+					</p>
+					<p className="pt-2 text-[13px]/[18px] text-ink-3">{provenance}</p>
+					<div className="flex flex-wrap gap-5 pt-2 text-[13px]/5 text-accent-text">
+						{item.data.checks.length > 0 && (
+							<button type="button" onClick={() => setExpanded(item.data.requirements[0]?.text ?? null)}>
+								<Trans>Against your requirements</Trans> ·{" "}
+								{plural(item.data.checks.filter((check) => check.met === true).length, {
+									one: "# met",
+									other: "# met",
+								})}
+								,{" "}
+								{plural(item.data.checks.filter((check) => check.met === null).length, {
+									one: "# not stated",
+									other: "# not stated",
+								})}
+							</button>
+						)}
+						{item.data.ask && (
+							<button type="button" onClick={() => setExpanded(item.data.requirements[0]?.text ?? null)}>
+								<Trans>Worth asking</Trans> · {plural(1, { one: "# question", other: "# questions" })}
+							</button>
+						)}
+					</div>
+				</>
+			)}
+			{!readOnly && (
+				<>
+					<AiNotice
+						needs={<Trans>A fit check needs AI.</Trans>}
+						works={<Trans>The posting's terms, your resume and your Knowledge work without it.</Trans>}
+					/>
+					<GenerateNotice generate={generate} onRetry={check} />
+				</>
+			)}
+
+			<div className={cn("grid items-start gap-10", expanded && "@3xl:grid-cols-[minmax(0,1fr)_272px]")}>
 				<div role="table" aria-label={t`Requirements and your evidence`} className="grid">
+					<SectionHeading className={expanded ? "pt-[22px]" : "pt-7"} note={item.data.requirements.length}>
+						<Trans>Requirements</Trans>
+					</SectionHeading>
 					{item.data.requirements.map((requirement) => {
 						const factId = added(requirement);
 						return (
@@ -330,29 +424,42 @@ export function FitTab({ application, version, go }: WorkspaceTabProps) {
 				{(item.data.checks.length > 0 || item.data.ask) && (
 					<div className={cn("grid items-start gap-8", !expanded && "@xl:grid-cols-2")}>
 						{item.data.checks.length > 0 && (
-							<section className="grid gap-2.5 border-t border-line pt-4">
-								<h3 className="t-section-title">
+							<section className="grid">
+								<SectionHeading className="pt-[22px]">
 									<Trans>Against your requirements</Trans>
-								</h3>
-								<ul className="grid gap-2">
+								</SectionHeading>
+								<List>
 									{item.data.checks.map((entry) => (
-										<li key={entry.label} className="flex gap-2 text-sm leading-[21px]">
-											<Icon
-												name={entry.met === true ? "check-circle" : entry.met === false ? "x-circle" : "question"}
-												size={18}
-												className={cn(
-													"mt-px shrink-0",
-													entry.met === true && "text-accent-text",
-													entry.met === false && "text-danger-text",
-													entry.met === null && "text-warn-text",
-												)}
-											/>
-											<span>
-												<strong className="font-semibold">{entry.label}.</strong> {entry.text}
-											</span>
-										</li>
+										<ListRow
+											key={entry.label}
+											className="min-h-[62px] [&_span.truncate]:whitespace-normal"
+											leading={
+												<Icon
+													name={entry.met === true ? "check-circle" : entry.met === false ? "x-circle" : "question"}
+													size={20}
+													className={
+														entry.met === true
+															? "text-accent-text"
+															: entry.met === false
+																? "text-danger-text"
+																: "text-warn-text"
+													}
+												/>
+											}
+											title={entry.label}
+											subtitle={entry.text}
+										/>
 									))}
-								</ul>
+								</List>
+								<p className="pt-2 text-[13px]/[18px] text-ink-3">
+									<Trans>
+										From{" "}
+										<Link to="/dashboard/career/preferences" className="font-medium text-ink-2">
+											Preferences
+										</Link>
+										. A question mark means the posting doesn't say.
+									</Trans>
+								</p>
 							</section>
 						)}
 						{item.data.ask && <WorthAsking ask={item.data.ask} applicationId={application.id} readOnly={readOnly} />}
@@ -410,7 +517,7 @@ function RequirementRow({
 						}
 						size={24}
 						className={cn(
-							"mx-2 shrink-0",
+							"shrink-0",
 							status === "supported" || status === "added"
 								? "text-accent-text"
 								: status === "partial"
@@ -420,7 +527,12 @@ function RequirementRow({
 					/>
 				}
 				title={
-					<button type="button" className="text-start" aria-expanded={editing} onClick={() => setEditing(!editing)}>
+					<button
+						type="button"
+						className="w-full text-start"
+						aria-expanded={editing}
+						onClick={() => setEditing(!editing)}
+					>
 						{requirement.text}
 					</button>
 				}
@@ -437,19 +549,29 @@ function RequirementRow({
 					</>
 				}
 				trailing={
-					canAdd ? (
-						<Button size="sm" variant="ghost" className="text-accent-text" onClick={() => setEditing(!editing)}>
-							{editing ? <Trans>Cancel</Trans> : <Trans>Add a fact</Trans>}
+					editing ? (
+						<IconButton icon="x" label={t`Close`} size="icon-sm" iconSize={16} onClick={() => setEditing(false)} />
+					) : canAdd ? (
+						<Button
+							variant="link"
+							className="h-auto p-0 text-sm/5 text-accent-text"
+							onClick={() => setEditing(!editing)}
+						>
+							<Trans>Add a fact</Trans>
 						</Button>
 					) : (
-						<Icon name="caret-right" className="text-ink-3" />
+						<Icon name="caret-right" size={18} className="text-ink-3" />
 					)
 				}
 			/>
 			{editing && (
-				<div className="grid gap-2 ps-14 pb-4">
-					<p className="text-xs text-ink-3">{from}</p>
-					<p className="text-sm text-ink-2">{evidence}</p>
+				<div className="grid gap-2 ps-[38px] pb-4">
+					{!canAdd && (
+						<>
+							<p className="text-xs text-ink-3">{from}</p>
+							<p className="text-sm text-ink-2">{evidence}</p>
+						</>
+					)}
 					{canAdd && (
 						<EvidenceEditor
 							requirement={requirement}
@@ -505,6 +627,7 @@ function EvidenceEditor({ requirement, onCancel, onSaved }: EvidenceEditorProps)
 
 	return (
 		<div className="grid w-full gap-2">
+			<label className="text-[13px]/[18px] font-medium text-ink-2">{t`What did you do that shows ${requirement.text.toLocaleLowerCase()}?`}</label>
 			<Textarea
 				// oxlint-disable-next-line jsx-a11y/no-autofocus -- opened by the user's click on Add evidence
 				autoFocus
@@ -518,8 +641,13 @@ function EvidenceEditor({ requirement, onCancel, onSaved }: EvidenceEditorProps)
 				onKeyDown={(event) => {
 					if (event.key === "Escape") onCancel();
 				}}
-				className="min-h-14 border-accent text-sm shadow-[0_0_0_3px_var(--accent-soft)]"
+				className="min-h-[68px] border-accent text-sm shadow-[0_0_0_3px_var(--accent-soft)]"
 			/>
+			<p className="text-xs/4 text-ink-3">
+				<Trans>
+					Say what you did, where and when, and what it led to. It is saved to Knowledge as a fact for all applications.
+				</Trans>
+			</p>
 			{touched && empty && (
 				<p role="alert" className="text-xs text-danger-text">
 					<Trans>Write what you did.</Trans>
@@ -545,19 +673,22 @@ function WorthAsking({ ask, applicationId, readOnly }: WorthAskingProps) {
 	const added = workspace.data.questions.some((question) => question.text === ask.text);
 
 	return (
-		<section className="grid justify-items-start gap-2.5 border-t border-line pt-4">
-			<h3 className="t-section-title">{ask.person ? t`Worth asking ${ask.person}` : t`Worth asking`}</h3>
+		<section className="grid justify-items-start gap-2.5">
+			<SectionHeading className="w-full pt-6">
+				<Trans>Worth asking</Trans>
+			</SectionHeading>
 			<p className="text-sm leading-[21px] text-ink-2">{ask.text}</p>
 			{!readOnly && (
 				<Button
 					size="sm"
 					variant="secondary"
+					className="justify-self-end"
 					disabled={added}
 					onClick={() =>
 						workspace.save({ questions: [...workspace.data.questions, { text: ask.text, origin: t`From Fit` }] })
 					}
 				>
-					<Icon name={added ? "check" : "plus"} size={16} />
+					{added && <Icon name="check" size={16} />}
 					{added ? <Trans>Added to Interview prep</Trans> : <Trans>Add to questions</Trans>}
 				</Button>
 			)}

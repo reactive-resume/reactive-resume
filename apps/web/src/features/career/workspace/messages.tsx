@@ -5,6 +5,7 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { replyPlaceholders } from "@reactive-resume/schema/applications/reply";
 import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
@@ -39,6 +40,9 @@ import { formatBonus, formatMoney } from "../offer-compare";
 import { OfferEntry } from "../offer-entry";
 import { Swap, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
+import { ListRow } from "@/components/calm/list-row";
+import { PageHeader } from "@/components/calm/page";
+import { SectionHeading } from "@/components/calm/section-heading";
 import { getCategoryLane, getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { offerHintFor, useOfferHints } from "@/features/applications/queries";
@@ -67,54 +71,140 @@ const periodLabel = (period: "year" | "month" | "hour") =>
 
 /** W15–W17: paste what the employer wrote, read it, reply, and apply the changes it implies only if you choose. */
 export function MessagesTab({ application, version, now, offerForm }: WorkspaceTabProps) {
+	const [pasting, setPasting] = useState(false);
+	const time = useCareerTime();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
 	const readOnly = version?.data.kind === "reply";
 	const reply = (readOnly ? version : latest(saved.data, "reply")) as ReplyItem | undefined;
+	const offer = application.status === "offer" ? latest(saved.data, "offer") : undefined;
 
 	if (workspace.isPending || saved.isPending)
 		return (
-			<div className="grid gap-4 @3xl:w-1/2">
+			<div className="grid gap-4">
+				<PageHeader title={t`Messages`} />
 				<Skeleton className="h-28 rounded-lg" />
 			</div>
 		);
+	const message = reply?.data.message ?? workspace.data.message;
+	const hasAside = Boolean(reply || message.trim() || offer);
 
 	return (
-		<div className="grid items-start gap-8 @3xl:grid-cols-[minmax(0,1fr)_280px]">
-			<div className="grid gap-5">
-				{!readOnly && (
-					<OfferEntry
-						application={application}
-						initialOpen={offerForm?.open ?? false}
-						{...(offerForm ? { onDone: offerForm.onDone } : {})}
-					/>
+		<div>
+			<PageHeader
+				title={t`Messages`}
+				className="[&>div]:min-h-9 [&>p]:pt-0 [&>p]:text-sm/6"
+				actions={
+					!readOnly && (
+						<Button
+							variant="ghost"
+							onClick={() => {
+								setPasting(true);
+							}}
+						>
+							<Icon name="plus" />
+							<Trans>Paste a message</Trans>
+						</Button>
+					)
+				}
+				subtitle={
+					reply
+						? t`${application.company} wrote back ${time.date(reply.createdAt)}. Nothing changes until you apply it.`
+						: offer?.data.respondBy
+							? t`Reply to the offer by ${time.format(offer.data.respondBy, { weekday: "long", day: "numeric", month: "short" })} · ${time.relative(offer.data.respondBy, now).toLocaleLowerCase(time.locale)}. You send from your own email; nothing is sent from here.`
+							: t`You send from your own email; nothing is sent from here.`
+				}
+			/>
+			{!readOnly && (
+				<AiNotice
+					needs={<Trans>Reading a message and drafting a reply need AI.</Trans>}
+					works={<Trans>Saving, writing, copying and logging work without it.</Trans>}
+				/>
+			)}
+			<div
+				className={cn(
+					"grid items-start gap-10",
+					hasAside &&
+						(application.status === "offer"
+							? "@3xl:grid-cols-[minmax(0,1fr)_264px]"
+							: "@3xl:grid-cols-[minmax(0,1fr)_304px]"),
 				)}
-				{reply && reply.data.changes.length > 0 && (
-					<ProposalCard key={reply.id} reply={reply} application={application} now={now} readOnly={readOnly} />
-				)}
-				{reply ? (
-					<ReplyCard key={reply.id} reply={reply} application={application} readOnly={readOnly} />
-				) : (
-					<PasteBox
-						key={`paste-${version?.id ?? "live"}`}
-						application={application}
-						initial={workspace.data.message}
-						readOnly={readOnly}
-						onSave={(message) => workspace.save({ message })}
-					/>
+			>
+				<div>
+					{!readOnly && offerForm?.open && (
+						<OfferEntry application={application} initialOpen onDone={offerForm.onDone} />
+					)}
+					{reply && reply.data.changes.length > 0 && (
+						<ProposalCard key={reply.id} reply={reply} application={application} now={now} readOnly={readOnly} />
+					)}
+					{reply ? (
+						<ReplyCard key={reply.id} reply={reply} application={application} readOnly={readOnly} />
+					) : (
+						<ReplyCard reply={null} application={application} readOnly={readOnly} />
+					)}
+				</div>
+				{hasAside && (
+					<aside>
+						{message.trim() && (
+							<>
+								<SectionHeading
+									className="pt-[22px]"
+									note={reply ? time.date(reply.createdAt) : undefined}
+								>{t`From ${application.company}`}</SectionHeading>
+								<p className="mt-0.5 rounded-lg bg-sunken px-3.5 py-3 text-[13px]/[18px] whitespace-pre-wrap">
+									{message}
+								</p>
+							</>
+						)}
+						{reply && (
+							<>
+								<ul className="grid pt-3">
+									{reply.data.asks.map((ask) => (
+										<li key={ask} className="flex gap-2 py-1 text-[13px]/[18px]">
+											<Icon name="check" size={16} className="shrink-0 text-accent-text" />
+											{ask}
+										</li>
+									))}
+									{reply.data.unconfirmed.map((open) => (
+										<li key={open} className="flex gap-2 py-1 text-[13px]/[18px]">
+											<Icon name="question" size={16} className="shrink-0 text-warn-text" />
+											{open}
+										</li>
+									))}
+								</ul>
+								<p className="pt-3 text-[13px]/[18px] text-ink-3">
+									<Trans>Saved with this application. Leave signatures out before reading a message.</Trans>
+								</p>
+							</>
+						)}
+						{!readOnly && offer && (
+							<ListRow
+								className="mt-5 border-t border-line"
+								leading={<Icon name="scales" size={20} className="text-ink-3" />}
+								title={t`Offer terms`}
+								subtitle={t`Saved ${time.date(offer.createdAt)} · compare in Offers`}
+								render={<Link to="/dashboard/career/offers" search={{ a: offer.id }} />}
+								caret
+							/>
+						)}
+					</aside>
 				)}
 			</div>
-			{reply && (
-				<aside>
+			<Dialog open={pasting} onOpenChange={setPasting}>
+				<DialogContent closeLabel={t`Close`}>
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Paste a message</Trans>
+						</DialogTitle>
+					</DialogHeader>
 					<PasteBox
-						key={`paste-${version?.id ?? "live"}`}
 						application={application}
-						initial={readOnly ? reply.data.message : workspace.data.message || reply.data.message}
-						readOnly={readOnly}
+						initial={workspace.data.message}
+						readOnly={false}
 						onSave={(message) => workspace.save({ message })}
 					/>
-				</aside>
-			)}
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }
@@ -169,10 +259,6 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 			</div>
 			{!readOnly && (
 				<div className="grid justify-items-start gap-2">
-					<AiNotice
-						needs={<Trans>Reading a message and drafting a reply need AI.</Trans>}
-						works={<Trans>Saving, writing, copying and logging work without it.</Trans>}
-					/>
 					<Button
 						type="button"
 						size="sm"
@@ -198,7 +284,7 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 	);
 }
 
-type ReplyCardProps = { reply: ReplyItem; application: WorkspaceTabProps["application"]; readOnly: boolean };
+type ReplyCardProps = { reply: ReplyItem | null; application: WorkspaceTabProps["application"]; readOnly: boolean };
 
 /** W16: what they're asking, what isn't confirmed, and a reply to edit and send yourself. */
 function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
@@ -217,16 +303,20 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const [logging, setLogging] = useState(false);
 	const generate = useGenerate(application.id);
 	const { provider } = useDefaultProvider();
-	const draft = useSessionDraft(`reply:${reply.id}`, reply.data.reply, (value) =>
+	const draft = useSessionDraft(`reply:${reply?.id ?? application.id}`, reply?.data.reply ?? "", (value) =>
 		typeof value === "string" && value.length <= 4000 ? value : undefined,
 	);
-	const text = readOnly ? reply.data.reply : draft.value;
+	const text = readOnly && reply ? reply.data.reply : draft.value;
 	const placeholders = replyPlaceholders(text);
 	// The employer's language is the default; this is the explicit way back to the words the user reads everything else in.
 	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
 
-	const rewrite = () =>
-		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
+	const rewrite = () => {
+		if (reply)
+			void generate
+				.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale })
+				.catch(() => undefined);
+	};
 
 	const copy = async (log = false) => {
 		if ((log && (!application.replyVersion || !text.trim())) || copying.current || account !== getAccountGeneration())
@@ -274,39 +364,25 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	};
 
 	return (
-		<section className="grid gap-3 md:p-[18px]">
-			<h2 className="text-base font-semibold">{reply.data.title}</h2>
-			{(reply.data.asks.length > 0 || reply.data.unconfirmed.length > 0) && (
-				<ul className="grid gap-1.5">
-					{reply.data.asks.map((ask) => (
-						<li key={ask} className="flex gap-2 text-sm leading-[21px]">
-							<Icon name="check" size={17} className="mt-0.5 shrink-0 text-accent-text" />
-							{ask}
-						</li>
-					))}
-					{reply.data.unconfirmed.map((open) => (
-						<li key={open} className="flex gap-2 text-sm leading-[21px]">
-							<Icon name="question" size={17} className="mt-0.5 shrink-0 text-warn-text" />
-							{open}
-						</li>
-					))}
-				</ul>
-			)}
-			{reply.data.reply && (
+		<section className="grid gap-3">
+			{(reply?.data.reply || !reply) && (
 				<>
 					<div className="grid gap-1.5">
-						<label htmlFor={`${reply.id}-reply`} className="text-xs font-medium text-ink-2">
+						<SectionHeading className={reply?.data.changes.length ? "pt-7" : "pt-[22px]"} note={t`edit before sending`}>
+							{reply?.data.changes.length ? t`Suggested reply` : t`Your reply`}
+						</SectionHeading>
+						<label htmlFor={`${reply?.id ?? application.id}-reply`} className="sr-only">
 							<Trans>Suggested reply · edit before sending</Trans>
 						</label>
 						<Textarea
 							// What people paste or write here can be in any language: its own text sets the direction.
 							dir="auto"
-							id={`${reply.id}-reply`}
+							id={`${reply?.id ?? application.id}-reply`}
 							value={text}
 							readOnly={readOnly}
 							maxLength={4000}
 							onChange={(event) => draft.setValue(event.target.value)}
-							className="min-h-[110px] px-3.5 py-3 text-sm leading-[22px] pointer-coarse:text-base"
+							className="min-h-[196px] px-3 py-2.5 text-sm leading-[22px] pointer-coarse:text-base"
 						/>
 					</div>
 					{placeholders.length > 0 && (
@@ -324,28 +400,27 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 					)}
 					<div className="flex flex-wrap items-center gap-2">
 						<Button
-							variant={reply.data.changes.length > 0 && !reply.data.applied ? "secondary" : "primary"}
-							size="sm"
+							variant={(reply?.data.changes.length ?? 0) > 0 && !reply?.data.applied ? "secondary" : "primary"}
 							onClick={() => void copy()}
 						>
-							<Icon name="copy" size={16} />
+							<Icon name="copy" size={18} />
 							<Trans>Copy reply</Trans>
 						</Button>
 						{!readOnly && application.status !== "saved" && application.status !== "closed" && (
 							<Button
 								variant="secondary"
-								size="sm"
 								loading={logging}
 								disabled={!application.replyVersion || !text.trim()}
 								onClick={() => void copy(true)}
 							>
+								<Icon name="check" size={18} />
 								<Trans>Copy and log as replied</Trans>
 							</Button>
 						)}
 						<span className="text-xs text-ink-3">
 							<Trans>You send it from your own email.</Trans>
 						</span>
-						{!readOnly && provider && (
+						{!readOnly && provider && reply && (
 							<Button variant="ghost" size="sm" className="ms-auto" loading={generate.isPending} onClick={rewrite}>
 								<Trans>Write a new reply in {languageName}</Trans>
 							</Button>
@@ -627,10 +702,9 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	};
 
 	return (
-		<aside className={cn("grid gap-4", applied || readOnly ? "border-line" : "border-info-text")}>
-			<div className="flex items-center gap-2">
-				<Icon name="list-checks" size={18} className="text-info-text" />
-				<h2 className="flex-1 text-sm font-semibold">
+		<section className="grid gap-0">
+			<div className="flex items-center gap-2 pt-[22px] pb-2.5">
+				<h2 className="flex-1 t-section-title">
 					<Trans>Proposed changes</Trans>
 				</h2>
 				<span className="text-xs text-ink-3">
@@ -642,7 +716,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				</span>
 			</div>
 
-			<ul className="grid gap-2">
+			<ul className="grid">
 				{changes.map((change, index) => {
 					const { title, detail } = describe(change, index);
 					const isFixed = fixed(index);
@@ -703,7 +777,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 						</p>
 					) : (
 						<Button
-							className="h-10 w-full"
+							className="mt-4 justify-self-start"
 							disabled={count === 0}
 							loading={apply.isPending}
 							onClick={() => void onApply()}
@@ -732,6 +806,6 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</aside>
+		</section>
 	);
 }

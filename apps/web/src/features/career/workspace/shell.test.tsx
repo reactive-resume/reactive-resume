@@ -8,7 +8,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
+import { EMPTY_WORKSPACE, offerTermsSchema } from "@reactive-resume/schema/career";
 import { Workspace } from "./shell";
 
 const api = vi.hoisted(() => ({
@@ -250,7 +250,7 @@ it("requires initial workspace data before exposing edits, with recovery after a
 		screen.queryByRole("checkbox", { name: "Review the selected resume and cover letter in their editors." }),
 	).toBeNull();
 	expect(
-		screen.getByRole("checkbox", { name: "Check every claim, date and result against your experience." }),
+		screen.getByRole("checkbox", { name: "Check every claim, date and result against your experience" }),
 	).not.toBeChecked();
 	expect(api.save).not.toHaveBeenCalled();
 });
@@ -283,7 +283,9 @@ it("explains a missing linked document during loading and offers retry after fai
 	const details = within(screen.getByRole("region", { name: "Application preparation" }));
 	expect(await details.findByRole("alert")).toHaveTextContent("Linked documents couldn't be loaded");
 	const retry = await details.findByRole("button", { name: "Try again" });
-	api.documents.mockResolvedValue([{ id: "linked-resume", type: "resume", name: "Harbor resume" }]);
+	api.documents.mockResolvedValue([
+		{ id: "linked-resume", type: "resume", name: "Harbor resume", editedAt: new Date("2026-11-07T09:00:00Z") },
+	]);
 	fireEvent.click(retry);
 	await waitFor(() => expect(screen.getByRole("combobox", { name: "Resume" })).toHaveTextContent("Harbor resume"));
 });
@@ -375,4 +377,25 @@ it("keeps the offer as the overview's next step when an interview is still on th
 	});
 	expect(await screen.findByRole("link", { name: "Compare offers" })).toBeTruthy();
 	expect(screen.queryByRole("heading", { name: "Technical interview" })).toBeNull();
+});
+
+it("shows the current offer deadline in the rail and clears an older deadline when newer terms omit it", async () => {
+	const dated = archive({
+		kind: "offer",
+		...offerTermsSchema.parse({
+			currency: "EUR",
+			period: "year",
+			base: 95000,
+			variable: null,
+			respondBy: "2030-01-04T18:00:00Z",
+		}),
+	});
+	api.saved.mockResolvedValue([dated]);
+	const { client } = mount(undefined, { application: { status: "offer" } });
+	expect(await screen.findByText("Offer · reply by Fri, Jan 4")).toBeTruthy();
+	if (dated.data.kind !== "offer") throw new Error("Missing offer fixture");
+	act(() =>
+		client.setQueryData(["saved"], [{ ...dated, id: "newer-offer", data: { ...dated.data, respondBy: null } }, dated]),
+	);
+	await waitFor(() => expect(screen.queryByText(/Offer · reply by/)).toBeNull());
 });

@@ -571,7 +571,7 @@ it("keeps one editable Debrief form after returning from a read-only saved revie
 	review.evidence.factIds = ["fact-123"];
 	api.data.savedItems = [review];
 	const view = mount(<DebriefTab {...props} version={review} />);
-	expect(screen.getByRole("heading", { name: "Earlier round" })).toBeTruthy();
+	expect(screen.getByText("Earlier round")).toBeTruthy();
 	const archivedTask = screen.getByRole("checkbox", { name: /Practise explaining the result/ });
 	expect(archivedTask).toHaveAttribute("aria-disabled", "true");
 	fireEvent.click(archivedTask);
@@ -583,7 +583,7 @@ it("keeps one editable Debrief form after returning from a read-only saved revie
 	view.rerender(<DebriefTab {...props} />);
 	expect(screen.getAllByRole("textbox", { name: "What did they ask?" })).toHaveLength(1);
 	expect(screen.getByRole("textbox", { name: "What did they ask?" })).not.toHaveAttribute("readonly");
-	expect(screen.getAllByRole("button", { name: "Review my answer" })).toHaveLength(1);
+	expect(screen.getAllByRole("button", { name: "Review again" })).toHaveLength(1);
 });
 
 it("falls back to All when deleting the final item in a selected Saved category", async () => {
@@ -595,7 +595,7 @@ it("falls back to All when deleting the final item in a selected Saved category"
 	fireEvent.click(screen.getByRole("button", { name: "Reply" }));
 	fireEvent.click(screen.getByRole("button", { name: "Delete" }));
 	expect(await screen.findByRole("button", { name: "Sent answers" })).toBeTruthy();
-	expect(screen.getByRole("button", { name: "All" })).toHaveAttribute("aria-pressed", "true");
+	expect(screen.getByRole("button", { name: /^All/ })).toHaveAttribute("aria-pressed", "true");
 });
 
 it("does not play a delayed spoken question after leaving Practise", async () => {
@@ -643,7 +643,9 @@ it("keeps Saved offer provenance neutral", async () => {
 		}),
 	];
 	mount(<SavedTab {...props} />);
-	expect(await screen.findByText("Library items for Harbor, newest first.")).toBeTruthy();
+	expect(
+		await screen.findByText("What you saved while working on Harbor. Each opens read-only in the place that made it."),
+	).toBeTruthy();
 	expect(screen.queryByText(/coach wrote/)).toBeNull();
 	expect(screen.queryByText(/used the message/)).toBeNull();
 	expect(screen.getByRole("link", { name: "Open in Offers" })).toBeTruthy();
@@ -651,6 +653,7 @@ it("keeps Saved offer provenance neutral", async () => {
 
 it("keeps an unacknowledged message across pagehide and requires review after reopening against newer server state", async () => {
 	const view = mount(<MessagesTab {...props} />);
+	fireEvent.click(screen.getByRole("button", { name: "Paste a message" }));
 	const field = await screen.findByRole("textbox", { name: `Paste a message from ${props.application.company}` });
 	fireEvent.change(field, { target: { value: "Durable employer message" } });
 	expect(localStorage.getItem(`career-draft:${api.userId}:message:${props.application.id}`)).toBe(
@@ -666,6 +669,7 @@ it("keeps an unacknowledged message across pagehide and requires review after re
 	api.save.mockClear();
 	api.data.workspace = { ...EMPTY_WORKSPACE, message: "Newer server text" };
 	mount(<MessagesTab {...props} />);
+	fireEvent.click(screen.getByRole("button", { name: "Paste a message" }));
 	expect(await screen.findByRole("button", { name: "Save recovered draft" })).toBeTruthy();
 	expect(screen.getByRole("textbox", { name: `Paste a message from ${props.application.company}` })).toHaveValue(
 		"Unacknowledged older text",
@@ -853,12 +857,12 @@ it("Tighten Undo keeps local typing and pins an unchanged inverse to accepted te
 
 it("omits absent review subjects and empty answer actions without moving manual indices", async () => {
 	mount(<ApplyTab {...props} />);
-	await screen.findByRole("heading", { name: "Review checks" });
+	await screen.findByRole("heading", { name: "Before you send" });
 	expect(within(document.querySelector("#application-readiness") as HTMLElement).getAllByRole("checkbox")).toHaveLength(
 		1,
 	);
 	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
-	fireEvent.click(screen.getByRole("checkbox", { name: "Submit through the employer's application page yourself." }));
+	fireEvent.click(screen.getByRole("checkbox", { name: "Submit on Harbor's application page yourself" }));
 	await waitFor(() =>
 		expect(api.save.mock.calls[0]?.[0]).toMatchObject({ checklist: [3], expected: { checklist: [] } }),
 	);
@@ -1038,4 +1042,21 @@ it("saves a manual debrief to application notes without AI and keeps its draft",
 	);
 	expect(api.generate).not.toHaveBeenCalled();
 	expect(screen.getByRole("textbox", { name: "What did they ask?" })).toHaveValue("What was your role?");
+});
+
+it("keeps a manually written reply available without AI and logs only after copying", async () => {
+	api.ai = false;
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [];
+	api.data.workspace = { ...EMPTY_WORKSPACE, message: "Can you meet Tuesday at 10:00?" };
+	const submitted = { ...props.application, status: "applied" as const };
+	mount(<MessagesTab {...props} application={submitted} />);
+	expect(screen.getByRole("heading", { name: "From Harbor" })).toBeVisible();
+	const field = await screen.findByRole("textbox", { name: "Suggested reply · edit before sending" });
+	fireEvent.change(field, { target: { value: "Thank you. I can meet Tuesday at 10:00." } });
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	await waitFor(() => expect(api.logReply).toHaveBeenCalledOnce());
+	expect(writeText).toHaveBeenCalledWith("Thank you. I can meet Tuesday at 10:00.");
+	expect(api.generate).not.toHaveBeenCalled();
 });

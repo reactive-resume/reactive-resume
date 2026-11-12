@@ -25,6 +25,7 @@ import { interviewKindOf } from "@/features/applications/interviews";
 import { getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { offerHintFor, useOfferHints } from "@/features/applications/queries";
+import { getStageLabel } from "@/features/applications/stages";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
 
 export const workspaceIcons: Record<WorkspaceTab, IconName> = {
@@ -80,7 +81,8 @@ export function ApplicationOverview({
 			application.sentCoverLetterVersionId || application.coverLetterUrl ? t`letter` : "",
 		].filter(Boolean),
 	);
-	const notes = application.activity.filter((entry) => entry.type === "note").length;
+	const notes =
+		application.activity.filter((entry) => entry.type === "note").length + (application.notes?.trim() ? 1 : 0);
 	const summaries: Record<WorkspaceTab, string> = {
 		fit: fit ? t`${supported} of ${count} requirements have evidence` : t`Check the posting against your experience`,
 		apply:
@@ -88,7 +90,11 @@ export function ApplicationOverview({
 				? t`${sent} sent ${time.date(application.appliedAt)}`
 				: t`Choose documents and prepare your form answers`,
 		prepare: briefing ? t`Briefing ready` : t`Plan for your next interview`,
-		practise: practice ? t`Practised ${time.date(practice.createdAt)}` : t`Rehearse an answer, typed or spoken`,
+		practise: practice
+			? time.date(practice.createdAt) === time.date(now)
+				? t`Practised today`
+				: t`Practised ${time.date(practice.createdAt)}`
+			: t`Rehearse an answer, typed or spoken`,
 		debrief: debrief ? t`Debrief saved ${time.date(debrief.createdAt)}` : t`Write down what happened after a round`,
 		messages: reply ? t`Last message ${time.date(reply.createdAt)}` : t`Save a message and write your reply`,
 		saved: t`Saved briefings, fit results and drafts`,
@@ -143,11 +149,12 @@ export function ApplicationOverview({
 						aria-label={t`Stage: ${getLaneLabel(lane)}. Open stage and details`}
 					>
 						<StageDot status={application.status} color={lane.color}>
-							{getLaneLabel(lane)}
+							{null}
 						</StageDot>
+						{getLaneLabel(lane)}
 						<Icon name="caret-down" className="text-ink-3" />
 					</Button>
-					<ApplicationActionsMenu application={application} className="[&_button]:size-9 [&_svg]:size-5" />
+					<ApplicationActionsMenu application={application} className="[&_[data-slot=icon]]:size-5 [&_button]:size-9" />
 				</div>
 			</header>
 			<StageStepper current={application.status} aria-label={t`Stage`} className="mt-[18px] w-full max-w-[520px]" />
@@ -220,9 +227,18 @@ export function ApplicationOverview({
 								render={<button type="button" onClick={onDetails} />}
 								title={t`Posting`}
 								subtitle={
-									application.sourceUrl
-										? `${new URL(application.sourceUrl).host}${new URL(application.sourceUrl).pathname} · ${t`saved ${time.date(application.createdAt)}`}`
-										: t`Add a posting`
+									application.sourceUrl ? (
+										<>
+											<span className="t-mono">
+												{new URL(application.sourceUrl).host}
+												{new URL(application.sourceUrl).pathname}
+											</span>
+											{" · "}
+											{t`saved ${time.date(application.createdAt)}`}
+										</>
+									) : (
+										t`Add a posting`
+									)
 								}
 								caret
 							/>
@@ -243,8 +259,9 @@ export function ApplicationOverview({
 								title={t`Timeline`}
 								subtitle={application.activity
 									.filter((entry) => entry.type === "stage")
+									.sort((a, b) => +new Date(a.at) - +new Date(b.at))
 									.slice(-2)
-									.map((entry) => time.date(entry.at))
+									.map((entry) => `${entry.laneLabel ?? getStageLabel(entry.stage)} ${time.date(entry.at)}`)
 									.join(" · ")}
 								caret
 							/>

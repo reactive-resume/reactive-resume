@@ -29,13 +29,12 @@ export function PrepareReview({ application, disabled }: PrepareReviewProps) {
 	return (
 		<>
 			<Button
-				size="sm"
-				variant="ghost"
-				className="w-fit text-accent-text"
+				variant="link"
+				className="h-auto w-fit gap-1.5 p-0 text-sm/5 text-accent-text"
 				disabled={disabled}
 				onClick={() => setOpen(true)}
 			>
-				<Icon name="sparkle" />
+				<Icon name="sparkle" size={16} />
 				<Trans>Prepare drafts</Trans>
 			</Button>
 			<Dialog open={open} onOpenChange={setOpen}>
@@ -255,22 +254,18 @@ function ReviewForm({ application, disabled }: PrepareReviewProps) {
 			<div className="flex flex-wrap gap-2">
 				<Button
 					disabled={
-						busy ||
-						disabled ||
-						review !== null ||
-						!valid ||
-						!application.resumeId ||
-						(!application.jobDescription && !application.requirements.length)
+						busy
+							? !stoppable
+							: disabled ||
+								review !== null ||
+								!valid ||
+								!application.resumeId ||
+								(!application.jobDescription && !application.requirements.length)
 					}
-					onClick={() => void prepare()}
+					onClick={() => (busy && stoppable ? controller.current?.abort() : void prepare())}
 				>
-					{busy ? t`Preparing…` : t`Prepare drafts for review`}
+					{busy && stoppable ? t`Stop` : busy ? t`Preparing…` : t`Prepare drafts for review`}
 				</Button>
-				{busy && stoppable && (
-					<Button variant="secondary" onClick={() => controller.current?.abort()}>
-						<Trans>Stop</Trans>
-					</Button>
-				)}
 				{undo && (
 					<Button variant="secondary" disabled={busy} onClick={() => void run(undo)}>
 						<Trans>Undo</Trans>

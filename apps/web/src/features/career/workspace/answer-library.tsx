@@ -1,6 +1,7 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { AnswerEvidence } from "@reactive-resume/schema/application-answers";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
+import type { ReactNode } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -29,13 +30,14 @@ type AnswerLibraryProps = {
 	company: string;
 	current?: Answer | undefined;
 	disabled: boolean;
+	renderActions?: (open: (mode: "list" | "save") => void) => ReactNode;
 	onUse: (answer: Pick<Answer, "question" | "answer" | "factIds" | "aiOperationIds">) => void;
 };
 type Mode = "list" | "save" | "edit" | "reuse" | "delete";
 const scopeLabel = (scope: SavedAnswer["scope"]) =>
 	scope === "reusable" ? t`All employers` : scope === "employer" ? t`This employer` : t`This application`;
 
-export function AnswerLibrary({ applicationId, company, current, disabled, onUse }: AnswerLibraryProps) {
+export function AnswerLibrary({ applicationId, company, current, disabled, onUse, renderActions }: AnswerLibraryProps) {
 	const { i18n } = useLingui();
 	const fieldId = useId();
 	const queryClient = useQueryClient();
@@ -163,26 +165,35 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 
 	return (
 		<>
-			<div className="flex flex-wrap gap-2">
-				{current && (
+			{renderActions ? (
+				renderActions((mode) => open(mode))
+			) : (
+				<div className="flex flex-wrap gap-2">
+					{current && (
+						<Button
+							size="sm"
+							variant="ghost"
+							disabled={disabled || !current.question.trim() || !current.answer.trim()}
+							onClick={() => open("save")}
+						>
+							<Trans>Save for other applications</Trans>
+						</Button>
+					)}
 					<Button
-						size="sm"
-						variant="ghost"
-						disabled={disabled || !current.question.trim() || !current.answer.trim()}
-						onClick={() => open("save")}
+						variant="link"
+						className="h-auto p-0 text-sm/5 text-accent-text"
+						disabled={disabled}
+						onClick={() => open("list")}
 					>
-						<Trans>Save for other applications</Trans>
+						<Trans>Use a saved answer</Trans>
 					</Button>
-				)}
-				<Button size="sm" variant="secondary" disabled={disabled} onClick={() => open("list")}>
-					<Trans>Use a saved answer</Trans>
-				</Button>
-				{relevant > 0 && (
-					<span className="self-center text-xs text-ink-2">
-						{plural(relevant, { one: "# relevant reviewed answer", other: "# relevant reviewed answers" })}
-					</span>
-				)}
-			</div>
+					{relevant > 0 && (
+						<span className="self-center text-xs text-ink-2">
+							{plural(relevant, { one: "# relevant reviewed answer", other: "# relevant reviewed answers" })}
+						</span>
+					)}
+				</div>
+			)}
 			<Dialog
 				open={mode !== null}
 				onOpenChange={(value) => {

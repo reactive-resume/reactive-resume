@@ -11,7 +11,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
-import { ListRow } from "@/components/calm/list-row";
+import { IconTile, ListRow } from "@/components/calm/list-row";
 import { createLetterWordsForLocale } from "@/features/letters/compose";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
@@ -24,9 +24,13 @@ export function ApplicationPacketPanel({ application }: ApplicationPacketPanelPr
 			<ListRow
 				title={t`Employer-form packet`}
 				subtitle={t`Documents, contact details and answers for one form`}
-				leading={<Icon name="file-text" />}
+				leading={
+					<IconTile>
+						<Icon name="clipboard-text" size={20} />
+					</IconTile>
+				}
 				trailing={
-					<Button size="sm" variant="ghost" onClick={() => setOpen(true)}>
+					<Button variant="link" className="h-auto p-0 text-sm/5 text-accent-text" onClick={() => setOpen(true)}>
 						<Trans>Review packet</Trans>
 					</Button>
 				}
@@ -113,24 +117,21 @@ function PacketForm({ application }: ApplicationPacketPanelProps) {
 			);
 		});
 	return (
-		<section aria-label={t`Employer-form packet`} className="grid gap-3 border-t border-line py-4 text-sm">
-			<h3 className="font-semibold">
-				<Trans>Employer-form packet</Trans>
-			</h3>
-			<p>
+		<section aria-label={t`Employer-form packet`} className="grid gap-3 text-sm">
+			<p className={packet ? "hidden" : "text-[13px]/[18px] text-ink-3"}>
 				<Trans>
 					Review a private snapshot for one form. No AI, submission or stage change. Named document versions are saved
 					only when you approve.
 				</Trans>
 			</p>
-			<p>
+			<p className={packet ? "hidden" : "text-[13px]/[18px] text-ink-3"}>
 				<Trans>
 					Browser autofill is experimental: only verified native controls can be filled. Unknown authorization,
 					sensitive questions, custom controls, account steps, captcha and additional pages need your explicit answers
 					or manual completion.
 				</Trans>
 			</p>
-			<fieldset disabled={busy} className="grid gap-3">
+			<fieldset disabled={busy} className={packet ? "hidden" : "grid gap-3"}>
 				<label htmlFor={`${id}-url`} className="grid gap-1">
 					<Trans>Exact form URL</Trans>
 					<Input
@@ -193,7 +194,7 @@ function PacketForm({ application }: ApplicationPacketPanelProps) {
 					<Trans>Review packet</Trans>
 				</Button>
 				{review && (
-					<div className="grid gap-3 rounded-lg border border-line p-3">
+					<div className="grid gap-3 border-t border-line pt-3">
 						<p className="break-all">{review.selection.targetUrl}</p>
 						{review.contact && (
 							<p className="whitespace-pre-wrap">
@@ -207,8 +208,8 @@ function PacketForm({ application }: ApplicationPacketPanelProps) {
 								{document.name} · {t`Content revision: ${document.revision}`}
 							</p>
 						))}
-						<pre className="whitespace-pre-wrap">{review.experience}</pre>
-						{review.letterText && <pre className="whitespace-pre-wrap">{review.letterText}</pre>}
+						<p className="text-sm/[21px] whitespace-pre-wrap">{review.experience}</p>
+						{review.letterText && <p className="text-sm/[21px] whitespace-pre-wrap">{review.letterText}</p>}
 						{review.answers.map((answer) => (
 							<div key={answer.id}>
 								<p>{answer.question}</p>
@@ -229,37 +230,36 @@ function PacketForm({ application }: ApplicationPacketPanelProps) {
 			{error && <p role="alert">{error}</p>}
 			{packet && (
 				<div className="grid gap-3">
-					<p role="status">
-						<Trans>
-							Packet ready. Nothing submitted or marked as sent. Downloaded copies remain yours and do not refresh when
-							source data changes.
-						</Trans>
-					</p>
-					<Button
-						variant="secondary"
-						onClick={() =>
-							downloadWithAnchor(
-								new Blob([JSON.stringify(packet)], { type: "application/json" }),
-								"application-packet.json",
-							)
-						}
-					>
-						<Trans>Download reviewed packet</Trans>
-					</Button>
-					<p>
-						<Trans>
-							Import this file into the browser helper, review the destination and fill report. Unsupported forms use
-							exact PDF downloads and copyable answers below. Native browser integration requires its own verified
-							build.
-						</Trans>
-					</p>
-					{packet.documents.map((document) => (
-						<div key={document.kind} className="grid gap-1">
-							<p className="break-all">
-								{document.name} · {t`Version: ${document.versionId}`}
+					<div role="status" className="flex items-start gap-3">
+						<Icon name="check-circle" size={24} className="text-accent-text" />
+						<div>
+							<p className="t-label">
+								<Trans>Packet ready</Trans>
 							</p>
+							<p className="text-[13px]/[18px] text-ink-3">
+								<Trans>
+									Nothing was submitted or marked as sent. Downloaded copies are yours and don't change when you edit.
+								</Trans>
+							</p>
+						</div>
+					</div>
+					<div className="flex flex-wrap items-center gap-2 ps-9">
+						<Button
+							variant="secondary"
+							onClick={() =>
+								downloadWithAnchor(
+									new Blob([JSON.stringify(packet)], { type: "application/json" }),
+									"application-packet.json",
+								)
+							}
+						>
+							<Icon name="download-simple" />
+							<Trans>Download packet</Trans>
+						</Button>
+						{packet.documents.map((document) => (
 							<Button
-								variant="secondary"
+								key={document.kind}
+								variant="ghost"
 								onClick={() =>
 									downloadWithAnchor(
 										new Blob([Uint8Array.from(atob(document.base64), (char) => char.charCodeAt(0))], {
@@ -268,9 +268,19 @@ function PacketForm({ application }: ApplicationPacketPanelProps) {
 										document.filename,
 									)
 								}
-							>{t`Download approved PDF: ${document.name}`}</Button>
-						</div>
-					))}
+								aria-label={t`Download approved PDF: ${document.name}`}
+							>
+								{document.kind === "resume" ? <Trans>Resume PDF</Trans> : <Trans>Letter PDF</Trans>}
+							</Button>
+						))}
+					</div>
+					<p className="ps-9 text-xs/4 text-ink-3">
+						<Trans>
+							Import this file into the browser helper, review the destination and fill report. Unsupported forms use
+							exact PDF downloads and copyable answers below. Native browser integration requires its own verified
+							build.
+						</Trans>
+					</p>
 					{packet.review.answers.map((answer) => (
 						<label key={answer.id} className="grid gap-1">
 							{answer.question}
