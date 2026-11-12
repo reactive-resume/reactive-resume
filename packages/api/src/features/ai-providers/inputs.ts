@@ -1,4 +1,5 @@
 import z from "zod";
+import { isAPIKeyOptional } from "@reactive-resume/ai/defaults";
 import { aiProviderSchema } from "@reactive-resume/ai/types";
 
 const providerFields = z.object({
@@ -11,11 +12,8 @@ const providerFields = z.object({
 	apiKey: z.string().trim(),
 });
 
-// Local OpenAI-compatible servers such as LM Studio often run without authentication.
-const keylessProvider = (provider: string | undefined) => provider === "ollama" || provider === "openai-compatible";
-
 export const providerInput = providerFields.refine(
-	(input) => keylessProvider(input.provider) || input.apiKey.length > 0,
+	(input) => isAPIKeyOptional(input.provider) || input.apiKey.length > 0,
 	{
 		message: "Enter an API key for this provider.",
 		path: ["apiKey"],
@@ -25,7 +23,7 @@ export const providerInput = providerFields.refine(
 export const updateProviderInput = providerFields
 	.partial()
 	.extend({ id: z.string(), enabled: z.boolean().optional() })
-	.refine((input) => input.apiKey === undefined || input.apiKey.length > 0 || keylessProvider(input.provider), {
+	.refine((input) => input.apiKey === undefined || input.apiKey.length > 0 || isAPIKeyOptional(input.provider), {
 		message: "Enter an API key for this provider.",
 		path: ["apiKey"],
 	})

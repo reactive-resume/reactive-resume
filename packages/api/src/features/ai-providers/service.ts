@@ -326,7 +326,7 @@ export const aiProvidersService = {
 			});
 		}
 
-		// On a new host the key is replaced even when empty (Ollama runs without one).
+		// On a new host the key is replaced even when empty (local servers may run without one).
 		const encrypted = nextApiKey || hostChanged ? encryptCredential(nextApiKey ?? "") : {};
 		const credentialChanged = !!nextApiKey;
 		const runtimeChanged = credentialChanged || providerChanged || modelChanged || taskModelsChanged || baseUrlChanged;

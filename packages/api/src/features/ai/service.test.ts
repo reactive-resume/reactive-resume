@@ -30,15 +30,7 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 });
 
-const LM_STUDIO_UNSUPPORTED_FIELDS = [
-	"response_format",
-	"tools",
-	"tool_choice",
-	"stream_options",
-	"parallel_tool_calls",
-];
-
-function stubOpenAIResponse(options: { rejectUnsupportedFields?: boolean } = {}) {
+function stubOpenAIResponse() {
 	let requestBody: unknown;
 	let requestHeaders: Headers | undefined;
 
@@ -50,11 +42,6 @@ function stubOpenAIResponse(options: { rejectUnsupportedFields?: boolean } = {})
 		};
 		requestBody = body;
 		requestHeaders = new Headers(init?.headers);
-		if (options.rejectUnsupportedFields && LM_STUDIO_UNSUPPORTED_FIELDS.some((field) => field in body))
-			return new Response(JSON.stringify({ error: { message: "Unsupported field", type: "invalid_request_error" } }), {
-				status: 400,
-				headers: { "Content-Type": "application/json" },
-			});
 		const hasEnoughOutputTokens = (body.max_tokens ?? body.max_completion_tokens ?? body.max_output_tokens ?? 0) >= 128;
 		const text = hasEnoughOutputTokens ? "1" : "";
 		if (String(input).endsWith("/responses")) {
@@ -135,7 +122,7 @@ describe("AI chat service", () => {
 		expect(openAiCompatible.getRequestBody()).toMatchObject({ max_tokens: 128 });
 	});
 	it("tests a keyless OpenAI-compatible provider with only LM Studio-compatible fields", async () => {
-		const openAiCompatible = stubOpenAIResponse({ rejectUnsupportedFields: true });
+		const openAiCompatible = stubOpenAIResponse();
 
 		await expect(
 			testConnection({

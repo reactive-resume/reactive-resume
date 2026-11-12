@@ -7,7 +7,11 @@ import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useRef, useState } from "react";
-import { AI_PROVIDER_DEFAULT_BASE_URLS, getAIProviderSetupProblem } from "@reactive-resume/ai/defaults";
+import {
+	AI_PROVIDER_DEFAULT_BASE_URLS,
+	getAIProviderSetupProblem,
+	isAPIKeyOptional,
+} from "@reactive-resume/ai/defaults";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -541,7 +545,7 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 	const newURL = (fields.baseURL.trim() || defaultURL) !== (provider.baseURL ?? defaultURL);
 	const apiKey = fields.apiKey.trim();
 	// The server won't send the saved key to a new address, so the key comes with it. Local servers may have none.
-	const keyMissing = newURL && provider.provider !== "ollama" && provider.provider !== "openai-compatible" && !apiKey;
+	const keyMissing = newURL && !isAPIKeyOptional(provider.provider) && !apiKey;
 	const valid = getAIProviderSetupProblem(provider.provider, fields, !newURL) === null;
 	const changes = {
 		...(fields.label.trim() && fields.label.trim() !== provider.label ? { label: fields.label.trim() } : {}),
