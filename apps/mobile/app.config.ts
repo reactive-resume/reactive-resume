@@ -17,7 +17,7 @@ const config: ExpoConfig = {
 	platforms: ["ios", "android"],
 	scheme: id,
 	owner: "reactive-resume",
-	version: "1.0.1",
+	version: "1.0.2",
 	icon: "./assets/icon.png",
 	orientation: "default",
 	userInterfaceStyle: "automatic",
