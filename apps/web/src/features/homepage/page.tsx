@@ -27,7 +27,7 @@ export function Homepage() {
 	useScrollScenes(root);
 
 	return (
-		<div ref={root} className="landing relative isolate overflow-x-clip bg-bg font-ui text-ink">
+		<div ref={root} className="landing radius-desk relative isolate overflow-x-clip bg-bg font-ui text-ink">
 			<LandingBackground />
 			<a
 				href="#main"

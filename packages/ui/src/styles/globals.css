@@ -19,7 +19,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Desk & Paper tokens. oklch is the source of truth; the hex values are sRGB approximations.
+ * Calm tokens (colour values unchanged from Desk & Paper). oklch is the source of truth; the hex values are sRGB approximations.
  * The resume page (--paper) is white in both themes and never inverts.
  */
 :root {
@@ -41,9 +41,11 @@
 	--accent-soft: oklch(0.94 0.035 150); /* #DCF2DF selected background, proposals */
 	--accent-text: oklch(0.42 0.1 150); /* #195C2E */
 	--danger: oklch(0.53 0.17 27); /* #BA3630 */
+	--danger-fill: oklch(0.53 0.17 27); /* the permanent-delete button */
 	--danger-soft: oklch(0.95 0.03 27); /* #FFE7E4 */
 	--danger-text: oklch(0.48 0.17 27); /* #A92321 */
 	--warn: oklch(0.72 0.14 80); /* #D29922 check issues, stale edits */
+	--warn-mark: oklch(0.6 0.14 70); /* warning marks that must hold 3:1 on bg */
 	--warn-soft: oklch(0.95 0.045 85); /* #FCEDCD */
 	--warn-text: oklch(0.48 0.1 70); /* #81520A */
 	--warn-ink: oklch(0.22 0.03 80); /* #22190A text on a warn fill */
@@ -77,10 +79,13 @@
 	/* Layout constants */
 	--editor-bar: 56px;
 	--editor-panel: 400px;
-	--app-sidebar: 240px;
-	--sheet-share: 440px;
+	--app-sidebar: 248px;
+	--sheet: 440px; /* side sheets; they float 8px inside the window */
 	--sheet-detail: 480px;
+	--dialog: 480px; /* 560px when fields sit two to a row */
 	--assistant: 400px;
+	--content-max: 1040px; /* reading width of a dashboard page; tables and boards may run wider */
+	--row: 56px; /* minimum height of a list row */
 }
 
 .dark {
@@ -102,9 +107,11 @@
 	--accent-soft: oklch(0.3 0.05 150); /* #1A3520 */
 	--accent-text: oklch(0.82 0.11 150); /* #8FD89E */
 	--danger: oklch(0.62 0.17 27); /* #D9544B */
+	--danger-fill: oklch(0.55 0.18 27);
 	--danger-soft: oklch(0.3 0.06 27); /* #47211D */
 	--danger-text: oklch(0.8 0.11 27); /* #FDA297 */
 	--warn: oklch(0.8 0.13 85); /* #E4B750 */
+	--warn-mark: oklch(0.8 0.13 85);
 	--warn-soft: oklch(0.31 0.05 80); /* #3E2D10 */
 	--warn-text: oklch(0.86 0.1 85); /* #EFCC83 */
 	--warn-ink: oklch(0.22 0.03 80); /* #22190A text on a warn fill */
@@ -128,16 +135,21 @@
 	--font-sans: var(--font-ui);
 	--font-mono: "Geist Mono Variable", ui-monospace, monospace;
 
-	/* Corners are 2–4px everywhere: 2 chips, tags and small marks · 3 controls · 4 cards, menus, dialogs, sheets. */
-	--radius: 4px;
-	--radius-xs: 2px;
-	--radius-sm: 2px;
-	--radius-md: 3px;
-	--radius-lg: 4px;
-	--radius-xl: 4px;
-	--radius-2xl: 4px;
-	--radius-3xl: 4px;
-	--radius-4xl: 4px;
+	/*
+	 * Corners are soft: 6 badges, checkboxes, keys · 8 chips, small buttons, menu items · 10 buttons, inputs, sidebar
+	 * items · 12 large buttons, segmented controls, menus, toasts, board cards · 16 cards, composer · 20 dialogs,
+	 * sheets, palette. Paper and thumbnails stay square (`rounded-paper`).
+	 */
+	--radius: 10px;
+	--radius-xs: 6px;
+	--radius-sm: 8px;
+	--radius-md: 10px;
+	--radius-lg: 12px;
+	--radius-xl: 16px;
+	--radius-2xl: 20px;
+	--radius-3xl: 20px;
+	--radius-4xl: 20px;
+	--radius-paper: 2px;
 
 	--aspect-page: 210 / 297;
 }
@@ -159,9 +171,11 @@
 	--color-accent-soft: var(--accent-soft);
 	--color-accent-text: var(--accent-text);
 	--color-danger: var(--danger);
+	--color-danger-fill: var(--danger-fill);
 	--color-danger-soft: var(--danger-soft);
 	--color-danger-text: var(--danger-text);
 	--color-warn: var(--warn);
+	--color-warn-mark: var(--warn-mark);
 	--color-warn-soft: var(--warn-soft);
 	--color-warn-text: var(--warn-text);
 	--color-warn-ink: var(--warn-ink);
@@ -170,6 +184,7 @@
 	--color-hover: var(--hover);
 	--color-press: var(--press);
 	--color-scrim: var(--scrim);
+	--color-scrim-sheet: var(--scrim-sheet);
 	--color-paper: var(--paper);
 	--color-stage-saved: var(--stage-saved);
 	--color-stage-applied: var(--stage-applied);
@@ -348,4 +363,69 @@ input[type="url"],
 input[type="tel"] {
 	direction: ltr;
 	text-align: start;
+}
+
+/*
+ * Calm type styles: size / line-height, family and weight in one utility. Instrument Serif has one weight: never bold.
+ * `eyebrow` is for group labels inside menus and the command palette only.
+ */
+@utility t-display {
+	font: 400 44px/48px var(--font-display);
+	letter-spacing: -0.01em;
+}
+@utility t-big-number {
+	font: 400 40px/44px var(--font-display);
+}
+@utility t-root-title {
+	font: 400 34px/40px var(--font-display);
+	letter-spacing: -0.005em;
+}
+@utility t-page-title {
+	font: 400 28px/34px var(--font-display);
+}
+@utility t-section-title {
+	font: 400 22px/28px var(--font-display);
+}
+@utility t-heading {
+	font: 600 20px/28px var(--font-ui);
+}
+@utility t-section-heading {
+	font: 600 17px/24px var(--font-ui);
+}
+@utility t-label {
+	font: 600 15px/22px var(--font-ui);
+}
+@utility t-row-title {
+	font: 500 15px/22px var(--font-ui);
+}
+@utility t-body {
+	font: 400 15px/24px var(--font-ui);
+}
+@utility t-ui {
+	font: 400 14px/20px var(--font-ui);
+}
+@utility t-small {
+	font: 400 13px/18px var(--font-ui);
+}
+@utility t-caption {
+	font: 500 12px/16px var(--font-ui);
+}
+@utility t-eyebrow {
+	font: 600 12px/16px var(--font-ui);
+}
+@utility t-mono {
+	font: 500 12px/16px var(--font-mono);
+}
+
+/* The marketing homepage keeps the Desk & Paper corners (routes/_home index only; out of scope for Calm). */
+.radius-desk {
+	--radius: 4px;
+	--radius-xs: 2px;
+	--radius-sm: 2px;
+	--radius-md: 3px;
+	--radius-lg: 4px;
+	--radius-xl: 4px;
+	--radius-2xl: 4px;
+	--radius-3xl: 4px;
+	--radius-4xl: 4px;
 }
