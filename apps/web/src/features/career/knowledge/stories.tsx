@@ -1,7 +1,7 @@
 import type { Fact, Story } from "../hooks";
 import type { CareerStoryData } from "@reactive-resume/schema/career";
 import { i18n } from "@lingui/core";
-import { ph, plural, t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -22,6 +22,7 @@ import {
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { Label } from "@reactive-resume/ui/components/label";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
@@ -29,8 +30,12 @@ import { useCoachKnowledge } from "../coach-thread";
 import { useSessionDraft } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
 import { useRemoving } from "../removing";
-import { CollapseRow, Eyebrow, Swap, useCareerTime, useNow, withQueryUndo } from "../shared";
+import { CollapseRow, useCareerTime, useNow, withQueryUndo } from "../shared";
 import { StoryPractice } from "../workspace/practise";
+import { KnowledgeFrame } from "./frame";
+import { ChipField } from "./preferences";
+import { List, ListRow } from "@/components/calm/list-row";
+import { SectionHeading } from "@/components/calm/section-heading";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { toastError } from "@/libs/error-message";
@@ -38,20 +43,15 @@ import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 type PartKey = "situation" | "task" | "action" | "result" | "reflection";
 
-/** STARR, in order. Situation, Task and Action are required; Result and Reflection stay blank until supported. */
+/** The five parts, in order. Situation, Task and Action are required; Result and Reflection stay blank until supported. */
 const parts = () =>
 	[
-		{ key: "situation", letter: "S", label: t`Situation`, placeholder: t`What was happening before you started?` },
-		{ key: "task", letter: "T", label: t`Task`, placeholder: t`What were you responsible for?` },
-		{ key: "action", letter: "A", label: t`Action`, placeholder: t`What did you do, specifically?` },
-		{
-			key: "result",
-			letter: "R",
-			label: t`Result`,
-			placeholder: t`What changed? Leave blank if you can’t support it.`,
-		},
-		{ key: "reflection", letter: "R", label: t`Reflection`, placeholder: t`What would you do differently?` },
-	] satisfies { key: PartKey; letter: string; label: string; placeholder: string }[];
+		{ key: "situation", label: t`Situation`, placeholder: t`What was happening before you started?` },
+		{ key: "task", label: t`Task`, placeholder: t`What were you responsible for?` },
+		{ key: "action", label: t`Action`, placeholder: t`What did you do, specifically?` },
+		{ key: "result", label: t`Result`, placeholder: t`What changed? Leave blank if you can’t support it.` },
+		{ key: "reflection", label: t`Reflection`, placeholder: t`What would you do differently?` },
+	] satisfies { key: PartKey; label: string; placeholder: string }[];
 
 const REQUIRED: PartKey[] = ["situation", "task", "action"];
 
@@ -82,16 +82,44 @@ export function StoriesPage({ storyId, edit, practice = false, start: planStart 
 	const removing = useRemoving((state) => state.ids);
 	const { add: hide, drop: unhide } = useRemoving.getState();
 
+	const addStory = (
+		<Button
+			variant={edit ? "secondary" : "primary"}
+			nativeButton={false}
+			render={
+				<Link
+					to="/dashboard/career/knowledge/stories/{-$storyId}"
+					params={{ storyId: undefined }}
+					search={{ edit: true }}
+				/>
+			}
+		>
+			<Icon name="plus" />
+			<Trans>Add a story</Trans>
+		</Button>
+	);
+
 	if ((!stories && storyQuery.isError) || (!facts && factQuery.isError))
 		return (
-			<CareerLoadError
-				onRetry={() => {
-					void storyQuery.refetch();
-					void factQuery.refetch();
-				}}
-			/>
+			<KnowledgeFrame current="stories">
+				<div className="pt-6">
+					<CareerLoadError
+						onRetry={() => {
+							void storyQuery.refetch();
+							void factQuery.refetch();
+						}}
+					/>
+				</div>
+			</KnowledgeFrame>
 		);
-	if (!stories || !facts) return <CareerLoading />;
+	if (!stories || !facts)
+		return (
+			<KnowledgeFrame current="stories">
+				<div className="pt-6">
+					<CareerLoading />
+				</div>
+			</KnowledgeFrame>
+		);
 
 	const factsById = new Map((facts ?? []).map((fact) => [fact.id, fact]));
 	const list = stories.filter((story) => !removing.has(story.id));
@@ -122,88 +150,49 @@ export function StoriesPage({ storyId, edit, practice = false, start: planStart 
 		});
 	};
 
+	const back = (id: string | undefined) => (
+		<Button variant="ghost" size="sm" className="-ms-2.5 justify-self-start text-ink-3" onClick={() => open(id)}>
+			<Icon name="caret-left" />
+			<Trans>Back to stories</Trans>
+		</Button>
+	);
+
 	if (practice && storyId)
 		return (
-			<div className="grid gap-4">
-				<Button variant="ghost" className="justify-self-start" onClick={() => open(storyId)}>
-					<Icon name="arrow-left" />
-					<Trans>Back to stories</Trans>
-				</Button>
-				<StoryPractice key={storyId} storyId={storyId} />
-			</div>
+			<KnowledgeFrame current="stories">
+				<div className="grid gap-4 pt-5">
+					{back(storyId)}
+					<StoryPractice key={storyId} storyId={storyId} />
+				</div>
+			</KnowledgeFrame>
+		);
+
+	// Editing turns the story into a form in place, across the page: the list steps aside until it is saved or cancelled.
+	if (editing)
+		return (
+			<KnowledgeFrame current="stories">
+				<div className="grid max-w-[720px] gap-2 pt-5">
+					{back(selected?.id)}
+					<h2 className="pb-2 t-section-title">{selected ? <Trans>Edit story</Trans> : <Trans>Add a story</Trans>}</h2>
+					<StoryEditor
+						key={selected?.id ?? "new"}
+						story={selected}
+						facts={facts ?? []}
+						onSaved={(id) => open(id)}
+						onCancel={() => open(selected?.id)}
+						onDelete={selected ? () => remove(selected) : undefined}
+						start={selected ? undefined : planStart}
+					/>
+				</div>
+			</KnowledgeFrame>
 		);
 
 	return (
-		<div className="grid items-start gap-5 lg:grid-cols-[300px_minmax(0,1fr)]">
-			<div className="grid content-start gap-2">
-				<AnimatePresence initial={false}>
-					{list.map((story) => (
-						<StoryCard
-							key={story.id}
-							story={story}
-							selected={story.id === selected?.id}
-							changed={factChanged(story, factsById)}
-						/>
-					))}
-				</AnimatePresence>
-				<Link
-					to="/dashboard/career/knowledge/stories/{-$storyId}"
-					params={{ storyId: undefined }}
-					search={{ edit: true }}
-					className={cn(
-						"touch-target relative flex h-9 items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-2 text-[13px] font-medium text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink",
-						editing && !selected && "border-accent text-ink",
-					)}
-				>
-					<Icon name="plus" size={18} />
-					<Trans>Add a story</Trans>
-				</Link>
-				<p className="px-0.5 py-1 text-xs leading-[17px] text-ink-3">
-					<Trans>
-						Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown
-						outcomes blank.
-					</Trans>
-				</p>
-			</div>
-
-			{storyId && !selected ? (
-				<div role="status" className="grid gap-2 rounded-xl border border-line p-6">
-					<h2 className="text-lg font-semibold">
-						<Trans>Story not found</Trans>
-					</h2>
-					<p className="text-sm text-ink-2">
-						<Trans>It may have been deleted. Choose another story or add a new one.</Trans>
-					</p>
-					<Button variant="secondary" onClick={() => open(undefined)}>
-						<Trans>Back to stories</Trans>
-					</Button>
-				</div>
-			) : selected || editing ? (
-				<div className="relative rounded-xl border border-line bg-surface px-4 py-5 sm:px-6 sm:py-[22px]">
-					<Swap id={editing ? "edit" : "read"}>
-						{editing ? (
-							<StoryEditor
-								key={selected?.id ?? "new"}
-								story={selected}
-								facts={facts ?? []}
-								onSaved={(id) => open(id)}
-								onCancel={() => open(selected?.id)}
-								onDelete={selected ? () => remove(selected) : undefined}
-								start={selected ? undefined : planStart}
-							/>
-						) : (
-							selected && <StoryReader story={selected} facts={factsById} onEdit={() => open(selected.id, true)} />
-						)}
-					</Swap>
-				</div>
-			) : (
+		<KnowledgeFrame current="stories" actions={addStory}>
+			{list.length === 0 && !storyId ? (
 				<EmptyState
+					className="mt-8"
 					title={<Trans>No stories yet</Trans>}
-					action={
-						<Button onClick={() => open(undefined, true)}>
-							<Trans>Add a story</Trans>
-						</Button>
-					}
 					description={
 						<Trans>
 							Write one about something you did, in five parts. Leave Result and Reflection blank until you can support
@@ -211,144 +200,171 @@ export function StoriesPage({ storyId, edit, practice = false, start: planStart 
 						</Trans>
 					}
 				/>
+			) : (
+				<div className="mt-2 grid items-start gap-x-12 gap-y-6 lg:grid-cols-[300px_minmax(0,1fr)]">
+					<div className="flex flex-col">
+						<List aria-label={t`Stories`} className="mt-3">
+							<AnimatePresence initial={false}>
+								{list.map((story) => (
+									<StoryRow
+										key={story.id}
+										story={story}
+										selected={story.id === selected?.id}
+										changed={factChanged(story, factsById)}
+									/>
+								))}
+							</AnimatePresence>
+						</List>
+						<p className="border-t border-line pt-4 text-ink-3 t-small">
+							<Trans>
+								A story has five parts: Situation, Task, Action, Result and Reflection. Leave Result and Reflection
+								blank until you can support them.
+							</Trans>
+						</p>
+					</div>
+
+					{selected ? (
+						<StoryReader story={selected} facts={factsById} onEdit={() => open(selected.id, true)} />
+					) : (
+						<div role="status" className="grid justify-items-start gap-2 pt-6">
+							<h2 className="t-section-title">
+								<Trans>Story not found</Trans>
+							</h2>
+							<p className="text-ink-2 t-ui">
+								<Trans>It may have been deleted. Choose another story or add a new one.</Trans>
+							</p>
+							<Button variant="secondary" onClick={() => open(undefined)}>
+								<Trans>Back to stories</Trans>
+							</Button>
+						</div>
+					)}
+				</div>
 			)}
-		</div>
+		</KnowledgeFrame>
 	);
 }
 
 // ---- List ----
 
-type StoryCardProps = { story: Story; selected: boolean; changed: boolean };
+type StoryRowProps = { story: Story; selected: boolean; changed: boolean };
 
-// Memoized with its motion wrapper: picking a story re-renders only the two cards whose selection changed.
-const StoryCard = memo(function StoryCard({ story, selected, changed }: StoryCardProps) {
+// Memoized with its motion wrapper: picking a story re-renders only the two rows whose selection changed.
+const StoryRow = memo(function StoryRow({ story, selected, changed }: StoryRowProps) {
 	const filled = parts().filter((part) => story.data[part.key].trim()).length;
 	const factCount = story.data.factIds.length;
 
 	return (
-		<CollapseRow>
-			<Link
-				to="/dashboard/career/knowledge/stories/{-$storyId}"
-				params={{ storyId: story.id }}
-				aria-current={selected ? "page" : undefined}
-				className={cn(
-					"grid gap-2 rounded-xl border p-3.5 text-start transition-colors duration-quick",
-					selected ? "border-accent bg-surface" : "border-line hover:bg-hover",
-				)}
+		<CollapseRow className="overflow-visible">
+			<ListRow
+				render={
+					<Link
+						to="/dashboard/career/knowledge/stories/{-$storyId}"
+						params={{ storyId: story.id }}
+						aria-current={selected ? "page" : undefined}
+					/>
+				}
+				className={cn("min-h-0 items-start py-3", selected && "border-transparent before:bg-hover")}
 			>
-				<span className="text-sm leading-5 font-semibold">{story.data.title}</span>
-				<span className="text-xs text-ink-3">
-					<Trans>{ph({ filled: i18n.number(filled) })} of 5 parts</Trans> ·{" "}
-					<span className={cn(factCount === 0 && "text-warn-text")}>
-						{plural(factCount, { one: "# fact", other: "# facts" })}
+				<span className="flex min-w-0 flex-1 flex-col gap-px">
+					<span className={cn("text-[15px]/[22px] text-ink", selected ? "font-semibold" : "font-medium")}>
+						{story.data.title}
 					</span>
+					<span className="text-ink-3 t-small">
+						{t`${i18n.number(filled)} of 5 parts`} · {plural(factCount, { one: "# fact", other: "# facts" })}
+					</span>
+					{changed && (
+						<span className="flex items-center gap-1.5 pt-0.5 text-warn-text t-small">
+							<Icon name="warning-circle" size={16} />
+							<Trans>A fact changed. Review this story.</Trans>
+						</span>
+					)}
 				</span>
-				<PartTiles story={story} />
-				{changed && (
-					<span className="flex items-center gap-1.5 text-xs text-warn-text">
-						<span aria-hidden="true" className="size-2 shrink-0 rounded-sm bg-warn" />
-						<Trans>A fact changed. Review this story.</Trans>
-					</span>
-				)}
-			</Link>
+			</ListRow>
 		</CollapseRow>
 	);
 });
 
-function PartTiles({ story }: { story: Story }) {
-	return (
-		<span aria-hidden="true" className="flex gap-[3px]">
-			{parts().map((part) => (
-				<span
-					key={part.key}
-					title={part.label}
-					className={cn(
-						"h-5 w-[22px] rounded-md text-center font-mono text-xs leading-5 font-semibold",
-						story.data[part.key].trim() ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-3",
-					)}
-				>
-					{part.letter}
-				</span>
-			))}
-		</span>
-	);
-}
-
 // ---- Reader ----
-
-const partTile = (filled: boolean) =>
-	cn(
-		"size-7 rounded-lg text-center font-mono text-[13px] leading-7 font-semibold",
-		filled ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-3",
-	);
 
 type StoryReaderProps = { story: Story; facts: Map<string, Fact>; onEdit: () => void };
 
 function StoryReader({ story, facts, onEdit }: StoryReaderProps) {
+	const titleId = useId();
 	const backing = story.data.factIds.flatMap((id) => facts.get(id) ?? []);
 
 	return (
-		<div className="grid gap-[18px]">
-			<header className="flex flex-wrap items-start gap-3">
-				<div className="grid min-w-0 flex-1 basis-60 gap-1">
-					<h2 className="font-display text-[22px] leading-7 text-pretty">{story.data.title}</h2>
-					<p className="text-[13px] text-ink-3">{story.data.tags.join(" · ") || t`No tags yet`}</p>
+		<article aria-labelledby={titleId} className="flex min-w-0 flex-col">
+			<header className="flex flex-wrap items-start gap-2 pt-6">
+				<div className="flex min-w-0 flex-1 basis-60 flex-col">
+					<h2 id={titleId} className="text-pretty t-section-title">
+						{story.data.title}
+					</h2>
+					<p className="pt-0.5 text-ink-3 t-small">{story.data.tags.join(" · ") || t`No tags yet`}</p>
 				</div>
-				<div className="flex gap-1.5">
-					<PractiseButton storyId={story.id} />
-					<Button variant="secondary" className="h-8 px-3 text-[13px]" onClick={onEdit}>
-						<Icon name="pencil-simple" size={18} />
-						<Trans>Edit</Trans>
-					</Button>
-				</div>
+				<Button variant="ghost" onClick={onEdit}>
+					<Icon name="pencil-simple" />
+					<Trans>Edit</Trans>
+				</Button>
+				<PractiseButton storyId={story.id} />
 			</header>
 
-			<div className="grid">
+			<div className="mt-4 border-t border-line">
 				{parts().map((part) => {
 					const text = story.data[part.key].trim();
 					return (
-						<div key={part.key} className="grid grid-cols-[32px_minmax(0,1fr)] gap-3.5 border-t border-line py-3">
-							<span aria-hidden="true" className={partTile(Boolean(text))}>
-								{part.letter}
-							</span>
-							<div className="grid min-w-0 gap-1">
-								<h3 className="text-[13px] font-semibold text-ink-2">{part.label}</h3>
-								{text ? (
-									<p className="text-[15px] leading-[23px] text-pretty whitespace-pre-line">{text}</p>
-								) : (
-									<p className="text-sm leading-[21px] text-ink-3">
+						<div key={part.key} className="flex items-start gap-4 border-b border-line py-3">
+							<h3 className="w-[104px] flex-none text-[13px]/6 font-medium text-ink-3 max-sm:w-20">{part.label}</h3>
+							{text ? (
+								<p className="min-w-0 flex-1 text-pretty whitespace-pre-line t-body">{text}</p>
+							) : (
+								<>
+									<p className="min-w-0 flex-1 text-sm/6 text-ink-3">
 										<Trans>Not recorded yet. Leave it blank until you can support it.</Trans>
 									</p>
-								)}
-							</div>
+									<button
+										type="button"
+										aria-label={t`Add ${part.label}`}
+										onClick={onEdit}
+										className="rounded-xs text-sm/5 font-medium text-accent-text hover:underline"
+									>
+										<Trans>Add</Trans>
+									</button>
+								</>
+							)}
 						</div>
 					);
 				})}
 			</div>
 
-			<div className="grid gap-2 pt-1">
-				<Eyebrow>
-					<Trans>Backed by</Trans>
-				</Eyebrow>
+			<SectionHeading
+				className="pt-6"
+				note={
+					backing.length > 0 &&
+					`${plural(backing.length, { one: "# fact", other: "# facts" })} · ${t`a story needs at least one to be used`}`
+				}
+			>
+				<Trans>Backed by</Trans>
+			</SectionHeading>
+			<List>
 				{backing.map((fact) => (
-					<Link
+					<ListRow
 						key={fact.id}
-						to="/dashboard/career/knowledge/facts"
-						search={{ highlight: fact.id }}
-						className="flex items-start gap-2.5 rounded-md bg-bg px-2.5 py-2 text-[13px] leading-[19px] transition-colors duration-quick hover:bg-hover"
+						render={<Link to="/dashboard/career/knowledge/facts" search={{ highlight: fact.id }} />}
+						className="min-h-0 items-start gap-2.5 py-2.5"
 					>
-						<Icon name="link-simple-horizontal" size={16} className="mt-0.5 shrink-0 text-accent-text" />
-						<span className={cn(fact.status !== "active" && "text-ink-3")}>{fact.text}</span>
-					</Link>
+						<Icon name="link-simple-horizontal" size={18} className="mt-px shrink-0 text-accent-text" />
+						<span className={cn("min-w-0 flex-1 t-ui", fact.status !== "active" && "text-ink-3")}>{fact.text}</span>
+						<Icon name="caret-right" size={18} className="shrink-0 text-ink-3" />
+					</ListRow>
 				))}
-				{backing.length === 0 && (
-					<p className="flex items-center gap-1.5 text-[13px] text-warn-text">
-						<Icon name="warning" size={16} />
-						<Trans>No supporting facts. Link one before using this story.</Trans>
-					</p>
-				)}
-			</div>
-		</div>
+			</List>
+			{backing.length === 0 && (
+				<p className="flex items-center gap-1.5 text-warn-text t-small">
+					<Icon name="warning" size={16} />
+					<Trans>No supporting facts. Link one before using this story.</Trans>
+				</p>
+			)}
+		</article>
 	);
 }
 
@@ -372,7 +388,7 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 	const usable = knowledge.stories.some((item) => item.id === storyId);
 	const label = (
 		<>
-			<Icon name="microphone" size={18} />
+			<Icon name="microphone" />
 			<Trans context="Button: rehearse interview answers">Practice</Trans>
 		</>
 	);
@@ -381,7 +397,6 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 			<div role="alert">
 				<Button
 					variant="secondary"
-					size="sm"
 					onClick={() => {
 						void refetch();
 						knowledge.retry();
@@ -393,7 +408,7 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 		);
 	if (isPending || !knowledge.loaded)
 		return (
-			<Button variant="ghost" size="sm" disabled>
+			<Button variant="secondary" disabled>
 				<Trans>Loading interviews…</Trans>
 			</Button>
 		);
@@ -409,12 +424,7 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 				{/* Focusable while disabled (aria-disabled), so hover and keyboard still reach the tooltip. */}
 				<TooltipTrigger
 					render={
-						<Button
-							variant="ghost"
-							disabled
-							focusableWhenDisabled
-							className="h-8 px-2.5 text-[13px] aria-disabled:cursor-not-allowed aria-disabled:text-ink-3 aria-disabled:hover:bg-transparent"
-						/>
+						<Button variant="secondary" disabled focusableWhenDisabled className="aria-disabled:cursor-not-allowed" />
 					}
 				>
 					{label}
@@ -432,8 +442,7 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 	if (upcoming.length === 0)
 		return (
 			<Button
-				variant="ghost"
-				className="h-8 px-2.5 text-[13px] text-ink-2"
+				variant="secondary"
 				onClick={() =>
 					void navigate({
 						to: "/dashboard/career/knowledge/stories/{-$storyId}",
@@ -448,17 +457,17 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 	const [next] = upcoming;
 	if (upcoming.length === 1 && next)
 		return (
-			<Button variant="ghost" className="h-8 px-2.5 text-[13px] text-ink-2" onClick={() => practise(next)}>
-				<Icon name="microphone" size={18} />
+			<Button variant="secondary" onClick={() => practise(next)}>
+				<Icon name="microphone" />
 				<Trans context="Button: rehearse interview answers">Practice for {next.application.company}</Trans>
 			</Button>
 		);
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger render={<Button variant="ghost" className="h-8 px-2.5 text-[13px] text-ink-2" />}>
+			<DropdownMenuTrigger render={<Button variant="secondary" />}>
 				{label}
-				<Icon name="caret-down" size={16} />
+				<Icon name="caret-down" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-72">
 				<DropdownMenuGroup>
@@ -591,6 +600,19 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 			factIds: checked ? [...current.factIds, id] : current.factIds.filter((item) => item !== id),
 		}));
 
+	const [allFacts, setAllFacts] = useState(false);
+	// The ticked facts and the first few; the rest wait behind one line.
+	const listed = allFacts ? shared : shared.filter((fact, index) => index < 5 || draft.factIds.includes(fact.id));
+	const tags = draft.tags
+		.split(",")
+		.map((tag) => tag.trim())
+		.filter(Boolean);
+	const optional = (
+		<span aria-hidden="true" className="text-xs/4 font-normal text-ink-3">
+			<Trans>optional</Trans>
+		</span>
+	);
+
 	return (
 		<form
 			className="grid gap-[18px]"
@@ -600,104 +622,94 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 			}}
 		>
 			{plan?.note && (
-				<p className="rounded-lg bg-info-soft px-3 py-2 text-sm text-info-text">
+				<p className="rounded-lg bg-info-soft px-3 py-2 text-info-text t-small">
 					<Trans>From your interview plan: {plan.note}</Trans>
 				</p>
 			)}
-			<div className="grid gap-2">
-				{/* A textarea so a long title wraps as it does in the reader; Enter doesn't add a line. */}
-				<Textarea
-					rows={1}
-					value={draft.title}
-					maxLength={200}
-					placeholder={t`Name the story`}
-					aria-label={t`Title`}
-					aria-required
-					aria-describedby={tried && missingTitle ? `${errorId}-title` : undefined}
-					aria-invalid={tried && missingTitle ? true : undefined}
-					onChange={(event) => setDraft({ ...draft, title: event.target.value.replace(/\n/g, " ") })}
-					onKeyDown={(event) => {
-						if (event.key === "Enter") event.preventDefault();
-					}}
-					className="min-h-0 resize-none py-1 font-display text-[22px] leading-7"
-				/>
-				{tried && missingTitle && (
-					<p id={`${errorId}-title`} role="alert" className="flex items-center gap-1.5 text-[13px] text-danger-text">
-						<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
-						<Trans>Give the story a title before you can save.</Trans>
-					</p>
-				)}
-				<Input
-					value={draft.tags}
-					placeholder={t`Tags, separated by commas`}
-					aria-label={t`Tags`}
-					onChange={(event) => setDraft({ ...draft, tags: event.target.value })}
-					className="h-8 text-[13px]"
+			<div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.65fr)]">
+				<div className="grid content-start gap-1.5">
+					<Label htmlFor={`${errorId}-title-field`}>
+						<Trans>Title</Trans>
+					</Label>
+					<Input
+						id={`${errorId}-title-field`}
+						value={draft.title}
+						maxLength={200}
+						placeholder={t`Name the story`}
+						aria-required
+						aria-describedby={tried && missingTitle ? `${errorId}-title` : undefined}
+						aria-invalid={tried && missingTitle ? true : undefined}
+						onChange={(event) => setDraft({ ...draft, title: event.target.value })}
+					/>
+					{tried && missingTitle && (
+						<p id={`${errorId}-title`} role="alert" className="flex items-center gap-1.5 text-danger-text t-small">
+							<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
+							<Trans>Give the story a title before you can save.</Trans>
+						</p>
+					)}
+				</div>
+				<ChipField
+					label={t`Tags`}
+					hint={optional}
+					placeholder={tags.length ? "" : t`Add a tag`}
+					value={tags}
+					onChange={(next) => setDraft({ ...draft, tags: next.join(", ") })}
 				/>
 			</div>
 
-			<p className="text-sm text-ink-3">
-				<Trans>
-					Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you
-					can support them.
-				</Trans>
-			</p>
-			<div className="grid">
-				{parts().map((part) => {
-					const text = draft[part.key];
-					const required = REQUIRED.includes(part.key);
-					const invalid = tried && missingParts.includes(part.key);
-					return (
-						<label key={part.key} className="grid grid-cols-[32px_minmax(0,1fr)] gap-3.5 border-t border-line py-3">
-							<span aria-hidden="true" className={partTile(Boolean(text.trim()))}>
-								{part.letter}
+			{parts().map((part) => {
+				const text = draft[part.key];
+				const required = REQUIRED.includes(part.key);
+				const invalid = tried && missingParts.includes(part.key);
+				return (
+					<div key={part.key} className="grid gap-1.5">
+						<Label htmlFor={`${errorId}-field-${part.key}`} className="justify-between">
+							{part.label}
+							{/* One rule: only the parts that may stay blank are marked. */}
+							{!required && optional}
+						</Label>
+						<Textarea
+							id={`${errorId}-field-${part.key}`}
+							rows={1}
+							value={text}
+							maxLength={part.key === "action" ? 6000 : 4000}
+							placeholder={required ? undefined : part.placeholder}
+							aria-label={required ? undefined : `${part.label} ${t`(optional)`}`}
+							aria-required={required}
+							aria-invalid={invalid || undefined}
+							aria-describedby={invalid ? `${errorId}-${part.key}` : undefined}
+							onChange={(event) => setDraft({ ...draft, [part.key]: event.target.value })}
+							className="min-h-10"
+						/>
+						{invalid && (
+							<span
+								id={`${errorId}-${part.key}`}
+								role="alert"
+								className="flex items-center gap-1.5 text-danger-text t-small"
+							>
+								<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
+								{t`Complete ${part.label} before saving.`}
 							</span>
-							<span className="grid min-w-0 gap-1.5">
-								<span id={`${errorId}-label-${part.key}`} className="text-[13px] font-semibold text-ink-2">
-									{/* One rule, said once above: only the parts that may stay blank are marked. */}
-									{required ? part.label : `${part.label} ${t`(optional)`}`}
-								</span>
-								<Textarea
-									rows={2}
-									value={text}
-									maxLength={part.key === "action" ? 6000 : 4000}
-									placeholder={part.placeholder}
-									aria-labelledby={`${errorId}-label-${part.key}`}
-									aria-required={required}
-									aria-invalid={invalid || undefined}
-									aria-describedby={invalid ? `${errorId}-${part.key}` : undefined}
-									onChange={(event) => setDraft({ ...draft, [part.key]: event.target.value })}
-									className="min-h-[60px] py-[9px] text-sm leading-[21px]"
-								/>
-								{invalid && (
-									<span
-										id={`${errorId}-${part.key}`}
-										role="alert"
-										className="flex items-center gap-1.5 text-[13px] text-danger-text"
-									>
-										<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
-										{t`Complete ${part.label} before saving.`}
-									</span>
-								)}
-							</span>
-						</label>
-					);
-				})}
-			</div>
+						)}
+					</div>
+				);
+			})}
 
-			<fieldset className="grid gap-2 pt-1">
-				<legend className="mb-2 text-xs font-semibold text-ink-3">
+			<fieldset className="grid gap-1">
+				<legend className="mb-1.5 flex w-full items-center justify-between gap-2 text-[13px]/[18px] font-medium text-ink-2">
 					<Trans>Backed by</Trans>
+					<span className="text-xs/4 font-normal text-ink-3">
+						<Trans>A story needs one fact before the coach or practice can use it</Trans>
+					</span>
 				</legend>
-				{shared.map((fact) => {
+				{listed.map((fact) => {
 					const disabled = fact.status !== "active";
 					const checked = draft.factIds.includes(fact.id) && !disabled;
 					return (
 						<label
 							key={fact.id}
 							className={cn(
-								"flex items-start gap-2.5 rounded-md px-2.5 py-2 text-[13px] leading-[19px] transition-colors duration-quick",
-								checked ? "bg-accent-soft" : "bg-bg",
+								"flex items-start gap-2.5 py-1.5 t-ui",
 								disabled ? "cursor-not-allowed text-ink-3" : "cursor-pointer",
 							)}
 						>
@@ -710,7 +722,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 							<span className="min-w-0 flex-1">
 								{fact.text}
 								{disabled && (
-									<span className="block text-xs text-ink-3">
+									<span className="block text-xs/4 text-ink-3">
 										<Trans>Not used in coaching, so it can't back a story.</Trans>
 									</span>
 								)}
@@ -718,20 +730,22 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 						</label>
 					);
 				})}
+				{shared.length > listed.length && (
+					<button
+						type="button"
+						onClick={() => setAllFacts(true)}
+						className="ms-7 justify-self-start rounded-xs py-1.5 text-sm/5 font-medium text-accent-text hover:underline"
+					>
+						{plural(shared.length - listed.length, { one: "Show # more fact", other: "Show # more facts" })}
+					</button>
+				)}
 				{shared.length === 0 && (
-					<p className="text-[13px] text-ink-3">
+					<p className="text-ink-3 t-small">
 						<Trans>No facts to link yet. Add them in Facts.</Trans>
 					</p>
 				)}
-				{/* The coach and Practice send only backed stories: say so before saving one without a fact. */}
-				{!draft.factIds.some((id) => shared.some((fact) => fact.id === id && fact.status === "active")) && (
-					<p role="status" className="flex items-start gap-1.5 text-[13px] text-warn-text">
-						<Icon name="warning" size={16} className="mt-px shrink-0" />
-						<Trans>Without a fact, the coach and practice can't use this story.</Trans>
-					</p>
-				)}
 				{unavailable.length > 0 && (
-					<p role="status" className="flex items-start gap-1.5 text-[13px] text-warn-text">
+					<p role="status" className="flex items-start gap-1.5 text-warn-text t-small">
 						<Icon name="warning" size={16} className="mt-px shrink-0" />
 						{plural(unavailable.length, {
 							one: "# proposed fact isn't available here and won't back the story.",
@@ -741,36 +755,33 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 				)}
 			</fieldset>
 
-			<div className="grid gap-2 border-t border-line pt-3.5">
-				<div className="flex flex-wrap items-center gap-2">
-					{onDelete && (
-						<Button
-							variant="ghost"
-							className="me-auto text-danger-text"
-							onClick={() => {
-								clear();
-								onDelete();
-							}}
-						>
-							<Icon name="trash" size={18} />
-							<Trans>Delete story</Trans>
-						</Button>
-					)}
-					<div className="ms-auto flex gap-2">
-						<Button
-							variant="ghost"
-							className="text-ink-2"
-							onClick={() => {
-								if (!proposal) clear();
-								onCancel();
-							}}
-						>
-							<Trans>Cancel</Trans>
-						</Button>
-						<Button type="submit" loading={save.isPending}>
-							<Trans>Save story</Trans>
-						</Button>
-					</div>
+			<div className="flex flex-wrap items-center gap-2 pt-1">
+				{onDelete && (
+					<Button
+						variant="danger-text"
+						className="-ms-3.5"
+						onClick={() => {
+							clear();
+							onDelete();
+						}}
+					>
+						<Icon name="trash" />
+						<Trans>Delete story</Trans>
+					</Button>
+				)}
+				<div className="ms-auto flex gap-2">
+					<Button
+						variant="ghost"
+						onClick={() => {
+							if (!proposal) clear();
+							onCancel();
+						}}
+					>
+						<Trans>Cancel</Trans>
+					</Button>
+					<Button type="submit" loading={save.isPending}>
+						<Trans>Save story</Trans>
+					</Button>
 				</div>
 			</div>
 		</form>

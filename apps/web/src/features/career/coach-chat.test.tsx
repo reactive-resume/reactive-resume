@@ -20,6 +20,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@tanstack/react-router", () => ({
 	Link: () => null,
+	createLink: (component: unknown) => component,
 	useNavigate: () => vi.fn(),
 	useRouteContext: () => ({ session: { user: { id: "test-user", timezone: "UTC" } } }),
 }));

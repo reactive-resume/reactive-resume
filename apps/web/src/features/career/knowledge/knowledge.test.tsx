@@ -81,6 +81,7 @@ vi.mock("@/libs/orpc/client", () => {
 });
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => api.navigate,
+	createLink: (component: unknown) => component,
 	useRouter: () => ({ state: { location: { pathname: "/test" } } }),
 	useSearch: () => ({}),
 	useRouteContext: () => ({ session: { user: { id: api.userId } } }),
@@ -92,6 +93,7 @@ vi.mock("../shared", () => ({
 		locale: "en-US",
 		timeZone: "Europe/Berlin",
 		format: () => "Oct 8",
+		date: () => "Oct 8",
 		when: () => "Oct 8",
 		relative: () => "today",
 	}),
@@ -202,19 +204,18 @@ it("keeps the complete correction after a failed save and retries its reviewed t
 		.mockResolvedValueOnce(undefined);
 	mount(<FactsPage highlight={undefined} />);
 	fireEvent.click(await screen.findByRole("button", { name: "Correct" }));
-	fireEvent.change(screen.getByLabelText("Correct this fact"), { target: { value: "Fictional private correction" } });
-	const type = screen.getAllByLabelText("Fact type").at(-1);
-	if (!type) throw new Error("Missing correction type control");
-	fireEvent.change(type, { target: { value: "skill" } });
-	await waitFor(() => expect(screen.getByLabelText("Scope")).not.toBeDisabled());
-	fireEvent.change(screen.getByLabelText("Scope"), { target: { value: "cedar" } });
-	fireEvent.click(screen.getByRole("button", { name: "Save correction" }));
+	const dialog = within(await screen.findByRole("dialog", { name: "Correct this fact" }));
+	fireEvent.change(dialog.getByLabelText("Fact"), { target: { value: "Fictional private correction" } });
+	fireEvent.change(dialog.getByLabelText("Type"), { target: { value: "skill" } });
+	await waitFor(() => expect(dialog.getByLabelText("Used for")).not.toBeDisabled());
+	fireEvent.change(dialog.getByLabelText("Used for"), { target: { value: "cedar" } });
+	fireEvent.click(dialog.getByRole("button", { name: "Save correction" }));
 	await waitFor(() => expect(api.correctFact).toHaveBeenCalledTimes(1));
-	await waitFor(() => expect(screen.getByRole("button", { name: "Save correction" })).not.toBeDisabled());
-	expect(screen.getByLabelText("Correct this fact")).toHaveValue("Fictional private correction");
-	expect(screen.getByLabelText("Scope")).toHaveValue("cedar");
-	fireEvent.click(screen.getByRole("button", { name: "Save correction" }));
-	await waitFor(() => expect(screen.queryByLabelText("Correct this fact")).not.toBeInTheDocument());
+	await waitFor(() => expect(dialog.getByRole("button", { name: "Save correction" })).not.toBeDisabled());
+	expect(dialog.getByLabelText("Fact")).toHaveValue("Fictional private correction");
+	expect(dialog.getByLabelText("Used for")).toHaveValue("cedar");
+	fireEvent.click(dialog.getByRole("button", { name: "Save correction" }));
+	await waitFor(() => expect(screen.queryByRole("dialog", { name: "Correct this fact" })).not.toBeInTheDocument());
 	expect(api.correctFact.mock.calls.map(([input]) => input)).toEqual(
 		Array.from({ length: 2 }, () => ({
 			id: fact.id,
@@ -244,20 +245,20 @@ it("discards cancelled and old-account resume reviews without saving or exposing
 			}),
 	);
 	const view = mount(<ResumeFacts />);
-	fireEvent.click(screen.getByRole("button", { name: "Pull facts from my resume" }));
+	// Choosing a resume reads it at once: the review has no separate button.
+	fireEvent.click(screen.getByRole("button", { name: "Pull from my resume" }));
 	await waitFor(() => expect(screen.getByRole("combobox", { name: "Resume" })).toBeEnabled());
 	fireEvent.change(screen.getByRole("combobox", { name: "Resume" }), { target: { value: "resume" } });
-	fireEvent.click(screen.getByRole("button", { name: "Review resume facts" }));
 	await waitFor(() => expect(api.proposeResumeFacts).toHaveBeenCalledTimes(1));
 	fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
-	fireEvent.click(screen.getByRole("button", { name: "Pull facts from my resume" }));
+	fireEvent.click(screen.getByRole("button", { name: "Pull from my resume" }));
 	await act(async () => {
 		finish?.(review);
 	});
 	expect(screen.queryByDisplayValue("Private career excerpt")).toBeNull();
 	api.proposeResumeFacts.mockResolvedValue(review);
+	await waitFor(() => expect(screen.getByRole("combobox", { name: "Resume" })).toBeEnabled());
 	fireEvent.change(screen.getByRole("combobox", { name: "Resume" }), { target: { value: "resume" } });
-	fireEvent.click(screen.getByRole("button", { name: "Review resume facts" }));
 	await screen.findByDisplayValue("Private career excerpt");
 	api.userId = "another-account";
 	setAccountScope(api.userId);
@@ -271,7 +272,7 @@ it("discards cancelled and old-account resume reviews without saving or exposing
 		</QueryClientProvider>,
 	);
 	expect(screen.queryByDisplayValue("Private career excerpt")).toBeNull();
-	expect(screen.getByRole("button", { name: "Review resume facts" })).toBeDisabled();
+	expect(screen.getByRole("combobox", { name: "Resume" })).toHaveValue("");
 	expect(api.saveResumeFacts).not.toHaveBeenCalled();
 });
 
@@ -471,6 +472,7 @@ it("does not claim an Ask first privacy default when the saved memory setting fa
 
 it("saves only memory consent from Facts, preserving other cached preferences", async () => {
 	mount(<FactsPage highlight={undefined} />);
+	fireEvent.click(await screen.findByRole("button", { name: "Change" }));
 	fireEvent.click(await screen.findByRole("radio", { name: "Never" }));
 	await waitFor(() => expect(api.saveProfile).toHaveBeenCalledWith({ memoryMode: "off" }, expect.anything()));
 	expect(clients[0]?.getQueryData(["profile"])).toEqual({ ...profile(), memoryMode: "off" });
@@ -496,6 +498,7 @@ it.each([false, true])("serializes rapid memory choices, including an earlier fa
 				}),
 		);
 	mount(<FactsPage highlight={undefined} />);
+	fireEvent.click(await screen.findByRole("button", { name: "Change" }));
 	fireEvent.click(await screen.findByRole("radio", { name: "Automatically" }));
 	await waitFor(() => expect(api.saveProfile).toHaveBeenCalledTimes(1));
 	await act(async () => fireEvent.click(screen.getByRole("radio", { name: "Never" })));
@@ -570,7 +573,7 @@ it("preserves company recipients in copied offer questions", async () => {
 	const writeText = vi.fn().mockResolvedValue(undefined);
 	Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
 	mount(<OffersPage a="a" b="b" />);
-	fireEvent.click(await screen.findByRole("button", { name: "Copy questions" }));
+	fireEvent.click(await screen.findByRole("button", { name: "Copy all questions" }));
 	await waitFor(() => expect(writeText).toHaveBeenCalled());
 	const copied = writeText.mock.calls[0]?.[0] as string;
 	expect(copied).toContain("Is there a bonus, and what does it depend on? · Ask Acme");
@@ -765,13 +768,10 @@ it("blocks invalid optional learning and skipped DST deadlines without losing th
 	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
 	await currencyPrefilled();
 	const learning = screen.getByLabelText("Learning budget");
-	fireEvent.click(screen.getByRole("button", { name: "More options" }));
 	fireEvent.change(learning, { target: { value: "95k" } });
 	expect(learning.getAttribute("aria-invalid")).not.toBe("true");
 	expect(screen.queryByText("Enter a full amount, such as 95000, or leave blank.")).toBeNull();
-	fireEvent.click(screen.getByRole("button", { name: "More options" }));
 	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
-	expect(screen.getByRole("button", { name: "More options" }).getAttribute("aria-expanded")).toBe("true");
 	expect(learning.getAttribute("aria-invalid")).toBe("true");
 	expect(api.createOffer).not.toHaveBeenCalled();
 	expect((learning as HTMLInputElement).value).toBe("95k");
@@ -898,7 +898,7 @@ it("leads to adding an application when there is none, and opens Add offer in a 
 	expect(within(sheet).getByRole("button", { name: "Save offer" })).toBeDefined();
 });
 
-it("starts in the last offer's currency, keeps the rarer terms under More options and the timezone with the time", async () => {
+it("starts in the last offer's currency, keeps the rarer terms under More terms and the timezone with the time", async () => {
 	api.data.savedItems = [
 		{ id: "old", createdAt: new Date("2026-09-01"), data: { kind: "offer", currency: "USD" } },
 		{ id: "new", createdAt: new Date("2026-10-01"), data: { kind: "offer", currency: "GBP" } },
@@ -921,7 +921,7 @@ it("starts in the last offer's currency, keeps the rarer terms under More option
 	expect(currency.textContent).toContain("GBP");
 	expect(currency.getAttribute("placeholder")).toBeNull();
 	expect(currency.getAttribute("aria-describedby")).toBeTruthy();
-	expect(screen.getByRole("button", { name: "More options" }).getAttribute("aria-expanded")).toBe("false");
+	expect(screen.getByRole("button", { name: "More terms" }).getAttribute("aria-expanded")).toBe("false");
 	expect(screen.queryByText("Times are shown in Europe/Berlin.")).toBeNull();
 	fireEvent.change(screen.getByLabelText("Respond by"), { target: { value: "2026-11-02" } });
 	expect(screen.getByText("Times are shown in Europe/Berlin.")).toBeDefined();
@@ -987,7 +987,7 @@ it.each(["pending", "error"])("keeps saved offers visible while application meta
 	];
 	mount(<OffersPage a="retained" b={undefined} />);
 	await screen.findAllByText("Retained Co");
-	expect(screen.getByRole("button", { name: "Swap" })).toBeDefined();
+	expect(screen.getByRole("heading", { name: /Terms/ })).toBeDefined();
 	expect(screen.queryByText("No offers to compare yet")).toBeNull();
 	if (mode === "error") await screen.findByRole("alert");
 	api.data.applications = [{ id: "new-job", company: "New Terms Co", role: "Engineer", status: "offer" }];

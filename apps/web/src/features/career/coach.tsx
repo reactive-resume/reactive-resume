@@ -8,8 +8,8 @@ import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { coachStarters, type CoachStarter } from "@reactive-resume/schema/career-starters";
-import { buttonVariants } from "@reactive-resume/ui/components/button";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -29,20 +29,28 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { buildConversationTitle } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { CareerCrumb } from "./career-crumb";
 import {
 	CoachThread,
 	connectionName,
 	copyToClipboard,
 	deleteConversation,
+	dropPrompt,
+	takePrompt,
 	titleFor,
 	useCoachKnowledge,
 	useConversationDate,
 	WebResearchChip,
 	useWebSearch,
 } from "./coach-thread";
+import { useProfile } from "./knowledge/preferences";
 import { CareerLoadError } from "./load-state";
 import { PracticeHandoff } from "./prepare-now";
-import { ContextChip, Eyebrow, PrivacyLine } from "./shared";
+import { ContextChip, PrivacyLine } from "./shared";
+import { List, ListRow } from "@/components/calm/list-row";
+import { Page, PageBody, PageHeader } from "@/components/calm/page";
+import { SectionHeading } from "@/components/calm/section-heading";
+import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { transcriptOf } from "@/features/assistant/chat";
@@ -107,7 +115,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const breakpoint = useBreakpoint();
-	const wide = breakpoint === "desktop" || breakpoint === "wide";
+	const wide = breakpoint === "wide";
 	const providers = useHasUsableAiProvider();
 	const threads = useQuery(orpc.agent.threads.list.queryOptions());
 	const knowledge = useCoachKnowledge(null);
@@ -120,6 +128,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		if (wide && renaming === null && document.activeElement === document.body) focusTarget()?.focus();
 	}, [wide, renaming]);
 	const [modelMenuOpen, setModelMenuOpen] = useState(false);
+	const [copySlot, setCopySlot] = useState<HTMLSpanElement | null>(null);
 	const [providerId, setProviderId] = useState<string | null>(null);
 	const [hidden, setHidden] = useState<ReadonlySet<string>>(() => new Set());
 	const created = useRef<ThreadSummary | null>(null);
@@ -136,6 +145,9 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		});
 	}
 	const threadId = conversationId ?? session.created;
+	// A first message written on Career's page, sent as this conversation opens.
+	const initialPrompt = takePrompt(threadId);
+	useEffect(() => dropPrompt(threadId), [threadId]);
 	const offerIds = routeOfferIds.length > 0 ? routeOfferIds : readOfferIds(threadId);
 	useEffect(() => {
 		if (threadId && routeOfferIds.length > 0) writeOfferIds(threadId, routeOfferIds);
@@ -276,12 +288,14 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		<>
 			{chips.memory && knowledge.isError && <CareerLoadError onRetry={knowledge.retry} />}
 			<ContextChip
+				icon="briefcase"
 				pressed={chips.application}
 				onPressedChange={(application) => setChips({ ...chips, application })}
 				label={t`Applications`}
 				tooltip={t`Summaries of your open applications`}
 			/>
 			<ContextChip
+				icon="books"
 				pressed={chips.memory}
 				onPressedChange={(memory) => setChips({ ...chips, memory })}
 				label={plural(knowledge.active.length, { one: "Knowledge · # fact", other: "Knowledge · # facts" })}
@@ -308,42 +322,52 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		</>
 	);
 
+	// The copy button needs the messages, which only the thread holds: it renders into the page header's slot.
 	const header = (messages: readonly UIMessage[]) => (
 		<>
-			<header className="flex h-12 shrink-0 items-center gap-2 border-b border-line ps-4 pe-2">
-				{!wide && (
+			{copySlot &&
+				createPortal(
 					<IconButton
-						icon="clock-counter-clockwise"
-						label={t`Conversations`}
-						size="icon-sm"
-						className="-ms-2 text-ink-2"
-						onClick={(event) => {
-							railOpener.current = event.currentTarget;
-							setRailOpen(true);
-						}}
-					/>
+						icon="copy"
+						label={t`Copy conversation`}
+						className="text-ink-2"
+						disabled={messages.length === 0}
+						onClick={() =>
+							void copyToClipboard(
+								transcriptOf(messages, { user: t`You`, assistant: t`Coach`, sources: t`Sources` }),
+								t`Conversation copied`,
+							)
+						}
+					/>,
+					copySlot,
 				)}
-				<Icon name="sparkle" size={20} className="shrink-0 text-accent-text" />
-				<h2 className="me-auto min-w-0 truncate text-sm font-semibold">
-					{summary ? (
-						<button
-							ref={titleButton}
-							type="button"
-							aria-label={`${t`Rename`}: ${titleFor(summary)}`}
-							onClick={(event) => {
-								railOpener.current = event.currentTarget;
-								setRenaming(summary.id);
-								setRailOpen(true);
-							}}
-							className="touch-target relative block max-w-full truncate rounded-md text-start outline-none hover:text-accent-text focus-visible:ring-2 focus-visible:ring-accent"
-						>
-							{titleFor(summary)}
-						</button>
-					) : (
-						titleFor(summary)
-					)}
-				</h2>
-				{(usable.length > 0 || summary) && (
+			<PracticeHandoff />
+		</>
+	);
+
+	const startRename = (opener: HTMLElement) => {
+		if (!summary) return;
+		railOpener.current = opener;
+		setRenaming(summary.id);
+		if (!wide) setRailOpen(true);
+	};
+
+	const pageActions = (
+		<div className="flex items-center gap-1">
+			{!wide && (
+				<IconButton
+					icon="clock-counter-clockwise"
+					label={t`Conversations`}
+					className="text-ink-2"
+					onClick={(event) => {
+						railOpener.current = event.currentTarget;
+						setRailOpen(true);
+					}}
+				/>
+			)}
+			{(usable.length > 0 || summary) && (
+				// The trigger caps itself at half its container, which here is only as wide as the trigger.
+				<div className="flex min-w-0 [&>button]:max-w-[320px]">
 					<ModelMenu
 						open={modelMenuOpen}
 						onOpenChange={setModelMenuOpen}
@@ -353,23 +377,35 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 						label={label}
 						onChoose={(id) => void chooseProvider(id)}
 					/>
-				)}
-				<IconButton
-					icon="copy"
-					label={t`Copy conversation`}
-					size="icon-sm"
-					className="text-ink-2"
-					disabled={messages.length === 0}
-					onClick={() =>
-						void copyToClipboard(
-							transcriptOf(messages, { user: t`You`, assistant: t`Coach`, sources: t`Sources` }),
-							t`Conversation copied`,
-						)
-					}
-				/>
-			</header>
-			<PracticeHandoff />
-		</>
+				</div>
+			)}
+			<span ref={setCopySlot} className="contents" />
+			{summary && (
+				<DropdownMenu>
+					<DropdownMenuTrigger
+						render={
+							<IconButton
+								ref={titleButton}
+								icon="dots-three"
+								label={t`Rename or delete this conversation`}
+								className="text-ink-2"
+							/>
+						}
+					/>
+					<DropdownMenuContent align="end" finalFocus={false}>
+						<DropdownMenuItem onClick={() => titleButton.current && startRename(titleButton.current)}>
+							<Icon name="pencil-simple" />
+							<Trans>Rename</Trans>
+						</DropdownMenuItem>
+						<DropdownMenuItem variant="destructive" onClick={() => remove(summary)}>
+							<Icon name="trash" />
+							<Trans>Delete</Trans>
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			)}
+			<PhoneHeaderActions />
+		</div>
 	);
 
 	const notSetUp = threads.error instanceof ORPCError && threads.error.code === "PRECONDITION_FAILED";
@@ -387,125 +423,132 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		/>
 	);
 
-	return (
-		// The card fills what's left of the page height and scrolls inside; on phones, all of it.
-		<div className="relative min-h-[560px] flex-1 max-sm:min-h-0">
-			<div className="absolute inset-0 grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-				{wide ? (
-					rail
-				) : (
-					<Sheet open={railOpen} onOpenChange={setRailOpen}>
-						<SheetContent
-							side="left"
-							finalFocus={focusTarget}
-							closeLabel={t`Close`}
-							className="p-4 pt-5 data-[side=left]:sm:max-w-[320px]"
-						>
-							<SheetTitle>
-								<Trans>Conversations</Trans>
-							</SheetTitle>
-							{rail}
-						</SheetContent>
-					</Sheet>
-				)}
-
-				<section
-					aria-label={t`Coach`}
-					className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-line bg-surface"
-				>
-					{notSetUp ? (
-						<>
-							{header([])}
-							<WebAccessAttention />
-							<p className="m-6 rounded-xl bg-sunken p-4 text-sm text-ink-2">
-								<Trans>
-									The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge,
-									Offers and your applications work without it.
-								</Trans>
-							</p>
-						</>
-					) : providers.error && !threadId ? (
-						<AiProviderLoadState
-							state={{
-								...providers,
-								retry: () => {
-									providers.retry();
-									void threads.refetch();
-									knowledge.retry();
-								},
-							}}
-						/>
-					) : (providers.isLoading && !threadId) || threads.isPending ? (
-						<div className="grid flex-1 place-items-center">
-							<Spinner />
+	// What the main column shows: a state that blocks the coach, or the conversation.
+	const body = (
+		<>
+			{notSetUp ? (
+				<>
+					{header([])}
+					<WebAccessAttention />
+					<p className="m-6 rounded-xl bg-sunken p-4 text-sm text-ink-2">
+						<Trans>
+							The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers
+							and your applications work without it.
+						</Trans>
+					</p>
+				</>
+			) : providers.error && !threadId ? (
+				<AiProviderLoadState
+					state={{
+						...providers,
+						retry: () => {
+							providers.retry();
+							void threads.refetch();
+							knowledge.retry();
+						},
+					}}
+				/>
+			) : (providers.isLoading && !threadId) || threads.isPending ? (
+				<div className="grid flex-1 place-items-center">
+					<Spinner />
+				</div>
+			) : threads.isError && !threads.data ? (
+				<CareerLoadError
+					onRetry={() => {
+						void threads.refetch();
+						providers.retry();
+					}}
+				/>
+			) : noProvider && !threadId ? (
+				<>
+					{header([])}
+					<div className="min-h-0 flex-1 overflow-y-auto">
+						<div className="mx-auto max-w-[560px] py-6">
+							<ProviderSetup />
 						</div>
-					) : threads.isError && !threads.data ? (
-						<CareerLoadError
-							onRetry={() => {
-								void threads.refetch();
-								providers.retry();
-							}}
-						/>
-					) : noProvider && !threadId ? (
-						<>
-							{header([])}
-							<div className="min-h-0 flex-1 overflow-y-auto">
-								<div className="mx-auto max-w-[560px] py-6">
-									<ProviderSetup />
-								</div>
-							</div>
-						</>
-					) : (
-						<>
-							<WebAccessAttention />
-							{!provider && (
-								<div role="status" className="grid justify-items-start gap-2 bg-warn-soft p-3 text-sm text-warn-text">
-									<Trans>
-										This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection
-										or choose a model before sending again.
-									</Trans>
-									<SetUpAi />
-								</div>
-							)}
-							<CoachThread
-								key={session.key}
-								draftKey={`career-coach:${threadId ?? "new"}`}
-								threadId={threadId}
-								createThread={createThread}
-								onThreadCreated={onThreadCreated}
-								applicationId={null}
-								context={context}
-								connection={connection}
-								onChangeConnection={() => setModelMenuOpen(true)}
-								header={header}
-								empty={(send) => (
-									<EmptyState
-										disabled={!provider || (chips.memory && (knowledge.isPending || knowledge.isError))}
-										offers={context.offerIds?.length ?? 0}
-										onPick={send}
-									/>
-								)}
-								chips={contextChips}
-								notice={
-									stranded ? (
-										<ConnectionNotice
-											label={summary?.providerLabel ?? null}
-											fallback={usable[0]}
-											onUse={(id) => void chooseProvider(id)}
-											onChoose={() => setModelMenuOpen(true)}
-										/>
-									) : null
-								}
-								privacy={privacy}
-								placeholder={t`Ask about your next career step…`}
-								disabled={!provider || (chips.memory && (knowledge.isPending || knowledge.isError))}
-								variant="page"
-							/>
-						</>
+					</div>
+				</>
+			) : (
+				<>
+					<WebAccessAttention />
+					{!provider && (
+						<div role="status" className="grid justify-items-start gap-2 bg-warn-soft p-3 text-sm text-warn-text">
+							<Trans>
+								This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or
+								choose a model before sending again.
+							</Trans>
+							<SetUpAi />
+						</div>
 					)}
-				</section>
-			</div>
-		</div>
+					<CoachThread
+						key={session.key}
+						draftKey={`career-coach:${threadId ?? "new"}`}
+						threadId={threadId}
+						initialPrompt={initialPrompt}
+						createThread={createThread}
+						onThreadCreated={onThreadCreated}
+						applicationId={null}
+						context={context}
+						connection={connection}
+						onChangeConnection={() => setModelMenuOpen(true)}
+						header={header}
+						empty={(send) => (
+							<EmptyState
+								disabled={!provider || (chips.memory && (knowledge.isPending || knowledge.isError))}
+								offers={context.offerIds?.length ?? 0}
+								onPick={send}
+							/>
+						)}
+						chips={contextChips}
+						notice={
+							stranded ? (
+								<ConnectionNotice
+									label={summary?.providerLabel ?? null}
+									fallback={usable[0]}
+									onUse={(id) => void chooseProvider(id)}
+									onChoose={() => setModelMenuOpen(true)}
+								/>
+							) : null
+						}
+						privacy={privacy}
+						placeholder={t`Ask about your next career step…`}
+						disabled={!provider || (chips.memory && (knowledge.isPending || knowledge.isError))}
+						variant="page"
+					/>
+				</>
+			)}
+		</>
+	);
+
+	return (
+		// The conversation fills what's left of the window height and scrolls inside; the aside sits beside it from 1280.
+		<Page className="min-h-0">
+			<PageBody className="flex min-h-[560px] flex-1 flex-col pb-0 max-sm:min-h-0">
+				<PageHeader crumb={<CareerCrumb />} title={titleFor(summary)} actions={pageActions} />
+				<div className="mt-2 grid min-h-0 flex-1 gap-12 xl:grid-cols-[minmax(0,1fr)_320px]">
+					<section aria-label={t`Coach`} className="flex min-h-0 min-w-0 flex-col border-t border-line">
+						{body}
+					</section>
+					{wide ? (
+						<aside className="min-h-0 overflow-y-auto">{rail}</aside>
+					) : (
+						<Sheet open={railOpen} onOpenChange={setRailOpen}>
+							<SheetContent
+								side="left"
+								finalFocus={focusTarget}
+								closeLabel={t`Close`}
+								className="p-4 pt-5 data-[side=left]:sm:max-w-[320px]"
+							>
+								<SheetTitle className="sr-only">
+									<Trans>Conversations</Trans>
+								</SheetTitle>
+								{rail}
+							</SheetContent>
+						</Sheet>
+					)}
+				</div>
+			</PageBody>
+		</Page>
 	);
 }
 
@@ -608,56 +651,88 @@ function ConversationRail({
 	const when = useConversationDate();
 
 	return (
-		<nav aria-label={t`Conversations`} className="flex min-h-0 flex-1 flex-col gap-4">
-			<Link
-				to="/dashboard/career/coach/{-$conversationId}"
-				params={{ conversationId: undefined }}
-				onClick={onNavigate}
-				className={cn(buttonVariants({ variant: "secondary" }), "justify-start gap-2")}
+		<nav aria-label={t`Conversations`} className="flex min-h-0 flex-1 flex-col">
+			<SectionHeading
+				first
+				className="pt-3"
+				action={
+					<Link to="/dashboard/career" onClick={onNavigate}>
+						<Trans>New</Trans>
+					</Link>
+				}
 			>
-				<Icon name="note-pencil" size={18} />
-				<Trans>New conversation</Trans>
-			</Link>
-
-			<div className="flex min-h-0 flex-1 flex-col gap-1.5">
-				<Eyebrow className="px-2.5">
-					<Trans>Recent</Trans>
-				</Eyebrow>
-				<ul className="-mx-1 grid min-h-0 flex-1 content-start gap-0.5 overflow-y-auto px-1">
-					{/* With no history yet, a "New conversation · Now" row would only repeat the button above. */}
-					{currentId === null && threads.length > 0 && (
-						<li aria-current="page" className="grid gap-0.5 rounded-lg bg-sunken px-2.5 py-2">
-							<span className="text-[13px] leading-[18px] font-medium">
-								<Trans>New conversation</Trans>
-							</span>
-							<span className="text-xs text-ink-3">
-								<Trans>Now</Trans>
-							</span>
-						</li>
-					)}
-					{threads.map((thread) => (
-						<RailItem
-							key={thread.id}
-							thread={thread}
-							current={thread.id === currentId}
-							date={when(new Date(thread.lastMessageAt))}
-							renaming={renaming === thread.id}
-							onRenameStart={() => setRenaming(thread.id)}
-							onRenameEnd={(title) => {
-								setRenaming(null);
-								if (title !== null) onRename(thread, title);
-							}}
-							onDelete={() => onDelete(thread)}
-							onNavigate={onNavigate}
-						/>
-					))}
-				</ul>
-			</div>
-
-			<p className="px-2.5 text-xs leading-[17px] text-ink-3">
-				<Trans>Conversations about one job live in its workspace.</Trans>
+				<Trans>Conversations</Trans>
+			</SectionHeading>
+			<ul className="grid content-start">
+				{currentId === null && (
+					<li aria-current="page" className="grid gap-px rounded-lg bg-sunken px-3 py-2.5">
+						<span className="text-sm/5 font-semibold">
+							<Trans>New conversation</Trans>
+						</span>
+						<span className="text-[13px]/[18px] text-ink-3">
+							<Trans>Now</Trans>
+						</span>
+					</li>
+				)}
+				{threads.map((thread) => (
+					<RailItem
+						key={thread.id}
+						thread={thread}
+						current={thread.id === currentId}
+						date={when(new Date(thread.lastMessageAt))}
+						renaming={renaming === thread.id}
+						onRenameStart={() => setRenaming(thread.id)}
+						onRenameEnd={(title) => {
+							setRenaming(null);
+							if (title !== null) onRename(thread, title);
+						}}
+						onDelete={() => onDelete(thread)}
+						onNavigate={onNavigate}
+					/>
+				))}
+			</ul>
+			<p className="pt-2.5 text-[13px]/[18px] text-ink-3">
+				<Trans>A conversation about one job also opens from its application.</Trans>
 			</p>
+			<Remembering onNavigate={onNavigate} />
 		</nav>
+	);
+}
+
+/** What the coach keeps: the memory mode (changed on Facts) and a row to Knowledge. */
+function Remembering({ onNavigate }: { onNavigate: () => void }) {
+	const { profile } = useProfile();
+	const knowledge = useCoachKnowledge(null);
+	const stories = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: null } }));
+	const mode = profile?.memoryMode;
+	const modeLabel =
+		mode === "auto" ? t`Automatically` : mode === "off" ? t`Never` : mode === "ask" ? t`Ask first` : null;
+	const facts = plural(knowledge.active.length, { one: "# fact", other: "# facts" });
+	const storyCount = stories.data ? plural(stories.data.length, { one: "# story", other: "# stories" }) : null;
+	return (
+		<>
+			<SectionHeading>
+				<Trans>Remembering</Trans>
+			</SectionHeading>
+			<List>
+				<ListRow
+					render={<Link to="/dashboard/career/knowledge/facts" onClick={onNavigate} />}
+					title={<Trans>Facts from my messages</Trans>}
+					subtitle={modeLabel}
+					trailing={
+						<span className="text-sm font-medium text-accent-text">
+							<Trans>Change</Trans>
+						</span>
+					}
+				/>
+				<ListRow
+					render={<Link to="/dashboard/career/knowledge/facts" onClick={onNavigate} />}
+					title={<Trans>Knowledge</Trans>}
+					subtitle={[facts, storyCount, t`preferences`].filter(Boolean).join(" · ")}
+					caret
+				/>
+			</List>
+		</>
 	);
 }
 
@@ -722,12 +797,12 @@ function RailItem({
 						aria-current={current ? "page" : undefined}
 						onClick={onNavigate}
 						className={cn(
-							"grid gap-0.5 rounded-lg py-2 ps-2.5 pe-9 transition-colors duration-quick",
+							"grid gap-px rounded-lg py-2.5 ps-3 pe-9 transition-colors duration-quick",
 							current ? "bg-sunken" : "hover:bg-hover",
 						)}
 					>
-						<span className="line-clamp-2 text-[13px] leading-[18px] font-medium">{title}</span>
-						<span className="text-xs text-ink-3">{date}</span>
+						<span className={cn("line-clamp-2 text-sm/5", current ? "font-semibold" : "font-medium")}>{title}</span>
+						<span className="text-[13px]/[18px] text-ink-3">{date}</span>
 					</Link>
 				)}
 				{!renaming && (

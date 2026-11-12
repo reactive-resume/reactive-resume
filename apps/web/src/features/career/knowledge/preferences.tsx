@@ -1,14 +1,14 @@
 import type { CareerProfileData } from "@reactive-resume/schema/career";
-import type { KeyboardEvent } from "react";
-import { t } from "@lingui/core/macro";
+import type { KeyboardEvent, ReactNode } from "react";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
-import { m } from "motion/react";
 import { useId, useRef, useState } from "react";
 import { careerProfileDataSchema } from "@reactive-resume/schema/career";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Label } from "@reactive-resume/ui/components/label";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { parseAmount } from "@reactive-resume/utils/amount";
@@ -19,10 +19,18 @@ import { useDebouncedSave, useSessionDraft } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
 import { RoleSuggestions } from "../role-suggestions";
 import { useCareerTime, useNow } from "../shared";
-import { SearchRegionsField } from "./search-regions-field";
+import { KnowledgeFrame } from "./frame";
+import {
+	chipFieldClassName,
+	fieldChipClassName,
+	fieldChipRemoveClassName,
+	SearchRegionsField,
+} from "./search-regions-field";
+import { List, ListRow } from "@/components/calm/list-row";
+import { Columns } from "@/components/calm/page";
+import { SectionHeading } from "@/components/calm/section-heading";
 import { getAccountGeneration } from "@/libs/auth/clear-account-data";
 import { toastError } from "@/libs/error-message";
-import { D2, EASE } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
 const saveFailed = (error: unknown) => toastError(error, t`Couldn't save your preferences. Try again.`);
@@ -60,9 +68,15 @@ export function useProfile() {
 export function PreferencesPage() {
 	const query = useQuery(orpc.career.profile.queryOptions());
 	const profile = query.data;
-	if (query.isError && !profile) return <CareerLoadError onRetry={() => void query.refetch()} />;
 	// The form keeps its own draft once loaded, so a background refetch never overwrites what's being typed.
-	return profile ? <PreferencesForm initial={profile} /> : <CareerLoading />;
+	if (profile) return <PreferencesForm initial={profile} />;
+	return (
+		<KnowledgeFrame current="preferences">
+			<div className="pt-6">
+				{query.isError ? <CareerLoadError onRetry={() => void query.refetch()} /> : <CareerLoading />}
+			</div>
+		</KnowledgeFrame>
+	);
 }
 
 type PreferencesFormProps = { initial: CareerProfileData };
@@ -130,172 +144,239 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 	const dirty = !failed && (status.saving || JSON.stringify(draft) !== JSON.stringify(saved));
 	const justNow = status.at !== null && now.getTime() - status.at < 60_000;
 
+	const money =
+		draft.minBase.amount === null
+			? null
+			: new Intl.NumberFormat(i18n.locale, {
+					style: "currency",
+					currency: draft.minBase.currency || "USD",
+					maximumFractionDigits: 0,
+				}).format(draft.minBase.amount);
+	const days = draft.maxOfficeDays;
+	const checks = [
+		money && t`${money} minimum`,
+		days === null
+			? null
+			: days === 0
+				? t`remote only`
+				: plural(days, { one: "at most # office day a week", other: "at most # office days a week" }),
+		draft.locations.length > 0 && new Intl.ListFormat(i18n.locale, { type: "disjunction" }).format(draft.locations),
+	].filter((item): item is string => Boolean(item));
+	const checked = new Intl.ListFormat(i18n.locale, { type: "conjunction" }).format(checks);
+
+	const saveStatus = (
+		<span role="status" className="flex h-9 items-center gap-1.5 text-ink-3 t-small">
+			<Icon name={failed ? "cloud-slash" : dirty ? "arrows-clockwise" : "cloud-check"} size={18} />
+			{failed ? (
+				<Trans>Not saved</Trans>
+			) : dirty ? (
+				<Trans>Saving…</Trans>
+			) : justNow ? (
+				<Trans>Saved just now</Trans>
+			) : (
+				<Trans>Saved</Trans>
+			)}
+			{failed && (
+				<button
+					type="button"
+					onClick={() => flush(true)}
+					className="rounded-xs font-medium text-accent-text hover:underline"
+				>
+					<Trans>Retry</Trans>
+				</button>
+			)}
+		</span>
+	);
+
 	return (
-		<div className="grid max-w-[820px] gap-[18px]" onBlur={() => flush()}>
-			<DraftRecovery {...kept} />
-			<div className="flex items-center gap-2">
-				<h2 className="flex-1 text-[17px] font-semibold">
-					<Trans>What you're looking for</Trans>
-				</h2>
-				<span role="status" className="flex items-center gap-1 text-xs text-ink-3">
-					<Icon name={failed ? "cloud-slash" : dirty ? "arrows-clockwise" : "cloud-check"} size={16} />
-					{failed ? (
-						<Trans>Not saved</Trans>
-					) : dirty ? (
-						<Trans>Saving…</Trans>
-					) : justNow ? (
-						<Trans>Saved just now</Trans>
-					) : (
-						<Trans>Saved</Trans>
-					)}
-				</span>
-				{failed && (
-					<button
-						type="button"
-						onClick={() => flush(true)}
-						className="text-xs text-ink-3 underline underline-offset-2 hover:text-ink"
+		<KnowledgeFrame current="preferences" actions={saveStatus}>
+			<Columns
+				className="xl:grid-cols-[minmax(0,1fr)_320px]"
+				aside={
+					<>
+						<SectionHeading className="pt-6">
+							<Trans>Where these are used</Trans>
+						</SectionHeading>
+						<List>
+							{/* calm: request to lead — link this to /dashboard/career/schedules once that route exists. */}
+							<UsedRow
+								to="/dashboard/career"
+								title={<Trans>Role discovery</Trans>}
+								subtitle={<Trans>Searches start from your roles, places and countries.</Trans>}
+							/>
+							<UsedRow
+								to="/dashboard/career/offers"
+								title={<Trans>Offers</Trans>}
+								subtitle={
+									checks.length > 0 ? (
+										<Trans>Checked for {checked}.</Trans>
+									) : (
+										<Trans>Checked once you set a requirement.</Trans>
+									)
+								}
+							/>
+							<UsedRow
+								to="/dashboard/career/coach/{-$conversationId}"
+								title={<Trans>The coach</Trans>}
+								subtitle={<Trans>Sent with a message while Knowledge is switched on, and never otherwise.</Trans>}
+							/>
+						</List>
+					</>
+				}
+			>
+				<div onBlur={() => flush()}>
+					<SectionHeading className="pt-6">
+						<Trans>What you're looking for</Trans>
+					</SectionHeading>
+					<div className="grid gap-[18px]">
+						<DraftRecovery {...kept} />
+						<ChipField
+							label={t`Target roles`}
+							hint={<RoleSuggestions onUse={(targetRoles) => change({ targetRoles })} />}
+							placeholder={t`Add a role`}
+							value={draft.targetRoles}
+							onChange={(targetRoles) => change({ targetRoles })}
+						/>
+						<div className="grid gap-x-3 gap-y-1.5 max-sm:gap-y-[18px] sm:grid-cols-2">
+							<ChipField
+								label={t`Where you want to work`}
+								placeholder={t`Add a place`}
+								value={draft.locations}
+								onChange={(locations) => change({ locations })}
+							/>
+							<SearchRegionsField
+								value={draft.searchRegions}
+								accountTimeZone={timeZone}
+								onChange={(searchRegions) => change({ searchRegions })}
+							/>
+						</div>
+						<div className="grid gap-1.5">
+							<Label htmlFor={`${id}-priorities`}>
+								<Trans>What matters to you</Trans>
+							</Label>
+							<Textarea
+								id={`${id}-priorities`}
+								rows={2}
+								maxLength={4000}
+								value={draft.priorities}
+								onChange={(event) => change({ priorities: event.target.value })}
+								className="min-h-[74px]"
+							/>
+						</div>
+					</div>
+
+					<SectionHeading
+						className="pt-7"
+						note={<Trans>Numbers, so roles and offers can be checked without guessing</Trans>}
 					>
-						<Trans>Retry</Trans>
-					</button>
-				)}
-			</div>
-
-			<div className="grid gap-4 sm:grid-cols-2">
-				<ChipField
-					label={t`Target roles`}
-					placeholder={t`Add a role, then Enter`}
-					value={draft.targetRoles}
-					onChange={(targetRoles) => change({ targetRoles })}
-				/>
-				<ChipField
-					label={t`Where you want to work`}
-					placeholder={t`Add a place, then Enter`}
-					value={draft.locations}
-					onChange={(locations) => change({ locations })}
-				/>
-				<div className="sm:col-start-2">
-					<SearchRegionsField
-						value={draft.searchRegions}
-						accountTimeZone={timeZone}
-						onChange={(searchRegions) => change({ searchRegions })}
-					/>
-				</div>
-			</div>
-
-			<RoleSuggestions onUse={(targetRoles) => change({ targetRoles })} />
-
-			<div className="grid gap-1.5">
-				<label htmlFor={`${id}-priorities`} className="text-xs font-medium text-ink-2">
-					<Trans>What matters to you</Trans>
-				</label>
-				<Textarea
-					id={`${id}-priorities`}
-					rows={3}
-					maxLength={4000}
-					value={draft.priorities}
-					onChange={(event) => change({ priorities: event.target.value })}
-					className="min-h-[84px] py-2.5 text-sm leading-[21px]"
-				/>
-			</div>
-
-			<section className="grid gap-2.5 rounded-xl border border-line bg-surface p-4">
-				<div className="grid gap-1">
-					<h3 className="text-sm font-semibold">
 						<Trans>Requirements</Trans>
-					</h3>
-					<p className="text-xs text-ink-3">
-						<Trans>Used to check roles and offers. Each is a number, so the coach can compare without guessing.</Trans>
+					</SectionHeading>
+					<div className="grid items-start gap-4 sm:grid-cols-[232px_minmax(0,1fr)_112px]">
+						<SalaryField
+							id={`${id}-salary`}
+							locale={i18n.locale}
+							value={draft.minBase}
+							onChange={(minBase) => change({ minBase })}
+						/>
+
+						<div className="grid gap-1.5">
+							<span id={`${id}-office`} className="text-[13px]/[18px] font-medium text-ink-2">
+								<Trans>Office days a week, at most</Trans>
+							</span>
+							<SegmentedControl
+								aria-labelledby={`${id}-office`}
+								value={draft.maxOfficeDays === null ? "any" : String(draft.maxOfficeDays)}
+								onValueChange={(value) => change({ maxOfficeDays: value === "any" ? null : Number(value) })}
+								className="flex h-10 w-full"
+							>
+								<SegmentedControlItem value="any" className="px-1">
+									<Trans>Any</Trans>
+								</SegmentedControlItem>
+								{[0, 1, 2, 3, 4, 5].map((count) => (
+									<SegmentedControlItem
+										key={count}
+										value={String(count)}
+										className={cn("px-1", count === 0 && "flex-[1.7]")}
+									>
+										{count === 0 ? t`Remote` : count}
+									</SegmentedControlItem>
+								))}
+							</SegmentedControl>
+						</div>
+
+						<div className="grid gap-1.5">
+							<Label htmlFor={`${id}-notice`}>
+								<Trans>Notice period</Trans>
+							</Label>
+							<span className={fieldShell}>
+								<input
+									id={`${id}-notice`}
+									type="number"
+									inputMode="numeric"
+									min={0}
+									max={52}
+									value={draft.noticeWeeks ?? ""}
+									onChange={(event) => {
+										const weeks = event.target.valueAsNumber;
+										change({ noticeWeeks: Number.isNaN(weeks) ? null : Math.min(52, Math.max(0, Math.round(weeks))) });
+									}}
+									className="w-full min-w-0 flex-1 [appearance:textfield] bg-transparent text-sm outline-none focus-visible:outline-none [&::-webkit-inner-spin-button]:appearance-none"
+								/>
+								<span className="text-sm text-ink-3">
+									<Trans>weeks</Trans>
+								</span>
+							</span>
+						</div>
+					</div>
+					<p className="pt-5 text-ink-3 t-small">
+						<Trans>Times are shown in {timeZone}.</Trans>{" "}
+						<Link
+							to="/dashboard/settings/preferences"
+							className="inline-block font-medium text-accent-text hover:underline"
+						>
+							<Trans>Change timezone</Trans>
+						</Link>
 					</p>
 				</div>
+			</Columns>
+		</KnowledgeFrame>
+	);
+}
 
-				<div className="mt-1 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
-					<SalaryField
-						id={`${id}-salary`}
-						locale={i18n.locale}
-						value={draft.minBase}
-						onChange={(minBase) => change({ minBase })}
-					/>
+type UsedRowProps = {
+	to: "/dashboard/career" | "/dashboard/career/offers" | "/dashboard/career/coach/{-$conversationId}";
+	title: ReactNode;
+	subtitle: ReactNode;
+};
 
-					<div className="grid gap-1.5 sm:col-span-2">
-						<span id={`${id}-office`} className="text-xs font-medium text-ink-2">
-							<Trans>Office days a week, at most</Trans>
-						</span>
-						<SegmentedControl
-							aria-labelledby={`${id}-office`}
-							value={draft.maxOfficeDays === null ? "any" : String(draft.maxOfficeDays)}
-							onValueChange={(value) => change({ maxOfficeDays: value === "any" ? null : Number(value) })}
-							className="flex w-full"
-						>
-							<SegmentedControlItem value="any" className="touch-target relative px-2">
-								<Trans>Any</Trans>
-							</SegmentedControlItem>
-							{[0, 1, 2, 3, 4, 5].map((days) => (
-								<SegmentedControlItem
-									key={days}
-									value={String(days)}
-									className="touch-target relative px-1 data-checked:bg-transparent data-checked:shadow-none"
-								>
-									{draft.maxOfficeDays === days && (
-										<m.span
-											layoutId="office-days"
-											transition={{ duration: D2, ease: EASE }}
-											className="absolute inset-0 rounded-sm bg-raised shadow-e1"
-										/>
-									)}
-									<span className="relative">{days === 0 ? t`Remote` : days}</span>
-								</SegmentedControlItem>
-							))}
-						</SegmentedControl>
-					</div>
-
-					<div className="grid gap-1.5">
-						<label htmlFor={`${id}-notice`} className="text-xs font-medium text-ink-2">
-							<Trans>Notice period</Trans>
-						</label>
-						<span className={fieldShell}>
-							<input
-								id={`${id}-notice`}
-								type="number"
-								inputMode="numeric"
-								min={0}
-								max={52}
-								value={draft.noticeWeeks ?? ""}
-								onChange={(event) => {
-									const weeks = event.target.valueAsNumber;
-									change({ noticeWeeks: Number.isNaN(weeks) ? null : Math.min(52, Math.max(0, Math.round(weeks))) });
-								}}
-								className="w-12 min-w-0 [appearance:textfield] bg-transparent text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none"
-							/>
-							<span className="text-[13px] text-ink-3">
-								<Trans>weeks</Trans>
-							</span>
-						</span>
-					</div>
-				</div>
-			</section>
-			<div className="grid gap-2 text-xs text-ink-3">
-				<p>
-					<Trans>Times are shown in {timeZone}.</Trans>{" "}
-					<Link to="/dashboard/settings/preferences" className="underline underline-offset-2 hover:text-ink">
-						<Trans>Change timezone</Trans>
-					</Link>
-				</p>
-			</div>
-		</div>
+/** Where an answer goes: a row that opens the place, with a line that may wrap. */
+function UsedRow({ to, title, subtitle }: UsedRowProps) {
+	return (
+		<ListRow render={<Link to={to} />} className="min-h-0 items-start py-3">
+			<span className="flex min-w-0 flex-1 flex-col gap-px">
+				<span className="text-ink t-row-title">{title}</span>
+				<span className="text-ink-3 t-small">{subtitle}</span>
+			</span>
+			<Icon name="caret-right" size={18} className="shrink-0 text-ink-3" />
+		</ListRow>
 	);
 }
 
 /** An input-like box holding a prefix/suffix and a bare input; focus rings the whole box. */
 const fieldShell =
-	"flex h-9 items-center gap-1.5 rounded-md border border-control-border bg-raised px-2.5 transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)] pointer-coarse:h-11";
+	"flex h-10 items-center gap-2 rounded-md border border-control-border bg-raised px-[11px] transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)] pointer-coarse:h-11";
 
-const bareSelect =
-	"field-sizing-content cursor-pointer appearance-none bg-transparent text-ink-3 outline-none hover:text-ink focus-visible:text-ink";
-
-type ChipFieldProps = { label: string; placeholder: string; value: string[]; onChange: (value: string[]) => void };
+type ChipFieldProps = {
+	label: string;
+	/** At the end of the label's line: "optional", or the action that fills the field. */
+	hint?: ReactNode;
+	placeholder: string;
+	value: string[];
+	onChange: (value: string[]) => void;
+};
 
 /** Enter or comma adds a chip, Backspace in an empty input removes the last one, × removes one. */
-function ChipField({ label, placeholder, value, onChange }: ChipFieldProps) {
+export function ChipField({ label, hint, placeholder, value, onChange }: ChipFieldProps) {
 	const id = useId();
 	const [input, setInput] = useState("");
 
@@ -317,23 +398,25 @@ function ChipField({ label, placeholder, value, onChange }: ChipFieldProps) {
 
 	return (
 		<div className="grid content-start gap-1.5">
-			<label htmlFor={id} className="text-xs font-medium text-ink-2">
-				{label}
-			</label>
-			<div className="flex min-h-10 flex-wrap items-center gap-1 rounded-md border border-control-border bg-raised p-1 transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)]">
+			{hint ? (
+				<div className="flex items-center justify-between gap-2">
+					<Label htmlFor={id}>{label}</Label>
+					{hint}
+				</div>
+			) : (
+				<Label htmlFor={id}>{label}</Label>
+			)}
+			<div className={chipFieldClassName}>
 				{value.map((chip) => (
-					<span
-						key={chip}
-						className="flex h-7 items-center gap-0.5 rounded-sm bg-sunken ps-2.5 pe-1 text-[13px] font-medium"
-					>
+					<span key={chip} className={fieldChipClassName}>
 						{chip}
 						<button
 							type="button"
 							aria-label={t`Remove ${chip}`}
 							onClick={() => onChange(value.filter((item) => item !== chip))}
-							className="touch-target relative flex size-[22px] items-center justify-center rounded-md text-ink-3 transition-colors duration-quick hover:bg-hover hover:text-ink"
+							className={fieldChipRemoveClassName}
 						>
-							<Icon name="x" size={16} />
+							<Icon name="x" size={14} />
 						</button>
 					</span>
 				))}
@@ -344,7 +427,7 @@ function ChipField({ label, placeholder, value, onChange }: ChipFieldProps) {
 					onChange={(event) => setInput(event.target.value)}
 					onKeyDown={onKeyDown}
 					onBlur={add}
-					className="h-7 min-w-40 flex-1 bg-transparent px-1.5 text-[13px] outline-none placeholder:text-ink-3"
+					className="h-7 min-w-24 flex-1 bg-transparent px-1 text-sm outline-none placeholder:text-ink-3 focus-visible:outline-none"
 				/>
 			</div>
 		</div>
@@ -366,19 +449,20 @@ function SalaryField({ id, locale, value, onChange }: SalaryFieldProps) {
 	const [invalid, setInvalid] = useState(false);
 	const formatted = value.amount === null ? "" : number.format(value.amount);
 
-	const periods = { hour: t`/ hour`, month: t`/ month`, year: t`/ year` };
+	const periods = { hour: t`an hour`, month: t`a month`, year: t`a year` };
 
 	return (
-		<div className="grid gap-1.5 sm:col-span-2">
-			<label htmlFor={id} className="text-xs font-medium text-ink-2">
+		<div className="grid gap-1.5">
+			<Label htmlFor={id}>
 				<Trans>Minimum base salary</Trans>
-			</label>
-			<span className={fieldShell}>
+			</Label>
+			<span className={cn(fieldShell, "gap-0 ps-0 pe-1")}>
 				<CurrencySelect
 					value={value.currency}
 					onChange={(currency) => onChange({ ...value, currency })}
-					className="h-auto w-auto border-0 bg-transparent px-0 text-sm shadow-none"
+					className="h-full w-auto gap-0.5 rounded-e-none bg-transparent ps-[11px] pe-1.5 font-normal text-ink-2 shadow-none"
 				/>
+				<span aria-hidden="true" className="my-2 w-px self-stretch bg-line" />
 				<input
 					id={id}
 					inputMode="decimal"
@@ -397,23 +481,26 @@ function SalaryField({ id, locale, value, onChange }: SalaryFieldProps) {
 						setInvalid(false);
 						setTyping(null);
 					}}
-					className="w-full min-w-0 flex-1 bg-transparent text-sm outline-none"
+					className="w-full min-w-0 flex-1 bg-transparent ps-2.5 text-sm outline-none focus-visible:outline-none"
 				/>
-				<select
-					aria-label={t`Pay period`}
-					value={value.period}
-					onChange={(event) => onChange({ ...value, period: event.target.value as keyof typeof periods })}
-					className={cn(bareSelect, "text-end text-xs")}
-				>
-					{Object.entries(periods).map(([period, label]) => (
-						<option key={period} value={period}>
-							{label}
-						</option>
-					))}
-				</select>
+				<span className="relative flex h-full items-center text-ink-2">
+					<select
+						aria-label={t`Pay period`}
+						value={value.period}
+						onChange={(event) => onChange({ ...value, period: event.target.value as keyof typeof periods })}
+						className="field-sizing-content h-full cursor-pointer appearance-none bg-transparent ps-1 pe-6 text-sm outline-none hover:text-ink focus-visible:text-ink"
+					>
+						{Object.entries(periods).map(([period, label]) => (
+							<option key={period} value={period}>
+								{label}
+							</option>
+						))}
+					</select>
+					<Icon name="caret-down" size={18} className="pointer-events-none absolute inset-e-1 text-ink-3" />
+				</span>
 			</span>
 			{invalid && (
-				<p id={`${id}-error`} role="alert" className="text-xs text-danger-text">
+				<p id={`${id}-error`} role="alert" className="text-xs/4 text-danger-text">
 					<Trans>Enter a full amount, such as 95000. Your previous amount is unchanged.</Trans>
 				</p>
 			)}

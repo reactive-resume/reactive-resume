@@ -4,25 +4,26 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import type z from "zod";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Link, useRouteContext } from "@tanstack/react-router";
-import { m } from "motion/react";
+import { useRouteContext } from "@tanstack/react-router";
 import { useId, useState } from "react";
+import { aiModelForTask } from "@reactive-resume/ai/task-models";
 import { defaultFollowUpNote } from "@reactive-resume/schema/applications/follow-up";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
-import { Sheet, SheetClose, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
-import { SwitchRow } from "@reactive-resume/ui/components/switch";
+import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { CareerLoadError } from "./load-state";
-import { PrivacyLine, Swap, useCareerTime, useNow } from "./shared";
+import { Swap, useCareerTime, useNow } from "./shared";
+import { List, ListRow } from "@/components/calm/list-row";
 import { collectInterviews, interviewKindOf } from "@/features/applications/interviews";
 import { applicationDetailQueryOptions, applicationsListQueryOptions } from "@/features/applications/queries";
 import { SetUpAi } from "@/features/assistant/provider-setup";
@@ -31,7 +32,6 @@ import { AiProviderLoadState } from "@/features/settings/integrations/ai-provide
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { toastError } from "@/libs/error-message";
-import { D2, EASE } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
 type ScheduleInput = z.input<typeof careerScheduleInputSchema>;
@@ -45,7 +45,7 @@ const KINDS: readonly Kind[] = ["discovery", "prepare", "follow-up"];
 export function scheduleKind(kind: string): { icon: IconName; title: string } {
 	if (kind === "prepare") return { icon: "graduation-cap", title: t`Interview preparation` };
 	if (kind === "follow-up") return { icon: "bell", title: t`Follow-up reminder` };
-	return { icon: "globe-simple", title: t`Opportunity discovery` };
+	return { icon: "globe-simple", title: t`Role discovery` };
 }
 
 // ---- Wall-clock time in the Preferences timezone ----
@@ -139,7 +139,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	const phone = useBreakpoint() === "mobile";
 	const now = useNow();
 	const [shown, onClosingComplete] = useClosingValue(schedule ?? null);
-	const { when, timeZone: accountTimeZone, locale } = useCareerTime();
+	const { when, format, plainTime, timeZone: accountTimeZone, locale } = useCareerTime();
 	const context = useRouteContext({ strict: false });
 	const user = context.session?.user;
 	const { data: schedules } = useQuery(orpc.career.schedules.queryOptions({ input: {} }));
@@ -147,6 +147,9 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
 	const { data: applications } = useQuery(applicationsListQueryOptions());
 	const { data: webAccess } = useQuery(orpc.webAccess.status.queryOptions());
+	// Only counted, for the line that says what a briefing sends.
+	const knowledge = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: null, all: true } }));
+	const stories = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: null } }));
 	const providerState = useHasUsableAiProvider();
 	const { usableProviders: providers, isLoading: providersLoading } = providerState;
 	const close = () => onScheduleChange(undefined);
@@ -271,6 +274,14 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	};
 
 	const dateLabel = draft?.kind === "follow-up" ? t`Remind me on` : t`First run`;
+	// "Lisbon": the city of the timezone the times are entered in.
+	const city = timeZone.split("/").at(-1)?.replaceAll("_", " ") ?? timeZone;
+	// "tavily" → "Tavily": the service's own name is its id with a capital.
+	const searchService = webAccess?.provider
+		? webAccess.provider.charAt(0).toUpperCase() + webAccess.provider.slice(1)
+		: null;
+	const providerLabel = providers.find((provider) => provider.id === draft?.aiProviderId)?.label;
+	const active = (knowledge.data ?? []).filter((fact) => fact.status === "active" && fact.applicationId === null);
 
 	return (
 		<Sheet
@@ -283,17 +294,13 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 				if (!next) setForm(null);
 			}}
 		>
-			<SheetContent
-				side={phone ? "bottom" : "right"}
-				showCloseButton={false}
-				className="gap-0 data-[side=right]:border-s data-[side=right]:border-line data-[side=right]:sm:max-w-[480px]"
-			>
-				<div className="flex items-center gap-3 border-b border-line ps-[22px] pe-3 pt-[18px] pb-3.5">
+			<SheetContent side={phone ? "bottom" : "right"} showCloseButton={false} className="gap-0">
+				<div className="flex shrink-0 items-center gap-2 ps-6 pe-4 pt-5 pb-3 max-sm:pt-2">
 					<SheetTitle className="flex-1">
 						{form?.existing ? <Trans>Edit schedule</Trans> : <Trans>New schedule</Trans>}
 					</SheetTitle>
 					<SheetClose aria-label={t`Close`} render={<Button variant="ghost" size="icon" className="text-ink-2" />}>
-						<Icon name="x" />
+						<Icon name="x" size={20} />
 					</SheetClose>
 				</div>
 
@@ -302,7 +309,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 						<Spinner />
 					</div>
 				) : (
-					<div className="flex min-h-0 flex-1 flex-col gap-[18px] overflow-y-auto px-[22px] py-5">
+					<div className="flex min-h-0 flex-1 flex-col gap-[18px] overflow-y-auto px-6 pt-1 pb-6">
 						<Segments
 							label={t`What should run`}
 							value={draft.kind}
@@ -312,6 +319,11 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 								{ value: "prepare", label: t`Interview prep` },
 								{ value: "follow-up", label: t`Remind me` },
 							]}
+							hint={
+								draft.kind === "prepare"
+									? t`Writes a briefing before an interview: likely questions, who you'll meet and stories to tell.`
+									: undefined
+							}
 						/>
 
 						{!runnerAvailable && (
@@ -322,14 +334,19 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 							</p>
 						)}
 						{draft.kind === "discovery" && !webAccess?.search && (
-							<div role="status" className="grid gap-2 rounded-lg bg-warn-soft p-3 text-sm">
+							<div role="status" className="grid gap-2 rounded-lg bg-warn-soft p-3 text-sm text-ink">
 								<p>
 									<Trans>
 										Finding roles needs a working web search service. Set it up first, or save jobs manually in
 										Applications.
 									</Trans>
 								</p>
-								<SetUpWebAccess />
+								{/* While the schedule is on, the footer's button is the way forward; one is enough. */}
+								{!needsWebSearch && (
+									<div>
+										<SetUpWebAccess />
+									</div>
+								)}
 							</div>
 						)}
 						<Swap id={draft.kind} className="flex flex-col gap-[18px]">
@@ -337,7 +354,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 								<>
 									<Field
 										label={t`Look for`}
-										hint={t`Roles, places and companies. Starts from your preferences.`}
+										hint={t`Roles, places and companies. Starts from your preferences; this schedule keeps its own copy.`}
 										error={shownError("query")}
 									>
 										{(props) => (
@@ -350,19 +367,6 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 											/>
 										)}
 									</Field>
-									<p className="text-xs text-ink-3">
-										<Trans>
-											AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule.
-											Existing schedules keep this query until you edit and save it.
-										</Trans>
-									</p>
-									<Button
-										variant="link"
-										nativeButton={false}
-										render={<Link to="/dashboard/career/knowledge/preferences" />}
-									>
-										<Trans>Review target roles in Knowledge</Trans>
-									</Button>
 									<Segments
 										label={t`How often`}
 										value={draft.every}
@@ -373,24 +377,6 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 											{ value: "7", label: t`Every week` },
 										]}
 									/>
-									<p className="flex gap-2.5 rounded-lg bg-info-soft px-3 py-2.5 text-[13px] leading-[19px] text-ink">
-										<Icon name="globe-simple" size={18} className="mt-px shrink-0 text-info-text" />
-										<Trans>
-											Uses the web search service set up in Settings. Only this query and search countries are sent;
-											your resume and Knowledge are not sent to search. The service may charge. Results wait in Today
-											for your review; applications and documents are never created for you.
-										</Trans>
-									</p>
-									<p className="text-xs text-ink-3">
-										{webAccess?.provider ? (
-											<Trans>
-												Found posting links are read by Reactive Resume and, when needed, {webAccess.provider} and the
-												sites being read. The reader may charge.
-											</Trans>
-										) : (
-											<Trans>Found posting links are read by Reactive Resume and the sites being read.</Trans>
-										)}
-									</p>
 								</>
 							)}
 
@@ -398,15 +384,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 								<>
 									<Field
 										label={t`Interview`}
-										hint={
-											choices.length === 0
-												? t`Add an interview in an application first`
-												: runAt && runAt <= now
-													? draft.lead === "morning"
-														? t`The morning of the interview has passed, so the briefing runs now.`
-														: t`Starts in under ${draft.lead === "24h" ? 24 : 2} hours, so the briefing runs now.`
-													: undefined
-										}
+										hint={choices.length === 0 ? t`Add an interview in an application first` : undefined}
 									>
 										{(props) => (
 											<NativeSelect
@@ -437,7 +415,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 										)}
 									</Field>
 									<Segments
-										label={t`Prepare a briefing`}
+										label={t`Prepare the briefing`}
 										value={draft.lead}
 										onChange={(lead) => {
 											setLeadChosen(true);
@@ -448,26 +426,47 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 											{ value: "2h", label: t`2 hours before` },
 											{ value: "morning", label: t`Morning of` },
 										]}
+										hint={
+											!runAt
+												? undefined
+												: runAt <= now
+													? draft.lead === "morning"
+														? t`The morning of the interview has passed, so the briefing runs now.`
+														: t`Starts in under ${draft.lead === "24h" ? 24 : 2} hours, so the briefing runs now.`
+													: t`Runs once, on ${format(runAt, { weekday: "long", day: "numeric", month: "short" })} at ${plainTime(runAt)} (${timeZone}).`
+										}
 									/>
-									<Field label={t`AI connection`}>
+									<Field
+										label={t`AI connection`}
+										hint={
+											providers.length > 0 ? t`A schedule never switches to another connection on its own.` : undefined
+										}
+									>
 										{(props) =>
 											providerState.isUnavailable ? (
 												<AiProviderLoadState state={providerState} />
 											) : providers.length === 0 ? (
 												<SetUpAi />
 											) : (
-												<NativeSelect
-													{...props}
-													value={draft.aiProviderId}
-													onChange={(event) => set({ aiProviderId: event.target.value })}
-													className="pointer-coarse:text-base"
-												>
-													{providers.map((provider) => (
-														<option key={provider.id} value={provider.id}>
-															{provider.label}
-														</option>
-													))}
-												</NativeSelect>
+												<div className="relative">
+													<Icon
+														name="sparkle"
+														size={18}
+														className="pointer-events-none absolute inset-s-2.5 top-1/2 z-10 -translate-y-1/2 text-ink-2"
+													/>
+													<NativeSelect
+														{...props}
+														value={draft.aiProviderId}
+														onChange={(event) => set({ aiProviderId: event.target.value })}
+														className="ps-9 pointer-coarse:text-base"
+													>
+														{providers.map((provider) => (
+															<option key={provider.id} value={provider.id}>
+																{`${provider.label} · ${aiModelForTask(provider, "capable")}`}
+															</option>
+														))}
+													</NativeSelect>
+												</div>
 											)
 										}
 									</Field>
@@ -480,34 +479,37 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 												</Trans>
 											</p>
 										)}
-									<PrivacyLine cost>
-										<Trans>
-											Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this
-											connection. Your provider may charge for it. Scheduled work never switches to another connection
-											automatically.
-										</Trans>
-									</PrivacyLine>
+									{providerLabel && (
+										<div className="flex flex-col gap-2 rounded-lg bg-sunken p-3.5">
+											<p className="text-[13px]/[18px] font-semibold">
+												<Trans>What it sends to {providerLabel}</Trans>
+											</p>
+											<SentLine icon="briefcase">
+												{interview ? (
+													<Trans>
+														The {interview.application.company} posting, your notes and the documents linked to it
+													</Trans>
+												) : (
+													<Trans>The application's posting, your notes and the documents linked to it</Trans>
+												)}
+											</SentLine>
+											<SentLine icon="books">
+												<Trans>
+													Knowledge that's switched on: <Plural value={active.length} one="# fact" other="# facts" />,{" "}
+													<Plural value={stories.data?.length ?? 0} one="# story" other="# stories" /> and your
+													preferences
+												</Trans>
+											</SentLine>
+											<SentLine icon="coins">
+												<Trans>Your provider may charge for the run.</Trans>
+											</SentLine>
+										</div>
+									)}
 								</>
 							)}
 
 							{draft.kind === "follow-up" && (
 								<>
-									<Field label={t`Follow-up note`}>
-										{(props) => (
-											<Input
-												{...props}
-												value={followUpNote}
-												onChange={(event) => set({ followUpNote: event.target.value })}
-											/>
-										)}
-									</Field>
-									{prefill && detail.isError && (
-										<CareerLoadError
-											onRetry={() => {
-												void detail.refetch();
-											}}
-										/>
-									)}
 									<Field label={t`Application`} hint={open.length === 0 ? t`Add an application first` : undefined}>
 										{(props) => (
 											<NativeSelect
@@ -525,12 +527,28 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 											</NativeSelect>
 										)}
 									</Field>
+									<Field label={t`Follow-up note`}>
+										{(props) => (
+											<Input
+												{...props}
+												value={followUpNote}
+												onChange={(event) => set({ followUpNote: event.target.value })}
+											/>
+										)}
+									</Field>
+									{prefill && detail.isError && (
+										<CareerLoadError
+											onRetry={() => {
+												void detail.refetch();
+											}}
+										/>
+									)}
 								</>
 							)}
 
 							{draft.kind !== "prepare" && (
 								<div className="grid gap-1.5">
-									<div className="grid grid-cols-2 gap-3">
+									<div className="grid grid-cols-[minmax(0,1fr)_120px] gap-3">
 										<Field label={dateLabel}>
 											{(props) => (
 												<Input
@@ -544,7 +562,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 												/>
 											)}
 										</Field>
-										<Field label={t`Time · ${timeZone}`}>
+										<Field label={t`Time · ${city}`}>
 											{(props) => (
 												<Input
 													{...props}
@@ -559,54 +577,69 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 										</Field>
 									</div>
 									<FieldError>{shownError("when")}</FieldError>
-									{draft.kind === "discovery" && (
-										<p className="text-xs text-ink-3">
-											<Trans>
-												Repeats at this local time in the displayed timezone across clock changes. A skipped clock time
-												moves forward. Missed runs combine into one search. Results and failures appear in Today;
-												delivery depends on the server runner.
-											</Trans>
-										</p>
-									)}
 								</div>
+							)}
+							{draft.kind === "discovery" && (
+								<p className="text-xs/4 text-ink-3">
+									{searchService ? (
+										<Trans>
+											Searches through {searchService}, which may charge. Your resume and Knowledge are not sent.
+											Results wait in Today; nothing is applied for or created.
+										</Trans>
+									) : (
+										<Trans>
+											Searches through your web search service, which may charge. Your resume and Knowledge are not
+											sent. Results wait in Today; nothing is applied for or created.
+										</Trans>
+									)}
+								</p>
 							)}
 						</Swap>
 
-						<div className="flex flex-col border-t border-line">
-							<SwitchRow
-								checked={draft.enabled}
-								onCheckedChange={(enabled) => set({ enabled })}
-								label={<span className="font-semibold">{t`Turn this schedule on`}</span>}
-								description={t`Paused schedules keep their settings.`}
-								className="rounded-none border-b border-line py-3.5"
+						<List cap>
+							<ListRow
+								title={t`Turn this schedule on`}
+								subtitle={t`A paused schedule keeps its settings.`}
+								trailing={
+									<Switch
+										aria-label={t`Turn this schedule on`}
+										checked={draft.enabled}
+										onCheckedChange={(enabled) => set({ enabled })}
+									/>
+								}
 							/>
-							{!smtp && (
-								<p className="py-3 text-xs text-ink-3">
+							{smtp ? (
+								<ListRow
+									title={t`Also email ${user?.email ?? ""}`}
+									subtitle={
+										!verified
+											? t`Verify your email in Settings first`
+											: draft.kind === "prepare"
+												? t`The briefing always appears in Today.`
+												: t`You always see results in Today.`
+									}
+									trailing={
+										<Switch
+											aria-label={t`Also email ${user?.email ?? ""}`}
+											checked={verified && draft.email}
+											disabled={!verified}
+											onCheckedChange={(email) => set({ email })}
+										/>
+									}
+								/>
+							) : (
+								<p className="py-3 text-xs/4 text-ink-3">
 									<Trans>
 										Email copies are unavailable on this server. In-app notifications still appear in Today.
 									</Trans>
 								</p>
 							)}
-							{smtp && (
-								<SwitchRow
-									checked={verified && draft.email}
-									disabled={!verified}
-									onCheckedChange={(email) => set({ email })}
-									label={<span className="font-semibold">{t`Also email ${user?.email ?? ""}`}</span>}
-									description={
-										verified
-											? t`You'll always see it in Today. Email depends on your server's mail setup.`
-											: t`Verify your email in Settings first`
-									}
-									className="rounded-none border-b border-line py-3.5"
-								/>
-							)}
-						</div>
+						</List>
 					</div>
 				)}
 
-				<div className="relative border-t border-line px-[22px] py-3 pb-[max(12px,env(safe-area-inset-bottom))]">
-					<Swap id={form?.discarding ? "discard" : "actions"} className="flex flex-wrap items-center gap-2">
+				<SheetFooter className="relative pb-[max(16px,env(safe-area-inset-bottom))]">
+					<Swap id={form?.discarding ? "discard" : "actions"} className="flex flex-1 flex-wrap items-center gap-2">
 						{form?.discarding ? (
 							<>
 								<p role="status" className="me-auto text-sm font-semibold">
@@ -626,8 +659,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 							<>
 								{form?.existing && (
 									<Button
-										variant="ghost"
-										className="text-danger-text"
+										variant="danger-text"
 										onClick={() => {
 											if (form.existing) onDelete(form.existing.id);
 											close();
@@ -637,7 +669,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 									</Button>
 								)}
 								<span className="flex-1" />
-								<Button variant="secondary" onClick={requestClose}>
+								<Button variant="ghost" onClick={requestClose}>
 									<Trans>Cancel</Trans>
 								</Button>
 								{needsWebSearch ? (
@@ -650,7 +682,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 							</>
 						)}
 					</Swap>
-				</div>
+				</SheetFooter>
 			</SheetContent>
 		</Sheet>
 	);
@@ -667,13 +699,27 @@ type FieldProps = {
 	children: (props: FieldControlProps) => ReactNode;
 };
 
-/** Label 12/500 ink-2 6px above the control; a hint below, replaced by the error once there is one. */
+/** One line of what a run sends, under its icon. */
+function SentLine({ icon, children }: { icon: IconName; children: ReactNode }) {
+	return (
+		// The words are the paragraph's own text, so the line wraps beside the icon.
+		<p className="flex items-start gap-2.5 text-sm/5">
+			<Icon name={icon} size={18} className="mt-px shrink-0 text-ink-3" />
+			{children}
+		</p>
+	);
+}
+
+const labelClassName = "text-[13px]/[18px] font-medium text-ink-2";
+const hintClassName = "text-xs/4 text-ink-3";
+
+/** Label 13/500 ink-2 6px above the control; a hint below, replaced by the error once there is one. */
 function Field({ label, hint, error, children }: FieldProps) {
 	const id = useId();
 	const note = error ?? hint;
 	return (
 		<div className="grid gap-1.5">
-			<label htmlFor={id} className="text-xs font-medium text-ink-2">
+			<label htmlFor={id} className={labelClassName}>
 				{label}
 			</label>
 			{children({
@@ -685,7 +731,7 @@ function Field({ label, hint, error, children }: FieldProps) {
 				<FieldError id={`${id}-note`}>{error}</FieldError>
 			) : (
 				hint && (
-					<p id={`${id}-note`} className="text-xs text-ink-3">
+					<p id={`${id}-note`} className={hintClassName}>
 						{hint}
 					</p>
 				)
@@ -709,39 +755,35 @@ type SegmentsProps = {
 	value: string;
 	options: { value: string; label: string }[];
 	onChange: (value: string) => void;
+	hint?: string | undefined;
 };
 
-/** A labelled segmented choice whose raised thumb slides to the chosen option. */
-function Segments({ label, value, options, onChange }: SegmentsProps) {
+/** A labelled segmented choice across the sheet's width, with one quiet line under it. */
+function Segments({ label, value, options, onChange, hint }: SegmentsProps) {
 	const id = useId();
 	return (
 		<div className="grid gap-1.5">
-			<span id={id} className="text-xs font-medium text-ink-2">
+			<span id={id} className={labelClassName}>
 				{label}
 			</span>
 			<SegmentedControl
 				aria-labelledby={id}
+				aria-describedby={hint ? `${id}-hint` : undefined}
 				value={value}
 				onValueChange={(next) => onChange(String(next))}
 				className="flex w-full"
 			>
 				{options.map((option) => (
-					<SegmentedControlItem
-						key={option.value}
-						value={option.value}
-						className="relative data-checked:bg-transparent data-checked:shadow-none"
-					>
-						{option.value === value && (
-							<m.span
-								layoutId={`${id}-thumb`}
-								transition={{ duration: D2, ease: EASE }}
-								className="absolute inset-0 rounded-sm bg-raised shadow-e1"
-							/>
-						)}
-						<span className="relative">{option.label}</span>
+					<SegmentedControlItem key={option.value} value={option.value} className="flex-1">
+						{option.label}
 					</SegmentedControlItem>
 				))}
 			</SegmentedControl>
+			{hint && (
+				<p id={`${id}-hint`} className={hintClassName}>
+					{hint}
+				</p>
+			)}
 		</div>
 	);
 }

@@ -172,13 +172,15 @@ type CoachThreadProps = {
 	draftKey?: string;
 	disabled?: boolean;
 	variant: "page" | "sheet";
+	/** A first message written elsewhere (Career's composer) for a thread that already exists: sent as it opens. */
+	initialPrompt?: Prompt | undefined;
 };
 
 /** The coach's chat, shared by Career → Coach and the workspace sheet: messages, writing state, composer. */
 export function CoachThread(props: CoachThreadProps) {
 	const knowledge = useCoachKnowledge(props.applicationId);
 	useEffect(() => void loadChatView(), []);
-	const [prompt, setPrompt] = useState<Prompt | null>(null);
+	const [prompt, setPrompt] = useState<Prompt | null>(props.initialPrompt ?? null);
 	const [starting, setStarting] = useState(false);
 	const draft = useRef<string | null>(null);
 	const creating = useRef<Promise<string> | null>(null);
@@ -257,7 +259,7 @@ function Empty({ render, send }: EmptyProps) {
 }
 
 export const contentClass = {
-	page: "mx-auto grid w-full max-w-[720px] content-start gap-6 px-6 py-6 max-sm:px-4 max-sm:py-4",
+	page: "grid w-full content-start gap-3.5 py-5",
 	sheet: "grid content-start gap-4 p-[18px]",
 };
 
@@ -319,6 +321,10 @@ function ThreadSession(props: SessionProps) {
 type Upload = ChatAttachment & { size: number };
 
 type ComposerProps = Pick<CoachThreadProps, "placeholder" | "chips" | "notice" | "draftKey" | "variant"> & {
+	/** Beside Send: Career's composer names its AI connection there. */
+	actions?: ReactNode;
+	/** Career's page composer has no thread to attach files to until the first message: it leaves the button out. */
+	attach?: boolean;
 	/** The privacy line, given how many files are attached. */
 	privacy: (attached: number) => ReactNode;
 	streaming: boolean;
@@ -385,8 +391,8 @@ export function Composer(props: ComposerProps) {
 	const page = props.variant === "page";
 
 	return (
-		<div className={page ? "border-t border-line px-6 py-3 max-sm:px-3 max-sm:py-2" : "px-3.5 pt-2 pb-3.5"}>
-			<div className={cn("grid gap-2", page && "mx-auto w-full max-w-[720px]")}>
+		<div className={page ? "shrink-0 pt-3.5 pb-5 max-sm:pb-3" : "px-3.5 pt-2 pb-3.5"}>
+			<div data-design="composer" className="grid gap-2">
 				{props.notice}
 				<ChatComposer
 					label={t`Message the coach`}
@@ -400,6 +406,27 @@ export function Composer(props: ComposerProps) {
 					onStop={props.onStop}
 					chips={
 						<>
+							{props.attach !== false && (
+								<>
+									<IconButton
+										icon="paperclip"
+										label={t`Attach a file`}
+										size="icon-sm"
+										disabled={props.disabled || uploading || removal.isPending}
+										loading={uploading}
+										className="text-ink-2"
+										onClick={() => fileInput.current?.click()}
+									/>
+									<input
+										ref={fileInput}
+										type="file"
+										multiple
+										accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
+										className="hidden"
+										onChange={(event) => void upload(event.target.files)}
+									/>
+								</>
+							)}
 							{props.chips}
 							{attachments.map((attachment) => (
 								<span
@@ -423,27 +450,7 @@ export function Composer(props: ComposerProps) {
 							))}
 						</>
 					}
-					actions={
-						<>
-							<IconButton
-								icon="paperclip"
-								label={t`Attach a file`}
-								size="icon-sm"
-								disabled={props.disabled || uploading || removal.isPending}
-								loading={uploading}
-								className="text-ink-2"
-								onClick={() => fileInput.current?.click()}
-							/>
-							<input
-								ref={fileInput}
-								type="file"
-								multiple
-								accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
-								className="hidden"
-								onChange={(event) => void upload(event.target.files)}
-							/>
-						</>
-					}
+					actions={props.actions}
 				/>
 				{props.privacy(attachments.length)}
 			</div>
@@ -487,11 +494,11 @@ export function WebResearchChip({ status, pressed, onPressedChange, fallbackLabe
 						? t`Retry with ${nativeSearchLabel}`
 						: t`Lets the coach search public pages through your web search service`
 				}
-				offIcon="globe-hemisphere-west"
+				offIcon="globe-simple"
 			/>
 		);
 	const chip =
-		"touch-target relative inline-flex h-7 items-center gap-1 rounded-sm border border-dashed border-line px-[9px] text-xs font-medium text-ink-3";
+		"touch-target relative inline-flex h-[26px] items-center gap-1.5 rounded-sm border border-dashed border-line-2 px-2 text-xs/[18px] font-medium whitespace-nowrap text-ink-3";
 	if (status.isPending || status.isError)
 		return (
 			<Tooltip>
@@ -505,7 +512,7 @@ export function WebResearchChip({ status, pressed, onPressedChange, fallbackLabe
 						/>
 					}
 				>
-					<Icon name={status.isError ? "arrow-clockwise" : "globe-hemisphere-west"} size={16} />
+					<Icon name={status.isError ? "arrow-clockwise" : "globe-simple"} size={14} />
 					{status.isError ? t`Web research · Retry` : t`Web research`}
 				</TooltipTrigger>
 				<TooltipContent>
@@ -516,7 +523,7 @@ export function WebResearchChip({ status, pressed, onPressedChange, fallbackLabe
 	return (
 		<Tooltip>
 			<TooltipTrigger render={<Link to="/dashboard/settings/ai" className={cn(chip, "hover:text-ink-2")} />}>
-				<Icon name="globe-hemisphere-west" size={16} />
+				<Icon name="globe-simple" size={14} />
 				<Trans>Web research · Set up</Trans>
 			</TooltipTrigger>
 			<TooltipContent>
@@ -536,3 +543,21 @@ export async function copyToClipboard(text: string, done: string) {
 		toast.add({ type: "error", description: t`Couldn't copy to the clipboard. Try again.` });
 	}
 }
+
+// ---- A first message written on Career, handed to the conversation's page ----
+
+let pending: { threadId: string; prompt: Prompt } | null = null;
+
+/** Career's composer creates the thread, leaves its first message here and opens the conversation. */
+export const handOffPrompt = (threadId: string, prompt: Prompt) => {
+	pending = { threadId, prompt };
+};
+
+/** The message left for this thread. Read during render, so it stays until `dropPrompt` (after the page mounts). */
+export const takePrompt = (threadId: string | null) =>
+	pending && pending.threadId === threadId ? pending.prompt : undefined;
+
+/** Called once the conversation's page has taken its message, so returning to it later never sends it again. */
+export const dropPrompt = (threadId: string | null) => {
+	if (pending?.threadId === threadId) pending = null;
+};

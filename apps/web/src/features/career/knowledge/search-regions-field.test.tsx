@@ -48,7 +48,7 @@ describe("SearchRegionsField", () => {
 		const onChange = vi.fn();
 		render(<Harness initial={null} accountTimeZone="Asia/Singapore" onChange={onChange} />);
 		expect(screen.getByText("Singapore")).toBeInTheDocument();
-		expect(screen.getByText("From your timezone")).toBeInTheDocument();
+		expect(screen.getByText(/^Singapore comes from your timezone\./)).toBeInTheDocument();
 		expect(onChange).not.toHaveBeenCalled();
 	});
 

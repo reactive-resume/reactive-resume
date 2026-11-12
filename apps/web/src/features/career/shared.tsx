@@ -467,12 +467,14 @@ type ContextChipProps = {
 	onPressedChange: (pressed: boolean) => void;
 	label: string;
 	tooltip: string;
-	/** Shown when off instead of `add`; Web research uses `public`. */
+	/** What the chip stands for, shown while it's on. */
+	icon?: IconName;
+	/** Shown when off instead of `plus`; Web research uses a globe. */
 	offIcon?: IconName;
 };
 
-/** Composer context switches: on is sunken with a check, off is quiet with add. */
-export function ContextChip({ pressed, onPressedChange, label, tooltip, offIcon = "plus" }: ContextChipProps) {
+/** Composer context switches: on is a sunken chip with its remove mark, off is a dashed offer to add it. */
+export function ContextChip({ pressed, onPressedChange, label, tooltip, icon, offIcon = "plus" }: ContextChipProps) {
 	return (
 		<Tooltip>
 			<TooltipTrigger
@@ -482,14 +484,17 @@ export function ContextChip({ pressed, onPressedChange, label, tooltip, offIcon 
 						aria-pressed={pressed}
 						onClick={() => onPressedChange(!pressed)}
 						className={cn(
-							"touch-target relative inline-flex h-7 items-center gap-1 rounded-sm border px-[9px] text-xs font-medium transition-[background-color,border-color,color] duration-quick",
-							pressed ? "border-line-2 bg-sunken text-ink" : "border-line text-ink-3 hover:text-ink-2",
+							"touch-target relative inline-flex h-[26px] items-center gap-1.5 rounded-sm text-xs/[18px] font-medium whitespace-nowrap transition-colors duration-quick",
+							pressed
+								? "bg-sunken ps-2 pe-1.5 text-ink-2 hover:text-ink"
+								: "border border-dashed border-line-2 px-2 text-ink-3 hover:text-ink-2",
 						)}
 					/>
 				}
 			>
-				<Icon name={pressed ? "check" : offIcon} size={16} />
+				<Icon name={pressed ? (icon ?? "check") : offIcon} size={16} />
 				{label}
+				{pressed && <Icon name="x" size={16} className="text-ink-3" />}
 			</TooltipTrigger>
 			<TooltipContent>{tooltip}</TooltipContent>
 		</Tooltip>
@@ -584,15 +589,15 @@ export function MemoryProposal(props: MemoryProposalProps) {
 					{props.remembered}
 				</p>
 			) : (
-				<div className="flex flex-wrap items-center gap-3 rounded-lg bg-info-soft px-3.5 py-3">
-					<Icon name="bookmark-simple" className="shrink-0 text-info-text" />
-					<div className="grid min-w-0 flex-1 basis-60 gap-1 text-[13px] leading-[19px]">
+				<div className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-raised py-2.5 ps-3.5 pe-3">
+					<Icon name="books" size={20} className="shrink-0 text-ink-2" />
+					<div className="grid min-w-0 flex-1 basis-60 text-[13px]/[18px]">
 						<p className="font-semibold text-ink">{props.question}</p>
 						{props.facts.length === 1 ? (
 							<q className="text-ink-2">{props.facts[0]}</q>
 						) : (
 							props.facts.map((fact, index) => (
-								<label key={fact} className="flex items-start gap-2 text-ink-2">
+								<label key={fact} className="flex items-start gap-2 pt-1 text-ink-2">
 									<Checkbox
 										checked={selected.includes(index)}
 										onCheckedChange={(checked) =>
@@ -606,7 +611,10 @@ export function MemoryProposal(props: MemoryProposalProps) {
 							))
 						)}
 					</div>
-					<div className="flex shrink-0 gap-1">
+					<div className="flex shrink-0 gap-3">
+						<Button size="sm" variant="ghost" onClick={props.onDismiss}>
+							<Trans>Not now</Trans>
+						</Button>
 						<Button
 							size="sm"
 							variant="secondary"
@@ -615,9 +623,6 @@ export function MemoryProposal(props: MemoryProposalProps) {
 							onClick={() => props.onRemember(selected)}
 						>
 							<Trans>Remember</Trans>
-						</Button>
-						<Button size="sm" variant="ghost" onClick={props.onDismiss}>
-							<Trans>Not now</Trans>
 						</Button>
 					</div>
 				</div>

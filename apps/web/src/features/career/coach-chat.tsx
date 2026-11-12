@@ -505,10 +505,6 @@ const MessageView = memo(function MessageView({
 
 			{/* An answer that never came was sent nothing; a stopped one still shows what it was given. Repeats of the
 			    answer before stay one click away, so a long thread doesn't list the same row under every answer. */}
-			{!streaming && used && (text || stories.length > 0) && (!sentRepeats || applications.length > 0 || showSent) && (
-				<UsedChips used={used} applications={scoped ? [] : applications} knowledge={knowledge} />
-			)}
-
 			{stories.map((story) => (
 				<p key={story.id} className="flex flex-wrap items-center gap-1.5 text-sm text-accent-text">
 					<Icon name="check-circle" size={18} />
@@ -525,29 +521,39 @@ const MessageView = memo(function MessageView({
 
 			{!streaming && <MemoryNotes message={message} knowledge={knowledge} company={company} />}
 
-			{!streaming && text && (
-				<div className="flex gap-1">
-					<Button
-						size="sm"
-						variant="ghost"
-						className="text-ink-2"
-						onClick={() => void copyToClipboard(text, t`Answer copied`)}
-					>
-						<Icon name="copy" size={16} />
-						<Trans>Copy</Trans>
-					</Button>
-					{sentRepeats && used && applications.length === 0 && (
-						<Button
-							size="sm"
-							variant="ghost"
-							className="text-ink-2"
-							aria-expanded={showSent}
-							onClick={() => setShowSent((current) => !current)}
-						>
-							<Trans>What was sent</Trans>
-						</Button>
+			{/* What went with the question, then Copy at the end of the same row. */}
+			{!streaming && (text || (used && stories.length > 0)) && (
+				<div className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
+					{/* An answer that never came was sent nothing; a stopped one still shows what it was given. Repeats of
+					    the answer before stay one click away, so a long thread doesn't list the same row under every answer. */}
+					{used && (!sentRepeats || applications.length > 0 || showSent) && (
+						<UsedChips used={used} applications={scoped ? [] : applications} knowledge={knowledge} />
 					)}
-					<AddToResume text={text} applicationId={applicationId} company={company} />
+					{text && (
+						<div className="ms-auto flex gap-1">
+							<Button
+								size="sm"
+								variant="ghost"
+								className="text-ink-2"
+								onClick={() => void copyToClipboard(text, t`Answer copied`)}
+							>
+								<Icon name="copy" size={16} />
+								<Trans>Copy</Trans>
+							</Button>
+							{sentRepeats && used && applications.length === 0 && (
+								<Button
+									size="sm"
+									variant="ghost"
+									className="text-ink-2"
+									aria-expanded={showSent}
+									onClick={() => setShowSent((current) => !current)}
+								>
+									<Trans>What was sent</Trans>
+								</Button>
+							)}
+							<AddToResume text={text} applicationId={applicationId} company={company} />
+						</div>
+					)}
 				</div>
 			)}
 		</div>
@@ -667,7 +673,7 @@ function UsedChips({ used, applications, knowledge }: UsedChipsProps) {
 	return (
 		<div className="flex flex-wrap items-center gap-1.5">
 			<span className="me-0.5 text-xs text-ink-3">
-				<Trans context="What went to the AI provider with a message">Sent</Trans>
+				<Trans context="What went to the AI provider with a message">Sent with your message</Trans>
 			</span>
 			{chips}
 		</div>
