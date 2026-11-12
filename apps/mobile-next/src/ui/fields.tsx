@@ -402,7 +402,14 @@ export function Composer({
 						testID="composer-input"
 						style={[
 							multiLine(typeScale.body),
-							{ padding: 0, color: colors.ink, maxHeight: 120, includeFontPadding: false },
+							// Android sizes an empty multiline input by the font, not the line height (18 instead of 24).
+							{
+								padding: 0,
+								color: colors.ink,
+								minHeight: typeScale.body.lineHeight,
+								maxHeight: 120,
+								includeFontPadding: false,
+							},
 						]}
 					/>
 				</View>
