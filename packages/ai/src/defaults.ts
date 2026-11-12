@@ -77,7 +77,8 @@ export function getAIProviderSetupProblem(
 			return "baseURL";
 		}
 	}
-	if (!hasSavedKey && provider !== "ollama" && !fields.apiKey.trim()) return "apiKey";
+	if (!hasSavedKey && provider !== "ollama" && provider !== "openai-compatible" && !fields.apiKey.trim())
+		return "apiKey";
 	if (!fields.model.trim()) return "model";
 	return null;
 }

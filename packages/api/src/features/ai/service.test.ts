@@ -30,16 +30,31 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 });
 
-function stubOpenAIResponse() {
-	let requestBody: unknown;
+const LM_STUDIO_UNSUPPORTED_FIELDS = [
+	"response_format",
+	"tools",
+	"tool_choice",
+	"stream_options",
+	"parallel_tool_calls",
+];
 
-	const fetchMock = vi.fn((input: unknown, init?: { body?: unknown }) => {
+function stubOpenAIResponse(options: { rejectUnsupportedFields?: boolean } = {}) {
+	let requestBody: unknown;
+	let requestHeaders: Headers | undefined;
+
+	const fetchMock = vi.fn((input: unknown, init?: { body?: unknown; headers?: HeadersInit }) => {
 		const body = JSON.parse(String(init?.body ?? "{}")) as {
 			max_tokens?: number;
 			max_completion_tokens?: number;
 			max_output_tokens?: number;
 		};
 		requestBody = body;
+		requestHeaders = new Headers(init?.headers);
+		if (options.rejectUnsupportedFields && LM_STUDIO_UNSUPPORTED_FIELDS.some((field) => field in body))
+			return new Response(JSON.stringify({ error: { message: "Unsupported field", type: "invalid_request_error" } }), {
+				status: 400,
+				headers: { "Content-Type": "application/json" },
+			});
 		const hasEnoughOutputTokens = (body.max_tokens ?? body.max_completion_tokens ?? body.max_output_tokens ?? 0) >= 128;
 		const text = hasEnoughOutputTokens ? "1" : "";
 		if (String(input).endsWith("/responses")) {
@@ -86,7 +101,7 @@ function stubOpenAIResponse() {
 
 	vi.stubGlobal("fetch", fetchMock);
 
-	return { fetchMock, getRequestBody: () => requestBody };
+	return { fetchMock, getRequestBody: () => requestBody, getRequestHeaders: () => requestHeaders };
 }
 
 const { getAgentModel, testConnection } = await import("./service");
@@ -118,6 +133,25 @@ describe("AI chat service", () => {
 		expect(fetchPublicMock).toHaveBeenCalledTimes(1);
 		expect(openAiCompatible.getRequestBody()).not.toHaveProperty("response_format");
 		expect(openAiCompatible.getRequestBody()).toMatchObject({ max_tokens: 128 });
+	});
+	it("tests a keyless OpenAI-compatible provider with only LM Studio-compatible fields", async () => {
+		const openAiCompatible = stubOpenAIResponse({ rejectUnsupportedFields: true });
+
+		await expect(
+			testConnection({
+				usage,
+				provider: "openai-compatible",
+				model: "test-model",
+				apiKey: "",
+				baseURL: "https://lmstudio.example.test/v1",
+			}),
+		).resolves.toEqual({ ok: true });
+
+		const body = openAiCompatible.getRequestBody() as Record<string, unknown>;
+		expect(body).toMatchObject({ model: "test-model", max_tokens: 128 });
+		for (const field of ["response_format", "tools", "tool_choice", "stream_options", "parallel_tool_calls"])
+			expect(body).not.toHaveProperty(field);
+		expect(openAiCompatible.getRequestHeaders()?.has("authorization")).toBe(false);
 	});
 	it("tests OpenAI reasoning models without unsupported setting warnings", async () => {
 		const { fetchMock } = stubOpenAIResponse();

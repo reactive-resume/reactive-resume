@@ -125,8 +125,8 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 	// An empty field means the provider's own address.
 	const newURL = !!baseline && (fields.baseURL.trim() || defaultURL) !== (baseline.baseURL ?? defaultURL);
 	const apiKey = fields.apiKey.trim();
-	// The server won't send the saved key to a new address, so the key comes with it (Ollama may have none).
-	const keyMissing = newURL && provider !== "ollama" && !apiKey;
+	// The server won't send the saved key to a new address, so the key comes with it. Local servers may have none.
+	const keyMissing = newURL && provider !== "ollama" && provider !== "openai-compatible" && !apiKey;
 	const problem = getAIProviderSetupProblem(provider, fields, Boolean(current && !newURL));
 	const explanation =
 		problem === "baseURL"
@@ -145,7 +145,7 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 		...(fields.capableModel.trim() !== (baseline?.capableModel ?? "")
 			? { capableModel: fields.capableModel.trim() }
 			: {}),
-		// The provider rides along so validation accepts Ollama's empty key.
+		// The provider rides along so validation accepts a keyless local provider.
 		...(newURL ? { provider, baseURL: fields.baseURL.trim() } : {}),
 		...(newURL || apiKey ? { apiKey } : {}),
 	};

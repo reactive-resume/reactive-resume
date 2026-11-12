@@ -114,7 +114,7 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 								? t`Optional for local Ollama`
 								: undefined
 					}
-					required={provider !== "ollama" && (!keyOptional || keyAgain)}
+					required={provider !== "ollama" && provider !== "openai-compatible" && (!keyOptional || keyAgain)}
 					aria-describedby={keyAgain ? `${id}-key-hint` : undefined}
 					onChange={(event) => set({ apiKey: event.target.value })}
 					{...secretInputProps}

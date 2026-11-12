@@ -11,15 +11,21 @@ const providerFields = z.object({
 	apiKey: z.string().trim(),
 });
 
-export const providerInput = providerFields.refine((input) => input.provider === "ollama" || input.apiKey.length > 0, {
-	message: "Enter an API key for this provider.",
-	path: ["apiKey"],
-});
+// Local OpenAI-compatible servers such as LM Studio often run without authentication.
+const keylessProvider = (provider: string | undefined) => provider === "ollama" || provider === "openai-compatible";
+
+export const providerInput = providerFields.refine(
+	(input) => keylessProvider(input.provider) || input.apiKey.length > 0,
+	{
+		message: "Enter an API key for this provider.",
+		path: ["apiKey"],
+	},
+);
 
 export const updateProviderInput = providerFields
 	.partial()
 	.extend({ id: z.string(), enabled: z.boolean().optional() })
-	.refine((input) => input.apiKey === undefined || input.apiKey.length > 0 || input.provider === "ollama", {
+	.refine((input) => input.apiKey === undefined || input.apiKey.length > 0 || keylessProvider(input.provider), {
 		message: "Enter an API key for this provider.",
 		path: ["apiKey"],
 	})
