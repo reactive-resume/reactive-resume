@@ -1,6 +1,6 @@
 import type { ExpoConfig } from "expo/config";
 
-// The successor to apps/mobile: same identifiers, so the production variant replaces it in place. The development
+// Same identifiers as the first Expo app it replaced, so the production variant updates it in place. The development
 // and storyboard variants carry a suffix and install beside it.
 const host = "rxresu.me";
 const microphonePermission = "Reactive Resume records your answers when you practise for an interview.";
@@ -17,7 +17,7 @@ const config: ExpoConfig = {
 	platforms: ["ios", "android"],
 	scheme: id,
 	owner: "reactive-resume",
-	version: "2.0.0",
+	version: "1.0.1",
 	icon: "./assets/icon.png",
 	orientation: "default",
 	userInterfaceStyle: "automatic",

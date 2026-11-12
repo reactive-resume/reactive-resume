@@ -8,23 +8,7 @@
 		},
 		"apps/mobile": {
 			"ignoreExportsUsedInFile": true,
-			"ignoreIssues": {
-				"src/ui/overlays.tsx": ["duplicates"]
-			},
-			"entry": [
-				"fingerprint.config.js",
-				"lingui.config.ts",
-				"scripts/**/*.{mjs,mts,tsx}",
-				"src/features/licences/generate.cjs",
-				"src/draft/index.ts",
-				"src/features/applications/next-step.ts",
-				"src/features/applications/stages.ts",
-				"src/features/assistant/chat-view.tsx",
-				"src/features/workspace/hooks.ts",
-				"src/features/write/{fields,rich-text}.ts",
-				"src/features/write/outline.tsx",
-				"src/ui/{index,tokens}.ts"
-			]
+			"entry": ["plugins/*.js", "scripts/**/*.mjs"]
 		},
 		"apps/web": {
 			"entry": [

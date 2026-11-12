@@ -1,8 +1,8 @@
-# mobile-next: build plan
+# Mobile app: build plan
 
 The new Reactive Resume phone app (Expo / React Native), built from the final storyboard (v4, 9 Nov 2026). The
 specification is the handoff bundle at `/Users/amruth/Projects/reactive-resume/.agents/handoff/mobile-final`
-(`BUILD.md` first). `apps/mobile` is a read-only reference.
+(`BUILD.md` first). It replaced the first Expo app, which was removed in `814aebe44` (read it from git history).
 
 ## Decisions
 
@@ -11,10 +11,10 @@ specification is the handoff bundle at `/Users/amruth/Projects/reactive-resume/.
 | Expo SDK        | 58 (React Native 0.88.1, Reanimated 4.7.1, Gesture Handler 3.5, worklets 0.13.1)                                                                    | The repo's current SDK; the bundle's reference code is type-checked against exactly these                                                                                           |
 | Stack navigator | `Stack` from `expo-router/js-stack` with `stackOptions()` from `src/ui/motion.tsx`                                                                  | Expo Router 58 vendors React Navigation and ships its own JS stack; the external `@react-navigation/stack` package no longer shares its contexts. Same JS stack, same interpolators |
 | Docks           | `Tabs` from `expo-router/js-tabs` with the design-system `Dock` as `tabBar`                                                                         | Custom dock, fade-through owned by `FadeThroughProvider`                                                                                                                            |
-| API client      | The typed oRPC client (`@orpc/client` + `@orpc/tanstack-query`, router types from `@reactive-resume/api`)                                           | BUILD.md §4: follow the repo's client where one exists. `apps/mobile/src/api/client.ts` already solves 401 handling and SSE with it                                                 |
-| Server state    | TanStack Query; offline queue and drafts in `expo-sqlite`                                                                                           | As `apps/mobile/src/draft`                                                                                                                                                          |
+| API client      | The typed oRPC client (`@orpc/client` + `@orpc/tanstack-query`, router types from `@reactive-resume/api`)                                           | BUILD.md §4: follow the repo's client where one exists. The first app's `src/api/client.ts` already solved 401 handling and SSE with it                                             |
+| Server state    | TanStack Query; offline queue and drafts in `expo-sqlite`                                                                                           | As the first app's `src/draft`                                                                                                                                                      |
 | Preferences     | `expo-sqlite/kv-store`                                                                                                                              | Already in the dependency set; no MMKV                                                                                                                                              |
-| Identifiers     | Production: `me.rxresu` (same as `apps/mobile`). Development: `me.rxresu.dev`. Storyboard: `me.rxresu.storyboard`. The scheme equals the identifier | BUILD.md §4; suffixed variants install beside the old app                                                                                                                           |
+| Identifiers     | Production: `me.rxresu` (same as the first app). Development: `me.rxresu.dev`. Storyboard: `me.rxresu.storyboard`. The scheme equals the identifier | BUILD.md §4; suffixed variants install beside the production app                                                                                                                    |
 | Unit tests      | Jest (`jest-expo`) under `src/**/*.test.ts(x)`                                                                                                      | BUILD.md §4                                                                                                                                                                         |
 | UI flows        | Maestro flows in `.maestro/`                                                                                                                        | BUILD.md §4                                                                                                                                                                         |
 | Devices         | One simulator or emulator at a time, machine-wide                                                                                                   | The build machine's memory; captures are serialised through a lock (below)                                                                                                          |
@@ -55,7 +55,7 @@ The tree in BUILD.md §5 is the map; deviations are recorded here as they are ma
 | `app/r/[username]/[slug] · app/ats-checker`                                                                                                                                                                                            | P1, P2                                                           |
 | `app/(dev)/storyboard/[id] · kit · motion-lab/[lab] · dev/haptics`                                                                                                                                                                     | harness, Kit, motion lab                                         |
 
-## Ported from `apps/mobile` (logic only, never UI)
+## Ported from the first app (logic only, never UI)
 
 | What                                                                     | From                                | To                                     |
 | ------------------------------------------------------------------------ | ----------------------------------- | -------------------------------------- |
@@ -80,8 +80,8 @@ Merge order: foundation → navigation → screens A–F in parallel on disjoint
 
 ## Rules for every sub-agent
 
-1. Work in `/Users/amruth/Projects/reactive-resume/apps/mobile-next` on branch `feat/mobile-next`. Never commit, stash,
-   switch branches or run `pnpm install`; the lead does those. Never edit `apps/mobile`, the handoff bundle or files
+1. Work in `/Users/amruth/Projects/reactive-resume/apps/mobile` on branch `feat/mobile-next`. Never commit, stash,
+   switch branches or run `pnpm install`; the lead does those. Never edit the handoff bundle or files
    another agent owns. A missing component, motion primitive, data hook or dependency is a request to the lead in your
    report, never a local look-alike.
 2. Node 24: prefix commands with `mise exec node@24 --`. Typecheck: `mise exec node@24 -- pnpm typecheck` in the app
@@ -241,7 +241,7 @@ an account. The public/letter paths do not invent a protected server PDF fallbac
 Screen agents (A–F) each work in their own git worktree and commit there; the lead merges. This section replaces rule 1's
 "never commit" and rule 4's Metro note for them; everything else in "Rules for every sub-agent" holds.
 
-**Setup (once).** In your worktree's `apps/mobile-next`: if `node_modules` is missing run
+**Setup (once).** In your worktree's `apps/mobile`: if `node_modules` is missing run
 `mise exec node@24 -- pnpm install --offline --frozen-lockfile` from the repo root of the worktree. Start your own Metro
 on your port: `APP_VARIANT=storyboard EXPO_PUBLIC_STORYBOARD=1 mise exec node@24 -- npx expo start --dev-client --port <port> > build/metro.log 2>&1 &`
 (create `build/` first; it is git-ignored). Ports: A 8082, B 8083, C 8084, D 8085, E 8086, F 8087. Stop it when you finish.
@@ -293,7 +293,7 @@ say so in your report instead of working around it.
 **Finish.** `mise exec node@24 -- pnpm typecheck`, `mise exec node@24 -- pnpm test` and `sh scripts/check-motion.sh`
 (prints nothing) pass; `mise exec node@24 -- pnpm exec vp lint --fix <your paths>` and `pnpm exec vp fmt <your paths>`
 from the worktree's repo root. Commit your work in your worktree with a Conventional Commit message
-(`feat(mobile-next): …`, no AI attribution, no trailers). Report: your branch name and commit; one scoreboard line per
+(`feat(mobile): …`, no AI attribution, no trailers). Report: your branch name and commit; one scoreboard line per
 screen; each remaining difference with its cause; every request to the lead; behaviour bullets from `SCREENS.md` you
 did not implement and why; questions about direction.
 

@@ -4,7 +4,7 @@ Run on iOS (iPhone 14 simulator, Release storyboard build) in Pass 8; the scoreb
 
 Every flow starts with `launchApp: clearState: true` and waits for `storyboard-ready` after each storyboard link: the capture harness holds motion at time scale 0 for about 4 s after a scenario loads, and toasts would run out instantly. Maestro waits for the screen to settle after each command, and a toast's running fuse keeps it busy, so taps that raise a 5 s toast use `waitToSettleTimeoutMs`. `dev/haptics` links switch the haptic log in place (`app/+native-intent.tsx`) and never move the screen.
 
-Run from `apps/mobile-next` with a storyboard development build (`APP_VARIANT=storyboard`, `EXPO_PUBLIC_STORYBOARD=1`, app ID and scheme `me.rxresu.storyboard`). Metro and the native app must already be available. Never point these flows at a production account. S7 flows clear the storyboard sandbox with `launchApp.clearState`; install a dedicated test variant.
+Run from `apps/mobile` with a storyboard development build (`APP_VARIANT=storyboard`, `EXPO_PUBLIC_STORYBOARD=1`, app ID and scheme `me.rxresu.storyboard`). Metro and the native app must already be available. Never point these flows at a production account. S7 flows clear the storyboard sandbox with `launchApp.clearState`; install a dedicated test variant.
 
 ```sh
 maestro test .maestro/haptics/segment.yaml

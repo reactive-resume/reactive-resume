@@ -58,7 +58,7 @@ jest.unmock("react-native-reanimated");
 require("react-native-reanimated").setUpTests();
 
 const repoRoot = path.resolve(__dirname, "../../../../..");
-const appDir = path.join(repoRoot, "apps/mobile-next/app");
+const appDir = path.join(repoRoot, "apps/mobile/app");
 /**
  * The app's route files as the bundler sees them: Metro's route context skips `+native-intent`, the testing
  * library's file scan doesn't. Modules load on first use, as with a real require context.
@@ -76,7 +76,7 @@ function appRoutes(overrides: Record<string, unknown>) {
 const root = path.resolve(
 	repoRoot,
 	execFileSync("git", ["rev-parse", "--git-common-dir"], { cwd: repoRoot, encoding: "utf8" }).trim(),
-	"../apps/mobile-next",
+	"../apps/mobile",
 );
 const bundle = path.resolve(root, "../../.agents/handoff/mobile-final/design/layout");
 type Element = { n: number; depth: number; text?: string; label?: string; navigatesTo?: string; component?: string };
