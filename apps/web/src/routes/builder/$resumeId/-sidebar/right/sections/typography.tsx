@@ -1,18 +1,11 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { getFont, sortFontWeights } from "@reactive-resume/fonts";
-import { Icon } from "@reactive-resume/ui/components/icon";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupText,
-	InputGroupButton,
-} from "@reactive-resume/ui/components/input-group";
-import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { Chip } from "@/components/calm/filter-bar";
-import { NumberInput } from "@/components/input/number-input";
+import { List } from "@/components/calm/list-row";
 import { FontFamilyCombobox } from "@/components/typography/combobox";
 import { getNextWeights } from "@/components/typography/get-next-weights";
+import { DesignHeading, Field, Stepper, SwitchListRow } from "@/features/resume/editor/design/fields";
 import { useDesign } from "@/features/resume/editor/design/style-groups";
 
 export function TypographySectionBuilder() {
@@ -25,13 +18,10 @@ export function TypographySectionBuilder() {
 				const weights = sortFontWeights(getFont(value.fontFamily)?.weights ?? ["400"]);
 				return (
 					<section key={prefix} className="grid gap-0">
-						<h3 className={`pb-2 t-section-title ${prefix === "body" ? "pt-[18px]" : "pt-[22px]"}`}>
+						<DesignHeading className={prefix === "body" ? "pt-[18px]" : "pt-[22px]"}>
 							{prefix === "body" ? <Trans>Body</Trans> : <Trans>Headings</Trans>}
-						</h3>
-						<div className="grid gap-1.5">
-							<label htmlFor={`font-${prefix}`} className="t-small font-medium">
-								<Trans>Font</Trans>
-							</label>
+						</DesignHeading>
+						<Field label={<Trans>Font</Trans>} htmlFor={`font-${prefix}`}>
 							<FontFamilyCombobox
 								id={`font-${prefix}`}
 								value={value.fontFamily}
@@ -48,18 +38,18 @@ export function TypographySectionBuilder() {
 									);
 								}}
 							/>
-						</div>
-						<div className="mt-3 grid gap-1.5">
-							<div className="flex items-baseline justify-between gap-2 t-small font-medium">
-								{prefix === "body" ? <Trans>Weights</Trans> : <Trans>Weight</Trans>}
-								<span className="t-caption text-ink-3">
-									{weights.length === 1
-										? t`${value.fontFamily} has one weight`
-										: prefix === "body"
-											? t`${value.fontWeights[0] ?? "400"} for text, ${value.fontWeights.at(-1) ?? "700"} for bold`
-											: null}
-								</span>
-							</div>
+						</Field>
+						<Field
+							className="mt-3"
+							label={prefix === "body" ? <Trans>Weights</Trans> : <Trans>Weight</Trans>}
+							help={
+								weights.length === 1
+									? t`${value.fontFamily} has one weight`
+									: prefix === "body"
+										? t`${value.fontWeights[0] ?? "400"} for text, ${value.fontWeights.at(-1) ?? "700"} for bold`
+										: undefined
+							}
+						>
 							<div
 								role="group"
 								aria-label={prefix === "body" ? t`Body weights` : t`Heading weight`}
@@ -91,150 +81,87 @@ export function TypographySectionBuilder() {
 									</Chip>
 								))}
 							</div>
-						</div>
+						</Field>
 						<div className="mt-3 grid grid-cols-2 gap-3">
-							<div className="grid gap-1.5">
-								<label className="t-small font-medium" htmlFor={`size-${prefix}`}>
-									<Trans>Size</Trans>
-								</label>
-								<InputGroup className="h-9">
-									<InputGroupAddon>
-										<InputGroupButton
-											variant="ghost"
-											size="icon-xs"
-											aria-label={prefix === "body" ? t`Smaller body text` : t`Smaller headings`}
-											disabled={value.fontSize <= 6}
-											onClick={() =>
-												write(
-													`${prefix}.size`,
-													(draft) => {
-														draft.typography[prefix].fontSize = Math.max(6, Number((value.fontSize - 0.1).toFixed(1)));
-													},
-													true,
-												)
-											}
-										>
-											<Icon name="minus" size={16} />
-										</InputGroupButton>
-									</InputGroupAddon>
-									<NumberInput
-										className="[appearance:textfield] px-0 text-center font-mono text-xs [&::-webkit-inner-spin-button]:appearance-none"
-										id={`size-${prefix}`}
-										value={value.fontSize}
-										min={6}
-										max={24}
-										step={0.1}
-										onValueChange={(next) =>
-											write(`${prefix}.size`, (draft) => {
+							<Field
+								label={<Trans>Size</Trans>}
+								help={prefix === "body" ? <Trans>10 to 11 reads best</Trans> : undefined}
+								htmlFor={`size-${prefix}`}
+							>
+								<Stepper
+									id={`size-${prefix}`}
+									label={t`Size`}
+									decrease={prefix === "body" ? t`Smaller body text` : t`Smaller headings`}
+									increase={prefix === "body" ? t`Larger body text` : t`Larger headings`}
+									value={value.fontSize}
+									min={6}
+									max={24}
+									step={0.1}
+									unit="pt"
+									onStep={(next) =>
+										write(
+											`${prefix}.size`,
+											(draft) => {
 												draft.typography[prefix].fontSize = next;
-											})
-										}
-									/>
-									<InputGroupAddon align="inline-end">
-										<InputGroupText>pt</InputGroupText>
-										<InputGroupButton
-											variant="ghost"
-											size="icon-xs"
-											aria-label={prefix === "body" ? t`Larger body text` : t`Larger headings`}
-											disabled={value.fontSize >= 24}
-											onClick={() =>
-												write(
-													`${prefix}.size`,
-													(draft) => {
-														draft.typography[prefix].fontSize = Math.min(24, Number((value.fontSize + 0.1).toFixed(1)));
-													},
-													true,
-												)
-											}
-										>
-											<Icon name="plus" size={16} />
-										</InputGroupButton>
-									</InputGroupAddon>
-								</InputGroup>
-							</div>
-							<div className="grid gap-1.5">
-								<label className="t-small font-medium" htmlFor={`line-${prefix}`}>
-									<Trans>Line height</Trans>
-								</label>
-								<InputGroup className="h-9">
-									<InputGroupAddon>
-										<InputGroupButton
-											variant="ghost"
-											size="icon-xs"
-											aria-label={prefix === "body" ? t`Tighter body lines` : t`Tighter heading lines`}
-											disabled={value.lineHeight <= 0.5}
-											onClick={() =>
-												write(
-													`${prefix}.lineHeight`,
-													(draft) => {
-														draft.typography[prefix].lineHeight = Math.max(
-															0.5,
-															Number((value.lineHeight - 0.05).toFixed(2)),
-														);
-													},
-													true,
-												)
-											}
-										>
-											<Icon name="minus" size={16} />
-										</InputGroupButton>
-									</InputGroupAddon>
-									<NumberInput
-										className="[appearance:textfield] px-0 text-center font-mono text-xs [&::-webkit-inner-spin-button]:appearance-none"
-										id={`line-${prefix}`}
-										value={value.lineHeight}
-										min={0.5}
-										max={4}
-										step={0.05}
-										onValueChange={(next) =>
-											write(`${prefix}.lineHeight`, (draft) => {
+											},
+											true,
+										)
+									}
+									onValueChange={(next) =>
+										write(`${prefix}.size`, (draft) => {
+											draft.typography[prefix].fontSize = next;
+										})
+									}
+								/>
+							</Field>
+							<Field label={<Trans>Line height</Trans>} htmlFor={`line-${prefix}`}>
+								<Stepper
+									id={`line-${prefix}`}
+									label={t`Line height`}
+									decrease={prefix === "body" ? t`Tighter body lines` : t`Tighter heading lines`}
+									increase={prefix === "body" ? t`Looser body lines` : t`Looser heading lines`}
+									value={value.lineHeight}
+									min={0.5}
+									max={4}
+									step={0.05}
+									onStep={(next) =>
+										write(
+											`${prefix}.lineHeight`,
+											(draft) => {
 												draft.typography[prefix].lineHeight = next;
-											})
-										}
-									/>
-									<InputGroupAddon align="inline-end">
-										<InputGroupButton
-											variant="ghost"
-											size="icon-xs"
-											aria-label={prefix === "body" ? t`Looser body lines` : t`Looser heading lines`}
-											disabled={value.lineHeight >= 4}
-											onClick={() =>
-												write(
-													`${prefix}.lineHeight`,
-													(draft) => {
-														draft.typography[prefix].lineHeight = Math.min(
-															4,
-															Number((value.lineHeight + 0.05).toFixed(2)),
-														);
-													},
-													true,
-												)
-											}
-										>
-											<Icon name="plus" size={16} />
-										</InputGroupButton>
-									</InputGroupAddon>
-								</InputGroup>
-							</div>
+											},
+											true,
+										)
+									}
+									onValueChange={(next) =>
+										write(`${prefix}.lineHeight`, (draft) => {
+											draft.typography[prefix].lineHeight = next;
+										})
+									}
+								/>
+							</Field>
 						</div>
 					</section>
 				);
 			})}
-			<SwitchRow
-				className="mt-3.5"
-				label={t`Hyphenation`}
-				description={t`Breaks long words between syllables, using the language set in Page.`}
-				checked={metadata.typography.hyphenation === true}
-				onCheckedChange={(checked) =>
-					write(
-						"hyphenation",
-						(draft) => {
-							draft.typography.hyphenation = checked;
-						},
-						true,
-					)
-				}
-			/>
+			<List cap className="mt-3.5">
+				<SwitchListRow
+					wrap
+					tall
+					label={t`Hyphenation`}
+					description={t`Breaks long words between syllables, using the language set in Page.`}
+					checked={metadata.typography.hyphenation === true}
+					onCheckedChange={(checked) =>
+						write(
+							"hyphenation",
+							(draft) => {
+								draft.typography.hyphenation = checked;
+							},
+							true,
+						)
+					}
+				/>
+			</List>
 		</div>
 	);
 }

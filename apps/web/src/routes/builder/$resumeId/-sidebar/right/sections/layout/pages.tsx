@@ -29,20 +29,22 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
+	DropdownMenuShortcut,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { InputGroup } from "@reactive-resume/ui/components/input-group";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
+import { formatShortcut } from "@reactive-resume/ui/components/kbd";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { resolveLayoutSectionTitle } from "./title";
-import { NumberInput } from "@/components/input/number-input";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { undoToast } from "@/features/resume/builder/undo-toast";
+import { Help } from "@/features/resume/editor/design/fields";
 import { resolveSection, getSectionObject } from "@/features/resume/editor/write/model";
 import { dndContextProps } from "@/libs/dnd";
 import { DRAG_SETTLE } from "@/libs/motion";
@@ -284,7 +286,7 @@ export function LayoutPages() {
 			onDragEnd={handleDragEnd}
 			onDragCancel={() => setActiveId(null)}
 		>
-			<div className="flex flex-col gap-4">
+			<div className="mt-4 flex flex-col gap-3">
 				{layout.pages.map((page, pageIndex) => (
 					<PageContainer
 						key={`page-${pageIndex}`}
@@ -303,10 +305,15 @@ export function LayoutPages() {
 					/>
 				))}
 
-				<Button variant="secondary" size="sm" className="self-start" onClick={handleAddPage}>
-					<Icon name="plus" size={16} />
-					<Trans>Add page</Trans>
-				</Button>
+				<div className="flex items-center justify-between gap-2">
+					<Button variant="secondary" onClick={handleAddPage}>
+						<Icon name="plus" />
+						<Trans>Add page</Trans>
+					</Button>
+					<Help className="max-w-[190px] text-end">
+						<Trans>Drag a section by its handle, or move it from its menu.</Trans>
+					</Help>
+				</div>
 			</div>
 
 			<DragOverlay dropAnimation={reduceMotion ? null : DRAG_SETTLE}>
@@ -341,75 +348,78 @@ function PageContainer({
 	const fullWidthSwitchId = useId();
 
 	return (
-		<div className="space-y-2">
-			<div className="py-1">
-				<div className="flex items-center justify-between gap-2">
-					<div className="flex min-w-0 flex-1 items-center justify-between gap-2">
-						<span className="text-xs font-medium">
-							<Trans comment="Layout editor page label with 1-based page number">
-								Page {i18n.number(pageIndex + 1)}
-							</Trans>
-						</span>
-
-						{sidebarPosition !== "none" && (
-							<label htmlFor={fullWidthSwitchId} className="flex min-w-0 cursor-pointer items-center gap-2">
-								<Switch
-									id={fullWidthSwitchId}
-									checked={page.fullWidth}
-									onCheckedChange={(checked) => onToggleFullWidth(pageIndex, checked)}
-								/>
-
-								<span className="text-xs font-medium text-ink-3">
-									<Trans comment="Layout editor toggle label that makes a page single-column">Full width</Trans>
-								</span>
-							</label>
-						)}
-					</div>
-
+		<div className="flex flex-col gap-2">
+			<div className="flex h-7 items-center justify-between gap-2">
+				<h3 className="t-label">
+					<Trans comment="Layout editor page label with 1-based page number">Page {i18n.number(pageIndex + 1)}</Trans>
+				</h3>
+				<span className="flex items-center gap-2">
+					{sidebarPosition !== "none" && (
+						<label htmlFor={fullWidthSwitchId} className="flex cursor-pointer items-center gap-2.5 t-small text-ink-2">
+							<Trans comment="Layout editor toggle label that makes a page single-column">Full width, no sidebar</Trans>
+							<Switch
+								id={fullWidthSwitchId}
+								checked={page.fullWidth}
+								onCheckedChange={(checked) => onToggleFullWidth(pageIndex, checked)}
+							/>
+						</label>
+					)}
 					{canDelete && (
-						<Button
-							variant="ghost"
+						<IconButton
+							icon="trash"
+							label={t`Delete page`}
+							size="icon-xs"
+							iconSize={16}
 							onClick={() => onDelete(pageIndex)}
-							className="size-auto gap-x-2.5 justify-self-end p-0!"
-						>
-							<Icon name="trash" size={16} />
-							<Trans>Delete page</Trans>
-						</Button>
+						/>
+					)}
+				</span>
+			</div>
+
+			<div className="flex flex-col gap-2 rounded-lg bg-sunken p-2">
+				{showHeader && (headerPlacement === "full-width" || isFullWidth || sidebarPosition === "none") && (
+					<HeaderSlot />
+				)}
+				<div
+					className={cn(
+						"grid items-start gap-2",
+						sidebarPosition === "none" || isFullWidth
+							? "grid-cols-1"
+							: sidebarPosition === "left"
+								? "grid-cols-[150px_minmax(0,1fr)]"
+								: "grid-cols-[minmax(0,1fr)_150px]",
+					)}
+				>
+					<LayoutColumn
+						header={showHeader && headerPlacement === "main-only" && !isFullWidth && sidebarPosition !== "none"}
+						pageIndex={pageIndex}
+						columnId="main"
+						items={page.main}
+						disabled={false}
+						hideLabel={sidebarPosition === "none" || isFullWidth}
+						className={cn(sidebarPosition === "left" ? "order-2" : "order-1")}
+					/>
+
+					{!isFullWidth && sidebarPosition !== "none" && (
+						<LayoutColumn
+							header={showHeader && headerPlacement === "sidebar-only"}
+							pageIndex={pageIndex}
+							columnId="sidebar"
+							items={page.sidebar}
+							className={cn(sidebarPosition === "left" ? "order-1" : "order-2")}
+						/>
 					)}
 				</div>
 			</div>
+		</div>
+	);
+}
 
-			<div
-				className={cn(
-					"grid w-full gap-x-3 gap-y-2 rounded-lg border border-line bg-sunken p-2 font-medium",
-					sidebarPosition === "none" || isFullWidth ? "grid-cols-1" : "grid-cols-2",
-				)}
-			>
-				{showHeader && (headerPlacement === "full-width" || isFullWidth || sidebarPosition === "none") && (
-					<div className="col-span-full rounded-xs border border-dashed border-line-2 px-2 py-1.5 t-caption text-ink-3">
-						<Trans>Header · your name and contact details</Trans>
-					</div>
-				)}
-				<LayoutColumn
-					header={showHeader && headerPlacement === "main-only" && !isFullWidth && sidebarPosition !== "none"}
-					pageIndex={pageIndex}
-					columnId="main"
-					items={page.main}
-					disabled={false}
-					className={cn(sidebarPosition === "left" ? "order-2" : "order-1")}
-				/>
-
-				{!isFullWidth && (
-					<LayoutColumn
-						header={showHeader && headerPlacement === "sidebar-only"}
-						pageIndex={pageIndex}
-						columnId="sidebar"
-						items={page.sidebar}
-						hideLabel={sidebarPosition === "none"}
-						className={cn(sidebarPosition === "left" ? "order-1" : "order-2")}
-					/>
-				)}
-			</div>
+/** Where the name and contact details sit: a dashed placeholder, not something to move. */
+function HeaderSlot() {
+	return (
+		<div className="flex h-[30px] items-center rounded-sm px-2.5 t-caption font-normal text-ink-3 outline outline-1 -outline-offset-1 outline-line-2 outline-dashed">
+			<Trans>Header · your name and contact details</Trans>
 		</div>
 	);
 }
@@ -442,31 +452,28 @@ function LayoutColumn({
 
 	return (
 		<SortableContext id={droppableId} items={items} strategy={verticalListSortingStrategy}>
-			<div className={cn("space-y-1.5", disabled && "opacity-50", className)}>
-				{!hideLabel && <div className="t-caption text-ink-3">{getColumnLabel(columnId)}</div>}
+			<div
+				ref={setNodeRef}
+				role="list"
+				aria-label={getPlaceLabel(pageIndex, columnId)}
+				className={cn(
+					"flex min-h-8 flex-col gap-1.5 rounded-md transition-colors",
+					isOver && !disabled && "bg-accent-soft",
+					disabled && "opacity-50",
+					className,
+				)}
+			>
+				{!hideLabel && <span className="px-1 pt-0.5 t-caption text-ink-3">{getColumnLabel(columnId)}</span>}
+				{header && <HeaderSlot />}
+				{items.map((id) => (
+					<SortableLayoutItem key={id} id={id} pageIndex={pageIndex} columnId={columnId} />
+				))}
 
-				<div
-					ref={setNodeRef}
-					className={cn(
-						"min-h-8 space-y-2 transition-colors",
-						isOver && !disabled ? "border-accent/60 bg-accent/5" : "bg-bg/40",
-					)}
-				>
-					{header && (
-						<div className="rounded-xs border border-dashed border-line-2 px-2 py-1.5 t-caption text-ink-3">
-							<Trans>Header · your name and contact details</Trans>
-						</div>
-					)}
-					{items.map((id) => (
-						<SortableLayoutItem key={id} id={id} pageIndex={pageIndex} columnId={columnId} />
-					))}
-
-					{items.length === 0 && (
-						<div className="py-2 t-caption text-ink-3">
-							<Trans>Drag and drop sections here to move them between columns</Trans>
-						</div>
-					)}
-				</div>
+				{items.length === 0 && (
+					<div className="px-1 py-2 t-caption font-normal text-ink-3">
+						<Trans>Drag and drop sections here to move them between columns</Trans>
+					</div>
+				)}
 			</div>
 		</SortableContext>
 	);
@@ -540,26 +547,11 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 		undoToast(t`Section moved`);
 	};
 
-	const moveToNewPage = () => {
-		updateResumeData(
-			(draft) => {
-				const from = draft.metadata.layout.pages[pageIndex]?.[columnId];
-				if (!from) return;
-				const index = from.indexOf(id);
-				if (index === -1) return;
-				from.splice(index, 1);
-				draft.metadata.layout.pages.push({ fullWidth: false, main: [id], sidebar: [] });
-			},
-			{ newStep: true },
-		);
-		undoToast(t`Section moved to a new page`);
-	};
-
 	return (
 		<DropdownMenuSub>
 			<DropdownMenuSubTrigger>
-				<Icon name="arrow-u-up-right" size={16} />
-				<Trans>Move to</Trans>
+				<Icon name="arrow-u-up-right" />
+				<Trans>Move to another page</Trans>
 			</DropdownMenuSubTrigger>
 
 			<DropdownMenuSubContent>
@@ -606,13 +598,6 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 						</DropdownMenuSub>
 					);
 				})}
-
-				<DropdownMenuSeparator />
-
-				<DropdownMenuItem onClick={moveToNewPage}>
-					<Icon name="plus-circle" size={16} />
-					<Trans>New page</Trans>
-				</DropdownMenuItem>
 			</DropdownMenuSubContent>
 		</DropdownMenuSub>
 	);
@@ -626,16 +611,29 @@ const readSectionBreak = (data: ResumeData, id: string, field: SectionBreakField
 	return data.customSections.find((section) => section.id === id)?.[field] ?? false;
 };
 
-type SectionBreakItemsProps = {
-	id: string;
-};
+/** The checkbox of a menu row that is itself the checkbox (`.chk`), at the start like the other rows' icons. */
+function CheckMark({ checked }: { checked: boolean }) {
+	return (
+		<span
+			aria-hidden="true"
+			className={cn(
+				"flex size-[18px] shrink-0 items-center justify-center rounded-xs",
+				checked ? "bg-accent text-on-accent" : "bg-raised shadow-[inset_0_0_0_1.5px_var(--control-border)]",
+			)}
+		>
+			{checked && <Icon name="check" size={13} className="text-on-accent!" />}
+		</span>
+	);
+}
+
+const checkItemClassName = "pe-2.5 [&_[data-slot=dropdown-menu-checkbox-item-indicator]]:hidden";
 
 /**
  * Per-section page-break controls. These write the declarative `keepTogether` /
  * `startOnNewPage` flags onto the section metadata (summary, standard, or custom),
  * which the PDF renderer applies as `wrap` / `break` on the section container.
  */
-function SectionBreakItems({ id }: SectionBreakItemsProps) {
+function SectionBreakItems({ id }: { id: string }) {
 	const resume = useCurrentResume();
 	const updateResumeData = useUpdateResumeData();
 
@@ -662,29 +660,56 @@ function SectionBreakItems({ id }: SectionBreakItemsProps) {
 		<>
 			<DropdownMenuCheckboxItem
 				checked={keepTogether}
+				className={checkItemClassName}
+				// The limitation, read with the item and shown on hover.
+				title={t({
+					comment: "Helper note explaining the keep-together limitation",
+					message: "Only applies when the section fits on a single page.",
+				})}
 				onSelect={(event) => event.preventDefault()}
 				onCheckedChange={() => toggle("keepTogether")}
 			>
+				<CheckMark checked={keepTogether} />
 				<Trans comment="Layout editor toggle that prevents a section from splitting across pages">
 					Keep on one page
 				</Trans>
 			</DropdownMenuCheckboxItem>
 
-			<p className="px-2 pb-1 text-xs text-ink-3">
-				<Trans comment="Helper note explaining the keep-together limitation">
-					Only applies when the section fits on a single page.
-				</Trans>
-			</p>
-
 			<DropdownMenuCheckboxItem
 				checked={startOnNewPage}
+				className={checkItemClassName}
 				onSelect={(event) => event.preventDefault()}
 				onCheckedChange={() => toggle("startOnNewPage")}
 			>
+				<CheckMark checked={startOnNewPage} />
 				<Trans comment="Layout editor toggle that forces a section to begin on a new page">Start on a new page</Trans>
 			</DropdownMenuCheckboxItem>
 		</>
 	);
+}
+
+/** Moving a section within its column, by one place: the menu's Move up / Move down and ⌥↑ / ⌥↓ on the row. */
+function useMoveInColumn(id: string, pageIndex: number | undefined, columnId: ColumnId | undefined) {
+	const resume = useCurrentResume();
+	const update = useUpdateResumeData();
+	const items =
+		pageIndex === undefined || columnId === undefined
+			? []
+			: (resume.data.metadata.layout.pages[pageIndex]?.[columnId] ?? []);
+	const index = items.indexOf(id);
+	const canMove = (delta: number) => index >= 0 && index + delta >= 0 && index + delta < items.length;
+	const move = (delta: number) => {
+		if (!canMove(delta) || pageIndex === undefined || columnId === undefined) return;
+		update(
+			(draft) => {
+				const page = draft.metadata.layout.pages[pageIndex];
+				if (page) page[columnId] = arrayMove(page[columnId], index, index + delta);
+			},
+			{ newStep: true },
+		);
+		undoToast(t`Section moved`);
+	};
+	return { canMove, move };
 }
 
 type LayoutItemContentProps = HTMLAttributes<HTMLDivElement> & {
@@ -709,41 +734,59 @@ function LayoutItemContent({
 }: LayoutItemContentProps) {
 	const resume = useCurrentResume();
 	const title = resume ? resolveLayoutSectionTitle(resume.data, id) : id;
+	const { move } = useMoveInColumn(id, pageIndex, columnId);
 
 	return (
 		<div
 			ref={ref}
 			style={style}
+			role="listitem"
 			data-overlay={isOverlay ? "true" : undefined}
 			data-dragging={isDragging ? "true" : undefined}
 			className={cn(
-				"group/item flex min-h-9 cursor-grab touch-none items-center gap-x-1 rounded-sm border border-line bg-raised px-1.5 py-1 t-small transition-colors duration-quick select-none",
-				"hover:bg-sunken/40 active:cursor-grabbing active:border-accent/60 active:bg-sunken/40",
-				"data-[overlay=true]:cursor-grabbing data-[overlay=true]:border-accent/60 data-[overlay=true]:bg-bg data-[overlay=true]:shadow-md",
+				"group/item flex h-10 cursor-grab touch-none items-center gap-1.5 rounded-md border border-line bg-raised ps-2 pe-1 text-sm/5 font-medium transition-colors duration-quick select-none",
+				"active:cursor-grabbing has-[[data-popup-open]]:border-line-2 has-[[data-popup-open]]:shadow-e1",
+				"data-[overlay=true]:cursor-grabbing data-[overlay=true]:border-line-2 data-[overlay=true]:shadow-e2",
 				"data-[dragging=true]:cursor-grabbing data-[dragging=true]:opacity-40",
 				className,
 			)}
 			{...rest}
+			onKeyDown={(event) => {
+				rest.onKeyDown?.(event);
+				if (!event.altKey || (event.key !== "ArrowUp" && event.key !== "ArrowDown")) return;
+				event.preventDefault();
+				move(event.key === "ArrowUp" ? -1 : 1);
+			}}
 		>
-			<Icon name="dots-six-vertical" size={16} className="opacity-40 transition-opacity group-hover/item:opacity-100" />
+			<Icon name="dots-six-vertical" size={16} aria-label={t`Drag to move ${title}`} className="text-ink-3" />
 			<span className="min-w-0 flex-1 truncate">{title}</span>
 
 			{/* The drag overlay renders without a location; only real rows get the menu. */}
 			{!isOverlay && pageIndex !== undefined && columnId !== undefined && (
 				<DropdownMenu>
 					<DropdownMenuTrigger
-						aria-label={t`Move section to another column or page`}
+						render={
+							<IconButton
+								icon="dots-three"
+								size="icon-xs"
+								label={t`Move or set up ${title}`}
+								className="shrink-0 cursor-context-menu data-popup-open:bg-hover data-popup-open:text-ink"
+							/>
+						}
 						onPointerDown={(event) => event.stopPropagation()}
-						className="flex size-7 shrink-0 cursor-context-menu items-center justify-center rounded-sm text-ink-3 hover:bg-hover focus-visible:outline"
-					>
-						<Icon name="dots-three" size={16} />
-					</DropdownMenuTrigger>
+					/>
 
-					<DropdownMenuContent side="right" align="start" sideOffset={16}>
+					<DropdownMenuContent
+						data-design="menu"
+						aria-label={title}
+						side="right"
+						align="start"
+						alignOffset={-4}
+						// Clear of the row's end, over the panel's edge.
+						sideOffset={18}
+						className="w-[228px]"
+					>
 						<LayoutMenuItems id={id} pageIndex={pageIndex} columnId={columnId} />
-						<MoveToSubmenu id={id} pageIndex={pageIndex} columnId={columnId} />
-						<DropdownMenuSeparator />
-						<SectionBreakItems id={id} />
 					</DropdownMenuContent>
 				</DropdownMenu>
 			)}
@@ -754,58 +797,110 @@ function LayoutItemContent({
 function LayoutMenuItems({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 	const resume = useCurrentResume();
 	const update = useUpdateResumeData();
-	const items = resume.data.metadata.layout.pages[pageIndex]?.[columnId] ?? [];
-	const index = items.indexOf(id);
+	const { canMove, move } = useMoveInColumn(id, pageIndex, columnId);
 	const section = resolveSection(resume.data, id);
 	const settings = section ? getSectionObject(resume.data, section) : null;
-	const move = (delta: number) => {
+	const pages = resume.data.metadata.layout.pages;
+	const page = pages[pageIndex];
+	const hasSidebar = templateLayouts[resume.data.metadata.template].columns === 2 && page && !page.fullWidth;
+	const other: ColumnId = columnId === "main" ? "sidebar" : "main";
+
+	const moveToColumn = () => {
 		update(
 			(draft) => {
-				const page = draft.metadata.layout.pages[pageIndex];
-				if (page) page[columnId] = arrayMove(page[columnId], index, index + delta);
+				const target = draft.metadata.layout.pages[pageIndex];
+				if (!target) return;
+				const index = target[columnId].indexOf(id);
+				if (index === -1) return;
+				target[columnId].splice(index, 1);
+				target[other].push(id);
 			},
 			{ newStep: true },
 		);
 		undoToast(t`Section moved`);
 	};
 
+	const moveToNewPage = () => {
+		update(
+			(draft) => {
+				const from = draft.metadata.layout.pages[pageIndex]?.[columnId];
+				if (!from) return;
+				const index = from.indexOf(id);
+				if (index === -1) return;
+				from.splice(index, 1);
+				draft.metadata.layout.pages.push({ fullWidth: false, main: [id], sidebar: [] });
+			},
+			{ newStep: true },
+		);
+		undoToast(t`Section moved to a new page`);
+	};
+
+	const setColumns = (value: number) =>
+		update(
+			(draft) => {
+				const target = resolveSection(draft, id);
+				const object = target ? getSectionObject(draft, target) : null;
+				if (object) object.columns = value;
+			},
+			{ newStep: true },
+		);
+
 	return (
 		<>
-			<DropdownMenuItem disabled={index <= 0} onClick={() => move(-1)}>
+			<DropdownMenuItem disabled={!canMove(-1)} onClick={() => move(-1)}>
 				<Icon name="arrow-up" />
 				<Trans>Move up</Trans>
+				<DropdownMenuShortcut>{formatShortcut("⌥↑")}</DropdownMenuShortcut>
 			</DropdownMenuItem>
-			<DropdownMenuItem disabled={index < 0 || index >= items.length - 1} onClick={() => move(1)}>
+			<DropdownMenuItem disabled={!canMove(1)} onClick={() => move(1)}>
 				<Icon name="arrow-down" />
 				<Trans>Move down</Trans>
+				<DropdownMenuShortcut>{formatShortcut("⌥↓")}</DropdownMenuShortcut>
 			</DropdownMenuItem>
+			{hasSidebar && (
+				<DropdownMenuItem onClick={moveToColumn}>
+					<Icon name={other === "sidebar" ? "sidebar-simple" : "layout"} />
+					{other === "sidebar" ? <Trans>Move to the sidebar</Trans> : <Trans>Move to the main column</Trans>}
+				</DropdownMenuItem>
+			)}
+			<DropdownMenuItem onClick={moveToNewPage}>
+				<Icon name="file-plus" />
+				<Trans>Move to a new page</Trans>
+			</DropdownMenuItem>
+			{/* Other pages are only a destination once there are several. */}
+			{pages.length > 1 && <MoveToSubmenu id={id} pageIndex={pageIndex} columnId={columnId} />}
 			{settings && (
 				<>
 					<DropdownMenuSeparator />
-					<div className="flex items-center gap-3 px-2 py-1.5">
-						<span className="flex-1 t-small">
-							<Trans>Columns</Trans>
-						</span>
-						<InputGroup className="h-8 w-20">
-							<NumberInput
-								aria-label={t`Columns, 1 to 6`}
-								value={settings.columns}
-								min={1}
-								max={6}
-								step={1}
-								onValueChange={(value) =>
-									update(
-										(draft) => {
-											const target = resolveSection(draft, id);
-											const object = target ? getSectionObject(draft, target) : null;
-											if (object) object.columns = value;
-										},
-										{ newStep: true },
-									)
-								}
+					<div role="group" aria-label={t`Columns`} className="flex h-9 items-center gap-2.5 px-2.5 text-sm/5">
+						<Icon name="columns" size={18} className="text-ink-2" />
+						<Trans>Columns</Trans>
+						<span className="ms-auto flex items-center gap-0.5 font-mono text-[13px]/4 font-medium">
+							<IconButton
+								icon="minus"
+								size="icon-xs"
+								iconSize={16}
+								label={t`Fewer columns`}
+								disabled={settings.columns <= 1}
+								onClick={() => setColumns(Math.max(1, settings.columns - 1))}
 							/>
-						</InputGroup>
+							<span className="min-w-[18px] text-center">{i18n.number(settings.columns)}</span>
+							<IconButton
+								icon="plus"
+								size="icon-xs"
+								iconSize={16}
+								label={t`More columns, up to 6`}
+								disabled={settings.columns >= 6}
+								onClick={() => setColumns(Math.min(6, settings.columns + 1))}
+							/>
+						</span>
 					</div>
+				</>
+			)}
+			<SectionBreakItems id={id} />
+			{settings && (
+				<>
+					<DropdownMenuSeparator />
 					<DropdownMenuItem
 						onClick={() => {
 							update(

@@ -82,7 +82,7 @@ export function FontDisplay({ family, label, type, url, highlight }: FontDisplay
 				{match >= 0 && highlight ? (
 					<>
 						{label.slice(0, match)}
-						<strong>{label.slice(match, match + highlight.trim().length)}</strong>
+						<b className="font-semibold">{label.slice(match, match + highlight.trim().length)}</b>
 						{label.slice(match + highlight.trim().length)}
 					</>
 				) : (

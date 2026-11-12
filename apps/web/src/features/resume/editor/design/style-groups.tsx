@@ -1,6 +1,7 @@
 import type { DensityId, FontPairingId, MarginId } from "./presets";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
+import type { CSSProperties } from "react";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { t } from "@lingui/core/macro";
@@ -15,6 +16,7 @@ import { Slider } from "@reactive-resume/ui/components/slider";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { contrastOnWhite, parseColorString } from "@reactive-resume/utils/color";
 import { cn } from "@reactive-resume/utils/style";
+import { Field, Help, wellClassName } from "./fields";
 import {
 	ACCENTS,
 	applyDensity,
@@ -217,11 +219,12 @@ export function ColorGroup() {
 						value={accent.hex}
 						aria-label={i18n._(accent.label)}
 						title={i18n._(accent.label)}
-						className="group/swatch grid cursor-pointer gap-1.5 text-start t-caption"
+						className="group/swatch grid cursor-pointer gap-1.5 text-start t-caption font-normal text-ink-2 data-checked:font-semibold data-checked:text-ink"
 					>
 						<span
-							className="grid h-10 place-items-center rounded-md border border-line-2 group-data-checked/swatch:ring-2 group-data-checked/swatch:ring-accent group-data-checked/swatch:ring-offset-2 group-data-checked/swatch:ring-offset-bg"
-							style={{ backgroundColor: accent.hex }}
+							// The ring takes the swatch's own colour (ink-2 on dark, where a dark accent would vanish).
+							className="grid h-10 place-items-center rounded-md shadow-[inset_0_0_0_1px_rgb(0_0_0/0.08)] group-data-checked/swatch:shadow-[0_0_0_2px_var(--bg),0_0_0_4px_var(--c)] dark:shadow-[0_0_0_1px_var(--control-border)] dark:group-data-checked/swatch:shadow-[0_0_0_2px_var(--bg),0_0_0_4px_var(--ink-2)]"
+							style={{ backgroundColor: accent.hex, "--c": accent.hex } as CSSProperties}
 						>
 							{selectedAccent?.hex === accent.hex && <Icon name="check" size={18} className="text-paper" />}
 						</span>
@@ -230,19 +233,12 @@ export function ColorGroup() {
 				))}
 			</RadioGroup>
 
-			<div className="mt-1 grid gap-1.5">
-				<div className="flex items-baseline justify-between t-small">
-					<span className="font-medium">
-						<Trans>Custom</Trans>
-					</span>
-					<span className="t-caption text-ink-3">
-						<Trans>Contrast on white</Trans>
-					</span>
-				</div>
+			<Field label={<Trans>Custom</Trans>} help={<Trans>Contrast on white</Trans>} className="mt-1">
 				<div className="flex items-center gap-2">
-					{/* calm: request to lead: ColorPicker needs a compact popup beside the panel. */}
 					<ColorPicker
-						className="[&>div]:size-10 [&>div]:rounded-md pointer-coarse:[&>div]:size-11"
+						compact
+						popupLabel={t`Custom accent color`}
+						className={wellClassName}
 						aria-label={t`Open the color picker`}
 						value={metadata.design.colors.primary}
 						onChange={(color) => {
@@ -256,7 +252,7 @@ export function ColorGroup() {
 						aria-label={t`Custom color (hex)`}
 						value={hex}
 						spellCheck={false}
-						className="font-mono"
+						className="font-mono text-[13px]/4 font-medium"
 						aria-invalid={!valid}
 						aria-describedby={valid ? undefined : `${hexId}-error`}
 						onChange={(event) => {
@@ -268,12 +264,17 @@ export function ColorGroup() {
 					/>
 					{/* An unreadable value has no ratio: the one shown would be the old colour's. */}
 					{valid && (
-						<span className={cn("shrink-0 font-mono text-xs", tooLight ? "text-warn-text" : "text-ink-3")}>
+						<span
+							className={cn(
+								"w-[52px] shrink-0 text-end font-mono text-xs/4 font-medium",
+								tooLight ? "text-warn-text" : "text-ink-2",
+							)}
+						>
 							{i18n.number(ratio, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}:{i18n.number(1)}
 						</span>
 					)}
 				</div>
-			</div>
+			</Field>
 			{!valid && (
 				<p id={`${hexId}-error`} className="text-xs text-danger-text">
 					<Trans>Use a hex color such as #2F5A8A.</Trans>
@@ -300,9 +301,9 @@ export function ColorGroup() {
 				</div>
 			)}
 
-			<p className="-mt-1 text-xs leading-4 text-ink-3">
+			<Help className="-mt-1">
 				<Trans>Used for headings, icons and the header band.</Trans>
-			</p>
+			</Help>
 		</div>
 	);
 }

@@ -25,6 +25,7 @@ import { useIsResumeLocked, useResumeData, useUpdateResumeData } from "@/feature
 import { undoToast } from "@/features/resume/builder/undo-toast";
 import { PanelBody, PanelHeader } from "@/features/resume/editor/chrome/panel";
 import { EntriesGroup } from "@/features/resume/editor/design/entries-group";
+import { DesignHeading, Help, Lede } from "@/features/resume/editor/design/fields";
 import { ACCENTS, matchDensity, matchMargins, rgbaToHex } from "@/features/resume/editor/design/presets";
 import { ColorGroup } from "@/features/resume/editor/design/style-groups";
 import { TemplateGroup } from "@/features/resume/editor/design/template-group";
@@ -58,6 +59,13 @@ export function DesignPanel() {
 	}, [category]);
 	if (!data) return null;
 	const { metadata } = data;
+	const crumb = (
+		<Crumb>
+			<CrumbButton onClick={() => setCategory(null)}>
+				<Trans>Design</Trans>
+			</CrumbButton>
+		</Crumb>
+	);
 	const template = templates[metadata.template];
 	const columns = templateLayouts[metadata.template];
 	const visible = filterSections(
@@ -115,20 +123,16 @@ export function DesignPanel() {
 			className={cn(category && "pt-3.5", category === "template" && "px-7")}
 			data-design-category={category ?? "overview"}
 		>
-			{category ? (
+			{category && category !== "template" ? (
 				<>
 					<div className="flex items-center justify-between gap-2">
-						<Crumb>
-							<CrumbButton onClick={() => setCategory(null)}>
-								<Trans>Design</Trans>
-							</CrumbButton>
-						</Crumb>
-						{category !== "template" && <CategoryStrip current={category} onSelect={setCategory} className="-me-1.5" />}
+						{crumb}
+						<CategoryStrip current={category} onSelect={setCategory} className="-me-1.5" />
 					</div>
 					<PanelHeader title={getDesignCategoryLabel(category)} className="mt-0.5" />
 				</>
 			) : (
-				<PanelHeader title={<Trans>Design</Trans>} />
+				!category && <PanelHeader title={<Trans>Design</Trans>} />
 			)}
 			{locked && <LockedNote className="mt-3" />}
 			<fieldset disabled={locked && category !== null} className="m-0 flex min-w-0 grow flex-col border-0 p-0">
@@ -146,6 +150,13 @@ export function DesignPanel() {
 									title={getDesignCategoryLabel(value)}
 									subtitle={
 										<span className="block w-full t-small">
+											{value === "color" && (
+												<span
+													aria-hidden="true"
+													className="me-1.5 inline-block size-2.5 rounded-[3px] shadow-[0_0_0_1px_var(--line-2)]"
+													style={{ backgroundColor: metadata.design.colors.primary }}
+												/>
+											)}
 											{summaries[value].split("\n").map((line, index) => (
 												<Fragment key={line}>
 													{index > 0 && <br />}
@@ -165,14 +176,14 @@ export function DesignPanel() {
 						</fieldset>
 					</>
 				)}
-				{category === "template" && <TemplateGroup onUse={() => setCategory("layout")} />}
+				{category === "template" && <TemplateGroup crumb={crumb} onUse={() => setCategory("layout")} />}
 				{category === "layout" && (
-					<div className="grid gap-4 pt-1">
-						<p className="t-small text-ink-3">
+					<div className="flex flex-col pb-6">
+						<Lede>
 							{columns.columns === 2
 								? t`${template.name} has two columns: a sidebar and a main column.`
 								: t`${template.name} has one column.`}
-						</p>
+						</Lede>
 						<LayoutSectionBuilder />
 					</div>
 				)}
@@ -186,9 +197,9 @@ export function DesignPanel() {
 								<Trans>Text and background</Trans>
 							</h3>
 							<ColorSectionForm includePrimary={false} />
-							<p className="mt-2 t-caption text-ink-3">
+							<Help className="mt-2">
 								<Trans>Near-black text on white prints cleanly and is what applicant tracking systems expect.</Trans>
-							</p>
+							</Help>
 						</section>
 					</div>
 				)}
@@ -256,28 +267,49 @@ function CustomCss() {
 		["list-item", t`A bullet`],
 		["--resume-primary-color", t`Your accent, read-only`],
 	];
+	// ponytail: counts opening braces, so a brace inside a comment or string counts too; only the sentence uses it.
+	const rules = text.match(/\{/g)?.length ?? 0;
 	return (
-		<div className="flex grow flex-col gap-3 pt-1">
-			<p className="t-small text-ink-3">
+		<div className="flex grow flex-col">
+			<Lede>
 				<Trans>
 					For details the other categories don't cover. Rules apply to the page, the PDF and your public page.
 				</Trans>
-			</p>
+			</Lede>
 			<CustomStylesSectionBuilder />
-			<div>
-				<h3 className="mb-3 t-section-title">
-					<Trans>What you can target</Trans>
-				</h3>
-				<dl className="grid grid-cols-[auto_1fr] gap-x-3 t-caption">
-					{targets.map(([selector, label]) => (
-						<div key={selector} className="contents">
-							<dt className="py-1 font-mono">{selector}</dt>
-							<dd className="py-1 text-ink-3">{label}</dd>
-						</div>
-					))}
-				</dl>
-			</div>
-			<div className="mt-auto border-t border-line pt-2 pb-4">
+			<DesignHeading
+				action={
+					<a
+						className="t-ui font-medium text-accent-text hover:underline"
+						href="https://docs.rxresu.me/applying-custom-styles"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<Trans>Full guide</Trans>
+						<span className="sr-only">
+							{" "}
+							(<Trans>opens in new tab</Trans>)
+						</span>
+					</a>
+				}
+			>
+				<Trans>What you can target</Trans>
+			</DesignHeading>
+			<dl className="grid grid-cols-[auto_1fr] items-center gap-x-3.5">
+				{targets.map(([selector, label]) => (
+					<div key={selector} className="contents">
+						<dt className="font-mono text-xs/[26px] font-medium text-ink">{selector}</dt>
+						<dd className="text-[13px]/[26px] text-ink-3">{label}</dd>
+					</div>
+				))}
+			</dl>
+			<Help className="mt-3">
+				<Trans>
+					PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are
+					ignored.
+				</Trans>
+			</Help>
+			<div className="mt-auto border-t border-line pt-2.5 pb-4">
 				<Button
 					variant="ghost"
 					className="-ms-3.5"
@@ -295,11 +327,14 @@ function CustomCss() {
 					<Icon name="eraser" />
 					<Trans>Clear custom CSS</Trans>
 				</Button>
-				<p className="t-caption text-ink-3">
-					<Trans>
-						Undo brings your rules back, and History keeps every saved version. Reset design never touches your CSS.
-					</Trans>
-				</p>
+				<Help>
+					{plural(rules, {
+						2: "Removes both rules; Undo brings them back, and History keeps every saved version. Reset design never touches your CSS.",
+						one: "Removes the rule; Undo brings it back, and History keeps every saved version. Reset design never touches your CSS.",
+						other:
+							"Removes all # rules; Undo brings them back, and History keeps every saved version. Reset design never touches your CSS.",
+					})}
+				</Help>
 			</div>
 		</div>
 	);

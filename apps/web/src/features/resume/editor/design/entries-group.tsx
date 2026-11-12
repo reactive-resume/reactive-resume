@@ -5,13 +5,11 @@ import { RadioGroup } from "@base-ui/react/radio-group";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { entryHeaderOf } from "@reactive-resume/schema/resume/data";
-import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { cn } from "@reactive-resume/utils/style";
-import { describeEntry } from "../write/model";
+import { DesignHeading, Field, Help, Lede } from "./fields";
 import { useDesign } from "./style-groups";
 import { IconPicker } from "@/components/input/icon-picker";
-import { LevelDisplay } from "@/components/level/display";
 import { useResumeData } from "@/features/resume/builder/draft";
 
 type BarProps = { tone?: "lead" | "accent"; className: string };
@@ -21,15 +19,15 @@ function Bar({ tone, className }: BarProps) {
 	return (
 		<span
 			className={cn(
-				"block h-1 rounded-sm",
-				tone === "lead" ? "bg-ink" : tone === "accent" ? "h-[3px] bg-accent" : "bg-line-2",
+				"block h-[3px] rounded-[1px]",
+				tone === "lead" ? "bg-ink" : tone === "accent" ? "bg-accent" : "bg-line-2",
 				className,
 			)}
 		/>
 	);
 }
 
-const ROW = "flex items-center justify-between gap-0.5";
+const ROW = "flex items-center justify-between gap-[3px]";
 
 const LAYOUTS: { id: EntryHeader["layout"]; label: () => string; wireframe: ReactNode }[] = [
 	{
@@ -53,7 +51,7 @@ const LAYOUTS: { id: EntryHeader["layout"]; label: () => string; wireframe: Reac
 		label: () => t({ message: "One line", context: "Entry header layout" }),
 		wireframe: (
 			<span className={ROW}>
-				<span className="flex w-[68%] gap-0.5">
+				<span className="flex w-[68%] gap-[3px]">
 					<Bar tone="lead" className="w-[45%]" />
 					<Bar className="w-[30%]" />
 					<Bar className="w-[18%]" />
@@ -71,7 +69,7 @@ const LAYOUTS: { id: EntryHeader["layout"]; label: () => string; wireframe: Reac
 					<Bar tone="lead" className="w-[52%]" />
 					<Bar className="w-[26%]" />
 				</span>
-				<span className="flex gap-0.5">
+				<span className="flex gap-[3px]">
 					<Bar className="w-[30%]" />
 					<Bar className="w-[16%]" />
 				</span>
@@ -82,9 +80,9 @@ const LAYOUTS: { id: EntryHeader["layout"]; label: () => string; wireframe: Reac
 		id: "date-column",
 		label: () => t({ message: "Date column", context: "Entry header layout" }),
 		wireframe: (
-			<span className="flex items-center gap-1">
+			<span className="flex items-center gap-[5px]">
 				<Bar className="w-[24%] shrink-0" />
-				<span className="grid flex-1 gap-1">
+				<span className="flex flex-1 flex-col gap-1">
 					<Bar tone="lead" className="w-[80%]" />
 					<Bar className="w-[58%]" />
 				</span>
@@ -98,7 +96,7 @@ const LAYOUTS: { id: EntryHeader["layout"]; label: () => string; wireframe: Reac
 			<>
 				<Bar tone="accent" className="w-[40%]" />
 				<span className={ROW}>
-					<Bar tone="lead" className="h-[5px] w-[58%]" />
+					<Bar tone="lead" className="h-1 w-[58%]" />
 					<Bar className="w-[24%]" />
 				</span>
 			</>
@@ -144,21 +142,38 @@ export function EntriesGroup() {
 		{ value: "icon", label: t`Icon` },
 	] as const;
 	const first = data?.sections.experience.items.find((item) => !item.hidden);
-	const preview = first ? describeEntry("experience", first) : null;
+	const samples: Record<(typeof levelOptions)[number]["value"], ReactNode> = {
+		hidden: null,
+		circle: <Dots className="size-2 rounded-full" />,
+		square: <Dots className="size-2 rounded-[1px]" />,
+		rectangle: <Dots className="h-[5px] w-[9px] rounded-[1px]" />,
+		"rectangle-full": <Dots className="h-[5px] flex-1 rounded-[1px]" />,
+		"progress-bar": (
+			<span className="block h-[5px] flex-1 overflow-hidden rounded-[3px] bg-line-2">
+				<i className="block h-[5px] w-3/5 bg-ink-2" />
+			</span>
+		),
+		icon: [0, 1, 2, 3, 4].map((index) => (
+			<i
+				key={index}
+				className={cn(
+					"ph shrink-0 text-[10px] not-italic",
+					`ph-${level.icon}`,
+					index < 3 ? "text-ink-2" : "text-line-2",
+				)}
+			/>
+		)),
+	};
 	return (
-		<div className="grid gap-4 pt-1 pb-6">
-			<p className="t-small text-ink-3">
+		<div className="flex flex-col pb-6">
+			<Lede>
 				<Trans>One setting for every entry on the resume.</Trans>
-			</p>
-			<div className="grid gap-2">
-				<div className="flex items-baseline justify-between gap-2">
-					<span className="t-small font-medium">
-						<Trans>Header layout</Trans>
-					</span>
-					<span className="t-caption text-ink-3">
-						<Trans>Experience, Education and more</Trans>
-					</span>
-				</div>
+			</Lede>
+			<Field
+				className="mt-3.5"
+				label={<Trans>Header layout</Trans>}
+				help={<Trans>Experience, Education and more</Trans>}
+			>
 				<RadioGroup
 					aria-label={t`Header layout`}
 					value={entry.layout}
@@ -169,29 +184,24 @@ export function EntriesGroup() {
 						<Radio.Root
 							key={option.id}
 							value={option.id}
-							className="group/layout flex min-h-[46px] cursor-pointer items-center gap-3 border-b border-line text-start last:border-0"
+							className="group/layout flex h-[46px] cursor-pointer items-center gap-3 border-b border-line text-start last:border-0"
 						>
-							<span className="grid size-4 shrink-0 place-items-center rounded-full border border-control-border group-data-checked/layout:border-accent">
-								{entry.layout === option.id && <span className="size-2 rounded-full bg-accent" />}
-							</span>
+							<RadioDot />
 							<span
 								aria-hidden="true"
-								className="flex h-[30px] w-16 shrink-0 flex-col justify-center gap-1 rounded-xs border border-line-2 bg-raised px-2 group-data-checked/layout:border-accent"
+								className="flex h-[30px] w-16 shrink-0 flex-col justify-center gap-1 rounded-xs bg-raised px-[7px] shadow-[inset_0_0_0_1px_var(--line-2)] group-data-checked/layout:shadow-[inset_0_0_0_1.5px_var(--accent)]"
 							>
 								{option.wireframe}
 							</span>
-							<span className="grid">
-								<span className="t-ui font-medium">{option.label()}</span>
-								<span className="t-caption text-ink-3">{descriptions[option.id]}</span>
+							<span className="flex min-w-0 flex-1 flex-col">
+								<span className="text-sm/[18px] font-medium">{option.label()}</span>
+								<span className="t-caption font-normal text-ink-3">{descriptions[option.id]}</span>
 							</span>
 						</Radio.Root>
 					))}
 				</RadioGroup>
-			</div>
-			<div className="grid gap-2">
-				<span className="t-small font-medium">
-					<Trans>Row order</Trans>
-				</span>
+			</Field>
+			<Field className="mt-4" label={<Trans>Row order</Trans>}>
 				<SegmentedControl
 					aria-label={t`Row order`}
 					value={entry.lead}
@@ -205,25 +215,25 @@ export function EntriesGroup() {
 						<Trans>Position first</Trans>
 					</SegmentedControlItem>
 				</SegmentedControl>
-				{preview && (
-					<div className="grid gap-1 t-caption">
-						<div className="rounded-sm bg-sunken px-2.5 py-1.5 font-semibold">
-							{entry.lead === "organization" ? first?.company : first?.position}
+				{first && (
+					<div aria-label={t`The two header rows as they print`} className="mt-2 flex flex-col gap-1">
+						<div className={PREVIEW_ROW}>
+							<b className="font-semibold text-ink">{entry.lead === "organization" ? first.company : first.position}</b>
+							{first.period && <span>{first.period}</span>}
 						</div>
-						<div className="rounded-sm bg-sunken px-2.5 py-1.5 text-ink-3">
-							{entry.lead === "organization" ? first?.position : first?.company}
-							{first?.location ? ` · ${first.location}` : ""}
+						<div className={PREVIEW_ROW}>
+							<span>
+								{entry.lead === "organization" ? first.position : first.company}
+								{first.location ? ` · ${first.location}` : ""}
+							</span>
 						</div>
 					</div>
 				)}
-				<p className="t-caption text-ink-3">
+				<Help>
 					<Trans>Education swaps school and field of study the same way.</Trans>
-				</p>
-			</div>
-			<div className="grid gap-2">
-				<span className="t-small font-medium">
-					<Trans>Accent</Trans>
-				</span>
+				</Help>
+			</Field>
+			<Field className="mt-4" label={<Trans>Accent</Trans>} help={<Trans>Uses the accent color</Trans>}>
 				<SegmentedControl
 					aria-label={t`Accent`}
 					value={entry.accent}
@@ -243,70 +253,84 @@ export function EntriesGroup() {
 						<Trans context="Entry header accent: a tinted background behind the header">Band</Trans>
 					</SegmentedControlItem>
 				</SegmentedControl>
-				<p className="t-caption text-ink-3">
+				<Help>
 					<Trans>A line under each header, a bar beside it, or a tint behind it.</Trans>
-				</p>
-			</div>
-			<section>
-				<h3 className="mb-2 flex items-baseline gap-3 t-section-title">
-					<Trans>Levels</Trans>
-					<span className="t-caption text-ink-3">
-						<Trans>How a skill or language level is drawn</Trans>
-					</span>
-				</h3>
-				<RadioGroup
-					aria-label={t`Level style`}
-					value={level.type}
-					onValueChange={(value) =>
-						write(
-							"level.type",
-							(draft) => {
-								draft.design.level.type = value as typeof level.type;
-							},
-							true,
-						)
-					}
-					className="grid grid-cols-2 gap-x-4"
-				>
-					{levelOptions.map((option) => (
-						<Radio.Root
-							key={option.value}
-							value={option.value}
-							className="flex min-h-9 cursor-pointer items-center gap-2 border-b border-line text-start t-small"
-						>
-							<Icon
-								name={level.type === option.value ? "check-circle" : "circle"}
-								size={16}
-								className={level.type === option.value ? "text-accent-text" : "text-ink-3"}
-							/>
-							{option.label}
-							<span aria-hidden="true" className="ms-auto w-[52px] [--page-primary-color:var(--ink-2)]">
-								<LevelDisplay level={3} type={option.value} icon={level.icon} decorationSizePx={8} iconSizePx={10} />
-							</span>
-						</Radio.Root>
-					))}
-					<span className="flex items-center t-caption text-ink-3">
-						<Trans>Samples show 3 of 5</Trans>
-					</span>
-				</RadioGroup>
-				{level.type === "icon" && (
-					<div className="mt-3 flex items-center gap-3 t-small">
-						<Trans>Icon</Trans>
-						<IconPicker
-							value={level.icon}
-							onChange={(value) =>
-								write(
-									"level.icon",
-									(draft) => {
-										draft.design.level.icon = value;
-									},
-									true,
-								)
-							}
-						/>
-					</div>
-				)}
-			</section>
+				</Help>
+			</Field>
+			<DesignHeading className="pt-[22px]" note={<Trans>how a skill or language level is drawn</Trans>}>
+				<Trans>Levels</Trans>
+			</DesignHeading>
+			<RadioGroup
+				aria-label={t`Level style`}
+				value={level.type}
+				onValueChange={(value) =>
+					write(
+						"level.type",
+						(draft) => {
+							draft.design.level.type = value as typeof level.type;
+						},
+						true,
+					)
+				}
+				className="grid grid-cols-2 gap-x-4"
+			>
+				{levelOptions.map((option) => (
+					<Radio.Root
+						key={option.value}
+						value={option.value}
+						className="group/layout flex h-9 cursor-pointer items-center gap-2.5 border-b border-line text-start text-[13px]/[18px] text-ink-2 data-checked:font-medium data-checked:text-ink"
+					>
+						<RadioDot className="size-4 group-data-checked/layout:after:inset-1" />
+						{option.label}
+						<span aria-hidden="true" className="ms-auto flex w-[52px] shrink-0 items-center gap-0.5">
+							{samples[option.value]}
+						</span>
+					</Radio.Root>
+				))}
+				<span className="flex h-9 items-center text-xs/[18px] text-ink-3">
+					<Trans>Samples show 3 of 5</Trans>
+				</span>
+			</RadioGroup>
+			{level.type === "icon" && (
+				<div className="mt-3 flex items-center gap-3 t-small">
+					<Trans>Icon</Trans>
+					<IconPicker
+						value={level.icon}
+						onChange={(value) =>
+							write(
+								"level.icon",
+								(draft) => {
+									draft.design.level.icon = value;
+								},
+								true,
+							)
+						}
+					/>
+				</div>
+			)}
 		</div>
 	);
+}
+
+const PREVIEW_ROW =
+	"flex h-7 items-center justify-between gap-2 rounded-sm bg-sunken px-2.5 t-caption font-normal text-ink-3";
+
+/** The radio mark of a row that is itself the radio (`.rad`): an 18px ring, filled while checked. */
+function RadioDot({ className }: { className?: string }) {
+	return (
+		<span
+			aria-hidden="true"
+			className={cn(
+				"relative size-[18px] shrink-0 rounded-full bg-raised shadow-[inset_0_0_0_1.5px_var(--control-border)] group-data-checked/layout:shadow-[inset_0_0_0_1.5px_var(--accent)] group-data-checked/layout:after:absolute group-data-checked/layout:after:inset-[5px] group-data-checked/layout:after:rounded-full group-data-checked/layout:after:bg-accent",
+				className,
+			)}
+		/>
+	);
+}
+
+/** Five marks, three filled: how a level of 3 of 5 is drawn. */
+function Dots({ className }: { className: string }) {
+	return [0, 1, 2, 3, 4].map((index) => (
+		<i key={index} className={cn("block shrink-0", index < 3 ? "bg-ink-2" : "bg-line-2", className)} />
+	));
 }

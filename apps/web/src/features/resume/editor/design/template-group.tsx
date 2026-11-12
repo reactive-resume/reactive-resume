@@ -1,21 +1,23 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
+import type { ReactNode } from "react";
 import { i18n } from "@lingui/core";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useInView } from "motion/react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { templateLayouts } from "@reactive-resume/schema/templates";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
-import { InputGroup, InputGroupAddon, InputGroupText } from "@reactive-resume/ui/components/input-group";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
+import { DecimalInput, Field } from "./fields";
 import { useTemplateThumbnail } from "./thumbnails";
 import { Chip, FilterField } from "@/components/calm/filter-bar";
-import { NumberInput } from "@/components/input/number-input";
 import { templates } from "@/dialogs/resume/template/data";
 import { useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { undoToast } from "@/features/resume/builder/undo-toast";
@@ -34,13 +36,42 @@ const layoutTags = (id: Template) =>
 		.filter(Boolean)
 		.join(" · ");
 
-type TemplateGroupProps = { layout?: "grid" | "strip"; onUse?: () => void };
-export function TemplateGroup({ layout = "grid", onUse }: TemplateGroupProps) {
+/** The template's style tags, after its column count (which the layout tag already says). */
+const styleTags = (id: Template) =>
+	[
+		templateLayouts[id].columns === 1 ? t`One column` : t`Two columns`,
+		...templates[id].tags.filter((tag) => !/^(single|two)-column$/i.test(tag)),
+	].join(" · ");
+
+type TemplateGroupProps = {
+	/** The way back up: the crumb above the title. */
+	crumb?: ReactNode;
+	onUse?: () => void;
+};
+
+/**
+ * Template (B7): every template in the wide panel, filtered by columns, ATS safety or words. A click previews it on
+ * the user's own page; nothing changes until Use this template, and Keep or Escape goes back.
+ */
+export function TemplateGroup({ crumb, onUse }: TemplateGroupProps) {
 	const data = useResumeData();
 	const [filter, setFilter] = useState<Filter>("all");
 	const [query, setQuery] = useState("");
+	const filterRef = useRef<HTMLInputElement>(null);
 	const preview = useEditorStore((state) => state.previewTemplate);
 	useEffect(() => () => useEditorStore.setState({ previewTemplate: null }), []);
+	// "/" goes to the filter, unless something else takes typing.
+	useEffect(() => {
+		const onKey = (event: KeyboardEvent) => {
+			const target = event.target as HTMLElement | null;
+			if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey) return;
+			if (target?.closest("input, textarea, [contenteditable=true]")) return;
+			event.preventDefault();
+			filterRef.current?.focus();
+		};
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, []);
 	if (!data) return null;
 	const current = data.metadata.template;
 	const chosen = preview ?? current;
@@ -59,11 +90,23 @@ export function TemplateGroup({ layout = "grid", onUse }: TemplateGroupProps) {
 		{ id: "ats", label: t`ATS-safe` },
 	];
 	const cancel = () => useEditorStore.setState({ previewTemplate: null });
+	const use = () => {
+		if (!preview) return;
+		useResumeStore.getState().updateResumeData(
+			(draft) => {
+				draft.metadata.template = preview;
+			},
+			{ newStep: true },
+		);
+		undoToast(t`Template changed to ${templates[preview].name}`);
+		cancel();
+		onUse?.();
+	};
 	return (
 		<div
 			role="group"
 			aria-label={t`Template preview`}
-			className="flex min-h-0 grow flex-col gap-2 pt-3 pb-5"
+			className="flex min-h-0 grow flex-col pb-5"
 			onKeyDown={(event) => {
 				if (event.key === "Escape" && preview) {
 					event.stopPropagation();
@@ -71,28 +114,34 @@ export function TemplateGroup({ layout = "grid", onUse }: TemplateGroupProps) {
 				}
 			}}
 		>
-			<div className="flex flex-wrap items-center gap-1.5 min-[1280px]:ms-[212px] min-[1280px]:-mt-[42px]">
-				{filters.map((option) => (
-					<Chip key={option.id} pressed={filter === option.id} onClick={() => setFilter(option.id)}>
-						{option.label}{" "}
-						<span className="t-caption">{TEMPLATE_IDS.filter((id) => matchesFilter(id, option.id)).length}</span>
-					</Chip>
-				))}
+			{crumb}
+			<div className="mt-0.5 flex flex-wrap items-center gap-4">
+				<h2 className="me-auto t-page-title">
+					<Trans>Template</Trans>
+				</h2>
+				<div role="group" aria-label={t`Show templates`} className="flex flex-wrap gap-1.5">
+					{filters.map((option) => (
+						<Chip key={option.id} pressed={filter === option.id} onClick={() => setFilter(option.id)}>
+							{option.label}
+							<span className={cn("font-mono text-xs/4 font-medium", filter !== option.id && "text-ink-3")}>
+								{i18n.number(TEMPLATE_IDS.filter((id) => matchesFilter(id, option.id)).length)}
+							</span>
+						</Chip>
+					))}
+				</div>
 				<FilterField
+					ref={filterRef}
 					label={t`Filter templates`}
 					icon="funnel"
+					shortcut="/"
 					value={query}
 					onChange={(event) => setQuery(event.target.value)}
-					className="min-w-40 flex-1"
 				/>
 			</div>
 			<div
-				aria-label={t`Templates`}
-				className={
-					layout === "strip"
-						? "flex gap-3 overflow-x-auto *:w-32 *:shrink-0"
-						: "grid grid-cols-2 gap-x-4 gap-y-4 min-[1280px]:grid-cols-6"
-				}
+				role="group"
+				aria-label={plural(shown.length, { one: "# template", other: "# templates" })}
+				className="mt-3.5 grid grid-cols-2 gap-x-4 gap-y-[18px] min-[1280px]:grid-cols-6"
 			>
 				{shown.map((id) => (
 					<TemplateCard
@@ -110,43 +159,39 @@ export function TemplateGroup({ layout = "grid", onUse }: TemplateGroupProps) {
 					<Trans>No templates match your filter.</Trans>
 				</p>
 			)}
+			{/* Over the canvas, beside the page it changes: its start edge follows the panel's width. */}
 			<div
-				className="mt-auto flex flex-wrap items-center gap-3 border-t border-line pt-3 min-[1280px]:fixed min-[1280px]:end-6 min-[1280px]:bottom-5 min-[1280px]:z-20 min-[1280px]:w-[456px] min-[1280px]:rounded-xl min-[1280px]:border min-[1280px]:bg-raised min-[1280px]:p-4 min-[1280px]:shadow-e2"
 				role="status"
+				aria-label={templates[chosen].name}
+				className="mt-auto flex flex-col gap-1.5 border-t border-line pt-3 min-[1280px]:fixed min-[1280px]:start-[calc(var(--editor-panel)+24px)] min-[1280px]:end-6 min-[1280px]:bottom-5 min-[1280px]:z-20 min-[1280px]:rounded-xl min-[1280px]:border min-[1280px]:bg-raised min-[1280px]:px-[18px] min-[1280px]:py-3.5 min-[1280px]:shadow-e2"
 			>
-				<div className="min-w-0 flex-1">
-					<h3 className="t-section-title">
-						{templates[chosen].name}{" "}
-						<span className="t-caption text-ink-3">{preview ? t`Previewing` : t`Current`}</span>
-					</h3>
-					<p className="t-small text-ink-2">{i18n._(templates[chosen].description)}</p>
-					{!templateLayouts[chosen].atsSafe && (
-						<p className="mt-1 t-caption text-warn-text">
-							<Trans>Not ATS-safe: two columns can be read out of order.</Trans>
-						</p>
-					)}
+				<div className="flex items-baseline gap-2.5">
+					<h3 className="t-section-title">{templates[chosen].name}</h3>
+					<span className="t-small text-ink-3">{styleTags(chosen)}</span>
+					<span className="sr-only">{preview ? t`Previewing` : t`Current`}</span>
 				</div>
-				<Button variant="secondary" onClick={cancel}>
-					<Trans>Keep {templates[current].name}</Trans>
-				</Button>
-				<Button
-					variant="secondary"
-					disabled={!preview}
-					onClick={() => {
-						if (!preview) return;
-						useResumeStore.getState().updateResumeData(
-							(draft) => {
-								draft.metadata.template = preview;
-							},
-							{ newStep: true },
-						);
-						undoToast(t`Template changed to ${templates[preview].name}`);
-						cancel();
-						onUse?.();
-					}}
-				>
-					<Trans>Use this template</Trans>
-				</Button>
+				<p className="t-small text-ink-2">{i18n._(templates[chosen].description)}</p>
+				{!templateLayouts[chosen].atsSafe && (
+					<p className="flex items-center gap-1.5 t-small text-warn-text">
+						<Icon name="warning-circle" size={16} />
+						<span>
+							<Trans>Not ATS-safe: two columns can be read out of order.</Trans>
+						</span>
+					</p>
+				)}
+				<div className="mt-1 flex justify-end gap-2">
+					<Button variant="secondary" onClick={cancel}>
+						<Trans>Keep {templates[current].name}</Trans>
+					</Button>
+					{/* Ink, not the accent: Download PDF stays the one accent button. */}
+					<Button
+						disabled={!preview}
+						className="bg-ink text-bg hover:bg-[color-mix(in_oklab,var(--ink),var(--bg)_14%)]"
+						onClick={use}
+					>
+						<Trans>Use this template</Trans>
+					</Button>
+				</div>
 			</div>
 		</div>
 	);
@@ -171,30 +216,30 @@ function TemplateCard({ id, data, current, previewing, onPreview }: TemplateCard
 			aria-pressed={previewing || current}
 			aria-label={t`Preview ${templates[id].name}`}
 			onClick={onPreview}
-			className="grid content-start gap-1.5 text-start"
+			className="flex min-w-0 flex-col text-start"
 		>
 			<span
 				className={cn(
-					"relative block aspect-page overflow-hidden rounded-paper border border-line bg-paper shadow-e1",
-					previewing && "ring-2 ring-accent ring-offset-2 ring-offset-bg",
+					"relative block aspect-page overflow-hidden rounded-paper bg-paper shadow-e1 ring-1 ring-line",
+					previewing && "shadow-none ring-2 ring-accent ring-offset-2 ring-offset-bg",
 				)}
 			>
 				<img src={thumbnail ?? templates[id].imageUrl} alt="" className="size-full object-cover object-top" />
 			</span>
-			<span className="flex flex-wrap items-center gap-1 t-ui font-medium">
+			<span className="mt-[7px] flex items-center gap-1.5 t-ui font-medium">
 				{templates[id].name}
-				{(current || previewing) && (
-					<span
-						className={cn(
-							"rounded-xs px-1 t-caption",
-							previewing ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-2",
-						)}
-					>
-						{previewing ? t`Previewing` : t`Current`}
-					</span>
+				{previewing ? (
+					<Badge variant="accent">{t`Previewing`}</Badge>
+				) : (
+					current && (
+						<Badge>
+							<Icon name="check" size={14} />
+							{t`Current`}
+						</Badge>
+					)
 				)}
 			</span>
-			<span className="t-caption text-ink-3">{layoutTags(id)}</span>
+			<span className="t-caption font-normal text-ink-3">{layoutTags(id)}</span>
 		</button>
 	);
 }
@@ -209,46 +254,43 @@ export function SidebarPanel({ data, template }: SidebarPanelProps) {
 	const shownOwnSide = isRTL(data.metadata.page.locale) ? (ownSide === "left" ? "right" : "left") : ownSide;
 	const side = data.metadata.layout.sidebarSide ?? shownOwnSide;
 	const width = data.metadata.layout.sidebarWidth;
-	const widthId = useId();
 
 	return (
-		<div className="grid gap-3 pt-2">
-			<p className="t-small font-medium">
-				<Trans>Side</Trans>
-			</p>
-			<SegmentedControl
-				aria-label={t`Sidebar side`}
-				value={side}
-				onValueChange={(value) =>
-					updateResumeData(
-						(draft) => {
-							draft.metadata.layout.sidebarSide = value === "right" ? "right" : "left";
-						},
-						{ newStep: true },
-					)
-				}
-				className="w-full"
-			>
-				<SegmentedControlItem value="left">
-					<Trans>Left</Trans>
-				</SegmentedControlItem>
-				<SegmentedControlItem value="right">
-					<Trans>Right</Trans>
-				</SegmentedControlItem>
-			</SegmentedControl>
-			<div className="grid gap-2">
-				<div className="flex items-center justify-between text-[13px]">
-					<span id={widthId}>
-						<Trans>Width</Trans>
-					</span>
-					<InputGroup className="h-8 w-20">
-						<NumberInput
+		<>
+			<Field label={<Trans>Side</Trans>}>
+				<SegmentedControl
+					aria-label={t`Sidebar side`}
+					value={side}
+					onValueChange={(value) =>
+						updateResumeData(
+							(draft) => {
+								draft.metadata.layout.sidebarSide = value === "right" ? "right" : "left";
+							},
+							{ newStep: true },
+						)
+					}
+					className="w-full"
+				>
+					<SegmentedControlItem value="left">
+						<Trans>Left</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="right">
+						<Trans>Right</Trans>
+					</SegmentedControlItem>
+				</SegmentedControl>
+			</Field>
+			<Field
+				className="mt-3.5"
+				label={<Trans>Width</Trans>}
+				help={
+					<span className="flex items-baseline font-mono text-xs/4 font-medium text-ink-2">
+						<DecimalInput
 							aria-label={t`Sidebar width`}
 							value={width}
 							min={10}
 							max={50}
 							step={0.1}
-							className="text-end font-mono text-xs"
+							className="text-end focus-visible:underline"
 							onValueChange={(value) =>
 								updateResumeData(
 									(draft) => {
@@ -258,27 +300,29 @@ export function SidebarPanel({ data, template }: SidebarPanelProps) {
 								)
 							}
 						/>
-						<InputGroupAddon align="inline-end">
-							<InputGroupText>%</InputGroupText>
-						</InputGroupAddon>
-					</InputGroup>
+						<span aria-hidden="true">%</span>
+					</span>
+				}
+			>
+				<div className="flex h-5 items-center">
+					<Slider
+						aria-label={t`Sidebar width`}
+						min={10}
+						max={50}
+						step={0.01}
+						value={[width]}
+						className="flex-1"
+						onValueChange={(value) =>
+							updateResumeData(
+								(draft) => {
+									draft.metadata.layout.sidebarWidth = Array.isArray(value) ? (value[0] ?? width) : value;
+								},
+								{ coalesceKey: "design.sidebarWidth" },
+							)
+						}
+					/>
 				</div>
-				<Slider
-					aria-label={t`Sidebar width`}
-					min={10}
-					max={50}
-					step={0.01}
-					value={[width]}
-					onValueChange={(value) =>
-						updateResumeData(
-							(draft) => {
-								draft.metadata.layout.sidebarWidth = Array.isArray(value) ? (value[0] ?? width) : value;
-							},
-							{ coalesceKey: "design.sidebarWidth" },
-						)
-					}
-				/>
-			</div>
-		</div>
+			</Field>
+		</>
 	);
 }

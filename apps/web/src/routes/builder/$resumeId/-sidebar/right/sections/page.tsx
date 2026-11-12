@@ -2,12 +2,14 @@ import type { DensityId, MarginId } from "@/features/resume/editor/design/preset
 import type { DateFormat } from "@reactive-resume/schema/resume/dates";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { InputGroup, InputGroupAddon, InputGroupText } from "@reactive-resume/ui/components/input-group";
+import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
-import { SwitchRow } from "@reactive-resume/ui/components/switch";
-import { NumberInput } from "@/components/input/number-input";
+import { cn } from "@reactive-resume/utils/style";
+import { List } from "@/components/calm/list-row";
 import { Combobox } from "@/components/ui/combobox";
 import { getLocaleOptions } from "@/features/locale/locale-options";
+import { DesignHeading, Field, Help, PointField, SwitchListRow } from "@/features/resume/editor/design/fields";
 import { applyDensity, applyMargins, matchDensity, matchMargins } from "@/features/resume/editor/design/presets";
 import { useDesign } from "@/features/resume/editor/design/style-groups";
 
@@ -25,38 +27,26 @@ export function PageSectionBuilder() {
 	const margin = matchMargins(metadata);
 	const density = matchDensity(metadata);
 	const numbers = (names: readonly ("marginX" | "marginY" | "gapX" | "gapY")[], labels: string[]) => (
-		<div className="grid grid-cols-2 gap-2">
+		<div className="mt-0.5 grid grid-cols-2 gap-2">
 			{names.map((name, index) => (
-				<InputGroup key={name} className="h-9">
-					<InputGroupAddon>
-						<InputGroupText className="t-caption">{labels[index]}</InputGroupText>
-					</InputGroupAddon>
-					<NumberInput
-						aria-label={labels[index]}
-						className="min-w-0 px-1 text-end font-mono text-xs"
-						value={page[name]}
-						min={0}
-						max={name.startsWith("margin") ? 100 : undefined}
-						step={1}
-						onValueChange={(next) =>
-							write(name, (draft) => {
-								draft.page[name] = next;
-							})
-						}
-					/>
-					<InputGroupAddon align="inline-end">
-						<InputGroupText>pt</InputGroupText>
-					</InputGroupAddon>
-				</InputGroup>
+				<PointField
+					key={name}
+					label={labels[index] ?? name}
+					value={page[name]}
+					min={0}
+					max={name.startsWith("margin") ? 100 : undefined}
+					onValueChange={(next) =>
+						write(name, (draft) => {
+							draft.page[name] = next;
+						})
+					}
+				/>
 			))}
 		</div>
 	);
 	return (
-		<div className="grid gap-3.5 pt-3.5 pb-6">
-			<div className="grid gap-1.5">
-				<span className="t-small font-medium">
-					<Trans>Paper</Trans>
-				</span>
+		<div className="flex flex-col pt-3.5 pb-6">
+			<Field label={<Trans>Paper</Trans>}>
 				<SegmentedControl
 					aria-label={t`Paper`}
 					className="w-full"
@@ -79,11 +69,8 @@ export function PageSectionBuilder() {
 						<Trans>Free-form</Trans>
 					</SegmentedControlItem>
 				</SegmentedControl>
-			</div>
-			<div className="grid gap-2">
-				<span className="t-small font-medium">
-					<Trans>Margins</Trans>
-				</span>
+			</Field>
+			<Field label={<Trans>Margins</Trans>} className="mt-3.5">
 				<SegmentedControl
 					aria-label={t`Margins`}
 					className="w-full"
@@ -101,16 +88,12 @@ export function PageSectionBuilder() {
 					</SegmentedControlItem>
 				</SegmentedControl>
 				{numbers(["marginX", "marginY"], [t`Left and right`, t`Top and bottom`])}
-			</div>
-			<div className="grid gap-2">
-				<div className="flex items-center justify-between gap-2">
-					<span className="t-small font-medium">
-						<Trans>Density</Trans>
-					</span>
-					<span className="t-caption text-ink-3">
-						<Trans>Also sets body line height, now {metadata.typography.body.lineHeight}</Trans>
-					</span>
-				</div>
+			</Field>
+			<Field
+				label={<Trans>Density</Trans>}
+				help={<Trans>Also sets body line height, now {metadata.typography.body.lineHeight}</Trans>}
+				className="mt-3.5"
+			>
 				<SegmentedControl
 					aria-label={t`Density`}
 					className="w-full"
@@ -128,18 +111,28 @@ export function PageSectionBuilder() {
 					</SegmentedControlItem>
 				</SegmentedControl>
 				{numbers(["gapY", "gapX"], [t`Between sections`, t`Between columns`])}
-			</div>
-			<h3 className="pt-1.5 t-section-title">
+			</Field>
+			<DesignHeading>
 				<Trans>Language and dates</Trans>
-			</h3>
-			<div className="grid gap-1.5">
-				<label htmlFor="page-language" className="t-small font-medium">
-					<Trans>Language</Trans>
-				</label>
+			</DesignHeading>
+			<Field label={<Trans>Language</Trans>} htmlFor="page-language">
 				<Combobox
 					id="page-language"
 					options={getLocaleOptions()}
 					value={page.locale}
+					render={(props) => (
+						<Button
+							{...props}
+							variant="secondary"
+							className={cn(
+								"h-10 justify-start bg-raised px-3 text-start font-normal shadow-[inset_0_0_0_1px_var(--control-border)] hover:bg-raised",
+								props.className,
+							)}
+						>
+							<Icon name="translate" className="text-ink-3" />
+							{props.children}
+						</Button>
+					)}
 					onValueChange={(value) => {
 						if (value)
 							write(
@@ -151,18 +144,15 @@ export function PageSectionBuilder() {
 							);
 					}}
 				/>
-				<p className="t-caption text-ink-3">
-					<Trans>Sets section titles, date words and text direction. Your content isn't translated.</Trans>
-				</p>
-			</div>
-			<div className="grid gap-1.5">
-				<span className="t-small font-medium">
-					<Trans>Date format</Trans>
-				</span>
+				<Help>
+					<Trans>Sets section titles, date words and text direction. Your own text isn't translated.</Trans>
+				</Help>
+			</Field>
+			<Field label={<Trans>Date format</Trans>} className="mt-3">
 				<SegmentedControl
 					aria-label={t`Date format`}
 					value={page.dateFormat ?? "short"}
-					className="w-full [&_button]:px-1"
+					className="w-full [&_[data-slot=segmented-control-item]]:px-1.5"
 					onValueChange={(value) =>
 						write(
 							"dateFormat",
@@ -179,11 +169,11 @@ export function PageSectionBuilder() {
 						</SegmentedControlItem>
 					))}
 				</SegmentedControl>
-			</div>
-			<h3 className="pt-1.5 t-section-title">
+			</Field>
+			<DesignHeading>
 				<Trans>Icons and links</Trans>
-			</h3>
-			<div>
+			</DesignHeading>
+			<List>
 				{(
 					[
 						{
@@ -195,7 +185,7 @@ export function PageSectionBuilder() {
 						{ name: "hideLinkUnderline", label: t`Underline links` },
 					] as const
 				).map((option) => (
-					<SwitchRow
+					<SwitchListRow
 						key={option.name}
 						label={option.label}
 						description={"description" in option ? option.description : undefined}
@@ -211,7 +201,7 @@ export function PageSectionBuilder() {
 						}
 					/>
 				))}
-			</div>
+			</List>
 		</div>
 	);
 }

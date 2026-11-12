@@ -51,7 +51,7 @@ export function StylesheetToolbar({
 	onFocusToggle,
 }: StylesheetToolbarProps) {
 	return (
-		<div className="flex flex-wrap items-center gap-0.5" role="toolbar" aria-label={t`Stylesheet editor`}>
+		<div className="-ms-1.5 mt-3 flex flex-wrap items-center gap-0.5" role="toolbar" aria-label={t`Stylesheet editor`}>
 			<ToolbarButton label={t`Undo resume change`} disabled={disabled || !canUndo} onClick={onUndo}>
 				<Icon name="arrow-u-up-left" size={16} />
 			</ToolbarButton>
@@ -68,7 +68,7 @@ export function StylesheetToolbar({
 			<Button
 				variant="ghost"
 				size="sm"
-				className="ms-auto"
+				className="ms-auto -me-2.5"
 				aria-label={focused ? t`Exit focus mode` : t`Open focus mode`}
 				onClick={onFocusToggle}
 			>

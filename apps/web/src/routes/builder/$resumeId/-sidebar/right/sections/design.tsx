@@ -15,6 +15,7 @@ import { IconPicker } from "@/components/input/icon-picker";
 import { LevelTypeCombobox } from "@/components/level/combobox";
 import { LevelDisplay } from "@/components/level/display";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { wellClassName } from "@/features/resume/editor/design/fields";
 import { hexToRgba, normalizeHex, rgbaToHex } from "@/features/resume/editor/design/presets";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
@@ -97,7 +98,11 @@ function ColorFormField({ form, name, label }: ColorFormFieldProps) {
 										? t`Pick the background color`
 										: t`Choose accent color`
 							}
-							className="[&>div]:size-10 [&>div]:rounded-md pointer-coarse:[&>div]:size-11"
+							compact
+							popupLabel={
+								name === "text" ? t`Text color` : name === "background" ? t`Background color` : t`Accent color`
+							}
+							className={wellClassName}
 							value={field.state.value}
 							onChange={(color) => {
 								field.handleChange(color);
@@ -108,7 +113,7 @@ function ColorFormField({ form, name, label }: ColorFormFieldProps) {
 								<Input
 									name={field.name}
 									value={typed ?? displayColor(field.state.value)}
-									className="font-mono"
+									className="font-mono text-[13px]/4 font-medium"
 									onBlur={() => {
 										setTyped(null);
 										field.handleBlur();
