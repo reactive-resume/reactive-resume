@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { openBrowserAsync } from "expo-web-browser";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import { AI_PROVIDER_KEY_URLS, getAIProviderSetupProblem } from "@reactive-resume/ai/defaults";
+import { AI_PROVIDER_KEY_URLS, getAIProviderSetupProblem, isAPIKeyOptional } from "@reactive-resume/ai/defaults";
 import { providerDefaults, providerLabel, providerOptions } from "./catalog";
 import { aiSettingsError, providerTestError } from "./error";
 import { ProviderModel } from "./provider-model";
@@ -125,8 +125,8 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 	// An empty field means the provider's own address.
 	const newURL = !!baseline && (fields.baseURL.trim() || defaultURL) !== (baseline.baseURL ?? defaultURL);
 	const apiKey = fields.apiKey.trim();
-	// The server won't send the saved key to a new address, so the key comes with it (Ollama may have none).
-	const keyMissing = newURL && provider !== "ollama" && !apiKey;
+	// The server won't send the saved key to a new address, so the key comes with it. Local servers may have none.
+	const keyMissing = newURL && !isAPIKeyOptional(provider) && !apiKey;
 	const problem = getAIProviderSetupProblem(provider, fields, Boolean(current && !newURL));
 	const explanation =
 		problem === "baseURL"
@@ -145,7 +145,7 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 		...(fields.capableModel.trim() !== (baseline?.capableModel ?? "")
 			? { capableModel: fields.capableModel.trim() }
 			: {}),
-		// The provider rides along so validation accepts Ollama's empty key.
+		// The provider rides along so validation accepts a keyless local provider.
 		...(newURL ? { provider, baseURL: fields.baseURL.trim() } : {}),
 		...(newURL || apiKey ? { apiKey } : {}),
 	};
@@ -287,14 +287,14 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 				placeholder={
 					current && !newURL
 						? t`Leave empty to keep the saved key`
-						: provider === "ollama"
-							? t`Optional for local Ollama`
+						: isAPIKeyOptional(provider)
+							? t`Optional`
 							: t`Paste your key`
 				}
 				helper={
 					!newURL
 						? undefined
-						: provider === "ollama"
+						: isAPIKeyOptional(provider)
 							? t`The saved key isn't sent to a new base URL. Enter it again if this server needs one.`
 							: t`The saved key isn't sent to a new base URL. Enter it again.`
 				}

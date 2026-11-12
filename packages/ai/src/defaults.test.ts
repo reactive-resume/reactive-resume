@@ -7,7 +7,7 @@ it.each([
 	["openai-compatible", "gateway.example.test/v1", "stub-key", "stub", false, "baseURL"],
 	["openai-compatible", "ftp://gateway.example.test/v1", "stub-key", "stub", false, "baseURL"],
 	["openai-compatible", " https://gateway.example.test/v1 ", " stub-key ", " stub ", false, null],
-	["openai-compatible", "http://127.0.0.1:8080/v1", "", "stub", false, "apiKey"],
+	["openai-compatible", "http://127.0.0.1:8080/v1", "", "stub", false, null],
 	["openai", "", "stub-key", "stub", false, null],
 	["openai", "https://api.openai.com/v1", "", "stub", false, "apiKey"],
 	["openai", "https://api.openai.com/v1", "", "stub", true, null],

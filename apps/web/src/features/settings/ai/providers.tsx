@@ -7,7 +7,11 @@ import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useRef, useState } from "react";
-import { AI_PROVIDER_DEFAULT_BASE_URLS, getAIProviderSetupProblem } from "@reactive-resume/ai/defaults";
+import {
+	AI_PROVIDER_DEFAULT_BASE_URLS,
+	getAIProviderSetupProblem,
+	isAPIKeyOptional,
+} from "@reactive-resume/ai/defaults";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -540,8 +544,8 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 	// An empty field means the provider's own address.
 	const newURL = (fields.baseURL.trim() || defaultURL) !== (provider.baseURL ?? defaultURL);
 	const apiKey = fields.apiKey.trim();
-	// The server won't send the saved key to a new address, so the key comes with it (Ollama may have none).
-	const keyMissing = newURL && provider.provider !== "ollama" && !apiKey;
+	// The server won't send the saved key to a new address, so the key comes with it. Local servers may have none.
+	const keyMissing = newURL && !isAPIKeyOptional(provider.provider) && !apiKey;
 	const valid = getAIProviderSetupProblem(provider.provider, fields, !newURL) === null;
 	const changes = {
 		...(fields.label.trim() && fields.label.trim() !== provider.label ? { label: fields.label.trim() } : {}),
@@ -550,7 +554,7 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 		...(fields.capableModel.trim() !== (provider.capableModel ?? "")
 			? { capableModel: fields.capableModel.trim() }
 			: {}),
-		// The provider rides along so validation accepts Ollama's empty key.
+		// The provider rides along so validation accepts a keyless local provider.
 		...(newURL ? { provider: provider.provider, baseURL: fields.baseURL.trim() } : {}),
 		...(newURL || apiKey ? { apiKey } : {}),
 	};

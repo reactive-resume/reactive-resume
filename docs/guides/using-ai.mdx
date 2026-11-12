@@ -11,7 +11,7 @@ without entering your own key. The steps below apply when personal providers are
 
 ## Before you start
 
-- Get an API key from your provider's dashboard. You pay the provider directly for what you use. A local Ollama server can connect without a key.
+- Get an API key from your provider's dashboard. You pay the provider directly for what you use. Local Ollama and OpenAI-compatible servers such as LM Studio can connect without a key.
 - Know which model you want to use, such as `gpt-6-luna` or `claude-haiku-5-5`. Reactive Resume suggests a default for each provider, but your account may not have access to every model.
 
 Personal **AI providers** settings show a billing reminder before and after you connect a provider. Your provider may charge your account for requests made with your API key, according to its plan. Server-managed connections show **Managed by your server** instead.
@@ -61,15 +61,15 @@ If you have no resumes or applications yet, the pickers offer to create a resume
 
 ### The fields
 
-| Field             | What to enter                                                                                                                                                 |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Provider**      | The company or service that runs the model.                                                                                                                   |
-| **API key**       | The key from your provider's dashboard. Required except for Ollama, where you can leave it empty for a local server that doesn't require authentication.      |
-| **Model**         | The model name exactly as your provider writes it. Required.                                                                                                  |
-| **Fast model**    | Optional. The model for resume import, Improve and reading job postings. Leave it empty to use **Model**.                                                     |
-| **Capable model** | Optional. The model for the assistant and letter drafts. Leave it empty to use **Model**.                                                                     |
-| **Name**          | A label you'll recognize, such as "Work OpenAI". Under **Advanced** for named providers. If you leave it empty, the provider's name is used.                  |
-| **Base URL**      | The address requests go to. Under **Advanced** for named providers; required and visible for OpenAI-compatible services. Changing it needs the API key again. |
+| Field             | What to enter                                                                                                                                                                           |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Provider**      | The company or service that runs the model.                                                                                                                                             |
+| **API key**       | The key from your provider's dashboard. Required except for Ollama and OpenAI-compatible services, where you can leave it empty for a local server that doesn't require authentication. |
+| **Model**         | The model name exactly as your provider writes it. Required.                                                                                                                            |
+| **Fast model**    | Optional. The model for resume import, Improve and reading job postings. Leave it empty to use **Model**.                                                                               |
+| **Capable model** | Optional. The model for the assistant and letter drafts. Leave it empty to use **Model**.                                                                                               |
+| **Name**          | A label you'll recognize, such as "Work OpenAI". Under **Advanced** for named providers. If you leave it empty, the provider's name is used.                                            |
+| **Base URL**      | The address requests go to. Under **Advanced** for named providers; required and visible for OpenAI-compatible services. Changing it needs the API key again.                           |
 
 ### Choosing a model
 
@@ -129,7 +129,7 @@ Suggestions favor fast, cost-efficient models for everyday AI tasks. They apply 
 
 Ollama defaults to a cloud model for its hosted base URL. For a local Ollama server, enter the name of a model installed on that server and change the base URL.
 
-Choose **OpenAI-compatible** for any other service that speaks the OpenAI API, such as a company gateway or LiteLLM. It needs both a model and a base URL.
+Choose **OpenAI-compatible** for any other service that speaks the OpenAI API, such as a company gateway, LiteLLM or a local LM Studio server. It needs a model and a base URL; the API key is optional for endpoints that don't require authentication.
 
 The base URL must start with `https://` and point to a public address. On the hosted instance, that means a model running on your own computer (for example, a local Ollama) can't be connected. Self-hosters can allow local and `http://` addresses; see [Environment variables](/self-hosting/environment-variables).
 

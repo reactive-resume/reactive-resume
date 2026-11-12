@@ -2,6 +2,7 @@ import { isIP } from "node:net";
 import { isAbsolute, join } from "node:path";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
+import { isAPIKeyOptional } from "@reactive-resume/ai/defaults";
 import { aiProviderSchema } from "@reactive-resume/ai/types";
 import { findWorkspaceRoot } from "@reactive-resume/utils/monorepo.node";
 import { deploymentEnvironment } from "./deployment";
@@ -252,9 +253,11 @@ if (
 
 if (
 	(env.AI_PROVIDER || env.AI_MODEL || env.AI_API_KEY || env.AI_BASE_URL) &&
-	(!env.AI_PROVIDER || !env.AI_MODEL || (!env.AI_API_KEY && env.AI_PROVIDER !== "ollama"))
+	(!env.AI_PROVIDER || !env.AI_MODEL || (!env.AI_API_KEY && !isAPIKeyOptional(env.AI_PROVIDER)))
 ) {
-	throw new Error("Server AI requires AI_PROVIDER, AI_MODEL and AI_API_KEY (the key is optional for Ollama).");
+	throw new Error(
+		"Server AI requires AI_PROVIDER, AI_MODEL and AI_API_KEY (the key is optional for Ollama and OpenAI-compatible servers).",
+	);
 }
 
 // `.env.example` is public, and production Compose loads it as the base `env_file`: its secrets would let anyone sign
