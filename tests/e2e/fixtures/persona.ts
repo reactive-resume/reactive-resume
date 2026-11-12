@@ -257,14 +257,20 @@ export async function seedPersona(
 	};
 	const onePage = [["summary", "experience", "education", "skills", "languages"]];
 
-	const productDesigner = await newResume("productDesigner", "Product designer", ["Design", "Product"], "product", {
-		headline: "Senior product designer",
-		email,
-		summary,
-		northwind,
-		harbour,
-		pages: onePage,
-	});
+	const productDesigner = await newResume(
+		"productDesigner",
+		"Product designer",
+		["Design", "Product"],
+		"product-designer",
+		{
+			headline: "Senior product designer",
+			email,
+			summary,
+			northwind,
+			harbour,
+			pages: onePage,
+		},
+	);
 	await call("put", `/resumes/${productDesigner}`, { isPublic: true, isPrimary: true });
 
 	const designLead = await newResume("designLead", "Design lead", ["Design"], "design-lead", {
@@ -464,6 +470,11 @@ export async function seedPersona(
 			"Before that I spent nearly three years at Harbour Studio in Porto, designing checkout and invoicing for 30 retail clients. Completed payments rose 12%, and I tested each release with shop owners before it shipped. I live in Lisbon, so the hybrid week suits me, and I would be glad to walk you through the onboarding work in detail.",
 		),
 	});
+	// The Kiln letter takes its design from the resume (L2 draws matching on); creating a letter leaves it off.
+	await call("put", `/cover-letters/${kilnLetter}`, {
+		expectedRevision: (await call("get", `/cover-letters/${kilnLetter}`)).revision,
+		designLinked: true,
+	});
 	const brightwellLetter = await newLetter("brightwell", {
 		name: "Brightwell · Product designer",
 		applicationId: brightwell,
@@ -587,6 +598,15 @@ export async function seedPersona(
 				.id,
 		);
 	const factId = (text: string) => seed.facts[facts.findIndex((fact) => fact[0] === text)] as string;
+	// Two facts forgotten since (C2 "2 · gone for good"); only their count and when stay. The caller dates them.
+	for (const quote of ["Workshop facilitation", "Product design"]) {
+		const { id } = await call("post", "/career/facts", {
+			text: quote,
+			category: "skill",
+			source: { kind: "resume", id: productDesigner, quote },
+		});
+		await call("delete", `/career/facts/${id}`);
+	}
 	// One fact is kept but not used in coaching.
 	await call("patch", `/career/facts/${factId("Studied at the University of Porto, 2017 to 2019.")}`, {
 		status: "excluded",
@@ -666,6 +686,12 @@ export async function seedPersona(
 			locale: "en-GB",
 			aiProviderId: seed.aiProviderId,
 		});
+
+	// S5's two keys; the caller sets their dates. The key itself is shown once and not kept.
+	if (variant === "alex") {
+		await call("post", "/auth/api-keys", { name: "Claude Desktop", expiresIn: 85 * 86_400, access: "read" });
+		await call("post", "/auth/api-keys", { name: "Portfolio site", expiresIn: null, access: "full" });
+	}
 
 	// Last, so nothing after it changes what the coach would read for Lumen.
 	seed.versionProbeId = (

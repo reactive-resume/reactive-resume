@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } 
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ensureDatabases } from "../dev/test-db.mjs";
-import { aiBaseUrl, appUrl, database, env, healthy, ports, root, state } from "./env.mjs";
+import { aiBaseUrl, apiOnly, appUrl, database, env, healthy, ports, root, state } from "./env.mjs";
 
 // The standing dev server for Calm captures: Vite with hot reload on :3410, the API (tsx watch, clock from
 // fake-clock.mjs) on :3411 and the e2e AI stub on :3412, against the private database rr_calm_capture.
@@ -74,7 +74,7 @@ async function run() {
 		pathToFileURL(resolve(import.meta.dirname, "fake-clock.mjs")).href,
 		"src/index.ts",
 	]);
-	keep("web", "apps/web", "vp", ["dev"]);
+	if (!apiOnly) keep("web", "apps/web", "vp", ["dev"]);
 }
 
 if (command === "run") await run();
