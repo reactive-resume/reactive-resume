@@ -4,7 +4,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { Asset } from "expo-asset";
 import { CryptoDigestAlgorithm, digestStringAsync } from "expo-crypto";
 import { Directory, File, Paths } from "expo-file-system";
-import { Image } from "react-native";
+import { Image, Platform } from "react-native";
 import { fixturePageMap, fixtureIssueMarkers } from "./fixture-map";
 import { rest } from "@/api/client";
 import { getAccountScope, getServer } from "@/auth/session";
@@ -35,6 +35,13 @@ export type PageRenderResult = {
 export interface PageRenderer {
 	render(request: PageRenderRequest): Promise<PageRenderResult>;
 }
+let androidPrints: Promise<unknown> = Promise.resolve();
+function oneAtATime<T>(task: () => Promise<T>): Promise<T> {
+	const run = androidPrints.then(task, task);
+	androidPrints = run;
+	return run;
+}
+
 const fixtureImages = {
 	"page-resume-B1": require("../../assets/fixtures/page-resume-B1.png"),
 	"page-resume-B6": require("../../assets/fixtures/page-resume-B6.png"),
@@ -112,12 +119,17 @@ export const pageRenderer: PageRenderer = {
 				const src = uri.includes(":")
 					? `data:image/png;base64,${await new File(uri).base64()}`
 					: `file:///android_res/drawable/${uri}.png`;
-				const output = await printToFileAsync({
-					html: `<html><head><style>@page{margin:0}html,body{margin:0;padding:0}img{display:block;width:100%}</style></head><body><img src="${src}" /></body></html>`,
-					width: size.width,
-					height: size.height,
-					margins: { left: 0, right: 0, top: 0, bottom: 0 },
-				});
+				const { width, height } = size;
+				const print = () =>
+					printToFileAsync({
+						html: `<html><head><style>@page{margin:0}html,body{margin:0;padding:0}img{display:block;width:100%}</style></head><body><img src="${src}" /></body></html>`,
+						width,
+						height,
+						margins: { left: 0, right: 0, top: 0, bottom: 0 },
+					});
+				// Android's print WebView sometimes never answers when several prints start at once (a builder screen
+				// renders four fixtures together), which left the storyboard waiting forever: print one at a time there.
+				const output = await (Platform.OS === "android" ? oneAtATime(print) : print());
 				new File(output.uri).copy(pdf);
 				pages = [{ index: 0, uri, width: size.width, height: size.height }];
 				pageMap = fixturePageMap(size.width, size.height);
