@@ -1165,6 +1165,41 @@ const threadSummarySelection = {
 	providerLabel: schema.aiProvider.label,
 };
 
+const REPOINT_REFUSED =
+	"This conversation can move only once, from the resume it started on to a copy of it that reads the same.";
+
+/**
+ * When a resume conversation may move to `targetId`, in SQL over the thread row: it is still on the resume it started on
+ * (working = source, so it moves once), it is a resume conversation (no letter), and the target is another of this
+ * account's resumes, not in Trash, whose content is the same as the source's. Same content keeps every pending edit
+ * valid on the target: each one's passage reads there as it did when it was proposed.
+ */
+function repointableTo(targetId: string, userId: string) {
+	return sql`${schema.agentThread.scope} = 'document'
+		and ${schema.agentThread.coverLetterId} is null
+		and ${schema.agentThread.workingResumeId} = ${schema.agentThread.sourceResumeId}
+		and exists (
+			select 1 from ${schema.resume} target, ${schema.resume} source
+			where target.id = ${targetId} and target.user_id = ${userId} and target.trashed_at is null
+				and source.id = ${schema.agentThread.sourceResumeId} and source.user_id = ${userId}
+				and target.id <> source.id and target.data = source.data
+		)`;
+}
+
+/** The reason a re-point is refused, before anything is written. Another account's resume reads as not found. */
+async function assertRepointable(thread: typeof schema.agentThread.$inferSelect, targetId: string, userId: string) {
+	const [target] = await db
+		.select({ id: schema.resume.id })
+		.from(schema.resume)
+		.where(and(eq(schema.resume.id, targetId), eq(schema.resume.userId, userId), isNull(schema.resume.trashedAt)));
+	if (!target) throw new ORPCError("NOT_FOUND", { message: "That resume isn't available." });
+	const [allowed] = await db
+		.select({ id: schema.agentThread.id })
+		.from(schema.agentThread)
+		.where(and(eq(schema.agentThread.id, thread.id), repointableTo(targetId, userId)));
+	if (!allowed) throw new ORPCError("CONFLICT", { message: REPOINT_REFUSED });
+}
+
 /** A document's name, locked state and whether the user owns it, or null when it's gone. */
 async function describeDocument(userId: string, document: AssistantDocument | null) {
 	if (!document) return null;
@@ -1335,16 +1370,21 @@ export const agentService = {
 			};
 		},
 
-		/** Switches the model a conversation uses ("Switch model"). */
+		/**
+		 * Switches the model a conversation uses ("Switch model"), renames it, or moves it once from the resume it started
+		 * on to a copy of it (see repointableTo).
+		 */
 		update: async (input: {
 			id: string;
 			userId: string;
 			aiProviderId?: string | undefined;
 			title?: string | undefined;
+			workingResumeId?: string | undefined;
 		}) => {
 			assertAgentEnvironment();
 
-			await getThread({ id: input.id, userId: input.userId });
+			const thread = await getThread({ id: input.id, userId: input.userId });
+			if (input.workingResumeId) await assertRepointable(thread, input.workingResumeId, input.userId);
 			// Renaming needs no working connection; switching models checks the new one.
 			const provider = input.aiProviderId
 				? await aiProvidersService.getRunnableById({ id: input.aiProviderId, userId: input.userId })
@@ -1352,7 +1392,11 @@ export const agentService = {
 
 			const [updated] = await db
 				.update(schema.agentThread)
-				.set({ ...(provider ? { aiProviderId: provider.id } : {}), ...(input.title ? { title: input.title } : {}) })
+				.set({
+					...(provider ? { aiProviderId: provider.id } : {}),
+					...(input.title ? { title: input.title } : {}),
+					...(input.workingResumeId ? { workingResumeId: input.workingResumeId } : {}),
+				})
 				.where(
 					and(
 						eq(schema.agentThread.id, input.id),
@@ -1360,10 +1404,15 @@ export const agentService = {
 							eq(schema.agentThread.userId, input.userId),
 							availableApplicationContext(input.userId, schema.agentThread.applicationId),
 						),
+						// Checked again in the write: two re-points at once move the conversation once.
+						input.workingResumeId ? repointableTo(input.workingResumeId, input.userId) : undefined,
 					),
 				)
 				.returning();
-			if (!updated) throw new ORPCError("NOT_FOUND");
+			if (!updated)
+				throw input.workingResumeId
+					? new ORPCError("CONFLICT", { message: REPOINT_REFUSED })
+					: new ORPCError("NOT_FOUND");
 
 			const [current] = updated.aiProviderId
 				? await db

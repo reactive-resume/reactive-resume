@@ -1190,6 +1190,58 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 		});
 	}
 
+	it("moves a resume conversation once, to this account's live copy of its resume, where its edits are then accepted", async () => {
+		const { proposals, ids, read } = await proposalsOn("resume", [{ id: "moved", after: "<p>Anchor, sharper</p>" }]);
+		const baseId = (await agent.threads.get({ id: ids.threadId, userId })).thread.sourceResumeId;
+		if (!baseId) throw new Error("Missing base resume");
+		const repoint = (workingResumeId: string, account = userId) =>
+			agent.threads.update({ id: ids.threadId, userId: account, workingResumeId });
+		const db = fixture.db;
+		if (!db) throw new Error("Missing fixture database");
+		const { data } = await resumes.getById({ userId, id: baseId });
+		await db.insert(tables.user).values({
+			id: "bob",
+			name: "Bob Example",
+			email: "bob@example.test",
+			username: `${schemaName}-bob`,
+			displayUsername: `${schemaName}-bob`,
+		});
+		await db.insert(tables.resume).values({ id: "bobs", userId: "bob", name: "Bob's", slug: "bobs", data });
+		const trashed = await documents.copyForJob({ userId, resumeId: baseId });
+		await documents.trash({ userId, type: "resume", id: trashed });
+		const different = structuredClone(data);
+		different.summary.content = "<p>Something else</p>";
+		await db.insert(tables.resume).values({ id: "other", userId, name: "Other", slug: "other", data: different });
+		const copy = await documents.copyForJob({ userId, resumeId: baseId });
+
+		await expect(repoint("bobs")).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(repoint(copy, "bob")).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(repoint(trashed)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(repoint("other")).rejects.toMatchObject({ code: "CONFLICT" });
+		await expect(repoint(baseId)).rejects.toMatchObject({ code: "CONFLICT" });
+
+		expect(await repoint(copy)).toMatchObject({ sourceResumeId: baseId, workingResumeId: copy });
+		await expect(repoint(await documents.copyForJob({ userId, resumeId: baseId }))).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		expect((await agent.threads.get({ id: ids.threadId, userId })).document).toMatchObject({ id: copy });
+
+		// The copy's save records the acceptance; the resume the conversation started on is untouched.
+		const client = await router();
+		const current = await resumes.getById({ userId, id: copy });
+		const next = structuredClone(current.data);
+		next.summary.content = "<p>Anchor, sharper</p>";
+		await client.update({
+			id: copy,
+			data: next,
+			expectedUpdatedAt: current.updatedAt,
+			proposalSafety: "v1",
+			proposalApplications: appliedApplications(proposals),
+		});
+		expect((await storedEdit(ids.threadId)).edit.status).toBe("accepted");
+		expect(await read()).toBe("<p>Anchor</p>");
+	});
+
 	it("refuses a current app's acceptance of tailoring this resume can't take, writing nothing", async () => {
 		// Tailored for the job, on a resume that isn't that job's copy.
 		const tailored = await proposalsOn("resume", [{ id: "tailored", after: "<p>Tailored for Northwind</p>" }], "job-a");

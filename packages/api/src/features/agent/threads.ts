@@ -75,7 +75,9 @@ export const threadsRouter = {
 			path: "/agent/threads/{id}",
 			tags: ["Agent"],
 			operationId: "updateAgentThread",
-			summary: "Switch a conversation's model or rename it",
+			summary: "Switch a conversation's model, rename it, or move it to a copy",
+			description:
+				"`workingResumeId` moves a resume conversation once, from the resume it started on to a copy of it: another of your resumes, not in Trash, with the same content. Its edits are then accepted on the copy and the original stays unchanged.",
 		})
 		.input(
 			z
@@ -83,8 +85,11 @@ export const threadsRouter = {
 					id: z.string(),
 					aiProviderId: z.string().min(1).optional(),
 					title: z.string().trim().min(1).max(200).optional(),
+					workingResumeId: z.string().min(1).optional(),
 				})
-				.refine((input) => input.aiProviderId || input.title, { message: "Give a model or a title." }),
+				.refine((input) => input.aiProviderId || input.title || input.workingResumeId, {
+					message: "Give a model, a title or a copy to work on.",
+				}),
 		)
 		.use(mapAgentEnvironmentError)
 		.output(agentThreadSchema)

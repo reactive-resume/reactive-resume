@@ -15376,7 +15376,8 @@
 			},
 			"patch": {
 				"operationId": "updateAgentThread",
-				"summary": "Switch a conversation's model or rename it",
+				"summary": "Switch a conversation's model, rename it, or move it to a copy",
+				"description": "`workingResumeId` moves a resume conversation once, from the resume it started on to a copy of it: another of your resumes, not in Trash, with the same content. Its edits are then accepted on the copy and the original stays unchanged.",
 				"tags": [
 					"Agent"
 				],
@@ -15405,6 +15406,10 @@
 										"type": "string",
 										"minLength": 1,
 										"maxLength": 200
+									},
+									"workingResumeId": {
+										"type": "string",
+										"minLength": 1
 									}
 								}
 							}

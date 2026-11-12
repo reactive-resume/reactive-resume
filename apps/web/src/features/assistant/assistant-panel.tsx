@@ -9,14 +9,15 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
+import { acceptOnCopy } from "./accept-on-copy";
 import { ChatWelcome, ModelMenu } from "./chat-chrome";
 import { ConnectionNotice } from "./connection-notice";
 import { Composer, Conversation } from "./conversation";
@@ -84,6 +85,14 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const stranded = threadId !== null && summary !== undefined && saved === undefined && !providers.isLoading;
 	const provider = threadId ? saved : (usable.find((item) => item.id === providerId) ?? usable[0]);
 	const providerLabel = provider?.label ?? summary?.providerLabel ?? t`your provider`;
+	// The resume this conversation started on, once it moved to a copy (its first accepted edit).
+	const original =
+		document.kind === "resume" &&
+		summary?.workingResumeId === document.id &&
+		summary.sourceResumeId &&
+		summary.sourceResumeId !== document.id
+			? summary.sourceResumeId
+			: null;
 
 	const ensureThread = async (): Promise<string> => {
 		if (draftThread.current) return draftThread.current;
@@ -193,7 +202,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 			{providers.hasUsableProvider && view !== "history" && (
 				<p className="mx-6 flex items-center gap-2.5 border-b border-line pt-[13px] pb-3 text-[13px]/[18px] text-ink-2">
 					<Icon
-						name={document.madeFor && document.kind === "resume" ? "copy" : "clock-counter-clockwise"}
+						name={(original || document.madeFor) && document.kind === "resume" ? "copy" : "clock-counter-clockwise"}
 						size={16}
 						className="mt-px shrink-0 self-start text-ink-3"
 					/>
@@ -201,8 +210,10 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						<Trans>This {kindLabel(document)} is locked. Questions still work; edits wait for Unlock.</Trans>
 					) : document.kind === "letter" ? (
 						<Trans>Accepted edits change this letter; history keeps each version.</Trans>
+					) : original ? (
+						<CopyLine original={original} company={document.posting?.company} />
 					) : document.madeFor && document.posting ? (
-						<Trans>Working on a copy made for {document.posting.company}. The resume it came from is unchanged.</Trans>
+						<Trans>Working on a copy made for {document.posting.company}: the resume it came from is unchanged.</Trans>
 					) : (
 						<Trans>Nothing changes until you accept an edit.</Trans>
 					)}
@@ -338,11 +349,46 @@ type ConversationLoaderProps = {
 
 /** Reads the conversation fresh each time it opens: the chat takes its messages once, when it mounts. */
 function ConversationLoader({ threadId, document, destinationUnavailable, ...props }: ConversationLoaderProps) {
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 	const thread = useQuery({
 		...orpc.agent.threads.get.queryOptions({ input: { id: threadId } }),
 		refetchOnMount: "always",
 		refetchOnWindowFocus: false,
 	});
+	// The assistant never edits a resume a conversation started on: its first accepted edit makes a copy and lands there.
+	const summary = thread.data?.thread;
+	const copyFirst =
+		document.kind === "resume" &&
+		!document.madeFor &&
+		summary?.workingResumeId === document.id &&
+		summary.sourceResumeId === document.id;
+	const working = useMemo<AssistantDocument>(
+		() =>
+			copyFirst
+				? {
+						...document,
+						accept: (proposals) => {
+							void acceptOnCopy({
+								threadId,
+								resumeId: document.id,
+								posting: document.posting,
+								proposals,
+								queryClient,
+								open: (copyId) =>
+									navigate({
+										to: "/builder/$resumeId",
+										params: { resumeId: copyId },
+										search: { assistant: threadId },
+									}),
+							});
+							// Recorded by the copy's save once it's applied there.
+							return { applied: [], stale: [] };
+						},
+					}
+				: document,
+		[copyFirst, document, threadId, queryClient, navigate],
+	);
 
 	if (thread.error)
 		return (
@@ -366,13 +412,44 @@ function ConversationLoader({ threadId, document, destinationUnavailable, ...pro
 				(file) => !file.messageId && !props.promptAttachments.some((sent) => sent.id === file.id),
 			)}
 			activeRun={Boolean(thread.data.thread.activeRunId)}
-			document={document}
+			document={working}
 			readOnly={thread.data.isReadOnly || destinationUnavailable}
 			localEditsLocked={document.locked || !thread.data.document}
 			{...props}
 			// A locked document still takes questions; the banner says why edits wait, with Unlock.
 			banner={document.locked ? <LockedNotice document={document} /> : undefined}
 		/>
+	);
+}
+
+/** "Working on a copy", with the resume it came from one link away. */
+function CopyLine({ original, company }: { original: string; company: string | undefined }) {
+	// Usually cached: the builder had it open just before the copy.
+	const { data } = useQuery(orpc.resume.getById.queryOptions({ input: { id: original } }));
+	const name = data?.name;
+	return (
+		<span className="flex flex-1 flex-wrap items-start justify-between gap-x-3 gap-y-1">
+			<span>
+				{company && name ? (
+					<Trans>
+						Working on a copy made for {company}: {name} is unchanged.
+					</Trans>
+				) : company ? (
+					<Trans>Working on a copy made for {company}: the resume it came from is unchanged.</Trans>
+				) : name ? (
+					<Trans>Working on a copy. {name} is unchanged.</Trans>
+				) : (
+					<Trans>Working on a copy. The resume it came from is unchanged.</Trans>
+				)}
+			</span>
+			<Link
+				to="/builder/$resumeId"
+				params={{ resumeId: original }}
+				className="font-medium text-accent-text hover:underline"
+			>
+				<Trans>Open original</Trans>
+			</Link>
+		</span>
 	);
 }
 
