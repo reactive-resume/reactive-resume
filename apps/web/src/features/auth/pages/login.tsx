@@ -314,20 +314,13 @@ export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin, i
 						{guestOffered && (
 							<ListRow
 								caret
+								wrap
 								className="w-full"
 								aria-busy={guestSignIn.isPending || undefined}
 								render={<button type="button" disabled={guestSignIn.isPending} onClick={() => guestSignIn.mutate()} />}
-							>
-								{/* calm: request to lead — ListRow's subtitle truncates; this row's second line wraps (`.s.w`). */}
-								<span className="flex min-w-0 flex-1 flex-col gap-px">
-									<span className="t-row-title">
-										<Trans>Continue as guest</Trans>
-									</span>
-									<span className="text-ink-3 t-small">
-										<Trans>Try it now. Work is lost when the session ends unless you create an account.</Trans>
-									</span>
-								</span>
-							</ListRow>
+								title={<Trans>Continue as guest</Trans>}
+								subtitle={<Trans>Try it now. Work is lost when the session ends unless you create an account.</Trans>}
+							/>
 						)}
 					</List>
 				</>

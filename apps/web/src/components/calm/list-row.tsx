@@ -9,6 +9,13 @@ export const revealOnRowClassName =
 	"opacity-0 transition-opacity group-focus-within/row:opacity-100 group-hover/row:opacity-100 pointer-coarse:opacity-100";
 
 /**
+ * Row actions that take no room until the row is hovered or holds focus. They stay in the tab order (narrowed, not
+ * removed), so a keyboard reaches them and focus opens them; the negative margin cancels the row's gap.
+ */
+const collapsedActionsClassName =
+	"relative z-10 flex max-w-0 shrink-0 items-center gap-1 overflow-hidden opacity-0 -ms-3.5 group-data-tight/list:-ms-3 group-focus-within/row:ms-0 group-focus-within/row:max-w-none group-focus-within/row:overflow-visible group-focus-within/row:opacity-100 group-hover/row:ms-0 group-hover/row:max-w-none group-hover/row:overflow-visible group-hover/row:opacity-100 pointer-coarse:ms-0 pointer-coarse:max-w-none pointer-coarse:overflow-visible pointer-coarse:opacity-100";
+
+/**
  * For a row that holds its own controls: keep the row a `div` and put this on the title's link, so the whole row is
  * still the click target without nesting buttons inside a link.
  */
@@ -42,13 +49,20 @@ type ListRowProps = Omit<useRender.ComponentProps<"div">, "title"> & {
 	/** Icon tile, document thumbnail, initials, date column or stage dot. */
 	leading?: ReactNode;
 	title?: ReactNode;
-	/** The one quiet line under the title. Never a third. */
+	/** The quiet line under the title. */
 	subtitle?: ReactNode;
+	/** An optional third line, as quiet as the subtitle (a date, a scope). Use sparingly. */
+	detail?: ReactNode;
+	/** Let a string subtitle wrap instead of truncating (`.s.w`); the title always wraps. */
+	wrap?: boolean;
 	/** A quiet value before the trailing element. */
 	value?: ReactNode;
 	/** The one thing at the end: a badge, a switch, a text action. */
 	trailing?: ReactNode;
-	/** Controls that appear on hover and focus. They must also be in the row's menu. */
+	/**
+	 * Controls that appear on hover and focus. They take no room while hidden, so the title uses the full width; touch
+	 * screens always show them. They must also be in the row's menu.
+	 */
 	actions?: ReactNode;
 	/** A caret at the end: the row opens something. */
 	caret?: boolean;
@@ -67,6 +81,8 @@ export function ListRow({
 	leading,
 	title,
 	subtitle,
+	detail,
+	wrap = false,
 	value,
 	trailing,
 	actions,
@@ -97,7 +113,7 @@ export function ListRow({
 				children: (
 					<>
 						{leading}
-						{(title || subtitle) && (
+						{(title || subtitle || detail) && (
 							<span className="flex min-w-0 flex-1 flex-col gap-px">
 								{title && (
 									<span
@@ -114,20 +130,17 @@ export function ListRow({
 										title={typeof subtitle === "string" ? subtitle : undefined}
 										className={cn(
 											"text-[13px]/[18px] text-ink-3",
-											typeof subtitle === "string" ? "truncate" : "[overflow-wrap:anywhere]",
+											typeof subtitle === "string" && !wrap ? "truncate" : "[overflow-wrap:anywhere]",
 										)}
 									>
 										{subtitle}
 									</span>
 								)}
+								{detail && <span className="text-[13px]/[18px] [overflow-wrap:anywhere] text-ink-3">{detail}</span>}
 							</span>
 						)}
 						{children}
-						{actions && (
-							<span className={cn("relative z-10 flex shrink-0 items-center gap-1", revealOnRowClassName)}>
-								{actions}
-							</span>
-						)}
+						{actions && <span className={collapsedActionsClassName}>{actions}</span>}
 						{value && <span className="flex shrink-0 items-center gap-1.5 text-[13px]/[18px] text-ink-3">{value}</span>}
 						{trailing && <span className="relative z-10 flex shrink-0 items-center">{trailing}</span>}
 						{caret && <Icon name="caret-right" size={18} className="text-ink-3" />}

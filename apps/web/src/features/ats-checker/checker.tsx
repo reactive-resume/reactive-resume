@@ -232,7 +232,7 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 			<h1 className="t-root-title text-balance sm:t-display">
 				<Trans>Can software read your resume?</Trans>
 			</h1>
-			<p className="max-w-[640px] pt-2.5 text-ink-2 t-body">
+			<p className="max-w-[640px] pt-2.5 t-body text-ink-2">
 				<Trans>
 					Choose a PDF and see the text an applicant tracking system pulls out of it: what is missing, what is out of
 					order, and how to fix it. Free, no account needed.
@@ -250,15 +250,14 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 				{...dropProps}
 			>
 				<Icon name="file-pdf" size={32} className="text-ink-3" />
-				{/* calm: request to lead — Button size="lg" computes a 21.4px line; the board is 15/20. */}
-				<Button size="lg" className="mt-1.5 leading-5" onClick={() => input.current?.click()}>
+				<Button size="lg" className="mt-1.5" onClick={() => input.current?.click()}>
 					<Icon name="upload-simple" />
 					{dragging ? <Trans>Drop to check</Trans> : <Trans>Choose a PDF</Trans>}
 				</Button>
-				<p className="text-ink-3 t-small">
+				<p className="t-small text-ink-3">
 					<Trans>or drop it here · up to 25 MB</Trans>
 				</p>
-				<p className="flex items-center gap-1.5 text-ink-2 t-small">
+				<p className="flex items-center gap-1.5 t-small text-ink-2">
 					<Icon name="shield-check" size={16} />
 					<Trans>Checked in your browser. The file is never uploaded.</Trans>
 				</p>
@@ -286,7 +285,7 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 				/>
 			</div>
 
-			<p className="pt-3 text-center text-ink-3 t-small">
+			<p className="pt-3 text-center t-small text-ink-3">
 				<Trans>
 					No file to hand?{" "}
 					{/* A link to the file itself, so it is inline text and opens the sample even before the app has loaded. */}
@@ -327,8 +326,8 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 			<dl className="grid gap-x-8 gap-y-4 sm:grid-cols-3">
 				{checks.map((check) => (
 					<div key={check.title}>
-						<dt className="text-ink t-small">{check.title}</dt>
-						<dd className="inline text-ink-3 t-small">{check.body}</dd>
+						<dt className="t-small text-ink">{check.title}</dt>
+						<dd className="inline t-small text-ink-3">{check.body}</dd>
 					</div>
 				))}
 			</dl>
@@ -443,7 +442,7 @@ function Result({ result, file, signedIn, importError, onFix, onFile, onReset }:
 							? VERDICT_LABEL[unreadable ? "hard" : verdict]()
 							: plural(issues.length, { one: "# thing to review", other: "# things to review" })}
 					</h1>
-					<p className="pt-1.5 text-ink-3 t-small">
+					<p className="pt-1.5 t-small text-ink-3">
 						{unreadable ? (
 							<Trans>It is probably a scan: start a blank resume, or import the Word version.</Trans>
 						) : issues.length === 0 ? (
@@ -501,7 +500,7 @@ function Result({ result, file, signedIn, importError, onFix, onFile, onReset }:
 											<span className="t-row-title">
 												{issues.length > 0 ? <Trans>Everything else passes</Trans> : <Trans>Everything passes</Trans>}
 											</span>
-											<span className="truncate text-ink-3 t-small">
+											<span className="truncate t-small text-ink-3">
 												{passing.map((category) => getPdfCategoryLabel(category.category)).join(", ")}
 											</span>
 										</span>
@@ -515,7 +514,7 @@ function Result({ result, file, signedIn, importError, onFix, onFile, onReset }:
 										/>
 									</button>
 									{passedOpen && (
-										<ul className={cn(ENTER_CLASS, "flex flex-col ps-[34px] pb-2 text-ink-2 t-small")}>
+										<ul className={cn(ENTER_CLASS, "flex flex-col ps-[34px] pb-2 t-small text-ink-2")}>
 											{passing.map((category) => (
 												<li key={category.category} className="flex justify-between gap-3 py-1">
 													{getPdfCategoryLabel(category.category)}
@@ -550,7 +549,7 @@ function Result({ result, file, signedIn, importError, onFix, onFile, onReset }:
 									))}
 								</ul>
 							) : (
-								<p className="py-4 text-ink-3 t-small">
+								<p className="py-4 t-small text-ink-3">
 									<Trans>Nothing to suggest.</Trans>
 								</p>
 							)}
@@ -560,7 +559,7 @@ function Result({ result, file, signedIn, importError, onFix, onFile, onReset }:
 
 				<div className="flex flex-col gap-2.5 border-t border-line bg-bg px-4 pt-4 pb-5 max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:z-20 max-lg:pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
 					{importError && (
-						<p role="alert" className="text-danger-text t-small">
+						<p role="alert" className="t-small text-danger-text">
 							{importError}
 						</p>
 					)}
@@ -614,7 +613,7 @@ function Result({ result, file, signedIn, importError, onFix, onFile, onReset }:
 						lens !== "page" && "max-xl:invisible max-xl:h-0 max-xl:overflow-hidden",
 					)}
 				>
-					<span className="text-ink-3 t-mono max-xl:hidden">
+					<span className="t-mono text-ink-3 max-xl:hidden">
 						<Trans>What a person sees</Trans>
 					</span>
 					<div data-design="paper" className="@container relative w-full rounded-paper bg-white shadow-page">
@@ -637,7 +636,7 @@ function Result({ result, file, signedIn, importError, onFix, onFile, onReset }:
 						lens !== "text" && "max-xl:hidden",
 					)}
 				>
-					<span className="text-ink-3 t-mono max-xl:hidden">
+					<span className="t-mono text-ink-3 max-xl:hidden">
 						<Trans>What a parser reads</Trans>
 					</span>
 					<ParsedText text={result.fullText} findings={issues} />
@@ -654,7 +653,7 @@ function FindingItem({ finding, lead }: { finding: PdfFinding; lead: ReactNode }
 			{lead}
 			<div className="flex min-w-0 flex-1 flex-col gap-0.5">
 				<span className="t-row-title">{message.title}</span>
-				<span className="text-ink-3 t-small">{message.action}</span>
+				<span className="t-small text-ink-3">{message.action}</span>
 			</div>
 		</li>
 	);

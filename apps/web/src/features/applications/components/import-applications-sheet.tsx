@@ -217,7 +217,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 			}}
 		>
 			<SheetContent closeLabel={t`Close`} side="right">
-				<SheetHeader className="gap-1.5 pt-6 pb-4">
+				<SheetHeader className="gap-1.5">
 					<SheetTitle>
 						<Trans>Import from CSV</Trans>
 					</SheetTitle>

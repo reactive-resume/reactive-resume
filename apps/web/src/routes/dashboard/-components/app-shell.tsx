@@ -254,22 +254,29 @@ function Sidebar() {
 				to="/dashboard/settings"
 				data-design="acct"
 				aria-current={matchRoute({ to: "/dashboard/settings", fuzzy: true }) ? "page" : undefined}
-				className="mt-1 flex h-12 items-center gap-2.5 rounded-md px-2 transition-colors duration-quick hover:bg-hover aria-[current=page]:bg-hover"
+				className="group/acct mt-1 flex h-12 items-center gap-2.5 rounded-md px-2 transition-colors duration-quick hover:bg-hover aria-[current=page]:bg-accent-soft"
 			>
 				<Avatar className="after:hidden">
 					<AvatarImage src={session.user.image ?? undefined} alt="" />
-					<AvatarFallback className="bg-accent-soft text-accent-text">{getInitials(session.user.name)}</AvatarFallback>
+					<AvatarFallback className="bg-accent-soft text-accent-text group-aria-[current=page]/acct:bg-bg">
+						<AccountMark name={session.user.name} guest={!!session.user.isAnonymous} />
+					</AvatarFallback>
 				</Avatar>
 				<span className="flex min-w-0 flex-1 flex-col">
 					<span className="truncate text-sm leading-[18px] font-medium">{session.user.name}</span>
-					<span className="text-xs leading-4 text-ink-3">
-						<Trans>Settings</Trans>
+					<span className="truncate text-xs leading-4 text-ink-3">
+						{session.user.isAnonymous ? <Trans>Not saved to an account</Trans> : <Trans>Settings</Trans>}
 					</span>
 				</span>
 				<Icon name="gear-six" size={18} className="text-ink-3" />
 			</Link>
 		</nav>
 	);
+}
+
+/** A guest has no name to draw initials from: the account row shows a person instead (E1). */
+function AccountMark({ name, guest }: { name: string; guest: boolean }) {
+	return guest ? <Icon name="user" size={18} /> : getInitials(name);
 }
 
 function NavLink({ item, current }: { item: NavItem; current: boolean }) {
@@ -366,7 +373,7 @@ function Rail() {
 					<Avatar className="after:hidden">
 						<AvatarImage src={session.user.image ?? undefined} alt="" />
 						<AvatarFallback className="bg-accent-soft text-accent-text">
-							{getInitials(session.user.name)}
+							<AccountMark name={session.user.name} guest={!!session.user.isAnonymous} />
 						</AvatarFallback>
 					</Avatar>
 				</TooltipTrigger>

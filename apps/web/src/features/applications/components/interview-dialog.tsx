@@ -625,16 +625,16 @@ function Segments<T extends string | number>({ label, value, options, onChange, 
 				<SegmentedControlItem
 					key={option.value}
 					value={option.value}
-					className="relative min-h-[30px] min-w-fit px-2 pointer-coarse:min-w-fit data-checked:bg-transparent data-checked:shadow-none"
+					className="min-h-[30px] min-w-fit px-2 pointer-coarse:min-w-fit data-checked:bg-transparent data-checked:shadow-none"
 				>
 					{option.value === value && (
 						<m.span
 							layoutId={`${id}-thumb`}
 							transition={{ duration: D2, ease: EASE }}
-							className="absolute inset-0 rounded-sm bg-raised shadow-e1"
+							className="absolute inset-0 -z-10 rounded-sm bg-raised shadow-e1"
 						/>
 					)}
-					<span className="relative">{option.label}</span>
+					{option.label}
 				</SegmentedControlItem>
 			))}
 		</SegmentedControl>

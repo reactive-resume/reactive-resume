@@ -317,10 +317,9 @@ function RouteComponent() {
 								</DropdownMenuContent>
 							</DropdownMenu>
 							{/* The empty state has its own Save a job: one accent action, not two. */}
-							{/* While a dialog or sheet is open its own primary is the accent; this one steps back. */}
 							{!empty && (
 								<Button
-									variant={adding || importing || exporting || managingLanes ? "secondary" : "primary"}
+									variant="primary"
 									onClick={() => setAdding(true)}
 									aria-label={t`Save a job`}
 									className="max-sm:size-11 max-sm:p-0"

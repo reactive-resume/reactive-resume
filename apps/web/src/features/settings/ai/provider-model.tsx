@@ -101,7 +101,11 @@ export function ProviderModel({ id, provider, value, onChange, label, hint = tru
 					<div ref={anchor}>
 						<ComboboxInput {...inputProps} className="w-full">
 							<InputGroupAddon align="inline-end">
-								<ComboboxTrigger aria-label={t`Choose model`} render={<InputGroupButton size="icon-xs" />} />
+								<ComboboxTrigger
+									caret="down"
+									aria-label={t`Choose model`}
+									render={<InputGroupButton size="icon-xs" />}
+								/>
 							</InputGroupAddon>
 						</ComboboxInput>
 					</div>

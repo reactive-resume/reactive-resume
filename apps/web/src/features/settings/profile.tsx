@@ -367,7 +367,7 @@ function ApplicationProfile({ record }: ApplicationProfileProps) {
 								Removes these details and references. Career preferences, documents and answers already sent stay.
 							</Trans>
 						}
-						className="[&>span.flex-col>span]:whitespace-normal"
+						wrap
 						onClick={() => setDeleting(true)}
 					/>
 				</List>
@@ -434,7 +434,7 @@ function ProfileRow({ label, value, note, empty, action, actionLabel, onEdit }: 
 	const verb = kind === "edit" ? t`Edit` : kind === "add" ? t`Add` : t`Answer`;
 	return (
 		<ListRow
-			className="min-h-12 py-1.5"
+			className="min-h-12 py-1.5 sm:min-h-12"
 			trailing={
 				<TextAction aria-label={actionLabel ?? t`${verb}: ${label}`} onClick={onEdit}>
 					{verb}
@@ -442,10 +442,10 @@ function ProfileRow({ label, value, note, empty, action, actionLabel, onEdit }: 
 			}
 		>
 			<span className="w-[168px] shrink-0 text-sm/5 [overflow-wrap:anywhere] text-ink-3 max-sm:w-24">{label}</span>
-			<span className="min-w-0 flex-1 text-[15px]/[22px] [overflow-wrap:anywhere]">
+			<span dir="auto" className="min-w-0 flex-1 text-[15px]/[22px] [overflow-wrap:anywhere]">
 				{value ? (
 					<>
-						<bdi>{value}</bdi>
+						{value}
 						{note && (
 							<>
 								{" "}

@@ -111,8 +111,7 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 	return (
 		<Sheet open={open} onOpenChange={onOpenChange}>
 			<SheetContent closeLabel={t`Close`} side="right">
-				{/* calm: request to lead — the board's sheet title sits 24px from the top (the header row is 36 tall). */}
-				<SheetHeader className="pe-15 pt-6 pb-4">
+				<SheetHeader>
 					<SheetTitle>
 						<Trans>Stages</Trans>
 					</SheetTitle>
@@ -234,13 +233,6 @@ type LaneRowProps = {
 	onRetire: () => void;
 };
 
-/**
- * Row arrows take no room until the row is pointed at or holds focus, so names and counts use the full width; touch
- * screens always show them. calm: request to lead (ListRow's `actions` keep their room while hidden).
- */
-const reveal =
-	"relative z-10 hidden group-focus-within/row:inline-flex group-hover/row:inline-flex pointer-coarse:inline-flex last:-me-1";
-
 function LaneRow({ lane, count, first, last, disabled, onRename, onColor, onMove, onRetire }: LaneRowProps) {
 	const label = getLaneLabel(lane);
 	const [draft, setDraft] = useState<string | null>(null);
@@ -324,38 +316,38 @@ function LaneRow({ lane, count, first, last, disabled, onRename, onColor, onMove
 					</>
 				)
 			}
-		>
-			<IconButton
-				icon="arrow-up"
-				size="icon-sm"
-				className={reveal}
-				variant="ghost"
-				label={t`Move ${label} up`}
-				disabled={disabled || first}
-				onClick={() => onMove(-1)}
-			/>
-			<IconButton
-				icon="arrow-down"
-				size="icon-sm"
-				className={reveal}
-				variant="ghost"
-				label={t`Move ${label} down`}
-				disabled={disabled || last}
-				onClick={() => onMove(1)}
-			/>
-			{/* Standard stages stay so every step always has somewhere to go. */}
-			{!lane.systemKey && (
-				<IconButton
-					icon="trash"
-					size="icon-sm"
-					className={reveal}
-					variant="ghost"
-					label={t`Remove ${label}…`}
-					disabled={disabled}
-					onClick={onRetire}
-				/>
-			)}
-		</ListRow>
+			actions={
+				<span className="-me-1 flex items-center gap-3.5">
+					<IconButton
+						icon="arrow-up"
+						size="icon-sm"
+						variant="ghost"
+						label={t`Move ${label} up`}
+						disabled={disabled || first}
+						onClick={() => onMove(-1)}
+					/>
+					<IconButton
+						icon="arrow-down"
+						size="icon-sm"
+						variant="ghost"
+						label={t`Move ${label} down`}
+						disabled={disabled || last}
+						onClick={() => onMove(1)}
+					/>
+					{/* Standard stages stay so every step always has somewhere to go. */}
+					{!lane.systemKey && (
+						<IconButton
+							icon="trash"
+							size="icon-sm"
+							variant="ghost"
+							label={t`Remove ${label}…`}
+							disabled={disabled}
+							onClick={onRetire}
+						/>
+					)}
+				</span>
+			}
+		/>
 	);
 }
 

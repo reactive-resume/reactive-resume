@@ -14,7 +14,12 @@ function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
 	return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />;
 }
 
-function ComboboxTrigger({ className, children, ...props }: ComboboxPrimitive.Trigger.Props) {
+type ComboboxTriggerProps = ComboboxPrimitive.Trigger.Props & {
+	/** `up-down` (default) for a searchable picker; `down` where the boards draw a plain select-like field. */
+	caret?: "up-down" | "down";
+};
+
+function ComboboxTrigger({ className, children, caret = "up-down", ...props }: ComboboxTriggerProps) {
 	return (
 		<ComboboxPrimitive.Trigger
 			data-slot="combobox-trigger"
@@ -22,7 +27,7 @@ function ComboboxTrigger({ className, children, ...props }: ComboboxPrimitive.Tr
 			{...props}
 		>
 			{children}
-			<Icon name="caret-up-down" className="pointer-events-none text-ink-3" />
+			<Icon name={caret === "down" ? "caret-down" : "caret-up-down"} className="pointer-events-none text-ink-3" />
 		</ComboboxPrimitive.Trigger>
 	);
 }

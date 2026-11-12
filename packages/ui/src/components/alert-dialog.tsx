@@ -41,6 +41,7 @@ function AlertDialogContent({
 			<AlertDialogOverlay />
 			<AlertDialogPrimitive.Popup
 				data-slot="alert-dialog-content"
+				data-top-layer=""
 				data-design="dialog"
 				data-size={size}
 				className={cn("group/alert-dialog-content", dialogPopupClassName, "data-[size=sm]:sm:max-w-[360px]", className)}

@@ -25,6 +25,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { dayKey } from "../interviews";
 import { getCategoryLane, getDisplayLane, getLaneLabel, getStageDisplay, laneDotColor } from "../lanes";
@@ -82,13 +83,8 @@ const compareValues = (a: SortValue, b: SortValue, aId: string, bId: string, dir
 	return sign * (Number(a) - Number(b));
 };
 
-/** "OH" for Orbital Health, "PC" for Parcel & Co., "LU" for Lumen: two letters, as an account's initials read. */
-export function companyInitials(company: string) {
-	const words = company.split(/\s+/).filter((word) => /^[\p{L}\p{N}]/u.test(word));
-	const letters =
-		words.length > 1 ? words.slice(0, 2).map((word) => [...word][0] ?? "") : [...(words[0] ?? "")].slice(0, 2);
-	return letters.join("").toUpperCase();
-}
+/** "OH" for Orbital Health, "PC" for Parcel & Co., "LU" for Lumen: the one monogram rule people use too. */
+export const companyInitials = getInitials;
 
 const relativeDay = (days: number, locale: string) => {
 	const text = new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(days, "day");

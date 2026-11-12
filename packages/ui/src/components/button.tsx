@@ -5,6 +5,11 @@ import { isValidElement } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 
+// Written out in full so Tailwind finds the classes: the secondary look, for a primary button outside an open dialog
+// or sheet (`data-top-layer` on their popups).
+const behindTopLayer =
+	"[body:has([data-top-layer][data-open])_&:not([data-top-layer]_*)]:bg-surface [body:has([data-top-layer][data-open])_&:not([data-top-layer]_*)]:text-ink [body:has([data-top-layer][data-open])_&:not([data-top-layer]_*)]:shadow-[inset_0_0_0_1px_var(--line-2)]";
+
 /**
  * Calm buttons: 28 · 36 · 44 high with 8 · 10 · 12 corners, 13 · 14 · 15px medium labels and 16 · 18 · 20px icons.
  * `primary` is the one accent button of a view; `soft` is Accept on a proposal; `danger-text` is a reversible removal
@@ -15,7 +20,8 @@ const baseButtonVariants = cva(
 	{
 		variants: {
 			variant: {
-				primary: "bg-accent text-on-accent hover:bg-accent-hover",
+				// One accent per view: while a dialog or sheet is open, a primary button behind its scrim looks secondary.
+				primary: `bg-accent text-on-accent hover:bg-accent-hover ${behindTopLayer}`,
 				secondary:
 					"bg-surface text-ink shadow-[inset_0_0_0_1px_var(--line-2)] hover:bg-sunken active:bg-press aria-expanded:bg-sunken",
 				ghost:
@@ -29,7 +35,7 @@ const baseButtonVariants = cva(
 			size: {
 				default: "h-9 rounded-md px-3.5 [--icon-size:18px]",
 				sm: "h-7 gap-1.5 rounded-sm px-2.5 text-[13px] leading-[18px] [--icon-size:16px]",
-				lg: "h-11 rounded-lg px-[18px] text-[15px]/5 [--icon-size:20px]",
+				lg: "h-11 rounded-lg px-[18px] text-[15px] leading-5 [--icon-size:20px]",
 				icon: "size-9 rounded-md [--icon-size:20px]",
 				"icon-sm": "size-7 rounded-sm [--icon-size:16px]",
 				"icon-xs": "size-7 rounded-sm [--icon-size:16px]",

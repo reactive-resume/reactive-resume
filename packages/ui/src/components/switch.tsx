@@ -38,13 +38,15 @@ function Switch({ className, ...props }: SwitchProps) {
 type SwitchRowProps = Omit<SwitchPrimitive.Root.Props, "children"> & {
 	label: React.ReactNode;
 	description?: React.ReactNode;
+	/** `tight` (default): the 44px row of panels, sheets and dialogs, 14px name. `row`: a 56px page row, 15px name. */
+	size?: "tight" | "row";
 };
 
 /**
- * The whole row is the switch: its name (and at most one quiet line) first, the switch last. This is the tight row of
- * panels, sheets and dialogs: at least 44px, a 14px medium name.
+ * The whole row is the switch: its name (and at most one quiet line) first, the switch last. `size="tight"` is the row
+ * of panels, sheets and dialogs (at least 44px, a 14px medium name); `size="row"` is the page row (at least 56px, 15px).
  */
-function SwitchRow({ className, label, description, ...props }: SwitchRowProps) {
+function SwitchRow({ className, label, description, size = "tight", ...props }: SwitchRowProps) {
 	const id = useId();
 	const labelId = `${id}-label`;
 	const descriptionId = `${id}-description`;
@@ -54,14 +56,18 @@ function SwitchRow({ className, label, description, ...props }: SwitchRowProps) 
 			data-slot="switch-row"
 			aria-labelledby={labelId}
 			aria-describedby={description ? descriptionId : undefined}
+			data-size={size}
 			className={cn(
-				"group/switch flex min-h-11 w-full items-center justify-between gap-3 rounded-md py-1.5 text-start data-disabled:cursor-not-allowed",
+				"group/switch flex min-h-11 w-full items-center justify-between gap-3 rounded-md py-1.5 text-start data-[size=row]:min-h-14 data-[size=row]:gap-3.5 data-[size=row]:py-2.5 data-disabled:cursor-not-allowed",
 				className,
 			)}
 			{...props}
 		>
 			<span className="flex min-w-0 flex-col gap-px">
-				<span id={labelId} className="text-sm leading-5 font-medium text-ink group-data-disabled/switch:text-ink-3">
+				<span
+					id={labelId}
+					className="text-sm leading-5 font-medium text-ink group-data-[size=row]/switch:text-[15px]/[22px] group-data-disabled/switch:text-ink-3"
+				>
 					{label}
 				</span>
 				{description && (

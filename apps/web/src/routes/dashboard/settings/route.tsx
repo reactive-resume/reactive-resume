@@ -55,7 +55,7 @@ function RouteComponent() {
 
 	return (
 		<Page>
-			<PageBody>
+			<PageBody className="sm:pb-0">
 				{/* Phones open the root list, which has its own title, and each section has a Back link. */}
 				<RootHeader title={<Trans>Settings</Trans>} className="max-sm:hidden" />
 				<div className="grid gap-x-12 gap-y-4 sm:mt-5 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-start">
@@ -79,7 +79,8 @@ function RouteComponent() {
 						</button>
 					</div>
 
-					<div className="min-w-0">
+					{/* The column reaches the window's foot, so the about line sits there on a short page (`.about`). */}
+					<div className="flex min-w-0 flex-col sm:min-h-[calc(100svh-109px)]">
 						{!isRoot && (
 							<Link
 								to="/dashboard/settings"
@@ -90,7 +91,7 @@ function RouteComponent() {
 								<Trans>Settings</Trans>
 							</Link>
 						)}
-						<div className="grid max-w-[704px] gap-8">
+						<div className="grid max-w-[704px] gap-8 sm:mb-12">
 							{matchesAccount ? (
 								<Outlet />
 							) : (
@@ -107,18 +108,26 @@ function RouteComponent() {
 								</>
 							)}
 						</div>
-						<p className="mt-12 text-xs leading-[18px] text-ink-3 max-sm:hidden">
-							<Trans>Reactive Resume {__APP_VERSION__} · MIT</Trans>
-							<br />
-							{getProjectLinks().map((link, index) => (
-								<Fragment key={link.href}>
-									{index > 0 && " · "}
-									<a className="underline" href={link.href} target="_blank" rel="noopener noreferrer">
-										{link.label}
-									</a>
-								</Fragment>
-							))}
-						</p>
+						<footer className="mt-auto flex max-w-[704px] flex-wrap justify-between gap-4 border-t border-line pt-3 pb-[22px] text-[13px]/[18px] text-ink-2 max-sm:hidden">
+							<p className="text-ink-3">
+								<Trans>Reactive Resume {__APP_VERSION__} · MIT</Trans>
+							</p>
+							<p>
+								{getProjectLinks().map((link, index) => (
+									<Fragment key={link.href}>
+										{index > 0 && " · "}
+										<a
+											className="underline decoration-line-2 underline-offset-3"
+											href={link.href}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{link.label}
+										</a>
+									</Fragment>
+								))}
+							</p>
+						</footer>
 					</div>
 				</div>
 			</PageBody>

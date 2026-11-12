@@ -14,7 +14,7 @@ export function AuthTitle({ className, children, ...props }: ComponentProps<"h1"
 
 /** The sentence under the title. */
 export function AuthLead({ className, ...props }: ComponentProps<"p">) {
-	return <p className={cn("pt-1.5 wrap-anywhere text-ink-2 t-body", className)} {...props} />;
+	return <p className={cn("pt-1.5 t-body wrap-anywhere text-ink-2", className)} {...props} />;
 }
 
 /** The quiet centred line under a form: a question and its link, or the way back. */
@@ -22,7 +22,7 @@ export function AuthFoot({ className, ...props }: ComponentProps<"p">) {
 	return (
 		<p
 			className={cn(
-				"mt-5 flex flex-wrap justify-center gap-x-1.5 text-ink-3 t-small [&_a]:font-medium [&_a]:text-accent-text [&_a]:underline-offset-4 [&_a]:hover:underline [&_button]:font-medium [&_button]:text-accent-text [&_button]:underline-offset-4 [&_button]:hover:underline",
+				"mt-5 flex flex-wrap justify-center gap-x-1.5 t-small text-ink-3 [&_a]:font-medium [&_a]:text-accent-text [&_a]:underline-offset-4 [&_a]:hover:underline [&_button]:font-medium [&_button]:text-accent-text [&_button]:underline-offset-4 [&_button]:hover:underline",
 				className,
 			)}
 			{...props}
@@ -35,7 +35,7 @@ export function AuthOr() {
 	return (
 		<div className="my-5 flex items-center gap-3">
 			<span className="h-px flex-1 bg-line" />
-			<span className="text-ink-3 t-small">
+			<span className="t-small text-ink-3">
 				<Trans context="Divider between the email form and other sign-in methods">or</Trans>
 			</span>
 			<span className="h-px flex-1 bg-line" />
@@ -47,5 +47,4 @@ type AuthActionVariant = "primary" | "secondary";
 
 /** Classes of a full-width 44px action. Links that navigate stay links, so they take the look without the role. */
 export const authAction = (variant: AuthActionVariant = "primary", className?: string) =>
-	// calm: request to lead — the `lg` button loses its 20px line (tailwind-merge drops `leading-5` for `text-[15px]`).
-	buttonVariants({ variant, size: "lg", className: cn("w-full leading-5", className) });
+	buttonVariants({ variant, size: "lg", className: cn("w-full", className) });

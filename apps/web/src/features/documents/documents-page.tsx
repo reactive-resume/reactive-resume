@@ -220,8 +220,8 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			? search.type
 			: null;
 	// A job with more than one document here gets a chip, in place of the group headings the library had.
-	// calm: request to lead — the chip narrows by the job's name through the filter text; a real application filter
-	// on `documents.page` would be exact.
+	// The chip narrows by the job's name through the filter text; an exact filter needs an application filter on
+	// `documents.page` (API).
 	const jobs = [
 		...new Map(shown.flatMap((item) => (item.application ? [[item.application.id, item.application]] : []))).values(),
 	]
@@ -411,7 +411,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 								</>
 							}
 						>
-							{/* calm: request to lead — FilterField has no slot for a clear button; Esc clears the field. */}
+							{/* No board draws a clear button on the filter: Esc clears it. */}
 							<FilterField
 								ref={searchRef}
 								label={t`Filter documents`}

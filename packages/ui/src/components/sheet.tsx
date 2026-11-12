@@ -62,6 +62,7 @@ function SheetContent({
 	const popup = (
 		<SheetPrimitive.Popup
 			data-slot="sheet-content"
+			data-top-layer=""
 			data-design={side === "right" || side === "left" ? "sheet-r" : undefined}
 			data-side={side}
 			className={cn(
@@ -87,7 +88,7 @@ function SheetContent({
 				<SheetPrimitive.Close
 					data-slot="sheet-close"
 					aria-label={closeLabel}
-					render={<Button variant="ghost" className="absolute inset-e-4 top-4 z-20" size="icon" />}
+					render={<Button variant="ghost" className="absolute inset-e-4 top-5 z-20" size="icon" />}
 				>
 					<Icon name="x" />
 				</SheetPrimitive.Close>
@@ -110,7 +111,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			data-slot="sheet-header"
-			className={cn("flex shrink-0 flex-col gap-1 ps-6 pe-14 pt-5 pb-3", className)}
+			className={cn("flex shrink-0 flex-col gap-1 ps-6 pe-15 pt-6 pb-4", className)}
 			{...props}
 		/>
 	);

@@ -105,7 +105,7 @@ export function DataSection({ openDeletion = false }: DataSectionProps) {
 				caret
 				title={<Trans>Delete account</Trans>}
 				subtitle={<Trans>Removes your documents, applications and Knowledge. This can't be undone.</Trans>}
-				className="[&>span.flex-col>span]:whitespace-normal"
+				wrap
 				onClick={() => setDeleting(true)}
 			/>
 			<DeleteAccountDialog open={deleting} onOpenChange={setDeleting} />

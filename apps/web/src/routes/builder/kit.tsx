@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { Badge } from "@reactive-resume/ui/components/badge";
+import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
@@ -15,6 +16,7 @@ import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@reactive-resume/ui/components/input-group";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { Label } from "@reactive-resume/ui/components/label";
 import {
@@ -190,7 +192,7 @@ function Group({ title, note, children }: { title: string; note?: string; childr
 	);
 }
 
-const Quiet = ({ children }: { children: ReactNode }) => <p className="text-ink-3 t-small">{children}</p>;
+const Quiet = ({ children }: { children: ReactNode }) => <p className="t-small text-ink-3">{children}</p>;
 
 const Frame = ({ className, children }: { className?: string; children: ReactNode }) => (
 	<div className={cn("overflow-hidden rounded-lg border border-line", className)}>{children}</div>
@@ -305,7 +307,7 @@ function KitPage() {
 									Knowledge
 								</Chip>
 							</Row>
-							<div className="text-ink-3 t-body">Ask about this resume…</div>
+							<div className="t-body text-ink-3">Ask about this resume…</div>
 							<Row>
 								<Chip variant="ctx" render={<span />} className="px-2">
 									<Icon name="sparkle" size={14} className="text-accent-text" />
@@ -327,13 +329,20 @@ function KitPage() {
 
 					<Group title="Combobox" note="Combobox 40 · closed, open">
 						<Combobox options={FONTS} value={font} onValueChange={setFont} />
+						{/* The open state: the trigger keeps its focus ring while the list hangs under it. */}
+						<Combobox
+							options={FONTS}
+							value="Instrument Serif"
+							onValueChange={() => {}}
+							className="shadow-[inset_0_0_0_1px_var(--accent),0_0_0_3px_var(--accent-soft)]"
+						/>
 						<div role="presentation" className={cn(menuPopupClassName, "z-0 w-[268px] p-0")}>
 							<div className="flex h-11 items-center gap-2 border-b border-line ps-3 pe-1.5">
 								<Icon name="magnifying-glass" size={18} className="text-ink-3" />
 								<span className="flex-1">serif</span>
 								<Icon name="x" size={16} className="me-1.5 text-ink-2" />
 							</div>
-							<div className="flex justify-between px-3.5 pt-2 pb-1 text-ink-3 t-mono">
+							<div className="flex justify-between px-3.5 pt-2 pb-1 t-mono text-ink-3">
 								<span>17 of 520 fonts</span>
 								<span>A to Z</span>
 							</div>
@@ -410,7 +419,7 @@ function KitPage() {
 									className="w-[34px] rounded-s-none"
 								/>
 							</div>
-							<span className="text-ink-3 t-small">Caret opens the other formats</span>
+							<span className="t-small text-ink-3">Caret opens the other formats</span>
 						</Row>
 					</Group>
 
@@ -493,7 +502,7 @@ function KitPage() {
 							</Chip>
 							<Kbd>⌘K</Kbd>
 							<Kbd>?</Kbd>
-							<span className="text-ink-3 t-mono">5</span>
+							<span className="t-mono text-ink-3">5</span>
 						</Row>
 					</Group>
 
@@ -522,13 +531,24 @@ function KitPage() {
 						<fieldset className="flex flex-col gap-1.5">
 							<legend className="mb-1.5 text-[13px]/[18px] font-medium text-ink-2">Dates</legend>
 							<Row className="flex-nowrap">
-								<Input aria-label="Start" defaultValue="Mar 2022" />
+								<InputGroup>
+									<InputGroupAddon>
+										<Icon name="calendar-dots" />
+									</InputGroupAddon>
+									<InputGroupInput aria-label="Start" defaultValue="Mar 2022" />
+								</InputGroup>
 								<span aria-hidden="true" className="text-ink-3">
 									–
 								</span>
-								<Input aria-label="End" defaultValue="Present" disabled />
+								{/* Present: the quiet field (`.inp.quiet`), sunken with no edge. */}
+								<InputGroup className="border-transparent">
+									<InputGroupAddon>
+										<Icon name="calendar-dots" />
+									</InputGroupAddon>
+									<InputGroupInput aria-label="End" defaultValue="Present" disabled className="text-ink-2" />
+								</InputGroup>
 							</Row>
-							<Row className="mt-0.5 gap-4 text-ink-2 t-small">
+							<Row className="mt-0.5 gap-4 t-small text-ink-2">
 								{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- the checkbox is nested */}
 								<label className="flex items-center gap-2">
 									<Checkbox defaultChecked className="size-4" />
@@ -555,7 +575,7 @@ function KitPage() {
 										/>
 									))}
 								</span>
-								<span className="text-ink-2 t-mono">4 of 5</span>
+								<span className="t-mono text-ink-2">4 of 5</span>
 								<span className="ms-auto text-xs text-ink-3">0 hides it</span>
 							</Row>
 						</div>
@@ -633,6 +653,7 @@ function KitPage() {
 						<Frame className="w-[248px]">
 							<nav aria-label="Main (specimen)" className="flex h-[476px] flex-col gap-1 bg-bg px-3 pt-4 pb-3">
 								<div className="mb-2 flex h-9 items-center gap-2.5 px-2 text-[15px]/5 font-semibold">
+									<BrandIcon variant="icon" alt="" className="size-6 shrink-0" />
 									Reactive Resume
 								</div>
 								<div className="mb-3 flex h-9 items-center gap-2 rounded-md bg-sunken ps-2.5 pe-2 text-sm text-ink-3">
@@ -674,10 +695,10 @@ function KitPage() {
 					<Group title="Section rail" note="SectionRail 200 · neutral selection">
 						<Frame className="w-56 p-3">
 							<SectionRail aria-label="Settings sections" className="max-lg:flex-col">
-								<SectionRailItem to="/builder/kit" icon="user-circle">
+								<SectionRailItem to="/builder/kit" icon="user">
 									Account
 								</SectionRailItem>
-								<SectionRailItem to="/dashboard/settings/profile" icon="clipboard-text">
+								<SectionRailItem to="/dashboard/settings/profile" icon="identification-card">
 									Application profile
 								</SectionRailItem>
 								<SectionRailItem to="/dashboard/settings/preferences" icon="sliders-horizontal">
@@ -910,7 +931,7 @@ function KitPage() {
 							</div>
 						</div>
 					))}
-					<p className="max-w-[520px] self-end text-ink-3 t-small lg:col-span-2">
+					<p className="max-w-[520px] self-end t-small text-ink-3 lg:col-span-2">
 						Amber when the work is safe but waiting on you or the network; red when a save did not happen. The action
 						sits in the line itself. E3 draws each state with its cause, E4 the offline builder.
 					</p>
@@ -987,13 +1008,13 @@ function KitPage() {
 									<Link to="/dashboard/applications" className={cn("t-row-title", rowLinkClassName)}>
 										{company}
 									</Link>
-									<span className="text-ink-3 t-small">{role}</span>
+									<span className="t-small text-ink-3">{role}</span>
 								</DataTableCell>
 								<DataTableCell>
 									<StageDot status={status} />
 								</DataTableCell>
 								<DataTableCell>{next}</DataTableCell>
-								<DataTableCell className="text-ink-3 t-small">{updated}</DataTableCell>
+								<DataTableCell className="t-small text-ink-3">{updated}</DataTableCell>
 								<DataTableCell className={cn("relative z-10", revealOnRowClassName)}>
 									<IconButton icon="dots-three" label={`More actions for ${company}`} size="icon-xs" iconSize={16} />
 								</DataTableCell>
@@ -1046,7 +1067,7 @@ function KitPage() {
 					<Row className="gap-3">
 						<DocumentThumb />
 						<DocumentThumb kind="letter" />
-						<span className="flex items-center gap-1.5 text-ink-2 t-small">
+						<span className="flex items-center gap-1.5 t-small text-ink-2">
 							<WarnDot />3 things to review
 						</span>
 					</Row>
@@ -1074,8 +1095,8 @@ function KitPage() {
 				<Frame>
 					<Page>
 						<PageBody>
-							<Columns aside={<div className="rounded-lg bg-sunken p-3 text-ink-2 t-small">Aside, 360 from 1280</div>}>
-								<div className="rounded-lg bg-sunken p-3 text-ink-2 t-small">Main column</div>
+							<Columns aside={<div className="rounded-lg bg-sunken p-3 t-small text-ink-2">Aside, 360 from 1280</div>}>
+								<div className="rounded-lg bg-sunken p-3 t-small text-ink-2">Main column</div>
 							</Columns>
 						</PageBody>
 					</Page>
@@ -1109,7 +1130,7 @@ function SidebarItem({ icon, current = false, end, children }: SidebarItemProps)
 }
 
 const SidebarCount = ({ children }: { children: ReactNode }) => (
-	<span className="ms-auto text-ink-3 t-mono">{children}</span>
+	<span className="ms-auto t-mono text-ink-3">{children}</span>
 );
 
 const SidebarBadge = ({ children }: { children: ReactNode }) => (

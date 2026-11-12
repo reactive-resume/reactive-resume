@@ -65,6 +65,7 @@ function DialogContent({
 			<DialogOverlay className={cn(instant && "transition-none")} />
 			<DialogPrimitive.Popup
 				data-slot="dialog-content"
+				data-top-layer=""
 				data-design="dialog"
 				className={cn(dialogPopupClassName, instant && "transition-none", className)}
 				{...props}

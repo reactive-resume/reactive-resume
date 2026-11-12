@@ -9,7 +9,7 @@ type SettingsSectionProps = {
 	title: ReactNode;
 	/** A short note after the title. */
 	description?: ReactNode;
-	/** Sits at the end of the title line. */
+	/** The one text action at the end of the title line, inside the heading (a plain button or link). */
 	action?: ReactNode;
 	children: ReactNode;
 	className?: string;
@@ -41,12 +41,9 @@ export function SettingsSection({ title, description, action, children, classNam
 			aria-labelledby={titleId}
 			className={cn("group/section flex scroll-mt-6 flex-col not-first:-mt-8", className)}
 		>
-			<div className="flex items-end justify-between gap-3">
-				<SectionHeading id={titleId} note={description} className="min-w-0 flex-1 pt-8 group-first/section:pt-2">
-					{title}
-				</SectionHeading>
-				{action && <div className="pb-2">{action}</div>}
-			</div>
+			<SectionHeading id={titleId} note={description} action={action} className="group-first/section:pt-2">
+				{title}
+			</SectionHeading>
 			{children}
 		</section>
 	);
@@ -74,8 +71,9 @@ export function SettingsRow({ id, leading, title, description, variant, classNam
 			title={title}
 			subtitle={description}
 			variant={variant ?? "default"}
-			// calm: request to lead: ListRow has no wrapping subtitle, and settings descriptions must not be cut on phones.
-			className={cn("scroll-mt-6 [&>span.flex-col>span]:whitespace-normal", className)}
+			// Settings descriptions must not be cut on phones.
+			wrap
+			className={cn("scroll-mt-6", className)}
 			trailing={children ? <span className="flex items-center gap-3.5">{children}</span> : undefined}
 		/>
 	);
