@@ -24,8 +24,18 @@ appId: me.rxresu.storyboard
 - tapOn: New conversation
 # Draft recovery.
 # The composer's field (a point: its placeholder isn't exposed as text).
-- tapOn:
-    point: "195,734"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,734"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,2202"
 - inputText: Which offer should I take?
 - tapOn: Back
 - openLink: me.rxresu.storyboard://career/coach

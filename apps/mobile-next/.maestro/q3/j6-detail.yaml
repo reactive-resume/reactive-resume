@@ -107,8 +107,18 @@ appId: me.rxresu.storyboard
     visible: Couldn't load this\. Your saved data hasn't changed\.
     timeout: 20000
 - waitForAnimationToEnd
-- tapOn:
-    point: "195,282"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,282"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,846"
 - extendedWaitUntil:
     visible: Work on it
     timeout: 10000

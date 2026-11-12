@@ -12,10 +12,22 @@ appId: me.rxresu.storyboard
     timeout: 30000
 - waitForAnimationToEnd
 - assertVisible: 2 of 3 open
-- swipe:
-    start: 60, 330
-    end: 380, 330
-    duration: 500
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 60, 330
+          end: 380, 330
+          duration: 500
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "180,990"
+          end: "1140,990"
+          duration: 500
 - extendedWaitUntil:
     visible: ".*Northwind Labs › line 2 · Accepted"
     timeout: 5000

@@ -18,15 +18,37 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible: Minimum base salary
     timeout: 10000
-- tapOn:
-    point: "195,213"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
 - eraseText: 20
 - inputText: 65k
 # Dragging the form puts the keyboard away (the footer sits under it).
-- swipe:
-    start: "195,420"
-    end: "195,600"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,420"
+          end: "195,600"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,1260"
+          end: "585,1800"
+          duration: 300
 - tapOn: Save
 - assertVisible: Enter a full amount, such as 95000\. Your previous amount is unchanged\.
 - tapOn: Don't use pay to filter
@@ -40,8 +62,18 @@ appId: me.rxresu.storyboard
     timeout: 10000
 # Each row is one accessible element with Move up / Move down actions, so its ··· isn't in the tree on its own:
 # tap the second row's ··· where it is drawn.
-- tapOn:
-    point: "344,267"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "344,267"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "1032,801"
 - tapOn: Move up
 # C6 reads the new order.
 - openLink: me.rxresu.storyboard://career/offers

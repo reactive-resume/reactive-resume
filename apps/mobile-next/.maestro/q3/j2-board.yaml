@@ -25,10 +25,22 @@ appId: me.rxresu.storyboard
     timeout: 10000
 - assertVisible: Drag an application here
 # Swiping pages the board (to Interviewing).
-- swipe:
-    start: "300,500"
-    end: "40,500"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "300,500"
+          end: "40,500"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "900,1500"
+          end: "120,1500"
+          duration: 300
 - extendedWaitUntil:
     visible: "Interviewing, 4 of 6"
     timeout: 10000

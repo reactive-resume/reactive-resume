@@ -47,10 +47,22 @@ appId: me.rxresu.storyboard
       id: storyboard-ready
     timeout: 30000
 - assertVisible: Fit to one page
-- swipe:
-    start: 36, 335
-    end: 36, 463
-    duration: 1500
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 36, 335
+          end: 36, 463
+          duration: 1500
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "108,1005"
+          end: "108,1389"
+          duration: 1500
 - openLink: me.rxresu.storyboard://storyboard/B18-Preview?theme=light
 - extendedWaitUntil:
     visible:

@@ -17,15 +17,37 @@ appId: me.rxresu.storyboard
 - waitForAnimationToEnd
 # Duplicate.
 # The field by point: after a modal comes and goes, Maestro's element frames can be stale.
-- tapOn:
-    point: "195,213"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
 - inputText: https://lumen.com/careers
 - assertVisible: "Already tracked: Senior product designer at Lumen\\. Open it or update only its posting details\\."
 # Dragging the form puts the keyboard away.
-- swipe:
-    start: "195,330"
-    end: "195,420"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
 - waitForAnimationToEnd
 - tapOn: Open tracked job
 - extendedWaitUntil:
@@ -44,14 +66,36 @@ appId: me.rxresu.storyboard
     timeout: 20000
 - waitForAnimationToEnd
 # The field by point: after a modal comes and goes, Maestro's element frames can be stale.
-- tapOn:
-    point: "195,213"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
 - inputText: https://jobs.example.com/designer
 # Dragging the form puts the keyboard away.
-- swipe:
-    start: "195,330"
-    end: "195,420"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
 - tapOn: Read posting
 - extendedWaitUntil:
     visible: Found the role and company\. Review before saving\.
@@ -76,14 +120,36 @@ appId: me.rxresu.storyboard
     timeout: 20000
 - waitForAnimationToEnd
 # The field by point: after a modal comes and goes, Maestro's element frames can be stale.
-- tapOn:
-    point: "195,213"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
 - inputText: Senior product designer at Lumen. You will own the design system.
 # Dragging the form puts the keyboard away.
-- swipe:
-    start: "195,330"
-    end: "195,420"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
 - tapOn: Read posting
 - extendedWaitUntil:
     visible: This description is clipped or incomplete\. Review it or paste the full description before preparing\.
@@ -100,14 +166,36 @@ appId: me.rxresu.storyboard
     visible: Job link or posting text
     timeout: 20000
 - waitForAnimationToEnd
-- tapOn:
-    point: "195,213"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
 - inputText: https://jobs.example.com/lead
 # Dragging the form puts the keyboard away.
-- swipe:
-    start: "195,330"
-    end: "195,420"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
 - tapOn: Read with AI
 - extendedWaitUntil:
     visible: Send to Work OpenAI\?
@@ -135,14 +223,36 @@ appId: me.rxresu.storyboard
     timeout: 20000
 - waitForAnimationToEnd
 # The field by point: after a modal comes and goes, Maestro's element frames can be stale.
-- tapOn:
-    point: "195,213"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
 - inputText: https://jobs.example.com/broken
 # Dragging the form puts the keyboard away.
-- swipe:
-    start: "195,330"
-    end: "195,420"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
 - tapOn: Read posting
 - extendedWaitUntil:
     visible: Couldn't read this posting\. Paste the posting text instead, or fill in the details\.

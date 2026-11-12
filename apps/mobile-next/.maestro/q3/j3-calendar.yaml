@@ -30,10 +30,22 @@ appId: me.rxresu.storyboard
     visible: "9–15 Nov.*"
     timeout: 5000
 # Swiping the strip pages a week too.
-- swipe:
-    start: "330,272"
-    end: "40,272"
-    duration: 300
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "330,272"
+          end: "40,272"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "990,816"
+          end: "120,816"
+          duration: 300
 - extendedWaitUntil:
     visible: "16–22 Nov.*"
     timeout: 5000
@@ -53,10 +65,22 @@ appId: me.rxresu.storyboard
     timeout: 5000
 - assertNotVisible: Monday 30 November
 # Pulling the strip down expands it as well.
-- swipe:
-    start: "195,265"
-    end: "195,500"
-    duration: 500
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,265"
+          end: "195,500"
+          duration: 500
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,795"
+          end: "585,1500"
+          duration: 500
 - extendedWaitUntil:
     visible: "November 2026.*"
     timeout: 5000

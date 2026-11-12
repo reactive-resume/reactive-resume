@@ -30,10 +30,22 @@ appId: me.rxresu.storyboard
     visible: "2 entries · on page 1"
     timeout: 10000
 # Swipe Harbour Studio toward the start, past 40% of the row.
-- swipe:
-    start: 350, 295
-    end: 30, 295
-    duration: 600
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 350, 295
+          end: 30, 295
+          duration: 600
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "1050,885"
+          end: "90,885"
+          duration: 600
 - extendedWaitUntil:
     visible: Entry deleted
     timeout: 5000

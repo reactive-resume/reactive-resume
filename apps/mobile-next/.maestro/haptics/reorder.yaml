@@ -15,10 +15,22 @@ appId: me.rxresu.storyboard
 - openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
 - waitForAnimationToEnd
 # Summary's handle (24, 322) to two rows (64 dp each) lower.
-- swipe:
-    start: 36, 335
-    end: 36, 463
-    duration: 1500
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 36, 335
+          end: 36, 463
+          duration: 1500
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "108,1005"
+          end: "108,1389"
+          duration: 1500
 - extendedWaitUntil:
     visible:
       id: haptic-log
