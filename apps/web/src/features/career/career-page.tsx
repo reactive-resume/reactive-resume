@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { coachStarters } from "@reactive-resume/schema/career-starters";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import {
 	Composer,
@@ -27,10 +26,10 @@ import { Columns, Page, PageBody, RootHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
 import { SetUpAiLine } from "@/components/calm/set-up-ai-line";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
+import { SetUpAiDialog } from "@/features/ai/set-up-ai";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { ModelMenu } from "@/features/assistant/chat-chrome";
-import { ProviderSetup } from "@/features/assistant/provider-setup";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
@@ -60,17 +59,7 @@ export function CareerPage({ schedule, onScheduleChange }: ScheduleUrl) {
 				</Columns>
 			</PageBody>
 			<ScheduleSheetFor schedule={schedule} onScheduleChange={onScheduleChange} onDelete={schedules.remove} />
-			{/* calm: request to lead — one shared opener for the Set up AI dialog. */}
-			<Dialog open={setupOpen} onOpenChange={setSetupOpen}>
-				<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto">
-					<DialogHeader>
-						<DialogTitle>
-							<Trans>Set up AI</Trans>
-						</DialogTitle>
-					</DialogHeader>
-					<ProviderSetup />
-				</DialogContent>
-			</Dialog>
+			<SetUpAiDialog open={setupOpen} onOpenChange={setSetupOpen} />
 		</Page>
 	);
 }
@@ -284,7 +273,7 @@ function CareerAside({
 	const { profile } = useProfile();
 	const factCount = facts.data?.filter((fact) => fact.status !== "forgotten").length;
 	const count = (value: number | undefined) =>
-		value === undefined ? undefined : <span className="text-ink-3 t-mono">{i18n.number(value)}</span>;
+		value === undefined ? undefined : <span className="t-mono text-ink-3">{i18n.number(value)}</span>;
 
 	const money =
 		profile?.minBase.amount == null

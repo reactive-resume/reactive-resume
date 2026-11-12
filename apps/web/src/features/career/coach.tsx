@@ -51,12 +51,13 @@ import { List, ListRow } from "@/components/calm/list-row";
 import { Page, PageBody, PageHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
+import { SetUpAi as SetUpAiFor } from "@/features/ai/set-up-ai";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { transcriptOf } from "@/features/assistant/chat";
 import { ChatWelcome, ModelMenu } from "@/features/assistant/chat-chrome";
 import { ConnectionNotice } from "@/features/assistant/connection-notice";
-import { ProviderSetup, SetUpAi } from "@/features/assistant/provider-setup";
+import { SetUpAi } from "@/features/assistant/provider-setup";
 import { WebAccessAttention } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -463,8 +464,11 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 				<>
 					{header([])}
 					<div className="min-h-0 flex-1 overflow-y-auto">
-						<div className="mx-auto max-w-[560px] py-6">
-							<ProviderSetup />
+						<div className="mx-auto max-w-[560px] px-4 py-6">
+							<SetUpAiFor
+								needs={<Trans>The coach needs AI.</Trans>}
+								works={<Trans>Today, Knowledge, offers and schedules work without it.</Trans>}
+							/>
 						</div>
 					</div>
 				</>

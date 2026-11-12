@@ -80,7 +80,7 @@ function renderSection() {
 }
 
 const openDelete = (index: number) => {
-	const trigger = screen.getAllByRole("button", { name: "Provider options" })[index];
+	const trigger = screen.getAllByRole("button", { name: /^More for / })[index];
 	if (!trigger) throw new Error("Missing provider options trigger");
 	fireEvent.click(trigger);
 };
@@ -97,16 +97,20 @@ it("deletes a provider from the row menu only after Keep provider is declined", 
 
 	expect(await screen.findByText("Fictional working connection")).toBeTruthy();
 	openDelete(0);
-	fireEvent.click(await screen.findByRole("menuitem", { name: "Delete provider" }));
+	fireEvent.click(await screen.findByRole("menuitem", { name: "Delete…" }));
 
 	expect(await screen.findByText("Delete “Fictional working connection”?")).toBeTruthy();
-	expect(screen.getByText("Its saved key is deleted. Conversations using it need another provider.")).toBeTruthy();
-	fireEvent.click(screen.getByRole("button", { name: "Keep provider" }));
+	expect(
+		screen.getByText(
+			"Its saved key is deleted. Conversations that used it need another connection before you can continue them.",
+		),
+	).toBeTruthy();
+	fireEvent.click(screen.getByRole("button", { name: "Keep connection" }));
 	expect(api.remove).not.toHaveBeenCalled();
 
 	openDelete(0);
-	fireEvent.click(await screen.findByRole("menuitem", { name: "Delete provider" }));
-	fireEvent.click(await screen.findByRole("button", { name: "Delete provider" }));
+	fireEvent.click(await screen.findByRole("menuitem", { name: "Delete…" }));
+	fireEvent.click(await screen.findByRole("button", { name: "Delete connection" }));
 	await waitFor(() => expect(api.remove).toHaveBeenCalledWith({ id: "p1" }, expect.anything()));
 });
 
@@ -122,8 +126,8 @@ it("removes the default row and shows the provider the server promoted", async (
 
 	expect(await screen.findByText("Fictional working connection")).toBeTruthy();
 	openDelete(0);
-	fireEvent.click(await screen.findByRole("menuitem", { name: "Delete provider" }));
-	fireEvent.click(await screen.findByRole("button", { name: "Delete provider" }));
+	fireEvent.click(await screen.findByRole("menuitem", { name: "Delete…" }));
+	fireEvent.click(await screen.findByRole("button", { name: "Delete connection" }));
 
 	await waitFor(() => expect(screen.queryByText("Fictional working connection")).toBeNull());
 	expect(screen.getByText("Fictional backup connection")).toBeTruthy();
@@ -133,7 +137,7 @@ it("removes the default row and shows the provider the server promoted", async (
 it("clears the typed key when the provider changes", async () => {
 	api.list.mockResolvedValue([provider("p1", "Fictional working connection", { isDefault: true })]);
 	renderSection();
-	fireEvent.click(await screen.findByRole("button", { name: /^Add AI provider/ }));
+	fireEvent.click(await screen.findByRole("button", { name: /^Add a connection/ }));
 	const key = await screen.findByLabelText("API key");
 	fireEvent.change(key, { target: { value: "sk-openai-secret" } });
 	fireEvent.click(screen.getByRole("combobox", { name: "Provider" }));

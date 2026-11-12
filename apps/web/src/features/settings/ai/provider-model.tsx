@@ -115,7 +115,7 @@ export function ProviderModel({ id, provider, value, onChange, label, hint = tru
 			) : (
 				<Input {...inputProps} value={value} onChange={(event) => onChange(event.target.value)} />
 			)}
-			<div id={`${id}-hint`} className="grid gap-1 text-xs leading-5 text-ink-3">
+			<div id={`${id}-hint`} className="grid gap-1 text-xs leading-5 text-ink-3 empty:hidden">
 				{hint && defaultModel && (
 					<p>
 						<Trans>
@@ -129,9 +129,11 @@ export function ProviderModel({ id, provider, value, onChange, label, hint = tru
 						<Trans>No built-in suggestions for this provider.</Trans>
 					</p>
 				)}
-				<p>
-					<Trans>Enter any model ID supported by your endpoint.</Trans>
-				</p>
+				{(hint || !models.length) && (
+					<p>
+						<Trans>Enter any model ID supported by your endpoint.</Trans>
+					</p>
+				)}
 			</div>
 		</div>
 	);

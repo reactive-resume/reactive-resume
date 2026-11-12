@@ -1,80 +1,122 @@
-import { useLingui } from "@lingui/react/macro";
+import type { AiAction } from "@reactive-resume/schema/ai-usage";
+import { plural } from "@lingui/core/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { groupAiUsage } from "@reactive-resume/schema/ai-usage";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@reactive-resume/ui/components/collapsible";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { SettingsSection } from "../section";
 import { aiActionLabel } from "@/features/ai/usage";
 import { orpc } from "@/libs/orpc/client";
 
+/** This week's AI request attempts: the total, the three features that made the most, and the detail folded away. */
 export function AiUsageSection() {
 	const { t, i18n } = useLingui();
+	const [detail, setDetail] = useState(false);
 	const query = useQuery(orpc.ai.usage.queryOptions({ input: { includeWebSearch: true } }));
 	const report = query.data;
-	// With nothing recorded, the explanations of how attempts are counted are noise: one line says it all.
-	const quiet = report?.requests === 0;
-	const date = (value: Date) => i18n.date(value, { dateStyle: "medium", timeZone: report?.timezone ?? "UTC" });
+
+	const byFeature = new Map<AiAction, number>();
+	for (const group of report?.groups ?? [])
+		byFeature.set(group.action, (byFeature.get(group.action) ?? 0) + group.requests);
+	const top = [...byFeature].sort((a, b) => b[1] - a[1]).slice(0, 3);
+	// "Mon 2 – Sun 8 Nov", in the account's timezone; the end is exclusive.
+	const week = report
+		? new Intl.DateTimeFormat(i18n.locale, {
+				weekday: "short",
+				day: "numeric",
+				month: "short",
+				timeZone: report.timezone,
+			}).formatRange(report.start, new Date(report.end.getTime() - 1))
+		: null;
+	const features = i18n.number(byFeature.size);
+
 	return (
 		<SettingsSection
-			title={t`AI usage this week`}
+			title={<Trans>This week</Trans>}
 			id="ai-usage"
 			description={
-				quiet
-					? undefined
-					: t`Request attempts recorded by this server, including failed or cancelled attempts. Retries and each model call in a tool loop count separately; stream chunks, tools themselves and saving do not.`
+				report && report.requests > 0
+					? plural(report.requests, { one: "# request attempt", other: "# request attempts" })
+					: undefined
 			}
 			action={
-				!quiet && (
-					<Button
-						variant="secondary"
-						size="sm"
-						disabled={query.isFetching}
-						onClick={() => void query.refetch()}
-					>{t`Refresh usage`}</Button>
-				)
+				<button
+					type="button"
+					aria-label={t`Refresh usage`}
+					disabled={query.isFetching}
+					onClick={() => void query.refetch()}
+					className="text-sm font-medium text-accent-text hover:underline disabled:opacity-50"
+				>
+					<Trans>Refresh</Trans>
+				</button>
 			}
 		>
-			<div className="grid gap-3" aria-live="polite" aria-busy={query.isFetching}>
+			<div className="grid" aria-live="polite" aria-busy={query.isFetching}>
 				{query.isError ? (
-					<p
-						role="alert"
-						className="text-sm text-danger-text"
-					>{t`AI usage couldn't be loaded. Try refreshing. Older servers may need an update.`}</p>
+					<p role="alert" className="text-sm text-danger-text">
+						<Trans>AI usage couldn't be loaded. Try refreshing. Older servers may need an update.</Trans>
+					</p>
 				) : !report ? (
-					<p className="text-sm text-ink-3">{t`Loading usage…`}</p>
+					<p className="text-sm text-ink-3">
+						<Trans>Loading usage…</Trans>
+					</p>
+				) : report.groups.length === 0 ? (
+					<p className="text-[13px]/[18px] text-ink-3">
+						{week} · <Trans>No AI request attempts recorded this week.</Trans>
+					</p>
 				) : (
-					<>
-						{!quiet && <p className="text-sm">{t`AI request attempts: ${i18n.number(report.requests)}`}</p>}
-						<p className="text-xs text-ink-3">
-							{date(report.start)} – {date(new Date(report.end.getTime() - 1))} · {report.timezone}
+					<Collapsible open={detail} onOpenChange={setDetail}>
+						<dl className="grid grid-cols-3 gap-6">
+							{top.map(([action, requests]) => (
+								<div key={action} className="flex flex-col-reverse gap-0.5">
+									<dt className="text-[13px]/[15px] text-ink-3">{aiActionLabel(action)}</dt>
+									<dd className="font-display text-[34px]/10">{i18n.number(requests)}</dd>
+								</div>
+							))}
+						</dl>
+						<p className="pt-3.5 text-[13px]/[18px] text-ink-3">
+							{week} ·{" "}
+							{byFeature.size > 3 ? (
+								<Trans>the three most used of {features} features.</Trans>
+							) : (
+								<Trans>by feature.</Trans>
+							)}{" "}
+							<Trans>These are attempts, not billing, tokens or cost; your provider's bill is final.</Trans>{" "}
+							<CollapsibleTrigger className="group inline-flex items-center gap-0.5 font-medium text-ink-2 hover:text-ink">
+								<Trans>By connection</Trans>
+								<Icon name="caret-down" size={14} className="transition-transform group-aria-expanded:rotate-180" />
+							</CollapsibleTrigger>
 						</p>
-						{report.groups.length === 0 && (
-							<p className="text-sm text-ink-3">{t`No AI request attempts recorded this week.`}</p>
-						)}
-						{groupAiUsage(report).map((provider) => (
-							<div
-								key={JSON.stringify([provider.providerId, provider.provider])}
-								className="grid min-w-0 gap-2 rounded-lg border border-line p-3"
-							>
-								<h3 className="text-sm font-medium break-words">
-									{provider.labels.join(" / ")} · {provider.provider}
-								</h3>
-								<p className="text-sm">{t`AI request attempts: ${i18n.number(provider.requests)}`}</p>
-								<ul className="grid gap-2 text-xs text-ink-2">
-									{provider.groups.map((group) => (
-										<li key={JSON.stringify([group.action, group.model, group.label])} className="break-words">
-											{aiActionLabel(group.action)} · {group.model} · {group.label} · {i18n.number(group.requests)}
-										</li>
-									))}
-								</ul>
+						<CollapsibleContent>
+							<div className="grid gap-3 ps-5 pt-2 text-[13px]/[18px] text-ink-2">
+								{groupAiUsage(report).map((provider) => (
+									<div key={JSON.stringify([provider.providerId, provider.provider])} className="grid min-w-0 gap-1">
+										<h3 className="font-medium break-words text-ink">
+											{provider.labels.join(" / ")} · {provider.provider}
+										</h3>
+										<p>{t`AI request attempts: ${i18n.number(provider.requests)}`}</p>
+										<ul className="grid gap-1 text-ink-3">
+											{provider.groups.map((group) => (
+												<li key={JSON.stringify([group.action, group.model, group.label])} className="break-words">
+													{aiActionLabel(group.action)} · {group.model} · {group.label} · {i18n.number(group.requests)}
+												</li>
+											))}
+										</ul>
+									</div>
+								))}
+								<p className="text-xs text-ink-3">
+									{report.timezone} ·{" "}
+									<Trans>
+										Weeks run Monday through Sunday in your account timezone. Failed and cancelled attempts count;
+										retries and each model call in a tool loop count separately. History starts when this server begins
+										recording, and connection labels are kept as used, even after a connection is removed.
+									</Trans>
+								</p>
 							</div>
-						))}
-					</>
-				)}
-				{!quiet && (
-					<>
-						<p className="text-xs text-ink-3">{t`Weeks run Monday through Sunday in your account timezone. History starts when this server begins recording; earlier requests aren't reconstructed. Connection labels and models are kept as used, even after a connection is removed.`}</p>
-						<p className="text-xs text-ink-3">{t`These are attempts, not billing, token counts or costs. An interrupted server can record an attempt before sending it; this report cannot confirm provider receipt.`}</p>
-					</>
+						</CollapsibleContent>
+					</Collapsible>
 				)}
 			</div>
 		</SettingsSection>

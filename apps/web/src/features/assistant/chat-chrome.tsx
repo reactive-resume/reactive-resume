@@ -13,8 +13,6 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { IconButton } from "@reactive-resume/ui/components/icon-button";
-import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { isImeComposing } from "@/libs/keyboard";
 import { ENTER_CLASS, stagger } from "@/libs/motion";
 import "./chat-chrome.css";
@@ -31,26 +29,26 @@ type ChatWelcomeProps = { description: ReactNode; starters: ChatStarter[] };
 /** Shared chrome only: each assistant owns its starters, context and edit permissions. */
 export function ChatWelcome({ description, starters }: ChatWelcomeProps) {
 	return (
-		<div className="grid gap-4">
+		<div className="grid gap-[13px]">
 			<div className="grid gap-1.5">
-				<h3 className="font-display text-[22px] leading-7">
+				<h3 className="t-section-title">
 					<Trans>What should we work on?</Trans>
 				</h3>
-				<p className="text-sm text-ink-2">{description}</p>
+				<p className="text-sm/[25px] text-ink-2">{description}</p>
 			</div>
-			<ul className="grid gap-1">
+			<ul className="grid gap-2">
 				{starters.map((starter, index) => (
 					<li key={starter.label} style={stagger(index)} className={ENTER_CLASS}>
 						<button
 							type="button"
 							disabled={starter.disabled}
 							onClick={starter.onPick}
-							className="flex min-h-11 w-full items-center gap-3 rounded-lg border border-line bg-raised px-3 py-2 text-start transition-[background-color,scale] duration-quick ease-enter hover:bg-hover enabled:active:scale-[0.98] disabled:opacity-60"
+							className="flex min-h-[46px] w-full items-center gap-3 rounded-lg border border-line bg-raised px-[14px] py-1.5 text-start transition-[background-color,scale] duration-quick ease-enter hover:bg-hover enabled:active:scale-[0.98] disabled:opacity-60"
 						>
 							<Icon name={starter.icon} size={20} className="shrink-0 text-ink-2" />
-							<span className="grid min-w-0">
-								<span className="text-sm font-medium">{starter.label}</span>
-								{starter.hint && <span className="text-xs text-ink-3">{starter.hint}</span>}
+							<span className="grid min-w-0 flex-1">
+								<span className="text-sm/[18px] font-medium">{starter.label}</span>
+								{starter.hint && <span className="text-xs/4 text-ink-3">{starter.hint}</span>}
 							</span>
 						</button>
 					</li>
@@ -81,47 +79,43 @@ export function ChatComposer(props: ChatComposerProps) {
 	return (
 		<div
 			data-slot="chat-composer"
+			data-design="composer"
 			className="grid rounded-xl border border-control-border bg-raised transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft"
 		>
-			<label htmlFor={id} className="sr-only">
-				{props.label}
-			</label>
-			<textarea
-				id={id}
-				dir="auto"
-				rows={2}
-				value={props.value}
-				disabled={props.disabled}
-				placeholder={props.placeholder}
-				onChange={(event) => props.onValueChange(event.target.value)}
-				onKeyDown={(event) => {
-					if (event.key === "Enter" && !event.shiftKey && !isImeComposing(event)) {
-						event.preventDefault();
-						if (!props.sendDisabled && !props.streaming) props.onSend();
-					}
-					if (event.key === "Escape" && props.streaming) {
-						event.preventDefault();
-						props.onStop();
-					}
-				}}
-				className="field-sizing-content max-h-[200px] min-h-[68px] w-full resize-none bg-transparent px-3 pt-2.5 pb-1.5 text-sm outline-none placeholder:text-ink-3 disabled:opacity-60 pointer-coarse:text-base"
-			/>
-			<div className="flex items-end gap-1.5 px-2 pb-2">
-				<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5 max-sm:[scrollbar-width:none] max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:*:shrink-0">
+			{props.chips && (
+				<div className="flex min-w-0 flex-wrap items-center gap-1 px-3 pt-[11px] max-sm:[scrollbar-width:none] max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:*:shrink-0">
 					{props.chips}
 				</div>
-				{props.actions}
-				<IconButton
-					data-chat-shortcut-help
-					icon="keyboard"
-					label={t`Keyboard shortcuts`}
-					size="icon-sm"
-					className="pointer-coarse:hidden"
-					onClick={() => showKeyboardShortcuts()}
+			)}
+			<div className="flex items-end gap-1.5 pe-2 pb-2">
+				<label htmlFor={id} className="sr-only">
+					{props.label}
+				</label>
+				<textarea
+					id={id}
+					dir="auto"
+					rows={1}
+					value={props.value}
+					disabled={props.disabled}
+					placeholder={props.placeholder}
+					onChange={(event) => props.onValueChange(event.target.value)}
+					onKeyDown={(event) => {
+						if (event.key === "Enter" && !event.shiftKey && !isImeComposing(event)) {
+							event.preventDefault();
+							if (!props.sendDisabled && !props.streaming) props.onSend();
+						}
+						if (event.key === "Escape" && props.streaming) {
+							event.preventDefault();
+							props.onStop();
+						}
+					}}
+					className="field-sizing-content max-h-[200px] min-h-10 min-w-0 flex-1 resize-none bg-transparent ps-3.5 pt-2.5 pb-1.5 text-[15px]/6 outline-none placeholder:text-ink-3 disabled:opacity-60 pointer-coarse:text-base"
 				/>
+				<span className="flex shrink-0 items-center gap-1 pb-0.5">{props.actions}</span>
 				<Button
 					size="icon-sm"
-					className="shrink-0 rounded-lg"
+					// Send is ink, not accent: the panel's accent belongs to the page.
+					className="mb-0.5 shrink-0 rounded-lg bg-ink text-bg hover:bg-ink/85 disabled:bg-ink-3 disabled:opacity-60"
 					aria-label={props.streaming ? t`Stop` : t`Send`}
 					disabled={!props.streaming && props.sendDisabled}
 					onClick={props.streaming ? props.onStop : props.onSend}
@@ -154,12 +148,12 @@ export function ModelMenu({ open, onOpenChange, providers, current, label, onCho
 					<button
 						type="button"
 						aria-label={t`Connection: ${text}`}
-						className="flex h-7 max-w-[50%] min-w-0 items-center gap-1 rounded-md bg-sunken px-2 text-xs text-ink-2 transition-colors hover:bg-hover"
+						className="flex h-[26px] max-w-[200px] min-w-0 items-center gap-1 rounded-md bg-sunken ps-2 pe-1.5 text-xs font-medium text-ink-2 transition-colors hover:bg-hover"
 					/>
 				}
 			>
 				<span className="truncate">{text}</span>
-				<Icon name="caret-down" size={14} />
+				<Icon name="caret-down" size={16} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-64">
 				{providers.map((item) => (

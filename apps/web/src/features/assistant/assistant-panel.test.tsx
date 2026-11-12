@@ -106,7 +106,7 @@ it("keeps task titles and shows the original message in history, with old-server
 		</I18nProvider>
 	);
 	const { rerender } = render(panel());
-	fireEvent.click(screen.getByRole("button", { name: "Past conversations" }));
+	fireEvent.click(screen.getByRole("button", { name: "Conversations" }));
 	const row = screen.getByRole("button", { name: /Tailor summary to payments roles.*I'm applying/ });
 	expect(row.textContent).toContain(thread.firstMessage);
 	expect(row.textContent).toContain("1 of 2 edits accepted");
@@ -117,23 +117,14 @@ it("keeps task titles and shows the original message in history, with old-server
 	expect(screen.getByText(thread.title)).toBeDefined();
 });
 
-it("states resume scope before sending and routes Open Write to this resume", () => {
-	const onClose = vi.fn();
+it("states what an accepted edit changes before sending, and offers translation", () => {
 	render(
 		<I18nProvider i18n={i18n}>
-			<AssistantPanel document={document} onClose={onClose} />
+			<AssistantPanel document={document} onClose={vi.fn()} />
 		</I18nProvider>,
 	);
-	expect(screen.getByText(/Some fields still need Write/)).toBeDefined();
-	expect(screen.getByRole("button", { name: "Translate into…" })).toBeDefined();
-	fireEvent.click(screen.getByRole("button", { name: "Open Write" }));
-	expect(onClose).toHaveBeenCalledOnce();
-	expect(mocks.navigate).toHaveBeenCalledWith({
-		to: "/builder/$resumeId",
-		params: { resumeId: "resume-1" },
-		search: { applicationId: "application-2", mode: undefined, assistant: undefined },
-	});
-	expect(mocks.setState).toHaveBeenCalledWith({ mobileView: "write", drawerOpen: true });
+	expect(screen.getByText(/Nothing changes until you accept an edit|Working on a copy made for/)).toBeDefined();
+	expect(screen.getByRole("button", { name: "Translate into another language…" })).toBeDefined();
 	expect(mocks.start).not.toHaveBeenCalled();
 });
 

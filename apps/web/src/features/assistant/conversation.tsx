@@ -416,7 +416,7 @@ export function Conversation(props: ConversationProps) {
 					<MessageScroller>
 						<MessageScrollerViewport aria-label={t`Conversation`}>
 							{/* Announced when the answer is complete, not token by token. */}
-							<MessageScrollerContent aria-busy={busy} className="gap-4 p-4">
+							<MessageScrollerContent aria-busy={busy} className="gap-4 px-6 py-4">
 								{messages.length === 0 && (status === "submitted" || resuming) && (
 									<MessageScrollerItem>{footer}</MessageScrollerItem>
 								)}
@@ -705,7 +705,10 @@ function UserText({ text }: { text: string }) {
 		<div className="grid justify-items-end gap-1">
 			<p
 				id={id}
-				className={cn("rounded-lg bg-sunken px-3 py-2 text-sm whitespace-pre-wrap", long && !open && "line-clamp-12")}
+				className={cn(
+					"rounded-xl bg-sunken px-3.5 py-2.5 text-[15px]/6 whitespace-pre-wrap",
+					long && !open && "line-clamp-12",
+				)}
 			>
 				{text}
 			</p>
@@ -1161,7 +1164,7 @@ export function Composer(props: ComposerProps) {
 	const needsCopy = document.kind === "resume" && !document.jobCopy;
 
 	return (
-		<div className="grid gap-2 border-t border-line bg-surface px-3 pt-2.5 pb-3">
+		<div className="grid gap-2 bg-surface px-6 pt-2.5 pb-5">
 			{props.notice}
 			{needsCopy && posting && (
 				<p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg bg-sunken px-3 py-2 text-xs text-ink-2">
@@ -1205,16 +1208,6 @@ export function Composer(props: ComposerProps) {
 				onStop={props.onStop}
 				chips={
 					<>
-						<ContextChip
-							pressed={context.memory === true}
-							onPressedChange={(memory) => onContextChange({ ...context, memory })}
-							label={t`Knowledge`}
-							tooltip={
-								context.memory
-									? t`The assistant can search facts and stories you share with all applications. It can't change them.`
-									: t`Let the assistant search facts and stories you share with all applications, read-only`
-							}
-						/>
 						{chips.map((chip) =>
 							context[chip.key] ? (
 								<RemovableChip
@@ -1239,6 +1232,16 @@ export function Composer(props: ComposerProps) {
 								</button>
 							),
 						)}
+						<ContextChip
+							pressed={context.memory === true}
+							onPressedChange={(memory) => onContextChange({ ...context, memory })}
+							label={t`Knowledge`}
+							tooltip={
+								context.memory
+									? t`The assistant can search facts and stories you share with all applications. It can't change them.`
+									: t`Let the assistant search facts and stories you share with all applications, read-only`
+							}
+						/>
 						{attachments.map((attachment) => (
 							<RemovableChip
 								key={attachment.id}
@@ -1293,7 +1296,7 @@ type RemovableChipProps = {
 
 function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove, disabled }: RemovableChipProps) {
 	return (
-		<span className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-xs text-ink-2">
+		<span className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-xs font-medium text-ink-2">
 			<Icon name={icon} size={15} />
 			<span className={cn(maxWidth, "truncate")}>{label}</span>
 			<button

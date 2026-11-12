@@ -12,7 +12,6 @@ import { hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { formatFileSize } from "@reactive-resume/utils/file";
@@ -30,7 +29,7 @@ import { SetUpAiLine } from "@/components/calm/set-up-ai-line";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
 import { Combobox } from "@/components/ui/combobox";
 import { useDialogStore } from "@/dialogs/store";
-import { ProviderSetup } from "@/features/assistant/provider-setup";
+import { SetUpAiDialog } from "@/features/ai/set-up-ai";
 import { getLocaleOptions } from "@/features/locale/locale-options";
 import { getSectionName } from "@/features/resume/editor/check/issues";
 import { summarizeImport } from "@/features/resume/import/read-file";
@@ -111,16 +110,7 @@ export function ImportPage({ applicationId }: ImportPageProps) {
 					</SetUpAiLine>
 				)}
 				<AiProviderLoadState state={providerState} />
-				<Dialog open={settingUpAi} onOpenChange={setSettingUpAi}>
-					<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto">
-						<DialogHeader>
-							<DialogTitle>
-								<Trans>Set up AI</Trans>
-							</DialogTitle>
-						</DialogHeader>
-						<ProviderSetup />
-					</DialogContent>
-				</Dialog>
+				<SetUpAiDialog open={settingUpAi} onOpenChange={setSettingUpAi} />
 				<input
 					ref={inputRef}
 					type="file"
@@ -328,7 +318,7 @@ function LanguageField({ value, onChange, defaultLabel, defaultLocale }: Languag
 	const id = useId();
 	return (
 		<div className="flex items-center gap-2">
-			<label htmlFor={id} className="text-ink-2 t-small">
+			<label htmlFor={id} className="t-small text-ink-2">
 				<Trans>Resume language</Trans>
 			</label>
 			<Combobox
@@ -607,13 +597,13 @@ function Review({ step, canUseAi, language, onCreate, onReadAgain, onChooseFile,
 				})}
 			</List>
 			{review.sections.length === 0 && (
-				<p className="pt-2 text-ink-2 t-small">
+				<p className="pt-2 t-small text-ink-2">
 					<Trans>No sections were found in this file.</Trans>
 				</p>
 			)}
 
 			{step.comparison !== "full" && (
-				<p className="pt-3 text-ink-2 t-small">
+				<p className="pt-3 t-small text-ink-2">
 					{step.comparison === "partial" ? (
 						<Trans>
 							Only part of this file could be compared with what came in. Check each section against your file in the
@@ -629,7 +619,7 @@ function Review({ step, canUseAi, language, onCreate, onReadAgain, onChooseFile,
 			)}
 
 			{review.missingContact && (
-				<p className="mt-3 flex gap-2 rounded-lg bg-warn-soft px-4 py-3 text-warn-text t-small">
+				<p className="mt-3 flex gap-2 rounded-lg bg-warn-soft px-4 py-3 t-small text-warn-text">
 					<Icon name="warning-circle" size={18} className="shrink-0" />
 					<Trans>Name and contact details weren't found. Add them in Basics.</Trans>
 				</p>
@@ -644,7 +634,7 @@ function Review({ step, canUseAi, language, onCreate, onReadAgain, onChooseFile,
 							other="# lines weren't placed in any section"
 						/>
 					</p>
-					<ul className="mt-1.5 mb-2.5 max-h-40 list-disc overflow-y-auto ps-[18px] text-ink-2 t-small">
+					<ul className="mt-1.5 mb-2.5 max-h-40 list-disc overflow-y-auto ps-[18px] t-small text-ink-2">
 						{review.notImported.map((line) => (
 							<li key={line}>{line}</li>
 						))}
@@ -686,7 +676,7 @@ function FoundRow({ label, value, count, flagged = 0 }: FoundRowProps) {
 					<Plural value={flagged} one="# date to check" other="# dates to check" />
 				</Badge>
 			)}
-			<span className="shrink-0 text-ink-3 t-mono">{count}</span>
+			<span className="shrink-0 t-mono text-ink-3">{count}</span>
 		</ListRow>
 	);
 }
@@ -748,7 +738,7 @@ function Progress({ step, creating, onCancel, onChooseFile, onStartBlank, onStay
 				<>
 					<div
 						role="alert"
-						className={cn(ENTER_CLASS, "mt-4 flex gap-2.5 rounded-lg bg-danger-soft px-4 py-3 text-danger-text t-ui")}
+						className={cn(ENTER_CLASS, "mt-4 flex gap-2.5 rounded-lg bg-danger-soft px-4 py-3 t-ui text-danger-text")}
 					>
 						<Icon name="warning-circle" size={20} className="shrink-0" />
 						<span>{step.message}</span>
@@ -893,7 +883,7 @@ function Formats() {
 						<span className="flex min-w-0 flex-1 flex-col gap-px">
 							<span className="flex items-center gap-2 text-sm font-medium">
 								{format.name}
-								<span className="text-ink-3 t-mono">{format.extension}</span>
+								<span className="t-mono text-ink-3">{format.extension}</span>
 								{format.ai && (
 									<Badge variant="outline" className="ms-auto">
 										<Icon name="sparkle" />
@@ -901,7 +891,7 @@ function Formats() {
 									</Badge>
 								)}
 							</span>
-							<span className="text-ink-3 t-small">{format.note}</span>
+							<span className="t-small text-ink-3">{format.note}</span>
 						</span>
 					</ListRow>
 				))}

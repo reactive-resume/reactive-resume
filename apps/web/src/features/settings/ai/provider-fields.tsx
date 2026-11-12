@@ -4,7 +4,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useId, useState } from "react";
 import { AI_PROVIDER_KEY_URLS, getAIProviderSetupProblem } from "@reactive-resume/ai/defaults";
-import { Button } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -28,6 +27,10 @@ type ProviderFieldsProps = {
 	/** Editing a new address requires a new key instead of forwarding the saved one. */
 	keyAgain?: boolean;
 };
+
+/** A folded group of fields: a 36px row with its current value at the end. */
+const foldClassName =
+	"group flex h-8 w-full items-center gap-2 rounded-md text-sm/5 [&>span:last-child]:text-[13px]/[18px]";
 
 const secretInputProps = {
 	autoComplete: "off",
@@ -98,11 +101,23 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 	);
 
 	return (
-		<div className="grid gap-3">
+		<div className="grid gap-[18px]">
 			<div className="grid gap-1.5">
-				<Label htmlFor={`${id}-key`}>
-					<Trans>API key</Trans>
-				</Label>
+				<span className="flex items-baseline justify-between gap-3">
+					<Label htmlFor={`${id}-key`}>
+						<Trans>API key</Trans>
+					</Label>
+					{keyURL && (
+						<a
+							href={keyURL}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-[13px]/[18px] font-medium text-accent-text hover:underline"
+						>
+							<Trans>Get an API key</Trans>
+						</a>
+					)}
+				</span>
 				<Input
 					id={`${id}-key`}
 					type="password"
@@ -119,16 +134,7 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 					onChange={(event) => set({ apiKey: event.target.value })}
 					{...secretInputProps}
 				/>
-				{keyURL ? (
-					<a
-						href={keyURL}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="w-fit text-xs text-accent-text underline underline-offset-2"
-					>
-						<Trans>Get an API key</Trans>
-					</a>
-				) : (
+				{!keyURL && (
 					<p className="text-xs text-ink-3">
 						<Trans>Get an API key from your endpoint operator.</Trans>
 					</p>
@@ -143,12 +149,31 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 					</p>
 				)}
 			</div>
-			<ProviderModel id={`${id}-model`} provider={provider} value={value.model} onChange={(model) => set({ model })} />
-			<div className="grid gap-3">
+			<ProviderModel
+				id={`${id}-model`}
+				hint={false}
+				provider={provider}
+				value={value.model}
+				onChange={(model) => set({ model })}
+			/>
+			<div className="-my-2 grid">
 				<Collapsible open={taskModels} onOpenChange={setTaskModels}>
-					<CollapsibleTrigger render={<Button type="button" variant="ghost" size="sm" className="group w-fit" />}>
-						<Trans>Task models (optional)</Trans>
-						<Icon name="caret-down" size={16} className="transition-transform group-aria-expanded:rotate-180" />
+					<CollapsibleTrigger className={foldClassName}>
+						<Icon
+							name="caret-right"
+							size={16}
+							className="text-ink-3 transition-transform group-aria-expanded:rotate-90"
+						/>
+						<span className="flex-1 text-start text-ink">
+							<Trans>Task models</Trans>
+						</span>
+						<span className="truncate text-ink-3">
+							{value.fastModel.trim() || value.capableModel.trim() ? (
+								<Trans>Fast and capable set</Trans>
+							) : (
+								<Trans>One model for everything</Trans>
+							)}
+						</span>
 					</CollapsibleTrigger>
 					<CollapsibleContent>
 						<div className="grid gap-3 pt-3">
@@ -177,27 +202,37 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 						</div>
 					</CollapsibleContent>
 				</Collapsible>
+				{compatible ? (
+					<div className="grid gap-[18px] pt-2.5">
+						{urlField}
+						{nameField}
+					</div>
+				) : (
+					<Collapsible open={advanced} onOpenChange={setAdvanced}>
+						<CollapsibleTrigger className={foldClassName}>
+							<Icon
+								name="caret-right"
+								size={16}
+								className="text-ink-3 transition-transform group-aria-expanded:rotate-90"
+							/>
+							<span className="flex-1 text-start text-ink">
+								<Trans>Name and base URL</Trans>
+							</span>
+							<span className="truncate text-ink-3">
+								{value.label.trim() || providerLabel(provider)} ·{" "}
+								{(value.baseURL.trim() || defaults.baseURL).replace(/^https?:\/\//, "").replace(/\/v\d+\/?$/, "")}
+							</span>
+						</CollapsibleTrigger>
+						<CollapsibleContent>
+							<div className="grid gap-3 pt-3">
+								{nameField}
+								{urlField}
+							</div>
+						</CollapsibleContent>
+					</Collapsible>
+				)}
 			</div>
-			{compatible ? (
-				<>
-					{urlField}
-					{nameField}
-				</>
-			) : (
-				<Collapsible open={advanced} onOpenChange={setAdvanced}>
-					<CollapsibleTrigger render={<Button type="button" variant="ghost" size="sm" className="group w-fit" />}>
-						<Trans>Advanced</Trans>
-						<Icon name="caret-down" size={16} className="transition-transform group-aria-expanded:rotate-180" />
-					</CollapsibleTrigger>
-					<CollapsibleContent>
-						<div className="grid gap-3 pt-3">
-							{nameField}
-							{urlField}
-						</div>
-					</CollapsibleContent>
-				</Collapsible>
-			)}
-			{explanation && !(urlError && (compatible || advanced)) && (
+			{explanation && problem !== "apiKey" && !(urlError && (compatible || advanced)) && (
 				<p role="status" className="text-xs text-ink-3">
 					{explanation}
 				</p>

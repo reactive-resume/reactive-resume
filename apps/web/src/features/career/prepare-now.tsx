@@ -45,7 +45,7 @@ export function PrepareNow({ applicationId, interviewId, now }: PrepareNowProps)
 			<time dateTime={round.at.toISOString()} className="text-sm text-ink-3">
 				{when(round.at)}
 			</time>
-			<AiNotice />
+			<AiNotice needs={<Trans>A briefing needs AI.</Trans>} works={<Trans>Reminders work without it.</Trans>} />
 			<Button variant="secondary" loading={generate.isPending} disabled={!connection.provider} onClick={plan}>
 				<Trans>Generate briefing now</Trans>
 			</Button>

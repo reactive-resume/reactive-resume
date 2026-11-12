@@ -60,6 +60,7 @@ describe.each([
 	{
 		name: "custom domain",
 		component: <CustomDomainField suggest={false} />,
+		menu: undefined,
 		trigger: "Remove",
 		title: "Remove the custom domain?",
 		keep: "Keep domain",
@@ -69,13 +70,20 @@ describe.each([
 	{
 		name: "web connection",
 		component: <WebAccessSection />,
-		trigger: "Remove connection",
+		// The row keeps Remove in its "…" menu.
+		menu: "More: Remove connection",
+		trigger: "Remove connection…",
 		title: "Remove the web connection?",
 		keep: "Keep connection",
 		confirm: "Remove connection",
 		endpoint: "delete",
 	},
-])("$name removal", ({ component, trigger, title, keep, confirm, endpoint }) => {
+])("$name removal", ({ component, menu, trigger, title, keep, confirm, endpoint }) => {
+	const open = async () => {
+		if (!menu) return fireEvent.click(screen.getByRole("button", { name: trigger }));
+		fireEvent.click(screen.getByRole("button", { name: menu }));
+		fireEvent.click(await screen.findByRole("menuitem", { name: trigger }));
+	};
 	it("keeps saved connection until explicit confirmation; cancellation sends no mutation", async () => {
 		render(
 			<I18nProvider i18n={i18n}>
@@ -83,7 +91,7 @@ describe.each([
 			</I18nProvider>,
 		);
 		await act(async () => {
-			fireEvent.click(screen.getByRole("button", { name: trigger }));
+			await open();
 		});
 		expect(state.remove).not.toHaveBeenCalled();
 		expect(screen.getByRole("alertdialog", { name: title })).toBeTruthy();
@@ -92,7 +100,7 @@ describe.each([
 		});
 		expect(state.remove).not.toHaveBeenCalled();
 		await act(async () => {
-			fireEvent.click(screen.getByRole("button", { name: trigger }));
+			await open();
 		});
 		const dialog = screen.getByRole("alertdialog", { name: title });
 		const button = Array.from(dialog.querySelectorAll("button")).find((button) => button.textContent === confirm);

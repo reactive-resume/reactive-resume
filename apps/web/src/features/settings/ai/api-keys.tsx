@@ -5,6 +5,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -21,7 +22,8 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Swap } from "@reactive-resume/ui/components/swap";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
-import { SettingsSection } from "../section";
+import { SettingsSection, TextAction } from "../section";
+import { IconTile, List, ListRow } from "@/components/calm/list-row";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
@@ -55,7 +57,21 @@ function isReadOnly(permissions: unknown): boolean {
 	return Array.isArray(api) && !api.includes("write") && !api.includes("delete");
 }
 
-const shortDate = (date: Date) => i18n.date(date, { month: "short", day: "numeric", year: "numeric" });
+// The year shows only for a date more than about ten months away, so "expires 31 Jan" stays short.
+const shortDate = (date: Date) =>
+	i18n.date(date, {
+		month: "short",
+		day: "numeric",
+		...(Math.abs(date.getTime() - Date.now()) < 300 * DAY * 1000 ? {} : { year: "numeric" }),
+	});
+
+/** "today", "yesterday", "3 days ago"; a date once it's more than a month back. */
+function lastUsed(date: Date) {
+	const startOfDay = (value: Date) => new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime();
+	const days = Math.round((startOfDay(date) - startOfDay(new Date())) / (DAY * 1000));
+	if (days < -30) return shortDate(date);
+	return new Intl.RelativeTimeFormat(i18n.locale, { numeric: "auto" }).format(days, "day");
+}
 
 type ApiKeysSectionProps = { openNewKey?: boolean };
 
@@ -102,105 +118,73 @@ export function ApiKeysSection({ openNewKey = false }: ApiKeysSectionProps) {
 	};
 
 	return (
-		<SettingsSection
-			id="api-keys"
-			title={<Trans>API keys</Trans>}
-			description={<Trans>Keys act as you with the access you choose. New keys start read-only.</Trans>}
-			action={
-				<Button size="sm" variant="secondary" onClick={() => setCreating(true)}>
-					<Icon name="plus" size={18} />
-					<Trans>New key</Trans>
-				</Button>
-			}
-		>
-			{isLoading ? (
-				<Skeleton className="h-14 rounded-xl" />
-			) : keys.length === 0 ? (
-				<p className="rounded-xl border border-dashed border-line-2 p-4 text-sm text-ink-2 transition-opacity duration-standard ease-enter starting:opacity-0">
-					<Trans>No keys yet.</Trans>
-				</p>
-			) : (
-				<table className="w-full overflow-hidden rounded-xl text-[13px] outline outline-line transition-opacity duration-standard ease-enter max-sm:block starting:opacity-0">
-					<caption className="sr-only">
-						<Trans>API keys</Trans>
-					</caption>
-					<thead className="bg-bg text-xs text-ink-3 max-sm:hidden">
-						<tr className="h-9 text-start">
-							<th scope="col" className="ps-3.5 text-start font-medium">
-								<Trans>Name</Trans>
-							</th>
-							<th scope="col" className="text-start font-medium">
-								<Trans>Access</Trans>
-							</th>
-							<th scope="col" className="text-start font-medium">
-								<Trans>Created</Trans>
-							</th>
-							<th scope="col" className="text-start font-medium">
-								<Trans>Last used</Trans>
-							</th>
-							<th scope="col" className="text-start font-medium">
-								<Trans>Expires</Trans>
-							</th>
-							<th scope="col" className="pe-3.5">
-								<span className="sr-only">
-									<Trans>Actions</Trans>
-								</span>
-							</th>
-						</tr>
-					</thead>
-					<tbody className="max-sm:block">
-						{keys.map((key) => (
-							<tr
-								key={key.id}
-								className="h-12 border-t border-line max-sm:flex max-sm:h-auto max-sm:flex-wrap max-sm:items-center max-sm:gap-x-3 max-sm:gap-y-0.5 max-sm:p-3 max-sm:first:border-t-0"
-							>
-								<td className="ps-3.5 font-medium max-sm:w-full max-sm:ps-0">
-									{key.name || <span className="font-mono text-ink-2">{key.start}…</span>}
-								</td>
-								<td className="text-ink-2 max-sm:text-xs">
-									<span className="sm:hidden">
-										<Trans>Access</Trans>{" "}
-									</span>
-									{isReadOnly(key.permissions) ? <Trans>Read only</Trans> : <Trans>Full access</Trans>}
-								</td>
-								<td className="text-ink-2 max-sm:text-xs">
-									<span className="sm:hidden">
-										<Trans>Created</Trans>{" "}
-									</span>
-									{shortDate(key.createdAt)}
-								</td>
-								<td className="text-ink-2 max-sm:text-xs">
-									<span className="sm:hidden">
-										<Trans>Last used</Trans>{" "}
-									</span>
-									{key.lastRequest ? shortDate(key.lastRequest) : <Trans>Never</Trans>}
-								</td>
-								<td className="text-ink-2 max-sm:text-xs">
-									<span className="sm:hidden">
-										<Trans>Expires</Trans>{" "}
-									</span>
-									{key.expiresAt ? shortDate(key.expiresAt) : <Trans>Never</Trans>}
-								</td>
-								<td className="pe-2 text-end max-sm:ms-auto max-sm:pe-0">
-									<Button
-										size="sm"
-										variant="ghost"
-										className="text-danger-text hover:bg-danger-soft"
+		<SettingsSection id="api-keys" title={<Trans>API keys</Trans>}>
+			<p className="pb-1.5 text-[13px]/[18px] text-ink-3">
+				<Trans>
+					A key acts as you, with the access you choose. Send it in the <code className="t-mono">x-api-key</code>{" "}
+					header.
+				</Trans>
+			</p>
+			<List>
+				{isLoading ? (
+					<Skeleton className="my-2 h-10 rounded-md" />
+				) : (
+					keys.map((key) => (
+						<ListRow
+							key={key.id}
+							className="transition-opacity duration-standard ease-enter starting:opacity-0"
+							leading={
+								<IconTile className="bg-raised shadow-[inset_0_0_0_1px_var(--line)]">
+									<Icon name="key" />
+								</IconTile>
+							}
+							title={key.name || <span className="t-mono text-ink-2">{key.start}…</span>}
+							subtitle={keyDates(key)}
+							trailing={
+								<span className="flex items-center gap-3.5">
+									{isReadOnly(key.permissions) ? (
+										<Badge variant="outline">
+											<Trans>Read only</Trans>
+										</Badge>
+									) : (
+										<Badge variant="warn">
+											<Trans>Full access</Trans>
+										</Badge>
+									)}
+									<TextAction
 										aria-label={t`Revoke ${key.name || key.start || t`unnamed key`}`}
 										onClick={() => void revoke(key)}
 									>
 										<Trans>Revoke</Trans>
-									</Button>
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-			)}
+									</TextAction>
+								</span>
+							}
+						/>
+					))
+				)}
+				<ListRow
+					render={<button type="button" onClick={() => setCreating(true)} />}
+					leading={
+						<IconTile className="bg-transparent text-ink-3 outline-1 -outline-offset-1 outline-line-2 outline-dashed">
+							<Icon name="plus" />
+						</IconTile>
+					}
+					title={<Trans>New key</Trans>}
+					subtitle={<Trans>Starts read-only. You choose its name, access and expiry.</Trans>}
+				/>
+			</List>
 
 			<NewKeyDialog open={creating} onOpenChange={setCreating} onCreated={() => void refresh()} />
 		</SettingsSection>
 	);
+}
+
+/** "Created 2 Nov · last used yesterday · expires 31 Jan": the year shows only when it isn't this one. */
+function keyDates(key: ApiKey) {
+	const created = shortDate(key.createdAt);
+	const used = key.lastRequest ? t`last used ${lastUsed(key.lastRequest)}` : t`never used`;
+	const expires = key.expiresAt ? t`expires ${shortDate(key.expiresAt)}` : t`no expiry`;
+	return t`Created ${created} · ${used} · ${expires}`;
 }
 
 type Expiry = { label: () => string; seconds: number | null };

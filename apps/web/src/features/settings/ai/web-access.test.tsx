@@ -82,12 +82,11 @@ it("tests the server's search without a connection and leaves reading to the bui
 	renderSection();
 
 	expect(await screen.findByText(/Your server provides search/)).toBeTruthy();
-	expect(screen.getByText(/Searches with your server's search and reads links with the built-in reader/)).toBeTruthy();
 	expect(screen.queryByText(/AI provider's own web search/)).toBeNull();
-	fireEvent.click(screen.getByRole("button", { name: "Test search" }));
+	fireEvent.click(screen.getByRole("button", { name: "Test" }));
 
-	expect(await screen.findByText("Search works.")).toBeTruthy();
-	expect(screen.queryByText("Enhanced reading failed.")).toBeNull();
+	expect(await screen.findByText("Search works")).toBeTruthy();
+	expect(screen.queryByText("Reading failed")).toBeNull();
 	expect(
 		screen.getByText(/Search was tested with your server's search. Links are read with the built-in reader./),
 	).toBeTruthy();
@@ -98,11 +97,10 @@ it("names the server's search and the connection's reading separately", async ()
 	api.test.mockResolvedValue({ search: { success: true }, read: { success: true } });
 	renderSection();
 
-	expect(await screen.findByText(/Searches with your server's search and reads pages with Tavily/)).toBeTruthy();
-	expect(screen.queryByRole("button", { name: "Test search" })).toBeNull();
-	fireEvent.click(screen.getByRole("button", { name: "Test connection" }));
+	expect(await screen.findByText("Search and reading · Tavily")).toBeTruthy();
+	fireEvent.click(screen.getByRole("button", { name: "Test" }));
 
-	expect(await screen.findByText("Reading works.")).toBeTruthy();
+	expect(await screen.findByText("Reading works")).toBeTruthy();
 	expect(screen.getByText("Search was tested with your server's search, and reading with Tavily.")).toBeTruthy();
 });
 
@@ -111,8 +109,9 @@ it("keeps the connection's wording without SearXNG", async () => {
 	api.test.mockResolvedValue({ search: { success: true }, read: { success: true } });
 	renderSection();
 
-	expect(await screen.findByText(/Searches and reads pages with Tavily/)).toBeTruthy();
+	expect(await screen.findByText("Search and reading · Tavily")).toBeTruthy();
 	expect(screen.queryByText(/Your server provides search/)).toBeNull();
-	fireEvent.click(screen.getByRole("button", { name: "Test connection" }));
-	expect(await screen.findByText("Tested with Tavily. Only this service was tested.")).toBeTruthy();
+	fireEvent.click(screen.getByRole("button", { name: "Test" }));
+	expect(await screen.findByText("Key stored encrypted · tested just now")).toBeTruthy();
+	expect(screen.queryByText(/Search was tested/)).toBeNull();
 });
