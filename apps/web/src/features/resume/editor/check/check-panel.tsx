@@ -255,6 +255,9 @@ function CategoryRows({ report }: { report: AtsReport }) {
 			</List>
 			<Collapsible open={expanded}>
 				<CollapsibleContent>
+					<p className="pt-2 pb-1 t-caption text-ink-3">
+						<Trans>Checks by category</Trans>
+					</p>
 					{categories.map((category) => {
 						const { total, passed } = report.categories[category];
 						const failing = total - passed;
@@ -290,6 +293,12 @@ function CategoryRows({ report }: { report: AtsReport }) {
 							</div>
 						);
 					})}
+					<p className="border-t border-line py-3 t-small text-ink-3">
+						<Trans>
+							The checks count how reliably software reads your resume. They don't predict whether you'll be
+							shortlisted.
+						</Trans>
+					</p>
 				</CollapsibleContent>
 			</Collapsible>
 		</section>

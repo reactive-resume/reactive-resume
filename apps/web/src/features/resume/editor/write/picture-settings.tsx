@@ -45,20 +45,14 @@ type PicturePreviewControlsProps = {
 	onSelectPicture: () => void;
 };
 
-function PicturePreviewControls({
-	form,
-	normalizedPictureUrl,
-	picture,
-	onAutoSave,
-	onSelectPicture,
-}: PicturePreviewControlsProps) {
+function PicturePreviewControls({ normalizedPictureUrl, picture, onSelectPicture }: PicturePreviewControlsProps) {
 	return (
-		<div className="flex items-center gap-x-4">
+		<div className="flex flex-col gap-3">
 			<button
 				type="button"
 				onClick={onSelectPicture}
 				aria-label={t`Change photo`}
-				className="group/picture relative size-18 cursor-pointer overflow-hidden rounded-md bg-sunken transition-colors hover:bg-sunken/50"
+				className="group/picture relative h-28 w-full cursor-pointer overflow-hidden rounded-md bg-sunken transition-colors hover:bg-sunken/50"
 			>
 				{normalizedPictureUrl && (
 					<img
@@ -73,31 +67,6 @@ function PicturePreviewControls({
 					<Icon name="upload-simple" size={24} />
 				</div>
 			</button>
-
-			<form.Field name="url">
-				{(field) => (
-					<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>URL</Trans>
-						</FormLabel>
-						<div className="flex items-center gap-x-2">
-							<FormControl
-								render={
-									<Input
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(event) => {
-											field.handleChange(event.target.value);
-											onAutoSave();
-										}}
-									/>
-								}
-							/>
-						</div>
-					</FormItem>
-				)}
-			</form.Field>
 		</div>
 	);
 }
@@ -469,7 +438,7 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 				</DialogHeader>
 
 				{shownCrop && (
-					<div className="relative h-64 w-full overflow-hidden rounded-md bg-sunken ring-1 ring-line ring-inset">
+					<div className="relative h-50 w-full overflow-hidden rounded-md bg-sunken ring-1 ring-line ring-inset">
 						<Cropper
 							image={shownCrop.imageSrc}
 							crop={crop}
@@ -517,12 +486,12 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 					>{t`This photo is larger than 10 MB. Use Crop and upload to shrink it.`}</p>
 				)}
 				<DialogFooter className="flex-row flex-wrap justify-between">
-					<Button variant="secondary" onClick={onClose}>
+					<Button variant="ghost" onClick={onClose}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<div className="flex flex-wrap gap-2">
 						<Button
-							variant="secondary"
+							variant="ghost"
 							disabled={!cropState || cropState.file.size > 10 * 1024 * 1024}
 							onClick={() => {
 								if (!cropState) return;
@@ -533,6 +502,7 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 							<Trans>Skip and upload</Trans>
 						</Button>
 						<Button
+							variant="secondary"
 							disabled={!croppedAreaPixels}
 							onClick={() => {
 								void onConfirmCrop();
@@ -801,8 +771,13 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 			<Popover>
 				<PopoverTrigger
 					render={
-						<Button variant="secondary" size="sm" disabled={locked}>
-							{picture.url ? <Trans>Edit</Trans> : <Trans>URL</Trans>}
+						<Button
+							variant={picture.url ? "secondary" : "ghost"}
+							size={picture.url ? "sm" : "icon-sm"}
+							aria-label={picture.url ? undefined : t`Photo settings`}
+							disabled={locked}
+						>
+							{picture.url ? <Trans>Edit</Trans> : <Icon name="dots-three" />}
 						</Button>
 					}
 				/>
@@ -825,9 +800,8 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 
 						{picture.url && (
 							<>
-								<PictureFitField form={form} onAutoSave={handleAutoSave} />
-
 								<div className="grid grid-cols-2 gap-3">
+									<PictureFitField form={form} onAutoSave={handleAutoSave} />
 									<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
 
 									<ColorWidthFields
@@ -851,6 +825,33 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 								</div>
 							</>
 						)}
+						<form.Field name="url">
+							{(field) => (
+								<FormItem
+									className="flex-1"
+									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								>
+									<FormLabel>
+										<Trans>Or use an image address</Trans>
+									</FormLabel>
+									<div className="flex items-center gap-x-2">
+										<FormControl
+											render={
+												<Input
+													name={field.name}
+													value={field.state.value}
+													onBlur={field.handleBlur}
+													onChange={(event) => {
+														field.handleChange(event.target.value);
+														handleAutoSave();
+													}}
+												/>
+											}
+										/>
+									</div>
+								</FormItem>
+							)}
+						</form.Field>
 					</form>
 				</PopoverContent>
 			</Popover>

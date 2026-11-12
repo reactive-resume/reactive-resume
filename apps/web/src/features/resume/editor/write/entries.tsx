@@ -50,6 +50,7 @@ function Text({
 		<TextField
 			label={label}
 			value={str(valuesOf(entry)[field])}
+			placeholder={field === "grade" || field === "phone" ? t`Optional` : undefined}
 			wide={wide}
 			autoFocus={autoFocus}
 			data-entry-field={field}
@@ -100,14 +101,15 @@ function Description({
 	field = "description",
 	label,
 	locked,
-}: FieldSetProps & { field?: string; label?: string }) {
+	placeholder = t`What you did, and what changed because of it.`,
+}: FieldSetProps & { field?: string; label?: string; placeholder?: string }) {
 	return (
 		<div className="col-span-full grid gap-1.5">
 			<span className="text-[13px] leading-[18px] font-medium text-ink-2">{label ?? t`Description`}</span>
 			<RichTextEditor
 				label={label ?? t`Description`}
 				disabled={locked}
-				placeholder={t`What you did, and what changed because of it.`}
+				placeholder={placeholder}
 				value={str(valuesOf(entry)[field])}
 				onChange={(html, options) =>
 					write(
@@ -130,7 +132,6 @@ function Keywords({ entry, write, label }: FieldSetProps & { label: ReactNode })
 			<FormControl
 				render={
 					<ChipInput
-						allowCommas
 						value={valuesOf(entry).keywords ?? []}
 						onChange={(keywords) =>
 							write("keywords", (target) => {
@@ -252,8 +253,13 @@ function Roles({ entry, write, page, locked }: FieldSetProps) {
 
 	return (
 		<div className="col-span-full grid gap-3">
-			<span className="t-small font-medium text-ink-2">
+			<span className="flex items-center justify-between t-small font-medium text-ink-2">
 				<Trans>Roles</Trans>
+				{roles.length > 0 && (
+					<span className="t-caption font-normal text-ink-3">
+						<Trans>{roles.length} · newest first</Trans>
+					</span>
+				)}
 			</span>
 			{roles.map((role, index) => (
 				<div key={role.id} className="grid grid-cols-2 gap-x-3 gap-y-2.5 border-t border-line pt-3">
@@ -350,8 +356,14 @@ function Roles({ entry, write, page, locked }: FieldSetProps) {
 					})
 				}
 			>
+				<Icon name="plus" size={16} />
 				<Trans>Add role</Trans>
 			</Button>
+			{roles.length === 0 && (
+				<p className="t-caption text-ink-3">
+					<Trans>For a promotion at the same company: its own position, dates and description.</Trans>
+				</p>
+			)}
 		</div>
 	);
 }
@@ -373,11 +385,24 @@ export function EntryFields({
 				<>
 					<Text {...props} field="company" label={<Trans>Company</Trans>} autoFocus={autoFocus} />
 					<Text {...props} field="location" label={<Trans>Location</Trans>} />
-					<Text {...props} field="position" label={<Trans>Position</Trans>} wide />
-					<Dates {...props} />
-					<Description {...props} />
-					<Link {...props} />
+					{!valuesOf(props.entry).roles?.length && (
+						<>
+							<Text {...props} field="position" label={<Trans>Position</Trans>} wide />
+							<Dates {...props} />
+							<Description {...props} />
+						</>
+					)}
 					<Roles {...props} />
+					<MoreOptions>
+						{Boolean(valuesOf(props.entry).roles?.length) && (
+							<>
+								<Text {...props} field="position" label={<Trans>Position</Trans>} wide />
+								<Dates {...props} />
+								<Description {...props} />
+							</>
+						)}
+						<Link {...props} />
+					</MoreOptions>
 				</>
 			);
 		case "education":
@@ -390,7 +415,7 @@ export function EntryFields({
 					<Text {...props} field="location" label={<Trans>Location</Trans>} />
 					<Dates {...props} expectable />
 					<Link {...props} />
-					<Description {...props} />
+					<Description {...props} placeholder={t`Thesis, honors, relevant courses.`} />
 				</>
 			);
 		case "projects":
@@ -451,7 +476,7 @@ export function EntryFields({
 					<Text {...props} field="issuer" label={<Trans>Issuer</Trans>} />
 					<Dates {...props} single />
 					<Link {...props} />
-					<Description {...props} />
+					<Description {...props} placeholder={t`What it covers, or a credential number.`} />
 				</>
 			);
 		case "publications":

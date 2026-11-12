@@ -275,7 +275,7 @@ export function EntryMenu({ section, entry, index, count, onEdit = false }: Entr
 	};
 
 	return (
-		<DropdownMenu>
+		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger
 				render={
 					<IconButton

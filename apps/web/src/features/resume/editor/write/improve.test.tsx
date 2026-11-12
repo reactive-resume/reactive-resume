@@ -71,9 +71,11 @@ async function review() {
 	const editor = await screen.findByRole("textbox", { name: "Summary" });
 	await act(async () => editor.focus());
 	fireEvent.click(screen.getByRole("button", { name: "Improve" }));
+	expect(editor.querySelector("p")).toHaveClass("bg-accent-soft");
 	fireEvent.click(screen.getByRole("button", { name: "Stronger verb" }));
 	expect(onChange).not.toHaveBeenCalled();
 	expect(fixture.requests).toEqual([expect.objectContaining({ includeProvenance: true, line: "Original line" })]);
+	fireEvent.click(screen.getByText("AI request details"));
 	return onChange;
 }
 

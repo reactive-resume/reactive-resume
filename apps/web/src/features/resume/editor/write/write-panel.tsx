@@ -76,7 +76,7 @@ function OutlineView({ locked }: { locked: boolean }) {
 				<Link
 					to="."
 					search={(previous: Record<string, unknown>) => ({ ...previous, mode: "design", designCategory: "layout" })}
-					className="mt-3 flex w-fit items-center gap-2 t-small text-ink-2 hover:text-ink"
+					className="mt-3 flex min-h-11 w-fit items-center gap-2 t-small text-ink-2 hover:text-ink sm:hidden"
 				>
 					<Icon name="columns" size={18} />
 					<Trans>Arrange sections</Trans>

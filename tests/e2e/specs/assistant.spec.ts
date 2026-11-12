@@ -165,7 +165,8 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 			),
 		)
 		.toMatch(/Tighten to one page\. Page 1 runs over by about \d+ lines\./);
-	// The assistant takes the panel's place, so the pending count shows on the proposal and the page, not the outline.
+	// The assistant takes the outline's place; its bar button keeps the pending count visible.
+	await expect(page.getByRole("button", { name: "Assistant", exact: true })).toContainText("1 proposed");
 	await expect(page.getByRole("region", { name: /· 1 proposed edit$/ })).toBeVisible();
 	// The page caption appears once the in-browser preview has fetched its fonts and rendered.
 	const activePreview = page.locator('[data-resume-preview-template][aria-hidden="false"]');
@@ -174,6 +175,7 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 
 	await edits.getByRole("button", { name: "Accept" }).click();
 	await expect(edits.getByText("Applied")).toBeVisible();
+	await expect(page.locator("[data-assistant-pending]")).toHaveCount(0);
 	await expect.poll(() => resumeIdOf(page), { timeout: 15_000 }).not.toBe(resumeId);
 	const workingResumeId = resumeIdOf(page);
 	await expect.poll(() => resumeJson(page, workingResumeId), { timeout: 15_000 }).toContain("(tightened by the stub)");

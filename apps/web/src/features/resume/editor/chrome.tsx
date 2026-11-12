@@ -272,10 +272,8 @@ export function BackLink() {
 				item.id === applicationId &&
 				(params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId),
 		) ??
-		(!search.applicationId
-			? applications?.find((item) =>
-					params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId,
-				)
+		(!params.resumeId && !search.applicationId
+			? applications?.find((item) => item.coverLetterId === params.coverLetterId)
 			: undefined);
 	const label = application ? t`Back to ${application.company}` : t`Back to documents`;
 

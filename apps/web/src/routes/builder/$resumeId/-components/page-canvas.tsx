@@ -9,6 +9,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, lazyRouteComponent } from "@tanstack/react-router";
 import { Suspense, useCallback, useLayoutEffect, useRef, useState } from "react";
+import { filterSections } from "@reactive-resume/pdf/filtering";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { spillingSections } from "@reactive-resume/resume/spill";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -198,17 +199,22 @@ function ResumePageCanvas() {
 									sideBySide={sideBySide}
 									// A page's own menu, where the pages on screen are the pages of the layout (nothing spills).
 									menu={
-										sideBySide && !locked && !viewing && !overflow && layoutPages === rendered.pageCount ? (
+										sideBySide &&
+										pageNumber > 1 &&
+										!locked &&
+										!viewing &&
+										!overflow &&
+										layoutPages === rendered.pageCount ? (
 											<PageMenu pageIndex={pageNumber - 1} />
 										) : null
 									}
 								/>
 							)
 						}
-						renderPageOverlay={({ pageIndex, pageMap }) =>
+						renderPageOverlay={({ pageIndex, pageMap, document, pageScale }) =>
 							// A version from History is read-only: its lines don't open entries.
 							viewing ? null : mode === "check" ? (
-								<CheckPageLayer pageIndex={pageIndex} pageMap={pageMap} />
+								<CheckPageLayer pageIndex={pageIndex} pageMap={pageMap} document={document} pageScale={pageScale} />
 							) : (
 								<PageOverlay pageIndex={pageIndex} pageMap={pageMap} onSelect={onSelect} />
 							)
@@ -226,7 +232,7 @@ function ResumePageCanvas() {
 				/>
 			)}
 
-			{desktop && !viewing && (
+			{(breakpoint === "tablet" || (desktop && panelHidden)) && !viewing && (
 				<Button
 					variant="secondary"
 					size="sm"
@@ -369,12 +375,13 @@ function AddPage({ height }: { height: number }) {
 /** A page's own menu: full width, arrange its sections (Design), and Delete page, which says where its sections go. */
 function PageMenu({ pageIndex }: { pageIndex: number }) {
 	const navigate = useNavigate({ from: "/builder/$resumeId" });
-	const page = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.layout.pages[pageIndex] ?? null);
+	const data = useResumeData();
+	const page = data?.metadata.layout.pages[pageIndex] ?? null;
 	const pageCount = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.layout.pages.length);
 	const updateResumeData = useResumeStore((state) => state.updateResumeData);
-	if (!page) return null;
+	if (!page || !data) return null;
 	const number = i18n.number(pageIndex + 1);
-	const sections = page.main.length + page.sidebar.length;
+	const sections = filterSections([...page.main, ...page.sidebar], data).length;
 	// Its sections go to the first page that stays.
 	const target = i18n.number(pageIndex === 0 ? 2 : 1);
 

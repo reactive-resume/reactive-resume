@@ -187,7 +187,12 @@ export function SwitchListRow({
 		<ListRow
 			// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- ListRow puts the title inside it; the whole row is the switch's click target
 			render={<label />}
-			className={cn("cursor-pointer", !tall && "min-h-12 py-1.5", wrap && "[&_.truncate]:whitespace-normal", className)}
+			className={cn(
+				"cursor-pointer",
+				!tall && "min-h-12 py-0 sm:min-h-12",
+				wrap && "[&_.truncate]:whitespace-normal",
+				className,
+			)}
 			title={label}
 			subtitle={description}
 			trailing={<Switch checked={checked} onCheckedChange={onCheckedChange} aria-label={label} />}

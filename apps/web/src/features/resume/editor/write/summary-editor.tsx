@@ -9,19 +9,24 @@ export function SummaryEditor({ locked }: { locked: boolean }) {
 	const updateResumeData = useUpdateResumeData();
 
 	return (
-		<RichTextEditor
-			label={t`Summary`}
-			value={content}
-			disabled={locked}
-			hint={<Trans>2–3 sentences reads best</Trans>}
-			onChange={(html, options) =>
-				updateResumeData(
-					(draft) => {
-						draft.summary.content = html;
-					},
-					{ coalesceKey: "summary.content", ...options },
-				)
-			}
-		/>
+		<div className="grid gap-1.5">
+			<span className="t-small font-medium text-ink-2">
+				<Trans>Text</Trans>
+			</span>
+			<RichTextEditor
+				label={t`Summary`}
+				value={content}
+				disabled={locked}
+				hint={<Trans>2–3 sentences reads best</Trans>}
+				onChange={(html, options) =>
+					updateResumeData(
+						(draft) => {
+							draft.summary.content = html;
+						},
+						{ coalesceKey: "summary.content", ...options },
+					)
+				}
+			/>
+		</div>
 	);
 }

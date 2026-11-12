@@ -14,6 +14,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
+import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { formatList } from "@reactive-resume/utils/locale";
@@ -157,8 +158,8 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 	const aiLine =
 		!providerState.isUnavailable && !hasUsableProvider ? (
-			<CheckAiLine lead={<Trans>Working a term into your writing needs AI.</Trans>}>
-				<Trans>Matching terms and adding Skills work without it.</Trans>
+			<CheckAiLine lead={<Trans>The assistant needs AI.</Trans>}>
+				<Trans>Matching, Add to Skills and hiding a term work without it.</Trans>
 			</CheckAiLine>
 		) : null;
 
@@ -170,7 +171,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 		);
 	if (match.applicationFailed)
 		return (
-			<div role="alert">
+			<div role="alert" className="flex items-center justify-between gap-2 text-sm text-danger-text">
 				<p>
 					<Trans>Couldn't load the linked posting.</Trans>
 				</p>
@@ -219,6 +220,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 			{!result ? (
 				<p className="flex items-center gap-2 text-sm text-ink-2">
+					<Spinner decorative className="size-3.5" />
 					<Trans>Reading the posting…</Trans>
 				</p>
 			) : result.total === 0 ? (
@@ -293,13 +295,10 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 										<Trans>If it's part of your experience, add it where it belongs.</Trans>
 									</p>
 									<div className="grid justify-items-start gap-0.5">
-										{/* Only a skill's name goes into Skills as it is; a phrase from the posting needs a place in context. */}
-										{open.skill && (
-											<Button size="sm" variant="soft" disabled={locked} onClick={() => addToSkills(open)}>
-												<Icon name="plus" size={16} />
-												<Trans>Add to Skills</Trans>
-											</Button>
-										)}
+										<Button size="sm" variant="soft" disabled={locked} onClick={() => addToSkills(open)}>
+											<Icon name="plus" size={16} />
+											<Trans>Add to Skills</Trans>
+										</Button>
 										{hasUsableProvider && (
 											<Button
 												size="sm"
@@ -510,7 +509,7 @@ function CopyOrLink({ application, onDone }: CopyOrLinkProps) {
 			<div className="flex flex-wrap gap-1.5">
 				<Button
 					size="sm"
-					variant="secondary"
+					variant="soft"
 					disabled={copying || linking}
 					onClick={() =>
 						void makeCopy({ applicationId: application.id, company: application.company }).then((saved) => {
@@ -580,8 +579,7 @@ function PostingSource({ application, contextOnly }: { application: JobMatch["ap
 				<span className="grid min-w-0 flex-1">
 					<b className="truncate t-row-title">{application.company}</b>
 					<span className="text-xs text-ink-3">
-						{application.role} ·{" "}
-						{contextOnly ? <Trans>For this visit only</Trans> : <Trans>Posting from the linked application</Trans>}
+						{application.role} · <Trans>saved job</Trans>
 					</span>
 				</span>
 				<Button
@@ -651,23 +649,35 @@ function ApplicationPicker({ value, onChange }: { value: string | null; onChange
 	const choices = (applications ?? []).filter((application) => application.status !== "closed");
 	// Linking changes the document's details, which a locked document keeps as they are.
 	const locked = useIsResumeLocked();
+	const selected = choices.find((application) => application.id === value);
 
 	return (
-		<NativeSelect
-			aria-label={t`Link an application`}
-			disabled={locked}
-			value={value ?? ""}
-			onChange={(event) => event.target.value && onChange(event.target.value)}
-		>
-			<option value="" disabled>
-				{choices.length > 0 ? t`Link an application…` : t`No applications yet`}
-			</option>
-			{choices.map((application) => (
-				<option key={application.id} value={application.id}>
-					{application.role} · {application.company}
+		<div className="relative">
+			{selected && (
+				<span
+					aria-hidden="true"
+					className="pointer-events-none absolute start-2 top-1/2 z-10 grid size-6 -translate-y-1/2 place-items-center rounded-xs bg-sunken t-caption text-ink-2"
+				>
+					{selected.company.slice(0, 1).toUpperCase()}
+				</span>
+			)}
+			<NativeSelect
+				className={selected ? "ps-10" : undefined}
+				aria-label={t`Link an application`}
+				disabled={locked}
+				value={value ?? ""}
+				onChange={(event) => event.target.value && onChange(event.target.value)}
+			>
+				<option value="" disabled>
+					{choices.length > 0 ? t`Link an application…` : t`No applications yet`}
 				</option>
-			))}
-		</NativeSelect>
+				{choices.map((application) => (
+					<option key={application.id} value={application.id}>
+						{application.company} · {application.role}
+					</option>
+				))}
+			</NativeSelect>
+		</div>
 	);
 }
 
@@ -825,6 +835,9 @@ function SaveAsApplication() {
 				void save("copy");
 			}}
 		>
+			<h3 className="t-row-title">
+				<Trans>Save as a job</Trans>
+			</h3>
 			<div className="grid gap-3">
 				<div className="grid gap-1">
 					<Label htmlFor={companyId}>
@@ -842,7 +855,7 @@ function SaveAsApplication() {
 			<p className="text-xs leading-[17px] text-ink-3">
 				<Trans>The copy gets the job's posting and keeps this resume as it is for other jobs.</Trans>
 			</p>
-			<div className="flex flex-wrap gap-1.5">
+			<div className="grid justify-items-start gap-1.5">
 				<Button size="sm" variant="soft" type="submit" disabled={!company.trim() || !role.trim() || busy}>
 					<Icon name="copy" size={16} />
 					<Trans>Save job and make a copy</Trans>
@@ -876,7 +889,7 @@ function askAssistant(label: string, pastedPosting: string | null) {
 function ApplicationFooter({ application }: { application: NonNullable<JobMatch["application"]> }) {
 	const { makeCopy, isPending } = useMakeCopy();
 	return (
-		<div className="mt-auto pb-2">
+		<div className="pb-2">
 			<List cap>
 				<ListRow
 					title={<Trans>Tailor a copy for {application.company}</Trans>}

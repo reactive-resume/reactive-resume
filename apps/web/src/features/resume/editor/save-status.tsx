@@ -1,3 +1,4 @@
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +31,9 @@ function useDocumentFacts() {
 	const company = application?.company;
 	const standing = company
 		? application.resumeId === id && application.sentResumeVersionId
-			? t`Sent to ${company}`
+			? application.appliedAt
+				? t`Sent ${i18n.date(application.appliedAt, { day: "numeric", month: "short" })}`
+				: t`Sent to ${company}`
 			: t`For ${company}`
 		: isPublic
 			? t`Public`
@@ -55,6 +58,7 @@ export function SaveStatus() {
 			!(await confirm(t`Reload the saved version?`, {
 				description: t`Your edits will be kept as a separate resume in Documents before loading the saved version.`,
 				confirmText: t`Keep a copy and reload`,
+				cancelText: t`Keep editing`,
 			}))
 		)
 			return;
@@ -99,7 +103,7 @@ export function SaveStatus() {
 			</span>
 			{status === "saving" && (
 				<>
-					<Spinner decorative className="size-3" />
+					<Spinner decorative className="size-3.5" />
 					<Trans>Saving…</Trans>
 				</>
 			)}

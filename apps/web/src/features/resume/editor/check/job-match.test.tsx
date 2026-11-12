@@ -8,6 +8,7 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const api = vi.hoisted(() => ({
 	navigate: vi.fn(),
+	edit: vi.fn(),
 	application: { id: "job-a", company: "Example", role: "Engineer", jobDescription: null as string | null },
 	load: vi.fn(async () => api.application),
 	update: vi.fn(async (input: { jobDescription: string }) => {
@@ -30,6 +31,7 @@ vi.mock("@/libs/orpc/client", () => ({
 				queryOptions: () => ({ queryKey: ["applications", "summary"], queryFn: async () => [] }),
 			},
 			update: { mutationOptions: () => ({ mutationFn: api.update }) },
+			create: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 		},
 		documents: {
 			key: () => ["documents"],
@@ -50,7 +52,7 @@ vi.mock("@tanstack/react-router", () => ({
 	useSearch: () => ({}),
 	Link: ({ children }: { children: React.ReactNode }) => <a href="/dashboard/applications/fixture/fit">{children}</a>,
 }));
-vi.mock("./actions", () => ({ checkStateOf: vi.fn(), editWithUndo: vi.fn() }));
+vi.mock("./actions", () => ({ checkStateOf: vi.fn(), editWithUndo: api.edit }));
 vi.mock("@reactive-resume/resume/ats-pdf", () => ({ matchJobDescription: () => ({ terms: [] }) }));
 
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
@@ -123,7 +125,7 @@ it("keeps the selected application's posting isolated from a different stored li
 	resolve({ id: "job-b", company: "Selected company", role: "Analyst", jobDescription: "Selected posting" });
 	await waitFor(() => expect(screen.getByTestId("posting").textContent).toBe("Selected posting"));
 	expect(screen.getByText("Selected company")).toBeTruthy();
-	expect(screen.getByText("Analyst · For this visit only")).toBeTruthy();
+	expect(screen.getByText("Analyst · saved job")).toBeTruthy();
 
 	fireEvent.click(screen.getByRole("button", { name: "Change" }));
 	fireEvent.change(screen.getByRole("combobox", { name: "Link an application" }), { target: { value: "job-c" } });
@@ -158,5 +160,41 @@ it("shows a failed selected posting with retry instead of matching an unrelated 
 	expect(screen.getByTestId("posting").textContent).toBe("");
 	fireEvent.click(screen.getByRole("button", { name: "Retry" }));
 	await waitFor(() => expect(screen.getByTestId("posting").textContent).toBe("Selected posting"));
+	client.clear();
+});
+
+it("offers Add to Skills for an uncatalogued term and adds only the chosen wording", () => {
+	i18n.loadAndActivate({ locale: "en", messages: {} });
+	const data = structuredClone(defaultResumeData);
+	const client = new QueryClient();
+	render(
+		<QueryClientProvider client={client}>
+			<I18nProvider i18n={i18n}>
+				<JobMatchTab
+					data={data}
+					match={{
+						application: null,
+						posting: "Work with real users",
+						result: {
+							found: [],
+							missing: [{ term: "real users", label: "real users", jdCount: 2, resumeCount: 0, weight: 1 }],
+							total: 1,
+						},
+						hiddenTerms: [],
+						contextOnly: false,
+						applicationLoading: false,
+						applicationFailed: false,
+						retryApplication: vi.fn(),
+					}}
+				/>
+			</I18nProvider>
+		</QueryClientProvider>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "real users" }));
+	fireEvent.click(screen.getByRole("button", { name: "Add to Skills" }));
+	const edit = api.edit.mock.calls.at(-1)?.[0];
+	expect(edit).toBeTypeOf("function");
+	edit(data);
+	expect(data.sections.skills.items.at(-1)?.name).toBe("real users");
 	client.clear();
 });

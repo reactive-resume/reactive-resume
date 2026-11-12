@@ -165,7 +165,6 @@ export function WebsiteField({ label, value, onChange, allowInlineLink = true }:
 							aria-label={typeof label === "string" ? label : allowInlineLink ? t`Link` : t`Website`}
 							value={value}
 							onChange={onChange}
-							hideLabelButton={inline}
 							onBlur={() => setTouched(true)}
 						/>
 					}

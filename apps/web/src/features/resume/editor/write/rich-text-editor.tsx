@@ -34,7 +34,7 @@ function RichTextPreview({
 	disabled = false,
 	className,
 	id,
-	heightClassName = "max-h-[360px] min-h-[88px]",
+	heightClassName = "max-h-[360px] min-h-11",
 	onFocusRequest,
 }: RichTextPreviewProps) {
 	const html = useMemo(() => toPreviewHtml(value), [value]);

@@ -2,10 +2,10 @@ import type { Basics, CustomField } from "@reactive-resume/schema/resume/data";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { generateId } from "@reactive-resume/utils/string";
 import { TextField, validateEmail, WebsiteField } from "./fields";
 import { PictureSettings } from "./picture-settings";
@@ -75,6 +75,9 @@ export function BasicsView({ locked }: { locked: boolean }) {
 						})
 					}
 				/>
+				<p className="col-span-full -mt-1 t-caption text-ink-3">
+					<Trans>The label prints in place of the address. Empty prints the address.</Trans>
+				</p>
 				<div className="col-span-full grid gap-1.5">
 					<span className="text-[13px]/[18px] font-medium">
 						<Trans>Custom fields</Trans>
@@ -104,75 +107,84 @@ type CustomFieldsProps = {
 	edit: (key: string, mutate: (list: CustomField[]) => void) => void;
 };
 export function CustomFields({ fields, locked, edit }: CustomFieldsProps) {
+	const [openLink, setOpenLink] = useState<string | null>(null);
 	return (
 		<div className="col-span-full grid gap-2">
 			{fields.map((field, index) => (
-				<div key={field.id} className="flex items-center gap-1.5">
-					<IconPicker
-						disabled={locked}
-						value={field.icon}
-						popoverProps={{ modal: true }}
-						onChange={(icon) =>
-							edit(`${field.id}.icon`, (list) => {
-								const target = list[index];
-								if (target) target.icon = icon;
-							})
-						}
-					/>
-					<Input
-						disabled={locked}
-						aria-label={t`Field ${i18n.number(index + 1)}`}
-						dir="auto"
-						value={field.text}
-						onChange={(event) =>
-							edit(`${field.id}.text`, (list) => {
-								const target = list[index];
-								if (target) target.text = event.target.value;
-							})
-						}
-					/>
-					<Popover>
-						<PopoverTrigger
-							render={
-								<IconButton
-									disabled={locked}
-									icon={field.link ? "link-simple-horizontal" : "link-simple-horizontal-break"}
-									label={field.link ? t`Edit link` : t`Add a link`}
-									className={field.link ? "text-accent-text" : "text-ink-3"}
-								/>
+				<div key={field.id} className="grid gap-1.5">
+					<div className="flex items-center gap-1.5">
+						<IconPicker
+							disabled={locked}
+							value={field.icon}
+							popoverProps={{ modal: true }}
+							onChange={(icon) =>
+								edit(`${field.id}.icon`, (list) => {
+									const target = list[index];
+									if (target) target.icon = icon;
+								})
 							}
 						/>
-						<PopoverContent align="end" className="w-72">
-							<Input
-								disabled={locked}
-								type="url"
-								dir="ltr"
-								aria-label={t`Link address`}
-								placeholder="https://"
-								value={field.link}
-								onChange={(event) =>
-									edit(`${field.id}.link`, (list) => {
-										const target = list[index];
-										if (target) target.link = event.target.value;
-									})
+						<Input
+							disabled={locked}
+							aria-label={t`Field ${i18n.number(index + 1)}`}
+							dir="auto"
+							value={field.text}
+							onChange={(event) =>
+								edit(`${field.id}.text`, (list) => {
+									const target = list[index];
+									if (target) target.text = event.target.value;
+								})
+							}
+						/>
+						<IconButton
+							id={`custom-link-${field.id}`}
+							disabled={locked}
+							icon={field.link ? "link-simple-horizontal" : "link-simple-horizontal-break"}
+							label={field.link ? t`Edit link` : t`Add a link`}
+							aria-expanded={openLink === field.id}
+							className={field.link ? "text-accent-text" : "text-ink-3"}
+							onClick={() => setOpenLink(openLink === field.id ? null : field.id)}
+						/>
+						<IconButton
+							icon="arrow-up"
+							label={t`Move field up`}
+							size="icon-sm"
+							disabled={locked || index === 0}
+							onClick={() => edit(`${field.id}.move`, (list) => list.splice(index - 1, 0, ...list.splice(index, 1)))}
+						/>
+						<IconButton
+							icon="x"
+							label={t`Remove field`}
+							disabled={locked}
+							size="icon-sm"
+							onClick={() => edit(`${field.id}.remove`, (list) => list.splice(index, 1))}
+						/>
+					</div>
+					{openLink === field.id && (
+						<Input
+							disabled={locked}
+							type="url"
+							dir="ltr"
+							aria-label={t`Link address`}
+							placeholder="https://"
+							value={field.link}
+							className="ms-10 w-[calc(100%-40px)]"
+							autoFocus
+							onKeyDown={(event) => {
+								if (event.key === "Escape") {
+									event.stopPropagation();
+									setOpenLink(null);
+									document.getElementById(`custom-link-${field.id}`)?.focus();
 								}
-							/>
-						</PopoverContent>
-					</Popover>
-					<IconButton
-						icon="arrow-up"
-						label={t`Move field up`}
-						size="icon-sm"
-						disabled={locked || index === 0}
-						onClick={() => edit(`${field.id}.move`, (list) => list.splice(index - 1, 0, ...list.splice(index, 1)))}
-					/>
-					<IconButton
-						icon="x"
-						label={t`Remove field`}
-						disabled={locked}
-						size="icon-sm"
-						onClick={() => edit(`${field.id}.remove`, (list) => list.splice(index, 1))}
-					/>
+							}}
+							onChange={(event) =>
+								edit(`${field.id}.link`, (list) => {
+									const target = list[index];
+									if (target) target.link = event.target.value;
+								})
+							}
+						/>
+					)}
 				</div>
 			))}
 			<button

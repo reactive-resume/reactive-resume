@@ -78,6 +78,7 @@ export function FontFamilyCombobox({
 	placeholder,
 }: FontFamilyComboboxProps) {
 	const [query, setQuery] = useState("");
+	const [listHeight, setListHeight] = useState(322);
 	const [uncontrolled, setUncontrolled] = useState(defaultValue ?? null);
 	const selected =
 		FONT_FAMILY_OPTIONS.find((option) => option.value === (value === undefined ? uncontrolled : value)) ?? null;
@@ -108,6 +109,8 @@ export function FontFamilyCombobox({
 			onInputValueChange={setQuery}
 			onOpenChange={(open) => {
 				if (!open) setQuery("");
+				else if (triggerRef.current)
+					setListHeight(Math.max(136, window.innerHeight - triggerRef.current.getBoundingClientRect().top - 80));
 			}}
 			onOpenChangeComplete={(open) => {
 				if (open && selected && !query) {
@@ -183,7 +186,7 @@ export function FontFamilyCombobox({
 						rowCount={options.length}
 						rowHeight={34}
 						overscanCount={4}
-						style={{ height: Math.min(322, options.length * 34), scrollbarWidth: "thin" }}
+						style={{ height: Math.min(listHeight, options.length * 34), scrollbarWidth: "thin" }}
 					/>
 				</ComboboxList>
 			</ComboboxContent>

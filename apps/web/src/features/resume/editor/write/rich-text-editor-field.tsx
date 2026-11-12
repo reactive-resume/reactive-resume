@@ -7,7 +7,8 @@ import type { ReactNode } from "react";
 import { Toolbar } from "@base-ui/react/toolbar";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { NodeSelection, TextSelection } from "@tiptap/pm/state";
+import { NodeSelection, Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -15,12 +16,11 @@ import {
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuGroup,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -195,7 +195,7 @@ export type RichTextEditorProps = {
 	className?: string;
 	/** The text area's id, so other controls can focus it. */
 	id?: string;
-	/** Replaces the text area's default height (88px to 360px). */
+	/** Replaces the text area's default height (44px to 360px). */
 	heightClassName?: string;
 	/** Improve's presets for a cover letter's body, instead of the resume ones. */
 	improve?: ImproveKind | undefined;
@@ -216,7 +216,7 @@ export function RichTextEditor({
 	disabled = false,
 	className,
 	id,
-	heightClassName = "max-h-[360px] min-h-[88px]",
+	heightClassName = "max-h-[360px] min-h-11",
 	focusRequest,
 	improve,
 }: RichTextEditorProps & { focusRequest?: FocusRequest }) {
@@ -314,6 +314,7 @@ export function RichTextEditor({
 					}
 				: { characters: 0, active: [] as boolean[], canImprove: false, formatting: DEFAULT_FORMATTING },
 	});
+	const characters = editor?.getText().length ?? 0;
 	const menus = useToolbarMenus(editor, () => setFocused(false));
 	useEffect(() => {
 		const link = actions.find((action) => action.icon === "link-simple-horizontal");
@@ -345,6 +346,26 @@ export function RichTextEditor({
 		return () => cancelAnimationFrame(frame);
 	}, [editor, focusRequest]);
 
+	useEffect(() => {
+		if (!editor || !improving) return;
+		const key = new PluginKey("improve-line");
+		editor.registerPlugin(
+			new Plugin({
+				key,
+				props: {
+					decorations: ({ doc }) => {
+						const { from, to, text } = improving;
+						if (to > doc.content.size || doc.textBetween(from, to) !== text) return null;
+						return DecorationSet.create(doc, [Decoration.node(from - 1, to + 1, { class: "bg-accent-soft" })]);
+					},
+				},
+			}),
+		);
+		return () => {
+			editor.unregisterPlugin(key);
+		};
+	}, [editor, improving]);
+
 	const editing = focused || improving !== null || menus.open;
 
 	const acceptImprove = (line: ImproveLine, text: string, aiOperationIds?: string[]) => {
@@ -366,7 +387,7 @@ export function RichTextEditor({
 	};
 
 	// Smaller buttons in a narrow field (the builder sidebar), so the toolbar stays one row under the text.
-	const buttonSize = mobile ? "size-11" : "size-7 [--icon-size:16px]";
+	const buttonSize = mobile ? "size-11" : "size-[26px] [--icon-size:16px]";
 	const toolbarButtons = (
 		<>
 			{actions.map((action, index) => (
@@ -396,7 +417,7 @@ export function RichTextEditor({
 			<Toolbar.Button
 				type="button"
 				aria-expanded={improving !== null}
-				disabled={ai.isUnavailable || (!state?.canImprove && improving === null)}
+				disabled={ai.isUnavailable || !characters || (!state?.canImprove && improving === null)}
 				title={state?.canImprove ? undefined : t`Put the caret in a line to improve it`}
 				onMouseDown={(event) => event.preventDefault()}
 				onClick={() => (improving ? setImproving(null) : startImprove())}
@@ -418,7 +439,7 @@ export function RichTextEditor({
 		<div className="flex items-center justify-between gap-3 border-t border-line px-3 py-1.5 text-xs text-ink-3">
 			<span>{hint ?? <Trans>Markdown shortcuts on</Trans>}</span>
 			<span className="font-mono">
-				<Plural value={state?.characters ?? 0} one="# character" other="# characters" />
+				<Plural value={characters} one="# character" other="# characters" />
 			</span>
 		</div>
 	);
@@ -457,11 +478,11 @@ export function RichTextEditor({
 					)}
 				</div>
 				{/* Formatting sits above the focused text; keyboard and menu actions keep its selection. */}
-				{(editing || (!disabled && state?.characters === 0)) && !readOnlyTable && !mobile && (
+				{(editing || (!disabled && characters === 0)) && !readOnlyTable && !mobile && (
 					<Toolbar.Root
 						ref={toolbar}
 						aria-label={t`Formatting`}
-						className="order-first flex gap-0.5 border-b border-line px-1 py-1"
+						className="order-first flex gap-0 border-b border-line px-1 py-1"
 					>
 						{toolbarButtons}
 					</Toolbar.Root>
@@ -495,9 +516,9 @@ export function RichTextEditor({
 				{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
 				{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
 
-				{editing && !improving && footer}
+				{editing && !improving && !!characters && footer}
 			</div>
-			{!editing && !disabled && state?.characters === 0 && !mobile && (
+			{!editing && !disabled && characters === 0 && !mobile && (
 				<p className="mt-2 text-xs/4 text-ink-3">
 					<Trans>Improve works on a line once you have written one.</Trans>
 				</p>
@@ -614,46 +635,35 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 						<Trans>Highlight</Trans>
 					</DropdownMenuCheckboxItem>
 
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger>
-							<Icon name="palette" />
+					<DropdownMenuGroup>
+						<DropdownMenuLabel>
 							<Trans>Text color</Trans>
-						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent {...menus.contentProps}>
-							<DropdownMenuRadioGroup
-								value={formatting.color}
-								onValueChange={(color: string) => (color ? chain().setColor(color).run() : chain().unsetColor().run())}
-							>
-								{TEXT_COLORS.map((color) => (
-									<DropdownMenuRadioItem key={color || "default"} value={color}>
-										<span
-											aria-hidden="true"
-											className="size-3.5 rounded-sm border border-line-2"
-											style={{ background: color || "var(--ink)" }}
-										/>
-										{colorLabels[color]}
-									</DropdownMenuRadioItem>
-								))}
-							</DropdownMenuRadioGroup>
-						</DropdownMenuSubContent>
-					</DropdownMenuSub>
-
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger>
-							<Icon name="text-aa" />
+						</DropdownMenuLabel>
+						<div className="flex gap-1.5 px-2.5 pt-0.5 pb-2">
+							{TEXT_COLORS.map((color) => (
+								<button
+									key={color || "default"}
+									type="button"
+									aria-label={colorLabels[color]}
+									aria-pressed={formatting.color === color}
+									className="size-6 rounded-full border border-line-2 aria-pressed:outline-2 aria-pressed:outline-offset-2 aria-pressed:outline-ink"
+									style={{ background: color || "var(--ink)" }}
+									onClick={() => (color ? chain().setColor(color).run() : chain().unsetColor().run())}
+								/>
+							))}
+						</div>
+					</DropdownMenuGroup>
+					<DropdownMenuRadioGroup value={formatting.block} onValueChange={(level: number) => setBlock(level)}>
+						<DropdownMenuLabel>
 							<Trans>Text style</Trans>
-						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent {...menus.contentProps}>
-							<DropdownMenuRadioGroup value={formatting.block} onValueChange={(level: number) => setBlock(level)}>
-								{blocks.map((block) => (
-									<DropdownMenuRadioItem key={block.level} value={block.level}>
-										<Icon name={block.icon} />
-										{block.label}
-									</DropdownMenuRadioItem>
-								))}
-							</DropdownMenuRadioGroup>
-						</DropdownMenuSubContent>
-					</DropdownMenuSub>
+						</DropdownMenuLabel>
+						{blocks.map((block) => (
+							<DropdownMenuRadioItem key={block.level} value={block.level}>
+								<Icon name={block.icon} />
+								<span>{block.label}</span>
+							</DropdownMenuRadioItem>
+						))}
+					</DropdownMenuRadioGroup>
 
 					<DropdownMenuSeparator />
 					<DropdownMenuItem onClick={() => chain().increaseIndent().run()}>

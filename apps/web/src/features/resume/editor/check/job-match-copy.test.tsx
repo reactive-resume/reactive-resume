@@ -146,7 +146,7 @@ it("picking a saved job for a base resume asks whether to copy or link, and copi
 	mount();
 
 	const picker = await screen.findByRole("combobox", { name: "Link an application" });
-	await waitFor(() => expect(screen.getByRole("option", { name: "Director · Northwind Labs" })).toBeTruthy());
+	await waitFor(() => expect(screen.getByRole("option", { name: "Northwind Labs · Director" })).toBeTruthy());
 	fireEvent.change(picker, { target: { value: "job-northwind" } });
 	expect(api.link).not.toHaveBeenCalled();
 	fireEvent.click(screen.getByRole("button", { name: "Make a copy for this job" }));
@@ -197,7 +197,7 @@ it("keeps saved-job choices visible when copying or linking fails", async () => 
 	api.link.mockReset().mockRejectedValueOnce(new Error("Network error")).mockResolvedValue({ id: "base-resume" });
 	mount();
 	const picker = await screen.findByRole("combobox", { name: "Link an application" });
-	await screen.findByRole("option", { name: "Engineer · Retry Co" });
+	await screen.findByRole("option", { name: "Retry Co · Engineer" });
 	fireEvent.change(picker, { target: { value: "job-retry" } });
 	fireEvent.click(screen.getByRole("button", { name: "Make a copy for this job" }));
 	await waitFor(() => expect(api.copyForJob).toHaveBeenCalledTimes(1));

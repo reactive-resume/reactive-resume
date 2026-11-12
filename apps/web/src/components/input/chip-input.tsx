@@ -34,7 +34,6 @@ import { isImeComposing } from "@/libs/keyboard";
 import { DRAG_SETTLE } from "@/libs/motion";
 
 const RETURN_KEY = "Enter";
-const COMMA_KEY = ",";
 const EMPTY_CHIPS: string[] = [];
 
 type ChipItemProps = {
@@ -115,7 +114,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 					<button
 						type="button"
 						tabIndex={-1}
-						className="rounded-sm p-0.5 text-ink/70 transition-colors hover:bg-sunken hover:text-ink focus:outline-none"
+						className="hidden rounded-sm p-0.5 text-ink/70 transition-colors group-focus-within/chip:inline-flex group-hover/chip:inline-flex hover:bg-sunken hover:text-ink focus:outline-none"
 						aria-label={t({
 							comment:
 								"Screen reader label for button that edits a keyword chip. Variable is the current keyword text.",
@@ -392,17 +391,19 @@ export function ChipInput({
 				<ChipDragOverlay activeChip={activeChip} />
 			</DndContext>
 
-			<p className="text-xs text-ink-3">
-				{allowCommas ? (
-					<Trans>
-						Press <Kbd>{RETURN_KEY}</Kbd> to add or save the current keyword.
-					</Trans>
-				) : (
-					<Trans>
-						Press <Kbd>{RETURN_KEY}</Kbd> or <Kbd>{COMMA_KEY}</Kbd> to add or save the current keyword.
-					</Trans>
-				)}
-			</p>
+			{!suggestions && (
+				<p className="text-xs text-ink-3">
+					{allowCommas ? (
+						<Trans>
+							Press <Kbd>{RETURN_KEY}</Kbd> to add or save the current keyword.
+						</Trans>
+					) : (
+						<Trans>
+							<Kbd>{RETURN_KEY}</Kbd> or a comma adds one. Drag to reorder.
+						</Trans>
+					)}
+				</p>
+			)}
 
 			{offered.length > 0 && (
 				<div className="grid gap-1.5">

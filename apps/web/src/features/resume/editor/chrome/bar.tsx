@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -11,7 +11,9 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { loadAssistantPanel } from "@/features/assistant/dock";
 import { useAssistantShortcutEnabled } from "@/features/assistant/shortcut";
+import { useResumeData, useResumeStore } from "@/features/resume/builder/draft";
 import { BackLink, DrawerControls } from "@/features/resume/editor/chrome";
+import { pendingProposals } from "@/features/resume/editor/proposals/proposals";
 import { useEditorStore } from "@/features/resume/editor/store";
 
 type EditorBarFrameProps = {
@@ -105,13 +107,17 @@ function AssistantToggle() {
 	const open = useEditorStore((state) => state.assistantOpen);
 	const setOpen = useEditorStore((state) => state.setAssistantOpen);
 	const labelled = useBreakpoint() === "wide";
+	const data = useResumeData();
+	const assistantProposals = useEditorStore((state) => state.assistantProposals);
+	const applications = useResumeStore((state) => state.proposalApplications);
+	const proposed = data ? pendingProposals(data, assistantProposals, undefined, applications).length : 0;
 	const preload = () => void loadAssistantPanel();
 
 	if (!labelled) {
 		return (
 			<IconButton
 				icon="sparkle"
-				label={t`Assistant`}
+				label={proposed ? t`Assistant · ${proposed} proposed` : t`Assistant`}
 				shortcut={shortcutEnabled ? "⌘J" : ""}
 				aria-pressed={open}
 				data-assistant-toggle=""
@@ -125,6 +131,7 @@ function AssistantToggle() {
 	const button = (
 		<Button
 			variant="ghost"
+			aria-label={t`Assistant`}
 			aria-pressed={open}
 			data-assistant-toggle=""
 			onPointerEnter={preload}
@@ -133,6 +140,11 @@ function AssistantToggle() {
 		>
 			<Icon name="sparkle" />
 			<Trans>Assistant</Trans>
+			{proposed > 0 && (
+				<span data-assistant-pending className="rounded-xs bg-accent-soft px-1.5 t-caption text-accent-text">
+					<Plural value={proposed} one="# proposed" other="# proposed" />
+				</span>
+			)}
 		</Button>
 	);
 	if (!shortcutEnabled) return button;
@@ -195,12 +207,12 @@ export function DownloadButtons({
 			size="icon"
 			disabled={disabled || busy}
 			aria-label={t`More download formats`}
-			className="w-[34px] [--icon-size:16px]"
+			className="group w-[34px] [--icon-size:16px]"
 			onPointerEnter={onPreload}
 			onFocus={onPreload}
 			onClick={renderMore ? undefined : () => setSheetTab("download")}
 		>
-			<Icon name="caret-down" />
+			<Icon name="caret-down" className="group-data-popup-open:rotate-180" />
 		</Button>
 	);
 

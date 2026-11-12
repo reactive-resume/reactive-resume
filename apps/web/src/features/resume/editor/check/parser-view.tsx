@@ -162,7 +162,10 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 						<div key={field.id} className="contents">
 							<dt className="text-ink-3">{field.label}</dt>
 							<dd
-								className={cn("flex min-w-0 items-center gap-2", issue || !field.value ? "text-warn-text" : "text-ink")}
+								className={cn(
+									"flex min-w-0 items-center gap-2",
+									issue ? "text-warn-text" : field.value ? "text-ink" : "text-ink-3",
+								)}
 							>
 								<span className={cn("min-w-0 break-words", field.id !== "dates" && "flex-1")}>
 									{field.value || notFound}

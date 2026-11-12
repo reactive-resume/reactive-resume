@@ -19,6 +19,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { formatList } from "@reactive-resume/utils/locale";
 import { addEntryTo } from "./actions";
 import { EntryRow, moveEntry } from "./entry-row";
+import { TextField } from "./fields";
 import {
 	countEntriesToCheck,
 	getEntries,
@@ -39,6 +40,7 @@ import { undoToast } from "@/features/resume/builder/undo-toast";
 import { PanelBody, PanelHeader } from "@/features/resume/editor/chrome/panel";
 import { usePrompt } from "@/hooks/use-confirm";
 import { dndContextProps } from "@/libs/dnd";
+import { getSectionTitle } from "@/libs/resume/section";
 
 /** The way back to the outline, above every panel below it. */
 export function SectionsCrumb({ children }: { children?: ReactNode }) {
@@ -78,6 +80,7 @@ function SectionBody({ section, locked }: { section: WriteSection; locked: boole
 	const title = useSectionTitle(section);
 	const isSummary = section.kind === "summary";
 	const proposed = useProposedCount(section.id);
+	const update = useUpdateResumeData();
 
 	return (
 		<PanelBody id={`sidebar-${section.id}`} data-section-id={section.id} className="pb-6">
@@ -102,6 +105,30 @@ function SectionBody({ section, locked }: { section: WriteSection; locked: boole
 				}
 			/>
 
+			{section.kind === "custom" && (
+				<fieldset disabled={locked} className="mt-3 grid grid-cols-2 gap-3 border-0 p-0">
+					<TextField
+						label={<Trans>Title</Trans>}
+						value={title}
+						onChange={(title) =>
+							update(
+								(draft) => {
+									const target = getSectionObject(draft, section);
+									if (target) target.title = title;
+								},
+								{ coalesceKey: `${section.id}:title` },
+							)
+						}
+					/>
+					<TextField label={<Trans>Kind</Trans>} value={getSectionTitle(section.type)} readOnly onChange={() => {}} />
+					<p className="col-span-full t-caption text-ink-3">
+						<Trans>
+							The kind is chosen when the section is added and can be any of the 13. Entries use that kind's form;
+							Summary gives entries of one rich text.
+						</Trans>
+					</p>
+				</fieldset>
+			)}
 			{isSummary ? (
 				<fieldset disabled={locked} className="m-0 mt-3 min-w-0 border-0 p-0">
 					<SummaryEditor locked={locked} />

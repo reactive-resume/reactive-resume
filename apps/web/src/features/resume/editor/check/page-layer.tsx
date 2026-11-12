@@ -2,6 +2,7 @@ import "./page-layer.css";
 import type { CheckIssue } from "./issues";
 import type { PageMap, PageMapNode, PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 import type { CSSProperties } from "react";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
@@ -14,6 +15,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { isSameSelection, useEditorStore } from "../store";
 import { findEntry } from "../write/model";
 import { scrollToIssue, useCheckActions } from "./actions";
+import { TermHighlights } from "./term-highlights";
 import { useCheck } from "./use-check";
 import { getPdfFindingMessage } from "@/features/ats-checker/messages";
 import { useResumeStore } from "@/features/resume/builder/draft";
@@ -81,13 +83,18 @@ function targetsMentioning(data: ResumeData, term: string): PageMapTarget[] {
 	return targets;
 }
 
-type CheckPageLayerProps = { pageIndex: number; pageMap: PageMap | undefined };
+type CheckPageLayerProps = {
+	pageIndex: number;
+	pageMap: PageMap | undefined;
+	document: PDFDocumentProxy;
+	pageScale: number;
+};
 
 /**
  * Check's marks on one page: numbered warn pins with a wavy underline for open issues, numbered accent markers for
  * proposed edits (while Writing is open), and a highlight on the entries that mention the picked job-match term.
  */
-export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
+export function CheckPageLayer({ pageIndex, pageMap, document, pageScale }: CheckPageLayerProps) {
 	const check = useCheck();
 	const applications = useResumeStore((state) => state.proposalApplications);
 	const tab = useEditorStore((state) => state.checkTab);
@@ -98,8 +105,6 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	const breakpoint = useBreakpoint();
 	const onPage = breakpoint === "mobile";
 	const page = pageMap?.pages[pageIndex];
-
-	const highlighted = check && highlightTerm && tab === "match" ? targetsMentioning(check.data, highlightTerm) : [];
 
 	if (!check || !pageMap || !page || page.width <= 0 || page.height <= 0) return null;
 
@@ -144,21 +149,11 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				})
 			: [];
 
-	const tinted = highlighted.flatMap((target) =>
-		pageMap.nodes.filter((node) => node.page === pageIndex && isSameSelection(toTarget(node), target)),
-	);
-
 	return (
 		<div data-slot="check-page-layer" className="pointer-events-none absolute inset-0">
-			{tinted.map((node) => (
-				<div
-					key={`tint:${node.key}:${node.y}`}
-					aria-hidden="true"
-					className="absolute -m-[3px] rounded-md bg-warn/30 p-[3px] mix-blend-multiply"
-					style={boxStyle(node, page)}
-				/>
-			))}
-
+			{tab === "match" && highlightTerm && (
+				<TermHighlights document={document} pageIndex={pageIndex} scale={pageScale} term={highlightTerm} />
+			)}
 			{pins.map(({ issue, node, stack }) => {
 				const isSelected = selected === issue.key;
 				return (

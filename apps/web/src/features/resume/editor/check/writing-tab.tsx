@@ -26,6 +26,7 @@ import { mapWritingReview, editWritingProposal } from "./review";
 import { AiResultUsage } from "@/features/ai/usage";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
+import { formatVersionTime } from "@/features/resume/share/format";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { AiProviderPicker } from "@/features/settings/integrations/components/ai-provider-picker";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -144,9 +145,22 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 
 	if (!hasUsableProvider && !review)
 		return (
-			<CheckAiLine lead={<Trans>Writing review needs AI.</Trans>}>
-				<Trans>Issues and Job match work without it.</Trans>
-			</CheckAiLine>
+			<div>
+				<CheckAiLine lead={<Trans>Writing review needs AI.</Trans>}>
+					<Trans>Issues and Job match work without it.</Trans>
+				</CheckAiLine>
+				{(["issues", "match"] as const).map((tab) => (
+					<Button
+						key={tab}
+						variant="ghost"
+						className="mt-3 flex w-full justify-between"
+						onClick={() => useEditorStore.setState({ checkTab: tab })}
+					>
+						{tab === "issues" ? <Trans>Issues</Trans> : <Trans>Job match</Trans>}
+						<Icon name="caret-right" />
+					</Button>
+				))}
+			</div>
 		);
 
 	if (isPending) {
@@ -253,7 +267,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 			<div className="flex items-start justify-between gap-2">
 				{reviewedAt && (
 					<p className="text-xs text-ink-3">
-						<Trans>Reviewed {reviewedAt.toLocaleString(i18n.locale)}</Trans>
+						<Trans>Reviewed {formatVersionTime(reviewedAt, i18n.locale)}</Trans>
 						{reviewUsage?.models.map((model) => (
 							<span key={model.providerId}>
 								{" "}
@@ -284,6 +298,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 			{proposals.length > 0 && (
 				<div className="check-writing-proposals mt-1">
 					<ChangeSet
+						compact
 						proposals={proposals}
 						states={proposals.map((proposal) => getProposalState(data, proposal, applications))}
 						locked={locked}
