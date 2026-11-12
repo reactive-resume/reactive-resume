@@ -76,27 +76,33 @@ describe("special characters in exported PDFs (#3106)", () => {
 		},
 	);
 
-	it("embeds Georgian glyphs through the Noto fallback (#3969)", { timeout: 30_000 }, async () => {
-		const data = fixture();
-		data.metadata.typography.body.fontFamily = "IBM Plex Serif";
-		data.metadata.typography.heading.fontFamily = "IBM Plex Serif";
-		const text = "ქართული ენა";
-		data.summary.content = `<p>${text}</p>`;
+	it.each(["IBM Plex Serif", "Helvetica", "Noto Serif Georgian", "Noto Sans Georgian"])(
+		"embeds Georgian glyphs with %s (#3969)",
+		{ timeout: 30_000 },
+		async (family) => {
+			const data = fixture();
+			data.metadata.typography.body.fontFamily = family;
+			data.metadata.typography.heading.fontFamily = family;
+			data.metadata.typography.body.fontWeights = ["400", "700"];
+			const alphabet = Array.from({ length: 32 }, (_, index) => String.fromCodePoint(0x10d0 + index)).join("");
+			const text = `Latin 123 ${alphabet} ${alphabet.toUpperCase()}`;
+			data.summary.content = `<p>${text}</p><p><strong>${text}</strong></p><p><em>${text}</em></p>`;
 
-		const { glyphs } = await readPdf(data);
-		const drawn = glyphs
-			.map((glyph) => glyph.unicode)
-			.join("")
-			.replaceAll(" ", "");
-		expect(drawn).toContain(text.replaceAll(" ", ""));
+			const { glyphs } = await readPdf(data);
+			const drawn = glyphs
+				.map((glyph) => glyph.unicode)
+				.join("")
+				.replaceAll(" ", "");
+			expect(drawn).toContain(text.replaceAll(" ", "").repeat(3));
 
-		const georgianGlyphs = glyphs.filter((glyph) => /[\u10A0-\u10FF]/.test(glyph.unicode));
-		expect(georgianGlyphs).toHaveLength(text.replaceAll(" ", "").length);
-		for (const glyph of georgianGlyphs) {
-			expect(glyph.isInFont).toBe(true);
-			expect(glyph.width).toBeGreaterThan(0);
-		}
-	});
+			const georgianGlyphs = glyphs.filter((glyph) => /\p{Script=Georgian}/u.test(glyph.unicode));
+			expect(georgianGlyphs).toHaveLength(alphabet.length * 2 * 3);
+			for (const glyph of georgianGlyphs) {
+				expect(glyph.isInFont).toBe(true);
+				expect(glyph.width).toBeGreaterThan(0);
+			}
+		},
+	);
 
 	it("exports a paragraph that ends in a line break in a standard PDF font (#3593)", { timeout: 30_000 }, async () => {
 		const data = fixture();
