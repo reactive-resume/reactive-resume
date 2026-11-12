@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
-import { render, screen } from "@testing-library/react";
-import { expect, it } from "vite-plus/test";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { StageStepper } from "./stage-stepper";
@@ -34,4 +34,28 @@ it("marks no step for a stage outside the steps", () => {
 	);
 
 	expect(states().every(([text, current]) => current === null && !text?.includes("done"))).toBe(true);
+});
+
+it("keys custom lanes by id, so two lanes of one stage stay apart, and moves to a pressed lane", () => {
+	const onSelect = vi.fn();
+	render(
+		<I18nProvider i18n={i18n}>
+			<StageStepper
+				aria-label="Stage"
+				current="onsite"
+				onSelect={onSelect}
+				steps={[
+					{ id: "saved", status: "saved" },
+					{ id: "first-round", status: "interview", label: "First round" },
+					{ id: "onsite", status: "interview", label: "On-site" },
+					{ id: "offer", status: "offer" },
+				]}
+			/>
+		</I18nProvider>,
+	);
+
+	expect(screen.getByRole("button", { current: "step" })).toHaveTextContent("On-site");
+	expect(screen.getByRole("button", { name: /First round/ })).toHaveTextContent("done");
+	fireEvent.click(screen.getByRole("button", { name: "Offer" }));
+	expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ id: "offer" }));
 });

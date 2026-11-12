@@ -1,9 +1,10 @@
 import type { Application } from "../../types";
 import type { ApplicationTimelineEntry, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
+import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -24,11 +25,11 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { showInterviewCancellation } from "../../calendar";
-import { interviewKindOf, interviewTypeLabel } from "../../interviews";
+import { dayKey, interviewKindOf, interviewTypeLabel } from "../../interviews";
 import { getCategoryLane, getLaneLabel, isCurrentLaneEvent } from "../../lanes";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { useApplicationLanes } from "../../use-application-lanes";
-import { useCareerTime } from "@/features/career/shared";
+import { useCareerTime, useNow } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
@@ -45,14 +46,22 @@ const dateInputValue = (value: Date | string) => {
 type ActivityProps = {
 	application: Application;
 	onOpenInterview: (interview: InterviewTimelineEntry) => void;
+	/** The heading, given whether the Log an update field shows and how to toggle it. Without it, the field always shows. */
+	renderHeader?: (log: { open: boolean; toggle: () => void }) => ReactNode;
+	/** More ways to log, beside the field's hint (Followed up). */
+	logActions?: ReactNode;
 };
 
 /**
- * The timeline: stage changes, notes and interviews, newest first, with a note field on top. Each row's ⋯ edits its
- * date (and a note's text) or deletes it; the entry that anchors the current stage can't be deleted.
+ * The timeline (`.tl`): stage changes, notes and interviews, newest first, each by its date. Log an update opens a note
+ * field (and Followed up). Each row's ⋯ edits its date (and a note's text) or deletes it; the entry that anchors the
+ * current stage can't be deleted.
  */
-export function Activity({ application, onOpenInterview }: ActivityProps) {
-	const { format, day } = useCareerTime();
+export function Activity({ application, onOpenInterview, renderHeader, logActions }: ActivityProps) {
+	const { format, day, plainTime, locale, timeZone } = useCareerTime();
+	const logId = useId();
+	const now = useNow();
+	const [logOpen, setLogOpen] = useState(!renderHeader);
 	const invalidate = useInvalidateApplications();
 	const confirm = useConfirm();
 	const { lanes } = useApplicationLanes();
@@ -83,14 +92,16 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 
 	const sorted = [...application.activity].sort(byNewest);
 	const anchorId = sorted.find((entry) => isCurrentLaneEvent(entry, application))?.id;
-	const formatDate = (value: Date | string, withTime: boolean) =>
-		format(value, {
-			month: "short",
-			day: "numeric",
-			// Stage and note entries are whole days, stored at noon UTC.
-			// The locale's clock, like the workspace and calendar, so one interview reads the same everywhere.
-			...(withTime ? { hour: "2-digit", minute: "2-digit" } : { timeZone: "UTC" }),
-		});
+	// Stage and note entries are whole days, stored at noon UTC; interviews and follow-ups are instants.
+	const formatDay = (value: Date | string, instant: boolean) =>
+		format(value, { weekday: "short", day: "numeric", month: "short", ...(instant ? {} : { timeZone: "UTC" }) });
+	// "in 3 days", for an interview still to come.
+	const fromToday = (value: Date | string) => {
+		const days = Math.round(
+			(Date.parse(dayKey(new Date(value), timeZone)) - Date.parse(dayKey(now, timeZone))) / 86_400_000,
+		);
+		return days >= 0 ? new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(days, "day") : null;
+	};
 
 	const describe = (entry: ApplicationTimelineEntry) => {
 		if (entry.type === "stage") {
@@ -99,8 +110,13 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 			const fallback = getCategoryLane(lanes, entry.stage);
 			const label = lane ? getLaneLabel(lane) : (entry.laneLabel ?? getLaneLabel(fallback));
 			return {
-				dot: (lane ?? fallback).color,
-				text: entry.dateUnknown ? `${t`Imported`} · ${label}` : t`Moved to ${label}`,
+				dot: "var(--ink-3)",
+				// The first entry is where the application started, not a move.
+				text: entry.dateUnknown
+					? `${t`Imported`} · ${label}`
+					: entry.id === sorted.at(-1)?.id
+						? label
+						: t`Moved to ${label}`,
 			};
 		}
 		if (entry.type === "note")
@@ -117,7 +133,11 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 					: entry.text,
 			};
 		const kind = interviewKindOf(entry.kind);
-		return { dot: kind?.color ?? "var(--ink-3)", text: t`${kind?.label ?? entry.kind} interview` };
+		const upcoming = fromToday(entry.at);
+		return {
+			dot: kind?.color ?? "var(--ink-3)",
+			text: [t`${kind?.label ?? entry.kind} interview`, plainTime(entry.at), upcoming].filter(Boolean).join(" · "),
+		};
 	};
 
 	const submit = () => {
@@ -127,55 +147,74 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 	};
 
 	return (
-		<section aria-labelledby="application-activity" className="grid gap-2">
-			<h3 id="application-activity" className="t-label">
-				<Trans>Timeline</Trans>
-			</h3>
-			<form
-				className="flex gap-1.5"
-				onSubmit={(event) => {
-					event.preventDefault();
-					submit();
-				}}
-			>
-				<Input
-					aria-label={t`Log an update`}
-					placeholder={t`Log an update…`}
-					value={note}
-					disabled={addNote.isPending}
-					onChange={(event) => setNote(event.target.value)}
-				/>
-				<Button type="submit" variant="secondary" disabled={!note.trim() || addNote.isPending}>
-					<Trans>Log</Trans>
-				</Button>
-			</form>
-			<p className="text-xs text-ink-3">
-				<Trans>Dated updates. For things to remember and share with the coach, use Notes.</Trans>
-			</p>
+		<section aria-labelledby="application-activity" className={renderHeader ? "grid" : "grid gap-2"}>
+			{renderHeader ? (
+				renderHeader({ open: logOpen, toggle: () => setLogOpen((open) => !open) })
+			) : (
+				<h3 id="application-activity" className="t-label">
+					<Trans>Timeline</Trans>
+				</h3>
+			)}
+			{logOpen && (
+				<div className={renderHeader ? "grid gap-1.5 pb-2" : "contents"}>
+					<form
+						className="flex gap-1.5"
+						onSubmit={(event) => {
+							event.preventDefault();
+							submit();
+						}}
+					>
+						<Input
+							id={logId}
+							aria-label={t`Log an update`}
+							placeholder={t`Log an update…`}
+							value={note}
+							// oxlint-disable-next-line jsx-a11y/no-autofocus -- the field opens because Log an update was pressed
+							autoFocus={!!renderHeader}
+							disabled={addNote.isPending}
+							onChange={(event) => setNote(event.target.value)}
+							onKeyDown={(event) => {
+								if (event.key !== "Escape" || !renderHeader) return;
+								event.stopPropagation();
+								setLogOpen(false);
+							}}
+						/>
+						<Button type="submit" variant="secondary" disabled={!note.trim() || addNote.isPending}>
+							<Trans>Log</Trans>
+						</Button>
+					</form>
+					<p className="flex flex-wrap items-center gap-x-3 text-xs text-ink-3">
+						<Trans>Dated updates. For things to remember and share with the coach, use Notes.</Trans>
+						{logActions}
+					</p>
+				</div>
+			)}
 
 			<ol className="grid">
 				{sorted.map((entry) => {
 					const { dot, text } = describe(entry);
 					return (
-						<li key={entry.id} className="group flex items-start gap-2.5 py-1.5 text-sm">
-							<span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-sm" style={{ background: dot }} />
+						<li
+							key={entry.id}
+							className="group relative grid min-h-7 grid-cols-[72px_8px_minmax(0,1fr)] items-center gap-2.5 text-[13px]/[18px]"
+						>
+							<span className="text-ink-3">
+								{entry.type === "stage" && entry.dateUnknown
+									? t`Not recorded`
+									: formatDay(entry.at, entry.type === "interview" || (entry.type === "note" && !!entry.followedUp))}
+							</span>
+							<span aria-hidden="true" className="size-2 rounded-full" style={{ background: dot }} />
 							{entry.type === "interview" ? (
 								<button
 									type="button"
 									onClick={() => onOpenInterview(entry)}
-									className="min-w-0 flex-1 text-start hover:underline"
+									className="min-w-0 truncate text-start hover:underline"
 								>
 									{text}
-									{entry.location ? <span className="text-ink-3"> · {entry.location}</span> : null}
 								</button>
 							) : (
-								<span className="min-w-0 flex-1 break-words whitespace-pre-wrap">{text}</span>
+								<span className="min-w-0 break-words whitespace-pre-wrap">{text}</span>
 							)}
-							<span className="shrink-0 text-xs leading-5 text-ink-3">
-								{entry.type === "stage" && entry.dateUnknown
-									? t`Not recorded`
-									: formatDate(entry.at, entry.type === "interview" || (entry.type === "note" && !!entry.followedUp))}
-							</span>
 							<DropdownMenu>
 								<DropdownMenuTrigger
 									render={
@@ -183,7 +222,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 											size="icon-xs"
 											variant="ghost"
 											aria-label={t`Options for this entry`}
-											className="-my-1 text-ink-3 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[popup-open]:opacity-100"
+											className="absolute inset-e-0 top-1/2 -translate-y-1/2 bg-raised text-ink-3 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[popup-open]:opacity-100"
 										/>
 									}
 								>

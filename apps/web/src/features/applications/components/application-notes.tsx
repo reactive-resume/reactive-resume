@@ -1,4 +1,5 @@
 import type { Application } from "../types";
+import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -11,9 +12,13 @@ import { useDebouncedSave, useSessionDraft } from "@/features/career/hooks";
 import { getAccountGeneration } from "@/libs/auth/clear-account-data";
 import { orpc } from "@/libs/orpc/client";
 
-type ApplicationNotesProps = { application: Pick<Application, "id" | "notes"> };
+type ApplicationNotesProps = {
+	application: Pick<Application, "id" | "notes">;
+	/** Draws the field's label, given its text and the field's id. A small label when not given. */
+	renderLabel?: (label: ReactNode, htmlFor: string) => ReactNode;
+};
 const saves = new Map<string, Promise<void>>();
-export function ApplicationNotes({ application }: ApplicationNotesProps) {
+export function ApplicationNotes({ application, renderLabel }: ApplicationNotesProps) {
 	const id = useId();
 	const generation = useRef(getAccountGeneration());
 	const invalidate = useInvalidateApplications();
@@ -57,14 +62,19 @@ export function ApplicationNotes({ application }: ApplicationNotesProps) {
 	};
 	const flush = useDebouncedSave(draft.restored ? saved : draft.value, saved, save, 800);
 	return (
-		<section className="grid gap-2">
+		<section className={renderLabel ? "grid" : "grid gap-2"}>
 			<DraftRecovery {...draft} />
-			<label htmlFor={id} className="text-xs font-semibold text-ink-3">
-				<Trans>Notes</Trans>
-			</label>
+			{renderLabel ? (
+				renderLabel(<Trans>Notes</Trans>, id)
+			) : (
+				<label htmlFor={id} className="text-xs font-semibold text-ink-3">
+					<Trans>Notes</Trans>
+				</label>
+			)}
 			<Textarea
 				id={id}
 				rows={3}
+				className={renderLabel ? "min-h-0 px-3 py-2 text-[13px]/[19px]" : undefined}
 				value={draft.value}
 				placeholder={t`Anything to remember about this job`}
 				onBlur={flush}

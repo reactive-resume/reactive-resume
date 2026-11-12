@@ -1,13 +1,12 @@
 import type { ApplicationLane } from "../lanes";
 import type { Application, ApplicationSummary } from "../types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
+import type { ComponentProps, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { useId, useRef, useState } from "react";
-import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { postingReadReceipt } from "@reactive-resume/schema/applications/posting-source";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -26,12 +25,20 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
-import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-resume/ui/components/sheet";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { isInterview, interviewKindOf } from "../interviews";
-import { getCategoryLane, getDisplayLane, getLaneLabel, getNextLane, getStageDisplay, laneMoveInput } from "../lanes";
+import {
+	getCategoryLane,
+	getDisplayLane,
+	getLaneLabel,
+	getNextLane,
+	getStageDisplay,
+	laneDotColor,
+	laneMoveInput,
+} from "../lanes";
 import { daysInLane } from "../next-step";
 import { applicationDetailQueryOptions, getInitialApplicationDetail } from "../queries";
 import { getClosedReasonLabel } from "../stages";
@@ -44,9 +51,10 @@ import { Contacts } from "./detail/contacts";
 import { NextStepCard } from "./detail/next-step-card";
 import { InterviewDialog } from "./interview-dialog";
 import { PriorNoResponseNotice } from "./prior-no-response-notice";
-import { List, ListRow, IconTile } from "@/components/calm/list-row";
-import { useCareerTime } from "@/features/career/shared";
-import { useNow } from "@/features/career/shared";
+import { Chip } from "@/components/calm/filter-bar";
+import { IconTile, List, ListRow } from "@/components/calm/list-row";
+import { StageStepper } from "@/components/calm/stage-stepper";
+import { useCareerTime, useNow } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
@@ -60,8 +68,9 @@ type DetailSheetProps = {
 };
 
 /**
- * One application, 480px from the right (full screen on phones): the stage stepper with Move to next, the next
- * step, what was sent, the key facts, notes and activity. Close application… takes a reason; Delete is in ⋯.
+ * One application, 480px from the right (full screen on phones): the stage and the date each was reached, with Move to
+ * next and Mark as closed…; the next interview; the job's facts, contacts, notes and timeline. Every value edits in
+ * place, and Edit interview takes the sheet's place rather than opening on top of it. Move to Trash is in ⋯.
  */
 export function ApplicationDetailSheet({ application, onOpenChange, onEditDetails, returnFocus }: DetailSheetProps) {
 	const contentRef = useRef<HTMLDivElement>(null);
@@ -89,7 +98,7 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEditDetail
 				}
 				finalFocus={() => (shown ? returnFocus(shown.id) : null) ?? false}
 				side={phone ? "bottom" : "right"}
-				closeLabel={t`Close`}
+				showCloseButton={false}
 				className={cn("gap-0", phone ? "h-svh" : "data-[side=right]:sm:max-w-[480px]")}
 			>
 				{current ? (
@@ -100,22 +109,88 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEditDetail
 						onDeleted={() => onOpenChange(false)}
 					/>
 				) : (
-					<div className="grid gap-2 p-5">
-						<SheetTitle tabIndex={-1} dir="auto">
-							{shown?.role}
-						</SheetTitle>
-						<SheetDescription aria-live="polite">
-							{isError ? t`Couldn't load this. Your saved data hasn't changed.` : t`Loading…`}
-						</SheetDescription>
-						{isError && (
-							<Button variant="secondary" disabled={isFetching || isPending} onClick={() => void refetch()}>
-								<Trans>Try again</Trans>
-							</Button>
-						)}
-					</div>
+					<>
+						<SheetHeading title={shown?.role} />
+						<div className="grid gap-2 px-6 pb-5">
+							<SheetDescription aria-live="polite">
+								{isError ? t`Couldn't load this. Your saved data hasn't changed.` : t`Loading…`}
+							</SheetDescription>
+							{isError && (
+								<Button variant="secondary" disabled={isFetching || isPending} onClick={() => void refetch()}>
+									<Trans>Try again</Trans>
+								</Button>
+							)}
+						</div>
+					</>
 				)}
 			</SheetContent>
 		</Sheet>
+	);
+}
+
+/** The sheet's header (`.hd`): its title and one quiet line, then ⋯ and Close. */
+function SheetHeading({ title, description, menu }: { title: ReactNode; description?: ReactNode; menu?: ReactNode }) {
+	return (
+		<header className="flex shrink-0 items-center gap-2 ps-6 pe-4 pt-5 pb-3">
+			<div className="flex min-w-0 flex-1 flex-col">
+				<SheetTitle tabIndex={-1} dir="auto" className="truncate outline-none">
+					{title}
+				</SheetTitle>
+				{description && (
+					<SheetDescription dir="auto" className="truncate text-[13px]/[18px] text-ink-3">
+						{description}
+					</SheetDescription>
+				)}
+			</div>
+			{menu}
+			<SheetClose render={<Button variant="ghost" size="icon" aria-label={t`Close`} className="text-ink-2" />}>
+				<Icon name="x" size={20} />
+			</SheetClose>
+		</header>
+	);
+}
+
+/** A heading inside the sheet (`.sx`): 14px semibold, a quiet note after it, its one action at the end. */
+function SheetSection({
+	id,
+	note,
+	action,
+	children,
+	render,
+}: {
+	id?: string;
+	note?: ReactNode;
+	action?: ReactNode;
+	children: ReactNode;
+	render?: (className: string, content: ReactNode) => ReactNode;
+}) {
+	const className = "flex shrink-0 items-baseline gap-2 pt-5 pb-1.5 text-sm/5 font-semibold text-ink";
+	const content = (
+		<>
+			{children}
+			{note && <small className="text-[13px]/[18px] font-normal text-ink-3">{note}</small>}
+			{action && <span className="ms-auto">{action}</span>}
+		</>
+	);
+	if (render) return render(className, content);
+	return (
+		<h3 id={id} className={className}>
+			{content}
+		</h3>
+	);
+}
+
+/** The accent text button of a sheet heading or row (`.lk`, `.ttb`). */
+function TextButton({ className, ...props }: ComponentProps<"button">) {
+	return (
+		<button
+			type="button"
+			className={cn(
+				"rounded-xs text-[13px]/[18px] font-medium text-accent-text hover:underline disabled:opacity-50",
+				className,
+			)}
+			{...props}
+		/>
 	);
 }
 
@@ -126,7 +201,6 @@ type DetailProps = {
 };
 
 function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
-	const { i18n } = useLingui();
 	const time = useCareerTime();
 	const now = useNow();
 	const { moveTo, close, remove, logFollowUp } = useApplicationActions();
@@ -135,6 +209,8 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 		open: false,
 		entry: null,
 	});
+	// Where focus goes back to when the interview form gives the sheet back.
+	const opener = useRef<HTMLElement | null>(null);
 	const [closing, setClosing] = useState(false);
 	const [postingOpen, setPostingOpen] = useState(false);
 	const [applying, setApplying] = useState<ApplicationLane | null>(null);
@@ -145,14 +221,25 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 	const stage = getStageDisplay(lanes, application);
 	const closed = application.status === "closed";
 	// An accepted offer keeps its pipeline filled through Offer: it was won, not lost.
-	const reached = stage.accepted
-		? steps.findLastIndex((lane) => lane.category === "offer")
-		: steps.findIndex((lane) => lane.id === current.id);
+	const reached = stage.accepted ? steps.findLast((lane) => lane.category === "offer")?.id : current.id;
 	const since = daysInLane(application);
 	const upcoming = application.activity
 		.filter(isInterview)
 		.filter((entry) => +new Date(entry.at) >= +now)
 		.toSorted((a, b) => +new Date(a.at) - +new Date(b.at))[0];
+	const openInterview = (entry: InterviewTimelineEntry | null) => {
+		opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+		setInterview({ open: true, entry });
+	};
+	// When each stage was reached: its own lane's move, else the latest move into its stage.
+	const reachedOn = (lane: ApplicationLane) => {
+		const moves = application.activity.filter((event) => event.type === "stage" && !event.dateUnknown);
+		const entry =
+			moves.findLast((event) => event.type === "stage" && event.laneId === lane.id) ??
+			moves.findLast((event) => event.type === "stage" && event.stage === lane.category);
+		if (!entry) return undefined;
+		return lane.id === current.id && !closed ? t`since ${time.date(entry.at)}` : time.date(entry.at);
+	};
 	// Leaving Saved for Applied records the submission first.
 	const goTo = (lane: ApplicationLane) => {
 		if (lane.id === current.id) return;
@@ -173,7 +260,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 								description: t`Moved to ${getLaneLabel(lane)}.`,
 								actionProps: {
 									children: t`Schedule it`,
-									onClick: () => setInterview({ open: true, entry: null }),
+									onClick: () => openInterview(null),
 								},
 							})
 					: undefined,
@@ -185,216 +272,211 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 
 	return (
 		<>
-			<div className="min-h-0 flex-1 overflow-y-auto">
-				<header className="flex items-start gap-3 border-b border-line px-6 pe-14 pt-4 pb-3">
-					<div className="min-w-0 flex-1">
-						<SheetTitle tabIndex={-1}>
-							<Trans>Details</Trans>
-						</SheetTitle>
-						<SheetDescription>
-							{[application.company, application.role, application.location].filter(Boolean).join(" · ")}
-						</SheetDescription>
-					</div>
-					<DropdownMenu>
-						<DropdownMenuTrigger
-							render={
-								<Button size="icon-sm" variant="ghost" aria-label={t`Application options`} className="text-ink-3" />
-							}
-						>
-							<Icon name="dots-three" />
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={() => onEditDetails(application)}>
-								<Icon name="pencil-simple" size={18} />
-								<Trans>Edit details…</Trans>
-							</DropdownMenuItem>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem variant="destructive" onClick={onDelete}>
-								<Icon name="trash" size={18} />
-								<Trans>Move to Trash</Trans>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</header>
-				<div className="grid gap-2.5 px-6 pt-3">
-					<div className="flex items-center gap-2">
-						<h3 className="me-auto t-label">
-							<Trans>Stage</Trans>
-						</h3>
-						{next && !closed && (
-							<Button size="sm" variant="secondary" onClick={() => goTo(next)}>
-								{application.status === "saved" && next.category === "applied" ? (
-									<Trans>Mark as applied</Trans>
-								) : (
-									<Trans>Move to {getLaneLabel(next)}</Trans>
-								)}
-								<Icon name="arrow-right" size={16} />
-							</Button>
-						)}
-						<Button size="sm" variant="ghost" onClick={() => setClosing(true)}>
-							<Trans>Mark as closed…</Trans>
-						</Button>
-					</div>
-					{/* Equal columns while they fit (five by default); more lanes scroll sideways. */}
-					<ol
-						aria-label={t`Stages`}
-						className="-mx-1 grid auto-cols-[minmax(64px,1fr)] grid-flow-col gap-1.5 overflow-x-auto px-1 pb-1"
-					>
-						{steps.map((lane, index) => {
-							const label = getLaneLabel(lane);
-							return (
-								<li key={lane.id} className="min-w-0">
-									<button
-										type="button"
-										title={label}
-										aria-current={lane.id === current.id ? "step" : undefined}
-										onClick={() => goTo(lane)}
-										className="grid w-full gap-1.5 text-start"
-									>
-										<span
-											className="h-[3px] transition-colors duration-standard"
-											style={{
-												background: (!closed || stage.accepted) && index <= reached ? lane.color : "var(--line)",
-											}}
-										/>
-										<span
-											className={cn(
-												"truncate text-[13px] leading-[18px]",
-												lane.id === current.id ? "font-semibold text-ink" : "text-ink-3",
-											)}
-										>
-											{label}
-										</span>
-										<small className="text-xs text-ink-3">
-											{(() => {
-												const entry = application.activity.find(
-													(event) => event.type === "stage" && event.stage === lane.category,
-												);
-												return entry ? time.date(entry.at) : " ";
-											})()}
-										</small>
-									</button>
-								</li>
-							);
-						})}
-					</ol>
-					<div className={cn("flex flex-wrap items-center justify-between gap-2", !closed && "hidden")}>
-						<span className="flex min-w-0 items-center gap-1.5 text-sm">
-							<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: stage.color }} />
-							{stage.accepted && <Icon name="check" size={16} className="shrink-0 text-accent-text" />}
-							<strong className="truncate font-semibold">{stage.label}</strong>
-							<span className="shrink-0 text-ink-3">
-								{stage.accepted ? null : closed && application.closedReason ? (
-									<>· {getClosedReasonLabel(application.closedReason)}</>
-								) : since === null ? null : (
-									<>
-										· <Plural value={since} _0="since today" one="for # day" other="for # days" />
-									</>
-								)}
-							</span>
-						</span>
-					</div>
-				</div>
-
-				<div className="grid gap-3 px-6 pb-6">
-					{upcoming ? (
-						<List cap>
-							<ListRow
-								title={t`${interviewKindOf(upcoming.kind)?.label ?? ""} interview`}
-								subtitle={`${time.when(upcoming.at)} · ${upcoming.durationMinutes} ${t`min`} · ${upcoming.location ?? ""}`}
-								leading={
-									<IconTile className="size-8">
-										<Icon name="calendar-dot" size={18} />
-									</IconTile>
+			<div hidden={interview.open} className="flex min-h-0 flex-1 flex-col">
+				<SheetHeading
+					title={<Trans>Details</Trans>}
+					description={[application.company, application.role, application.location].filter(Boolean).join(" · ")}
+					menu={
+						<DropdownMenu>
+							<DropdownMenuTrigger
+								render={
+									<Button size="icon" variant="ghost" aria-label={t`Application options`} className="text-ink-2" />
 								}
-								trailing={
-									<Button size="sm" variant="ghost" onClick={() => setInterview({ open: true, entry: upcoming })}>
-										<Trans>Edit interview</Trans>
-									</Button>
-								}
-							/>
-						</List>
-					) : (
-						<NextStepCard
-							application={application}
-							onScheduleInterview={(entry) => setInterview({ open: true, entry })}
-						/>
-					)}
-					<h3 className="pt-2 t-label">
-						<Trans>About the job</Trans>
-					</h3>
-					{application.sourceUrl && (
-						<div className="flex flex-wrap items-center gap-2 text-[13px]">
-							<span className="w-20 text-ink-3">
-								<Trans>Posting</Trans>
-							</span>
-							<a
-								href={application.sourceUrl}
-								target="_blank"
-								rel="noreferrer"
-								className="min-w-0 flex-1 truncate font-mono"
 							>
-								{application.sourceUrl.replace(/^https?:\/\//, "")}
-							</a>
-							<Button size="sm" variant="ghost" onClick={() => setPostingOpen(true)}>
-								<Trans>Saved copy</Trans>
-							</Button>
-						</div>
-					)}
-					<Facts application={application} locale={i18n.locale} />
-					<Tags application={application} />
-					<ContactSection application={application} />
-					<ApplicationNotes application={application} />
-					<Activity application={application} onOpenInterview={(entry) => setInterview({ open: true, entry })} />
-					{upcoming && (
-						<details>
-							<summary className="cursor-pointer text-[13px] text-ink-2">
-								<Trans>Next step and follow-up</Trans>
-							</summary>
-							<NextStepCard
-								application={application}
-								onScheduleInterview={(entry) => setInterview({ open: true, entry })}
-							/>
-						</details>
-					)}
-					{!closed && application.status !== "saved" && (
-						<Button
-							variant="ghost"
-							className="w-fit"
-							disabled={logFollowUp.isPending}
-							onClick={() => logFollowUp.mutate({ id: application.id })}
-						>
-							<Trans>Followed up</Trans>
-						</Button>
-					)}
-					<div className="flex flex-wrap items-center gap-2 border-t border-line px-6 py-4">
-						{!closed ? (
-							<>
-								<Button variant="secondary" onClick={() => setClosing(true)}>
-									<Trans>Mark as closed…</Trans>
+								<Icon name="dots-three" size={20} />
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuItem onClick={() => onEditDetails(application)}>
+									<Icon name="pencil-simple" size={18} />
+									<Trans>Edit details…</Trans>
+								</DropdownMenuItem>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem variant="destructive" onClick={onDelete}>
+									<Icon name="trash" size={18} />
+									<Trans>Move to Trash</Trans>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					}
+				/>
+				{/* No sticky footer: the sheet scrolls and fades at its edge. */}
+				<div className="relative min-h-0 flex-1">
+					<div className="h-full overflow-y-auto px-6 pb-10">
+						<div className="flex items-center gap-1 pb-2">
+							<h3 className="me-auto text-sm/5 font-semibold">
+								<Trans>Stage</Trans>
+							</h3>
+							{closed ? (
+								<Button
+									size="sm"
+									variant="secondary"
+									onClick={() => moveTo(application, getCategoryLane(lanes, "applied"))}
+								>
+									<Trans>Reopen</Trans>
 								</Button>
-								{application.sourceUrl && (
-									<Button
-										variant="ghost"
-										nativeButton={false}
-										className="text-ink-2"
-										render={<a href={application.sourceUrl} target="_blank" rel="noreferrer" />}
-									>
-										<Trans>Posting</Trans>
-										<Icon name="arrow-square-out" size={16} />
+							) : (
+								<>
+									{next && (
+										<Button size="sm" variant="secondary" onClick={() => goTo(next)}>
+											{application.status === "saved" && next.category === "applied" ? (
+												<Trans>Mark as applied</Trans>
+											) : (
+												<Trans>Move to {getLaneLabel(next)}</Trans>
+											)}
+											<Icon name="arrow-right" size={16} />
+										</Button>
+									)}
+									<Button size="sm" variant="ghost" onClick={() => setClosing(true)}>
+										<Trans>Mark as closed…</Trans>
 									</Button>
-								)}
-								<OpenWorkspaceButton application={application} />
-							</>
+								</>
+							)}
+						</div>
+						{/* Equal columns while they fit (five by default); more lanes scroll sideways. */}
+						<StageStepper
+							aria-label={t`Stage history`}
+							variant="history"
+							current={(!closed || stage.accepted) && reached ? reached : ""}
+							steps={steps.map((lane) => ({
+								id: lane.id,
+								status: lane.category,
+								label: getLaneLabel(lane),
+								date: reachedOn(lane),
+								color: laneDotColor(lane),
+							}))}
+							onSelect={(step) => {
+								const lane = steps.find((item) => item.id === step.id);
+								if (lane) goTo(lane);
+							}}
+							className="auto-cols-[minmax(64px,1fr)] overflow-x-auto"
+						/>
+						{closed && (
+							<p className="flex min-w-0 items-center gap-1.5 pt-3 text-sm">
+								<span aria-hidden="true" className="size-2 shrink-0 rounded-full" style={{ background: stage.color }} />
+								{stage.accepted && <Icon name="check" size={16} className="shrink-0 text-accent-text" />}
+								<strong className="truncate font-semibold">{stage.label}</strong>
+								<span className="shrink-0 text-ink-3">
+									{stage.accepted ? null : application.closedReason ? (
+										<>· {getClosedReasonLabel(application.closedReason)}</>
+									) : since === null ? null : (
+										<>
+											· <Plural value={since} _0="since today" one="for # day" other="for # days" />
+										</>
+									)}
+								</span>
+							</p>
+						)}
+
+						{upcoming ? (
+							<List cap className="mt-3.5">
+								<ListRow
+									className="min-h-[46px] py-1.5"
+									title={
+										<span className="block truncate text-sm/5">
+											{t`${interviewKindOf(upcoming.kind)?.label ?? ""} interview`}
+										</span>
+									}
+									subtitle={[time.when(upcoming.at), `${upcoming.durationMinutes} ${t`min`}`, upcoming.location]
+										.filter(Boolean)
+										.join(" · ")}
+									leading={
+										<IconTile className="size-8 rounded-sm">
+											<Icon name="calendar-dot" size={18} />
+										</IconTile>
+									}
+									trailing={
+										<TextButton className="text-sm/5" onClick={() => openInterview(upcoming)}>
+											<Trans>Edit interview</Trans>
+										</TextButton>
+									}
+								/>
+							</List>
 						) : (
-							<Button variant="secondary" onClick={() => moveTo(application, getCategoryLane(lanes, "applied"))}>
-								<Trans>Reopen</Trans>
-							</Button>
+							<div className="pt-3.5">
+								<NextStepCard application={application} onScheduleInterview={openInterview} />
+							</div>
+						)}
+
+						<SheetSection>
+							<Trans>About the job</Trans>
+						</SheetSection>
+						<Facts application={application} onOpenPosting={() => setPostingOpen(true)} />
+
+						<ContactSection application={application} />
+
+						<ApplicationNotes
+							application={application}
+							renderLabel={(label, htmlFor) => (
+								<SheetSection
+									note={<Trans>The coach reads these for this application only</Trans>}
+									render={(className, content) => (
+										<label htmlFor={htmlFor} className={className}>
+											{content}
+										</label>
+									)}
+								>
+									{label}
+								</SheetSection>
+							)}
+						/>
+
+						<Activity
+							application={application}
+							onOpenInterview={openInterview}
+							logActions={
+								!closed &&
+								application.status !== "saved" && (
+									<TextButton
+										className="text-xs"
+										disabled={logFollowUp.isPending}
+										onClick={() => logFollowUp.mutate({ id: application.id })}
+									>
+										<Trans>Followed up</Trans>
+									</TextButton>
+								)
+							}
+							renderHeader={(log) => (
+								<SheetSection
+									id="application-activity"
+									action={
+										<TextButton aria-expanded={log.open} onClick={log.toggle}>
+											<Trans>Log an update</Trans>
+										</TextButton>
+									}
+								>
+									<Trans>Timeline</Trans>
+								</SheetSection>
+							)}
+						/>
+
+						{upcoming && (
+							<details className="pt-5">
+								<summary className="cursor-pointer text-[13px] text-ink-2">
+									<Trans>Next step and follow-up</Trans>
+								</summary>
+								<div className="pt-2">
+									<NextStepCard application={application} onScheduleInterview={openInterview} />
+								</div>
+							</details>
 						)}
 					</div>
+					<div
+						aria-hidden="true"
+						className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-linear-to-b from-transparent to-raised"
+					/>
 				</div>
 			</div>
 
+			<InterviewDialog
+				inline
+				application={application}
+				interview={interview.entry}
+				open={interview.open}
+				onOpenChange={(open) => {
+					setInterview((currentValue) => ({ ...currentValue, open }));
+					if (!open) requestAnimationFrame(() => opener.current?.focus());
+				}}
+			/>
 			<CloseDialog
 				open={closing}
 				status={application.status}
@@ -402,56 +484,13 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 				lanes={active}
 				onClose={(lane, reason) => (lane ? moveTo(application, lane, reason) : reason && close(application, reason))}
 			/>
-			<InterviewDialog
-				application={application}
-				interview={interview.entry}
-				open={interview.open}
-				onOpenChange={(open) => setInterview((currentValue) => ({ ...currentValue, open }))}
-			/>
 			<PostingDialog application={application} open={postingOpen} onOpenChange={setPostingOpen} />
 			{applying && <MarkAppliedDialog application={application} lane={applying} onClose={() => setApplying(null)} />}
 		</>
 	);
 }
 
-/** Salary, Source, Applied and Contact. Salary and source edit in place. */
-function Facts({ application, locale }: { application: Application; locale: string }) {
-	const invalidate = useInvalidateApplications();
-	const update = useMutation({
-		...orpc.applications.update.mutationOptions(),
-		onSuccess: () => invalidate(application.id),
-		onError: () => toast.add({ type: "error", description: t`Couldn't save the change. Try again.` }),
-	});
-	const applied = applicationSentAt(application)
-		? new Date(application.appliedAt).toLocaleDateString(locale, {
-				month: "short",
-				day: "numeric",
-				year: "numeric",
-			})
-		: t`Not recorded`;
-
-	return (
-		<dl className="grid">
-			<InlineFact
-				label={t`Salary`}
-				value={application.salary}
-				onSave={(salary) => update.mutate({ id: application.id, salary })}
-			/>
-			<InlineFact
-				label={t`Source`}
-				value={application.source}
-				onSave={(source) => update.mutate({ id: application.id, source })}
-			/>
-			<div className="grid min-h-[33px] grid-cols-[88px_minmax(0,1fr)] items-center gap-3 border-b border-line last:border-0">
-				<dt className="text-[13px] font-normal text-ink-3">
-					<Trans>Applied</Trans>
-				</dt>
-				<dd className="text-sm font-medium">{application.status === "saved" ? "—" : applied}</dd>
-			</div>
-		</dl>
-	);
-}
-
+/** Contacts, then anyone met at an interview who isn't one yet. */
 function ContactSection({ application }: { application: Application }) {
 	const invalidate = useInvalidateApplications();
 	const update = useMutation({
@@ -467,30 +506,86 @@ function ContactSection({ application }: { application: Application }) {
 				!application.contacts.some((contact) => contact.name === person.name) &&
 				all.findIndex((item) => item.name === person.name) === index,
 		);
+
 	return (
-		<section className="grid gap-2">
-			<h3 className="t-label">
-				<Trans>Contacts</Trans>
-			</h3>
-			<Contacts
-				inline
-				application={application}
-				disabled={update.isPending}
-				onChange={(contacts) => update.mutate({ id: application.id, contacts })}
-			/>
-			<List tight>
-				{people.map((person) => (
-					<ListRow key={person.name} title={person.name} subtitle={person.role} />
-				))}
-			</List>
-		</section>
+		<Contacts
+			inline
+			application={application}
+			disabled={update.isPending}
+			onChange={(contacts) => update.mutate({ id: application.id, contacts })}
+			people={people}
+			renderHeader={(add) => (
+				<SheetSection
+					action={
+						<TextButton disabled={add.disabled} onClick={add.start}>
+							<Trans>Add contact</Trans>
+						</TextButton>
+					}
+				>
+					<Trans>Contacts</Trans>
+				</SheetSection>
+			)}
+		/>
 	);
 }
 
-type InlineFactProps = { label: string; value: string | null; onSave: (value: string | null) => void };
+const factRowClassName =
+	"grid min-h-[33px] grid-cols-[88px_minmax(0,1fr)] items-center gap-3 border-b border-line text-sm/5 last:border-0";
+const factLabelClassName = "text-[13px] font-normal text-ink-3";
+
+/** Posting, Source, Salary and Tags (`.kv`). Source, salary and tags edit in place; the posting's copy opens. */
+function Facts({ application, onOpenPosting }: { application: Application; onOpenPosting: () => void }) {
+	const invalidate = useInvalidateApplications();
+	const update = useMutation({
+		...orpc.applications.update.mutationOptions(),
+		onSuccess: () => invalidate(application.id),
+		onError: () => toast.add({ type: "error", description: t`Couldn't save the change. Try again.` }),
+	});
+
+	return (
+		<dl className="grid">
+			{application.sourceUrl && (
+				<div className={factRowClassName}>
+					<dt className={factLabelClassName}>
+						<Trans>Posting</Trans>
+					</dt>
+					<dd className="flex min-w-0 items-center gap-2">
+						<a
+							href={application.sourceUrl}
+							target="_blank"
+							rel="noreferrer"
+							className="flex min-w-0 items-center gap-2 font-mono text-[13px]/4 font-medium hover:underline"
+						>
+							<span className="truncate">{application.sourceUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span>
+							<Icon name="arrow-square-out" size={16} className="shrink-0 text-ink-3" />
+						</a>
+						<TextButton className="ms-auto shrink-0" onClick={onOpenPosting}>
+							<Trans>Saved copy</Trans>
+						</TextButton>
+					</dd>
+				</div>
+			)}
+			<InlineFact
+				label={t`Source`}
+				value={application.source}
+				empty={t`Not recorded`}
+				onSave={(source) => update.mutate({ id: application.id, source })}
+			/>
+			<InlineFact
+				label={t`Salary`}
+				value={application.salary}
+				empty={t`Not listed in the posting`}
+				onSave={(salary) => update.mutate({ id: application.id, salary })}
+			/>
+			<Tags application={application} />
+		</dl>
+	);
+}
+
+type InlineFactProps = { label: string; value: string | null; empty: string; onSave: (value: string | null) => void };
 
 /** A fact that edits in place: click to type, Enter or leaving saves, Esc cancels. */
-function InlineFact({ label, value, onSave }: InlineFactProps) {
+function InlineFact({ label, value, empty, onSave }: InlineFactProps) {
 	const id = useId();
 	const [draft, setDraft] = useState<string | null>(null);
 
@@ -502,26 +597,32 @@ function InlineFact({ label, value, onSave }: InlineFactProps) {
 	};
 
 	return (
-		<div className="grid min-h-[33px] grid-cols-[88px_minmax(0,1fr)] items-center gap-3 border-b border-line last:border-0">
-			<dt className="text-[13px] font-normal text-ink-3">
-				<label htmlFor={id}>{label}</label>
+		<div className={factRowClassName}>
+			<dt className={factLabelClassName}>
+				<label htmlFor={id} className="block leading-5">
+					{label}
+				</label>
 			</dt>
-			<dd>
+			<dd className="min-w-0">
 				{draft === null ? (
 					<button
 						id={id}
 						type="button"
 						onClick={() => setDraft(value ?? "")}
 						dir="auto"
-						className="w-full truncate rounded-md text-start text-sm font-medium hover:bg-hover"
+						className={cn(
+							"block w-full cursor-text truncate rounded-xs text-start hover:underline",
+							!value && "text-ink-3",
+						)}
 					>
-						{value || "—"}
+						{value || empty}
 					</button>
 				) : (
 					<Input
 						id={id}
 						autoFocus
 						value={draft}
+						placeholder={empty}
 						className="h-8"
 						onChange={(event) => setDraft(event.target.value)}
 						onBlur={commit}
@@ -540,54 +641,67 @@ function InlineFact({ label, value, onSave }: InlineFactProps) {
 	);
 }
 
+/** Tags as chips, each with its remove button, and "Add a tag" that turns into a field. */
 function Tags({ application }: { application: Application }) {
 	const invalidate = useInvalidateApplications();
-	const [tag, setTag] = useState("");
+	const [tag, setTag] = useState<string | null>(null);
 	const update = useMutation({
 		...orpc.applications.update.mutationOptions(),
 		onSuccess: () => invalidate(application.id),
 		onError: () => toast.add({ type: "error", description: t`Couldn't save the tags. Try again.` }),
 	});
 	const save = (tags: string[]) => update.mutate({ id: application.id, tags });
+	const commit = () => {
+		const value = tag?.trim();
+		if (value && !application.tags.includes(value)) save([...application.tags, value]);
+		setTag(null);
+	};
 
 	return (
-		<section aria-labelledby="application-tags" className="grid grid-cols-[88px_minmax(0,1fr)] items-center gap-3">
-			<h3 id="application-tags" className="text-[13px] font-normal text-ink-3">
+		<div className={cn(factRowClassName, "py-1")}>
+			<dt className={factLabelClassName}>
 				<Trans>Tags</Trans>
-			</h3>
-			<div className="flex flex-wrap items-center gap-1.5">
+			</dt>
+			<dd className="flex min-w-0 flex-wrap items-center gap-1.5">
 				{application.tags.map((value) => (
-					<span key={value} className="flex h-7 items-center gap-1 rounded-md bg-sunken ps-2 text-xs">
+					<Chip
+						key={value}
+						className="h-6 pe-1 text-xs/[18px]"
+						removeLabel={t`Remove ${value}`}
+						onRemove={() => save(application.tags.filter((item) => item !== value))}
+					>
 						{value}
-						<button
-							type="button"
-							aria-label={t`Remove ${value}`}
-							onClick={() => save(application.tags.filter((item) => item !== value))}
-							className="grid size-6 place-items-center rounded text-ink-3 hover:text-ink"
-						>
-							<Icon name="x" size={14} />
-						</button>
-					</span>
+					</Chip>
 				))}
-				<form
-					onSubmit={(event) => {
-						event.preventDefault();
-						const value = tag.trim();
-						if (!value || application.tags.includes(value)) return setTag("");
-						save([...application.tags, value]);
-						setTag("");
-					}}
-				>
+				{tag === null ? (
+					<Chip variant="dash" className="h-6 text-xs/[18px]" onClick={() => setTag("")}>
+						<Icon name="plus" size={16} />
+						<Trans>Add a tag</Trans>
+					</Chip>
+				) : (
 					<Input
 						aria-label={t`Add a tag`}
 						placeholder={t`Add a tag`}
+						autoFocus
 						value={tag}
-						className="h-7 w-28 text-xs"
+						className="h-6 w-32 px-2 text-xs"
 						onChange={(event) => setTag(event.target.value)}
+						onBlur={commit}
+						onKeyDown={(event) => {
+							if (isImeComposing(event)) return;
+							if (event.key === "Enter") {
+								event.preventDefault();
+								commit();
+							}
+							if (event.key === "Escape") {
+								event.stopPropagation();
+								setTag(null);
+							}
+						}}
 					/>
-				</form>
-			</div>
-		</section>
+				)}
+			</dd>
+		</div>
 	);
 }
 
@@ -798,24 +912,5 @@ function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) 
 				)}
 			</DialogContent>
 		</Dialog>
-	);
-}
-
-/** Opens the application's workspace on the tab for its stage. */
-function OpenWorkspaceButton({ application }: { application: Application }) {
-	const navigate = useNavigate();
-	return (
-		<Button
-			className="ms-auto bg-accent-soft text-accent-text hover:bg-accent-soft hover:brightness-95"
-			onClick={() =>
-				void navigate({
-					to: "/dashboard/applications/$applicationId/{-$tab}",
-					params: { applicationId: application.id },
-				})
-			}
-		>
-			<Icon name="arrow-right" size={18} />
-			<Trans>Open workspace</Trans>
-		</Button>
 	);
 }

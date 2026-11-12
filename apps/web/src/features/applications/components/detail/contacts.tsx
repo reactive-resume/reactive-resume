@@ -1,16 +1,20 @@
 import type { Application } from "../../types";
 import type { Contact } from "@reactive-resume/schema/applications/data";
+import type { ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
-import { useId, useRef, useState } from "react";
+import { Fragment, useId, useRef, useState } from "react";
 import { contactSchema } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
+import { cn } from "@reactive-resume/utils/style";
 import { applicationDetailQueryKey } from "../../queries";
+import { companyInitials } from "../list-view";
+import { IconTile, List, ListRow } from "@/components/calm/list-row";
 import { withQueryUndo } from "@/features/career/shared";
 import { client, prepareRpc } from "@/libs/orpc/client";
 
@@ -21,6 +25,10 @@ type ContactsProps = {
 	disabled: boolean;
 	inline?: boolean;
 	onChange: (contacts: Contact[]) => void;
+	/** People met at interviews who aren't contacts yet, listed after them. */
+	people?: { name: string; role?: string | undefined }[];
+	/** The heading above the list, given the list's own Add contact action. Without it the action sits below. */
+	renderHeader?: (add: { start: () => void; disabled: boolean }) => ReactNode;
 };
 type Removing = { index: number; contact: Contact };
 
@@ -29,7 +37,7 @@ const contactKey = (contact: Contact) =>
 const sameContact = (a: Contact | undefined, b: Contact | undefined) => !!a && !!b && contactKey(a) === contactKey(b);
 
 /** The Contact cell: the primary contact (the first), and the full list, with add and remove, in a popover. */
-export function Contacts({ application, disabled, onChange, inline = false }: ContactsProps) {
+export function Contacts({ application, disabled, onChange, inline = false, people, renderHeader }: ContactsProps) {
 	const { contacts } = application;
 	const queryClient = useQueryClient();
 	const [removing, setRemoving] = useState<Removing | null>(null);
@@ -76,6 +84,8 @@ export function Contacts({ application, disabled, onChange, inline = false }: Co
 				onChange={onChange}
 				removing={removing}
 				onRemove={remove}
+				people={people}
+				renderHeader={renderHeader}
 			/>
 		);
 	return (
@@ -116,9 +126,26 @@ type ContactListProps = {
 	onChange: (contacts: Contact[]) => void;
 	removing: Removing | null;
 	onRemove: (contact: Contact) => void;
+	people?: ContactsProps["people"];
+	renderHeader?: ContactsProps["renderHeader"];
 };
 
-function ContactList({ contacts, disabled, onChange, removing, onRemove }: ContactListProps) {
+/** A contact's initials (`.mono2.sm`). */
+const Initials = ({ name }: { name: string }) => (
+	<IconTile aria-hidden="true" className="size-8 rounded-sm text-xs">
+		{companyInitials(name)}
+	</IconTile>
+);
+
+function ContactList({
+	contacts,
+	disabled,
+	onChange,
+	removing,
+	onRemove,
+	people = [],
+	renderHeader,
+}: ContactListProps) {
 	const id = useId();
 	const [adding, setAdding] = useState(false);
 	// The contact being corrected: its position, and what it said when the form opened.
@@ -185,64 +212,70 @@ function ContactList({ contacts, disabled, onChange, removing, onRemove }: Conta
 	);
 
 	return (
-		<div className="grid gap-2">
-			{shown.length === 0 && !formOpen && (
+		<div className={renderHeader ? "grid" : "grid gap-2"}>
+			{renderHeader?.({ start: () => setAdding(true), disabled: locked || formOpen })}
+			{shown.length === 0 && people.length === 0 && !formOpen && (
 				<p className="text-sm text-ink-3">
 					<Trans>No contacts yet.</Trans>
 				</p>
 			)}
-			{shown.map((contact) => {
-				const index = contacts.indexOf(contact);
-				return (
-					<div key={`${contact.name}-${index}`} className="flex items-start gap-2.5 text-sm">
-						<div className="grid min-w-0 flex-1">
-							<span className="truncate font-medium">
-								<bdi>{contact.name}</bdi>
-								{contact.type && <span className="font-normal text-ink-3"> · {contact.type}</span>}
-							</span>
-							{contact.role && (
-								<span dir="auto" className="truncate text-xs text-ink-3">
-									{contact.role}
-								</span>
-							)}
-							{contact.email && (
-								<a href={`mailto:${contact.email}`} className="truncate text-xs text-accent-text hover:underline">
-									{contact.email}
-								</a>
-							)}
-							{contact.phone && (
-								<a href={`tel:${contact.phone}`} className="truncate text-xs text-accent-text hover:underline">
-									{contact.phone}
-								</a>
-							)}
-						</div>
-						<Button
-							size="icon-xs"
-							variant="ghost"
-							className="touch-target relative"
-							disabled={locked || formOpen}
-							aria-label={t`Edit ${contact.name}`}
-							onClick={() => edit(index)}
-						>
-							<Icon name="pencil-simple" size={16} />
-						</Button>
-						<Button
-							size="icon-xs"
-							variant="ghost"
-							className="touch-target relative"
-							disabled={locked || formOpen}
-							aria-label={t`Remove ${contact.name}`}
-							onClick={() => onRemove(contact)}
-						>
-							<Icon name="x" size={16} />
-						</Button>
-					</div>
-				);
-			})}
+			<List>
+				{shown.map((contact) => {
+					const index = contacts.indexOf(contact);
+					const details = [contact.type, contact.role].filter(Boolean).join(" · ");
+					return (
+						<ListRow
+							key={`${contact.name}-${index}`}
+							className="min-h-[46px] py-1.5"
+							leading={<Initials name={contact.name} />}
+							title={<bdi className="block truncate text-sm/5">{contact.name}</bdi>}
+							subtitle={
+								details || contact.email || contact.phone ? (
+									<>
+										{details}
+										{[contact.email, contact.phone].filter(Boolean).map((value, position) => (
+											<Fragment key={value}>
+												{(details || position > 0) && " · "}
+												<a
+													href={value === contact.email ? `mailto:${value}` : `tel:${value}`}
+													className="font-mono text-xs font-medium hover:underline"
+												>
+													{value}
+												</a>
+											</Fragment>
+										))}
+									</>
+								) : undefined
+							}
+							actions={
+								<Button
+									size="icon-sm"
+									variant="ghost"
+									className="touch-target relative"
+									disabled={locked || formOpen}
+									aria-label={t`Edit ${contact.name}`}
+									onClick={() => edit(index)}
+								>
+									<Icon name="pencil-simple" size={16} />
+								</Button>
+							}
+						/>
+					);
+				})}
+				{people.map((person) => (
+					<ListRow
+						key={person.name}
+						className="min-h-[46px] py-1.5"
+						leading={<Initials name={person.name} />}
+						title={<bdi className="block truncate text-sm/5">{person.name}</bdi>}
+						subtitle={person.role}
+					/>
+				))}
+			</List>
 
 			{formOpen ? (
 				<form
-					className="grid gap-2 rounded-lg border border-line p-2.5"
+					className={cn("grid gap-2 rounded-lg border border-line p-2.5", renderHeader && "mt-2")}
 					onSubmit={(event) => {
 						event.preventDefault();
 						save();
@@ -279,6 +312,22 @@ function ContactList({ contacts, disabled, onChange, removing, onRemove }: Conta
 					</datalist>
 					{error && <p className="text-xs text-danger-text">{error}</p>}
 					<div className="flex justify-end gap-1.5">
+						{editing !== null && contacts[editing.index] && (
+							<Button
+								type="button"
+								size="sm"
+								variant="danger-text"
+								className="me-auto"
+								disabled={locked}
+								onClick={() => {
+									const contact = contacts[editing.index];
+									close();
+									if (contact) onRemove(contact);
+								}}
+							>
+								<Trans>Remove</Trans>
+							</Button>
+						)}
 						<Button type="button" size="sm" variant="ghost" onClick={close}>
 							<Trans>Cancel</Trans>
 						</Button>
@@ -287,7 +336,7 @@ function ContactList({ contacts, disabled, onChange, removing, onRemove }: Conta
 						</Button>
 					</div>
 				</form>
-			) : (
+			) : renderHeader ? null : (
 				<Button size="sm" variant="ghost" className="w-fit" disabled={locked} onClick={() => setAdding(true)}>
 					<Icon name="plus" size={16} />
 					<Trans>Add contact</Trans>

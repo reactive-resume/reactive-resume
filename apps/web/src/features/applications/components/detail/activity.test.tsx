@@ -8,7 +8,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Activity } from "./activity";
 vi.mock("../../use-application-lanes", () => ({ useApplicationLanes: () => ({ lanes: [] }) }));
 vi.mock("../../use-application-actions", () => ({ useInvalidateApplications: () => vi.fn() }));
-vi.mock("@/features/career/shared", () => ({ useCareerTime: () => ({ format: () => "Date", day: () => "Date" }) }));
+vi.mock("@/features/career/shared", () => ({
+	useCareerTime: () => ({ format: () => "Date", day: () => "Date" }),
+	useNow: () => new Date(),
+}));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
