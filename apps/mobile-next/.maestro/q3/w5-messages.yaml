@@ -10,7 +10,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - extendedWaitUntil:
     visible: "Hi Joana,.*"
     timeout: 20000
@@ -55,6 +55,7 @@ appId: me.rxresu.storyboard
           start: "200,2190"
           end: "0,2190"
           duration: 150
+          waitToSettleTimeoutMs: 1
 - assertVisible: Copied
 - tapOn:
     id: toast-action
@@ -128,7 +129,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - extendedWaitUntil:
     visible: "Hi Joana,.*"
     timeout: 20000
@@ -146,6 +147,7 @@ appId: me.rxresu.storyboard
           start: "200,2190"
           end: "0,2190"
           duration: 150
+          waitToSettleTimeoutMs: 1
 - tapOn:
     id: toast-action
     text: Log follow-up

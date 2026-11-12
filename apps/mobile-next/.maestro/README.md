@@ -29,6 +29,9 @@ The same flows run on the `Pixel_10_Pro` emulator at 390 × 844 dp (`adb shell w
 - Absolute coordinates are points on iOS and pixels on Android, and Maestro takes only whole percentages. Steps with absolute coordinates are split into `when: platform:` branches: iOS keeps its points, Android uses the same points × 3.
 - Android reports only what is on screen; iOS also reports elements below the fold. Scroll (`scrollUntilVisible`) before asserting anything that can sit under a footer or the fold.
 - The screen under a sheet, dialog or menu stays in Android's hierarchy, so a label that appears in both (Restore, Applied) can match the wrong one. Scope such taps with `childOf: { id: sheet | dialog | menu }`.
+- Board drags on Android go at about 10 dp/s (`applied-board`, `board-drop`): the card lifts after a 500 ms hold, and a faster finger passes the touch slop first and scrolls the board. How long the swipe dwells in the edge zone varies with load, so `board-drop` on Android proves the lift and the drop, not the page count.
+- Cold-launched flows wait up to 90 s for `storyboard-ready`: on a loaded emulator the fixture pages behind builder screens can take that long to print before the harness settles.
+- Run the suite with the emulator settled (guest load under 5 after a cold boot) and the host quiet; at host load above about 15 flows start timing out.
 - iOS-only gestures and system UI get platform branches: modals close by swiping down on iOS and with back on Android (MOTION.md §6.1); the interview time uses the system date then time dialogs (OK, OK) on Android.
 
 ## Flow inventory

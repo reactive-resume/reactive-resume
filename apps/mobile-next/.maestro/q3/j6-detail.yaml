@@ -9,7 +9,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - extendedWaitUntil:
     visible: Kiln Studio
     timeout: 20000
@@ -55,17 +55,48 @@ appId: me.rxresu.storyboard
 - assertVisible: Close…
 - assertVisible: Move to Trash
 - tapOn: Edit details
-- tapOn:
-    id: edit-role
+# Android puts the cursor where the tap lands; tap the field's empty end so the erase takes the whole role.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          id: edit-role
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          id: edit-role
+          point: "98%,50%"
 - eraseText: 40
 - inputText: Lead product designer
 - tapOn:
     id: edit-save
     waitToSettleTimeoutMs: 1
 - assertVisible: Details saved
-- scrollUntilVisible:
-    element: "Lead product designer.*"
-    direction: UP
+# Maestro's gentle scroll doesn't move this screen on Android; a firmer swipe does.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - scrollUntilVisible:
+          element: "Lead product designer.*"
+          direction: UP
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - repeat:
+          while:
+            notVisible: "Lead product designer.*"
+          times: 6
+          commands:
+            - swipe:
+                start: "50%,35%"
+                end: "50%,75%"
+                duration: 400
+      - assertVisible: "Lead product designer.*"
 - tapOn: More
 - tapOn: Link a resume or letter
 - extendedWaitUntil:
@@ -102,7 +133,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - extendedWaitUntil:
     visible: Couldn't load this\. Your saved data hasn't changed\.
     timeout: 20000

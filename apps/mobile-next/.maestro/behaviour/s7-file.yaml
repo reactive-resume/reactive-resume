@@ -5,14 +5,14 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - launchApp:
     clearState: true
 - openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - openLink: me.rxresu.storyboard://import
 # D4 keeps the last file: Change picks another. Checked first: once the picker is up, neither button is visible.
 - runFlow:

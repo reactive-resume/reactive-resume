@@ -7,7 +7,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 # Storyboard capture temporarily sets timeScale=0; lead must wait for capture completion + 4 s before measurements.
 - repeat:
     times: 5
@@ -45,7 +45,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - assertVisible: Fit to one page
 - runFlow:
     when:
@@ -67,7 +67,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - assertVisible: Page 1 of 1
 # No two-finger pinch command authored; the fetched command docs did not establish supported syntax. Lead must pinch here during manual recording.
 - doubleTapOn:
@@ -77,9 +77,10 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - swipe:
     start: 85%, 22%
     end: 25%, 22%
     duration: 400
+    waitToSettleTimeoutMs: 1
 - assertVisible: “Product designer” moved to Trash

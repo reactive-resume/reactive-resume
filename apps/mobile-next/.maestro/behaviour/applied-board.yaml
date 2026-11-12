@@ -9,7 +9,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - assertVisible: "Kiln Studio.*"
 - runFlow:
     when:
@@ -26,7 +26,7 @@ appId: me.rxresu.storyboard
       - swipe:
           start: "468,960"
           end: "1032,966"
-          duration: 11000
+          duration: 19000
 - extendedWaitUntil:
     visible: What did you send?
     timeout: 10000

@@ -8,7 +8,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - openLink: me.rxresu.storyboard://settings?queued=online
 - tapOn:
     id: settings-sign-out
@@ -24,17 +24,17 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - assertVisible: Sign in again
 - openLink: me.rxresu.storyboard://storyboard/S8-Conflict?theme=light
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - assertVisible: Review
 - openLink: me.rxresu.storyboard://storyboard/S8-NoResponse?theme=light
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - assertVisible: Try again

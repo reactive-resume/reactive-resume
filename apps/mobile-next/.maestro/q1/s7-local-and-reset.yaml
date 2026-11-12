@@ -8,19 +8,19 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - assertVisible: Read on this device instead
 - openLink: me.rxresu.storyboard://storyboard/S7-Audio?theme=light
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - assertVisible: Type your answer instead
 - openLink: me.rxresu.storyboard://storyboard/S7-Chat?theme=light
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - assertVisible: Cancel
 - assertNotVisible: Read on this device instead
 - launchApp:
@@ -29,7 +29,7 @@ appId: me.rxresu.storyboard
 - extendedWaitUntil:
     visible:
       id: storyboard-ready
-    timeout: 30000
+    timeout: 90000
 - tapOn: Redraft
 - waitForAnimationToEnd
 - assertVisible: Send to Work OpenAI?
