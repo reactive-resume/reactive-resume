@@ -121,7 +121,7 @@ body{margin:0;background:var(--desk);font-family:var(--font-ui)}
 .rr-actions .rr-btn{height:48px;font-size:16px}
 .rr-actions>.rr-btn:not(.rr-primary){background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-2)}
 .rr-download summary{width:100%}
-.rr-download-options{top:auto;bottom:calc(100% + 8px);inset-inline:0}
+.rr-download-options{top:auto;bottom:calc(100% + 8px);inset-inline:0;min-width:0}
 .rr-toast{bottom:88px}
 }
 @media print{body{background:#fff}.rr.rr-desk{min-height:0;padding:0;background:none}.rr-page{box-shadow:none}.rr-bar,.rr-credit,.rr-toast{display:none}}

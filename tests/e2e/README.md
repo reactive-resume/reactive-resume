@@ -47,7 +47,7 @@ viewports, copy) and HTTP-only contracts belong in web unit tests and API integr
   the session, a successful one clears private browser storage.
 - Guest login, and a guest's resume carried over when they create an account. Skips without `FLAG_ENABLE_GUEST_LOGIN=true`.
 - Builder section editing, with autosave across reloads and a draft kept when saving during navigation fails.
-- JSON export/import through the New dialog, including an older file whose resume still carries a cover letter.
+- JSON export/import through the Import page, including an older file whose resume still carries a cover letter.
 - Public sharing: an anonymous visitor's PDF download and statistics, a renamed address that keeps redirecting, a
   password-protected link, and Word downloads gated by the owner's opt-in.
 - Browser-made PDFs keep shaped scripts as text (checked with `pdftotext`).
