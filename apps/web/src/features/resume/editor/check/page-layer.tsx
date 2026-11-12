@@ -1,10 +1,11 @@
+import "./page-layer.css";
 import type { CheckIssue } from "./issues";
 import type { PageMap, PageMapNode, PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -111,7 +112,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 
 	const perBlock = new Map<string, number>();
 	const pins =
-		tab === "writing"
+		tab !== "issues"
 			? []
 			: check.issues.flatMap((issue) => {
 					const node = issue.target ? findNode(pageMap, issue.target) : undefined;
@@ -153,7 +154,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				<div
 					key={`tint:${node.key}:${node.y}`}
 					aria-hidden="true"
-					className="absolute -m-[3px] rounded-md bg-[#F2DE8C]/45 p-[3px] mix-blend-multiply"
+					className="absolute -m-[3px] rounded-md bg-warn/30 p-[3px] mix-blend-multiply"
 					style={boxStyle(node, page)}
 				/>
 			))}
@@ -179,7 +180,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 							onClick={() => pickIssue(issue)}
 							style={marginStyle(node, page, stack, onPage)}
 							className={cn(
-								"pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-paper bg-warn text-xs font-semibold text-warn-ink shadow-[0_1px_3px_oklch(0_0_0/0.25)]",
+								"pointer-events-auto absolute grid size-5 place-items-center rounded-xs bg-warn-mark t-caption font-semibold text-warn-ink",
 								isSelected && "outline-2 outline-offset-1 outline-warn",
 							)}
 						>
@@ -214,7 +215,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				<span
 					key={`marker:${number}`}
 					aria-hidden="true"
-					className="absolute grid size-5 place-items-center rounded-sm bg-accent text-xs font-semibold text-on-accent"
+					className="absolute grid size-5 place-items-center rounded-xs bg-accent text-xs font-semibold text-on-accent"
 					style={marginStyle(node, page, 0, onPage)}
 				>
 					{i18n.number(number)}
@@ -227,16 +228,70 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 /** "What a person sees / What a parser reads", floating over the canvas in Check. Switching is instant. */
 export function PageViewToggle() {
 	const view = useEditorStore((state) => state.pageView);
+	const count = useEditorStore((state) => state.rendered.pageCount);
+	const tab = useEditorStore((state) => state.checkTab);
+	const check = useCheck();
+	const highlightTerm = useEditorStore((state) => state.highlightTerm);
+	const pageMap = useEditorStore((state) => state.rendered.pageMap);
+	const mentions =
+		check && highlightTerm
+			? targetsMentioning(check.data, highlightTerm).filter((target) =>
+					pageMap?.nodes.some((node) => isSameSelection(toTarget(node), target)),
+				).length
+			: 0;
+	const proposals = useEditorStore((state) => state.proposals);
+	const applications = useResumeStore((state) => state.proposalApplications);
+	const pending =
+		check && tab === "writing"
+			? proposals.filter((proposal) => getProposalState(check.data, proposal, applications) === "pending").length
+			: 0;
+	const writing = view === "page" && count === 1 && pending > 0;
 	return (
-		<Button
-			variant="ghost"
-			size="sm"
-			className="absolute end-10 top-3.5 z-10 text-accent-text"
-			onClick={() => useEditorStore.setState({ pageView: view === "page" ? "parser" : "page" })}
-		>
-			<Icon name={view === "page" ? "code" : "file-text"} size={16} />
-			{view === "page" ? <Trans>See what a parser reads</Trans> : <Trans>Back to the page</Trans>}
-		</Button>
+		<>
+			{writing && (
+				<span
+					data-check-writing-caption
+					className="pointer-events-none absolute inset-x-0 top-3.5 text-center t-mono text-ink-3"
+				>
+					<Plural
+						value={pending}
+						one="# suggested rewrite on this page · nothing changes until you accept"
+						other="# suggested rewrites on this page · nothing changes until you accept"
+					/>
+				</span>
+			)}
+			{view === "parser" && (
+				<span className="pointer-events-none absolute inset-x-0 top-3.5 text-center t-mono text-ink-3">
+					<Trans>What a parser reads · page 1 of {i18n.number(Math.max(1, count))}</Trans>
+				</span>
+			)}
+
+			{tab === "match" && view === "page" && highlightTerm ? (
+				<span
+					data-check-page-toggle
+					className="absolute end-[calc(50%-310px)] top-[13px] t-small text-ink-2 max-sm:end-4"
+				>
+					<Trans>“{highlightTerm}”</Trans>
+					{" · "}
+					<Plural value={mentions} one="found in # place" other="found in # places" />
+				</span>
+			) : (
+				<Button
+					data-check-page-toggle
+					variant="ghost"
+					size="sm"
+					className={cn(
+						"absolute end-[calc(50%-310px)] top-3 z-10 h-5 gap-1.5 p-0 text-[13px]/5 text-accent-text max-sm:end-4",
+						view === "parser" && "end-[calc(50%-350px)]",
+						tab === "writing" && view === "page" && "top-10",
+					)}
+					onClick={() => useEditorStore.setState({ pageView: view === "page" ? "parser" : "page" })}
+				>
+					<Icon name={view === "page" ? "code" : "file-text"} size={16} />
+					{view === "page" ? <Trans>See what a parser reads</Trans> : <Trans>Back to the page</Trans>}
+				</Button>
+			)}
+		</>
 	);
 }
 

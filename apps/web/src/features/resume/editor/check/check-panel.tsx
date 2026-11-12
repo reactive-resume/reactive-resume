@@ -37,7 +37,7 @@ import { useIsResumeLocked } from "@/features/resume/builder/draft";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 
 /**
- * Check: the score over the live checks, then Issues (numbered cards pinned to their lines), Job match (terms from
+ * Check: a word-led verdict, then Issues (numbered rows pinned to their lines), Job match (terms from
  * the linked application's posting, not scored) and Writing (an opt-in AI review, not scored).
  */
 export function CheckPanel() {
@@ -52,7 +52,7 @@ export function CheckPanel() {
 	if (!check) return null;
 
 	return (
-		<PanelBody className="gap-5 pb-6">
+		<PanelBody className={cn("gap-5", tab === "match" ? "pb-0" : "pb-6")}>
 			<ScoreSummary report={check.report} count={check.issues.length} />
 
 			<Tabs
@@ -62,7 +62,7 @@ export function CheckPanel() {
 					useEditorStore.setState({ checkTab: value });
 					void navigate({ to: ".", search: { ...search, checkTab: value }, replace: true });
 				}}
-				className="gap-1.5"
+				className="flex-1 gap-1.5"
 			>
 				<TabsList aria-label={t`Check views`} className="h-9 w-full">
 					<TabsTrigger value="issues" className="gap-1.5">
@@ -144,10 +144,10 @@ function IssuesTab({ check }: { check: CheckResult }) {
 						leading={<Icon name="eye-slash" className="text-ink-3" />}
 						title={<Plural value={report.ignored.length} one="# issue is ignored" other="# issues are ignored" />}
 						subtitle={buildIssues({ ...report, findings: report.ignored }, data)
-							.map((issue) => issue.title)
+							.map((issue) => t`“${issue.title}”`)
 							.join(" · ")}
 						trailing={
-							<Button variant="ghost" size="sm" disabled={locked} onClick={restoreIgnored}>
+							<Button variant="link" size="sm" className="text-sm/5" disabled={locked} onClick={restoreIgnored}>
 								<Trans>Show it again</Trans>
 							</Button>
 						}
@@ -175,31 +175,32 @@ function IssueCard({ issue, selected, locked }: IssueCardProps) {
 			data-issue-card={issue.key}
 			aria-labelledby={titleId}
 			onClick={() => useEditorStore.setState({ checkIssue: issue.key })}
-			className={cn("grid cursor-pointer gap-2.5 border-b border-line py-3.5", selected && "bg-hover")}
+			className={cn("relative cursor-pointer border-b border-line pt-3.5 pb-4", selected && "bg-hover")}
 		>
-			<div className="flex items-start gap-2.5">
+			<div className="flex items-start gap-3">
 				<span
 					aria-hidden="true"
-					className="mt-px grid size-5 shrink-0 place-items-center rounded-xs bg-warn-mark t-caption font-semibold text-warn-ink"
+					className="mt-px grid size-5 shrink-0 place-items-center rounded-xs bg-warn font-mono text-[11px]/5 font-semibold text-warn-ink"
 				>
 					{i18n.number(issue.number)}
 				</span>
-				<div className="grid min-w-0 gap-[3px]">
-					<h3 id={titleId} className="text-sm leading-5 font-semibold">
+				<div className="grid min-w-0 flex-1 gap-0.5">
+					<h3 id={titleId} className="t-row-title">
 						<span className="sr-only">
 							<Trans>Issue {i18n.number(issue.number)}:</Trans>{" "}
 						</span>
 						{issue.title}
 					</h3>
-					<p className="text-[13px] leading-[19px] text-ink-2">{issue.body}</p>
+					<p className="t-small text-ink-3">{issue.body}</p>
 				</div>
 			</div>
 
 			{/* Touch size on phones (B1). */}
-			<div className="ms-8 flex flex-wrap gap-0.5 [&_button]:max-sm:h-10 [&_button]:max-sm:px-3.5 [&_button]:max-sm:text-sm">
+			<div className="ms-8 mt-2.5 flex flex-wrap gap-0.5 [&_button]:max-sm:h-10 [&_button]:max-sm:px-3.5 [&_button]:max-sm:text-sm">
 				<Button
 					size="sm"
 					variant="secondary"
+					className="me-1"
 					disabled={locked && applies}
 					onClick={(event) => {
 						event.stopPropagation();
@@ -345,7 +346,8 @@ function DeepCheck({ data }: { data: ResumeData }) {
 					subtitle={<Trans>Checks the file you'd send, on this device</Trans>}
 					trailing={
 						<Button
-							variant="ghost"
+							variant="link"
+							className="text-sm/5"
 							size="sm"
 							aria-label={running ? t`Checking the exported PDF…` : t`Check`}
 							disabled={running}

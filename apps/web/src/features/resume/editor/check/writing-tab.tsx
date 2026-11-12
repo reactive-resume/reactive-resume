@@ -1,3 +1,4 @@
+import "./writing-tab.css";
 import type { WritingNote } from "../store";
 import type { CheckIssue } from "./issues";
 import type { AiUsageSummary } from "@reactive-resume/schema/ai-usage";
@@ -9,20 +10,22 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { collectPassages } from "@reactive-resume/resume/proposals";
+import { getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { ProposalList } from "../proposals/proposal-list";
+import { ChangeSet } from "../proposals/proposal-list";
+import { acceptResumeProposals } from "../proposals/proposals";
 import { useEditorStore } from "../store";
 import { describeEntry } from "../write/model";
 import { CheckAiLine } from "./ai-line";
 import { getSectionName } from "./issues";
-import { mapWritingReview } from "./review";
+import { mapWritingReview, editWritingProposal } from "./review";
 import { AiResultUsage } from "@/features/ai/usage";
 import { SetUpAi } from "@/features/assistant/provider-setup";
-import { useResumeStore } from "@/features/resume/builder/draft";
+import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { AiProviderPicker } from "@/features/settings/integrations/components/ai-provider-picker";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -58,6 +61,9 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 	const [choosing, setChoosing] = useState(false);
 	const review = useEditorStore((state) => state.writingReview);
 	const proposals = useEditorStore((state) => state.proposals);
+	const locked = useIsResumeLocked();
+	const applications = useResumeStore((state) => state.proposalApplications);
+	const setProposalStatus = useEditorStore((state) => state.setProposalStatus);
 
 	const provider = usableProviders.find((entry) => entry.id === providerOverride) ?? usableProviders[0];
 	const passages = collectPassages(data, {
@@ -161,7 +167,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 			<div className="grid gap-3">
 				<div
 					role="alert"
-					className="flex gap-2.5 rounded-xl bg-danger-soft p-3 text-[13px] leading-[19px] text-danger-text"
+					className="flex gap-2.5 rounded-xl bg-danger-soft p-3 text-[13px] leading-[18px] text-danger-text"
 				>
 					<Icon name="warning-circle" />
 					<span>
@@ -194,7 +200,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 				<strong className="text-sm font-semibold">
 					<Trans>A second opinion on your wording</Trans>
 				</strong>
-				<p className="text-[13px] leading-[19px] text-ink-2">
+				<p className="text-[13px] leading-[18px] text-ink-2">
 					<Trans>
 						The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests
 						rewrites. It isn't part of the checks.
@@ -238,22 +244,79 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 	}
 
 	return (
-		<div className="grid gap-3">
-			{reviewedAt && (
-				<p className="text-xs text-ink-3">
-					<Trans>Reviewed {reviewedAt.toLocaleString(i18n.locale)}</Trans>
-				</p>
+		<div className="flex min-h-full flex-col gap-2 pt-2">
+			{!hasUsableProvider && (
+				<CheckAiLine lead={<Trans>Writing review needs AI.</Trans>}>
+					<Trans>Issues and Job match work without it.</Trans>
+				</CheckAiLine>
 			)}
-			{review && <AiResultUsage usage={reviewUsage} />}
+			<div className="flex items-start justify-between gap-2">
+				{reviewedAt && (
+					<p className="text-xs text-ink-3">
+						<Trans>Reviewed {reviewedAt.toLocaleString(i18n.locale)}</Trans>
+						{reviewUsage?.models.map((model) => (
+							<span key={model.providerId}>
+								{" "}
+								· {model.label} · {model.model}
+							</span>
+						))}
+					</p>
+				)}
+				{hasUsableProvider && (
+					<button type="button" className="shrink-0 text-[13px]/5 font-medium text-accent-text" onClick={run}>
+						<Trans>Run again</Trans>
+					</button>
+				)}
+			</div>
+			<details className="text-xs text-ink-3">
+				<summary className="cursor-pointer">
+					<Trans>AI request details</Trans>
+				</summary>
+				<AiResultUsage usage={reviewUsage} />
+			</details>
 			{reviewInput !== null && reviewInput !== inputText && (
 				<p role="status" className="text-xs text-warn-text">
 					<Trans>Resume changed since this review. Review these suggestions as out of date or run again.</Trans>
 				</p>
 			)}
-			{!hasUsableProvider && <SetUpAi />}
-			{review.summary && <p className="text-[13px] leading-[19px] text-ink-2">{review.summary}</p>}
+			{review.summary && <p className="text-[13px] leading-[18px] text-ink-2">{review.summary}</p>}
 
-			{proposals.length > 0 && <ProposalList proposals={proposals} data={data} onSuggestAgain={run} />}
+			{proposals.length > 0 && (
+				<div className="check-writing-proposals mt-1">
+					<ChangeSet
+						proposals={proposals}
+						states={proposals.map((proposal) => getProposalState(data, proposal, applications))}
+						locked={locked}
+						onAccept={(accepted) => {
+							const { applied } = acceptResumeProposals(accepted);
+							setProposalStatus(
+								applied.map((proposal) => proposal.id),
+								"accepted",
+							);
+						}}
+						onReject={(rejected) =>
+							setProposalStatus(
+								rejected.map((proposal) => proposal.id),
+								"rejected",
+							)
+						}
+						onRestore={(restored) =>
+							setProposalStatus(
+								restored.map((proposal) => proposal.id),
+								"pending",
+							)
+						}
+						onSuggestAgain={hasUsableProvider ? run : undefined}
+						onEdit={(proposal, text) => {
+							const edited = editWritingProposal(proposal, text, passages, inputText);
+							useEditorStore.setState((state) => ({
+								proposals: state.proposals.map((current) => (current.id === edited.id ? edited : current)),
+							}));
+							return Promise.resolve();
+						}}
+					/>
+				</div>
+			)}
 
 			{review.notes.map((note) => (
 				<WritingNoteCard key={`${note.location}:${note.note}`} note={note} />
@@ -261,10 +324,10 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 
 			{review.strengths.length > 0 && (
 				<section aria-labelledby="writing-strengths" className="grid gap-1.5">
-					<h3 id="writing-strengths" className="pt-1.5 text-xs font-semibold text-ink-3">
+					<h3 id="writing-strengths" className="mt-2.5 t-caption text-ink-3">
 						<Trans>What's working</Trans>
 					</h3>
-					<ul className="grid list-disc gap-1 ps-[18px] text-[13px] leading-[19px] text-ink-2">
+					<ul className="grid list-disc gap-1 ps-[18px] text-[13px] leading-[18px] text-ink-2">
 						{review.strengths.map((strength) => (
 							<li key={strength}>{strength}</li>
 						))}
@@ -272,16 +335,8 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 				</section>
 			)}
 
-			<p className="text-xs leading-[17px] text-ink-3">
+			<p className="mt-auto pt-1.5 pb-3 text-xs leading-4 text-ink-3">
 				<Trans>A model's opinion, not a verdict. It can be wrong.</Trans>{" "}
-				<button
-					type="button"
-					disabled={!hasUsableProvider || isPending}
-					className="font-medium text-ink-2 underline underline-offset-2 disabled:opacity-45"
-					onClick={run}
-				>
-					<Trans>Run again</Trans>
-				</button>
 			</p>
 		</div>
 	);
@@ -300,22 +355,22 @@ function WritingNoteCard({ note }: { note: WritingNote }) {
 	};
 
 	return (
-		<article className="grid gap-1.5 border-b border-line py-3">
-			<div className="flex justify-between gap-2">
-				<span className="font-mono text-xs text-ink-3">{note.location}</span>
+		<article className="grid gap-1 border-b border-line pt-3 pb-1.5">
+			<div className="flex items-center justify-between gap-2">
+				<span className="t-mono text-ink-2">{note.location}</span>
 				<span
 					className={cn(
-						"h-[18px] rounded px-1.5 text-xs leading-[18px] font-semibold",
+						"inline-flex h-5 items-center rounded-xs px-1.5 t-caption",
 						note.impact === "high" ? "bg-warn-soft text-warn-text" : "bg-sunken text-ink-2",
 					)}
 				>
 					{impactLabel(note.impact)}
 				</span>
 			</div>
-			<p className="text-[13px] leading-[19px]">
+			<p className="text-[13px] leading-[18px]">
 				{note.quote && <i className="text-ink-2">“{note.quote}”</i>} {note.note}
 			</p>
-			{note.rewrite && <p className="text-[13px] leading-[19px] text-accent-text">{note.rewrite}</p>}
+			{note.rewrite && <p className="text-[13px] leading-[18px] text-accent-text">{note.rewrite}</p>}
 			{note.target && (
 				<Button size="sm" variant="ghost" className="-ms-2 w-fit" onClick={showOnPage}>
 					<Trans>Show on page</Trans>

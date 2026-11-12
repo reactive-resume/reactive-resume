@@ -11,6 +11,7 @@ import { useEditorStore } from "../store";
 
 const api = vi.hoisted(() => ({ review: vi.fn(), read: vi.fn(), id: "resume-a" }));
 vi.mock("@/features/resume/builder/draft", () => ({
+	useIsResumeLocked: () => false,
 	useResumeStore: Object.assign((select: (state: unknown) => unknown) => select({ resume: { id: api.id } }), {
 		getState: () => ({ resume: { id: api.id } }),
 	}),
@@ -36,7 +37,7 @@ vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () 
 	}),
 }));
 vi.mock("@/features/assistant/provider-setup", () => ({ SetUpAi: () => null }));
-vi.mock("../proposals/proposal-list", () => ({ ProposalList: () => null }));
+vi.mock("../proposals/proposal-list", () => ({ ChangeSet: () => null }));
 import { WritingTab } from "./writing-tab";
 
 beforeEach(() => {
@@ -126,6 +127,7 @@ it("publishes only the document's saved review when an older unmounted request f
 	expect(useEditorStore.getState().writingReview?.summary).toBe("Latest saved review");
 	expect(useEditorStore.getState().proposals[0]?.aiOperationIds).toEqual(["saved-writing-source"]);
 	expect(screen.queryByText("Older discarded response")).toBeNull();
+	fireEvent.click(screen.getByText("AI request details"));
 	expect(screen.getByText("AI request attempts: 2")).toBeVisible();
 	expect(screen.getByText("Recorded AI · openai · recorded-model")).toBeVisible();
 	const { aiOperationIds: _sources, ...legacy } = saved as Record<string, unknown>;

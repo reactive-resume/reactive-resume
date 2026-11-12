@@ -22,6 +22,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { checkStateOf, editWithUndo } from "./actions";
 import { CheckAiLine } from "./ai-line";
+import { List, ListRow } from "@/components/calm/list-row";
 import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { useNewDocumentsStore } from "@/features/documents/new-documents";
@@ -154,6 +155,13 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 	const { i18n } = useLingui();
 	const hiddenList = formatList(i18n.locale, hiddenTerms);
 
+	const aiLine =
+		!providerState.isUnavailable && !hasUsableProvider ? (
+			<CheckAiLine lead={<Trans>Working a term into your writing needs AI.</Trans>}>
+				<Trans>Matching terms and adding Skills work without it.</Trans>
+			</CheckAiLine>
+		) : null;
+
 	if (match.applicationLoading)
 		return (
 			<p role="status">
@@ -171,7 +179,13 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 				</Button>
 			</div>
 		);
-	if (!posting) return <NoPosting application={application} />;
+	if (!posting)
+		return (
+			<div className="grid gap-3.5">
+				{aiLine}
+				<NoPosting application={application} />
+			</div>
+		);
 
 	const open = result?.missing.find((term) => term.term === openTerm);
 
@@ -199,12 +213,8 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 	};
 
 	return (
-		<div className="grid gap-3.5">
-			{!providerState.isUnavailable && !hasUsableProvider && (
-				<CheckAiLine lead={<Trans>Working a term into your writing needs AI.</Trans>}>
-					<Trans>Matching terms and adding Skills work without it.</Trans>
-				</CheckAiLine>
-			)}
+		<div className="flex min-h-full flex-col gap-3.5">
+			{aiLine}
 			<PostingSource application={application} contextOnly={match.contextOnly} />
 
 			{!result ? (
@@ -219,7 +229,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 				<>
 					<div className="grid gap-1.5">
 						<div className="flex items-baseline justify-between gap-2">
-							<strong className="text-sm font-semibold">
+							<strong className="t-label">
 								<Trans>
 									{i18n.number(result.found.length)} of {i18n.number(result.total)} posting terms appear
 								</Trans>
@@ -245,7 +255,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 					{result.missing.length > 0 && (
 						<section aria-labelledby="match-missing" className="grid gap-2">
-							<h3 id="match-missing" className="text-xs font-semibold text-ink-3">
+							<h3 id="match-missing" className="t-caption text-ink-3">
 								<Trans>Not in your resume · add only if true</Trans>
 							</h3>
 							<div className="flex flex-wrap gap-1.5">
@@ -256,11 +266,13 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 										aria-expanded={openTerm === term.term}
 										onClick={() => setOpenTerm(openTerm === term.term ? null : term.term)}
 										className={cn(
-											"flex h-[30px] items-center gap-1 rounded-lg border border-dashed px-2.5 text-[13px] font-medium transition-colors duration-quick",
-											openTerm === term.term ? "border-accent bg-accent-soft" : "border-line-2 hover:bg-hover",
+											"flex h-7 items-center gap-1.5 rounded-sm border border-dashed px-2.5 text-[13px] leading-[18px] font-medium transition-colors duration-quick",
+											openTerm === term.term
+												? "border-transparent bg-accent-soft text-accent-text"
+												: "border-line-2 hover:bg-hover",
 										)}
 									>
-										<Icon name="plus" size={15} className="text-ink-3" />
+										<Icon name="plus" size={14} className="text-ink-3" />
 										{term.label}
 									</button>
 								))}
@@ -270,7 +282,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 								<section
 									key={open.term}
 									aria-label={t`Add “${open.label}”`}
-									className={cn(ENTER_CLASS, "grid gap-2 rounded-xl border border-line bg-raised p-3 shadow-e2")}
+									className={cn(ENTER_CLASS, "grid gap-1.5 rounded-lg border border-line bg-raised px-3.5 py-3")}
 								>
 									<p className="text-[13px] leading-[19px] text-ink-2">
 										<Plural
@@ -280,7 +292,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 										/>{" "}
 										<Trans>If it's part of your experience, add it where it belongs.</Trans>
 									</p>
-									<div className="grid justify-items-start gap-1">
+									<div className="grid justify-items-start gap-0.5">
 										{/* Only a skill's name goes into Skills as it is; a phrase from the posting needs a place in context. */}
 										{open.skill && (
 											<Button size="sm" variant="soft" disabled={locked} onClick={() => addToSkills(open)}>
@@ -292,6 +304,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 											<Button
 												size="sm"
 												variant="ghost"
+												className="-ms-2.5"
 												disabled={locked}
 												onClick={() => askAssistant(open.label, application ? null : posting)}
 											>
@@ -299,7 +312,13 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 												<Trans>Ask the assistant to work it in</Trans>
 											</Button>
 										)}
-										<Button size="sm" variant="ghost" disabled={locked} onClick={() => hideTerm(open)}>
+										<Button
+											size="sm"
+											variant="ghost"
+											className="-ms-2.5"
+											disabled={locked}
+											onClick={() => hideTerm(open)}
+										>
 											<Trans>Not true for me, hide it</Trans>
 										</Button>
 									</div>
@@ -310,7 +329,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 					{result.found.length > 0 && (
 						<section aria-labelledby="match-found" className="grid gap-2">
-							<h3 id="match-found" className="text-xs font-semibold text-ink-3">
+							<h3 id="match-found" className="t-caption text-ink-3">
 								<Trans>Already covered · pick one to find it on the page</Trans>
 							</h3>
 							<div className="flex flex-wrap gap-1.5">
@@ -323,7 +342,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 											aria-pressed={on}
 											onClick={() => useEditorStore.setState({ highlightTerm: on ? null : term.term })}
 											className={cn(
-												"flex h-7 items-center gap-1 rounded-md px-2 text-xs font-medium transition-colors duration-quick",
+												"flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-[13px] leading-[18px] font-medium transition-colors duration-quick",
 												on ? "bg-warn-soft text-warn-text" : "border border-line-2 text-ink-2",
 											)}
 										>
@@ -358,7 +377,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 					</button>
 				</p>
 			)}
-			{application && <ApplicationFooter application={application} contextOnly={match.contextOnly} />}
+			{application && <ApplicationFooter application={application} />}
 		</div>
 	);
 }
@@ -530,8 +549,8 @@ function PostingSource({ application, contextOnly }: { application: JobMatch["ap
 
 	if (!application) {
 		return (
-			<div className="grid gap-2 border-b border-line py-3">
-				<div className="flex items-center gap-2.5">
+			<div className="grid gap-2 border-b border-line py-2.5">
+				<div className="flex items-center gap-3.5">
 					<span className="grid size-7 place-items-center rounded-lg bg-sunken text-ink-2">
 						<Icon name="copy" size={16} />
 					</span>
@@ -553,19 +572,25 @@ function PostingSource({ application, contextOnly }: { application: JobMatch["ap
 	}
 
 	return (
-		<div className="grid gap-2 border-b border-line py-3">
-			<div className="flex items-center gap-2.5">
-				<span className="grid size-7 place-items-center rounded-lg bg-sunken text-[13px] font-semibold text-ink-2">
+		<div className="grid gap-2 border-b border-line py-2.5">
+			<div className="flex items-center gap-3.5">
+				<span className="grid size-8 place-items-center rounded-sm bg-sunken text-[12px]/4 font-semibold text-ink-2">
 					{application.company.slice(0, 1).toUpperCase()}
 				</span>
 				<span className="grid min-w-0 flex-1">
-					<b className="truncate text-[13px] font-semibold">{application.company}</b>
+					<b className="truncate t-row-title">{application.company}</b>
 					<span className="text-xs text-ink-3">
 						{application.role} ·{" "}
 						{contextOnly ? <Trans>For this visit only</Trans> : <Trans>Posting from the linked application</Trans>}
 					</span>
 				</span>
-				<Button size="sm" variant="secondary" aria-expanded={changing} onClick={() => setChanging(!changing)}>
+				<Button
+					size="sm"
+					variant="link"
+					className="h-5 p-0 text-sm/5"
+					aria-expanded={changing}
+					onClick={() => setChanging(!changing)}
+				>
 					<Trans>Change</Trans>
 				</Button>
 			</div>
@@ -848,51 +873,37 @@ function askAssistant(label: string, pastedPosting: string | null) {
 	openAssistantFrom({ ask: posting ? `${request}\n\n${t`The posting:`}\n${posting}` : request });
 }
 
-function ApplicationFooter({
-	application,
-	contextOnly,
-}: {
-	application: NonNullable<JobMatch["application"]>;
-	contextOnly: boolean;
-}) {
+function ApplicationFooter({ application }: { application: NonNullable<JobMatch["application"]> }) {
 	const { makeCopy, isPending } = useMakeCopy();
 	return (
-		<div className="mt-2 border-t border-line">
-			{contextOnly && (
-				<div className="flex min-h-14 items-center gap-2 border-b border-line py-2">
-					<div className="min-w-0 flex-1">
-						<p className="t-ui font-medium">
-							<Trans>Tailor a copy for {application.company}</Trans>
-						</p>
-						<p className="t-caption text-ink-3">
-							<Trans>This resume stays as it is for other jobs</Trans>
-						</p>
-					</div>
-					<Button
-						variant="secondary"
-						size="sm"
-						disabled={isPending}
-						onClick={() => void makeCopy({ applicationId: application.id, company: application.company })}
-					>
-						<Trans>Make a copy</Trans>
-					</Button>
-				</div>
-			)}
-			<Link
-				to="/dashboard/applications/$applicationId/{-$tab}"
-				params={{ applicationId: application.id, tab: "fit" }}
-				className="flex min-h-14 items-center gap-3 py-2"
-			>
-				<span className="flex-1">
-					<span className="block t-ui font-medium">
-						<Trans>Fit for {application.company}</Trans>
-					</span>
-					<span className="t-caption text-ink-3">
-						<Trans>Each requirement, with the evidence for it</Trans>
-					</span>
-				</span>
-				<Icon name="caret-right" />
-			</Link>
+		<div className="mt-auto pb-2">
+			<List cap>
+				<ListRow
+					title={<Trans>Tailor a copy for {application.company}</Trans>}
+					subtitle={<Trans>This resume stays as it is for other jobs</Trans>}
+					trailing={
+						<Button
+							size="sm"
+							variant="secondary"
+							disabled={isPending}
+							onClick={() => void makeCopy({ applicationId: application.id, company: application.company })}
+						>
+							<Trans>Make a copy</Trans>
+						</Button>
+					}
+				/>
+				<ListRow
+					title={<Trans>Fit for {application.company}</Trans>}
+					subtitle={<Trans>Each requirement, with the evidence for it</Trans>}
+					caret
+					render={
+						<Link
+							to="/dashboard/applications/$applicationId/{-$tab}"
+							params={{ applicationId: application.id, tab: "fit" }}
+						/>
+					}
+				/>
+			</List>
 		</div>
 	);
 }

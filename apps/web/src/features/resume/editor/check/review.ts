@@ -50,7 +50,7 @@ export function mapWritingReview(
 			proposals.push({
 				id: generateId(),
 				target: passage.target,
-				location: passage.location,
+				location: passage.location.replaceAll(" · ", " › "),
 				before: passage.html,
 				after: replaceBlockText(passage.html, rewrite),
 				why: suggestion.issue,
@@ -62,7 +62,7 @@ export function mapWritingReview(
 		}
 
 		notes.push({
-			location: passage?.location ?? saved?.where ?? suggestion.section ?? "",
+			location: (passage?.location ?? saved?.where ?? suggestion.section ?? "").replaceAll(" · ", " › "),
 			impact: suggestion.impact,
 			quote: passage?.text ?? saved?.text ?? "",
 			...(rewrite ? { rewrite } : {}),
@@ -72,4 +72,30 @@ export function mapWritingReview(
 	}
 
 	return { proposals, notes };
+}
+
+/** Editing a suggestion rechecks its claims before the shared acceptance guard can apply it. */
+export function editWritingProposal(
+	proposal: Proposal,
+	text: string,
+	passages: readonly Passage[],
+	documentText: string,
+): Proposal {
+	const entry = passages
+		.filter(
+			(passage) =>
+				passage.target.sectionId === proposal.target.sectionId &&
+				passage.target.itemId === proposal.target.itemId &&
+				passage.target.roleId === proposal.target.roleId,
+		)
+		.map((passage) => passage.text)
+		.join("\n");
+	const unsupported = unverifiedClaims(text, { entry, document: documentText });
+	return {
+		...proposal,
+		after: replaceBlockText(proposal.before, text),
+		edited: true,
+		unsupported,
+		addsClaims: unsupported.length > 0,
+	};
 }

@@ -50,7 +50,7 @@ const issueOnLine = (issues: readonly CheckIssue[], line: string) =>
 
 function IssueChip({ issue }: { issue: CheckIssue }) {
 	return (
-		<span className="h-[18px] shrink-0 rounded-sm bg-warn-soft px-1.5 font-sans text-xs leading-[18px] font-semibold whitespace-nowrap text-warn-text">
+		<span className="h-[18px] shrink-0 rounded-sm bg-warn-soft px-1.5 font-sans text-[11px] leading-[18px] font-semibold whitespace-nowrap text-warn-text">
 			<Trans>issue {i18n.number(issue.number)}</Trans>
 		</span>
 	);
@@ -78,7 +78,11 @@ export function ParserView() {
 	});
 
 	return (
-		<div className="mx-auto grid min-h-[792px] w-[612px] max-w-full content-start gap-[18px] rounded-paper border border-line bg-bg px-8 py-7 font-mono text-[12px] leading-[19px] text-ink max-sm:px-4">
+		<div
+			role="document"
+			aria-label={t`What a parser reads`}
+			className="mx-auto w-[700px] max-w-full shrink-0 self-start rounded-md border border-line bg-surface px-8 pt-[26px] pb-10 font-mono text-[12px] leading-[19px] text-ink-2 max-sm:px-4"
+		>
 			{isError ? (
 				<p className="font-sans text-sm text-danger-text">
 					<Trans>The page's PDF couldn't be read. Edit anything to render it again.</Trans>
@@ -142,7 +146,7 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 
 	return (
 		<>
-			<div className="flex flex-wrap justify-between gap-2 text-xs font-medium text-ink-3">
+			<div className="flex justify-between gap-2 font-medium text-ink-3">
 				<span>
 					<Trans>Extracted from the PDF on the page · reading order</Trans>
 				</span>
@@ -151,14 +155,18 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 				</span>
 			</div>
 
-			<dl className="grid grid-cols-[110px_minmax(0,1fr)] gap-x-4 gap-y-1.5 max-sm:grid-cols-[84px_minmax(0,1fr)]">
+			<dl className="my-3.5 grid grid-cols-[96px_minmax(0,1fr)] gap-x-4 gap-y-[3px] max-sm:grid-cols-[84px_minmax(0,1fr)]">
 				{fields.map((field) => {
 					const issue = issueFor(issues, FIELD_CODES[field.id] ?? []);
 					return (
 						<div key={field.id} className="contents">
 							<dt className="text-ink-3">{field.label}</dt>
-							<dd className={cn("flex min-w-0 items-center gap-2", (issue || !field.value) && "text-warn-text")}>
-								<span className="min-w-0 break-words">{field.value || notFound}</span>
+							<dd
+								className={cn("flex min-w-0 items-center gap-2", issue || !field.value ? "text-warn-text" : "text-ink")}
+							>
+								<span className={cn("min-w-0 break-words", field.id !== "dates" && "flex-1")}>
+									{field.value || notFound}
+								</span>
 								{issue && <IssueChip issue={issue} />}
 							</dd>
 						</div>
@@ -170,8 +178,8 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 
 			{groups.map((group, index) =>
 				group.heading === null && group.lines.length === 0 ? null : (
-					<section key={`${index}:${group.heading ?? ""}`} className="grid gap-1">
-						{group.heading !== null && <h3 className="text-accent-text">▸ {group.heading}</h3>}
+					<section key={`${index}:${group.heading ?? ""}`} className="mt-3">
+						{group.heading !== null && <h3 className="font-medium text-accent-text">▸ {group.heading}</h3>}
 						{group.lines.map((line, lineIndex) => {
 							const issue = issueOnLine(issues, line);
 							return (
