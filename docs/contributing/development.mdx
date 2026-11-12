@@ -21,9 +21,12 @@ Run every command from the repository root unless a step says otherwise.
 <Steps>
   <Step title="Clone the repository">
     ```bash
-    git clone https://github.com/reactive-resume/reactive-resume.git
+    git clone --filter=blob:none https://github.com/reactive-resume/reactive-resume.git
     cd reactive-resume
     ```
+
+    `--filter=blob:none` downloads the full commit history but only the current files, which keeps the clone near 130 MB instead of over 2 GB. Git fetches older file versions when a command such as `git blame` or `git checkout` needs them.
+
   </Step>
 
     <Step title="Install dependencies">

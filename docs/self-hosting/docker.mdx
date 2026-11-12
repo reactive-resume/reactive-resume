@@ -285,7 +285,7 @@ The repository's own `compose.yml` builds the image from source and also starts 
 storage). It reads `.env.example` first and then your `.env`.
 
 ```bash
-git clone https://github.com/reactive-resume/reactive-resume.git
+git clone --depth=1 https://github.com/reactive-resume/reactive-resume.git
 cd reactive-resume
 cp .env.example .env    # then set APP_URL, AUTH_SECRET and ENCRYPTION_SECRET
 docker compose up -d --build

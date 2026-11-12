@@ -77,6 +77,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: ${{ matrix.suite == 'Unit' && '0' || '1' }}
+          # Full history without old file contents; Git fetches the few blobs a diff needs.
+          filter: ${{ matrix.suite == 'Unit' && 'blob:none' || '' }}
 
       - name: Check out source (Blacksmith)
         if: ${{ vars.USE_BLACKSMITH == 'true' }}
@@ -84,6 +86,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: ${{ matrix.suite == 'Unit' && '0' || '1' }}
+          # Full history without old file contents; Git fetches the few blobs a diff needs.
+          filter: ${{ matrix.suite == 'Unit' && 'blob:none' || '' }}
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
@@ -133,7 +137,8 @@ jobs:
         env:
           LOCALES_BASE_REF: ${{ github.event.pull_request.base.sha }}
         run: |
-          if git diff --quiet "$LOCALES_BASE_REF" HEAD -- apps/web/locales/ apps/mobile/locales/; then
+          # A full diff (not --quiet) fetches every changed catalog blob in one batch for locales:diff.
+          if git diff --exit-code "$LOCALES_BASE_REF" HEAD -- apps/web/locales/ apps/mobile/locales/ > /dev/null; then
             exit 0
           fi
           pnpm locales:diff --base "$LOCALES_BASE_REF"
@@ -221,12 +226,14 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+          filter: blob:none
       - name: Check out source (Blacksmith)
         if: ${{ vars.USE_BLACKSMITH == 'true' }}
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
           fetch-depth: 0
+          filter: blob:none
       # App, shared-package and dependency-resolution changes can alter the bundle.
       - name: Detect mobile changes
         id: changes
