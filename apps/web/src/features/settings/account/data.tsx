@@ -108,15 +108,25 @@ export function DataSection({ openDeletion = false }: DataSectionProps) {
 				wrap
 				onClick={() => setDeleting(true)}
 			/>
-			<DeleteAccountDialog open={deleting} onOpenChange={setDeleting} />
+			<DeleteAccountDialog
+				open={deleting}
+				onOpenChange={setDeleting}
+				onExport={() => exportAll.mutate()}
+				exporting={exportAll.isPending}
+			/>
 		</SettingsSection>
 	);
 }
 
-type DeleteAccountDialogProps = { open: boolean; onOpenChange: (open: boolean) => void };
+type DeleteAccountDialogProps = {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	onExport: () => void;
+	exporting: boolean;
+};
 
 /** The one confirmation in Settings that asks you to type: it names what goes, and can't be undone. */
-function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
+function DeleteAccountDialog({ open, onOpenChange, onExport, exporting }: DeleteAccountDialogProps) {
 	const id = useId();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -155,19 +165,16 @@ function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
 						</Trans>
 					</AlertDialogDescription>
 				</AlertDialogHeader>
+				<TextAction disabled={exporting} onClick={onExport}>
+					{exporting ? <Trans>Exporting…</Trans> : <Trans>Export everything first</Trans>}
+				</TextAction>
 				<div className="grid gap-1.5">
 					<label htmlFor={id} className="text-[13px]/[18px] font-medium">
 						<Trans>
 							Type <b className="font-mono font-medium">{CONFIRMATION}</b> to confirm
 						</Trans>
 					</label>
-					<Input
-						id={id}
-						value={typed}
-						autoComplete="off"
-						className="focus-visible:border-danger focus-visible:shadow-[0_0_0_3px_var(--danger-soft)]"
-						onChange={(event) => setTyped(event.target.value)}
-					/>
+					<Input id={id} value={typed} autoComplete="off" onChange={(event) => setTyped(event.target.value)} />
 				</div>
 				<AlertDialogFooter>
 					<AlertDialogCancel>

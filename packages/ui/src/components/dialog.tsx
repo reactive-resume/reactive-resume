@@ -70,6 +70,7 @@ function DialogContent({
 				className={cn(dialogPopupClassName, instant && "transition-none", className)}
 				{...props}
 			>
+				<div aria-hidden="true" className="mx-auto -mt-2 h-1 w-9 rounded-full bg-line-2 sm:hidden" />
 				{children}
 				{showCloseButton && (
 					<DialogPrimitive.Close

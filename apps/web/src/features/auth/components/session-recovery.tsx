@@ -63,6 +63,9 @@ export function SessionRecovery() {
 			>
 				<Trans>Sign in again</Trans>
 			</Button>
+			<p className="basis-full t-small text-ink-3">
+				<Trans>Sign-in opens in a new tab. This page carries on and saves once you are signed in.</Trans>
+			</p>
 		</div>
 	);
 }

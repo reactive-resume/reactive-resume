@@ -9,7 +9,7 @@ const ENGLISH = {
 	copyLink: "Copy link",
 	share: "Share",
 	linkCopied: "Link copied",
-	credit: "Made with Reactive Resume, free and open source",
+	credit: "Made with Reactive Resume",
 	buildResume: "Build your resume",
 	passwordTitle: "This resume is password-protected",
 	passwordHint: "Enter the password the resume owner shared with you.",

@@ -40,6 +40,9 @@ type SingleComboboxProps<TValue extends string | number = string> = {
 	"aria-describedby"?: string;
 	"aria-labelledby"?: string;
 	showClear?: boolean;
+	caret?: "down" | "up-down";
+	/** Two columns for long, named provider lists. */
+	columns?: 1 | 2;
 	placeholder?: string;
 	emptyMessage?: React.ReactNode;
 	className?: string;
@@ -59,6 +62,9 @@ type MultiComboboxProps<TValue extends string | number = string> = {
 	"aria-describedby"?: string;
 	"aria-labelledby"?: string;
 	showClear?: boolean;
+	caret?: "down" | "up-down";
+	/** Two columns for long, named provider lists. */
+	columns?: 1 | 2;
 	placeholder?: string;
 	emptyMessage?: React.ReactNode;
 	className?: string;
@@ -81,6 +87,8 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 		multiple = false,
 		disabled = false,
 		showClear = false,
+		caret = "down",
+		columns = 1,
 		placeholder,
 		emptyMessage,
 		className,
@@ -146,6 +154,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 	const triggerNode = (
 		<ComboboxTrigger
+			caret={caret}
 			aria-label={props["aria-label"]}
 			aria-describedby={props["aria-describedby"]}
 			aria-labelledby={props["aria-labelledby"]}
@@ -197,13 +206,22 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 				triggerNode
 			)}
 
-			<ComboboxContent aria-label={placeholder ?? t`Options`}>
+			<ComboboxContent
+				aria-label={placeholder ?? t`Options`}
+				className={columns === 2 ? "w-[480px] max-w-[calc(100vw-2rem)] min-w-0" : undefined}
+			>
 				<ComboboxInput
 					placeholder={placeholder ?? t`Search…`}
 					render={<Input disabled={disabled} className="border-none focus-visible:border-none focus-visible:ring-0" />}
 				/>
 				<ComboboxEmpty>{emptyMessage ?? t`No results found.`}</ComboboxEmpty>
-				<ComboboxList>{listContent}</ComboboxList>
+				<ComboboxList
+					className={
+						columns === 2 ? "grid max-h-[min(400px,calc(var(--available-height)-44px))] grid-cols-2" : undefined
+					}
+				>
+					{listContent}
+				</ComboboxList>
 			</ComboboxContent>
 		</ComboboxRoot>
 	);

@@ -35,9 +35,9 @@ it("leads a signed-out visitor home, not to the dashboard", () => {
 	expect(screen.getByRole("link", { name: /Go home/ }).getAttribute("href")).toBe("/");
 });
 
-it("offers the dashboard first to someone signed in", () => {
+it("offers Today to someone signed in", () => {
 	context.session = { user: { id: "u" } };
 	mount();
 	const links = screen.getAllByRole("link").map((link) => link.textContent);
-	expect(links).toEqual(["Go to Today", "Go home"]);
+	expect(links).toEqual(["Go to Today"]);
 });

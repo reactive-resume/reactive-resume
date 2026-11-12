@@ -80,7 +80,7 @@ function RouteComponent() {
 					</div>
 
 					{/* The column reaches the window's foot, so the about line sits there on a short page (`.about`). */}
-					<div className="flex min-w-0 flex-col sm:min-h-[calc(100svh-109px)]">
+					<div className="flex min-w-0 flex-col sm:min-h-[calc(100svh-92px)]">
 						{!isRoot && (
 							<Link
 								to="/dashboard/settings"
@@ -91,7 +91,7 @@ function RouteComponent() {
 								<Trans>Settings</Trans>
 							</Link>
 						)}
-						<div className="grid max-w-[704px] gap-8 sm:mb-12">
+						<div className="grid max-w-[704px] gap-8 sm:mb-8">
 							{matchesAccount ? (
 								<Outlet />
 							) : (
@@ -112,12 +112,12 @@ function RouteComponent() {
 							<p className="text-ink-3">
 								<Trans>Reactive Resume {__APP_VERSION__} · MIT</Trans>
 							</p>
-							<p>
+							<p className="text-ink-3">
 								{getProjectLinks().map((link, index) => (
 									<Fragment key={link.href}>
 										{index > 0 && " · "}
 										<a
-											className="underline decoration-line-2 underline-offset-3"
+											className="text-ink-2 underline decoration-line-2 underline-offset-3"
 											href={link.href}
 											target="_blank"
 											rel="noopener noreferrer"

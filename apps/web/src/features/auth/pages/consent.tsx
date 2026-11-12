@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { AuthFoot, AuthLead, AuthTitle, authAction } from "../components/auth-page";
 import { isOAuthRedirect } from "../redirect";
@@ -96,7 +97,7 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 	const api = { read: scopes.has("api:read"), write: scopes.has("api:write"), delete: scopes.has("api:delete") };
 	const callbackURL = `/api/auth/oauth?${oauthQuery}`;
 	const failure = error && (
-		<p role="alert" className={cn(ENTER_CLASS, "mt-4 text-danger-text t-small")}>
+		<p role="alert" className={cn(ENTER_CLASS, "mt-4 t-small text-danger-text")}>
 			{error}
 		</p>
 	);
@@ -129,7 +130,8 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 		return (
 			<>
 				{title}
-				<AuthLead role="status">
+				<AuthLead role="status" className="flex items-center gap-2">
+					<Spinner decorative className="size-3.5" />
 					<Trans>Loading connection request…</Trans>
 				</AuthLead>
 			</>
@@ -185,7 +187,7 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 					<span className="flex min-w-0 flex-1 flex-col wrap-anywhere">
 						<span className="t-label">{client.client_name || clientId}</span>
 						{destination && (
-							<span className="text-ink-3 t-small">
+							<span className="t-small text-ink-3">
 								{/* One message, so translators can place the address where their language puts it. */}
 								<Trans>
 									Access is sent to <span className="font-semibold text-ink">{destination}</span>
@@ -193,7 +195,7 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 							</span>
 						)}
 					</span>
-					<span className="max-w-[40%] shrink-0 truncate text-ink-3 t-mono" title={`${t`Client ID`}: ${clientId}`}>
+					<span className="max-w-[40%] shrink-0 truncate t-mono text-ink-3" title={`${t`Client ID`}: ${clientId}`}>
 						<Trans comment="Short label before an application's client ID">ID {clientId}</Trans>
 					</span>
 				</div>
@@ -251,7 +253,7 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 						</Permission>
 					)}
 				</ul>
-				<p className="mt-3.5 text-ink-3 t-small">
+				<p className="mt-3.5 t-small text-ink-3">
 					{/* Only true when the request names what it wants and leaves deleting out. */}
 					{(api.read || api.write) && !api.delete && (
 						<>

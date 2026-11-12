@@ -101,7 +101,7 @@ export function Chip({
 					"inline-flex h-7 shrink-0 items-center gap-1.5 rounded-sm px-2.5 text-[13px]/[18px] font-medium whitespace-nowrap text-ink-2 transition-colors",
 					variant === "outline" && "shadow-[inset_0_0_0_1px_var(--line-2)]",
 					variant === "dash" && "border border-dashed border-line-2 px-[9px] text-ink-3",
-					variant === "ctx" && "h-[26px] bg-sunken ps-2 pe-1.5 text-xs",
+					variant === "ctx" && "h-[26px] bg-sunken ps-2 pe-1.5 text-xs leading-[18px]",
 					!isStatic && "touch-target relative hover:text-ink",
 					pressed && "bg-accent-soft text-accent-text shadow-none hover:text-accent-text",
 					className,

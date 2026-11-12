@@ -51,7 +51,7 @@ export function GuestBanner() {
 		<div className="-mb-2 px-4 pt-4 sm:px-8 sm:pt-7 lg:px-10">
 			<div
 				role="status"
-				className="flex max-w-(--content-max) flex-wrap items-center gap-3 rounded-lg bg-warn-soft py-3 ps-3.5 pe-3 text-[13px]/[18px] text-warn-text [--icon-size:18px]"
+				className="flex max-w-(--content-max) flex-wrap items-center gap-3 rounded-lg bg-warn-soft py-3 ps-3.5 pe-4 text-[13px]/[18px] text-warn-text [--icon-size:18px]"
 			>
 				<Icon name="warning-circle" className="shrink-0" />
 				<p className="min-w-[min(100%,20rem)] flex-1">

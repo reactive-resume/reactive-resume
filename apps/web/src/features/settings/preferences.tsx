@@ -182,7 +182,7 @@ function ThemeTiles() {
 			aria-label={t`Theme`}
 			value={theme}
 			onValueChange={(value) => setTheme(value as Theme)}
-			className="grid grid-cols-3 gap-3 max-sm:grid-cols-1"
+			className="grid grid-cols-3 gap-3"
 		>
 			{THEMES.map((option) => {
 				const checked = theme === option.value;
@@ -191,14 +191,14 @@ function ThemeTiles() {
 						key={option.value}
 						htmlFor={`${id}-${option.value}`}
 						className={cn(
-							"flex min-w-0 cursor-pointer items-center gap-3 rounded-lg bg-raised py-3.5 ps-4 pe-3.5 shadow-[inset_0_0_0_1px_var(--line-2)] transition-[background-color,box-shadow] duration-quick hover:bg-hover has-focus-visible:outline-2 has-focus-visible:outline-accent",
+							"flex min-w-0 cursor-pointer items-center gap-3 rounded-lg bg-raised py-3.5 ps-4 pe-3.5 shadow-[inset_0_0_0_1px_var(--line-2)] transition-[background-color,box-shadow] duration-quick hover:bg-hover has-focus-visible:outline-2 has-focus-visible:outline-accent max-sm:flex-wrap max-sm:gap-2 max-sm:p-3",
 							checked && "bg-accent-soft shadow-[inset_0_0_0_2px_var(--accent)] hover:bg-accent-soft",
 						)}
 					>
 						<Icon name={option.icon} size={22} className="text-ink-2" />
 						<span className="flex min-w-0 flex-1 flex-col">
 							<span className="text-sm/5 font-semibold text-ink">{i18n.t(themeMap[option.value])}</span>
-							<span className="text-[13px]/[18px] text-ink-3">{i18n.t(option.note)}</span>
+							<span className="text-[13px]/[18px] text-ink-3 max-sm:hidden">{i18n.t(option.note)}</span>
 						</span>
 						<RadioGroupItem id={`${id}-${option.value}`} value={option.value} />
 					</label>

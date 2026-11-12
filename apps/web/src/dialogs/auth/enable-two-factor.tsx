@@ -22,6 +22,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { OTPField } from "@reactive-resume/ui/components/otp-field";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { cn } from "@reactive-resume/utils/style";
 import { useDialogStore } from "../store";
 import { PasswordInput } from "@/components/input/password-input";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
@@ -90,7 +91,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 			if (data.method === "totp") {
 				setTotpUri(data.totpURI);
 				setBackupCodes(data.backupCodes);
-				setStep("backup");
+				setStep("verify");
 				toast.close(toastId);
 			} else {
 				toast.add({ type: "error", description: t`Couldn't set up two-step verification. Try again.`, id: toastId });
@@ -132,8 +133,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 			toast.close(toastId);
 			toast.add({ type: "success", description: t`Two-step verification turned on` });
 			void queryClient.invalidateQueries({ queryKey: sessionQueryKey }).then(() => router.invalidate());
-			closeDialog();
-			onReset();
+			setStep("backup");
 		},
 	});
 
@@ -151,7 +151,8 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 	});
 
 	const onConfirmBackup = () => {
-		setStep("verify");
+		closeDialog();
+		onReset();
 	};
 
 	const onReset = () => {
@@ -187,9 +188,25 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 				<DialogTitle>
 					<TwoFactorDialogTitle step={step} />
 				</DialogTitle>
-				<DialogDescription>
-					<TwoFactorDialogDescription step={step} />
-				</DialogDescription>
+				<div className="flex items-center gap-3 t-small text-ink-3" role="status">
+					<span aria-hidden="true" className="flex gap-1">
+						{["enable", "verify", "backup"].map((part, index) => (
+							<span
+								key={part}
+								className={cn(
+									"h-1 w-7 rounded-full",
+									index <= ["enable", "verify", "backup"].indexOf(step) ? "bg-accent" : "bg-line",
+								)}
+							/>
+						))}
+					</span>
+					<Trans>Step {step === "enable" ? 1 : step === "verify" ? 2 : 3} of 3</Trans>
+				</div>
+				{step !== "verify" && (
+					<DialogDescription>
+						<TwoFactorDialogDescription step={step} />
+					</DialogDescription>
+				)}
 			</DialogHeader>
 
 			{match(step)
@@ -241,32 +258,34 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 					const secret = totpUri ? extractSecretFromTotpUri(totpUri) : null;
 					return (
 						<div className="space-y-4">
-							{/* Most people scan: the QR code leads, centred; the whole key follows as the fallback. */}
 							{totpUri && secret && (
-								<>
-									<div className="flex justify-center">
+								<div className="flex items-start gap-5 max-[400px]:flex-col">
+									<div className="shrink-0 rounded-md border border-line bg-paper p-2.5">
 										<TwoFactorQRCode totpUri={totpUri} />
 									</div>
-									<div className="grid gap-1.5">
-										<p className="text-sm text-ink-2">
+									<div className="grid min-w-0 gap-2 t-ui text-ink-2">
+										<p>
+											<Trans>Scan this with your authenticator app.</Trans>
+										</p>
+										<p className="t-small text-ink-3">
 											<Trans>Can't scan? Enter this key in the app:</Trans>
 										</p>
-										<div className="flex items-start gap-x-2">
-											<code className="min-w-0 flex-1 rounded-md bg-sunken px-3 py-2 font-mono text-sm leading-6 break-all">
+										<div className="flex items-start gap-2">
+											<code className="min-w-0 flex-1 rounded-md bg-sunken px-2.5 py-2 font-mono text-xs leading-5 break-all">
 												{secret.match(/.{1,4}/g)?.join(" ")}
 											</code>
-											<Button size="icon" variant="ghost" type="button" onClick={handleCopySecret}>
-												<span className="sr-only">
-													{t({
-														comment: "Accessible label for the button that copies the two-factor secret key",
-														message: "Copy secret",
-													})}
-												</span>
+											<Button
+												size="icon-sm"
+												variant="ghost"
+												type="button"
+												aria-label={t`Copy secret`}
+												onClick={handleCopySecret}
+											>
 												<Icon name="copy" size={16} />
 											</Button>
 										</div>
 									</div>
-								</>
+								</div>
 							)}
 
 							<p>
@@ -349,7 +368,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 
 						<DialogFooter>
 							<Button type="button" onClick={onConfirmBackup}>
-								<Trans comment="Final action button after saving backup codes">Continue</Trans>
+								<Trans comment="Final action button after saving backup codes">Done</Trans>
 							</Button>
 						</DialogFooter>
 					</div>
@@ -397,7 +416,7 @@ function TwoFactorQRCode({ totpUri }: TwoFactorQRCodeProps) {
 	return (
 		<QRCodeSVG
 			value={totpUri}
-			size={256}
+			size={136}
 			marginSize={2}
 			className="rounded-md"
 			title={t({

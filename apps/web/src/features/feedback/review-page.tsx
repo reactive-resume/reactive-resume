@@ -81,7 +81,7 @@ function FeedbackUnavailable({ reason }: FeedbackUnavailableProps) {
 						<Trans>This link doesn't open</Trans>
 					)}
 				</h1>
-				<p className="text-ink-2 t-ui">
+				<p className="t-ui text-ink-2">
 					{reason === "missing" ? (
 						<Trans>Check that you copied the whole link, or ask the person who sent it for a new one.</Trans>
 					) : (
@@ -111,13 +111,13 @@ function FeedbackReview({ token, view }: FeedbackReviewProps) {
 			>
 				<div className="flex min-w-0 flex-col px-1">
 					<span className="truncate text-[15px]/5 font-semibold">{view.resumeName}</span>
-					<span className="truncate font-normal text-ink-3 t-caption">
+					<span className="truncate t-caption font-normal text-ink-3">
 						<Trans>
 							{owner}'s resume · as saved {sharedOn} · read-only
 						</Trans>
 					</span>
 				</div>
-				<Link to="/" className="ms-auto flex shrink-0 items-center gap-2 rounded-xs text-ink-3 t-caption">
+				<Link to="/" className="ms-auto flex shrink-0 items-center gap-2 rounded-xs t-caption text-ink-3">
 					<BrandIcon variant="icon" alt="" className="size-[18px]" />
 					<span className="max-sm:sr-only">Reactive Resume</span>
 				</Link>
@@ -129,14 +129,14 @@ function FeedbackReview({ token, view }: FeedbackReviewProps) {
 					aria-label={t`Comments and progress`}
 					className="shrink-0 border-line bg-bg px-6 pt-5 pb-10 max-lg:border-t max-sm:px-4 lg:w-[392px] lg:overflow-y-auto lg:border-s"
 				>
-					<h1 className="wrap-anywhere t-page-title">
+					<h1 className="t-page-title wrap-anywhere">
 						{view.allowComments ? (
 							<Trans>{owner} asked for your feedback</Trans>
 						) : (
 							<Trans>{owner} asked you to take a look</Trans>
 						)}
 					</h1>
-					<p className="pt-2 text-ink-3 t-small">
+					<p className="pt-2 t-small text-ink-3">
 						{view.allowComments ? (
 							<Trans>Your comments go only to {owner} and don't change the resume.</Trans>
 						) : (
@@ -240,7 +240,7 @@ function FeedbackComments({ token, view }: FeedbackReviewProps) {
 				<Trans>Comments</Trans>
 			</SectionHeading>
 			{view.comments.length === 0 ? (
-				<p className="pt-1 text-ink-3 t-small">
+				<p className="pt-1 t-small text-ink-3">
 					<Trans>No comments yet.</Trans>
 				</p>
 			) : (
@@ -325,7 +325,7 @@ function SharedProgress({ applications }: SharedProgressProps) {
 			<SectionHeading id={`${id}-title`} className="pt-[26px]">
 				<Trans>Application progress</Trans>
 			</SectionHeading>
-			<p className="text-ink-3 t-small">
+			<p className="t-small text-ink-3">
 				<Trans>Stages and dates only. Notes, contacts and pay stay private.</Trans>
 			</p>
 			<List className="mt-1.5">
@@ -337,7 +337,7 @@ function SharedProgress({ applications }: SharedProgressProps) {
 							<span className="text-[15px]/[22px] font-medium wrap-anywhere">
 								{application.role} · {application.company}
 							</span>
-							<StageDot status={application.status} className="text-ink-3 t-small">
+							<StageDot status={application.status} className="t-small text-ink-3">
 								{stageName(application)}
 								{application.closedReason ? ` · ${getClosedReasonLabel(application.closedReason)}` : ""}
 								{application.appliedAt ? (
@@ -351,16 +351,6 @@ function SharedProgress({ applications }: SharedProgressProps) {
 									</>
 								) : null}
 							</StageDot>
-							{application.stages.length > 1 && (
-								<ol className="pt-1 font-normal text-ink-3 t-caption">
-									{application.stages.map((stage) => (
-										<li key={`${stage.status}:${stage.at.toISOString()}`}>
-											{stageName(stage)} ·{" "}
-											{stage.dateUnknown ? <Trans>date unknown</Trans> : i18n.date(stage.at, { dateStyle: "medium" })}
-										</li>
-									))}
-								</ol>
-							)}
 						</span>
 					</ListRow>
 				))}

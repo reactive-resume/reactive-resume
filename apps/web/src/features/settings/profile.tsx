@@ -480,6 +480,7 @@ function ProfileDialog({ group, record, onSaved }: ProfileDialogProps) {
 			: new Intl.NumberFormat(i18n.locale, { maximumFractionDigits: 20 }).format(record.data.requestedSalary.amount),
 	);
 	const [busy, setBusy] = useState(false);
+	const [addingCountry, setAddingCountry] = useState(false);
 	const [error, setError] = useState("");
 	const patch = (value: Partial<ApplicationProfileData>) => setDraft((current) => ({ ...current, ...value }));
 	const salary = draft.requestedSalary ?? { amount: null, currency: null, period: null };
@@ -694,27 +695,34 @@ function ProfileDialog({ group, record, onSaved }: ProfileDialogProps) {
 								</fieldset>
 							);
 						})}
-						{draft.workAuthorization.length < 50 && (
-							<ProfileSelect
-								label={t`Add a country`}
-								value=""
-								options={[
-									{ value: "", label: t`Choose a country` },
-									...countries.filter(
-										(option) => !draft.workAuthorization.some((row) => row.countryCode === option.value),
-									),
-								]}
-								onChange={(countryCode) => {
-									if (countryCode)
-										patch({
-											workAuthorization: [
-												...draft.workAuthorization,
-												{ countryCode, authorized: "unknown", needsSponsorship: "unknown" },
-											],
-										});
-								}}
-							/>
-						)}
+						{draft.workAuthorization.length < 50 &&
+							(addingCountry ? (
+								<ProfileSelect
+									label={t`Add a country`}
+									value=""
+									options={[
+										{ value: "", label: t`Choose a country` },
+										...countries.filter(
+											(option) => !draft.workAuthorization.some((row) => row.countryCode === option.value),
+										),
+									]}
+									onChange={(countryCode) => {
+										if (countryCode) {
+											setAddingCountry(false);
+											patch({
+												workAuthorization: [
+													...draft.workAuthorization,
+													{ countryCode, authorized: "unknown", needsSponsorship: "unknown" },
+												],
+											});
+										}
+									}}
+								/>
+							) : (
+								<AddLine onClick={() => setAddingCountry(true)}>
+									<Trans>Add a country</Trans>
+								</AddLine>
+							))}
 					</>
 				)}
 				{group === "relocation" && (

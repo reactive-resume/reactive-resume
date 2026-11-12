@@ -6,12 +6,10 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { getLanguageName } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { LandingFooter } from "./footer";
 import { LocaleCombobox } from "@/features/locale/combobox";
-import { useTheme } from "@/features/theme/provider";
 
 type MarketingLayoutProps = { children: ReactNode };
 
@@ -46,9 +44,7 @@ function PublicHeader() {
 	const { i18n } = useLingui();
 	// Build-time prerender has no route matches; live routes carry the root session.
 	const signedIn = useRouterState({ select: (state) => Boolean(state.matches.at(-1)?.context.session) });
-	const { resolvedTheme, toggleTheme } = useTheme();
 	const language = getLanguageName(i18n.locale, i18n.locale, false);
-	const themeLabel = resolvedTheme === "dark" ? t`Switch to light mode` : t`Switch to dark mode`;
 
 	return (
 		<header
@@ -74,23 +70,6 @@ function PublicHeader() {
 			</nav>
 
 			<div className="ms-auto flex items-center gap-1">
-				{/* No board draws a theme switch here; the pages follow the device, and this keeps the choice reachable. */}
-				<Tooltip>
-					<TooltipTrigger
-						render={
-							<Button
-								variant="ghost"
-								size="icon"
-								aria-label={themeLabel}
-								className="max-sm:hidden"
-								onClick={() => toggleTheme()}
-							/>
-						}
-					>
-						<Icon name={resolvedTheme === "dark" ? "sun" : "moon"} />
-					</TooltipTrigger>
-					<TooltipContent>{themeLabel}</TooltipContent>
-				</Tooltip>
 				<LocaleCombobox
 					render={(props) => (
 						<button

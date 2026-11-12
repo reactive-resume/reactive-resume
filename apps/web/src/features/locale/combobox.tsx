@@ -12,6 +12,7 @@ export function LocaleCombobox(props: Props) {
 	return (
 		<Combobox
 			showClear={false}
+			caret="down"
 			defaultValue={i18n.locale}
 			options={getLocaleOptions()}
 			onValueChange={changeLocale}

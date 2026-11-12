@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useLingui } from "@lingui/react/macro";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
@@ -8,6 +9,8 @@ import { useCommandPaletteStore } from "@/features/command-palette/store";
 
 type PhoneHeaderActionsProps = {
 	className?: string;
+	/** Page action between search and account, preserving visual and keyboard order. */
+	children?: ReactNode;
 	/** The shell's own copy, shown only while the page hasn't placed one in its header. */
 	fallback?: boolean;
 };
@@ -17,7 +20,7 @@ type PhoneHeaderActionsProps = {
  * in the header's actions; it shows under 640px only. A page that hasn't placed it gets the shell's copy above its
  * content instead.
  */
-export function PhoneHeaderActions({ className, fallback = false }: PhoneHeaderActionsProps) {
+export function PhoneHeaderActions({ className, fallback = false, children }: PhoneHeaderActionsProps) {
 	const { t } = useLingui();
 	const { session } = useRouteContext({ strict: false });
 	const openPalette = useCommandPaletteStore((state) => state.setOpen);
@@ -35,6 +38,7 @@ export function PhoneHeaderActions({ className, fallback = false }: PhoneHeaderA
 			>
 				<Icon name="magnifying-glass" size={24} />
 			</button>
+			{children}
 			<Link
 				to="/dashboard/settings"
 				aria-label={t`Settings`}

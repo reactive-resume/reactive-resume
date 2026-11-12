@@ -1,17 +1,19 @@
-import type { IconName } from "@reactive-resume/ui/components/icon";
-import type { ReactNode } from "react";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
+import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { getLanguageName } from "@reactive-resume/utils/locale";
 import { getInitials } from "@reactive-resume/utils/string";
-import { SignOutButton } from "./account/page";
 import { getProjectLinks } from "./project-links";
-import { PageHeader } from "@/components/layout/page-header";
+import { List, ListRow } from "@/components/calm/list-row";
+import { RootHeader } from "@/components/calm/page";
 import { useTheme } from "@/features/theme/provider";
+import { trashedApplicationsQueryOptions } from "@/features/trash/queries";
+import { useSignOut } from "@/features/user/sign-out";
 import { orpc } from "@/libs/orpc/client";
 import { themeMap } from "@/libs/theme";
 
@@ -21,33 +23,21 @@ const supportsTransitionTypes = globalThis.CSS?.supports?.("selector(:active-vie
 const pushTransition = supportsTransitionTypes && { types: ["page", "forward"] };
 export const popTransition = supportsTransitionTypes && { types: ["page", "back"] };
 
-type RowProps = { icon: IconName; label: ReactNode; value?: ReactNode };
-
-function Row({ icon, label, value }: RowProps) {
-	return (
-		<>
-			<Icon name={icon} size={22} className="text-ink-2" />
-			<span className="flex-1">{label}</span>
-			{value && <span className="truncate text-sm text-ink-3">{value}</span>}
-			<Icon name="caret-right" size={22} className="text-ink-3" />
-		</>
-	);
-}
-
-const rowClass =
-	"flex h-14 items-center gap-3 px-3.5 font-medium text-base transition-colors duration-quick ease-enter active:bg-press";
-
 /** Phones: the Settings tab opens the root, rows showing their current values. */
 export function SettingsRoot() {
 	const { i18n } = useLingui();
 	const { session } = useRouteContext({ from: "/dashboard" });
 	const { theme } = useTheme();
+	const signOut = useSignOut();
+	const { data: counts } = useQuery(orpc.documents.counts.queryOptions());
+	const { data: applications } = useQuery(trashedApplicationsQueryOptions());
+	const trashCount = (counts?.trash ?? 0) + (applications?.total ?? 0);
 	const { data: providers } = useQuery(orpc.aiProviders.list.queryOptions());
 	const provider = providers?.find((entry) => entry.enabled && entry.testStatus === "success");
 
 	return (
-		<div className="grid gap-4">
-			<PageHeader title={<Trans>Settings</Trans>} />
+		<div className="grid gap-5">
+			<RootHeader title={<Trans>Settings</Trans>} />
 			<div className="flex items-center gap-3">
 				<Avatar className="size-12">
 					<AvatarImage src={session.user.image ?? undefined} alt="" />
@@ -63,44 +53,82 @@ export function SettingsRoot() {
 				</span>
 			</div>
 
-			<nav
-				aria-label={t`Settings`}
-				className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface"
-			>
-				<Link to="/dashboard/settings/account" viewTransition={pushTransition} className={rowClass}>
-					<Row icon="user-circle" label={<Trans>Account</Trans>} />
-				</Link>
-				<Link to="/dashboard/settings/profile" viewTransition={pushTransition} className={rowClass}>
-					<Row icon="clipboard-text" label={<Trans>Application profile</Trans>} />
-				</Link>
-				<Link to="/dashboard/settings/preferences" viewTransition={pushTransition} className={rowClass}>
-					<Row icon="sliders-horizontal" label={<Trans>Preferences</Trans>} value={i18n.t(themeMap[theme])} />
-				</Link>
-				<Link to="/dashboard/settings/ai" viewTransition={pushTransition} className={rowClass}>
-					<Row icon="sparkle" label={<Trans>AI</Trans>} value={provider?.label ?? <Trans>Not set up</Trans>} />
-				</Link>
-				<Link to="/dashboard/settings/developer" viewTransition={pushTransition} className={rowClass}>
-					<Row icon="code" label={<Trans>Developer</Trans>} />
-				</Link>
+			<nav aria-label={t`Settings`}>
+				<List cap>
+					<ListRow
+						render={<Link to="/dashboard/settings/account" viewTransition={pushTransition} />}
+						leading={<Icon name="user" />}
+						title={<Trans>Account</Trans>}
+						subtitle={<Trans>Name, email, password, passkeys, your data</Trans>}
+						caret
+					/>
+					<ListRow
+						render={<Link to="/dashboard/settings/profile" viewTransition={pushTransition} />}
+						leading={<Icon name="identification-card" />}
+						title={<Trans>Application profile</Trans>}
+						subtitle={<Trans>Details for job forms</Trans>}
+						caret
+					/>
+					<ListRow
+						render={<Link to="/dashboard/settings/preferences" viewTransition={pushTransition} />}
+						leading={<Icon name="sliders-horizontal" />}
+						title={<Trans>Preferences</Trans>}
+						subtitle={`${i18n.t(themeMap[theme])} · ${getLanguageName(i18n.locale, i18n.locale)}`}
+						caret
+					/>
+					<ListRow
+						render={<Link to="/dashboard/settings/ai" viewTransition={pushTransition} />}
+						leading={<Icon name="sparkle" />}
+						title={<Trans>AI</Trans>}
+						subtitle={provider ? `${provider.label} · ${provider.model}` : <Trans>Not set up</Trans>}
+						caret
+					/>
+					<ListRow
+						render={<Link to="/dashboard/settings/developer" viewTransition={pushTransition} />}
+						leading={<Icon name="code" />}
+						title={<Trans>Developer</Trans>}
+						subtitle={<Trans>API keys and MCP</Trans>}
+						caret
+					/>
+				</List>
 			</nav>
-
-			{/* The desktop footer's links, as rows: each opens outside the app. */}
-			<nav
-				aria-label={t`About Reactive Resume`}
-				className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface"
-			>
-				{getProjectLinks().map((link) => (
-					<a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={rowClass}>
-						<Icon name={link.icon} size={22} className="text-ink-2" />
-						<span className="flex-1">{link.label}</span>
-						<Icon name="arrow-square-out" size={20} className="text-ink-3" />
-					</a>
-				))}
-			</nav>
-			<p className="text-center text-xs text-ink-3">
-				<Trans>Reactive Resume {__APP_VERSION__} · MIT</Trans>
-			</p>
-			<SignOutButton />
+			<List cap>
+				<ListRow
+					render={<Link to="/dashboard/trash" />}
+					leading={<Icon name="trash" />}
+					title={<Trans>Trash</Trans>}
+					subtitle={
+						trashCount ? (
+							plural(trashCount, { one: "# item · each kept 30 days", other: "# items · each kept 30 days" })
+						) : (
+							<Trans>Items are kept for 30 days</Trans>
+						)
+					}
+					caret
+				/>
+			</List>
+			<Button variant="ghost" className="justify-start px-0" onClick={() => void signOut()}>
+				<Icon name="sign-out" />
+				<Trans>Sign out</Trans>
+			</Button>
+			<footer className="mt-2 t-small text-ink-3">
+				<p>
+					<Trans>Reactive Resume {__APP_VERSION__} · MIT</Trans>
+				</p>
+				<nav aria-label={t`About Reactive Resume`} className="flex flex-wrap gap-x-4 gap-y-2 pt-1">
+					{getProjectLinks().map((link) => (
+						<a
+							key={link.href}
+							href={link.href}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="underline decoration-line-2 underline-offset-3"
+						>
+							{link.label}
+						</a>
+					))}
+				</nav>
+			</footer>
 		</div>
 	);
 }

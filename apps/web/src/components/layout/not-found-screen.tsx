@@ -2,7 +2,6 @@ import { Trans } from "@lingui/react/macro";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
-import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 
 type NotFoundScreenProps = {
@@ -25,21 +24,21 @@ export function NotFoundScreen({ inLayout = false }: NotFoundScreenProps) {
 				<Trans>Page not found</Trans>
 			</h1>
 			<p className="text-center text-ink-2">
-				<Trans>The page you're looking for may have been moved or no longer exists.</Trans>
+				<Trans>It may have been moved, or it no longer exists.</Trans>
 			</p>
 
 			<div className="flex flex-wrap items-center justify-center gap-2">
 				{signedIn && (
 					<Link to="/dashboard" className={buttonVariants()}>
 						<Trans>Go to Today</Trans>
-						<Icon name="arrow-right" size={16} className="rtl:-scale-x-100" />
 					</Link>
 				)}
 
-				<Link to="/" className={buttonVariants({ variant: signedIn ? "secondary" : "primary" })}>
-					<Icon name="house" size={16} />
-					<Trans>Go home</Trans>
-				</Link>
+				{!signedIn && (
+					<Link to="/" className={buttonVariants()}>
+						<Trans>Go home</Trans>
+					</Link>
+				)}
 			</div>
 		</div>
 	);

@@ -104,7 +104,7 @@ function CommandItem({ className, children, ...props }: React.ComponentProps<typ
 					"hidden group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:hidden group-data-selected/command-item:inline-flex max-sm:hidden",
 				)}
 			>
-				↵
+				<Icon name="arrow-elbow-down-left" size={16} />
 			</span>
 		</CommandPrimitive.Item>
 	);

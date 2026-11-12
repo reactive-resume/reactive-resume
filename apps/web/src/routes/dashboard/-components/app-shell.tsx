@@ -7,7 +7,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useMatchRoute, useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -23,6 +23,7 @@ import { GuestBanner } from "@/features/auth/components/guest-banner";
 import { useNeedsYouCount } from "@/features/career/needs-you";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
 import { DocumentLibraryProvider } from "@/features/documents/library-session";
+import { useStartDocument } from "@/features/documents/use-start-document";
 import { shortcutOverlayOpen } from "@/features/keyboard-shortcuts/blocking";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
@@ -141,6 +142,15 @@ export function AppShell({ children }: AppShellProps) {
 	const { t } = useLingui();
 	const breakpoint = useBreakpoint();
 	const openNew = useNewAction();
+	const navigate = useNavigate();
+	const openDialog = useDialogStore((state) => state.openDialog);
+	const { newLetter } = useStartDocument();
+	const pendingNew = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const cancelNew = () => {
+		if (pendingNew.current !== null) clearTimeout(pendingNew.current);
+		pendingNew.current = null;
+	};
+	useEffect(() => cancelNew, []);
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const matchRoute = useMatchRoute();
 	const tabs =
@@ -150,9 +160,43 @@ export function AppShell({ children }: AppShellProps) {
 		"N",
 		() => {
 			if (isEditableElementFocused() || shortcutOverlayOpen()) return;
-			openNew();
+			cancelNew();
+			// Give the explicit N R / N L / N J sequences time to finish before the contextual N action.
+			pendingNew.current = setTimeout(() => {
+				pendingNew.current = null;
+				if (!isEditableElementFocused() && !shortcutOverlayOpen()) openNew();
+			}, 600);
 		},
-		{ enabled: characterShortcuts, meta: { name: t`New` } },
+		{
+			enabled: characterShortcuts,
+			meta: { name: matchRoute({ to: "/dashboard/applications", fuzzy: true }) ? t`Save a job` : t`New` },
+		},
+	);
+
+	useHotkey(
+		["N", "R"],
+		() => {
+			cancelNew();
+			if (!isEditableElementFocused() && !shortcutOverlayOpen()) openDialog("document.new", undefined);
+		},
+		{ enabled: characterShortcuts, timeout: 600, meta: { name: t`New resume` } },
+	);
+	useHotkey(
+		["N", "L"],
+		() => {
+			cancelNew();
+			if (!isEditableElementFocused() && !shortcutOverlayOpen()) void newLetter();
+		},
+		{ enabled: characterShortcuts, timeout: 600, meta: { name: t`New cover letter` } },
+	);
+	useHotkey(
+		["N", "J"],
+		() => {
+			cancelNew();
+			if (!isEditableElementFocused() && !shortcutOverlayOpen())
+				void navigate({ to: "/dashboard/applications", search: { create: true } });
+		},
+		{ enabled: characterShortcuts, timeout: 600, meta: { name: t`Save a job` } },
 	);
 
 	return (
