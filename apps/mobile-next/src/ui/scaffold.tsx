@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "./base";
 import { BottomSheet, type BottomSheetProps } from "./BottomSheet";
 import { IconButton } from "./buttons";
+import { type ChatFollow } from "./ChatFollow";
 import { CollapsedBar, useTitleCollapse } from "./CollapsingHeader";
 import { DockScene } from "./Dock";
 import { PageSubtitle, PageTitle, RootHeader, StatusLine } from "./layout";
@@ -133,6 +134,8 @@ export type PushScreenProps = {
 	bg?: ColorToken;
 	/** False for screens that manage their own scrolling (chat, pagers, page preview). */
 	scroll?: boolean;
+	/** A conversation in the main scroll view (B16): follow at the bottom, Latest after scrolling away. */
+	chat?: ChatFollow | undefined;
 	/** Wrap in a dock scene (builder and letter modes). */
 	docked?: boolean;
 	presentation?: "screen" | "modal";
@@ -163,6 +166,7 @@ export function PushScreen({
 	overlay,
 	bg = "bg",
 	scroll = true,
+	chat,
 	docked = false,
 	presentation = "screen",
 	bottomPadding = 24,
@@ -252,7 +256,15 @@ export function PushScreen({
 					style={{ flex: 1, opacity: bodyOpacity }}
 				>
 					<KeyboardAwareScrollView
-						ref={ref as never}
+						{...chat?.scrollProps}
+						ref={
+							(chat
+								? (node: ScrollHandle | null) => {
+										ref.current = node;
+										chat.attach(node);
+									}
+								: ref) as never
+						}
 						onScroll={collapse.onScroll as never}
 						scrollEventThrottle={16}
 						// Only the screen on top follows the keyboard: a screen under it scrolling for its field moved its
@@ -265,12 +277,13 @@ export function PushScreen({
 						// so a short drag over the letter (L1) never closed it.
 						keyboardDismissMode="on-drag"
 						showsVerticalScrollIndicator={!STORYBOARD}
-						contentContainerStyle={{ paddingBottom: bottomPadding + (footer ? 0 : insets.bottom) }}
+						contentContainerStyle={{ paddingBottom: bottomPadding + (footer ? 0 : insets.bottom) + (chat?.room ?? 0) }}
 						style={{ flex: 1 }}
 					>
 						{heading}
 						{children}
 					</KeyboardAwareScrollView>
+					{chat?.latest}
 				</DesignClip>
 			) : (
 				<View style={{ flex: 1, opacity: bodyOpacity }}>

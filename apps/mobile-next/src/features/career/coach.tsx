@@ -40,6 +40,7 @@ import {
 	BottomSheet,
 	haptic,
 	showToast,
+	useChatFollow,
 } from "@/ui";
 
 export function CoachScreen() {
@@ -162,6 +163,10 @@ function ScopedCoachScreen() {
 				dispatched.current = undefined;
 			});
 	}, [threadId, pending, stream, params.offers, knowledge, applications]);
+	// Each question settles near the top (a saved thread opens on its last one); the reply is followed only while the
+	// reader stays at the bottom.
+	const lastQuestion = conversation.data?.messages.findLast((message) => message.role === "user")?.id;
+	const { attach, scrollProps, room, anchor, latest } = useChatFollow({ question: lastQuestion, settle: true });
 	const copyConversation = async () => {
 		const text =
 			conversation.data?.messages
@@ -347,58 +352,66 @@ function ScopedCoachScreen() {
 				</View>
 			) : null}
 			{!fake || threadId ? (
-				<ScrollView contentContainerStyle={{ padding: 24, gap: 16 }}>
-					{conversation.data?.messages
-						.filter((message) => message.id !== stream.messageId)
-						.map((message) => (
+				<View style={{ flex: 1 }}>
+					<ScrollView
+						ref={attach}
+						{...scrollProps}
+						contentContainerStyle={{ padding: 24, paddingBottom: 24 + room, gap: 16 }}
+					>
+						{conversation.data?.messages
+							.filter((message) => message.id !== stream.messageId)
+							.map((message) => (
+								<Text
+									key={message.id}
+									variant="body"
+									onLayout={message.id === lastQuestion ? anchor : undefined}
+									onPress={() =>
+										setReplyActions(
+											message.parts
+												.filter((part) => part.type === "text")
+												.map((part) => ("text" in part ? part.text : ""))
+												.join("\n"),
+										)
+									}
+									onLongPress={() =>
+										setReplyActions(
+											message.parts
+												.filter((part) => part.type === "text")
+												.map((part) => ("text" in part ? part.text : ""))
+												.join("\n"),
+										)
+									}
+								>
+									{message.parts
+										.filter((part) => part.type === "text")
+										.map((part) => ("text" in part ? part.text : ""))
+										.join("\n")}
+								</Text>
+							))}
+						{stream.text ? (
 							<Text
-								key={message.id}
 								variant="body"
-								onPress={() =>
-									setReplyActions(
-										message.parts
-											.filter((part) => part.type === "text")
-											.map((part) => ("text" in part ? part.text : ""))
-											.join("\n"),
-									)
-								}
-								onLongPress={() =>
-									setReplyActions(
-										message.parts
-											.filter((part) => part.type === "text")
-											.map((part) => ("text" in part ? part.text : ""))
-											.join("\n"),
-									)
-								}
+								onPress={() => setReplyActions(stream.text)}
+								onLongPress={() => setReplyActions(stream.text)}
 							>
-								{message.parts
-									.filter((part) => part.type === "text")
-									.map((part) => ("text" in part ? part.text : ""))
-									.join("\n")}
+								{stream.text}
 							</Text>
-						))}
-					{stream.text ? (
-						<Text
-							variant="body"
-							onPress={() => setReplyActions(stream.text)}
-							onLongPress={() => setReplyActions(stream.text)}
-						>
-							{stream.text}
-						</Text>
-					) : null}
-					{busy ? (
-						<>
-							<WorkingLabel steps={[t`Thinking`, t`Still working`]} />
-							<Button
-								label={t`Stop`}
-								onPress={() => {
-									haptic("light");
-									void stream.stop().catch(() => setError(true));
-								}}
-							/>
-						</>
-					) : null}
-				</ScrollView>
+						) : null}
+						{busy ? (
+							<>
+								<WorkingLabel steps={[t`Thinking`, t`Still working`]} />
+								<Button
+									label={t`Stop`}
+									onPress={() => {
+										haptic("light");
+										void stream.stop().catch(() => setError(true));
+									}}
+								/>
+							</>
+						) : null}
+					</ScrollView>
+					{latest}
+				</View>
 			) : null}
 			{error ? (
 				<View style={{ padding: 24 }}>

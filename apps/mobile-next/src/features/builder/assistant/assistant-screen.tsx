@@ -31,6 +31,7 @@ import {
 	WorkingLabel,
 	Box,
 	haptic,
+	useChatFollow,
 } from "@/ui";
 
 /** The assistant whose storyboard preset is in force. */
@@ -152,12 +153,15 @@ export function AssistantScreen() {
 		haptic("light");
 		void stream.stop().catch(() => undefined);
 	};
+	// Each message sent comes into view and the reply is followed while the reader stays at the bottom.
+	const chat = useChatFollow({ question: sent.length ? String(sent.length) : undefined });
 	const edits = stream.status === "idle" ? editCount(stream.chunks) : 0;
 	const stopped = stream.status === "stopped";
 	return (
 		<PushScreen
 			back="close"
 			presentation="modal"
+			chat={chat}
 			barCenter={
 				<ConnectionChip
 					label={
