@@ -23,10 +23,6 @@ export const providerInput = providerFields.refine(
 export const updateProviderInput = providerFields
 	.partial()
 	.extend({ id: z.string(), enabled: z.boolean().optional() })
-	.refine((input) => input.apiKey === undefined || input.apiKey.length > 0 || isAPIKeyOptional(input.provider), {
-		message: "Enter an API key for this provider.",
-		path: ["apiKey"],
-	})
 	.refine((input) => Object.keys(input).some((key) => key !== "id"), {
 		message: "At least one field must be provided.",
 	});

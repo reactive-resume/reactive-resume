@@ -180,6 +180,20 @@ describe("aiProvidersService", () => {
 		).resolves.toMatchObject({ id: "provider-1" });
 	});
 
+	it("accepts an empty key only for a provider that can run without one", async () => {
+		const update = { id: "provider-1", userId: "user-1", baseURL: "https://other.example/v1", apiKey: "" };
+		vi.mocked(resolveAiBaseUrl).mockReturnValue("https://other.example/v1");
+
+		queryState.rows = [providerRow()];
+		await expect(aiProvidersService.update(update)).rejects.toMatchObject({
+			code: "BAD_REQUEST",
+			message: "Enter an API key for this provider.",
+		});
+
+		queryState.rows = [providerRow({ provider: "openai-compatible" })];
+		await expect(aiProvidersService.update(update)).resolves.toMatchObject({ id: "provider-1" });
+	});
+
 	it("rejects an update if the destination or credential changed after the ownership read", async () => {
 		queryState.rows = [providerRow()];
 		queryState.updateRows = [];

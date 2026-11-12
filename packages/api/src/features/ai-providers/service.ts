@@ -2,6 +2,7 @@ import type { AIProvider, AiVoiceOperation } from "@reactive-resume/ai/types";
 import type { DbOrTx } from "@reactive-resume/db/client";
 import { ORPCError } from "@orpc/client";
 import { and, asc, desc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
+import { isAPIKeyOptional } from "@reactive-resume/ai/defaults";
 import { aiConfiguredModels } from "@reactive-resume/ai/task-models";
 import { aiProviderSchema } from "@reactive-resume/ai/types";
 import { db } from "@reactive-resume/db/client";
@@ -305,6 +306,9 @@ export const aiProvidersService = {
 		const existing = await getOwnedProvider(input);
 		const provider = input.provider ?? aiProviderSchema.parse(existing.provider);
 		const nextApiKey = input.apiKey?.trim();
+		// An update may omit the provider, so an empty key is checked against the one it ends up with.
+		if (nextApiKey === "" && !isAPIKeyOptional(provider))
+			throw new ORPCError("BAD_REQUEST", { message: "Enter an API key for this provider." });
 		const providerChanged = input.provider !== undefined && input.provider !== existing.provider;
 		const nextBaseUrl =
 			input.baseURL !== undefined || providerChanged

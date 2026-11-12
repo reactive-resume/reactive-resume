@@ -14,16 +14,6 @@ describe("AI provider router input", () => {
 		expect(providerInput.safeParse({ ...input, provider: "openai-compatible" }).success).toBe(true);
 		expect(providerInput.safeParse({ ...input, provider: "openai" }).success).toBe(false);
 	});
-	it("allows a keyless OpenAI-compatible update that changes the base URL", () => {
-		const update = {
-			id: "provider-1",
-			provider: "openai-compatible",
-			baseURL: "http://localhost:1234/v1",
-			apiKey: "",
-		};
-		expect(updateProviderInput.safeParse(update).success).toBe(true);
-		expect(updateProviderInput.safeParse({ ...update, provider: "openai" }).success).toBe(false);
-	});
 	it("does not default baseURL on switch-only updates", () => {
 		expect(updateProviderInput.parse({ id: "provider-1", enabled: false })).not.toHaveProperty("baseURL");
 	});
