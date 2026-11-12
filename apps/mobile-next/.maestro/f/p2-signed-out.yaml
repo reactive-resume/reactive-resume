@@ -7,6 +7,7 @@ appId: me.rxresu.storyboard
 - assertNotVisible: "Sign in"
 - tapOn:
     id: ats-choose
+# The system document picker opens: its Browse tab on iOS, its roots menu on Android.
 - extendedWaitUntil:
-    visible: "Browse"
+    visible: "Browse|Show roots"
     timeout: 20000

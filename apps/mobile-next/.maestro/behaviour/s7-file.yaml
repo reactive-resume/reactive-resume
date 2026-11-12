@@ -31,6 +31,7 @@ appId: me.rxresu.storyboard
     file: ../q1/lib/pick-file.yaml
     env:
       FILE: q1-resume, pdf
+      NAME: q1-resume.pdf
 - tapOn: Read with AI
 - assertVisible: Send to Work OpenAI?
 - assertVisible: "Don't ask again for files"
@@ -56,6 +57,7 @@ appId: me.rxresu.storyboard
     file: ../q1/lib/pick-file.yaml
     env:
       FILE: q1-resume, pdf
+      NAME: q1-resume.pdf
 - tapOn: Read with AI
 - assertNotVisible: Send to Work OpenAI?
 - openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
@@ -84,6 +86,7 @@ appId: me.rxresu.storyboard
     file: ../q1/lib/pick-file.yaml
     env:
       FILE: q1-resume, pdf
+      NAME: q1-resume.pdf
 # Read with AI is still the chosen way on this screen, so picking the file reads with AI at once, and asks again.
 - extendedWaitUntil:
     visible: Send to Work OpenAI?

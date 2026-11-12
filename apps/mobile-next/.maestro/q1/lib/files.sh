@@ -1,8 +1,9 @@
 #!/bin/bash
 # Makes the nonpersonal test files the picker flows choose (P2, D4, behaviour/s7-file) and copies them into the
-# simulator's Files › On My iPhone. Usage: .maestro/q1/lib/files.sh <simulator udid>
+# simulator's Files › On My iPhone, or into an Android emulator's Downloads.
+# Usage: .maestro/q1/lib/files.sh <simulator udid | emulator serial, e.g. emulator-5554>
 set -euo pipefail
-udid=${1:?simulator udid}
+udid=${1:?simulator udid or emulator serial}
 here=$(cd "$(dirname "$0")" && pwd)
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
@@ -44,6 +45,17 @@ echo '{"hello":"world"}' > q1-notes.json
 schema='"$schema":"https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json"'
 echo "{$schema,\"basics\":{\"label\":\"Designer\"}}" > q1-blank.json
 echo "{$schema,\"basics\":{},\"work\":[{\"name\":\"Example Labs\",\"position\":\"Designer\",\"startDate\":\"2021-01-01\"}]}" > q1-nocontact.json
+if adb -s "$udid" get-state >/dev/null 2>&1; then
+	adb -s "$udid" push q1-*.pdf q1-*.json /sdcard/Download/ >/dev/null
+	# The folder picker flows save into Documents (Android refuses the storage root).
+	adb -s "$udid" shell mkdir -p /sdcard/Documents
+	# Tell the media store, so the system picker lists them at once.
+	for f in q1-*.pdf q1-*.json; do
+		adb -s "$udid" shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///sdcard/Download/$f" >/dev/null
+	done
+	echo "Copied test files to Downloads on $udid"
+	exit 0
+fi
 groups=~/Library/Developer/CoreSimulator/Devices/$udid/data/Containers/Shared/AppGroup
 for group in "$groups"/*; do
 	id=$(plutil -extract MCMMetadataIdentifier raw "$group/.com.apple.mobile_container_manager.metadata.plist" 2>/dev/null || true)

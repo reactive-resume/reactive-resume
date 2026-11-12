@@ -1,0 +1,12 @@
+# Android half of pick-file.yaml: ${NAME} (the file name) from Downloads in the system picker.
+appId: me.rxresu.storyboard
+---
+- extendedWaitUntil:
+    visible: Show roots
+    timeout: 20000
+- tapOn: Show roots
+- tapOn: Downloads
+- scrollUntilVisible:
+    element: ${NAME}
+    timeout: 15000
+- tapOn: ${NAME}

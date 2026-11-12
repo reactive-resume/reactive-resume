@@ -17,6 +17,7 @@ appId: me.rxresu.storyboard
     file: lib/pick-file.yaml
     env:
       FILE: q1-notes.json, json
+      NAME: q1-notes.json
 - extendedWaitUntil:
     visible: The file couldn't be read as a resume.
     timeout: 30000
@@ -26,16 +27,24 @@ appId: me.rxresu.storyboard
     file: lib/pick-file.yaml
     env:
       FILE: q1-blank.json, json
+      NAME: q1-blank.json
 - extendedWaitUntil:
     visible: No sections were found in this file.
     timeout: 30000
+# Below the fold: iOS reports it anyway, Android only once it is on screen.
+- scrollUntilVisible:
+    element: Start blank
 - assertVisible: Start blank
+- scrollUntilVisible:
+    element: Change
+    direction: UP
 - tapOn: Change
 - waitForAnimationToEnd
 - runFlow:
     file: lib/pick-file.yaml
     env:
       FILE: q1-nocontact.json, json
+      NAME: q1-nocontact.json
 - extendedWaitUntil:
     visible: Name and contact details weren't found. Add them in Basics.
     timeout: 30000
@@ -45,6 +54,7 @@ appId: me.rxresu.storyboard
     file: lib/pick-file.yaml
     env:
       FILE: q1-resume, pdf
+      NAME: q1-resume.pdf
 - extendedWaitUntil:
     visible: Check what was found
     timeout: 30000

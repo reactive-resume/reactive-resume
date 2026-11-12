@@ -20,6 +20,17 @@ Storyboard capture temporarily sets `timeScale=0`, restoring 1 four seconds afte
 
 `j8-repeated-hour.yaml` and `s8-export.yaml` are explicitly incomplete drafts: their comments identify native interactions the lead must author before they can pass. No fake app selector substitutes for a native picker. Board gestures and row swipes use inherited/calibrated coordinates only as authoring starting points; remeasure on both platforms before relying on them. Board drags hold still long enough to lift only in a slow swipe (about 18 dp/s), so the board flows use 11 s swipes from fixed points measured on the iPhone 14; remeasure on another device. Maestro's double tap reaches PageZoom only some of the time: the double-tap snap is proved in `src/ui/page-zoom.test.tsx`. J5 intentionally expects success and the Applied gate even though SaveJobScreen currently cannot save.
 
+## Android
+
+The same flows run on the `Pixel_10_Pro` emulator at 390 × 844 dp (`adb shell wm size 1170x2532 && adb shell wm density 480`) with a Release storyboard build; pass `--device emulator-5554`.
+
+- `q1/lib/files.sh emulator-5554` pushes the picker fixtures to Downloads and creates Documents (the folder picker's destination; Android refuses the storage root). `pick-file.yaml` and `pick-folder.yaml` branch by platform; Android callers pass the file name as `NAME`.
+- Set Android's "Time to take action" before each flow: `adb shell settings put secure accessibility_interactive_ui_timeout_ms 30000` and the same for `accessibility_non_interactive_ui_timeout_ms`. Maestro on the software-rendered emulator needs 7–9 s for a tap and the next check, longer than a 5 s toast; the app lengthens toasts by that setting (MOTION.md: "Android's accessibility timeout can only lengthen it"). `behaviour/toast-touch` and `behaviour/c3-forget-finalises` prove the 8 s lifetime itself, so run them with the setting deleted (`adb shell settings delete secure …`).
+- Absolute coordinates are points on iOS and pixels on Android, and Maestro takes only whole percentages. Steps with absolute coordinates are split into `when: platform:` branches: iOS keeps its points, Android uses the same points × 3.
+- Android reports only what is on screen; iOS also reports elements below the fold. Scroll (`scrollUntilVisible`) before asserting anything that can sit under a footer or the fold.
+- The screen under a sheet, dialog or menu stays in Android's hierarchy, so a label that appears in both (Restore, Applied) can match the wrong one. Scope such taps with `childOf: { id: sheet | dialog | menu }`.
+- iOS-only gestures and system UI get platform branches: modals close by swiping down on iOS and with back on Android (MOTION.md §6.1); the interview time uses the system date then time dialogs (OK, OK) on Android.
+
 ## Flow inventory
 
 | Flow                                                                       | Contract / limitation                                                                                            |

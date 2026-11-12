@@ -1,19 +1,17 @@
-# Picks ${FILE} (resource id "<name>, <type>") from On My iPhone in the system document picker. The fixtures are
-# nonpersonal files copied into the simulator's Files storage first (see README in this folder).
+# Picks a fixture in the system document picker: ${FILE} (iOS resource id "<name>, <type>") from On My iPhone on
+# iOS, ${NAME} (the file name) from Downloads on Android. The fixtures are nonpersonal files copied to the device
+# first (q1/lib/files.sh).
 appId: me.rxresu.storyboard
 ---
-- extendedWaitUntil:
-    visible: Browse
-    timeout: 20000
-- tapOn: Browse
 - runFlow:
     when:
-      visible: On My iPhone
-    commands:
-      - tapOn: On My iPhone
-- extendedWaitUntil:
-    visible:
-      id: ${FILE}
-    timeout: 10000
-- tapOn:
-    id: ${FILE}
+      platform: iOS
+    file: pick-file-ios.yaml
+    env:
+      FILE: ${FILE}
+- runFlow:
+    when:
+      platform: Android
+    file: pick-file-android.yaml
+    env:
+      NAME: ${NAME}

@@ -1,16 +1,12 @@
-# Chooses On My iPhone as the destination in the system folder picker.
+# Chooses a destination in the system folder picker: On My iPhone on iOS, Documents on Android
+# (q1/lib/files.sh creates it).
 appId: me.rxresu.storyboard
 ---
-- extendedWaitUntil:
-    visible: Browse
-    timeout: 20000
-- tapOn: Browse
 - runFlow:
     when:
-      visible: On My iPhone
-    commands:
-      - tapOn: On My iPhone
-- extendedWaitUntil:
-    visible: Open
-    timeout: 10000
-- tapOn: Open
+      platform: iOS
+    file: pick-folder-ios.yaml
+- runFlow:
+    when:
+      platform: Android
+    file: pick-folder-android.yaml

@@ -1,0 +1,18 @@
+# iOS half of pick-file.yaml: ${FILE} (resource id "<name>, <type>") from Files › On My iPhone.
+appId: me.rxresu.storyboard
+---
+- extendedWaitUntil:
+    visible: Browse
+    timeout: 20000
+- tapOn: Browse
+- runFlow:
+    when:
+      visible: On My iPhone
+    commands:
+      - tapOn: On My iPhone
+- extendedWaitUntil:
+    visible:
+      id: ${FILE}
+    timeout: 10000
+- tapOn:
+    id: ${FILE}

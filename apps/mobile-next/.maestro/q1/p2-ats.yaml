@@ -18,6 +18,7 @@ appId: me.rxresu.storyboard
     file: lib/pick-file.yaml
     env:
       FILE: q1-resume, pdf
+      NAME: q1-resume.pdf
 - extendedWaitUntil:
     visible: ".*checks passed.*"
     timeout: 30000
@@ -30,6 +31,7 @@ appId: me.rxresu.storyboard
     file: lib/pick-file.yaml
     env:
       FILE: q1-locked, pdf
+      NAME: q1-locked.pdf
 - extendedWaitUntil:
     visible: This PDF is password protected. Save an unprotected copy and try again.
     timeout: 30000
@@ -39,6 +41,7 @@ appId: me.rxresu.storyboard
     file: lib/pick-file.yaml
     env:
       FILE: q1-huge, pdf
+      NAME: q1-huge.pdf
 - extendedWaitUntil:
     visible: That file is too large to check. PDFs up to 25 MB work.
     timeout: 30000
