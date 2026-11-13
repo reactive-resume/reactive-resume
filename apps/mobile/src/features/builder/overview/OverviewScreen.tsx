@@ -135,12 +135,13 @@ export function OverviewScreen() {
 	const rows = data ? getOutlineRows(data) : [];
 	const open = (section: BuilderSection) => router.push(`/builder/${id}/section/${section.id}`);
 
+	const inUse = new Set(rows.map((row) => row.id));
+	const addable = ADDABLE.filter((type) => !inUse.has(type));
 	const addSection = () => {
 		if (!data) return;
-		const inUse = new Set(rows.map((row) => row.id));
 		menu.open(
 			addRef,
-			ADDABLE.filter((type) => !inUse.has(type)).map((type) => ({
+			addable.map((type) => ({
 				label: sectionMeta[type].title(),
 				onPress: () => {
 					if (type === "summary") {
@@ -203,7 +204,7 @@ export function OverviewScreen() {
 							}}
 						/>
 					))}
-					{locked ? null : (
+					{locked || addable.length === 0 ? null : (
 						<View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
 							<Anchor anchorRef={addRef}>
 								<TextLink label={t`Add section`} icon="plus" onPress={addSection} />

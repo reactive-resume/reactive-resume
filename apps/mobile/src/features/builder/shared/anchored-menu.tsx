@@ -9,6 +9,8 @@ export type MenuAction = { label: string; onPress: () => void; danger?: boolean;
 export function useAnchoredMenu() {
 	const [state, setState] = useState<{ anchor: Rect; actions: MenuAction[] } | null>(null);
 	const open = (ref: React.RefObject<HostInstance | null>, actions: MenuAction[]) => {
+		// An empty menu would draw as a bare 8 dp strip.
+		if (!actions.some((a) => !a.disabled)) return;
 		ref.current?.measureInWindow((x, y, width, height) => setState({ anchor: { x, y, width, height }, actions }));
 	};
 	const close = () => setState(null);
