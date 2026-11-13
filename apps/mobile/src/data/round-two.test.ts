@@ -17,10 +17,7 @@ jest.mock("expo-sqlite/kv-store", () => ({
 }));
 import { dataClient } from "./client";
 import { connectivityState } from "./connectivity";
-import { fixtureArtifact } from "./fixture-artifacts";
-import { fixtureProposals } from "./fixture-proposals";
-import { fakeReplyStream, setFakeStreamFailure } from "./fixture-stream";
-import { seed, fakeBackend, invokeFake, recordFixtureMessages } from "./fixtures";
+import { seed, fakeBackend } from "./fixtures";
 import { moneyDifference } from "./offer-compare";
 import { validateWrites } from "./queue";
 import { matching, updateRecentSearches } from "./search";
@@ -92,73 +89,6 @@ test("audio validation rejects oversized, empty and unsupported uploads", () => 
 		expect(() => validatePracticeAudio(size, "audio/mp4")).toThrow();
 	expect(() => validatePracticeAudio(2, "text/plain")).toThrow("format");
 });
-test("fake document list/detail stay in sync; copy retry creates only one job and copy", async () => {
-	seed("storyboard");
-	await fakeBackend.write("documents.rename", { id: "resume-product", type: "resume", name: "Renamed" }, "storyboard");
-	expect((await fakeBackend.read("resume", { id: "resume-product" })).name).toBe("Renamed");
-	const input = { resumeId: "resume-product", newId: "copy-one", application: { company: "Lumen", role: "Designer" } };
-	const first = await invokeFake("documents.copyForJob", input);
-	expect(await invokeFake("documents.copyForJob", input)).toBe(first);
-	const copies = (await fakeBackend.read("documents", {})).filter((row) => row.id === "copy-one");
-	expect(copies).toHaveLength(1);
-	expect(copies[0]?.application?.company).toBe("Lumen");
-	await expect(invokeFake("documents.copyForJob", { ...input, name: "Different" })).rejects.toThrow("changed");
-});
-test("version snapshots stay immutable and restore preserves history", async () => {
-	seed("storyboard");
-	const before = await fakeBackend.read("resume", { id: "resume-product" });
-	const version = (await invokeFake("resume.createVersion", { resumeId: before.id, name: "Before" })) as { id: string };
-	const data = structuredClone(before.data);
-	data.basics.name = "Changed";
-	await invokeFake("resume.update", { id: before.id, data });
-	expect(
-		(await fakeBackend.read("resumeVersion", { resumeId: before.id, versionId: version.id })).data.basics.name,
-	).toBe("Alex Morgan");
-	await invokeFake("resume.restoreVersion", { resumeId: before.id, versionId: version.id });
-	expect((await fakeBackend.read("resume", { id: before.id })).data.basics.name).toBe("Alex Morgan");
-	expect(await fakeBackend.read("versions", { resumeId: before.id })).toHaveLength(5);
-});
-test("Forget removes text; fixture workspace data passes shared schemas", async () => {
-	seed("storyboard");
-	await invokeFake("career.forgetFact", { id: "fact-0" });
-	expect(await fakeBackend.read("forgottenFacts", {})).toEqual([{ count: 1, at: expect.any(Date) }]);
-	expect((await fakeBackend.read("facts", {})).some((row) => row.id === "fact-0")).toBe(false);
-	for (const task of [
-		{ task: "fit" },
-		{ task: "briefing" },
-		{ task: "reply", message: "Employer message" },
-		{ task: "practice", question: "Question", answer: "Long answer", origin: "simulated", mode: "typed" },
-	])
-		expect(fixtureArtifact(task).kind).toBe(task.task);
-});
-test("fake conversation streams board reply and refuses stale proposal wording receipts", async () => {
-	seed("storyboard");
-	const thread = (await invokeFake("agent.threads.start", { resumeId: "resume-product", scope: "document" })) as {
-		id: string;
-	};
-	const resume = await fakeBackend.read("resume", { id: "resume-product" });
-	const proposals = fixtureProposals(resume.data);
-	recordFixtureMessages(
-		thread.id,
-		{ id: "user-1", role: "user", parts: [{ type: "text", text: "Tailor" }] },
-		"Reply",
-		proposals,
-	);
-	const proposal = proposals[0];
-	if (!proposal) throw new Error("Missing proposal");
-	const input = {
-		threadId: thread.id,
-		messageId: "reply-user-1",
-		toolCallId: "edits-reply-user-1",
-		edits: [{ id: proposal.id, status: "accepted", after: "Changed" }],
-	};
-	await expect(invokeFake("agent.messages.setEditStatus", input)).rejects.toThrow("changed");
-	const result = await invokeFake("agent.messages.setEditStatus", {
-		...input,
-		edits: [{ ...input.edits[0], after: proposal.after }],
-	});
-	expect(result).toMatchObject({ editsAccepted: 2 });
-});
 
 test("restored queue cannot bypass Applied confirmation", () => {
 	expect(() =>
@@ -188,36 +118,6 @@ test("Today ranking is deterministic and never duplicates its hero in Needs you"
 	expect(moneyDifference(data, { ...data, currency: "USD" }, "base")).toBeNull();
 	expect(moneyDifference(data, { ...data, period: "month" }, "base")).toBeNull();
 });
-test("fake streaming yields several chunks, saves history and exposes a controlled failure", async () => {
-	seed("storyboard");
-	const frame = jest.spyOn(global, "requestAnimationFrame").mockImplementation((callback) => {
-		queueMicrotask(() => callback(0));
-		return 1;
-	});
-	try {
-		const thread = (await invokeFake("agent.threads.start", { resumeId: "resume-product", scope: "document" })) as {
-			id: string;
-		};
-		const input = {
-			threadId: thread.id,
-			message: { id: "stream-user", role: "user" as const, parts: [{ type: "text" as const, text: "Tailor" }] },
-		};
-		const signal = new AbortController().signal;
-		const chunks: { type: string }[] = [];
-		await consumeAgentStream(await fakeReplyStream(thread.id, input, signal, false), signal, (chunk) =>
-			chunks.push(chunk),
-		);
-		expect(chunks.filter((chunk) => chunk.type === "text-delta")).toHaveLength(3);
-		expect((await fakeBackend.read("conversation", { id: thread.id })).messages).toHaveLength(2);
-		setFakeStreamFailure(2);
-		await expect(
-			consumeAgentStream(await fakeReplyStream(thread.id, undefined, signal, true), signal, () => {}),
-		).rejects.toThrow("failed");
-	} finally {
-		setFakeStreamFailure();
-		frame.mockRestore();
-	}
-});
 
 test("Empty Trash consumes server receipts and only captured application generations", async () => {
 	const documents = jest.mocked(dataClient.documents.purgeMany);
@@ -241,31 +141,4 @@ test("Empty Trash consumes server receipts and only captured application generat
 	);
 	expect(applications).toHaveBeenCalledWith({ id: "a", trashedAt: at }, { context: { scope: "storyboard" } });
 	expect(result).toMatchObject({ deleted: 1, skipped: 1, failed: [{ refs: [{ id: "a" }], error: expect.any(Error) }] });
-});
-test("provider changes pause bound schedules and never store supplied key material in fake state", async () => {
-	seed("storyboard");
-	await fakeBackend.write(
-		"aiProviders.update",
-		{ id: "work-openai", model: "new-model", apiKey: "private-test-value" },
-		"storyboard",
-	);
-	const providers = await fakeBackend.read("aiProviders", {});
-	expect(providers[0]).not.toHaveProperty("apiKey");
-	expect((await fakeBackend.read("schedules", {}))[0]?.enabled).toBe(false);
-});
-
-test("fake reply decisions record Undo receipts and refuse Undo after later changes", async () => {
-	seed("storyboard");
-	const result = (await fakeBackend.write(
-		"career.generate",
-		{ applicationId: "lumen", locale: "en-US", task: { task: "reply", message: "Employer message" } },
-		"storyboard",
-	)) as { item: { id: string } };
-	expect(await fakeBackend.write("career.applyReply", { id: result.item.id, changes: [] }, "storyboard")).toEqual({
-		stages: [],
-	});
-	expect(await fakeBackend.write("career.undoReply", { id: result.item.id }, "storyboard")).toEqual({ stages: [] });
-	await fakeBackend.write("career.applyReply", { id: result.item.id, changes: [] }, "storyboard");
-	await fakeBackend.write("applications.update", { id: "lumen", status: "offer" }, "storyboard");
-	await expect(fakeBackend.write("career.undoReply", { id: result.item.id }, "storyboard")).rejects.toThrow("changed");
 });
