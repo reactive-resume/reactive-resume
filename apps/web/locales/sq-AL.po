@@ -1030,17 +1030,29 @@ msgstr "{0} u përditësuan; {1} dështuan. Pozicionet që dështuan mbeten të 
 msgid "{0} words · {1} characters"
 msgstr "{0} fjalë · {1} karaktere"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} u përgjigj më {wroteOn}. Asgjë nuk ndryshon derisa ta zbatoni."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} u përgjigj më {wroteOn}. Lexuar nga {1} · {2}. Asgjë nuk ndryshon derisa ta zbatoni."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# në pritje} other {# në pritje}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "P: {answer}"
 msgid "About"
 msgstr "Rreth këtij aplikacioni"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "Rreth {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "Rreth {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "Theks ngjyre"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "Ngjyra e theksit"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "Ngjyra theksi"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "Rendit seksionet"
 msgid "As written on the page"
 msgstr "Siç është shkruar në faqe"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "Stil aziatik"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "Në Northwind Labs, shumica e ekipeve të reja ngecnin para se të përf
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS kontrollues"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "I përshtatshëm për ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "Përmbledhje · {0} · përdori {1}"
 msgid "Briefing ready"
 msgstr "Përmbledhja është gati"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "Përmbledhja është gati për {0}"
@@ -4319,6 +4346,11 @@ msgstr "Lista me pika"
 msgid "Burgundy"
 msgstr "Bordo"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "Analist biznesi"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "Nga komuniteti, për komunitetin."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "Kalendari"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "I qetë"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "I pastër"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "I pastër"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "Tipografi e pastër"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "Klikoni çdo gjë në faqe për ta stiluar atë. Rregulli në të cilin 
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "ID-ja e klientit"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "Kontakt me klientët"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "U mbyll si „Pranoi ofertën“"
 msgid "Closing {company} · {role}. "
 msgstr "Po mbyllet {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "Komente"
 msgid "Comments and progress"
 msgstr "Komente dhe ecuri"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "Komunikim"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "Komuniteti"
@@ -5256,6 +5318,11 @@ msgstr "Kompakt"
 msgctxt "Entry header layout"
 msgid "Compact"
 msgstr "Kompakte"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Compact"
+msgstr "Kompakt"
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
@@ -5461,6 +5528,11 @@ msgstr "Lidhja: {text}"
 msgid "Connections"
 msgstr "Lidhjet"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "Konsulencë"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "Kontaktoni"
@@ -5511,12 +5583,12 @@ msgstr "Telefoni i kontaktit"
 msgid "Contact role"
 msgstr "Roli i kontaktit"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "Kontakt: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "Përshtat brenda"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Përmbajtja"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "Krijues përmbajtjeje"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "Kopjoni tekstin nga skedari i eksportuar dhe lexojeni; rregulloni çdo g
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "Kopjo transkriptin"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "Korporativ"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "Krijuar {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "Krijuar dhe lidhur me {company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "Kreativ"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "Atribuimi"
@@ -6925,9 +7012,19 @@ msgstr "Danisht"
 msgid "Dark"
 msgstr "E errët"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "Shirit anësor i errët"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Temë e errët"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "Shkenca e të dhënave"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "U fshi nga Biblioteka"
 msgid "Deleted today"
 msgstr "Fshirë sot"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "I ngjeshur"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "Kompromiset e sistemit të dizajnit"
 msgid "Design systems"
 msgstr "Sistemet e dizajnit"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "Dizajner"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7302,6 +7409,11 @@ msgstr "Detaje nga ofruesi: {detail}"
 #: src/routes/dashboard/settings/route.tsx
 msgid "Developer"
 msgstr "Zhvilluesi"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Developer"
+msgstr "Zhvillues"
 
 #: src/features/settings/account/sessions.tsx
 msgid "Devices signed in to your account"
@@ -7783,6 +7895,11 @@ msgstr "Rezultat i mëparshëm kërkimi · parë së fundi {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Mesazhet dhe bashkëngjimet e mëparshme në këtë bisedë do t'i dërgohen këtij destinacioni kur të dërgosh përsëri."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "Tone natyrore"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "Pamjet e redaktorit"
 msgid "Editorial"
 msgstr "Editorial"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "Editorial"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "Modifikimet shkojnë te një kopje, kurrë te kjo CV."
@@ -8021,6 +8143,11 @@ msgstr "Arsimimi"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "Te Arsimimi, shkolla dhe fusha e studimit ndërrohen në të njëjtën mënyrë."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "Efikas"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "Zbraz Kosin…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "fund"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "Inxhinieri"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "Vendosni fjalëkalimin tuaj."
 msgid "Entered by you"
 msgstr "Futur nga ti"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "Ndërmarrje të mëdha"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "Hyrja {0} nga {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "Hyrja u fshi"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "Nivel fillestar"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "Saktësisht minimumi"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Shkëmbe komente për CV-të, bëj pyetje dhe ndihmo të formësohet Reactive Resume bashkë me komunitetin."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "Drejtues"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "Filtro faktet"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "Filtro shabllonet"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "Financa"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "Nga"
 msgid "from “{0}”"
 msgstr "nga “{0}”"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "Titujt në {0}, {1} pt\n"
 msgid "Headline"
 msgstr "Titulli"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "Kujdes shëndetësor"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "Si të shfaqni skedarin"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "Sa i përshtatem këtij roli?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "BNJ"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "Interesa"
 msgid "Interface language"
 msgstr "Gjuha e ndërfaqes"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "Praktikë"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON lexo"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "Kalo te"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "Junior"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "Skedarët e vjetër Word nuk mbështeten. Hapni skedarin në Word dhe ru
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "Ligjore"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "Ligjor"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Krijuar me Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Bërë me Reactive Resume, falas dhe me burim të hapur"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "Revistë"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "Theks magenta"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "U shënua si i aplikuar. Versionet që dërguat ruhen."
 msgid "Marked as read"
 msgstr "U shënua si e lexuar"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "Marketing"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "Mikrofoni është i bllokuar. Lejojeni te parametrat e shfletuesit ose s
 msgid "min"
 msgstr "min"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "Minimal"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "Paga bazë minimale"
@@ -11885,6 +12082,11 @@ msgstr "Modeli"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Modeli për {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "Modern"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "E zhvendos aplikimin nga {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "Zhvendosja e {item} u anulua. Nuk u zhvendos asgjë."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "Shirit anësor i zbehtë"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "Asgjë e përzgjedhur"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "Ende asnjë. Një bisedë me këshilltarin ruhet këtu dhe mbetet e lexueshme nëse lidhja e saj hiqet më vonë."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "Jofitimprurës"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "Oferta u fshi"
 msgid "Offer saved"
 msgstr "Oferta e punës u ruajt"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Oferta u ruajt. {0} u zhvendos në Ofertë."
@@ -13909,6 +14121,11 @@ msgstr "hapet në skedë të re"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "Hapet te emri dhe detajet e kontaktit. Asgjë për të plotësuar më parë."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "Operacione"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "Ngjit një postim pune…"
 msgid "Paste a message"
 msgstr "Ngjit një mesazh"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "Ngjitni një mesazh nga {0}"
@@ -14593,6 +14810,11 @@ msgstr "Kumbulla"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Polonisht"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "I rafinuar"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15025,6 +15247,11 @@ msgstr "Dizajner produktesh me nëntë vjet përvojë në krijimin e <0>sistemev
 #: src/features/resume/editor/design/presets.ts
 msgid "Professional"
 msgstr "profesionale"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Professional"
+msgstr "Profesional"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -16017,7 +16244,7 @@ msgstr "Hiq referencën e faktit të padisponueshëm"
 msgid "Remove unavailable story reference"
 msgstr "Hiq referencën e historisë së padisponueshme"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "U hoq {0}"
@@ -16812,6 +17039,16 @@ msgstr "Vijë"
 msgid "Rule accent"
 msgstr "Theks me vijë"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "Rrjetë me vija"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "Tituj me vijë"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "Ekzekutoni përsëri"
@@ -17138,7 +17375,7 @@ msgstr "Ruajtur {0} · krahasoni te Ofertat"
 msgid "Saved {0} · read-only"
 msgstr "Ruajtur {0} · vetëm për lexim"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} u ruajt te Aplikimet"
@@ -17761,6 +17998,11 @@ msgstr "Dërgon shpalljen e punës, CV-në e lidhur dhe Njohuritë e aktivizuara
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Dërgon këtë histori dhe faktet e aktivizuara te lidhja juaj AI. Pa të, asgjë nuk dërgohet."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "Senior"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "Ndaji pyetjet me një rresht bosh. Deri në pesë pyetje me nga 2.000 sh
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Serbisht"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Serif"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "Po dilni…"
 msgid "Signing up…"
 msgstr "Po regjistroheni…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "I thjeshtë"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "Tituj më të vegjël"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "Kështu që fola me 14 klientë, gjeta tre vendet ku njerëzit braktisnin, dhe krijuam prototipin e një konfigurimi më të shkurtër."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "Theks i butë"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "Fillon tani"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "Fillon vetëm për lexim. Ju zgjidhni emrin, qasjen dhe skadimin."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "Startup"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "Shtet ose rajon"
@@ -19025,6 +19287,11 @@ msgstr "Vijëzim në mes"
 msgid "Stronger verb"
 msgstr "Folje më e fortë"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "I strukturuar"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "Redaktuesi i fletës së stilit"
@@ -19037,7 +19304,7 @@ msgstr "Subjekti"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "Dorëzimi u regjistrua më {date}. Versionet e dërguara nuk ndryshojnë kurrë; draftet aktuale mbeten të ndreqshme. Ky regjistrim nuk konfirmon marrjen nga punëdhënësi."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "Dorëzojeni vetë në faqen e aplikimit të {0}"
@@ -19130,6 +19397,11 @@ msgstr "E mbështetur"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "Fakte dhe histori mbështetëse të Njohurive"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "Qëndrueshmëri"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "Modelet e detyrave"
 msgid "Teal"
 msgstr "Blu e gjelbër"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "Teknologji"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Teknike"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "Teknik"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "PM teknik"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "Teksti kaq afër skajit mund të pritet. Përdorni të paktën {minimum}
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "Teksti nën {minimum} pt mund të lexohet gabimisht kur një sistem e rishfaq atë."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "Me shumë tekst"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "Ora · {0}"
 msgid "Time · {city}"
 msgstr "Ora · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "Koha për të kontaktuar përsëri {0}"
@@ -20910,6 +21202,11 @@ msgstr "Ndjekja"
 #: src/features/resume/editor/design/presets.ts
 msgid "Traditional"
 msgstr "Tradicionale"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Traditional"
+msgstr "Tradicional"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -21273,6 +21570,11 @@ msgstr "Nënvizim"
 msgid "Underline links"
 msgstr "Nënvizoni lidhjet"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "I përmbajtur"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "Ngarko foton"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "Po ngarkohet fotoja…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "Tituj me shkronja të mëdha"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "Po verifikohet kodi rezervë…"
 msgid "Verifying code…"
 msgstr "Duke verifikuar kodin…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "I gjithanshëm"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "Vizitorët fusin fjalëkalimin përpara se të shohin CV-në. Ndajeni ve
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "Vizitorëve u duhen lidhja dhe fjalëkalimi për të parë faqen tuaj të internetit."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "Elegancë vizuale"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "Cilat përfitime të tjera përfshihen, si pensioni ose shtesat?"
 msgid "Which terms from a posting appear in it"
 msgstr "Cilat terma nga një shpallje shfaqen në të"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "Hapësirë e bollshme"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Kush mund ta gjejë faqen tuaj të internetit, t’ju kontaktojë prej saj dhe të marrë një kopje."
@@ -22588,8 +22910,8 @@ msgstr "Gatishmëria për t’u zhvendosur: pa përgjigje"
 msgid "With {0}"
 msgstr "Me {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "Shkruani përgjigjen ose hartoni një nga Njohuritë tuaja."
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Shkruani CV-në tuaj profesionale"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "Shkrimtar"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

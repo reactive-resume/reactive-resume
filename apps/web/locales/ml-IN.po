@@ -1030,17 +1030,29 @@ msgstr "{0} അപ്ഡേറ്റ് ചെയ്തു; {1} പരാജയ�
 msgid "{0} words · {1} characters"
 msgstr "{0} വാക്കുകൾ · {1} അക്ഷരങ്ങൾ"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} {wroteOn}-ന് മറുപടി എഴുതി. നിങ്ങൾ പ്രയോഗിക്കുന്നതുവരെ ഒന്നും മാറില്ല."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} {wroteOn}-ന് മറുപടി എഴുതി. {1} · {2} വായിച്ചു. നിങ്ങൾ പ്രയോഗിക്കുന്നതുവരെ ഒന്നും മാറില്ല."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# കാത്തിരിക്കുന്നു} other {# കാത്തിരിക്കുന്നു}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "ഉത്തരം: {answer}"
 msgid "About"
 msgstr "ഈ ആപ്പിനെക്കുറിച്ച്"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "{0} സംബന്ധിച്ച്"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "{0} സംബന്ധിച്ച് · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "ഹൈലൈറ്റ്"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "ആക്സന്റ് നിറം"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "ആക്സന്റ് നിറങ്ങൾ"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "വിഭാഗങ്ങൾ ക്രമീകരിക്കുക"
 msgid "As written on the page"
 msgstr "പേജിൽ എഴുതിയതുപോലെ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "ഏഷ്യൻ ശൈലി"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "Northwind Labs-ൽ മിക്ക പുതിയ ടീമുകളു
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS ചെക്കർ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ATS സൗഹൃദം"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "ബ്രീഫിംഗ് · {0} · {1} ഉപയോഗിച്ചു
 msgid "Briefing ready"
 msgstr "ബ്രീഫിംഗ് തയ്യാർ"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "{0}-നുള്ള ബ്രീഫിംഗ് തയ്യാർ"
@@ -4319,6 +4346,11 @@ msgstr "ബുള്ളറ്റ് ലിസ്റ്റ്"
 msgid "Burgundy"
 msgstr "ബർഗണ്ടി"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "ബിസിനസ് അനലിസ്റ്റ്"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "സമൂഹത്താൽ, സമൂഹത്തിനായി."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "കലണ്ടർ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "ശാന്തം"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "ലളിതം"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "വൃത്തിയുള്ളത്"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "വൃത്തിയുള്ള ടൈപ്പോഗ്രഫി"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "അത് സ്റ്റൈൽ ചെയ്യാൻ പേജിൽ �
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "ക്ലയൻ്റ് ഐഡി"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "ക്ലയന്റ് ഇടപെടൽ"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "“ഓഫർ സ്വീകരിച്ചു” എന്ന് അട
 msgid "Closing {company} · {role}. "
 msgstr "{company} · {role} അടയ്ക്കുന്നു. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "കമൻ്റുകൾ"
 msgid "Comments and progress"
 msgstr "കമൻ്റുകളും പുരോഗതിയും"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "കമ്മ്യൂണിക്കേഷൻസ്"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "കമ്മ്യൂണിറ്റി"
@@ -5254,6 +5316,11 @@ msgstr "സംക്ഷിപ്തമായ"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "ഒതുക്കമുള്ളത്"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "ഒതുക്കമുള്ളത്"
 
@@ -5461,6 +5528,11 @@ msgstr "കണക്ഷൻ: {text}"
 msgid "Connections"
 msgstr "കണക്ഷനുകൾ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "കൺസൾട്ടിംഗ്"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "ബന്ധപ്പെടുക"
@@ -5511,12 +5583,12 @@ msgstr "ബന്ധപ്പെടാനുള്ള ഫോൺ"
 msgid "Contact role"
 msgstr "കോൺടാക്റ്റ് റോൾ"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "കോൺടാക്റ്റ്: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "മുഴുവൻ ചിത്രം"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "ഉള്ളടക്കം"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "കണ്ടന്റ് ക്രിയേറ്റർ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "എക്സ്പോർട്ട് ചെയ്ത ഫയലിൽ ന
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "ട്രാൻസ്ക്രിപ്റ്റ് പകർത്തുക"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "കോർപ്പറേറ്റ്"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "{created}-ന് സൃഷ്ടിച്ചു · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "സൃഷ്ടിക്കുകയും {company}-ലേക്ക് ലിങ്ക് ചെയ്യുകയും ചെയ്തു"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "ക്രിയേറ്റീവ്"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "ക്രെഡിറ്റ്"
@@ -6925,9 +7012,19 @@ msgstr "ഡാനിഷ്"
 msgid "Dark"
 msgstr "ഡാർക്ക്"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "ഇരുണ്ട സൈഡ്ബാർ"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "ഡാർക്ക് തീം"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "ഡാറ്റ സയൻസ്"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "ലൈബ്രറിയിൽ നിന്ന് ഡിലീറ്റ�
 msgid "Deleted today"
 msgstr "ഇന്ന് ഡിലീറ്റ് ചെയ്തു"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "നിബിഡം"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "ഡിസൈൻ സിസ്റ്റത്തിലെ വിട്ട�
 msgid "Design systems"
 msgstr "ഡിസൈൻ സംവിധാനങ്ങൾ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "ഡിസൈനർ"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "പ്രൊവൈഡറിൽ നിന്നുള്ള വിശദ�
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "ഡെവലപ്പർ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "ഡെവലപ്പർ"
 
@@ -7783,6 +7895,11 @@ msgstr "മുമ്പത്തെ കണ്ടെത്തൽ ഫലം · അ
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "നിങ്ങൾ വീണ്ടും അയയ്ക്കുമ്പോൾ, ഈ സംഭാഷണത്തിലെ മുമ്പത്തെ സന്ദേശങ്ങളും അറ്റാച്ച്മെൻ്റുകളും ഈ ലക്ഷ്യസ്ഥാനത്തേക്ക് അയയ്ക്കപ്പെടും."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "മണ്ണിന്റെ നിറങ്ങൾ"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "എഡിറ്റർ കാഴ്ചകൾ"
 msgid "Editorial"
 msgstr "എഡിറ്റോറിയൽ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "എഡിറ്റോറിയൽ"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "തിരുത്തുകൾ ഒരു പകർപ്പിലേക്ക് പോകും, ഈ റെസ്യൂമെയിലേക്ക് ഒരിക്കലുമില്ല."
@@ -8021,6 +8143,11 @@ msgstr "വിദ്യാഭ്യാസം"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "വിദ്യാഭ്യാസത്തിലും ഇതേ രീതിയിൽ സ്ഥാപനവും പഠനമേഖലയും പരസ്പരം മാറുന്നു."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "കാര്യക്ഷമം"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "ട്രാഷ് ശൂന്യമാക്കുക…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "അവസാനിക്കുന്നു"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "എഞ്ചിനീയറിംഗ്"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "നിങ്ങളുടെ പാസ്‌വേഡ് നൽകുക.
 msgid "Entered by you"
 msgstr "നിങ്ങൾ നൽകിയത്"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "എന്റർപ്രൈസ്"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "{count}-ൽ എൻട്രി {0}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "എൻട്രി ഇല്ലാതാക്കി"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "തുടക്കക്കാർക്ക്"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "കൃത്യം കുറഞ്ഞ തുക"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "റെസ്യൂമെകളെക്കുറിച്ച് അഭിപ്രായങ്ങൾ പങ്കിടുക, ചോദ്യങ്ങൾ ചോദിക്കുക, കമ്മ്യൂണിറ്റിയോടൊപ്പം Reactive Resume രൂപപ്പെടുത്താൻ സഹായിക്കുക."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "എക്സിക്യൂട്ടീവ്"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "വസ്തുതകൾ ഫിൽട്ടർ ചെയ്യുക"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "ടെംപ്ലേറ്റുകൾ ഫിൽട്ടർ ചെയ്യുക"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "ധനകാര്യം"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "നിന്ന്"
 msgid "from “{0}”"
 msgstr "“{0}”-ൽ നിന്ന്"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "തലക്കെട്ടുകൾ {0}-ൽ, {1} pt\n"
 msgid "Headline"
 msgstr "ഹെഡ്ലൈൻ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "ആരോഗ്യ സംരക്ഷണം"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "ഫയൽ എങ്ങനെ കാണിക്കും"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "ഈ റോളിൽ ഞാൻ എത്രത്തോളം യോജിക്കും?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "HR"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "താൽപര്യങ്ങൾ"
 msgid "Interface language"
 msgstr "ഇൻ്റർഫേസ് ഭാഷ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "ഇന്റേൺഷിപ്പ്"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON വായിച്ചു"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "ഇതിലേക്ക് പോകുക"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "ജൂനിയർ"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "ലെഗസി Word ഫയലുകൾ പിന്തുണയ്ക�
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "നിയമപരം"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "നിയമം"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Reactive Resume ഉപയോഗിച്ച് നിർമ്മിച�
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Reactive Resume ഉപയോഗിച്ച് നിർമ്മിച്ചത്, സ്വതന്ത്രവും ഓപ്പൺ സോഴ്‌സും"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "മാഗസിൻ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "മജന്ത ആക്സന്റ്"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "അപേക്ഷിച്ചതായി അടയാളപ്പെ�
 msgid "Marked as read"
 msgstr "വായിച്ചതായി അടയാളപ്പെടുത്തി"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "മാർക്കറ്റിംഗ്"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "മൈക്രോഫോൺ തടഞ്ഞിരിക്കുന്�
 msgid "min"
 msgstr "മിനിറ്റ്"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "മിനിമൽ"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "കുറഞ്ഞ അടിസ്ഥാന ശമ്പളം"
@@ -11885,6 +12082,11 @@ msgstr "മോഡൽ"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "{label}-നുള്ള മോഡൽ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "ആധുനികം"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "അപേക്ഷ {0}-ൽ നിന്ന് നീക്കുന്�
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "{item} നീക്കുന്നത് റദ്ദാക്കി. ഒന്നും നീക്കിയില്ല."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "മങ്ങിയ സൈഡ്ബാർ"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "ഒന്നും തിരഞ്ഞെടുത്തിട്ടി�
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "ഇതുവരെ ഒന്നുമില്ല. കോച്ചുമായുള്ള സംഭാഷണം ഇവിടെ സൂക്ഷിക്കും, അതിന്റെ കണക്ഷൻ പിന്നീട് നീക്കം ചെയ്താലും വായിക്കാനാകും."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "ലാഭേച്ഛയില്ലാത്തത്"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "ഓഫർ ഡിലീറ്റ് ചെയ്തു"
 msgid "Offer saved"
 msgstr "ജോലി ഓഫർ സേവ് ചെയ്തു"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "ഓഫർ സേവ് ചെയ്തു. {0} ഓഫർ ഘട്ടത്തിലേക്ക് നീക്കി."
@@ -13909,6 +14121,11 @@ msgstr "പുതിയ ടാബിൽ തുറക്കും"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "നിങ്ങളുടെ പേരും ബന്ധപ്പെടാനുള്ള വിവരങ്ങളും വച്ച് തുറക്കുന്നു. ആദ്യം ഒന്നും പൂരിപ്പിക്കേണ്ട."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "ഓപ്പറേഷൻസ്"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "ഒരു ജോലി പോസ്റ്റിംഗ് ഒട്ടി
 msgid "Paste a message"
 msgstr "ഒരു സന്ദേശം പേസ്റ്റ് ചെയ്യുക"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "{0}-ൽ നിന്നുള്ള ഒരു സന്ദേശം ഒട്ടിക്കുക"
@@ -14593,6 +14810,11 @@ msgstr "പ്ലം പർപ്പിൾ"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "പോളിഷ്"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "മിനുസമാർന്നത്"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "B2B ടീമുകൾക്കായി <0>ഡിസൈൻ സിസ്റ്റങ്ങളും</0> ഗവേഷണാധിഷ്ഠിത ഉൽപ്പന്നങ്ങളും നിർമ്മിക്കുന്നതിൽ ഒമ്പത് വർഷത്തെ പരിചയമുള്ള ഉൽപ്പന്ന ഡിസൈനർ."
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "പ്രൊഫഷണൽ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "പ്രൊഫഷണൽ"
 
@@ -16017,7 +16244,7 @@ msgstr "ലഭ്യമല്ലാത്ത വസ്തുത റഫറൻസ�
 msgid "Remove unavailable story reference"
 msgstr "ലഭ്യമല്ലാത്ത കഥ റഫറൻസ് നീക്കുക"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "{0} നീക്കി"
@@ -16812,6 +17039,16 @@ msgstr "വര"
 msgid "Rule accent"
 msgstr "വര ആക്സന്റ്"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "വരയിട്ട ഗ്രിഡ്"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "വരയിട്ട തലക്കെട്ടുകൾ"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "വീണ്ടും പ്രവർത്തിപ്പിക്കുക"
@@ -17138,7 +17375,7 @@ msgstr "{0}-ന് സേവ് ചെയ്തു · ഓഫറുകളിൽ �
 msgid "Saved {0} · read-only"
 msgstr "{0}-ന് സേവ് ചെയ്തു · വായിക്കാൻ മാത്രം"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} അപേക്ഷകളിലേക്ക് സേവ് ചെയ്തു"
@@ -17761,6 +17998,11 @@ msgstr "ജോലി പോസ്റ്റിംഗ്, നിങ്ങൾ ല�
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "ഈ കഥയും ഓണാക്കിയ വസ്തുതകളും നിങ്ങളുടെ AI കണക്ഷനിലേക്ക് അയയ്ക്കുന്നു. കണക്ഷൻ ഇല്ലെങ്കിൽ ഒന്നും അയയ്ക്കില്ല."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "സീനിയർ"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "ചോദ്യങ്ങൾ ഒരു ഒഴിഞ്ഞ വരിയാ
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "സെർബിയൻ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "സെരിഫ്"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "സൈൻ ഔട്ട് ചെയ്യുന്നു…"
 msgid "Signing up…"
 msgstr "സൈൻ അപ് ചെയ്യുന്നു…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "ലളിതം"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "ചെറിയ തലക്കെട്ടുകൾ"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "അങ്ങനെ ഞാൻ 14 ഉപഭോക്താക്കളോട് സംസാരിച്ചു, ആളുകൾ പിന്മാറിയ മൂന്ന് ഇടങ്ങൾ കണ്ടെത്തി, ഞങ്ങൾ ചെറിയൊരു സെറ്റപ്പിന്റെ പ്രോട്ടോടൈപ്പ് ഉണ്ടാക്കി."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "മൃദു ആക്സന്റ്"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "ഇപ്പോൾ തുടങ്ങുന്നു"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "വായിക്കാൻ മാത്രമായി തുടങ്ങുന്നു. പേര്, ആക്സസ്, കാലാവധി എന്നിവ നിങ്ങൾ തിരഞ്ഞെടുക്കുക."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "സ്റ്റാർട്ടപ്പ്"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "സംസ്ഥാനം അല്ലെങ്കിൽ മേഖല"
@@ -19025,6 +19287,11 @@ msgstr "സ്ട്രൈക്ക്ത്രൂ"
 msgid "Stronger verb"
 msgstr "ശക്തമായ ക്രിയ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "ഘടനാപരം"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "സ്റ്റൈൽഷീറ്റ് എഡിറ്റർ"
@@ -19037,7 +19304,7 @@ msgstr "വിഷയം"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "സമർപ്പണം രേഖപ്പെടുത്തിയത് {date}. അയച്ച പതിപ്പുകൾ ഒരിക്കലും മാറില്ല; നിലവിലുള്ള ഡ്രാഫ്റ്റുകൾ തിരുത്താവുന്നതായി തുടരും. ഈ രേഖ തൊഴിലുടമ സ്വീകരിച്ചത് ഉറപ്പാക്കുന്നില്ല."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "{0}-ന്റെ അപേക്ഷാ പേജിൽ സ്വയം സമർപ്പിക്കുക"
@@ -19130,6 +19397,11 @@ msgstr "പിന്തുണയുണ്ട്"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "പിന്തുണയ്ക്കുന്ന അറിവിലെ വസ്തുതകളും കഥകളും"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "സുസ്ഥിരത"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "ജോലി മോഡലുകൾ"
 msgid "Teal"
 msgstr "നീലപ്പച്ച"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "ടെക്"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "സാങ്കേതികം"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "സാങ്കേതികം"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "ടെക്നിക്കൽ PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "അരികിനോട് ചേർന്നുള്ള ടെക്�
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "{minimum} pt-ന് കീഴിലുള്ള ടെക്‌സ്‌റ്റ് ഒരു സിസ്റ്റം റീ-റെൻഡർ ചെയ്യുമ്പോൾ അത് തെറ്റായി വായിക്കാം."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "ടെക്സ്റ്റ് നിറഞ്ഞത്"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "സമയം · {0}"
 msgid "Time · {city}"
 msgstr "സമയം · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "{0}-മായി ഫോളോ-അപ്പ് ചെയ്യാൻ സമയമായി"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "ട്രാക്കിംഗ്"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "പരമ്പരാഗതം"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "പരമ്പരാഗതം"
 
@@ -21273,6 +21570,11 @@ msgstr "അടിവര"
 msgid "Underline links"
 msgstr "ലിങ്കുകൾക്ക് അടിവരയിടുക"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "അടക്കമുള്ളത്"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുന്നു…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "വലിയക്ഷര തലക്കെട്ടുകൾ"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "ബാക്കപ്പ് കോഡ് പരിശോദിക്ക�
 msgid "Verifying code…"
 msgstr "കോഡ് പരിശോധിക്കുന്നു…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "ബഹുമുഖം"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "സന്ദർശകർ റെസ്യൂമെ കാണുന്ന�
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "നിങ്ങളുടെ വെബ് പേജ് കാണാൻ സന്ദർശകർക്ക് ലിങ്കും പാസ്‌വേഡും വേണം."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "ദൃശ്യഭംഗി"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "പെൻഷൻ അല്ലെങ്കിൽ അലവൻസുകൾ 
 msgid "Which terms from a posting appear in it"
 msgstr "ഒരു പോസ്റ്റിംഗിലെ ഏതൊക്കെ പദങ്ങൾ ഇതിലുണ്ട്"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "വിശാലമായ ഒഴിവിടം"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "നിങ്ങളുടെ വെബ് പേജ് ആർക്ക് കണ്ടെത്താം, അതിൽ നിന്ന് നിങ്ങളെ ബന്ധപ്പെടാം, ഒരു പകർപ്പ് എടുക്കാം."
@@ -22588,8 +22910,8 @@ msgstr "സ്ഥലം മാറാൻ തയ്യാറാണോ: ഉത്�
 msgid "With {0}"
 msgstr "{0} എന്നിവരോടൊപ്പം"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "നിങ്ങളുടെ ഉത്തരം എഴുതുക, അ�
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "നിങ്ങളുടെ പ്രൊഫഷണൽ സിവി എഴുതുക"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "എഴുത്തുകാരൻ"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

@@ -1030,17 +1030,29 @@ msgstr "{0} به‌روزرسانی شد؛ {1} ناموفق بود. موقعیت
 msgid "{0} words · {1} characters"
 msgstr "{0} کلمه · {1} کاراکتر"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} در {wroteOn} پاسخ داد. تا آن را اعمال نکنید چیزی تغییر نمی‌کند."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} در {wroteOn} پاسخ داد. خوانده‌شده توسط {1} · {2}. تا آن را اعمال نکنید چیزی تغییر نمی‌کند."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}، {1, plural, one {# در انتظار} other {# در انتظار}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}، {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "ج: {answer}"
 msgid "About"
 msgstr "درباره این برنامه"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "دربارهٔ {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "دربارهٔ {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "تأکید"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "رنگ تاکیدی"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "رنگ‌های تأکیدی"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "چیدمان بخش‌ها"
 msgid "As written on the page"
 msgstr "همان‌طور که در صفحه نوشته شده"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "سبک آسیایی"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "در Northwind Labs، بیشتر تیم‌های جدید پیش از ت
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "چک کننده ATS"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "سازگار با ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "گزارش توجیهی · {0} · استفاده از {1}"
 msgid "Briefing ready"
 msgstr "گزارش توجیهی آماده است"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "گزارش توجیهی برای {0} آماده است"
@@ -4319,6 +4346,11 @@ msgstr "لیست گلوله شده"
 msgid "Burgundy"
 msgstr "بورگوندی"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "تحلیلگر کسب‌وکار"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "از جامعه، برای جامعه."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "تقویم"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "آرام"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "ساده"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "تمیز"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "تایپوگرافی تمیز"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "برای استایل کردن روی هر چیزی در صفحه کلی
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "شناسه مشتری"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "در ارتباط با مشتری"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "به‌عنوان «پذیرش پیشنهاد» بسته شد"
 msgid "Closing {company} · {role}. "
 msgstr "بستن {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "نظرها"
 msgid "Comments and progress"
 msgstr "نظرها و پیشرفت"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "ارتباطات"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "انجمن"
@@ -5254,6 +5316,11 @@ msgstr "کوتاه و مختصر"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "فشرده"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "فشرده"
 
@@ -5461,6 +5528,11 @@ msgstr "اتصال: {text}"
 msgid "Connections"
 msgstr "اتصال‌ها"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "مشاوره"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "تماس بگیرید"
@@ -5511,12 +5583,12 @@ msgstr "تلفن تماس"
 msgid "Contact role"
 msgstr "نقش تماس"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "تماس: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "نمایش کامل"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "محتوا"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "تولیدکننده محتوا"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "متن را از فایل خروجی کپی کنید و آن را کام
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "رونوشت را کپی کنید"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "سازمانی"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "ساخته‌شده {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "ایجاد و به {company} پیوند داده شد"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "خلاقانه"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "ذکر سازنده"
@@ -6925,9 +7012,19 @@ msgstr "دانمارکی"
 msgid "Dark"
 msgstr "تاریک"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "نوار کناری تیره"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "تم تیره"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "علم داده"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "از کتابخانه حذف شد"
 msgid "Deleted today"
 msgstr "امروز حذف شد"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "پرتراکم"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "بده‌بستان‌های سیستم طراحی"
 msgid "Design systems"
 msgstr "سیستم‌های طراحی"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "طراح"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "جزئیات از ارائه‌دهنده: {detail}"
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "توسعه‌دهنده"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "توسعه‌دهنده"
 
@@ -7783,6 +7895,11 @@ msgstr "نتیجهٔ یافتن قبلی · آخرین بار دیده‌شده 
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "پیام‌ها و پیوست‌های قبلی این گفت‌وگو، وقتی دوباره پیام بفرستید، به این مقصد ارسال می‌شوند."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "رنگ‌های خاکی"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "دیدگاه های ویرایشگر"
 msgid "Editorial"
 msgstr "سرمقاله"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "سردبیری"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "ویرایش‌ها روی یک کپی اعمال می‌شوند، هرگز روی این رزومه."
@@ -8021,6 +8143,11 @@ msgstr "تحصیلات"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "در بخش تحصیلات نیز نام مؤسسه و رشتهٔ تحصیلی به همین روش جابه‌جا می‌شوند."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "کارآمد"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "خالی‌کردن سطل زباله…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "پایان"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "مهندسی"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "گذرواژهٔ خود را وارد کنید."
 msgid "Entered by you"
 msgstr "واردشده توسط شما"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "شرکت‌های بزرگ"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "مدخل {0} از {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "ورودی حذف شد"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "سطح ورودی"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "دقیقاً حداقل"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "درباره رزومه‌ها بازخورد ردوبدل کنید، سؤال بپرسید و همراه با جامعه به شکل‌دادن Reactive Resume کمک کنید."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "مدیران ارشد"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "فیلتر واقعیت‌ها"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "فیلتر قالب‌ها"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "مالی"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "از"
 msgid "from “{0}”"
 msgstr "از «{0}»"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "سرعنوان‌ها با {0}، {1} pt\n"
 msgid "Headline"
 msgstr "تیتر"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "بهداشت و درمان"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "نحوه نمایش فایل"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "چقدر این نقش را جا می‌دهم؟"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "منابع انسانی"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "علاقه‌مندی‌ها"
 msgid "Interface language"
 msgstr "زبان رابط"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "کارآموزی"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON خوانده شود"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "پرش به"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "تازه‌کار"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10912,6 +11084,11 @@ msgid "Legacy Word files aren't supported. Open the file in Word and save it as 
 msgstr "فایل‌های قدیمی Word پشتیبانی نمی‌شوند. فایل را در Word باز کنید و ابتدا آن را به عنوان .docx ذخیره کنید."
 
 #: src/features/homepage/footer.tsx
+msgid "Legal"
+msgstr "حقوقی"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Legal"
 msgstr "حقوقی"
 
@@ -11525,6 +11702,16 @@ msgstr "ساخته‌شده با Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "ساخته شده با Reactive Resume، رایگان و منبع باز"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "مجله‌ای"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "تأکید سرخابی"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "به‌عنوان ارسال‌شده علامت خورد. نسخه‌ه
 msgid "Marked as read"
 msgstr "به‌عنوان خوانده‌شده علامت خورد"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "بازاریابی"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "میکروفون مسدود است. در تنظیمات مرورگر ا�
 msgid "min"
 msgstr "دقیقه"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "مینیمال"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "حداقل حقوق پایه"
@@ -11885,6 +12082,11 @@ msgstr "مدل"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "مدل برای {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "مدرن"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "درخواست را از {0} منتقل می‌کند"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "جابه‌جایی {item} لغو شد. چیزی جابه‌جا نشد."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "نوار کناری ملایم"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "چیزی انتخاب نشده"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "هنوز چیزی نیست. گفتگو با مربی اینجا نگه داشته می‌شود و اگر اتصالش بعداً حذف شود، همچنان خواندنی می‌ماند."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "غیرانتفاعی"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "پیشنهاد حذف شد"
 msgid "Offer saved"
 msgstr "پیشنهاد شغلی ذخیره شد"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "پیشنهاد ذخیره شد. {0} به مرحلهٔ پیشنهاد منتقل شد."
@@ -13909,6 +14121,11 @@ msgstr "در زبانهٔ جدید باز می‌شود"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "با نام و اطلاعات تماس شما باز می‌شود. ابتدا چیزی برای پر کردن نیست."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "عملیات"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "چسباندن یک آگهی استخدام…"
 msgid "Paste a message"
 msgstr "چسباندن پیام"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "پیامی از {0} بچسبانید"
@@ -14593,6 +14810,11 @@ msgstr "بنفش آلو"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "لهستانی"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "پرداخته"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15025,6 +15247,11 @@ msgstr "طراح محصول با نه سال تجربه در ساخت <0>سیس�
 #: src/features/resume/editor/design/presets.ts
 msgid "Professional"
 msgstr "سبک حرفه ای"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Professional"
+msgstr "حرفه‌ای"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -16017,7 +16244,7 @@ msgstr "حذف ارجاع به واقعیتِ در دسترس‌نیافتنی"
 msgid "Remove unavailable story reference"
 msgstr "حذف ارجاع به داستانِ در دسترس‌نیافتنی"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "{0} حذف شد"
@@ -16812,6 +17039,16 @@ msgstr "خط"
 msgid "Rule accent"
 msgstr "تأکید خطی"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "شبکه خط‌دار"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "سرتیترهای خط‌دار"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "دوباره اجرا کن"
@@ -17138,7 +17375,7 @@ msgstr "ذخیره‌شده {0} · در پیشنهادها مقایسه کنید
 msgid "Saved {0} · read-only"
 msgstr "ذخیره‌شده {0} · فقط‌خواندنی"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} در درخواست‌ها ذخیره شد"
@@ -17761,6 +17998,11 @@ msgstr "آگهی شغلی، رزومهٔ پیوندشده‌تان و دانست
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "این داستان و واقعیت‌های روشن را به اتصال هوش مصنوعی شما می‌فرستد. بدون اتصال، چیزی ارسال نمی‌شود."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "ارشد"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "پرسش‌ها را با یک خط خالی جدا کنید. حداکث
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "صربی"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "سریف"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "در حال خروج…"
 msgid "Signing up…"
 msgstr "در حال عضویت…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "ساده"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "سرعنوان‌های کوچک‌تر"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "پس با ۱۴ مشتری صحبت کردم، سه جایی را که افراد رها می‌کردند پیدا کردم و نمونهٔ اولیهٔ یک راه‌اندازی کوتاه‌تر را ساختیم."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "تأکید ملایم"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "اکنون شروع می‌شود"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "فقط‌خواندنی شروع می‌شود. نام، دسترسی و انقضای آن را شما انتخاب می‌کنید."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "استارتاپ"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "ایالت یا منطقه"
@@ -19025,6 +19287,11 @@ msgstr "خط‌خورده"
 msgid "Stronger verb"
 msgstr "فعل قوی تر"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "ساختاریافته"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "ویرایشگر استایل‌شیت"
@@ -19037,7 +19304,7 @@ msgstr "موضوع"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "ارسال در {date} ثبت شد. نسخه‌های ارسال‌شده هرگز تغییر نمی‌کنند؛ پیش‌نویس‌های فعلی قابل ویرایش می‌مانند. این ثبت، رسیدِ کارفرما را تأیید نمی‌کند."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "خودتان در صفحهٔ درخواست {0} ارسال کنید"
@@ -19130,6 +19397,11 @@ msgstr "مستند"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "واقعیت‌ها و داستان‌های پشتیبانِ «دانسته‌ها»"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "پایداری"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "مدل‌های وظیفه"
 msgid "Teal"
 msgstr "سبزآبی"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "فناوری"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "فنی"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "فنی"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "مدیر محصول فنی"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "متن نزدیک به لبه را می توان قطع کرد. حداق
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "متن زیر {minimum} pt ممکن است زمانی که یک سیستم آن را دوباره ارائه می کند اشتباه خوانده شود."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "پرمتن"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "زمان · {0}"
 msgid "Time · {city}"
 msgstr "زمان · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "زمان پیگیری با {0} است"
@@ -20910,6 +21202,11 @@ msgstr "ردیابی"
 #: src/features/resume/editor/design/presets.ts
 msgid "Traditional"
 msgstr "سبک سنتی"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Traditional"
+msgstr "سنتی"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -21273,6 +21570,11 @@ msgstr "زیرخط"
 msgid "Underline links"
 msgstr "زیر لینک ها خط بکشید"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "بی‌پیرایه"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "بارگذاری عکس"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "در حال آپلود عکس…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "سرتیترهای با حروف بزرگ"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "در حال تأیید کد پشتیبان…"
 msgid "Verifying code…"
 msgstr "کد تایید…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "همه‌کاره"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "بازدیدکنندگان پیش از دیدن رزومه رمز عبو
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "بازدیدکنندگان برای دیدن صفحهٔ وب شما به لینک و رمز عبور نیاز دارند."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "جلوه بصری"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "چه مزایای دیگری دارد، مثل بازنشستگی یا �
 msgid "Which terms from a posting appear in it"
 msgstr "کدام اصطلاحات آگهی شغلی در آن آمده است"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "فضای سفید"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "چه کسی می‌تواند صفحهٔ وب شما را پیدا کند، از طریق آن با شما تماس بگیرد و کپی‌ای بردارد."
@@ -22588,8 +22910,8 @@ msgstr "مایل به جابه‌جایی: پاسخ داده نشده"
 msgid "With {0}"
 msgstr "با {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "پاسخ خود را بنویسید یا از دانسته‌هایتا�
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "رزومه حرفه ای خود را بنویسید"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "نویسنده"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

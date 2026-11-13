@@ -1030,17 +1030,29 @@ msgstr "{0} 件を更新、{1} 件が失敗しました。失敗した職種は�
 msgid "{0} words · {1} characters"
 msgstr "{0} 語 · {1} 文字"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} から {wroteOn} に返信がありました。反映するまで何も変わりません。"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} から {wroteOn} に返信がありました。{1} · {2} が読み取りました。反映するまで何も変わりません。"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}、{1, plural, other {#件待機中}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}、{1, plural, other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "A: {answer}"
 msgid "About"
 msgstr "このアプリについて"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "{0} について"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "{0} について · {label} · {model}"
@@ -2429,6 +2441,11 @@ msgstr "アクセント"
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
+msgstr "アクセントカラー"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
 msgstr "アクセントカラー"
 
 #: src/features/career/workspace/apply.tsx
@@ -3646,6 +3663,11 @@ msgstr "セクションを並べ替え"
 msgid "As written on the page"
 msgstr "ページに記載のとおり"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "アジアスタイル"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "Northwind Labsでは、新規チームの多くがセットアップを�
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATSチェッカー"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ATS対応"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "ブリーフィング · {0} · 使用：{1}"
 msgid "Briefing ready"
 msgstr "ブリーフィングの準備ができました"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "{0} のブリーフィングの準備ができました"
@@ -4319,6 +4346,11 @@ msgstr "箇条書きリスト"
 msgid "Burgundy"
 msgstr "バーガンディー"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "ビジネスアナリスト"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "コミュニティによる、コミュニティのためのプロジェ
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "カレンダー"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "落ち着いた"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "シンプル"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "すっきり"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "すっきりした書体"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "ページ上の何かをクリックしてスタイルを設定します
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "クライアント ID"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "顧客対応"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "「内定を承諾」として終了"
 msgid "Closing {company} · {role}. "
 msgstr "{company} · {role} を終了します。 "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "中国/日本/韓国"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "コメント"
 msgid "Comments and progress"
 msgstr "コメントと進捗"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "広報"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "コミュニティ"
@@ -5254,6 +5316,11 @@ msgstr "コンパクト"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "コンパクト"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "コンパクト"
 
@@ -5461,6 +5528,11 @@ msgstr "接続: {text}"
 msgid "Connections"
 msgstr "接続"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "コンサルティング"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "接触"
@@ -5511,12 +5583,12 @@ msgstr "連絡先電話番号"
 msgid "Contact role"
 msgstr "連絡先の役割"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "連絡先: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "全体表示"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "コンテンツ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "コンテンツクリエイター"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "エクスポートしたファイルからテキストをコピーして
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "トランスクリプトをコピーする"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "企業向け"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "作成 {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "作成され、{company} にリンクされました"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "クリエイティブ"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "クレジット表記"
@@ -6925,9 +7012,19 @@ msgstr "デンマーク語"
 msgid "Dark"
 msgstr "ダーク"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "ダークサイドバー"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "ダークテーマ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "データサイエンス"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "ライブラリから削除しました"
 msgid "Deleted today"
 msgstr "今日削除"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "高密度"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "デザインシステムのトレードオフ"
 msgid "Design systems"
 msgstr "デザインシステム"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "デザイナー"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "プロバイダーからの詳細：{detail}"
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "開発者"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "開発者"
 
@@ -7783,6 +7895,11 @@ msgstr "以前の検索結果 · 最終確認 {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "次に送信すると、この会話のこれまでのメッセージと添付ファイルがこの送信先に送られます。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "アーストーン"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "エディターのビュー"
 msgid "Editorial"
 msgstr "社説"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "エディトリアル"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "編集はコピーに反映され、このレジュメは変更されません。"
@@ -8021,6 +8143,11 @@ msgstr "学歴"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "学歴でも同様に、学校名と専攻の順序を入れ替えます。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "効率的"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "ゴミ箱を空にする…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "終わり"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "エンジニアリング"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "パスワードを入力してください。"
 msgid "Entered by you"
 msgstr "あなたが入力"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "大企業"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "項目 {0}/{count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "エントリが削除されました"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "未経験・新卒"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "最低条件ちょうど"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "履歴書へのフィードバックを交換し、質問し、コミュニティと一緒に Reactive Resume を形づくりましょう。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "エグゼクティブ"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "事実を絞り込む"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "テンプレートを絞り込む"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "金融"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "から"
 msgid "from “{0}”"
 msgstr "「{0}」より"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "見出しは {0}、{1} pt\n"
 msgid "Headline"
 msgstr "肩書き"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "医療"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "ファイルの見せ方"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "私はこの役割にどの程度適していますか?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "人事"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "趣味・関心"
 msgid "Interface language"
 msgstr "インターフェース言語"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "インターン"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON 読み取り"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "移動"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "ジュニア"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10912,6 +11084,11 @@ msgid "Legacy Word files aren't supported. Open the file in Word and save it as 
 msgstr "従来の Word ファイルはサポートされていません。まず、Word でファイルを開き、.docx として保存します。"
 
 #: src/features/homepage/footer.tsx
+msgid "Legal"
+msgstr "法務"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Legal"
 msgstr "法務"
 
@@ -11525,6 +11702,16 @@ msgstr "Reactive Resume で作成"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Reactive Resume で作成、無料かつオープンソース"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "雑誌風"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "マゼンタのアクセント"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "応募済みにしました。送信したバージョンは保管され
 msgid "Marked as read"
 msgstr "既読にしました"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "マーケティング"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "マイクがブロックされています。ブラウザーの設定で
 msgid "min"
 msgstr "分"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "ミニマル"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "最低基本給"
@@ -11885,6 +12082,11 @@ msgstr "モデル"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "{label}のモデル"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "モダン"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "応募を{0}から移動します"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "{item}の移動をキャンセルしました。何も移動していません。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "落ち着いたサイドバー"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "未選択"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "まだありません。コーチとの会話はここに保管され、後で接続を削除しても読むことができます。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "非営利"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "オファーを削除しました"
 msgid "Offer saved"
 msgstr "オファーを保存しました"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "オファーを保存しました。{0} をオファーに移動しました。"
@@ -13909,6 +14121,11 @@ msgstr "新しいタブで開きます"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "名前と連絡先から始まります。先に入力する必要はありません。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "オペレーション"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "求人情報を貼り付け…"
 msgid "Paste a message"
 msgstr "メッセージを貼り付け"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "{0}からのメッセージを貼り付け"
@@ -14593,6 +14810,11 @@ msgstr "プラムパープル"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "ポーランド語"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "洗練"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "B2Bチーム向けの<0>デザインシステム</0>や調査に基づいたプロダクトの構築に9年の経験を持つプロダクトデザイナー。"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "プロフェッショナル"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "プロフェッショナル"
 
@@ -16017,7 +16244,7 @@ msgstr "利用できない事実の参照を削除"
 msgid "Remove unavailable story reference"
 msgstr "利用できないストーリーの参照を削除"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "{0} を削除しました"
@@ -16812,6 +17039,16 @@ msgstr "罫線"
 msgid "Rule accent"
 msgstr "罫線のアクセント"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "罫線グリッド"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "罫線付き見出し"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "再実行"
@@ -17138,7 +17375,7 @@ msgstr "{0} に保存 · オファーで比較"
 msgid "Saved {0} · read-only"
 msgstr "{0} に保存 · 閲覧のみ"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0}を応募に保存しました"
@@ -17761,6 +17998,11 @@ msgstr "求人情報、リンクされたレジュメ、オンになっている
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "このストーリーとオンになっている事実をAI接続に送信します。接続がなければ何も送信されません。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "シニア"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "質問は空行で区切ってください。最大5問、各2,000文字
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "セルビア語"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "セリフ体"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "サインアウトしています…"
 msgid "Signing up…"
 msgstr "登録中…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "シンプル"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "見出しを小さく"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "そこで14人の顧客と話し、離脱が起きている3つの箇所を見つけ、短いセットアップを試作しました。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "控えめなアクセント"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "今から開始"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "最初は閲覧のみです。名前、権限、有効期限を選択できます。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "スタートアップ"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "都道府県・地域"
@@ -19025,6 +19287,11 @@ msgstr "取り消し線"
 msgid "Stronger verb"
 msgstr "より強い動詞"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "構造的"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "スタイルシートエディタ"
@@ -19037,7 +19304,7 @@ msgstr "件名"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "{date} に提出を記録しました。送信したバージョンは変更されず、現在の下書きは引き続き編集できます。この記録は、応募先が受け取ったことを確認するものではありません。"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "{0} の応募ページからご自身で提出"
@@ -19130,6 +19397,11 @@ msgstr "裏付けあり"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "裏付けとなるナレッジの事実とストーリー"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "サステナビリティ"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "タスクのモデル"
 msgid "Teal"
 msgstr "ティール"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "テック"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "技術"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "技術系"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "テクニカルPM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "この端に近いテキストは切り取られる可能性がありま
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "{minimum} pt の下のテキストは、システムが再レンダリングするときに誤って読み取られる可能性があります。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "文字量多め"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "時刻 · {0}"
 msgid "Time · {city}"
 msgstr "時刻 · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "{0} にフォローアップする時期です"
@@ -20910,6 +21202,11 @@ msgstr "トラッキング"
 #: src/features/resume/editor/design/presets.ts
 msgid "Traditional"
 msgstr "トラディショナル"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Traditional"
+msgstr "伝統的"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -21273,6 +21570,11 @@ msgstr "下線"
 msgid "Underline links"
 msgstr "リンクに下線を引く"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "控えめ"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "写真をアップロード"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "写真をアップロード中…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "大文字の見出し"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "バックアップコードを確認しています…"
 msgid "Verifying code…"
 msgstr "検証コード…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "汎用的"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "訪問者は履歴書を見る前にパスワードを入力します。
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "Web ページを閲覧するには、リンクとパスワードが必要です。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "視覚的な華やかさ"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "年金や手当など、ほかにどのような福利厚生がありま
 msgid "Which terms from a posting appear in it"
 msgstr "求人情報のどの用語が含まれているか"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "余白多め"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Web ページを見つけられる人、そこから連絡できる人、コピーを取れる人。"
@@ -22588,8 +22910,8 @@ msgstr "転居の可否：未回答"
 msgid "With {0}"
 msgstr "参加者：{0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "回答を書くか、ナレッジから下書きを作成してくださ
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "職務経歴書を書いてください"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "ライター"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

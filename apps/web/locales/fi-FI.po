@@ -1030,17 +1030,29 @@ msgstr "Päivitetty: {0}; epäonnistui: {1}. Epäonnistuneet tehtävät pysyvät
 msgid "{0} words · {1} characters"
 msgstr "{0} sanaa · {1} merkkiä"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} vastasi {wroteOn}. Mikään ei muutu, ennen kuin otat sen käyttöön."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} vastasi {wroteOn}. Lukija: {1} · {2}. Mikään ei muutu, ennen kuin otat sen käyttöön."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# odottaa} other {# odottaa}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "V: {answer}"
 msgid "About"
 msgstr "Tietoja tästä sovelluksesta"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "Aihe: {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "Aihe: {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "Korostus"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "Aksenttiväri"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "Korostusvärit"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "Järjestä osiot"
 msgid "As written on the page"
 msgstr "Kuten sivulle kirjoitettu"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "Aasialainen tyyli"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "Northwind Labsissa useimmat uudet tiimit jumittuivat ennen kuin saivat k
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS-tarkistus"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ATS-yhteensopiva"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "Muistio · {0} · käytetty: {1}"
 msgid "Briefing ready"
 msgstr "Muistio valmis"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "Muistio valmis: {0}"
@@ -4319,6 +4346,11 @@ msgstr "Luettelona"
 msgid "Burgundy"
 msgstr "Viininpunainen"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "Liiketoiminta-analyytikko"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "Yhteisöltä yhteisölle."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "Kalenteri"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "Rauhallinen"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "Selkeä"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "Siisti"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "Selkeä typografia"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "Napsauta mitä tahansa sivulla muokataksesi sitä. Sääntö, johon olet
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "Asiakastunnus"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "Asiakasrajapinta"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "Suljettu: Hyväksytty tarjous"
 msgid "Closing {company} · {role}. "
 msgstr "Suljetaan: {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "Kommentit"
 msgid "Comments and progress"
 msgstr "Kommentit ja eteneminen"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "Viestintä"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "Yhteisö"
@@ -5256,6 +5318,11 @@ msgstr "Kompakti"
 msgctxt "Entry header layout"
 msgid "Compact"
 msgstr "Tiivis"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Compact"
+msgstr "Kompakti"
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
@@ -5461,6 +5528,11 @@ msgstr "Yhteys: {text}"
 msgid "Connections"
 msgstr "Yhteydet"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "Konsultointi"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "Ota yhteyttä"
@@ -5511,12 +5583,12 @@ msgstr "Yhteydenotto puhelin"
 msgid "Contact role"
 msgstr "Yhteyshenkilön rooli"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "Yhteyshenkilö: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "Sovita"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Sisältö"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "Sisällöntuottaja"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "Kopioi teksti viedystä tiedostosta ja lue se läpi; korjaa kaikki, mik�
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "Kopioi transkriptio"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "Yritysmäinen"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "Luotu {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "Luotu ja linkitetty {company}:han"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "Luova"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "Tekijämaininta"
@@ -6925,9 +7012,19 @@ msgstr "tanska"
 msgid "Dark"
 msgstr "Tumma"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "Tumma sivupalkki"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Tumma teema"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "Datatiede"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "Poistettu kirjastosta"
 msgid "Deleted today"
 msgstr "Poistettu tänään"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "Tiivis"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "Suunnittelujärjestelmän kompromissit"
 msgid "Design systems"
 msgstr "Suunnittelujärjestelmät"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "Suunnittelija"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "Palveluntarjoajan tiedot: {detail}"
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "Kehittäjä"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "Kehittäjä"
 
@@ -7783,6 +7895,11 @@ msgstr "Aiempi hakutulos · viimeksi nähty {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Tämän keskustelun aiemmat viestit ja liitteet lähetetään tähän kohteeseen, kun lähetät uudelleen."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "Maanläheinen"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "Toimittajan näkymät"
 msgid "Editorial"
 msgstr "Toimitus"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "Toimituksellinen"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "Muutokset menevät kopioon, eivät koskaan tähän ansioluetteloon."
@@ -8021,6 +8143,11 @@ msgstr "Koulutus"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "Koulutus-osiossa oppilaitos ja koulutusala vaihtavat paikkaa samalla tavalla."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "Tehokas"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "Tyhjennä roskakori…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "Loppu"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "Insinöörityö"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "Syötä salasanasi."
 msgid "Entered by you"
 msgstr "Syöttämäsi"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "Suuryritykset"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "Merkintä {0}/{count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "Merkintä poistettu"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "Aloitustaso"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "Täsmälleen minimi"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Vaihda palautetta ansioluetteloista, kysy kysymyksiä ja auta muokkaamaan Reactive Resumea yhdessä yhteisön kanssa."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "Johto"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "Suodata faktoja"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "Suodata mallipohjia"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "Talous"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "Lähettäjä"
 msgid "from “{0}”"
 msgstr "lähteestä ”{0}”"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "Otsikot: {0}, {1} pt\n"
 msgid "Headline"
 msgstr "Kuvausteksti"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "Terveydenhuolto"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "Kuinka näyttää tiedosto"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "Kuinka hyvin sopeudun tähän rooliin?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "HR"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "Kiinnostuksen kohteet"
 msgid "Interface language"
 msgstr "Käyttöliittymän kieli"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "Harjoittelu"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON luku"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "Siirry"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "Junior"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "Vanhoja Word-tiedostoja ei tueta. Avaa tiedosto Word:ssa ja tallenna se 
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "Oikeudelliset tiedot"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "Lakiala"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Tehty Reactive Resumella"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Tehty Reactive Resumella – ilmainen ja avoimen lähdekoodin sovellus"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "Aikakauslehti"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "Magenta korostus"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "Merkitty haetuksi. Lähettämäsi versiot säilytetään."
 msgid "Marked as read"
 msgstr "Merkitty luetuksi"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "Markkinointi"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "Mikrofoni estetty. Salli se selaimen asetuksissa tai kirjoita vastaukses
 msgid "min"
 msgstr "min"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "Minimalistinen"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "Vähimmäisperuspalkka"
@@ -11885,6 +12082,11 @@ msgstr "Malli"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Malli: {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "Moderni"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "Siirtää hakemuksen pois vaiheesta: {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "Kohteen {item} siirto peruttiin. Mitään ei siirretty."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "Hillitty sivupalkki"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "Ei valittua"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "Ei vielä mitään. Keskustelu valmentajan kanssa säilytetään täällä, ja se pysyy luettavana, vaikka sen yhteys poistettaisiin myöhemmin."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "Voittoa tavoittelematon"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "Tarjous poistettu"
 msgid "Offer saved"
 msgstr "Työtarjous tallennettu"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Tarjous tallennettu. {0} siirtyi vaiheeseen Tarjous."
@@ -13909,6 +14121,11 @@ msgstr "avautuu uuteen välilehteen"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "Avautuu nimesi ja yhteystietojesi kohdalta. Mitään ei tarvitse täyttää ensin."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "Operatiivinen"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "Liitä työpaikkailmoitus…"
 msgid "Paste a message"
 msgstr "Liitä viesti"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "Liitä viesti yritykseltä {0}"
@@ -14593,6 +14810,11 @@ msgstr "Luumu"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "puola"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "Viimeistelty"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "Tuotesuunnittelija, jolla on yhdeksän vuoden kokemus <0>suunnittelujärjestelmien</0> ja tutkimukseen perustuvien tuotteiden kehittämisestä B2B-tiimeille."
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "Ammattimainen"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "Ammattimainen"
 
@@ -16017,7 +16244,7 @@ msgstr "Poista viittaus ei-saatavilla olevaan faktan"
 msgid "Remove unavailable story reference"
 msgstr "Poista viittaus ei-saatavilla olevaan tarinaan"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "Poistettu: {0}"
@@ -16812,6 +17039,16 @@ msgstr "Viiva"
 msgid "Rule accent"
 msgstr "Viivakorostus"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "Viivoitettu ruudukko"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "Viivoitetut otsikot"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "Suorita uudelleen"
@@ -17138,7 +17375,7 @@ msgstr "Tallennettu {0} · vertaa Tarjouksissa"
 msgid "Saved {0} · read-only"
 msgstr "Tallennettu {0} · vain luku"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} tallennettu hakemuksiin"
@@ -17761,6 +17998,11 @@ msgstr "Lähettää työpaikkailmoituksen, linkitetyn ansioluettelosi ja käytö
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Lähettää tämän tarinan ja käyttöön otetut faktat tekoälyyhteydellesi. Ilman yhteyttä mitään ei lähetetä."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "Senior"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "Erota kysymykset tyhjällä rivillä. Enintään viisi kysymystä, kussa
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "serbia"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Serif"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "Kirjaudutaan ulos…"
 msgid "Signing up…"
 msgstr "Rekisteröidytään…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "Yksinkertainen"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "Pienemmät otsikot"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "Joten juttelin 14 asiakkaan kanssa, löysin kolme kohtaa, joissa ihmiset luopuivat, ja prototypoimme lyhyemmän käyttöönoton."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "Pehmeä korostus"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "Alkaa nyt"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "Alkaa vain luku -tilassa. Valitset sen nimen, käyttöoikeudet ja vanhenemisen."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "Startup"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "Osavaltio tai alue"
@@ -19025,6 +19287,11 @@ msgstr "Yliviivaus"
 msgid "Stronger verb"
 msgstr "Vahvempi verbi"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "Jäsennelty"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "Tyylitiedostoeditori"
@@ -19037,7 +19304,7 @@ msgstr "Aihe"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "Lähetys kirjattu {date}. Lähetetyt versiot eivät muutu koskaan; nykyiset luonnokset pysyvät muokattavina. Tämä merkintä ei vahvista työnantajan vastaanottoa."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "Lähetä itse hakemussivulla: {0}"
@@ -19130,6 +19397,11 @@ msgstr "Tuettu"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "Tietopankin faktat ja tarinat tukena"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "Kestävä kehitys"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "Tehtäväkohtaiset mallit"
 msgid "Teal"
 msgstr "Sinivihreä"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "Teknologia-ala"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Tekninen"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "Tekninen"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "Tekninen PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "Näin läheltä reunaa oleva teksti voidaan leikata pois. Käytä vähin
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "Tekstin alla {minimum} pt voidaan lukea väärin, kun järjestelmä hahmontaa sen uudelleen."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "Tekstipainotteinen"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "Aika · {0}"
 msgid "Time · {city}"
 msgstr "Aika · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "Aika ottaa yhteyttä: {0}"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "Seuranta"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Perinteinen"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "Perinteinen"
 
@@ -21273,6 +21570,11 @@ msgstr "Alleviivaus"
 msgid "Underline links"
 msgstr "Alleviivaa linkit"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "Vähäeleinen"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "Lataa kuva"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "Ladataan kuvaa…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "Isot kirjaimet otsikoissa"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "Vahvistetaan varmuuskoodia…"
 msgid "Verifying code…"
 msgstr "Vahvistuskoodi…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "Monipuolinen"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "Vierailijat syöttävät sen ennen kuin he näkevät ansioluettelon. Jaa
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "Kävijät tarvitsevat linkin ja salasanan nähdäkseen verkkosivusi."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "Visuaalista särmää"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "Mitä muita etuja siihen kuuluu, kuten eläke tai lisät?"
 msgid "Which terms from a posting appear in it"
 msgstr "Mitkä ilmoituksen termit esiintyvät siinä"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "Runsaasti tyhjää tilaa"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Kuka voi löytää verkkosivusi, ottaa sen kautta yhteyttä ja tehdä kopion."
@@ -22588,8 +22910,8 @@ msgstr "Halukkuus muuttaa: ei vastattu"
 msgid "With {0}"
 msgstr "Mukana {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "Kirjoita vastauksesi tai luonnostele se tietopankistasi."
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Kirjoita ammatillinen CV"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "Kirjoittaja"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

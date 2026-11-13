@@ -1030,17 +1030,29 @@ msgstr "{0} dikemas kini; {1} gagal. Peranan yang gagal kekal dipilih."
 msgid "{0} words · {1} characters"
 msgstr "{0} patah perkataan · {1} aksara"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} membalas {wroteOn}. Tiada apa yang berubah sehingga anda menggunakannya."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} membalas {wroteOn}. Dibaca oleh {1} · {2}. Tiada apa yang berubah sehingga anda menggunakannya."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, other {# menunggu}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "J: {answer}"
 msgid "About"
 msgstr "Mengenai aplikasi ini"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "Tentang {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "Tentang {0} · {label} · {model}"
@@ -2429,6 +2441,11 @@ msgstr "Aksen"
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
+msgstr "Warna aksen"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
 msgstr "Warna aksen"
 
 #: src/features/career/workspace/apply.tsx
@@ -3646,6 +3663,11 @@ msgstr "Susun bahagian"
 msgid "As written on the page"
 msgstr "Seperti ditulis pada halaman"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "Gaya Asia"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "Di Northwind Labs, kebanyakan pasukan baharu tersekat sebelum selesai me
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "Penyemak ATS"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "Mesra ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "Taklimat · {0} · menggunakan {1}"
 msgid "Briefing ready"
 msgstr "Taklimat sedia"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "Taklimat sedia untuk {0}"
@@ -4319,6 +4346,11 @@ msgstr "Senarai bertitik tumpu mata"
 msgid "Burgundy"
 msgstr "Burgundi"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "Penganalisis perniagaan"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "Oleh komuniti, untuk komuniti."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "Kalendar"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "Tenang"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "Bersih"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "Kemas"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "Tipografi kemas"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "Klik apa sahaja pada halaman untuk menggayakannya. Peraturan yang anda i
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "ID Pelanggan"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "Berhadapan pelanggan"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "Ditutup sebagai Tawaran diterima"
 msgid "Closing {company} · {role}. "
 msgstr "Menutup {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "Komen"
 msgid "Comments and progress"
 msgstr "Komen dan kemajuan"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "Komunikasi"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "Komuniti"
@@ -5254,6 +5316,11 @@ msgstr "Padat"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "Padat"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "Padat"
 
@@ -5461,6 +5528,11 @@ msgstr "Sambungan: {text}"
 msgid "Connections"
 msgstr "Sambungan"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "Perundingan"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "Kenalan"
@@ -5511,12 +5583,12 @@ msgstr "Hubungi telefon"
 msgid "Contact role"
 msgstr "Peranan kenalan"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "Hubungan: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "Muat keseluruhan"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Kandungan"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "Pencipta kandungan"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "Salin teks daripada fail yang dieksport dan baca keseluruhannya; baiki a
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "Salin transkrip"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "Korporat"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "Dicipta {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "Dicipta dan dipautkan kepada {company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "Kreatif"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "Kredit"
@@ -6925,9 +7012,19 @@ msgstr "Danish"
 msgid "Dark"
 msgstr "Gelap"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "Bar sisi gelap"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Tema gelap"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "Sains data"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "Dipadam daripada Pustaka"
 msgid "Deleted today"
 msgstr "Dipadam hari ini"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "Padat maklumat"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "Pertukaran dalam sistem reka bentuk"
 msgid "Design systems"
 msgstr "Sistem reka bentuk"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "Pereka"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "Butiran daripada penyedia: {detail}"
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "Pembangun"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "Pembangun"
 
@@ -7783,6 +7895,11 @@ msgstr "Hasil penemuan terdahulu · terakhir dilihat {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Mesej dan lampiran terdahulu dalam perbualan ini akan dihantar ke destinasi ini apabila anda menghantar semula."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "Tona tanah"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "Pandangan editor"
 msgid "Editorial"
 msgstr "Editorial"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "Editorial"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "Suntingan pergi ke salinan, tidak pernah ke resume ini."
@@ -8021,6 +8143,11 @@ msgstr "Pendidikan"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "Pendidikan menukar sekolah dan bidang pengajian dengan cara yang sama."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "Cekap"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "Kosongkan Sampah…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "tamat"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "Kejuruteraan"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "Masukkan kata laluan anda."
 msgid "Entered by you"
 msgstr "Dimasukkan oleh anda"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "Perusahaan"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "Entri {0} daripada {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "Entri dipadamkan"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "Peringkat permulaan"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "Tepat minimum"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Bertukar maklum balas resume, tanya soalan dan bantu membentuk Reactive Resume bersama komuniti."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "Eksekutif"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "Tapis fakta"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "Tapis templat"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "Kewangan"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "daripada"
 msgid "from “{0}”"
 msgstr "daripada “{0}”"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "Tajuk dalam {0}, {1} pt\n"
 msgid "Headline"
 msgstr "Tajuk Utama"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "Penjagaan kesihatan"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "Bagaimana untuk menunjukkan fail"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "Sejauh manakah saya sesuai dengan peranan ini?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "HR"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "Minat"
 msgid "Interface language"
 msgstr "Bahasa antara muka"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "Latihan industri"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON dibaca"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "Lompat ke"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "Junior"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "Fail Word warisan tidak disokong. Buka fail dalam Word dan simpannya seb
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "Perundangan"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "Undang-undang"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Dibuat dengan Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Dibuat dengan Reactive Resume, percuma dan sumber terbuka"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "Majalah"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "Aksen magenta"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "Ditandakan sebagai dimohon. Versi yang anda hantar disimpan."
 msgid "Marked as read"
 msgstr "Ditandakan sebagai dibaca"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "Pemasaran"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "Mikrofon disekat. Benarkannya dalam tetapan pelayar anda, atau taip jawa
 msgid "min"
 msgstr "min"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "Minimalis"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "Gaji pokok minimum"
@@ -11885,6 +12082,11 @@ msgstr "Model"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Model untuk {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "Moden"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "Mengalihkan permohonan dari {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "Pengalihan {item} dibatalkan. Tiada apa-apa yang dialihkan."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "Bar sisi lembut"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "Tiada yang dipilih"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "Belum ada. Perbualan dengan jurulatih disimpan di sini, dan kekal boleh dibaca jika sambungannya dialih keluar kemudian."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "Bukan untung"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "Tawaran dipadam"
 msgid "Offer saved"
 msgstr "Tawaran kerja disimpan"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Tawaran disimpan. {0} dipindahkan ke Tawaran."
@@ -13909,6 +14121,11 @@ msgstr "dibuka dalam tab baharu"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "Dibuka pada nama dan butiran hubungan anda. Tiada apa yang perlu diisi dahulu."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "Operasi"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "Tampalkan siaran kerja…"
 msgid "Paste a message"
 msgstr "Tampal mesej"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "Tampal mesej daripada {0}"
@@ -14593,6 +14810,11 @@ msgstr "Ungu plum"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Poland"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "Rapi"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "Pereka produk dengan sembilan tahun pengalaman membina <0>sistem reka bentuk</0> dan produk berasaskan penyelidikan untuk pasukan B2B."
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "Profesional"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "Profesional"
 
@@ -16017,7 +16244,7 @@ msgstr "Buang rujukan fakta yang tidak tersedia"
 msgid "Remove unavailable story reference"
 msgstr "Buang rujukan cerita yang tidak tersedia"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "{0} dibuang"
@@ -16812,6 +17039,16 @@ msgstr "Garisan"
 msgid "Rule accent"
 msgstr "Aksen garisan"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "Grid bergaris"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "Tajuk bergaris"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "Jalankan semula"
@@ -17138,7 +17375,7 @@ msgstr "Disimpan {0} · bandingkan dalam Tawaran"
 msgid "Saved {0} · read-only"
 msgstr "Disimpan {0} · baca sahaja"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} disimpan ke Permohonan"
@@ -17761,6 +17998,11 @@ msgstr "Menghantar siaran kerja, resume terpaut anda dan Pengetahuan yang dihidu
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Menghantar cerita ini dan fakta yang dihidupkan kepada sambungan AI anda. Tanpanya, tiada apa-apa dihantar."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "Senior"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "Pisahkan soalan dengan baris kosong. Maksimum lima soalan, 2,000 aksara 
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Serbia"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Serif"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "Log keluar…"
 msgid "Signing up…"
 msgstr "Mendaftar…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "Ringkas"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "Tajuk lebih kecil"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "Jadi saya bercakap dengan 14 pelanggan, menemui tiga tempat orang tercicir, dan kami membina prototaip persediaan yang lebih ringkas."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "Aksen lembut"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "Bermula sekarang"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "Bermula sebagai baca sahaja. Anda memilih nama, akses dan tarikh luputnya."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "Syarikat permulaan"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "Negeri atau wilayah"
@@ -19025,6 +19287,11 @@ msgstr "Garis lorek"
 msgid "Stronger verb"
 msgstr "Kata kerja yang lebih kuat"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "Berstruktur"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "Editor helaian gaya"
@@ -19037,7 +19304,7 @@ msgstr "Subjek"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "Penyerahan direkodkan {date}. Versi yang dihantar tidak pernah berubah; draf semasa kekal boleh disunting. Rekod ini tidak mengesahkan penerimaan majikan."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "Serahkan sendiri di halaman permohonan {0}"
@@ -19130,6 +19397,11 @@ msgstr "Disokong"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "Fakta dan cerita Pengetahuan yang menyokong"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "Kelestarian"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "Model tugas"
 msgid "Teal"
 msgstr "Biru kehijauan"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "Teknologi"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Teknikal"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "Teknikal"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "PM teknikal"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "Teks ini dekat dengan tepi boleh dipotong. Gunakan sekurang-kurangnya {m
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "Teks di bawah {minimum} pt boleh disalah baca apabila sistem memaparkannya semula."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "Padat teks"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "Masa · {0}"
 msgid "Time · {city}"
 msgstr "Masa · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "Masa untuk menghubungi semula {0}"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "Penjejakan"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Tradisional"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "Tradisional"
 
@@ -21273,6 +21570,11 @@ msgstr "Garis bawah"
 msgid "Underline links"
 msgstr "Garis bawah pautan"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "Bersahaja"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "Muat naik foto"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "Memuat naik foto…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "Tajuk huruf besar"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "Mengesahkan kod sandaran…"
 msgid "Verifying code…"
 msgstr "Mengesahkan kod…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "Serba boleh"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "Pelawat memasukkan kata laluan sebelum mereka melihat resume. Kongsi han
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "Pelawat memerlukan pautan dan kata laluan untuk melihat halaman web anda."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "Gaya visual"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "Apakah faedah lain yang disertakan, seperti pencen atau elaun?"
 msgid "Which terms from a posting appear in it"
 msgstr "Istilah siaran kerja yang mana muncul di dalamnya"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "Ruang lapang"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Siapa yang boleh menemui halaman web anda, menghubungi anda daripadanya dan mengambil salinan."
@@ -22588,8 +22910,8 @@ msgstr "Bersedia berpindah: tidak dijawab"
 msgid "With {0}"
 msgstr "Bersama {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "Tulis jawapan anda, atau draf satu daripada Pengetahuan anda."
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Tulis CV profesional anda"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "Penulis"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

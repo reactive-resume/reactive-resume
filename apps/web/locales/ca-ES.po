@@ -1030,17 +1030,29 @@ msgstr "{0} actualitzats; {1} han fallat. Els llocs que han fallat continuen sel
 msgid "{0} words · {1} characters"
 msgstr "{0} paraules · {1} caràcters"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} ha respost el {wroteOn}. No canvia res fins que ho apliquis."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} ha respost el {wroteOn}. Llegit per {1} · {2}. No canvia res fins que ho apliquis."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# pendent} other {# pendents}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "R: {answer}"
 msgid "About"
 msgstr "Sobre aquesta aplicació"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "Sobre {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "Sobre {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "Accent"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "Color d'èmfasi"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "Colors d'accent"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "Organitza les seccions"
 msgid "As written on the page"
 msgstr "Tal com està escrit a la pàgina"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "Estil asiàtic"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "A Northwind Labs, la majoria d'equips nous s'encallaven abans d'acabar l
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "Comprovador ATS"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "Compatible amb ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "Dossier · {0} · ha fet servir {1}"
 msgid "Briefing ready"
 msgstr "Dossier a punt"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "Dossier a punt per a {0}"
@@ -4319,6 +4346,11 @@ msgstr "Llista amb pics"
 msgid "Burgundy"
 msgstr "Bordeus"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "Analista de negoci"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "De la comunitat i per a la comunitat."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "Calendari"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "Serè"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "Net"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "Net"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "Tipografia neta"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "Feu clic a qualsevol cosa de la pàgina per estilitzar-la. La regla en q
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "ID del client"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "De cara al client"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "Tancada com a «Oferta acceptada»"
 msgid "Closing {company} · {role}. "
 msgstr "Es tanca {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "Comentaris"
 msgid "Comments and progress"
 msgstr "Comentaris i progrés"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "Comunicació"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "Comunitat"
@@ -5254,6 +5316,11 @@ msgstr "Compacte"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "Compacte"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "Compacte"
 
@@ -5461,6 +5528,11 @@ msgstr "Connexió: {text}"
 msgid "Connections"
 msgstr "Connexions"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "Consultoria"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "Contacte"
@@ -5511,12 +5583,12 @@ msgstr "Telèfon de contacte"
 msgid "Contact role"
 msgstr "Rol de contacte"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "Contacte: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "Encabir"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Contingut"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "Creador de contingut"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "Copia el text del fitxer exportat i llegeix-lo sencer; corregeix qualsev
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "Copia la transcripció"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "Corporatiu"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "Creada {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "Creat i enllaçat a {company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "Creatiu"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "Crèdit"
@@ -6925,9 +7012,19 @@ msgstr "Danès"
 msgid "Dark"
 msgstr "Fosc"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "Barra lateral fosca"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Tema fosc"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "Ciència de dades"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "Suprimit de la Biblioteca"
 msgid "Deleted today"
 msgstr "Suprimit avui"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "Dens"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "Compromisos del sistema de disseny"
 msgid "Design systems"
 msgstr "Sistemes de disseny"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "Dissenyador"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "Detalls del proveïdor: {detail}"
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "Desenvolupador"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "Desenvolupador"
 
@@ -7783,6 +7895,11 @@ msgstr "Resultat de cerca anterior · vist per última vegada {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Els missatges i fitxers adjunts anteriors d'aquesta conversa s'enviaran a aquesta destinació quan tornis a enviar."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "Tons terrosos"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "Visualitzacions de l'editor"
 msgid "Editorial"
 msgstr "Editorial"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "Editorial"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "Les edicions van a una còpia, mai a aquest currículum."
@@ -8021,6 +8143,11 @@ msgstr "Educació"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "Educació intercanvia el centre i el camp d'estudi de la mateixa manera."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "Eficient"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "Buida la paperera de reciclatge…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "Final"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "Enginyeria"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "Introduïu la contrasenya."
 msgid "Entered by you"
 msgstr "Introduït per tu"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "Gran empresa"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "Entrada {0} de {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "S'ha suprimit l'entrada"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "Nivell inicial"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "Exactament el mínim"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Intercanvia opinions sobre currículums, fes preguntes i ajuda a donar forma a Reactive Resume amb la comunitat."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "Directiu"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "Filtra els fets"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "Filtra les plantilles"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "Finances"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "Des de"
 msgid "from “{0}”"
 msgstr "de «{0}»"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "Encapçalaments en {0}, {1} pt\n"
 msgid "Headline"
 msgstr "Titular"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "Salut"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "Com mostrar el fitxer"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "Què tan bé m'encaixo aquest paper?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "RH"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "Interessos"
 msgid "Interface language"
 msgstr "Llenguatge de la interfície"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "Pràctiques"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "Llegir JSON"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "Salta a"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "Júnior"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "Els fitxers Word heretats no són compatibles. Obriu el fitxer a Word i 
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "Legal"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "Jurídic"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Fet amb Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Fet amb Reactive Resume, de codi obert i gratuït"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "Revista"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "Accent magenta"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "S'ha marcat com a enviada. Es conserven les versions que vau enviar."
 msgid "Marked as read"
 msgstr "S'ha marcat com a llegit"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "Màrqueting"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "Micròfon bloquejat. Permeteu-lo a la configuració del navegador o escr
 msgid "min"
 msgstr "min"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "Minimalista"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "Salari base mínim"
@@ -11885,6 +12082,11 @@ msgstr "Model"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Model per a {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "Modern"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "Mou la candidatura des de {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "S'ha cancel·lat el moviment de {item}. No s'ha mogut res."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "Barra lateral suau"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "Cap seleccionat"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "Encara res. Una conversa amb l'orientador es conserva aquí i continua llegible encara que se'n tregui la connexió."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "Sense ànim de lucre"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "Oferta suprimida"
 msgid "Offer saved"
 msgstr "Oferta laboral desada"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Oferta desada. {0} s'ha mogut a Oferta."
@@ -13909,6 +14121,11 @@ msgstr "s’obre en una pestanya nova"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "S'obre amb el teu nom i dades de contacte. No cal omplir res abans."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "Operacions"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "Enganxa una publicació de feina..."
 msgid "Paste a message"
 msgstr "Enganxa un missatge"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "Enganxeu un missatge de {0}"
@@ -14593,6 +14810,11 @@ msgstr "Pruna"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Polonès"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "Polit"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15025,6 +15247,11 @@ msgstr "Dissenyador de producte amb nou anys d’experiència creant <0>sistemes
 #: src/features/resume/editor/design/presets.ts
 msgid "Professional"
 msgstr "Estil professional"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Professional"
+msgstr "Professional"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -16017,7 +16244,7 @@ msgstr "Elimina la referència a un fet no disponible"
 msgid "Remove unavailable story reference"
 msgstr "Elimina la referència a una història no disponible"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "S'ha eliminat {0}"
@@ -16812,6 +17039,16 @@ msgstr "Línia"
 msgid "Rule accent"
 msgstr "Accent de línia"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "Quadrícula amb línies"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "Encapçalaments amb línia"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "Torna a executar"
@@ -17138,7 +17375,7 @@ msgstr "Desada {0} · compara-la a Ofertes"
 msgid "Saved {0} · read-only"
 msgstr "Desada {0} · només lectura"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "S'ha desat {0} a Candidatures"
@@ -17761,6 +17998,11 @@ msgstr "Envia l'anunci, el teu currículum vinculat i els Coneixements activats 
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Envia aquesta història i els fets activats a la vostra connexió d'IA. Sense connexió, no s'envia res."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "Sènior"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "Separa les preguntes amb una línia en blanc. Fins a cinc preguntes de 2
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Serbi"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Serif"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "S’està tancant la sessió…"
 msgid "Signing up…"
 msgstr "S’està creant el compte…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "Senzill"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "Encapçalaments més petits"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "Així que vaig parlar amb 14 clients, vaig trobar els tres punts on la gent abandonava i vam prototipar una configuració més curta."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "Accent suau"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "Comença ara"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "Comença només de lectura. Tu tries el nom, l'accés i la caducitat."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "Startup"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "Estat o regió"
@@ -19025,6 +19287,11 @@ msgstr "Ratllat"
 msgid "Stronger verb"
 msgstr "Verb més fort"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "Estructurat"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "Editor de fulls d'estil"
@@ -19037,7 +19304,7 @@ msgstr "Assumpte"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "Presentació registrada el {date}. Les versions enviades mai no canvien; els esborranys actuals continuen editables. Aquest registre no confirma la recepció per part de l'empresa."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "Envia-la tu mateix a la pàgina de candidatura de {0}"
@@ -19130,6 +19397,11 @@ msgstr "Avalat"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "Fets i històries dels Coneixements de suport"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "Sostenibilitat"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "Models per tasca"
 msgid "Teal"
 msgstr "Verd blavós"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "Tecnologia"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Tècnica"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "Tècnic"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "PM tècnic"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "El text tan a prop de la vora es pot tallar. Utilitzeu almenys {minimum}
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "El text sota {minimum} pt es pot malinterpretar quan un sistema el torna a renderitzar."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "Text dens"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "Hora · {0}"
 msgid "Time · {city}"
 msgstr "Hora · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "És hora de fer seguiment amb {0}"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "Seguiment"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Tradicional"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "Tradicional"
 
@@ -21273,6 +21570,11 @@ msgstr "Subratllat"
 msgid "Underline links"
 msgstr "Subratlla els enllaços"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "Discret"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "Puja una fotografia"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "S'està pujant la fotografia…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "Encapçalaments en majúscules"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "S’està verificant el codi de reserva…"
 msgid "Verifying code…"
 msgstr "Verificació del codi…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "Versàtil"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "Els visitants introdueixen la contrasenya abans de veure el currículum.
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "Els visitants necessiten l'enllaç i la contrasenya per veure la teva pàgina web."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "Toc visual"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "Quins altres beneficis inclou, com ara pla de pensions o complements?"
 msgid "Which terms from a posting appear in it"
 msgstr "Quins termes d'un anunci hi apareixen"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "Molt espai en blanc"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Qui pot trobar la teva pàgina web, contactar-te des d'allà i fer-ne una còpia."
@@ -22588,8 +22910,8 @@ msgstr "Disposat a traslladar-se: sense resposta"
 msgid "With {0}"
 msgstr "Amb {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "Escriviu la resposta o redacteu-ne un esborrany a partir dels vostres Co
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Redacta el teu currículum professional"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "Escriptor"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

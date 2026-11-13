@@ -1030,17 +1030,29 @@ msgstr "Atjaunināti: {0}; neizdevās: {1}. Neizdevušies amati paliek atlasīti
 msgid "{0} words · {1} characters"
 msgstr "{0} vārdi · {1} rakstzīmes"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} atbildēja {wroteOn}. Nekas nemainās, kamēr to nepiemērojat."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} atbildēja {wroteOn}. Izlasīja {1} · {2}. Nekas nemainās, kamēr to nepiemērojat."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, zero {# gaida} one {# gaida} other {# gaida}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, zero {#} one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "A: {answer}"
 msgid "About"
 msgstr "Par šo lietotni"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "Par {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "Par {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "Akcents"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "Akcenta krāsa"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "Akcenta krāsas"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "Kārtot sadaļas"
 msgid "As written on the page"
 msgstr "Kā rakstīts lapā"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "Āzijas stils"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "Uzņēmumā Northwind Labs lielākā daļa jauno komandu iestrēga, pirm
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS pārbaudītājs"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "Piemērots ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "Atgādne · {0} · izmantots: {1}"
 msgid "Briefing ready"
 msgstr "Atgādne gatava"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "Atgādne gatava: {0}"
@@ -4319,6 +4346,11 @@ msgstr "Saraksts ar aizzīmēm"
 msgid "Burgundy"
 msgstr "Bordo"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "Biznesa analītiķis"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "No kopienas kopienai."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "Kalendārs"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "Mierīgs"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "Vienkāršs"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "Tīrs"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "Tīra tipogrāfija"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "Noklikšķiniet uz jebkura lapas, lai to veidotu. Noteikums, kurā atrod
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "Klienta ID"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "Darbs ar klientiem"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "Slēgts kā Pieņemts piedāvājums"
 msgid "Closing {company} · {role}. "
 msgstr "Slēdz {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "Komentāri"
 msgid "Comments and progress"
 msgstr "Komentāri un norise"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "Komunikācija"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "Kopiena"
@@ -5254,6 +5316,11 @@ msgstr "Kompakts"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "Kompakts"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "Kompakts"
 
@@ -5461,6 +5528,11 @@ msgstr "Savienojums: {text}"
 msgid "Connections"
 msgstr "Savienojumi"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "Konsultācijas"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "Sazināties"
@@ -5511,12 +5583,12 @@ msgstr "Kontakttālrunis"
 msgid "Contact role"
 msgstr "Kontaktpersonas loma"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "Kontakts: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "Ietilpināt pilnībā"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Saturs"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "Satura veidotājs"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "Izkopējiet tekstu no eksportētā faila un izlasiet to; izlabojiet visu
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "Kopēt atšifrējumu"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "Korporatīvs"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "Izveidota {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "Izveidots un saistīts ar {company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "Radošs"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "Atsauce"
@@ -6925,9 +7012,19 @@ msgstr "Dāņu"
 msgid "Dark"
 msgstr "Tumšs"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "Tumša sānjosla"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Tumšā tēma"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "Datu zinātne"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "Izdzēsts no bibliotēkas"
 msgid "Deleted today"
 msgstr "Dzēsts šodien"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "Blīvs"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "Dizaina sistēmas kompromisi"
 msgid "Design systems"
 msgstr "Dizaina sistēmas"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "Dizainers"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7302,6 +7409,11 @@ msgstr "Pakalpojumu sniedzēja informācija: {detail}"
 #: src/routes/dashboard/settings/route.tsx
 msgid "Developer"
 msgstr "Izstrādātājiem"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Developer"
+msgstr "Izstrādātājs"
 
 #: src/features/settings/account/sessions.tsx
 msgid "Devices signed in to your account"
@@ -7783,6 +7895,11 @@ msgstr "Iepriekšējs meklēšanas rezultāts · pēdējoreiz redzēts {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Iepriekšējās ziņas un pielikumi šajā sarunā tiks nosūtīti uz šo galamērķi, kad sūtīsiet vēlreiz."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "Zemes toņi"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "Redaktora skati"
 msgid "Editorial"
 msgstr "Redakcija"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "Redakcionāls"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "Labojumi tiek veikti kopijā, nekad ne šajā CV."
@@ -8021,6 +8143,11 @@ msgstr "Izglītība"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "Izglītības sadaļā tāpat tiek samainīta mācību iestāde un studiju joma."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "Efektīvs"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "Iztukšot miskasti…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "Beigas"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "Inženierija"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "Ievadiet savu paroli."
 msgid "Entered by you"
 msgstr "Ievadīja: jūs"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "Lieluzņēmumi"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "{0}. ieraksts no {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "Ieraksts izdzēsts"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "Sākuma līmenis"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "Tieši minimums"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Apmainieties ar atsauksmēm par CV, uzdodiet jautājumus un palīdziet kopā ar kopienu veidot Reactive Resume."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "Vadītājs"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "Filtrēt faktus"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "Filtrēt veidnes"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "Finanses"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "No"
 msgid "from “{0}”"
 msgstr "no “{0}”"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "Virsraksti: {0}, {1} pt\n"
 msgid "Headline"
 msgstr "Īss apraksts"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "Veselības aprūpe"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "Kā parādīt failu"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "Cik labi es atbilstu šai lomai?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "Personāla vadība"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "Intereses"
 msgid "Interface language"
 msgstr "Interfeisa valoda"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "Prakse"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON lasīt"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "Pāriet uz"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "Jaunākais speciālists"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "Mantotie Word faili netiek atbalstīti. Atveriet failu Word un vispirms 
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "Juridiskā informācija"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "Jurisprudence"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Izveidots ar Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Izgatavots ar Reactive Resume, bezmaksas un atvērtā koda"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "Žurnāls"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "Magenta akcents"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "Atzīmēts kā pieteikts. Nosūtītās versijas ir saglabātas."
 msgid "Marked as read"
 msgstr "Atzīmēts kā izlasīts"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "Mārketings"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "Mikrofons ir bloķēts. Atļaujiet to pārlūkprogrammas iestatījumos v
 msgid "min"
 msgstr "min"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "Minimālistisks"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "Minimālā pamatalga"
@@ -11885,6 +12082,11 @@ msgstr "Modelis"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Modelis: {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "Moderns"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "Pārvieto pieteikumu no posma {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "Elementa “{item}” pārvietošana atcelta. Nekas netika pārvietots."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "Klusināta sānjosla"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "Nekas nav atlasīts"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "Vēl nav. Saruna ar konsultantu tiek saglabāta šeit un paliek lasāma arī tad, ja tās savienojums vēlāk tiek noņemts."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "Bezpeļņas"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "Piedāvājums izdzēsts"
 msgid "Offer saved"
 msgstr "Darba piedāvājums saglabāts"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Piedāvājums saglabāts. Pieteikums {0} pārvietots uz posmu Piedāvājums."
@@ -13909,6 +14121,11 @@ msgstr "atveras jaunā cilnē"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "Atveras ar jūsu vārdu un kontaktinformāciju. Vispirms nekas nav jāaizpilda."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "Operācijas"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "Ielīmējiet darba sludinājumu…"
 msgid "Paste a message"
 msgstr "Ielīmēt ziņojumu"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "Ielīmējiet ziņojumu no uzņēmuma {0}"
@@ -14593,6 +14810,11 @@ msgstr "plūme"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Poļu"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "Izsmalcināts"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "Produktu dizainers ar deviņu gadu pieredzi <0>dizaina sistēmu</0> un izpētē balstītu produktu izstrādē B2B komandām."
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "Profesionāls"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "Profesionāls"
 
@@ -16017,7 +16244,7 @@ msgstr "Noņemt nepieejama fakta atsauci"
 msgid "Remove unavailable story reference"
 msgstr "Noņemt nepieejama stāsta atsauci"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "Noņemts: {0}"
@@ -16812,6 +17039,16 @@ msgstr "Līnija"
 msgid "Rule accent"
 msgstr "Līnijas akcents"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "Līniju režģis"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "Pasvītroti virsraksti"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "Palaist vēlreiz"
@@ -17138,7 +17375,7 @@ msgstr "Saglabāts {0} · salīdziniet sadaļā Piedāvājumi"
 msgid "Saved {0} · read-only"
 msgstr "Saglabāts {0} · tikai lasīšanai"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} saglabāts pieteikumos"
@@ -17761,6 +17998,11 @@ msgstr "Nosūta darba sludinājumu, saistīto CV un ieslēgtās Zināšanas uz {
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Nosūta šo stāstu un ieslēgtos faktus uz jūsu AI savienojumu. Bez tā nekas netiek sūtīts."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "Vecākais speciālists"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "Atdaliet jautājumus ar tukšu rindu. Līdz pieciem jautājumiem, katrā
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Serbu"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Serif"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "Notiek atteikšanās…"
 msgid "Signing up…"
 msgstr "Notiek reģistrācija…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "Vienkāršs"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "Mazāki virsraksti"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "Tāpēc es aprunājos ar 14 klientiem, atradu trīs vietas, kur cilvēki pameta procesu, un mēs izveidojām īsākas iestatīšanas prototipu."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "Maigs akcents"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "Sākas tagad"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "Sākumā tikai lasīšanai. Jūs izvēlaties tās nosaukumu, piekļuvi un derīguma termiņu."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "Jaunuzņēmums"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "Štats vai reģions"
@@ -19025,6 +19287,11 @@ msgstr "Pārsvītrots"
 msgid "Stronger verb"
 msgstr "Spēcīgāks darbības vārds"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "Strukturēts"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "Stilu lapu redaktors"
@@ -19037,7 +19304,7 @@ msgstr "Temats"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "Iesniegums reģistrēts {date}. Nosūtītās versijas nekad nemainās; pašreizējie melnraksti paliek rediģējami. Šis ieraksts neapstiprina, ka darba devējs to saņēmis."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "Iesniedziet pats {0} pieteikuma lapā"
@@ -19130,6 +19397,11 @@ msgstr "Pamatots"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "Atbalstošie Zināšanu fakti un stāsti"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "Ilgtspēja"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "Uzdevumu modeļi"
 msgid "Teal"
 msgstr "Zilganzaļš"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "Tehnoloģijas"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Tehniskā"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "Tehnisks"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "Tehniskais PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "Tekstu tik tuvu malai var nogriezt. Izmantojiet vismaz {minimum} pt."
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "Teksts zem {minimum} pt var tikt nepareizi nolasīts, kad sistēma to atkārtoti renderē."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "Daudz teksta"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "Laiks · {0}"
 msgid "Time · {city}"
 msgstr "Laiks · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "Laiks sazināties atkārtoti ar {0}"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "Izsekošana"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Tradicionāls"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "Tradicionāls"
 
@@ -21273,6 +21570,11 @@ msgstr "Pasvītrots"
 msgid "Underline links"
 msgstr "Pasvītrot saites"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "Atturīgs"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "Augšupielādēt fotoattēlu"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "Augšupielādē fotoattēlu…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "Virsraksti ar lielajiem burtiem"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "Verificē rezerves kodu…"
 msgid "Verifying code…"
 msgstr "Pārbaudes kods…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "Daudzpusīgs"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "Apmeklētāji to ievada, pirms viņi redz CV. Kopīgojiet to tikai ar ci
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "Apmeklētājiem nepieciešama saite un parole, lai redzētu jūsu tīmekļa lapu."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "Vizuāls šarms"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "Kādi vēl labumi ir iekļauti, piemēram, pensija vai piemaksas?"
 msgid "Which terms from a posting appear in it"
 msgstr "Kuri darba sludinājuma termini tajā parādās"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "Daudz brīvas vietas"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Kas var atrast jūsu tīmekļa lapu, sazināties ar jums no tās un iegūt kopiju."
@@ -22588,8 +22910,8 @@ msgstr "Gatavība pārcelties: nav atbildēts"
 msgid "With {0}"
 msgstr "Piedalās: {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "Uzrakstiet atbildi vai sagatavojiet melnrakstu no savām Zināšanām."
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Uzrakstiet savu profesionālo CV"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "Rakstnieks"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

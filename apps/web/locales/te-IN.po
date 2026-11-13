@@ -1030,17 +1030,29 @@ msgstr "{0} అప్‌డేట్ అయ్యాయి; {1} విఫలమ�
 msgid "{0} words · {1} characters"
 msgstr "{0} పదాలు · {1} అక్షరాలు"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} {wroteOn} న తిరిగి రాశారు. మీరు దాన్ని వర్తింపజేసే వరకు ఏదీ మారదు."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} {wroteOn} న తిరిగి రాశారు. {1} · {2} చదివింది. మీరు దాన్ని వర్తింపజేసే వరకు ఏదీ మారదు."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# వేచి ఉంది} other {# వేచి ఉన్నాయి}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "జవాబు: {answer}"
 msgid "About"
 msgstr "ఈ యాప్ గురించి"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "{0} గురించి"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "{0} గురించి · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "ప్రత్యేక రంగు"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "యాస రంగు"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "యాక్సెంట్ రంగులు"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "విభాగాలను అమర్చండి"
 msgid "As written on the page"
 msgstr "పేజీలో రాసినట్లుగా"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "ఆసియా శైలి"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "Northwind Labsలో, చాలా కొత్త బృందాలు
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS చెకర్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ATS అనుకూలం"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "బ్రీఫింగ్ · {0} · {1} ఉపయోగించబడ
 msgid "Briefing ready"
 msgstr "బ్రీఫింగ్ సిద్ధంగా ఉంది"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "{0} కోసం బ్రీఫింగ్ సిద్ధంగా ఉంది"
@@ -4319,6 +4346,11 @@ msgstr "బుల్లెట్ జాబితా"
 msgid "Burgundy"
 msgstr "బుర్గుండి"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "బిజినెస్ అనలిస్ట్"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "కమ్యూనిటీ కోసం, కమ్యూనిటీ �
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "క్యాలెండర్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "ప్రశాంతం"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "సరళం"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "శుభ్రమైన"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "శుభ్రమైన టైపోగ్రఫీ"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "స్టైల్ చేయడానికి పేజీలో ఏద
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "క్లయింట్ ID"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "క్లయింట్‌లతో పని"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "ఆఫర్ అంగీకరించినట్లుగా మూ�
 msgid "Closing {company} · {role}. "
 msgstr "{company} · {role} మూసివేస్తోంది. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "కామెంట్‌లు"
 msgid "Comments and progress"
 msgstr "కామెంట్‌లు మరియు పురోగతి"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "కమ్యూనికేషన్స్"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "కమ్యూనిటీ"
@@ -5256,6 +5318,11 @@ msgstr "సంక్షిప్త"
 msgctxt "Entry header layout"
 msgid "Compact"
 msgstr "కుదించిన"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Compact"
+msgstr "కాంపాక్ట్"
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
@@ -5461,6 +5528,11 @@ msgstr "కనెక్షన్: {text}"
 msgid "Connections"
 msgstr "కనెక్షన్‌లు"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "కన్సల్టింగ్"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "సంప్రదించండి"
@@ -5511,12 +5583,12 @@ msgstr "ఫోన్‌ను సంప్రదించండి"
 msgid "Contact role"
 msgstr "సంప్రదింపు పాత్ర"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "సంప్రదింపు: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "పూర్తిగా చూపు"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "విషయం"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "కంటెంట్ క్రియేటర్"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "ఎగుమతి చేసిన ఫైల్ నుండి టె�
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "లిప్యంతరీకరణను కాపీ చేయండి"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "కార్పొరేట్"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "{created} న సృష్టించబడింది · {used} · {e
 msgid "Created and linked to {company}"
 msgstr "{company} సృష్టించబడింది మరియు లింక్ చేయబడింది"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "సృజనాత్మక"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "క్రెడిట్"
@@ -6925,9 +7012,19 @@ msgstr "డానిష్"
 msgid "Dark"
 msgstr "చీకటి"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "ముదురు సైడ్‌బార్"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "చీకటి థీమ్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "డేటా సైన్స్"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "లైబ్రరీ నుంచి తొలగించబడిం�
 msgid "Deleted today"
 msgstr "ఈరోజు తొలగించబడ్డాయి"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "దట్టమైన"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "డిజైన్ సిస్టమ్ ట్రేడ్-ఆఫ్‌
 msgid "Design systems"
 msgstr "డిజైన్ సిస్టమ్స్"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "డిజైనర్"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "ప్రొవైడర్ నుండి వివరాలు: {deta
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "డెవలపర్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "డెవలపర్"
 
@@ -7783,6 +7895,11 @@ msgstr "మునుపటి అన్వేషణ ఫలితం · చివ
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "మీరు మళ్లీ పంపినప్పుడు, ఈ సంభాషణలోని ఇంతకుముంది మెసేజ్‌లు, అటాచ్‌మెంట్‌లు ఈ గమ్యానికి పంపబడతాయి."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "మట్టి రంగులు"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "ఎడిటర్ వీక్షణలు"
 msgid "Editorial"
 msgstr "సంపాదకీయం"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "ఎడిటోరియల్"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "మార్పులు కాపీకి వెళ్తాయి, ఈ రెజ్యూమ్‌కు ఎప్పుడూ కాదు."
@@ -8021,6 +8143,11 @@ msgstr "విద్య"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "విద్య విభాగంలో విద్యాసంస్థ, అధ్యయన రంగం కూడా ఇదే విధంగా స్థానాలు మారతాయి."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "సమర్థవంతమైన"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "ట్రాష్‌ను ఖాళీ చేయండి…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "ముగింపు"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "ఇంజనీరింగ్"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "మీ పాస్‌వర్డ్‌ను నమోదు చేయ
 msgid "Entered by you"
 msgstr "మీరు నమోదు చేసారు"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "ఎంటర్‌ప్రైజ్"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "{count} లో ఎంట్రీ {0}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "ఎంట్రీ తొలగించబడింది"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "ఎంట్రీ లెవల్"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "సరిగ్గా కనీసం"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "రెజ్యూమేలపై అభిప్రాయాలు పంచుకోండి, ప్రశ్నలు అడగండి, కమ్యూనిటీతో కలిసి Reactive Resumeను తీర్చిదిద్దడంలో సహాయపడండి."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "ఎగ్జిక్యూటివ్"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "వాస్తవాలను ఫిల్టర్ చేయండి"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "టెంప్లేట్‌లను ఫిల్టర్ చేయండి"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "ఫైనాన్స్"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "నుండి"
 msgid "from “{0}”"
 msgstr "“{0}” నుండి"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "శీర్షికలు {0} లో, {1} pt\n"
 msgid "Headline"
 msgstr "హెడ్లైన్"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "ఆరోగ్య సంరక్షణ"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "ఫైల్‌ను ఎలా చూపించాలి"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "ఈ పాత్రకు నేను ఎంతవరకు సరిపోతాను?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "HR"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "అభిరుచులు"
 msgid "Interface language"
 msgstr "ఇంటర్ఫేస్ భాష"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "ఇంటర్న్‌షిప్"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON చదివారు"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "ఇక్కడికి వెళ్లండి"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "జూనియర్"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "లెగసీ Word ఫైల్‌లకు మద్దతు లే�
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "చట్టపరమైనవి"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "న్యాయ"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Reactive Resume తో తయారు చేయబడింది"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Reactive Resume, ఉచిత మరియు ఓపెన్ సోర్స్‌తో తయారు చేయబడింది"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "మ్యాగజైన్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "మెజెంటా యాక్సెంట్"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "దరఖాస్తు చేసినట్లు గుర్తి�
 msgid "Marked as read"
 msgstr "చదివినట్లు గుర్తించబడింది"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "మార్కెటింగ్"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "మైక్రోఫోన్ బ్లాక్ చేయబడిం�
 msgid "min"
 msgstr "నిమి"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "మినిమల్"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "కనీస మూల వేతనం"
@@ -11885,6 +12082,11 @@ msgstr "మోడల్"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "{label} కోసం మోడల్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "ఆధునిక"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "దరఖాస్తును {0} నుండి తరలిస్త
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "{item} తరలింపు రద్దు చేయబడింది. ఏదీ తరలించబడలేదు."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "లేత సైడ్‌బార్"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "ఏవీ ఎంపిక కాలేదు"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "ఇంకా ఏమీ లేవు. కోచ్‌తో సంభాషణ ఇక్కడ ఉంచబడుతుంది, దాని కనెక్షన్ తర్వాత తీసివేసినా చదవగలిగేలా ఉంటుంది."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "లాభాపేక్ష లేని"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "ఆఫర్ తొలగించబడింది"
 msgid "Offer saved"
 msgstr "ఉద్యోగ ఆఫర్ సేవ్ అయింది"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "ఆఫర్ సేవ్ అయింది. {0} Offer దశకు తరలించబడింది."
@@ -13909,6 +14121,11 @@ msgstr "కొత్త ట్యాబ్‌లో తెరవబడుతు�
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "మీ పేరు మరియు సంప్రదింపు వివరాలతో తెరుచుకుంటుంది. ముందుగా నింపాల్సింది ఏమీ లేదు."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "ఆపరేషన్స్"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "ఉద్యోగ పోస్టింగ్‌ను అతికి�
 msgid "Paste a message"
 msgstr "సందేశం పేస్ట్ చేయండి"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "{0} నుండి వచ్చిన సందేశాన్ని అతికించండి"
@@ -14593,6 +14810,11 @@ msgstr "ప్లం పర్పుల్"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "పోలిష్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "మెరుగుపరిచిన"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15025,6 +15247,11 @@ msgstr "B2B బృందాల కోసం <0>డిజైన్ వ్యవ�
 #: src/features/resume/editor/design/presets.ts
 msgid "Professional"
 msgstr "వృత్తిపరం"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Professional"
+msgstr "ప్రొఫెషనల్"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -16017,7 +16244,7 @@ msgstr "అందుబాటులో లేని వాస్తవ రిఫ
 msgid "Remove unavailable story reference"
 msgstr "అందుబాటులో లేని కథ రిఫరెన్స్‌ను తొలగించు"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "{0} తొలగించబడింది"
@@ -16812,6 +17039,16 @@ msgstr "గీత"
 msgid "Rule accent"
 msgstr "రూల్ ప్రత్యేక రంగు"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "గీతల గ్రిడ్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "గీతల శీర్షికలు"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "మళ్లీ నడపండి"
@@ -17138,7 +17375,7 @@ msgstr "{0} న సేవ్ చేయబడింది · ఆఫర్‌ల�
 msgid "Saved {0} · read-only"
 msgstr "{0} న సేవ్ చేయబడింది · చదవడానికి మాత్రమే"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} దరఖాస్తులలో సేవ్ చేయబడింది"
@@ -17761,6 +17998,11 @@ msgstr "ఉద్యోగ ప్రకటన, లింక్ చేసిన �
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "ఈ కథను, ఆన్ చేసిన వాస్తవాలను మీ AI కనెక్షన్‌కు పంపుతుంది. కనెక్షన్ లేకపోతే, ఏదీ పంపబడదు."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "సీనియర్"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "ప్రశ్నలను ఖాళీ పంక్తితో వే
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "సెర్బియన్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "సెరిఫ్"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "సైన్ అవుట్ చేస్తున్నారు…"
 msgid "Signing up…"
 msgstr "సైన్ అప్ చేస్తున్నారు…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "సరళమైన"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "చిన్న శీర్షికలు"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "అందుకే నేను 14 మంది కస్టమర్లతో మాట్లాడాను, ప్రజలు వదిలేసిన మూడు చోట్లను కనుగొన్నాను, మేము చిన్న సెటప్‌కు ప్రోటోటైప్ చేశాం."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "మృదువైన యాక్సెంట్"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "ఇప్పుడే ప్రారంభమవుతుంది"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "చదవడానికి మాత్రమే అనుమతితో ప్రారంభమవుతుంది. దాని పేరు, యాక్సెస్ మరియు గడువు మీరు ఎంచుకుంటారు."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "స్టార్టప్"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "రాష్ట్రం లేదా ప్రాంతం"
@@ -19025,6 +19287,11 @@ msgstr "కొట్టివేత"
 msgid "Stronger verb"
 msgstr "బలమైన క్రియ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "నిర్మాణాత్మక"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "స్టైల్‌షీట్ ఎడిటర్"
@@ -19037,7 +19304,7 @@ msgstr "విషయం"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "సమర్పణ {date}న నమోదైంది. పంపిన వెర్షన్‌లు ఎప్పుడూ మారవు; ప్రస్తుత డ్రాఫ్ట్‌లు సవరించదగినవే ఉంటాయి. ఈ నమోదు యజమాని అందుకున్నట్లు ధృవీకరించదు."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "{0} దరఖాస్తు పేజీలో మీరే సమర్పించండి"
@@ -19130,6 +19397,11 @@ msgstr "ఆధారం ఉంది"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "సపోర్టింగ్ Knowledge వాస్తవాలు, కథలు"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "సుస్థిరత"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "పని మోడల్‌లు"
 msgid "Teal"
 msgstr "టీల్"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "టెక్"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "టెక్నికల్"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "సాంకేతిక"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "టెక్నికల్ PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "అంచుకు దగ్గరగా ఉన్న వచనాన్
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "{minimum} pt కింద ఉన్న వచనాన్ని సిస్టమ్ రీ-రెండర్ చేసినప్పుడు తప్పుగా చదవబడుతుంది."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "ఎక్కువ టెక్స్ట్"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "సమయం · {0}"
 msgid "Time · {city}"
 msgstr "సమయం · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "{0} తో ఫాలో అప్ చేయాల్సిన సమయం"
@@ -20910,6 +21202,11 @@ msgstr "ట్రాకింగ్"
 #: src/features/resume/editor/design/presets.ts
 msgid "Traditional"
 msgstr "సాంప్రదాయం"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Traditional"
+msgstr "సాంప్రదాయ"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -21273,6 +21570,11 @@ msgstr "అండర్‌లైన్"
 msgid "Underline links"
 msgstr "లింక్‌లను అండర్లైన్ చేయండి"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "నిరాడంబర"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "ఫోటోను అప్‌లోడ్ చేయండి"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "ఫోటో అప్‌లోడ్ అవుతోంది…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "పెద్ద అక్షరాల శీర్షికలు"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "బ్యాకప్ కోడ్‌ను ధ్రువీకరి�
 msgid "Verifying code…"
 msgstr "ధృవీకరణ కోడ్…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "బహుముఖ"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "సందర్శకులు రెజ్యూమ్‌ని చూ�
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "మీ వెబ్ పేజీని చూడటానికి సందర్శకులకు లింక్ మరియు పాస్‌వర్డ్ అవసరం."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "దృశ్య ఆకర్షణ"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "పెన్షన్ లేదా అలవెన్సుల వంట
 msgid "Which terms from a posting appear in it"
 msgstr "పోస్టింగ్‌లోని ఏ పదాలు దీనిలో కనిపిస్తాయి"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "విశాలమైన ఖాళీ"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "మీ వెబ్ పేజీని ఎవరు కనుగొనగలరు, దాని నుండి మిమ్మల్ని సంప్రదించగలరు మరియు కాపీ తీసుకోగలరు."
@@ -22588,8 +22910,8 @@ msgstr "స్థలం మారడానికి సిద్ధం: సమ�
 msgid "With {0}"
 msgstr "{0} తో"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "మీ సమాధానాన్ని రాయండి, లేద�
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "మీ వృత్తిపరమైన CVని వ్రాయండి"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "రచయిత"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

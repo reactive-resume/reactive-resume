@@ -1030,17 +1030,29 @@ msgstr "Aktualizované: {0}; zlyhalo: {1}. Neúspešné pozície zostávajú vyb
 msgid "{0} words · {1} characters"
 msgstr "{0} slov · {1} znakov"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} odpovedala {wroteOn}. Nič sa nezmení, kým to nepoužijete."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} odpovedala {wroteOn}. Prečítal {1} · {2}. Nič sa nezmení, kým to nepoužijete."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# čaká} few {# čakajú} many {# čaká} other {# čaká}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} few {#} many {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "O: {answer}"
 msgid "About"
 msgstr "O tejto aplikácii"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "O {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "O {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "Farebný akcent"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "Farba akcentu"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "Farby akcentu"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "Usporiadať sekcie"
 msgid "As written on the page"
 msgstr "Ako je napísané na strane"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "Ázijský štýl"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "V Northwind Labs väčšina nových tímov uviazla ešte pred dokončen�
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "Kontrola ATS"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "Vhodné pre ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "Brífing · {0} · použité {1}"
 msgid "Briefing ready"
 msgstr "Brífing je pripravený"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "Brífing pre {0} je pripravený"
@@ -4319,6 +4346,11 @@ msgstr "Zoznam s odrážkami"
 msgid "Burgundy"
 msgstr "Bordová"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "Biznis analytik"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "Komunitou vytvorené pre komunitu."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "Kalendár"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "Pokojný"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "Čistý"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "Čistý"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "Čistá typografia"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "Kliknutím na čokoľvek na stránke upravíte štýl. Pravidlo, v ktoro
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "ID klienta"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "Práca s klientmi"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "Uzavreté ako Prijatá ponuka"
 msgid "Closing {company} · {role}. "
 msgstr "Uzatvára sa {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "Komentáre"
 msgid "Comments and progress"
 msgstr "Komentáre a priebeh"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "Komunikácia"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "Komunita"
@@ -5256,6 +5318,11 @@ msgstr "Kompaktný"
 msgctxt "Entry header layout"
 msgid "Compact"
 msgstr "Kompaktné"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Compact"
+msgstr "Kompaktný"
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
@@ -5461,6 +5528,11 @@ msgstr "Pripojenie: {text}"
 msgid "Connections"
 msgstr "Pripojenia"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "Poradenstvo"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "Kontaktovať"
@@ -5511,12 +5583,12 @@ msgstr "Kontaktný telefón"
 msgid "Contact role"
 msgstr "Kontaktná rola"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "Kontakt: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "Zmestiť"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Obsah"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "Tvorca obsahu"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "Skopírujte text z exportovaného súboru a prečítajte si ho celý; op
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "Skopírujte prepis"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "Korporátny"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "Vytvorené {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "Vytvorené a prepojené so {company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "Kreatívny"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "Uvedenie autora"
@@ -6925,9 +7012,19 @@ msgstr "Dánčina"
 msgid "Dark"
 msgstr "Tmavá"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "Tmavý bočný panel"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Tmavá téma"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "Dátová veda"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "Vymazané z knižnice"
 msgid "Deleted today"
 msgstr "Vymazané dnes"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "Hustý"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "Kompromisy dizajnového systému"
 msgid "Design systems"
 msgstr "Dizajnové systémy"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "Dizajnér"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "Podrobnosti od poskytovateľa: {detail}"
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "Vývojár"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "Vývojár"
 
@@ -7783,6 +7895,11 @@ msgstr "Skorší výsledok hľadania · naposledy videné {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Staršie správy a prílohy v tejto konverzácii sa pri ďalšom odoslaní pošlú do tohto cieľa."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "Zemité tóny"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "Zobrazenia editora"
 msgid "Editorial"
 msgstr "Redakcia"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "Redakčný"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "Úpravy idú do kópie, nikdy do tohto životopisu."
@@ -8021,6 +8143,11 @@ msgstr "Vzdelanie"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "Vzdelanie rovnakým spôsobom vymení školu a študijný odbor."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "Efektívny"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "Vyprázdniť kôš…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "Koniec"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "Inžinierstvo"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "Zadajte heslo."
 msgid "Entered by you"
 msgstr "Zadané vami"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "Veľké firmy"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "Položka {0} z {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "Záznam bol odstránený"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "Pre začiatočníkov"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "Presne minimum"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Vymieňajte si spätnú väzbu k životopisom, pýtajte sa a pomôžte s komunitou formovať Reactive Resume."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "Vedúce pozície"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "Filtrovať fakty"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "Filtrovať šablóny"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "Financie"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "Od"
 msgid "from “{0}”"
 msgstr "z „{0}“"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "Nadpisy v {0}, {1} pt\n"
 msgid "Headline"
 msgstr "Titulok"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "Zdravotníctvo"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "Ako zobraziť súbor"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "Ako dobre sa hodím k tejto úlohe?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "HR"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "Záujmy"
 msgid "Interface language"
 msgstr "Jazyk rozhrania"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "Stáž"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "Čítanie JSON"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "Prejsť na"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "Junior"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "Staršie súbory Word nie sú podporované. Otvorte súbor v Word a najs
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "Právne informácie"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "Právo"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Vytvorené v Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Vyrobené z Reactive Resume, bezplatný a otvorený zdroj"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "Magazín"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "Magentový akcent"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "Označené ako odoslané. Verzie, ktoré ste poslali, sú uchované."
 msgid "Marked as read"
 msgstr "Označené ako prečítané"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "Marketing"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "Mikrofón je zablokovaný. Povoľte ho v nastaveniach prehliadača alebo
 msgid "min"
 msgstr "min"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "Minimalistický"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "Minimálny základný plat"
@@ -11885,6 +12082,11 @@ msgstr "Model"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Model pre {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "Moderný"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "Presunie žiadosť z {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "Presun položky {item} bol zrušený. Nič sa nepresunulo."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "Tlmený bočný panel"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "Nič nevybrané"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "Zatiaľ nič. Konverzácia s koučom sa uchová tu a zostane čitateľná, aj keď sa jej pripojenie neskôr odstráni."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "Neziskový sektor"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "Ponuka vymazaná"
 msgid "Offer saved"
 msgstr "Pracovná ponuka uložená"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Ponuka uložená. {0} presunuté do etapy Ponuka."
@@ -13909,6 +14121,11 @@ msgstr "otvorí sa na novej karte"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "Otvorí sa s vaším menom a kontaktnými údajmi. Najprv nie je čo vypĺňať."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "Prevádzka"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "Prilepiť pracovný inzerát…"
 msgid "Paste a message"
 msgstr "Vložiť správu"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "Vložte správu od {0}"
@@ -14593,6 +14810,11 @@ msgstr "Slivkovo fialová"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Poľština"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "Vyladený"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "Produktový dizajnér s deviatimi rokmi skúseností s tvorbou <0>dizajnových systémov</0> a produktov založených na výskume pre B2B tímy."
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "Profesionálny"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "Profesionálny"
 
@@ -16017,7 +16244,7 @@ msgstr "Odstrániť odkaz na nedostupný fakt"
 msgid "Remove unavailable story reference"
 msgstr "Odstrániť odkaz na nedostupný príbeh"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "Odstránené: {0}"
@@ -16812,6 +17039,16 @@ msgstr "Čiara"
 msgid "Rule accent"
 msgstr "Akcent čiary"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "Linajková mriežka"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "Nadpisy s linkou"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "Spustiť znova"
@@ -17138,7 +17375,7 @@ msgstr "Uložené {0} · porovnajte v Ponukách"
 msgid "Saved {0} · read-only"
 msgstr "Uložené {0} · iba na čítanie"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "Uložené do Žiadostí: {0}"
@@ -17761,6 +17998,11 @@ msgstr "Odošle inzerát, váš prepojený životopis a zapnuté znalosti do {0}
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Odošle tento príbeh a zapnuté fakty do vášho pripojenia AI. Bez neho sa nič neodošle."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "Senior"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "Oddeľte otázky prázdnym riadkom. Najviac päť otázok po 2 000 znako
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Srbčina"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Pätkové písmo"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "Odhlasujem…"
 msgid "Signing up…"
 msgstr "Registrujem…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "Jednoduchý"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "Menšie nadpisy"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "Tak som sa porozprával so 14 zákazníkmi, našiel tri miesta, kde ľudia odchádzali, a spolu sme navrhli prototyp kratšieho nastavenia."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "Jemný akcent"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "Začína teraz"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "Na začiatku iba na čítanie. Názov, prístup a platnosť zvolíte vy."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "Startup"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "Kraj alebo región"
@@ -19025,6 +19287,11 @@ msgstr "Prečiarknuté"
 msgid "Stronger verb"
 msgstr "Silnejšie sloveso"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "Štruktúrovaný"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "Editor štýlov"
@@ -19037,7 +19304,7 @@ msgstr "Predmet"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "Podanie zaznamenané {date}. Odoslané verzie sa nikdy nemenia; aktuálne koncepty zostávajú upraviteľné. Tento záznam nepotvrdzuje doručenie zamestnávateľovi."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "Odošlite sami na stránke žiadosti {0}"
@@ -19130,6 +19397,11 @@ msgstr "Podložené"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "Podporné fakty a príbehy zo Znalostí"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "Udržateľnosť"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "Modely pre úlohy"
 msgid "Teal"
 msgstr "Modrozelená"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "Tech"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Technický"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "Technický"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "Technický PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "Text blízko okraja je možné odrezať. Použite aspoň {minimum} pt."
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "Text pod {minimum} pt môže byť nesprávne prečítaný, keď ho systém znova vykreslí."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "Hustý text"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "Čas · {0}"
 msgid "Time · {city}"
 msgstr "Čas · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "Je čas ozvať sa {0}"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "Sledovanie"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Tradičný"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "Tradičný"
 
@@ -21273,6 +21570,11 @@ msgstr "Podčiarknuté"
 msgid "Underline links"
 msgstr "Podčiarknite odkazy"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "Decentný"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "Nahrať fotografiu"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "Nahráva sa fotografia…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "Nadpisy veľkými písmenami"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "Overujem záložný kód…"
 msgid "Verifying code…"
 msgstr "Overovací kód…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "Univerzálny"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "Návštevníci zadajú heslo skôr, ako uvidia životopis. Zdieľajte ho
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "Návštevníci potrebujú na zobrazenie vašej webovej stránky odkaz a heslo."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "Výrazný vizuál"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "Aké ďalšie benefity k tomu patria, napríklad dôchodkové sporenie a
 msgid "Which terms from a posting appear in it"
 msgstr "Ktoré pojmy z inzerátu sa v ňom objavujú"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "Vzdušný"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Kto môže nájsť vašu webovú stránku, kontaktovať vás cez ňu a stiahnuť si kópiu."
@@ -22588,8 +22910,8 @@ msgstr "Ochota presťahovať sa: nezodpovedané"
 msgid "With {0}"
 msgstr "S {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "Napíšte odpoveď alebo si ju nechajte navrhnúť zo Znalostí."
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Napíšte svoj profesionálny životopis"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "Autor textov"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

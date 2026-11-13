@@ -1030,17 +1030,29 @@ msgstr "{0} עודכנו; {1} נכשלו. התפקידים שנכשלו נשאר
 msgid "{0} words · {1} characters"
 msgstr "{0} מילים · {1} תווים"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} השיבו ב־{wroteOn}. שום דבר לא משתנה עד שתחילו את זה."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} השיבו ב־{wroteOn}. נקרא על ידי {1} · {2}. שום דבר לא משתנה עד שתחילו את זה."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# ממתין} two {# ממתינים} other {# ממתינים}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} two {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "ת: {answer}"
 msgid "About"
 msgstr "על האפליקציה הזו"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "על {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "על {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "הדגשה"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "צבע מבטא"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "צבעי הדגשה"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "לסדר מקטעים"
 msgid "As written on the page"
 msgstr "כפי שכתוב בעמוד"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "סגנון אסייתי"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "ב-Northwind Labs, רוב הצוותים החדשים נתקעו לפנ�
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "בודק ATS"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ידידותי ל-ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "תדריך · {0} · השתמש ב־{1}"
 msgid "Briefing ready"
 msgstr "התדריך מוכן"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "התדריך מוכן עבור {0}"
@@ -4319,6 +4346,11 @@ msgstr "רשימת תבליטים"
 msgid "Burgundy"
 msgstr "בורגונדי"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "אנליסט עסקי"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "מהקהילה, למען הקהילה."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "לוּחַ שָׁנָה"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "רגוע"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "נקי"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "נקי"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "טיפוגרפיה נקייה"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "לחץ על כל דבר בדף כדי לעצב אותו. הכלל שבו
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "מזהה לקוח"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "מול לקוחות"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "נסגרה כ„הצעה התקבלה”"
 msgid "Closing {company} · {role}. "
 msgstr "סוגרים את {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "תגובות"
 msgid "Comments and progress"
 msgstr "תגובות והתקדמות"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "תקשורת"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "קהילה"
@@ -5254,6 +5316,11 @@ msgstr "קומפקטי"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "קומפקטי"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "קומפקטי"
 
@@ -5461,6 +5528,11 @@ msgstr "חיבור: {text}"
 msgid "Connections"
 msgstr "חיבורים"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "ייעוץ"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "מַגָע"
@@ -5511,12 +5583,12 @@ msgstr "טלפון ליצירת קשר"
 msgid "Contact role"
 msgstr "תפקיד יצירת קשר"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "איש קשר: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "הצגה מלאה"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "תוכן"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "יוצר תוכן"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "העתק את הטקסט מהקובץ המיוצא וקרא אותו; ת
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "העתק תמליל"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "תאגידי"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "נוצר {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "נוצר ומקושר ל-{company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "יצירתי"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "קרדיט"
@@ -6925,9 +7012,19 @@ msgstr "דנית"
 msgid "Dark"
 msgstr "כהה"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "סרגל צד כהה"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "ערכת עיצוב כהה"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "מדעי הנתונים"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "נמחק מהספרייה"
 msgid "Deleted today"
 msgstr "נמחקו היום"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "צפוף"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "פשרות במערכת העיצוב"
 msgid "Design systems"
 msgstr "מערכות עיצוב"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "מעצב"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7302,6 +7409,11 @@ msgstr "פרטים מהספק: {detail}"
 #: src/routes/dashboard/settings/route.tsx
 msgid "Developer"
 msgstr "מפתחים"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Developer"
+msgstr "מפתח"
 
 #: src/features/settings/account/sessions.tsx
 msgid "Devices signed in to your account"
@@ -7783,6 +7895,11 @@ msgstr "תוצאת איתור קודמת · נראתה לאחרונה {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "הודעות וקבצים מצורפים קודמים בשיחה הזו יישלחו ליעד הזה כשתשלח שוב."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "גוני אדמה"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "תצוגות עורך"
 msgid "Editorial"
 msgstr "מאמר מערכת"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "סגנון עיתונאי"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "העריכות נכנסות לעותק, לעולם לא לקורות החיים האלה."
@@ -8021,6 +8143,11 @@ msgstr "השכלה"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "בהשכלה, מוסד הלימודים ותחום הלימוד מתחלפים באותה דרך."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "יעיל"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "רוקן את האשפה…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "סוֹף"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "הנדסה"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "הזן את הסיסמה שלך."
 msgid "Entered by you"
 msgstr "הוזן על ידך"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "ארגונים גדולים"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "רשומה {0} מתוך {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "הערך נמחק"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "רמת כניסה"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "בדיוק המינימום"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "החליפו משוב על קורות חיים, שאלו שאלות ועזרו לעצב את Reactive Resume יחד עם הקהילה."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "הנהלה בכירה"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "לסנן עובדות"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "לסנן תבניות"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "פיננסים"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "מִן"
 msgid "from “{0}”"
 msgstr "מתוך “{0}”"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "כותרות ב־{0}, {1} נק׳\n"
 msgid "Headline"
 msgstr "כותרת עליונה"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "בריאות"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "כיצד להציג את הקובץ"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "עד כמה אני מתאים לתפקיד הזה?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "משאבי אנוש"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "תחביבים"
 msgid "Interface language"
 msgstr "שפת ממשק"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "התמחות"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON לקרוא"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "קפיצה אל"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "ג׳וניור"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "קבצי Word מדור קודם אינם נתמכים. פתח את הק�
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "משפטי"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "משפטים"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "נוצר עם Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "מיוצר עם Reactive Resume, חינם וקוד פתוח"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "מגזין"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "הדגשה במג׳נטה"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "סומן כהוגש. הגרסאות ששלחת נשמרו."
 msgid "Marked as read"
 msgstr "סומן כנקרא"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "שיווק"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "המיקרופון חסום. אפשר אותו בהגדרות הדפדפ
 msgid "min"
 msgstr "דק׳"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "מינימליסטי"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "שכר בסיס מינימלי"
@@ -11885,6 +12082,11 @@ msgstr "מודל"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "מודל עבור {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "מודרני"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "מעביר את המועמדות מ־{0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "העברת {item} בוטלה. שום דבר לא הוזז."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "סרגל צד מעומעם"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "לא נבחר דבר"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "עדיין אין. שיחה עם המאמן נשמרת כאן, ונשארת קריאה גם אם החיבור שלה יוסר בהמשך."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "ללא מטרות רווח"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "ההצעה נמחקה"
 msgid "Offer saved"
 msgstr "הצעת העבודה נשמרה"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "ההצעה נשמרה. {0} הועברה להצעה."
@@ -13909,6 +14121,11 @@ msgstr "נפתח בלשונית חדשה"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "נפתח עם השם ופרטי הקשר שלכם. אין צורך למלא דבר קודם."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "תפעול"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "הדבק פרסום משרה..."
 msgid "Paste a message"
 msgstr "להדביק הודעה"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "הדבק הודעה מ-{0}"
@@ -14593,6 +14810,11 @@ msgstr "שזיף"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "פולנית"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "מלוטש"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "מעצב מוצר עם תשע שנות ניסיון בבניית <0>מערכות עיצוב</0> ומוצרים מבוססי מחקר לצוותי B2B."
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "מקצועי"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "מקצועי"
 
@@ -16017,7 +16244,7 @@ msgstr "הסר הפניה לעובדה שאינה זמינה"
 msgid "Remove unavailable story reference"
 msgstr "הסר הפניה לסיפור שאינו זמין"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "{0} הוסר"
@@ -16812,6 +17039,16 @@ msgstr "קו"
 msgid "Rule accent"
 msgstr "הדגשת קו"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "רשת קווים"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "כותרות עם קו"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "הרץ שוב"
@@ -17138,7 +17375,7 @@ msgstr "נשמרה {0} · להשוואה בהצעות"
 msgid "Saved {0} · read-only"
 msgstr "נשמר {0} · לקריאה בלבד"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} נשמר במועמדויות"
@@ -17761,6 +17998,11 @@ msgstr "שולח את מודעת הדרושים, את קורות החיים המ
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "שולח את הסיפור הזה ואת העובדות המופעלות לחיבור ה-AI שלך. בלי חיבור, שום דבר לא נשלח."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "סניור"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "הפרידו שאלות בשורה ריקה. עד חמש שאלות, ע�
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "סרבית"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "סריף"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "יוצא מהמערכת…"
 msgid "Signing up…"
 msgstr "הרשמה…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "פשוט"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "כותרות קטנות יותר"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "אז דיברתי עם 14 לקוחות, מצאתי את שלוש הנקודות שבהן אנשים נטשו, ובנינו אב-טיפוס להגדרה קצרה יותר."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "הדגשה עדינה"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "מתחיל עכשיו"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "מתחיל לקריאה בלבד. אתם בוחרים את השם, ההרשאות והתפוגה שלו."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "סטארט-אפ"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "מדינה או מחוז"
@@ -19025,6 +19287,11 @@ msgstr "קו חוצה"
 msgid "Stronger verb"
 msgstr "פועל חזק יותר"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "מובנה"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "עורך גיליון סגנונות"
@@ -19037,7 +19304,7 @@ msgstr "נושא"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "ההגשה תועדה {date}. הגרסאות שנשלחו לעולם אינן משתנות; הטיוטות הנוכחיות נשארות ניתנות לעריכה. תיעוד זה אינו מאשר שהמעסיק קיבל אותן."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "להגיש בעצמכם בדף המועמדות של {0}"
@@ -19130,6 +19397,11 @@ msgstr "נתמך"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "עובדות וסיפורים תומכים ממאגר הידע"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "קיימות"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "מודלים למשימות"
 msgid "Teal"
 msgstr "טורקיז כהה"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "הייטק"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "טכני"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "טכני"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "PM טכני"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "ניתן לחתוך טקסט זה קרוב לקצה. השתמש לפחו
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "טקסט תחת {minimum} pt יכול להיקרא בצורה לא נכונה כאשר מערכת מעבדת אותו מחדש."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "עתיר טקסט"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "שעה · {0}"
 msgid "Time · {city}"
 msgstr "שעה · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "הגיע הזמן ליצור קשר שוב עם {0}"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "מַעֲקָב"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "מסורתי"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "מסורתי"
 
@@ -21273,6 +21570,11 @@ msgstr "קו תחתון"
 msgid "Underline links"
 msgstr "קו תחתון של קישורים"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "מאופק"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "העלאת תמונה"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "מעלה תמונה…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "כותרות באותיות גדולות"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "מאמת קוד גיבוי…"
 msgid "Verifying code…"
 msgstr "מאמת קוד…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "רב-תכליתי"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "המבקרים מזינים את הסיסמה לפני שהם רואים
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "מבקרים צריכים את הקישור ואת הסיסמה כדי לראות את דף האינטרנט שלכם."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "נגיעה חזותית"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "אילו הטבות נוספות כלולות, כמו פנסיה או ה
 msgid "Which terms from a posting appear in it"
 msgstr "אילו מונחים ממודעה מופיעים בהם"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "שטח לבן"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "מי יכול למצוא את דף האינטרנט שלכם, ליצור איתכם קשר דרכו ולשמור עותק."
@@ -22588,8 +22910,8 @@ msgstr "מוכנות לעבור דירה: לא נענה"
 msgid "With {0}"
 msgstr "עם {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "כתוב את התשובה שלך, או נסח אחת ממאגר היד�
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "כתוב את קורות החיים המקצועיים שלך"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "כותב"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

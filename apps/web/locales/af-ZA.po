@@ -1030,17 +1030,29 @@ msgstr "{0} bygewerk; {1} het misluk. Die mislukte rolle bly gekies."
 msgid "{0} words · {1} characters"
 msgstr "{0} woorde · {1} karakters"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} het {wroteOn} teruggeskryf. Niks verander totdat jy dit toepas nie."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} het {wroteOn} teruggeskryf. Gelees deur {1} · {2}. Niks verander totdat jy dit toepas nie."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# wagtend} other {# wagtend}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "A: {answer}"
 msgid "About"
 msgstr "Oor hierdie toepassing"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "Oor {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "Oor {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "Aksent"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "Aksentkleur"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "Aksentkleure"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "Rangskik afdelings"
 msgid "As written on the page"
 msgstr "Soos op die bladsy geskryf"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "Asiatiese styl"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "By Northwind Labs het die meeste nuwe spanne vasgeval voordat hulle die 
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS kontroleerder"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ATS-vriendelik"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "Voorbereiding · {0} · gebruik {1}"
 msgid "Briefing ready"
 msgstr "Oorsig gereed"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "Voorbereiding gereed vir {0}"
@@ -4319,6 +4346,11 @@ msgstr "Kolpuntlys"
 msgid "Burgundy"
 msgstr "Bordeauxrooi"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "Besigheidsontleder"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "Deur die gemeenskap, vir die gemeenskap."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "Kalender"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "Kalm"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "Sober"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "Netjies"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "Netjiese tipografie"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "Klik enigiets op die bladsy om dit te stileer. Die reël waarin jy is, w
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "Kliënt-ID"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "Kliëntgerig"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "Gesluit as Aanbod aanvaar"
 msgid "Closing {company} · {role}. "
 msgstr "Sluit {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "Opmerkings"
 msgid "Comments and progress"
 msgstr "Opmerkings en vordering"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "Kommunikasie"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "Gemeenskap"
@@ -5254,6 +5316,11 @@ msgstr "Kompak"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "Kompak"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "Kompak"
 
@@ -5461,6 +5528,11 @@ msgstr "Verbinding: {text}"
 msgid "Connections"
 msgstr "Verbindings"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "Konsultasie"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "Kontak"
@@ -5511,12 +5583,12 @@ msgstr "Kontak telefoon"
 msgid "Contact role"
 msgstr "Kontak rol"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "Kontak: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "Pas in"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Inhoud"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "Inhoudskepper"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "Kopieer die teks uit die uitgevoerde lêer en lees dit deur; maak enigie
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "Kopieer transkripsie"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "Korporatief"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "Geskep {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "Geskep en gekoppel aan {company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "Kreatief"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "Erkenning"
@@ -6925,9 +7012,19 @@ msgstr "Deens"
 msgid "Dark"
 msgstr "Donker"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "Donker sybalk"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Donker tema"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "Datawetenskap"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "Uit die Biblioteek uitgevee"
 msgid "Deleted today"
 msgstr "Vandag uitgevee"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "Dig"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "Ontwerpstelsel-afwegings"
 msgid "Design systems"
 msgstr "Ontwerpstelsels"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "Ontwerper"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "Besonderhede van die verskaffer: {detail}"
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "Ontwikkelaar"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "Ontwikkelaar"
 
@@ -7783,6 +7895,11 @@ msgstr "Vroeëre ontdekkingsresultaat · laas gesien {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Vroeëre boodskappe en aanhegsels in hierdie gesprek sal na hierdie bestemming gestuur word wanneer jy weer stuur."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "Aardse kleure"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "Redakteur-aansigte"
 msgid "Editorial"
 msgstr "Redaksie"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "Redaksioneel"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "Wysigings gaan na ’n kopie, nooit na hierdie CV nie."
@@ -8021,6 +8143,11 @@ msgstr "Kwalifikasie"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "Kwalifikasie ruil die skool en studierigting op dieselfde manier om."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "Doeltreffend"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "Maak die Asblik leeg…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "Einde"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "Ingenieurswese"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "Voer jou wagwoord in."
 msgid "Entered by you"
 msgstr "Deur jou ingevoer"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "Groot ondernemings"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "Inskrywing {0} van {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "Inskrywing uitgevee"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "Intreevlak"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "Presies die minimum"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Ruil terugvoer oor CV’s uit, vra vrae en help om Reactive Resume saam met die gemeenskap te vorm."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "Uitvoerend"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "Filtreer feite"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "Filtreer sjablone"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "Finansies"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "Van"
 msgid "from “{0}”"
 msgstr "uit “{0}”"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "Opskrifte in {0}, {1} pt\n"
 msgid "Headline"
 msgstr "Opskriflyn"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "Gesondheidsorg"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "Hoe om die lêer te wys"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "Hoe goed pas ek hierdie rol?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "MH"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "Belangstellings"
 msgid "Interface language"
 msgstr "Interface taal"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "Internskap"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON gelees"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "Spring na"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "Junior"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "Ouderwetse Word-lêers word nie ondersteun nie. Maak die lêer in Word o
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "Regsinligting"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "Regsdienste"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Gemaak met Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Gemaak met Reactive Resume, gratis en oopbron"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "Tydskrif"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "Magenta-aksent"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "As aansoek gedoen gemerk. Die weergawes wat jy gestuur het, word gehou."
 msgid "Marked as read"
 msgstr "As gelees gemerk"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "Bemarking"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "Mikrofoon geblokkeer. Laat dit toe in jou blaaierinstellings, of tik jou
 msgid "min"
 msgstr "min"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "Minimalisties"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "Minimum basiese salaris"
@@ -11885,6 +12082,11 @@ msgstr "Model"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Model vir {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "Modern"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "Skuif die aansoek uit {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "Skuif van {item} is gekanselleer. Niks is geskuif nie."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "Gedempte sybalk"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "Geen gekies nie"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "Nog niks nie. ’n Gesprek met die afrigter word hier bewaar, en bly leesbaar as sy verbinding later verwyder word."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "Sonder winsoogmerk"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "Aanbod uitgevee"
 msgid "Offer saved"
 msgstr "Werksaanbod gestoor"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Aanbod bewaar. {0} geskuif na Aanbod."
@@ -13909,6 +14121,11 @@ msgstr "maak in nuwe oortjie oop"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "Maak oop op jou naam en kontakbesonderhede. Niks om eers in te vul nie."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "Bedrywighede"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "Plak 'n posplasing..."
 msgid "Paste a message"
 msgstr "Plak ’n boodskap"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "Plak 'n boodskap van {0}"
@@ -14593,6 +14810,11 @@ msgstr "Pruimpers"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Pools"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "Verfynd"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15025,6 +15247,11 @@ msgstr "Produkontwerper met nege jaar ervaring in die ontwikkeling van <0>ontwer
 #: src/features/resume/editor/design/presets.ts
 msgid "Professional"
 msgstr "Professionele styl"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Professional"
+msgstr "Professioneel"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -16017,7 +16244,7 @@ msgstr "Verwyder onbeskikbare feitverwysing"
 msgid "Remove unavailable story reference"
 msgstr "Verwyder onbeskikbare storieverwysing"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "{0} verwyder"
@@ -16812,6 +17039,16 @@ msgstr "Lyn"
 msgid "Rule accent"
 msgstr "Lynaksent"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "Gelynde rooster"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "Gelynde opskrifte"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "Voer weer uit"
@@ -17138,7 +17375,7 @@ msgstr "Bewaar {0} · vergelyk in Aanbiedinge"
 msgid "Saved {0} · read-only"
 msgstr "Bewaar {0} · leesalleen"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} in Aansoeke bewaar"
@@ -17761,6 +17998,11 @@ msgstr "Stuur die posplasing, jou gekoppelde CV en Kennis wat aangeskakel is na 
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Stuur hierdie storie en die feite wat aangeskakel is na jou KI-verbinding. Sonder een word niks gestuur nie."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "Senior"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "Skei vrae met ’n leë reël. Hoogstens vyf vrae van 2 000 karakters el
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Serwies"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Serif"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "Tans besig om af te meld…"
 msgid "Signing up…"
 msgstr "Tans besig om te registreer…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "Eenvoudig"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "Kleiner opskrifte"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "Toe het ek met 14 kliënte gepraat, die drie plekke gevind waar mense uitval, en ons het 'n korter opstelling as prototipe gebou."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "Sagte aksent"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "Begin nou"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "Begin leesalleen. Jy kies sy naam, toegang en vervaldatum."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "Begin-onderneming"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "Staat of streek"
@@ -19025,6 +19287,11 @@ msgstr "Deurhaal"
 msgid "Stronger verb"
 msgstr "Sterker werkwoord"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "Gestruktureerd"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "Stylbladredigeerder"
@@ -19037,7 +19304,7 @@ msgstr "Onderwerp"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "Indiening opgeteken op {date}. Die gestuurde weergawes verander nooit; huidige konsepte bly redigeerbaar. Hierdie rekord bevestig nie werkgewerontvangs nie."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "Dien self in op {0} se aansoekbladsy"
@@ -19130,6 +19397,11 @@ msgstr "Gestaaf"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "Ondersteunende Kennis-feite en -stories"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "Volhoubaarheid"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "Taakmodelle"
 msgid "Teal"
 msgstr "Blauwgroen"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "Tegnologie"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Tegnies"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "Tegnies"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "Tegniese PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "Teks so naby aan die rand kan afgesny word. Gebruik ten minste {minimum}
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "Teks onder {minimum} pt kan verkeerd gelees word wanneer 'n stelsel dit weer gee."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "Teksryk"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "Tyd · {0}"
 msgid "Time · {city}"
 msgstr "Tyd · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "Tyd om by {0} op te volg"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "Nasporing"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Tradisioneel"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "Tradisioneel"
 
@@ -21273,6 +21570,11 @@ msgstr "Onderstreep"
 msgid "Underline links"
 msgstr "Onderstreep skakels"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "Ingetoë"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "Laai foto op"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "Laai tans foto op…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "Hoofletteropskrifte"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "Besig om rugsteunkode te verifieer…"
 msgid "Verifying code…"
 msgstr "Verifieer kode…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "Veelsydig"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "Besoekers voer die wagwoord in voordat hulle die CV sien. Deel dit net m
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "Besoekers het die skakel en wagwoord nodig om jou webblad te sien."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "Visuele flair"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "Watter ander voordele kom daarmee saam, soos pensioen of toelaes?"
 msgid "Which terms from a posting appear in it"
 msgstr "Watter terme uit ’n advertensie daarin verskyn"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "Witruimte"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Wie jou webblad kan vind, jou daarvandaan kan kontak en ’n kopie kan neem."
@@ -22588,8 +22910,8 @@ msgstr "Bereid om te verhuis: nie beantwoord nie"
 msgid "With {0}"
 msgstr "Met {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "Skryf jou antwoord, of stel een op uit jou Kennis."
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Skryf jou professionele CV"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "Skrywer"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

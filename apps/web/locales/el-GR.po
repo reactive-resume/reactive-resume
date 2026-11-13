@@ -1030,17 +1030,29 @@ msgstr "{0} ενημερώθηκαν· {1} απέτυχαν. Οι θέσεις �
 msgid "{0} words · {1} characters"
 msgstr "{0} λέξεις · {1} χαρακτήρες"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "Η {0} απάντησε {wroteOn}. Τίποτα δεν αλλάζει μέχρι να το εφαρμόσετε."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "Η {0} απάντησε {wroteOn}. Διαβάστηκε από {1} · {2}. Τίποτα δεν αλλάζει μέχρι να το εφαρμόσετε."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# σε αναμονή} other {# σε αναμονή}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "Α: {answer}"
 msgid "About"
 msgstr "Σχετικά με αυτήν την εφαρμογή"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "Σχετικά με την {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "Σχετικά με την {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "Τονισμός"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "Χρώμα έμφασης"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "Χρώματα έμφασης"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "Τακτοποίηση ενοτήτων"
 msgid "As written on the page"
 msgstr "Όπως είναι γραμμένο στη σελίδα"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "Ασιατικό στυλ"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "Στη Northwind Labs, οι περισσότερες νέες ομάδε
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS πούλι"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "Φιλικό για ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "Ενημερωτικό · {0} · χρησιμοποίησε {1}"
 msgid "Briefing ready"
 msgstr "Το ενημερωτικό είναι έτοιμο"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "Το ενημερωτικό για την {0} είναι έτοιμο"
@@ -4319,6 +4346,11 @@ msgstr "Λίστα με κουκκίδες"
 msgid "Burgundy"
 msgstr "Μπορντό"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "Αναλυτής επιχειρήσεων"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "Από την κοινότητα, για την κοινότητα."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "Ημερολόγιο"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "Ήρεμο"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "Καθαρό"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "Καθαρό"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "Καθαρή τυπογραφία"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "Κάντε κλικ σε οτιδήποτε στη σελίδα για �
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "Αναγνωριστικό πελάτη"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "Επαφή με πελάτες"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "Έκλεισε ως «Αποδοχή προσφοράς»"
 msgid "Closing {company} · {role}. "
 msgstr "Κλείσιμο {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "Σχόλια"
 msgid "Comments and progress"
 msgstr "Σχόλια και πρόοδος"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "Επικοινωνία"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "Κοινότητα"
@@ -5254,6 +5316,11 @@ msgstr "Συμπαγής"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "Συμπαγές"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "Συμπαγές"
 
@@ -5461,6 +5528,11 @@ msgstr "Σύνδεση: {text}"
 msgid "Connections"
 msgstr "Συνδέσεις"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "Συμβουλευτική"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "Επαφή"
@@ -5511,12 +5583,12 @@ msgstr "Τηλέφωνο επικοινωνίας"
 msgid "Contact role"
 msgstr "Ρόλος επαφής"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "Επαφή: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "Εντός πλαισίου"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Περιεχόμενο"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "Δημιουργός περιεχομένου"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "Αντιγράψτε το κείμενο από το εξαγόμενο 
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "Αντιγραφή μεταγραφής"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "Εταιρικό"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "Δημιουργήθηκε {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "Δημιουργήθηκε και συνδέθηκε με το {company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "Δημιουργικό"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "Αναφορά"
@@ -6925,9 +7012,19 @@ msgstr "Δανικά"
 msgid "Dark"
 msgstr "Σκούρο"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "Σκούρα πλαϊνή στήλη"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Σκουρόχρωμο θέμα"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "Επιστήμη δεδομένων"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "Διαγράφηκε από τη Βιβλιοθήκη"
 msgid "Deleted today"
 msgstr "Διαγράφηκε σήμερα"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "Πυκνό"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "Συμβιβασμοί στα συστήματα σχεδίασης"
 msgid "Design systems"
 msgstr "Συστήματα σχεδιασμού"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "Σχεδιαστής"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7302,6 +7409,11 @@ msgstr "Λεπτομέρειες από τον πάροχο: {detail}"
 #: src/routes/dashboard/settings/route.tsx
 msgid "Developer"
 msgstr "Για προγραμματιστές"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Developer"
+msgstr "Προγραμματιστής"
 
 #: src/features/settings/account/sessions.tsx
 msgid "Devices signed in to your account"
@@ -7783,6 +7895,11 @@ msgstr "Προηγούμενο αποτέλεσμα αναζήτησης · τε
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "Τα προηγούμενα μηνύματα και συνημμένα αυτής της συνομιλίας θα σταλούν σε αυτόν τον προορισμό όταν στείλετε ξανά."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "Γήινοι τόνοι"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "Προβολές συντάκτη"
 msgid "Editorial"
 msgstr "Σύνταξης"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "Εκδοτικό"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "Οι αλλαγές γίνονται σε αντίγραφο, ποτέ σε αυτό το βιογραφικό."
@@ -8021,6 +8143,11 @@ msgstr "Εκπαίδευση"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "Στην Εκπαίδευση εναλλάσσονται με τον ίδιο τρόπο η σχολή και το αντικείμενο σπουδών."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "Αποδοτικό"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "Άδειασμα κάδου απορριμμάτων…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "Τέλος"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "Μηχανική"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "Εισαγάγετε τον κωδικό πρόσβασής σας."
 msgid "Entered by you"
 msgstr "Εισήχθη από εσάς"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "Μεγάλες επιχειρήσεις"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "Καταχώριση {0} από {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "Η καταχώριση διαγράφηκε"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "Αρχικό επίπεδο"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "Ακριβώς το ελάχιστο"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Ανταλλάξτε σχόλια για βιογραφικά, κάντε ερωτήσεις και βοηθήστε να διαμορφωθεί το Reactive Resume μαζί με την κοινότητα."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "Στέλεχος"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "Φιλτράρισμα στοιχείων"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "Φιλτράρισμα προτύπων"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "Χρηματοοικονομικά"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "Από"
 msgid "from “{0}”"
 msgstr "από «{0}»"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "Επικεφαλίδες σε {0}, {1} pt\n"
 msgid "Headline"
 msgstr "Επικεφαλίδα θέσης"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "Υγεία"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "Πώς να εμφανίσετε το αρχείο"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "Πόσο ταιριάζω σε αυτόν τον ρόλο;"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "Ανθρώπινο δυναμικό"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "Ενδιαφέροντα"
 msgid "Interface language"
 msgstr "Γλώσσα διεπαφής"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "Πρακτική άσκηση"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON διαβάστηκε"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "Μετάβαση σε"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "Junior"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10912,6 +11084,11 @@ msgid "Legacy Word files aren't supported. Open the file in Word and save it as 
 msgstr "Τα αρχεία Word παλαιού τύπου δεν υποστηρίζονται. Ανοίξτε το αρχείο στο Word και αποθηκεύστε το πρώτα ως .docx."
 
 #: src/features/homepage/footer.tsx
+msgid "Legal"
+msgstr "Νομικά"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Legal"
 msgstr "Νομικά"
 
@@ -11525,6 +11702,16 @@ msgstr "Δημιουργήθηκε με το Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Κατασκευασμένο με Reactive Resume, δωρεάν και ανοιχτού κώδικα"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "Περιοδικό"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "Έμφαση ματζέντα"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "Σημειώθηκε ως υποβληθείσα. Οι εκδόσεις 
 msgid "Marked as read"
 msgstr "Σημειώθηκε ως αναγνωσμένο"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "Μάρκετινγκ"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "Το μικρόφωνο είναι αποκλεισμένο. Επιτρ�
 msgid "min"
 msgstr "λεπτά"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "Μινιμαλιστικό"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "Ελάχιστος βασικός μισθός"
@@ -11885,6 +12082,11 @@ msgstr "Μοντέλο"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Μοντέλο για {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "Μοντέρνο"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "Μετακινεί την αίτηση από {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "Η μετακίνηση του {item} ακυρώθηκε. Δεν μετακινήθηκε τίποτα."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "Διακριτική πλαϊνή στήλη"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "Καμία επιλογή"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "Καμία ακόμη. Μια συζήτηση με τον σύμβουλο φυλάσσεται εδώ και παραμένει αναγνώσιμη αν αργότερα αφαιρεθεί η σύνδεσή της."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "Μη κερδοσκοπικό"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "Η προσφορά διαγράφτηκε"
 msgid "Offer saved"
 msgstr "Η προσφορά αποθηκεύτηκε"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Η προσφορά αποθηκεύτηκε. Η {0} μετακινήθηκε σε Προσφορά."
@@ -13909,6 +14121,11 @@ msgstr "ανοίγει σε νέα καρτέλα"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "Ανοίγει με το όνομα και τα στοιχεία επικοινωνίας σας. Δεν χρειάζεται να συμπληρώσετε τίποτα πρώτα."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "Λειτουργίες"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "Επικολλήστε μια αγγελία εργασίας…"
 msgid "Paste a message"
 msgstr "Επικόλληση μηνύματος"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "Επικόλληση μηνύματος από την εταιρεία {0}"
@@ -14593,6 +14810,11 @@ msgstr "Δαμάσκηνο"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Πολωνικά"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "Προσεγμένο"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "Σχεδιαστής προϊόντων με εννέα χρόνια εμπειρίας στη δημιουργία <0>συστημάτων σχεδίασης</0> και προϊόντων βασισμένων στην έρευνα για ομάδες B2B."
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "Επαγγελματικό"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "Επαγγελματικό"
 
@@ -16017,7 +16244,7 @@ msgstr "Αφαίρεση μη διαθέσιμης παραπομπής σε γ�
 msgid "Remove unavailable story reference"
 msgstr "Αφαίρεση μη διαθέσιμης παραπομπής σε ιστορία"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "Αφαιρέθηκε το στοιχείο {0}"
@@ -16812,6 +17039,16 @@ msgstr "Οριζόντια γραμμή"
 msgid "Rule accent"
 msgstr "Έμφαση γραμμής"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "Πλέγμα με γραμμές"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "Επικεφαλίδες με γραμμή"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "Εκτέλεση ξανά"
@@ -17138,7 +17375,7 @@ msgstr "Αποθηκεύτηκε {0} · σύγκριση στις Προσφορ
 msgid "Saved {0} · read-only"
 msgstr "Αποθηκεύτηκε {0} · μόνο για ανάγνωση"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "Η εταιρεία {0} αποθηκεύτηκε στις Αιτήσεις"
@@ -17761,6 +17998,11 @@ msgstr "Στέλνει την αγγελία, το συνδεδεμένο βιο
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Στέλνει αυτή την ιστορία και τα ενεργά γεγονότα στη σύνδεση AI σας. Χωρίς σύνδεση, δεν αποστέλλεται τίποτα."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "Senior"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "Χωρίστε τις ερωτήσεις με κενή γραμμή. Έ�
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Σερβικά"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Serif"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "Αποσύνδεση…"
 msgid "Signing up…"
 msgstr "Εγγραφή…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "Απλό"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "Μικρότερες επικεφαλίδες"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "Έτσι μίλησα με 14 πελάτες, βρήκα τα τρία σημεία όπου οι χρήστες εγκατέλειπαν και φτιάξαμε ένα πρωτότυπο συντομότερης ρύθμισης."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "Απαλή έμφαση"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "Ξεκινά τώρα"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "Ξεκινά μόνο για ανάγνωση. Εσείς επιλέγετε όνομα, πρόσβαση και λήξη."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "Startup"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "Πολιτεία ή περιφέρεια"
@@ -19025,6 +19287,11 @@ msgstr "Διακριτή διαγραφή"
 msgid "Stronger verb"
 msgstr "Ισχυρότερο ρήμα"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "Δομημένο"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "Επεξεργαστής φύλλου στυλ"
@@ -19037,7 +19304,7 @@ msgstr "Θέμα"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "Η υποβολή καταγράφηκε {date}. Οι σταλμένες εκδόσεις δεν αλλάζουν ποτέ· τα τρέχοντα προσχέδια παραμένουν επεξεργάσιμα. Αυτή η καταγραφή δεν επιβεβαιώνει την παραλαβή από τον εργοδότη."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "Υποβάλετε μόνοι σας στη σελίδα αιτήσεων της {0}"
@@ -19130,6 +19397,11 @@ msgstr "Τεκμηριωμένο"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "Γεγονότα και ιστορίες της Γνώσης που υποστηρίζουν"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "Βιωσιμότητα"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "Μοντέλα εργασιών"
 msgid "Teal"
 msgstr "Πετρόλ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "Τεχνολογία"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Τεχνική"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "Τεχνικό"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "Τεχνικός PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "Το κείμενο τόσο κοντά στην άκρη μπορεί �
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "Το κείμενο κάτω από το {minimum} pt μπορεί να διαβαστεί εσφαλμένα όταν ένα σύστημα το αποδίδει ξανά."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "Πυκνό κείμενο"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "Ώρα · {0}"
 msgid "Time · {city}"
 msgstr "Ώρα · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "Ώρα να επικοινωνήσετε ξανά με την {0}"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "Παρακολούθηση"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Παραδοσιακό"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "Παραδοσιακό"
 
@@ -21273,6 +21570,11 @@ msgstr "Υπογράμμιση"
 msgid "Underline links"
 msgstr "Υπογράμμισε συνδέσμους"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "Λιτό"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "Μεταφόρτωση φωτογραφίας"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "Μεταφόρτωση φωτογραφίας…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "Επικεφαλίδες με κεφαλαία"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "Γίνεται επαλήθευση εφεδρικού κωδικού…
 msgid "Verifying code…"
 msgstr "Επαλήθευση κωδικού…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "Ευέλικτο"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "Οι επισκέπτες εισάγουν τον κωδικό πρόσ�
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "Οι επισκέπτες χρειάζονται τον σύνδεσμο και τον κωδικό για να δουν την ιστοσελίδα σας."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "Οπτική φινέτσα"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "Ποιες άλλες παροχές περιλαμβάνει, όπως 
 msgid "Which terms from a posting appear in it"
 msgstr "Ποιοι όροι μιας αγγελίας εμφανίζονται σε αυτό"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "Άφθονος λευκός χώρος"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Ποιος μπορεί να βρει την ιστοσελίδα σας, να επικοινωνήσει μαζί σας από αυτήν και να πάρει αντίγραφο."
@@ -22588,8 +22910,8 @@ msgstr "Διάθεση μετεγκατάστασης: δεν απαντήθηκ
 msgid "With {0}"
 msgstr "Με {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "Γράψτε την απάντησή σας ή συντάξτε ένα �
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Γράψτε το επαγγελματικό σας βιογραφικό"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "Συγγραφέας"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

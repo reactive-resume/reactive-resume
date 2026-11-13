@@ -1030,17 +1030,29 @@ msgstr "已更新 {0} 個；{1} 個失敗。失敗的職位仍保持選取。"
 msgid "{0} words · {1} characters"
 msgstr "{0} 個字 · {1} 個字元"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} 已於 {wroteOn} 回覆。在你套用前不會有任何變更。"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} 已於 {wroteOn} 回覆。由 {1} · {2} 讀取。在你套用前不會有任何變更。"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, other {# 個待處理}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "答：{answer}"
 msgid "About"
 msgstr "關於"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "關於 {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "關於 {0} · {label} · {model}"
@@ -2429,6 +2441,11 @@ msgstr "強調色"
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
+msgstr "強調色"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
 msgstr "強調色"
 
 #: src/features/career/workspace/apply.tsx
@@ -3646,6 +3663,11 @@ msgstr "排列區段"
 msgid "As written on the page"
 msgstr "依頁面上的寫法"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "亞洲風格"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "在 Northwind Labs，大多數新團隊還沒完成設定就停滯了。
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS檢查器"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "適合 ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "簡報 · {0} · 使用了 {1}"
 msgid "Briefing ready"
 msgstr "簡報已就緒"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "{0} 的簡報已準備好"
@@ -4319,6 +4346,11 @@ msgstr "項目符號清單"
 msgid "Burgundy"
 msgstr "勃根地"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "商業分析師"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "來自社區，服務社區。"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "日曆"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "沉穩"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "清潔"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "簡潔"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "簡潔字體"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "點擊頁面上的任何內容以設定其樣式。您所遵循的規則
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "用戶端 ID"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "面向客戶"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "已以「已接受錄取」結束"
 msgid "Closing {company} · {role}. "
 msgstr "正在結束 {company} · {role}。 "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "中/日/韓"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "留言"
 msgid "Comments and progress"
 msgstr "留言與進度"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "傳播"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "社群"
@@ -5256,6 +5318,11 @@ msgstr "緊湊型"
 msgctxt "Entry header layout"
 msgid "Compact"
 msgstr "精簡"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Compact"
+msgstr "緊湊"
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
@@ -5461,6 +5528,11 @@ msgstr "連線：{text}"
 msgid "Connections"
 msgstr "連線"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "顧問"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "接觸"
@@ -5511,12 +5583,12 @@ msgstr "聯絡電話"
 msgid "Contact role"
 msgstr "聯繫角色"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "聯絡人：{0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "完整顯示"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "內容"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "內容創作者"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "把匯出檔案中的文字複製出來通讀一遍；修正任何位置
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "複製成績單"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "企業"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "建立於 {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "建立並連結到 {company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "創意"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "署名"
@@ -6925,9 +7012,19 @@ msgstr "丹麥語"
 msgid "Dark"
 msgstr "暗色"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "深色側邊欄"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "深色主題"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "資料科學"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "已從收藏庫刪除"
 msgid "Deleted today"
 msgstr "今天刪除"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "密集"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "設計系統中的取捨"
 msgid "Design systems"
 msgstr "設計系統"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "設計師"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "服務提供者的詳細資訊：{detail}"
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "開發人員"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "開發人員"
 
@@ -7783,6 +7895,11 @@ msgstr "先前的探索結果 · 上次出現於 {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "當您再次傳送時，此對話中先前的訊息和附件都會傳送到此目的地。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "大地色系"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "編輯觀點"
 msgid "Editorial"
 msgstr "社論"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "編輯風格"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "修改會套用到副本，絕不會改動此履歷。"
@@ -8021,6 +8143,11 @@ msgstr "學歷"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "學歷中的學校與主修領域也會以相同方式交換位置。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "高效"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "清空垃圾箱…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "結尾"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "工程"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "請輸入您的密碼。"
 msgid "Entered by you"
 msgstr "由您輸入"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "大型企業"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "第 {0} 個項目，共 {count} 個"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "條目已刪除"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "入門"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "剛好等於最低要求"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "與社群交流履歷回饋、提出問題，並一起打造 Reactive Resume。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "高階主管"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "篩選事實"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "篩選範本"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "金融"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "從"
 msgid "from “{0}”"
 msgstr "來自「{0}」"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "標題使用 {0}，{1} pt\n"
 msgid "Headline"
 msgstr "標題"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "醫療保健"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "如何顯示文件"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "我有多適合這個角色？"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "人資"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "興趣"
 msgid "Interface language"
 msgstr "介面語言"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "實習"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON 已讀"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "跳至"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "初階"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "不支援舊版 Word 檔案。先開啟Word中的文件，然後另存�
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "法律資訊"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "法律"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "使用 Reactive Resume 製作"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "使用Reactive Resume製作，免費開源"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "雜誌"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "洋紅強調色"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "已標記為已申請。您寄出的版本已保留。"
 msgid "Marked as read"
 msgstr "已標記為已讀"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "行銷"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "麥克風已被封鎖。請在瀏覽器設定中允許，或輸入您的
 msgid "min"
 msgstr "分鐘"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "極簡"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "最低底薪"
@@ -11885,6 +12082,11 @@ msgstr "模型"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "{label} 的模型"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "現代"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "將應徵紀錄從{0}移出"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "已取消移動 {item}。未移動任何內容。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "柔和側邊欄"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "未選取任何項目"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "目前沒有。與教練的對話會保留在這裡，即使之後移除其連線仍可閱讀。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "非營利"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "已刪除錄取通知"
 msgid "Offer saved"
 msgstr "已儲存錄取邀約"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "已儲存錄取通知。{0} 已移至「錄取」。"
@@ -13909,6 +14121,11 @@ msgstr "在新分頁中開啟"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "開啟時會帶入你的姓名和聯絡資訊。不需要先填寫任何內容。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "營運"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "貼上招募資訊..."
 msgid "Paste a message"
 msgstr "貼上訊息"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "貼上來自 {0} 的訊息"
@@ -14593,6 +14810,11 @@ msgstr "梅紫"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "波蘭語"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "精緻"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "產品設計師，擁有九年為 B2B 團隊打造研究導向產品和<0>設計系統</0>的經驗。"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "專業"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "專業"
 
@@ -16017,7 +16244,7 @@ msgstr "移除無法使用的事實參照"
 msgid "Remove unavailable story reference"
 msgstr "移除無法使用的故事參照"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "已移除 {0}"
@@ -16812,6 +17039,16 @@ msgstr "橫線"
 msgid "Rule accent"
 msgstr "線條強調"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "格線"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "線條標題"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "重新執行"
@@ -17138,7 +17375,7 @@ msgstr "儲存於 {0} · 在錄取通知中比較"
 msgid "Saved {0} · read-only"
 msgstr "儲存於 {0} · 唯讀"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "已將 {0} 儲存到「應徵紀錄」"
@@ -17761,6 +17998,11 @@ msgstr "將職缺公告、連結的履歷和已開啟的知識庫傳送給 {0}�
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "將此故事和已開啟的事實傳送到您的 AI 連線。沒有連線時不會傳送任何內容。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "資深"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "用空白行分隔問題。最多五個問題，每個不超過 2,000 �
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "塞爾維亞語"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "襯線"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "正在登出…"
 msgid "Signing up…"
 msgstr "正在註冊…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "簡單"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "縮小標題"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "於是我和 14 位客戶聊了聊，找到使用者流失的三個環節，我們做出了更短設定流程的原型。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "柔和強調色"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "現在開始"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "一開始為唯讀。你可以選擇其名稱、存取權和到期時間。"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "新創"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "州或地區"
@@ -19025,6 +19287,11 @@ msgstr "刪除線"
 msgid "Stronger verb"
 msgstr "更強的動詞"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "結構化"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "樣式表編輯器"
@@ -19037,7 +19304,7 @@ msgstr "主旨"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "提交已於 {date} 記錄。已傳送的版本永遠不會變更；目前的草稿仍可編輯。此紀錄不代表雇主已收到。"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "請自行在 {0} 的應徵頁面提交"
@@ -19130,6 +19397,11 @@ msgstr "有證據"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "作為依據的知識庫事實和故事"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "永續"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "任務模型"
 msgid "Teal"
 msgstr "藍綠"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "科技"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "技術面試"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "技術"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "技術 PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "靠近邊緣的文字可以被剪掉。至少使用 {minimum} pt。"
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "當系統重新渲染時，{minimum} pt 下的文字可能會被誤讀。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "文字密集"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "時間 · {0}"
 msgid "Time · {city}"
 msgstr "時間 · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "該追蹤 {0} 的進度了"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "追蹤"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "傳統"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "傳統"
 
@@ -21273,6 +21570,11 @@ msgstr "底線"
 msgid "Underline links"
 msgstr "底線連結"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "低調"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "上傳照片"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "正在上傳照片…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "大寫標題"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "正在驗證備份代碼…"
 msgid "Verifying code…"
 msgstr "驗證碼…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "多用途"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "訪客需要先輸入密碼才能查看履歷。請只與您信任的人
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "訪客需要連結和密碼才能看到你的網頁。"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "視覺亮點"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "還有哪些其他福利，例如退休金或津貼？"
 msgid "Which terms from a posting appear in it"
 msgstr "職缺公告中的哪些詞彙出現在其中"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "留白"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "誰能找到你的網頁、從中聯絡你和取得副本。"
@@ -22588,8 +22910,8 @@ msgstr "願意搬遷：未回答"
 msgid "With {0}"
 msgstr "與 {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "寫下您的回答，或根據知識庫擬一份草稿。"
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "撰寫您的專業履歷"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "撰稿人"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

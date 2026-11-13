@@ -1030,17 +1030,29 @@ msgstr "បានធ្វើបច្ចុប្បន្នភាព {0} ប�
 msgid "{0} words · {1} characters"
 msgstr "{0} ពាក្យ · {1} តួអក្សរ"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} បានឆ្លើយតបនៅ {wroteOn}។ គ្មានអ្វីផ្លាស់ប្ដូរទេ រហូតដល់អ្នកអនុវត្តវា។"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} បានឆ្លើយតបនៅ {wroteOn}។ អានដោយ {1} · {2}។ គ្មានអ្វីផ្លាស់ប្ដូរទេ រហូតដល់អ្នកអនុវត្តវា។"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, other {# កំពុងរង់ចាំ}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "ច៖ {answer}"
 msgid "About"
 msgstr "អំពីកម្មវិធីនេះ"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "អំពី {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "អំពី {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "ការរំលេច"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "ពណ៌សង្កត់សំឡេង"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "ពណ៌សង្កត់ធ្ងន់"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "រៀបចំផ្នែក"
 msgid "As written on the page"
 msgstr "ដូចបានសរសេរនៅលើទំព័រ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "រចនាប័ទ្មអាស៊ី"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "នៅ Northwind Labs ក្រុមថ្មីភាគច្រើ�
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ឧបករណ៍ពិនិត្យ ATS"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ងាយស្រួលសម្រាប់ ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "ការណែនាំ · {0} · បានប្រើ {1}"
 msgid "Briefing ready"
 msgstr "ឯកសារសង្ខេបរួចរាល់"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "ការណែនាំរួចរាល់សម្រាប់ {0}"
@@ -4319,6 +4346,11 @@ msgstr "បញ្ជីចំណុច"
 msgid "Burgundy"
 msgstr "ប៊ឺហ្គូឌី"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "អ្នកវិភាគអាជីវកម្ម"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "ដោយ​សហគមន៍ សម្រាប់​សហគមន�
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "ប្រតិទិន"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "ស្ងប់ស្ងាត់"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "ស្អាត"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "ស្អាត"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "អក្សរស្អាត"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "ចុចអ្វីនៅលើទំព័រដើម្បីធ្
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "លេខសម្គាល់អតិថិជន"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "ទំនាក់ទំនងអតិថិជន"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "បានបិទជា បានទទួលយកការផ្ត�
 msgid "Closing {company} · {role}. "
 msgstr "កំពុងបិទ {company} · {role}។ "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "មតិយោបល់"
 msgid "Comments and progress"
 msgstr "មតិយោបល់ និងវឌ្ឍនភាព"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "ទំនាក់ទំនង"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "សហគមន៍"
@@ -5254,6 +5316,11 @@ msgstr "បង្រួម"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "បង្រួម"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "បង្រួម"
 
@@ -5461,6 +5528,11 @@ msgstr "ការតភ្ជាប់៖ {text}"
 msgid "Connections"
 msgstr "ការតភ្ជាប់"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "ការប្រឹក្សា"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "ទំនាក់ទំនង"
@@ -5511,12 +5583,12 @@ msgstr "ទូរស័ព្ទទំនាក់ទំនង"
 msgid "Contact role"
 msgstr "តួនាទីទំនាក់ទំនង"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "ទំនាក់ទំនង៖ {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "បង្ហាញទាំងមូល"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "មាតិកា"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "អ្នកបង្កើតមាតិកា"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "ចម្លងអត្ថបទចេញពីឯកសារដែល
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "ចម្លងប្រតិចារិក"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "សាជីវកម្ម"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "បានបង្កើត {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "បានបង្កើត និងភ្ជាប់ទៅ {company}"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "ច្នៃប្រឌិត"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "ឥណទាន"
@@ -6925,9 +7012,19 @@ msgstr "Danish"
 msgid "Dark"
 msgstr "ងងឹត"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "របារចំហៀងងងឹត"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "ស្បែកងងឹត"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "វិទ្យាសាស្ត្រទិន្នន័យ"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "បានលុបពីបណ្ណាល័យ"
 msgid "Deleted today"
 msgstr "បានលុបថ្ងៃនេះ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "ក្រាស់"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "ការថ្លឹងថ្លែងក្នុងប្រព័ន
 msgid "Design systems"
 msgstr "ប្រព័ន្ធរចនា"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "អ្នករចនា"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "ព័ត៌មានលម្អិតពីអ្នកផ្ដល់
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "អ្នកអភិវឌ្ឍន៍"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "អ្នកអភិវឌ្ឍន៍"
 
@@ -7783,6 +7895,11 @@ msgstr "លទ្ធផលស្វែងរកមុន · ឃើញចុង�
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "សារ និងឯកសារភ្ជាប់មុនៗក្នុងការសន្ទនានេះ នឹងត្រូវបានផ្ញើទៅគោលដៅនេះ នៅពេលអ្នកផ្ញើម្ដងទៀត។"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "ពណ៌ដី"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "ទស្សនៈរបស់អ្នកនិពន្ធ"
 msgid "Editorial"
 msgstr "វិចារណកថា"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "បែបនិពន្ធ"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "ការកែសម្រួលទៅច្បាប់ចម្លង មិនដែលទៅប្រវត្តិរូបសង្ខេបនេះទេ។"
@@ -8021,6 +8143,11 @@ msgstr "ការ​សិក្សា"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "ផ្នែកការ​សិក្សាប្តូរទីតាំងសាលា និងជំនាញសិក្សាតាមរបៀបដូចគ្នា។"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "មានប្រសិទ្ធភាព"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "សម្អាតធុងសំរាម…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "ចប់"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "វិស្វកម្ម"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "បញ្ចូលពាក្យសម្ងាត់របស់អ្
 msgid "Entered by you"
 msgstr "បញ្ចូលដោយអ្នក"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "សហគ្រាសធំ"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "ធាតុ {0} នៃ {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "ធាតុត្រូវបានលុប"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "កម្រិតដំបូង"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "ស្មើនឹងអប្បបរមា"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "ផ្លាស់ប្តូរមតិលើប្រវត្តិរូបសង្ខេប សួរសំណួរ និងជួយកសាង Reactive Resume ជាមួយសហគមន៍។"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "នាយកប្រតិបត្តិ"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "ត្រងការពិត"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "ត្រងគំរូ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "ហិរញ្ញវត្ថុ"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "ពី"
 msgid "from “{0}”"
 msgstr "ពី “{0}”"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "ចំណងជើងជា {0}, {1} pt\n"
 msgid "Headline"
 msgstr "ក្បាលសារពណ៌នាខ្លី"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "សុខាភិបាល"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "របៀបបង្ហាញឯកសារ"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "តើខ្ញុំសមនឹងតួនាទីនេះល្អប៉ុណ្ណា?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "ធនធានមនុស្ស"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "ចំណាប់អារម្មណ៍"
 msgid "Interface language"
 msgstr "ភាសាចំណុចប្រទាក់"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "កម្មសិក្សា"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON អាន"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "លោតទៅ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "កម្រិតបឋម"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "ឯកសារ Word កេរ្តិ៍ដំណែលមិនត្
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "ផ្នែកច្បាប់"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "ច្បាប់"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "បង្កើតដោយ Reactive Resume"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "ផលិតជាមួយ Reactive Resume ឥតគិតថ្លៃ និងប្រភពបើកចំហ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "ទស្សនាវដ្តី"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "សង្កត់ពណ៌ស្វាយក្រហម"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "បានសម្គាល់ថាបានដាក់ពាក្យ
 msgid "Marked as read"
 msgstr "បានសម្គាល់ថាបានអាន"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "ទីផ្សារ"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "មីក្រូហ្វូនត្រូវបានរារាំ
 msgid "min"
 msgstr "នាទី"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "បែបអប្បបរមា"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "ប្រាក់ខែគោលអប្បបរមា"
@@ -11885,6 +12082,11 @@ msgstr "ម៉ូដែល"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "ម៉ូដែលសម្រាប់ {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "ទំនើប"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "ផ្លាស់ទីពាក្យសុំពី {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "ការផ្លាស់ទី {item} ត្រូវបានបោះបង់។ គ្មានអ្វីត្រូវបានផ្លាស់ទីទេ។"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "របារចំហៀងពណ៌ស្រាល"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "មិនបានជ្រើសទេ"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "មិនទាន់មាន។ ការសន្ទនាជាមួយគ្រូបង្វឹកត្រូវបានរក្សាទុកនៅទីនេះ ហើយនៅតែអានបាន ប្រសិនបើការតភ្ជាប់របស់វាត្រូវបានដកចេញពេលក្រោយ។"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "មិនរកប្រាក់ចំណេញ"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "ការផ្តល់ការងារត្រូវបានលុ
 msgid "Offer saved"
 msgstr "បានរក្សាទុកសំណើការងារ"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "ការផ្តល់ការងារត្រូវបានរក្សាទុក។ {0} បានផ្លាស់ទីទៅ ការផ្តល់ការងារ។"
@@ -13909,6 +14121,11 @@ msgstr "បើក​ក្នុង​ផ្ទាំង​ថ្មី"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "បើកនៅលើឈ្មោះ និងព័ត៌មានទំនាក់ទំនងរបស់អ្នក។ គ្មានអ្វីត្រូវបំពេញជាមុនទេ។"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "ប្រតិបត្តិការ"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "បិទភ្ជាប់ការប្រកាសការងារ
 msgid "Paste a message"
 msgstr "បិទភ្ជាប់សារ"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "បិទភ្ជាប់សារពី {0}"
@@ -14593,6 +14810,11 @@ msgstr "ពណ៌ផ្លែព្រូន"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Polish"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "ល្អិតល្អន់"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "អ្នករចនាផលិតផលដែលមានបទពិសោធន៍ប្រាំបួនឆ្នាំក្នុងការបង្កើត<0>ប្រព័ន្ធរចនា</0> និងផលិតផលផ្អែកលើការស្រាវជ្រាវសម្រាប់ក្រុម B2B។"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "វិជ្ជាជីវៈ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "វិជ្ជាជីវៈ"
 
@@ -16017,7 +16244,7 @@ msgstr "ដកការយោងទៅការពិតដែលមិនមា
 msgid "Remove unavailable story reference"
 msgstr "ដកការយោងទៅរឿងដែលមិនមានចេញ"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "បានដក {0} ចេញ"
@@ -16812,6 +17039,16 @@ msgstr "បន្ទាត់"
 msgid "Rule accent"
 msgstr "ការរំលេចជាបន្ទាត់"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "ក្រឡាចត្រង្គមានបន្ទាត់"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "ចំណងជើងមានបន្ទាត់"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "ដំណើរការម្តងទៀត"
@@ -17138,7 +17375,7 @@ msgstr "បានរក្សាទុក {0} · ប្រៀបធៀបក្�
 msgid "Saved {0} · read-only"
 msgstr "បានរក្សាទុក {0} · អានតែប៉ុណ្ណោះ"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "បានរក្សាទុក {0} ទៅពាក្យសុំ"
@@ -17761,6 +17998,11 @@ msgstr "ផ្ញើការប្រកាសការងារ ប្រវ�
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "ផ្ញើរឿងនេះ និងការពិតដែលបានបើក ទៅការតភ្ជាប់ AI របស់អ្នក។ បើគ្មានការតភ្ជាប់ទេ គ្មានអ្វីត្រូវបានផ្ញើទេ។"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "កម្រិតជាន់ខ្ពស់"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "បំបែកសំណួរដោយបន្ទាត់ទទេ។
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Serbian"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Serif"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "កំពុង​ចេញ…"
 msgid "Signing up…"
 msgstr "កំពុង​ចុះឈ្មោះ…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "សាមញ្ញ"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "ចំណងជើងតូចជាង"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "ដូច្នេះខ្ញុំបាននិយាយជាមួយអតិថិជន 14 នាក់ រកឃើញកន្លែងបីដែលមនុស្សបោះបង់ ហើយយើងបានបង្កើតគំរូការរៀបចំដំបូងដែលខ្លីជាងមុន។"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "សង្កត់ពណ៌ទន់"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "ចាប់ផ្តើមឥឡូវនេះ"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "ចាប់ផ្ដើមជាអានតែប៉ុណ្ណោះ។ អ្នកជ្រើសរើសឈ្មោះ សិទ្ធិចូលប្រើ និងការផុតកំណត់របស់វា។"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "ក្រុមហ៊ុនចាប់ផ្តើម"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "រដ្ឋ ឬតំបន់"
@@ -19025,6 +19287,11 @@ msgstr "បន្ទាត់ឆូត"
 msgid "Stronger verb"
 msgstr "កិរិយាសព្ទខ្លាំងជាង"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "មានរចនាសម្ព័ន្ធ"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "កម្មវិធីនិពន្ធសន្លឹករចនាប័ទ្ម"
@@ -19037,7 +19304,7 @@ msgstr "ប្រធានបទ"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "ការដាក់ស្នើត្រូវបានកត់ត្រា {date}។ កំណែដែលបានផ្ញើមិនដែលផ្លាស់ប្តូរទេ; សេចក្តីព្រាងបច្ចុប្បន្ននៅតែអាចកែបាន។ កំណត់ត្រានេះមិនបញ្ជាក់ថានិយោជកបានទទួលទេ។"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "ដាក់ស្នើនៅលើទំព័រពាក្យសុំរបស់ {0} ដោយខ្លួនឯង"
@@ -19130,6 +19397,11 @@ msgstr "មានភស្តុតាងគាំទ្រ"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "ការពិត និងរឿងក្នុងចំណេះដឹងដែលគាំទ្រ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "និរន្តរភាព"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "ម៉ូដែលតាមកិច្ចការ"
 msgid "Teal"
 msgstr "ពណ៌ខៀវបៃតង"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "បច្ចេកវិទ្យា"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "បច្ចេកទេស"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "បច្ចេកទេស"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "PM បច្ចេកទេស"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "អត្ថបទនេះនៅជិតគែមអាចត្រូ
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "អត្ថបទនៅក្រោម {minimum} pt អាចត្រូវបានអានខុសនៅពេលដែលប្រព័ន្ធបង្ហាញវាឡើងវិញ។"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "អត្ថបទច្រើន"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "ពេលវេលា · {0}"
 msgid "Time · {city}"
 msgstr "ពេលវេលា · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "ដល់ពេលទាក់ទង {0} ម្ដងទៀត"
@@ -20910,6 +21202,11 @@ msgstr "ការតាមដាន"
 #: src/features/resume/editor/design/presets.ts
 msgid "Traditional"
 msgstr "ប្រពៃណី"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Traditional"
+msgstr "បែបប្រពៃណី"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -21273,6 +21570,11 @@ msgstr "គូសបន្ទាត់ពីក្រោម"
 msgid "Underline links"
 msgstr "គូសបន្ទាត់ក្រោមតំណ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "មិនលើសលប់"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "អាប់ឡូដរូបថត"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "កំពុងអាប់ឡូដរូបថត…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "ចំណងជើងអក្សរធំ"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "កំពុង​ផ្ទៀងផ្ទាត់​កូដ​បម
 msgid "Verifying code…"
 msgstr "កំពុងផ្ទៀងផ្ទាត់លេខកូដ…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "ពហុបំណង"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "អ្នកទស្សនាបញ្ចូលវាមុនពេល
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "អ្នកទស្សនាត្រូវការតំណ និងពាក្យសម្ងាត់ដើម្បីមើលទំព័រវេបរបស់អ្នក។"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "ភាពទាក់ទាញផ្នែករូបភាព"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "តើមានអត្ថប្រយោជន៍ផ្សេងទៀ
 msgid "Which terms from a posting appear in it"
 msgstr "ពាក្យគន្លឹះណាខ្លះពីការប្រកាសការងារបង្ហាញក្នុងវា"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "ចន្លោះទំនេរច្រើន"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "អ្នកណាអាចរកឃើញទំព័រវេបរបស់អ្នក ទាក់ទងអ្នកពីវា និងយកច្បាប់ចម្លង។"
@@ -22588,8 +22910,8 @@ msgstr "ចង់ផ្លាស់ទីលំនៅ៖ មិនបានឆ�
 msgid "With {0}"
 msgstr "ជាមួយ {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "សរសេរចម្លើយរបស់អ្នក ឬព្រ�
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "សរសេរ CV វិជ្ជាជីវៈរបស់អ្នក។"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "អ្នកនិពន្ធ"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

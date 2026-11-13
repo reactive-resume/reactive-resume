@@ -1030,17 +1030,29 @@ msgstr "{0} ተዘምነዋል፤ {1} አልተሳኩም። ያልተሳኩት �
 msgid "{0} words · {1} characters"
 msgstr "{0} ቃላት · {1} ቁምፊዎች"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} {wroteOn} መልሰው ጽፈዋል። እርስዎ እስኪተገብሩት ድረስ ምንም አይለወጥም።"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} {wroteOn} መልሰው ጽፈዋል። በ{1} · {2} የተነበበ። እርስዎ እስኪተገብሩት ድረስ ምንም አይለወጥም።"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}፣ {1, plural, one {# በመጠባበቅ ላይ} other {# በመጠባበቅ ላይ}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}፣ {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "መ፦ {answer}"
 msgid "About"
 msgstr "ስለዚህ መተግበሪያ"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "ስለ {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "ስለ {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "ማድመቂያ"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "የአነጋገር ቀለም"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "የማጉያ ቀለሞች"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "ክፍሎችን ያደራጁ"
 msgid "As written on the page"
 msgstr "በገጹ ላይ እንደተጻፈ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "የእስያ ቅጥ"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "በNorthwind Labs አብዛኞቹ አዲስ ቡድኖች ማዋቀሩን
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS አራሚ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ለATS ተስማሚ"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "ማብራሪያ · {0} · {1} ተጠቅሟል"
 msgid "Briefing ready"
 msgstr "አጭር መግለጫው ዝግጁ ነው"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "ለ{0} ማብራሪያ ዝግጁ ነው"
@@ -4319,6 +4346,11 @@ msgstr "ነጥበ ምልክት የተደረገበት ዝርዝር"
 msgid "Burgundy"
 msgstr "ቡርጋንዲ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "የንግድ ተንታኝ"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "በማህበረሰቡ፣ ለማህበረሰቡ።"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "የቀን መቁጠሪያ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "የተረጋጋ"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "ንፁህ ዘይቤ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "ንጹህ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "ንጹህ የፊደል አቀማመጥ"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "በገጹ ላይ ያለውን ማንኛውንም ነገር ቅጥ ለማ
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "የደንበኛ መታወቂያ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "ከደንበኛ ጋር የሚሰራ"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "“ቅናሹን ተቀብሏል” ተብሎ ተዘግቷል"
 msgid "Closing {company} · {role}. "
 msgstr "{company} · {role} በመዝጋት ላይ። "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "አስተያየቶች"
 msgid "Comments and progress"
 msgstr "አስተያየቶች እና ሂደት"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "ኮሙኒኬሽን"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "ማህበረሰብ"
@@ -5254,6 +5316,11 @@ msgstr "የታመቀ"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "የታመቀ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "የታመቀ"
 
@@ -5461,6 +5528,11 @@ msgstr "ግንኙነት: {text}"
 msgid "Connections"
 msgstr "ግንኙነቶች"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "ማማከር"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "ተገናኝ"
@@ -5511,12 +5583,12 @@ msgstr "የእውቂያ ስልክ"
 msgid "Contact role"
 msgstr "የግንኙነት ሚና"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "እውቂያ፦ {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "ሙሉውን አሳይ"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "ይዘት"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "የይዘት ፈጣሪ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "ጽሁፉን ከወጣው ፋይል ገልብጠው ያንብቡት፤ �
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "ግልባጭ ይቅዱ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "ኮርፖሬት"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "{created} ተፈጥሯል · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "የተፈጠረ እና ከ {company} ጋር የተገናኘ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "ፈጠራዊ"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "ምስጋና"
@@ -6925,9 +7012,19 @@ msgstr "ዴኒሽ"
 msgid "Dark"
 msgstr "ጨለማ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "ጨለማ የጎን አሞሌ"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "ጨለማ ገጽታ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "የውሂብ ሳይንስ"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "ከቤተ-መጽሐፍት ተሰርዟል"
 msgid "Deleted today"
 msgstr "ዛሬ ተሰርዟል"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "ጥቅጥቅ ያለ"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "የዲዛይን ሥርዓት ሚዛናዊ ውሳኔዎች"
 msgid "Design systems"
 msgstr "የንድፍ ሥርዓቶች"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "ዲዛይነር"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "ከአቅራቢው የተገኙ ዝርዝሮች፦ {detail}"
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "ገንቢ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "ገንቢ"
 
@@ -7783,6 +7895,11 @@ msgstr "የቀድሞ የፍለጋ ውጤት · ለመጨረሻ ጊዜ {0} የታ
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "እንደገና ሲልኩ በዚህ ውይይት ውስጥ ያሉ ቀደም ያሉ መልዕክቶች እና አባሪዎች ወደዚህ መድረሻ ይላካሉ።"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "የአፈር ቀለሞች"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "የአርታዒ እይታዎች"
 msgid "Editorial"
 msgstr "ኤዲቶሪያል"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "ኤዲቶሪያል"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "ማስተካከያዎች ወደ ቅጂ ይሄዳሉ፣ ወደዚህ የስራ ልምድ ማስረጃ በጭራሽ አይሄዱም።"
@@ -8021,6 +8143,11 @@ msgstr "ትምህርት"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "ትምህርትም ትምህርት ቤቱን እና የትምህርት ዘርፉን በተመሳሳይ መንገድ ይቀያይራል።"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "ቀልጣፋ"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "መጣያውን ባዶ አድርግ…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "መጨረሻ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "ምህንድስና"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "የይለፍ ቃልዎን ያስገቡ።"
 msgid "Entered by you"
 msgstr "በእርስዎ የገባ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "ትላልቅ ድርጅቶች"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "ግቤት {0} ከ{count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "መግባት ተሰርዟል።"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "የመግቢያ ደረጃ"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "በትክክል ዝቅተኛው"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "ስለ ሬዙሜ አስተያየት ይለዋወጡ፣ ጥያቄዎችን ይጠይቁ፣ እና ከማህበረሰቡ ጋር Reactive Resumeን ለመቅረጽ ያግዙ።"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "ሥራ አስፈጻሚ"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "እውነታዎችን አጣራ"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "ቴምፕሌቶችን አጣራ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "ፋይናንስ"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "ከ"
 msgid "from “{0}”"
 msgstr "ከ“{0}”"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "ርዕሶች በ{0}፣ {1} pt\n"
 msgid "Headline"
 msgstr "ርዕሰ ነጥብ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "ጤና አጠባበቅ"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "ፋይሉን እንዴት ማሳየት እንደሚቻል"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "ለዚህ ሚና ምን ያህል እስማማለሁ?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "የሰው ኃይል"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "ፍላጎቶች"
 msgid "Interface language"
 msgstr "የበይነገጽ ቋንቋ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "ልምምድ"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON አንብብ"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "ዝለል ወደ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "ጀማሪ"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10912,6 +11084,11 @@ msgid "Legacy Word files aren't supported. Open the file in Word and save it as 
 msgstr "Legacy Word ፋይሎች አይደገፉም። ፋይሉን በWord ይክፈቱ እና መጀመሪያ እንደ .docx ያስቀምጡት።"
 
 #: src/features/homepage/footer.tsx
+msgid "Legal"
+msgstr "ሕጋዊ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Legal"
 msgstr "ሕጋዊ"
 
@@ -11525,6 +11702,16 @@ msgstr "በReactive Resume የተሠራ"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "በReactive Resume፣ ነፃ እና ክፍት ምንጭ የተሰራ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "መጽሔት"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "የማጀንታ ማጉያ"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "ማመልከቻ እንደቀረበ ምልክት ተደርጓል። የ�
 msgid "Marked as read"
 msgstr "እንደተነበበ ምልክት ተደርጓል"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "ግብይት"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "ማይክሮፎን ታግዷል። በአሳሽዎ ቅንብሮች ው�
 msgid "min"
 msgstr "ደቂቃ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "ዝቅተኛ"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "ዝቅተኛ መሠረታዊ ደመወዝ"
@@ -11885,6 +12082,11 @@ msgstr "ሞዴል"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "ሞዴል ለ{label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "ዘመናዊ"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "ማመልከቻውን ከ{0} ያዛውራል"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "{item}ን ማንቀሳቀስ ተሰርዟል። ምንም አልተንቀሳቀሰም።"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "የደበዘዘ የጎን አሞሌ"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "ምንም አልተመረጠም"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "እስካሁን የለም። ከአሰልጣኙ ጋር የሚደረግ ውይይት እዚህ ይቀመጣል፣ ግንኙነቱ በኋላ ቢወገድም ሊነበብ ይችላል።"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "ለትርፍ ያልተቋቋመ"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "ቅናሹ ተሰርዟል"
 msgid "Offer saved"
 msgstr "የሥራ አቅርቦቱ ተቀምጧል"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "ቅናሹ ተቀምጧል። {0} ወደ ቅናሽ ተዛውሯል።"
@@ -13909,6 +14121,11 @@ msgstr "በአዲስ ታብ ይከፈታል"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "በስምዎ እና በመገኛ ዝርዝሮችዎ ይከፈታል። መጀመሪያ የሚሞላ ነገር የለም።"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "ኦፕሬሽንስ"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "የሥራ ማስታወቂያ ይለጥፉ…"
 msgid "Paste a message"
 msgstr "መልዕክት ይለጥፉ"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "ከ{0} የመጣ መልዕክት ይለጥፉ"
@@ -14593,6 +14810,11 @@ msgstr "ፕለም ሐምራዊ"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "ፖላንድኛ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "የተወለወለ"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15025,6 +15247,11 @@ msgstr "ለB2B ቡድኖች <0>የንድፍ ስርዓቶችን</0> እና በጥ
 #: src/features/resume/editor/design/presets.ts
 msgid "Professional"
 msgstr "ሙያዊ ቅጥ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Professional"
+msgstr "ሙያዊ"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -16017,7 +16244,7 @@ msgstr "የማይገኘውን የእውነታ ማጣቀሻ አስወግድ"
 msgid "Remove unavailable story reference"
 msgstr "የማይገኘውን የታሪክ ማጣቀሻ አስወግድ"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "{0} ተወግዷል"
@@ -16812,6 +17039,16 @@ msgstr "መስመር"
 msgid "Rule accent"
 msgstr "የመስመር ማድመቂያ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "የመስመር ፍርግርግ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "መስመር ያላቸው ርዕሶች"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "እንደገና ያሂዱ"
@@ -17138,7 +17375,7 @@ msgstr "{0} ተቀምጧል · በቅናሾች ውስጥ ያነጻጽሩ"
 msgid "Saved {0} · read-only"
 msgstr "{0} ተቀምጧል · ለንባብ ብቻ"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} ወደ ማመልከቻዎች ተቀምጧል"
@@ -17761,6 +17998,11 @@ msgstr "የሥራ ማስታወቂያውን፣ የተገናኘውን የስራ �
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "ይህን ታሪክ እና የበሩትን እውነታዎች ወደ AI ግንኙነትዎ ይልካል። ግንኙነት ከሌለ ምንም ነገር አይላክም።"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "ከፍተኛ"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "ጥያቄዎችን በባዶ መስመር ይለዩ። እስከ አም�
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "ሰርቢኛ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "ሰሪፍ"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "በመውጣት ላይ…"
 msgid "Signing up…"
 msgstr "በመመዝገብ ላይ…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "ቀላል"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "ትንሽ ርዕሶች"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "ስለዚህ 14 ደንበኞችን አነጋገርኩ፣ ሰዎች የሚያቋርጡባቸውን ሶስት ቦታዎች አገኘሁ፣ አጠር ያለ ማዋቀርም ፕሮቶታይፕ ሠራን።"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "ለስላሳ ማጉያ"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "አሁን ይጀምራል"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "ለንባብ ብቻ ሆኖ ይጀምራል። ስሙን፣ መዳረሻውን እና የማብቂያ ጊዜውን እርስዎ ይመርጣሉ።"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "ጀማሪ ኩባንያ"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "ክልል"
@@ -19025,6 +19287,11 @@ msgstr "በመሃል አስምር"
 msgid "Stronger verb"
 msgstr "የበለጠ ጠንካራ ግስ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "የተዋቀረ"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "የቅጥ ሉህ አርታኢ"
@@ -19037,7 +19304,7 @@ msgstr "ርዕሰ ጉዳይ"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "ማስገባቱ በ{date} ተመዝግቧል። የተላኩት ስሪቶች በጭራሽ አይቀየሩም፤ የአሁኑ ረቂቆች ሊስተካከሉ ይችላሉ። ይህ መዝገብ አሠሪው መቀበሉን አያረጋግጥም።"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "በ{0} የማመልከቻ ገጽ ላይ ራስዎ ያስገቡ"
@@ -19130,6 +19397,11 @@ msgstr "የተደገፈ"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "የሚደግፉ የእውቀት እውነታዎች እና ታሪኮች"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "ዘላቂነት"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "የተግባር ሞዴሎች"
 msgid "Teal"
 msgstr "ሰማያዊ አረንጓዴ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "ቴክኖሎጂ"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "ቴክኒካል"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "ቴክኒካል"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "ቴክኒካል PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "ይህ ወደ ጠርዝ የተጠጋ ጽሑፍ ሊቆረጥ ይችላል
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "ስርዓቱ እንደገና ሲያሰራው በ{minimum} pt ስር ያለው ጽሑፍ ሊሳሳት ይችላል።"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "ብዙ ጽሑፍ"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "ሰዓት · {0}"
 msgid "Time · {city}"
 msgstr "ሰዓት · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "{0}ን በድጋሚ የማነጋገሪያ ጊዜ ነው"
@@ -20910,6 +21202,11 @@ msgstr "መከታተል"
 #: src/features/resume/editor/design/presets.ts
 msgid "Traditional"
 msgstr "ባህላዊ ዘይቤ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Traditional"
+msgstr "ባህላዊ"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -21273,6 +21570,11 @@ msgstr "ከስር አስምር"
 msgid "Underline links"
 msgstr "አገናኞችን አስምር"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "ልከኛ"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "ፎቶ ስቀል"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "ፎቶ በመስቀል ላይ…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "በአቢይ ፊደላት ርዕሶች"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "መከላከያ ኮድ በማረጋገጥ ላይ…"
 msgid "Verifying code…"
 msgstr "የማረጋገጫ ኮድ…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "ሁለገብ"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "ጎብኚዎች የትምህርት ማስረጃውን ከማየታቸው
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "ጎብኚዎች ድረ-ገጽዎን ለማየት አገናኙ እና የይለፍ ቃሉ ያስፈልጋቸዋል።"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "የእይታ ውበት"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "እንደ ጡረታ ወይም አበል ያሉ ሌሎች ምን ጥቅ�
 msgid "Which terms from a posting appear in it"
 msgstr "ከሥራ ማስታወቂያ የትኞቹ ቃላት በውስጡ እንደሚገኙ"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "ሰፊ ባዶ ቦታ"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "ድረ-ገጽዎን ማን ሊያገኘው፣ ከእሱ ሊያገኝዎት እና ቅጂ ሊወስድ እንደሚችል።"
@@ -22588,8 +22910,8 @@ msgstr "ለመዛወር ፈቃደኛነት፦ አልተመለሰም"
 msgid "With {0}"
 msgstr "ከ{0} ጋር"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "መልስዎን ይጻፉ፣ ወይም ከእውቀትዎ አንድ ያ�
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "የእርስዎን ሙያዊ CV ይጻፉ"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "ጸሐፊ"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

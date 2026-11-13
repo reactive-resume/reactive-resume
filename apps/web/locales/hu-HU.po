@@ -1030,17 +1030,29 @@ msgstr "{0} frissítve; {1} sikertelen. A sikertelen pozíciók kijelölve marad
 msgid "{0} words · {1} characters"
 msgstr "{0} szó · {1} karakter"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} válaszolt: {wroteOn}. Semmi sem változik, amíg nem alkalmazod."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} válaszolt: {wroteOn}. Olvasta: {1} · {2}. Semmi sem változik, amíg nem alkalmazod."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# várakozik} other {# várakozik}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "V: {answer}"
 msgid "About"
 msgstr "Erről az alkalmazásról"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "Téma: {0}"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "Téma: {0} · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "Kiemelés"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "Kiemelő szín"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "Kiemelő színek"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "Szakaszok elrendezése"
 msgid "As written on the page"
 msgstr "Ahogy az oldalon szerepel"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "Ázsiai stílus"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "A Northwind Labsnél a legtöbb új csapat elakadt, mielőtt befejezte v
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS ellenőrző"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ATS-barát"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "Eligazítás · {0} · felhasználva: {1}"
 msgid "Briefing ready"
 msgstr "Az eligazítás elkészült"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "Eligazítás kész: {0}"
@@ -4319,6 +4346,11 @@ msgstr "Felsorolásos lista"
 msgid "Burgundy"
 msgstr "Bordó"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "Üzleti elemző"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "A közösség által, a közösségért."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "Naptár"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "Nyugodt"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "Letisztult"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "Letisztult"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "Letisztult tipográfia"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "Kattintson bármire az oldalon a stílushoz. Az Ön által használt sza
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "Ügyfél-azonosító"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "Ügyfélkapcsolati"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "Lezárva: elfogadott ajánlat"
 msgid "Closing {company} · {role}. "
 msgstr "Lezárás: {company} · {role}. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "Hozzászólások"
 msgid "Comments and progress"
 msgstr "Hozzászólások és állapot"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "Kommunikáció"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "Közösség"
@@ -5254,6 +5316,11 @@ msgstr "Kompakt"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header layout"
+msgid "Compact"
+msgstr "Kompakt"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Compact"
 msgstr "Kompakt"
 
@@ -5461,6 +5528,11 @@ msgstr "Kapcsolat: {text}"
 msgid "Connections"
 msgstr "Kapcsolatok"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "Tanácsadás"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "Érintkezés"
@@ -5511,12 +5583,12 @@ msgstr "Kapcsolattartó telefonszám"
 msgid "Contact role"
 msgstr "Kapcsolattartó szerepkör"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "Kapcsolat: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "Teljes kép"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Tartalom"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "Tartalomgyártó"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "Másold ki a szöveget az exportált fájlból, és olvasd át; javíts 
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "Átirat másolása"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "Vállalati"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "Létrehozva: {created} · {used} · {expires}"
 msgid "Created and linked to {company}"
 msgstr "Létrehozva és összekapcsolva a {company}-val"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "Kreatív"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "Forrásmegjelölés"
@@ -6925,9 +7012,19 @@ msgstr "dán"
 msgid "Dark"
 msgstr "Sötét"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "Sötét oldalsáv"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Sötét téma"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "Adattudomány"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "Törölve a Könyvtárból"
 msgid "Deleted today"
 msgstr "Ma törölve"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "Sűrű"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "A dizájnrendszer kompromisszumai"
 msgid "Design systems"
 msgstr "Dizájnrendszerek"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "Tervező"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7302,6 +7409,11 @@ msgstr "A szolgáltató részletei: {detail}"
 #: src/routes/dashboard/settings/route.tsx
 msgid "Developer"
 msgstr "Fejlesztői"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Developer"
+msgstr "Fejlesztő"
 
 #: src/features/settings/account/sessions.tsx
 msgid "Devices signed in to your account"
@@ -7783,6 +7895,11 @@ msgstr "Korábbi keresési találat · utoljára látva: {0}"
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "A beszélgetés korábbi üzenetei és csatolmányai el lesznek küldve erre a célra, amikor legközelebb küldesz."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "Földszínek"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "Szerkesztői nézetek"
 msgid "Editorial"
 msgstr "Szerkesztőségi"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "Szerkesztőségi"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "A módosítások egy másolatba kerülnek, sosem ebbe az önéletrajzba."
@@ -8021,6 +8143,11 @@ msgstr "Tanulmányok"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "A Tanulmányok szakaszban ugyanígy felcserélhető az iskola és a tanulmányi terület."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "Hatékony"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "Kuka kiürítése…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "Vége"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "Mérnöki"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "Add meg a jelszavadat."
 msgid "Entered by you"
 msgstr "Általad megadva"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "Nagyvállalati"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "{0}/{count}. bejegyzés"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "Bejegyzés törölve"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "Pályakezdő"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "Pontosan a minimum"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Cserélj visszajelzést önéletrajzokról, tegyél fel kérdéseket, és formáld a Reactive Resume-ot a közösséggel együtt."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "Vezetői"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "Tények szűrése"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "Sablonok szűrése"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "Pénzügy"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "Tól"
 msgid "from “{0}”"
 msgstr "innen: „{0}”"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "Címsorok: {0}, {1} pt\n"
 msgid "Headline"
 msgstr "Főcím"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "Egészségügy"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "A fájl megjelenítése"
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "Mennyire passzolok ehhez a szerephez?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "HR"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "Érdeklődési körök"
 msgid "Interface language"
 msgstr "Interfész nyelve"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "Gyakornoki"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON olvasható"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "Ugrás ide"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "Junior"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "A régi Word fájlok nem támogatottak. Nyissa meg a fájlt a Word-ban, 
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "Jogi információk"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "Jogi"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Készült a Reactive Resume-mal"
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Reactive Resume-val készült, ingyenes és nyílt forráskódú"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "Magazin"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "Magenta kiemelés"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "Beadottként megjelölve. Az elküldött verziók megmaradnak."
 msgid "Marked as read"
 msgstr "Olvasottként megjelölve"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "Marketing"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "A mikrofon le van tiltva. Engedélyezd a böngésző beállításaiban, 
 msgid "min"
 msgstr "perc"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "Minimalista"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "Minimális alapfizetés"
@@ -11885,6 +12082,11 @@ msgstr "Modell"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Modell ehhez: {label}"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "Modern"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "Áthelyezi a jelentkezést innen: {0}"
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "{item} áthelyezése megszakítva. Semmi sem mozdult."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "Visszafogott oldalsáv"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "Nincs kijelölve"
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "Még nincs. A coach-csal folytatott beszélgetések itt maradnak, és olvashatók maradnak akkor is, ha a kapcsolatukat később eltávolítod."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "Nonprofit"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "Az ajánlat törölve"
 msgid "Offer saved"
 msgstr "Állásajánlat mentve"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Ajánlat elmentve. {0} áthelyezve az Ajánlat szakaszba."
@@ -13909,6 +14121,11 @@ msgstr "új lapon nyílik meg"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "A neveddel és az elérhetőségeiddel nyílik meg. Előbb nem kell semmit kitölteni."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "Üzemeltetés"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "Álláshirdetés beillesztése…"
 msgid "Paste a message"
 msgstr "Üzenet beillesztése"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "Illessz be egy üzenetet tőle: {0}"
@@ -14593,6 +14810,11 @@ msgstr "Szilvalila"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "lengyel"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "Kifinomult"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15025,6 +15247,11 @@ msgstr "Terméktervező kilenc év tapasztalattal <0>designrendszerek</0> és ku
 #: src/features/resume/editor/design/presets.ts
 msgid "Professional"
 msgstr "Professzionális stílus"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Professional"
+msgstr "Professzionális"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -16017,7 +16244,7 @@ msgstr "Nem elérhető tényhivatkozás eltávolítása"
 msgid "Remove unavailable story reference"
 msgstr "Nem elérhető történet-hivatkozás eltávolítása"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "Eltávolítva: {0}"
@@ -16812,6 +17039,16 @@ msgstr "Vízszintes vonal"
 msgid "Rule accent"
 msgstr "Vonalas kiemelés"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "Vonalas rács"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "Vonalas címsorok"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "Futtatás újra"
@@ -17138,7 +17375,7 @@ msgstr "Mentve: {0} · összehasonlítás az Ajánlatokban"
 msgid "Saved {0} · read-only"
 msgstr "Mentve: {0} · csak olvasható"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "Mentve a Jelentkezésekbe: {0}"
@@ -17761,6 +17998,11 @@ msgstr "Elküldi az álláshirdetést, a linkelt önéletrajzodat és a bekapcso
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "Elküldi ezt a történetet és a bekapcsolt tényeket az AI-kapcsolatodnak. Kapcsolat nélkül semmit sem küld el."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "Senior"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "A kérdéseket üres sorral válaszd el. Legfeljebb öt kérdés, egyenk
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "szerb"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "Talpas betű"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "Kijelentkezés…"
 msgid "Signing up…"
 msgstr "Regisztráció…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "Egyszerű"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "Kisebb címsorok"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "Így hát beszéltem 14 ügyféllel, megtaláltam azt a három pontot, ahol az emberek lemorzsolódtak, és prototípust készítettünk egy rövidebb beállításhoz."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "Lágy kiemelés"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "Most kezdődik"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "Csak olvasási joggal indul. Te választod ki a nevét, a hozzáférését és a lejáratát."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "Startup"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "Állam vagy régió"
@@ -19025,6 +19287,11 @@ msgstr "Áthúzás"
 msgid "Stronger verb"
 msgstr "Erősebb ige"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "Strukturált"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "Stíluslap-szerkesztő"
@@ -19037,7 +19304,7 @@ msgstr "Tárgy"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "A beküldés rögzítve: {date}. Az elküldött verziók sosem változnak; a jelenlegi piszkozatok szerkeszthetők maradnak. Ez a bejegyzés nem erősíti meg, hogy a munkáltató megkapta."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "Add be magad a jelentkezési oldalon: {0}"
@@ -19130,6 +19397,11 @@ msgstr "Alátámasztva"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "Alátámasztó Tudástár-tények és -történetek"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "Fenntarthatóság"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "Feladatmodellek"
 msgid "Teal"
 msgstr "Kékeszöld"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "Technológia"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Szakmai"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "Műszaki"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "Műszaki PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "A széléhez közel álló szöveg levágható. Használjon legalább {m
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "A {minimum} pt alatti szöveg félreolvasható, ha a rendszer újra rendereli."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "Szövegsűrű"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "Időpont · {0}"
 msgid "Time · {city}"
 msgstr "Idő · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "Ideje újra érdeklődni itt: {0}"
@@ -20908,6 +21200,11 @@ msgid "Tracking"
 msgstr "Követés"
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Hagyományos"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Traditional"
 msgstr "Hagyományos"
 
@@ -21273,6 +21570,11 @@ msgstr "Aláhúzás"
 msgid "Underline links"
 msgstr "A hivatkozások aláhúzása"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "Diszkrét"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "Fotó feltöltése"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "Fotó feltöltése…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "Nagybetűs címsorok"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "Biztonsági kód ellenőrzése…"
 msgid "Verifying code…"
 msgstr "Ellenőrző kód…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "Sokoldalú"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "A látogatók az önéletrajz megtekintése előtt megadják a jelszót.
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "A látogatóknak a link és a jelszó is kell a weboldalad megtekintéséhez."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "Vizuális lendület"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "Milyen egyéb juttatások járnak hozzá, például nyugdíj vagy támog
 msgid "Which terms from a posting appear in it"
 msgstr "Az álláshirdetés mely kifejezései szerepelnek benne"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "Bő térköz"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "Ki találhatja meg a weboldaladat, ki érhet el rajta keresztül, és ki készíthet róla másolatot."
@@ -22588,8 +22910,8 @@ msgstr "Költözési hajlandóság: nincs megválaszolva"
 msgid "With {0}"
 msgstr "Résztvevők: {0}"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "Írd meg a válaszod, vagy fogalmazz meg egyet a Tudástáradból."
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Írja meg szakmai önéletrajzát"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "Író"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"

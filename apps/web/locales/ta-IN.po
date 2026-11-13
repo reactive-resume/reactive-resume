@@ -1030,17 +1030,29 @@ msgstr "{0} புதுப்பிக்கப்பட்டன; {1} தோ�
 msgid "{0} words · {1} characters"
 msgstr "{0} சொற்கள் · {1} எழுத்துகள்"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Nothing changes until you apply it."
 msgstr "{0} {wroteOn} பதில் எழுதியது. நீங்கள் பயன்படுத்தும் வரை எதுவும் மாறாது."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {1}: readBy.label
 #. placeholder {2}: readBy.model
 #: src/features/career/workspace/messages.tsx
 msgid "{0} wrote back {wroteOn}. Read by {1} · {2}. Nothing changes until you apply it."
 msgstr "{0} {wroteOn} பதில் எழுதியது. படித்தது {1} · {2}. நீங்கள் பயன்படுத்தும் வரை எதுவும் மாறாது."
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.badge
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {# waiting} other {# waiting}}"
+msgstr "{0}, {1, plural, one {# காத்திருக்கிறது} other {# காத்திருக்கின்றன}}"
+
+#. placeholder {0}: item.label
+#. placeholder {1}: item.count
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "{0}, {1, plural, one {#} other {#}}"
+msgstr "{0}, {1, plural, one {#} other {#}}"
 
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
@@ -2399,12 +2411,12 @@ msgstr "A: {answer}"
 msgid "About"
 msgstr "இந்த பயன்பாட்டைப் பற்றி"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0}"
 msgstr "{0} பற்றி"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "About {0} · {label} · {model}"
 msgstr "{0} பற்றி · {label} · {model}"
@@ -2430,6 +2442,11 @@ msgstr "சிறப்பூட்டும் நிறம்"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
 msgstr "உச்சரிப்பு நிறம்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Accent colors"
+msgstr "அக்சென்ட் நிறங்கள்"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
@@ -3646,6 +3663,11 @@ msgstr "பகுதிகளை ஒழுங்குபடுத்து"
 msgid "As written on the page"
 msgstr "பக்கத்தில் எழுதியபடி"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Asian style"
+msgstr "ஆசிய பாணி"
+
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -3806,6 +3828,11 @@ msgstr "Northwind Labs-இல், பெரும்பாலான புதி
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS சரிபார்ப்பு"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "ATS friendly"
+msgstr "ATS-க்கு ஏற்றது"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -4246,7 +4273,7 @@ msgstr "சுருக்கக் குறிப்பு · {0} · {1} ப�
 msgid "Briefing ready"
 msgstr "சுருக்கக் குறிப்பு தயார்"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Briefing ready for {0}"
 msgstr "{0}-க்கான சுருக்கக் குறிப்பு தயார்"
@@ -4319,6 +4346,11 @@ msgstr "பொட்டுக்குறியிடப்பட்ட பட�
 msgid "Burgundy"
 msgstr "பர்கண்டி"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Business analyst"
+msgstr "வணிக பகுப்பாய்வாளர்"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -4363,6 +4395,11 @@ msgstr "சமூகத்தால், சமூகத்திற்காக.
 #: src/routes/dashboard/applications/index.tsx
 msgid "Calendar"
 msgstr "நாட்காட்டி"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Calm"
+msgstr "அமைதியான"
 
 #: src/features/homepage/faq.tsx
 msgid "Can I host it myself?"
@@ -4995,6 +5032,16 @@ msgstr "Claude Desktop"
 msgid "Clean"
 msgstr "எளிமை"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean"
+msgstr "சுத்தமான"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Clean typography"
+msgstr "சுத்தமான எழுத்தமைப்பு"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
@@ -5053,6 +5100,11 @@ msgstr "ஸ்டைல் ​​செய்ய பக்கத்தில் 
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
 msgstr "வாடிக்கையாளர் ஐடி"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Client-facing"
+msgstr "வாடிக்கையாளர் தொடர்பு"
 
 #. Command palette key hint: Escape closes the palette
 #: src/features/command-palette/content.tsx
@@ -5164,6 +5216,11 @@ msgstr "ஆஃபர் ஏற்றுக்கொள்ளப்பட்ட�
 msgid "Closing {company} · {role}. "
 msgstr "{company} · {role} மூடப்படுகிறது. "
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "CN/JP/KR"
+msgstr "CN/JP/KR"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -5242,6 +5299,11 @@ msgstr "கருத்துகள்"
 msgid "Comments and progress"
 msgstr "கருத்துகளும் முன்னேற்றமும்"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Communications"
+msgstr "தகவல் தொடர்பு"
+
 #: src/features/homepage/footer.tsx
 msgid "Community"
 msgstr "சமூகம்"
@@ -5256,6 +5318,11 @@ msgstr "இறுக்கம்"
 msgctxt "Entry header layout"
 msgid "Compact"
 msgstr "கச்சிதம்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Compact"
+msgstr "கச்சிதமான"
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
@@ -5461,6 +5528,11 @@ msgstr "இணைப்பு: {text}"
 msgid "Connections"
 msgstr "இணைப்புகள்"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Consulting"
+msgstr "ஆலோசனை"
+
 #: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "தொடர்பு கொள்ளவும்"
@@ -5511,12 +5583,12 @@ msgstr "தொடர்பு தொலைபேசி"
 msgid "Contact role"
 msgstr "தொடர்பு பங்கு"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0}"
 msgstr "தொடர்பு: {0}"
 
-#. placeholder {0}: primary.name
+#. placeholder {0}: isolate(primary.name)
 #. placeholder {1}: i18n.number(others.length)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Contact: {0} and {1} more"
@@ -5540,6 +5612,11 @@ msgstr "முழுமையாகக் காட்டு"
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "உள்ளடக்கம்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Content creator"
+msgstr "உள்ளடக்க உருவாக்குநர்"
 
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
@@ -5731,6 +5808,11 @@ msgstr "ஏற்றுமதி செய்யப்பட்ட கோப்�
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
 msgstr "டிரான்ஸ்கிரிப்டை நகலெடுக்கவும்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Corporate"
+msgstr "கார்ப்பரேட்"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Correct"
@@ -6797,6 +6879,11 @@ msgstr "{created} உருவாக்கப்பட்டது · {used} · 
 msgid "Created and linked to {company}"
 msgstr "{company} உருவாக்கப்பட்டது மற்றும் இணைக்கப்பட்டது"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Creative"
+msgstr "படைப்பாற்றல்"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Credit"
 msgstr "நன்றிக் குறிப்பு"
@@ -6925,9 +7012,19 @@ msgstr "டேனிஷ்"
 msgid "Dark"
 msgstr "டார்க்"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dark sidebar"
+msgstr "அடர் சைட்பார்"
+
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "டார்க் தீம்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Data science"
+msgstr "தரவு அறிவியல்"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the AI provider."
@@ -7219,6 +7316,11 @@ msgstr "நூலகத்திலிருந்து நீக்கப்�
 msgid "Deleted today"
 msgstr "இன்று நீக்கப்பட்டது"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Dense"
+msgstr "அடர்த்தியான"
+
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Density"
@@ -7276,6 +7378,11 @@ msgstr "வடிவமைப்பு அமைப்பின் சமரச�
 msgid "Design systems"
 msgstr "வடிவமைப்பு அமைப்புகள்"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Designer"
+msgstr "வடிவமைப்பாளர்"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/overview.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -7300,6 +7407,11 @@ msgstr "வழங்குநரிடமிருந்து விவரங�
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/developer.tsx
 #: src/routes/dashboard/settings/route.tsx
+msgid "Developer"
+msgstr "டெவலப்பர்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Developer"
 msgstr "டெவலப்பர்"
 
@@ -7783,6 +7895,11 @@ msgstr "முந்தைய கண்டறிதல் முடிவு · 
 msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr "நீங்கள் மீண்டும் அனுப்பும்போது, இந்த உரையாடலின் முந்தைய செய்திகளும் இணைப்புகளும் இந்த இலக்கிற்கு அனுப்பப்படும்."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Earthy"
+msgstr "மண் நிறங்கள்"
+
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -8008,6 +8125,11 @@ msgstr "எடிட்டர் பார்வைகள்"
 msgid "Editorial"
 msgstr "தலையங்கம்"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Editorial"
+msgstr "இதழியல் பாணி"
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Edits go to a copy, never to this resume."
 msgstr "திருத்தங்கள் ஒரு நகலுக்குச் செல்லும், இந்த ரெஸ்யூமுக்கு ஒருபோதும் அல்ல."
@@ -8021,6 +8143,11 @@ msgstr "கல்வி"
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Education swaps school and field of study the same way."
 msgstr "கல்விப் பகுதியிலும் கல்வி நிறுவனமும் படிப்புத் துறையும் இதேபோல் இடம் மாறும்."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Efficient"
+msgstr "செயல்திறன்மிக்க"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -8097,6 +8224,11 @@ msgstr "குப்பையைக் காலியாக்கு…"
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
 msgstr "முடிவு"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Engineering"
+msgstr "பொறியியல்"
 
 #: src/libs/locale.ts
 msgid "English"
@@ -8247,6 +8379,11 @@ msgstr "உங்கள் கடவுச்சொல்லை உள்ளி�
 msgid "Entered by you"
 msgstr "நீங்கள் உள்ளிட்டது"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Enterprise"
+msgstr "பெரு நிறுவனம்"
+
 #: src/components/calm/category-strip.tsx
 #: src/features/resume/editor/write/section-view.tsx
 msgid "Entries"
@@ -8260,6 +8397,11 @@ msgstr "பதிவு {0} / {count}"
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Entry deleted"
 msgstr "நுழைவு நீக்கப்பட்டது"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Entry level"
+msgstr "தொடக்க நிலை"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8352,6 +8494,11 @@ msgstr "சரியாகக் குறைந்தபட்சம்"
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "ரெஸ்யூமே குறித்த கருத்துகளைப் பகிருங்கள், கேள்விகள் கேளுங்கள், சமூகத்துடன் இணைந்து Reactive Resume-ஐ வடிவமைக்க உதவுங்கள்."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Executive"
+msgstr "உயர் நிர்வாகம்"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Exit focus mode"
@@ -8667,6 +8814,11 @@ msgstr "தகவல்களை வடிகட்டு"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Filter templates"
 msgstr "டெம்ப்ளேட்களை வடிகட்டு"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Finance"
+msgstr "நிதி"
 
 #: src/features/homepage/remember.tsx
 msgid "Find out why, and shorten setup without adding support work."
@@ -9094,7 +9246,7 @@ msgstr "இருந்து"
 msgid "from “{0}”"
 msgstr "“{0}”-இலிருந்து"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #. placeholder {0}: row.employer
 #: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/messages.tsx
@@ -9442,6 +9594,11 @@ msgstr "தலைப்புகள் {0}, {1} pt\n"
 msgid "Headline"
 msgstr "தலைவரி"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Healthcare"
+msgstr "சுகாதாரம்"
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Hear it"
@@ -9684,6 +9841,11 @@ msgstr "கோப்பை எவ்வாறு காண்பிப்பத�
 #: src/features/assistant/assistant-panel.tsx
 msgid "How well do I fit this role?"
 msgstr "இந்த பாத்திரத்திற்கு நான் எவ்வளவு பொருத்தமாக இருக்கிறேன்?"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "HR"
+msgstr "மனிதவளம்"
 
 #: src/libs/locale.ts
 msgid "Hungarian"
@@ -10054,6 +10216,11 @@ msgstr "விருப்பங்கள்"
 msgid "Interface language"
 msgstr "இடைமுக மொழி"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Internship"
+msgstr "இன்டர்ன்ஷிப்"
+
 #: src/features/applications/stages.ts
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/overview.tsx
@@ -10404,6 +10571,11 @@ msgstr "JSON படித்தது"
 #: src/features/command-palette/content.tsx
 msgid "Jump to"
 msgstr "இங்கே செல்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Junior"
+msgstr "ஜூனியர்"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
@@ -10914,6 +11086,11 @@ msgstr "மரபுவழி Word கோப்புகள் ஆதரிக�
 #: src/features/homepage/footer.tsx
 msgid "Legal"
 msgstr "சட்டரீதியான"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Legal"
+msgstr "சட்டம்"
 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11525,6 +11702,16 @@ msgstr "Reactive Resume மூலம் உருவாக்கப்பட்�
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Reactive Resume, இலவச மற்றும் திறந்த மூலமாக உருவாக்கப்பட்டது"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magazine"
+msgstr "பத்திரிகை"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Magenta accent"
+msgstr "மெஜந்தா அக்சென்ட்"
+
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -11718,6 +11905,11 @@ msgstr "விண்ணப்பித்ததாகக் குறிக்�
 msgid "Marked as read"
 msgstr "படித்ததாகக் குறிக்கப்பட்டது"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Marketing"
+msgstr "மார்க்கெட்டிங்"
+
 #. placeholder {0}: resume?.name ?? t`the resume`
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Match “{0}”"
@@ -11857,6 +12049,11 @@ msgstr "மைக்ரோஃபோன் தடுக்கப்பட்ட�
 msgid "min"
 msgstr "நிமி"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Minimal"
+msgstr "மினிமல்"
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Minimum base salary"
 msgstr "குறைந்தபட்ச அடிப்படைச் சம்பளம்"
@@ -11885,6 +12082,11 @@ msgstr "மாதிரி"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "{label}-க்கான மாதிரி"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Modern"
+msgstr "நவீன"
 
 #: src/features/homepage/sheet.tsx
 msgid "Mono"
@@ -12157,6 +12359,11 @@ msgstr "விண்ணப்பத்தை {0}-இலிருந்து ந
 #: src/libs/dnd.ts
 msgid "Moving {item} was cancelled. Nothing moved."
 msgstr "{item} நகர்த்துதல் ரத்துசெய்யப்பட்டது. எதுவும் நகர்த்தப்படவில்லை."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Muted sidebar"
+msgstr "மங்கிய சைட்பார்"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -12978,6 +13185,11 @@ msgstr "எதுவும் தேர்ந்தெடுக்கப்ப�
 msgid "None yet. A conversation with the coach is kept here, and stays readable if its connection is later removed."
 msgstr "இன்னும் எதுவும் இல்லை. ஆலோசகருடனான உரையாடல் இங்கே வைக்கப்படும், அதன் இணைப்பு பின்னர் அகற்றப்பட்டாலும் படிக்கக்கூடியதாக இருக்கும்."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Nonprofit"
+msgstr "இலாப நோக்கற்றது"
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -13457,7 +13669,7 @@ msgstr "ஆஃபர் நீக்கப்பட்டது"
 msgid "Offer saved"
 msgstr "வேலைவாய்ப்புச் சலுகை சேமிக்கப்பட்டது"
 
-#. placeholder {0}: target.company
+#. placeholder {0}: isolate(target.company)
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved. {0} moved to Offer."
 msgstr "ஆஃபர் சேமிக்கப்பட்டது. {0} ஆஃபர் நிலைக்கு நகர்த்தப்பட்டது."
@@ -13909,6 +14121,11 @@ msgstr "புதிய தாவலில் திறக்கிறது"
 msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr "உங்கள் பெயர் மற்றும் தொடர்பு விவரங்களுடன் திறக்கும். முதலில் நிரப்ப எதுவும் இல்லை."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Operations"
+msgstr "செயல்பாடுகள்"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
@@ -14304,7 +14521,7 @@ msgstr "வேலை இடுகையை ஒட்டவும்…"
 msgid "Paste a message"
 msgstr "செய்தியை ஒட்டு"
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/messages.tsx
 msgid "Paste a message from {0}"
 msgstr "{0}-இடமிருந்து வந்த செய்தியை ஒட்டவும்"
@@ -14593,6 +14810,11 @@ msgstr "பிளம்"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "போலிஷ்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Polished"
+msgstr "மெருகூட்டப்பட்ட"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -15023,6 +15245,11 @@ msgid "Product designer with nine years of experience building <0>design systems
 msgstr "B2B குழுக்களுக்காக <0>வடிவமைப்பு அமைப்புகளையும்</0> ஆராய்ச்சி சார்ந்த தயாரிப்புகளையும் உருவாக்குவதில் ஒன்பது ஆண்டுகள் அனுபவமுள்ள தயாரிப்பு வடிவமைப்பாளர்."
 
 #: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "தொழில்முறை"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
 msgid "Professional"
 msgstr "தொழில்முறை"
 
@@ -16017,7 +16244,7 @@ msgstr "கிடைக்காத உண்மைக் குறிப்ப�
 msgid "Remove unavailable story reference"
 msgstr "கிடைக்காத கதைக் குறிப்பை நீக்கு"
 
-#. placeholder {0}: contact.name
+#. placeholder {0}: isolate(contact.name)
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Removed {0}"
 msgstr "{0} நீக்கப்பட்டது"
@@ -16812,6 +17039,16 @@ msgstr "கோடு"
 msgid "Rule accent"
 msgstr "கோடு சிறப்பூட்டல்"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled grid"
+msgstr "கோடிட்ட கட்டம்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Ruled headings"
+msgstr "கோடிட்ட தலைப்புகள்"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Run again"
 msgstr "மீண்டும் இயக்கு"
@@ -17138,7 +17375,7 @@ msgstr "{0} சேமிக்கப்பட்டது · சலுகைக�
 msgid "Saved {0} · read-only"
 msgstr "{0} சேமிக்கப்பட்டது · படிக்க மட்டும்"
 
-#. placeholder {0}: companyOf(row)
+#. placeholder {0}: isolate(companyOf(row))
 #: src/features/career/today.tsx
 msgid "Saved {0} to Applications"
 msgstr "{0} விண்ணப்பங்களில் சேமிக்கப்பட்டது"
@@ -17761,6 +17998,11 @@ msgstr "வேலை அறிவிப்பு, இணைத்த ரெஸ�
 msgid "Sends this story and the facts switched on to your AI connection. Without one, nothing is sent."
 msgstr "இந்தக் கதையையும் இயக்கப்பட்ட உண்மைகளையும் உங்கள் AI இணைப்புக்கு அனுப்பும். இணைப்பு இல்லையென்றால், எதுவும் அனுப்பப்படாது."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Senior"
+msgstr "சீனியர்"
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/tailor.tsx
@@ -17833,6 +18075,11 @@ msgstr "கேள்விகளை வெற்று வரியால் ப
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "செர்பியன்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Serif"
+msgstr "செரிஃப்"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Service"
@@ -18358,6 +18605,11 @@ msgstr "வெளியேறிக் கொண்டிருக்கிற�
 msgid "Signing up…"
 msgstr "பதிவு செய்து கொண்டிருக்கிறது…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Simple"
+msgstr "எளிமையான"
+
 #. placeholder {0}: time.date(entry.at)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "since {0}"
@@ -18491,6 +18743,11 @@ msgstr "சிறிய தலைப்புகள்"
 #: src/features/homepage/remember.tsx
 msgid "So I talked to 14 customers, found the three places people dropped off, and we prototyped a shorter setup."
 msgstr "அதனால் 14 வாடிக்கையாளர்களிடம் பேசினேன், மக்கள் விலகிய மூன்று இடங்களைக் கண்டறிந்தேன், நாங்கள் சுருக்கமான அமைவுக்கு முன்மாதிரி உருவாக்கினோம்."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Soft accent"
+msgstr "மென்மையான அக்சென்ட்"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some application systems ask for one before you can apply."
@@ -18881,6 +19138,11 @@ msgstr "இப்போது தொடங்குகிறது"
 msgid "Starts read-only. You choose its name, access and expiry."
 msgstr "படிக்க மட்டும் எனத் தொடங்கும். அதன் பெயர், அணுகல் மற்றும் காலாவதியை நீங்கள் தேர்ந்தெடுக்கலாம்."
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Startup"
+msgstr "ஸ்டார்ட்அப்"
+
 #: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "மாநிலம் அல்லது பகுதி"
@@ -19025,6 +19287,11 @@ msgstr "அடித்தல்"
 msgid "Stronger verb"
 msgstr "வலுவான வினைச்சொல்"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Structured"
+msgstr "கட்டமைக்கப்பட்ட"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "ஸ்டைல்ஷீட் எடிட்டர்"
@@ -19037,7 +19304,7 @@ msgstr "பொருள்"
 msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr "{date} அன்று சமர்ப்பிப்பு பதிவு செய்யப்பட்டது. அனுப்பப்பட்ட பதிப்புகள் ஒருபோதும் மாறாது; தற்போதைய வரைவுகள் திருத்தக்கூடியதாகவே இருக்கும். இந்தப் பதிவு முதலாளி பெற்றதை உறுதிப்படுத்தாது."
 
-#. placeholder {0}: application.company
+#. placeholder {0}: isolate(application.company)
 #: src/features/career/workspace/apply.tsx
 msgid "Submit on {0}'s application page yourself"
 msgstr "{0}-இன் விண்ணப்பப் பக்கத்தில் நீங்களே சமர்ப்பியுங்கள்"
@@ -19130,6 +19397,11 @@ msgstr "சான்று உள்ளது"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Supporting Knowledge facts and stories"
 msgstr "ஆதரவளிக்கும் அறிவுத் தள உண்மைகளும் கதைகளும்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Sustainability"
+msgstr "நிலைத்தன்மை"
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -19305,9 +19577,24 @@ msgstr "பணி மாதிரிகள்"
 msgid "Teal"
 msgstr "டீல்"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Tech"
+msgstr "தொழில்நுட்பம்"
+
 #: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "தொழில்நுட்பம்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical"
+msgstr "தொழில்நுட்ப"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Technical PM"
+msgstr "தொழில்நுட்ப PM"
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
@@ -19473,6 +19760,11 @@ msgstr "விளிம்பிற்கு அருகில் உள்ள 
 #: src/features/resume/editor/check/issues.ts
 msgid "Text under {minimum} pt can be misread when a system re-renders it."
 msgstr "{minimum} pt இன் கீழ் உள்ள உரையை கணினி மீண்டும் வழங்கும்போது தவறாகப் படிக்கலாம்."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Text-dense"
+msgstr "உரை நிறைந்த"
 
 #: src/libs/locale.ts
 msgid "Thai"
@@ -20737,7 +21029,7 @@ msgstr "நேரம் · {0}"
 msgid "Time · {city}"
 msgstr "நேரம் · {city}"
 
-#. placeholder {0}: notice.company
+#. placeholder {0}: isolate(notice.company)
 #: src/features/career/today.tsx
 msgid "Time to follow up with {0}"
 msgstr "{0}-ஐ மீண்டும் தொடர்புகொள்ளும் நேரம்"
@@ -20910,6 +21202,11 @@ msgstr "கண்காணிப்பு"
 #: src/features/resume/editor/design/presets.ts
 msgid "Traditional"
 msgstr "பாரம்பரியம்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Traditional"
+msgstr "பாரம்பரிய"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -21273,6 +21570,11 @@ msgstr "அடிக்கோடு"
 msgid "Underline links"
 msgstr "இணைப்புகளை அடிக்கோடிடவும்"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Understated"
+msgstr "அடக்கமான"
+
 #: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
@@ -21449,6 +21751,11 @@ msgstr "புகைப்படத்தைப் பதிவேற்று"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading photo…"
 msgstr "புகைப்படம் பதிவேற்றப்படுகிறது…"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Uppercase headings"
+msgstr "பெரிய எழுத்து தலைப்புகள்"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "US Letter"
@@ -21872,6 +22179,11 @@ msgstr "காப்பு குறியீட்டை சரிபார்�
 msgid "Verifying code…"
 msgstr "சரிபார்க்கும் குறியீடு…"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Versatile"
+msgstr "பல்துறை"
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/editor/chrome/shell.tsx
 #: src/features/resume/share/download-menu.tsx
@@ -21962,6 +22274,11 @@ msgstr "பார்வையாளர்கள் ரெஸ்யூமைப�
 #: src/features/resume/share/share-panel.tsx
 msgid "Visitors need the link and password to see your web page."
 msgstr "உங்கள் வலைப்பக்கத்தைப் பார்க்க பார்வையாளர்களுக்கு இணைப்பும் கடவுச்சொல்லும் தேவை."
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Visual flair"
+msgstr "காட்சி அழகு"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice"
@@ -22531,6 +22848,11 @@ msgstr "ஓய்வூதியம் அல்லது படிகள் ப
 msgid "Which terms from a posting appear in it"
 msgstr "வேலை அறிவிப்பின் எந்தச் சொற்கள் அதில் உள்ளன"
 
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Whitespace"
+msgstr "வெற்றிடம்"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Who can find your web page, reach you from it and take a copy."
 msgstr "உங்கள் வலைப்பக்கத்தை யார் கண்டறியலாம், அதிலிருந்து உங்களைத் தொடர்புகொள்ளலாம், நகல் எடுக்கலாம்."
@@ -22588,8 +22910,8 @@ msgstr "இடம் மாற விருப்பம்: பதிலளி�
 msgid "With {0}"
 msgstr "{0} உடன்"
 
-#. placeholder {0}: heroInterview.participants.map((person) => person.name).join(t` and `)
-#. placeholder {1}: midSentence(heroInterview.location) ?? t`Interview`
+#. placeholder {0}: heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)
+#. placeholder {1}: isolate(midSentence(heroInterview.location) ?? t`Interview`)
 #. placeholder {2}: briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""
 #: src/features/career/workspace/overview.tsx
 msgid "With {0} · {1}.{2}"
@@ -22793,6 +23115,11 @@ msgstr "உங்கள் பதிலை எழுதுங்கள், அ�
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "உங்கள் தொழில்முறை CV ஐ எழுதுங்கள்"
+
+#: src/dialogs/resume/template/data.ts
+msgctxt "Template style tag"
+msgid "Writer"
+msgstr "எழுத்தாளர்"
 
 #: src/features/career/schedules.tsx
 msgid "Writes a briefing before an interview"
