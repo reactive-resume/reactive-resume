@@ -7,7 +7,6 @@ import { WritePanel } from "@/features/resume/editor/write/write-panel";
 
 // Design carries the font list and icon search: it loads once the editor is idle, or when first opened.
 export const DesignPanel = lazyRouteComponent(() => import("./design-panel"), "DesignPanel");
-export const DesignSheet = lazyRouteComponent(() => import("./design-panel"), "DesignSheet");
 const SharePanel = lazyRouteComponent(() => import("@/features/resume/share/share-panel"), "SharePanel");
 
 export function ModePanel({ mode }: { mode: EditorMode }) {

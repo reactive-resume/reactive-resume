@@ -6,7 +6,7 @@ import type { CSSProperties } from "react";
 /** --ease / `ease-enter`: everything entering, exiting or changing state. */
 export const EASE = [0.2, 0.8, 0.2, 1] as const;
 /** --ease-in-out-strong / `ease-in-out-strong`: things moving across the screen (indicators, reorder, settling). */
-export const EASE_MOVE = [0.77, 0, 0.175, 1] as const;
+const EASE_MOVE = [0.77, 0, 0.175, 1] as const;
 /** --d1 / `duration-quick`: hover, press, toggle, checkbox, focus ring. */
 export const D1 = 0.12;
 /** --d2 / `duration-standard`: menus, popovers, expand/collapse, content swaps, dialogs. */

@@ -3,8 +3,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { PreparedRequest } from "@reactive-resume/utils/deferred-request";
 import type { QueryClient, QueryKey } from "@tanstack/react-query";
 import type { ComponentProps, ReactNode } from "react";
-import { i18n } from "@lingui/core";
-import { ph, t } from "@lingui/core/macro";
+import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Link, useRouteContext } from "@tanstack/react-router";
@@ -412,45 +411,6 @@ export function Eyebrow({ children, className }: EyebrowProps) {
 	return <h2 className={cn("text-xs font-semibold text-ink-3", className)}>{children}</h2>;
 }
 
-const statusPill = {
-	supported: { icon: "check-circle", tone: "bg-accent-soft text-accent-text" },
-	added: { icon: "check-circle", tone: "bg-accent-soft text-accent-text" },
-	partial: { icon: "circle-half", tone: "bg-warn-soft text-warn-text" },
-	missing: { icon: "question", tone: "bg-sunken text-ink-2" },
-} satisfies Record<string, { icon: IconName; tone: string }>;
-
-/** Evidence status: colour, icon and words together. */
-export function StatusPill({ status }: { status: keyof typeof statusPill }) {
-	const labels = {
-		supported: t`Supported`,
-		added: t`Added by you`,
-		partial: t`Partly supported`,
-		missing: t`No evidence yet`,
-	};
-	const { icon, tone } = statusPill[status];
-	return (
-		<span className={cn("inline-flex h-6 w-fit items-center gap-1 rounded-sm px-2 text-xs font-semibold", tone)}>
-			<Icon name={icon} size={15} />
-			{labels[status]}
-		</span>
-	);
-}
-
-/** A match in the user's own words, or a fact that's unknown. */
-export function InfoChip({ tone, children }: { tone: "match" | "unknown"; children: ReactNode }) {
-	return (
-		<span
-			className={cn(
-				"inline-flex h-6 items-center gap-1 rounded-sm px-2 text-xs font-medium",
-				tone === "match" ? "bg-accent-soft text-accent-text" : "bg-warn-soft text-warn-text",
-			)}
-		>
-			<Icon name={tone === "match" ? "check" : "question"} size={15} />
-			{children}
-		</span>
-	);
-}
-
 type FilterChipProps = { pressed: boolean; onClick: () => void; children: ReactNode; className?: string };
 
 /** A 30px pill toggle for filters and single choices; selected is ink-filled. */
@@ -557,37 +517,6 @@ export function PrivacyLine({
 
 /** Whole minutes until `at`; negative once it has started. */
 export const minutesUntil = (at: Date, now: Date) => Math.round((at.getTime() - now.getTime()) / 60_000);
-
-type CountdownChipProps = { at: Date; now: Date; className?: string };
-
-/** "In 23 hours" on sunken; within the hour it turns warn and reads "Starts in 10 minutes". */
-export function CountdownChip({ at, now, className }: CountdownChipProps) {
-	const { relative } = useCareerTime();
-	const minutes = minutesUntil(at, now);
-	const soon = minutes <= 60;
-	const label =
-		minutes <= 0
-			? t`Started`
-			: soon
-				? t`Starts in ${ph({ minutes: i18n.number(minutes) })} minutes`
-				: relative(at, now);
-	return (
-		<span
-			className={cn(
-				"inline-flex h-6 w-fit items-center gap-1 rounded-sm px-2 text-xs font-semibold",
-				soon ? "bg-warn-soft text-warn-text" : "bg-sunken text-ink-2",
-				className,
-			)}
-		>
-			<Icon name="clock" size={15} />
-			{label}
-			{/* Announced only when it crosses the hour and ten minutes, not every minute. */}
-			<span className="sr-only" aria-live="polite">
-				{minutes === 60 || minutes === 10 ? label : ""}
-			</span>
-		</span>
-	);
-}
 
 type MemoryProposalProps = {
 	/** "Remember this for future coaching?" or "Remember for Northstar only?" */

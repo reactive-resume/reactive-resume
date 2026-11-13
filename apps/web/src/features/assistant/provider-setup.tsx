@@ -1,24 +1,7 @@
 import { Trans } from "@lingui/react/macro";
 import { useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
-import { ConnectionForm, SetUpAiDialog } from "@/features/ai/set-up-ai";
-
-type ProviderSetupProps = {
-	/** Kept for callers that connect another one while some are saved; the form is the same. */
-	connectOnly?: boolean;
-};
-
-/**
- * The Set up AI form for callers that already draw their own dialog around it. New callers use `SetUpAi` or
- * `useSetUpAi` from `@/features/ai/set-up-ai`, which open the one dialog (N11).
- */
-export function ProviderSetup(_props: ProviderSetupProps) {
-	return (
-		<div className="grid gap-4 p-4">
-			<ConnectionForm onTesting={() => {}} onConnected={() => {}} />
-		</div>
-	);
-}
+import { SetUpAiDialog } from "@/features/ai/set-up-ai";
 
 /** A "Set up AI" button that opens the dialog in place, keeping the task's typed input and files. */
 export function SetUpAi() {

@@ -4,7 +4,7 @@ import { formatForDisplay } from "@tanstack/react-hotkeys";
 /** `meta.group` for keys that work on every page (search, this list): listed after the page's own. */
 export const APP_GROUP = "app";
 /** `meta.group` for keys that need a focused row in a list. */
-export const ROW_GROUP = "row";
+const ROW_GROUP = "row";
 /** `meta.group` for the page's main action set by the shell ("Save a job"): listed before the page's own keys. */
 export const LEAD_GROUP = "lead";
 /** `meta.group` for keys that act on the open document (undo, save, download): listed after the app-wide ones. */

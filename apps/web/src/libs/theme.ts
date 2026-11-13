@@ -21,7 +21,7 @@ export const themeMap = {
 	system: msg`System`,
 } satisfies Record<Theme, MessageDescriptor>;
 
-export function isTheme(theme: string): theme is Theme {
+function isTheme(theme: string): theme is Theme {
 	return themeSchema.safeParse(theme).success;
 }
 

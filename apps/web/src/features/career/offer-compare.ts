@@ -5,7 +5,7 @@ import { bonusAmount } from "@reactive-resume/schema/career-offer";
 type Pay = Pick<OfferTerms, "currency" | "period">;
 
 /** Money is only compared in the same currency and pay period: anything else needs a guessed rate or hours. */
-export const sameTerms = (a: Pay, b: Pay) => a.currency === b.currency && a.period === b.period;
+const sameTerms = (a: Pay, b: Pay) => a.currency === b.currency && a.period === b.period;
 
 /** How much more `a` pays than `b` (negative when less), or null when it can't be told honestly. */
 export function moneyDifference(a: OfferTerms, b: OfferTerms, key: "base" | "variable" | "learning") {

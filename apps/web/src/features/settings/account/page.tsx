@@ -28,7 +28,7 @@ export function AccountSettings() {
 	);
 }
 
-export function SignOutButton() {
+function SignOutButton() {
 	const router = useRouter();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();

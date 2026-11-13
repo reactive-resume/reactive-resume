@@ -6,22 +6,18 @@ import type {
 	UnsupportedClaim,
 } from "@reactive-resume/resume/proposals";
 import type { WordDiffSegment } from "@reactive-resume/resume/word-diff";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { KeyboardEvent, ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { ph, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useId, useMemo, useState } from "react";
-import { additionParts, getProposalState, needsConfirmation, passageLines } from "@reactive-resume/resume/proposals";
+import { additionParts, needsConfirmation, passageLines } from "@reactive-resume/resume/proposals";
 import { wordDiff } from "@reactive-resume/resume/word-diff";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
-import { useEditorStore } from "../store";
 import { ProposalPageFit } from "./page-fit";
-import { acceptResumeProposals } from "./proposals";
-import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 
 const claimKindLabel = (kind: UnsupportedClaim["kind"]) =>
@@ -109,51 +105,6 @@ function inContext(segments: readonly WordDiffSegment[]): WordDiffSegment[] {
 			text: `${words.slice(0, CONTEXT_WORDS).join("")}… ${words.slice(-CONTEXT_WORDS).join("")}`,
 		};
 	});
-}
-
-type ProposalListProps = {
-	proposals: readonly Proposal[];
-	data: ResumeData;
-	/** "Suggest again" on an out-of-date proposal. */
-	onSuggestAgain: () => void;
-	/** The narrow-panel cards (see ChangeSet). */
-	compact?: boolean | undefined;
-};
-
-/** Check → Writing's change set, applied to the resume. */
-export function ProposalList({ proposals, data, onSuggestAgain, compact }: ProposalListProps) {
-	const setProposalStatus = useEditorStore((state) => state.setProposalStatus);
-	const locked = useIsResumeLocked();
-	const applications = useResumeStore((state) => state.proposalApplications);
-
-	return (
-		<ChangeSet
-			compact={compact}
-			proposals={proposals}
-			states={proposals.map((proposal) => getProposalState(data, proposal, applications))}
-			locked={locked}
-			onAccept={(accepted) => {
-				const { applied } = acceptResumeProposals(accepted);
-				setProposalStatus(
-					applied.map((proposal) => proposal.id),
-					"accepted",
-				);
-			}}
-			onReject={(rejected) =>
-				setProposalStatus(
-					rejected.map((proposal) => proposal.id),
-					"rejected",
-				)
-			}
-			onRestore={(restored) =>
-				setProposalStatus(
-					restored.map((proposal) => proposal.id),
-					"pending",
-				)
-			}
-			onSuggestAgain={onSuggestAgain}
-		/>
-	);
 }
 
 type ChangeSetProps = {

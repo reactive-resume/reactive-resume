@@ -58,7 +58,7 @@ export function moveEntry(section: WriteSection, entryId: string, to: number, an
 	announce(t`${title}, entry ${i18n.number(to + 1)} of ${i18n.number(entries.length)}`);
 }
 
-export function setEntryHidden(section: WriteSection, entryId: string, hidden: boolean) {
+function setEntryHidden(section: WriteSection, entryId: string, hidden: boolean) {
 	useResumeStore.getState().updateResumeData(
 		(draft) => {
 			const target = getEntries(draft, section).find((item) => item.id === entryId);
@@ -181,7 +181,7 @@ export function EntryRow({ section, entryId, index, count, locked }: EntryRowPro
 }
 
 /** Deletes an entry at once; the toast names it and puts it back where it was. */
-export function deleteEntry(section: WriteSection, entryId: string) {
+function deleteEntry(section: WriteSection, entryId: string) {
 	const { resume, updateResumeData } = useResumeStore.getState();
 	const entries = resume ? getEntries(resume.data, section) : [];
 	const index = entries.findIndex((entry) => entry.id === entryId);

@@ -176,7 +176,7 @@ let lastUndoAt = 0;
 let lastUndoKeys = "";
 
 /** The values `edits` replace, so applying the result undoes them. Undefined when nothing undoable changes. */
-export function inverseEdits(letter: CoverLetter, edits: LetterEdits): LetterEdits | undefined {
+function inverseEdits(letter: CoverLetter, edits: LetterEdits): LetterEdits | undefined {
 	const inverse: Record<string, unknown> = {};
 	for (const key of UNDOABLE) if (key in edits && edits[key] !== letter[key]) inverse[key] = letter[key];
 	return Object.keys(inverse).length > 0 ? (inverse as LetterEdits) : undefined;

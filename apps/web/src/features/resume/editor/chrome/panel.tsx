@@ -1,6 +1,4 @@
 import type { ComponentProps, ReactNode } from "react";
-import { t } from "@lingui/core/macro";
-import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { cn } from "@reactive-resume/utils/style";
 
 // What the editor's one panel slot (shell.tsx, `data-design="epanel"`, 400px) lays out the same way whatever is in it:
@@ -56,27 +54,4 @@ export function PanelHeader({
 /** The quiet line at the foot of a panel; it stays on the bottom edge while the content is short. */
 export function PanelFoot({ className, ...props }: ComponentProps<"p">) {
 	return <p className={cn("mt-auto flex gap-2 pt-4 pb-5 t-small text-ink-3", className)} {...props} />;
-}
-
-type PanelTakeoverProps = {
-	title: ReactNode;
-	/** Closes it and hands the slot back to the mode's panel. */
-	onClose: () => void;
-	children: ReactNode;
-};
-
-/**
- * Something that takes the panel's place and brings no header of its own (History): a title, a close button and a
- * scrolling body. The assistant draws its own header and does not use this.
- */
-export function PanelTakeover({ title, onClose, children }: PanelTakeoverProps) {
-	return (
-		<div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-5 pb-6 [overflow-anchor:none]">
-			<PanelHeader
-				title={title}
-				actions={<IconButton icon="x" label={t`Close`} size="icon-sm" className="-me-1.5" onClick={onClose} />}
-			/>
-			<div className="mt-3 flex min-h-0 flex-1 flex-col">{children}</div>
-		</div>
-	);
 }

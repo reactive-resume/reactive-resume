@@ -11,7 +11,7 @@ import { Page, PageBody, PageHeader } from "@/components/calm/page";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
 import { orpc } from "@/libs/orpc/client";
 
-export type KnowledgeSection = "facts" | "stories" | "preferences";
+type KnowledgeSection = "facts" | "stories" | "preferences";
 
 type KnowledgeFrameProps = {
 	current: KnowledgeSection;

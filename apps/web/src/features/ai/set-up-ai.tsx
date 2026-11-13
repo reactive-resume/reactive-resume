@@ -53,7 +53,7 @@ type ConnectionFormProps = {
  * Provider, key and model, with task models and the name and base URL folded. Save and test stores the key, then sends
  * one test prompt; a failure stays in the form with its reason.
  */
-export function ConnectionForm({ cancel, onTesting, onConnected }: ConnectionFormProps) {
+function ConnectionForm({ cancel, onTesting, onConnected }: ConnectionFormProps) {
 	const id = useId();
 	const queryClient = useQueryClient();
 	const state = useHasUsableAiProvider();

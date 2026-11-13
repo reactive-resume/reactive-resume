@@ -81,6 +81,6 @@ export function SelectionBar({
 }
 
 /** A hairline between groups of actions in the bar. */
-export function SelectionBarSeparator() {
+function SelectionBarSeparator() {
 	return <span aria-hidden="true" className="m-1 w-px shrink-0 self-stretch bg-line" />;
 }
