@@ -668,7 +668,7 @@ type FoundRowProps = { label: ReactNode; value: string; count: string; flagged?:
 /** One section of the review (`.cmp .li`): its name, what was read, anything to check, and how much. */
 function FoundRow({ label, value, count, flagged = 0 }: FoundRowProps) {
 	return (
-		<ListRow role="listitem" className="min-h-11 py-2">
+		<ListRow role="listitem" className="min-h-11 py-2 sm:min-h-11">
 			<span className="w-28 shrink-0 truncate text-sm font-medium">{label}</span>
 			<span className="min-w-0 flex-1 truncate text-sm text-ink-2">{value}</span>
 			{flagged > 0 && (

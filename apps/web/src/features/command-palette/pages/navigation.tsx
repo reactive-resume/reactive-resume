@@ -1,11 +1,11 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
-import { CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
+import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { CommandItem } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { useCommandPaletteStore } from "../store";
 import { useDialogStore } from "@/dialogs/store";
-import { useStartDocument } from "@/features/documents/use-start-document";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 
 function useGo() {
@@ -82,22 +82,19 @@ export function JumpItems() {
 	);
 }
 
-/** Create: a resume (the New document dialog), a cover letter, a saved job. `forceMount` keeps them through a search. */
+/** Create: a resume, a cover letter (both the New document form), a saved job, each with its N chord. */
 export function CreateItems({ forceMount = false }: { forceMount?: boolean }) {
 	const navigate = useNavigate();
 	const { session } = useRouteContext({ strict: false });
 	const reset = useCommandPaletteStore((state) => state.reset);
-	const { newLetter, creating } = useStartDocument();
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
-	// N opens whichever of these the current section's New is, at once. The board's N R / N L / N J chords are not
-	// bound: a chord that starts with N would either fire N first or make N wait for a second key.
-	const inApplications = useRouterState({
-		select: (state) => state.location.pathname.startsWith("/dashboard/applications"),
-	});
-	const hint = (shown: boolean) =>
-		shown && characterShortcuts ? (
-			// The shortcut slot is the key's own chip.
-			<CommandShortcut>N</CommandShortcut>
+	// The shell binds N R, N L and N J; each key is its own chip, as in the shortcuts list.
+	const chord = (key: string) =>
+		characterShortcuts ? (
+			<span data-slot="command-shortcut" className="ms-auto inline-flex shrink-0 gap-1 max-sm:hidden">
+				<Kbd>N</Kbd>
+				<Kbd>{key}</Kbd>
+			</span>
 		) : null;
 
 	return (
@@ -114,20 +111,21 @@ export function CreateItems({ forceMount = false }: { forceMount?: boolean }) {
 			>
 				<Icon name="file-text" />
 				<Trans>New resume</Trans>
-				{hint(!inApplications)}
+				{chord("R")}
 			</CommandItem>
 			<CommandItem
 				forceMount={forceMount}
-				disabled={!session || creating}
+				disabled={!session}
 				keywords={[t`Cover letter`, t`Letter`, t`Create`]}
 				value="navigation.letters.new"
 				onSelect={() => {
 					reset();
-					void newLetter();
+					useDialogStore.getState().openDialog("document.new", { context: "letters" });
 				}}
 			>
 				<Icon name="envelope-simple" />
 				<Trans>New cover letter</Trans>
+				{chord("L")}
 			</CommandItem>
 			<CommandItem
 				forceMount={forceMount}
@@ -141,7 +139,7 @@ export function CreateItems({ forceMount = false }: { forceMount?: boolean }) {
 			>
 				<Icon name="bookmark-simple" />
 				<Trans>Save a job</Trans>
-				{hint(inApplications)}
+				{chord("J")}
 			</CommandItem>
 		</>
 	);

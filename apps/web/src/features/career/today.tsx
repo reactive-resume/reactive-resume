@@ -270,8 +270,8 @@ function InterviewHero({ now }: { now: Date }) {
 				<>
 					<Button
 						size="lg"
-						// Phones: each action takes the whole line, the accent first (M4).
-						className={cn(LG, "max-sm:w-full")}
+						// The actions share a line while they fit and wrap when they don't (German, M4).
+						className={LG}
 						nativeButton={false}
 						render={
 							<Link
@@ -283,7 +283,7 @@ function InterviewHero({ now }: { now: Date }) {
 					>
 						{hasBriefing ? <Trans>Open briefing</Trans> : <Trans>Prepare</Trans>}
 					</Button>
-					<Button size="lg" variant="ghost" className={cn(LG, "max-sm:w-full")} onClick={calendar.onClick}>
+					<Button size="lg" variant="ghost" className={LG} onClick={calendar.onClick}>
 						<Icon name="calendar-plus" />
 						<Trans>Add to calendar</Trans>
 					</Button>
@@ -465,6 +465,12 @@ function RowCaret() {
 	);
 }
 
+/**
+ * A list row in its own animated wrapper is that wrapper's last child, so the row's own `last:` rule would drop every
+ * hairline: the wrapper puts it back between rows and keeps it off the list's last row.
+ */
+const COLLAPSE_ROW = "-mx-3 px-3 [&:last-child>*]:border-b-0 [&:not(:last-child)>*:last-child]:border-b";
+
 // ---- From your schedules ----
 
 const resultKind = (kind: Notification["notice"]["type"]): { icon: IconName; source: string; action: string } => {
@@ -567,7 +573,7 @@ function ScheduleResults({
 						// Only in-app paths: notifications link into the app, never elsewhere.
 						const actionable = row.notice.type === "opportunities" || /^\/(?!\/)/.test(row.url ?? "");
 						return (
-							<CollapseRow key={row.id} className="-mx-3 px-3 [&:last-child>*]:border-b-0">
+							<CollapseRow key={row.id} className={COLLAPSE_ROW}>
 								<ListRow
 									leading={
 										<IconTile className="bg-hover">
@@ -725,11 +731,18 @@ function NewRoles({ now, selecting: selectingByDefault, accent }: NewRolesProps)
 	};
 
 	const clock = discovery ? time(discovery.nextRunAt) : "";
-	const note = selecting
-		? t`${i18n.number(today)} found today`
-		: discovery && (discovery.intervalDays ?? 1) === 1
-			? t`${i18n.number(today)} today · role discovery runs daily at ${clock}`
-			: t`${i18n.number(today)} today`;
+	const daily = discovery && (discovery.intervalDays ?? 1) === 1;
+	// No zero count: without roles found today the note only says when discovery runs.
+	const note =
+		today === 0
+			? daily && !selecting
+				? t`Role discovery runs daily at ${clock}`
+				: undefined
+			: selecting
+				? t`${i18n.number(today)} found today`
+				: daily
+					? t`${i18n.number(today)} today · role discovery runs daily at ${clock}`
+					: t`${i18n.number(today)} today`;
 	const all = visible.length > 0 && selection.length === visible.length;
 
 	return (
@@ -801,7 +814,7 @@ function NewRoles({ now, selecting: selectingByDefault, accent }: NewRolesProps)
 					<List>
 						<AnimatePresence initial={false}>
 							{shown.map((row) => (
-								<CollapseRow key={row.id} className="-mx-3 px-3 [&:last-child>*]:border-b-0">
+								<CollapseRow key={row.id} className={COLLAPSE_ROW}>
 									<RoleRow
 										row={row}
 										now={now}

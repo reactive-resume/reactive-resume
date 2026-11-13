@@ -16,7 +16,7 @@ export function PageNavigation({ offset, total, busy, onChange }: PageNavigation
 			<Button
 				variant="secondary"
 				aria-disabled={busy || offset === 0}
-				className="aria-disabled:cursor-not-allowed aria-disabled:text-ink-3"
+				className="aria-disabled:cursor-not-allowed aria-disabled:opacity-45"
 				onClick={() => {
 					if (!busy && offset > 0) onChange(Math.max(0, offset - 100));
 				}}
@@ -32,7 +32,7 @@ export function PageNavigation({ offset, total, busy, onChange }: PageNavigation
 			<Button
 				variant="secondary"
 				aria-disabled={busy || offset + 100 >= total}
-				className="aria-disabled:cursor-not-allowed aria-disabled:text-ink-3"
+				className="aria-disabled:cursor-not-allowed aria-disabled:opacity-45"
 				onClick={() => {
 					if (!busy && offset + 100 < total) onChange(offset + 100);
 				}}

@@ -345,15 +345,15 @@ export function TrashPage({ kind, onKindChange }: TrashPageProps) {
 						<TabsList variant="line" aria-label={t`Show`} className="w-full justify-start">
 							<TabsTrigger value="all">
 								<Trans>All</Trans>
-								{loaded && <TabsCount>{i18n.number(total)}</TabsCount>}
+								{loaded && total > 0 && <TabsCount>{i18n.number(total)}</TabsCount>}
 							</TabsTrigger>
 							<TabsTrigger value="documents">
 								<Trans>Documents</Trans>
-								{loaded && <TabsCount>{i18n.number(totals.documents)}</TabsCount>}
+								{loaded && totals.documents > 0 && <TabsCount>{i18n.number(totals.documents)}</TabsCount>}
 							</TabsTrigger>
 							<TabsTrigger value="applications">
 								<Trans>Applications</Trans>
-								{loaded && <TabsCount>{i18n.number(totals.applications)}</TabsCount>}
+								{loaded && totals.applications > 0 && <TabsCount>{i18n.number(totals.applications)}</TabsCount>}
 							</TabsTrigger>
 						</TabsList>
 					</Tabs>

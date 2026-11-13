@@ -98,7 +98,8 @@ it("lists current registration names, suspends background actions, closes with ?
 	);
 	key(control);
 	const translated = await screen.findByRole("dialog", { name: "Tastenkombinationen" });
-	expect(Array.from(translated.querySelectorAll("dt"), (element) => element.textContent)).toContain("Diese Liste");
+	// Without a page name, the line under the title says what ? does, so ? is not listed again.
+	expect(Array.from(translated.querySelectorAll("dt"), (element) => element.textContent)).not.toContain("Diese Liste");
 });
 
 it("leaves text entry, IME, modifier chords and other overlays alone", () => {
@@ -196,5 +197,7 @@ it("names the page, lists keys that need a focused row under On a row and folds 
 	const rows = within(dialog).getByRole("region", { name: "On a row" });
 	expect(Array.from(rows.querySelectorAll("dt"), (element) => element.textContent)).toEqual(["Move to Saved … Offer"]);
 	expect(rows.querySelector("dd")?.textContent).toBe("1–5");
-	expect(Array.from(dialog.querySelectorAll("dt"), (element) => element.textContent)).toContain("Save a job");
+	const names = Array.from(dialog.querySelectorAll("dt"), (element) => element.textContent);
+	expect(names).toContain("Save a job");
+	expect(names).toContain("This list");
 });

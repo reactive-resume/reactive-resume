@@ -214,6 +214,8 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		resume: displayed?.counts.resume ?? 0,
 		letter: displayed?.counts.letter ?? 0,
 	};
+	// No count at zero, and none while the library loads (it would read 0).
+	const tabCount = (count: number) => (count > 0 ? <TabsCount>{i18n.number(count)}</TabsCount> : null);
 	const hasPublic = displayed?.hasPublic ?? false;
 	// A type tab with nothing of its kind is empty, not filtered: it offers to make one.
 	const emptyType =
@@ -363,15 +365,15 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							<TabsList variant="line" aria-label={t`Document type`} className="w-full justify-start">
 								<TabsTrigger value="all">
 									<Trans>All</Trans>
-									<TabsCount>{i18n.number(counts.all)}</TabsCount>
+									{tabCount(counts.all)}
 								</TabsTrigger>
 								<TabsTrigger value="resume">
 									<Trans>Resumes</Trans>
-									<TabsCount>{i18n.number(counts.resume)}</TabsCount>
+									{tabCount(counts.resume)}
 								</TabsTrigger>
 								<TabsTrigger value="letter">
 									<Trans>Letters</Trans>
-									<TabsCount>{i18n.number(counts.letter)}</TabsCount>
+									{tabCount(counts.letter)}
 								</TabsTrigger>
 							</TabsList>
 						</Tabs>
@@ -811,12 +813,7 @@ function FirstRun({ onFile, trashCount }: FirstRunProps) {
 						<Button variant="secondary" disabled={creating} onClick={() => void startBlank()}>
 							<Trans>Start blank</Trans>
 						</Button>
-						<Button
-							variant="link"
-							disabled={creating}
-							className="text-ink-2 underline underline-offset-2 hover:text-ink pointer-coarse:min-h-11"
-							onClick={() => void trySample()}
-						>
+						<Button variant="ghost" disabled={creating} onClick={() => void trySample()}>
 							<Trans>Try a sample</Trans>
 						</Button>
 					</>
@@ -1009,13 +1006,17 @@ function DocumentsSelectionBar({ selection, total, onSelectAll, onClear, onTags 
 /** The library's shape while it loads: rows or cards at their final size. */
 function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
 	if (view === "list") {
+		// E3 tile 02: 56px rows, a thumb, two text bars and a trailing bar.
 		return (
 			<div className="mt-3 grid" aria-busy="true">
-				<div className="h-8 border-b border-line max-sm:hidden" />
 				{Array.from({ length: 5 }, (_, index) => (
-					<div key={index} className="flex h-16 items-center gap-3.5 border-b border-line sm:h-[61px] sm:ps-[52px]">
-						<Skeleton className="h-11 w-8 rounded-paper" />
-						<Skeleton className="h-4 w-56 max-w-[60%]" />
+					<div key={index} className="flex h-14 items-center gap-3.5 border-b border-line last:border-b-0">
+						<Skeleton className="size-10 shrink-0 rounded-md" />
+						<div className="grid min-w-0 flex-1 gap-2">
+							<Skeleton className="h-3.5 w-48 max-w-[60%]" />
+							<Skeleton className="h-3 w-64 max-w-[80%]" />
+						</div>
+						<Skeleton className="h-3 w-16 shrink-0" />
 					</div>
 				))}
 			</div>
@@ -1080,16 +1081,16 @@ export function DropToImport() {
 		<div
 			aria-hidden={!dragging}
 			className={cn(
-				"pointer-events-none fixed inset-3 z-40 grid place-items-center rounded-2xl border-2 border-dashed border-accent bg-accent-soft/80 transition-[opacity,visibility] ease-enter",
+				"pointer-events-none fixed inset-3 z-40 grid place-items-center rounded-2xl border-2 border-dashed border-accent bg-accent-soft transition-[opacity,visibility] ease-enter",
 				dragging ? "visible opacity-100 duration-standard" : "invisible opacity-0 duration-[calc(var(--d2)*0.7)]",
 			)}
 		>
-			<div className="grid justify-items-center gap-2 text-center">
-				<Icon name="download-simple" size={32} className="text-accent-text" />
-				<p className="text-lg font-semibold">
+			<div className="grid max-w-[30ch] justify-items-center gap-2 text-center">
+				<Icon name="download-simple" size={24} className="text-accent-text" />
+				<p className="text-[20px]/7 font-semibold text-ink">
 					<Trans>Drop to import</Trans>
 				</p>
-				<p className="text-sm text-ink-2">
+				<p className="text-sm/5 text-ink-2">
 					<Trans>PDF, Word or JSON. A resume is built from it.</Trans>
 				</p>
 			</div>

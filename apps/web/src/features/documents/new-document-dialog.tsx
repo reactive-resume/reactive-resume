@@ -308,11 +308,17 @@ function NewDocument({ data, mobileSheet = false }: NewDocumentDialogProps) {
 										}}
 									>
 										<option value="">{t`No job yet`}</option>
-										{jobs.map((application) => (
-											<option key={application.id} value={application.id}>
-												{[application.company, application.role.trim()].filter(Boolean).join(" · ")}
-											</option>
-										))}
+										{jobs.map((application) => {
+											const label = [application.company, application.role.trim()].filter(Boolean).join(" · ");
+											// A job whose letter has gone out can't take another (L3).
+											const sent =
+												Boolean(application.sentCoverLetterVersionId) && application.id !== data?.applicationId;
+											return (
+												<option key={application.id} value={application.id} disabled={sent}>
+													{sent ? t`${label} — Letter already sent` : label}
+												</option>
+											);
+										})}
 									</NativeSelect>
 								</div>
 							</Field>

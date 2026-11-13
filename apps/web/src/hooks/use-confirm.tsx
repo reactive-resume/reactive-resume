@@ -16,9 +16,9 @@ import { cn } from "@reactive-resume/utils/style";
 import { isImeComposing } from "@/libs/keyboard";
 
 type AskOptions = {
-	description?: string;
+	description?: React.ReactNode;
 	confirmText?: string;
-	variant?: "primary" | "danger";
+	variant?: "primary" | "secondary" | "danger";
 	cancelText?: string;
 	/** Prompts only: the text the field starts with. */
 	defaultValue?: string;
@@ -97,9 +97,11 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle className="pe-8">{state.title}</AlertDialogTitle>
-						<AlertDialogDescription className={cn(!state.description && "sr-only")}>
-							{state.description}
-						</AlertDialogDescription>
+						{!state.withInput && (
+							<AlertDialogDescription className={cn(!state.description && "sr-only")}>
+								{state.description}
+							</AlertDialogDescription>
+						)}
 					</AlertDialogHeader>
 
 					{state.withInput && (
@@ -117,12 +119,18 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 						/>
 					)}
 
+					{state.withInput && (
+						<AlertDialogDescription className={cn("t-caption text-ink-3", !state.description && "sr-only")}>
+							{state.description}
+						</AlertDialogDescription>
+					)}
+
 					<AlertDialogFooter>
 						<AlertDialogCancel variant="ghost" onClick={() => answer(null)}>
 							{state.cancelText ?? t`Cancel`}
 						</AlertDialogCancel>
 						<AlertDialogAction
-							variant={state.hold ? "danger" : state.variant}
+							variant={state.hold ? "danger" : (state.variant ?? (state.withInput ? "secondary" : "primary"))}
 							onClick={() => answer(state.withInput ? value : "")}
 						>
 							{state.confirmText ?? t`Confirm`}

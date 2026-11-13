@@ -22,6 +22,8 @@ type ThumbnailResume = { id: string; updatedAt: Date };
 
 type ResumeThumbnailProps = {
 	resume: ThumbnailResume;
+	/** The document as a PDF; by default the resume's own. A letter passes its page (D1 draws letters as pages too). */
+	renderPdf?: (queryClient: QueryClient) => Promise<Blob>;
 };
 
 // In a build this chunk's URL is content-hashed, including the PDF renderer it imports (and, through it, the
@@ -85,7 +87,12 @@ const findLatestThumbnail = (queryClient: QueryClient, resumePrefix: string) => 
 	return latest?.url;
 };
 
-function useResumeThumbnail(resume: ThumbnailResume, size: ResumeThumbnailSize, enabled: boolean): ThumbnailState {
+function useResumeThumbnail(
+	resume: ThumbnailResume,
+	size: ResumeThumbnailSize,
+	enabled: boolean,
+	renderPdf: ResumeThumbnailProps["renderPdf"],
+): ThumbnailState {
 	const queryClient = useQueryClient();
 	const cacheKey = getResumeThumbnailCacheKey(resume.id, resume.updatedAt);
 	const resumePrefix = `${resume.id}:`;
@@ -108,9 +115,15 @@ function useResumeThumbnail(resume: ThumbnailResume, size: ResumeThumbnailSize, 
 			if (stored) return URL.createObjectURL(stored);
 
 			return enqueueThumbnailRender(async () => {
-				const { data } = await queryClient.fetchQuery(orpc.resume.getById.queryOptions({ input: { id: resume.id } }));
+				const pdf = renderPdf
+					? await renderPdf(queryClient)
+					: await queryClient
+							.fetchQuery(orpc.resume.getById.queryOptions({ input: { id: resume.id } }))
+							.then(({ data }) => {
+								signal.throwIfAborted();
+								return createResumePdfBlob(data);
+							});
 				signal.throwIfAborted();
-				const pdf = await createResumePdfBlob(data);
 				const image = await createPdfFirstPageImage(pdf, size, signal);
 				void storeThumbnail(resume.id, version, image);
 				return URL.createObjectURL(image);
@@ -163,11 +176,11 @@ function useResumeThumbnail(resume: ThumbnailResume, size: ResumeThumbnailSize, 
 }
 
 /** The resume's first page, rendered once it scrolls near view and stored on the device until it changes. */
-export function ResumeThumbnail({ resume }: ResumeThumbnailProps) {
+export function ResumeThumbnail({ resume, renderPdf }: ResumeThumbnailProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const isInView = useInView(containerRef, { amount: 0.1, margin: "240px" });
 	const size = useThumbnailSize(containerRef, isInView);
-	const thumbnail = useResumeThumbnail(resume, size, isInView);
+	const thumbnail = useResumeThumbnail(resume, size, isInView, renderPdf);
 
 	return (
 		<div ref={containerRef} className="relative size-full overflow-hidden bg-white">

@@ -114,20 +114,20 @@ function RenameInput({ document, onDone }: { document: DocumentSummary; onDone: 
 }
 
 /**
- * A letter's page: its recipient and opening lines, so several letters can be told apart. The text is the owner's own
- * letter, read only once the card nears the viewport and cached until the letter's content changes (`editedAt`).
+ * A letter's page, rendered as resumes are. Its opening words also go to the screen reader, so two equally named
+ * letters can be told apart: read once the card nears the viewport and cached until the content changes (`editedAt`).
  */
 function LetterThumbnail({ document, descriptionId }: { document: DocumentSummary; descriptionId: string }) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const isInView = useInView(containerRef, { amount: 0.1, margin: "240px" });
 	const options = orpc.coverLetters.getById.queryOptions({ input: { id: document.id } });
-	const letter = useQuery({
+	// A content edit moves `editedAt`, so the preview fetches the new letter instead of showing a stale one.
+	const letterQuery = {
 		...options,
-		// A content edit moves `editedAt`, so the preview fetches the new letter instead of showing a stale one.
 		queryKey: [...options.queryKey, new Date(document.editedAt).getTime()],
-		enabled: document.type === "letter" && isInView,
-		staleTime: "static",
-	});
+		staleTime: "static" as const,
+	};
+	const letter = useQuery({ ...letterQuery, enabled: document.type === "letter" && isInView });
 	const recipient = document.recipient;
 	const greeting = letter.data ? letterGreeting(letter.data.greeting) : null;
 	const lines = letter.data ? letterBodyLines(letter.data.content) : [];
@@ -138,32 +138,14 @@ function LetterThumbnail({ document, descriptionId }: { document: DocumentSummar
 
 	return (
 		<>
-			<div ref={containerRef} aria-hidden="true" className="flex size-full flex-col gap-1 bg-white p-[14%] text-[0]">
-				<span className="h-1.5 w-2/5 rounded-sm bg-[#c9c9c9]" />
-				{recipient ? (
-					<span className="truncate text-[10px] leading-4 font-semibold text-[#3a3a3a]">{recipient}</span>
-				) : null}
-				{greeting ? <span className="truncate text-[9px] leading-3 text-[#3a3a3a]">{greeting}</span> : null}
-				{lines.length > 0 ? (
-					lines.map((line, index) => (
-						<span key={`${index}-${line}`} className="line-clamp-2 text-[9px] leading-3 text-[#6d6d6d]">
-							{line}
-						</span>
-					))
-				) : letter.isError ? (
-					<span className="truncate text-[9px] leading-3 text-[#9a9a9a]">
-						<Trans>Preview unavailable</Trans>
-					</span>
-				) : empty ? (
-					<span className="truncate text-[9px] leading-3 text-[#9a9a9a]">
-						<Trans>Empty letter</Trans>
-					</span>
-				) : letter.isSuccess ? null : (
-					// Loading: keep the page's shape rather than an empty frame.
-					Array.from({ length: 7 }, (_, index) => (
-						<span key={index} className={cn("h-1 rounded-sm bg-[#e6e6e6]", index % 3 === 2 ? "w-4/5" : "w-full")} />
-					))
-				)}
+			<div ref={containerRef} aria-hidden="true" className="size-full">
+				<ResumeThumbnail
+					resume={document}
+					renderPdf={async (queryClient) => {
+						const { createLetterFile } = await import("@/features/letters/export");
+						return createLetterFile(await queryClient.fetchQuery(letterQuery), "pdf");
+					}}
+				/>
 			</div>
 			{/* Outside the aria-hidden page: the link's accessible name stays the document name, and this reads the
 			    letter's own opening words so two equally named letters remain distinguishable. */}

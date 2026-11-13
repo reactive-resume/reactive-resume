@@ -21,7 +21,7 @@ import { showKeyboardShortcuts, useShortcutHelp } from "./store";
 /** The `?` shortcut and its dialog. The sidebar's Shortcuts row and the command palette open the same list. */
 export function KeyboardShortcuts() {
 	const { t } = useLingui();
-	const { shortcuts, opener, page, close } = useShortcutHelp();
+	const { shortcuts, opener, page, description, close } = useShortcutHelp();
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const scope = useId();
 	useHotkey(
@@ -49,7 +49,13 @@ export function KeyboardShortcuts() {
 		>
 			{shortcuts !== null && (
 				<HotkeysProvider scope={scope} exclusive>
-					<ShortcutContent shortcuts={shortcuts} page={page} onClose={close} opener={opener} />
+					<ShortcutContent
+						shortcuts={shortcuts}
+						page={page}
+						description={description}
+						onClose={close}
+						opener={opener}
+					/>
 				</HotkeysProvider>
 			)}
 		</Dialog>
@@ -59,11 +65,12 @@ export function KeyboardShortcuts() {
 type ShortcutContentProps = {
 	shortcuts: HotkeyRegistrationView[];
 	page: string | null;
+	description: string | null;
 	onClose: () => void;
 	opener: HTMLElement | null;
 };
 
-function ShortcutContent({ shortcuts, page, onClose, opener }: ShortcutContentProps) {
+function ShortcutContent({ shortcuts, page, description, onClose, opener }: ShortcutContentProps) {
 	const { t } = useLingui();
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	useHotkey(
@@ -73,7 +80,8 @@ function ShortcutContent({ shortcuts, page, onClose, opener }: ShortcutContentPr
 		},
 		{ enabled: characterShortcuts, requireReset: true },
 	);
-	const groups = groupShortcuts(shortcuts);
+	// A page that names itself lists ? as "This list"; otherwise the line under the title says what ? does.
+	const groups = groupShortcuts(page ? shortcuts : shortcuts.filter((shortcut) => shortcut.hotkey !== "?"));
 	const rowId = useId();
 	return (
 		<DialogContent
@@ -87,11 +95,14 @@ function ShortcutContent({ shortcuts, page, onClose, opener }: ShortcutContentPr
 		>
 			<DialogHeader className="gap-1.5">
 				<DialogTitle>{page ? <Trans>Shortcuts on {page}</Trans> : <Trans>Keyboard shortcuts</Trans>}</DialogTitle>
-				<DialogDescription>
-					<Trans>
-						<Kbd>?</Kbd> opens this list on any page.
-					</Trans>
-				</DialogDescription>
+				{!page && (
+					<DialogDescription>
+						{description && <>{description} </>}
+						<Trans>
+							<Kbd>?</Kbd> opens this list on any page.
+						</Trans>
+					</DialogDescription>
+				)}
 			</DialogHeader>
 			{/* One group reads in two columns, down then across, so related keys (the editor's 1 to 4) stay together. */}
 			<ShortcutList lines={groups.page} columns={groups.row.length === 0} />

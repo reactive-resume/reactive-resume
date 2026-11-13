@@ -72,6 +72,10 @@ function renderCard(document: DocumentSummary, { inView = true }: { inView?: boo
 	return { ...view, update: (next: DocumentSummary) => view.rerender(tree(next)) };
 }
 
+const description = () =>
+	document.getElementById(screen.getByRole("link", { name: "Untitled letter" }).getAttribute("aria-describedby") ?? "")
+		?.textContent;
+
 it("previews a letter's recipient, greeting and opening lines", async () => {
 	letters.load.mockResolvedValue({
 		greeting: "Dear Dana,",
@@ -80,20 +84,17 @@ it("previews a letter's recipient, greeting and opening lines", async () => {
 
 	renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
 
-	expect(await screen.findByText("Dear Dana,")).toBeTruthy();
-	expect(screen.getByText("I am writing about the staff engineer role.")).toBeTruthy();
-	expect(screen.getByText("Northwind Labs")).toBeTruthy();
+	// The page itself is the rendered PDF; its words reach the link's description.
+	await waitFor(() =>
+		expect(description()).toBe("Northwind Labs. Dear Dana, I am writing about the staff engineer role."),
+	);
 });
 
 it("shows a failed preview instead of an endless loading placeholder", async () => {
 	letters.load.mockRejectedValue(new Error("preview failed"));
 	renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
 
-	expect(await screen.findByText("Preview unavailable")).toBeTruthy();
-	const link = screen.getByRole("link", { name: "Untitled letter" });
-	expect(document.getElementById(link.getAttribute("aria-describedby") ?? "")?.textContent).toBe(
-		"Northwind Labs. Preview unavailable",
-	);
+	await waitFor(() => expect(description()).toBe("Northwind Labs. Preview unavailable"));
 });
 
 it("does not fetch letter content while the card is offscreen", () => {
@@ -106,11 +107,11 @@ it("does not fetch letter content while the card is offscreen", () => {
 it("fetches a new preview after the letter's content edit", async () => {
 	letters.load.mockResolvedValue({ greeting: null, content: "<p>First version.</p>" });
 	const view = renderCard(letter(new Date("2026-10-19T00:00:00.000Z")));
-	expect(await screen.findByText("First version.")).toBeTruthy();
+	await waitFor(() => expect(description()).toBe("Northwind Labs. First version."));
 
 	letters.load.mockResolvedValue({ greeting: null, content: "<p>Second version.</p>" });
 	view.update(letter(new Date("2026-10-20T00:00:00.000Z")));
 
-	expect(await screen.findByText("Second version.")).toBeTruthy();
+	await waitFor(() => expect(description()).toBe("Northwind Labs. Second version."));
 	await waitFor(() => expect(letters.load).toHaveBeenCalledTimes(2));
 });

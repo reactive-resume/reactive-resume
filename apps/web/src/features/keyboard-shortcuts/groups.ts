@@ -50,7 +50,8 @@ export function groupShortcuts(shortcuts: HotkeyRegistrationView[]): ShortcutGro
 	const row: ShortcutLine[] = [];
 	for (const shortcut of shortcuts) {
 		const name = shortcut.options.meta?.name;
-		if (!name) continue;
+		// Sequences (the shell's N R, N L, N J) are listed with Create in the command palette, not per page.
+		if (!name || shortcut.kind === "sequence") continue;
 		const onRow =
 			shortcut.options.meta?.group === ROW_GROUP ||
 			(typeof HTMLAnchorElement !== "undefined" && shortcut.target instanceof HTMLAnchorElement);
