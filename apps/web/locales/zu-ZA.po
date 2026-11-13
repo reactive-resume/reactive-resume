@@ -1507,6 +1507,10 @@ msgstr ""
 msgid "{label} is off or was removed. Choose the connection this conversation uses next."
 msgstr ""
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "{label} moved to position {position} of {total}"
+msgstr ""
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "{lateDays, plural, one {# day overdue} other {# days overdue}}"
 msgstr ""
@@ -2534,11 +2538,6 @@ msgstr ""
 msgid "Add “{0}”"
 msgstr ""
 
-#. placeholder {0}: lane.label
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "Add “{0}” as a new stage"
-msgstr ""
-
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Add “Ghosted” (closed, no response)"
 msgstr ""
@@ -2722,6 +2721,10 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Add application"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Add as a new stage"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -7670,7 +7673,7 @@ msgstr ""
 
 #. placeholder {0}: application.company
 #. placeholder {1}: application.role
-#. placeholder {2}: connection?.label ?? ""
+#. placeholder {2}: [connection?.label, connection?.model].filter(Boolean).join(" · ")
 #: src/features/career/workspace/prepare-review.tsx
 msgid "Drafts for {0} · {1}, made by {2}. Nothing is sent to the employer."
 msgstr ""
@@ -7783,6 +7786,7 @@ msgstr ""
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/workspace/answer-library.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/entry-row.tsx
@@ -9710,6 +9714,11 @@ msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "I removed employer-specific wording and reviewed reuse across employers."
+msgstr ""
+
+#. placeholder {0}: selected.employer
+#: src/features/career/workspace/answer-library.tsx
+msgid "I removed wording about {0} and checked every claim."
 msgstr ""
 
 #: src/features/career/workspace/application-packet.tsx
@@ -13898,6 +13907,7 @@ msgid "Opens on your name and contact details. Nothing to fill in first."
 msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/prepare-review.tsx
 msgid "optional"
 msgstr ""
 
@@ -15241,7 +15251,7 @@ msgid "Questions copied. Paste them into your message to {company}."
 msgstr ""
 
 #: src/features/career/workspace/prepare-review.tsx
-msgid "Questions from the employer's form · optional"
+msgid "Questions from the employer's form"
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -16133,6 +16143,11 @@ msgstr ""
 #. placeholder {0}: format(offer.data.respondBy, { weekday: "short", day: "numeric", month: "short" })
 #: src/features/career/career-page.tsx
 msgid "reply by {0}"
+msgstr ""
+
+#. placeholder {0}: time.day(offer.data.respondBy)
+#: src/features/career/workspace/messages.tsx
+msgid "Reply by {0}"
 msgstr ""
 
 #: src/features/career/offers.tsx
@@ -17736,7 +17751,7 @@ msgstr ""
 
 #. placeholder {0}: connection.label
 #: src/features/career/workspace/prepare-review.tsx
-msgid "Sends the posting, your linked resume and Knowledge to {0}. Your provider may charge."
+msgid "Sends the posting, your linked resume and Knowledge that's switched on to {0}. Your provider may charge."
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -17835,6 +17850,10 @@ msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Set a password to turn on two-step verification."
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Set by you"
 msgstr ""
 
 #. Primary action button to add a password to an account without one
@@ -19641,7 +19660,7 @@ msgid "The briefing always appears in Today."
 msgstr ""
 
 #: src/features/career/workspace/application-packet.tsx
-msgid "The browser helper can fill plain form fields from the packet file. It is experimental: sign-in steps, captchas, custom controls and sensitive questions stay with you. Use the PDF downloads and copyable answers for forms it cannot fill."
+msgid "The browser helper can fill plain form fields from the packet file. It is experimental: sign-in steps, captchas, custom controls and sensitive questions stay with you."
 msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
@@ -22814,6 +22833,12 @@ msgstr ""
 #: src/features/career/offer-entry.tsx
 msgctxt "Offer type: an offer made in writing"
 msgid "Written"
+msgstr ""
+
+#. placeholder {0}: selected.employer
+#. placeholder {1}: i18n.date(selected.createdAt, { day: "numeric", month: "short" })
+#: src/features/career/workspace/answer-library.tsx
+msgid "Written for {0} on {1}. Saving sends nothing to AI and doesn't change Knowledge."
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
