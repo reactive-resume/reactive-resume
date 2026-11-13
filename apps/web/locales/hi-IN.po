@@ -464,6 +464,11 @@ msgstr "{0, plural, one {# दिन पहले आवेदन किया} 
 msgid "{0, plural, one {Backed by # fact in your Knowledge} other {Backed by # facts in your Knowledge}}"
 msgstr ""
 
+#. placeholder {0}: item.answer.factIds.length
+#: src/features/career/workspace/prepare-review.tsx
+msgid "{0, plural, one {Backed by # fact} other {Backed by # facts}}"
+msgstr ""
+
 #. placeholder {0}: issues.count
 #: src/features/resume/share/download-menu.tsx
 msgid "{0, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
@@ -679,11 +684,6 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{0} · key {1}"
 msgstr "{0} · कुंजी {1}"
-
-#. placeholder {0}: application.role
-#: src/features/documents/document-actions.tsx
-msgid "{0} · letter already sent"
-msgstr ""
 
 #. placeholder {0}: roles.length
 #: src/features/resume/editor/write/entries.tsx
@@ -2177,6 +2177,10 @@ msgstr "एक तथ्य जिसे भुलाने के लिए आ
 msgid "A file exported from this app, version 4 included. Comes in exactly as it is."
 msgstr ""
 
+#: src/features/career/workspace/preparation.tsx
+msgid "A file is a PDF up to 10 MB that you wrote elsewhere."
+msgstr ""
+
 #: src/features/career/workspace/fit-local.tsx
 #: src/features/career/workspace/fit.tsx
 msgid "A fit check needs AI."
@@ -3405,6 +3409,7 @@ msgstr "Apple"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/command-palette/pages/resumes.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Application"
@@ -3819,6 +3824,7 @@ msgstr "कवर लेटर फ़ाइल संलग्न करें (
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Attach a file"
 msgstr "दस्तावेज संलग्न करें"
 
@@ -3967,6 +3973,7 @@ msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/homepage/remember.tsx
 msgid "Backed by"
 msgstr "इन पर आधारित"
@@ -4943,6 +4950,10 @@ msgstr "मॉडल चुनें"
 msgid "Choose up to 200 applications per bulk action."
 msgstr "प्रति थोक कार्रवाई 200 आवेदन तक चुनें।"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Choose what this stage counts as"
+msgstr ""
+
 #: src/features/assistant/connection-notice.tsx
 msgid "Choose…"
 msgstr "चुनें…"
@@ -5085,7 +5096,6 @@ msgstr ""
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/resume/editor/chrome/panel.tsx
-#: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/resume/share/feedback-links.tsx
@@ -6594,6 +6604,7 @@ msgstr "देशों"
 msgid "Countries to search"
 msgstr "खोजने के लिए देश"
 
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Counts as"
 msgstr "के रूप में गिना जाएगा"
@@ -6660,6 +6671,7 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/apply.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Cover letter file"
 msgstr "कवर लेटर फ़ाइल"
 
@@ -7460,6 +7472,7 @@ msgstr ""
 #: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/today.tsx
 #: src/features/career/workspace/prepare-review.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/account/backup-codes.tsx
@@ -7494,10 +7507,13 @@ msgid "Download {name} sample PDF"
 msgstr "{name} नमूना PDF डाउनलोड करें"
 
 #: src/features/resume/editor/chrome/download-sheet.tsx
-#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Download & history"
 msgstr "डाउनलोड और इतिहास"
+
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+msgid "Download and history"
+msgstr ""
 
 #. placeholder {0}: document.name
 #: src/features/career/workspace/application-packet.tsx
@@ -7769,7 +7785,6 @@ msgstr "दोबारा भेजने पर इस बातचीत क�
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/workspace/answer-library.tsx
-#: src/features/career/workspace/messages.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/entry-row.tsx
@@ -7935,10 +7950,6 @@ msgstr "ईमेल संपादित करें"
 msgid "Edit the link"
 msgstr "लिंक संपादित करें"
 
-#: src/features/career/workspace/messages.tsx
-msgid "Edit the reply-by date"
-msgstr ""
-
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Edit this interview…"
 msgstr "इस साक्षात्कार को संपादित करें..."
@@ -7992,6 +8003,10 @@ msgstr "संपादक के विचार"
 #: src/features/homepage/sheet.tsx
 msgid "Editorial"
 msgstr "संपादकीय"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Edits go to a copy, never to this resume."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -8711,6 +8726,10 @@ msgstr ""
 #: src/features/career/workspace/fit.tsx
 msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
 msgstr "फ़िट जाँच को साक्ष्य चाहिए। अनुरोध भेजने से पहले ज्ञानकोश में तथ्य जोड़ें या लिंक करने के लिए कोई रेज़्यूमे चुनें।"
+
+#: src/features/resume/editor/chrome.tsx
+msgid "Fit page to width"
+msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Fit page to window"
@@ -9891,10 +9910,6 @@ msgstr ""
 msgid "Import the resume you have and every section is laid out for you to refine, or start from a blank page. Drop a PDF, Word or JSON file anywhere here."
 msgstr ""
 
-#: src/features/career/workspace/application-packet.tsx
-msgid "Import this file into the browser helper, review the destination and fill report. Unsupported forms use exact PDF downloads and copyable answers below. Native browser integration requires its own verified build."
-msgstr "इस फ़ाइल को ब्राउज़र हेल्पर में इंपोर्ट करें, गंतव्य और भरने की रिपोर्ट की समीक्षा करें। असमर्थित फ़ॉर्म नीचे दिए सटीक PDF डाउनलोड और कॉपी करने योग्य उत्तरों का उपयोग करते हैं। नेटिव ब्राउज़र एकीकरण के लिए उसका अपना सत्यापित बिल्ड चाहिए।"
-
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/documents/import/import-page.tsx
 #: src/features/resume/share/format.ts
@@ -10600,10 +10615,6 @@ msgstr "कीबोर्ड शॉर्टकट"
 msgid "Keys act as you with the access you choose. New keys start read-only."
 msgstr "कुंजियाँ आपकी चुनी हुई पहुँच के साथ आपकी ओर से काम करती हैं। नई कुंजियाँ शुरुआत में केवल पढ़ने की अनुमति देती हैं।"
 
-#: src/features/keyboard-shortcuts/character-shortcuts.tsx
-msgid "Keys such as ?, N, / and 1 to 4 work outside text fields. Turn this off if you use speech input."
-msgstr ""
-
 #: src/features/settings/preferences.tsx
 msgid "Keys such as <0>?</0> <1>N</1> <2>/</2> and <3>1</3>–<4>4</4> for the editor's modes, outside text fields. Turn off if you use speech input."
 msgstr ""
@@ -10949,6 +10960,7 @@ msgctxt "US Letter paper size (8.5 × 11 in), shown beside A4"
 msgid "Letter"
 msgstr "US Letter"
 
+#: src/features/documents/document-actions.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter already sent"
 msgstr "कवर लेटर पहले भेजा जा चुका है"
@@ -11177,11 +11189,6 @@ msgstr "लिंक बंद कर दिया गया. पता रख�
 #: src/features/resume/editor/check/issues.ts
 msgid "Link updated"
 msgstr "लिंक अपडेट किया गया"
-
-#. Marks the application a document is already linked to
-#: src/features/documents/document-actions.tsx
-msgid "Linked"
-msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Linked · not sent yet"
@@ -12613,6 +12620,10 @@ msgstr "कोई देश नहीं मिला."
 msgid "No cover letter selected"
 msgstr "कोई कवर लेटर नहीं चुना गया"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "No cover letter yet"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr "अभी तक कोई कवर लेटर नहीं"
@@ -13213,10 +13224,6 @@ msgstr "टिप्पणियाँ"
 
 #: src/features/career/offers.tsx
 msgid "Nothing changed between these versions."
-msgstr ""
-
-#: src/features/assistant/assistant-panel.tsx
-msgid "Nothing changes until you accept an edit."
 msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
@@ -13896,6 +13903,7 @@ msgstr ""
 msgid "optional"
 msgstr ""
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/write/entries.tsx
 msgid "Optional"
 msgstr ""
@@ -14103,6 +14111,10 @@ msgid "Page {page} of {pages} · {formatLabel}"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Page {page} of {pages} · {formatLabel} · fits the width"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page {page} of {pages} · {formatLabel} · read-only"
 msgstr ""
 
@@ -14157,6 +14169,10 @@ msgstr "पेज पढ़ना ख़त्म नहीं हुआ."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page removed. Its sections are kept."
+msgstr ""
+
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "Page shows the result. Tap a block there to edit it."
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -14737,11 +14753,11 @@ msgstr "अपने परिचय का एक बार अभ्यास 
 
 #. placeholder {0}: time.date(practice.createdAt)
 #: src/features/career/workspace/overview.tsx
-msgid "Practised {0}"
+msgid "Practiced {0}"
 msgstr ""
 
 #: src/features/career/workspace/overview.tsx
-msgid "Practised today"
+msgid "Practiced today"
 msgstr ""
 
 #. placeholder {0}: selectedStory.data.title
@@ -14749,18 +14765,18 @@ msgstr ""
 #. placeholder {2}: interviewTypeLabel(interview.kind).toLocaleLowerCase(time.locale)
 #. placeholder {3}: application.company
 #: src/features/career/workspace/practise.tsx
-msgid "Practising your story “{0}” for {1}'s {2} interview. The question is simulated, not from {3}."
+msgid "Practicing your story “{0}” for {1}'s {2} interview. The question is simulated, not from {3}."
 msgstr ""
 
 #. placeholder {0}: selectedStory.data.title
 #. placeholder {1}: application.company
 #: src/features/career/workspace/practise.tsx
-msgid "Practising your story “{0}”. The question is simulated, not from {1}."
+msgid "Practicing your story “{0}”. The question is simulated, not from {1}."
 msgstr ""
 
 #. placeholder {0}: selectedStory.data.title
 #: src/features/career/workspace/practise.tsx
-msgid "Practising your story “{0}”. The question is simulated."
+msgid "Practicing your story “{0}”. The question is simulated."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -15331,10 +15347,6 @@ msgstr "एक संदेश से पढ़ा गया"
 #: src/features/career/offers.tsx
 msgid "Read from a message, edited by you"
 msgstr "एक संदेश से पढ़ा गया, आपके द्वारा संपादित"
-
-#: src/features/career/workspace/messages.tsx
-msgid "Read from their message"
-msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read it"
@@ -16062,6 +16074,10 @@ msgstr "नाम बदलें..."
 msgid "Reopen"
 msgstr "फिर से खोलना"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Reorder {label}"
+msgstr ""
+
 #. An entry's drag handle in a resume section
 #: src/features/resume/editor/write/entry-row.tsx
 msgid "Reorder {name}. Drag, or press Option and an arrow key"
@@ -16121,11 +16137,6 @@ msgstr "उत्तर"
 msgid "reply by {0}"
 msgstr ""
 
-#. placeholder {0}: time.format(offer.data.respondBy, { weekday: "short", day: "numeric", month: "short" })
-#: src/features/career/workspace/messages.tsx
-msgid "Reply by {0}"
-msgstr ""
-
 #: src/features/career/offers.tsx
 msgid "Reply by {day} · {relative}"
 msgstr ""
@@ -16149,6 +16160,10 @@ msgstr "जवाब कॉपी किया गया। नौकरी क�
 #: src/features/career/workspace/messages.tsx
 msgid "Reply copied. Nothing was logged. Review the application before logging again."
 msgstr "जवाब कॉपी हुआ। कुछ भी दर्ज नहीं हुआ। फिर से दर्ज करने से पहले आवेदन की समीक्षा करें।"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Reply language"
+msgstr ""
 
 #. placeholder {0}: item.application.company
 #: src/features/career/career-page.tsx
@@ -16621,10 +16636,6 @@ msgstr "तैयारी की समीक्षा करें और अ�
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Review saved version"
 msgstr "सहेजे गए संस्करण की समीक्षा करें"
-
-#: src/features/career/workspace/prepare-review.tsx
-msgid "Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer."
-msgstr "अनुकूलन सुझावों, पत्र और जवाबों की एक साथ समीक्षा करें। नियोक्ता को कुछ नहीं भेजा जाता।"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Review the form answers and remove anything you can't support"
@@ -17412,7 +17423,7 @@ msgid "Search for an icon"
 msgstr "किसी आइकॉन के लिए खोजें"
 
 #: src/features/command-palette/index.tsx
-msgid "Search or jump"
+msgid "Search or jump to"
 msgstr ""
 
 #: src/components/layout/phone-header-actions.tsx
@@ -17827,10 +17838,6 @@ msgstr "एक पासवर्ड सेट करें"
 #: src/features/settings/account/security.tsx
 msgid "Set a password to turn on two-step verification."
 msgstr "दो चरणों वाला सत्यापन चालू करने के लिए पासवर्ड सेट करें।"
-
-#: src/features/career/workspace/messages.tsx
-msgid "Set by you"
-msgstr ""
 
 #. Primary action button to add a password to an account without one
 #: src/dialogs/auth/set-password.tsx
@@ -18340,10 +18347,6 @@ msgstr ""
 msgid "Since today"
 msgstr "आज से"
 
-#: src/features/keyboard-shortcuts/character-shortcuts.tsx
-msgid "Single-character shortcuts"
-msgstr "एक-अक्षर वाले शॉर्टकट"
-
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
 msgstr "जापानी रिरेकिशो बायोडाटा से प्रेरित एक सिंगल-कॉलम फॉर्म: बॉर्डर वाले फ़ील्ड से बना एक हेडर, और प्रत्येक अनुभाग को एक ठोस शीर्षक बार के साथ एक तालिका के रूप में प्रस्तुत किया जाता है। कॉम्पैक्ट और स्कैन करने में आसान, जापान में इंजीनियरिंग नौकरियों, संचालन नौकरियों या नौकरी आवेदनों के लिए उपयुक्त।"
@@ -18376,6 +18379,7 @@ msgstr "एक कॉलम, जिसमें बड़े अक्षरो�
 msgid "Single-column; polished and serious for senior or enterprise-level positions."
 msgstr "सिंगल‑कॉलम; वरिष्ठ या एंटरप्राइज़‑स्तरीय पदों के लिए परिष्कृत और गंभीर।"
 
+#: src/features/keyboard-shortcuts/character-shortcuts.tsx
 #: src/features/settings/preferences.tsx
 msgid "Single-key shortcuts"
 msgstr ""
@@ -19600,6 +19604,10 @@ msgstr "ऐप को स्वयंसेवकों द्वारा {lang
 msgid "The application that sent you here made an invalid authorization request."
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+msgid "The application this document is for."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "The application's posting, your notes and the documents linked to it"
 msgstr ""
@@ -19632,6 +19640,10 @@ msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The briefing always appears in Today."
+msgstr ""
+
+#: src/features/career/workspace/application-packet.tsx
+msgid "The browser helper can fill plain form fields from the packet file. It is experimental: sign-in steps, captchas, custom controls and sensitive questions stay with you. Use the PDF downloads and copyable answers for forms it cannot fill."
 msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
@@ -19759,14 +19771,6 @@ msgstr "अभिवादन नाम के अनुसार होता �
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "The greeting follows the recipient's name. Clear either one to leave it out; clearing the sign-off also removes your name under it."
-msgstr ""
-
-#: src/features/documents/document-actions.tsx
-msgid "The job this letter is for. Choosing one links it and closes."
-msgstr ""
-
-#: src/features/documents/document-actions.tsx
-msgid "The job this resume is for. Choosing one links it and closes."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -20000,6 +20004,10 @@ msgstr ""
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "बायोडाटा ज्यों का त्यों है"
+
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+msgid "The resume editor."
+msgstr ""
 
 #: src/features/career/workspace/fit-local.tsx
 msgid "The resume linked to this job"
@@ -20871,6 +20879,10 @@ msgstr ""
 msgid "Track a job you're applying to and link the resume you sent."
 msgstr "जिस नौकरी के लिए आप आवेदन कर रहे हैं उसे ट्रैक करें और भेजा गया रेज़्यूमे लिंक करें।"
 
+#: src/features/applications/components/insights-view.tsx
+msgid "Tracked using Reactive Resume"
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "ट्रैकिंग"
@@ -20909,7 +20921,7 @@ msgid "Translate the app"
 msgstr "ऐप का अनुवाद करें"
 
 #: src/features/assistant/translate-resume.tsx
-msgid "Translate this resume into {language}. Keep names, dates, figures, meaning and facts. Leave hidden content unchanged. Propose every visible field as one complete set for review; no tailoring."
+msgid "Translate this resume into {language}. Keep names, dates and numbers as they are."
 msgstr ""
 
 #: src/features/homepage/sections.tsx
@@ -21043,6 +21055,10 @@ msgstr "बंद करें"
 #: src/features/ats-checker/messages.ts
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "एक्सपोर्ट करते समय वैकल्पिक लिगेचर बंद करें।"
+
+#: src/features/keyboard-shortcuts/character-shortcuts.tsx
+msgid "Turn off if you use speech input. Shortcuts with ⌘ keep working."
+msgstr ""
 
 #: src/features/resume/share/feedback-links.tsx
 msgid "Turn off link…"
@@ -21513,10 +21529,12 @@ msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "A4 या US Letter इस्तेमाल करें ताकि दोबारा रेंडर होने पर भी लेआउट बना रहे।"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Use an existing letter"
 msgstr "मौजूदा कवर लेटर का उपयोग करें"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Use an existing letter…"
 msgstr "मौजूदा कवर लेटर का उपयोग करें…"
 
@@ -22099,6 +22117,11 @@ msgstr ""
 msgid "Went well"
 msgstr "अच्छा रहा"
 
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "What {0} counts as"
+msgstr ""
+
 #. placeholder {0}: version.name
 #: src/features/resume/share/format.ts
 msgid "what {0} received"
@@ -22185,13 +22208,10 @@ msgstr ""
 msgid "What goes in it?"
 msgstr "इसमें क्या जाता है?"
 
+#: src/features/career/career-page.tsx
 #: src/features/career/coach.tsx
 msgid "What interview answers should I practice?"
 msgstr "मुझे साक्षात्कार के किन जवाबों का अभ्यास करना चाहिए?"
-
-#: src/features/career/career-page.tsx
-msgid "What interview answers should I practise?"
-msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "What is the base salary, and is it negotiable?"
