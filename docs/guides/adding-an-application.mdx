@@ -11,12 +11,12 @@ Saving a job and preparing a resume manually work without an AI connection or an
 
 <Steps>
   <Step title="Open the Save a job dialog">
-    In **Applications**, select **Save job**. You can also press <kbd>⌘</kbd> <kbd>K</kbd> (<kbd>Ctrl</kbd> <kbd>K</kbd>{" "}
+    In **Applications**, select **Save a job**. You can also press <kbd>⌘</kbd> <kbd>K</kbd> (<kbd>Ctrl</kbd> <kbd>K</kbd>{" "}
     on Windows and Linux) and run **Save job**.
   </Step>
   <Step title="Paste the job link or posting">
-    Paste into **Job link or posting text**. A single web address counts as a link; anything else counts as posting
-    text. Select **Read posting** to retrieve a link's text and any available job details. Reading starts only when you
+    Use **Link or posting text**. Enter a URL under **Job link**, or use **Or paste the posting text**. A single web address counts as a link; anything else counts as posting
+    text. Select **Read it** to retrieve a link's text and any available job details. Reading starts only when you
     select the button; you can also save the link without reading it. If you close the dialog before saving, what you
     pasted and what was read are still there when you open it again in the same tab.
 
@@ -31,17 +31,10 @@ Saving a job and preparing a resume manually work without an AI connection or an
     for** lists the requirements it found.
   </Step>
   <Step title="Pick a stage">
-    **Saved** is the default. Choose **Already applied** or **Already interviewing** only if that happened, then confirm
-    the application date and select any documents you actually submitted. Your own Saved, Applied and Interview stages
-    appear here too. If you applied to the same company before and never heard back, those applications are listed as a
-    reminder; you can still save.
+    **Saved** is the default. Choose **Applied** only if you already submitted; you will be asked which resume and letter you sent. If earlier applications to this company never received a reply, the form lists them as a reminder.
   </Step>
   <Step title="Add it">
-    Select **Save job** to open its details, or **Record application** when recording a submission. For a saved job,
-    **Resume** starts on your most recently edited resume that isn't a copy for another job. With a resume chosen,
-    **Save and prepare resume** makes a copy for this job, named from the resume and the company, and opens it; your
-    original stays unchanged. With **No resume selected**, it opens the copy step instead. See [Tailoring a resume for a
-    job](/guides/tailoring-a-resume-for-a-job).
+    Select **Save job** to open the application page. Choose **Apply** under **Work on it** to prepare documents. Copy a base resume for this job there to keep the original unchanged. See [Tailoring a resume for a job](/guides/tailoring-a-resume-for-a-job).
   </Step>
 </Steps>
 
@@ -70,7 +63,7 @@ On Android and iPhone, **Applications → Save job** opens the same preparation 
 
 ## Capture from your browser
 
-In **Save a job**, select **Download browser helper**. Unzip the download, open `chrome://extensions` (or `edge://extensions`), enable **Developer mode**, choose **Load unpacked**, and select the unzipped folder. This helper supports current desktop Chrome and Edge. Other browsers, restricted pages, and embedded frames can use URL or pasted-text import.
+In **Save a job**, follow the **browser helper** link in the capture guidance. Unzip the download, open `chrome://extensions` (or `edge://extensions`), enable **Developer mode**, choose **Load unpacked**, and select the unzipped folder. This helper supports current desktop Chrome and Edge. Other browsers, restricted pages, and embedded frames can use URL or pasted-text import.
 
 Open the helper and **Connect** your installation origin, such as `https://rxresu.me` or `https://resume.example.org`. It stores only that origin. Sign in inside the installation itself; never paste API keys, browser cookies or passwords into the helper. Self-hosted installations need HTTPS; HTTP localhost is allowed for development.
 
@@ -89,7 +82,7 @@ Choose **Disconnect** in the helper to remove its installation setting. Reconnec
 
 ## Import a mobile share
 
-In the current native iOS or Android app, connect to your installation using the existing **Another server** sign-in flow. Use the browser's **Share** action and select **Reactive Resume**. Share one URL or the posting text you deliberately selected. On iOS, choose **Keep for review, then reopen app**, return to your Home Screen, and reopen Reactive Resume yourself within 15 minutes. The Share extension finishes normally; it does not launch the app. Open the app and sign in before sharing; after a day without opening it, open it again before sharing. On Android, selecting Reactive Resume opens the review directly. Review the destination installation and imported text; use **Read posting** for a public URL or fill missing fields manually. Save only after correcting the details. Duplicate controls work as above. If the duplicate check is unavailable on an older self-hosted server, saving remains available. Check Applications manually before saving or upgrade the server to enable duplicate detection.
+In the current native iOS or Android app, connect to your installation using the existing **Another server** sign-in flow. Use the browser's **Share** action and select **Reactive Resume**. Share one URL or the posting text you deliberately selected. On iOS, choose **Keep for review, then reopen app**, return to your Home Screen, and reopen Reactive Resume yourself within 15 minutes. The Share extension finishes normally; it does not launch the app. Open the app and sign in before sharing; after a day without opening it, open it again before sharing. On Android, selecting Reactive Resume opens the review directly. Review the destination installation and imported text; use **Read it** for a public URL or fill missing fields manually. Save only after correcting the details. Duplicate controls work as above. If the duplicate check is unavailable on an older self-hosted server, saving remains available. Check Applications manually before saving or upgrade the server to enable duplicate detection.
 
 Mobile browsers choose what their share sheet exposes. Many send only a URL, without the page title, description or signed-in page contents. The app receives only the shared payload; it cannot read the browser's session. For a session-only posting, select and share its text, or paste it into **Applications → Save job**. Files and multiple postings are unsupported. A new store build is required for the native receive target; older binaries retain URL/paste import.
 
@@ -97,11 +90,11 @@ Switching server or signing out disconnects the native app through its existing 
 
 ## Find a posting with keyword search
 
-If search is available on your installation, the **Save a job** dialog also shows **Search job postings**. Search needs a configured **Web access** connection or server-provided search; an AI provider alone does not enable it. Check **Settings → AI & developer → Web access**, or ask your administrator if the server provides search. You can always paste a link or posting instead.
+If search is available on your installation, the **Save a job** dialog also shows **Search postings**. Search needs a configured **Web access** connection or server-provided search; an AI provider alone does not enable it. Check **Settings → AI → Web access**, or ask your administrator if the server provides search. You can always paste a link or posting instead.
 
 <Steps>
   <Step title="Search for a role">
-    Enter a role, company or location under **Search job postings**, then select **Search**. Search runs only when you
+    Enter a role, company or location under **Search postings**, then select **Search**. Search runs only when you
     select the button or press Enter in that field.
   </Step>
   <Step title="Choose a posting">
@@ -110,10 +103,10 @@ If search is available on your installation, the **Save a job** dialog also show
     the dialog; it does not read or save the posting.
   </Step>
   <Step title="Read and review">
-    Select **Read posting**, then review **Saved description** and the role, company, location and salary. Correct
-    missing or inaccurate details. If the page cannot be read, use **Paste description instead**. The reason stays above
-    the paste field: a board's list of jobs says to open one posting, and other failures name what to do next. Opening
-    the paste field never pretends the read succeeded.
+    Select **Read it**, then review **Saved description** and the role, company, location and salary. Correct missing or
+    inaccurate details. If the page cannot be read, use **Paste description instead**. The reason stays above the paste
+    field: a board's list of jobs says to open one posting, and other failures name what to do next. Opening the paste
+    field never pretends the read succeeded.
   </Step>
   <Step title="Save the job">
     Choose the appropriate stage, then select **Save job**, **Record application** or **Save and prepare resume**, as
@@ -121,7 +114,7 @@ If search is available on your installation, the **Save a job** dialog also show
   </Step>
 </Steps>
 
-Search sends your search terms to the configured web search service. Reading a link retrieves its public page through the selected web reader or the built-in reader. **Read posting** reads structured page details without AI. **Read with AI** is optional and names the connection receiving the posting before you choose it. Saving a job never submits an application or contacts the employer.
+Search sends your search terms to the configured web search service. Reading a link retrieves its public page through the selected web reader or the built-in reader. **Read it** reads structured page details without AI. **Read with AI** is optional and names the connection receiving the posting before you choose it. Saving a job never submits an application or contacts the employer.
 
 If search fails or finds nothing useful, change your keywords or paste a posting link directly. For searches that run on a schedule, see [Finding roles automatically](/guides/finding-roles-automatically).
 
@@ -168,7 +161,7 @@ Pasted descriptions remain labeled **Pasted description**.
   />
 </Frame>
 
-**Read posting** uses structured page details without AI. The app first confirms that your server supports reading without AI. If that check fails, it sends no parse request: retry, update your server, or enter the details manually. Optional **Read with AI** remains a separate choice and uses your selected [AI connection](/guides/using-ai), disclosed beside the button:
+**Read it** uses structured page details without AI. The app first confirms that your server supports reading without AI. If that check fails, it sends no parse request: retry, update your server, or enter the details manually. Optional **Read with AI** remains a separate choice and uses your selected [AI connection](/guides/using-ai), disclosed beside the button:
 
 | You paste    | Without an AI provider                                                                | With optional Read with AI                                      |
 | ------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
@@ -205,7 +198,7 @@ AI enrichment is optional. If it fails, the retrieved description is retained so
 
 ## Add more details
 
-The Add dialog keeps things short on purpose. Once the application is saved, its details sheet opens, where you can add the salary, source, contacts, tags, notes and a follow-up date. To edit everything in one form, including the job posting link, location and linked resume, open the **⋯** menu in the details sheet and select **Edit details…**. See [Managing an application](/guides/managing-an-application).
+The Add dialog keeps things short on purpose. Once the application is saved, its own page opens. Its **Details** rows open a side sheet for salary, source, people, tags, notes and follow-ups. To edit everything in one form, including the job posting link, location and linked resume, open the application's **⋯** menu and select **Edit details…**. See [Managing an application](/guides/managing-an-application).
 
 ## Other ways to add applications
 
@@ -219,4 +212,4 @@ The Add dialog keeps things short on purpose. Once the application is saved, its
 
 ## Re-read a posting
 
-Reading a different posting replaces values filled by the previous read. Fields you typed or deliberately cleared stay yours, including edits made while the read runs. **Read posting** asks you to approve the named web reader and uses no AI. Optional **Read with AI** names the AI connection receiving the posting. Without an AI provider, public links can still use the built-in reader, or you can save the role and company manually. **Set up AI** keeps your input in place. A rejected web key shows **Needs attention** and repair controls; pasting the posting stays available.
+Reading a different posting replaces values filled by the previous read. Fields you typed or deliberately cleared stay yours, including edits made while the read runs. **Read it** asks you to approve the named web reader and uses no AI. Optional **Read with AI** names the AI connection receiving the posting. Without an AI provider, public links can still use the built-in reader, or you can save the role and company manually. **Set up AI** keeps your input in place. A rejected web key shows **Needs attention** and repair controls; pasting the posting stays available.
