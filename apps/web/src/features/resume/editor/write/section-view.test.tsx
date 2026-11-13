@@ -59,7 +59,7 @@ it("sorts publications by date, newest first", () => {
 	expect(fixture.update).toHaveBeenCalledOnce();
 	expect(fixture.update).toHaveBeenCalledWith(expect.any(Function), { newStep: true });
 	expect(toast.add).not.toHaveBeenCalled();
-	expect(fixture.data.sections.publications.items.map((entry) => entry.title)).toEqual([
+	expect(fixture.data?.sections.publications.items.map((entry) => entry.title)).toEqual([
 		"Building Modular Dialogue Systems",
 		"Optimizing Unity Games for Mobile: A Practical Guide",
 	]);
