@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { applyLaneMapping, collectCsvLanes, compatibleLanes, mapCsvToApplications, parseCsv, rowsToCsv } from "./csv";
+import { createDefaultApplicationLanes } from "./lanes";
 
 describe("parseCsv", () => {
 	it("neutralizes formulas in skipped rows and headers, preserving quotes and newlines", () => {
@@ -95,9 +96,7 @@ describe("mapCsvToApplications", () => {
 		const [lane] = collectCsvLanes(result.rows);
 		expect(lane).toMatchObject({ label: "Take-home", unclassified: true });
 		if (!lane) throw new Error("Unknown CSV stage was dropped");
-		const existing = [{ id: "interview", category: "interview", closedReason: null, retiredAt: null }] as Parameters<
-			typeof compatibleLanes
-		>[1];
+		const existing = createDefaultApplicationLanes().filter((item) => item.id === "interview");
 		expect(compatibleLanes(lane, existing)).toEqual(existing);
 		expect(applyLaneMapping(result.rows, new Map([[lane.key, "interview"]]))[0]).toEqual({
 			company: "A",
