@@ -75,13 +75,13 @@ export function LandingHeader({ story = true }: LandingHeaderProps) {
 								aria-current={active ? "step" : undefined}
 								onClick={() => goToScene(scene, 0.04)}
 								className={cn(
-									"font-martian relative flex h-[34px] items-center gap-[7px] rounded-sm px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] transition-opacity duration-300",
+									"font-martian relative flex h-[34px] items-center gap-[7px] rounded-md px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] transition-opacity duration-300",
 									!active && "opacity-65 hover:opacity-100",
 								)}
 							>
 								<span
 									aria-hidden="true"
-									className={cn("size-1.5 rounded-sm transition-colors duration-300", active && "bg-accent")}
+									className={cn("size-1.5 rounded-full transition-colors duration-300", active && "bg-accent")}
 								/>
 								{label}
 								{/* How much of the current scene is left: a line that fills with its scroll progress (--sp). */}
@@ -101,7 +101,7 @@ export function LandingHeader({ story = true }: LandingHeaderProps) {
 			<div className="ms-auto flex items-center gap-2">
 				<LanguageDoorway
 					story={story}
-					className="font-martian h-[34px] gap-[7px] rounded-sm px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] opacity-65 transition-opacity duration-300 hover:opacity-100"
+					className="font-martian h-[34px] gap-[7px] rounded-md px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] opacity-65 transition-opacity duration-300 hover:opacity-100"
 					nameClassName="max-[639px]:sr-only"
 				/>
 				<GithubLink />

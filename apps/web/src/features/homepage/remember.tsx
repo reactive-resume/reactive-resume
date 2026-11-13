@@ -141,7 +141,7 @@ export function Remember() {
 				{/* Knowledge: the story on an index card, with its result's fact clipped to it. */}
 				<div className="relative flex [transform:translateY(calc((1-var(--rin))*8vh))_rotate(calc(-1.2deg-(1-var(--rin))*3deg))] flex-col opacity-[clamp(0,var(--rin)*3,1)] [transition:transform_.5s_var(--ease)]">
 					<span className={cn(labelClass, "mb-3 text-ink-3")}>{t`Knowledge`}</span>
-					<div className="on-paper rounded-md bg-paper px-[clamp(18px,2vw,30px)] py-[clamp(18px,2vw,26px)] shadow-paper">
+					<div className="on-paper rounded-paper bg-paper px-[clamp(18px,2vw,30px)] py-[clamp(18px,2vw,26px)] shadow-paper">
 						<span className="font-martian flex items-center gap-2 text-xs font-medium text-accent-text">
 							<Icon name="book-open" size={15} />
 							{t`Story · 5 of 5 parts`}
@@ -165,7 +165,7 @@ export function Remember() {
 										<span
 											aria-hidden="true"
 											className={cn(
-												"grid size-6 shrink-0 place-items-center rounded-md border text-[12px] font-bold transition-[background-color,border-color,color] duration-300",
+												"grid size-6 shrink-0 place-items-center rounded-xs border text-[12px] font-bold transition-[background-color,border-color,color] duration-300",
 												missing
 													? "border-dashed border-line-2 text-ink-3"
 													: used
@@ -179,7 +179,7 @@ export function Remember() {
 											<span className="flex flex-wrap items-center gap-x-2 text-[12px] font-semibold text-ink-2">
 												{part.label}
 												{missing && (
-													<span className="inline-flex items-center gap-1 rounded-lg bg-warn-soft px-1.5 text-[11px] font-medium text-warn-text">
+													<span className="inline-flex items-center gap-1 rounded-xs bg-warn-soft px-1.5 text-[11px] font-medium text-warn-text">
 														<Icon name="question" size={12} />
 														{t`No evidence yet`}
 													</span>
@@ -204,7 +204,7 @@ export function Remember() {
 						/>
 						<div
 							className={cn(
-								"on-paper rounded-md bg-paper px-5 py-4 ring-2 shadow-paper transition-shadow duration-500",
+								"on-paper rounded-paper bg-paper px-5 py-4 ring-2 shadow-paper transition-shadow duration-500",
 								withResult ? "ring-transparent" : "ring-[oklch(0.75_0.09_70/.6)]",
 							)}
 						>
@@ -262,13 +262,13 @@ export function Remember() {
 							setDestination(value as Destination);
 							setChanged(true);
 						}}
-						className="h-auto max-w-full [scrollbar-width:none] self-start overflow-x-auto rounded-sm border border-line bg-[color-mix(in_oklch,var(--surface)_85%,transparent)] p-1"
+						className="h-auto max-w-full [scrollbar-width:none] self-start overflow-x-auto rounded-lg bg-sunken p-0.5"
 					>
 						{destinations.map((item) => (
 							<SegmentedControlItem
 								key={item.value}
 								value={item.value}
-								className="h-9 flex-none rounded-sm px-3.5 font-ui text-[13.5px] duration-300 data-checked:bg-ink data-checked:text-bg data-checked:shadow-none"
+								className="h-9 flex-none rounded-md px-3.5 font-ui text-[13.5px] duration-300"
 							>
 								<span className="max-[520px]:hidden">{item.label}</span>
 								<span className="min-[521px]:hidden">{item.short}</span>
@@ -276,7 +276,7 @@ export function Remember() {
 						))}
 					</SegmentedControl>
 
-					<div className="on-paper relative rotate-[.5deg] rounded-md bg-paper px-[clamp(20px,3.4vw,52px)] py-[clamp(22px,3vw,44px)] shadow-paper">
+					<div className="on-paper relative rotate-[.5deg] rounded-paper bg-paper px-[clamp(20px,3.4vw,52px)] py-[clamp(22px,3vw,44px)] shadow-paper">
 						<span className="font-martian text-xs font-medium text-accent-text">{draft.context}</span>
 						<p
 							key={`${destination}-${withResult}`}
@@ -310,12 +310,12 @@ export function Remember() {
 						<div className="mt-6 flex flex-col gap-3 border-t border-line pt-4 font-ui text-[13px] text-ink-3">
 							<span className="flex flex-wrap items-center gap-1.5">
 								{t`Backed by`}
-								<span className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2 text-ink-2">
+								<span className="inline-flex h-7 items-center gap-1.5 rounded-sm border border-line px-2 text-ink-2">
 									<Icon name="book-open" size={14} />
 									{t`Onboarding story`}
 								</span>
 								{withResult && (
-									<span className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2 text-ink-2">
+									<span className="inline-flex h-7 items-center gap-1.5 rounded-sm border border-line px-2 text-ink-2">
 										<Icon name="link-simple-horizontal" size={14} />
 										{t`Activation rose from 31%…`}
 									</span>

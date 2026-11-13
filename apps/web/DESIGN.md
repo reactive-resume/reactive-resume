@@ -147,7 +147,7 @@ marketing:
 
 Reactive Resume uses “Calm”: a quiet desk around a bright page, drawn with soft corners, flat lists and one obvious next step per view. It keeps the colours, type families, shadows, motion and voice of Desk & Paper (version 6) and replaces its shape, spacing, hierarchy and layout rules.
 
-This reference covers the app, its AI features and the homepage. The homepage keeps the Desk & Paper corners (see Marketing site). Implementation details live in the source files named below.
+This reference covers the app, its AI features and the homepage. The homepage uses the same radius scale and controls (see Marketing site). Implementation details live in the source files named below.
 
 Nine principles guide decisions:
 
@@ -334,7 +334,7 @@ The shared `theme` cookie stores `light`, `dark`, or `system` (the default). Sys
 
 ## Marketing site
 
-The public homepage in `apps/web/src/features/homepage` shares app colors and themes but has its own typography, illustrations, and motion. `landing.css` defines its fonts, graphite color, paper shadows, and ambient animations. Other illustration colors in the front matter are scene values, not global app tokens.
+The public homepage in `apps/web/src/features/homepage` shares app colors, themes, the radius scale and control shapes, but has its own typography, illustrations, and motion. Paper (resume pages, notes, the FAQ answer) keeps `rounded-paper`; mock app UI inside scenes follows the app: `SegmentedControl` unstyled, small buttons at `rounded-sm`, badges at `rounded-xs`, em-based radii where a mock scales with its container. `landing.css` defines its fonts, graphite color, paper shadows, and ambient animations. Other illustration colors in the front matter are scene values, not global app tokens.
 
 ### Brand and type
 
@@ -348,7 +348,7 @@ The public homepage in `apps/web/src/features/homepage` shares app colors and th
 
 ### Controls
 
-- Repeat the same primary CTA, “Build your resume,” in the header, hero, and closing section. Buttons have 2px corners, in Figtree 600, at 38px, 54px, and 56px respectively.
+- Repeat the same primary CTA, “Build your resume,” in the header, hero, and closing section. Buttons have 12px corners (`rounded-lg`), in Figtree 600, at 38px, 54px, and 56px respectively.
 - Scene navigation appears from 1240px. Sentence-case labels use `ink` when active and `ink-3` when inactive; a 6px accent dot marks the active scene. The Share night scene uses its own light inks.
 - The GitHub link appears from 1024px, with the GitHub mark and, when available, a filled gold star and live compact count. Format counts with the locale's `Intl.NumberFormat`; include the full count in the accessible name. Failed counts leave the GitHub link available without a star or number.
 - Community totals need at least two eligible rows. Hide failed totals and values below 100; reserve loading placeholders and announcements for pending queries.

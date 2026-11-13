@@ -124,7 +124,7 @@ function FaqItem({ item, index }: FaqItemProps) {
 			<div className="ps-13 pe-2 pb-8">
 				<div
 					data-note
-					className="relative rounded-md bg-paper px-6 py-5 text-[oklch(0.28_0.01_95)] shadow-[0_1px_2px_oklch(0.2_0.01_95/.12),0_18px_36px_-18px_oklch(0.2_0.01_95/.4)]"
+					className="relative rounded-paper bg-paper px-6 py-5 text-[oklch(0.28_0.01_95)] shadow-[0_1px_2px_oklch(0.2_0.01_95/.12),0_18px_36px_-18px_oklch(0.2_0.01_95/.4)]"
 					style={{ "--tilt": `${index % 2 === 0 ? -0.5 : 0.4}deg` } as CSSProperties}
 				>
 					<p className="font-display text-[clamp(17px,1.3vw,20px)] leading-normal text-pretty">{item.answer}</p>

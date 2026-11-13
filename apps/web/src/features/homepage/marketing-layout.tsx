@@ -28,8 +28,8 @@ export function MarketingLayout({ children }: MarketingLayoutProps) {
 			</a>
 			<PublicHeader />
 			{children}
-			{/* The footer is the homepage's own, on its desk: it keeps that page's variables and corners. */}
-			<div className="landing radius-desk relative">
+			{/* The footer is the homepage's own, on its desk: it keeps that page's variables. */}
+			<div className="landing relative">
 				<LandingFooter story={false} />
 			</div>
 		</div>
