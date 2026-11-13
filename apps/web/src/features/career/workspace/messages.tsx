@@ -43,7 +43,7 @@ import {
 	useWorkspace,
 } from "../hooks";
 import { formatBonus, formatMoney } from "../offer-compare";
-import { OfferEntry } from "../offer-entry";
+import { OfferEntry, OfferForm, OfferSheet } from "../offer-entry";
 import { Swap, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import { List, ListRow } from "@/components/calm/list-row";
@@ -79,6 +79,8 @@ const periodLabel = (period: "year" | "month" | "hour") =>
 /** W15–W17: paste what the employer wrote, read it, reply, and apply the changes it implies only if you choose. */
 export function MessagesTab({ application, version, now, offerForm }: WorkspaceTabProps) {
 	const [pasting, setPasting] = useState(false);
+	const [editingDeadline, setEditingDeadline] = useState(false);
+	const connection = useDefaultProvider();
 	const time = useCareerTime();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
@@ -234,6 +236,24 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 						)}
 						{!readOnly && offer && (
 							<List cap className="mt-3.5">
+								{!connection.isLoading && !connection.provider && offer.data.respondBy && (
+									<ListRow
+										leading={<Icon name="calendar-blank" size={20} className="text-ink-3" />}
+										title={
+											<span className="block text-[13px]/[18px]">{t`Reply by ${time.day(offer.data.respondBy)}`}</span>
+										}
+										subtitle={t`Set by you`}
+										trailing={
+											<button
+												type="button"
+												className="text-xs/4 text-accent-text hover:underline"
+												onClick={() => setEditingDeadline(true)}
+											>
+												<Trans>Edit</Trans>
+											</button>
+										}
+									/>
+								)}
 								<ListRow
 									leading={<Icon name="scales" size={20} className="text-ink-3" />}
 									title={<span className="block text-sm/5">{t`Offer terms`}</span>}
@@ -248,6 +268,17 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 					</aside>
 				)}
 			</div>
+			{offer && editingDeadline && (
+				<OfferSheet open onClose={() => setEditingDeadline(false)}>
+					<OfferForm
+						sheet
+						application={application}
+						offer={offer}
+						onClose={() => setEditingDeadline(false)}
+						onSaved={() => setEditingDeadline(false)}
+					/>
+				</OfferSheet>
+			)}
 			<Dialog open={pasting} onOpenChange={setPasting}>
 				<DialogContent closeLabel={t`Close`}>
 					<DialogHeader>

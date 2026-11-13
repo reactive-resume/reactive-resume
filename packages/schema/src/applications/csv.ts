@@ -297,7 +297,11 @@ export type CsvMapResult = {
 // are skipped (and counted). Invalid stages, dates and metadata require correction before import. A contact that fails
 // validation (bad email, or contact columns with no name) is dropped on its own — the application
 // still imports, since losing the whole row would silently discard company/role/salary/tags too.
-export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvField | null)[]): CsvMapResult {
+export function mapCsvToApplications(
+	table: string[][],
+	mapping?: readonly (CsvField | null)[],
+	preserveStageNames = false,
+): CsvMapResult {
 	const [headerRow, ...dataRows] = table;
 	if (!headerRow)
 		return {
@@ -343,6 +347,7 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 			if (!value) return;
 			if (field === "tags") record.tags = parseTags(value);
 			else if (field === "status") {
+				if (preserveStageNames) record.laneLabel ??= value.slice(0, 80);
 				// Other trackers' names ("Phone Screen", "Ghosted", "Rejected") read as a stage and outcome.
 				const stage = value
 					.toLowerCase()
@@ -422,7 +427,7 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 			application.lane = {
 				label: laneLabel,
 				category,
-				closedReason: laneClosedReason ?? null,
+				closedReason: laneClosedReason ?? (preserveStageNames ? application.closedReason : null) ?? null,
 				...(unclassified ? { unclassified: true } : {}),
 			};
 		}

@@ -93,11 +93,11 @@ it("requires explicit review after adaptation before using an independent answer
 	fireEvent.click(screen.getByRole("button", { name: "Use a saved answer" }));
 	fireEvent.click(await screen.findByRole("button", { name: "Review and use" }));
 	const dialog = screen.getByRole("dialog", { name: "Review before you reuse it" });
-	expect(within(dialog).getByText("Source employer", { exact: false })).toHaveTextContent("Harbor Labs");
+	expect(within(dialog).getByText(/Written for Harbor Labs on/)).toBeVisible();
 	const use = within(dialog).getByRole("button", { name: "Use reviewed answer" });
 	expect(use).toBeDisabled();
 	const review = within(dialog).getByRole("checkbox", {
-		name: "I reviewed this answer, its evidence and the application context.",
+		name: "I removed wording about Harbor Labs and checked every claim.",
 	});
 	await userEvent.click(review);
 	expect(use).toBeEnabled();

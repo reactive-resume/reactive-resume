@@ -25,6 +25,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { cn } from "@reactive-resume/utils/style";
 import { showInterviewCancellation } from "../../calendar";
 import { dayKey, interviewKindOf, interviewTypeLabel } from "../../interviews";
 import { getCategoryLane, getLaneLabel, isCurrentLaneEvent } from "../../lanes";
@@ -52,6 +53,8 @@ type ActivityProps = {
 	renderHeader?: (log: { open: boolean; toggle: () => void }) => ReactNode;
 	/** More ways to log, beside the field's hint (Followed up). */
 	logActions?: ReactNode;
+	/** The workspace update form uses a weekday-over-day date column. */
+	dateColumnWhenLogging?: boolean;
 };
 
 /**
@@ -59,7 +62,13 @@ type ActivityProps = {
  * field (and Followed up). Each row's ⋯ edits its date (and a note's text) or deletes it; the entry that anchors the
  * current stage can't be deleted.
  */
-export function Activity({ application, onOpenInterview, renderHeader, logActions }: ActivityProps) {
+export function Activity({
+	application,
+	onOpenInterview,
+	renderHeader,
+	logActions,
+	dateColumnWhenLogging = false,
+}: ActivityProps) {
 	const { format, day, plainTime, locale, timeZone } = useCareerTime();
 	const logId = useId();
 	const now = useNow();
@@ -207,11 +216,16 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 					return (
 						<li
 							key={entry.id}
-							className="group relative grid min-h-[52px] grid-cols-[36px_8px_minmax(0,1fr)] items-center gap-2.5 text-[13px]/[18px]"
+							className={cn(
+								"group relative grid items-center gap-2.5 text-[13px]/[18px]",
+								dateColumnWhenLogging && logOpen
+									? "min-h-[52px] grid-cols-[36px_8px_minmax(0,1fr)]"
+									: "min-h-[28px] grid-cols-[76px_8px_minmax(0,1fr)]",
+							)}
 						>
 							{entry.type === "stage" && entry.dateUnknown ? (
 								<span className="text-ink-3">{t`Not recorded`}</span>
-							) : (
+							) : dateColumnWhenLogging && logOpen ? (
 								<DateColumn
 									className="w-9 [&>span:last-child]:text-[18px]/[22px]"
 									aria-label={formatDay(
@@ -221,6 +235,10 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 									label={format(entry.at, { weekday: "short", ...dateOptions })}
 									day={format(entry.at, { day: "numeric", ...dateOptions })}
 								/>
+							) : (
+								<span className="whitespace-nowrap text-ink-3">
+									{formatDay(entry.at, entry.type === "interview" || (entry.type === "note" && !!entry.followedUp))}
+								</span>
 							)}
 							<span aria-hidden="true" className="size-2 rounded-full" style={{ background: dot }} />
 							{entry.type === "interview" ? (

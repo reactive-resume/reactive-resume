@@ -354,8 +354,7 @@ function PacketForm({ application, onClose }: ApplicationPacketPanelProps & { on
 					<p className="ps-9 text-xs/4 text-ink-3">
 						<Trans>
 							The browser helper can fill plain form fields from the packet file. It is experimental: sign-in steps,
-							captchas, custom controls and sensitive questions stay with you. Use the PDF downloads and copyable
-							answers for forms it cannot fill.
+							captchas, custom controls and sensitive questions stay with you.
 						</Trans>
 					</p>
 					{packet.review.answers.map((answer) => (

@@ -8,7 +8,7 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { APPLICATION_STATUSES } from "@reactive-resume/schema/applications/data";
 import { MAX_APPLICATION_LANES } from "@reactive-resume/schema/applications/lanes";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
@@ -67,6 +67,13 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 	const queryClient = useQueryClient();
 	const { lanes, active, revision, mode, unsupported, error, refetch } = useApplicationLanes();
 	const { data: applications } = useQuery({ ...applicationsListQueryOptions(), enabled: open });
+	const [announcement, setAnnouncement] = useState("");
+	const reorderFocus = useRef<HTMLElement | null>(null);
+	useLayoutEffect(() => {
+		const handle = reorderFocus.current;
+		if (handle && (document.activeElement === handle || document.activeElement === document.body)) handle.focus();
+		reorderFocus.current = null;
+	}, [revision]);
 	const [retiring, setRetiring] = useState<ApplicationLane | null>(null);
 
 	// How many applications each stage holds, as the list and board place them.
@@ -98,13 +105,21 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 	const busy = save.isPending;
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
 	const reorder = (from: number, to: number) => {
-		if (busy || from < 0 || to < 0 || from === to) return;
+		if (busy || from < 0 || to < 0 || to >= active.length || from === to) return;
+		const lane = active[from];
+		if (!lane) return;
+		const label = getLaneLabel(lane);
+		const position = to + 1;
+		const total = active.length;
+		reorderFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 		const ids = arrayMove(
 			active.map((lane) => lane.id),
 			from,
 			to,
 		);
-		save.mutate((expectedRevision) => client.applications.lanes.reorder({ expectedRevision, ids }));
+		save.mutate((expectedRevision) => client.applications.lanes.reorder({ expectedRevision, ids }), {
+			onSuccess: () => setAnnouncement(t`${label} moved to position ${position} of ${total}`),
+		});
 	};
 
 	const add = (lane: NewLane, done?: () => void) =>
@@ -119,6 +134,9 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 	return (
 		<Sheet open={open} onOpenChange={onOpenChange}>
 			<SheetContent closeLabel={t`Close`} side="right">
+				<p className="sr-only" aria-live="polite" aria-atomic="true">
+					{announcement}
+				</p>
 				<SheetHeader>
 					<SheetTitle>
 						<Trans>Stages</Trans>
@@ -295,7 +313,8 @@ function LaneRow({ lane, count, first, last, disabled, onRename, onColor, onMove
 			{...listeners}
 			ref={setActivatorNodeRef}
 			type="button"
-			disabled={disabled}
+			aria-busy={disabled}
+			aria-disabled={undefined}
 			aria-label={t`Reorder ${label}`}
 			aria-keyshortcuts="ArrowUp ArrowDown"
 			onKeyDown={(event) => {

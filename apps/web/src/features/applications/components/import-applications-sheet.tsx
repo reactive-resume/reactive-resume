@@ -9,7 +9,6 @@ import {
 	applyLaneMapping,
 	autoMapHeaders,
 	collectCsvLanes,
-	compatibleLanes,
 	CSV_FIELDS,
 	CSV_SAMPLE,
 	mapCsvToApplications,
@@ -38,6 +37,7 @@ import { getLaneLabel, LANE_COLORS } from "../lanes";
 import { getClosedReasonLabel, getStageLabel } from "../stages";
 import { useInvalidateApplications } from "../use-application-actions";
 import { applicationLanesQueryKey, useApplicationLanes } from "../use-application-lanes";
+import { StageDot } from "@/components/calm/stage-dot";
 import { client } from "@/libs/orpc/client";
 
 /** A CSV lane's choice: one of this account's lanes, or a new one with the CSV's name. */
@@ -103,14 +103,22 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	const mapping = autoMapHeaders(headers).map((field, index) =>
 		index in overrides ? (overrides[index] ?? null) : field,
 	);
-	const result = table ? mapCsvToApplications(table, mapping) : null;
+	const result = table ? mapCsvToApplications(table, mapping, true) : null;
 
 	// The import endpoint takes 500 at a time; the rest is reported rather than refused.
 	const importable = result ? result.rows.slice(0, MAX_IMPORT) : [];
 	const overflow = (result?.rows.length ?? 0) - importable.length;
 	// Every named lane is matched on purpose: a suggestion by name, else the person picks or creates one.
 	const csvLanes = mode === "lanes" ? collectCsvLanes(importable) : [];
-	const choiceFor = (lane: (typeof csvLanes)[number]) => laneChoices[lane.key] ?? suggestLane(lane, lanes) ?? "";
+	const choiceFor = (lane: (typeof csvLanes)[number]) =>
+		laneChoices[lane.key] ??
+		suggestLane(lane, lanes) ??
+		(!lane.unclassified
+			? lanes.find(
+					(item) => !item.retiredAt && item.systemKey && item.category === lane.category && item.closedReason === null,
+				)?.id
+			: null) ??
+		NEW_LANE;
 	const unmatched = csvLanes.filter((lane) => !choiceFor(lane)).length;
 	const hasNamedStages = importable.some((row) => row.lane);
 	const stagesUnresolved = hasNamedStages && ((mode !== "lanes" && !unsupported) || needsStageRefresh);
@@ -144,6 +152,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 			if (stagesUnresolved) throw new Error("Load application stages before importing named stages.");
 			const laneIds = new Map<string, string>();
 			const before = new Set(lanes.map((item) => item.id));
+			const importLanes = [...lanes];
 			let expectedRevision = revision;
 			for (const [index, lane] of csvLanes.entries()) {
 				const choice = choiceFor(lane);
@@ -168,12 +177,26 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 						item.closedReason === lane.closedReason,
 				);
 				if (!created) throw new Error("The new application stage wasn't returned. Refresh stages and try again.");
+				importLanes.push(created);
 				laneIds.set(lane.key, created.id);
 				before.add(created.id);
 				// Successful stage creation survives a later failure in the same import attempt.
 				setLaneChoices((current) => ({ ...current, [lane.key]: created.id }));
 			}
-			return client.applications.import({ items: applyLaneMapping(importable, laneIds) });
+			return client.applications.import({
+				items: applyLaneMapping(importable, laneIds).map((row) => {
+					const target = importLanes.find((lane) => lane.id === row.laneId);
+					if (!target) return row;
+					const { status: _status, closedReason, ...fields } = row;
+					return {
+						...fields,
+						status: target.category,
+						...(target.category === "closed"
+							? { closedReason: target.closedReason ?? (row.status === "closed" ? closedReason : undefined) }
+							: {}),
+					};
+				}),
+			});
 		},
 		onSuccess: (response) => {
 			invalidate();
@@ -384,41 +407,59 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 									</h3>
 									<ul className="grid gap-1.5">
 										{csvLanes.map((lane) => {
-											const hint =
-												lane.category === "closed" && lane.closedReason
-													? `${getStageLabel("closed")} · ${getClosedReasonLabel(lane.closedReason)}`
-													: lane.unclassified
-														? t`Choose what this stage counts as`
-														: getStageLabel(lane.category);
+											const choice = choiceFor(lane);
+											const selectedLane = lanes.find((item) => item.id === choice);
 											return (
-												<li key={lane.key} className={mapRowClassName}>
+												<li
+													key={lane.key}
+													className="grid grid-cols-[minmax(0,1fr)_16px_minmax(0,1.4fr)] items-center gap-x-2.5 gap-y-1.5"
+												>
 													<span className="grid min-w-0">
 														<span className="truncate font-mono text-xs/4">{lane.label}</span>
-														<span className="truncate text-xs/4 text-ink-3">{hint}</span>
 													</span>
 													<Icon name="arrow-right" size={16} className="text-ink-3 rtl:-scale-x-100" />
-													<NativeSelect
-														disabled={working}
-														aria-label={t`Stage ${lane.label} goes to`}
-														value={choiceFor(lane)}
-														className="h-8 pointer-coarse:h-11"
-														onChange={(event) =>
-															setLaneChoices((current) => ({ ...current, [lane.key]: event.target.value }))
-														}
-													>
-														<option value="" disabled>
-															{t`Choose a stage`}
-														</option>
-														{compatibleLanes(lane, lanes).map((option) => (
-															<option key={option.id} value={option.id}>
-																{getLaneLabel(option)}
+													<div className="relative min-w-0">
+														<StageDot
+															status={selectedLane?.category ?? laneCategories[lane.key] ?? lane.category}
+															color={selectedLane?.color}
+															className="pointer-events-none absolute start-3 top-1/2 z-10 -translate-y-1/2"
+														>
+															{null}
+														</StageDot>
+														<NativeSelect
+															disabled={working}
+															aria-label={t`Stage ${lane.label} goes to`}
+															value={choiceFor(lane)}
+															className="h-8 ps-7 pointer-coarse:h-11"
+															onChange={(event) =>
+																setLaneChoices((current) => ({ ...current, [lane.key]: event.target.value }))
+															}
+														>
+															<option value="" disabled>
+																{t`Choose a stage`}
 															</option>
-														))}
-														<option value={NEW_LANE}>{t`Add “${lane.label}” as a new stage`}</option>
-													</NativeSelect>
+															{lanes
+																.filter((item) => !item.retiredAt)
+																.map((option) => (
+																	<option key={option.id} value={option.id}>
+																		{option.category === "closed" && lane.closedReason && option.closedReason === null
+																			? `${getLaneLabel(option)} · ${getClosedReasonLabel(lane.closedReason)}`
+																			: getLaneLabel(option)}
+																	</option>
+																))}
+															<option value={NEW_LANE}>{t`Add as a new stage`}</option>
+														</NativeSelect>
+													</div>
+													{lane.unclassified && choice === NEW_LANE && (
+														<span className="col-span-full text-xs/4 text-ink-3">
+															<Trans>Choose what this stage counts as</Trans>
+														</span>
+													)}
 													{lane.unclassified && choiceFor(lane) === NEW_LANE && (
 														<label className="col-span-full flex items-center gap-2 t-small text-ink-3">
-															<Trans>Counts as</Trans>
+															<span className="shrink-0 whitespace-nowrap">
+																<Trans>Counts as</Trans>
+															</span>
 															<NativeSelect
 																aria-label={t`What ${lane.label} counts as`}
 																value={laneCategories[lane.key] ?? lane.category}

@@ -24,6 +24,7 @@ import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-sco
 const api = vi.hoisted(() => ({
 	data: {} as Record<string, unknown>,
 	reviewPacket: vi.fn(),
+	updateOffer: vi.fn(),
 	exportPacket: vi.fn(),
 	save: vi.fn(),
 	note: vi.fn(),
@@ -70,6 +71,9 @@ vi.mock("@/libs/orpc/client", () => {
 				stories: endpoint("stories"),
 				workspace: endpoint("workspace"),
 				savedItems: endpoint("savedItems"),
+				profile: endpoint("profile"),
+				createOffer: endpoint("createOffer"),
+				updateOffer: endpoint("updateOffer"),
 				schedules: endpoint("schedules"),
 				facts: endpoint("facts"),
 				saveWorkspace: endpoint("saveWorkspace", api.save),
@@ -82,13 +86,15 @@ vi.mock("@/libs/orpc/client", () => {
 			},
 		},
 		client: {
-			career: { generate: api.generate, voice: { speak: api.speak } },
+			career: { updateOffer: api.updateOffer, generate: api.generate, voice: { speak: api.speak } },
 			applications: { logReply: api.logReply, packet: { review: api.reviewPacket, export: api.exportPacket } },
 		},
 	};
 });
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => vi.fn(),
+	useRouter: () => ({ state: { location: { pathname: "/messages" } } }),
+	useSearch: () => ({}),
 	useRouteContext: () => ({ session: { user: { id: api.userId, timezone: "UTC" } } }),
 	Link: ({ children }: { children: ReactNode }) => <a href="#test-link">{children}</a>,
 }));
@@ -1194,4 +1200,41 @@ it("shows the recorded reply changes after reload using the previous stage, not 
 	expect(screen.getByText(/Follow-up set for .*11/, { selector: "span" })).toBeVisible();
 	expect(screen.queryByRole("button", { name: "Apply 2 changes" })).not.toBeInTheDocument();
 	expect(screen.queryByText(/replaces the overdue/)).not.toBeInTheDocument();
+});
+
+it("lets a no-AI user edit the Messages reply deadline and keeps the row absent with AI", async () => {
+	const offer = item("manual-offer", {
+		kind: "offer",
+		...offerTermsSchema.parse({
+			currency: "EUR",
+			period: "year",
+			base: 95000,
+			variable: null,
+			respondBy: "2026-11-13T23:59:00Z",
+		}),
+	});
+	api.data.savedItems = [offer];
+	api.data.workspace = { ...EMPTY_WORKSPACE, message: "Please reply by Friday." };
+	api.updateOffer.mockResolvedValue({
+		...offer,
+		id: "new-offer",
+		data: { ...offer.data, respondBy: "2026-11-16T23:59:00.000Z" },
+	});
+	const view = mount(<MessagesTab {...props} application={{ ...application, status: "offer" }} />);
+	expect(screen.queryByText(/Set by you/)).toBeNull();
+	api.ai = false;
+	view.rerender(<MessagesTab {...props} application={{ ...application, status: "offer" }} />);
+	expect(screen.getByText(/^Reply by /)).toBeVisible();
+	expect(screen.getByText("Set by you")).toBeVisible();
+	fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+	const dialog = screen.getByRole("dialog");
+	fireEvent.change(within(dialog).getByLabelText("Respond by"), { target: { value: "2026-11-16" } });
+	fireEvent.click(within(dialog).getByRole("button", { name: "Save offer" }));
+	await waitFor(() => expect(api.updateOffer).toHaveBeenCalled());
+	expect(api.updateOffer.mock.calls[0]?.[0]).toMatchObject({
+		id: offer.id,
+		terms: { respondBy: "2026-11-16T23:59:00.000Z" },
+		expected: { respondBy: "2026-11-13T23:59:00Z" },
+		newVersion: true,
+	});
 });

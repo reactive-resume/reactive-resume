@@ -359,16 +359,20 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 						</>
 					) : (
 						<fieldset disabled={busy} className="grid gap-3">
-							<p className="text-sm text-ink-2">
-								<Trans>
-									Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data
-									to AI.
-								</Trans>
-							</p>
-							{selected && (
-								<p>
-									{t`Source employer`}: {selected.employer}
-								</p>
+							{mode !== "reuse" && (
+								<>
+									<p className="text-sm text-ink-2">
+										<Trans>
+											Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send
+											data to AI.
+										</Trans>
+									</p>
+									{selected && (
+										<p>
+											{t`Source employer`}: {selected.employer}
+										</p>
+									)}
+								</>
 							)}
 							{mode !== "reuse" ? (
 								<label htmlFor={`${fieldId}-question`} className="grid gap-1">
@@ -386,16 +390,21 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 									<Input id={`${fieldId}-question`} value={current?.question || question} readOnly />
 								</label>
 							)}
-							<label htmlFor={`${fieldId}-answer`} className="grid gap-1">
-								<Trans>Answer</Trans>
+							<div className="grid gap-1">
+								<span className="flex items-baseline justify-between gap-2">
+									<label htmlFor={`${fieldId}-answer`}>
+										<Trans>Answer</Trans>
+									</label>
+									<span className="text-xs font-normal text-ink-3">{t`${i18n.number(answer.split(/\s+/).filter(Boolean).length)} words · ${i18n.number([...answer].length)} characters`}</span>
+								</span>
 								<Textarea
 									id={`${fieldId}-answer`}
+									className="resize-none"
 									value={answer}
 									maxLength={6000}
 									onChange={(event) => change(() => setAnswer(event.target.value))}
 								/>
-							</label>
-							<p className="text-xs">{t`${i18n.number(answer.split(/\s+/).filter(Boolean).length)} words · ${i18n.number([...answer].length)} characters`}</p>
+							</div>
 							{mode === "reuse" && (
 								<div className="grid justify-items-start gap-1.5 text-sm text-ink-2">
 									<p className="t-label">
@@ -428,6 +437,9 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 													.join("\n")}
 											</p>
 										))}
+									{selected && (
+										<p className="text-xs/4 text-ink-3">{t`Written for ${selected.employer} on ${i18n.date(selected.createdAt, { day: "numeric", month: "short" })}. Saving sends nothing to AI and doesn't change Knowledge.`}</p>
+									)}
 								</div>
 							)}
 							{mode !== "reuse" && (
@@ -520,7 +532,11 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 							)}
 							<label htmlFor={`${fieldId}-review`} className="flex gap-2">
 								<Checkbox id={`${fieldId}-review`} checked={reviewed} onCheckedChange={confirmReview} />
-								<Trans>I reviewed this answer, its evidence and the application context.</Trans>
+								{mode === "reuse" && selected ? (
+									t`I removed wording about ${selected.employer} and checked every claim.`
+								) : (
+									<Trans>I reviewed this answer, its evidence and the application context.</Trans>
+								)}
 							</label>
 							<DialogFooter>
 								<Button variant="ghost" disabled={busy} onClick={() => setMode(null)}>

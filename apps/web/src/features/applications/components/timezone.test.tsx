@@ -155,11 +155,22 @@ it.each([
 	expect(container.querySelector("[data-upcoming-interview]")?.textContent).toContain(time);
 });
 
-it("keeps stage and note dates as UTC whole days even east of the date boundary", () => {
-	account.timeZone = "Pacific/Kiritimati";
-	show(<Activity application={application("2026-10-30T09:00:00Z")} onOpenInterview={vi.fn()} />);
-	expect(screen.getAllByLabelText("Thu 1 Oct")).toHaveLength(2);
-});
+it.each([false, true])(
+	"keeps stage and note dates as UTC whole days even east of the date boundary (date column: %s)",
+	(dateColumnWhenLogging) => {
+		account.timeZone = "Pacific/Kiritimati";
+		show(
+			<Activity
+				application={application("2026-10-30T09:00:00Z")}
+				onOpenInterview={vi.fn()}
+				dateColumnWhenLogging={dateColumnWhenLogging}
+			/>,
+		);
+		expect(
+			dateColumnWhenLogging ? screen.getAllByLabelText("Thu 1 Oct") : screen.getAllByText("Thu 1 Oct", { exact: true }),
+		).toHaveLength(2);
+	},
+);
 
 it.each([
 	["UTC", "October 2026", "2026-10-31"],

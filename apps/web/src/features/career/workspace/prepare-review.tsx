@@ -236,8 +236,11 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 			</DialogHeader>
 			{!review && (
 				<>
-					<Label htmlFor={`prepare-questions-${application.id}`}>
-						<Trans>Questions from the employer's form · optional</Trans>
+					<Label htmlFor={`prepare-questions-${application.id}`} className="justify-between">
+						<Trans>Questions from the employer's form</Trans>
+						<span className="font-normal text-ink-3">
+							<Trans>optional</Trans>
+						</span>
 					</Label>
 					<Textarea
 						id={`prepare-questions-${application.id}`}
@@ -255,7 +258,8 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 					{connection && (
 						<p className="t-small text-ink-3">
 							<Trans>
-								Sends the posting, your linked resume and Knowledge to {connection.label}. Your provider may charge.
+								Sends the posting, your linked resume and Knowledge that's switched on to {connection.label}. Your
+								provider may charge.
 							</Trans>
 						</p>
 					)}
@@ -288,7 +292,7 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 			)}
 			{review && (
 				<>
-					<p className="t-small text-ink-2">{t`Drafts for ${application.company} · ${application.role}, made by ${connection?.label ?? ""}. Nothing is sent to the employer.`}</p>
+					<p className="t-small text-ink-2">{t`Drafts for ${application.company} · ${application.role}, made by ${[connection?.label, connection?.model].filter(Boolean).join(" · ")}. Nothing is sent to the employer.`}</p>
 					{review.failed.length > 0 && (
 						<p role="status">
 							<Trans>Some drafts couldn't finish. Keep completed drafts before trying again.</Trans>{" "}

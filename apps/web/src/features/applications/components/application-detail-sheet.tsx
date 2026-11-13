@@ -428,6 +428,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 						/>
 
 						<Activity
+							dateColumnWhenLogging
 							application={application}
 							onOpenInterview={openInterview}
 							logActions={
