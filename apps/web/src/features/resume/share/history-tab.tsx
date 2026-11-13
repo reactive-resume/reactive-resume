@@ -40,6 +40,12 @@ type HistoryVersion = Pick<VersionSummary, "id" | "kind" | "name" | "createdAt">
 // A version already selected when History opens came from an Open sent version entry point.
 const useHistoryEntry = create<{ versionId: string | null }>(() => ({ versionId: null }));
 
+/** A sent version opened from its application: the page shows it under the sent-version banner, History closed. */
+export function openLinkedVersion(versionId: string) {
+	useHistoryEntry.setState({ versionId });
+	useEditorStore.setState({ historyVersionId: versionId });
+}
+
 /** What History shows and does for one document: its versions, and saving, restoring, renaming and deleting them. */
 export type HistorySource = {
 	versions: HistoryVersion[] | undefined;

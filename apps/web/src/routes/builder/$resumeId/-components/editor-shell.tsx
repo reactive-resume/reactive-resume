@@ -26,7 +26,7 @@ import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
 import { preloadRichTextEditor } from "@/features/resume/editor/write/rich-text-editor";
 import { searchOf, selectionOf } from "@/features/resume/editor/write/view";
 import { whenIdle } from "@/features/resume/preview/resume-thumbnail.shared";
-import { HistoryPanel, HistoryTab } from "@/features/resume/share/history-tab";
+import { HistoryPanel, HistoryTab, openLinkedVersion } from "@/features/resume/share/history-tab";
 
 /**
  * The editor: a 56px bar over one 400px panel slot and the page canvas (desktop). The slot holds the mode's panel, or
@@ -88,11 +88,12 @@ function useOpenVersionFromUrl(panelBesidePage: boolean) {
 		if (!version) return;
 		// From an application ("What you sent") the page and its banner are the whole view: History stays closed.
 		// Otherwise History takes the panel's place beside the page; on smaller screens it is still the sheet.
-		if (!applicationId) {
+		if (applicationId) openLinkedVersion(version);
+		else {
 			if (panelBesidePage) useEditorStore.getState().setHistoryOpen(true);
 			else useEditorStore.getState().setSheetTab("history");
+			useEditorStore.setState({ historyVersionId: version });
 		}
-		useEditorStore.setState({ historyVersionId: version });
 		void navigate({
 			to: ".",
 			resetScroll: false,
