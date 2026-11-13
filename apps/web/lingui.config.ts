@@ -25,6 +25,7 @@ export default defineConfig({
 		"he-IL",
 		"hi-IN",
 		"hu-HU",
+		"hy-AM",
 		"id-ID",
 		"it-IT",
 		"ja-JP",

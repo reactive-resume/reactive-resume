@@ -84,6 +84,7 @@ const scriptFonts: Record<Script, { serif: string; sansSerif: string }> = {
 	ethiopic: { serif: "Noto Sans Ethiopic", sansSerif: "Noto Sans Ethiopic" },
 	khmer: { serif: "Noto Sans Khmer", sansSerif: "Noto Sans Khmer" },
 	georgian: { serif: "Noto Serif Georgian", sansSerif: "Noto Sans Georgian" },
+	armenian: { serif: "Noto Serif Armenian", sansSerif: "Noto Sans Armenian" },
 	// Monochrome outlines (TrueType glyf, not CBDT bitmaps) so react-pdf can
 	// embed them; the serif/sans distinction is meaningless for emoji (#3321).
 	emoji: { serif: "Noto Emoji", sansSerif: "Noto Emoji" },

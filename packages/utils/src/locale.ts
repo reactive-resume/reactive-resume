@@ -22,6 +22,7 @@ export const localeSchema = z.enum([
 	"he-IL",
 	"hi-IN",
 	"hu-HU",
+	"hy-AM",
 	"id-ID",
 	"it-IT",
 	"ja-JP",
@@ -156,6 +157,7 @@ export type Script =
 	| "ethiopic"
 	| "khmer"
 	| "georgian"
+	| "armenian"
 	| "emoji"
 	| "arrows"
 	| "symbols";
@@ -209,6 +211,8 @@ export function getLocaleScript(locale?: Locale): Script | null {
 			return "ethiopic";
 		case "km-KH":
 			return "khmer";
+		case "hy-AM":
+			return "armenian";
 		default:
 			return null;
 	}

@@ -45,6 +45,7 @@ export const localeMap = {
 	"he-IL": msg`Hebrew`,
 	"hi-IN": msg`Hindi`,
 	"hu-HU": msg`Hungarian`,
+	"hy-AM": msg`Armenian`,
 	"id-ID": msg`Indonesian`,
 	"it-IT": msg`Italian`,
 	"ja-JP": msg`Japanese`,
