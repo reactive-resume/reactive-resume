@@ -906,13 +906,13 @@ msgstr "{0} {1} նիշից"
 #. placeholder {1}: i18n.number(category.applicableChecks)
 #: src/features/ats-checker/checker.tsx
 msgid "{0} of {1} checks"
-msgstr "{0}{1} չեկերից"
+msgstr "{1} ստուգումից {0}-ը"
 
 #. placeholder {0}: thread.editsAccepted
 #. placeholder {1}: thread.editsProposed
 #: src/features/assistant/assistant-panel.tsx
 msgid "{0} of {1} edits accepted"
-msgstr "{0}{1} խմբագրումներից ընդունված է"
+msgstr "{1} փոփոխությունից {0}-ն ընդունված է"
 
 #. placeholder {0}: options.length
 #. placeholder {1}: FONT_FAMILY_OPTIONS.length
@@ -1254,7 +1254,7 @@ msgstr "{count, plural, one {# կողպված է} other {# կողպված է}}"
 
 #: src/features/settings/account/security.tsx
 msgid "{count, plural, one {# passkey} other {# passkeys}}"
-msgstr "{count, plural, one {# անցաբառ} other {# գաղտնաբառեր}}"
+msgstr "{count, plural, one {# passkey} other {# passkey}}"
 
 #: src/features/resume/editor/write/outline.tsx
 msgid "{count, plural, one {# profile} other {# profiles}}"
@@ -1381,15 +1381,15 @@ msgstr "{done} {0}-ից"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "{done} of {count} done"
-msgstr "{done}{count}-ից կատարված է"
+msgstr "{count}-ից {done}-ը կատարված է"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "{done} of {total} min done"
-msgstr "{done}{total} րոպեից կատարված է"
+msgstr "{total} րոպեից {done}-ը կատարված է"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "{doneMinutes} of {total} min done"
-msgstr "{doneMinutes}{total} րոպեից կատարված է"
+msgstr "{total} րոպեից {doneMinutes}-ը կատարված է"
 
 #: src/features/career/offers.tsx
 msgid "{dueCompany} needs an answer by {dueDay}."
@@ -1693,7 +1693,7 @@ msgstr "{passed} {total}-ից"
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{passed} of {total} checks pass · updates as you edit"
-msgstr "{passed}{total} չեկերից անցնում են · թարմացումներ, երբ դուք խմբագրում եք"
+msgstr "{total} ստուգումից {passed}-ն անցած է · թարմացվում է խմբագրելիս"
 
 #: src/features/settings/ai/providers.tsx
 msgid "{pausedSchedules, plural, one {The schedule that uses it is paused.} other {# schedules that use it are paused.}}"
@@ -2005,7 +2005,7 @@ msgstr "1 մեկնաբանություն, արված է"
 
 #: src/features/settings/account/security.tsx
 msgid "1 passkey · {first}"
-msgstr "1 անցաբառ · {first}"
+msgstr "1 passkey · {first}"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "10 to 11 reads best"
@@ -2098,7 +2098,7 @@ msgstr "Այս նամակի կրկնօրինակը: Հետ ներմուծվու�
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "A bullet"
-msgstr "Մի փամփուշտ"
+msgstr "Ցանկի կետ"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "A city and country let roles be matched to where you are."
@@ -2270,7 +2270,7 @@ msgstr "մեկ ամիս"
 
 #: src/features/settings/account/security.tsx
 msgid "A name helps you tell passkeys apart, like “Work laptop”."
-msgstr "Անունն օգնում է ձեզ տարբերակել անցաբառերը, օրինակ՝ «Աշխատանքային նոութբուք»:"
+msgstr "Անունն օգնում է տարբերակել passkey-ները, օրինակ՝ «Աշխատանքային նոութբուք»։"
 
 #: src/features/settings/ai/page.tsx
 msgid "A new fact is saved to Knowledge only after you agree"
@@ -2432,12 +2432,12 @@ msgstr "Աշխատանքի մասին"
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent"
-msgstr "Առոգանություն"
+msgstr "Շեշտադրման գույն"
 
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Accent color"
-msgstr "Առոգանության գույն"
+msgstr "Շեշտադրման գույն"
 
 #: src/dialogs/resume/template/data.ts
 msgctxt "Template style tag"
@@ -2662,7 +2662,7 @@ msgstr "Ավելացրեք բաժին «Փորձ» կամ «Աշխատանքայ
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Add a stage"
-msgstr "Ավելացնել բեմ"
+msgstr "Ավելացնել փուլ"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Add a story"
@@ -3195,7 +3195,7 @@ msgstr "Թույլատրել այս գործողությունը"
 
 #: src/features/ats-checker/messages.ts
 msgid "Almost none of your bullets carry a number."
-msgstr "Ձեր փամփուշտներից գրեթե ոչ մեկը թիվ չի կրում:"
+msgstr "Ձեր ցանկի կետերից գրեթե ոչ մեկը թիվ չի պարունակում։"
 
 #: src/features/career/workspace/fit-local.tsx
 msgid "Already covered"
@@ -4928,7 +4928,7 @@ msgstr "Ընտրեք ռեզյումեն Write-ում, որպեսզի համապ�
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Choose a stage"
-msgstr "Ընտրեք բեմ"
+msgstr "Ընտրել փուլ"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
@@ -5636,7 +5636,7 @@ msgstr "Շարունակեք որպես հյուր"
 #. Label for passkey sign-in button
 #: src/features/auth/components/social-auth.tsx
 msgid "Continue with a passkey"
-msgstr "Շարունակեք անցաբառով"
+msgstr "Շարունակել passkey-ով"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Contrast on white"
@@ -5848,7 +5848,7 @@ msgstr "Չհաջողվեց ավելացնել դիմումը: Նորից փոր�
 
 #: src/features/settings/account/security.tsx
 msgid "Couldn't add the passkey. Try again."
-msgstr "Չհաջողվեց ավելացնել անցաբառը: Նորից փորձեք:"
+msgstr "Չհաջողվեց ավելացնել passkey-ը։ Նորից փորձեք։"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -6302,7 +6302,7 @@ msgstr "Չհաջողվեց հեռացնել այն Դիմումներից: Նո�
 
 #: src/features/settings/account/security.tsx
 msgid "Couldn't remove the passkey. Try again."
-msgstr "Չհաջողվեց հեռացնել անցաբառը: Նորից փորձեք:"
+msgstr "Չհաջողվեց հեռացնել passkey-ը։ Նորից փորձեք։"
 
 #: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
@@ -6310,7 +6310,7 @@ msgstr "Չհաջողվեց վերանվանել փաստաթուղթը: Նորի
 
 #: src/features/settings/account/security.tsx
 msgid "Couldn't rename the passkey. Try again."
-msgstr "Չհաջողվեց վերանվանել անցաբառը: Նորից փորձեք:"
+msgstr "Չհաջողվեց վերանվանել passkey-ը։ Նորից փորձեք։"
 
 #: src/features/career/coach.tsx
 msgid "Couldn't rename this conversation. Try again."
@@ -7332,7 +7332,7 @@ msgstr "Մերժել մուտքը"
 
 #: src/features/ats-checker/messages.ts
 msgid "Describe each role with short bullets. Solid paragraphs are harder to skim and to segment."
-msgstr "Նկարագրեք յուրաքանչյուր պաշտոնը կարճ փամփուշտներով: Պինդ պարբերությունները ավելի դժվար է շրջել և բաժանել:"
+msgstr "Նկարագրեք յուրաքանչյուր պաշտոնը ցանկի կարճ կետերով։ Երկար պարբերություններն ավելի դժվար է արագ կարդալ և բաժանել։"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Describe the role"
@@ -8834,7 +8834,7 @@ msgstr "Գտեք դրանք էջում"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Find weak bullets"
-msgstr "Գտեք թույլ փամփուշտներ"
+msgstr "Գտնել թույլ ձևակերպված ցանկի կետերը"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
@@ -10672,7 +10672,7 @@ msgstr "Պահել մեկ էջում"
 
 #: src/features/settings/account/security.tsx
 msgid "Keep passkey"
-msgstr "Պահպանեք անցաբառը"
+msgstr "Պահպանել passkey-ը"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Keep password"
@@ -11702,7 +11702,7 @@ msgstr "Ամսագիր"
 #: src/dialogs/resume/template/data.ts
 msgctxt "Template style tag"
 msgid "Magenta accent"
-msgstr "Մագենտա առոգանություն"
+msgstr "Մաջենտա շեշտադրում"
 
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
@@ -11816,7 +11816,7 @@ msgstr "Կառավարվում է ձեր սերվերի կողմից"
 
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
-msgstr "Շատ փամփուշտներ սկսվում են նույն արտահայտությամբ։"
+msgstr "Ցանկի շատ կետեր սկսվում են նույն արտահայտությամբ։"
 
 #: src/features/resume/editor/write/dates-field.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
@@ -12427,7 +12427,7 @@ msgstr "Անվանեք պատմությունը"
 
 #: src/features/settings/account/security.tsx
 msgid "Name this passkey"
-msgstr "Անվանեք այս անցաբառը"
+msgstr "Անվանել այս passkey-ը"
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Name, color and order the stages your applications move through."
@@ -12435,7 +12435,7 @@ msgstr "Անվանեք, գունավորեք և պատվիրեք այն փուլ
 
 #: src/features/settings/root.tsx
 msgid "Name, email, password, passkeys, your data"
-msgstr "Անուն, էլ. փոստ, գաղտնաբառ, գաղտնաբառեր, ձեր տվյալները"
+msgstr "Անուն, էլփոստ, գաղտնաբառ, passkey-ներ, ձեր տվյալները"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Name, email, phone and location are found, and links are full addresses."
@@ -12646,7 +12646,7 @@ msgstr "Նոր բաժին"
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "New stage color"
-msgstr "Բեմի նոր գույն"
+msgstr "Նոր փուլի գույնը"
 
 #: src/features/homepage/remember.tsx
 msgid "New teams at Northwind were stalling in setup; most never got through."
@@ -14469,7 +14469,7 @@ msgstr "Գաղտնաբառը փոխվել է"
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
-msgstr "Գաղտնաբառը փոխվել է։ Դուք դուրս եք գրվել ամենուր. մուտք գործեք, այնուհետև նորից ավելացրեք ցանկացած անցաբառ կամ API բանալի:"
+msgstr "Գաղտնաբառը փոխվել է։ Դուք դուրս եք եկել բոլոր սարքերից։ Մուտք գործեք, ապա նորից ավելացրեք ձեր passkey-ները կամ API բանալիները։"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
@@ -15650,7 +15650,7 @@ msgstr "Կարդացեք ձեր պրոֆիլի տվյալները:"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full export: profile and email, documents, applications, Career data and coaching conversations."
-msgstr "Կարդացեք ձեր ամբողջ հաշիվը, ներառյալ ամբողջական արտահանումը. պրոֆիլ և էլ."
+msgstr "Կարդալ ձեր հաշվի ամբողջ բովանդակությունը՝ ներառյալ ամբողջական արտահանումը՝ պրոֆիլը և էլփոստի հասցեն, փաստաթղթերը, աշխատանքի դիմումները, կարիերայի տվյալները և կարիերայի խորհրդատուի հետ զրույցները։"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Read your whole account, including exports and coaching conversations"
@@ -16892,7 +16892,7 @@ msgstr "«{name}»-ը չեղարկվել է: Այն օգտագործող հավ�
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Right"
-msgstr "Ճիշտ է"
+msgstr "Աջ"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Right now"
@@ -17004,7 +17004,7 @@ msgstr "Կանոն"
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Rule accent"
-msgstr "Կանոնային առոգանություն"
+msgstr "Գծի շեշտադրում"
 
 #: src/dialogs/resume/template/data.ts
 msgctxt "Template style tag"
@@ -18733,7 +18733,7 @@ msgstr "Որոշ կիրառական համակարգեր խնդրում են մ�
 
 #: src/features/ats-checker/messages.ts
 msgid "Some bullets run long."
-msgstr "Որոշ փամփուշտներ երկար են վազում:"
+msgstr "Ցանկի որոշ կետեր չափազանց երկար են։"
 
 #: src/features/ats-checker/messages.ts
 msgid "Some characters come out as question marks."
@@ -18911,7 +18911,7 @@ msgstr "Դրսից վերնագրեր"
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/overview.tsx
 msgid "Stage"
-msgstr "Բեմ"
+msgstr "Փուլ"
 
 #. placeholder {0}: lane.label
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -18936,28 +18936,28 @@ msgstr "Փուլը հաշվվում է որպես"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Stage date"
-msgstr "Բեմի ամսաթիվը"
+msgstr "Փուլի ամսաթիվը"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Stage history"
-msgstr "Բեմական պատմություն"
+msgstr "Փուլերի պատմություն"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Stage name"
-msgstr "Բեմի անվանումը"
+msgstr "Փուլի անվանումը"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Stage outcome"
-msgstr "Բեմական արդյունք"
+msgstr "Փուլի արդյունքը"
 
 #: src/features/career/workspace/messages.tsx
 msgid "Stage stays {stage}"
-msgstr "Բեմում մնում է {stage}"
+msgstr "Փուլը մնում է {stage}"
 
 #. placeholder {0}: getLaneLabel(lane)
 #: src/features/career/workspace/overview.tsx
 msgid "Stage: {0}. Open stage and details"
-msgstr "Փուլ՝ {0}: Բաց բեմ և մանրամասներ"
+msgstr "Փուլ՝ {0}։ Բացել փուլը և մանրամասները"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -19936,7 +19936,7 @@ msgstr "Ստուգաթերթը, մարդիկ և պատմություններն �
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the checks."
-msgstr "Չեկերը մեխանիկական են։ Սա լեզվի մոդելին հարցնում է, թե ինչպես կարող է ընթերցողը արձագանքել ձեր փամփուշտներին և առաջարկում է վերաշարադրել: Դա ստուգումների մաս չէ:"
+msgstr "Ստուգումները մեխանիկական են։ Այս գործիքը լեզվային մոդելին հարցնում է, թե ընթերցողն ինչպես կարող է արձագանքել ձեր ցանկի կետերին, և առաջարկում է վերաձևակերպումներ։ Սա ստուգումների մաս չէ։"
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "The checks count how reliably software reads your resume. They don't predict whether you'll be shortlisted."
@@ -20896,7 +20896,7 @@ msgstr "Մուտքի այս քայլի ժամկետը սպառվել է: Նոր�
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "This signs you out everywhere and removes your passkeys, API keys and connected apps."
-msgstr "Սա ձեզ դուրս կբերի ամենուր և կհեռացնի ձեր անցաբառերը, API ստեղները և միացված հավելվածները:"
+msgstr "Սա ձեզ դուրս կբերի բոլոր սարքերից և կհեռացնի ձեր passkey-ները, API բանալիները և միացված հավելվածները։"
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -21624,7 +21624,7 @@ msgstr "անանուն բանալի"
 
 #: src/features/settings/account/security.tsx
 msgid "Unnamed passkey"
-msgstr "Անանուն անցաբառ"
+msgstr "Անանուն passkey"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Until then, Interview prep has your plan, your opening and the questions to ask."
@@ -22135,7 +22135,7 @@ msgstr "Սկզբում հաստատեք ձեր էլ.փոստը Կարգավոր�
 
 #: src/features/settings/account/security.tsx
 msgid "Verify your email to add a passkey."
-msgstr "Հաստատեք ձեր էլ․ հասցեն՝ մուտքի բանալի ավելացնելու համար։"
+msgstr "Հաստատեք ձեր էլփոստի հասցեն՝ passkey ավելացնելու համար։"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code…"
@@ -22914,15 +22914,15 @@ msgstr "Word ֆայլերը կարդացվում են AI-ով: Ֆայլն ուղ
 
 #: src/features/ai/usage.tsx
 msgid "Word import"
-msgstr "Բառի ներմուծում"
+msgstr "Word-ի ներմուծում"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Word off"
-msgstr "Խոսքը անջատված է"
+msgstr "Word-ն անջատված է"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Word on"
-msgstr "Խոսքի մասին"
+msgstr "Word-ը միացված է"
 
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
@@ -23227,7 +23227,7 @@ msgstr "Դուք կարող եք պահել մինչև 30 դիմումի հար�
 
 #: src/features/settings/account/security.tsx
 msgid "You can no longer sign in with this passkey. Your password and other passkeys still work."
-msgstr "Դուք այլևս չեք կարող մուտք գործել այս անցաբառով: Ձեր գաղտնաբառը և մյուս անցաբառերը դեռ աշխատում են:"
+msgstr "Այս passkey-ով այլևս չեք կարող մուտք գործել։ Ձեր գաղտնաբառը և մյուս passkey-ները դեռ աշխատում են։"
 
 #: src/features/auth/pages/error.tsx
 msgid "You canceled the sign-in before it finished."
@@ -23307,7 +23307,7 @@ msgstr "Դուք հասել եք {MAX_APPLICATION_LANES} փուլին: Հեռա�
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Your accent, read-only"
-msgstr "Ձեր առոգանությունը, միայն կարդալու համար"
+msgstr "Ձեր շեշտադրման գույնը, միայն ընթերցման համար"
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -23390,7 +23390,7 @@ msgstr "Ձեր դիտարկիչի թելադրանքը դադարեց: Կրկի�
 
 #: src/features/ats-checker/messages.ts
 msgid "Your bullets are drawn with unusual characters."
-msgstr "Ձեր փամփուշտները նկարված են անսովոր կերպարներով:"
+msgstr "Ձեր ցանկի կետերը նշված են անսովոր նշաններով։"
 
 #: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-shell.tsx
@@ -23777,7 +23777,7 @@ msgstr "Մեծացնել"
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Zoom out"
-msgstr "Մեծացնել"
+msgstr "Փոքրացնել"
 
 #: src/libs/locale.ts
 msgid "Zulu"
