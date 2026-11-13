@@ -175,6 +175,18 @@ jobs:
           psql "$DATABASE_URL" -c "CREATE DATABASE oauth_test"
           DATABASE_URL="$OAUTH_TEST_DATABASE_URL" pnpm db:migrate
 
+      - name: TEMP compare worker pools on one runner
+        if: matrix.suite == 'Unit'
+        env:
+          REQUIRE_DB_TESTS: "1"
+        run: |
+          for pool in forks threads forks threads; do
+            start=$(date +%s)
+            if pnpm exec turbo run test:ci --force --filter=!mobile --concurrency=4 -- --maxWorkers=8 --pool=$pool > "$RUNNER_TEMP/pool.log" 2>&1; then status=ok; else status=fail; fi
+            echo "POOL $pool $status $(( $(date +%s) - start ))s $(grep -c 'jit_page' "$RUNNER_TEMP/pool.log") crash-lines"
+            grep -E 'Duration ' "$RUNNER_TEMP/pool.log" | sort -t' ' -k3 -rn | head -4
+          done
+
       # Discover every package. The 32-vCPU runner tests four packages at once with eight workers each, which
       # also stops Jest from taking every core; smaller GitHub runners stay serial with two workers to avoid
       # PDF/rate-limit timeouts. Vitest and Jest both take --maxWorkers.
