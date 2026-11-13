@@ -1,6 +1,7 @@
 // B2 · Section: its entries as two-line rows (what and when), one way to add, and the section's options. Swipe a row
 // toward the start to delete it; press and hold to reorder, or open the entry's actions (B21).
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
@@ -56,7 +57,7 @@ function sortSectionByDate(section: BuilderSection, locale: string) {
 		unresolved = sortEntriesByDate(draft, section, locale);
 	});
 	if (unresolved.length === 0) return;
-	const entries = formatList(locale, unresolved);
+	const entries = formatList(i18n.locale, unresolved);
 	showToast({
 		message: t`Couldn't read the dates on ${entries}, so they stay at the end. Fix their dates and sort again.`,
 	});

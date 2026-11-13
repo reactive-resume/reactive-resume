@@ -10,7 +10,7 @@ test("sorts publications newest first and names entries with unreadable dates by
 	undated.id = "undated";
 	undated.title = "Forthcoming paper";
 	undated.date = "";
-	delete (undated as { dates?: unknown }).dates;
+	delete undated.dates;
 	entries.push(undated);
 
 	const unresolved = sortEntriesByDate(
@@ -42,4 +42,27 @@ test("names undated experience entries by company", () => {
 	);
 
 	expect(unresolved).toEqual(entries.map((entry) => entry.company));
+});
+
+test("sorts custom publications without changing built-in entries and falls back to ids for blank titles", () => {
+	const data = structuredClone(sampleResumeData);
+	const [first] = data.sections.publications.items;
+	if (!first) throw new Error("Missing sample publication");
+	const custom = {
+		...data.sections.publications,
+		id: "custom-publications",
+		type: "publications" as const,
+		items: [
+			{ ...first, id: "undated", title: "   ", date: "", dates: undefined },
+			{ ...first, id: "dated", date: "2025", dates: undefined },
+		],
+	};
+	data.customSections.push(custom);
+	const builtin = structuredClone(data.sections.publications.items);
+
+	const unresolved = sortEntriesByDate(data, { id: custom.id, kind: "custom", type: "publications" }, "en-US");
+
+	expect(custom.items.map((entry) => entry.id)).toEqual(["dated", "undated"]);
+	expect(unresolved).toEqual(["undated"]);
+	expect(data.sections.publications.items).toEqual(builtin);
 });

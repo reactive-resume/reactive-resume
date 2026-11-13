@@ -86,4 +86,22 @@ describe("sortSectionItemsByPeriod", () => {
 		expect(ids(result.items)).toEqual(["newer", "blank", "prose"]);
 		expect(result.unresolvedIds).toEqual(["blank", "prose"]);
 	});
+
+	it("uses structured dates over legacy text, keeps ties stable, and leaves input untouched", () => {
+		const input: DatedItem[] = [
+			{ id: "older", date: "2026", dates: { start: "2020", end: null, present: false } },
+			{ id: "cleared", date: "2026", dates: { start: null, end: null, present: false } },
+			dateItem("first-march", "mars 2024"),
+			{ id: "second-march", dates: { start: "2024-03", end: null, present: false } },
+			dateItem("year-only", "2024"),
+		];
+		const before = structuredClone(input);
+
+		const result = sortSectionItemsByPeriod(input, "fr-FR");
+
+		expect(ids(result.items)).toEqual(["first-march", "second-march", "year-only", "older", "cleared"]);
+		expect(result.unresolvedIds).toEqual(["cleared"]);
+		expect(input).toEqual(before);
+		expect(result.items[0]).toBe(input[2]);
+	});
 });

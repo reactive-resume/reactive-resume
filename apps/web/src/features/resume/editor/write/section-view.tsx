@@ -151,7 +151,9 @@ function SectionBody({ section, locked }: { section: WriteSection; locked: boole
 }
 
 /** The count line with Sort by date, then the entries. They reorder by the grip, ⌥↑ / ⌥↓, or the row's menu. */
-export function Entries({ section, locked }: { section: WriteSection; locked: boolean }) {
+type EntriesProps = { section: WriteSection; locked: boolean };
+
+function Entries({ section, locked }: EntriesProps) {
 	const ids = useCurrentBuilderResumeSelector((resume) =>
 		getEntries(resume.data, section)
 			.map((entry) => entry.id)
