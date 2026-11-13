@@ -2,7 +2,7 @@ import type { NewDocumentContext } from "@/features/documents/new-document-dialo
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactElement, ReactNode } from "react";
 import { i18n } from "@lingui/core";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
@@ -312,7 +312,7 @@ function Sidebar() {
 				</Avatar>
 				<span className="flex min-w-0 flex-1 flex-col">
 					<span className="truncate text-sm leading-[18px] font-medium">{session.user.name}</span>
-					<span className="truncate text-xs leading-4 text-ink-3">
+					<span className="truncate text-xs leading-4 text-ink-3 group-aria-[current=page]/acct:text-ink-2">
 						{session.user.isAnonymous ? <Trans>Not saved to an account</Trans> : <Trans>Settings</Trans>}
 					</span>
 				</span>
@@ -370,7 +370,13 @@ function Rail() {
 			>
 				<Link
 					to={item.to}
-					aria-label={item.label}
+					aria-label={
+						item.badge
+							? t`${item.label}, ${plural(item.badge, { one: "# waiting", other: "# waiting" })}`
+							: item.count
+								? t`${item.label}, ${plural(item.count, { one: "#", other: "#" })}`
+								: item.label
+					}
 					aria-current={current ? "page" : undefined}
 					className={cn(railButton, current ? "bg-accent-soft text-accent-text" : idle)}
 				/>

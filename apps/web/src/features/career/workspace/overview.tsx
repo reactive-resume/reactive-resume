@@ -10,6 +10,7 @@ import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { formatList } from "@reactive-resume/utils/locale";
+import { isolate } from "@reactive-resume/utils/string";
 import { latest } from "../hooks";
 import { CareerLoadError } from "../load-state";
 import { midSentence, tabLabel, useCareerTime } from "../shared";
@@ -40,7 +41,7 @@ export const workspaceIcons: Record<WorkspaceTab, IconName> = {
 
 type Props = Pick<WorkspaceTabProps, "application" | "interview" | "now" | "go"> & {
 	saved: SavedItem[];
-	onDetails: () => void;
+	onDetails: (opener: HTMLButtonElement) => void;
 	onEdit: () => void;
 	savedPending: boolean;
 	savedFailed: boolean;
@@ -150,9 +151,14 @@ export function ApplicationOverview({
 		<>
 			<header className="flex flex-wrap items-start justify-between gap-4">
 				<div className="min-w-0 flex-1 max-sm:basis-full">
-					<h1 className="t-page-title">{application.company}</h1>
+					<h1 className="t-page-title">
+						<bdi>{application.company}</bdi>
+					</h1>
 					<p className="h-6 text-sm text-ink-3">
-						{[application.role, application.location].filter(Boolean).join(" · ")}
+						{[application.role, application.location]
+							.filter(Boolean)
+							.map((part) => isolate(part as string))
+							.join(" · ")}
 					</p>
 				</div>
 				<div className="flex flex-wrap items-center gap-2 pt-0.5">
@@ -160,7 +166,7 @@ export function ApplicationOverview({
 						variant="secondary"
 						className="min-w-[129px]"
 						data-details-trigger
-						onClick={onDetails}
+						onClick={(event) => onDetails(event.currentTarget)}
 						aria-label={t`Stage: ${getLaneLabel(lane)}. Open stage and details`}
 					>
 						<StageDot status={application.status} color={lane.color}>
@@ -238,7 +244,7 @@ export function ApplicationOverview({
 				}
 			>
 				{heroInterview
-					? t`With ${heroInterview.participants.map((person) => person.name).join(t` and `)} · ${midSentence(heroInterview.location) ?? t`Interview`}.${briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""}`
+					? t`With ${heroInterview.participants.map((person) => isolate(person.name)).join(t` and `)} · ${isolate(midSentence(heroInterview.location) ?? t`Interview`)}.${briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""}`
 					: text.sub}
 			</HeroCard>
 			<Columns
@@ -250,7 +256,7 @@ export function ApplicationOverview({
 						</SectionHeading>
 						<List>
 							<ListRow
-								render={<button type="button" onClick={onDetails} />}
+								render={<button type="button" onClick={(event) => onDetails(event.currentTarget)} />}
 								title={t`Posting`}
 								subtitle={
 									application.sourceUrl ? (
@@ -269,19 +275,19 @@ export function ApplicationOverview({
 								caret
 							/>
 							<ListRow
-								render={<button type="button" onClick={onDetails} />}
+								render={<button type="button" onClick={(event) => onDetails(event.currentTarget)} />}
 								title={t`People`}
-								subtitle={application.contacts.map((person) => person.name).join(", ") || t`Add a contact`}
+								subtitle={application.contacts.map((person) => isolate(person.name)).join(", ") || t`Add a contact`}
 								caret
 							/>
 							<ListRow
-								render={<button type="button" onClick={onDetails} />}
+								render={<button type="button" onClick={(event) => onDetails(event.currentTarget)} />}
 								title={t`Notes`}
 								subtitle={plural(notes, { one: "# note", other: "# notes" })}
 								caret
 							/>
 							<ListRow
-								render={<button type="button" onClick={onDetails} />}
+								render={<button type="button" onClick={(event) => onDetails(event.currentTarget)} />}
 								title={t`Timeline`}
 								subtitle={application.activity
 									.filter((entry) => entry.type === "stage")

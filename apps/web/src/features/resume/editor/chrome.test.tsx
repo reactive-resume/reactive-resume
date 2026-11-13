@@ -1,8 +1,9 @@
 // @vitest-environment happy-dom
 
-import { act, render } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
-import { usePageScale } from "./chrome";
+import { i18n } from "@lingui/core";
+import { DocumentMenuTrigger, usePageScale } from "./chrome";
 import { useEditorStore } from "./store";
 
 function Canvas({ pages = 0, loaderPages = 0 }: { pages?: number; loaderPages?: number }) {
@@ -249,4 +250,13 @@ describe("canvas zoom", () => {
 		expect(event.defaultPrevented).toBe(true);
 		expect(useEditorStore.getState().zoom).toBe("fit");
 	});
+});
+
+// Both resume and letter bars use this trigger.
+it("names the edited document as the page heading while keeping its menu a named button", () => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	render(<DocumentMenuTrigger name="Design portfolio" isLocked={false} />);
+	expect(screen.getByRole("heading", { level: 1, name: "Design portfolio" })).toBeTruthy();
+	expect(screen.getByRole("button", { name: "Document menu: Design portfolio" })).toBeTruthy();
+	cleanup();
 });

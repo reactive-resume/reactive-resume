@@ -11,6 +11,7 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { offerTermsSchema, EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
+import { isolate } from "@reactive-resume/utils/string";
 import { useDebouncedSave } from "../hooks";
 import { pendingCommits } from "../pending-commits";
 import { ApplicationPacketPanel } from "./application-packet";
@@ -668,7 +669,9 @@ it("keeps Saved offer provenance neutral", async () => {
 it("keeps an unacknowledged message across pagehide and requires review after reopening against newer server state", async () => {
 	const view = mount(<MessagesTab {...props} />);
 	fireEvent.click(screen.getByRole("button", { name: "Paste a message" }));
-	const field = await screen.findByRole("textbox", { name: `Paste a message from ${props.application.company}` });
+	const field = await screen.findByRole("textbox", {
+		name: `Paste a message from ${isolate(props.application.company)}`,
+	});
 	fireEvent.change(field, { target: { value: "Durable employer message" } });
 	expect(localStorage.getItem(`career-draft:${api.userId}:message:${props.application.id}`)).toBe(
 		JSON.stringify("Durable employer message"),
@@ -685,15 +688,15 @@ it("keeps an unacknowledged message across pagehide and requires review after re
 	mount(<MessagesTab {...props} />);
 	fireEvent.click(screen.getByRole("button", { name: "Paste a message" }));
 	expect(await screen.findByRole("button", { name: "Save recovered draft" })).toBeTruthy();
-	expect(screen.getByRole("textbox", { name: `Paste a message from ${props.application.company}` })).toHaveValue(
-		"Unacknowledged older text",
-	);
+	expect(
+		screen.getByRole("textbox", { name: `Paste a message from ${isolate(props.application.company)}` }),
+	).toHaveValue("Unacknowledged older text");
 	window.dispatchEvent(new Event("pagehide"));
 	expect(api.save).not.toHaveBeenCalled();
 	fireEvent.click(screen.getByRole("button", { name: "Use saved version" }));
-	expect(screen.getByRole("textbox", { name: `Paste a message from ${props.application.company}` })).toHaveValue(
-		"Newer server text",
-	);
+	expect(
+		screen.getByRole("textbox", { name: `Paste a message from ${isolate(props.application.company)}` }),
+	).toHaveValue("Newer server text");
 });
 
 it("commits a typed question on Draft and measures the proposal against the question's limit", async () => {
@@ -876,7 +879,7 @@ it("omits absent review subjects and empty answer actions without moving manual 
 		1,
 	);
 	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
-	fireEvent.click(screen.getByRole("checkbox", { name: "Submit on Harbor's application page yourself" }));
+	fireEvent.click(screen.getByRole("checkbox", { name: `Submit on ${isolate("Harbor")}'s application page yourself` }));
 	await waitFor(() =>
 		expect(api.save.mock.calls[0]?.[0]).toMatchObject({ checklist: [3], expected: { checklist: [] } }),
 	);
@@ -1066,7 +1069,7 @@ it("keeps a manually written reply available without AI and logs only after copy
 	api.data.workspace = { ...EMPTY_WORKSPACE, message: "Can you meet Tuesday at 10:00?" };
 	const submitted = { ...props.application, status: "applied" as const };
 	mount(<MessagesTab {...props} application={submitted} />);
-	expect(screen.getByRole("heading", { name: "From Harbor" })).toBeVisible();
+	expect(screen.getByRole("heading", { name: `From ${isolate("Harbor")}` })).toBeVisible();
 	const field = await screen.findByRole("textbox", { name: "Suggested reply · edit before sending" });
 	fireEvent.change(field, { target: { value: "Thank you. I can meet Tuesday at 10:00." } });
 	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));

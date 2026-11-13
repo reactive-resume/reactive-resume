@@ -213,11 +213,14 @@ function ThemeTiles() {
 						)}
 					>
 						<Icon name={option.icon} size={22} className="text-ink-2" />
-						<span className="flex min-w-0 flex-1 flex-col">
-							<span className="text-sm/5 font-semibold text-ink">{i18n.t(themeMap[option.value])}</span>
+						{/* Phones: icon and radio share the top row, the name gets the tile's full width below. */}
+						<span className="flex min-w-0 flex-1 flex-col max-sm:order-last max-sm:basis-full">
+							<span className="text-sm/5 font-semibold wrap-break-word hyphens-auto text-ink">
+								{i18n.t(themeMap[option.value])}
+							</span>
 							<span className="text-[13px]/[18px] text-ink-3 max-sm:hidden">{i18n.t(option.note)}</span>
 						</span>
-						<RadioGroupItem id={`${id}-${option.value}`} value={option.value} />
+						<RadioGroupItem id={`${id}-${option.value}`} value={option.value} className="max-sm:ms-auto" />
 					</label>
 				);
 			})}

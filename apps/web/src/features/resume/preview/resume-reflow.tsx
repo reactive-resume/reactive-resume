@@ -143,7 +143,7 @@ export function ResumeReflow({ data }: ResumeReflowProps) {
 			style={{ fontFamily: `"${font}", ui-sans-serif, system-ui, sans-serif` }}
 		>
 			<header className="grid gap-2">
-				<h1 className="text-[26px] leading-tight font-semibold">{basics.name}</h1>
+				<h2 className="text-[26px] leading-tight font-semibold">{basics.name}</h2>
 				{(basics.headline || basics.location) && (
 					<p className="text-[#555]">{[basics.headline, basics.location].filter(Boolean).join(" · ")}</p>
 				)}

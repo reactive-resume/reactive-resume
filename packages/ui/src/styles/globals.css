@@ -234,6 +234,13 @@
 		unicode-bidi: plaintext;
 	}
 
+	/* Code (keys, selectors, header names) reads left to right in every interface, and stays one unit inside a
+	   right-to-left sentence instead of losing its leading hyphens to the far end. */
+	:where(code, kbd, samp) {
+		direction: ltr;
+		unicode-bidi: isolate;
+	}
+
 	h1 {
 		@apply font-display;
 	}

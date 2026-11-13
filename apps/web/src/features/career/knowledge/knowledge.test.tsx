@@ -130,6 +130,7 @@ vi.mock("@/features/applications/use-application-lanes", async () => {
 });
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
 
+import { isolate } from "@reactive-resume/utils/string";
 import { OfferEntry } from "../offer-entry";
 import { OffersPage } from "../offers";
 import { FactsPage } from "./facts";
@@ -852,7 +853,7 @@ it("moves an Applied job to Offer with Undo once its offer is saved, and keeps t
 			expect.objectContaining({
 				applications: [{ id: "job-a" }],
 				lane: expect.objectContaining({ category: "offer" }),
-				description: "Offer saved. Fieldnote moved to Offer.",
+				description: `Offer saved. ${isolate("Fieldnote")} moved to Offer.`,
 			}),
 		),
 	);

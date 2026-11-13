@@ -23,7 +23,7 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
-import { getInitials } from "@reactive-resume/utils/string";
+import { getInitials, isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
 import { useApplicationsNeedingAttention } from "./needs-you";
@@ -255,7 +255,8 @@ function InterviewHero({ now }: { now: Date }) {
 	const when = `${format(at, { weekday: "long", day: "numeric", month: "short" })}, ${plainTime(at)}`;
 	const inDays = new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(days, "day");
 	const calendar = interviewCalendarAction(application, interview, "PUBLISH", getAccountGeneration());
-	const company = application.company;
+	// Isolated, so a name keeps its own direction and punctuation inside a translated sentence (Arabic: "Parcel & Co.").
+	const company = isolate(application.company);
 	const kind = interviewStepTitle(interview.kind);
 
 	return (
@@ -306,7 +307,7 @@ function InterviewHero({ now }: { now: Date }) {
 function useNeedLine() {
 	const { format } = useCareerTime();
 	return (application: ApplicationSummary, step: NextStep, compact: boolean) => {
-		const company = application.company;
+		const company = isolate(application.company);
 		const sentAt = applicationSentAt(application);
 		const sent = sentAt ? format(sentAt, { day: "numeric", month: "short" }) : null;
 		const long = (value: Date) => format(value, { weekday: "long", day: "numeric", month: "short" });
@@ -331,7 +332,7 @@ function useNeedLine() {
 							: t`Overdue · applied ${sent}, no reply yet`,
 			};
 		}
-		return { title: company, subtitle: application.role };
+		return { title: company, subtitle: isolate(application.role) };
 	};
 }
 
@@ -452,7 +453,7 @@ function NeedsYou({ now, compact = false, first = false, readCount = 0, onShowRe
 /** Row controls that take the caret's place on hover and keyboard focus; touch screens always show them. */
 function HoverActions({ children }: { children: ReactNode }) {
 	return (
-		<span className="relative z-10 hidden shrink-0 items-center gap-3.5 group-focus-within/row:flex group-hover/row:flex pointer-coarse:flex">
+		<span className="pointer-events-none relative z-10 flex shrink-0 items-center gap-3.5 opacity-0 group-focus-within/row:pointer-events-auto group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100">
 			{children}
 		</span>
 	);
@@ -463,7 +464,7 @@ function RowCaret() {
 		<Icon
 			name="caret-right"
 			size={18}
-			className="shrink-0 text-ink-3 group-focus-within/row:hidden group-hover/row:hidden pointer-coarse:hidden"
+			className="pointer-events-none absolute end-0 text-ink-3 group-focus-within/row:opacity-0 group-hover/row:opacity-0 pointer-coarse:hidden"
 		/>
 	);
 }
@@ -536,8 +537,8 @@ function ScheduleResults({
 		const notice = row.notice;
 		if (notice.type === "opportunities")
 			return plural(notice.count, { one: "# new role found", other: "# new roles found" });
-		if (notice.type === "briefing") return t`Briefing ready for ${notice.company}`;
-		if (notice.type === "followup") return t`Time to follow up with ${notice.company}`;
+		if (notice.type === "briefing") return t`Briefing ready for ${isolate(notice.company)}`;
+		if (notice.type === "followup") return t`Time to follow up with ${isolate(notice.company)}`;
 		return row.title;
 	};
 	const detail = (row: Notification) => {
@@ -657,7 +658,7 @@ function NewRoles({ now, selecting: selectingByDefault, accent }: NewRolesProps)
 		onSuccess: ({ applicationId }, { id }) => {
 			const row = rows?.find((item) => item.id === id);
 			toast.add({
-				description: row ? t`Saved ${companyOf(row)} to Applications` : t`Saved to Applications`,
+				description: row ? t`Saved ${isolate(companyOf(row))} to Applications` : t`Saved to Applications`,
 				actionProps: { children: t`Undo`, onClick: () => untrack.mutate({ id: applicationId }) },
 			});
 		},
@@ -911,7 +912,7 @@ function RoleRow({ row, now, selecting, selected, open, pending, onOpen, onSelec
 						{row.role}
 					</button>
 					<span className="truncate text-[13px]/[18px] text-ink-3">
-						{[company, row.location, why].filter(Boolean).join(" · ")}
+						{[isolate(company), row.location && isolate(row.location), why].filter(Boolean).join(" · ")}
 					</span>
 				</span>
 				{!selecting && (
@@ -1000,7 +1001,7 @@ function PickUp({ documents }: { documents: DocumentSummary[] }) {
 						<ListRow
 							key={`${document.type}:${document.id}`}
 							leading={<DocumentThumb kind={document.type} />}
-							title={document.name}
+							title={isolate(document.name)}
 							subtitle={document.type === "resume" ? t`Resume · edited ${edited}` : t`Cover letter · edited ${edited}`}
 							value={<DocumentStatusBadge document={document} />}
 							caret
@@ -1073,7 +1074,7 @@ function ComingUp({ now }: { now: Date }) {
 										label={format(event.at, { weekday: "short" })}
 									/>
 								}
-								title={event.application.company}
+								title={isolate(event.application.company)}
 								subtitle={subtitle}
 								render={
 									event.kind === "offer" ? (

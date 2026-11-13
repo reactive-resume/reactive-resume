@@ -37,7 +37,7 @@ import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
+import { pendingRequestId, settleRequestId, isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CurrencySelect } from "./currency-select";
 import { CareerLoadError } from "./load-state";
@@ -384,7 +384,7 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 				moveWithUndo({
 					applications: [{ id: input.applicationId }],
 					lane: getCategoryLane(lanes, "offer"),
-					description: t`Offer saved. ${target.company} moved to Offer.`,
+					description: t`Offer saved. ${isolate(target.company)} moved to Offer.`,
 				});
 			} else {
 				toast.add({ description: t`Offer saved` });

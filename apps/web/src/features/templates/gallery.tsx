@@ -191,13 +191,11 @@ export function TemplateGallery() {
 				</div>
 				<p className="mt-2.5 t-small text-ink-2">{i18n._(templates[selected].description)}</p>
 				<ul className="mt-3 flex flex-wrap gap-1.5">
-					{templates[selected].tags
-						.filter((tag) => !/column/i.test(tag))
-						.map((tag) => (
-							<Badge key={tag} variant="outline" render={<li />}>
-								{tag}
-							</Badge>
-						))}
+					{templates[selected].tags.map((tag) => (
+						<Badge key={tag.id} variant="outline" render={<li />}>
+							{i18n._(tag)}
+						</Badge>
+					))}
 				</ul>
 				<div className="relative mt-[18px] w-full max-w-[456px] shrink-0 self-center">
 					<div data-design="paper" className="rounded-paper bg-paper">

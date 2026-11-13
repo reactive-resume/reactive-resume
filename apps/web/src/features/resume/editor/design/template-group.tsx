@@ -40,7 +40,7 @@ const layoutTags = (id: Template) =>
 const styleTags = (id: Template) =>
 	[
 		templateLayouts[id].columns === 1 ? t`One column` : t`Two columns`,
-		...templates[id].tags.filter((tag) => !/^(single|two)-column$/i.test(tag)),
+		...templates[id].tags.map((tag) => i18n._(tag)),
 	].join(" · ");
 
 type TemplateGroupProps = {
@@ -78,7 +78,7 @@ export function TemplateGroup({ crumb, onUse }: TemplateGroupProps) {
 	const shown = TEMPLATE_IDS.filter(
 		(id) =>
 			matchesFilter(id, filter) &&
-			[templates[id].name, i18n._(templates[id].description), ...templates[id].tags]
+			[templates[id].name, i18n._(templates[id].description), ...templates[id].tags.map((tag) => i18n._(tag))]
 				.join(" ")
 				.toLocaleLowerCase()
 				.includes(query.trim().toLocaleLowerCase()),

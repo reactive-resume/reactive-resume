@@ -11,6 +11,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
+import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { applicationDetailQueryKey } from "../../queries";
 import { companyInitials } from "../list-view";
@@ -54,7 +55,7 @@ export function Contacts({ application, disabled, onChange, inline = false, peop
 		withQueryUndo({
 			queryClient,
 			queryKey: applicationDetailQueryKey(application.id),
-			description: t`Removed ${contact.name}`,
+			description: t`Removed ${isolate(contact.name)}`,
 			errorMessage: t`Couldn't save the change. Try again.`,
 			prepare: () => {
 				if (!application.contactsVersion) throw new Error(t`Couldn't save the change. Try again.`);
@@ -97,8 +98,8 @@ export function Contacts({ application, disabled, onChange, inline = false, peop
 					!primary
 						? t`Contact: none yet`
 						: others.length > 0
-							? t`Contact: ${primary.name} and ${i18n.number(others.length)} more`
-							: t`Contact: ${primary.name}`
+							? t`Contact: ${isolate(primary.name)} and ${i18n.number(others.length)} more`
+							: t`Contact: ${isolate(primary.name)}`
 				}
 				className="grid min-w-0 rounded-md text-start hover:underline"
 			>

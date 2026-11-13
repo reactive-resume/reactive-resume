@@ -63,13 +63,18 @@ export function DocumentMenu() {
 	return (
 		<>
 			{dialog === "rename" && !isLocked ? (
-				<InlineNameInput
-					key={id}
-					name={name}
-					disabled={isLocked}
-					onSave={(next) => saveMetadata({ name: next })}
-					onDone={() => setDialog(null)}
-				/>
+				<>
+					<h1 className="sr-only" dir="auto">
+						{name}
+					</h1>
+					<InlineNameInput
+						key={id}
+						name={name}
+						disabled={isLocked}
+						onSave={(next) => saveMetadata({ name: next })}
+						onDone={() => setDialog(null)}
+					/>
+				</>
 			) : (
 				<DropdownMenu
 					onOpenChangeComplete={(open) => {

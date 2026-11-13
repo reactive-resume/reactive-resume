@@ -238,17 +238,22 @@ type DocumentMenuTriggerProps = ComponentProps<"button"> & { name: string; isLoc
  */
 export function DocumentMenuTrigger({ name, isLocked: _isLocked, ...props }: DocumentMenuTriggerProps) {
 	return (
-		<button
-			type="button"
-			dir="auto"
-			{...props}
-			aria-label={t`Document menu: ${name}`}
-			title={name}
-			className="touch-target relative isolate flex max-w-full min-w-0 items-center gap-1 truncate text-start text-[15px]/5 font-semibold text-ink before:absolute before:-inset-x-1.5 before:-inset-y-0.5 before:-z-10 before:rounded-sm before:transition-colors before:duration-quick hover:before:bg-hover aria-expanded:before:bg-hover"
-		>
-			{name}
-			<Icon name="caret-down" size={14} className="shrink-0 text-ink-3" />
-		</button>
+		<>
+			<h1 className="sr-only" dir="auto">
+				{name}
+			</h1>
+			<button
+				type="button"
+				dir="auto"
+				{...props}
+				aria-label={t`Document menu: ${name}`}
+				title={name}
+				className="touch-target relative isolate flex max-w-full min-w-0 items-center gap-1 text-start text-[15px]/5 font-semibold text-ink before:absolute before:-inset-x-1.5 before:-inset-y-0.5 before:-z-10 before:rounded-sm before:transition-colors before:duration-quick hover:before:bg-hover aria-expanded:before:bg-hover pointer-coarse:after:top-5.5"
+			>
+				<span className="truncate">{name}</span>
+				<Icon name="caret-down" size={14} className="shrink-0 text-ink-3" />
+			</button>
+		</>
 	);
 }
 

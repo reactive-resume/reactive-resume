@@ -28,7 +28,7 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/file";
-import { rewriteSummary } from "@reactive-resume/utils/string";
+import { rewriteSummary, isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { DraftRecovery } from "../draft-recovery";
 import {
@@ -982,7 +982,7 @@ function Checklist({
 	const review = applicationReviewChecks(application, workspace.data);
 	const { submitted, checklist: ticked } = review;
 	const labels = [...checklistItems()];
-	labels[3] = t`Submit on ${application.company}'s application page yourself`;
+	labels[3] = t`Submit on ${isolate(application.company)}'s application page yourself`;
 	const recordedVersion =
 		!readOnly || (versionId !== undefined && versionId === workspace.data.submissionReview?.answerVersionId);
 	const items = recordedVersion ? review.indices.map((index) => ({ index, label: labels[index] })) : [];

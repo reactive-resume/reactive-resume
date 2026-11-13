@@ -9,7 +9,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { m, useReducedMotion } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { WORKSPACE_TABS } from "@reactive-resume/schema/career";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { DropdownMenuItem } from "@reactive-resume/ui/components/dropdown-menu";
@@ -127,6 +127,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 	const time = useCareerTime();
 	// The round being edited is fixed when the dialog opens; "next interview" can move on while it's open.
 	const [editing, setEditing] = useState<{ id: string | null } | null>(null);
+	const detailsOpener = useRef<HTMLButtonElement | null>(null);
 	const [editDetails, setEditDetails] = useState<Application | null>(null);
 	const query = useQuery(orpc.applications.getById.queryOptions({ input: { id: applicationId } }));
 	const saved = useSavedItems(applicationId);
@@ -282,7 +283,10 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 						savedFailed={saved.isError}
 						onRetrySaved={() => void saved.refetch()}
 						go={go}
-						onDetails={() => openSearch({ details: true })}
+						onDetails={(opener) => {
+							detailsOpener.current = opener;
+							openSearch({ details: true });
+						}}
 						onEdit={() => openSearch({ edit: "interview" })}
 					/>
 				) : (
@@ -404,7 +408,11 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 				application={search.details && !editDetails ? application : null}
 				onOpenChange={(open) => !open && closeSearch({ details: undefined })}
 				onEditDetails={setEditDetails}
-				returnFocus={() => document.querySelector<HTMLElement>("[data-details-trigger]")}
+				returnFocus={() =>
+					detailsOpener.current?.isConnected
+						? detailsOpener.current
+						: document.querySelector<HTMLElement>("[data-details-trigger]")
+				}
 			/>
 			<ApplicationFormSheet
 				open={!!editDetails}

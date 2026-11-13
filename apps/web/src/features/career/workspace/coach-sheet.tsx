@@ -20,6 +20,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
+import { isolate } from "@reactive-resume/utils/string";
 import {
 	CoachThread,
 	connectionName,
@@ -199,8 +200,8 @@ function CoachSheetBody({
 					</SheetTitle>
 					<SheetDescription className="truncate text-[13px]/[18px] text-ink-3">
 						{provider && model
-							? t`About ${application.company} · ${label} · ${model}`
-							: t`About ${application.company}`}
+							? t`About ${isolate(application.company)} · ${label} · ${model}`
+							: t`About ${isolate(application.company)}`}
 					</SheetDescription>
 				</div>
 				{/* With one connection there is nothing to choose; the subtitle names it. */}

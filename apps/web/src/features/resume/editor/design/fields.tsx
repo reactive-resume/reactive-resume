@@ -140,11 +140,14 @@ type PointFieldProps = {
 	onValueChange: (value: number) => void;
 };
 
-/** A 36px number field: its name at the start, the value and its unit at the end (`.numf`). */
+/**
+ * A 36px number field: its name at the start, the value and its unit at the end (`.numf`). A name too long for one
+ * line (German "Zwischen Abschnitten") wraps and the field grows, so the whole name stays readable.
+ */
 export function PointField({ label, value, min, max, step = 1, unit = "pt", onValueChange }: PointFieldProps) {
 	return (
-		<label className="flex h-9 min-w-0 items-center justify-between gap-2 rounded-md bg-raised px-3 shadow-[inset_0_0_0_1px_var(--control-border)] focus-within:shadow-[inset_0_0_0_1px_var(--accent),0_0_0_3px_var(--accent-soft)]">
-			<span className="truncate text-[13px]/5 text-ink-2">{label}</span>
+		<label className="flex min-h-9 min-w-0 items-center justify-between gap-2 rounded-md bg-raised px-3 py-1 shadow-[inset_0_0_0_1px_var(--control-border)] focus-within:shadow-[inset_0_0_0_1px_var(--accent),0_0_0_3px_var(--accent-soft)]">
+			<span className="min-w-0 text-[13px]/5 wrap-break-word hyphens-auto text-ink-2">{label}</span>
 			<span className="flex shrink-0 items-baseline font-mono text-[13px]/4 font-medium text-ink">
 				<DecimalInput
 					aria-label={label}

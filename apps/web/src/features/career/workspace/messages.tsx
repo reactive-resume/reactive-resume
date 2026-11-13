@@ -30,6 +30,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { DraftRecovery } from "../draft-recovery";
@@ -143,8 +144,8 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 				subtitle={
 					reply && pending
 						? readBy
-							? t`${application.company} wrote back ${wroteOn}. Read by ${readBy.label} · ${readBy.model}. Nothing changes until you apply it.`
-							: t`${application.company} wrote back ${wroteOn}. Nothing changes until you apply it.`
+							? t`${isolate(application.company)} wrote back ${wroteOn}. Read by ${readBy.label} · ${readBy.model}. Nothing changes until you apply it.`
+							: t`${isolate(application.company)} wrote back ${wroteOn}. Nothing changes until you apply it.`
 						: offer?.data.respondBy
 							? t`Reply to the offer by ${time.format(offer.data.respondBy, { weekday: "long", day: "numeric", month: "short" })} · ${deadlineRelative}. You send from your own email; nothing is sent from here.`
 							: t`You send from your own email; nothing is sent from here.`
@@ -199,7 +200,7 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 								<SectionHeading
 									className="pt-[22px]"
 									note={reply ? wroteOn : undefined}
-								>{t`From ${application.company}`}</SectionHeading>
+								>{t`From ${isolate(application.company)}`}</SectionHeading>
 								<p className="mt-0.5 rounded-lg bg-sunken px-3.5 py-3 text-[13px]/[18px] whitespace-pre-wrap text-ink-2">
 									{message}
 								</p>
@@ -325,7 +326,7 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 			<DraftRecovery {...draft} />
 			<div className="grid gap-1.5">
 				<label htmlFor={`${application.id}-message`} className="text-xs font-medium text-ink-2">
-					{t`Paste a message from ${application.company}`}
+					{t`Paste a message from ${isolate(application.company)}`}
 				</label>
 				<Textarea
 					// What people paste or write here can be in any language: its own text sets the direction.

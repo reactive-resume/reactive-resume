@@ -184,7 +184,7 @@ export function EntriesGroup() {
 						<Radio.Root
 							key={option.id}
 							value={option.id}
-							className="group/layout flex h-[46px] cursor-pointer items-center gap-3 border-b border-line text-start last:border-0"
+							className="group/layout flex min-h-[46px] cursor-pointer items-center gap-3 border-b border-line py-1.5 text-start last:border-0"
 						>
 							<RadioDot />
 							<span
@@ -278,10 +278,11 @@ export function EntriesGroup() {
 					<Radio.Root
 						key={option.value}
 						value={option.value}
-						className="group/layout flex h-9 cursor-pointer items-center gap-2.5 border-b border-line text-start text-[13px]/[18px] text-ink-2 data-checked:font-medium data-checked:text-ink"
+						className="group/layout flex min-h-9 cursor-pointer items-center gap-2.5 border-b border-line py-1.5 text-start text-[13px]/[18px] text-ink-2 data-checked:font-medium data-checked:text-ink"
 					>
 						<RadioDot className="size-4 group-data-checked/layout:after:inset-1" />
-						{option.label}
+						{/* A long name (German "Fortschrittsbalken") wraps instead of pushing its sample out of the column. */}
+						<span className="min-w-0 wrap-break-word hyphens-auto">{option.label}</span>
 						<span aria-hidden="true" className="ms-auto flex w-[52px] shrink-0 items-center gap-0.5">
 							{samples[option.value]}
 						</span>

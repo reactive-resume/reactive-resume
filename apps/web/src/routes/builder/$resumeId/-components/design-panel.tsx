@@ -307,7 +307,9 @@ function CustomCss() {
 			<dl className="grid grid-cols-[auto_1fr] items-center gap-x-3.5">
 				{targets.map(([selector, label]) => (
 					<div key={selector} className="contents">
-						<dt className="font-mono text-xs/[26px] font-medium text-ink">{selector}</dt>
+						<dt className="font-mono text-xs/[26px] font-medium text-ink">
+							<bdi dir="ltr">{selector}</bdi>
+						</dt>
 						<dd className="text-[13px]/[26px] text-ink-3">{label}</dd>
 					</div>
 				))}
