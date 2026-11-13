@@ -5,6 +5,7 @@ import type { ImageSourcePropType } from "react-native";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { Image } from "react-native";
+import { useSettled } from "../share/document";
 import { useResumeData, useResumeDocument } from "./document";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import { paperText } from "@/dev/storyboard/paper-text.gen";
@@ -20,7 +21,7 @@ const fixtureIds = { overview: "B1-Overview", design: "B6-Design" } as const;
 
 /** The page render of the open resume: a file URI, refreshed when the draft changes. */
 export function usePageImage(id: string): { source: ImageSourcePropType | undefined; pageCount: number } {
-	const data = useResumeData();
+	const data = useSettled(useResumeData());
 	const document = useResumeDocument();
 	// A new data object is a new revision; renders are cached per revision.
 	const revision = `${document?.updatedAt?.toString() ?? ""}:${data ? revisionOf(data) : 0}`;

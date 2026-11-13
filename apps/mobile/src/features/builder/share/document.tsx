@@ -1,7 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
 import { fnv1a } from "@reactive-resume/utils/string";
 import { DockDocumentId } from "../shared/document";
@@ -33,11 +33,22 @@ export function useLetterDocument(id: string) {
 	const draft = useLetterStore((s) => (s.document?.id === id ? s.document : null));
 	return { ...query, data: draft ?? query.data };
 }
-export function useRenderedPage(request: PageRenderRequest | undefined) {
+/** The server renders every page: wait for a pause in typing (the letter autosave delay) before asking for one. */
+export const RENDER_SETTLE_MS = 800;
+export function useSettled<T>(value: T, ms = RENDER_SETTLE_MS): T {
+	const [settled, setSettled] = useState(value);
+	useEffect(() => {
+		const timer = setTimeout(() => setSettled(value), ms);
+		return () => clearTimeout(timer);
+	}, [value, ms]);
+	return settled;
+}
+export function useRenderedPage(live: PageRenderRequest | undefined) {
 	const { scope } = useDataBackend();
-	const snapshot = request?.data
-		? { ...request, revision: `${request.revision}:${fnv1a(JSON.stringify(request.data))}` }
-		: request;
+	const request = useSettled(live);
+	const draft = request?.data ?? request?.letter;
+	const snapshot =
+		request && draft ? { ...request, revision: `${request.revision}:${fnv1a(JSON.stringify(draft))}` } : request;
 	return useQuery({
 		queryKey: [scope, "document-page", snapshot],
 		queryFn: () => {
