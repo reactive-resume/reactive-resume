@@ -62,7 +62,9 @@ export const createVitestProjectConfig = ({
 			setupFiles: [setupFile],
 			include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
 			exclude: ["node_modules", "dist", ".output", "coverage", "reports"],
-			pool: "threads",
+			// Processes, not threads: with several worker threads compiling WebAssembly (Forme, HarfBuzz, PDF.js), V8 on
+			// Linux CPUs with memory protection keys can abort the run with "Check failed: jit_page.has_value()".
+			pool: "forks",
 			maxWorkers: 2,
 			// Isolation stays on: without it, test files in a worker share one module registry, so a
 			// `vi.mock` in one file leaks into another and whichever file imported a module first wins.
