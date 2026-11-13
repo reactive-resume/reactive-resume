@@ -13,8 +13,8 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
-import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { generateId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
@@ -485,7 +485,7 @@ export function InterviewDialog({
 						<Trans>Who you'll meet</Trans>
 					</legend>
 					{draft.participants.map((participant, index) => (
-						<div key={participant.id} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_32px] gap-2">
+						<div key={participant.id} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_28px_28px] gap-2">
 							<Input
 								aria-label={t`Name of person ${i18n.number(index + 1)}`}
 								placeholder={t`Name`}
@@ -500,6 +500,28 @@ export function InterviewDialog({
 								maxLength={200}
 								onChange={(event) => setParticipant(participant.id, { role: event.target.value })}
 							/>
+							<Popover>
+								<PopoverTrigger
+									render={
+										<IconButton
+											icon="link"
+											label={t`Profile link of person ${i18n.number(index + 1)}`}
+											size="icon-sm"
+										/>
+									}
+								/>
+								<PopoverContent className="w-80">
+									<Input
+										type="url"
+										aria-label={t`Profile link of person ${i18n.number(index + 1)}`}
+										placeholder={t`Profile link (optional)`}
+										className="w-full"
+										value={participant.profileUrl}
+										maxLength={2048}
+										onChange={(event) => setParticipant(participant.id, { profileUrl: event.target.value })}
+									/>
+								</PopoverContent>
+							</Popover>
 							<IconButton
 								icon="x"
 								iconSize={18}
@@ -511,15 +533,6 @@ export function InterviewDialog({
 										draft.participants.filter((item) => item.id !== participant.id),
 									)
 								}
-							/>
-							<Input
-								type="url"
-								aria-label={t`Profile link of person ${i18n.number(index + 1)}`}
-								placeholder={t`Profile link (optional)`}
-								className="col-span-2"
-								value={participant.profileUrl}
-								maxLength={2048}
-								onChange={(event) => setParticipant(participant.id, { profileUrl: event.target.value })}
 							/>
 						</div>
 					))}
@@ -546,9 +559,8 @@ export function InterviewDialog({
 				</fieldset>
 
 				<Field label={t`What they asked you to prepare`} htmlFor={`${id}-notes`}>
-					<Textarea
+					<Input
 						id={`${id}-notes`}
-						rows={2}
 						value={draft.notes}
 						maxLength={5000}
 						onChange={(event) => set("notes", event.target.value)}

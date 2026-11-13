@@ -195,13 +195,13 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent closeLabel={t`Close`} className="sm:max-w-sm">
+			<DialogContent closeLabel={t`Close`} className="sm:max-w-[480px]">
 				<DialogHeader>
 					<DialogTitle>
 						<Trans>Follow-up</Trans>
 					</DialogTitle>
 					<DialogDescription>
-						<Trans>A reminder to check in, shown as the next step until you do.</Trans>
+						<Trans>A reminder to check in with {application.company}.</Trans>
 					</DialogDescription>
 				</DialogHeader>
 				<form
@@ -239,18 +239,21 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 						});
 					}}
 				>
-					<div className="grid gap-1.5">
-						<Label htmlFor={`${id}-date`}>
-							<Trans>Date</Trans>
-						</Label>
-						<Input id={`${id}-date`} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+					<div className="grid grid-cols-[minmax(0,1fr)_120px] gap-3">
+						<div className="grid gap-1.5">
+							<Label htmlFor={`${id}-date`}>
+								<Trans>Date</Trans>
+							</Label>
+							<Input id={`${id}-date`} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+						</div>
+						<div className="grid gap-1.5">
+							<Label htmlFor={`${id}-time`}>
+								<Trans>Time</Trans>
+							</Label>
+							<Input id={`${id}-time`} type="time" value={time} onChange={(event) => setTime(event.target.value)} />
+						</div>
 					</div>
-					<div className="grid gap-1.5">
-						<Label htmlFor={`${id}-time`}>
-							<Trans>Time</Trans>
-						</Label>
-						<Input id={`${id}-time`} type="time" value={time} onChange={(event) => setTime(event.target.value)} />
-					</div>
+
 					<div className="grid gap-1.5">
 						<Label htmlFor={`${id}-note`}>
 							<Trans>What to do</Trans>
@@ -262,17 +265,23 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 							onChange={(event) => setNote(event.target.value)}
 						/>
 					</div>
+					<p className="t-small text-ink-3">
+						<Trans>Shown on Today and in the list as the next step. Times are in {timeZone}.</Trans>
+					</p>
 				</form>
 				<DialogFooter>
 					{application.followUpAt && (
 						<Button
-							variant="ghost"
+							variant="danger-text"
 							className="me-auto"
 							onClick={() => update.mutate({ id: application.id, followUpAt: null, followUpNote: null })}
 						>
 							<Trans>Clear</Trans>
 						</Button>
 					)}
+					<Button variant="ghost" onClick={() => onOpenChange(false)}>
+						<Trans>Cancel</Trans>
+					</Button>
 					<Button type="submit" form={`${id}-form`} disabled={!date || update.isPending}>
 						<Trans>Save</Trans>
 					</Button>

@@ -20,6 +20,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
@@ -88,6 +94,13 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 		}
 	};
 	const offer = application.status === "offer" ? latest(saved.data, "offer") : undefined;
+	const deadlineDays = offer?.data.respondBy ? Math.floor((+new Date(offer.data.respondBy) - +now) / 86_400_000) : 0;
+	const deadlineRelative =
+		deadlineDays > 0
+			? plural(deadlineDays, { one: "in # day", other: "in # days" })
+			: offer?.data.respondBy
+				? time.relative(offer.data.respondBy, now).toLocaleLowerCase(time.locale)
+				: "";
 
 	if (workspace.isPending || saved.isPending)
 		return (
@@ -131,7 +144,7 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 							? t`${application.company} wrote back ${wroteOn}. Read by ${readBy.label} · ${readBy.model}. Nothing changes until you apply it.`
 							: t`${application.company} wrote back ${wroteOn}. Nothing changes until you apply it.`
 						: offer?.data.respondBy
-							? t`Reply to the offer by ${time.format(offer.data.respondBy, { weekday: "long", day: "numeric", month: "short" })} · ${time.relative(offer.data.respondBy, now).toLocaleLowerCase(time.locale)}. You send from your own email; nothing is sent from here.`
+							? t`Reply to the offer by ${time.format(offer.data.respondBy, { weekday: "long", day: "numeric", month: "short" })} · ${deadlineRelative}. You send from your own email; nothing is sent from here.`
 							: t`You send from your own email; nothing is sent from here.`
 				}
 			/>
@@ -374,6 +387,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	);
 	const text = readOnly && reply ? reply.data.reply : draft.value;
 	const placeholders = replyPlaceholders(text);
+	const highlight = useRef<HTMLDivElement>(null);
 	// The employer's language is the default; this is the explicit way back to the words the user reads everything else in.
 	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
 
@@ -441,17 +455,25 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 								reply &&
 								!readOnly &&
 								provider && (
-									<Button
-										size="sm"
-										variant="ghost"
-										loading={generate.isPending}
-										onClick={() =>
-											void generate.run({ task: "reply", message: reply.data.message }).catch(() => undefined)
-										}
-									>
-										<Icon name="sparkle" size={16} />
-										<Trans>Redraft</Trans>
-									</Button>
+									<DropdownMenu>
+										<DropdownMenuTrigger render={<Button size="sm" variant="ghost" loading={generate.isPending} />}>
+											<Icon name="sparkle" size={16} />
+											<Trans>Redraft</Trans>
+											<Icon name="caret-down" size={14} />
+										</DropdownMenuTrigger>
+										<DropdownMenuContent align="end">
+											<DropdownMenuItem
+												onClick={() =>
+													void generate.run({ task: "reply", message: reply.data.message }).catch(() => undefined)
+												}
+											>
+												<Trans>Redraft</Trans>
+											</DropdownMenuItem>
+											<DropdownMenuItem onClick={rewrite}>
+												<Trans>Write a new reply in {languageName}</Trans>
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
 								)
 							}
 						>
@@ -460,28 +482,47 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 						<label htmlFor={`${reply?.id ?? application.id}-reply`} className="sr-only">
 							<Trans>Suggested reply · edit before sending</Trans>
 						</label>
-						<Textarea
-							// What people paste or write here can be in any language: its own text sets the direction.
-							dir="auto"
-							id={`${reply?.id ?? application.id}-reply`}
-							value={text}
-							readOnly={readOnly}
-							maxLength={4000}
-							onChange={(event) => draft.setValue(event.target.value)}
-							className="min-h-[196px] px-3 py-2.5 text-sm leading-[22px] pointer-coarse:text-base"
-						/>
+						<div className="relative">
+							{placeholders.length > 0 && (
+								<div
+									ref={highlight}
+									aria-hidden="true"
+									dir="auto"
+									className="pointer-events-none absolute inset-0 overflow-hidden rounded-md border border-transparent px-3 py-2.5 text-sm/[22px] wrap-break-word whitespace-pre-wrap pointer-coarse:text-base"
+								>
+									{text.split(/(\[[^\]\n]+\])/g).map((part, index) =>
+										placeholders.includes(part) ? (
+											<mark key={index} className="bg-warn-soft text-warn-text">
+												{part}
+											</mark>
+										) : (
+											part
+										),
+									)}
+								</div>
+							)}
+							<Textarea
+								// What people paste or write here can be in any language: its own text sets the direction.
+								dir="auto"
+								id={`${reply?.id ?? application.id}-reply`}
+								value={text}
+								readOnly={readOnly}
+								maxLength={4000}
+								onChange={(event) => draft.setValue(event.target.value)}
+								className={cn(
+									"relative min-h-[196px] resize-none px-3 py-2.5 text-sm leading-[22px] pointer-coarse:text-base",
+									placeholders.length > 0 && "bg-transparent text-transparent caret-ink dark:bg-transparent",
+								)}
+								onScroll={(event) => {
+									if (highlight.current) highlight.current.scrollTop = event.currentTarget.scrollTop;
+								}}
+							/>
+						</div>
 					</div>
 					{placeholders.length > 0 && (
-						<p role="status" className="text-sm text-warn-text">
-							<Trans>Replace these placeholders before sending:</Trans>{" "}
-							{placeholders.map((placeholder, index) => (
-								<span key={placeholder}>
-									{index > 0 && " · "}
-									<mark className="rounded bg-warn-soft px-1 text-warn-text" dir="auto">
-										{placeholder}
-									</mark>
-								</span>
-							))}
+						<p role="status" className="flex items-center gap-1.5 t-small text-ink-3">
+							<Icon name="warning" size={14} />
+							<Trans>Replace the marked placeholder before sending.</Trans>
 						</p>
 					)}
 					<div className="flex flex-wrap items-center gap-2">
@@ -494,7 +535,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 						</Button>
 						{!readOnly && application.status !== "saved" && application.status !== "closed" && (
 							<Button
-								variant="secondary"
+								variant="ghost"
 								loading={logging}
 								disabled={!application.replyVersion || !text.trim()}
 								onClick={() => void copy(true)}
@@ -504,25 +545,20 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							</Button>
 						)}
 						<span className="text-xs text-ink-3">
-							<Trans>You send it from your own email.</Trans>
+							{!reply?.data.changes.length && <Trans>You send it from your own email.</Trans>}
 						</span>
-						{!readOnly && provider && reply && (
-							<Button variant="ghost" size="sm" className="ms-auto" loading={generate.isPending} onClick={rewrite}>
-								<Trans>Write a new reply in {languageName}</Trans>
-							</Button>
-						)}
 					</div>
-					{!readOnly && application.status !== "saved" && application.status !== "closed" && (
-						<p className="text-xs text-ink-3">
-							<Trans>
-								Log only when you have replied. This records contact and clears the application's follow-up and its
-								reminder; it sends no message and keeps interview reminders.
-							</Trans>{" "}
-							{!application.replyVersion && (
-								<Trans>Update the server to enable reply logging. Copy reply is still available.</Trans>
-							)}
-						</p>
-					)}
+					{!readOnly &&
+						!application.replyVersion &&
+						application.status !== "saved" &&
+						application.status !== "closed" && (
+							<p className="text-xs text-ink-3">
+								<Trans>Logging records contact and clears the follow-up reminder; nothing is sent.</Trans>{" "}
+								{!application.replyVersion && (
+									<Trans>Update the server to enable reply logging. Copy reply is still available.</Trans>
+								)}
+							</p>
+						)}
 					{!readOnly && <GenerateNotice generate={generate} onRetry={rewrite} className="w-fit" />}
 				</>
 			)}
@@ -800,9 +836,9 @@ function ProposalCard({ reply, application, now, readOnly, onDismiss }: Proposal
 	};
 
 	return (
-		<section className="grid gap-0">
+		<section className={cn("grid gap-0", applied && "mt-[22px] rounded-xl border border-line px-5 py-2")}>
 			<SectionHeading
-				className="pt-[22px]"
+				className={applied ? "sr-only" : "pt-[22px]"}
 				note={
 					applied
 						? t({ message: "Applied", context: "A proposed change has been applied" })
@@ -817,28 +853,49 @@ function ProposalCard({ reply, application, now, readOnly, onDismiss }: Proposal
 			<ul className="grid">
 				{changes.map((change, index) => {
 					const described = describe(change, index);
-					const { title, detail } = described;
+					const { title } = described;
+					const appliedChange = applied?.changes.includes(index);
+					const before = reply.data.applied?.undo?.before;
+					const detail = appliedChange
+						? change.type === "stage" && before
+							? t`Was ${getLaneLabel(lanes.find((lane) => lane.id === before.laneId) ?? getCategoryLane(lanes, before.status))}`
+							: change.type === "follow-up" && change.at
+								? t`Follow-up set for ${day(change.at)}`
+								: described.detail
+						: described.detail;
 					const isFixed = fixed(index);
 					const id = `${reply.id}-change-${index}`;
 					return (
 						<li
 							key={id}
-							className={cn("flex items-start gap-3.5 border-b border-line py-2.5", isFixed && "opacity-70")}
+							className={cn(
+								"flex items-start gap-3.5 border-b border-line py-2.5 last:border-b-0",
+								isFixed && !applied && "opacity-70",
+							)}
 						>
-							<Checkbox
-								id={id}
-								className="mt-px"
-								checked={isFixed || selected.includes(index)}
-								disabled={isFixed || applied !== null || readOnly}
-								onCheckedChange={(checked) =>
-									setTicked((rows) => (checked ? [...rows, index] : rows.filter((row) => row !== index)))
-								}
-							/>
+							{appliedChange ? (
+								<Icon name="check-circle" className="mt-px text-accent-text" size={18} />
+							) : (
+								<Checkbox
+									id={id}
+									className="mt-px"
+									checked={isFixed || selected.includes(index)}
+									disabled={isFixed || applied !== null || readOnly}
+									onCheckedChange={(checked) =>
+										setTicked((rows) => (checked ? [...rows, index] : rows.filter((row) => row !== index)))
+									}
+								/>
+							)}
 							<label htmlFor={id} className="grid flex-1 gap-px">
 								<span className="text-[15px]/[22px] font-medium">{title}</span>
 								{detail && <span className="text-[13px]/[18px] text-ink-3">{detail}</span>}
 							</label>
-							{"from" in described && described.from && described.to && (
+							{appliedChange && (
+								<span className="rounded-sm bg-accent-soft px-1.5 py-0.5 text-xs text-accent-text">
+									{t({ message: "Applied", context: "A proposed change has been applied" })}
+								</span>
+							)}
+							{!applied && "from" in described && described.from && described.to && (
 								<span className="flex shrink-0 items-center gap-1.5 pt-0.5 text-[13px]/[18px] text-ink-2">
 									<StageDot status={described.from.category} color={described.from.color}>
 										{getLaneLabel(described.from)}
@@ -871,30 +928,32 @@ function ProposalCard({ reply, application, now, readOnly, onDismiss }: Proposal
 			)}
 
 			{/* Only a message about scheduling can tempt adding an interview from an unconfirmed time. */}
-			{reply.data.unconfirmed.length > 0 && !reply.data.changes.some((change) => change.type === "offer") && (
-				<div className="flex items-start gap-3.5 border-b border-line py-2.5 ps-8">
-					<div className="grid flex-1 gap-px">
-						<p className="text-[15px]/[22px] font-medium">
-							<Trans>No interview added</Trans>
-						</p>
-						<p className="text-[13px]/[18px] text-ink-3">
-							{contact
-								? t`The message gives no time. Confirm one with ${contact}, then schedule the call.`
-								: t`The message gives no time. Confirm one, then schedule the call.`}
-						</p>
+			{!applied &&
+				reply.data.unconfirmed.length > 0 &&
+				!reply.data.changes.some((change) => change.type === "offer") && (
+					<div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3.5 border-b border-line py-2.5 ps-8">
+						<div className="contents">
+							<p className="col-span-2 text-[15px]/[22px] font-medium">
+								<Trans>No interview added</Trans>
+							</p>
+							<p className="text-[13px]/[18px] text-ink-3">
+								{contact
+									? t`The message gives no time. Confirm one with ${contact}, then schedule the call.`
+									: t`The message gives no time. Confirm one, then schedule the call.`}
+							</p>
+						</div>
+						{!readOnly && (
+							<Link
+								to="/dashboard/applications/$applicationId/{-$tab}"
+								params={{ applicationId: application.id, tab: "messages" }}
+								search={{ edit: "interview" }}
+								className="text-[13px]/[18px] font-medium text-accent-text"
+							>
+								<Trans>Schedule…</Trans>
+							</Link>
+						)}
 					</div>
-					{!readOnly && (
-						<Link
-							to="/dashboard/applications/$applicationId/{-$tab}"
-							params={{ applicationId: application.id, tab: "messages" }}
-							search={{ edit: "interview" }}
-							className="shrink-0 pt-0.5 text-[13px]/[18px] font-medium text-accent-text"
-						>
-							<Trans>Schedule…</Trans>
-						</Link>
-					)}
-				</div>
-			)}
+				)}
 
 			{!readOnly && (
 				<Swap id={applied ? "applied" : "pending"}>

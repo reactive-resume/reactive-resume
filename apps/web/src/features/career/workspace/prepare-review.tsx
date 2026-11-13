@@ -1,6 +1,6 @@
 import type { Application } from "@/features/applications/types";
 import type { Proposal, ProposalApplications } from "@reactive-resume/resume/proposals";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
@@ -8,7 +8,7 @@ import { applicationReviewSchema, type ApplicationReview } from "@reactive-resum
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { appliedApplications, applyResumeProposals, getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
@@ -39,20 +39,16 @@ export function PrepareReview({ application, disabled }: PrepareReviewProps) {
 			</Button>
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto sm:max-w-[560px]">
-					<DialogHeader>
-						<DialogTitle>
-							<Trans>Prepare application</Trans>
-						</DialogTitle>
-					</DialogHeader>
-					<ReviewForm application={application} disabled={disabled} />
+					<ReviewForm application={application} disabled={disabled} onClose={() => setOpen(false)} />
 				</DialogContent>
 			</Dialog>
 		</>
 	);
 }
 
-function ReviewForm({ application, disabled }: PrepareReviewProps) {
+function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { onClose: () => void }) {
 	const workspace = useWorkspace(application.id);
+	const { provider: connection } = useDefaultProvider();
 	const questions = useSessionDraft(`prepare-questions:${application.id}`, "", (value) =>
 		typeof value === "string" ? value : undefined,
 	);
@@ -63,6 +59,7 @@ function ReviewForm({ application, disabled }: PrepareReviewProps) {
 	const review = reviewDraft.value;
 	const setReview = reviewDraft.setValue;
 	const [decisions, setDecisions] = useState<ProposalApplications>({});
+	const [keptAnswers, setKeptAnswers] = useState<Review["answers"]>([]);
 	const [busy, setBusy] = useState(false);
 	const [stoppable, setStoppable] = useState(false);
 	const [undo, setUndo] = useState<(() => Promise<void>) | null>(null);
@@ -106,6 +103,7 @@ function ReviewForm({ application, disabled }: PrepareReviewProps) {
 			if (!current() || controller.current?.signal.aborted) return;
 			setReview(result);
 			setDecisions({});
+			setKeptAnswers([]);
 			setUndo(null);
 		}, true);
 	const accept = (chosen: readonly Proposal[]) =>
@@ -218,62 +216,87 @@ function ReviewForm({ application, disabled }: PrepareReviewProps) {
 			if (!(await workspace.save({ answers: [...before, answer] }, { answers: before }))) return;
 			if (!current()) return;
 			setReview({ ...review, answers: review.answers.filter((_, position) => position !== index) });
+			setKeptAnswers((kept) => [...kept, item]);
 			setUndo(() => async () => {
 				const latest = (await workspace.settled()).answers;
 				if (JSON.stringify(latest.find((value) => value.id === answer.id)) !== JSON.stringify(answer))
 					throw new Error(t`The answer changed since, so it wasn't restored.`);
 				if (await workspace.save({ answers: latest.filter((value) => value.id !== answer.id) }, { answers: latest })) {
-					if (current()) setUndo(null);
+					if (current()) {
+						setReview((value) => (value ? { ...value, answers: [...value.answers, item] } : value));
+						setKeptAnswers((kept) => kept.filter((value) => value !== item));
+						setUndo(null);
+					}
 				}
 			});
 		});
 	return (
 		<section aria-label={t`Prepare application`} className="grid gap-4">
-			<p className="text-sm text-ink-2">
-				<Trans>
-					Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer.
-				</Trans>
-			</p>
-			<Label htmlFor={`prepare-questions-${application.id}`}>
-				<Trans>Form questions (optional)</Trans>
-			</Label>
-			<Textarea
-				id={`prepare-questions-${application.id}`}
-				value={questions.value}
-				onChange={(event) => questions.setValue(event.target.value)}
-				disabled={busy}
-			/>
-			<p className="text-xs text-ink-2">
-				<Trans>Separate questions with a blank line. Up to five questions, 2,000 characters each.</Trans>
-			</p>
-			{!valid && (
-				<p role="alert">
-					<Trans>Separate questions with a blank line. Up to five questions, 2,000 characters each.</Trans>
-				</p>
+			<DialogHeader>
+				<DialogTitle>{review ? t`Prepare application` : t`Prepare drafts`}</DialogTitle>
+			</DialogHeader>
+			{!review && (
+				<>
+					<p className="text-sm text-ink-2">
+						<Trans>
+							Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer.
+						</Trans>
+					</p>
+					<Label htmlFor={`prepare-questions-${application.id}`}>
+						<Trans>Questions from the employer's form · optional</Trans>
+					</Label>
+					<Textarea
+						id={`prepare-questions-${application.id}`}
+						placeholder={t`For example: Why do you want this role?`}
+						value={questions.value}
+						onChange={(event) => questions.setValue(event.target.value)}
+						disabled={busy}
+					/>
+					<p className="text-xs text-ink-2">
+						<Trans>Separate questions with a blank line. Up to five questions, 2,000 characters each.</Trans>
+					</p>
+					{!valid && (
+						<p role="alert">
+							<Trans>Separate questions with a blank line. Up to five questions, 2,000 characters each.</Trans>
+						</p>
+					)}
+					{connection && (
+						<p className="t-small text-ink-3">
+							<Trans>
+								Sends the posting, your linked resume and Knowledge to {connection.label}. Your provider may charge.
+							</Trans>
+						</p>
+					)}
+					<DialogFooter>
+						<Button variant="ghost" onClick={onClose}>
+							<Trans>Cancel</Trans>
+						</Button>
+						<Button
+							disabled={
+								busy
+									? !stoppable
+									: disabled ||
+										review !== null ||
+										!valid ||
+										!application.resumeId ||
+										(!application.jobDescription && !application.requirements.length)
+							}
+							onClick={() => (busy && stoppable ? controller.current?.abort() : void prepare())}
+						>
+							{!busy && <Icon name="sparkle" size={18} />}
+							{busy && stoppable ? t`Stop` : busy ? t`Preparing…` : t`Prepare drafts`}
+						</Button>
+						{undo && (
+							<Button variant="secondary" disabled={busy} onClick={() => void run(undo)}>
+								<Trans>Undo</Trans>
+							</Button>
+						)}
+					</DialogFooter>
+				</>
 			)}
-			<div className="flex flex-wrap gap-2">
-				<Button
-					disabled={
-						busy
-							? !stoppable
-							: disabled ||
-								review !== null ||
-								!valid ||
-								!application.resumeId ||
-								(!application.jobDescription && !application.requirements.length)
-					}
-					onClick={() => (busy && stoppable ? controller.current?.abort() : void prepare())}
-				>
-					{busy && stoppable ? t`Stop` : busy ? t`Preparing…` : t`Prepare drafts for review`}
-				</Button>
-				{undo && (
-					<Button variant="secondary" disabled={busy} onClick={() => void run(undo)}>
-						<Trans>Undo</Trans>
-					</Button>
-				)}
-			</div>
 			{review && (
 				<>
+					<p className="t-small text-ink-2">{t`Drafts for ${application.company} · ${application.role}, made by ${connection?.label ?? ""}. Nothing is sent to the employer.`}</p>
 					{review.failed.length > 0 && (
 						<p role="status">
 							<Trans>Some drafts couldn't finish. Keep completed drafts before trying again.</Trans>{" "}
@@ -290,73 +313,83 @@ function ReviewForm({ application, disabled }: PrepareReviewProps) {
 							].join(", ")}
 						</p>
 					)}
-					<Button
-						variant="secondary"
-						disabled={busy}
-						onClick={() => {
-							setReview(null);
-							setUndo(null);
-						}}
-					>
-						<Trans>Discard</Trans>
-					</Button>
-					<h3 className="font-semibold">
-						<Trans>Resume proposals</Trans>
-					</h3>
-					{review.assistantText && <p className="text-sm whitespace-pre-line">{review.assistantText}</p>}
-					{review.threadId && (
-						<Link
-							to="/builder/$resumeId"
-							params={{ resumeId: review.resume.id }}
-							search={{ assistant: review.threadId, applicationId: application.id }}
-						>
-							<Trans>Open AI assistant</Trans>
-						</Link>
-					)}
-					{review.sets.length === 0 && (
-						<p>
-							<Trans>No edits proposed.</Trans>
-						</p>
-					)}
-					{review.sets.map((set) => {
-						const proposals: Proposal[] = set.edits.map((edit) => ({
-							...edit,
-							source: "assistant",
-							aiOperationIds: set.aiOperationIds,
-						}));
-						return (
-							<ChangeSet
-								key={set.toolCallId}
-								compact
-								resumeId={review.resume.id}
-								title={set.title}
-								proposals={proposals}
-								states={proposals.map((proposal) => getProposalState(review.resume.data, proposal, decisions))}
-								locked={
-									busy ||
-									disabled ||
-									review.resume.isLocked ||
-									set.revoked === true ||
-									set.tailoredFor !== application.id
-								}
-								onAccept={(chosen) => void accept(chosen)}
-								onReject={(chosen) => void decide(set, chosen, "rejected")}
-								onRestore={(chosen) => void decide(set, chosen, "pending")}
-								onEdit={async (proposal, text) => {
-									if (!(await decide(set, [proposal], "pending", text)))
-										throw new Error(t`Couldn't save that change. Try again.`);
-								}}
-								requirements={set.requirements ?? []}
-							/>
-						);
-					})}
+					<details className="border-y border-line py-3">
+						<summary className="flex cursor-pointer items-center gap-3">
+							<Icon name="file-text" />
+							<span className="flex-1">
+								{plural(
+									review.sets.reduce((count, set) => count + set.edits.length, 0),
+									{ one: "Resume · # proposed edit", other: "Resume · # proposed edits" },
+								)}
+							</span>
+							{review.threadId && (
+								<Link
+									to="/builder/$resumeId"
+									params={{ resumeId: review.resume.id }}
+									search={{ assistant: review.threadId, applicationId: application.id }}
+									className="t-small text-accent-text"
+								>
+									<Trans>Review edits</Trans>
+								</Link>
+							)}
+						</summary>
+
+						{review.assistantText && <p className="text-sm whitespace-pre-line">{review.assistantText}</p>}
+						{review.threadId && (
+							<Link
+								to="/builder/$resumeId"
+								params={{ resumeId: review.resume.id }}
+								search={{ assistant: review.threadId, applicationId: application.id }}
+							>
+								<Trans>Open AI assistant</Trans>
+							</Link>
+						)}
+						{review.sets.length === 0 && (
+							<p>
+								<Trans>No edits proposed.</Trans>
+							</p>
+						)}
+						{review.sets.map((set) => {
+							const proposals: Proposal[] = set.edits.map((edit) => ({
+								...edit,
+								source: "assistant",
+								aiOperationIds: set.aiOperationIds,
+							}));
+							return (
+								<ChangeSet
+									key={set.toolCallId}
+									compact
+									resumeId={review.resume.id}
+									title={set.title}
+									proposals={proposals}
+									states={proposals.map((proposal) => getProposalState(review.resume.data, proposal, decisions))}
+									locked={
+										busy ||
+										disabled ||
+										review.resume.isLocked ||
+										set.revoked === true ||
+										set.tailoredFor !== application.id
+									}
+									onAccept={(chosen) => void accept(chosen)}
+									onReject={(chosen) => void decide(set, chosen, "rejected")}
+									onRestore={(chosen) => void decide(set, chosen, "pending")}
+									onEdit={async (proposal, text) => {
+										if (!(await decide(set, [proposal], "pending", text)))
+											throw new Error(t`Couldn't save that change. Try again.`);
+									}}
+									requirements={set.requirements ?? []}
+								/>
+							);
+						})}
+					</details>
 					{review.letter && (
-						<div className="grid gap-2">
-							<h3 className="font-semibold">
+						<div className="grid gap-2 border-b border-line pb-4">
+							<h3 className="font-medium">
 								<Trans>Letter draft</Trans>
 							</h3>
 							<Textarea
 								aria-label={t`Letter draft`}
+								className="min-h-20 resize-none border-transparent bg-sunken text-[13px]/[18px] shadow-none"
 								value={review.letter.text}
 								disabled={busy}
 								onChange={(event) =>
@@ -366,16 +399,38 @@ function ReviewForm({ application, disabled }: PrepareReviewProps) {
 									})
 								}
 							/>
-							<Button disabled={busy || disabled || !review.letter.text.trim()} onClick={() => void keepLetter()}>
-								<Trans>Keep letter</Trans>
-							</Button>
+							<div className="flex items-center gap-3">
+								<Button
+									variant="secondary"
+									size="sm"
+									disabled={busy || disabled || !review.letter.text.trim()}
+									onClick={() => void keepLetter()}
+								>
+									<Trans>Keep letter</Trans>
+								</Button>
+								<Button
+									variant="ghost"
+									size="sm"
+									disabled={busy}
+									onClick={() => setReview({ ...review, letter: null })}
+								>
+									<Trans>Discard</Trans>
+								</Button>
+								<span className="ms-auto t-small text-ink-3">
+									{plural(review.letter.text.trim().split(/\s+/).filter(Boolean).length, {
+										one: "# word",
+										other: "# words",
+									})}
+								</span>
+							</div>
 						</div>
 					)}
 					{review.answers.map((item, index) => (
-						<div key={`${index}:${item.question}`} className="grid gap-2">
-							<h3 className="font-semibold">{item.question}</h3>
+						<div key={`${index}:${item.question}`} className="grid gap-2 border-b border-line pb-4">
+							<h3 className="font-medium">{item.question}</h3>
 							<Textarea
 								aria-label={item.question}
+								className="min-h-20 resize-none border-transparent bg-sunken text-[13px]/[18px] shadow-none"
 								value={item.answer.answer}
 								maxLength={6000}
 								disabled={busy}
@@ -391,11 +446,60 @@ function ReviewForm({ application, disabled }: PrepareReviewProps) {
 								}
 							/>
 							{item.note && <p role="note">{item.note}</p>}
-							<Button disabled={busy || disabled || !item.answer.answer.trim()} onClick={() => void keepAnswer(index)}>
-								<Trans>Keep answer</Trans>
-							</Button>
+							<div className="flex items-center gap-3">
+								<Button
+									variant="secondary"
+									size="sm"
+									disabled={busy || disabled || !item.answer.answer.trim()}
+									onClick={() => void keepAnswer(index)}
+								>
+									<Trans>Keep answer</Trans>
+								</Button>
+								<Button
+									variant="ghost"
+									size="sm"
+									disabled={busy}
+									onClick={() =>
+										setReview({ ...review, answers: review.answers.filter((_, position) => position !== index) })
+									}
+								>
+									<Trans>Discard</Trans>
+								</Button>
+							</div>
 						</div>
 					))}
+
+					{keptAnswers.map((item, index) => (
+						<div key={`kept:${index}`} className="grid gap-2 border-b border-line pb-4">
+							<h3 className="font-medium">{item.question}</h3>
+							<p className="rounded-lg bg-sunken px-3 py-2 text-[13px]/[18px]">{item.answer.answer}</p>
+							<span className="flex items-center gap-1.5 t-small text-ink-3">
+								<Icon name="check" size={16} />
+								<Trans>Kept</Trans>
+							</span>
+						</div>
+					))}
+					<DialogFooter className="justify-between">
+						<Button
+							variant="ghost"
+							disabled={busy}
+							onClick={() => {
+								setReview(null);
+								setUndo(null);
+							}}
+						>
+							<Icon name="arrow-clockwise" />
+							<Trans>Prepare again</Trans>
+						</Button>
+						{undo && (
+							<Button variant="secondary" disabled={busy} onClick={() => void run(undo)}>
+								<Trans>Undo</Trans>
+							</Button>
+						)}
+						<Button disabled={busy} onClick={onClose}>
+							<Trans>Done</Trans>
+						</Button>
+					</DialogFooter>
 				</>
 			)}
 		</section>

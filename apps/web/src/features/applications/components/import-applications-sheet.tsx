@@ -234,7 +234,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 							<span className="truncate text-sm/5 font-medium">
 								{table ? (fileName ?? <Trans>Pasted rows</Trans>) : <Trans>Choose a .csv file</Trans>}
 							</span>
-							<span className="truncate text-xs/4 text-ink-3">
+							<span className="text-xs/4 text-ink-3">
 								{table ? (
 									<>
 										<Plural value={Math.max(table.length - 1, 0)} one="# row" other="# rows" />
@@ -428,7 +428,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 										<ul className="grid gap-1.5 pt-1">
 											{result.invalidValues.map(({ row, field, value }) => (
 												<li key={`${row}:${field}`}>
-													{field === "stageEnteredAt" ? (
+													{field === "stageEnteredAt" || field === "applicationDate" ? (
 														<Trans>
 															Row {row}: couldn't read the date “{value}”. Use a date like 2026-10-15.
 														</Trans>

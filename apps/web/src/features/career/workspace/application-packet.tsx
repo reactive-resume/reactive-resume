@@ -3,14 +3,17 @@ import type { ApplicationPacket, PacketReview, PacketSelection } from "@reactive
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { useEffect, useId, useState } from "react";
+import { packetTargetSchema } from "@reactive-resume/schema/applications/autofill";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { useWorkspace } from "../hooks";
 import { IconTile, ListRow } from "@/components/calm/list-row";
 import { createLetterWordsForLocale } from "@/features/letters/compose";
 import { getReadableErrorMessage } from "@/libs/error-message";
@@ -42,15 +45,16 @@ export function ApplicationPacketPanel({ application }: ApplicationPacketPanelPr
 							<Trans>Employer-form packet</Trans>
 						</DialogTitle>
 					</DialogHeader>
-					<PacketForm application={application} />
+					<PacketForm application={application} onClose={() => setOpen(false)} />
 				</DialogContent>
 			</Dialog>
 		</>
 	);
 }
 
-function PacketForm({ application }: ApplicationPacketPanelProps) {
+function PacketForm({ application, onClose }: ApplicationPacketPanelProps & { onClose: () => void }) {
 	const id = useId();
+	const workspace = useWorkspace(application.id);
 	const answers = useQuery(orpc.career.answers.list.queryOptions({ input: { applicationId: application.id } }));
 	const [targetUrl, setTargetUrl] = useState(application.sourceUrl ?? "");
 	const [includeContact, setIncludeContact] = useState(false);
@@ -65,6 +69,7 @@ function PacketForm({ application }: ApplicationPacketPanelProps) {
 		setReview(null);
 		setPacket(null);
 		setReviewed(false);
+		setError("");
 	};
 	const run = async (action: () => Promise<void>) => {
 		setBusy(true);
@@ -79,10 +84,10 @@ function PacketForm({ application }: ApplicationPacketPanelProps) {
 			setBusy(false);
 		}
 	};
-	const prepare = () =>
-		run(async () => {
-			setPacket(null);
-			setReviewed(false);
+	useEffect(() => {
+		if (!application.resumeId || !packetTargetSchema.safeParse(targetUrl).success) return;
+		let cancelled = false;
+		void (async () => {
 			let letterWords: PacketSelection["letterWords"] = null;
 			if (application.coverLetterId) {
 				const letter = await client.coverLetters.getById({ id: application.coverLetterId });
@@ -95,19 +100,29 @@ function PacketForm({ application }: ApplicationPacketPanelProps) {
 					signOff: words.signOff,
 				};
 			}
-			setReview(
-				await client.applications.packet.review({
-					applicationId: application.id,
-					targetUrl,
-					includeContact,
-					answerIds,
-					letterWords,
-				}),
-			);
-		});
+			const result = await client.applications.packet.review({
+				applicationId: application.id,
+				targetUrl,
+				includeContact,
+				answerIds,
+				letterWords,
+			});
+			if (!cancelled) setReview(result);
+		})()
+			.catch((error) => {
+				if (!cancelled)
+					setError(getReadableErrorMessage(error, t`Couldn't prepare the packet. Reload and review again.`));
+			})
+			.finally(() => {
+				if (!cancelled) setBusy(false);
+			});
+		return () => {
+			cancelled = true;
+		};
+	}, [application.id, application.resumeId, application.coverLetterId, targetUrl, includeContact, answerIds]);
 	const approve = () =>
 		run(async () => {
-			if (!review || !reviewed) return;
+			if (!review || !reviewed || busy) return;
 			setPacket(
 				await client.applications.packet.export({
 					selection: review.selection,
@@ -118,116 +133,178 @@ function PacketForm({ application }: ApplicationPacketPanelProps) {
 		});
 	return (
 		<section aria-label={t`Employer-form packet`} className="grid gap-3 text-sm">
-			<p className={packet ? "hidden" : "text-[13px]/[18px] text-ink-3"}>
-				<Trans>
-					Review a private snapshot for one form. No AI, submission or stage change. Named document versions are saved
-					only when you approve.
-				</Trans>
-			</p>
-			<p className={packet ? "hidden" : "text-[13px]/[18px] text-ink-3"}>
-				<Trans>
-					Browser autofill is experimental: only verified native controls can be filled. Unknown authorization,
-					sensitive questions, custom controls, account steps, captcha and additional pages need your explicit answers
-					or manual completion.
-				</Trans>
-			</p>
-			<fieldset disabled={busy} className={packet ? "hidden" : "grid gap-3"}>
-				<label htmlFor={`${id}-url`} className="grid gap-1">
-					<Trans>Exact form URL</Trans>
-					<Input
-						id={`${id}-url`}
-						type="url"
-						value={targetUrl}
-						onChange={(event) => change(() => setTargetUrl(event.target.value))}
-					/>
-				</label>
-				<label htmlFor={`${id}-contact`} className="flex gap-2">
-					<Checkbox
-						id={`${id}-contact`}
-						checked={includeContact}
-						onCheckedChange={(value) => change(() => setIncludeContact(value))}
-					/>
-					<Trans>Include reviewed profile name, email and phone</Trans>
-				</label>
-				<p>
-					<Trans>
-						Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported.
-					</Trans>
-				</p>
-				{answers.isError ? (
-					<Button variant="secondary" onClick={() => void answers.refetch()}>
-						<Trans>Retry saved answers</Trans>
-					</Button>
-				) : answers.isPending ? (
-					<p role="status">
-						<Trans>Loading saved answers…</Trans>
+			{!packet && (
+				<fieldset disabled={busy} className="grid gap-3">
+					<p className="t-small text-ink-2">
+						<Trans>Everything one application form asks for, checked by you and saved as it is now.</Trans>
 					</p>
-				) : (
-					answers.data.map((answer) => (
-						<label key={answer.id} htmlFor={`${id}-${answer.id}`} className="flex gap-2">
+					<label htmlFor={`${id}-url`} className="grid gap-1.5 t-small text-ink-2">
+						<Trans>The form's exact address</Trans>
+						<Input
+							id={`${id}-url`}
+							type="url"
+							value={targetUrl}
+							onChange={(event) => change(() => setTargetUrl(event.target.value))}
+						/>
+					</label>
+					<div>
+						<p className="pb-1.5 t-small text-ink-2">
+							<Trans>What goes in</Trans>
+						</p>
+						<label htmlFor={`${id}-contact`} className="flex min-h-[52px] items-center gap-3 border-y border-line py-2">
 							<Checkbox
-								id={`${id}-${answer.id}`}
-								disabled={!answer.canReuse}
-								checked={answerIds.includes(answer.id)}
-								onCheckedChange={(checked) =>
-									change(() =>
-										setAnswerIds(
-											checked ? [...answerIds, answer.id] : answerIds.filter((value) => value !== answer.id),
-										),
-									)
-								}
+								id={`${id}-contact`}
+								checked={includeContact}
+								onCheckedChange={(value) => change(() => setIncludeContact(value))}
 							/>
-							{answer.question}
-							{!answer.canReuse && (
-								<span>
-									<Trans>Needs evidence or scope review</Trans>
+							<span className="min-w-0 flex-1">
+								<span className="block">
+									<Trans>Contact details</Trans>
+									{review?.contact &&
+										` · ${[review.contact.givenName, review.contact.familyName, review.contact.email, review.contact.phone].filter(Boolean).join(", ")}`}
 								</span>
-							)}
+								<span className="t-small text-ink-3">
+									<Trans>From your reviewed application profile</Trans>
+								</span>
+							</span>
+							<Link to="/dashboard/settings/profile" className="t-small text-accent-text">
+								<Trans>Review</Trans>
+							</Link>
 						</label>
-					))
-				)}
-				<Button
-					variant="secondary"
-					disabled={!application.resumeId || !targetUrl.trim()}
-					onClick={() => void prepare()}
-				>
-					<Trans>Review packet</Trans>
-				</Button>
-				{review && (
-					<div className="grid gap-3 border-t border-line pt-3">
-						<p className="break-all">{review.selection.targetUrl}</p>
-						{review.contact && (
-							<p className="whitespace-pre-wrap">
-								{Object.values(review.contact).join("\n")}
-								<br />
-								{t`Profile review: ${review.profileReviewedAt ?? ""}`}
-							</p>
-						)}
-						{review.documents.map((document) => (
-							<p key={document.kind} className="break-all">
-								{document.name} · {t`Content revision: ${document.revision}`}
-							</p>
-						))}
-						<p className="text-sm/[21px] whitespace-pre-wrap">{review.experience}</p>
-						{review.letterText && <p className="text-sm/[21px] whitespace-pre-wrap">{review.letterText}</p>}
-						{review.answers.map((answer) => (
-							<div key={answer.id}>
-								<p>{answer.question}</p>
-								<p className="whitespace-pre-wrap">{answer.answer}</p>
-								<p>{t`Source: ${answer.source} · scope: ${answer.scope} · revision ${answer.revision}`}</p>
+						{review?.documents.map((document) => (
+							<div key={document.kind} className="flex min-h-[52px] items-center gap-3 border-b border-line py-2">
+								<Checkbox checked readOnly aria-label={t`${document.name} included`} />
+								<span className="min-w-0 flex-1">
+									<span className="block">{document.name}</span>
+									<span className="t-small text-ink-3">
+										{document.kind === "resume" ? t`Resume · current version` : t`Cover letter · current version`}
+									</span>
+								</span>
+								{document.kind === "resume" ? (
+									<Link
+										to="/builder/$resumeId"
+										params={{ resumeId: document.id }}
+										target="_blank"
+										className="t-small text-accent-text"
+									>
+										<Trans>Open</Trans>
+									</Link>
+								) : (
+									<Link
+										to="/builder/letter/$coverLetterId"
+										params={{ coverLetterId: document.id }}
+										target="_blank"
+										className="t-small text-accent-text"
+									>
+										<Trans>Open</Trans>
+									</Link>
+								)}
 							</div>
 						))}
-						<label htmlFor={`${id}-review`} className="flex gap-2">
-							<Checkbox id={`${id}-review`} checked={reviewed} onCheckedChange={setReviewed} />
-							<Trans>I reviewed these fields, answers, destination and document content.</Trans>
-						</label>
-						<Button disabled={!reviewed || packet !== null} onClick={() => void approve()}>
+						{answers.isError ? (
+							<Button variant="secondary" onClick={() => void answers.refetch()}>
+								<Trans>Retry saved answers</Trans>
+							</Button>
+						) : answers.isPending ? (
+							<p role="status">
+								<Trans>Loading saved answers…</Trans>
+							</p>
+						) : (
+							answers.data.map((answer) => (
+								<label
+									key={answer.id}
+									htmlFor={`${id}-${answer.id}`}
+									className="flex min-h-[52px] items-center gap-3 border-b border-line py-2"
+								>
+									<Checkbox
+										id={`${id}-${answer.id}`}
+										disabled={!answer.canReuse}
+										checked={answerIds.includes(answer.id)}
+										onCheckedChange={(checked) =>
+											change(() =>
+												setAnswerIds(
+													checked ? [...answerIds, answer.id] : answerIds.filter((value) => value !== answer.id),
+												),
+											)
+										}
+									/>
+									<span>
+										<span className="block">{answer.question}</span>
+										<span className={answer.canReuse ? "t-small text-ink-3" : "t-small text-warn-text"}>
+											{answer.canReuse ? t`Reviewed answer` : t`Needs evidence or scope review · can't be included`}
+										</span>
+									</span>
+								</label>
+							))
+						)}
+						{workspace.data.answers
+							.filter((answer) => !answers.data?.some((saved) => saved.question === answer.question))
+							.map((answer) => (
+								<div
+									key={answer.id}
+									className="flex min-h-[52px] items-center gap-3 border-b border-line py-2 text-ink-3"
+								>
+									<Checkbox disabled checked={false} />
+									<span>
+										<span className="block">{answer.question}</span>
+										<span className="t-small text-warn-text">
+											{answer.answer.trim()
+												? t`Not reviewed yet · can't be included`
+												: t`Not written yet · can't be included`}
+										</span>
+									</span>
+								</div>
+							))}
+					</div>
+					{!review && !error && packetTargetSchema.safeParse(targetUrl).success && (
+						<p role="status" className="t-small text-ink-3">
+							<Trans>Preparing review…</Trans>
+						</p>
+					)}
+					{review && (
+						<details className="t-small text-ink-3">
+							<summary className="cursor-pointer">
+								<Trans>Review included content</Trans>
+							</summary>
+							<div className="grid gap-3 py-2 whitespace-pre-wrap">
+								<p>{review.experience}</p>
+								{review.letterText && <p>{review.letterText}</p>}
+								{review.answers.map((answer) => (
+									<div key={answer.id}>
+										<p>{answer.question}</p>
+										<p>{answer.answer}</p>
+										<p>{t`Source: ${answer.source} · scope: ${answer.scope} · revision ${answer.revision}`}</p>
+									</div>
+								))}
+							</div>
+						</details>
+					)}
+					<label htmlFor={`${id}-review`} className="flex items-center gap-3 py-1.5">
+						<Checkbox id={`${id}-review`} disabled={!review || busy} checked={reviewed} onCheckedChange={setReviewed} />
+						<Trans>I reviewed these fields, answers, the address and each document.</Trans>
+					</label>
+					<DialogFooter>
+						<Button variant="ghost" onClick={onClose}>
+							<Trans>Cancel</Trans>
+						</Button>
+						<Button disabled={!review || !reviewed || busy} loading={busy} onClick={() => void approve()}>
 							<Trans>Approve and create packet</Trans>
 						</Button>
-					</div>
-				)}
-			</fieldset>
-			{error && <p role="alert">{error}</p>}
+					</DialogFooter>
+				</fieldset>
+			)}
+			{error && (
+				<div role="alert" className="grid gap-2">
+					<p>{error}</p>
+					<Button
+						variant="secondary"
+						disabled={!packetTargetSchema.safeParse(targetUrl).success || busy}
+						onClick={() => change(() => setAnswerIds([...answerIds]))}
+					>
+						<Trans>Retry review</Trans>
+					</Button>
+				</div>
+			)}
 			{packet && (
 				<div className="grid gap-3">
 					<div role="status" className="flex items-start gap-3">

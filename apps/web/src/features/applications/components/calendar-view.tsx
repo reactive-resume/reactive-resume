@@ -370,7 +370,7 @@ function AgendaRow({ entry, now }: { entry: CalendarEntry; now: Date }) {
 				<DateColumn
 					day={format(entry.at, { day: "numeric" })}
 					label={format(entry.at, { weekday: "short" })}
-					className="flex-col-reverse pt-px"
+					className="pt-px"
 				/>
 			}
 		>

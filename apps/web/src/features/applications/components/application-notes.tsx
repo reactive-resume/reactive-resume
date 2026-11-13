@@ -74,7 +74,7 @@ export function ApplicationNotes({ application, renderLabel }: ApplicationNotesP
 			<Textarea
 				id={id}
 				rows={3}
-				className={renderLabel ? "min-h-0 px-3 py-2 text-[13px]/[19px]" : undefined}
+				className={renderLabel ? "min-h-0 resize-none px-3 py-2 text-[13px]/[19px]" : undefined}
 				value={draft.value}
 				placeholder={t`Anything to remember about this job`}
 				onBlur={flush}

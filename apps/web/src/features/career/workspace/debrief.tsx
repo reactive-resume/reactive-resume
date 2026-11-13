@@ -55,6 +55,7 @@ const afterRound = (kind: InterviewKind | undefined) =>
 
 export function DebriefTab({ application, version, now, go, interview }: WorkspaceTabProps) {
 	const saved = useSavedItems(application.id);
+	const { provider } = useDefaultProvider();
 	const time = useCareerTime();
 	const [fresh, setFresh] = useState<Review | null>(null);
 	const [newQuestion, setNewQuestion] = useState(0);
@@ -87,7 +88,7 @@ export function DebriefTab({ application, version, now, go, interview }: Workspa
 		);
 
 	return (
-		<div>
+		<div className="relative">
 			<PageHeader
 				title={t`Debrief`}
 				className="[&>div]:min-h-9 [&>p]:pt-1 [&>p]:text-sm/5"
@@ -109,10 +110,12 @@ export function DebriefTab({ application, version, now, go, interview }: Workspa
 				actions={
 					!viewing && (
 						<>
-							<Button variant="ghost" onClick={() => setNewQuestion((current) => current + 1)}>
-								<Icon name="plus" />
-								<Trans>Add another question</Trans>
-							</Button>
+							{provider && (
+								<Button variant="ghost" onClick={() => setNewQuestion((current) => current + 1)}>
+									<Icon name="plus" />
+									<Trans>Add another question</Trans>
+								</Button>
+							)}
 							{review?.data.priority && (
 								<Button onClick={() => go("practise", { round: review.interviewId ?? undefined })}>
 									<Icon name="microphone" />
@@ -142,6 +145,7 @@ export function DebriefTab({ application, version, now, go, interview }: Workspa
 							readOnly={viewing !== undefined}
 							onReviewed={setFresh}
 							hasReview={!!review}
+							onAddQuestion={() => setNewQuestion((current) => current + 1)}
 						/>
 					)}
 					{review && (
@@ -197,9 +201,10 @@ type DebriefFormProps = {
 	readOnly: boolean;
 	onReviewed: (review: Review) => void;
 	hasReview: boolean;
+	onAddQuestion: () => void;
 };
 
-function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview }: DebriefFormProps) {
+function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview, onAddQuestion }: DebriefFormProps) {
 	const id = useId();
 	const invalidate = useInvalidateApplications();
 	const note = useMutation({
@@ -293,7 +298,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 					readOnly={readOnly}
 					maxLength={6000}
 					onChange={(event) => change({ answer: event.target.value })}
-					className="min-h-21 px-3 py-2.5 text-sm/[22px] pointer-coarse:text-base"
+					className="min-h-21 resize-none px-3 py-[9px] text-sm/[22px] pointer-coarse:text-base"
 				/>
 			</div>
 			<div className="grid gap-1.5">
@@ -305,7 +310,10 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 						{landed.map((option) => (
 							<FilterChip
 								key={option.value}
-								className={cn("h-7 text-[13px]/[18px]", draft.landed !== option.value && "text-ink-2")}
+								className={cn(
+									"h-7 text-[13px]/[18px]",
+									draft.landed !== option.value ? "text-ink-2" : "border-transparent",
+								)}
 								pressed={draft.landed === option.value}
 								onClick={() => change({ landed: draft.landed === option.value ? null : option.value })}
 							>
@@ -315,26 +323,28 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 					</fieldset>
 					{!readOnly && hasReview && (
 						<span className="flex items-center gap-1">
-							<Button
-								size="sm"
-								variant="ghost"
-								disabled={!ready}
-								loading={note.isPending}
-								onClick={() =>
-									note.mutate({
-										id: application.id,
-										text: [
-											draft.question.trim(),
-											draft.answer.trim(),
-											landed.find((option) => option.value === draft.landed)?.label,
-										]
-											.filter(Boolean)
-											.join("\n\n"),
-									})
-								}
-							>
-								<Trans>Save to notes</Trans>
-							</Button>
+							{!provider && (
+								<Button
+									size="sm"
+									variant="ghost"
+									disabled={!ready}
+									loading={note.isPending}
+									onClick={() =>
+										note.mutate({
+											id: application.id,
+											text: [
+												draft.question.trim(),
+												draft.answer.trim(),
+												landed.find((option) => option.value === draft.landed)?.label,
+											]
+												.filter(Boolean)
+												.join("\n\n"),
+										})
+									}
+								>
+									<Trans>Save to notes</Trans>
+								</Button>
+							)}
 							{provider && (
 								<Button size="sm" variant="ghost" disabled={!ready} loading={generate.isPending} onClick={submit}>
 									{generate.isPending ? (
@@ -352,7 +362,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 				</div>
 			</div>
 			{!readOnly && (
-				<div className="grid justify-items-start gap-2.5">
+				<div className="grid justify-items-start gap-2.5 empty:hidden">
 					{!hasReview && (
 						<div className="flex flex-wrap gap-2.5">
 							{provider && (
@@ -360,25 +370,33 @@ function DebriefForm({ application, round, from, readOnly, onReviewed, hasReview
 									{generate.isPending ? <Working steps={workingSteps("debrief")} /> : <Trans>Review my answer</Trans>}
 								</Button>
 							)}
-							<Button
-								variant={provider ? "secondary" : "primary"}
-								disabled={!ready}
-								loading={note.isPending}
-								onClick={() =>
-									note.mutate({
-										id: application.id,
-										text: [
-											draft.question.trim(),
-											draft.answer.trim(),
-											landed.find((option) => option.value === draft.landed)?.label,
-										]
-											.filter(Boolean)
-											.join("\n\n"),
-									})
-								}
-							>
-								<Trans>Save to notes</Trans>
-							</Button>
+							{!provider && (
+								<div className="absolute end-0 top-0 flex gap-2">
+									<Button variant="ghost" onClick={onAddQuestion}>
+										<Icon name="plus" />
+										<Trans>Add another question</Trans>
+									</Button>
+									<Button
+										variant="primary"
+										disabled={!ready}
+										loading={note.isPending}
+										onClick={() =>
+											note.mutate({
+												id: application.id,
+												text: [
+													draft.question.trim(),
+													draft.answer.trim(),
+													landed.find((option) => option.value === draft.landed)?.label,
+												]
+													.filter(Boolean)
+													.join("\n\n"),
+											})
+										}
+									>
+										<Trans>Save to notes</Trans>
+									</Button>
+								</div>
+							)}
 						</div>
 					)}
 					<GenerateNotice generate={generate} onRetry={submit} />
@@ -565,11 +583,11 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 
 	return (
 		<aside className="grid gap-0">
-			<div className="grid gap-1">
-				<SectionHeading first>
+			<div className="grid">
+				<SectionHeading className="pt-0">
 					<Trans>This week</Trans>
 				</SectionHeading>
-				<p className="text-[13px]/[18px] text-ink-3">
+				<p className="pb-1 text-[13px]/[18px] text-ink-3">
 					{t`${ph({ done: i18n.number(done) })} of ${ph({ count: i18n.number(count) })} done`} ·{" "}
 					{plural(minutes, { one: "# minute in total", other: "# minutes in total" })}
 				</p>
@@ -580,7 +598,7 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 					const weekday = format(row.start, { weekday: "short" });
 					const length = row.minutes;
 					return (
-						<li key={row.key} className="border-t border-line py-3 first:border-t-0 first:pt-1">
+						<li key={row.key} className="min-h-14 border-t border-line py-2.5 first:border-t-0">
 							<label className="grid cursor-pointer grid-cols-[18px_34px_minmax(0,1fr)] items-start gap-3">
 								<Checkbox
 									disabled={readOnly}
@@ -595,7 +613,7 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 								</span>
 								<span
 									className={cn(
-										"text-[13px] leading-[19px] transition-colors duration-quick",
+										"text-[13px] leading-[18px] transition-colors duration-quick",
 										checked ? "text-ink-2" : "text-ink",
 									)}
 								>

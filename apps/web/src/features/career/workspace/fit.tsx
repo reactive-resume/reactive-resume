@@ -404,6 +404,7 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 								evidence={factId ? (factText(factId) ?? requirement.evidence) : requirement.evidence}
 								readOnly={readOnly}
 								onTailor={tailor}
+								onProposeFact={provider && application.resumeId ? proposeEvidence : undefined}
 								onSaved={(id) => onSaved(requirement, id)}
 								onPropose={
 									provider &&
@@ -490,6 +491,7 @@ type RequirementRowProps = {
 	onSaved: (factId: string) => void;
 	onTailor: () => void;
 	onPropose?: (() => void) | undefined;
+	onProposeFact?: ((factId: string) => Promise<void>) | undefined;
 	proposalPending: boolean;
 	/** W9: with a requirement open, gaps also say where they came from. */
 	showOrigin?: boolean;
@@ -506,6 +508,7 @@ function RequirementRow({
 	onSaved,
 	onTailor,
 	onPropose,
+	onProposeFact,
 	proposalPending,
 	showOrigin = false,
 }: RequirementRowProps) {
@@ -593,6 +596,7 @@ function RequirementRow({
 					{canAdd && (
 						<EvidenceEditor
 							requirement={requirement}
+							onPropose={onProposeFact}
 							onCancel={() => setEditing(false)}
 							onSaved={(id) => {
 								onSaved(id);
@@ -605,9 +609,11 @@ function RequirementRow({
 							<Trans>Propose a resume bullet</Trans>
 						</Button>
 					)}
-					<Button size="sm" variant="link" onClick={onTailor}>
-						<Trans>Tailor resume for this job</Trans>
-					</Button>
+					{!canAdd && (
+						<Button size="sm" variant="link" onClick={onTailor}>
+							<Trans>Tailor resume for this job</Trans>
+						</Button>
+					)}
 				</div>
 			)}
 		</div>
@@ -617,17 +623,19 @@ function RequirementRow({
 type EvidenceEditorProps = {
 	requirement: Requirement;
 	onCancel: () => void;
+	onPropose?: ((factId: string) => Promise<void>) | undefined;
 	onSaved: (factId: string) => void;
 };
 
 /** W2: what the user did, saved to Knowledge as a shared Experience fact (it's about them, not this job). */
-function EvidenceEditor({ requirement, onCancel, onSaved }: EvidenceEditorProps) {
+function EvidenceEditor({ requirement, onCancel, onSaved, onPropose }: EvidenceEditorProps) {
 	const [text, setText] = useState("");
 	const [touched, setTouched] = useState(false);
 	const saveFact = useMutation(orpc.career.saveFact.mutationOptions());
 	const empty = !text.trim();
 
-	const save = async () => {
+	const save = async (propose = false) => {
+		const account = getAccountGeneration();
 		if (empty) return setTouched(true);
 		try {
 			const fact = await saveFact.mutateAsync({
@@ -636,8 +644,10 @@ function EvidenceEditor({ requirement, onCancel, onSaved }: EvidenceEditorProps)
 				text: text.trim(),
 				source: { kind: "manual", id: crypto.randomUUID(), quote: text.trim() },
 			});
+			if (account !== getAccountGeneration()) return;
 			if (!fact) throw new Error("not saved");
 			onSaved(fact.id);
+			if (propose) await onPropose?.(fact.id);
 		} catch (error) {
 			toastError(error, t`Couldn't save that to Knowledge. Try again.`);
 		}
@@ -678,6 +688,19 @@ function EvidenceEditor({ requirement, onCancel, onSaved }: EvidenceEditorProps)
 				<Button size="sm" variant="ghost" onClick={onCancel}>
 					<Trans>Cancel</Trans>
 				</Button>
+				{onPropose && (
+					<Button
+						size="sm"
+						variant="ghost"
+						className="ms-auto text-accent-text"
+						loading={saveFact.isPending}
+						disabled={empty}
+						onClick={() => void save(true)}
+					>
+						<Icon name="sparkle" size={16} />
+						<Trans>Propose a resume bullet</Trans>
+					</Button>
+				)}
 			</div>
 		</div>
 	);
@@ -697,13 +720,21 @@ function WorthAsking({ ask, applicationId, readOnly }: WorthAskingProps) {
 			</SectionHeading>
 			<div className="grid gap-0.5">
 				<p className="text-sm leading-[21px] text-ink">{ask.text}</p>
-				{ask.person && <p className="text-[13px]/[18px] text-ink-3">{t`Ask ${ask.person}`}</p>}
+				<div className="flex flex-wrap items-center gap-2 t-small text-ink-3">
+					{ask.person && <span>{t`Ask ${ask.person}`}</span>}
+					{added && (
+						<span className="inline-flex items-center gap-1">
+							<Icon name="check" size={14} />
+							<Trans>In Interview prep</Trans>
+						</span>
+					)}
+				</div>
 			</div>
-			{!readOnly && (
+			{!readOnly && !added && (
 				<Button
 					size="sm"
-					variant="secondary"
-					className="justify-self-end"
+					variant="ghost"
+					className="text-accent-text"
 					disabled={added}
 					onClick={() =>
 						workspace.save({ questions: [...workspace.data.questions, { text: ask.text, origin: t`From Fit` }] })

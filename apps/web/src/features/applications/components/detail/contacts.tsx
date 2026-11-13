@@ -5,7 +5,7 @@ import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
-import { Fragment, useId, useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { contactSchema } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/com
 import { cn } from "@reactive-resume/utils/style";
 import { applicationDetailQueryKey } from "../../queries";
 import { companyInitials } from "../list-view";
+import { Chip } from "@/components/calm/filter-bar";
 import { IconTile, List, ListRow } from "@/components/calm/list-row";
 import { withQueryUndo } from "@/features/career/shared";
 import { client, prepareRpc } from "@/libs/orpc/client";
@@ -146,7 +147,6 @@ function ContactList({
 	people = [],
 	renderHeader,
 }: ContactListProps) {
-	const id = useId();
 	const [adding, setAdding] = useState(false);
 	// The contact being corrected: its position, and what it said when the form opened.
 	const [editing, setEditing] = useState<{ index: number; original: Contact } | null>(null);
@@ -199,16 +199,19 @@ function ContactList({
 	};
 
 	const field = (key: keyof typeof EMPTY_CONTACT, label: string, type = "text") => (
-		<Input
-			aria-label={label}
-			placeholder={label}
-			type={type}
-			value={draft[key]}
-			onChange={(event) => {
-				setError("");
-				setDraft((current) => ({ ...current, [key]: event.target.value }));
-			}}
-		/>
+		<label className="grid gap-1.5 t-small text-ink-2">
+			{label}
+			<Input
+				aria-label={label}
+				placeholder={label}
+				type={type}
+				value={draft[key]}
+				onChange={(event) => {
+					setError("");
+					setDraft((current) => ({ ...current, [key]: event.target.value }));
+				}}
+			/>
+		</label>
 	);
 
 	return (
@@ -226,7 +229,7 @@ function ContactList({
 					return (
 						<ListRow
 							key={`${contact.name}-${index}`}
-							className="min-h-[46px] py-1.5"
+							className="min-h-[52px] py-1.5"
 							leading={<Initials name={contact.name} />}
 							title={<bdi className="block truncate text-sm/5">{contact.name}</bdi>}
 							subtitle={
@@ -265,7 +268,7 @@ function ContactList({
 				{people.map((person) => (
 					<ListRow
 						key={person.name}
-						className="min-h-[46px] py-1.5"
+						className="min-h-[52px] py-1.5"
 						leading={<Initials name={person.name} />}
 						title={<bdi className="block truncate text-sm/5">{person.name}</bdi>}
 						subtitle={person.role}
@@ -281,35 +284,36 @@ function ContactList({
 						save();
 					}}
 				>
-					{field("name", t`Name`)}
 					<div className="grid grid-cols-2 gap-2">
+						{field("name", t`Name`)}
 						{field("role", t`Role (optional)`)}
-						<div className="relative">
-							<Input
-								aria-label={t`Label`}
-								placeholder={t`Label, e.g. Recruiter`}
-								list={`${id}-types`}
-								value={draft.type}
-								className="pe-8 [&::-webkit-calendar-picker-indicator]:opacity-0"
-								onChange={(event) => setDraft((current) => ({ ...current, type: event.target.value }))}
-							/>
-							<Icon
-								name="caret-down"
-								size={16}
-								className="pointer-events-none absolute inset-e-3 top-1/2 -translate-y-1/2 text-ink-3"
-							/>
-						</div>
 					</div>
+					<fieldset className="grid gap-1.5">
+						<legend className="t-small text-ink-2">
+							<Trans>Label</Trans>
+						</legend>
+						<div className="flex flex-wrap gap-1.5">
+							{[t`Recruiter`, t`Hiring manager`, t`Referral`, t`Interviewer`].map((label) => (
+								<Chip
+									key={label}
+									pressed={draft.type === label}
+									onClick={() => setDraft((current) => ({ ...current, type: label }))}
+								>
+									{label}
+								</Chip>
+							))}
+						</div>
+						<Input
+							aria-label={t`Custom label`}
+							placeholder={t`Or your own label`}
+							value={draft.type}
+							onChange={(event) => setDraft((current) => ({ ...current, type: event.target.value }))}
+						/>
+					</fieldset>
 					<div className="grid grid-cols-2 gap-2">
 						{field("email", t`Email (optional)`, "email")}
 						{field("phone", t`Phone (optional)`, "tel")}
 					</div>
-					<datalist id={`${id}-types`}>
-						<option value={t`Recruiter`} />
-						<option value={t`Hiring manager`} />
-						<option value={t`Referral`} />
-						<option value={t`Interviewer`} />
-					</datalist>
 					{error && <p className="text-xs text-danger-text">{error}</p>}
 					<div className="flex justify-end gap-1.5">
 						{editing !== null && contacts[editing.index] && (
@@ -331,8 +335,8 @@ function ContactList({
 						<Button type="button" size="sm" variant="ghost" onClick={close}>
 							<Trans>Cancel</Trans>
 						</Button>
-						<Button type="submit" size="sm" disabled={!draft.name.trim() || disabled}>
-							{editing === null ? <Trans>Add</Trans> : <Trans>Save</Trans>}
+						<Button type="submit" size="sm" variant="secondary" disabled={!draft.name.trim() || disabled}>
+							{editing === null ? <Trans>Add contact</Trans> : <Trans>Save</Trans>}
 						</Button>
 					</div>
 				</form>

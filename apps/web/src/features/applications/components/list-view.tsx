@@ -497,9 +497,10 @@ const ApplicationRow = memo(function ApplicationRow({
 					</span>
 				</span>
 				<TagChips
+					fit
 					tags={application.tags}
 					onSelect={onTagSelect}
-					className="relative z-10 ms-0 h-4 min-w-0 flex-1 flex-wrap overflow-hidden *:shrink-0"
+					className="relative z-10 ms-0 h-4 min-w-0 flex-1 overflow-hidden *:shrink-0"
 				/>
 			</DataTableCell>
 			<DataTableCell>

@@ -17,6 +17,7 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
+import { useDefaultProvider } from "../hooks";
 import { latest, useOverlayHistory, useSavedItems } from "../hooks";
 import { tabLabel, useCareerTime, useNow } from "../shared";
 import { ApplyTab } from "./apply";
@@ -119,6 +120,7 @@ type WorkspaceProps = {
 
 export function Workspace({ applicationId, tab: requested, search }: WorkspaceProps) {
 	const navigate = useNavigate();
+	const ai = useDefaultProvider();
 	const now = useNow();
 	const time = useCareerTime();
 	// The round being edited is fixed when the dialog opens; "next interview" can move on while it's open.
@@ -217,10 +219,6 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 		warmup: search.warmup === true,
 		offerForm: { open: search.offer === "new", onDone: () => setSearch({ offer: undefined }) },
 	};
-	// Messages shows the newest read message: it waits for a decision while its changes aren't applied.
-	const newestReply = saved.data?.find((item) => item.data.kind === "reply");
-	const unreadMessages =
-		newestReply?.data.kind === "reply" && newestReply.data.changes.length > 0 && !newestReply.data.applied ? 1 : 0;
 	const editOpen = search.edit === "interview";
 	if (editOpen && !editing) setEditing({ id: interview?.id ?? null });
 	if (!editOpen && editing) setEditing(null);
@@ -230,7 +228,13 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 		<Page className="h-svh flex-none overflow-y-auto">
 			<PageBody className={!requested ? "pb-0" : undefined}>
 				<div className="flex min-h-7 items-center justify-between gap-3">
-					<Crumb>
+					{!requested && (
+						<Link to="/dashboard/applications" className="flex items-center gap-1 t-ui text-ink-2 sm:hidden">
+							<Icon name="caret-left" />
+							<Trans>Applications</Trans>
+						</Link>
+					)}
+					<Crumb className={!requested ? "max-sm:hidden" : undefined}>
 						<CrumbLink to="/dashboard/applications">
 							<Trans>Applications</Trans>
 						</CrumbLink>
@@ -240,10 +244,12 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 							</Link>
 						)}
 					</Crumb>
-					<Button size="sm" variant="ghost" className="-me-2.5" onClick={() => openSearch({ coach: true })}>
-						<Icon name="sparkle" />
-						<Trans>Ask the coach</Trans>
-					</Button>
+					{ai.provider && (
+						<Button size="sm" variant="ghost" className="-me-2.5" onClick={() => openSearch({ coach: true })}>
+							<Icon name="sparkle" />
+							<Trans>Ask the coach</Trans>
+						</Button>
+					)}
 				</div>
 				{!requested ? (
 					<ApplicationOverview
@@ -256,7 +262,6 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 						onRetrySaved={() => void saved.refetch()}
 						go={go}
 						onDetails={() => openSearch({ details: true })}
-						detailsOpen={Boolean(search.details)}
 						onEdit={() => openSearch({ edit: "interview" })}
 					/>
 				) : (
@@ -291,9 +296,6 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 										search={search.round ? { round: search.round } : {}}
 									>
 										{tabLabel(value)}
-										{value === "messages" && unreadMessages > 0 && (
-											<span className="text-xs text-ink-3">{unreadMessages}</span>
-										)}
 									</SectionRailItem>
 								))}
 							</SectionRail>
@@ -353,10 +355,15 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 											) : (
 												<>
 													{version && (
-														<div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg bg-sunken px-3.5 py-2.5 text-sm">
-															<Icon name="clock-counter-clockwise" size={18} className="text-ink-3" />
+														<div className="mb-4 flex min-h-11 flex-wrap items-center gap-3 rounded-lg bg-info-soft px-3.5 py-2 text-[13px]/[18px] text-info-text">
+															<Icon name="clock-counter-clockwise" size={18} />
 															<span className="flex-1">{t`Saved ${time.when(version.createdAt)} · read-only`}</span>
-															<Button size="sm" variant="secondary" onClick={() => setSearch({ version: undefined })}>
+															<Button
+																size="sm"
+																variant="ghost"
+																className="text-info-text"
+																onClick={() => setSearch({ version: undefined })}
+															>
 																<Trans>Back to current</Trans>
 															</Button>
 														</div>

@@ -40,6 +40,7 @@ import { applicationsListQueryKey, applicationsListQueryOptions } from "../queri
 import { CLOSED_REASONS, getClosedReasonLabel, getStageLabel } from "../stages";
 import { applicationLanesQueryKey, useApplicationLanes } from "../use-application-lanes";
 import { List, ListRow } from "@/components/calm/list-row";
+import { StageDot } from "@/components/calm/stage-dot";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
 import { client } from "@/libs/orpc/client";
@@ -178,7 +179,7 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 				</div>
 
 				{ready && (
-					<SheetFooter className="items-center justify-between">
+					<SheetFooter className="flex-row items-center justify-between">
 						{hasGhosted ? (
 							<span />
 						) : (
@@ -472,18 +473,24 @@ function AddLaneForm({ id, disabled, full, onAdd }: AddLaneFormProps) {
 						<Label htmlFor={`${id}-category`}>
 							<Trans>Counts as</Trans>
 						</Label>
-						<NativeSelect
-							id={`${id}-category`}
-							value={category}
-							disabled={disabled}
-							onChange={(event) => setCategory(event.target.value as ApplicationStatus)}
-						>
-							{APPLICATION_STATUSES.map((value) => (
-								<option key={value} value={value}>
-									{getStageLabel(value)}
-								</option>
-							))}
-						</NativeSelect>
+						<div className="relative">
+							<StageDot status={category} className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2">
+								{null}
+							</StageDot>
+							<NativeSelect
+								id={`${id}-category`}
+								className="ps-7"
+								value={category}
+								disabled={disabled}
+								onChange={(event) => setCategory(event.target.value as ApplicationStatus)}
+							>
+								{APPLICATION_STATUSES.map((value) => (
+									<option key={value} value={value}>
+										{getStageLabel(value)}
+									</option>
+								))}
+							</NativeSelect>
+						</div>
 					</div>
 					<div className="grid content-start gap-1.5">
 						<span id={`${id}-color`} className="text-[13px]/[18px] font-medium text-ink-2">
@@ -571,21 +578,33 @@ function RetireLaneDialog({ lane, lanes, count, disabled, onCancel, onRetire }: 
 							<Label htmlFor={`${id}-replacement`}>
 								<Trans>Move its applications to</Trans>
 							</Label>
-							<NativeSelect
-								id={`${id}-replacement`}
-								required
-								value={replacementId}
-								onChange={(event) => setReplacementId(event.target.value)}
-							>
-								<option value="" disabled>
-									{t`Choose a stage`}
-								</option>
-								{options.map((option) => (
-									<option key={option.id} value={option.id}>
-										{getLaneLabel(option)}
+							<div className="relative">
+								{replacementId && (
+									<StageDot
+										status={lane.category}
+										color={options.find((option) => option.id === replacementId)?.color}
+										className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2"
+									>
+										{null}
+									</StageDot>
+								)}
+								<NativeSelect
+									id={`${id}-replacement`}
+									className={replacementId ? "ps-7" : undefined}
+									required
+									value={replacementId}
+									onChange={(event) => setReplacementId(event.target.value)}
+								>
+									<option value="" disabled>
+										{t`Choose a stage`}
 									</option>
-								))}
-							</NativeSelect>
+									{options.map((option) => (
+										<option key={option.id} value={option.id}>
+											{getLaneLabel(option)}
+										</option>
+									))}
+								</NativeSelect>
+							</div>
 						</div>
 					) : (
 						<Alert variant="warn" role="alert">

@@ -48,6 +48,11 @@ it("keeps a prepared answer beside the existing answers", async () => {
 	expect(workspace.save).not.toHaveBeenCalled();
 	fireEvent.click(await screen.findByRole("button", { name: "Keep answer" }));
 	await waitFor(() => expect(workspace.save).toHaveBeenCalled());
+	expect(await screen.findByText("Kept")).toBeVisible();
+	expect(
+		screen.queryByRole("textbox", { name: "Questions from the employer's form · optional" }),
+	).not.toBeInTheDocument();
+	expect(screen.getByRole("button", { name: "Done" })).toBeVisible();
 	expect(workspace.save.mock.lastCall).toEqual([
 		{
 			answers: [

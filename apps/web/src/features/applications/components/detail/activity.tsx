@@ -18,6 +18,7 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -66,7 +67,12 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 	const confirm = useConfirm();
 	const { lanes } = useApplicationLanes();
 	const [note, setNote] = useState("");
-	const [editing, setEditing] = useState<{ entry: ApplicationTimelineEntry; date: string; text: string } | null>(null);
+	const [editing, setEditing] = useState<{
+		entry: ApplicationTimelineEntry;
+		field: "date" | "note";
+		date: string;
+		text: string;
+	} | null>(null);
 	// Closing keeps the entry's title and fields on screen until the dialog has faded out.
 	const [shownEdit, onEditOpenChangeComplete] = useClosingValue(editing);
 
@@ -135,7 +141,9 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 		const kind = interviewKindOf(entry.kind);
 		const upcoming = fromToday(entry.at);
 		return {
-			dot: kind?.color ?? "var(--ink-3)",
+			dot:
+				getCategoryLane(lanes, entry.kind === "screening" ? "screening" : "interview").color ??
+				(entry.kind === "screening" ? "var(--stage-screening)" : "var(--stage-interview)"),
 			text: [t`${kind?.label ?? entry.kind} interview`, plainTime(entry.at), upcoming].filter(Boolean).join(" · "),
 		};
 	};
@@ -231,21 +239,37 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 								<DropdownMenuContent align="end">
 									{entry.type === "interview" ? (
 										<DropdownMenuItem onClick={() => onOpenInterview(entry)}>
+											<Icon name="pencil-simple" />
 											<Trans>Edit interview…</Trans>
 										</DropdownMenuItem>
 									) : (
-										<DropdownMenuItem
-											onClick={() =>
-												setEditing({
-													entry,
-													date: entry.type === "stage" && entry.dateUnknown ? "" : dateInputValue(entry.at),
-													text: entry.type === "note" ? entry.text : "",
-												})
-											}
-										>
-											<Trans>Edit…</Trans>
-										</DropdownMenuItem>
+										<>
+											{entry.type === "note" && (
+												<DropdownMenuItem
+													onClick={() =>
+														setEditing({ entry, field: "note", date: dateInputValue(entry.at), text: entry.text })
+													}
+												>
+													<Icon name="pencil-simple" />
+													<Trans>Edit note…</Trans>
+												</DropdownMenuItem>
+											)}
+											<DropdownMenuItem
+												onClick={() =>
+													setEditing({
+														entry,
+														field: "date",
+														date: entry.type === "stage" && entry.dateUnknown ? "" : dateInputValue(entry.at),
+														text: entry.type === "note" ? entry.text : "",
+													})
+												}
+											>
+												<Icon name="calendar-blank" />
+												<Trans>Edit date…</Trans>
+											</DropdownMenuItem>
+										</>
 									)}
+									<DropdownMenuSeparator />
 									<DropdownMenuItem
 										variant="destructive"
 										disabled={entry.id === anchorId}
@@ -275,6 +299,7 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 												);
 										}}
 									>
+										<Icon name="trash" />
 										<Trans>Delete…</Trans>
 									</DropdownMenuItem>
 								</DropdownMenuContent>
@@ -292,7 +317,7 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 				<DialogContent closeLabel={t`Close`} className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>
-							{shownEdit?.entry.type === "note" ? <Trans>Edit note</Trans> : <Trans>Edit date</Trans>}
+							{shownEdit?.field === "note" ? <Trans>Edit note</Trans> : <Trans>Edit date</Trans>}
 						</DialogTitle>
 						<DialogDescription className="sr-only">
 							<Trans>Change this timeline entry.</Trans>
@@ -309,11 +334,11 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 									id: application.id,
 									entryId: editing.entry.id,
 									date: editing.date,
-									...(editing.entry.type === "note" && editing.text.trim() ? { text: editing.text.trim() } : {}),
+									...(editing.field === "note" && editing.text.trim() ? { text: editing.text.trim() } : {}),
 								});
 							}}
 						>
-							{shownEdit.entry.type === "note" && (
+							{shownEdit.field === "note" && (
 								<Textarea
 									aria-label={t`Note`}
 									rows={3}
@@ -324,15 +349,17 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 									}}
 								/>
 							)}
-							<Input
-								type="date"
-								aria-label={t`Date`}
-								value={shownEdit.date}
-								onChange={(event) => {
-									const date = event.target.value;
-									setEditing((current) => current && { ...current, date });
-								}}
-							/>
+							{shownEdit.field === "date" && (
+								<Input
+									type="date"
+									aria-label={t`Date`}
+									value={shownEdit.date}
+									onChange={(event) => {
+										const date = event.target.value;
+										setEditing((current) => current && { ...current, date });
+									}}
+								/>
+							)}
 						</form>
 					)}
 					<DialogFooter>

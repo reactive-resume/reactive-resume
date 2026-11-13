@@ -813,7 +813,7 @@ function AnswerCard({
 						placeholder={t`Write your answer, or draft one from your Knowledge.`}
 						onChange={(event) => setText(event.target.value)}
 						onBlur={flushAnswer}
-						className="min-h-16 px-3 py-2.5 text-sm leading-[22px] pointer-coarse:text-base"
+						className="min-h-16 resize-none px-3 py-2.5 text-sm leading-[22px] pointer-coarse:text-base"
 					/>
 				)}
 			</Swap>

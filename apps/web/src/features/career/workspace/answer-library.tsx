@@ -14,9 +14,18 @@ import {
 } from "@reactive-resume/schema/application-answers";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
-import { Dialog, DialogContent, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogFooter } from "@reactive-resume/ui/components/dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@reactive-resume/ui/components/dropdown-menu";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@reactive-resume/ui/components/input-group";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
+import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
@@ -158,7 +167,7 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 		mode === "list"
 			? t`Use a saved answer`
 			: mode === "reuse"
-				? t`Review for this application`
+				? t`Review before you reuse it`
 				: mode === "delete"
 					? t`Delete saved answer`
 					: t`Save for other applications`;
@@ -194,108 +203,142 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 					)}
 				</div>
 			)}
-			<Dialog
-				open={mode !== null}
-				onOpenChange={(value) => {
-					if (!value && !busy) setMode(null);
-				}}
-			>
-				<DialogContent aria-labelledby={`${fieldId}-title`} closeLabel={t`Close`} className="sm:max-w-xl">
-					<DialogTitle id={`${fieldId}-title`}>{title}</DialogTitle>
-					<p>{t`Current employer: ${company}`}</p>
-					{mode === "list" ? (
-						<div className="grid gap-4">
-							<Input
+			<Sheet open={mode === "list"} onOpenChange={(value) => !value && setMode(null)}>
+				<SheetContent closeLabel={t`Close`} className="w-[440px] max-w-[calc(100vw-16px)] gap-0 overflow-y-auto p-6">
+					<header className="mb-4 flex items-center gap-3 pe-8">
+						<SheetTitle className="flex-1">{title}</SheetTitle>
+						<Button
+							aria-label={t`Export saved answers`}
+							variant="ghost"
+							size="icon-sm"
+							disabled={!library.data?.length}
+							onClick={() =>
+								downloadWithAnchor(
+									new Blob([JSON.stringify(library.data, null, 2)], { type: "application/json" }),
+									"reviewed-answers.json",
+								)
+							}
+						>
+							<Icon name="download-simple" />
+						</Button>
+					</header>
+					<div className="grid gap-4">
+						<InputGroup className="h-9 border-transparent bg-sunken shadow-none">
+							<InputGroupAddon>
+								<Icon name="magnifying-glass" />
+							</InputGroupAddon>
+							<InputGroupInput
 								aria-label={t`Search saved answers`}
 								placeholder={t`Search saved answers`}
 								value={query}
 								onChange={(event) => setQuery(event.target.value)}
 							/>
-							<Button
-								variant="ghost"
-								size="sm"
-								disabled={!library.data?.length}
-								onClick={() =>
-									downloadWithAnchor(
-										new Blob([JSON.stringify(library.data, null, 2)], { type: "application/json" }),
-										"reviewed-answers.json",
-									)
-								}
-							>
-								<Trans>Export saved answers</Trans>
+						</InputGroup>
+						{library.isPending && (
+							<p role="status">
+								<Trans>Loading saved answers…</Trans>
+							</p>
+						)}
+						{library.isError && (
+							<Button onClick={() => void library.refetch()}>
+								<Trans>Retry</Trans>
 							</Button>
-							{library.isPending && (
-								<p role="status">
-									<Trans>Loading saved answers…</Trans>
+						)}
+						{!library.isPending && rows.length === 0 && (
+							<p>
+								<Trans>No matching saved answers. Clear the search to see all answers.</Trans>
+							</p>
+						)}
+						{library.data && (
+							<p className="t-small text-ink-3">
+								{plural(rows.length, { one: "# saved", other: "# saved" })} · {t`for ${company}`}
+							</p>
+						)}
+						{rows.map(({ row }) => (
+							<section
+								key={row.id}
+								className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1.5 border-b border-line py-3 [&>p]:col-span-full"
+							>
+								<h3 className="t-ui">{row.question}</h3>
+
+								<p className="text-xs text-ink-2">
+									{t`From ${row.employer}`} · {i18n.date(row.reviewedAt, { day: "numeric", month: "short" })} ·{" "}
+									{plural(row.answer.trim().split(/\s+/).filter(Boolean).length, { one: "# word", other: "# words" })} ·{" "}
+									{scopeLabel(row.scope)}
 								</p>
-							)}
-							{library.isError && (
-								<Button onClick={() => void library.refetch()}>
-									<Trans>Retry</Trans>
-								</Button>
-							)}
-							{!library.isPending && rows.length === 0 && (
-								<p>
-									<Trans>No matching saved answers. Clear the search to see all answers.</Trans>
-								</p>
-							)}
-							{rows.map(({ row }) => (
-								<section key={row.id} className="grid gap-2 rounded-lg border border-line p-3">
-									<h3 className="font-semibold">{row.question}</h3>
-									<p className="whitespace-pre-wrap">{row.answer}</p>
-									<p className="text-xs text-ink-2">
-										{scopeLabel(row.scope)} · {row.employer} · {t`Last reviewed`}:{" "}
-										{i18n.date(row.reviewedAt, { dateStyle: "medium", timeStyle: "short" })}
+								{row.stale ? (
+									<p role="status" className="text-danger-text">
+										<Trans>Evidence changed or was removed. Edit and review before reuse.</Trans>
 									</p>
-									{row.stale ? (
-										<p role="status" className="text-danger-text">
-											<Trans>Evidence changed or was removed. Edit and review before reuse.</Trans>
+								) : (
+									row.evidence.length > 0 &&
+									!library.isFetching && (
+										<p className="text-xs">
+											<Trans>Linked evidence unchanged since review</Trans>
 										</p>
-									) : (
-										row.evidence.length > 0 &&
-										!library.isFetching && (
-											<p className="text-xs">
-												<Trans>Linked evidence unchanged since review</Trans>
-											</p>
-										)
-									)}
-									{!answerScopeAllows(row, { id: applicationId, company }) && (
-										<p>
-											<Trans>Restricted to its employer or application.</Trans>
-										</p>
-									)}
-									<div className="flex flex-wrap gap-2">
-										<Button size="sm" disabled={!row.canReuse || library.isFetching} onClick={() => open("reuse", row)}>
-											<Trans>Review and use</Trans>
-										</Button>
-										<Button
-											size="sm"
-											variant="secondary"
-											disabled={!answerScopeAllows(row, { id: applicationId, company }) || library.isFetching}
-											onClick={() => open("edit", row)}
+									)
+								)}
+								{!answerScopeAllows(row, { id: applicationId, company }) && (
+									<p>
+										<Trans>Restricted to its employer or application.</Trans>
+									</p>
+								)}
+								<div className="col-start-2 row-start-1 flex items-start gap-1">
+									<Button
+										size="sm"
+										variant="secondary"
+										disabled={!row.canReuse || library.isFetching}
+										onClick={() => open("reuse", row)}
+									>
+										<Trans>Review and use</Trans>
+									</Button>
+									<Button
+										size="sm"
+										variant="ghost"
+										disabled={!answerScopeAllows(row, { id: applicationId, company }) || library.isFetching}
+										onClick={() => open("edit", row)}
+									>
+										<Trans>Edit</Trans>
+									</Button>
+									<DropdownMenu>
+										<DropdownMenuTrigger
+											render={<Button variant="ghost" size="icon-sm" aria-label={t`More saved answer actions`} />}
 										>
-											<Trans>Edit saved answer</Trans>
-										</Button>
-										<Button
-											size="sm"
-											variant="ghost"
-											onClick={() =>
-												void run(async () => {
-													await navigator.clipboard.writeText(row.answer);
-													toast.add({ description: t`Answer copied` });
-												})
-											}
-										>
-											<Trans>Copy</Trans>
-										</Button>
-										<Button size="sm" variant="ghost" onClick={() => open("delete", row)}>
-											<Trans>Delete</Trans>
-										</Button>
-									</div>
-								</section>
-							))}
-						</div>
-					) : mode === "delete" ? (
+											<Icon name="dots-three" />
+										</DropdownMenuTrigger>
+										<DropdownMenuContent>
+											<DropdownMenuItem
+												onClick={() =>
+													void run(async () => {
+														await navigator.clipboard.writeText(row.answer);
+														toast.add({ description: t`Answer copied` });
+													})
+												}
+											>
+												<Trans>Copy</Trans>
+											</DropdownMenuItem>
+											<DropdownMenuItem onClick={() => open("delete", row)}>
+												<Trans>Delete</Trans>
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</div>
+							</section>
+						))}
+					</div>
+				</SheetContent>
+			</Sheet>
+
+			<Dialog
+				open={mode !== null && mode !== "list"}
+				onOpenChange={(value) => {
+					if (!value && !busy) setMode(null);
+				}}
+			>
+				<DialogContent aria-labelledby={`${fieldId}-title`} closeLabel={t`Close`} className="sm:max-w-[480px]">
+					<DialogTitle id={`${fieldId}-title`}>{title}</DialogTitle>
+
+					{mode === "delete" ? (
 						<>
 							<p>
 								<Trans>Delete this library answer? Application drafts and submitted copies are kept.</Trans>
@@ -338,7 +381,10 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 									/>
 								</label>
 							) : (
-								<h3>{current?.question || question}</h3>
+								<label htmlFor={`${fieldId}-question`} className="grid gap-1">
+									<Trans>Question</Trans>
+									<Input id={`${fieldId}-question`} value={current?.question || question} readOnly />
+								</label>
 							)}
 							<label htmlFor={`${fieldId}-answer`} className="grid gap-1">
 								<Trans>Answer</Trans>
@@ -467,25 +513,30 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 								<Checkbox id={`${fieldId}-review`} checked={reviewed} onCheckedChange={confirmReview} />
 								<Trans>I reviewed this answer, its evidence and the application context.</Trans>
 							</label>
-							<Button
-								loading={busy}
-								disabled={
-									!reviewed ||
-									!answer.trim() ||
-									!question.trim() ||
-									(mode !== "reuse" &&
-										(facts.isPending ||
-											stories.isPending ||
-											facts.isError ||
-											stories.isError ||
-											missingFacts.length > 0 ||
-											missingStories.length > 0 ||
-											(scope === "reusable" && !noEmployerWording)))
-								}
-								onClick={() => void submit()}
-							>
-								{mode === "reuse" ? t`Use reviewed answer` : t`Save reviewed answer`}
-							</Button>
+							<DialogFooter>
+								<Button variant="ghost" disabled={busy} onClick={() => setMode(null)}>
+									<Trans>Cancel</Trans>
+								</Button>
+								<Button
+									loading={busy}
+									disabled={
+										!reviewed ||
+										!answer.trim() ||
+										!question.trim() ||
+										(mode !== "reuse" &&
+											(facts.isPending ||
+												stories.isPending ||
+												facts.isError ||
+												stories.isError ||
+												missingFacts.length > 0 ||
+												missingStories.length > 0 ||
+												(scope === "reusable" && !noEmployerWording)))
+									}
+									onClick={() => void submit()}
+								>
+									{mode === "reuse" ? t`Use reviewed answer` : t`Save reviewed answer`}
+								</Button>
+							</DialogFooter>
 						</fieldset>
 					)}
 				</DialogContent>

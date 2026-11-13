@@ -14,6 +14,7 @@ import {
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
+	DialogFooter,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import {
@@ -54,7 +55,7 @@ import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { Chip } from "@/components/calm/filter-bar";
 import { IconTile, List, ListRow } from "@/components/calm/list-row";
 import { StageStepper } from "@/components/calm/stage-stepper";
-import { useCareerTime, useNow } from "@/features/career/shared";
+import { midSentence, useCareerTime, useNow } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
@@ -376,7 +377,11 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 											{t`${interviewKindOf(upcoming.kind)?.label ?? ""} interview`}
 										</span>
 									}
-									subtitle={[time.when(upcoming.at), `${upcoming.durationMinutes} ${t`min`}`, upcoming.location]
+									subtitle={[
+										time.when(upcoming.at),
+										`${upcoming.durationMinutes} ${t`min`}`,
+										midSentence(upcoming.location),
+									]
 										.filter(Boolean)
 										.join(" · ")}
 									leading={
@@ -480,6 +485,8 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 			<CloseDialog
 				open={closing}
 				status={application.status}
+				company={application.company}
+				role={application.role}
 				onOpenChange={setClosing}
 				lanes={active}
 				onClose={(lane, reason) => (lane ? moveTo(application, lane, reason) : reason && close(application, reason))}
@@ -668,7 +675,7 @@ function Tags({ application }: { application: Application }) {
 				{application.tags.map((value) => (
 					<Chip
 						key={value}
-						className="h-6 pe-1 text-xs/[18px]"
+						className="group h-6 text-xs/[18px] [&_button]:hidden focus-within:[&_button]:inline-flex hover:[&_button]:inline-flex"
 						removeLabel={t`Remove ${value}`}
 						onRemove={() => save(application.tags.filter((item) => item !== value))}
 					>
@@ -757,14 +764,14 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 						</DialogTitle>
 						<DialogDescription>
 							<Trans>
-								Confirm submission and choose the documents you actually sent. Their current versions will be saved.
+								This moves {application.company} to Applied and saves the versions of the documents you sent.
 							</Trans>
 						</DialogDescription>
 					</DialogHeader>
 					<PriorNoResponseNotice company={application.company} excludeId={application.id} />
 					<div className="grid gap-1.5">
 						<label htmlFor={`${id}-date`}>
-							<Trans>Application date</Trans>
+							<Trans>Applied on</Trans>
 						</label>
 						<Input
 							id={`${id}-date`}
@@ -839,9 +846,17 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 							{getOrpcErrorMessage(update.error, { fallback: t`Couldn't record submission. Try again.` })}
 						</p>
 					)}
-					<Button type="submit" disabled={!date || update.isPending}>
-						<Trans>Confirm applied</Trans>
-					</Button>
+					<p className="t-small text-ink-3">
+						<Trans>Documents are optional. You can record what you sent later.</Trans>
+					</p>
+					<DialogFooter>
+						<Button variant="ghost" onClick={onClose}>
+							<Trans>Cancel</Trans>
+						</Button>
+						<Button type="submit" disabled={!date || update.isPending}>
+							<Trans>Mark as applied</Trans>
+						</Button>
+					</DialogFooter>
 				</form>
 			</DialogContent>
 		</Dialog>

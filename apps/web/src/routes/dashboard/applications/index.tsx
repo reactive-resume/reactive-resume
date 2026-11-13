@@ -11,6 +11,7 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
@@ -137,6 +138,7 @@ function RouteComponent() {
 	const [viewSwitched, setViewSwitched] = useState(false);
 
 	const { data: applications, isPending, isError, isFetching, refetch } = useQuery(applicationsListQueryOptions());
+	const [retryingLoad, setRetryingLoad] = useState(false);
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	useHotkey(
 		"/",
@@ -297,21 +299,27 @@ function RouteComponent() {
 								<DropdownMenuTrigger render={<Button size="icon" variant="secondary" aria-label={t`More`} />}>
 									<Icon name="dots-three" size={20} />
 								</DropdownMenuTrigger>
-								<DropdownMenuContent align="end">
+								<DropdownMenuContent align="end" className="w-[212px]">
 									<HotkeysProvider scope={`${overlayScope}-more`} exclusive>
 										<DropdownMenuItem onClick={() => setImporting(true)}>
+											<Icon name="upload-simple" />
 											<Trans>Import CSV…</Trans>
 										</DropdownMenuItem>
 										<DropdownMenuItem
 											disabled={empty || !applications || exportLoading}
 											onClick={() => void openExport()}
 										>
+											<Icon name="download-simple" />
 											<Trans>Export CSV…</Trans>
 										</DropdownMenuItem>
 										{!lanes.unsupported && (
-											<DropdownMenuItem onClick={() => setManagingLanes(true)}>
-												<Trans>Manage stages…</Trans>
-											</DropdownMenuItem>
+											<>
+												<DropdownMenuSeparator />
+												<DropdownMenuItem onClick={() => setManagingLanes(true)}>
+													<Icon name="sliders-horizontal" />
+													<Trans>Manage stages…</Trans>
+												</DropdownMenuItem>
+											</>
 										)}
 									</HotkeysProvider>
 								</DropdownMenuContent>
@@ -402,20 +410,35 @@ function RouteComponent() {
 					</p>
 				)}
 
-				{isError && (
-					<div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-b border-line py-3">
+				{(isError || retryingLoad) && (
+					<div
+						role="alert"
+						className="my-4 flex min-h-24 flex-wrap items-center justify-between gap-3 rounded-xl border border-line p-5"
+					>
 						<p className="text-sm text-danger-text">
 							<Trans>Couldn't load applications. Your saved data hasn't changed.</Trans>
 						</p>
-						<Button variant="secondary" size="sm" loading={isFetching} onClick={() => void refetch()}>
+						<Button
+							variant="secondary"
+							size="sm"
+							loading={isFetching}
+							onClick={() => {
+								setRetryingLoad(true);
+								void refetch().finally(() => setRetryingLoad(false));
+							}}
+						>
 							{isFetching ? <Trans>Retrying…</Trans> : <Trans>Retry</Trans>}
 						</Button>
 					</div>
 				)}
 
 				{lanes.error && (
-					<div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-b border-line py-3">
+					<div
+						role="alert"
+						className="my-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-warn-soft p-3.5 text-warn-text"
+					>
 						<p className="text-sm text-danger-text">
+							<Icon name="warning-circle" className="me-2 inline" />
 							<Trans>Couldn't load your stages, so the standard ones are shown. Try again.</Trans>
 						</p>
 						<Button variant="secondary" size="sm" onClick={() => void lanes.refetch()}>
@@ -424,7 +447,7 @@ function RouteComponent() {
 					</div>
 				)}
 
-				{isError && !applications ? null : empty ? (
+				{(isError || retryingLoad) && !applications ? null : empty ? (
 					<EmptyState
 						title={<Trans>Follow each job from saved to offer</Trans>}
 						description={
@@ -448,7 +471,7 @@ function RouteComponent() {
 				) : allClosed && (shown === "list" || shown === "board") ? (
 					<EmptyState
 						title={<Trans>All your applications are closed</Trans>}
-						description={<Trans>Show closed applications to see your past job searches.</Trans>}
+						description={<Trans>Show them to look back at earlier searches.</Trans>}
 						action={
 							<Button variant="secondary" onClick={() => setSearch({ closed: true })}>
 								<Trans>Show closed applications</Trans>

@@ -22,10 +22,10 @@ import { StageStepper } from "@/components/calm/stage-stepper";
 import { ApplicationActionsMenu } from "@/features/applications/components/application-actions-menu";
 import { buildIcs } from "@/features/applications/ics";
 import { interviewKindOf } from "@/features/applications/interviews";
-import { getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
+import { getDisplayLane, getLaneLabel, isCurrentLaneEvent } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { offerHintFor, useOfferHints } from "@/features/applications/queries";
-import { getStageLabel } from "@/features/applications/stages";
+import { getStageLabel, PIPELINE } from "@/features/applications/stages";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
 
 export const workspaceIcons: Record<WorkspaceTab, IconName> = {
@@ -45,8 +45,6 @@ type Props = Pick<WorkspaceTabProps, "application" | "interview" | "now" | "go">
 	savedPending: boolean;
 	savedFailed: boolean;
 	onRetrySaved: () => void;
-	/** The details sheet is open over the page (J7). */
-	detailsOpen?: boolean;
 };
 
 /** One job's next step and its seven work areas. All summaries come from the current application. */
@@ -61,11 +59,14 @@ export function ApplicationOverview({
 	savedPending,
 	savedFailed,
 	onRetrySaved,
-	detailsOpen = false,
 }: Props) {
 	const time = useCareerTime();
 	const { lanes } = useApplicationLanes();
 	const lane = getDisplayLane(lanes, application);
+	const stagePosition = PIPELINE.indexOf(application.status) + 1;
+	const stageSince = [...application.activity]
+		.filter((entry) => isCurrentLaneEvent(entry, application))
+		.sort((a, b) => +new Date(b.at) - +new Date(a.at))[0];
 	const hints = useOfferHints(application.status === "offer");
 	const step = getNextStep(application, now, time.timeZone, offerHintFor(hints, application.id));
 	const text = describeNextStep(step, application, time.locale, time.timeZone);
@@ -147,14 +148,14 @@ export function ApplicationOverview({
 	};
 	return (
 		<>
-			<header className="flex items-start justify-between gap-4">
-				<div className="min-w-0 flex-1">
+			<header className="flex flex-wrap items-start justify-between gap-4">
+				<div className="min-w-0 flex-1 max-sm:basis-full">
 					<h1 className="t-page-title">{application.company}</h1>
 					<p className="h-6 text-sm text-ink-3">
 						{[application.role, application.location].filter(Boolean).join(" · ")}
 					</p>
 				</div>
-				<div className="flex items-center gap-2 pt-0.5">
+				<div className="flex flex-wrap items-center gap-2 pt-0.5">
 					<Button
 						variant="secondary"
 						className="min-w-[129px]"
@@ -169,11 +170,18 @@ export function ApplicationOverview({
 						<Icon name="caret-down" className="text-ink-3" />
 					</Button>
 					<ApplicationActionsMenu application={application} className="[&_[data-slot=icon]]:size-5 [&_button]:size-9" />
+					{stagePosition > 0 && (
+						<p className="basis-full t-small text-ink-3 sm:hidden">
+							{stageSince && stageSince.type === "stage" && !stageSince.dateUnknown
+								? t`Stage ${stagePosition} of ${PIPELINE.length} · since ${time.date(stageSince.at)}`
+								: t`Stage ${stagePosition} of ${PIPELINE.length}`}
+						</p>
+					)}
 				</div>
 			</header>
 			<StageStepper current={application.status} aria-label={t`Stage`} className="mt-[18px] w-full max-w-[520px]" />
 			<HeroCard
-				className="mt-5 [&>div>p:last-child]:max-w-none"
+				className="mt-5 max-sm:[&>div:last-child]:grid max-sm:[&>div:last-child]:grid-cols-2 max-sm:[&>div:last-child>button]:w-full max-sm:[&>div:last-child>button:first-child]:col-span-2 [&>div>p:last-child]:max-w-none"
 				kicker={
 					heroInterview
 						? t`Next · ${time.format(heroInterview.at, { weekday: "long", day: "numeric", month: "short" })}, ${time.time(heroInterview.at)} · ${time.relative(heroInterview.at, now).toLocaleLowerCase(time.locale)}`
@@ -182,9 +190,8 @@ export function ApplicationOverview({
 				title={heroInterview ? t`${interviewKindOf(heroInterview.kind)?.label ?? ""} interview` : text.title}
 				actions={
 					<>
-						{/* J7: with the details sheet open over the page, the sheet holds the view's one accent. */}
 						{action ? (
-							<Button size="lg" className="leading-5" variant={detailsOpen ? "secondary" : "primary"} onClick={action}>
+							<Button size="lg" className="leading-5" onClick={action}>
 								{application.status === "closed" ? (
 									<Trans>Open Library</Trans>
 								) : application.status === "saved" ? (
@@ -227,7 +234,7 @@ export function ApplicationOverview({
 				}
 			>
 				{heroInterview
-					? t`With ${heroInterview.participants.map((person) => person.name).join(t` and `)} · ${midSentence(heroInterview.location) ?? t`Interview`}.${briefing ? t` Your briefing is ready: likely questions and stories to tell.` : ""}`
+					? t`With ${heroInterview.participants.map((person) => person.name).join(t` and `)} · ${midSentence(heroInterview.location) ?? t`Interview`}.${briefing ? t` Your briefing is ready: likely questions and ${briefing.data.stories.length === 3 ? t`three stories` : plural(briefing.data.stories.length, { one: "# story", other: "# stories" })} to tell.` : ""}`
 					: text.sub}
 			</HeroCard>
 			<Columns

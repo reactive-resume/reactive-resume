@@ -5,6 +5,7 @@ import type { Application } from "@/features/applications/types";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -12,15 +13,18 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { offerTermsSchema, EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
 import { useDebouncedSave } from "../hooks";
 import { pendingCommits } from "../pending-commits";
+import { ApplicationPacketPanel } from "./application-packet";
 import { ApplyTab } from "./apply";
 import { DebriefTab } from "./debrief";
 import { MessagesTab } from "./messages";
-import { PractiseTab } from "./practise";
+import { PractiseTab, StoryPractice } from "./practise";
 import { SavedTab } from "./saved";
 import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-scope";
 
 const api = vi.hoisted(() => ({
 	data: {} as Record<string, unknown>,
+	reviewPacket: vi.fn(),
+	exportPacket: vi.fn(),
 	save: vi.fn(),
 	note: vi.fn(),
 	ai: true,
@@ -79,7 +83,7 @@ vi.mock("@/libs/orpc/client", () => {
 		},
 		client: {
 			career: { generate: api.generate, voice: { speak: api.speak } },
-			applications: { logReply: api.logReply },
+			applications: { logReply: api.logReply, packet: { review: api.reviewPacket, export: api.exportPacket } },
 		},
 	};
 });
@@ -373,12 +377,14 @@ it("highlights localized reply placeholders without blocking Copy, and logs only
 	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
 	const editor = screen.getByRole("textbox", { name: "Suggested reply · edit before sending" });
 	fireEvent.change(editor, { target: { value: "Available [Datum und Uhrzeit 1] or [slot 2]." } });
-	expect(screen.getByRole("status")).toHaveTextContent("[Datum und Uhrzeit 1] · [slot 2]");
+	expect(screen.getByRole("status")).toHaveTextContent("Replace the marked placeholder before sending.");
+	expect(screen.getByText("[Datum und Uhrzeit 1]", { selector: "mark" })).toBeInTheDocument();
+	expect(screen.getByText("[slot 2]", { selector: "mark" })).toBeInTheDocument();
 	fireEvent.click(screen.getByRole("button", { name: "Copy reply" }));
 	await waitFor(() => expect(writeText).toHaveBeenCalledWith("Available [Datum und Uhrzeit 1] or [slot 2]."));
 	expect(api.logReply).not.toHaveBeenCalled();
 	fireEvent.change(editor, { target: { value: "Available Tuesday at 14:00." } });
-	expect(screen.queryByText("Replace these placeholders before sending:")).not.toBeInTheDocument();
+	expect(screen.queryByText("Replace the marked placeholder before sending.")).not.toBeInTheDocument();
 	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
 	await waitFor(() => expect(api.logReply).toHaveBeenCalledTimes(1));
 	expect(writeText).toHaveBeenLastCalledWith("Available Tuesday at 14:00.");
@@ -1059,4 +1065,131 @@ it("keeps a manually written reply available without AI and logs only after copy
 	await waitFor(() => expect(api.logReply).toHaveBeenCalledOnce());
 	expect(writeText).toHaveBeenCalledWith("Thank you. I can meet Tuesday at 10:00.");
 	expect(api.generate).not.toHaveBeenCalled();
+});
+
+it("opens a saved Fit summary once without adding a second counts sentence", () => {
+	const summary = "6 supported, 1 partly supported, 3 with no evidence yet. Strong on design systems.";
+	api.data.savedItems = [
+		item("Fit result", { kind: "fit", headline: "Fit check", summary, requirements: [], checks: [], ask: null }),
+	];
+	mount(<SavedTab {...props} />);
+	fireEvent.click(screen.getByRole("button", { name: "Fit result" }));
+	expect(screen.getByText(summary)).toBeVisible();
+	expect(screen.queryByText(/0 supported/)).not.toBeInTheDocument();
+});
+
+it("requires the current packet review and resets approval when its destination changes", async () => {
+	const selection = {
+		applicationId: application.id,
+		targetUrl: "https://example.com/form",
+		includeContact: false,
+		answerIds: [],
+		letterWords: null,
+	};
+	const makeReview = (targetUrl: string, fingerprint: string) => ({
+		selection: { ...selection, targetUrl },
+		fingerprint,
+		application: { id: application.id, company: application.company, role: application.role },
+		contact: null,
+		profileRevision: null,
+		profileReviewedAt: null,
+		experience: "Reviewed experience",
+		letterText: "",
+		answers: [],
+		documents: [{ kind: "resume", id: "resume-1", name: "My resume", revision: "v1" }],
+	});
+	const initial = makeReview(selection.targetUrl, "a".repeat(64));
+	const next = deferred<ReturnType<typeof makeReview>>();
+	api.reviewPacket.mockResolvedValueOnce(initial).mockReturnValueOnce(next.promise);
+	mount(
+		<ApplicationPacketPanel application={{ ...application, resumeId: "resume-1", sourceUrl: selection.targetUrl }} />,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Review packet" }));
+	const approve = await screen.findByRole("button", { name: "Approve and create packet" });
+	expect(approve).toBeDisabled();
+	const reviewed = await screen.findByRole("checkbox", {
+		name: "I reviewed these fields, answers, the address and each document.",
+	});
+	await waitFor(() => expect(reviewed).toBeEnabled());
+	await userEvent.click(reviewed);
+	await waitFor(() => expect(approve).toBeEnabled());
+	fireEvent.change(screen.getByRole("textbox", { name: "The form's exact address" }), {
+		target: { value: "https://example.com/new-form" },
+	});
+	expect(approve).toBeDisabled();
+	expect(reviewed).not.toBeChecked();
+	expect(api.exportPacket).not.toHaveBeenCalled();
+	const updated = makeReview("https://example.com/new-form", "b".repeat(64));
+	await act(async () => next.resolve(updated));
+	expect(approve).toBeDisabled();
+	await userEvent.click(reviewed);
+	api.exportPacket.mockReturnValue(new Promise(() => {}));
+	fireEvent.click(approve);
+	await waitFor(() =>
+		expect(api.exportPacket).toHaveBeenCalledWith({
+			selection: updated.selection,
+			fingerprint: updated.fingerprint,
+			reviewed: true,
+		}),
+	);
+});
+
+it("starts practice without an application with three general questions and keeps story practice available", () => {
+	mount(<StoryPractice storyId="story-1" />);
+	expect(screen.getByRole("heading", { name: "Practice without an application" })).toBeVisible();
+	expect(screen.getByText("Question 1 of 3 · simulated")).toBeVisible();
+	expect(
+		screen.getByRole("heading", {
+			name: "Tell me about a piece of work you're proud of. What was your part in it, and how did you measure success?",
+		}),
+	).toBeVisible();
+	expect(screen.getByRole("button", { name: "Practice this story" })).toBeEnabled();
+});
+
+it("shows the recorded reply changes after reload using the previous stage, not the current follow-up", () => {
+	const savedReply = reply();
+	if (savedReply.data.kind !== "reply") throw new Error("Expected reply");
+	savedReply.data.changes = [
+		{ type: "stage", stage: "screening" },
+		{ type: "follow-up", at: "2026-11-11T09:00:00Z", note: "Send availability" },
+	];
+	savedReply.data.applied = {
+		at: "2026-11-07T09:00:00Z",
+		changes: [0, 1],
+		undo: {
+			before: {
+				status: "applied",
+				laneId: null,
+				closedReason: null,
+				followUpAt: null,
+				followUpDateOnly: false,
+				followUpNote: null,
+			},
+			after: {
+				status: "screening",
+				laneId: null,
+				closedReason: null,
+				followUpAt: "2026-11-11T09:00:00Z",
+				followUpDateOnly: false,
+				followUpNote: "Send availability",
+			},
+			offerId: null,
+		},
+	};
+	api.data.savedItems = [savedReply];
+	mount(
+		<MessagesTab
+			{...props}
+			application={{
+				...application,
+				status: "screening",
+				followUpAt: new Date("2026-11-11T09:00:00Z"),
+				followUpNote: "Send availability",
+			}}
+		/>,
+	);
+	expect(screen.getByText("Was Applied")).toBeVisible();
+	expect(screen.getByText(/Follow-up set for .*11/, { selector: "span" })).toBeVisible();
+	expect(screen.queryByRole("button", { name: "Apply 2 changes" })).not.toBeInTheDocument();
+	expect(screen.queryByText(/replaces the overdue/)).not.toBeInTheDocument();
 });

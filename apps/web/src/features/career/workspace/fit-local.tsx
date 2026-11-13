@@ -6,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { cn } from "@reactive-resume/utils/style";
 import { useCareerTime } from "../shared";
 import { AiNotice } from "./fit";
 import { IconTile, List, ListRow } from "@/components/calm/list-row";
@@ -120,7 +121,7 @@ export function LocalMatch({ application }: { application: Application }) {
 							</SectionHeading>
 							<div className="flex flex-wrap gap-1.5">
 								{found.map((term) => (
-									<span key={term.term} className={chip}>
+									<span key={term.term} className={cn(chip, "border-transparent bg-accent-soft text-accent-text")}>
 										<Icon name="check" size={14} className="text-accent-text" />
 										{term.label}
 									</span>

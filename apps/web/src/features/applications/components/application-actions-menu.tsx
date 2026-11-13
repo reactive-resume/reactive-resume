@@ -1,8 +1,11 @@
 import type { ApplicationLane } from "../lanes";
-import type { ApplicationSummary } from "../types";
+import type { Application, ApplicationSummary } from "../types";
 import type { ApplicationClosedReason } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -17,12 +20,17 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { getDisplayLane, getLaneLabel, laneDotColor } from "../lanes";
+import { applicationDetailQueryOptions } from "../queries";
 import { CLOSED_REASONS, getClosedReasonLabel } from "../stages";
 import { useApplicationActions } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
+import { ApplicationFormSheet } from "./application-form-sheet";
+import { InterviewDialog } from "./interview-dialog";
 import { StageDot } from "@/components/calm/stage-dot";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 
 // Keep pointer and clicks from reaching the card, which would start a drag or open the detail sheet. React portals
 // bubble synthetic events through the React tree, so a menu item's click would otherwise reach the card.
@@ -35,6 +43,19 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 	const { moveTo, close, remove } = useApplicationActions();
 	const { lanes, active } = useApplicationLanes();
 	const current = getDisplayLane(lanes, application);
+	const queryClient = useQueryClient();
+	const [form, setForm] = useState<{ kind: "details" | "interview"; application: Application } | null>(null);
+	const openForm = async (kind: "details" | "interview") => {
+		const generation = getAccountGeneration();
+		try {
+			const detail = await queryClient.fetchQuery(applicationDetailQueryOptions(application.id));
+			if (generation !== getAccountGeneration()) return;
+			setForm({ kind, application: detail });
+		} catch {
+			if (generation !== getAccountGeneration()) return;
+			toast.add({ type: "error", description: t`Couldn't load this application. Try again.` });
+		}
+	};
 
 	return (
 		<div className={cn("shrink-0", className)}>
@@ -52,13 +73,30 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 				>
 					<Icon name="dots-three" size={16} />
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end" className="w-48" onClick={stop}>
+				<DropdownMenuContent align="end" className="w-[212px]" onClick={stop}>
+					<DropdownMenuItem
+						render={
+							<Link to="/dashboard/applications/$applicationId/{-$tab}" params={{ applicationId: application.id }} />
+						}
+					>
+						<Icon name="arrow-square-out" />
+						<Trans>Open</Trans>
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => void openForm("details")}>
+						<Icon name="pencil-simple" />
+						<Trans>Edit details…</Trans>
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => void openForm("interview")}>
+						<Icon name="calendar-plus" />
+						<Trans>Schedule an interview…</Trans>
+					</DropdownMenuItem>
+					<DropdownMenuSeparator />
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>
 							<Icon name="arrow-right" size={18} />
 							<Trans>Move to…</Trans>
 						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent>
+						<DropdownMenuSubContent className="w-[212px]">
 							{active
 								.filter((lane) => lane.category !== "closed")
 								.map((lane) => (
@@ -79,7 +117,7 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 							<Icon name="check" size={18} />
 							<Trans>Mark as closed…</Trans>
 						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent>
+						<DropdownMenuSubContent className="w-[212px]">
 							<ClosedLaneItems
 								lanes={active}
 								currentId={current.id}
@@ -98,6 +136,17 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
+			{form?.kind === "details" && (
+				<ApplicationFormSheet open application={form.application} onOpenChange={(open) => !open && setForm(null)} />
+			)}
+			{form?.kind === "interview" && (
+				<InterviewDialog
+					open
+					application={form.application}
+					interview={null}
+					onOpenChange={(open) => !open && setForm(null)}
+				/>
+			)}
 		</div>
 	);
 }

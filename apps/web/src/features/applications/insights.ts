@@ -87,7 +87,14 @@ export function computeTimeline(
 
 	const buckets = Array.from({ length: weeks }, (_, i) => {
 		const start = new Date(startOfWeek.getTime() - (weeks - 1 - i) * msWeek);
-		return { start: start.getTime(), label: format.format(start), count: 0 };
+		return {
+			start: start.getTime(),
+			label: format
+				.formatToParts(start)
+				.map((part) => (part.type === "month" && part.value === "Sept" ? "Sep" : part.value))
+				.join(""),
+			count: 0,
+		};
 	});
 
 	const first = buckets[0]?.start ?? 0;

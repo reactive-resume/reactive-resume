@@ -75,7 +75,7 @@ function practiceQuestions(
 	const fallbacks = [
 		t`Tell me about a piece of work you're proud of. What was your part in it, and how did you measure success?`,
 		t`Tell me about a time you disagreed with a colleague. How did you resolve it?`,
-		t`Why do you want this role at ${company}?`,
+		company ? t`Why do you want this role at ${company}?` : t`What would you like to work on next, and why?`,
 	];
 	if (warmup) return threePracticeQuestions(questions, fallbacks);
 	return questions.length > 0 ? questions : fallbacks.map((text) => ({ text, origin: "simulated" as const }));
@@ -87,22 +87,34 @@ type StoryPracticeProps = { storyId: string };
 
 export function StoryPractice({ storyId }: StoryPracticeProps) {
 	const saved = useSavedItems(null);
+	const [fromStory, setFromStory] = useState(false);
 	const [versionId, setVersionId] = useState<string>();
 	const now = useNow();
 	return (
 		<div className="grid gap-3">
-			<p className="text-sm text-ink-2">
-				<Trans>Practice without an application</Trans>
-			</p>
 			<PractiseTab
 				application={null}
-				version={saved.data?.find((item) => item.id === versionId && item.evidence.storyIds.includes(storyId))}
+				version={saved.data?.find(
+					(item) => item.id === versionId && (!fromStory || item.evidence.storyIds.includes(storyId)),
+				)}
 				interview={undefined}
-				speak={true}
-				story={storyId}
+				speak={false}
+				story={fromStory ? storyId : undefined}
 				now={now}
 				go={(_tab, search) => setVersionId(search?.version)}
 			/>
+			<div className="flex justify-end">
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={() => {
+						setFromStory(!fromStory);
+						setVersionId(undefined);
+					}}
+				>
+					{fromStory ? t`Practice general questions` : t`Practice this story`}
+				</Button>
+			</div>
 		</div>
 	);
 }
@@ -134,7 +146,7 @@ export function PractiseTab({ application, version, interview, speak, story, war
 					origin: "simulated",
 				},
 			]
-		: practiceQuestions(saved.data, interview?.id, application?.company ?? "", warmup);
+		: practiceQuestions(application ? saved.data : [], interview?.id, application?.company ?? "", warmup);
 	const briefed = latest(saved.data, "briefing", interview?.id)?.data.practiceQuestions ?? [];
 	const general =
 		!selectedStory && questions.every((item) => item.origin !== "recalled" && !briefed.includes(item.text));
@@ -185,7 +197,7 @@ export function PractiseTab({ application, version, interview, speak, story, war
 		<div className="relative">
 			<PageHeader
 				title={application ? t`Practice` : t`Practice without an application`}
-				className="[&_h1]:pe-44 [&>div]:min-h-9 [&>p]:pt-1 [&>p]:text-sm/5"
+				className={cn("[&>div]:min-h-9 [&>p]:pt-1 [&>p]:text-sm/5", application && "[&_h1]:pe-44")}
 				actions={
 					selectedStory && (
 						<Link
@@ -211,7 +223,7 @@ export function PractiseTab({ application, version, interview, speak, story, war
 									? t`Three general questions for ${time.format(interview.at, { weekday: "long" })}'s ${interviewTypeLabel(interview.kind).toLocaleLowerCase(time.locale)} interview. They are simulated, not from ${application.company}.`
 									: t`Likely questions for ${time.format(interview.at, { weekday: "long" })}'s ${interviewTypeLabel(interview.kind).toLocaleLowerCase(time.locale)} interview. They are simulated, not from ${application.company}.`
 								: t`Practice for ${application.company}. Questions are simulated, not from ${application.company}.`
-							: t`Practice your story. Questions are simulated.`
+							: undefined
 				}
 			/>
 			{!viewing && (
@@ -253,6 +265,14 @@ export function PractiseTab({ application, version, interview, speak, story, war
 				)}
 				{!speaking && (
 					<aside className="grid gap-0">
+						{noAi && (
+							<>
+								<SectionHeading className="pt-[22px]">
+									<Trans>Voice</Trans>
+								</SectionHeading>
+								<VoiceSettingsPanel voice={voice} audio={null} disabled={false} />
+							</>
+						)}
 						<SectionHeading className="pt-[22px]" note={attempts.length}>
 							{noAi ? <Trans>Your answers</Trans> : <Trans>Your attempts</Trans>}
 						</SectionHeading>
@@ -590,24 +610,29 @@ function Session({
 			maxLength={6000}
 			placeholder={t`About 90 seconds when spoken`}
 			onChange={(event) => setAnswer(event.target.value)}
-			className="min-h-[152px] px-3 py-2.5 text-sm/[22px] pointer-coarse:text-base"
+			className={cn(
+				"resize-none px-3 py-2.5 text-sm/[22px] pointer-coarse:text-base",
+				!provider ? "min-h-[108px]" : "min-h-[152px]",
+			)}
 		/>
 	);
 
 	return (
 		<div className={cn("grid min-w-0 gap-0", mode === "spoken" && "@3xl:pe-[312px]")}>
-			<section className="grid gap-0 pt-[22px]">
+			<section className={cn("grid gap-0", !applicationId && !storyTitle ? "pt-2" : "pt-[22px]")}>
 				<div className="flex min-h-7 items-center justify-between gap-2">
 					<p className="flex-1 text-[13px]/[18px] text-ink-3">
-						{storyTitle
-							? t`From your story`
-							: question.origin === "recalled"
-								? t`Recalled`
-								: briefed.includes(question.text)
-									? t`From your briefing`
-									: t`General question`}
+						{!applicationId && !storyTitle
+							? t`Question ${position} of ${total} · simulated`
+							: storyTitle
+								? t`From your story`
+								: question.origin === "recalled"
+									? t`Recalled`
+									: briefed.includes(question.text)
+										? t`From your briefing`
+										: t`General question`}
 					</p>
-					{!storyTitle && (
+					{!storyTitle && applicationId && (
 						<div className="absolute end-0 top-0 flex items-center gap-0.5">
 							<IconButton
 								icon="caret-left"
@@ -828,6 +853,21 @@ function Session({
 								<Button variant="link" size="sm" className="w-fit p-0" onClick={() => chooseMode("typed")}>
 									<Trans>Type instead</Trans>
 								</Button>
+								{!browserDictation && (
+									<Button
+										variant="link"
+										size="sm"
+										className="w-fit p-0"
+										onClick={() => {
+											recording.current?.cancel();
+											recording.current = null;
+											setStep({ name: "idle" });
+											fileInput.current?.click();
+										}}
+									>
+										<Trans>Choose an audio file · up to 2 MB</Trans>
+									</Button>
+								)}
 							</>
 						)}
 						{step.name === "blocked" && (
@@ -1179,8 +1219,8 @@ function VoiceSettingsPanel({ voice, audio, disabled }: VoiceSettingsPanelProps)
 					)}
 					<p className="text-xs leading-[17px] text-ink-3">
 						<Trans>
-							Connections bill speech separately and may use tokens on your account. Your browser's speech is free, but
-							its maker may process the audio. The server keeps transcripts, never recordings.
+							A connection bills speech separately and may use tokens on your account. Your browser's speech is free,
+							but its maker may process the audio. The server keeps transcripts, never recordings.
 						</Trans>
 					</p>
 				</div>

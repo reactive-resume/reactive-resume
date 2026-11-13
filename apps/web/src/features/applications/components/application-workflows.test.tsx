@@ -2,6 +2,7 @@
 import type { Application } from "../types";
 import type { ComponentProps, ReactNode } from "react";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -10,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const api = vi.hoisted(() => ({
 	bulkTrash: vi.fn(),
+	updateTimelineEntry: vi.fn(),
 	copyForJob: vi.fn(),
 	bulkUpdate: vi.fn(),
 	parsePosting: vi.fn(),
@@ -53,6 +55,9 @@ vi.mock("@/libs/orpc/client", () => ({
 				},
 			},
 			priorNoResponse: { queryOptions: () => ({ queryKey: ["prior"], queryFn: async () => [] }) },
+			addNote: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			updateTimelineEntry: { mutationOptions: () => ({ mutationFn: api.updateTimelineEntry }) },
+			deleteTimelineEntry: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			bulkTrash: { mutationOptions: () => ({ mutationFn: api.bulkTrash }) },
 			bulkUpdate: { mutationOptions: () => ({ mutationFn: api.bulkUpdate }) },
 			create: { mutationOptions: () => ({ mutationFn: api.create }) },
@@ -100,6 +105,7 @@ vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() }
 
 import { AddApplicationDialog } from "./add-application-dialog";
 import { ApplicationBoard } from "./board";
+import { Activity } from "./detail/activity";
 import { ApplicationList } from "./list-view";
 
 const application = (id: string, status: Application["status"]): Application => ({
@@ -270,7 +276,7 @@ it("does not report successful extraction when role and company are blank", asyn
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: "https://example.test/careers" },
 	});
-	fireEvent.click(screen.getByRole("button", { name: "Read the page without AI" }));
+	await readWithoutAi();
 	await screen.findByText(/Some job details couldn't be read/);
 	expect(screen.queryByText(/Found (the )?role,? (and )?company/)).toBeNull();
 	expect((screen.getByRole("button", { name: "Save job" }) as HTMLButtonElement).disabled).toBe(true);
@@ -327,7 +333,10 @@ it("updates a tracked job's posting without blanking its saved description", asy
 			}}
 		/>,
 	);
-	fireEvent.click(await screen.findByRole("button", { name: "Update posting details" }));
+	await screen.findByRole("button", { name: "Update posting details" });
+	expect(screen.queryByRole("textbox", { name: "Company" })).not.toBeInTheDocument();
+	expect(screen.queryByRole("textbox", { name: "Role" })).not.toBeInTheDocument();
+	fireEvent.click(screen.getByRole("button", { name: "Update posting details" }));
 	await waitFor(() => expect(api.update).toHaveBeenCalled());
 	expect(api.update.mock.lastCall?.[0]).not.toHaveProperty("jobDescription");
 });
@@ -370,7 +379,7 @@ it("never dispatches a no-AI parse to a server that cannot confirm support, whil
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: "https://example.test/role" },
 	});
-	fireEvent.click(screen.getByRole("button", { name: "Read the page without AI" }));
+	await readWithoutAi();
 	await screen.findByText(/Reading without AI couldn't be confirmed/);
 	expect(api.parsePosting).not.toHaveBeenCalled();
 	fireEvent.click(screen.getByRole("button", { name: "Read it" }));
@@ -430,7 +439,7 @@ it("shows the posting once when a link couldn't be read, its text was pasted and
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: "https://jobs.example.test/vp" },
 	});
-	fireEvent.click(screen.getByRole("button", { name: "Read the page without AI" }));
+	await readWithoutAi();
 	fireEvent.change(await screen.findByRole("textbox", { name: "Pasted description" }), { target: { value: posting } });
 	fireEvent.click(screen.getByRole("button", { name: "Read it" }));
 	await screen.findByText(/AI couldn't fill the details/);
@@ -495,7 +504,7 @@ it("keeps the link's failure above paste recovery instead of replacing it with i
 	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
 		target: { value: "https://jobs.lever.co/spotify" },
 	});
-	fireEvent.click(screen.getByRole("button", { name: "Read the page without AI" }));
+	await readWithoutAi();
 	await screen.findByRole("textbox", { name: "Pasted description" });
 	const error = await screen.findByRole("alert");
 	expect(error.textContent).toContain("That link is a list of jobs");
@@ -540,4 +549,44 @@ it("keeps one failure status when optional AI enrichment fails for a captured po
 	expect(await screen.findAllByText(/AI couldn't fill the details/)).toHaveLength(1);
 	expect(screen.queryByText(/Some job details couldn't be read/)).toBeNull();
 	expect(screen.getByRole("textbox", { name: "Saved description" })).toHaveValue(posting);
+});
+
+async function readWithoutAi() {
+	const direct = screen.queryByRole("button", { name: "Read the page without AI" });
+	if (direct) return userEvent.click(direct);
+	await userEvent.click(screen.getByRole("button", { name: "Reading options" }));
+	await userEvent.click(await screen.findByRole("menuitem", { name: "Read the page without AI" }));
+}
+
+it("edits a timeline note separately from its date without dropping either value", async () => {
+	const user = userEvent.setup();
+	api.updateTimelineEntry.mockResolvedValue(undefined);
+	const item = {
+		...application("timeline", "applied"),
+		activity: [{ id: "note", type: "note" as const, at: new Date("2026-11-05T12:00:00Z"), text: "Sent availability" }],
+	};
+	mount(<Activity application={item} onOpenInterview={vi.fn()} />);
+	await user.click(screen.getByRole("button", { name: "Options for this entry" }));
+	await user.click(await screen.findByRole("menuitem", { name: "Edit note…" }));
+	expect(screen.queryByLabelText("Date")).toBeNull();
+	fireEvent.change(screen.getByRole("textbox", { name: "Note" }), { target: { value: "Confirmed availability" } });
+	await user.click(screen.getByRole("button", { name: "Save" }));
+	await waitFor(() =>
+		expect(api.updateTimelineEntry).toHaveBeenCalledWith(
+			{ id: "timeline", entryId: "note", date: "2026-11-05", text: "Confirmed availability" },
+			expect.anything(),
+		),
+	);
+	await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+	await user.click(screen.getByRole("button", { name: "Options for this entry" }));
+	await user.click(await screen.findByRole("menuitem", { name: "Edit date…" }));
+	expect(screen.queryByRole("textbox", { name: "Note" })).toBeNull();
+	fireEvent.change(screen.getByLabelText("Date"), { target: { value: "2026-11-06" } });
+	await user.click(screen.getByRole("button", { name: "Save" }));
+	await waitFor(() =>
+		expect(api.updateTimelineEntry).toHaveBeenLastCalledWith(
+			{ id: "timeline", entryId: "note", date: "2026-11-06" },
+			expect.anything(),
+		),
+	);
 });

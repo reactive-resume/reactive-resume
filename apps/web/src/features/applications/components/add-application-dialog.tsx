@@ -21,6 +21,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@reactive-resume/ui/components/input-group";
@@ -478,7 +484,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 				onValueChange={(value) => setTab(value as typeof tab)}
 				className={tab === "search" ? "gap-[18px]" : "gap-5"}
 			>
-				<TabsList aria-label={t`How to add it`} className="w-full max-sm:h-auto max-sm:min-h-11 max-sm:items-stretch">
+				<TabsList
+					aria-label={t`How to add it`}
+					className={cn("w-full max-sm:h-auto max-sm:min-h-11 max-sm:items-stretch", stage === "applied" && "hidden")}
+				>
 					<TabsTrigger value="link" className="max-sm:min-w-0 max-sm:py-2 max-sm:whitespace-normal">
 						<Icon name="link" />
 						<Trans>Link or posting text</Trans>
@@ -545,6 +554,21 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 										<Icon name="sparkle" className="text-ink-3" />
 										<Trans>Read it</Trans>
 									</Button>
+
+									{readable && link && (
+										<DropdownMenu>
+											<DropdownMenuTrigger
+												render={<Button type="button" size="icon-xs" variant="ghost" aria-label={t`Reading options`} />}
+											>
+												<Icon name="caret-down" />
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuItem disabled={read.isPending} onClick={() => readPosting(false)}>
+													<Trans>Read the page without AI</Trans>
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
+									)}
 								</InputGroupAddon>
 							)}
 						</InputGroup>
@@ -566,7 +590,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 										</button>
 									</Trans>
 								)}
-								{readable && link && (
+								{!readAI && readable && link && (
 									<span>
 										{oneLine && !pasteOpen && !initialCapture && " · "}
 										<button
@@ -730,157 +754,166 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 							</AlertDescription>
 						</Alert>
 					)}
-					<PriorNoResponseNotice company={company} />
+					<fieldset hidden={Boolean(duplicate.data)} className={cn("grid gap-[18px]", duplicate.data && "hidden")}>
+						<PriorNoResponseNotice company={company} />
 
-					<div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-						<div className="grid gap-1.5">
-							<Label htmlFor={`${id}-company`}>
-								<Trans>Company</Trans>
-							</Label>
-							<Input
-								id={`${id}-company`}
-								value={company}
-								onChange={(event) => {
-									markAuthored("company");
-									setCompany(event.target.value);
-								}}
-							/>
+						<div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
+							<div className="grid gap-1.5">
+								<Label htmlFor={`${id}-company`}>
+									<Trans>Company</Trans>
+								</Label>
+								<Input
+									id={`${id}-company`}
+									value={company}
+									onChange={(event) => {
+										markAuthored("company");
+										setCompany(event.target.value);
+									}}
+								/>
+							</div>
+							<div className="grid gap-1.5">
+								<Label htmlFor={`${id}-role`}>
+									<Trans>Role</Trans>
+								</Label>
+								<Input
+									id={`${id}-role`}
+									value={role}
+									onChange={(event) => {
+										markAuthored("role");
+										setRole(event.target.value);
+									}}
+								/>
+							</div>
 						</div>
-						<div className="grid gap-1.5">
-							<Label htmlFor={`${id}-role`}>
-								<Trans>Role</Trans>
-							</Label>
-							<Input
-								id={`${id}-role`}
-								value={role}
-								onChange={(event) => {
-									markAuthored("role");
-									setRole(event.target.value);
-								}}
-							/>
-						</div>
-					</div>
 
-					<div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-						<div className="grid gap-1.5">
-							<Label htmlFor={`${id}-location`}>
-								<Trans>Location</Trans>
-							</Label>
-							<Input
-								id={`${id}-location`}
-								value={location}
-								onChange={(event) => {
-									markAuthored("location");
-									setLocation(event.target.value);
-								}}
-							/>
-						</div>
-						<div className="grid gap-1.5">
-							<Label htmlFor={`${id}-salary`}>
-								<Trans>Salary</Trans>
-							</Label>
-							<Input
-								id={`${id}-salary`}
-								value={salary}
-								onChange={(event) => {
-									markAuthored("salary");
-									setSalary(event.target.value);
-								}}
-							/>
-						</div>
-					</div>
+						<details open={stage === "saved" || !!location || !!salary} className="grid gap-3">
+							<summary className={cn("cursor-pointer t-small text-accent-text", stage === "saved" && "hidden")}>
+								<Trans>Additional details</Trans>
+							</summary>
+							<div className="grid gap-1.5">
+								<Label htmlFor={`${id}-location`}>
+									<Trans>Location</Trans>
+								</Label>
+								<Input
+									id={`${id}-location`}
+									value={location}
+									onChange={(event) => {
+										markAuthored("location");
+										setLocation(event.target.value);
+									}}
+								/>
+							</div>
+							<details className="grid gap-1.5">
+								<summary className="cursor-pointer t-small text-accent-text">
+									<Trans>Add salary</Trans>
+								</summary>
+								<Label htmlFor={`${id}-salary`}>
+									<Trans>Salary</Trans>
+								</Label>
+								<Input
+									id={`${id}-salary`}
+									value={salary}
+									onChange={(event) => {
+										markAuthored("salary");
+										setSalary(event.target.value);
+									}}
+								/>
+							</details>
+						</details>
 
-					<div className="grid gap-1.5">
-						<span id={`${id}-stage`} className="text-[13px]/[18px] font-medium text-ink-2">
-							<Trans>Stage</Trans>
-						</span>
-						<div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-							<SegmentedControl
-								aria-labelledby={`${id}-stage`}
-								value={lane.id}
-								onValueChange={(value) => setLaneId(value as string)}
-								className="h-auto min-h-9 max-w-full flex-wrap"
-							>
-								{choices.map((choice) => (
-									<SegmentedControlItem
-										key={choice.id}
-										value={choice.id}
-										className="min-h-8 max-w-full flex-auto [overflow-wrap:anywhere] whitespace-normal"
-									>
-										<StageDot status={choice.category} color={choice.color}>
-											{null}
-										</StageDot>
-										{getLaneLabel(choice)}
-									</SegmentedControlItem>
-								))}
-							</SegmentedControl>
-							{stage === "saved" && (
-								<p className="min-w-0 flex-1 basis-48 text-xs/4 text-ink-3">
-									<Trans>Choosing Applied asks which resume and letter you sent.</Trans>
-								</p>
-							)}
-						</div>
-					</div>
-
-					{stage !== "saved" && (
 						<div className="grid gap-1.5">
-							<div className="grid grid-cols-[150px_1fr_1fr] gap-3 max-sm:grid-cols-1">
-								<div className="grid gap-1.5">
-									<Label htmlFor={`${id}-date`}>
-										<Trans>Applied on</Trans>
-									</Label>
-									<Input
-										id={`${id}-date`}
-										type="date"
-										value={stageDate}
-										required
-										onChange={(event) => setStageDate(event.target.value)}
-									/>
-								</div>
-								<div className="grid min-w-0 gap-1.5">
-									<Label htmlFor={`${id}-resume`}>
-										<Trans>Resume you sent</Trans>
-									</Label>
-									<NativeSelect
-										id={`${id}-resume`}
-										value={resumeId}
-										onChange={(event) => setResumeId(event.target.value)}
-									>
-										<option value="">{t`None`}</option>
-										{resumes.map((document) => (
-											<option key={document.id} value={document.id}>
-												{document.name}
-											</option>
-										))}
-									</NativeSelect>
-								</div>
-								<div className="grid min-w-0 gap-1.5">
-									<Label htmlFor={`${id}-letter`}>
-										<Trans>Letter you sent</Trans>
-									</Label>
-									<NativeSelect
-										id={`${id}-letter`}
-										value={coverLetterId}
-										onChange={(event) => setCoverLetterId(event.target.value)}
-									>
-										<option value="">{t`None`}</option>
-										{documents
-											?.filter((document) => document.type === "letter" && !document.isLocked)
-											.map((document) => (
+							<span id={`${id}-stage`} className="text-[13px]/[18px] font-medium text-ink-2">
+								<Trans>Stage</Trans>
+							</span>
+							<div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+								<SegmentedControl
+									aria-labelledby={`${id}-stage`}
+									value={lane.id}
+									onValueChange={(value) => setLaneId(value as string)}
+									className="h-auto min-h-9 max-w-full flex-wrap"
+								>
+									{choices.map((choice) => (
+										<SegmentedControlItem
+											key={choice.id}
+											value={choice.id}
+											className="min-h-8 max-w-full flex-auto [overflow-wrap:anywhere] whitespace-normal"
+										>
+											<StageDot status={choice.category} color={choice.color}>
+												{null}
+											</StageDot>
+											{getLaneLabel(choice)}
+										</SegmentedControlItem>
+									))}
+								</SegmentedControl>
+								{stage === "saved" && (
+									<p className="min-w-0 flex-1 basis-48 text-xs/4 text-ink-3">
+										<Trans>Choosing Applied asks which resume and letter you sent.</Trans>
+									</p>
+								)}
+							</div>
+						</div>
+
+						{stage !== "saved" && (
+							<div className="grid gap-1.5">
+								<div className="grid grid-cols-[150px_1fr_1fr] gap-3 max-sm:grid-cols-1">
+									<div className="grid gap-1.5">
+										<Label htmlFor={`${id}-date`}>
+											<Trans>Applied on</Trans>
+										</Label>
+										<Input
+											id={`${id}-date`}
+											type="date"
+											value={stageDate}
+											required
+											onChange={(event) => setStageDate(event.target.value)}
+										/>
+									</div>
+									<div className="grid min-w-0 gap-1.5">
+										<Label htmlFor={`${id}-resume`}>
+											<Trans>Resume you sent</Trans>
+										</Label>
+										<NativeSelect
+											id={`${id}-resume`}
+											value={resumeId}
+											onChange={(event) => setResumeId(event.target.value)}
+										>
+											<option value="">{t`None`}</option>
+											{resumes.map((document) => (
 												<option key={document.id} value={document.id}>
 													{document.name}
 												</option>
 											))}
-									</NativeSelect>
+										</NativeSelect>
+									</div>
+									<div className="grid min-w-0 gap-1.5">
+										<Label htmlFor={`${id}-letter`}>
+											<Trans>Letter you sent</Trans>
+										</Label>
+										<NativeSelect
+											id={`${id}-letter`}
+											value={coverLetterId}
+											onChange={(event) => setCoverLetterId(event.target.value)}
+										>
+											<option value="">{t`None`}</option>
+											{documents
+												?.filter((document) => document.type === "letter" && !document.isLocked)
+												.map((document) => (
+													<option key={document.id} value={document.id}>
+														{document.name}
+													</option>
+												))}
+										</NativeSelect>
+									</div>
 								</div>
+								<p className="text-xs/4 text-ink-3">
+									<Trans>
+										Both are optional. What you pick is kept as it was sent and never changes; your drafts stay
+										editable.
+									</Trans>
+								</p>
 							</div>
-							<p className="text-xs/4 text-ink-3">
-								<Trans>
-									Both are optional. What you pick is kept as it was sent and never changes; your drafts stay editable.
-								</Trans>
-							</p>
-						</div>
-					)}
+						)}
+					</fieldset>
 				</TabsContent>
 
 				<TabsContent value="search" className="grid gap-[18px]">

@@ -32,6 +32,7 @@ import {
 	workingSteps,
 } from "../shared";
 import { AiNotice } from "./fit";
+import { DocumentThumb } from "@/components/calm/document-thumb";
 import { List, ListRow } from "@/components/calm/list-row";
 import { PageHeader } from "@/components/calm/page";
 import { SectionHeading } from "@/components/calm/section-heading";
@@ -293,7 +294,8 @@ function PrepWithoutAi({ application, interview, now, go }: PrepWithoutAiProps) 
 												<Link to="/builder/letter/$coverLetterId" params={{ coverLetterId: entry.id }} />
 											)
 										}
-										leading={<Icon name={entry.kind === "resume" ? "file-text" : "envelope-simple"} size={20} />}
+										leading={<DocumentThumb kind={entry.kind === "resume" ? "resume" : "letter"} />}
+										className="min-h-[65px]"
 										title={entry.name}
 										subtitle={entry.label}
 										caret
@@ -509,7 +511,15 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 								</p>
 								<p className="text-[13px]/[18px] text-ink-3">{row.detail}</p>
 							</div>
-							<div className="col-start-2 @xl:col-start-auto">{action(row)}</div>
+							<div className="col-start-2 @xl:col-start-auto">
+								{index === 0 && row.action === "none" ? (
+									<Button variant="link" size="sm" className="h-auto p-0 text-accent-text" onClick={() => go("fit")}>
+										<Trans>Open Fit</Trans>
+									</Button>
+								) : (
+									action(row)
+								)}
+							</div>
 						</div>
 					))}
 				</div>
@@ -585,9 +595,17 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 						<RefreshSwitch application={application} interview={interview} />
 					</div>
 				)}
-				<Button variant="ghost" size="sm" className="mt-2" onClick={() => setReading(true)}>
-					<Trans>Read briefing</Trans>
-				</Button>
+				{readOnly && (
+					<Button
+						variant="link"
+						size="sm"
+						className="mt-2 h-auto p-0 text-accent-text"
+						onClick={() => setReading(true)}
+					>
+						<Icon name="timer" size={16} />
+						<Trans>10-minute briefing</Trans>
+					</Button>
+				)}
 			</aside>
 			<BriefingDialog
 				application={application}
@@ -711,7 +729,7 @@ function StoriesToBring({ application, briefing }: StoriesToBringProps) {
 				))}
 				{briefing.data.missingStory && (
 					<ListRow
-						leading={<Icon name="question" size={20} className="text-warn-text" />}
+						leading={<Icon name="question" size={20} className="text-ink-3" />}
 						subtitle={t`No story yet for ${briefing.data.missingStory}`}
 						className="[&_span.truncate]:whitespace-normal"
 					/>
@@ -754,6 +772,8 @@ type BriefingDialogProps = {
 
 function BriefingDialog({ application, interview, briefing, open, onOpenChange }: BriefingDialogProps) {
 	const ticks = useTicks(application.id, `now:${interview?.id ?? briefing.interviewId}`);
+	const time = useCareerTime();
+	const workspace = useWorkspace(application.id);
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent closeLabel={t`Close`} className="content-start sm:max-w-[560px]">
@@ -761,6 +781,9 @@ function BriefingDialog({ application, interview, briefing, open, onOpenChange }
 					<DialogTitle className="text-2xl leading-8">
 						<Trans>10-minute briefing</Trans>
 					</DialogTitle>
+					{interview && (
+						<p className="t-small text-ink-3">{t`${interviewTypeLabel(interview.kind)} interview at ${application.company} · ${time.when(interview.at)} · with ${interview.participants.map((person) => person.name).join(t` and `)}`}</p>
+					)}
 				</DialogHeader>
 				<div className="grid">
 					{steps().map((step, index) => (
@@ -770,19 +793,25 @@ function BriefingDialog({ application, interview, briefing, open, onOpenChange }
 								onCheckedChange={(checked) => ticks.toggle(String(index), checked)}
 							/>
 							<span className="grid flex-1 gap-1">
-								<span className="t-label">{step.title}</span>
-								<span className="text-[13px] text-ink-3">{index === 1 ? briefing.data.opening : step.detail}</span>
+								<span className="t-label">
+									{index === 1 ? t`Your opening` : index === 2 ? t`Two stories` : step.title}
+								</span>
+								<span className="text-[13px] whitespace-pre-line text-ink-3">
+									{index === 1
+										? `“${briefing.data.opening}”`
+										: index === 2
+											? briefing.data.stories.join(" · ")
+											: index === 3
+												? [...briefing.data.questions, ...workspace.data.questions]
+														.map((question) => question.text)
+														.join("\n")
+												: step.detail}
+								</span>
 							</span>
 							<span className="text-xs text-ink-3">{t`${step.minutes} min`}</span>
 						</label>
 					))}
 				</div>
-				<details>
-					<summary className="cursor-pointer text-[13px] text-accent-text">
-						<Trans>Read the full briefing</Trans>
-					</summary>
-					<BriefingNotes briefing={briefing} />
-				</details>
 				<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4">
 					<Button variant="ghost" onClick={() => onOpenChange(false)}>
 						<Trans>Open the full plan</Trans>
