@@ -208,6 +208,8 @@ function makeState(fixture: Fixture) {
 		sourceUrl: null,
 		jobDescription: null,
 		postingSource: null,
+		postingFileUrl: null,
+		postingFileName: null,
 		matchScore: null,
 		aiMetadata: null,
 		notes: null,

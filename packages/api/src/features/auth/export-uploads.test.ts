@@ -26,6 +26,17 @@ it("never fetches external photos or unsafe references, and records each exclusi
 	);
 });
 
+it("exports the original posting PDF kept with an application", async () => {
+	read.mockReset().mockResolvedValue({ data: new Uint8Array([1]), size: 1 });
+	const data = {
+		career: { threads: [], attachments: [] },
+		applications: [{ id: "app-1", postingFileUrl: "http://localhost:3000/api/uploads/owner/pictures/posting.pdf" }],
+	};
+	const result = await exportAccountUploads("owner", data);
+	expect(read).toHaveBeenCalledWith("uploads/owner/pictures/posting.pdf", expect.anything());
+	expect(result.files.map((file) => file.key)).toEqual(["uploads/owner/pictures/posting.pdf"]);
+});
+
 it("caps attempted file reads even when every referenced file is unavailable", async () => {
 	read.mockReset().mockResolvedValue(null);
 	const references = Array.from(

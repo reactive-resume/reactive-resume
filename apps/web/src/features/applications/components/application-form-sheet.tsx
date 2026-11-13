@@ -62,6 +62,7 @@ const emptyForm = () => ({
 	notes: "",
 	resumeFile: null as FileAttachment | File | null,
 	coverLetter: null as FileAttachment | File | null,
+	postingFile: null as FileAttachment | File | null,
 });
 
 type FormState = ReturnType<typeof emptyForm>;
@@ -93,6 +94,7 @@ function toForm(app: Application, timeZone: string): FormState {
 		notes: app.notes ?? "",
 		resumeFile: toAttachment(app.resumeFileUrl, app.resumeFileName),
 		coverLetter: toAttachment(app.coverLetterUrl, app.coverLetterName),
+		postingFile: toAttachment(app.postingFileUrl, app.postingFileName),
 	};
 }
 
@@ -130,6 +132,9 @@ function toPayload(form: FormState, timeZone: string, application: Application |
 		coverLetterUrl: form.coverLetter instanceof File ? null : (form.coverLetter?.url ?? null),
 		...(form.coverLetter instanceof File ? { coverLetterFile: form.coverLetter } : {}),
 		coverLetterName: form.coverLetter?.name ?? null,
+		postingFileUrl: form.postingFile instanceof File ? null : (form.postingFile?.url ?? null),
+		...(form.postingFile instanceof File ? { postingFile: form.postingFile } : {}),
+		postingFileName: form.postingFile?.name ?? null,
 	};
 }
 
@@ -441,6 +446,22 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 								placeholder="https://…"
 								onChange={(event) => set("sourceUrl", event.target.value)}
 							/>
+						)}
+					</Field>
+
+					{/* The employer's own copy survives the posting changing or being taken down. */}
+					<Field label={t`Original posting PDF`}>
+						{() => (
+							<div className="grid gap-2">
+								<FileAttachmentField
+									value={form.postingFile}
+									attachLabel={t`Attach the posting PDF (up to 10 MB)`}
+									onChange={(value) => set("postingFile", value)}
+								/>
+								<p className="text-xs text-ink-3">
+									<Trans>Keep a copy of the posting in case it changes or is taken down.</Trans>
+								</p>
+							</div>
 						)}
 					</Field>
 

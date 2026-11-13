@@ -57,7 +57,8 @@ export async function exportAccountUploads(
 		} else if (value && typeof value === "object") {
 			if ("picture" in value && value.picture && typeof value.picture === "object" && "url" in value.picture)
 				visit(value.picture.url, true);
-			for (const [field, item] of Object.entries(value)) visit(item, field === "image" || field === "resumeFileUrl");
+			for (const [field, item] of Object.entries(value))
+				visit(item, field === "image" || field === "resumeFileUrl" || field === "postingFileUrl");
 		}
 	};
 	visit(data);

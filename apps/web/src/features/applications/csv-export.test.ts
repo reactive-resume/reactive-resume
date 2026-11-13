@@ -40,6 +40,8 @@ const application: Application = {
 	resumeId: null,
 	jobDescription: null,
 	postingSource: null,
+	postingFileUrl: null,
+	postingFileName: null,
 	matchScore: null,
 	aiMetadata: null,
 	resumeFileUrl: null,

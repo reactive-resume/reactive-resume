@@ -107,6 +107,35 @@ describe("registerTools", () => {
 		vi.clearAllMocks();
 	});
 
+	it("attaches and removes posting PDFs through the public MCP contract", async () => {
+		const file = new File(["%PDF-1.7"], "posting.pdf", { type: "application/pdf" });
+		const { readMcpFile } = await import("./files");
+		const { resolveUserFromRequestHeaders } = await import("@reactive-resume/api/context");
+		vi.mocked(resolveUserFromRequestHeaders).mockResolvedValue({ id: "owner" } as never);
+		vi.mocked(readMcpFile).mockResolvedValue(file);
+		clientMock.applications.attachDocument.mockResolvedValue({ id: "application" });
+		clientMock.applications.removeDocument.mockResolvedValue({ id: "application" });
+		const { server, registered } = makeFakeServer();
+		registerTools(server as never, clientMock as never, new Headers());
+		const attach = registered.find((tool) => tool.name === MCP_TOOL_NAME.attachApplicationDocument)!;
+		const remove = registered.find((tool) => tool.name === MCP_TOOL_NAME.removeApplicationDocument)!;
+		const result = await attach.handler(
+			TOOL_META[MCP_TOOL_NAME.attachApplicationDocument].inputSchema.parse({
+				id: "application",
+				kind: "posting",
+				fileName: "posting.pdf",
+				contentType: "application/pdf",
+				dataBase64: "JVBERi0xLjc=",
+			}),
+		);
+		expect(result.isError).not.toBe(true);
+		expect(clientMock.applications.attachDocument).toHaveBeenCalledWith({ id: "application", kind: "posting", file });
+		await remove.handler(
+			TOOL_META[MCP_TOOL_NAME.removeApplicationDocument].inputSchema.parse({ id: "application", kind: "posting" }),
+		);
+		expect(clientMock.applications.removeDocument).toHaveBeenCalledWith({ id: "application", kind: "posting" });
+	});
+
 	it("preserves the application-letter review and provenance envelope without saving generated text", async () => {
 		const draft = {
 			text: "Fictional reviewed body",

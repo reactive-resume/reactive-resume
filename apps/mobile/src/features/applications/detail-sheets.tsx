@@ -3,11 +3,13 @@ import type { Application, ApplicationRow } from "./model";
 // applications as "I accepted another offer", with a way to reopen them from the hero until dismissed.
 import { t } from "@lingui/core/macro";
 import { useQueryClient } from "@tanstack/react-query";
+import { openBrowserAsync } from "expo-web-browser";
 import { useState } from "react";
 import { View } from "react-native";
 import { useApplicationActions } from "./actions";
+import { attachPostingPdf, openPostingPdf, pickPostingPdf, PostingPdfError, removePostingPdf } from "./posting-file";
 import { useApplications, useDataActions, useDocuments, useLocalValue } from "@/data";
-import { BottomSheet, Button, Checkbox, Icon, layout, ListRow, showToast, TextField } from "@/ui";
+import { BottomSheet, Button, Checkbox, Icon, layout, ListRow, showToast, TextField, TextLink } from "@/ui";
 
 /** ⋯ › Edit details: role, company, location and salary, saved together. */
 export function EditDetailsSheet({ app, onClose }: { app: Application; onClose: () => void }) {
@@ -53,6 +55,89 @@ export function EditDetailsSheet({ app, onClose }: { app: Application; onClose: 
 					onPress={() => void save()}
 					testID="edit-save"
 				/>
+			</View>
+		</BottomSheet>
+	);
+}
+
+type PostingSheetProps = { app: Application; onClose: () => void };
+
+/** The posting's link and the employer's original PDF, kept in case the posting changes or disappears. */
+export function PostingSheet({ app, onClose }: PostingSheetProps) {
+	const queryClient = useQueryClient();
+	const [busy, setBusy] = useState(false);
+	const run = async (action: () => Promise<void>, failure: string) => {
+		setBusy(true);
+		try {
+			await action();
+			await queryClient.invalidateQueries();
+		} catch (error) {
+			showToast({ message: error instanceof PostingPdfError ? error.message : failure });
+		} finally {
+			setBusy(false);
+		}
+	};
+	const attach = () =>
+		run(
+			async () => {
+				const file = await pickPostingPdf();
+				if (!file) return;
+				await attachPostingPdf(app.id, file);
+				showToast({ message: t`Posting PDF attached` });
+			},
+			t`Couldn't attach the posting PDF. Try again.`,
+		);
+	const remove = () =>
+		run(
+			async () => {
+				await removePostingPdf(app.id);
+				showToast({ message: t`Posting PDF removed` });
+			},
+			t`Couldn't remove the posting PDF. Try again.`,
+		);
+	const open = () =>
+		run(
+			() => openPostingPdf(app.postingFileUrl ?? "", app.postingFileName ?? t`Posting`),
+			t`Couldn't open the posting PDF. Try again.`,
+		);
+	return (
+		<BottomSheet title={t`Posting`} height={440} onClose={onClose} closeIconSize={24}>
+			<View style={{ paddingTop: 8 }}>
+				{app.sourceUrl ? (
+					<ListRow
+						title={t`Job posting link`}
+						secondary={app.sourceUrl}
+						leading={<Icon name="link-simple" size={24} color="ink2" />}
+						trailing="caret"
+						onPress={() => void openBrowserAsync(app.sourceUrl ?? "")}
+					/>
+				) : null}
+				{app.postingFileUrl ? (
+					<>
+						<ListRow
+							title={t`Original posting PDF`}
+							secondary={app.postingFileName ?? undefined}
+							leading={<Icon name="file-pdf" size={24} color="ink2" />}
+							trailing="caret"
+							last
+							disabled={busy}
+							onPress={() => void open()}
+						/>
+						<View style={{ flexDirection: "row", gap: 24, paddingHorizontal: layout.screenMargin, paddingTop: 12 }}>
+							<TextLink label={t`Replace PDF`} onPress={busy ? undefined : () => void attach()} />
+							<TextLink label={t`Remove PDF`} onPress={busy ? undefined : () => void remove()} />
+						</View>
+					</>
+				) : (
+					<ListRow
+						title={t`Attach the posting PDF`}
+						secondary={t`Keep a copy in case it changes or is taken down`}
+						leading={<Icon name="file-pdf" size={24} color="ink2" />}
+						last
+						disabled={busy}
+						onPress={() => void attach()}
+					/>
+				)}
 			</View>
 		</BottomSheet>
 	);
