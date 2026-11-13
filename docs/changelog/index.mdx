@@ -4,6 +4,41 @@ description: "Release notes for Reactive Resume covering new features, resume bu
 rss: true
 ---
 
+<Update label="v6.1.1" description="13th November 2026">
+
+## Highlights
+
+- **A calmer workspace for your job search.** Today, Documents, Applications, Career and the resume builder have a refreshed interface, with clearer navigation, focused editing panels and layouts that adapt to phones. The builder keeps Write, Design, Check and Share close at hand, while settings and public pages follow the same design. [09db0013c](https://github.com/reactive-resume/reactive-resume/commit/09db0013c)
+- **Keep your work when you make an account.** Linking a guest session to an account now carries over application workspaces, saved items and practice transcripts, along with the facts and stories those answers use. [ed5205cd1](https://github.com/reactive-resume/reactive-resume/commit/ed5205cd1)
+
+## Resume Builder, Sharing & Export
+
+- Fixed editing dates in languages whose printed dates could not be read back, and kept month dates in the Gregorian calendar so the editor and exports show the year you entered. [ceb53ecfe](https://github.com/reactive-resume/reactive-resume/commit/ceb53ecfe), [2a5b69b29](https://github.com/reactive-resume/reactive-resume/commit/2a5b69b29)
+- Added Georgian font fallbacks so Georgian text appears in PDFs, including mixed-language documents. Thanks to @Henglie. [d1d8ad010](https://github.com/reactive-resume/reactive-resume/commit/d1d8ad010)
+- Fixed repeated or missing headers in Word exports, preserved education fields when importing JSON Resume files, and corrected custom line-height lengths. Markdown and assistant checks now leave out sidebars that are not printed on full-width pages. [85e01e7ac](https://github.com/reactive-resume/reactive-resume/commit/85e01e7ac)
+- Kept public resumes and downloads available when visit counting fails, preserved the page language when duplicating a resume, and let a first published resume become primary when the previous primary is in Trash. Changes from Documents now reach open editors to avoid unnecessary save conflicts. [85e01e7ac](https://github.com/reactive-resume/reactive-resume/commit/85e01e7ac)
+
+## Applications, Career & Assistant
+
+- Added **Empty Trash** for applications and automatic removal after 30 days in Trash. Improved application details, keyboard stage reordering and CSV import, including choices for mapping unfamiliar stage names on the web. [09db0013c](https://github.com/reactive-resume/reactive-resume/commit/09db0013c)
+- Improved follow-up letter saving and paused briefing refreshes when a rescheduled interview leaves too little preparation time. Replies still running when their conversation is deleted no longer save partial output into that deleted conversation. [85e01e7ac](https://github.com/reactive-resume/reactive-resume/commit/85e01e7ac)
+- Reduced false warnings about unsupported claims in rewritten resume lines, and added the option to work on a copy when accepting the assistant's first edit. [c560233b9](https://github.com/reactive-resume/reactive-resume/commit/c560233b9), [09db0013c](https://github.com/reactive-resume/reactive-resume/commit/09db0013c)
+
+## Mobile
+
+- Prepared the rebuilt phone app with server-rendered resume and cover letter previews, retry controls for failed renders, menus that stay on screen, and touch handling that prevents scrolling or swiping from opening a row. Native updates reach users through separate App Store and Google Play builds. [62fa3f925](https://github.com/reactive-resume/reactive-resume/commit/62fa3f925), [aabb1ced8](https://github.com/reactive-resume/reactive-resume/commit/aabb1ced8), [c755a1dd6](https://github.com/reactive-resume/reactive-resume/commit/c755a1dd6), [42f02634a](https://github.com/reactive-resume/reactive-resume/commit/42f02634a), [61144ab21](https://github.com/reactive-resume/reactive-resume/commit/61144ab21)
+
+## Self-Hosting & Maintenance
+
+- Added **FONT_MIRROR_URL** and a font-mirroring command so self-hosters can serve catalog fonts from their own infrastructure. Thanks to @zenojor. [ced8d2500](https://github.com/reactive-resume/reactive-resume/commit/ced8d2500)
+- Allowed OpenAI-compatible providers such as LM Studio to connect without an API key when the server does not require one. Abandoning a provider test no longer marks that provider as unavailable. [c595436f6](https://github.com/reactive-resume/reactive-resume/commit/c595436f6), [85e01e7ac](https://github.com/reactive-resume/reactive-resume/commit/85e01e7ac)
+- Added configurable assistant timeout budgets for slower inference servers. Thanks to @Henglie. [e06cebab1](https://github.com/reactive-resume/reactive-resume/commit/e06cebab1)
+- Improved startup recovery from migration lock conflicts, reduced server PDF font processing, and added database indexes for related-record cleanup. This release includes a database migration. [eb735640e](https://github.com/reactive-resume/reactive-resume/commit/eb735640e), [85e01e7ac](https://github.com/reactive-resume/reactive-resume/commit/85e01e7ac)
+
+**Full Changelog**: [v6.1.0...v6.1.1](https://github.com/reactive-resume/reactive-resume/compare/v6.1.0...v6.1.1)
+
+</Update>
+
 <Update label="v6.1.0" description="4th November 2026">
 
 ## Highlights
