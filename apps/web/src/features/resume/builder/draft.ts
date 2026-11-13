@@ -20,7 +20,7 @@ import {
 	restoreProposalApplications,
 } from "@reactive-resume/resume/proposals";
 import { aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
-import { parseResumeData } from "@reactive-resume/schema/resume/data";
+import { parseResumeData, withWebPageCss } from "@reactive-resume/schema/resume/data";
 import { syncResumeDates } from "@reactive-resume/schema/resume/dates";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { generateId } from "@reactive-resume/utils/string";
@@ -415,7 +415,7 @@ async function flushResumeSave(id: string) {
 		const updated = (await orpc.resume.update.call(
 			{
 				id: submitted.id,
-				data: submittedData,
+				data: withWebPageCss(submittedData),
 				...(submitted.aiOperationIds !== undefined ? { aiOperationIds: submitted.aiOperationIds } : {}),
 				sessionId: runtime.sessionId,
 				expectedUpdatedAt: runtime.baseUpdatedAt,

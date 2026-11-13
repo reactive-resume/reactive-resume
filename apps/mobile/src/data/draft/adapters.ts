@@ -6,7 +6,7 @@ import { ORPCError } from "@orpc/client";
 import { produce } from "immer";
 import { aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
-import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
+import { resumeDataSchema, withWebPageCss } from "@reactive-resume/schema/resume/data";
 import { syncResumeDates } from "@reactive-resume/schema/resume/dates";
 import { dataClient as client } from "@/data/client";
 
@@ -25,7 +25,7 @@ function resumeFields(document: ResumeDocument) {
 		showDownloadButtons: document.showDownloadButtons,
 		hideContactDetails: document.hideContactDetails,
 		showInSearchEngines: document.showInSearchEngines,
-		data: document.data,
+		data: withWebPageCss(document.data),
 		aiOperationIds: document.aiOperationIds ?? [],
 	};
 }
@@ -105,7 +105,7 @@ export const resumeAdapter: DraftAdapter<ResumeDocument, ResumeDocument["data"]>
 				id: document.id,
 				...changedFields(resumeFields(document), resumeFields(baseline)),
 				...(JSON.stringify(document.aiOperationIds ?? []) !== JSON.stringify(baseline.aiOperationIds ?? [])
-					? { data: document.data }
+					? { data: withWebPageCss(document.data) }
 					: {}),
 				sessionId,
 				// Only for drafts this app kept (see the draft store's proposalSafety).

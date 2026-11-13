@@ -6,6 +6,15 @@ import { semanticStylesheetSchema } from "./stylesheet";
 /** The longest stylesheet the web page takes from its author. */
 export const WEB_PAGE_CSS_MAX_LENGTH = 20_000;
 
+/**
+ * The data with `metadata.web.css` always present, empty when there is none. Current clients save through this: a
+ * save without the field comes from an app built before it, and the server keeps the saved stylesheet for those.
+ */
+export const withWebPageCss = (data: ResumeData): ResumeData => ({
+	...data,
+	metadata: { ...data.metadata, web: { showCredit: true, ...data.metadata.web, css: data.metadata.web?.css ?? "" } },
+});
+
 const iconSchema = z
 	.string()
 	.describe(

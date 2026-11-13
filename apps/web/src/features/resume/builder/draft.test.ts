@@ -8,7 +8,7 @@ import { afterEach, assert, beforeEach, describe, expect, it, vi } from "vite-pl
 import { i18n } from "@lingui/core";
 import { ORPCError } from "@orpc/client";
 import { applyResumeProposals } from "@reactive-resume/resume/proposals";
-import { parseResumeData } from "@reactive-resume/schema/resume/data";
+import { parseResumeData, withWebPageCss } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import {
 	clearResumeDrafts,
@@ -841,7 +841,7 @@ describe("builder resume autosave", () => {
 		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
 			{
 				id: initial.id,
-				data: updated.data,
+				data: withWebPageCss(updated.data),
 				expectedUpdatedAt: initial.updatedAt,
 				sessionId: expect.any(String),
 				proposalSafety: "v1",
@@ -888,14 +888,14 @@ describe("builder resume autosave", () => {
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(2);
 		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).toEqual({
 			id: initial.id,
-			data: first.data,
+			data: withWebPageCss(first.data),
 			expectedUpdatedAt: initial.updatedAt,
 			sessionId: expect.any(String),
 			proposalSafety: "v1",
 		});
 		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({
 			id: initial.id,
-			data: latest.data,
+			data: withWebPageCss(latest.data),
 			expectedUpdatedAt: first.updatedAt,
 			sessionId: expect.any(String),
 			proposalSafety: "v1",
