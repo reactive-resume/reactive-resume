@@ -1,10 +1,11 @@
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@reactive-resume/ui/components/button";
+import { useState } from "react";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { SettingsRow, SettingsSection } from "../section";
+import { SettingsRow, subRowClassName, subRowsClassName, TextAction } from "../section";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 
@@ -37,11 +38,13 @@ function describeAgent(agent: string | null | undefined): string | null {
 	return browser ?? system;
 }
 
-/** Where this account is signed in, newest first, each but this one with Sign out. */
-export function SessionsSection() {
+/** Where this account is signed in: one row that opens the devices, newest first, each but this one with Sign out. */
+export function SessionsRow() {
 	const { i18n } = useLingui();
 	const queryClient = useQueryClient();
 	const { data: current } = authClient.useSession();
+	// Links to `#sessions` (the phone apps use it) land on the opened list.
+	const [open, setOpen] = useState(() => window.location.hash === "#sessions");
 	const { data: sessions = [] } = useQuery({
 		queryKey: SESSIONS_KEY,
 		queryFn: async () => {
@@ -66,36 +69,56 @@ export function SessionsSection() {
 	});
 
 	if (sessions.length === 0) return null;
+	const count = sessions.length;
 	return (
-		<SettingsSection
-			id="sessions"
-			title={<Trans>Sessions</Trans>}
-			description={<Trans>Devices signed in to your account.</Trans>}
-		>
-			{sessions.map((session) => {
-				const here = session.token === current?.session.token;
-				const name = describeAgent(session.userAgent) ?? t`Unknown device`;
-				const active = i18n.date(new Date(session.updatedAt), { dateStyle: "medium", timeStyle: "short" });
-				return (
-					<SettingsRow
-						key={session.id}
-						title={here ? <Trans>{name} · this device</Trans> : name}
-						description={<Trans>Last active {active}</Trans>}
-					>
-						{here ? null : (
-							<Button
-								size="sm"
-								variant="ghost"
-								disabled={revoke.isPending}
-								aria-label={t`Sign out of ${name}`}
-								onClick={() => revoke.mutate(session.token)}
-							>
-								<Trans>Sign out</Trans>
-							</Button>
-						)}
-					</SettingsRow>
-				);
-			})}
-		</SettingsSection>
+		<>
+			<SettingsRow
+				id="sessions"
+				title={<Trans>Sessions</Trans>}
+				description={
+					open ? (
+						<Trans>Devices signed in to your account</Trans>
+					) : (
+						plural(count, { one: "# device · this one", other: "# devices signed in to your account" })
+					)
+				}
+			>
+				{!open && (
+					<TextAction aria-label={t`Manage sessions`} onClick={() => setOpen(true)}>
+						<Trans>Manage</Trans>
+					</TextAction>
+				)}
+			</SettingsRow>
+			{open && (
+				<ul className={subRowsClassName}>
+					{sessions.map((session) => {
+						const here = session.token === current?.session.token;
+						const name = describeAgent(session.userAgent) ?? t`Unknown device`;
+						const active = i18n.date(new Date(session.updatedAt), { dateStyle: "medium", timeStyle: "short" });
+						const phone = /iPhone|iPad|Android/.test(session.userAgent ?? "");
+						return (
+							<li key={session.id} className={subRowClassName}>
+								<Icon name={phone ? "device-mobile" : "desktop"} size={18} className="text-ink-2" />
+								<span className="flex min-w-0 flex-1 flex-col">
+									<span className="truncate font-medium">{name}</span>
+									<span className="text-[13px]/[18px] text-ink-3">
+										{here ? <Trans>This device · last active {active}</Trans> : <Trans>Last active {active}</Trans>}
+									</span>
+								</span>
+								{here ? null : (
+									<TextAction
+										disabled={revoke.isPending}
+										aria-label={t`Sign out of ${name}`}
+										onClick={() => revoke.mutate(session.token)}
+									>
+										<Trans>Sign out</Trans>
+									</TextAction>
+								)}
+							</li>
+						);
+					})}
+				</ul>
+			)}
+		</>
 	);
 }

@@ -34,7 +34,7 @@ export function PasswordInput(props: PasswordInputProps) {
 								})
 					}
 				>
-					<Icon name={visible ? "eye" : "eye-slash"} size={16} />
+					<Icon name={visible ? "eye" : "eye-slash"} size={18} />
 				</InputGroupButton>
 			</InputGroupAddon>
 		</InputGroup>

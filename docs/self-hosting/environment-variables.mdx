@@ -234,7 +234,7 @@ Switching backends does not move files that are already stored. Copy them yourse
 For setup instructions and official provider guides, see [Job search and AI](/self-hosting/job-search-and-ai).
 
 To let people bring their own keys, set `ENCRYPTION_SECRET`. They can then add providers in
-**Settings → AI & developer**; see [Connecting an AI provider](/guides/using-ai).
+**Settings → AI**; see [Connecting an AI provider](/guides/using-ai).
 
 Alternatively, configure a shared provider with `AI_PROVIDER`, `AI_MODEL` and `AI_API_KEY` (the key is optional for
 Ollama and OpenAI-compatible servers). Server configuration takes precedence over personal providers for every AI
@@ -289,7 +289,7 @@ Without `CRON_SECRET`, the HTTP runner returns `404`; an invalid bearer token re
 ## Web access
 
 The built-in reader is active without credentials. Search and enhanced reading use one optional connection:
-Firecrawl, Tavily or Exa. People can select a provider and save one personal key in **Settings → AI & developer →
+Firecrawl, Tavily or Exa. People can select a provider and save one personal key in **Settings → AI →
 Web access** when `ENCRYPTION_SECRET` is configured. Personal connections use official cloud endpoints.
 
 For a shared service, set `WEB_ACCESS_PROVIDER` and `WEB_ACCESS_API_KEY`. Only Firecrawl accepts a custom

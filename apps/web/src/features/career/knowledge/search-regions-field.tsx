@@ -25,6 +25,14 @@ import {
 
 type Country = { value: string; label: string };
 
+/** A field holding chips (C6): shared with the role, place and tag fields. */
+export const chipFieldClassName =
+	"flex min-h-10 flex-wrap items-center gap-1.5 rounded-md border border-control-border bg-raised px-[5px] py-1 transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)]";
+export const fieldChipClassName =
+	"flex h-7 items-center gap-1.5 rounded-sm bg-sunken ps-2.5 pe-1.5 text-[13px]/[18px] font-medium text-ink";
+export const fieldChipRemoveClassName =
+	"touch-target relative flex size-3.5 items-center justify-center rounded-xs text-ink-3 transition-colors duration-quick hover:text-ink";
+
 export type SearchRegionsFieldProps = {
 	value: string[] | null | undefined;
 	accountTimeZone: string;
@@ -48,6 +56,7 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 		[i18n.locale],
 	);
 	const name = (code: string) => countryName(code, i18n.locale);
+	const automaticNames = shown.codes.map(name).join(", ");
 
 	const apply = (action: SearchRegionsAction) => {
 		const next = nextSearchRegions(shown.codes, action);
@@ -62,82 +71,83 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 	};
 
 	return (
-		<div role="group" aria-labelledby={labelId} className="grid content-start gap-1.5">
-			<span id={labelId} className="text-xs font-medium text-ink-2">
-				<Trans>Countries to search</Trans>
-			</span>
-			<div className="flex min-h-10 flex-wrap items-center gap-1 rounded-md border border-control-border bg-raised p-1">
-				{shown.codes.map((code) => {
-					const country = name(code);
-					return (
-						<span
-							key={code}
-							className="flex h-7 items-center gap-1 rounded-sm bg-sunken ps-2.5 pe-1 text-[13px] font-medium"
-						>
-							<span>{country}</span>
-							{shown.automatic && (
-								<span className="flex items-center gap-0.5 text-xs font-normal text-ink-3">
-									<Icon name="clock" size={14} />
-									<Trans>From your timezone</Trans>
-								</span>
-							)}
-							<button
-								type="button"
-								aria-label={t`Remove ${country}`}
-								onClick={() => apply({ type: "remove", code })}
-								className="touch-target relative flex size-[22px] items-center justify-center rounded-md text-ink-3 transition-colors duration-quick hover:bg-hover hover:text-ink"
-							>
-								<Icon name="x" size={16} />
-							</button>
-						</span>
-					);
-				})}
-				{shown.codes.length === 0 && (
-					<span className="px-1.5 text-[13px] text-ink-3">
-						<Trans>Anywhere</Trans>
-					</span>
-				)}
-				<ComboboxRoot
-					multiple
-					items={countries}
-					value={countries.filter((country) => shown.codes.includes(country.value))}
-					onValueChange={onPick}
-					itemToStringLabel={(country: Country) => country.label}
-					isItemEqualToValue={(a: Country, b: Country) => a.value === b.value}
-					filter={(country: Country, query: string) =>
-						contains(country.label, query) || country.value === query.trim().toUpperCase()
-					}
-				>
-					<ComboboxTrigger
-						aria-label={t`Add a country`}
-						className="ms-auto flex h-7 items-center gap-1 rounded-sm px-2 text-[13px] text-ink-3 transition-colors duration-quick hover:bg-hover hover:text-ink"
-					>
-						<Trans>Add a country</Trans>
-					</ComboboxTrigger>
-					<ComboboxContent aria-label={t`Countries`}>
-						<ComboboxInput
-							placeholder={t`Search countries`}
-							render={<Input className="border-none focus-visible:border-none focus-visible:ring-0" />}
-						/>
-						<ComboboxEmpty>
-							<Trans>No country matches.</Trans>
-						</ComboboxEmpty>
-						<ComboboxList>
-							{(country: Country) => (
-								<ComboboxItem
-									key={country.value}
-									value={country}
-									disabled={full && !shown.codes.includes(country.value)}
+		<>
+			<div role="group" aria-labelledby={labelId} className="grid content-start gap-1.5">
+				<span id={labelId} className="text-[13px]/[18px] font-medium text-ink-2">
+					<Trans>Countries to search</Trans>
+				</span>
+				<div className={chipFieldClassName}>
+					{shown.codes.map((code) => {
+						const country = name(code);
+						return (
+							<span key={code} className={fieldChipClassName}>
+								{country}
+								<button
+									type="button"
+									aria-label={t`Remove ${country}`}
+									onClick={() => apply({ type: "remove", code })}
+									className={fieldChipRemoveClassName}
 								>
-									{country.label}
-								</ComboboxItem>
-							)}
-						</ComboboxList>
-					</ComboboxContent>
-				</ComboboxRoot>
+									<Icon name="x" size={14} />
+								</button>
+							</span>
+						);
+					})}
+					{shown.codes.length === 0 && (
+						<span className="px-1 text-sm text-ink-3">
+							<Trans>Anywhere</Trans>
+						</span>
+					)}
+					<ComboboxRoot
+						multiple
+						items={countries}
+						value={countries.filter((country) => shown.codes.includes(country.value))}
+						onValueChange={onPick}
+						itemToStringLabel={(country: Country) => country.label}
+						isItemEqualToValue={(a: Country, b: Country) => a.value === b.value}
+						filter={(country: Country, query: string) =>
+							contains(country.label, query) || country.value === query.trim().toUpperCase()
+						}
+					>
+						<ComboboxTrigger
+							aria-label={t`Add a country`}
+							className="flex h-7 items-center gap-1.5 rounded-sm border border-dashed border-line-2 px-[9px] text-[13px]/[18px] font-medium text-ink transition-colors duration-quick hover:bg-hover [&>[data-slot=icon]:last-child]:hidden"
+						>
+							<Icon name="plus" size={14} className="text-ink-3" />
+							<Trans>Add a country</Trans>
+						</ComboboxTrigger>
+						<ComboboxContent aria-label={t`Countries`}>
+							<ComboboxInput
+								placeholder={t`Search countries`}
+								render={<Input className="border-none focus-visible:border-none focus-visible:ring-0" />}
+							/>
+							<ComboboxEmpty>
+								<Trans>No country matches.</Trans>
+							</ComboboxEmpty>
+							<ComboboxList>
+								{(country: Country) => (
+									<ComboboxItem
+										key={country.value}
+										value={country}
+										disabled={full && !shown.codes.includes(country.value)}
+									>
+										{country.label}
+									</ComboboxItem>
+								)}
+							</ComboboxList>
+						</ComboboxContent>
+					</ComboboxRoot>
+				</div>
 			</div>
-			<p className="flex flex-wrap items-center gap-x-1 text-xs text-ink-3">
-				<Trans>Web searches look for work here, up to three countries.</Trans>
+			{/* Under both fields of the row it sits in: it explains the pair. */}
+			<p className="flex flex-wrap items-center gap-x-1 text-xs/4 text-ink-3 sm:col-span-2">
+				{shown.automatic && shown.codes.length > 0 ? (
+					<Trans>
+						{automaticNames} comes from your timezone. Web searches look for work in these countries, up to three.
+					</Trans>
+				) : (
+					<Trans>Web searches look for work in these countries, up to three.</Trans>
+				)}
 				{!shown.automatic && (
 					<button
 						type="button"
@@ -148,6 +158,6 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 					</button>
 				)}
 			</p>
-		</div>
+		</>
 	);
 }

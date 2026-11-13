@@ -32,7 +32,7 @@ function PopoverContent({
 				<PopoverPrimitive.Popup
 					data-slot="popover-content"
 					className={cn(
-						"z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-xl bg-raised p-3 text-sm text-ink shadow-e2 outline-hidden transition-[opacity,scale,translate] duration-standard ease-enter data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-instant:transition-none data-starting-style:scale-[0.98] data-starting-style:opacity-0",
+						"z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-lg border border-line bg-raised p-3 text-sm text-ink shadow-e2 outline-hidden transition-[opacity,scale,translate] duration-standard ease-enter data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-instant:transition-none data-starting-style:scale-[0.98] data-starting-style:opacity-0",
 						popupSlideClassName,
 						className,
 					)}

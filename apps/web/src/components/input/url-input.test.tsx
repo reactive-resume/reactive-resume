@@ -22,7 +22,7 @@ describe("URLInput", () => {
 		const onChange = vi.fn();
 		renderInput({ url: "https://example.com", label: "" }, onChange);
 
-		const input = screen.getByRole("textbox") as HTMLInputElement;
+		const input = screen.getByRole("textbox", { name: "Web address" }) as HTMLInputElement;
 		fireEvent.change(input, { target: { value: "new.example" } });
 
 		expect(onChange).toHaveBeenCalledWith({
@@ -37,7 +37,7 @@ describe("URLInput", () => {
 			const onChange = vi.fn();
 			renderInput({ url: "https://example.com", label: "Company" }, onChange);
 
-			fireEvent.change(screen.getByRole("textbox"), { target: { value: url } });
+			fireEvent.change(screen.getByRole("textbox", { name: "Web address" }), { target: { value: url } });
 
 			expect(onChange).toHaveBeenCalledWith({ url, label: "Company" });
 		},
@@ -47,7 +47,9 @@ describe("URLInput", () => {
 		const onChange = vi.fn();
 		renderInput({ url: "http://example.com/path", label: "Company" }, onChange);
 
-		fireEvent.change(screen.getByRole("textbox"), { target: { value: "example.com/new-path" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Web address" }), {
+			target: { value: "example.com/new-path" },
+		});
 
 		expect(onChange).toHaveBeenCalledWith({ url: "http://example.com/new-path", label: "Company" });
 	});
@@ -56,7 +58,7 @@ describe("URLInput", () => {
 		const onChange = vi.fn();
 		renderInput({ url: "https://example.com", label: "" }, onChange);
 
-		const input = screen.getByRole("textbox") as HTMLInputElement;
+		const input = screen.getByRole("textbox", { name: "Web address" }) as HTMLInputElement;
 		fireEvent.change(input, { target: { value: "" } });
 
 		expect(onChange).toHaveBeenCalledWith({

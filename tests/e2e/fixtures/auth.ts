@@ -10,11 +10,14 @@ async function assertAuthResponse(response: Awaited<ReturnType<APIRequestContext
 export async function registerViaUi(page: Page, account: E2EAccount, callbackURL?: string) {
 	await page.goto(`/auth/register${callbackURL ? `?callbackURL=${encodeURIComponent(callbackURL)}` : ""}`);
 	await page.getByRole("textbox", { name: "Name", exact: true }).fill(account.name);
-	// The username is optional; an empty one is made from the email address.
-	if (account.username) await page.getByLabel("Username").fill(account.username);
+	// The username is optional and hidden until asked for; an empty one is made from the email address.
+	if (account.username) {
+		await page.getByRole("button", { name: "Choose your own", exact: true }).click();
+		await page.getByLabel("Username", { exact: true }).fill(account.username);
+	}
 	await page.getByLabel("Email address", { exact: true }).fill(account.email);
 	await page.getByLabel("Password", { exact: true }).fill(account.password);
-	await page.getByRole("button", { name: "Sign up" }).click();
+	await page.getByRole("button", { name: "Create account", exact: true }).click();
 	await page.waitForURL(/\/dashboard/);
 }
 
@@ -27,12 +30,12 @@ export async function loginViaUi(page: Page, account: E2EAccount, path = "/auth/
 }
 
 export async function logoutViaUi(page: Page, account: E2EAccount) {
-	// The avatar row at the foot of the sidebar opens the account menu.
+	// The account row at the foot of the sidebar opens Settings; Sign out is under its section list.
 	await page
-		.getByRole("complementary")
-		.getByRole("button", { name: new RegExp(account.name) })
+		.getByRole("navigation", { name: "Main" })
+		.getByRole("link", { name: new RegExp(account.name) })
 		.click();
-	await page.getByRole("menuitem", { name: "Sign out" }).click();
+	await page.getByRole("button", { name: "Sign out", exact: true }).first().click();
 	await page.waitForURL((url) => url.pathname === "/");
 }
 

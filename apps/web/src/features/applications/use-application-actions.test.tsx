@@ -20,10 +20,22 @@ const mocks = vi.hoisted(() => ({
 	bulkUpdate: vi.fn(),
 	prepare: vi.fn(),
 	navigate: vi.fn(),
+	trash: vi.fn(),
+	bulkTrash: vi.fn(),
+	listTrash: vi.fn(),
+	restore: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({ useRouter: () => ({ navigate: mocks.navigate }) }));
 vi.mock("@/libs/orpc/client", () => ({
-	client: { applications: { bulkUpdate: mocks.bulkUpdate } },
+	client: {
+		applications: {
+			bulkUpdate: mocks.bulkUpdate,
+			trash: mocks.trash,
+			bulkTrash: mocks.bulkTrash,
+			listTrash: mocks.listTrash,
+			restore: mocks.restore,
+		},
+	},
 	prepareRpc: mocks.prepare,
 	orpc: {
 		applications: {
@@ -58,7 +70,13 @@ vi.mock("./queries", () => ({
 }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: mocks.toast, close: mocks.close } }));
 
-import { listedApplication, STAGE_SCOPE, useApplicationActions, useMoveWithUndo } from "./use-application-actions";
+import {
+	listedApplication,
+	STAGE_SCOPE,
+	useApplicationActions,
+	useMoveWithUndo,
+	useTrashWithUndo,
+} from "./use-application-actions";
 
 i18n.load("en", {});
 i18n.activate("en");
@@ -787,4 +805,38 @@ describe("Offer and accepted-offer follow-ups (J2-06, J2-07)", () => {
 			}),
 		);
 	});
+});
+
+it("moves applications to Trash at once and Undo restores exactly those, by their Trash timestamps", async () => {
+	mocks.toast.mockClear();
+	mocks.bulkTrash.mockResolvedValue({ deleted: 2 });
+	const trashedAt = new Date("2026-11-07T09:00:00Z");
+	mocks.listTrash.mockResolvedValue({
+		total: 3,
+		items: [
+			{ id: "a", trashedAt },
+			{ id: "other", trashedAt },
+			{ id: "b", trashedAt },
+		],
+	});
+	mocks.restore.mockResolvedValue(undefined);
+	const client = new QueryClient();
+	const { result } = renderHook(() => useTrashWithUndo(), {
+		wrapper: ({ children }: { children: ReactNode }) => (
+			<QueryClientProvider client={client}>{children}</QueryClientProvider>
+		),
+	});
+
+	await result.current([{ id: "a" }, { id: "b" }]);
+
+	expect(mocks.bulkTrash).toHaveBeenCalledExactlyOnceWith({ ids: ["a", "b"] });
+	const notice = mocks.toast.mock.calls.at(-1)?.[0];
+	expect(notice.description).toBe("2 applications moved to Trash");
+	expect(notice.actionProps.children).toBe("Undo");
+	notice.actionProps.onClick();
+	await waitFor(() => expect(mocks.restore).toHaveBeenCalledTimes(2));
+	expect(mocks.restore.mock.calls.map(([input]) => input)).toEqual([
+		{ id: "a", trashedAt },
+		{ id: "b", trashedAt },
+	]);
 });

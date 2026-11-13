@@ -45,35 +45,35 @@ export const getExportFormats = (): DownloadFormat[] => [
 		label: "PDF",
 		extension: ".pdf",
 		icon: "file-pdf",
-		description: t`Looks exactly like the page. Use it for applications and email.`,
+		description: t`Looks exactly like the page. For applications and email.`,
 	},
 	{
 		id: "docx",
 		label: "Word",
 		extension: ".docx",
-		icon: "file-text",
-		description: t`For portals or recruiters who ask for Word. Layout is simplified.`,
+		icon: "file-doc",
+		description: t`For portals and recruiters that ask for Word. Simpler layout.`,
 	},
 	{
 		id: "odt",
 		label: "OpenDocument",
 		extension: ".odt",
 		icon: "file-text",
-		description: t`For LibreOffice and other open-source editors. Layout is simplified.`,
+		description: t`For LibreOffice and other open editors. Simpler layout.`,
 	},
 	{
 		id: "md",
 		label: "Markdown",
 		extension: ".md",
 		icon: "text-align-left",
-		description: t`Plain text with headings. Paste into application forms and notes.`,
+		description: t`Plain text with headings, to paste into forms and notes.`,
 	},
 	{
 		id: "json",
 		label: "JSON",
 		extension: ".json",
 		icon: "brackets-curly",
-		description: t`Complete data backup. Imports back into Reactive Resume.`,
+		description: t`A complete backup. Imports back into Reactive Resume.`,
 	},
 ];
 
@@ -237,7 +237,7 @@ export function DownloadActions({ state, label, onDownload, onDownloadPdf }: Dow
 }
 
 /** The letter written for this resume's application, which can be downloaded along with it. */
-function useLinkedLetter(resume: Resume) {
+export function useLinkedLetter(resume: Resume) {
 	const { data: applications } = useQuery(applicationsListQueryOptions());
 	const application = applications?.find(
 		(item) => item.coverLetterId && (item.id === resume.applicationId || item.resumeId === resume.id),

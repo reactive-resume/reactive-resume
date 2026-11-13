@@ -37,7 +37,7 @@ export function useCheckActions() {
 	const showOnPage = (issue: CheckIssue) => {
 		useEditorStore.setState({ checkIssue: issue.key, pageView: "page" });
 		// The page is behind the drawer on tablets and in its own view on phones.
-		if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: false });
+		if (breakpoint === "tablet") useEditorStore.setState({ panelHidden: true });
 		if (breakpoint === "mobile") useEditorStore.setState({ mobileView: "page" });
 		scrollToIssue(issue.key, "page");
 	};

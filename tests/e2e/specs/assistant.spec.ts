@@ -30,11 +30,18 @@ async function resumeJson(page: Page, resumeId: string) {
 /** D1: connects the stub through the assistant's inline setup. */
 async function connectStub(page: Page) {
 	const assistant = page.getByRole("region", { name: "Assistant" });
-	await assistant.getByRole("button", { name: "Other · OpenAI-compatible" }).click();
-	await assistant.getByLabel("Base URL").fill(stub.baseURL);
-	await assistant.getByLabel("API key").fill("stub-key");
-	await assistant.getByLabel("Model").fill("stub");
-	await assistant.getByRole("button", { name: "Connect" }).click();
+	await assistant.getByRole("button", { name: "Set up AI", exact: true }).click();
+	const setup = page.getByRole("dialog", { name: "Set up AI", exact: true });
+	await setup.getByRole("combobox", { name: "Provider", exact: true }).click();
+	await page.getByRole("option", { name: "OpenAI-compatible", exact: true }).click();
+	await setup.getByLabel("Base URL (required)", { exact: true }).fill(stub.baseURL);
+	await setup.getByLabel("API key", { exact: true }).fill("stub-key");
+	await setup.getByLabel("Model", { exact: true }).fill("stub");
+	await setup.getByRole("button", { name: "Save and test", exact: true }).click();
+	await page
+		.getByRole("dialog", { name: "AI is ready", exact: true })
+		.getByRole("button", { name: "Done", exact: true })
+		.click();
 	await expect(assistant.getByLabel("Message the assistant")).toBeVisible({ timeout: 20_000 });
 }
 
@@ -158,17 +165,23 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 			),
 		)
 		.toMatch(/Tighten to one page\. Page 1 runs over by about \d+ lines\./);
-	await expect(page.getByText("1 proposed", { exact: true })).toBeVisible();
+	// The assistant takes the outline's place; its bar button keeps the pending count visible.
+	await expect(page.getByRole("button", { name: "Assistant", exact: true })).toContainText("1 proposed");
+	await expect(page.getByRole("region", { name: /· 1 proposed edit$/ })).toBeVisible();
 	// The page caption appears once the in-browser preview has fetched its fonts and rendered.
 	const activePreview = page.locator('[data-resume-preview-template][aria-hidden="false"]');
-	await expect(activePreview.getByText(/proposed edit on this page/)).toBeVisible({ timeout: 30_000 });
+	await expect(activePreview.getByText(/^1 proposed edit on this page/)).toBeVisible({ timeout: 30_000 });
 	expect(await resumeJson(page, resumeId)).not.toContain("(tightened by the stub)");
 
 	await edits.getByRole("button", { name: "Accept" }).click();
 	await expect(edits.getByText("Applied")).toBeVisible();
-	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).toContain("(tightened by the stub)");
+	await expect(page.locator("[data-assistant-pending]")).toHaveCount(0);
+	await expect.poll(() => resumeIdOf(page), { timeout: 15_000 }).not.toBe(resumeId);
+	const workingResumeId = resumeIdOf(page);
+	await expect.poll(() => resumeJson(page, workingResumeId), { timeout: 15_000 }).toContain("(tightened by the stub)");
+	expect(await resumeJson(page, resumeId)).not.toContain("(tightened by the stub)");
 	await expect(page.locator("figcaption")).toHaveCount(predictedPages, { timeout: 30_000 });
-	await expect(page.getByText("1 proposed", { exact: true })).toBeHidden();
+	await expect(page.getByText(/proposed edits? on this page/)).toBeHidden();
 	await expect(page.getByText(/Page 1 still runs over by about \d+ lines\./)).toBeVisible();
 
 	// A clarifying question: the answer continues the reply.

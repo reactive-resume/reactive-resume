@@ -5,12 +5,19 @@ import { expect, test } from "../fixtures/test";
 test("round-trips a JSON backup and splits a legacy embedded letter on import", async ({
 	authPage: page,
 }, testInfo) => {
+	const importFromDocuments = async (file: string) => {
+		await page.goto("/dashboard/documents");
+		await expect(page.getByRole("heading", { name: "Documents", level: 1 })).toBeVisible();
+		await page.getByRole("main").getByRole("link", { name: "Import", exact: true }).click();
+		await expect(page.getByRole("heading", { name: "Import a resume", level: 1 })).toBeVisible();
+		await page.getByLabel("Choose a file to import").setInputFiles(file);
+		await page.getByRole("button", { name: "Open in editor" }).click();
+	};
 	await createSampleResumeFromDashboard(page, testInfo);
 
-	const sheet = await openDownloadDialog(page);
-	await sheet.getByRole("radio", { name: /^JSON/ }).click();
+	const menu = await openDownloadDialog(page);
 	const downloadPromise = page.waitForEvent("download");
-	await sheet.getByRole("button", { name: "Download JSON" }).click();
+	await menu.getByRole("button", { name: /^JSON/ }).click();
 	const download = await downloadPromise;
 	expect(download.suggestedFilename()).toMatch(/\.json$/);
 
@@ -25,12 +32,8 @@ test("round-trips a JSON backup and splits a legacy embedded letter on import", 
 	exportedData.basics.name = `Imported ${Date.now()}`;
 	await writeFile(downloadPath, JSON.stringify(exportedData));
 
-	// New → Import a resume: picking the file detects the format and imports it in three steps.
-	await page.goto("/dashboard");
-	await page.getByRole("button", { name: "New", exact: true }).click();
-	const dialog = page.getByRole("dialog", { name: "New", exact: true });
-	await dialog.getByLabel("Choose a file to import").setInputFiles(downloadPath);
-	await page.getByRole("button", { name: "Open in editor" }).click();
+	// Documents → Import, a page of its own: picking the file detects the format and imports it in three steps.
+	await importFromDocuments(downloadPath);
 
 	await page.waitForURL(/\/builder\/.+/);
 	await openSidebarSection(page, "Basics");
@@ -52,17 +55,11 @@ test("round-trips a JSON backup and splits a legacy embedded letter on import", 
 	const path = testInfo.outputPath("with-letter.json");
 	await writeFile(path, JSON.stringify(exportedData));
 
-	await page.goto("/dashboard");
-	await page.getByRole("button", { name: "New", exact: true }).click();
-	await page
-		.getByRole("dialog", { name: "New", exact: true })
-		.getByLabel("Choose a file to import")
-		.setInputFiles(path);
-	await page.getByRole("button", { name: "Open in editor" }).click();
+	await importFromDocuments(path);
 	await page.waitForURL(/\/builder\/.+/);
 	await expect(page.getByText("Dear Globex team,")).toHaveCount(0);
 
-	await page.goto("/dashboard");
+	await page.goto("/dashboard/documents");
 	await page.getByRole("tab", { name: /^Letters/ }).click();
 	await expect(page.getByRole("heading", { name: /— Letter to Globex$/ })).toHaveCount(1);
 });

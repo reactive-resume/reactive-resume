@@ -2,19 +2,19 @@ import type { CheckIssue } from "./issues";
 import type { CheckResult } from "./use-check";
 import type { AtsCategory, AtsReport } from "@reactive-resume/resume/ats";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { CSSProperties } from "react";
 import { i18n } from "@lingui/core";
 import { ph, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { getRouteApi } from "@tanstack/react-router";
 import { useState } from "react";
-import { ATS_CATEGORIES, atsVerdict } from "@reactive-resume/resume/ats";
+import { ATS_CATEGORIES } from "@reactive-resume/resume/ats";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
@@ -23,20 +23,21 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { PanelBody } from "../chrome/panel";
 import { useEditorStore } from "../store";
 import { useCheckActions } from "./actions";
-import { getCategoryDescription, getCategoryName } from "./issues";
+import { buildIssues, getCategoryDescription, getCategoryName } from "./issues";
 import { JobMatchTab, useJobMatch } from "./job-match";
 import { useCheck } from "./use-check";
 import { WritingTab } from "./writing-tab";
-import { RollingNumber } from "@/components/ui/rolling-number";
+import { ListRow, List } from "@/components/calm/list-row";
 import { AtsPdfReportView } from "@/features/ats-checker/report/report-view";
 import { blobToPdfFile, runAtsCheck } from "@/features/ats-checker/run-ats-check";
 import { useIsResumeLocked } from "@/features/resume/builder/draft";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 
 /**
- * Check: the score over the live checks, then Issues (numbered cards pinned to their lines), Job match (terms from
+ * Check: a word-led verdict, then Issues (numbered rows pinned to their lines), Job match (terms from
  * the linked application's posting, not scored) and Writing (an opt-in AI review, not scored).
  */
 export function CheckPanel() {
@@ -51,8 +52,8 @@ export function CheckPanel() {
 	if (!check) return null;
 
 	return (
-		<div className="grid content-start gap-3.5 p-4 pb-12">
-			<ScoreSummary report={check.report} />
+		<PanelBody className={cn("gap-5", tab === "match" ? "pb-0" : "pb-6")}>
+			<ScoreSummary report={check.report} count={check.issues.length} />
 
 			<Tabs
 				value={tab}
@@ -61,20 +62,15 @@ export function CheckPanel() {
 					useEditorStore.setState({ checkTab: value });
 					void navigate({ to: ".", search: { ...search, checkTab: value }, replace: true });
 				}}
-				className="gap-3.5"
+				className="flex-1 gap-1.5"
 			>
-				<TabsList aria-label={t`Check views`} className="h-[38px] w-full">
+				<TabsList aria-label={t`Check views`} className="h-9 w-full">
 					<TabsTrigger value="issues" className="gap-1.5">
 						<Trans>Issues</Trans>
 						<span className="font-mono text-xs text-ink-3">{i18n.number(check.issues.length)}</span>
 					</TabsTrigger>
 					<TabsTrigger value="match" className="gap-1.5">
 						<Trans>Job match</Trans>
-						{match.result && (
-							<span className="font-mono text-xs text-ink-3">
-								{i18n.number(match.result.found.length)}/{i18n.number(match.result.total)}
-							</span>
-						)}
 					</TabsTrigger>
 					<TabsTrigger value="writing">
 						<Trans>Writing</Trans>
@@ -91,55 +87,27 @@ export function CheckPanel() {
 					<WritingTab data={check.data} issues={check.issues} />
 				</TabsContent>
 			</Tabs>
-		</div>
+		</PanelBody>
 	);
 }
 
-const getVerdict = (report: AtsReport) =>
-	({ clean: t`Reads cleanly`, mostly: t`Mostly readable`, hard: t`Hard for software to read` })[atsVerdict(report)];
-
-/** The 84px ring (accent, or warn below 80), the verdict and what the score counts. */
-function ScoreSummary({ report }: { report: AtsReport }) {
-	const { score, passedRules, totalRules } = report;
-	const open = report.findings.length;
-
+function ScoreSummary({ report, count }: { report: AtsReport; count: number }) {
 	return (
-		<div className="flex items-center gap-4 rounded-xl border border-line p-4">
-			<div
-				role="img"
-				aria-label={t`Readability score: ${ph({ score: i18n.number(score) })} out of 100`}
-				className="score-ring grid size-[84px] shrink-0 place-items-center rounded-full"
-				style={
-					{
-						"--ring-value": `${score}%`,
-						"--ring-color": atsVerdict(report) === "clean" ? "var(--accent)" : "var(--warn)",
-					} as CSSProperties
-				}
-			>
-				<span className="grid size-[70px] place-items-center rounded-full bg-surface font-display text-[26px]">
-					<RollingNumber value={score} />
-				</span>
-			</div>
-
-			<div className="grid min-w-0 gap-1">
-				<strong className="text-[15px] font-semibold">{getVerdict(report)}</strong>
-				<span className="text-[13px] leading-[19px] text-ink-2">
-					<Trans>
-						{ph({ passedRules: i18n.number(passedRules) })} of {ph({ totalRules: i18n.number(totalRules) })} checks
-						pass.
-					</Trans>{" "}
-					{open > 0 ? (
-						<Plural value={open} one="# thing to review." other="# things to review." />
-					) : (
-						<Trans>Nothing to review.</Trans>
-					)}
-				</span>
-				<span className="flex items-center gap-1 text-xs text-ink-3">
-					<Icon name="lightning" size={14} />
-					<Trans>Live · updates as you edit</Trans>
-				</span>
-			</div>
-		</div>
+		<header>
+			<h2 className="t-page-title">
+				{count > 0 ? (
+					<Plural value={count} one="# thing to review" other="# things to review" />
+				) : (
+					<Trans>Reads cleanly</Trans>
+				)}
+			</h2>
+			<p className="pt-1.5 t-small text-ink-3">
+				<Trans>
+					{ph({ passed: i18n.number(report.passedRules) })} of {ph({ total: i18n.number(report.totalRules) })} checks
+					pass · updates as you edit
+				</Trans>
+			</p>
+		</header>
 	);
 }
 
@@ -148,11 +116,9 @@ function IssuesTab({ check }: { check: CheckResult }) {
 	const selected = useEditorStore((state) => state.checkIssue);
 	const { restoreIgnored } = useCheckActions();
 	const locked = useIsResumeLocked();
-	// One obvious next step: the highest-ranked open issue that applies a fix gets the only filled button.
-	const leadingFix = issues.find((issue) => issue.fix.kind === "apply")?.key;
 
 	return (
-		<div className="grid gap-2.5">
+		<div className="grid">
 			{issues.length === 0 ? (
 				<div className="flex gap-2.5 rounded-xl bg-accent-soft p-3 text-[13px] leading-[19px] text-accent-text">
 					<Icon name="check-circle" />
@@ -163,49 +129,41 @@ function IssuesTab({ check }: { check: CheckResult }) {
 					</p>
 				</div>
 			) : (
-				<ol aria-label={t`Issues`} className="grid gap-2.5">
+				<ol aria-label={t`Issues`} className="grid">
 					{issues.map((issue) => (
-						<IssueCard
-							key={issue.key}
-							issue={issue}
-							selected={selected === issue.key}
-							locked={locked}
-							primary={issue.key === leadingFix}
-						/>
+						<IssueCard key={issue.key} issue={issue} selected={selected === issue.key} locked={locked} />
 					))}
 				</ol>
 			)}
 
 			<CategoryRows report={report} />
 
-			<p className="px-1 text-xs leading-[17px] text-ink-3">
-				<Trans>
-					The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted.
-				</Trans>{" "}
-				{report.ignored.length > 0 && (
-					<>
-						<Plural value={report.ignored.length} one="# issue is ignored." other="# issues are ignored." />{" "}
-						<button
-							type="button"
-							disabled={locked}
-							onClick={restoreIgnored}
-							className="font-medium text-ink-2 underline underline-offset-2"
-						>
-							<Trans>Show them again</Trans>
-						</button>
-					</>
-				)}
-			</p>
+			{report.ignored.length > 0 && (
+				<List>
+					<ListRow
+						leading={<Icon name="eye-slash" className="text-ink-3" />}
+						title={<Plural value={report.ignored.length} one="# issue is ignored" other="# issues are ignored" />}
+						subtitle={buildIssues({ ...report, findings: report.ignored }, data)
+							.map((issue) => t`“${issue.title}”`)
+							.join(" · ")}
+						trailing={
+							<Button variant="link" size="sm" className="text-sm/5" disabled={locked} onClick={restoreIgnored}>
+								<Trans>Show it again</Trans>
+							</Button>
+						}
+					/>
+				</List>
+			)}
 
 			<DeepCheck data={data} />
 		</div>
 	);
 }
 
-type IssueCardProps = { issue: CheckIssue; selected: boolean; locked: boolean; primary: boolean };
+type IssueCardProps = { issue: CheckIssue; selected: boolean; locked: boolean };
 
 /** A numbered card: category, title, a plain explanation, the fix, Show on page and Ignore (or Keep). */
-function IssueCard({ issue, selected, locked, primary }: IssueCardProps) {
+function IssueCard({ issue, selected, locked }: IssueCardProps) {
 	const { fix, ignore, showOnPage } = useCheckActions();
 	const titleId = `issue-${issue.number}-title`;
 	const applies = issue.fix.kind === "apply";
@@ -217,46 +175,38 @@ function IssueCard({ issue, selected, locked, primary }: IssueCardProps) {
 			data-issue-card={issue.key}
 			aria-labelledby={titleId}
 			onClick={() => useEditorStore.setState({ checkIssue: issue.key })}
-			className={cn(
-				"grid cursor-pointer gap-2.5 rounded-xl border bg-surface p-3.5 transition-[border-color,box-shadow] duration-standard",
-				selected ? "border-warn shadow-e2" : "border-line",
-			)}
+			className={cn("relative cursor-pointer border-b border-line pt-3.5 pb-4", selected && "bg-hover")}
 		>
-			<div className="flex items-start gap-2.5">
+			<div className="flex items-start gap-3">
 				<span
 					aria-hidden="true"
-					className="grid size-[22px] shrink-0 place-items-center rounded-sm bg-warn text-xs font-semibold text-warn-ink"
+					className="mt-px grid size-5 shrink-0 place-items-center rounded-xs bg-warn font-mono text-[11px]/5 font-semibold text-warn-ink"
 				>
 					{i18n.number(issue.number)}
 				</span>
-				<div className="grid min-w-0 gap-[3px]">
-					<span className="text-xs font-semibold text-ink-3">{getCategoryName(issue.category)}</span>
-					<h3 id={titleId} className="text-sm leading-5 font-semibold">
+				<div className="grid min-w-0 flex-1 gap-0.5">
+					<h3 id={titleId} className="t-row-title">
 						<span className="sr-only">
 							<Trans>Issue {i18n.number(issue.number)}:</Trans>{" "}
 						</span>
 						{issue.title}
 					</h3>
-					<p className="text-[13px] leading-[19px] text-ink-2">{issue.body}</p>
+					<p className="t-small text-ink-3">{issue.body}</p>
 				</div>
 			</div>
 
 			{/* Touch size on phones (B1). */}
-			<div className="ms-8 flex flex-wrap gap-1.5 [&_button]:max-sm:h-10 [&_button]:max-sm:px-3.5 [&_button]:max-sm:text-sm">
+			<div className="ms-8 mt-2.5 flex flex-wrap gap-0.5 [&_button]:max-sm:h-10 [&_button]:max-sm:px-3.5 [&_button]:max-sm:text-sm">
 				<Button
 					size="sm"
-					variant={primary && applies ? "primary" : "secondary"}
+					variant="secondary"
+					className="me-1"
 					disabled={locked && applies}
 					onClick={(event) => {
 						event.stopPropagation();
 						fix(issue);
 					}}
 				>
-					{issue.fix.kind === "apply" ? (
-						<Icon name={issue.fix.icon} size={16} />
-					) : (
-						<Icon name="pencil-simple" size={16} />
-					)}
 					{issue.fix.label}
 				</Button>
 				{issue.target && (
@@ -280,7 +230,7 @@ function IssueCard({ issue, selected, locked, primary }: IssueCardProps) {
 						ignore(issue);
 					}}
 				>
-					{issue.keepLabel ? <Trans>Keep</Trans> : <Trans>Ignore</Trans>}
+					<Trans>Ignore</Trans>
 				</Button>
 			</div>
 		</li>
@@ -289,63 +239,68 @@ function IssueCard({ issue, selected, locked, primary }: IssueCardProps) {
 
 /** Contact details, Dates, Layout, Section headings, Writing: "n of m", open when something needs attention. */
 function CategoryRows({ report }: { report: AtsReport }) {
+	const [expanded, setExpanded] = useState(false);
 	const [toggled, setToggled] = useState<Partial<Record<AtsCategory, boolean>>>({});
 	const categories = ATS_CATEGORIES.filter((category) => report.categories[category].total > 0);
-
 	return (
-		<section aria-labelledby="check-categories" className="grid gap-2 pt-2">
-			<h3 id="check-categories" className="px-1 text-xs font-semibold text-ink-3">
-				<Trans>Checks by category</Trans>
-			</h3>
-			<div className="overflow-hidden rounded-xl border border-line">
-				{categories.map((category, index) => {
-					const { total, passed } = report.categories[category];
-					const failing = total - passed;
-					const open = toggled[category] ?? failing > 0;
-					const descriptionId = `check-category-${category}`;
-
-					return (
-						<div key={category} className={cn(index > 0 && "border-t border-line")}>
-							<button
-								type="button"
-								aria-expanded={open}
-								aria-controls={descriptionId}
-								onClick={() => setToggled((current) => ({ ...current, [category]: !open }))}
-								className="flex h-12 w-full items-center gap-2.5 px-3 text-start text-sm font-medium transition-colors duration-quick hover:bg-hover"
-							>
-								<Icon
-									name={failing > 0 ? "warning-circle" : "check-circle"}
-									className={failing > 0 ? "text-warn-text" : "text-accent-text"}
-								/>
-								{getCategoryName(category)}
-								<span className={cn("text-xs font-normal", failing > 0 ? "text-warn-text" : "text-ink-3")}>
-									{failing > 0 ? (
-										<Plural value={failing} one="# to review" other="# to review" />
-									) : (
-										<Trans>
-											{ph({ passed: i18n.number(passed) })} of {ph({ total: i18n.number(total) })}
-										</Trans>
-									)}
-								</span>
-								<Icon
-									name="caret-down"
-									className={cn(
-										"ms-auto text-ink-3 transition-transform duration-standard ease-enter",
-										open && "rotate-180",
-									)}
-								/>
-							</button>
-							<Collapsible open={open}>
-								<CollapsibleContent id={descriptionId} keepMounted>
-									<p className="px-3 ps-[42px] pb-3 text-[13px] leading-[19px] text-ink-2">
-										{getCategoryDescription(category)}
-									</p>
-								</CollapsibleContent>
-							</Collapsible>
-						</div>
-					);
-				})}
-			</div>
+		<section>
+			<List>
+				<ListRow
+					leading={<Icon name="check-circle" className="text-accent-text" />}
+					title={<Plural value={report.passedRules} one="# check passes" other="# checks pass" />}
+					subtitle={<Trans>Contact details, reading order, fonts, links</Trans>}
+					caret
+					render={<button type="button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)} />}
+				/>
+			</List>
+			<Collapsible open={expanded}>
+				<CollapsibleContent>
+					<p className="pt-2 pb-1 t-caption text-ink-3">
+						<Trans>Checks by category</Trans>
+					</p>
+					{categories.map((category) => {
+						const { total, passed } = report.categories[category];
+						const failing = total - passed;
+						const open = toggled[category] ?? failing > 0;
+						return (
+							<div key={category} className="border-t border-line">
+								<button
+									type="button"
+									aria-expanded={open}
+									aria-controls={`check-category-${category}`}
+									onClick={() => setToggled((current) => ({ ...current, [category]: !open }))}
+									className="flex min-h-12 w-full items-center gap-2.5 text-start t-ui"
+								>
+									<Icon
+										name={failing ? "warning-circle" : "check-circle"}
+										className={failing ? "text-warn-text" : "text-accent-text"}
+									/>
+									{getCategoryName(category)}
+									<span className="ms-auto t-caption text-ink-3">
+										{failing ? (
+											<Plural value={failing} one="# to review" other="# to review" />
+										) : (
+											t`${passed} of ${total}`
+										)}
+									</span>
+									<Icon name={open ? "caret-up" : "caret-down"} size={16} />
+								</button>
+								<Collapsible open={open}>
+									<CollapsibleContent id={`check-category-${category}`}>
+										<p className="ps-7 pb-3 t-small text-ink-2">{getCategoryDescription(category)}</p>
+									</CollapsibleContent>
+								</Collapsible>
+							</div>
+						);
+					})}
+					<p className="border-t border-line py-3 t-small text-ink-3">
+						<Trans>
+							The checks count how reliably software reads your resume. They don't predict whether you'll be
+							shortlisted.
+						</Trans>
+					</p>
+				</CollapsibleContent>
+			</Collapsible>
 		</section>
 	);
 }
@@ -393,10 +348,30 @@ function DeepCheck({ data }: { data: ResumeData }) {
 
 	return (
 		<>
-			<Button variant="ghost" size="sm" className="w-fit text-ink-2" disabled={running} onClick={() => void run()}>
-				{running ? <Spinner /> : <Icon name="file-pdf" size={18} />}
-				{running ? <Trans>Checking the exported PDF…</Trans> : <Trans>Also check the exported PDF</Trans>}
-			</Button>
+			<List>
+				<ListRow
+					leading={<Icon name="file-pdf" className="text-ink-3" />}
+					title={<Trans>Also check the exported PDF</Trans>}
+					// While it runs, the status replaces the description and the button (B22 tile 16).
+					subtitle={
+						running ? (
+							<span role="status" className="flex items-center gap-1.5">
+								<Spinner />
+								<Trans>Checking the exported PDF…</Trans>
+							</span>
+						) : (
+							<Trans>Checks the file you'd send, on this device</Trans>
+						)
+					}
+					trailing={
+						running ? undefined : (
+							<Button variant="link" className="text-sm/5" size="sm" onClick={() => void run()}>
+								<Trans>Check</Trans>
+							</Button>
+						)
+					}
+				/>
+			</List>
 
 			<Dialog
 				open={reportOpen && report !== null}
@@ -414,6 +389,11 @@ function DeepCheck({ data }: { data: ResumeData }) {
 						</DialogDescription>
 					</DialogHeader>
 					{report && <AtsPdfReportView report={report} />}
+					<DialogFooter>
+						<Button variant="secondary" onClick={() => useEditorStore.setState({ exportReportOpen: false })}>
+							<Trans>Close</Trans>
+						</Button>
+					</DialogFooter>
 				</DialogContent>
 			</Dialog>
 		</>

@@ -5,22 +5,19 @@ import type {
 	RequirementCoverage,
 	UnsupportedClaim,
 } from "@reactive-resume/resume/proposals";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { WordDiffSegment } from "@reactive-resume/resume/word-diff";
 import type { KeyboardEvent, ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { ph, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useId, useMemo, useState } from "react";
-import { additionParts, getProposalState, needsConfirmation, passageLines } from "@reactive-resume/resume/proposals";
+import { additionParts, needsConfirmation, passageLines } from "@reactive-resume/resume/proposals";
 import { wordDiff } from "@reactive-resume/resume/word-diff";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
-import { useEditorStore } from "../store";
 import { ProposalPageFit } from "./page-fit";
-import { acceptResumeProposals } from "./proposals";
-import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 
 const claimKindLabel = (kind: UnsupportedClaim["kind"]) =>
@@ -49,46 +46,65 @@ const passageText = (html: string) => passageLines(html);
 const addedText = ({ before, after }: Pick<Proposal, "before" | "after">) =>
 	passageText(before && after.startsWith(before) ? after.slice(before.length) : after);
 
-type ProposalListProps = {
-	proposals: readonly Proposal[];
-	data: ResumeData;
-	/** "Suggest again" on an out-of-date proposal. */
-	onSuggestAgain: () => void;
-};
+const WORD_CHAR = /[\p{L}\p{N}'’]/u;
 
-/** Check → Writing's change set, applied to the resume. */
-export function ProposalList({ proposals, data, onSuggestAgain }: ProposalListProps) {
-	const setProposalStatus = useEditorStore((state) => state.setProposalStatus);
-	const locked = useIsResumeLocked();
-	const applications = useResumeStore((state) => state.proposalApplications);
+/**
+ * The change inside one passage, for the card: what both texts share at the start and end stays plain, and only the
+ * words in between are marked. A pure insertion (the common rewrite: a clause added to a bullet) reads as the
+ * sentence once with the new words tinted, even when the old text is short. Changes in several places fall back to
+ * the word-level comparison; null when the two share too little, so the card shows old and new whole.
+ */
+function changeParts(before: string, after: string): WordDiffSegment[] | null {
+	let start = 0;
+	while (start < before.length && start < after.length && before[start] === after[start]) start++;
+	// Never split a word: back off to the last boundary both texts agree on.
+	const inWord = (text: string, at: number) => WORD_CHAR.test(text[at] ?? "");
+	while (start > 0 && inWord(before, start - 1) && (inWord(before, start) || inWord(after, start))) start--;
+	let end = 0;
+	const room = Math.min(before.length, after.length) - start;
+	while (end < room && before[before.length - 1 - end] === after[after.length - 1 - end]) end++;
+	while (
+		end > 0 &&
+		inWord(before, before.length - end) &&
+		(inWord(before, before.length - end - 1) || inWord(after, after.length - end - 1))
+	)
+		end--;
 
-	return (
-		<ChangeSet
-			proposals={proposals}
-			states={proposals.map((proposal) => getProposalState(data, proposal, applications))}
-			locked={locked}
-			onAccept={(accepted) => {
-				const { applied } = acceptResumeProposals(accepted);
-				setProposalStatus(
-					applied.map((proposal) => proposal.id),
-					"accepted",
-				);
-			}}
-			onReject={(rejected) =>
-				setProposalStatus(
-					rejected.map((proposal) => proposal.id),
-					"rejected",
-				)
-			}
-			onRestore={(restored) =>
-				setProposalStatus(
-					restored.map((proposal) => proposal.id),
-					"pending",
-				)
-			}
-			onSuggestAgain={onSuggestAgain}
-		/>
-	);
+	const removed = before.slice(start, before.length - end);
+	const added = after.slice(start, after.length - end);
+	if (removed === "" && added === "") return null;
+	const segments: WordDiffSegment[] = [];
+	if (start > 0) segments.push({ kind: "same", text: after.slice(0, start) });
+	if (removed) segments.push({ kind: "removed", text: removed });
+	if (added) segments.push({ kind: "added", text: added });
+	if (end > 0) segments.push({ kind: "same", text: after.slice(after.length - end) });
+	if (removed.trim() === "" || added.trim() === "") return segments;
+	// Changes in several places read better word by word; one changed run in a mostly kept sentence stays one run.
+	return wordDiff(before, after) ?? ((start + end) / Math.max(before.length, after.length) >= 0.4 ? segments : null);
+}
+
+const CONTEXT_WORDS = 6;
+
+/**
+ * The card's view of a change: long kept stretches shrink to a few words beside each change, so a one-clause
+ * edit to a long paragraph reads as that clause in context. Nothing changed is ever dropped.
+ */
+function inContext(segments: readonly WordDiffSegment[]): WordDiffSegment[] {
+	return segments.map((segment, index) => {
+		if (segment.kind !== "same") return segment;
+		const words = segment.text.split(/(?<=\s)/u);
+		const first = index === 0;
+		const last = index === segments.length - 1;
+		const keep = first || last ? CONTEXT_WORDS : CONTEXT_WORDS * 2;
+		// Shrinking saves little on a short stretch and cuts a sentence's opening words: keep up to four more whole.
+		if (words.length <= keep + 4) return segment;
+		if (first) return { kind: "same", text: `…${words.slice(-CONTEXT_WORDS).join("")}` };
+		if (last) return { kind: "same", text: `${words.slice(0, CONTEXT_WORDS).join("")}…` };
+		return {
+			kind: "same",
+			text: `${words.slice(0, CONTEXT_WORDS).join("")}… ${words.slice(-CONTEXT_WORDS).join("")}`,
+		};
+	});
 }
 
 type ChangeSetProps = {
@@ -112,6 +128,13 @@ type ChangeSetProps = {
 	requirements?: readonly RequirementCoverage[] | undefined;
 	/** A cited Knowledge fact's text while it's still switched on; null once it's gone. */
 	factText?: ((id: string) => string | null) | undefined;
+	/**
+	 * Narrow panels (Check's Writing tab, the workspace's prepare review): tighter cards and 14px text. Every safeguard
+	 * stays: sources, the "New detail" tag, Accept, Edit and Reject.
+	 */
+	compact?: boolean | undefined;
+	/** Check's Writing tab: no heading row above the cards; Reject all and Accept all sit under them. */
+	untitled?: boolean | undefined;
 };
 
 /**
@@ -165,36 +188,49 @@ export function ChangeSet(props: ChangeSetProps) {
 		}
 	};
 
+	const bulk = (checked.length > 1 || rejectable.length > 1) && (
+		<div className="flex gap-1">
+			{rejectable.length > 1 && (
+				<Button size="sm" variant="ghost" onClick={() => onReject(rejectable)}>
+					<Trans>Reject all</Trans>
+				</Button>
+			)}
+			{checked.length > 1 && (
+				<Button size="sm" variant="soft" disabled={locked} onClick={() => accept(checked)}>
+					{toConfirm > 0 ? <Trans>Accept the others</Trans> : <Trans>Accept all</Trans>}
+				</Button>
+			)}
+		</div>
+	);
+	const heading = title ?? <Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />;
+
 	return (
-		<section aria-labelledby={headingId} className="overflow-hidden rounded-xl border border-line">
-			<header className="flex min-h-11 items-center justify-between gap-2 border-b border-line bg-bg px-3 py-2">
-				<h3 id={headingId} className="text-sm font-semibold">
-					{title ?? <Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />}
-				</h3>
-				<div className="grid justify-items-end gap-1">
+		<section
+			aria-labelledby={props.untitled ? undefined : headingId}
+			aria-label={props.untitled ? t`Proposed edits` : undefined}
+			className="grid gap-3"
+		>
+			{!props.untitled && (
+				<header className="flex min-h-8 flex-wrap items-center justify-between gap-x-2 gap-y-1">
+					<h3 id={headingId} className="min-w-0 flex-1 text-[15px]/[22px] font-semibold">
+						{heading}
+					</h3>
+					{bulk}
 					{props.resumeId && !locked && checked.length > 0 && (
-						<ProposalPageFit resumeId={props.resumeId} proposals={checked} />
-					)}
-					{(checked.length > 1 || rejectable.length > 1) && (
-						<div className="flex gap-1.5">
-							{rejectable.length > 1 && (
-								<Button size="sm" variant="secondary" onClick={() => onReject(rejectable)}>
-									<Trans>Reject all</Trans>
-								</Button>
-							)}
-							{checked.length > 1 && (
-								<Button size="sm" disabled={locked} onClick={() => accept(checked)}>
-									{toConfirm > 0 ? <Trans>Accept the others</Trans> : <Trans>Accept all</Trans>}
-								</Button>
-							)}
+						<div className="basis-full">
+							<ProposalPageFit resumeId={props.resumeId} proposals={checked} />
 						</div>
 					)}
-				</div>
-			</header>
+				</header>
+			)}
 
 			{requirements.length > 0 && <Coverage requirements={requirements} factText={props.factText} />}
 
-			<ol aria-label={t`Proposed edits`} onKeyDown={onKeyDown} className="divide-y divide-line">
+			<ol
+				aria-label={t`Proposed edits`}
+				onKeyDown={onKeyDown}
+				className={cn("grid", props.compact ? "gap-2" : "gap-3")}
+			>
 				{proposals.map((proposal, index) => (
 					<ProposalItem
 						key={proposal.id}
@@ -220,11 +256,13 @@ export function ChangeSet(props: ChangeSetProps) {
 						}
 						factText={props.factText}
 						onSuggestAgain={onSuggestAgain}
+						compact={props.compact}
 					/>
 				))}
 			</ol>
 
-			<p className="border-t border-line px-3 py-2 text-xs text-ink-3">
+			{props.untitled && bulk && <div className="-ms-2.5">{bulk}</div>}
+			<p className="text-xs text-ink-3">
 				{toConfirm > 0 && checked.length > 1 && (
 					<>
 						<Plural
@@ -259,16 +297,18 @@ type ProposalItemProps = {
 	onDrafting: (open: boolean) => void;
 	factText?: ((id: string) => string | null) | undefined;
 	onSuggestAgain?: (() => void) | undefined;
+	compact?: boolean | undefined;
 };
 
 function ProposalItem(props: ProposalItemProps) {
 	const { proposal, number, state, index, focusable, locked } = props;
 	const addition = additionParts(proposal);
 	// Wording edits show word by word; structural changes and additions keep their whole-text view.
-	const diff = useMemo(
-		() => (addition || proposal.snapshot ? null : wordDiff(passageText(proposal.before), passageText(proposal.after))),
-		[addition, proposal.snapshot, proposal.before, proposal.after],
-	);
+	const diff = useMemo(() => {
+		if (addition || proposal.snapshot) return null;
+		const parts = changeParts(passageText(proposal.before), passageText(proposal.after));
+		return parts && inContext(parts);
+	}, [addition, proposal.snapshot, proposal.before, proposal.after]);
 	const labelId = `proposal-${proposal.id}-location`;
 	const editId = useId();
 	const [draft, setDraftText] = useState<string | null>(null);
@@ -326,11 +366,11 @@ function ProposalItem(props: ProposalItemProps) {
 				tabIndex={focusable ? 0 : -1}
 				aria-labelledby={labelId}
 				onFocus={props.onFocus}
-				className="flex items-center gap-2 px-3 py-2 text-xs focus-visible:bg-hover focus-visible:-outline-offset-2"
+				className="flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-xs focus-visible:bg-hover"
 			>
 				<span
 					aria-hidden="true"
-					className="grid size-5 shrink-0 place-items-center rounded-sm bg-sunken text-xs font-semibold text-ink-3"
+					className="grid size-[18px] shrink-0 place-items-center rounded-xs bg-sunken text-xs font-semibold text-ink-3"
 				>
 					{i18n.number(number)}
 				</span>
@@ -369,16 +409,19 @@ function ProposalItem(props: ProposalItemProps) {
 			tabIndex={focusable ? 0 : -1}
 			aria-labelledby={labelId}
 			onFocus={props.onFocus}
-			className="grid gap-2 p-3 focus-visible:bg-hover focus-visible:-outline-offset-2"
+			className={cn(
+				"grid rounded-xl border border-line bg-raised focus-visible:-outline-offset-2",
+				props.compact ? "gap-1.5 p-3" : "gap-2 p-3.5",
+			)}
 		>
 			<div className="flex items-center gap-2">
 				<span
 					aria-hidden="true"
-					className="grid size-5 shrink-0 place-items-center rounded-sm bg-accent text-xs font-semibold text-on-accent"
+					className="grid size-[18px] shrink-0 place-items-center rounded-xs bg-accent text-xs font-semibold text-on-accent"
 				>
 					{i18n.number(number)}
 				</span>
-				<span id={labelId} className="line-clamp-2 font-mono text-xs break-words text-ink-3">
+				<span id={labelId} className="line-clamp-2 font-mono text-[13px]/[18px] break-words text-ink-2">
 					<span className="sr-only">
 						<Trans>Edit {ph({ number: i18n.number(number) })}:</Trans>{" "}
 					</span>
@@ -386,38 +429,30 @@ function ProposalItem(props: ProposalItemProps) {
 				</span>
 			</div>
 
-			<div className="grid gap-1.5 text-[13px] leading-[19px] whitespace-pre-wrap">
+			<div className={cn("grid gap-1.5 whitespace-pre-wrap", props.compact ? "text-sm/5" : "text-[15px]/[22px]")}>
 				{addition ? (
 					<p className="text-ink-3">
 						<Trans>Adds after: {addition.anchor}</Trans>
 					</p>
-				) : diff ? (
-					// Only the changed words are marked, so a one-word fix in a long passage shows at a glance.
-					<p className="text-ink-3">
-						{diff.map((segment, part) =>
-							segment.kind === "removed" ? (
-								<del key={part} className="text-ink-2">
-									{segment.text}
-								</del>
-							) : segment.kind === "same" ? (
-								<span key={part}>{segment.text}</span>
-							) : null,
-						)}
-					</p>
-				) : (
+				) : diff ? null : (
 					<del className="text-ink-3">{proposal.snapshot ? proposal.before : passageText(proposal.before)}</del>
 				)}
 				{draft === null ? (
 					diff ? (
+						// One passage: removed words struck through, new words marked, so a one-word fix shows at a glance.
 						<p>
 							{diff.map((segment, part) =>
 								segment.kind === "added" ? (
-									<ins key={part} className="rounded-sm bg-accent-soft px-0.5 no-underline">
+									<ins key={part} className="rounded-xs bg-accent-soft px-0.5 no-underline">
 										{segment.text}
 									</ins>
-								) : segment.kind === "same" ? (
+								) : segment.kind === "removed" ? (
+									<del key={part} className="text-ink-3">
+										{segment.text}
+									</del>
+								) : (
 									<span key={part}>{segment.text}</span>
-								) : null,
+								),
 							)}
 						</p>
 					) : (
@@ -445,7 +480,7 @@ function ProposalItem(props: ProposalItemProps) {
 						<Trans>Edited by you</Trans>
 					</span>
 				)}
-				{proposal.why && <span className="text-xs text-ink-2">{proposal.why}</span>}
+				{proposal.why && <span className="text-xs text-ink-3">{proposal.why}</span>}
 				{proposal.addsClaims && state === "pending" && (
 					<span className="flex w-fit items-center gap-1 rounded-md bg-warn-soft px-1.5 py-0.5 text-xs font-medium text-warn-text">
 						<Icon name="warning-circle" size={14} />
@@ -491,16 +526,16 @@ function ProposalItem(props: ProposalItemProps) {
 					</div>
 				</div>
 			) : state === "pending" ? (
-				<div className="flex gap-1.5">
-					<Button size="sm" disabled={locked} onClick={props.onAccept}>
+				<div className="flex gap-1">
+					<Button size="sm" variant="soft" disabled={locked} onClick={props.onAccept}>
 						<Trans>Accept</Trans>
 					</Button>
 					{props.onEdit && (
-						<Button size="sm" variant="secondary" disabled={locked} onClick={() => setDraft(addedText(proposal))}>
+						<Button size="sm" variant="ghost" disabled={locked} onClick={() => setDraft(addedText(proposal))}>
 							<Trans>Edit</Trans>
 						</Button>
 					)}
-					<Button size="sm" variant="secondary" onClick={props.onReject}>
+					<Button size="sm" variant="ghost" onClick={props.onReject}>
 						<Trans>Reject</Trans>
 					</Button>
 				</div>
@@ -613,21 +648,38 @@ function ProposalReview({ proposal, factText }: ProposalReviewProps) {
 					/>
 				</p>
 			)}
-			{unsupported.length > 0 && (
-				<div className="grid gap-1 rounded-md bg-warn-soft px-2 py-1.5 text-warn-text">
-					<p className="flex items-center gap-1.5 font-medium">
-						<Icon name="warning-circle" size={14} />
-						<Trans>Nothing checked backs these. Confirm each before accepting:</Trans>
-					</p>
-					<ul className="grid gap-0.5 ps-5">
-						{unsupported.map((claim) => (
-							<li key={`${claim.kind}:${claim.text}`} className="list-disc">
-								{claimKindLabel(claim.kind)}: {claim.text}
-							</li>
-						))}
-					</ul>
-				</div>
-			)}
+			{unsupported.length > 0 &&
+				(proposal.addsClaims ? (
+					<div className="rounded-md bg-warn-soft p-2.5 text-warn-text">
+						<p className="font-medium">
+							<Trans>Nothing checked backs these. Confirm each before accepting:</Trans>
+						</p>
+						<ul className="mt-1 grid gap-0.5 ps-5">
+							{unsupported.map((claim) => (
+								<li key={`${claim.kind}:${claim.text}`} className="list-disc">
+									{claimKindLabel(claim.kind)}: {claim.text}
+								</li>
+							))}
+						</ul>
+					</div>
+				) : (
+					<details className="text-ink-3">
+						<summary className="w-fit cursor-pointer">
+							<Plural
+								value={unsupported.length}
+								one="# word or detail nothing checked backs"
+								other="# words or details nothing checked backs"
+							/>
+						</summary>
+						<ul className="mt-1 grid gap-0.5 ps-5 text-ink-2">
+							{unsupported.map((claim) => (
+								<li key={`${claim.kind}:${claim.text}`} className="list-disc">
+									{claimKindLabel(claim.kind)}: {claim.text}
+								</li>
+							))}
+						</ul>
+					</details>
+				))}
 		</div>
 	);
 }

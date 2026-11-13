@@ -25,15 +25,17 @@ function NotesSectionForm() {
 
 	return (
 		<div className="space-y-4">
-			<p>
-				<Trans>Keep private notes about this resume here. Nobody else can see them.</Trans>
+			<p className="t-body text-ink-2">
+				<Trans>Private notes about this resume. Nobody else can see them.</Trans>
 			</p>
 
-			<RichTextEditor label={t`Notes`} value={notes} onChange={onChange} disabled={resume.isLocked} />
+			<div className="space-y-2">
+				<RichTextEditor label={t`Notes`} value={notes} onChange={onChange} disabled={resume.isLocked} compact />
 
-			<p className="text-ink-3">
-				<Trans>For example, note which companies you sent this resume to, or links to the job descriptions.</Trans>
-			</p>
+				<p className="t-caption text-ink-3">
+					<Trans>For example, where you sent this resume, or links to the postings.</Trans>
+				</p>
+			</div>
 		</div>
 	);
 }

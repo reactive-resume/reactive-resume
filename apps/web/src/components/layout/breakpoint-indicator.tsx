@@ -1,6 +1,6 @@
 export function BreakpointIndicator() {
 	return (
-		<div className="fixed inset-e-0 bottom-0 z-50 flex size-10 items-center justify-center bg-blue-900 p-2 font-mono text-xs font-bold text-white opacity-80 transition-opacity hover:opacity-40 print:hidden">
+		<div className="fixed inset-e-0 bottom-0 z-50 flex size-10 items-center justify-center bg-info-text p-2 font-mono text-xs font-bold text-bg opacity-80 transition-opacity hover:opacity-40 print:hidden">
 			<span className="inline sm:hidden">XS</span>
 			<span className="hidden sm:inline md:hidden">SM</span>
 			<span className="hidden md:inline lg:hidden">MD</span>

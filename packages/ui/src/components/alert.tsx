@@ -3,9 +3,9 @@ import type * as React from "react";
 import { cva } from "class-variance-authority";
 import { cn } from "@reactive-resume/utils/style";
 
-/** Inline alerts: a 20px icon and 13px text. Errors are announced (`role="alert"`); the rest are static. */
+/** Inline alerts: an 18px icon and 13px text on a soft ground with its own text ink, no border. Errors are announced (`role="alert"`); the rest are static. */
 const alertVariants = cva(
-	"group/alert relative grid w-full gap-0.5 rounded-lg px-3.5 py-3 text-start text-[13px] leading-[19px] has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pe-18 has-[>[data-slot=icon]]:grid-cols-[auto_1fr] has-[>[data-slot=icon]]:gap-x-2.5 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2.5 *:data-[slot=icon]:row-span-2 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
+	"group/alert relative grid w-full gap-0.5 rounded-lg p-3 text-start text-[13px] leading-[18px] [--icon-size:18px] has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pe-18 has-[>[data-slot=icon]]:grid-cols-[auto_1fr] has-[>[data-slot=icon]]:gap-x-2.5 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2.5 *:data-[slot=icon]:row-span-2 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
 	{
 		variants: {
 			variant: {

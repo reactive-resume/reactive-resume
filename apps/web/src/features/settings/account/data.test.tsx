@@ -61,7 +61,7 @@ function renderData() {
 it("requests owned upload bytes and downloads the shared archive", async () => {
 	exported.request.mockResolvedValue(backup);
 	renderData();
-	fireEvent.click(screen.getByRole("button", { name: "Export" }));
+	fireEvent.click(screen.getByRole("button", { name: "Download" }));
 	await waitFor(() => expect(exported.download).toHaveBeenCalledOnce());
 	expect(exported.request.mock.calls[0]?.[0]).toEqual({ includeUploads: true });
 	expect(exported.request.mock.calls[0]?.[1].context).toEqual({ accountId: "owner" });
@@ -84,7 +84,7 @@ it.each(["cancel", "unmount", "account change"])("does not download a late expor
 			}),
 	);
 	const view = renderData();
-	fireEvent.click(screen.getByRole("button", { name: "Export" }));
+	fireEvent.click(screen.getByRole("button", { name: "Download" }));
 	await screen.findByRole("button", { name: "Cancel" });
 	if (action === "cancel") fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
 	if (action === "unmount") view.unmount();
@@ -94,7 +94,7 @@ it.each(["cancel", "unmount", "account change"])("does not download a late expor
 		resolve?.(backup);
 	});
 	expect(exported.download).not.toHaveBeenCalled();
-	if (action !== "unmount") await waitFor(() => expect(screen.getByRole("button", { name: "Export" })).toBeEnabled());
+	if (action !== "unmount") await waitFor(() => expect(screen.getByRole("button", { name: "Download" })).toBeEnabled());
 	expect(exported.toast).not.toHaveBeenCalled();
 });
 
@@ -107,7 +107,7 @@ it.each(["older server", "skipped file"])("makes incomplete file coverage visibl
 				: { files: [], skipped: [{ key: "uploads/owner/pictures/gone.png", reason: "unavailable" }] },
 	});
 	renderData();
-	fireEvent.click(screen.getByRole("button", { name: "Export" }));
+	fireEvent.click(screen.getByRole("button", { name: "Download" }));
 	await waitFor(() => expect(exported.download).toHaveBeenCalledOnce());
 	expect(exported.toast).toHaveBeenCalledWith(expect.objectContaining({ type: "warning" }));
 });
@@ -121,6 +121,10 @@ it("opens the deletion deep link at confirmation, never deletes on navigation, a
 		</I18nProvider>,
 	);
 	const confirm = await screen.findByRole("button", { name: /^Delete account$/ });
+	exported.request.mockResolvedValue(backup);
+	fireEvent.click(screen.getByRole("button", { name: "Export everything first" }));
+	await waitFor(() => expect(exported.download).toHaveBeenCalledOnce());
+	expect(screen.getByRole("alertdialog")).toBeDefined();
 	expect(confirm).toBeDisabled();
 	fireEvent.change(screen.getByRole("textbox"), { target: { value: "delete" } });
 	expect(confirm).toBeEnabled();
@@ -133,7 +137,7 @@ it("opens the deletion deep link at confirmation, never deletes on navigation, a
 it("warns that individual exports omit other records when a complete archive fails", async () => {
 	exported.request.mockRejectedValue(new AccountExportLimitError());
 	renderData();
-	fireEvent.click(screen.getByRole("button", { name: "Export" }));
+	fireEvent.click(screen.getByRole("button", { name: "Download" }));
 	await waitFor(() =>
 		expect(exported.toast).toHaveBeenCalledWith(
 			expect.objectContaining({

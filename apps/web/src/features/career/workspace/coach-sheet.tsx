@@ -20,6 +20,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
+import { isolate } from "@reactive-resume/utils/string";
 import {
 	CoachThread,
 	connectionName,
@@ -31,9 +32,9 @@ import {
 } from "../coach-thread";
 import { ContextChip, PrivacyLine, tabLabel } from "../shared";
 import { coachStarters } from "./coach-starters";
+import { SetUpAi as SetUpAiFor } from "@/features/ai/set-up-ai";
 import { ChatWelcome, ModelMenu } from "@/features/assistant/chat-chrome";
 import { ConnectionNotice } from "@/features/assistant/connection-notice";
-import { ProviderSetup } from "@/features/assistant/provider-setup";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { WebAccessAttention } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -84,11 +85,7 @@ export function CoachSheet({ application, tab, conversation, onConversationChang
 
 	return (
 		<Sheet open={conversation !== undefined} onOpenChange={(open) => onConversationChange(open ? true : undefined)}>
-			<SheetContent
-				side="right"
-				closeLabel={t`Close`}
-				className="gap-0 border-s border-line data-[side=right]:sm:max-w-none data-[side=right]:md:max-w-[420px]"
-			>
+			<SheetContent side="right" closeLabel={t`Close`} className="gap-0">
 				<CoachSheetBody
 					application={application}
 					tab={tab}
@@ -192,38 +189,47 @@ function CoachSheetBody({
 		return thread.id;
 	};
 
+	const model = provider ? aiModelForTask(provider, "capable") : null;
+	// W12: a serif title, what the conversation is about and who answers, and what the coach reads.
 	const header = (
-		<header className="flex h-14 shrink-0 items-center gap-1 border-b border-line ps-4 pe-14">
-			<Icon name="sparkle" size={20} className="me-1.5 shrink-0 text-accent-text" />
-			<div className="grid min-w-0 flex-1">
-				<SheetTitle className="font-sans text-[15px] leading-5 font-semibold">
-					<Trans>Coach</Trans>
-				</SheetTitle>
-				<SheetDescription className="truncate text-xs text-ink-3">
-					{application.company} · {tabLabel(tab)}
-				</SheetDescription>
-			</div>
-			{(usable.length > 0 || summary) && (
-				<ModelMenu
-					open={modelMenuOpen}
-					onOpenChange={setModelMenuOpen}
-					onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
-					providers={usable}
-					current={provider}
-					label={label}
-					onChoose={(id) => void chooseProvider(id)}
+		<header data-design="coach-head" className="grid shrink-0 gap-2.5 px-6 pt-5">
+			<div className="flex items-start gap-2 pe-9">
+				<div className="grid min-w-0 flex-1">
+					<SheetTitle className="t-section-title">
+						<Trans>Coach</Trans>
+					</SheetTitle>
+					<SheetDescription className="truncate text-[13px]/[18px] text-ink-3">
+						{provider && model
+							? t`About ${isolate(application.company)} · ${label} · ${model}`
+							: t`About ${isolate(application.company)}`}
+					</SheetDescription>
+				</div>
+				{/* With one connection there is nothing to choose; the subtitle names it. */}
+				{(usable.length > 1 || stranded) && (
+					<ModelMenu
+						open={modelMenuOpen}
+						onOpenChange={setModelMenuOpen}
+						onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
+						providers={usable}
+						current={provider}
+						label={label}
+						onChoose={(id) => void chooseProvider(id)}
+					/>
+				)}
+				{list.length > 0 && <ConversationMenu threads={list} currentId={threadId} onOpen={open} onDelete={remove} />}
+				<IconButton
+					icon="note-pencil"
+					label={t`New conversation`}
+					size="icon"
+					iconSize={20}
+					className="text-ink-2"
+					disabled={threadId === null}
+					onClick={() => open("new")}
 				/>
-			)}
-			{list.length > 0 && <ConversationMenu threads={list} currentId={threadId} onOpen={open} onDelete={remove} />}
-			<IconButton
-				icon="note-pencil"
-				label={t`New conversation`}
-				size="icon-sm"
-				iconSize={20}
-				className="text-ink-2"
-				disabled={threadId === null}
-				onClick={() => open("new")}
-			/>
+			</div>
+			<p className="border-b border-line pb-3.5 text-[13px]/[18px] text-ink-3">
+				<Trans>It reads the posting, your notes and what you sent, and knows you are on {tabName}.</Trans>
+			</p>
 		</header>
 	);
 
@@ -254,8 +260,11 @@ function CoachSheetBody({
 			<>
 				{header}
 				<WebAccessAttention />
-				<div className="min-h-0 flex-1 overflow-y-auto">
-					<ProviderSetup />
+				<div className="min-h-0 flex-1 overflow-y-auto p-4">
+					<SetUpAiFor
+						needs={<Trans>The coach needs AI.</Trans>}
+						works={<Trans>Today, Knowledge, offers and schedules work without it.</Trans>}
+					/>
 				</div>
 			</>
 		);
@@ -323,6 +332,8 @@ function CoachSheetBody({
 				chips={
 					<>
 						<ContextChip
+							tone="on"
+							icon="books"
 							pressed={chips.memory}
 							onPressedChange={(memory) => setChips({ ...chips, memory })}
 							label={t`Knowledge`}
@@ -333,6 +344,7 @@ function CoachSheetBody({
 							}
 						/>
 						<WebResearchChip
+							tone="on"
 							status={webAccess}
 							fallbackLabel={web.fallbackLabel}
 							pressed={chips.web}
@@ -358,6 +370,7 @@ function CoachSheetBody({
 				placeholder={t`Ask about this application…`}
 				draftKey={`application:${application.id}`}
 				disabled={!provider}
+				suggestions={provider ? coachStarters(application.status) : []}
 				variant="sheet"
 			/>
 		</>
@@ -382,7 +395,7 @@ function ConversationMenu({ threads, currentId, onOpen, onDelete }: Conversation
 					<IconButton
 						icon="clock-counter-clockwise"
 						label={t`Conversations`}
-						size="icon-sm"
+						size="icon"
 						iconSize={20}
 						className="text-ink-2"
 					/>

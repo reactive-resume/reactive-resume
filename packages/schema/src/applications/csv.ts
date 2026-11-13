@@ -63,7 +63,12 @@ export function parseCsv(input: string): string[][] {
 }
 
 /** A lane named in a CSV, by what it counts as; another account's IDs are never trusted. */
-export type CsvLane = { label: string; category: ApplicationStatus; closedReason: ApplicationClosedReason | null };
+export type CsvLane = {
+	label: string;
+	category: ApplicationStatus;
+	closedReason: ApplicationClosedReason | null;
+	unclassified?: boolean;
+};
 
 type ParsedApplication = {
 	company: string;
@@ -292,7 +297,11 @@ export type CsvMapResult = {
 // are skipped (and counted). Invalid stages, dates and metadata require correction before import. A contact that fails
 // validation (bad email, or contact columns with no name) is dropped on its own — the application
 // still imports, since losing the whole row would silently discard company/role/salary/tags too.
-export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvField | null)[]): CsvMapResult {
+export function mapCsvToApplications(
+	table: string[][],
+	mapping?: readonly (CsvField | null)[],
+	preserveStageNames = false,
+): CsvMapResult {
 	const [headerRow, ...dataRows] = table;
 	if (!headerRow)
 		return {
@@ -338,6 +347,7 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 			if (!value) return;
 			if (field === "tags") record.tags = parseTags(value);
 			else if (field === "status") {
+				if (preserveStageNames) record.laneLabel ??= value.slice(0, 80);
 				// Other trackers' names ("Phone Screen", "Ghosted", "Rejected") read as a stage and outcome.
 				const stage = value
 					.toLowerCase()
@@ -350,6 +360,8 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 					record.status = alias.status;
 					if (alias.closedReason) record.closedReason ??= alias.closedReason;
 				} else if (parsed.success) record.status = parsed.data;
+				// The web import offers an unknown name for stage mapping; other callers (the phone apps) reject it as before.
+				else if (preserveStageNames) record.laneLabel ??= value.slice(0, 80);
 				else invalid.push({ row: index + 2, field, value });
 			} else if (field === "closedReason") {
 				const parsed = applicationClosedReasonSchema.safeParse(value.toLowerCase().replace(/\s+/g, "-"));
@@ -412,8 +424,14 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 				invalidValues.push({ row: index + 2, field: "laneCategory", value: laneCategory ?? category });
 				continue;
 			}
-			application.status = category;
-			application.lane = { label: laneLabel, category, closedReason: laneClosedReason ?? null };
+			const unclassified = !laneCategory && !application.status;
+			if (!unclassified) application.status = category;
+			application.lane = {
+				label: laneLabel,
+				category,
+				closedReason: laneClosedReason ?? (preserveStageNames ? application.closedReason : null) ?? null,
+				...(unclassified ? { unclassified: true } : {}),
+			};
 		}
 		// An outcome belongs only to a closed application (a lane may have just made it one).
 		if (application.closedReason && application.status !== "closed") delete application.closedReason;
@@ -447,7 +465,9 @@ export function collectCsvLanes(rows: readonly { lane?: CsvLane }[]): (CsvLane &
 /** This account's lanes a CSV lane may go to: active, counting the same, with the same preset outcome. */
 export const compatibleLanes = (csvLane: CsvLane, lanes: readonly ApplicationLane[]) =>
 	lanes.filter(
-		(lane) => !lane.retiredAt && lane.category === csvLane.category && lane.closedReason === csvLane.closedReason,
+		(lane) =>
+			!lane.retiredAt &&
+			(csvLane.unclassified || (lane.category === csvLane.category && lane.closedReason === csvLane.closedReason)),
 	);
 
 /** A suggested match: a compatible lane with the same name (default lanes by their standard name), else none. */

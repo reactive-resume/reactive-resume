@@ -1,15 +1,23 @@
+import type { ReactNode } from "react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { getOAuthSignInOptions } from "../redirect";
+import { AuthLead } from "./auth-page";
 import { authClient } from "@/libs/auth/client";
 
-type ConnectingClientProps = { callbackURL: unknown; register?: boolean };
+type ConnectingClientProps = {
+	callbackURL: unknown;
+	register?: boolean;
+	/** The page's own sentence, shown when no application is waiting. */
+	children: ReactNode;
+};
 
 /**
- * Mid-OAuth, the sign-in pages say which app is waiting, so people arriving from an AI client know why they're here.
+ * The sentence under the title of sign-in and sign-up. Mid-OAuth it says which app is waiting, so people arriving from
+ * an AI client know why they're here.
  * The name comes from the provider's signed-request check; a forged or expired request falls back to the generic line.
  */
-export function ConnectingClient({ callbackURL, register = false }: ConnectingClientProps) {
+export function ConnectingClient({ callbackURL, register = false, children }: ConnectingClientProps) {
 	const oauthQuery = getOAuthSignInOptions(callbackURL).oauth_query;
 	const clientId = oauthQuery ? new URLSearchParams(oauthQuery).get("client_id") : null;
 	const { data: name } = useQuery({
@@ -25,9 +33,9 @@ export function ConnectingClient({ callbackURL, register = false }: ConnectingCl
 			return data?.client_name?.trim() || null;
 		},
 	});
-	if (!oauthQuery) return null;
+	if (!oauthQuery) return <AuthLead>{children}</AuthLead>;
 	return (
-		<p className="text-sm wrap-anywhere text-ink-2">
+		<AuthLead>
 			{register ? (
 				name ? (
 					<Trans>Create an account to connect {name}.</Trans>
@@ -39,6 +47,6 @@ export function ConnectingClient({ callbackURL, register = false }: ConnectingCl
 			) : (
 				<Trans>Sign in to connect an application.</Trans>
 			)}
-		</p>
+		</AuthLead>
 	);
 }

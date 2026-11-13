@@ -1,12 +1,15 @@
 import type { AuthSession } from "@reactive-resume/auth/types";
-import { plural, t } from "@lingui/core/macro";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext, useRouter } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import z from "zod";
+import { Alert } from "@reactive-resume/ui/components/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import {
 	InputGroup,
@@ -16,8 +19,7 @@ import {
 } from "@reactive-resume/ui/components/input-group";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { getInitials } from "@reactive-resume/utils/string";
-import { cn } from "@reactive-resume/utils/style";
-import { SettingsSection } from "../section";
+import { SettingsOpenRow, SettingsRow, SettingsSection, TextAction } from "../section";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
@@ -40,25 +42,37 @@ type FieldProps = {
 	anchor?: string;
 	label: string;
 	value: string;
+	/** The line under the label while the row is closed; the value itself when absent. */
+	display?: React.ReactNode;
+	/** The closed row's action: "Edit" or "Change". Absent when the value can't be changed here. */
+	action?: string | undefined;
+	/** Sits before the action on the closed row: a status badge, a second action. */
+	status?: React.ReactNode;
+	/** Stays under the row, open or closed: a change that is waiting. */
+	note?: React.ReactNode;
 	/** Saves the new value; resolves to an error message, or null when it saved. */
 	save: (value: string) => Promise<string | null>;
 	validate: (value: string) => string | null;
-	/** Asks before saving a valid change; false puts the saved value back. */
+	/** Asks before saving a valid change; false keeps the row open. */
 	confirm?: (value: string) => Promise<boolean>;
 	prefix?: string;
 	hint?: React.ReactNode;
 	type?: "text" | "email";
 	autoComplete?: string;
-	className?: string;
-	/** After a save the field shows `value` again: an email change waits for approval, so the address hasn't changed. */
-	resetOnSave?: boolean;
 };
 
-/** A text setting that saves when it loses focus. Invalid or failed values stay, with the reason under them. */
-function SavedField({
+/**
+ * A text setting as a row: its value and one action. The action opens the field in the row, with Cancel and Save.
+ * Invalid or failed values stay, with the reason under them.
+ */
+function EditableRow({
 	anchor,
 	label,
 	value,
+	display,
+	action,
+	status,
+	note,
 	save,
 	validate,
 	confirm,
@@ -66,23 +80,33 @@ function SavedField({
 	hint,
 	type = "text",
 	autoComplete,
-	className,
-	resetOnSave = false,
 }: FieldProps) {
 	const id = useId();
+	const [open, setOpen] = useState(false);
 	const [draft, setDraft] = useState(value);
 	const [error, setError] = useState<string | null>(null);
 	const [saving, setSaving] = useState(false);
+	const opener = useRef<HTMLButtonElement>(null);
+	const returnFocus = useRef(false);
+	// Closing hands focus back to the action that opened the row.
+	useEffect(() => {
+		if (open || !returnFocus.current) return;
+		returnFocus.current = false;
+		opener.current?.focus();
+	}, [open]);
+
+	const close = () => {
+		returnFocus.current = true;
+		setOpen(false);
+		setError(null);
+	};
 
 	const commit = async () => {
 		const next = draft.trim();
-		if (next === value) return setError(null);
+		if (next === value) return close();
 		const invalid = validate(next);
 		if (invalid) return setError(invalid);
-		if (confirm && !(await confirm(next))) {
-			setDraft(value);
-			return setError(null);
-		}
+		if (confirm && !(await confirm(next))) return;
 		setSaving(true);
 		let failure: string | null;
 		try {
@@ -91,58 +115,103 @@ function SavedField({
 			failure = t`Couldn't save. Try again.`;
 		}
 		setSaving(false);
-		setError(failure);
-		if (!failure && resetOnSave) setDraft(value);
+		if (failure) return setError(failure);
+		close();
 	};
+
+	const noteRow = note && <div className="border-b border-line pb-3">{note}</div>;
+
+	if (!open)
+		return (
+			<>
+				<SettingsRow
+					id={anchor}
+					title={label}
+					description={display ?? value}
+					className={note ? "border-b-0" : undefined}
+				>
+					{status}
+					{action && (
+						<TextAction
+							ref={opener}
+							aria-label={t`${action}: ${label}`}
+							onClick={() => {
+								setDraft(value);
+								setOpen(true);
+							}}
+						>
+							{action}
+						</TextAction>
+					)}
+				</SettingsRow>
+				{noteRow}
+			</>
+		);
 
 	const inputProps = {
 		id,
 		type,
 		value: draft,
 		autoComplete,
+		autoFocus: true,
 		"aria-invalid": error ? true : undefined,
 		"aria-describedby": error ? `${id}-error` : hint ? `${id}-hint` : undefined,
-		"aria-busy": saving || undefined,
 		onChange: (event: React.ChangeEvent<HTMLInputElement>) => setDraft(event.target.value),
-		onBlur: () => void commit(),
 		onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
 			if (isImeComposing(event)) return;
-			if (event.key === "Enter") event.currentTarget.blur();
 			if (event.key === "Escape") {
-				setDraft(value);
-				setError(null);
+				event.preventDefault();
+				close();
 			}
 		},
 	};
 
 	return (
-		<div id={anchor} className={cn("grid scroll-mt-6 content-start gap-1.5", className)}>
-			<label htmlFor={id} className="text-xs font-medium text-ink-2">
-				{label}
-			</label>
-			{prefix ? (
-				// A web address (host/username) reads left to right in every language.
-				<InputGroup dir="ltr">
-					<InputGroupAddon>
-						<InputGroupText>{prefix}</InputGroupText>
-					</InputGroupAddon>
-					<InputGroupInput {...inputProps} />
-				</InputGroup>
-			) : (
-				<Input {...inputProps} />
-			)}
-			{error ? (
-				<p id={`${id}-error`} role="alert" className="text-xs text-danger-text">
-					{error}
-				</p>
-			) : (
-				hint && (
-					<p id={`${id}-hint`} className="text-xs text-ink-3">
-						{hint}
+		<>
+			<SettingsOpenRow id={anchor} className={note ? "border-b-0 pb-3" : undefined}>
+				<label htmlFor={id} className="text-[15px]/[22px] font-medium">
+					{label}
+				</label>
+				<form
+					noValidate
+					className="flex flex-wrap items-center gap-2"
+					onSubmit={(event) => {
+						event.preventDefault();
+						void commit();
+					}}
+				>
+					{prefix ? (
+						// A web address (host/username) reads left to right in every language.
+						<InputGroup dir="ltr" className="min-w-48 flex-1">
+							<InputGroupAddon>
+								<InputGroupText className="font-mono text-[13px]">{prefix}</InputGroupText>
+							</InputGroupAddon>
+							<InputGroupInput {...inputProps} />
+						</InputGroup>
+					) : (
+						<Input {...inputProps} className="min-w-48 flex-1" />
+					)}
+					<Button type="button" variant="ghost" disabled={saving} onClick={close}>
+						<Trans>Cancel</Trans>
+					</Button>
+					<Button type="submit" variant="secondary" loading={saving}>
+						<Trans>Save</Trans>
+					</Button>
+				</form>
+				{error ? (
+					<p id={`${id}-error`} role="alert" className="text-xs/4 text-danger-text">
+						{error}
 					</p>
-				)
-			)}
-		</div>
+				) : (
+					hint && (
+						<p id={`${id}-hint`} className="text-xs/4 text-ink-3">
+							{hint}
+						</p>
+					)
+				)}
+			</SettingsOpenRow>
+			{noteRow}
+		</>
 	);
 }
 
@@ -157,26 +226,41 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 	const host = window.location.host;
 	const ask = useConfirm();
 
-	// The username is part of every public link: changing it moves them, so say how many first.
-	const confirmUsername = async () => {
-		let total: number;
+	// Show an actual public link before changing its username; still warn when the lookup is unavailable.
+	const confirmUsername = async (next: string) => {
+		let total = -1;
+		let slug: string | null | undefined;
 		try {
-			({ total } = await client.documents.page({ type: "resume", public: true, limit: 1 }));
+			const page = await client.documents.page({ type: "resume", public: true, limit: 1 });
+			total = page.total;
+			slug = page.items[0]?.slug;
 		} catch {
 			// Unknown is not none: still warn, without a count.
-			total = -1;
 		}
 		if (total === 0) return true;
-		return ask(
-			total > 0
-				? plural(total, { one: "# public link will change", other: "# public links will change" })
-				: t`Your public links will change`,
-			{
-				description: t`Links you've already shared keep working for 30 days, then stop. Share the new ones before then.`,
-				confirmText: t`Change username`,
-				cancelText: t`Keep username`,
-			},
-		);
+		const oldAddress = `${host}/${user.username}${slug ? `/${slug}` : ""}`;
+		const newAddress = `${host}/${next.trim().toLowerCase()}${slug ? `/${slug}` : ""}`;
+		return ask(total === 1 ? t`Your public link will change` : t`Your public links will change`, {
+			description: (
+				<>
+					<Trans>
+						<code dir="ltr" className="font-mono text-xs">
+							{oldAddress}
+						</code>{" "}
+						becomes{" "}
+						<code dir="ltr" className="font-mono text-xs">
+							{newAddress}
+						</code>
+						.
+					</Trans>{" "}
+					<Trans>
+						Links you've already shared keep working for 30 days, then stop. Share the new ones before then.
+					</Trans>
+				</>
+			),
+			confirmText: t`Change username`,
+			cancelText: t`Keep username`,
+		});
 	};
 
 	const updateUser = async (patch: Parameters<typeof authClient.updateUser>[0]) => {
@@ -225,96 +309,120 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 		);
 	};
 
-	return (
-		<SettingsSection id="account-details" title={<Trans>Account details</Trans>}>
-			<ProfilePhoto name={user.name} image={user.image ?? null} onChange={(image) => updateUser({ image })} />
+	const noteLink = "font-semibold underline underline-offset-2";
 
-			<div className="grid gap-3 sm:grid-cols-2">
-				<SavedField
-					label={t`Name`}
-					value={user.name}
-					autoComplete="name"
-					validate={(value) => (nameSchema.safeParse(value).success ? null : t`Enter a name, up to 64 characters.`)}
-					save={(name) => updateUser({ name })}
-				/>
-				<SavedField
-					label={t`Username`}
-					value={user.username ?? ""}
-					prefix={`${host}/`}
-					autoComplete="username"
-					validate={(value) =>
-						usernameSchema.safeParse(value).success
-							? null
-							: t`Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores.`
-					}
-					confirm={confirmUsername}
-					save={(value) => {
-						const username = value.trim().toLowerCase();
-						return updateUser({ username, displayUsername: username });
-					}}
-					hint={<Trans>Part of every public link. Old links keep working for 30 days after a change.</Trans>}
-				/>
-				<SavedField
-					anchor="email"
-					className="sm:col-span-2"
-					type="email"
-					label={t`Email`}
-					value={user.email}
-					autoComplete="email"
-					validate={(value) => (emailSchema.safeParse(value).success ? null : t`Enter a valid email address.`)}
-					save={changeEmail}
-					resetOnSave
-					hint={
+	return (
+		<SettingsSection id="account-details" title={<Trans>Account</Trans>}>
+			<ProfilePhoto name={user.name} image={user.image ?? null} onChange={(image) => updateUser({ image })} />
+			<EditableRow
+				label={t`Name`}
+				value={user.name}
+				action={t`Edit`}
+				autoComplete="name"
+				validate={(value) => (nameSchema.safeParse(value).success ? null : t`Enter a name, up to 64 characters.`)}
+				save={(name) => updateUser({ name })}
+			/>
+			<EditableRow
+				label={t`Username`}
+				value={user.username ?? ""}
+				display={
+					user.username ? (
+						<Trans>
+							<span dir="ltr" className="font-mono text-xs/4 font-medium">
+								{host}/{user.username}
+							</span>{" "}
+							· part of every public link
+						</Trans>
+					) : (
+						<Trans>Not set</Trans>
+					)
+				}
+				action={t`Change`}
+				prefix={`${host}/`}
+				autoComplete="username"
+				validate={(value) =>
+					usernameSchema.safeParse(value).success
+						? null
+						: t`Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores.`
+				}
+				confirm={confirmUsername}
+				save={(value) => {
+					const username = value.trim().toLowerCase();
+					return updateUser({ username, displayUsername: username });
+				}}
+				hint={<Trans>Part of every public link. Old links keep working for 30 days after a change.</Trans>}
+			/>
+			<EditableRow
+				anchor="email"
+				type="email"
+				label={t`Email`}
+				value={user.email}
+				// Without email delivery neither link can arrive, so the row offers no change that could never finish.
+				display={
+					smtpEnabled ? undefined : (
+						<Trans>
+							{user.email} · This server can't send email, so the address can't be changed here. Ask the person who runs
+							it.
+						</Trans>
+					)
+				}
+				action={smtpEnabled ? t`Change` : undefined}
+				status={
+					user.emailVerified ? (
+						<Badge variant="accent">
+							<Icon name="check" />
+							<Trans>Verified</Trans>
+						</Badge>
+					) : (
 						<>
-							{pendingEmail ? (
-								<>
-									{user.emailVerified ? (
-										<Trans>
-											Change to {pendingEmail} is waiting for approval from {user.email}. The link works for an hour.
-										</Trans>
-									) : (
-										<Trans>
-											Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour.
-										</Trans>
-									)}{" "}
-									<button
-										type="button"
-										className="underline underline-offset-2"
-										onClick={() => void resendEmailChange(pendingEmail)}
-									>
-										{/* With a verified address, asking again starts over from the approval link to it. */}
-										{user.emailVerified ? <Trans>Send the approval link again</Trans> : <Trans>Resend</Trans>}
-									</button>
-									{" · "}
-									<button type="button" className="underline underline-offset-2" onClick={() => setPendingEmail(null)}>
-										<Trans>Cancel</Trans>
-									</button>
-								</>
-							) : !smtpEnabled ? (
-								// Without email delivery neither link can arrive, so don't describe a flow that can't start.
-								<Trans>
-									This server can't send email, so the address can't be changed here. Ask the person who runs it.
-								</Trans>
-							) : // A verified address approves the change first; an unverified one confirms the new address only.
-							user.emailVerified ? (
-								<Trans>Changing it asks your current address to approve, then confirms the new one.</Trans>
-							) : (
-								<Trans>Changing it sends a confirmation to the new address.</Trans>
-							)}{" "}
-							{/* Without email delivery the hint above already says why; no verification link can be sent. */}
-							{!user.emailVerified && smtpEnabled && (
-								<button
-									type="button"
-									className="underline underline-offset-2"
-									onClick={() => void resendVerification()}
-								>
-									<Trans>Not verified yet. Resend the link</Trans>
-								</button>
+							<Badge variant="neutral">
+								<Trans>Not verified</Trans>
+							</Badge>
+							{smtpEnabled && (
+								<TextAction onClick={() => void resendVerification()}>
+									<Trans>Resend the link</Trans>
+								</TextAction>
 							)}
 						</>
-					}
-				/>
-			</div>
+					)
+				}
+				autoComplete="email"
+				validate={(value) => (emailSchema.safeParse(value).success ? null : t`Enter a valid email address.`)}
+				save={changeEmail}
+				hint={
+					// A verified address approves the change first; an unverified one confirms the new address only.
+					user.emailVerified ? (
+						<Trans>Changing it asks your current address to approve, then confirms the new one.</Trans>
+					) : (
+						<Trans>Changing it sends a confirmation to the new address.</Trans>
+					)
+				}
+				note={
+					pendingEmail && (
+						<Alert variant="info" className="block">
+							{user.emailVerified ? (
+								<Trans>
+									Change to <b className="font-semibold">{pendingEmail}</b> is waiting for approval from {user.email}.
+									The link works for an hour.
+								</Trans>
+							) : (
+								<Trans>
+									Change to <b className="font-semibold">{pendingEmail}</b> is waiting: open the link we sent there. The
+									link works for an hour.
+								</Trans>
+							)}{" "}
+							{/* With a verified address, asking again starts over from the approval link to it. */}
+							<button type="button" className={noteLink} onClick={() => void resendEmailChange(pendingEmail)}>
+								<Trans>Send it again</Trans>
+							</button>
+							{" · "}
+							<button type="button" className={noteLink} onClick={() => setPendingEmail(null)}>
+								<Trans>Cancel</Trans>
+							</button>
+						</Alert>
+					)
+				}
+			/>
 		</SettingsSection>
 	);
 }
@@ -407,13 +515,16 @@ function ProfilePhoto({ name, image, onChange }: ProfilePhotoProps) {
 	};
 
 	return (
-		<div className="flex items-center gap-3.5">
-			<Avatar className="size-14">
-				<AvatarImage src={image ?? undefined} alt="" />
-				<AvatarFallback className="bg-accent-soft text-lg font-semibold text-accent-text">
-					{getInitials(name)}
-				</AvatarFallback>
-			</Avatar>
+		<SettingsRow
+			leading={
+				<Avatar size="lg">
+					<AvatarImage src={image ?? undefined} alt="" />
+					<AvatarFallback>{getInitials(name)}</AvatarFallback>
+				</Avatar>
+			}
+			title={<Trans>Photo</Trans>}
+			description={<Trans>Shown in the app only. Each resume keeps its own picture.</Trans>}
+		>
 			<input
 				ref={input}
 				type="file"
@@ -423,14 +534,14 @@ function ProfilePhoto({ name, image, onChange }: ProfilePhotoProps) {
 				aria-hidden
 				onChange={(event) => choose(event.target.files?.[0])}
 			/>
-			<Button size="sm" variant="secondary" loading={upload.isPending} onClick={() => input.current?.click()}>
-				<Trans>Change photo</Trans>
-			</Button>
 			{image && (
-				<Button size="sm" variant="ghost" onClick={() => void onChange(null)}>
+				<TextAction onClick={() => void onChange(null)}>
 					<Trans>Remove photo</Trans>
-				</Button>
+				</TextAction>
 			)}
-		</div>
+			<TextAction loading={upload.isPending} onClick={() => input.current?.click()}>
+				<Trans>Change photo</Trans>
+			</TextAction>
+		</SettingsRow>
 	);
 }

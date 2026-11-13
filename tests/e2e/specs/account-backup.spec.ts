@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { strFromU8, unzipSync } from "fflate";
 import { Pool } from "pg";
+import { openSidebarSection } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 async function applicationReceipts(ids: string[]) {
@@ -73,10 +74,7 @@ test("account ZIP carries submission receipts, uploaded bytes and history after 
 	await expect(created).toBeOK();
 	const id = (await created.json()) as string;
 	await page.goto(`/builder/${id}`);
-	await page
-		.getByRole("region", { name: "Basics", exact: true })
-		.getByRole("button", { name: "Add", exact: true })
-		.click();
+	await openSidebarSection(page, "Basics");
 	const uploaded = page.waitForResponse((response) => response.url().includes("/api/rpc/storage/uploadFile"));
 	await page
 		.locator('input[type="file"][accept*="image"]')
@@ -108,8 +106,9 @@ test("account ZIP carries submission receipts, uploaded bytes and history after 
 	await expect(stored).toBeOK();
 	const originalBytes = new Uint8Array(await stored.body());
 	await page.goto("/dashboard/settings/account");
+	const yourData = page.getByRole("region", { name: "Your data", exact: true });
 	const download = page.waitForEvent("download");
-	await page.getByRole("button", { name: "Export", exact: true }).click();
+	await yourData.getByRole("button", { name: "Download", exact: true }).click();
 	const saved = await download;
 	const path = info.outputPath("account.zip");
 	await saved.saveAs(path);
@@ -128,10 +127,8 @@ test("account ZIP carries submission receipts, uploaded bytes and history after 
 		path: file.path,
 		bytes: originalBytes.byteLength,
 	});
-	await expect(page.getByRole("button", { name: "Export", exact: true })).toBeEnabled();
-	await page
-		.getByRole("region", { name: "Your data", exact: true })
-		.screenshot({ path: info.outputPath("your-data-section.png"), animations: "disabled" });
+	await expect(yourData.getByRole("button", { name: "Download", exact: true })).toBeEnabled();
+	await yourData.screenshot({ path: info.outputPath("your-data-section.png"), animations: "disabled" });
 	const deleted = await page.request.delete("/api/openapi/auth/account");
 	await expect(deleted).toBeOK();
 	expect((await page.request.get(file.url)).status()).toBe(404);

@@ -1,41 +1,51 @@
 import type { Kind, Lead, Schedule } from "./schedule-sheet";
+import type { ApplicationSummary } from "@/features/applications/types";
 import type { RouterOutput } from "@/libs/orpc/client";
+import type { NextStep } from "@reactive-resume/schema/applications/next-step";
 import type { IconName } from "@reactive-resume/ui/components/icon";
-import type { Ref } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { ph, plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouteContext, useRouter } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
-import { useRef, useState } from "react";
+import { useId, useState } from "react";
 import { latestOfferHints } from "@reactive-resume/schema/applications/next-step";
+import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { upcomingApplicationEvents } from "@reactive-resume/schema/applications/upcoming";
-import { interviewPreparationDue } from "@reactive-resume/schema/career-practice";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { getInitials } from "@reactive-resume/utils/string";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { getInitials, isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
-import { PrepareNow } from "./prepare-now";
+import { useApplicationsNeedingAttention } from "./needs-you";
 import { rollForward, ScheduleSheet, scheduleKind } from "./schedule-sheet";
-import { CollapseRow, Eyebrow, flash, InfoChip, Swap, useCareerTime, useNow, withQueryUndo } from "./shared";
-import { formatDuration, interviewKindOf } from "@/features/applications/interviews";
-import {
-	compareNextStepSortKeys,
-	describeNextStep,
-	getNextStep,
-	needsAttention,
-	nextStepSortKey,
-} from "@/features/applications/next-step";
-import { offerHintFor, savedOffersQueryOptions, useOfferHints } from "@/features/applications/queries";
-import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { CollapseRow, useCareerTime, useNow, withQueryUndo } from "./shared";
+import { DocumentThumb } from "@/components/calm/document-thumb";
+import { HeroCard } from "@/components/calm/hero-card";
+import { DateColumn, IconTile, List, ListRow, rowLinkClassName } from "@/components/calm/list-row";
+import { Columns } from "@/components/calm/page";
+import { SectionHeading } from "@/components/calm/section-heading";
+import { StageDot } from "@/components/calm/stage-dot";
+import { interviewCalendarAction } from "@/features/applications/calendar";
+import { interviewStepTitle } from "@/features/applications/next-step";
+import { applicationsListQueryOptions, savedOffersQueryOptions } from "@/features/applications/queries";
+import { useApplicationActions } from "@/features/applications/use-application-actions";
+import { DocumentStatusBadge } from "@/features/documents/document-status";
+import { DropToImport } from "@/features/documents/documents-page";
+import { formatEdited } from "@/features/documents/filter";
+import { useStartDocument } from "@/features/documents/use-start-document";
+import { useShortcutsPage } from "@/features/keyboard-shortcuts/store";
 import { useSaveTimezone } from "@/features/settings/use-save-timezone";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { toastError } from "@/libs/error-message";
 import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
@@ -44,16 +54,43 @@ type Opportunity = RouterOutput["career"]["opportunities"][number];
 
 type TodayPageProps = { schedule: string | undefined; onScheduleChange: (schedule: string | undefined) => void };
 
+/** Calendar days from `now` to `value` in the account's timezone: 0 today, 1 tomorrow, -1 yesterday. */
+function useDayDistance() {
+	const { timeZone } = useCareerTime();
+	// en-CA writes the calendar date as YYYY-MM-DD, which parses as that day's UTC midnight.
+	const ymd = new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" });
+	return (value: Date | string, now: Date) => {
+		const key = (date: Date | string) => Date.parse(ymd.format(new Date(date)));
+		return Math.round((key(value) - key(now)) / 86_400_000);
+	};
+}
+
+/** "today, 07:00", "yesterday, 18:02", else "Wed 4 Nov": when a schedule's result arrived. */
+function useStamp() {
+	const { time, day, locale } = useCareerTime();
+	const distance = useDayDistance();
+	return (value: Date | string, now: Date) => {
+		const days = distance(value, now);
+		if (days !== 0 && days !== -1) return day(value);
+		return `${new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(days, "day")}, ${time(value)}`;
+	};
+}
+
 /**
- * Career → Today: what needs you, roles found by discovery, the next interview and the schedules that produce them.
- * Below 1024px it's one column: Coming up, Needs you, New roles, Schedules. Phones drop Coming up: stacked above
- * Needs you it repeats the same interviews and offers.
+ * Today, the home page. Resting (T1): the next interview leads as the hero; Needs you, New roles and the last documents
+ * on the left, Coming up on the right. When schedules have produced something unread (C11), those results lead
+ * instead, with Needs you and the schedules beside them. A new account (E1) gets the first-run hero.
  */
 export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
+	useShortcutsPage(t`Today`);
 	const { session } = useRouteContext({ strict: false });
 	const now = useNow();
-	const rolesRef = useRef<HTMLElement>(null);
 	const queryClient = useQueryClient();
+	const notifications = useQuery(orpc.career.notifications.queryOptions({ input: {} }));
+	const documents = useQuery(orpc.documents.list.queryOptions({ input: { sort: "edited", limit: 2 } }));
+	const applications = useQuery(applicationsListQueryOptions());
+	const [showRead, setShowRead] = useState(false);
+	const [pending, setPending] = useState<string[]>([]);
 	// Deleted schedules stay hidden locally until the Undo toast closes; any mutation refetches every query.
 	const [deleted, setDeleted] = useState<string[]>([]);
 
@@ -69,143 +106,416 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 		});
 	};
 
-	const reviewRoles = () => {
-		const section = rolesRef.current;
-		if (!section) return;
-		for (const card of section.querySelectorAll("[data-role-card]")) flash(card);
-		// Last, so the section heading wins over each card's own scroll.
-		const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-		section.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
-	};
+	const sheet = (
+		<ScheduleSheet
+			key={session?.user.id}
+			schedule={schedule}
+			onScheduleChange={onScheduleChange}
+			onDelete={deleteSchedule}
+		/>
+	);
+
+	if (notifications.isError || documents.isError || applications.isError)
+		return (
+			<div className="pt-5">
+				<CareerLoadError
+					onRetry={() => {
+						void notifications.refetch();
+						void documents.refetch();
+						void applications.refetch();
+					}}
+				/>
+				{sheet}
+			</div>
+		);
+	if (!notifications.data || !documents.data || !applications.data)
+		return (
+			<div className="flex flex-col gap-4 pt-5">
+				<Skeleton className="h-50 rounded-xl" />
+				<Skeleton className="h-64 rounded-xl xl:me-[408px]" />
+				{sheet}
+			</div>
+		);
+
+	const isUnread = (row: Notification) => !row.readAt && !pending.includes(row.id);
+	const unread = notifications.data.filter(isUnread);
+	const results = showRead ? notifications.data.filter((row) => !pending.includes(row.id)) : unread;
+	const readCount = notifications.data.length - unread.length;
+
+	if (documents.data.length === 0 && applications.data.length === 0 && notifications.data.length === 0)
+		return (
+			<>
+				<FirstRun />
+				{sheet}
+			</>
+		);
+
+	const resultsLead = results.length > 0;
 
 	return (
-		<div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start xl:grid-cols-[minmax(0,1fr)_380px]">
-			<TimezoneNotice className="order-first lg:col-span-full" />
-			<div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-7">
-				<NeedsYou now={now} onReview={reviewRoles} className="order-2 lg:order-none" />
-				<NewRoles
-					ref={rolesRef}
-					now={now}
-					deleted={deleted}
-					onOpenSchedule={onScheduleChange}
-					className="order-3 scroll-mt-6 lg:order-none"
-				/>
-			</div>
-			{/* Starts level with the first card on the left, below the "Needs you" heading (24px line + 10px gap). */}
-			<div className="contents lg:flex lg:flex-col lg:gap-[18px] lg:pt-[34px]">
-				<ComingUp now={now} className="order-1 max-sm:hidden lg:order-none" />
-				<Schedules deleted={deleted} onOpenSchedule={onScheduleChange} className="order-4 lg:order-none" />
-			</div>
-			<ScheduleSheet
-				key={session?.user.id}
-				schedule={schedule}
-				onScheduleChange={onScheduleChange}
-				onDelete={deleteSchedule}
-			/>
-		</div>
+		<>
+			{!resultsLead && <InterviewHero now={now} />}
+			{resultsLead ? (
+				<Columns
+					className="mt-1"
+					aside={
+						<>
+							<NeedsYou now={now} compact first />
+							<SchedulesPanel deleted={deleted} onOpenSchedule={onScheduleChange} />
+						</>
+					}
+				>
+					<ScheduleResults
+						rows={results}
+						unread={unread.length}
+						readCount={readCount}
+						showRead={showRead}
+						onShowRead={setShowRead}
+						isUnread={isUnread}
+						now={now}
+						onHide={(id) => setPending((current) => [...current, id])}
+						onRestore={(id) => setPending((current) => current.filter((item) => item !== id))}
+					/>
+					<NewRoles now={now} selecting accent />
+				</Columns>
+			) : (
+				<div className="grid items-start gap-x-12 xl:grid-cols-[minmax(0,1fr)_360px]">
+					<div className="min-w-0">
+						<NeedsYou now={now} readCount={readCount} onShowRead={() => setShowRead(true)} />
+					</div>
+					<aside className="min-w-0 xl:col-start-2 xl:row-span-2 xl:row-start-1">
+						<ComingUp now={now} />
+					</aside>
+					<div className="min-w-0 xl:col-start-1">
+						<NewRoles now={now} selecting={false} accent={false} />
+						<PickUp documents={documents.data} />
+					</div>
+				</div>
+			)}
+			{sheet}
+		</>
 	);
 }
 
-/**
- * When the account's timezone isn't this device's, times here carry their zone ("16:56 UTC"); this says so once and
- * offers the device's zone in one step, as Settings → Preferences does.
- */
-function TimezoneNotice({ className }: { className?: string }) {
+/** "times in Lisbon · this device is on Berlin time · Use Berlin time": said once, under the date, when they differ. */
+export function TodayTimezoneNote() {
 	const { timeZone, deviceTimeZone } = useCareerTime();
 	const save = useSaveTimezone();
 	const [saving, setSaving] = useState(false);
 	if (!deviceTimeZone) return null;
+	const city = (zone: string) => zone.split("/").at(-1)?.replaceAll("_", " ") ?? zone;
+	const account = city(timeZone);
+	const device = city(deviceTimeZone);
 	return (
-		<p className={cn("flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink-2", className)}>
-			<Icon name="globe-simple" size={18} className="text-ink-3" />
-			<Trans>Times here are in {timeZone}, your account's timezone.</Trans>
-			<Button
-				variant="link"
-				className="h-auto p-0 text-[13px] text-ink-2 underline"
+		<>
+			{" · "}
+			<Trans>
+				times in {account} · this device is on {device} time
+			</Trans>{" "}
+			<button
+				type="button"
 				disabled={saving}
+				className="touch-target relative font-medium text-accent-text hover:underline disabled:opacity-50"
 				onClick={() => {
 					setSaving(true);
 					void save(deviceTimeZone).finally(() => setSaving(false));
 				}}
 			>
-				<Trans>Use this device's timezone ({deviceTimeZone})</Trans>
-			</Button>
-		</p>
+				<Trans>Use {device} time</Trans>
+			</button>
+		</>
 	);
 }
 
-// ---- Shared bits ----
+// ---- Hero: the next interview ----
 
-/** 0 for today, -1 for yesterday, 1 for tomorrow (in the Preferences timezone), otherwise null. */
-function useDayOffset() {
-	const { format } = useCareerTime();
-	return (value: Date | string, now: Date) => {
-		const key = (date: Date | string) => format(date, { dateStyle: "short" });
-		const day = key(value);
-		for (const offset of [0, -1, 1]) if (key(new Date(now.getTime() + offset * 86_400_000)) === day) return offset;
-		return null;
-	};
-}
+// calm: request to lead — Button size="lg" sets no line height; the boards draw its label on a 20px line.
+const LG = "leading-5";
 
-type SectionHeadingProps = { id: string; title: string; count: number | undefined; note?: string };
+function InterviewHero({ now }: { now: Date }) {
+	const { format, plainTime, locale, timeZone } = useCareerTime();
+	const distance = useDayDistance();
+	const applications = useQuery(applicationsListQueryOptions());
+	const offers = useQuery(savedOffersQueryOptions());
+	const briefings = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "briefing" } }));
+	const interviews = upcomingApplicationEvents(
+		applications.data ?? [],
+		offers.data ? latestOfferHints(offers.data) : undefined,
+		now,
+		timeZone,
+	).flatMap((event) => (event.kind === "interview" && distance(event.at, now) <= 7 ? [event] : []));
+	const ready = (id: string) => briefings.data?.some((item) => item.interviewId === id) ?? false;
+	// The interview you're ready for leads; otherwise the soonest one.
+	const next = interviews.find((event) => ready(event.interview.id)) ?? interviews[0];
+	if (!next) return null;
 
-/** "Needs you 3": 17/600 with a mono count, and an optional note on the right. */
-function SectionHeading({ id, title, count, note }: SectionHeadingProps) {
+	const { application, interview, at } = next;
+	const hasBriefing = ready(interview.id);
+	const days = distance(at, now);
+	const when = `${format(at, { weekday: "long", day: "numeric", month: "short" })}, ${plainTime(at)}`;
+	const inDays = new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(days, "day");
+	const calendar = interviewCalendarAction(application, interview, "PUBLISH", getAccountGeneration());
+	// Isolated, so a name keeps its own direction and punctuation inside a translated sentence (Arabic: "Parcel & Co.").
+	const company = isolate(application.company);
+	const kind = interviewStepTitle(interview.kind);
+
 	return (
-		<div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-			<h2 id={id} className="text-[17px] leading-6 font-semibold">
-				{title}
-			</h2>
-			{count !== undefined && <span className="font-mono text-xs font-medium text-ink-3">{i18n.number(count)}</span>}
-			{note && <span className="ms-auto text-xs text-ink-3">{note}</span>}
-		</div>
+		<HeroCard
+			className="mt-5"
+			kicker={
+				<StageDot status={application.status} className="flex w-full gap-2">
+					{t`Interview · ${when} · ${inDays}`}
+				</StageDot>
+			}
+			title={t`${kind} at ${company}`}
+			actions={
+				<>
+					<Button
+						size="lg"
+						// The actions share a line while they fit and wrap when they don't (German, M4).
+						className={LG}
+						nativeButton={false}
+						render={
+							<Link
+								to="/dashboard/applications/$applicationId/{-$tab}"
+								params={{ applicationId: application.id, tab: "prepare" }}
+								search={{ round: interview.id }}
+							/>
+						}
+					>
+						{hasBriefing ? <Trans>Open briefing</Trans> : <Trans>Prepare</Trans>}
+					</Button>
+					<Button size="lg" variant="ghost" className={LG} onClick={calendar.onClick}>
+						<Icon name="calendar-plus" />
+						<Trans>Add to calendar</Trans>
+					</Button>
+				</>
+			}
+		>
+			{hasBriefing ? (
+				<Trans>Your briefing is ready: likely questions, who you'll meet and three stories to tell.</Trans>
+			) : (
+				<Trans>Get ready in the workspace: likely questions, who you'll meet and stories to tell.</Trans>
+			)}
+		</HeroCard>
 	);
 }
 
 // ---- Needs you ----
 
-const notificationKind = (kind: Notification["notice"]["type"]): { icon: IconName; tone: string; action: string } => {
-	if (kind === "opportunities") return { icon: "globe-simple", tone: "bg-info-soft text-info-text", action: t`Review` };
-	if (kind === "followup") return { icon: "envelope", tone: "bg-warn-soft text-warn-text", action: t`Review draft` };
-	if (kind === "briefing")
-		return { icon: "clipboard-text", tone: "bg-accent-soft text-accent-text", action: t`Open briefing` };
-	return { icon: "info", tone: "bg-warn-soft text-warn-text", action: t`Open` };
+/** What the next step asks of you, in Today's words: "Reply to Parcel & Co." / "Offer · by Friday 13 Nov". */
+function useNeedLine() {
+	const { format } = useCareerTime();
+	return (application: ApplicationSummary, step: NextStep, compact: boolean) => {
+		const company = isolate(application.company);
+		const sentAt = applicationSentAt(application);
+		const sent = sentAt ? format(sentAt, { day: "numeric", month: "short" }) : null;
+		const long = (value: Date) => format(value, { weekday: "long", day: "numeric", month: "short" });
+		if (step.kind === "offer") {
+			const by = step.respondBy ? long(step.respondBy) : null;
+			return {
+				title: t`Reply to ${company}`,
+				subtitle: !by ? t`Offer` : step.overdue ? t`Offer · was due ${by}` : t`Offer · by ${by}`,
+			};
+		}
+		if (step.kind === "follow-up" || step.kind === "no-reply") {
+			const overdue = step.kind === "no-reply" || step.overdue;
+			const due = step.kind === "follow-up" ? long(step.at) : "";
+			return {
+				title: compact ? t`Follow up with ${company}` : t`Send a follow-up to ${company}`,
+				subtitle: !overdue
+					? due
+					: !sent
+						? t`Overdue`
+						: compact
+							? t`Overdue · applied ${sent}`
+							: t`Overdue · applied ${sent}, no reply yet`,
+			};
+		}
+		return { title: company, subtitle: isolate(application.role) };
+	};
+}
+
+type NeedsYouProps = {
+	now: Date;
+	compact?: boolean;
+	first?: boolean;
+	/** Resting Today with nothing owed and nothing new: the caught-up block offers the read results back. */
+	readCount?: number;
+	onShowRead?: () => void;
 };
 
-type NeedsYouProps = { now: Date; onReview: () => void; className?: string };
+/** The steps you owe on your applications: replies to offers and follow-ups. Interviews are in Coming up. */
+function NeedsYou({ now, compact = false, first = false, readCount = 0, onShowRead }: NeedsYouProps) {
+	const { attention: owed } = useApplicationsNeedingAttention(now);
+	// Offers lead: they carry a deadline the other side set. The rest keep Applications' order.
+	const attention = owed.toSorted((a, b) => Number(b.step.kind === "offer") - Number(a.step.kind === "offer"));
+	const actions = useApplicationActions();
+	const line = useNeedLine();
+	// Phones keep the whole title and its line, one caret: the row opens Messages to draft a note, and Done stays on the application's row in Applications.
+	const phone = useBreakpoint() === "mobile";
 
-function NeedsYou({ now, onReview, className }: NeedsYouProps) {
+	return (
+		<section aria-labelledby="needs-you">
+			<SectionHeading
+				id="needs-you"
+				className={first ? "pt-5" : undefined}
+				note={attention.length ? i18n.number(attention.length) : undefined}
+			>
+				<Trans>Needs you</Trans>
+			</SectionHeading>
+			{attention.length === 0 ? (
+				compact || !onShowRead ? (
+					<EmptyState variant="compact" title={<Trans>You're up to date</Trans>} />
+				) : (
+					<EmptyState
+						title={<Trans>You're up to date</Trans>}
+						description={<Trans>New roles, reminders and finished briefings appear here.</Trans>}
+						action={
+							readCount > 0 && (
+								<Button variant="ghost" onClick={onShowRead}>
+									<Trans>Show {i18n.number(readCount)} read</Trans>
+								</Button>
+							)
+						}
+					/>
+				)
+			) : (
+				<List>
+					{attention.map(({ application, step }) => {
+						const { title, subtitle } = line(application, step, compact);
+						const leading = <StageDot status={application.status}>{null}</StageDot>;
+						if (step.kind === "offer" || compact || phone)
+							return (
+								<ListRow
+									key={application.id}
+									leading={leading}
+									title={title}
+									subtitle={subtitle}
+									caret
+									render={
+										step.kind === "offer" ? (
+											<Link to="/dashboard/career/offers" />
+										) : (
+											<Link
+												to="/dashboard/applications/$applicationId/{-$tab}"
+												params={{ applicationId: application.id, tab: "messages" }}
+											/>
+										)
+									}
+								/>
+							);
+						return (
+							<ListRow key={application.id} interactive leading={leading}>
+								<span className="flex min-w-0 flex-1 flex-col gap-px">
+									<Link
+										to="/dashboard/applications/$applicationId/{-$tab}"
+										params={{ applicationId: application.id, tab: "messages" }}
+										className={cn("truncate t-row-title", rowLinkClassName)}
+									>
+										{title}
+									</Link>
+									<span className="truncate text-[13px]/[18px] text-ink-3">{subtitle}</span>
+								</span>
+								<HoverActions>
+									<Button
+										size="sm"
+										variant="ghost"
+										disabled={actions.logFollowUp.isPending}
+										onClick={() => actions.logFollowUp.mutate({ id: application.id })}
+									>
+										<Trans>Done</Trans>
+									</Button>
+									<Button
+										size="sm"
+										variant="secondary"
+										nativeButton={false}
+										render={
+											<Link
+												to="/dashboard/applications/$applicationId/{-$tab}"
+												params={{ applicationId: application.id, tab: "messages" }}
+											/>
+										}
+									>
+										<Trans>Draft a note</Trans>
+									</Button>
+								</HoverActions>
+								<RowCaret />
+							</ListRow>
+						);
+					})}
+				</List>
+			)}
+		</section>
+	);
+}
+
+/** Row controls that take the caret's place on hover and keyboard focus; touch screens always show them. */
+function HoverActions({ children }: { children: ReactNode }) {
+	return (
+		<span className="pointer-events-none relative z-10 flex shrink-0 items-center gap-3.5 opacity-0 group-focus-within/row:pointer-events-auto group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100">
+			{children}
+		</span>
+	);
+}
+
+function RowCaret() {
+	return (
+		<Icon
+			name="caret-right"
+			size={18}
+			className="pointer-events-none absolute end-0 text-ink-3 group-focus-within/row:opacity-0 group-hover/row:opacity-0 pointer-coarse:hidden"
+		/>
+	);
+}
+
+/**
+ * A list row in its own animated wrapper is that wrapper's last child, so the row's own `last:` rule would drop every
+ * hairline: the wrapper puts it back between rows and keeps it off the list's last row.
+ */
+const COLLAPSE_ROW = "-mx-3 px-3 [&:last-child>*]:border-b-0 [&:not(:last-child)>*:last-child]:border-b";
+
+// ---- From your schedules ----
+
+const resultKind = (kind: Notification["notice"]["type"]): { icon: IconName; source: string; action: string } => {
+	if (kind === "opportunities") return { icon: "globe-simple", source: t`Role discovery`, action: t`Review` };
+	if (kind === "followup") return { icon: "envelope-simple", source: t`Follow-up reminder`, action: t`Review draft` };
+	if (kind === "briefing")
+		return { icon: "clipboard-text", source: t`Interview preparation`, action: t`Open briefing` };
+	return { icon: "warning-circle", source: t`Schedules`, action: t`Open` };
+};
+
+type ScheduleResultsProps = {
+	rows: Notification[];
+	unread: number;
+	readCount: number;
+	showRead: boolean;
+	onShowRead: (show: boolean) => void;
+	isUnread: (row: Notification) => boolean;
+	now: Date;
+	onHide: (id: string) => void;
+	onRestore: (id: string) => void;
+};
+
+/** Each finished run is one row: what it made, which schedule and when, and one way in. The tick marks it read. */
+function ScheduleResults({
+	rows,
+	unread,
+	readCount,
+	showRead,
+	onShowRead,
+	isUnread,
+	now,
+	onHide,
+	onRestore,
+}: ScheduleResultsProps) {
 	const queryClient = useQueryClient();
 	const router = useRouter();
-	const { time, when, locale, timeZone } = useCareerTime();
-	const dayOffset = useDayOffset();
+	const stamp = useStamp();
 	const queryKey = orpc.career.notifications.queryKey({ input: {} });
-	const { data, isError, refetch } = useQuery(orpc.career.notifications.queryOptions({ input: {} }));
-	const applicationQuery = useQuery(applicationsListQueryOptions());
-	const applications = applicationQuery.data;
-	const hints = useOfferHints();
-	const [showRead, setShowRead] = useState(false);
-	const [pending, setPending] = useState<string[]>([]);
-	const setReadAt = (id: string, readAt: Date | null) =>
-		queryClient.setQueryData(queryKey, (current) => current?.map((row) => (row.id === id ? { ...row, readAt } : row)));
 
-	const isUnread = (row: Notification) => !row.readAt && !pending.includes(row.id);
-	const unread = data?.filter(isUnread) ?? [];
-	const read = data?.filter((row) => !isUnread(row)) ?? [];
-	const rows = showRead ? (data ?? []).filter((row) => !pending.includes(row.id)) : unread;
-	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
-	const attention = (applications ?? [])
-		.flatMap((application) => {
-			const step = getNextStep(application, now, timeZone, offerHintFor(hints, application.id));
-			return needsAttention(step, now)
-				? [{ application, step, key: nextStepSortKey(application, now, timeZone, offerHintFor(hints, application.id)) }]
-				: [];
-		})
-		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.application.id, b.application.id));
-
-	// Hidden at once; the server hears about it when the toast closes. The cache edit drops the sidebar count too,
-	// while `pending` keeps the row hidden through any refetch.
-	const dismiss = (row: Notification) => {
+	// Hidden at once; the server hears about it when the toast closes.
+	const markRead = (row: Notification) => {
 		withQueryUndo({
 			queryClient,
 			queryKey: orpc.career.notifications.key(),
@@ -213,317 +523,172 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 			errorMessage: t`Couldn't mark this as read. Try again.`,
 			prepare: () => prepareRpc(client.career.markNotificationRead, { id: row.id }),
 			hide: () => {
-				setPending((current) => [...current, row.id]);
-				setReadAt(row.id, new Date());
+				onHide(row.id);
+				queryClient.setQueryData(queryKey, (current) =>
+					current?.map((item) => (item.id === row.id ? { ...item, readAt: new Date() } : item)),
+				);
 			},
-			restore: () => setPending((current) => current.filter((id) => id !== row.id)),
+			restore: () => onRestore(row.id),
 		});
 	};
 
-	// One lookup table and one formatter per render, not a scan and a constructor per row.
-	const companies = new Map(applications?.map((application) => [application.id, application.company]));
-	const relativeDay = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
-	const meta = (row: Notification) => {
-		const source =
-			row.notice.type === "opportunities"
-				? t`Opportunity discovery`
-				: row.notice.type === "briefing"
-					? t`Interview preparation`
-					: row.applicationId
-						? companies.get(row.applicationId)
-						: undefined;
-		const offset = dayOffset(row.createdAt, now);
-		const stamp =
-			offset === null ? when(row.createdAt) : `${relativeDay.format(offset, "day")}, ${time(row.createdAt)}`;
-		return [source, stamp].filter(Boolean).join(" · ");
+	// Written here, not taken from the server's English title and body, so they follow the interface language.
+	const title = (row: Notification) => {
+		const notice = row.notice;
+		if (notice.type === "opportunities")
+			return plural(notice.count, { one: "# new role found", other: "# new roles found" });
+		if (notice.type === "briefing") return t`Briefing ready for ${isolate(notice.company)}`;
+		if (notice.type === "followup") return t`Time to follow up with ${isolate(notice.company)}`;
+		return row.title;
 	};
-
-	const act = (row: Notification) => {
-		if (row.notice.type === "opportunities") onReview();
-		else if (row.url) router.history.push(row.url);
+	const detail = (row: Notification) => {
+		const notice = row.notice;
+		if (notice.type === "opportunities") return t`for “${notice.query}”`;
+		if (notice.type === "followup") return notice.note ? `“${notice.note}”` : null;
+		if (notice.type === "briefing") return notice.role;
+		return row.body || null;
+	};
+	const open = (row: Notification) => {
+		if (row.notice.type === "opportunities")
+			return document.getElementById("new-roles")?.scrollIntoView({ block: "start", behavior: "smooth" });
+		if (row.url) router.history.push(row.url);
 	};
 
 	return (
-		<section aria-labelledby="needs-you" className={cn("flex flex-col gap-2.5", className)}>
+		<section aria-labelledby="from-schedules">
 			<SectionHeading
-				id="needs-you"
-				title={t`Needs you`}
-				count={data && applications ? unread.length + attention.length : undefined}
-			/>
-			{isError || applicationQuery.isError ? (
-				<CareerLoadError
-					onRetry={() => {
-						void refetch();
-						void applicationQuery.refetch();
-					}}
-				/>
-			) : !data || !applications ? (
-				<Skeleton className="h-40 rounded-xl" />
-			) : (
-				<Swap id={rows.length + attention.length > 0 ? "list" : "empty"}>
-					{rows.length + attention.length > 0 ? (
-						<div role="list" className="overflow-hidden rounded-xl border border-line bg-surface">
-							<AnimatePresence initial={false}>
-								{rows.map((row) => {
-									const kind = notificationKind(row.notice.type);
-									// Only in-app paths: notifications link into the app, never elsewhere.
-									const actionable = row.notice.type === "opportunities" || /^\/(?!\/)/.test(row.url ?? "");
-									return (
-										<CollapseRow key={row.id} role="listitem" className="border-t border-line first:border-t-0">
-											<div
-												role="group"
-												aria-labelledby={`note-${row.id}`}
-												// Off-screen rows skip layout and paint; they stay findable and readable.
-												className="flex items-start gap-3.5 px-4 py-3.5 [contain-intrinsic-size:auto_96px] [content-visibility:auto]"
-											>
-												<span
-													aria-hidden="true"
-													className={cn("grid size-[34px] shrink-0 place-items-center rounded-lg", kind.tone)}
-												>
-													<Icon name={kind.icon} size={20} />
-												</span>
-												<div className="flex min-w-0 flex-1 flex-wrap items-start gap-x-3 gap-y-2">
-													<div className="grid min-w-0 flex-1 basis-56 gap-0.5">
-														<p id={`note-${row.id}`} className="text-sm leading-5 font-semibold">
-															{row.title}
-														</p>
-														<p className="text-[13px] leading-[19px] text-ink-2">{row.body}</p>
-														<p className="mt-0.5 text-xs text-ink-3">{meta(row)}</p>
-													</div>
-													{actionable && (
-														<Button variant="secondary" className="h-8 px-3 text-[13px]" onClick={() => act(row)}>
-															{kind.action}
-														</Button>
-													)}
-												</div>
-												{isUnread(row) && (
-													<IconButton
-														icon="check"
-														label={t`Mark as read`}
-														size="icon-sm"
-														iconSize={20}
-														className="text-ink-2"
-														onClick={() => dismiss(row)}
-													/>
-												)}
-											</div>
-										</CollapseRow>
-									);
-								})}
-								{attention.map(({ application, step }) => {
-									const text = describeNextStep(step, application, locale, timeZone);
-									return (
-										<CollapseRow
-											key={`application-${application.id}`}
-											role="listitem"
-											className="border-t border-line first:border-t-0"
-										>
-											<div
-												role="group"
-												aria-labelledby={`attention-${application.id}`}
-												className="flex items-start gap-3.5 px-4 py-3.5 [contain-intrinsic-size:auto_96px] [content-visibility:auto]"
-											>
-												<span
-													aria-hidden="true"
-													className={cn(
-														"grid size-[34px] shrink-0 place-items-center rounded-lg",
-														text.tone === "warn" ? "bg-warn-soft text-warn-text" : "bg-accent-soft text-accent-text",
-													)}
-												>
-													<Icon name={text.icon} size={20} />
-												</span>
-												<div className="flex min-w-0 flex-1 flex-wrap items-start gap-x-3 gap-y-2">
-													<div className="grid min-w-0 flex-1 basis-56 gap-0.5">
-														<p id={`attention-${application.id}`} className="text-sm leading-5 font-semibold">
-															{text.title}
-														</p>
-														{text.sub && <p className="text-[13px] leading-[19px] text-ink-2">{text.sub}</p>}
-														<p className="mt-0.5 text-xs text-ink-3">
-															{application.company} · {application.role}
-														</p>
-													</div>
-													<Button
-														variant="secondary"
-														nativeButton={false}
-														className="h-8 px-3 text-[13px]"
-														render={
-															<Link
-																to="/dashboard/applications/$applicationId/{-$tab}"
-																params={{
-																	applicationId: application.id,
-																	tab: step.kind === "interview" ? "prepare" : "messages",
-																}}
-															/>
-														}
-													>
-														<Trans>Open workspace</Trans>
-													</Button>
-												</div>
-											</div>
-										</CollapseRow>
-									);
-								})}
-							</AnimatePresence>
-						</div>
-					) : data?.length === 0 && applications?.length === 0 ? (
-						// A new account: what Career is for, and the first three things to do.
-						<EmptyState
-							title={<Trans>Your job search starts here</Trans>}
-							description={
-								<Trans>
-									Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and
-									finished briefings appear here.
-								</Trans>
-							}
-							action={
-								<Button nativeButton={false} render={<Link to="/dashboard/career/knowledge/preferences" />}>
-									<Trans>Set your preferences</Trans>
-								</Button>
-							}
-							secondary={
-								<span className="flex flex-wrap justify-center gap-2">
-									<Button
-										variant="secondary"
-										nativeButton={false}
-										render={<Link to="/dashboard/career/knowledge/facts" />}
-									>
-										<Trans>Add facts</Trans>
-									</Button>
-									<Button
-										variant="secondary"
-										nativeButton={false}
-										render={
-											<Link to="/dashboard/career/coach/{-$conversationId}" params={{ conversationId: undefined }} />
-										}
-									>
-										<Trans>Ask the coach</Trans>
-									</Button>
-								</span>
-							}
-						/>
-					) : (
-						<EmptyState
-							title={<Trans>You're up to date</Trans>}
-							description={<Trans>New roles, reminders and finished briefings appear here.</Trans>}
-							secondary={
-								read.length > 0 ? (
-									<Button
-										variant="ghost"
-										size="sm"
-										className="text-ink-2 underline underline-offset-3"
-										onClick={() => setShowRead(true)}
-									>
-										<Trans>Show {i18n.number(read.length)} read</Trans>
-									</Button>
-								) : undefined
-							}
-						/>
-					)}
-				</Swap>
-			)}
+				id="from-schedules"
+				className="pt-5"
+				note={unread ? t`${i18n.number(unread)} new` : undefined}
+				action={
+					readCount > 0 && (
+						<button type="button" className="hover:underline" onClick={() => onShowRead(!showRead)}>
+							{showRead ? <Trans>Hide read</Trans> : <Trans>Show {i18n.number(readCount)} read</Trans>}
+						</button>
+					)
+				}
+			>
+				<Trans>From your schedules</Trans>
+			</SectionHeading>
+			<List>
+				<AnimatePresence initial={false}>
+					{rows.map((row) => {
+						const kind = resultKind(row.notice.type);
+						// Only in-app paths: notifications link into the app, never elsewhere.
+						const actionable = row.notice.type === "opportunities" || /^\/(?!\/)/.test(row.url ?? "");
+						return (
+							<CollapseRow key={row.id} className={COLLAPSE_ROW}>
+								<ListRow
+									leading={
+										<IconTile className="bg-hover">
+											<Icon name={kind.icon} size={20} />
+										</IconTile>
+									}
+									title={title(row)}
+									subtitle={[kind.source, stamp(row.createdAt, now), detail(row)].filter(Boolean).join(" · ")}
+									variant={isUnread(row) ? "default" : "dim"}
+									trailing={
+										<span className="flex items-center gap-3.5">
+											{actionable && (
+												<Button size="sm" variant="secondary" onClick={() => open(row)}>
+													{kind.action}
+												</Button>
+											)}
+											{isUnread(row) && (
+												<IconButton
+													icon="check"
+													label={t`Mark as read`}
+													size="icon-sm"
+													variant="ghost"
+													className="text-ink-2"
+													onClick={() => markRead(row)}
+												/>
+											)}
+										</span>
+									}
+								/>
+							</CollapseRow>
+						);
+					})}
+				</AnimatePresence>
+			</List>
 		</section>
 	);
 }
 
 // ---- New roles ----
 
-type Tracked = Record<string, { applicationId: string; undoable: boolean }>;
+/** "MF" for Marlow & Finch: letters only, two at most. */
+const initialsOf = (name: string) => getInitials(name.replace(/[^\p{L}\p{N}\s]/gu, " ").trim() || name).slice(0, 2);
+
+const companyOf = (row: Opportunity) => row.company || new URL(row.url).hostname.replace(/^www\./, "");
 
 type NewRolesProps = {
-	ref: Ref<HTMLElement>;
 	now: Date;
-	deleted: string[];
-	onOpenSchedule: (schedule: string) => void;
-	className?: string;
+	/** Every role, with a checkbox each: after the morning runs. Resting Today shows two. */
+	selecting: boolean;
+	/** No hero above: the selection's Track is the page's accent. */
+	accent: boolean;
 };
 
-function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProps) {
+function NewRoles({ now, selecting: selectingByDefault, accent }: NewRolesProps) {
 	const queryClient = useQueryClient();
-	const { time, day } = useCareerTime();
-	const dayOffset = useDayOffset();
+	const { time } = useCareerTime();
+	const distance = useDayDistance();
 	const { data: rows, isError, refetch } = useQuery(orpc.career.opportunities.queryOptions({ input: {} }));
-	const scheduleQuery = useQuery(orpc.career.schedules.queryOptions({ input: {} }));
-	const schedules = scheduleQuery.data;
+	const schedules = useQuery(orpc.career.schedules.queryOptions({ input: {} }));
 	const [hidden, setHidden] = useState<string[]>([]);
-	const [tracked, setTracked] = useState<Tracked>({});
 	const [expanded, setExpanded] = useState(false);
+	const [open, setOpen] = useState<string | null>(null);
 	const [selected, setSelected] = useState<string[]>([]);
 	const [bulkPending, setBulkPending] = useState(false);
-	const [bulkStatus, setBulkStatus] = useState("");
+	const allId = useId();
+	const selecting = selectingByDefault || expanded;
 	const invalidateRoles = () => queryClient.invalidateQueries({ queryKey: orpc.career.opportunities.key() });
-	// Callbacks live on the hooks, not on mutate(), so each of several quick calls gets its own.
+
+	const untrack = useMutation({
+		...orpc.applications.delete.mutationOptions(),
+		onSuccess: () => invalidateRoles(),
+		onError: (error) =>
+			toastError(error, t`Couldn't remove it from Applications. Try again.`, { allowServerMessage: true }),
+	});
+	// Callbacks live on the hook, not on mutate(), so each of several quick calls gets its own.
 	const track = useMutation({
 		...orpc.career.trackOpportunity.mutationOptions(),
 		onSuccess: ({ applicationId }, { id }) => {
-			setTracked((current) => ({ ...current, [id]: { applicationId, undoable: true } }));
-			window.setTimeout(
-				() =>
-					setTracked((current) => {
-						const entry = current[id];
-						return entry ? { ...current, [id]: { ...entry, undoable: false } } : current;
-					}),
-				10_000,
-			);
-			// Every mutation refetches all queries (MutationCache), so the sidebar's Applications count updates.
 			const row = rows?.find((item) => item.id === id);
-			toast.add({ description: row ? t`Saved ${companyOf(row)} to Applications` : t`Saved to Applications` });
+			toast.add({
+				description: row ? t`Saved ${isolate(companyOf(row))} to Applications` : t`Saved to Applications`,
+				actionProps: { children: t`Undo`, onClick: () => untrack.mutate({ id: applicationId }) },
+			});
 		},
 		onError: (error) =>
 			toastError(error, t`Couldn't save this role to Applications. Try again.`, { allowServerMessage: true }),
 	});
-	const untrack = useMutation({
-		...orpc.applications.delete.mutationOptions(),
-		onSuccess: async (_data, { id: applicationId }) => {
-			// The role is back once the list knows it's untracked; dropping it from `tracked` first would flicker.
-			await invalidateRoles();
-			setTracked((current) =>
-				Object.fromEntries(Object.entries(current).filter(([, entry]) => entry.applicationId !== applicationId)),
-			);
-		},
-		onError: (error) =>
-			toastError(error, t`Couldn't remove it from Applications. Try again.`, { allowServerMessage: true }),
-	});
 
-	const visible = (rows ?? [])
-		.filter((row) => !hidden.includes(row.id) && (!row.trackedApplicationId || tracked[row.id]))
-		.sort(
-			(a, b) =>
-				b.matches.length - a.matches.length || new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime(),
+	if (isError || schedules.isError)
+		return (
+			<section aria-labelledby="new-roles">
+				<SectionHeading id="new-roles">
+					<Trans>New roles</Trans>
+				</SectionHeading>
+				<CareerLoadError
+					onRetry={() => {
+						void refetch();
+						void schedules.refetch();
+					}}
+				/>
+			</section>
 		);
-	const shown = expanded ? visible : visible.slice(0, 5);
-	const discovery =
-		schedules?.filter((schedule) => schedule.kind === "discovery" && !deleted.includes(schedule.id)) ?? [];
-	const active = discovery.find((schedule) => schedule.enabled) ?? discovery[0];
+	if (!rows || !schedules.data) return <Skeleton className="mt-8 h-40 rounded-xl" />;
 
-	const selectable = visible.filter((row) => !row.trackedApplicationId && !tracked[row.id]);
-	const selection = selected.filter((id) => selectable.some((row) => row.id === id));
-	const bulk = async (kind: "track" | "dismiss") => {
-		if (bulkPending || !selection.length) return;
-		setBulkPending(true);
-		const failed: string[] = [];
-		// Each write takes the owner's mutex; send one at a time instead of flooding the server's queue.
-		for (const id of selection) {
-			try {
-				if (kind === "track") await client.career.trackOpportunity({ id });
-				else await client.career.dismissOpportunity({ id });
-			} catch {
-				failed.push(id);
-			}
-		}
-		const done = selection.filter((id) => !failed.includes(id));
-		setHidden((current) => [...new Set([...current, ...done])]);
-		setSelected(failed);
-		setBulkStatus(
-			failed.length
-				? t`${i18n.number(done.length)} updated; ${i18n.number(failed.length)} failed. Failed roles remain selected. Refresh or retry.`
-				: plural(done.length, { one: "# role updated.", other: "# roles updated." }),
-		);
-		await Promise.all([invalidateRoles(), queryClient.invalidateQueries({ queryKey: orpc.applications.key() })]);
-		setBulkPending(false);
-	};
-
-	const onTrack = (row: Opportunity) => track.mutate({ id: row.id });
-	const onUndoTrack = (applicationId: string) => untrack.mutate({ id: applicationId });
+	const visible = rows
+		.filter((row) => !hidden.includes(row.id) && !row.trackedApplicationId)
+		.sort((a, b) => new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime() || a.id.localeCompare(b.id));
+	const shown = selecting ? visible : visible.slice(0, 2);
+	const discovery = schedules.data.find((row) => row.kind === "discovery" && row.enabled);
+	const today = visible.filter((row) => distance(row.firstSeenAt, now) === 0).length;
+	const selection = selected.filter((id) => visible.some((row) => row.id === id));
 
 	const onDismiss = (row: Opportunity) => {
 		withQueryUndo({
@@ -537,411 +702,411 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 		});
 	};
 
-	const emptyLine = () => {
-		if (!active) return null;
-		if (!active.enabled)
-			return (
-				<p className="flex flex-wrap items-center gap-x-1 px-0.5 py-1.5 text-[13px] text-ink-3">
-					<Trans>No new roles. Discovery is paused.</Trans>
-					<Button
-						variant="link"
-						className="text-[13px] text-ink-2 underline underline-offset-3"
-						onClick={() => onOpenSchedule(active.id)}
-					>
-						<Trans>Open the schedule</Trans>
-					</Button>
-				</p>
-			);
-		const offset = dayOffset(active.nextRunAt, now);
-		const clock = time(active.nextRunAt);
-		return (
-			<p className="px-0.5 py-1.5 text-[13px] text-ink-3">
-				{offset === 0
-					? t`No new roles. Discovery runs again today at ${clock}.`
-					: offset === 1
-						? t`No new roles. Discovery runs again tomorrow at ${clock}.`
-						: t`No new roles. Discovery runs again on ${day(active.nextRunAt)} at ${clock}.`}
-			</p>
-		);
+	const bulk = async (kind: "track" | "dismiss") => {
+		if (bulkPending || !selection.length) return;
+		setBulkPending(true);
+		const failed: string[] = [];
+		// Each write takes the owner's mutex; send one at a time instead of flooding the server's queue.
+		for (const id of selection) {
+			try {
+				if (kind === "track") await client.career.trackOpportunity({ id });
+				else await client.career.dismissOpportunity({ id });
+			} catch {
+				failed.push(id);
+			}
+		}
+		const done = selection.length - failed.length;
+		setHidden((current) => [...new Set([...current, ...selection.filter((id) => !failed.includes(id))])]);
+		setSelected(failed);
+		if (failed.length)
+			toast.add({
+				type: "error",
+				description: t`${i18n.number(done)} updated; ${i18n.number(failed.length)} failed. The failed roles stay selected.`,
+			});
+		else
+			toast.add({
+				description:
+					kind === "track"
+						? plural(done, { one: "# role saved to Applications", other: "# roles saved to Applications" })
+						: plural(done, { one: "# role hidden", other: "# roles hidden" }),
+			});
+		await Promise.all([invalidateRoles(), queryClient.invalidateQueries({ queryKey: orpc.applications.key() })]);
+		setBulkPending(false);
 	};
 
+	const clock = discovery ? time(discovery.nextRunAt) : "";
+	const daily = discovery && (discovery.intervalDays ?? 1) === 1;
+	// No zero count: without roles found today the note only says when discovery runs.
+	const note =
+		today === 0
+			? daily && !selecting
+				? t`Role discovery runs daily at ${clock}`
+				: undefined
+			: selecting
+				? t`${i18n.number(today)} found today`
+				: daily
+					? t`${i18n.number(today)} today · role discovery runs daily at ${clock}`
+					: t`${i18n.number(today)} today`;
+	const all = visible.length > 0 && selection.length === visible.length;
+
 	return (
-		<section ref={ref} aria-labelledby="new-roles" className={cn("flex flex-col gap-2.5", className)}>
+		<section id="new-roles" aria-labelledby="new-roles-title" className="scroll-mt-6">
 			<SectionHeading
-				id="new-roles"
-				title={t`New roles from your search`}
-				count={rows ? visible.filter((row) => !tracked[row.id]).length : undefined}
-				note={t`Nothing is applied for or created until you choose.`}
-			/>
-			{isError || scheduleQuery.isError ? (
-				<CareerLoadError
-					onRetry={() => {
-						void refetch();
-						void scheduleQuery.refetch();
-					}}
-				/>
-			) : !rows || !schedules ? (
-				<Skeleton className="h-52 rounded-xl" />
-			) : visible.length === 0 ? (
-				active ? (
-					emptyLine()
-				) : (
-					<div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-line-2 px-4 py-3.5">
-						<p className="text-sm text-ink-2">
+				id="new-roles-title"
+				className={selecting && selection.length ? "items-center" : undefined}
+				note={visible.length ? note : undefined}
+				action={
+					selecting && selection.length > 0 ? (
+						<span className="flex items-center gap-1.5 font-normal">
+							<span className="me-1.5 text-[13px]/[18px] font-medium text-ink-2">
+								{t`${i18n.number(selection.length)} selected`}
+							</span>
+							<Button size="sm" variant="ghost" disabled={bulkPending} onClick={() => void bulk("dismiss")}>
+								<Trans>Not for me</Trans>
+							</Button>
+							<Button
+								size="sm"
+								variant={accent ? "primary" : "secondary"}
+								loading={bulkPending}
+								onClick={() => void bulk("track")}
+							>
+								<Icon name="bookmark-simple" />
+								<Trans>Track {i18n.number(selection.length)}</Trans>
+							</Button>
+						</span>
+					) : !selecting && visible.length > shown.length ? (
+						<button type="button" className="hover:underline" onClick={() => setExpanded(true)}>
+							<Trans>See all</Trans>
+						</button>
+					) : undefined
+				}
+			>
+				<Trans>New roles</Trans>
+			</SectionHeading>
+			{visible.length === 0 ? (
+				<EmptyState
+					variant="compact"
+					title={
+						discovery ? (
+							<Trans>No new roles. Role discovery runs again at {clock}.</Trans>
+						) : (
 							<Trans>Get new roles here every morning</Trans>
-						</p>
-						<Button
-							variant="secondary"
-							className="h-8 px-3 text-[13px]"
-							onClick={() => onOpenSchedule("new:discovery")}
-						>
-							<Icon name="globe-simple" size={18} />
-							<Trans>Set up discovery</Trans>
-						</Button>
-					</div>
-				)
+						)
+					}
+				/>
 			) : (
-				<div>
-					<div className="mb-3 flex flex-wrap items-center gap-2">
-						<Button
-							variant="ghost"
-							disabled={bulkPending || track.isPending}
-							onClick={() => setSelected(selection.length === selectable.length ? [] : selectable.map((row) => row.id))}
-						>
-							<Trans>Select all roles</Trans>
-						</Button>
-						<span className="text-xs">{t`${i18n.number(selection.length)} selected`}</span>
-						<Button
-							variant="secondary"
-							disabled={!selection.length || bulkPending || track.isPending}
-							onClick={() => void bulk("track")}
-						>
-							<Trans>Track selected</Trans>
-						</Button>
-						<Button
-							variant="ghost"
-							disabled={!selection.length || bulkPending || track.isPending}
-							onClick={() => void bulk("dismiss")}
-						>
-							<Trans>Dismiss selected</Trans>
-						</Button>
-					</div>
-					<AnimatePresence initial={false}>
-						{shown.map((row) => {
-							const offset = dayOffset(row.firstSeenAt, now);
-							return (
-								<CollapseRow key={row.id} className="pb-3">
-									<RoleCard
+				<>
+					{selecting && (
+						<div className="flex items-center gap-3.5 pb-1.5 text-[13px]/[18px] text-ink-3">
+							<span className="flex items-center gap-2.5">
+								<Checkbox
+									id={allId}
+									checked={all}
+									indeterminate={selection.length > 0 && !all}
+									disabled={bulkPending}
+									onCheckedChange={() => setSelected(all ? [] : visible.map((row) => row.id))}
+								/>
+								<label htmlFor={allId}>
+									<Trans>Select all roles</Trans>
+								</label>
+							</span>
+							<span className="ms-auto">
+								<Trans>Nothing is applied for or created until you choose.</Trans>
+							</span>
+						</div>
+					)}
+					<List>
+						<AnimatePresence initial={false}>
+							{shown.map((row) => (
+								<CollapseRow key={row.id} className={COLLAPSE_ROW}>
+									<RoleRow
 										row={row}
-										found={
-											offset === 0
-												? t`Found today`
-												: offset === -1
-													? t`Found yesterday`
-													: t`Found ${day(row.firstSeenAt)}`
-										}
-										tracked={tracked[row.id]}
-										pending={(track.isPending && track.variables?.id === row.id) || bulkPending}
+										now={now}
+										selecting={selecting}
 										selected={selection.includes(row.id)}
+										open={open === row.id}
+										pending={(track.isPending && track.variables?.id === row.id) || bulkPending}
+										onOpen={() => setOpen((current) => (current === row.id ? null : row.id))}
 										onSelect={() =>
 											setSelected((current) =>
 												current.includes(row.id) ? current.filter((id) => id !== row.id) : [...current, row.id],
 											)
 										}
-										onTrack={onTrack}
-										onUndo={onUndoTrack}
-										onDismiss={onDismiss}
+										onTrack={() => track.mutate({ id: row.id })}
+										onDismiss={() => onDismiss(row)}
 									/>
 								</CollapseRow>
-							);
-						})}
-					</AnimatePresence>
-					{visible.length > shown.length && (
-						<Button variant="ghost" size="sm" className="text-ink-2" onClick={() => setExpanded(true)}>
-							<Trans>Show {i18n.number(visible.length - shown.length)} more</Trans>
-						</Button>
-					)}
-				</div>
-			)}
-			{bulkStatus && (
-				<p role="status" className="text-sm">
-					{bulkStatus}
-				</p>
+							))}
+						</AnimatePresence>
+					</List>
+				</>
 			)}
 		</section>
 	);
 }
 
-type RoleCardProps = {
+type RoleRowProps = {
 	row: Opportunity;
+	now: Date;
+	selecting: boolean;
 	selected: boolean;
-	onSelect: () => void;
-	found: string;
-	tracked: Tracked[string] | undefined;
+	open: boolean;
 	pending: boolean;
-	onTrack: (row: Opportunity) => void;
-	onUndo: (applicationId: string) => void;
-	onDismiss: (row: Opportunity) => void;
+	onOpen: () => void;
+	onSelect: () => void;
+	onTrack: () => void;
+	onDismiss: () => void;
 };
 
-const companyOf = (row: Opportunity) => row.company || new URL(row.url).hostname.replace(/^www\./, "");
-
-function RoleCard({ row, found, tracked, pending, selected, onSelect, onTrack, onUndo, onDismiss }: RoleCardProps) {
-	const { matches, unknowns } = row;
-	const { when } = useCareerTime();
+/** A role as one row; its detail (how it was found, what a match means) opens under it, one at a time. */
+function RoleRow({ row, now, selecting, selected, open, pending, onOpen, onSelect, onTrack, onDismiss }: RoleRowProps) {
+	const stamp = useStamp();
 	const company = companyOf(row);
-	const unknownLabels = { salary: t`Salary not detected`, office: t`Workplace arrangement unknown` };
+	const why = row.matches.length
+		? t`matches ${row.matches.join(", ")}`
+		: row.unknowns.includes("salary")
+			? t`salary not listed`
+			: row.unknowns.includes("office")
+				? t`workplace not stated`
+				: t`no preference phrase matches`;
+	const host = new URL(row.url).hostname.replace(/^www\./, "");
+	const detailId = `role-detail-${row.id}`;
+
 	return (
-		<article
-			data-role-card
-			aria-labelledby={`role-${row.id}`}
-			className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4"
-		>
-			{!tracked && (
-				<label className="flex items-center gap-2 text-xs">
-					<input type="checkbox" checked={selected} disabled={pending} onChange={onSelect} />
-					{t`Select ${row.role}`}
-				</label>
-			)}
-			<div className="flex items-start gap-3">
-				<span
-					aria-hidden="true"
-					className="grid size-9 shrink-0 place-items-center rounded-lg bg-sunken text-sm font-semibold text-ink-2"
-				>
-					{getInitials(company).slice(0, 1)}
-				</span>
-				<div className="grid min-w-0 gap-0.5">
-					<h3 id={`role-${row.id}`} className="text-[15px] font-semibold">
+		<>
+			<ListRow
+				interactive
+				selected={selected}
+				className={cn(selecting && "min-h-[52px]", open && "border-transparent")}
+				leading={
+					<>
+						{selecting && (
+							<Checkbox
+								checked={selected}
+								disabled={pending}
+								onCheckedChange={onSelect}
+								aria-label={t`Select ${row.role}`}
+								className="relative z-10"
+							/>
+						)}
+						<IconTile
+							className={cn(
+								"group-hover/row:bg-raised",
+								selecting && "size-8 rounded-sm text-xs",
+								selected && "bg-raised",
+							)}
+						>
+							{initialsOf(company)}
+						</IconTile>
+					</>
+				}
+			>
+				<span className="flex min-w-0 flex-1 flex-col gap-px">
+					<button
+						type="button"
+						aria-expanded={open}
+						aria-controls={detailId}
+						onClick={onOpen}
+						className={cn("truncate text-start t-row-title", rowLinkClassName)}
+					>
 						{row.role}
-					</h3>
-					<p className="text-[13px] text-ink-3">{[company, row.location, found].filter(Boolean).join(" · ")}</p>
-				</div>
-			</div>
-			{row.snippet && <p className="text-sm leading-[21px] text-ink-2">{row.snippet}</p>}
-			<p className="text-xs text-ink-3">
-				{t`Source: ${new URL(row.url).hostname}`} · {t`Last seen in search: ${when(row.lastSeenAt)}`}
-			</p>
-			<p className="text-xs text-ink-3">
-				{row.discoverySource
-					? t`Found for “${row.discoverySource.query}”. Posting checked ${when(row.discoverySource.checkedAt)}.`
-					: t`Earlier discovery result. Search query and posting check time unknown.`}
-			</p>
-			<p className="text-xs text-ink-3">
-				<Trans>Postings can change or close. Publication date unknown; search coverage is incomplete.</Trans>
-			</p>
-			<p className="text-xs text-ink-2">
-				{matches.length
-					? t`Preference phrase matches: ${matches.join(" · ")}`
-					: t`No current target-role or location phrase matches.`}
-			</p>
-			<p className="text-xs text-ink-3">{t`Keyword overlap: ${(row.keywordOverlap ?? []).join(" · ") || t`None`}`}</p>
-			<p className="text-xs text-ink-3">
-				<Trans>
-					Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not
-					been assessed. Track, then open Fit for an optional assessment.
-				</Trans>
-			</p>
-			{matches.length + unknowns.length > 0 && (
-				<div className="flex flex-wrap gap-1.5">
-					{matches.map((match) => (
-						<InfoChip key={match} tone="match">
-							{match}
-						</InfoChip>
-					))}
-					{unknowns.map((unknown) => (
-						<InfoChip key={unknown} tone="unknown">
-							{unknownLabels[unknown]}
-						</InfoChip>
-					))}
-				</div>
-			)}
-			<Swap id={tracked ? "tracked" : "actions"}>
-				{tracked ? (
-					<p className="flex min-h-8 items-center gap-2 text-[13px] text-accent-text">
-						<Icon name="check-circle" size={18} className="shrink-0" />
-						<span className="me-auto">
-							<Trans>Saved to Applications with the posting</Trans>
-						</span>
-						{tracked.undoable && (
-							<Button
-								variant="ghost"
-								size="sm"
-								className="text-ink-2 underline underline-offset-3"
-								onClick={() => onUndo(tracked.applicationId)}
-							>
-								<Trans>Undo</Trans>
+					</button>
+					<span className="truncate text-[13px]/[18px] text-ink-3">
+						{[isolate(company), row.location && isolate(row.location), why].filter(Boolean).join(" · ")}
+					</span>
+				</span>
+				{!selecting && (
+					<>
+						<HoverActions>
+							<Button size="sm" variant="ghost" disabled={pending} onClick={onDismiss}>
+								<Trans>Not for me</Trans>
 							</Button>
+							<Button size="sm" variant="secondary" loading={pending} onClick={onTrack}>
+								<Icon name="bookmark-simple" />
+								<Trans>Track</Trans>
+							</Button>
+						</HoverActions>
+						<RowCaret />
+					</>
+				)}
+			</ListRow>
+			{open && (
+				<div
+					id={detailId}
+					className={cn(
+						"flex flex-col gap-0.5 border-b border-line pt-0.5 pb-3 text-[13px]/[18px] text-ink-2",
+						selecting ? "ps-[76px]" : "ps-[54px]",
+					)}
+				>
+					<p>
+						{row.discoverySource ? (
+							<>
+								{t`Found for “${row.discoverySource.query}” · posting checked ${stamp(row.discoverySource.checkedAt, now)}`}
+								{" · "}
+								<span className="t-mono">{host}</span>
+							</>
+						) : (
+							<>
+								{t`Earlier discovery result · last seen ${stamp(row.lastSeenAt, now)}`}
+								{" · "}
+								<span className="t-mono">{host}</span>
+							</>
 						)}
 					</p>
-				) : (
-					<div className="flex flex-wrap items-center gap-2">
-						<Button variant="secondary" className="h-8 px-3 text-[13px]" loading={pending} onClick={() => onTrack(row)}>
-							{!pending && <Icon name="bookmark-simple" size={18} />}
-							<Trans>Track in Applications</Trans>
-						</Button>
+					<p className="text-ink-3">
+						<Trans>
+							Matches are words your preferences share with the posting, not a checked salary, workplace or eligibility.
+							Track it, then open Fit.
+						</Trans>
+					</p>
+					<div className="-ms-2.5 flex flex-wrap items-center gap-1 pt-2">
 						<Button
+							size="sm"
 							variant="ghost"
 							nativeButton={false}
-							className="h-8 px-2.5 text-[13px] text-ink-2"
 							render={<a href={row.url} target="_blank" rel="noopener noreferrer" />}
 						>
+							<Icon name="arrow-square-out" />
 							<Trans>Read posting</Trans>
-							<Icon name="arrow-square-out" size={16} />
 						</Button>
-						<Button
-							disabled={pending}
-							variant="ghost"
-							className="ms-auto h-8 px-2.5 text-[13px] text-ink-2"
-							onClick={() => onDismiss(row)}
-						>
+						<Button size="sm" variant="ghost" loading={pending} onClick={onTrack}>
+							<Icon name="bookmark-simple" />
+							<Trans>Track</Trans>
+						</Button>
+						<Button size="sm" variant="ghost" disabled={pending} onClick={onDismiss}>
 							<Trans>Not for me</Trans>
 						</Button>
 					</div>
-				)}
-			</Swap>
-		</article>
+				</div>
+			)}
+		</>
 	);
 }
 
-// ---- Rail ----
+// ---- Pick up where you left off ----
 
-type ComingUpProps = { now: Date; className?: string };
+type DocumentSummary = RouterOutput["documents"]["list"][number];
 
-/** Independent saved-item reads never block application dates; unavailable offer deadlines retain their own retry. */
-function ComingUp({ now, className }: ComingUpProps) {
-	const { format, time, when, relative, locale, timeZone } = useCareerTime();
-	const applicationQuery = useQuery(applicationsListQueryOptions());
-	const applications = applicationQuery.data;
-	const offerQuery = useQuery(savedOffersQueryOptions());
-	const briefingQuery = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "briefing" } }));
-	const briefings = briefingQuery.data;
-	if (applicationQuery.isError)
-		return (
-			<CareerLoadError
-				onRetry={() => {
-					void applicationQuery.refetch();
-					void briefingQuery.refetch();
-					void offerQuery.refetch();
-				}}
-			/>
-		);
-	if (applicationQuery.isPending) return <Skeleton className={cn("h-36 rounded-xl", className)} />;
-	const events = upcomingApplicationEvents(
-		applications ?? [],
-		offerQuery.data ? latestOfferHints(offerQuery.data) : undefined,
-		now,
-		timeZone,
-	);
-	const [next, ...later] = events.slice(0, 3);
-	const preparation = events.find((item) => item.kind === "interview" && interviewPreparationDue(item.at, now));
-	const offerError = offerQuery.isError ? <CareerLoadError onRetry={() => void offerQuery.refetch()} /> : null;
-	if (!next) return offerError;
-
-	const { application, at: start } = next;
-	const label = (item: (typeof events)[number]) =>
-		item.kind === "offer"
-			? t`Reply to the offer`
-			: item.kind === "follow-up"
-				? t`Follow-up reminder`
-				: t`${interviewKindOf(item.interview.kind)?.label ?? item.interview.kind} interview`;
-	const ready = next.kind === "interview" && briefings?.some((item) => item.interviewId === next.interview.id);
-
+function PickUp({ documents }: { documents: DocumentSummary[] }) {
+	if (documents.length === 0) return null;
 	return (
-		<section
-			aria-labelledby="coming-up"
-			className={cn("flex flex-col gap-3 rounded-xl border border-line bg-surface p-4", className)}
-		>
-			<Eyebrow>
-				<span id="coming-up">
-					<Trans>Coming up</Trans>
-				</span>
-			</Eyebrow>
-			<div className="flex items-start gap-3">
-				<span className="flex min-w-[2.75rem] shrink-0 flex-col items-center rounded-lg bg-sunken py-1.5">
-					<span className="font-mono text-xs font-medium text-ink-3">{format(start, { weekday: "short" })}</span>
-					<span className="font-display text-[22px] leading-[26px]">{format(start, { day: "numeric" })}</span>
-				</span>
-				<div className="grid min-w-0 gap-0.5">
-					<p className="flex items-center gap-1.5 text-sm font-semibold">
-						<span
-							aria-hidden="true"
-							className="size-2 shrink-0 rounded-sm"
-							style={{ backgroundColor: `var(--stage-${application.status})` }}
+		<section aria-labelledby="pick-up">
+			<SectionHeading id="pick-up">
+				<Trans>Pick up where you left off</Trans>
+			</SectionHeading>
+			<List>
+				{documents.map((document) => {
+					const edited = formatEdited(document.editedAt, i18n.locale);
+					return (
+						<ListRow
+							key={`${document.type}:${document.id}`}
+							leading={<DocumentThumb kind={document.type} />}
+							title={isolate(document.name)}
+							subtitle={document.type === "resume" ? t`Resume · edited ${edited}` : t`Cover letter · edited ${edited}`}
+							value={<DocumentStatusBadge document={document} />}
+							caret
+							render={
+								document.type === "resume" ? (
+									<Link to="/builder/$resumeId" params={{ resumeId: document.id }} />
+								) : (
+									<Link to="/builder/letter/$coverLetterId" params={{ coverLetterId: document.id }} />
+								)
+							}
 						/>
-						{label(next)}
-					</p>
-					<p className="text-[13px] text-ink-2">
-						{[
-							application.company,
-							time(start),
-							next.kind === "interview" ? formatDuration(next.interview.durationMinutes, locale) : null,
-						]
-							.filter(Boolean)
-							.join(" · ")}
-					</p>
-					{next.kind === "follow-up" && next.note && <p className="text-sm break-words text-ink-2">{next.note}</p>}
-					<p className="text-xs text-ink-3">
-						{ready ? `${relative(start, now)} · ${t`Briefing ready`}` : relative(start, now)}
-					</p>
-				</div>
-			</div>
-			<Button
-				variant="secondary"
-				nativeButton={false}
-				className="h-8 w-full text-[13px]"
-				render={
-					<Link
-						to="/dashboard/applications/$applicationId/{-$tab}"
-						params={{ applicationId: application.id, tab: next.kind === "interview" ? "prepare" : "messages" }}
-						search={next.kind === "interview" ? { round: next.interview.id } : {}}
-					/>
-				}
-			>
-				<Trans>Open workspace</Trans>
-				<Icon name="arrow-right" size={18} className="rtl:-scale-x-100" />
-			</Button>
-			{later.length > 0 && (
-				<ul className="grid gap-1 border-t border-line pt-3">
-					{later.map((item) => (
-						<li key={item.key}>
-							<Link
-								to="/dashboard/applications/$applicationId/{-$tab}"
-								params={{ applicationId: item.application.id, tab: item.kind === "interview" ? "prepare" : "messages" }}
-								search={item.kind === "interview" ? { round: item.interview.id } : {}}
-								className="grid min-h-11 min-w-0 gap-0.5 rounded-sm text-[13px] hover:underline"
-							>
-								<span className="text-ink-3">{when(item.at)}</span>
-								<span className="font-medium break-words text-ink-2">{label(item)}</span>
-								<span className="truncate text-ink-3">{item.application.company}</span>
-							</Link>
-						</li>
-					))}
-				</ul>
-			)}
-			{preparation?.kind === "interview" && (
-				<PrepareNow
-					key={preparation.key}
-					applicationId={preparation.application.id}
-					interviewId={preparation.interview.id}
-					now={now}
-				/>
-			)}
-			{offerError}
+					);
+				})}
+			</List>
 		</section>
 	);
 }
 
-type SchedulesProps = { deleted: string[]; onOpenSchedule: (schedule: string) => void; className?: string };
+// ---- Coming up ----
+
+function ComingUp({ now }: { now: Date }) {
+	const { format, plainTime, timeZone } = useCareerTime();
+	const applications = useQuery(applicationsListQueryOptions());
+	const offers = useQuery(savedOffersQueryOptions());
+	const events = upcomingApplicationEvents(
+		applications.data ?? [],
+		offers.data ? latestOfferHints(offers.data) : undefined,
+		now,
+		timeZone,
+	)
+		// Follow-ups that are due already sit in Needs you; the agenda holds calls, interviews and offer deadlines.
+		.filter((event) => event.kind !== "follow-up")
+		.slice(0, 4);
+
+	return (
+		<section aria-labelledby="coming-up">
+			<SectionHeading
+				id="coming-up"
+				action={
+					events.length > 0 && (
+						<Link to="/dashboard/applications" search={{ view: "calendar" }} className="inline-block hover:underline">
+							<Trans>Calendar</Trans>
+						</Link>
+					)
+				}
+			>
+				<Trans>Coming up</Trans>
+			</SectionHeading>
+			{events.length === 0 ? (
+				<p className="max-w-[36ch] pt-1 text-[13px]/[18px] text-ink-3">
+					<Trans>Interviews, follow-ups and offer deadlines appear here once you save a job.</Trans>
+				</p>
+			) : (
+				<List>
+					{events.map((event) => {
+						const clock = plainTime(event.at);
+						const subtitle =
+							event.kind === "interview"
+								? `${interviewStepTitle(event.interview.kind)} · ${clock}`
+								: clock === "23:59"
+									? t`Offer deadline · end of day`
+									: t`Offer deadline · ${clock}`;
+						return (
+							<ListRow
+								key={event.key}
+								// calm: request to lead — DateColumn draws the day over the label; the boards put the weekday on top.
+								leading={
+									<DateColumn
+										day={format(event.at, { day: "numeric" })}
+										label={format(event.at, { weekday: "short" })}
+									/>
+								}
+								title={isolate(event.application.company)}
+								subtitle={subtitle}
+								render={
+									event.kind === "offer" ? (
+										<Link to="/dashboard/career/offers" />
+									) : (
+										<Link
+											to="/dashboard/applications/$applicationId/{-$tab}"
+											params={{ applicationId: event.application.id, tab: "prepare" }}
+											search={{ round: event.interview.id }}
+										/>
+									)
+								}
+							/>
+						);
+					})}
+				</List>
+			)}
+		</section>
+	);
+}
+
+// ---- Schedules, beside the results ----
+
+type SchedulesPanelProps = { deleted: string[]; onOpenSchedule: (schedule: string) => void };
 
 const KIND_ORDER = ["discovery", "prepare", "follow-up"];
 
-function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
+function SchedulesPanel({ deleted, onOpenSchedule }: SchedulesPanelProps) {
 	const queryClient = useQueryClient();
 	const { day, time, when } = useCareerTime();
 	const queryKey = orpc.career.schedules.queryKey({ input: {} });
 	const { data: schedules, isError, refetch } = useQuery(orpc.career.schedules.queryOptions({ input: {} }));
-	const applicationQuery = useQuery(applicationsListQueryOptions());
-	const applications = applicationQuery.data;
 	const save = useMutation({
 		...orpc.career.saveSchedule.mutationOptions(),
 		onMutate: (input) => {
@@ -984,23 +1149,12 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 				a.id.localeCompare(b.id),
 		);
 
-	const describe = (row: Schedule) => {
-		const application = applications?.find((item) => item.id === row.applicationId);
-		if (row.kind === "discovery") return row.query;
-		if (row.kind === "follow-up")
-			return [application ? `${application.company} · ${application.role}` : "", row.query].filter(Boolean).join(" · ");
-		const interview = application?.activity.find((entry) => entry.type === "interview" && entry.id === row.interviewId);
-		const kind = interview?.type === "interview" ? (interviewKindOf(interview.kind)?.label ?? interview.kind) : null;
-		return [application?.company, kind ? t`${kind} interview` : null].filter(Boolean).join(" · ");
-	};
-
 	const status = (row: Schedule) => {
 		// A one-off's queued run goes by its outcome: still running or retrying, failed after its last try, or done.
 		if (!row.intervalDays && row.lastQueuedAt) {
 			const run = row.lastRun?.status;
 			if (run === "failed") return t`Failed · ${day(row.nextRunAt)} · open to check it`;
 			if (run === "queued" || run === "running") return t`Running · ${day(row.nextRunAt)}`;
-			// A briefing refresh belongs to one interview: once it ran, it's done for that round.
 			if (row.kind === "prepare") return t`Ran ${day(row.nextRunAt)} · done for this interview`;
 			return t`Done · ${day(row.nextRunAt)}`;
 		}
@@ -1024,9 +1178,6 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 	};
 
 	const toggle = (row: Schedule, enabled: boolean) => {
-		// A finished one-off reminder has nothing left to run: switching it on means picking a new time.
-		if (enabled && !row.intervalDays && row.lastQueuedAt && new Date(row.nextRunAt).getTime() <= Date.now())
-			return onOpenSchedule(row.id);
 		// Turning a repeating schedule back on starts from its next future run, at the same time of day.
 		const nextRunAt =
 			enabled && row.intervalDays
@@ -1049,75 +1200,168 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 	};
 
 	return (
-		<section
-			aria-labelledby="schedules"
-			className={cn("overflow-hidden rounded-xl border border-line bg-surface", className)}
-		>
-			<div className="flex items-center ps-4 pe-2.5 pt-3.5 pb-2.5">
-				<Eyebrow className="flex-1">
-					<span id="schedules">
-						<Trans>Schedules</Trans>
-					</span>
-				</Eyebrow>
-				<Button variant="ghost" size="sm" className="text-ink-2" onClick={() => onOpenSchedule("new")}>
-					<Icon name="plus" size={18} />
-					<Trans>Add</Trans>
-				</Button>
-			</div>
-			{isError || applicationQuery.isError ? (
-				<div className="border-t border-line px-4 py-3">
-					<CareerLoadError
-						onRetry={() => {
-							void refetch();
-							void applicationQuery.refetch();
-						}}
-					/>
-				</div>
+		<section aria-labelledby="schedules">
+			<SectionHeading
+				id="schedules"
+				action={
+					<Link to="/dashboard/career/schedules" className="inline-block hover:underline">
+						<Trans>Manage</Trans>
+					</Link>
+				}
+			>
+				<Trans>Schedules</Trans>
+			</SectionHeading>
+			{isError ? (
+				<CareerLoadError onRetry={() => void refetch()} />
 			) : !rows ? (
-				<Skeleton className="mx-4 mb-3 h-24" />
+				<Skeleton className="h-24" />
 			) : rows.length === 0 ? (
-				<EmptyState variant="compact" title={<Trans>Nothing scheduled yet.</Trans>} className="border-t border-line" />
+				<EmptyState variant="compact" title={<Trans>Nothing scheduled yet.</Trans>} />
 			) : (
-				<AnimatePresence initial={false}>
+				<List>
 					{rows.map((row) => {
-						const { icon, title } = scheduleKind(row.kind);
-						const done = !row.intervalDays && Boolean(row.lastQueuedAt);
-						const failed = row.lastRun?.status === "failed";
+						const { title } = scheduleKind(row.kind);
+						// A finished one-off has nothing left to run: it opens to pick a new time.
+						const finished = !row.intervalDays && Boolean(row.lastQueuedAt);
 						return (
-							<CollapseRow key={row.id} className="border-t border-line">
-								<div className="flex items-start gap-3 px-4 py-3">
-									<Icon name={icon} size={20} className="mt-px shrink-0 text-ink-2" />
-									<button
-										type="button"
-										onClick={() => onOpenSchedule(row.id)}
-										className="grid min-w-0 flex-1 gap-0.5 rounded-sm text-start"
+							<ListRow
+								key={row.id}
+								interactive
+								trailing={
+									!finished && (
+										<Switch
+											aria-label={row.enabled ? t`${title} is on` : t`${title} is off`}
+											checked={row.enabled}
+											onCheckedChange={(enabled) => toggle(row, enabled)}
+										/>
+									)
+								}
+							>
+								<button
+									type="button"
+									onClick={() => onOpenSchedule(row.id)}
+									className={cn("flex min-w-0 flex-1 flex-col gap-px text-start", rowLinkClassName)}
+								>
+									<span className="truncate text-sm/[22px] font-medium">{title}</span>
+									<span
+										className={cn(
+											"truncate text-[13px]/[18px]",
+											row.lastRun?.status === "failed" ? "text-danger-text" : "text-ink-3",
+										)}
 									>
-										<span className="text-sm font-semibold">{title}</span>
-										<span className="line-clamp-2 text-xs leading-[17px] text-ink-2">{describe(row)}</span>
-										<span
-											className={cn(
-												"text-xs",
-												failed ? "text-danger-text" : row.enabled && !done ? "text-accent-text" : "text-ink-3",
-											)}
-										>
-											{status(row)}
-										</span>
-									</button>
-									<Switch
-										aria-label={[title, describe(row)].filter(Boolean).join(" · ")}
-										checked={row.enabled}
-										onCheckedChange={(enabled) => toggle(row, enabled)}
-										className="mt-0.5"
-									/>
-								</div>
-							</CollapseRow>
+										{status(row)}
+									</span>
+								</button>
+							</ListRow>
 						);
 					})}
-				</AnimatePresence>
+				</List>
 			)}
-			<p className="border-t border-line px-4 pt-2.5 pb-3.5 text-xs leading-[17px] text-ink-3">
-				<Trans>Results appear in Needs you. Email copies are optional and need a verified address.</Trans>
-			</p>
 		</section>
+	);
+}
+
+// ---- First run ----
+
+/** A new account: import leads, Start blank is its peer, the sample a quiet third; then where to go next. */
+function FirstRun() {
+	const { startBlank, trySample, creating } = useStartDocument();
+	const next: { icon: IconName; title: ReactNode; subtitle: ReactNode; link: ReactElement }[] = [
+		{
+			icon: "briefcase",
+			title: <Trans>Save a job</Trans>,
+			subtitle: (
+				<Trans>Paste a job link. The posting is kept, so Check, the assistant and your letter can use it.</Trans>
+			),
+			link: <Link to="/dashboard/applications" search={{ create: true }} />,
+		},
+		{
+			icon: "target",
+			title: <Trans>Set your preferences</Trans>,
+			subtitle: <Trans>Roles, places and what matters to you. New roles are matched against them.</Trans>,
+			link: <Link to="/dashboard/career/knowledge/preferences" />,
+		},
+		{
+			icon: "books",
+			title: <Trans>Add facts about your work</Trans>,
+			subtitle: <Trans>What you've done, with numbers when you have them. The coach draws on them.</Trans>,
+			link: <Link to="/dashboard/career/knowledge/facts" />,
+		},
+		{
+			icon: "compass",
+			title: <Trans>Ask the coach</Trans>,
+			subtitle: <Trans>Bring a question about your search. Needs an AI connection.</Trans>,
+			link: <Link to="/dashboard/career/coach/{-$conversationId}" params={{ conversationId: undefined }} />,
+		},
+	];
+
+	return (
+		<>
+			<DropToImport />
+			<HeroCard
+				className="mt-5"
+				title={<Trans>Start with your resume</Trans>}
+				actions={
+					<>
+						<Button size="lg" className={LG} nativeButton={false} render={<Link to="/dashboard/documents/import" />}>
+							<Icon name="file-arrow-up" />
+							<Trans>Choose a file</Trans>
+						</Button>
+						<Button size="lg" variant="secondary" className={LG} disabled={creating} onClick={() => void startBlank()}>
+							<Trans>Start blank</Trans>
+						</Button>
+						<Button size="lg" variant="ghost" className={LG} disabled={creating} onClick={() => void trySample()}>
+							<Trans>Try a sample</Trans>
+						</Button>
+					</>
+				}
+			>
+				<span className="block pointer-coarse:hidden">
+					<Trans>
+						Import the one you have and every section is laid out for you to refine, or start from a blank page. You can
+						also drop a PDF, Word or JSON file anywhere in this window.
+					</Trans>
+				</span>
+				<span className="hidden pointer-coarse:block">
+					<Trans>
+						Import the one you have and every section is laid out for you to refine, or start from a blank page.
+					</Trans>
+				</span>
+			</HeroCard>
+			<Columns
+				aside={
+					<section aria-labelledby="coming-up">
+						<SectionHeading id="coming-up">
+							<Trans>Coming up</Trans>
+						</SectionHeading>
+						<p className="max-w-[36ch] pt-1 text-[13px]/[18px] text-ink-3">
+							<Trans>Interviews, follow-ups and offer deadlines appear here once you save a job.</Trans>
+						</p>
+					</section>
+				}
+			>
+				<section aria-labelledby="when-ready">
+					<SectionHeading id="when-ready">
+						<Trans>When you're ready</Trans>
+					</SectionHeading>
+					<List>
+						{next.map((item) => (
+							<ListRow
+								key={item.icon}
+								leading={
+									<IconTile>
+										<Icon name={item.icon} size={20} />
+									</IconTile>
+								}
+								title={item.title}
+								subtitle={item.subtitle}
+								caret
+								render={item.link}
+							/>
+						))}
+					</List>
+				</section>
+			</Columns>
+		</>
 	);
 }

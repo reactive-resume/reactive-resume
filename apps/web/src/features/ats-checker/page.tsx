@@ -1,8 +1,4 @@
-import { t } from "@lingui/core/macro";
-import { Link } from "@tanstack/react-router";
 import { AtsChecker } from "./checker";
-import { LandingBackground } from "@/features/homepage/background";
-import { Doodle } from "@/features/homepage/ui";
 
 type AtsCheckerPageProps = { signedIn: boolean; importPending: boolean };
 
@@ -12,24 +8,9 @@ type AtsCheckerPageProps = { signedIn: boolean; importPending: boolean };
  */
 export function AtsCheckerPage({ signedIn, importPending }: AtsCheckerPageProps) {
 	return (
-		// On the homepage's desk, as its Check scene sold it: the grain and window light, and the magnifier beside the
-		// title. The marketing header is fixed and 65px tall, so the page makes room for it.
-		<div className="landing relative isolate min-h-svh overflow-x-clip bg-bg font-ui text-ink">
-			<LandingBackground />
-			<main id="main-content" className="relative pt-20">
-				<Doodle
-					name="magnifier"
-					wipe="1"
-					sizes="(min-width: 900px) 12vw, 1px"
-					className="end-[6vw] top-24 w-[clamp(120px,12vw,200px)] rotate-[-8deg] max-[900px]:hidden"
-				/>
-				<AtsChecker signedIn={signedIn} importPending={importPending} />
-				<p className="mx-auto max-w-3xl px-6 pb-12 text-center text-ink-2">
-					<Link to="/resume-templates" className="text-accent-text underline underline-offset-4">
-						{t`Browse free resume templates and sample PDFs`}
-					</Link>
-				</p>
-			</main>
-		</div>
+		// A full screen under the 64px public header, so the site footer starts below the fold.
+		<main id="main-content" className="flex min-h-[calc(100svh-4rem)] flex-1 flex-col">
+			<AtsChecker signedIn={signedIn} importPending={importPending} />
+		</main>
 	);
 }

@@ -2,6 +2,8 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { Icon } from "@reactive-resume/ui/components/icon";
+import { AuthLead, AuthTitle, authAction } from "@/features/auth/components/auth-page";
 import { androidCallbackIntent } from "@/features/auth/native-callback";
 import { getPageTitle } from "@/libs/seo";
 
@@ -24,24 +26,33 @@ function NativeCallbackPage() {
 			openApp();
 	}, []);
 
+	// A flag only: authorization codes must never enter rendered markup.
+	const signedIn = !new URLSearchParams(window.location.search).has("error");
+
 	return (
-		<div className="space-y-4 text-center">
-			<h1 className="text-[30px] leading-9">
-				<Trans>Open the Reactive Resume app</Trans>
-			</h1>
-			<p className="text-sm text-ink-2">
+		<>
+			<AuthTitle>
+				<Trans>Return to the app</Trans>
+			</AuthTitle>
+			<AuthLead>
+				{signedIn && (
+					<>
+						<Trans>You're signed in.</Trans>{" "}
+					</>
+				)}
 				<Trans>If the app did not open, try again on a device where it is installed.</Trans>
-			</p>
+			</AuthLead>
 			<a
 				href="/auth/native-callback"
-				className="inline-flex min-h-11 items-center underline underline-offset-4"
+				className={authAction("primary", "mt-7")}
 				onClick={(event) => {
 					event.preventDefault();
 					openApp();
 				}}
 			>
+				<Icon name="device-mobile" />
 				<Trans>Try opening the app again</Trans>
 			</a>
-		</div>
+		</>
 	);
 }

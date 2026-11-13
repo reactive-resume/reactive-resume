@@ -1,4 +1,5 @@
-/* Mixed-direction items can place markers on either side of the list. */
-:is(ul, ol):has(> li[data-content-direction]) {
+/* Opposite-direction items need room for markers on the other side of the list. */
+:is(ul, ol):dir(ltr):has(> li[data-content-direction]:dir(rtl)),
+:is(ul, ol):dir(rtl):has(> li[data-content-direction]:dir(ltr)) {
 	padding-inline-end: 1.5em;
 }

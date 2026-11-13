@@ -34,7 +34,7 @@ function RichTextPreview({
 	disabled = false,
 	className,
 	id,
-	heightClassName = "max-h-[360px] min-h-[88px]",
+	heightClassName = "max-h-[360px] min-h-11",
 	onFocusRequest,
 }: RichTextPreviewProps) {
 	const html = useMemo(() => toPreviewHtml(value), [value]);
@@ -60,7 +60,7 @@ function RichTextPreview({
 				onPointerDown={(event) => editable && onFocusRequest(() => ({ x: event.clientX, y: event.clientY }))}
 				onFocus={() => editable && onFocusRequest((current) => current ?? "end")}
 				className={cn(
-					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none",
+					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none [&_li]:my-1.5 [&_li]:ps-0 [&_li>p]:my-0 [&_ol]:ps-[14px] [&_ol]:pe-0 [&_ul]:ps-[14px] [&_ul]:pe-0",
 					heightClassName,
 					"[&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
 				)}

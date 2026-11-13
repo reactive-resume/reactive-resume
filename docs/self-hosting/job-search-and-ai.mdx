@@ -27,7 +27,7 @@ WEB_ACCESS_PROVIDER="tavily" # firecrawl, tavily or exa
 WEB_ACCESS_API_KEY="replace-with-your-provider-key"
 ```
 
-**Settings → AI & developer → Web access** then says **Provided by the server**, and personal connection changes are
+**Settings → AI → Web access** then says **Provided by the server**, and personal connection changes are
 disabled. Paid usage is charged to the shared account. Existing personal connections stay stored and become available
 again if you remove shared configuration. AI has its own existing shared/personal configuration.
 
@@ -180,7 +180,7 @@ For the [Docker guide's setup](/self-hosting/docker), put Reactive Resume variab
 For local development, edit `.env.local` and restart `pnpm dev`. On other platforms, update the server's environment
 and restart or redeploy it. Keep keys in server configuration or secret storage, never browser build variables.
 
-1. Open **Settings → AI & developer → Web access**. The built-in reader should show **Active**. The selected web service
+1. Open **Settings → AI → Web access**. The built-in reader should show **Active**. The selected web service
    should show its provider and ownership.
 2. Click **Test connection**. Search and reading are tested separately; a built-in fallback cannot make this pass.
 3. Open **Applications**, enter search keywords, choose a result and review the role, company and retained description.
@@ -224,7 +224,7 @@ credentials. Do not commit credentials or shell output containing them.
 
 ## Career schedules
 
-The same web connection supports [automatic role discovery](/guides/finding-roles-automatically). Users enable a search schedule in **Career → Today**. Interview briefings use AI separately, and users must enable their preparation schedule too. Work runs on the server while the browser is closed.
+The same web connection supports [automatic role discovery](/guides/finding-roles-automatically). Users enable a search schedule in **Today**. Interview briefings use AI separately, and users must enable their preparation schedule too. Work runs on the server while the browser is closed.
 
 Node.js and Docker run the scheduler in the long-running server. Vercel uses the checked-in cron configuration and requires `CRON_SECRET`; Cloudflare uses its Cron Trigger. Check platform limits and verify a due reminder in a dedicated test installation. See [Operating scheduled work](/contributing/career-platform#operate-scheduled-work) for setup, delivery and retry details.
 

@@ -22,3 +22,15 @@ export const BaseCommandGroup = ({ page, heading, children, forceMount }: Props)
 		</CommandGroup>
 	);
 };
+
+/**
+ * The quiet word at the end of a row ("Resume", "British English"). It takes the shortcut's slot, so the row shows
+ * it in place of the ↵ hint.
+ */
+export function RowNote({ children }: { children: React.ReactNode }) {
+	return (
+		<span data-slot="command-shortcut" className="ms-auto shrink-0 text-[13px] leading-[18px] text-ink-3">
+			{children}
+		</span>
+	);
+}

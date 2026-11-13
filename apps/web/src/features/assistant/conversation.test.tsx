@@ -884,3 +884,37 @@ it("restores owned unsent files as visible chips and waits for explicit Send", (
 	expect(send).toHaveBeenCalledWith("Review this recovered file", files);
 	expect(screen.queryByText("Fictional draft.txt")).toBeNull();
 });
+
+it("restores the interrupted reply notice after reopening and continues only on request", () => {
+	const messages = [
+		{
+			id: "interrupted-reply",
+			role: "assistant" as const,
+			parts: [{ type: "text" as const, text: "I started checking the summary." }],
+		},
+	];
+	mocks.chat.mockReturnValue({ messages, sendMessage: mocks.send, status: "ready", clearError: vi.fn() });
+	render(
+		<I18nProvider i18n={i18n}>
+			<Conversation
+				document={document}
+				threadId="thread-1"
+				initialMessages={messages}
+				interrupted={["interrupted-reply"]}
+				activeRun={false}
+				readOnly={false}
+				providerLabel="Local"
+				initialContext={{ document: true, posting: true }}
+				prompt={null}
+				promptAttachments={[]}
+				onPromptSent={() => {}}
+				onSwitchModel={() => {}}
+			/>
+		</I18nProvider>,
+	);
+	expect(screen.getByText("Stopped. No edits were proposed.")).toBeDefined();
+	expect(mocks.send).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+	expect(mocks.send).toHaveBeenCalledWith({ text: "Continue" }, { body: { attachmentIds: [] } });
+	expect(screen.queryByText("Stopped. No edits were proposed.")).toBeNull();
+});

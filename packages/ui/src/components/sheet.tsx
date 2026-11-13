@@ -2,6 +2,7 @@ import type * as React from "react";
 import { Drawer as SheetPrimitive } from "@base-ui/react/drawer";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
@@ -25,7 +26,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
 		<SheetPrimitive.Backdrop
 			data-slot="sheet-overlay"
 			className={cn(
-				"fixed inset-0 z-50 bg-(--scrim-sheet) transition-opacity duration-emphasized ease-enter data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-starting-style:opacity-0",
+				"fixed inset-0 z-50 bg-scrim-sheet transition-opacity duration-emphasized ease-enter data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-starting-style:opacity-0",
 				className,
 			)}
 			{...props}
@@ -43,29 +44,34 @@ type SheetContentProps = SheetPrimitive.Popup.Props & {
 } & CloseButtonProps;
 
 /**
- * A task beside the page. Side sheets slide in from their edge over 320ms ("right" is the inline end, so the left in RTL); the bottom variant is the mobile
- * form (18px top radius and a grabber) and follows a downward swipe: a flick or a drag past half its height
- * dismisses it, anything less settles back.
+ * A task beside the page. Side sheets float 8px inside the window (`--sheet` wide, 20px radius, e3) and slide in from
+ * their edge over 320ms ("right" is the inline end, so the left in RTL); the bottom variant is the mobile form (20px
+ * top radius and a grabber) and follows a downward swipe: a flick or a drag past half its height dismisses it,
+ * anything less settles back. Header, body and footer sit flush: the header and footer carry their own padding.
  */
 function SheetContent({
 	className,
 	children,
-	side = "right",
+	side: requestedSide = "right",
 	showCloseButton = true,
 	closeLabel = "Close",
 	...props
 }: SheetContentProps) {
+	const phone = useBreakpoint() === "mobile";
+	const side = phone && (requestedSide === "left" || requestedSide === "right") ? "bottom" : requestedSide;
 	const popup = (
 		<SheetPrimitive.Popup
 			data-slot="sheet-content"
+			data-top-layer=""
+			data-design={side === "right" || side === "left" ? "sheet-r" : undefined}
 			data-side={side}
 			className={cn(
-				"pointer-events-auto fixed z-50 flex flex-col gap-4 bg-raised text-sm text-ink shadow-e3 transition-[translate] duration-emphasized ease-enter outline-none data-ending-style:duration-[calc(var(--d3)*0.7)]",
-				"data-[side=left]:inset-y-0 data-[side=left]:start-0 data-[side=left]:h-full data-[side=left]:w-full data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full data-[side=left]:sm:max-w-[440px]",
-				"data-[side=right]:inset-y-0 data-[side=right]:end-0 data-[side=right]:h-full data-[side=right]:w-full data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full data-[side=right]:sm:max-w-[440px]",
-				"rtl:data-[side=left]:data-ending-style:translate-x-full rtl:data-[side=left]:data-starting-style:translate-x-full rtl:data-[side=right]:data-ending-style:-translate-x-full rtl:data-[side=right]:data-starting-style:-translate-x-full",
-				"data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full",
-				"data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[calc(100svh-2rem)] data-[side=bottom]:rounded-t-3xl data-[side=bottom]:pt-3 data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full",
+				"pointer-events-auto fixed z-50 flex flex-col overflow-hidden bg-raised text-sm text-ink shadow-e3 transition-[translate] duration-emphasized ease-enter outline-none data-ending-style:duration-[calc(var(--d3)*0.7)]",
+				"data-[side=left]:inset-y-2 data-[side=left]:start-2 data-[side=left]:w-[calc(100%-1rem)] data-[side=left]:rounded-2xl data-[side=left]:data-ending-style:-translate-x-[calc(100%+0.5rem)] data-[side=left]:data-starting-style:-translate-x-[calc(100%+0.5rem)] data-[side=left]:sm:max-w-(--sheet)",
+				"data-[side=right]:inset-y-2 data-[side=right]:end-2 data-[side=right]:w-[calc(100%-1rem)] data-[side=right]:rounded-2xl data-[side=right]:data-ending-style:translate-x-[calc(100%+0.5rem)] data-[side=right]:data-starting-style:translate-x-[calc(100%+0.5rem)] data-[side=right]:sm:max-w-(--sheet)",
+				"rtl:data-[side=left]:data-ending-style:translate-x-[calc(100%+0.5rem)] rtl:data-[side=left]:data-starting-style:translate-x-[calc(100%+0.5rem)] rtl:data-[side=right]:data-ending-style:-translate-x-[calc(100%+0.5rem)] rtl:data-[side=right]:data-starting-style:-translate-x-[calc(100%+0.5rem)]",
+				"data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:rounded-b-2xl data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full",
+				"data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[calc(100svh-2rem)] data-[side=bottom]:rounded-t-2xl data-[side=bottom]:pt-3 data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full",
 				// Swipe: Base UI moves the popup inline while dragging; on release it rests at the swipe offset and
 				// transitions back to 0, or leaves on the drawer curve, faster for a harder flick.
 				"data-swipe-dismiss:data-ending-style:duration-[calc(var(--d3)*0.7*var(--drawer-swipe-strength,1))] data-swipe-dismiss:data-ending-style:ease-drawer data-swiping:select-none data-[side=bottom]:[transform:translateY(var(--drawer-swipe-movement-y,0px))] data-[side=bottom]:transition-[translate,transform]",
@@ -74,7 +80,7 @@ function SheetContent({
 			{...props}
 		>
 			{side === "bottom" && (
-				<span aria-hidden="true" className="mx-auto block h-[5px] w-9 shrink-0 rounded-sm bg-line-2" />
+				<span aria-hidden="true" className="mx-auto block h-[5px] w-9 shrink-0 rounded-full bg-line-2" />
 			)}
 			{/* Content is where a mouse press clicks rather than starts a swipe; `contents` keeps it out of the layout. */}
 			<SheetPrimitive.Content className="contents">{children}</SheetPrimitive.Content>
@@ -82,7 +88,7 @@ function SheetContent({
 				<SheetPrimitive.Close
 					data-slot="sheet-close"
 					aria-label={closeLabel}
-					render={<Button variant="ghost" className="absolute inset-e-3 top-3 z-20 text-ink-2" size="icon" />}
+					render={<Button variant="ghost" className="absolute inset-e-4 top-5 z-20" size="icon" />}
 				>
 					<Icon name="x" />
 				</SheetPrimitive.Close>
@@ -102,11 +108,26 @@ function SheetContent({
 }
 
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="sheet-header" className={cn("flex flex-col gap-1 px-6 pe-14 pt-5", className)} {...props} />;
+	return (
+		<div
+			data-slot="sheet-header"
+			className={cn("flex shrink-0 flex-col gap-1 ps-6 pe-15 pt-6 pb-4", className)}
+			{...props}
+		/>
+	);
 }
 
 function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-2 p-6", className)} {...props} />;
+	return (
+		<div
+			data-slot="sheet-footer"
+			className={cn(
+				"mt-auto flex shrink-0 flex-col-reverse gap-2 border-t border-line px-6 py-4 sm:flex-row sm:flex-wrap sm:justify-end",
+				className,
+			)}
+			{...props}
+		/>
+	);
 }
 
 function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
@@ -123,7 +144,7 @@ function SheetDescription({ className, ...props }: SheetPrimitive.Description.Pr
 	return (
 		<SheetPrimitive.Description
 			data-slot="sheet-description"
-			className={cn("text-sm text-ink-2", className)}
+			className={cn("text-sm leading-5 text-ink-3", className)}
 			{...props}
 		/>
 	);

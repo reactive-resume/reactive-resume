@@ -1,5 +1,6 @@
 import { beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
+import { renderToStaticMarkup } from "react-dom/server";
 import { authorizeAiRequest } from "./ai-consent";
 import { confirmOperation } from "@/hooks/use-confirm";
 
@@ -58,7 +59,8 @@ it("rejects configuration or key changes made while consent is open", async () =
 });
 it("approves only the chosen thread destination and discloses history when rebinding", async () => {
 	vi.mocked(confirmOperation).mockResolvedValue(true);
-	api.aiProviders.list.mockResolvedValue([{ ...provider, id: "other" }, provider]);
+	api.aiProviders.list.mockResolvedValue([{ ...provider, id: "other", label: "Previous connection" }, provider]);
+	api.agent.threads.get.mockResolvedValue({ thread: { aiProviderId: "other" } });
 	const approved = await authorizeAiRequest(
 		["agent", "threads", "update"],
 		{ id: "thread", aiProviderId: provider.id },
@@ -66,9 +68,15 @@ it("approves only the chosen thread destination and discloses history when rebin
 	);
 	expect(approved?.aiDestination).toContain('"provider-a"');
 	expect(confirmOperation).toHaveBeenCalledWith(
-		expect.any(String),
-		expect.objectContaining({ description: expect.stringContaining("Earlier messages and attachments") }),
+		`Use ${provider.label} for this conversation?`,
+		expect.objectContaining({ cancelText: "Keep Previous connection", confirmText: "Use this destination" }),
 	);
+	const description = vi.mocked(confirmOperation).mock.calls[0]?.[1].description;
+	const markup = renderToStaticMarkup(description);
+	expect(markup).toContain("Earlier messages and attachments");
+	expect(markup).toContain(`<code`);
+	expect(markup).toContain(provider.baseURL);
+	expect(api.agent.threads.get).toHaveBeenCalledWith({ id: "thread" }, {});
 });
 it("web search names its own destination without claiming to call an AI model", async () => {
 	vi.mocked(confirmOperation).mockResolvedValue(true);
@@ -261,7 +269,9 @@ it.each([true, false, undefined])(
 		);
 		expect(approval?.nativeSearchFallback).toBe(web === false ? undefined : true);
 		const description = vi.mocked(confirmOperation).mock.calls[0]?.[1]?.description ?? "";
-		expect(description.includes("This can add AI requests and charges")).toBe(web !== false);
+		expect(typeof description === "string" && description.includes("This can add AI requests and charges")).toBe(
+			web !== false,
+		);
 	},
 );
 

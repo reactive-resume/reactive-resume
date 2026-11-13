@@ -12,7 +12,7 @@ export const Route = createFileRoute("/dashboard/resumes/")({
 	}),
 	beforeLoad: ({ search }) => {
 		throw redirect({
-			to: "/dashboard",
+			to: "/dashboard/documents",
 			search: {
 				type: "resume",
 				...(search.tags?.length ? { tags: search.tags } : {}),

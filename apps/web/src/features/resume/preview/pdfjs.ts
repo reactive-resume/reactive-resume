@@ -14,4 +14,4 @@ export function getPdfWorker() {
 	return shared;
 }
 
-export { AnnotationMode, getDocument, RenderingCancelledException } from "pdfjs-dist/legacy/build/pdf.mjs";
+export { AnnotationMode, getDocument, RenderingCancelledException, TextLayer } from "pdfjs-dist/legacy/build/pdf.mjs";

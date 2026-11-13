@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 
-import { act, renderHook } from "@testing-library/react";
+import { act, fireEvent, renderHook, screen } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vite-plus/test";
 import { i18n } from "@lingui/core";
-import { confirmOperation, ConfirmDialogProvider, useConfirm } from "./use-confirm";
+import { confirmOperation, ConfirmDialogProvider, useConfirm, usePrompt } from "./use-confirm";
 
 type HookWrapperProps = {
 	children: React.ReactNode;
@@ -48,4 +48,21 @@ it("dismisses an operation confirmation when its request is aborted", async () =
 	await act(() => controller.abort());
 	await expect(promise).resolves.toBe(false);
 	unmount();
+});
+
+it("shows a prompt helper below its input and preserves empty submission", async () => {
+	const { result } = renderHook(() => usePrompt(), { wrapper });
+	let answer!: Promise<string | null>;
+	await act(() => {
+		answer = result.current("Link address", {
+			description: "Leave empty to remove the link.",
+			confirmText: "Add link",
+		});
+	});
+	const field = screen.getByRole("textbox", { name: "Link address" });
+	const helper = screen.getByText("Leave empty to remove the link.");
+	expect(field.compareDocumentPosition(helper) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+	expect(screen.getByRole("alertdialog")).toHaveAttribute("aria-describedby", helper.id);
+	fireEvent.click(screen.getByRole("button", { name: "Add link" }));
+	await expect(answer).resolves.toBe("");
 });

@@ -64,3 +64,27 @@ it("lets each block of written text take its own direction without saving it", (
 		editor.destroy();
 	}
 });
+
+it("keeps a list unchanged on focus and caret movement, and still saves typed text", () => {
+	const html = "<ul><li><p>First bullet</p></li><li><p>Second bullet</p></li></ul>";
+	const updates: string[] = [];
+	const editor = new Editor({
+		extensions: richTextExtensions,
+		content: html,
+		onUpdate: ({ editor }) => updates.push(editor.getHTML()),
+	});
+	try {
+		editor.commands.setTextSelection(4);
+		editor.commands.setTextSelection(5);
+		expect(editor.getHTML()).toBe(html);
+		expect(updates).toEqual([]);
+		editor.commands.insertContent(" edited");
+		expect(updates).toHaveLength(1);
+		expect(updates[0]).toContain(" edited");
+		expect(updates[0]).not.toMatch(/<\/ul><p[^>]*><\/p>$/);
+		editor.commands.undo();
+		expect(editor.getHTML()).toBe(html);
+	} finally {
+		editor.destroy();
+	}
+});

@@ -5,23 +5,31 @@ import type { Application } from "@/features/applications/types";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { offerTermsSchema, EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
+import { isolate } from "@reactive-resume/utils/string";
 import { useDebouncedSave } from "../hooks";
 import { pendingCommits } from "../pending-commits";
+import { ApplicationPacketPanel } from "./application-packet";
 import { ApplyTab } from "./apply";
 import { DebriefTab } from "./debrief";
 import { MessagesTab } from "./messages";
-import { PractiseTab } from "./practise";
+import { PractiseTab, StoryPractice } from "./practise";
 import { SavedTab } from "./saved";
 import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-scope";
 
 const api = vi.hoisted(() => ({
 	data: {} as Record<string, unknown>,
+	reviewPacket: vi.fn(),
+	updateOffer: vi.fn(),
+	exportPacket: vi.fn(),
 	save: vi.fn(),
+	note: vi.fn(),
+	ai: true,
 	submit: vi.fn(),
 	generate: vi.fn(),
 	apply: vi.fn(),
@@ -49,6 +57,7 @@ vi.mock("@/libs/orpc/client", () => {
 				listSummary: endpoint("applications"),
 				list: endpoint("applications"),
 				update: endpoint("updateApplication"),
+				addNote: endpoint("addNote", api.note),
 				logReply: endpoint("logReply", api.logReply),
 				lanes: { get: endpoint("lanes") },
 			},
@@ -63,6 +72,9 @@ vi.mock("@/libs/orpc/client", () => {
 				stories: endpoint("stories"),
 				workspace: endpoint("workspace"),
 				savedItems: endpoint("savedItems"),
+				profile: endpoint("profile"),
+				createOffer: endpoint("createOffer"),
+				updateOffer: endpoint("updateOffer"),
 				schedules: endpoint("schedules"),
 				facts: endpoint("facts"),
 				saveWorkspace: endpoint("saveWorkspace", api.save),
@@ -75,19 +87,21 @@ vi.mock("@/libs/orpc/client", () => {
 			},
 		},
 		client: {
-			career: { generate: api.generate, voice: { speak: api.speak } },
-			applications: { logReply: api.logReply },
+			career: { updateOffer: api.updateOffer, generate: api.generate, voice: { speak: api.speak } },
+			applications: { logReply: api.logReply, packet: { review: api.reviewPacket, export: api.exportPacket } },
 		},
 	};
 });
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => vi.fn(),
+	useRouter: () => ({ state: { location: { pathname: "/messages" } } }),
+	useSearch: () => ({}),
 	useRouteContext: () => ({ session: { user: { id: api.userId, timezone: "UTC" } } }),
 	Link: ({ children }: { children: ReactNode }) => <a href="#test-link">{children}</a>,
 }));
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
 	useHasUsableAiProvider: () => ({
-		usableProviders: [{ id: "voice-provider", provider: "openai", label: "Test AI" }],
+		usableProviders: api.ai ? [{ id: "voice-provider", provider: "openai", label: "Test AI" }] : [],
 		isLoading: false,
 	}),
 }));
@@ -235,6 +249,7 @@ function mount(children: ReactNode) {
 }
 beforeEach(() => {
 	vi.clearAllMocks();
+	api.ai = true;
 	api.data = {
 		stories: [],
 		lanes: [],
@@ -353,11 +368,13 @@ it("retains edited replies across navigation while saved versions keep the gener
 	api.data.savedItems = [savedReply];
 	const first = mount(<MessagesTab {...props} />);
 	fireEvent.change(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" }), {
-		target: { value: "My reply draft" },
+		target: { value: "My reply draft\n\nSecond paragraph" },
 	});
 	first.unmount();
 	const next = mount(<MessagesTab {...props} />);
-	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue("My reply draft");
+	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue(
+		"My reply draft\n\nSecond paragraph",
+	);
 	next.rerender(<MessagesTab {...props} version={savedReply} />);
 	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue("Original reply");
 });
@@ -369,12 +386,14 @@ it("highlights localized reply placeholders without blocking Copy, and logs only
 	mount(<MessagesTab {...props} application={{ ...application, status: "applied" }} />);
 	const editor = screen.getByRole("textbox", { name: "Suggested reply · edit before sending" });
 	fireEvent.change(editor, { target: { value: "Available [Datum und Uhrzeit 1] or [slot 2]." } });
-	expect(screen.getByRole("status")).toHaveTextContent("[Datum und Uhrzeit 1] · [slot 2]");
+	expect(screen.getByRole("status")).toHaveTextContent("Replace the marked placeholder before sending.");
+	expect(screen.getByText("[Datum und Uhrzeit 1]", { selector: "mark" })).toBeInTheDocument();
+	expect(screen.getByText("[slot 2]", { selector: "mark" })).toBeInTheDocument();
 	fireEvent.click(screen.getByRole("button", { name: "Copy reply" }));
 	await waitFor(() => expect(writeText).toHaveBeenCalledWith("Available [Datum und Uhrzeit 1] or [slot 2]."));
 	expect(api.logReply).not.toHaveBeenCalled();
 	fireEvent.change(editor, { target: { value: "Available Tuesday at 14:00." } });
-	expect(screen.queryByText("Replace these placeholders before sending:")).not.toBeInTheDocument();
+	expect(screen.queryByText("Replace the marked placeholder before sending.")).not.toBeInTheDocument();
 	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
 	await waitFor(() => expect(api.logReply).toHaveBeenCalledTimes(1));
 	expect(writeText).toHaveBeenLastCalledWith("Available Tuesday at 14:00.");
@@ -567,7 +586,7 @@ it("keeps one editable Debrief form after returning from a read-only saved revie
 	review.evidence.factIds = ["fact-123"];
 	api.data.savedItems = [review];
 	const view = mount(<DebriefTab {...props} version={review} />);
-	expect(screen.getByRole("heading", { name: "Earlier round" })).toBeTruthy();
+	expect(screen.getByText("Earlier round")).toBeTruthy();
 	const archivedTask = screen.getByRole("checkbox", { name: /Practise explaining the result/ });
 	expect(archivedTask).toHaveAttribute("aria-disabled", "true");
 	fireEvent.click(archivedTask);
@@ -579,7 +598,7 @@ it("keeps one editable Debrief form after returning from a read-only saved revie
 	view.rerender(<DebriefTab {...props} />);
 	expect(screen.getAllByRole("textbox", { name: "What did they ask?" })).toHaveLength(1);
 	expect(screen.getByRole("textbox", { name: "What did they ask?" })).not.toHaveAttribute("readonly");
-	expect(screen.getAllByRole("button", { name: "Review my answer" })).toHaveLength(1);
+	expect(screen.getAllByRole("button", { name: "Review again" })).toHaveLength(1);
 });
 
 it("falls back to All when deleting the final item in a selected Saved category", async () => {
@@ -591,7 +610,7 @@ it("falls back to All when deleting the final item in a selected Saved category"
 	fireEvent.click(screen.getByRole("button", { name: "Reply" }));
 	fireEvent.click(screen.getByRole("button", { name: "Delete" }));
 	expect(await screen.findByRole("button", { name: "Sent answers" })).toBeTruthy();
-	expect(screen.getByRole("button", { name: "All" })).toHaveAttribute("aria-pressed", "true");
+	expect(screen.getByRole("button", { name: /^All/ })).toHaveAttribute("aria-pressed", "true");
 });
 
 it("does not play a delayed spoken question after leaving Practise", async () => {
@@ -639,7 +658,9 @@ it("keeps Saved offer provenance neutral", async () => {
 		}),
 	];
 	mount(<SavedTab {...props} />);
-	expect(await screen.findByText("Library items for Harbor, newest first.")).toBeTruthy();
+	expect(
+		await screen.findByText("What you saved while working on Harbor. Each opens read-only in the place that made it."),
+	).toBeTruthy();
 	expect(screen.queryByText(/coach wrote/)).toBeNull();
 	expect(screen.queryByText(/used the message/)).toBeNull();
 	expect(screen.getByRole("link", { name: "Open in Offers" })).toBeTruthy();
@@ -647,7 +668,10 @@ it("keeps Saved offer provenance neutral", async () => {
 
 it("keeps an unacknowledged message across pagehide and requires review after reopening against newer server state", async () => {
 	const view = mount(<MessagesTab {...props} />);
-	const field = await screen.findByRole("textbox", { name: `Paste a message from ${props.application.company}` });
+	fireEvent.click(screen.getByRole("button", { name: "Paste a message" }));
+	const field = await screen.findByRole("textbox", {
+		name: `Paste a message from ${isolate(props.application.company)}`,
+	});
 	fireEvent.change(field, { target: { value: "Durable employer message" } });
 	expect(localStorage.getItem(`career-draft:${api.userId}:message:${props.application.id}`)).toBe(
 		JSON.stringify("Durable employer message"),
@@ -662,16 +686,17 @@ it("keeps an unacknowledged message across pagehide and requires review after re
 	api.save.mockClear();
 	api.data.workspace = { ...EMPTY_WORKSPACE, message: "Newer server text" };
 	mount(<MessagesTab {...props} />);
+	fireEvent.click(screen.getByRole("button", { name: "Paste a message" }));
 	expect(await screen.findByRole("button", { name: "Save recovered draft" })).toBeTruthy();
-	expect(screen.getByRole("textbox", { name: `Paste a message from ${props.application.company}` })).toHaveValue(
-		"Unacknowledged older text",
-	);
+	expect(
+		screen.getByRole("textbox", { name: `Paste a message from ${isolate(props.application.company)}` }),
+	).toHaveValue("Unacknowledged older text");
 	window.dispatchEvent(new Event("pagehide"));
 	expect(api.save).not.toHaveBeenCalled();
 	fireEvent.click(screen.getByRole("button", { name: "Use saved version" }));
-	expect(screen.getByRole("textbox", { name: `Paste a message from ${props.application.company}` })).toHaveValue(
-		"Newer server text",
-	);
+	expect(
+		screen.getByRole("textbox", { name: `Paste a message from ${isolate(props.application.company)}` }),
+	).toHaveValue("Newer server text");
 });
 
 it("commits a typed question on Draft and measures the proposal against the question's limit", async () => {
@@ -849,12 +874,12 @@ it("Tighten Undo keeps local typing and pins an unchanged inverse to accepted te
 
 it("omits absent review subjects and empty answer actions without moving manual indices", async () => {
 	mount(<ApplyTab {...props} />);
-	await screen.findByRole("heading", { name: "Review checks" });
+	await screen.findByRole("heading", { name: "Before you send" });
 	expect(within(document.querySelector("#application-readiness") as HTMLElement).getAllByRole("checkbox")).toHaveLength(
 		1,
 	);
 	expect(screen.queryByRole("button", { name: "Copy answers" })).toBeNull();
-	fireEvent.click(screen.getByRole("checkbox", { name: "Submit through the employer's application page yourself." }));
+	fireEvent.click(screen.getByRole("checkbox", { name: `Submit on ${isolate("Harbor")}'s application page yourself` }));
 	await waitFor(() =>
 		expect(api.save.mock.calls[0]?.[0]).toMatchObject({ checklist: [3], expected: { checklist: [] } }),
 	);
@@ -1011,4 +1036,208 @@ it("resumes autosave after a reviewed answer replaces a recovered draft", async 
 	await waitFor(() =>
 		expect(api.save.mock.lastCall?.[0]).toMatchObject({ answers: [{ id: "project", answer: "A later edit" }] }),
 	);
+});
+
+it("saves a manual debrief to application notes without AI and keeps its draft", async () => {
+	api.ai = false;
+	api.note.mockResolvedValue({});
+	mount(<DebriefTab {...props} />);
+	fireEvent.change(screen.getByRole("textbox", { name: "What did they ask?" }), {
+		target: { value: "What was your role?" },
+	});
+	fireEvent.change(screen.getByRole("textbox", { name: "What did you say, as close as you remember?" }), {
+		target: { value: "I built the migration plan." },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Went well" }));
+	expect(screen.queryByRole("button", { name: "Review my answer" })).toBeNull();
+	fireEvent.click(screen.getByRole("button", { name: "Save to notes" }));
+	await waitFor(() =>
+		expect(api.note).toHaveBeenCalledWith(
+			{ id: application.id, text: "What was your role?\n\nI built the migration plan.\n\nWent well" },
+			expect.anything(),
+		),
+	);
+	expect(api.generate).not.toHaveBeenCalled();
+	expect(screen.getByRole("textbox", { name: "What did they ask?" })).toHaveValue("What was your role?");
+});
+
+it("keeps a manually written reply available without AI and logs only after copying", async () => {
+	api.ai = false;
+	const writeText = vi.fn().mockResolvedValue(undefined);
+	vi.stubGlobal("navigator", { clipboard: { writeText } });
+	api.data.savedItems = [];
+	api.data.workspace = { ...EMPTY_WORKSPACE, message: "Can you meet Tuesday at 10:00?" };
+	const submitted = { ...props.application, status: "applied" as const };
+	mount(<MessagesTab {...props} application={submitted} />);
+	expect(screen.getByRole("heading", { name: `From ${isolate("Harbor")}` })).toBeVisible();
+	const field = await screen.findByRole("textbox", { name: "Suggested reply · edit before sending" });
+	fireEvent.change(field, { target: { value: "Thank you. I can meet Tuesday at 10:00." } });
+	fireEvent.click(screen.getByRole("button", { name: "Copy and log as replied" }));
+	await waitFor(() => expect(api.logReply).toHaveBeenCalledOnce());
+	expect(writeText).toHaveBeenCalledWith("Thank you. I can meet Tuesday at 10:00.");
+	expect(api.generate).not.toHaveBeenCalled();
+});
+
+it("opens a saved Fit summary once without adding a second counts sentence", () => {
+	const summary = "6 supported, 1 partly supported, 3 with no evidence yet. Strong on design systems.";
+	api.data.savedItems = [
+		item("Fit result", { kind: "fit", headline: "Fit check", summary, requirements: [], checks: [], ask: null }),
+	];
+	mount(<SavedTab {...props} />);
+	fireEvent.click(screen.getByRole("button", { name: "Fit result" }));
+	expect(screen.getByText(summary)).toBeVisible();
+	expect(screen.queryByText(/0 supported/)).not.toBeInTheDocument();
+});
+
+it("requires the current packet review and resets approval when its destination changes", async () => {
+	const selection = {
+		applicationId: application.id,
+		targetUrl: "https://example.com/form",
+		includeContact: false,
+		answerIds: [],
+		letterWords: null,
+	};
+	const makeReview = (targetUrl: string, fingerprint: string) => ({
+		selection: { ...selection, targetUrl },
+		fingerprint,
+		application: { id: application.id, company: application.company, role: application.role },
+		contact: null,
+		profileRevision: null,
+		profileReviewedAt: null,
+		experience: "Reviewed experience",
+		letterText: "",
+		answers: [],
+		documents: [{ kind: "resume", id: "resume-1", name: "My resume", revision: "v1" }],
+	});
+	const initial = makeReview(selection.targetUrl, "a".repeat(64));
+	const next = deferred<ReturnType<typeof makeReview>>();
+	api.reviewPacket.mockResolvedValueOnce(initial).mockReturnValueOnce(next.promise);
+	mount(
+		<ApplicationPacketPanel application={{ ...application, resumeId: "resume-1", sourceUrl: selection.targetUrl }} />,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Review packet" }));
+	const approve = await screen.findByRole("button", { name: "Approve and create packet" });
+	expect(approve).toBeDisabled();
+	const reviewed = await screen.findByRole("checkbox", {
+		name: "I reviewed these fields, answers, the address and each document.",
+	});
+	await waitFor(() => expect(reviewed).toBeEnabled());
+	await userEvent.click(reviewed);
+	await waitFor(() => expect(approve).toBeEnabled());
+	fireEvent.change(screen.getByRole("textbox", { name: "The form's exact address" }), {
+		target: { value: "https://example.com/new-form" },
+	});
+	expect(approve).toBeDisabled();
+	expect(reviewed).not.toBeChecked();
+	expect(api.exportPacket).not.toHaveBeenCalled();
+	const updated = makeReview("https://example.com/new-form", "b".repeat(64));
+	await act(async () => next.resolve(updated));
+	expect(approve).toBeDisabled();
+	await userEvent.click(reviewed);
+	api.exportPacket.mockReturnValue(new Promise(() => {}));
+	fireEvent.click(approve);
+	await waitFor(() =>
+		expect(api.exportPacket).toHaveBeenCalledWith({
+			selection: updated.selection,
+			fingerprint: updated.fingerprint,
+			reviewed: true,
+		}),
+	);
+});
+
+it("starts practice without an application with three general questions and keeps story practice available", () => {
+	mount(<StoryPractice storyId="story-1" />);
+	expect(screen.getByRole("heading", { name: "Practice without an application" })).toBeVisible();
+	expect(screen.getByText("Question 1 of 3 · simulated")).toBeVisible();
+	expect(
+		screen.getByRole("heading", {
+			name: "Tell me about a piece of work you're proud of. What was your part in it, and how did you measure success?",
+		}),
+	).toBeVisible();
+	expect(screen.getByRole("button", { name: "Practice this story" })).toBeEnabled();
+});
+
+it("shows the recorded reply changes after reload using the previous stage, not the current follow-up", () => {
+	const savedReply = reply();
+	if (savedReply.data.kind !== "reply") throw new Error("Expected reply");
+	savedReply.data.changes = [
+		{ type: "stage", stage: "screening" },
+		{ type: "follow-up", at: "2026-11-11T09:00:00Z", note: "Send availability" },
+	];
+	savedReply.data.applied = {
+		at: "2026-11-07T09:00:00Z",
+		changes: [0, 1],
+		undo: {
+			before: {
+				status: "applied",
+				laneId: null,
+				closedReason: null,
+				followUpAt: null,
+				followUpDateOnly: false,
+				followUpNote: null,
+			},
+			after: {
+				status: "screening",
+				laneId: null,
+				closedReason: null,
+				followUpAt: "2026-11-11T09:00:00Z",
+				followUpDateOnly: false,
+				followUpNote: "Send availability",
+			},
+			offerId: null,
+		},
+	};
+	api.data.savedItems = [savedReply];
+	mount(
+		<MessagesTab
+			{...props}
+			application={{
+				...application,
+				status: "screening",
+				followUpAt: new Date("2026-11-11T09:00:00Z"),
+				followUpNote: "Send availability",
+			}}
+		/>,
+	);
+	expect(screen.getByText("Was Applied")).toBeVisible();
+	expect(screen.getByText(/Follow-up set for .*11/, { selector: "span" })).toBeVisible();
+	expect(screen.queryByRole("button", { name: "Apply 2 changes" })).not.toBeInTheDocument();
+	expect(screen.queryByText(/replaces the overdue/)).not.toBeInTheDocument();
+});
+
+it("lets a no-AI user edit the Messages reply deadline and keeps the row absent with AI", async () => {
+	const offer = item("manual-offer", {
+		kind: "offer",
+		...offerTermsSchema.parse({
+			currency: "EUR",
+			period: "year",
+			base: 95000,
+			variable: null,
+			respondBy: "2026-11-13T23:59:00Z",
+		}),
+	});
+	api.data.savedItems = [offer];
+	api.data.workspace = { ...EMPTY_WORKSPACE, message: "Please reply by Friday." };
+	api.updateOffer.mockResolvedValue({
+		...offer,
+		id: "new-offer",
+		data: { ...offer.data, respondBy: "2026-11-16T23:59:00.000Z" },
+	});
+	const view = mount(<MessagesTab {...props} application={{ ...application, status: "offer" }} />);
+	expect(screen.queryByText(/Set by you/)).toBeNull();
+	api.ai = false;
+	view.rerender(<MessagesTab {...props} application={{ ...application, status: "offer" }} />);
+	expect(screen.getByText(/^Reply by /)).toBeVisible();
+	expect(screen.getByText("Set by you")).toBeVisible();
+	fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+	const dialog = screen.getByRole("dialog");
+	fireEvent.change(within(dialog).getByLabelText("Respond by"), { target: { value: "2026-11-16" } });
+	fireEvent.click(within(dialog).getByRole("button", { name: "Save offer" }));
+	await waitFor(() => expect(api.updateOffer).toHaveBeenCalled());
+	expect(api.updateOffer.mock.calls[0]?.[0]).toMatchObject({
+		id: offer.id,
+		terms: { respondBy: "2026-11-16T23:59:00.000Z" },
+		expected: { respondBy: "2026-11-13T23:59:00Z" },
+		newVersion: true,
+	});
 });

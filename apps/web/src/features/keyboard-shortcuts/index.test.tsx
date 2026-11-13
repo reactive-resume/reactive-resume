@@ -1,13 +1,15 @@
 // @vitest-environment happy-dom
 
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
-import { HotkeyManager, HotkeysProvider, useHotkey } from "@tanstack/react-hotkeys";
+import { HotkeyManager, HotkeysProvider, useHotkey, useHotkeys } from "@tanstack/react-hotkeys";
+import { useRef } from "react";
 import { KeyboardShortcuts } from ".";
+import { DOCUMENT_GROUP, LEAD_GROUP } from "./groups";
 import { useShortcutSettings } from "./settings";
-import { useShortcutHelp } from "./store";
+import { showKeyboardShortcuts, useShortcutHelp, useShortcutsPage } from "./store";
 
 beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
@@ -48,6 +50,10 @@ function Page({ editor = false, run = () => {} }: PageProps) {
 	return (
 		<>
 			<button type="button">Page control</button>
+			{/* The sidebar's Shortcuts row: the way in without a keyboard. */}
+			<button type="button" onClick={(event) => showKeyboardShortcuts(event.currentTarget)}>
+				Shortcuts
+			</button>
 			<input aria-label="Name" />
 			<textarea aria-label="Notes" />
 			<div contentEditable aria-label="Editor" />
@@ -88,12 +94,13 @@ it("lists current registration names, suspends background actions, closes with ?
 	expect(editorDialog.textContent).toContain("Download PDF");
 	key(editorDialog);
 	await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
-	act(() => i18n.loadAndActivate({ locale: "de", messages: { "77Emn0": "Tastenkombinationen" } }));
-	fireEvent.click(screen.getByRole("button", { name: "Tastenkombinationen" }));
-	const translated = await screen.findByRole("dialog", { name: "Tastenkombinationen" });
-	expect(Array.from(translated.querySelectorAll("dt"), (element) => element.textContent)).toContain(
-		"Tastenkombinationen",
+	act(() =>
+		i18n.loadAndActivate({ locale: "de", messages: { "77Emn0": "Tastenkombinationen", "-rGgtX": "Diese Liste" } }),
 	);
+	key(control);
+	const translated = await screen.findByRole("dialog", { name: "Tastenkombinationen" });
+	// Without a page name, the line under the title says what ? does, so ? is not listed again.
+	expect(Array.from(translated.querySelectorAll("dt"), (element) => element.textContent)).not.toContain("Diese Liste");
 });
 
 it("leaves text entry, IME, modifier chords and other overlays alone", () => {
@@ -136,11 +143,11 @@ it("leaves text entry, IME, modifier chords and other overlays alone", () => {
 it("offers a non-keyboard entry and persists the off switch without disabling modifier commands", async () => {
 	const run = vi.fn();
 	render(page({ run }));
-	const trigger = screen.getByRole("button", { name: "Keyboard shortcuts" });
+	const trigger = screen.getByRole("button", { name: "Shortcuts" });
 	trigger.focus();
 	fireEvent.click(trigger);
 	await screen.findByRole("dialog");
-	fireEvent.click(screen.getByRole("switch", { name: "Single-character shortcuts" }));
+	fireEvent.click(screen.getByRole("switch", { name: "Single-key shortcuts" }));
 	expect(localStorage.getItem("character-shortcuts")).toBe("off");
 	fireEvent.click(screen.getByRole("button", { name: "Close" }));
 	await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
@@ -152,4 +159,48 @@ it("offers a non-keyboard entry and persists the off switch without disabling mo
 	expect(run).toHaveBeenCalledOnce();
 	fireEvent.click(trigger);
 	expect(await screen.findByRole("dialog")).toBeTruthy();
+});
+
+it("names the page, orders lead, page, app-wide and document keys, lists row keys under On a row and folds digit runs", async () => {
+	function RowPage() {
+		useShortcutsPage("Applications");
+		const row = useRef<HTMLAnchorElement>(null);
+		useHotkey("Mod+Z", () => {}, { meta: { name: "Undo", group: DOCUMENT_GROUP } });
+		useHotkey("/", () => {}, { meta: { name: "Filter applications" } });
+		// The shell registers its N after the page's own keys; it still leads the list.
+		useHotkey("N", () => {}, { meta: { name: "Save a job", group: LEAD_GROUP } });
+		useHotkeys(
+			["Saved", "Applied", "Screening", "Interview", "Offer"].map((stage, index) => ({
+				hotkey: `${index + 1}` as "1",
+				callback: () => {},
+				options: { meta: { name: `Move to ${stage}` } },
+			})),
+			{ target: row },
+		);
+		return (
+			<>
+				<a ref={row} href="#lumen">
+					Lumen
+				</a>
+				<button type="button" onClick={(event) => showKeyboardShortcuts(event.currentTarget)}>
+					Shortcuts
+				</button>
+				<KeyboardShortcuts />
+			</>
+		);
+	}
+	render(
+		<I18nProvider i18n={i18n}>
+			<HotkeysProvider defaultOptions={{ hotkey: { platform: "mac" } }}>
+				<RowPage />
+			</HotkeysProvider>
+		</I18nProvider>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Shortcuts" }));
+	const dialog = await screen.findByRole("dialog", { name: "Shortcuts on Applications" });
+	const rows = within(dialog).getByRole("region", { name: "On a row" });
+	expect(Array.from(rows.querySelectorAll("dt"), (element) => element.textContent)).toEqual(["Move to Saved … Offer"]);
+	expect(rows.querySelector("dd")?.textContent).toBe("1–5");
+	const names = Array.from(dialog.querySelectorAll("dt"), (element) => element.textContent);
+	expect(names.slice(0, 4)).toEqual(["Save a job", "Filter applications", "This list", "Undo"]);
 });

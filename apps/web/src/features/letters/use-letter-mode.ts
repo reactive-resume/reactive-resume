@@ -2,6 +2,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useCallback, useEffect } from "react";
 import { useAssistantInUrl } from "@/features/assistant/use-assistant-url";
 import { useEditorStore } from "@/features/resume/editor/store";
+import { openLinkedVersion } from "@/features/resume/share/history-tab";
 
 export type LetterMode = "write" | "design";
 
@@ -29,20 +30,24 @@ export function useLetterMode() {
 
 /** `?version=` opens History on that version (the page shows it read-only), then leaves the URL. */
 export function useOpenLetterVersionFromUrl() {
-	const { version } = routeApi.useSearch();
+	const { version, applicationId } = routeApi.useSearch();
 	const navigate = routeApi.useNavigate();
 
 	useEffect(() => {
 		if (!version) return;
-		useEditorStore.getState().setSheetTab("history");
-		useEditorStore.setState({ historyVersionId: version });
+		// From an application the page and its banner are the whole view: History stays closed.
+		if (applicationId) openLinkedVersion(version);
+		else {
+			useEditorStore.getState().setSheetTab("history");
+			useEditorStore.setState({ historyVersionId: version });
+		}
 		void navigate({
 			to: ".",
 			resetScroll: false,
 			search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, version: undefined }),
 			replace: true,
 		});
-	}, [version, navigate]);
+	}, [version, applicationId, navigate]);
 }
 
 /** `?assistant=` opens the assistant on that conversation; `?ask=` only fills its composer. Both then leave the URL. */

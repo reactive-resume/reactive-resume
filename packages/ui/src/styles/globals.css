@@ -19,7 +19,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Desk & Paper tokens. oklch is the source of truth; the hex values are sRGB approximations.
+ * Calm tokens (colour values unchanged from Desk & Paper). oklch is the source of truth; the hex values are sRGB approximations.
  * The resume page (--paper) is white in both themes and never inverts.
  */
 :root {
@@ -41,9 +41,11 @@
 	--accent-soft: oklch(0.94 0.035 150); /* #DCF2DF selected background, proposals */
 	--accent-text: oklch(0.42 0.1 150); /* #195C2E */
 	--danger: oklch(0.53 0.17 27); /* #BA3630 */
+	--danger-fill: oklch(0.53 0.17 27); /* the permanent-delete button */
 	--danger-soft: oklch(0.95 0.03 27); /* #FFE7E4 */
 	--danger-text: oklch(0.48 0.17 27); /* #A92321 */
 	--warn: oklch(0.72 0.14 80); /* #D29922 check issues, stale edits */
+	--warn-mark: oklch(0.6 0.14 70); /* warning marks that must hold 3:1 on bg */
 	--warn-soft: oklch(0.95 0.045 85); /* #FCEDCD */
 	--warn-text: oklch(0.48 0.1 70); /* #81520A */
 	--warn-ink: oklch(0.22 0.03 80); /* #22190A text on a warn fill */
@@ -77,10 +79,13 @@
 	/* Layout constants */
 	--editor-bar: 56px;
 	--editor-panel: 400px;
-	--app-sidebar: 240px;
-	--sheet-share: 440px;
+	--app-sidebar: 248px;
+	--sheet: 440px; /* side sheets; they float 8px inside the window */
 	--sheet-detail: 480px;
+	--dialog: 480px; /* 560px when fields sit two to a row */
 	--assistant: 400px;
+	--content-max: 1040px; /* reading width of a dashboard page; tables and boards may run wider */
+	--row: 56px; /* minimum height of a list row */
 }
 
 .dark {
@@ -102,9 +107,11 @@
 	--accent-soft: oklch(0.3 0.05 150); /* #1A3520 */
 	--accent-text: oklch(0.82 0.11 150); /* #8FD89E */
 	--danger: oklch(0.62 0.17 27); /* #D9544B */
+	--danger-fill: oklch(0.55 0.18 27);
 	--danger-soft: oklch(0.3 0.06 27); /* #47211D */
 	--danger-text: oklch(0.8 0.11 27); /* #FDA297 */
 	--warn: oklch(0.8 0.13 85); /* #E4B750 */
+	--warn-mark: oklch(0.8 0.13 85);
 	--warn-soft: oklch(0.31 0.05 80); /* #3E2D10 */
 	--warn-text: oklch(0.86 0.1 85); /* #EFCC83 */
 	--warn-ink: oklch(0.22 0.03 80); /* #22190A text on a warn fill */
@@ -128,16 +135,21 @@
 	--font-sans: var(--font-ui);
 	--font-mono: "Geist Mono Variable", ui-monospace, monospace;
 
-	/* Corners are 2–4px everywhere: 2 chips, tags and small marks · 3 controls · 4 cards, menus, dialogs, sheets. */
-	--radius: 4px;
-	--radius-xs: 2px;
-	--radius-sm: 2px;
-	--radius-md: 3px;
-	--radius-lg: 4px;
-	--radius-xl: 4px;
-	--radius-2xl: 4px;
-	--radius-3xl: 4px;
-	--radius-4xl: 4px;
+	/*
+	 * Corners are soft: 6 badges, checkboxes, keys · 8 chips, small buttons, menu items · 10 buttons, inputs, sidebar
+	 * items · 12 large buttons, segmented controls, menus, toasts, board cards · 16 cards, composer · 20 dialogs,
+	 * sheets, palette. Paper and thumbnails stay square (`rounded-paper`).
+	 */
+	--radius: 10px;
+	--radius-xs: 6px;
+	--radius-sm: 8px;
+	--radius-md: 10px;
+	--radius-lg: 12px;
+	--radius-xl: 16px;
+	--radius-2xl: 20px;
+	--radius-3xl: 20px;
+	--radius-4xl: 20px;
+	--radius-paper: 2px;
 
 	--aspect-page: 210 / 297;
 }
@@ -159,9 +171,11 @@
 	--color-accent-soft: var(--accent-soft);
 	--color-accent-text: var(--accent-text);
 	--color-danger: var(--danger);
+	--color-danger-fill: var(--danger-fill);
 	--color-danger-soft: var(--danger-soft);
 	--color-danger-text: var(--danger-text);
 	--color-warn: var(--warn);
+	--color-warn-mark: var(--warn-mark);
 	--color-warn-soft: var(--warn-soft);
 	--color-warn-text: var(--warn-text);
 	--color-warn-ink: var(--warn-ink);
@@ -170,6 +184,7 @@
 	--color-hover: var(--hover);
 	--color-press: var(--press);
 	--color-scrim: var(--scrim);
+	--color-scrim-sheet: var(--scrim-sheet);
 	--color-paper: var(--paper);
 	--color-stage-saved: var(--stage-saved);
 	--color-stage-applied: var(--stage-applied);
@@ -217,6 +232,13 @@
 	   icons and empty caret, which dir="auto" would flip. */
 	:where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"]), textarea) {
 		unicode-bidi: plaintext;
+	}
+
+	/* Code (keys, selectors, header names) reads left to right in every interface, and stays one unit inside a
+	   right-to-left sentence instead of losing its leading hyphens to the far end. */
+	:where(code, kbd, samp) {
+		direction: ltr;
+		unicode-bidi: isolate;
 	}
 
 	h1 {
@@ -348,4 +370,102 @@ input[type="url"],
 input[type="tel"] {
 	direction: ltr;
 	text-align: start;
+}
+
+/*
+ * Calm type styles: size / line-height, family and weight in one utility. Longhand on purpose: a later `font-medium`
+ * or `font-semibold` on the same element must still win, which the `font` shorthand would not allow. Instrument Serif has one weight: never bold.
+ * `eyebrow` is for group labels inside menus and the command palette only.
+ */
+@utility t-display {
+	font-family: var(--font-display);
+	font-size: 44px;
+	line-height: 48px;
+	font-weight: 400;
+	letter-spacing: -0.01em;
+}
+@utility t-big-number {
+	font-family: var(--font-display);
+	font-size: 40px;
+	line-height: 44px;
+	font-weight: 400;
+}
+@utility t-root-title {
+	font-family: var(--font-display);
+	font-size: 34px;
+	line-height: 40px;
+	font-weight: 400;
+	letter-spacing: -0.005em;
+}
+@utility t-page-title {
+	font-family: var(--font-display);
+	font-size: 28px;
+	line-height: 34px;
+	font-weight: 400;
+}
+@utility t-section-title {
+	font-family: var(--font-display);
+	font-size: 22px;
+	line-height: 28px;
+	font-weight: 400;
+}
+@utility t-heading {
+	font-family: var(--font-ui);
+	font-size: 20px;
+	line-height: 28px;
+	font-weight: 600;
+}
+@utility t-section-heading {
+	font-family: var(--font-ui);
+	font-size: 17px;
+	line-height: 24px;
+	font-weight: 600;
+}
+@utility t-label {
+	font-family: var(--font-ui);
+	font-size: 15px;
+	line-height: 22px;
+	font-weight: 600;
+}
+@utility t-row-title {
+	font-family: var(--font-ui);
+	font-size: 15px;
+	line-height: 22px;
+	font-weight: 500;
+}
+@utility t-body {
+	font-family: var(--font-ui);
+	font-size: 15px;
+	line-height: 24px;
+	font-weight: 400;
+}
+@utility t-ui {
+	font-family: var(--font-ui);
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 400;
+}
+@utility t-small {
+	font-family: var(--font-ui);
+	font-size: 13px;
+	line-height: 18px;
+	font-weight: 400;
+}
+@utility t-caption {
+	font-family: var(--font-ui);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 500;
+}
+@utility t-eyebrow {
+	font-family: var(--font-ui);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+}
+@utility t-mono {
+	font-family: var(--font-mono);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 500;
 }

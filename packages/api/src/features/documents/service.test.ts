@@ -108,7 +108,7 @@ describe("copyForJob", () => {
 
 		expect(id).toBe("copy");
 		expect(resumeServiceMock.create).toHaveBeenCalledWith(
-			expect.objectContaining({ name: "Product Designer — Orbital", tags: ["design"] }),
+			expect.objectContaining({ name: "Product Designer · Orbital", tags: ["design"] }),
 		);
 		expect(set).toHaveBeenCalledWith({ applicationId: "a1" });
 		expect(applicationServiceMock.update).toHaveBeenCalledWith({ userId: "u1", id: "a1", resumeId: "copy" });

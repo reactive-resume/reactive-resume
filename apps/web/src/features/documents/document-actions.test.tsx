@@ -16,6 +16,8 @@ const api = vi.hoisted(() => ({
 	trash: vi.fn(),
 	restoreMany: vi.fn(),
 	toast: vi.fn(),
+	suggestName: vi.fn(),
+	duplicate: vi.fn(),
 }));
 const mutation = vi.hoisted(() => (mutationFn: unknown) => ({
 	mutationOptions: (options: object = {}) => ({ ...options, mutationFn }),
@@ -43,9 +45,10 @@ vi.mock("@/libs/orpc/client", async (importOriginal) => {
 				purge: mutation(vi.fn()),
 				purgeMany: mutation(vi.fn()),
 				emptyTrash: mutation(vi.fn()),
+				suggestDuplicateName: { call: api.suggestName },
 				key: () => ["documents"],
 			},
-			resume: { list: { key: () => ["resumes"] }, duplicate: mutation(vi.fn()), update: mutation(vi.fn()) },
+			resume: { list: { key: () => ["resumes"] }, duplicate: mutation(api.duplicate), update: mutation(vi.fn()) },
 			coverLetters: { duplicate: mutation(vi.fn()) },
 		},
 	};
@@ -128,6 +131,22 @@ it.each([
 	const trashed = api.trash.mock.calls.map(([input]) => input);
 	undo.onClick();
 	await waitFor(() => expect(api.restoreMany.mock.calls.flatMap(([input]) => input.documents)).toEqual(trashed));
+});
+
+// Duplicating is undone by renaming or trashing the copy, so it makes the copy at once and offers Rename (D5).
+it("duplicates at once under the suggested name, without asking for one", async () => {
+	api.suggestName.mockResolvedValue("Fictional resume 2");
+	api.duplicate.mockResolvedValue("r2");
+	await renderActions(useDocumentActions).duplicate(document());
+	expect(api.duplicate).toHaveBeenCalledWith(
+		{ id: "r1", name: "Fictional resume 2", tags: ["design"] },
+		expect.anything(),
+	);
+	expect(screen.queryByRole("dialog")).toBeNull();
+	expect(api.toast.mock.lastCall?.[0]).toMatchObject({
+		description: "Duplicated “Fictional resume”",
+		actionProps: { children: "Rename" },
+	});
 });
 
 function renderActions<T>(hook: () => T) {

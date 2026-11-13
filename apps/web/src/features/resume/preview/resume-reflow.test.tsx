@@ -49,3 +49,12 @@ it.each([
 	);
 	expect(container.querySelector(`[lang="${locale}"]`)?.getAttribute("dir")).toBe(direction);
 });
+
+it("keeps the resume's printed name below the editor's page heading", () => {
+	const data = structuredClone(defaultResumeData);
+	data.basics.name = "Taylor Example";
+	const view = render(<ResumeReflow data={data} />);
+	expect(view.getByRole("heading", { level: 2, name: "Taylor Example" })).toBeTruthy();
+	expect(view.queryByRole("heading", { level: 1 })).toBeNull();
+	view.unmount();
+});

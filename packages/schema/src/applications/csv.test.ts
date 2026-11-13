@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
-import { mapCsvToApplications, parseCsv, rowsToCsv } from "./csv";
+import { applyLaneMapping, collectCsvLanes, compatibleLanes, mapCsvToApplications, parseCsv, rowsToCsv } from "./csv";
+import { createDefaultApplicationLanes } from "./lanes";
 
 describe("parseCsv", () => {
 	it("neutralizes formulas in skipped rows and headers, preserving quotes and newlines", () => {
@@ -92,6 +93,27 @@ describe("mapCsvToApplications", () => {
 			]),
 		);
 	});
+	it("offers every Status value for stage mapping when the caller asks, unknown names unclassified", () => {
+		const result = mapCsvToApplications(
+			parseCsv("Company,Role,Status\nA,Designer,Take-home\nB,Designer,Interview"),
+			undefined,
+			true,
+		);
+		expect(result.invalidValues).toEqual([]);
+		expect(result.rows).toHaveLength(2);
+		expect(result.rows[1]).toMatchObject({ company: "B", status: "interview", lane: { label: "Interview" } });
+		const lane = collectCsvLanes(result.rows).find((item) => item.label === "Take-home");
+		expect(lane).toMatchObject({ label: "Take-home", unclassified: true });
+		if (!lane) throw new Error("Unknown CSV stage was dropped");
+		const existing = createDefaultApplicationLanes().filter((item) => item.id === "interview");
+		expect(compatibleLanes(lane, existing)).toEqual(existing);
+		expect(applyLaneMapping(result.rows, new Map([[lane.key, "interview"]]))[0]).toEqual({
+			company: "A",
+			role: "Designer",
+			laneId: "interview",
+		});
+	});
+
 	it("reports malformed posting metadata and lets an explicit column omission resolve it", () => {
 		const table = parseCsv("Company,Role,Posting Source\nAcme,Engineer,not-json");
 		expect(mapCsvToApplications(table).invalidValues).toEqual([{ row: 2, field: "postingSource", value: "not-json" }]);

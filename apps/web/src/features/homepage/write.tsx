@@ -86,7 +86,7 @@ export function Write() {
 					{t`Write beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide.`}
 				</SceneCaption>
 
-				<div className="absolute start-[5vw] top-[calc(10vh+17vw+150px)] h-[120vh] w-[90vw] origin-top-left [transform:translateY(calc((1-var(--in))*14vh))_rotate(-1.2deg)_scale(calc(.94+var(--in)*.06))] rounded-md bg-paper p-[6vw] font-ui text-[14px] leading-[1.55] text-[oklch(0.28_0.01_95)] shadow-paper [transition:transform_.5s_var(--ease)] min-[900px]:start-[42vw] min-[900px]:top-[14vh] min-[900px]:w-[53vw] min-[900px]:px-[3vw] min-[900px]:py-[3.5vw] min-[900px]:text-[clamp(14px,1.3vw,20px)] min-[900px]:opacity-[clamp(0,var(--p)*20,1)] rtl:origin-top-right">
+				<div className="absolute start-[5vw] top-[calc(10vh+17vw+150px)] h-[120vh] w-[90vw] origin-top-left [transform:translateY(calc((1-var(--in))*14vh))_rotate(-1.2deg)_scale(calc(.94+var(--in)*.06))] rounded-paper bg-paper p-[6vw] font-ui text-[14px] leading-[1.55] text-[oklch(0.28_0.01_95)] shadow-paper [transition:transform_.5s_var(--ease)] min-[900px]:start-[42vw] min-[900px]:top-[14vh] min-[900px]:w-[53vw] min-[900px]:px-[3vw] min-[900px]:py-[3.5vw] min-[900px]:text-[clamp(14px,1.3vw,20px)] min-[900px]:opacity-[clamp(0,var(--p)*20,1)] rtl:origin-top-right">
 					<div className="absolute end-[2vw] top-[1.6vw] flex h-7 items-center gap-1.5 rounded-sm bg-[oklch(0.95_0.006_95)] ps-2 pe-[11px] text-[12px] font-medium text-[oklch(0.42_0.01_95)] opacity-(--cl)">
 						<Icon name="cloud-check" size={16} className="text-[oklch(0.42_0.1_150)]" />
 						{t`Saved · version ${version}`}
@@ -151,7 +151,7 @@ export function Write() {
 								className="col-start-1 row-start-1 flex flex-col gap-[9px] rounded-xl border border-[oklch(0.9_0.006_95)] bg-white px-[13px] py-3 opacity-(--card) shadow-[0_12px_30px_-12px_oklch(0.2_0.01_95/.3)]"
 							>
 								<div className="flex items-center gap-2">
-									<span className="flex size-[22px] items-center justify-center rounded-sm bg-[oklch(0.94_0.035_150)] text-[oklch(0.42_0.1_150)]">
+									<span className="flex size-[22px] items-center justify-center rounded-xs bg-[oklch(0.94_0.035_150)] text-[oklch(0.42_0.1_150)]">
 										<Icon name="sparkle" size={15} />
 									</span>
 									<b className="font-semibold">{t`Assistant`}</b>
@@ -162,14 +162,14 @@ export function Write() {
 										ref={acceptRef}
 										type="button"
 										onClick={() => finish(false)}
-										className="h-[30px] rounded-md bg-[oklch(0.5_0.1_150)] px-3 text-[12.5px] font-semibold text-white transition-colors hover:bg-[oklch(0.44_0.1_150)]"
+										className="h-[30px] rounded-sm bg-[oklch(0.5_0.1_150)] px-3 text-[12.5px] font-semibold text-white transition-colors hover:bg-[oklch(0.44_0.1_150)]"
 									>
 										{t`Accept`}
 									</button>
 									<button
 										type="button"
 										onClick={() => finish(true)}
-										className="h-[30px] rounded-md border border-[oklch(0.82_0.008_95)] bg-white px-[11px] text-[12.5px] font-medium text-[oklch(0.25_0.01_95)] transition-colors hover:bg-[oklch(0.96_0.005_95)]"
+										className="h-[30px] rounded-sm border border-[oklch(0.82_0.008_95)] bg-white px-[11px] text-[12.5px] font-medium text-[oklch(0.25_0.01_95)] transition-colors hover:bg-[oklch(0.96_0.005_95)]"
 									>
 										{t`Keep mine`}
 									</button>

@@ -235,7 +235,7 @@ export function Hero() {
 					))}
 				</div>
 
-				<div className="hero-page absolute top-(--pt) left-1/2 aspect-[612/792] w-(--pw) rounded-sm shadow-paper">
+				<div className="hero-page absolute top-(--pt) left-1/2 aspect-[612/792] w-(--pw) rounded-paper shadow-paper">
 					<Sheet />
 				</div>
 

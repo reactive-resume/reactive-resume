@@ -32,12 +32,13 @@ const proposal: Proposal = {
 
 function renderSet(
 	handlers: { onAccept?: () => void; onEdit?: (proposal: Proposal, text: string) => Promise<void> } = {},
+	overrides: Partial<Proposal> = {},
 ) {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 	render(
 		<I18nProvider i18n={i18n}>
 			<ChangeSet
-				proposals={[proposal]}
+				proposals={[{ ...proposal, ...overrides }]}
 				states={["pending"]}
 				locked={false}
 				onAccept={handlers.onAccept ?? (() => {})}
@@ -197,4 +198,55 @@ it("checks identical posting gaps independently", () => {
 	expect(first.getAttribute("aria-checked")).toBe("true");
 	expect(second.getAttribute("aria-checked")).toBe("false");
 	expect(requirements.map((item) => item.status)).toEqual(["missing", "unassessed"]);
+});
+
+/** The card's one-passage view of a wording edit: kept, removed and added runs, in order. */
+function shownChange(before: string, after: string) {
+	renderSet({}, { before: `<p>${before}</p>`, after: `<p>${after}</p>` });
+	const passage = document.querySelector("ins")?.parentElement;
+	if (!passage) throw new Error("Missing the change");
+	const parts = Array.from(passage.children, (part) => ({
+		kind: part.tagName === "INS" ? "added" : part.tagName === "DEL" ? "removed" : "same",
+		text: part.textContent,
+	}));
+	cleanup();
+	return parts;
+}
+
+it("shows a clause added to a short bullet as the sentence once, with only the new words marked", () => {
+	expect(
+		shownChange(
+			"Run more than 40 customer interviews a year.",
+			"Run more than 40 customer interviews a year, and plan each quarter's design work from what they show.",
+		),
+	).toEqual([
+		{ kind: "same", text: "Run more than 40 customer interviews a year" },
+		{ kind: "added", text: ", and plan each quarter's design work from what they show" },
+		{ kind: "same", text: "." },
+	]);
+	// A changed word is never split: "launch" → "launched" marks the whole word.
+	expect(shownChange("We launch it.", "We launched it.")).toEqual([
+		{ kind: "same", text: "We " },
+		{ kind: "removed", text: "launch " },
+		{ kind: "added", text: "launched " },
+		{ kind: "same", text: "it." },
+	]);
+});
+
+it("shrinks long kept text around a change on the narrow card, and keeps every changed word", () => {
+	const long = "one two three four five six seven eight nine ten eleven twelve ";
+	const parts = shownChange(long + long.trim(), `${long}new words ${long.trim()}`);
+	expect(parts.map((part) => part.text).join("")).toBe(
+		"…seven eight nine ten eleven twelve new words one two three four five six …",
+	);
+	expect(parts[1]).toEqual({ kind: "added", text: "new words " });
+	// A short sentence opening stays whole instead of losing its first words.
+	const opening = "Tested each release with shop owners before it shipped";
+	expect(shownChange(opening, `${opening}, so problems surfaced`)[0]?.text).toBe(opening);
+});
+
+it("keeps unverified new details visible before accepting, without opening a disclosure", () => {
+	renderSet({}, { addsClaims: true, unsupported: [{ kind: "figure", text: "58% activation" }] });
+	expect(screen.getByText("Figure: 58% activation")).toBeVisible();
+	expect(screen.getByText("Nothing checked backs these. Confirm each before accepting:")).toBeVisible();
 });

@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
+import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -45,30 +45,37 @@ export function GuestBanner() {
 
 	if (!isAnonymous) return null;
 
+	// The callout sits where E1 draws it: at the top of the page's reading column, 20px above the page's header. The
+	// page below brings its own top padding (28px), so the frame takes 8px back.
 	return (
-		<div className="px-4 pt-4">
-			<Alert variant="warn">
-				<Icon name="warning-circle" />
-				<AlertTitle>
-					<Trans>You're using a guest account</Trans>
-				</AlertTitle>
-				<AlertDescription>
-					<p>
-						<Trans>
-							Your work is lost when you sign out or the session ends. Create an account or sign in to keep your
-							resumes, cover letters and applications.
-						</Trans>
-					</p>
-					<div className="mt-2 flex flex-wrap gap-2">
-						<Button variant="secondary" size="sm" nativeButton={false} render={<Link to="/auth/register" />}>
-							<Trans>Create account</Trans>
-						</Button>
-						<Button variant="ghost" size="sm" nativeButton={false} render={<Link to="/auth/login" />}>
-							<Trans>Sign in</Trans>
-						</Button>
-					</div>
-				</AlertDescription>
-			</Alert>
+		<div className="-mb-2 px-4 pt-4 sm:px-8 sm:pt-7 lg:px-10">
+			<div
+				role="status"
+				className="flex max-w-(--content-max) flex-wrap items-center gap-3 rounded-lg bg-warn-soft py-3 ps-3.5 pe-3 text-[13px]/[18px] text-warn-text [--icon-size:18px]"
+			>
+				<Icon name="warning-circle" className="shrink-0" />
+				<p className="min-w-[min(100%,20rem)] flex-1">
+					<Trans>
+						<b className="font-semibold">You're using a guest account.</b> Everything you make is lost when you sign out
+						or this session ends. Create an account and your resumes, cover letters, applications and Career knowledge
+						move into it.
+					</Trans>
+				</p>
+				<span className="flex shrink-0 gap-2">
+					<Button variant="secondary" size="sm" nativeButton={false} render={<Link to="/auth/register" />}>
+						<Trans>Create account</Trans>
+					</Button>
+					<Button
+						variant="ghost"
+						size="sm"
+						className="text-current"
+						nativeButton={false}
+						render={<Link to="/auth/login" />}
+					>
+						<Trans>Sign in</Trans>
+					</Button>
+				</span>
+			</div>
 		</div>
 	);
 }
@@ -79,18 +86,26 @@ export function GuestBanner() {
  * Career knowledge move, except facts the account already holds; conflicting profiles stop the move, and assistant
  * conversations are deleted with the guest after a successful move).
  */
-export function GuestTransferNote() {
+export function GuestTransferNote({ signUp = false }: { signUp?: boolean }) {
 	useEffect(() => writeTransfer(Date.now()), []);
 
 	return (
-		<Alert variant="info">
+		<Alert variant="info" className="mt-5">
 			<Icon name="info" />
 			<AlertDescription>
-				<Trans>
-					Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it
-					already has. Different Career profiles stop sign-in and keep your guest work. Assistant conversations don't
-					move.
-				</Trans>
+				{signUp ? (
+					// A new account has no facts or Career profile of its own, so those clauses don't apply.
+					<Trans>
+						Your guest resumes, cover letters, applications and Career knowledge move to this account. Assistant
+						conversations don't move.
+					</Trans>
+				) : (
+					<Trans>
+						Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it
+						already has. Different Career profiles stop sign-in and keep your guest work. Assistant conversations don't
+						move.
+					</Trans>
+				)}
 			</AlertDescription>
 		</Alert>
 	);

@@ -5,10 +5,10 @@ description: "Use Check mode to see how well software reads your resume, fix iss
 
 Before you send a resume, open **Check** in the editor. It shows how reliably an applicant tracking system (ATS) can read your resume, pins each problem to the line it's about, and compares your resume with a job posting. Everything except the optional writing review runs in your browser.
 
-<Frame caption="Check shows issues beside the affected resume">
+<Frame caption="Check leads with a verdict and passed checks">
   <img
     src="/images/guides/checking-your-resume/check-mode-overview.webp"
-    alt="Check mode with readability score 82, four issues, suggested fixes and numbered markers on the fictional sample resume"
+    alt="Check with Reads cleanly, 23 of 23 checks pass, Issues, Job match and Writing"
   />
 </Frame>
 
@@ -16,16 +16,16 @@ Before you send a resume, open **Check** in the editor. It shows how reliably an
 
 In the editor bar, select **Check**, or press <kbd>3</kbd> when you aren't typing in a field. The tab shows how many issues are open, or a check mark when there are none.
 
-Check updates as you edit. Switch to **Write**, change something, and the score and issues follow straight away.
+Check updates as you edit. Switch to **Write**, change something, and the verdict and issues follow straight away.
 
 ## Read the score
 
-The panel starts with a score from 0 to 100 and a short verdict: **Reads cleanly** (80 and above), **Mostly readable** (50 to 79) or **Hard for software to read** (below 50). While any entry **Looks like part of the entry above**, **Reads cleanly** is blocked: scores of 50 or more read **Mostly readable**, while scores below 50 still read **Hard for software to read**.
+The panel starts with a verdict, such as **Reads cleanly**, **Mostly readable** or **Hard for software to read**, followed by the number of checks passed. The verdict still uses the share of checks passed: 80% and above reads cleanly, 50–79% is mostly readable and below 50% is hard for software to read. An entry that **Looks like part of the entry above** prevents the clean verdict until reviewed.
 
-<Frame caption="Check shows issues beside the affected resume">
+<Frame caption="Check leads with a verdict and passed checks">
   <img
     src="/images/guides/checking-your-resume/score-and-issues.webp"
-    alt="Check mode with readability score 82, four issues, suggested fixes and numbered markers on the fictional sample resume"
+    alt="Check with Reads cleanly, 23 of 23 checks pass, Issues, Job match and Writing"
   />
 </Frame>
 
@@ -47,10 +47,10 @@ The heading check only runs when your resume's language is English, so resumes i
 
 Below the issues, **Checks by category** lists each category with how many checks pass, or how many need a look. Select a row to read what it covers.
 
-<Frame caption="Check shows issues beside the affected resume">
+<Frame caption="Check leads with a verdict and passed checks">
   <img
     src="/images/guides/checking-your-resume/checks-by-category.webp"
-    alt="Check Issues tab with two Layout items, one Section headings item and one Contact details item to review beside the fictional resume"
+    alt="Check with Reads cleanly, 23 of 23 checks pass, Issues, Job match and Writing"
   />
 </Frame>
 
@@ -93,16 +93,16 @@ When every check passes, the tab reads **Nothing to fix.**
 
 ## See what a parser reads
 
-At the top of the page, switch from **What a person sees** to **What a parser reads**. The page is replaced by the text software pulls out of your resume's PDF, in the order it comes out, with the name, email, phone, location, links, section headings and dates it recognized.
+Select **See what a parser reads** at the bottom of Check. The page is replaced by the text software pulls out of your resume's PDF, in the order it comes out, with the name, email, phone, location, links, section headings and dates it recognized.
 
-<Frame caption="Review the text a parser reads">
+<Frame caption="Read the text extracted from the PDF">
   <img
     src="/images/guides/checking-your-resume/parser-view.webp"
-    alt="Check with What a parser reads selected, showing the fictional resume in extracted reading order"
+    alt="Check with the parser reading view, recognized fields and Back to the page"
   />
 </Frame>
 
-Use it to spot content that lands in the wrong place, for example a sidebar read after your experience, or a field picked up from the wrong line. Switch back with **What a person sees**.
+Use it to spot content that lands in the wrong place, for example a sidebar read after your experience, or a field picked up from the wrong line. Use the back control to return to the page.
 
 ## Match your resume to a job
 
@@ -148,17 +148,17 @@ Once a resume is linked, the top of the tab names the application. Select **Chan
 
 You can also arrive from an application's **Fit** result with **Tailor resume for this job**. Job match uses that application's posting, including after a web reload. If it differs from the resume's saved application link, **For this visit only** identifies the temporary context; Change and Unlink are unavailable for that context, so the other saved link stays intact.
 
-<Frame caption="Fit opens Job match using the selected application's posting.">
+<Frame caption="Use the linked job’s posting in Job match">
   <img
     src="/images/guides/checking-your-resume/fit-job-match.png"
-    alt="Fictional resume in Check with Job match selected, Operations lead at Fictional Cedar marked For this visit only, and TypeScript and enterprise onboarding among missing terms."
+    alt="Job match for the fictional Lumen application, beside its tailored resume"
   />
 </Frame>
 
-<Frame caption="Choose a saved job for keyword comparison">
+<Frame caption="Use the linked job’s posting in Job match">
   <img
     src="/images/guides/checking-your-resume/job-match-linked-application.webp"
-    alt="Job match comparing the fictional resume with the selected Northwind Games posting"
+    alt="Job match for the fictional Lumen application, beside its tailored resume"
   />
 </Frame>
 
@@ -188,14 +188,14 @@ The pins show while the **Issues** tab is open, until you change the resume. Aft
 
 ## Get a second opinion on your wording
 
-The checks are mechanical. The **Writing** tab asks an AI model how a reader might react to your summary and bullets, and suggests rewrites. It needs your own AI provider; see [Connecting an AI provider](/guides/using-ai). Without one, the tab offers **Open AI settings**. Issues and Job match work without AI.
+The checks are mechanical. The **Writing** tab asks an AI model how a reader might react to your summary and bullets, and suggests rewrites. It needs your own AI provider; see [Connecting an AI provider](/guides/using-ai). Without one, the tab shows one **Set up AI** line that opens setup in place. Issues and Job match work without AI.
 
 <Steps>
   <Step title="Choose the model">
     The tab says where your resume's text goes, for example "Sends your resume's text only to OpenAI · gpt-5-mini, with your key." To use another of your providers, select **Change** and pick it.
 
-    <Frame caption="Writing review is separate from the readability score">
-      <img src="/images/guides/checking-your-resume/writing-review-start.webp" alt="Writing review tab explaining the optional AI review and provider connection" />
+    <Frame caption="Review wording separately from readability checks">
+      <img src="/images/guides/checking-your-resume/writing-review-start.webp" alt="Writing tab with the named AI connection and Review writing button" />
     </Frame>
 
   </Step>

@@ -23,7 +23,7 @@ export function EditorPending() {
 			<EditorFrame
 				editorLayout={editorLayout}
 				bar={
-					<header className="flex h-(--editor-bar) items-center gap-1.5 border-b border-line bg-surface px-3">
+					<header className="flex h-(--editor-bar) items-center gap-3 border-b border-line bg-bg px-3">
 						<BackLink />
 						<Skeleton className="h-4 w-40" />
 					</header>
@@ -36,7 +36,7 @@ export function EditorPending() {
 				mobile={
 					<div className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto]">
 						<PanelPlaceholder />
-						<div className="min-h-[52px] border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]" />
+						<div className="min-h-16 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)]" />
 					</div>
 				}
 			>
@@ -48,7 +48,7 @@ export function EditorPending() {
 
 function PanelPlaceholder() {
 	return (
-		<div role="status" aria-label={t`Loading`} className="grid content-start gap-3 bg-surface p-4">
+		<div role="status" aria-label={t`Loading`} className="grid content-start gap-3 px-6 pt-5">
 			<Skeleton className="h-9" />
 			<Skeleton className="h-9" />
 			<Skeleton className="h-9 w-2/3" />
@@ -68,15 +68,16 @@ export function PagePlaceholder() {
 	const { canvasRef, pageScale } = usePageScale(data?.metadata.page.format ?? "a4");
 
 	return (
-		<div className="relative h-full min-h-0 bg-sunken">
-			<div ref={canvasRef} className="absolute inset-0 overflow-auto px-4 pt-7 pb-24 sm:px-10">
+		<div className="relative h-full min-h-0 bg-sunken dark:bg-raised">
+			{/* The live canvas puts a 16px label and 10px of space above its first page. */}
+			<div ref={canvasRef} className="absolute inset-0 overflow-auto px-4 pt-10 pb-24 sm:px-10">
 				<div className="mx-auto w-fit">
 					<ResumePreviewLoader
 						data={data}
 						pageLayout="vertical"
 						pageGap={24}
 						pageScale={pageScale}
-						pageClassName="rounded-none shadow-page"
+						pageClassName="rounded-paper bg-paper shadow-page"
 					/>
 				</div>
 			</div>

@@ -1,5 +1,5 @@
 import type { Page, TestInfo } from "@playwright/test";
-import { createSampleResumeFromDashboard } from "../fixtures/resume";
+import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 const updateUrl = "**/api/rpc/resume/update";
@@ -18,6 +18,7 @@ async function clickDashboardWithoutNavigationWait(page: Page) {
 async function prepareNavigationTest(page: Page, testInfo: TestInfo) {
 	await createSampleResumeFromDashboard(page, testInfo);
 	await page.reload();
+	await openSidebarSection(page, "Basics");
 	const warmup = waitSave(page);
 	await page.getByLabel("Headline", { exact: true }).fill("Navigation fixture ready");
 	await warmup;

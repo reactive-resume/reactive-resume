@@ -26,28 +26,23 @@ keep working when you switch templates. Reach for custom styles when you want so
     Open your resume and select **Design** at the top of the editor, or press <kbd>2</kbd> when you're not typing in a
     field.
   </Step>
-  <Step title="Open Advanced">
-    Select **Advanced** in the row of groups at the top of the Design panel. The Advanced group opens and scrolls into
-    view.
-  </Step>
-  <Step title="Find Custom styles">
-    Scroll to **Custom styles**, near the end of the Advanced group, just above **Reset design defaults**.
+  <Step title="Open Custom CSS">
+    Select **Custom CSS** in the Design category list. The stylesheet editor replaces the list in the panel.
   </Step>
 </Steps>
 
-<Frame caption="The current Custom styles editor">
+<Frame caption="Custom CSS has its own Design category">
   <img
     src="/images/guides/applying-custom-styles/custom-styles-editor.webp"
-    alt="Custom styles editor with undo, redo, copy, format and focus controls, CSS limitations and the Semantic CSS stylesheet field"
+    alt="Custom CSS editor with Format, Focus mode, supported targets and Clear custom CSS"
   />
 </Frame>
 
-On a phone, Design opens as a sheet over the page. Select the **Page** tab, then select **Advanced** under the page
-settings.
+On the phone website, open **Design → Custom CSS**. The native apps keep custom styles under **Page → Advanced**.
 
 <Note>
-  **Reset design defaults** doesn't touch your custom styles. It resets the look (fonts, colors, spacing) and keeps your
-  stylesheet, paper size, language, date format and section layout.
+  **Reset design to defaults** doesn't touch your custom styles. It resets the look (fonts, colors, spacing) and keeps
+  your stylesheet, paper size, language, date format and section layout.
 </Note>
 
 ## Style one section or entry
@@ -69,10 +64,10 @@ The quickest way to start is to pick the thing you want to change on the page.
   </Step>
 </Steps>
 
-<Frame caption="A section rule beside the rendered resume">
+<Frame caption="Custom CSS has its own Design category">
   <img
     src="/images/guides/applying-custom-styles/pick-an-entry-on-the-page.webp"
-    alt="Semantic CSS rule for the Education section beside the fictional sample resume"
+    alt="Custom CSS editor with Format, Focus mode, supported targets and Clear custom CSS"
   />
 </Frame>
 
@@ -172,7 +167,7 @@ Section types, element names and field names work in any resume. Rules that use 
 entry, and template parts only exist in their template.
 
 1. In the source resume, select **Copy stylesheet**.
-2. In the other resume, open **Design → Advanced → Custom styles** and paste.
+2. In the other resume, open **Design → Custom CSS** and paste.
 3. Remove or rewrite rules with `item[id=...]` selectors, and template-part rules for a different template.
 4. Check the page and the downloaded PDF.
 

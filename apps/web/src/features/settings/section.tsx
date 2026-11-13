@@ -1,20 +1,26 @@
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { useEffect, useId, useRef } from "react";
+import { Button } from "@reactive-resume/ui/components/button";
 import { cn } from "@reactive-resume/utils/style";
+import { ListRow } from "@/components/calm/list-row";
+import { SectionHeading } from "@/components/calm/section-heading";
 
 type SettingsSectionProps = {
 	title: ReactNode;
-	/** A short line under the title. */
+	/** A short note after the title. */
 	description?: ReactNode;
-	/** Sits at the right of the title, e.g. "New key". */
+	/** The one text action at the end of the title line, inside the heading (a plain button or link). */
 	action?: ReactNode;
 	children: ReactNode;
 	className?: string;
-	/** An anchor for links straight to this group, e.g. `/dashboard/settings/ai#api-keys`. */
+	/** An anchor for links straight to this group, e.g. `/dashboard/settings/developer#api-keys`. */
 	id?: string;
 };
 
-/** A settings group: a title and its rows, divided from the group above by a rule. No card around it. */
+/**
+ * A settings group: a serif title and its flat rows. The settings route spaces groups 32px apart, so the title adds
+ * none of its own; the first group sits 8px under the page title.
+ */
 export function SettingsSection({ title, description, action, children, className, id }: SettingsSectionProps) {
 	const titleId = useId();
 	const ref = useRef<HTMLElement>(null);
@@ -33,38 +39,62 @@ export function SettingsSection({ title, description, action, children, classNam
 			ref={ref}
 			id={id}
 			aria-labelledby={titleId}
-			className={cn("grid scroll-mt-6 gap-3 border-t border-line pt-6 first:border-t-0 first:pt-0", className)}
+			className={cn("group/section flex scroll-mt-6 flex-col not-first:-mt-8", className)}
 		>
-			<div className="flex items-center justify-between gap-3">
-				<div className="grid gap-0.5">
-					<h2 id={titleId} className="text-[17px] font-semibold">
-						{title}
-					</h2>
-					{description && <p className="text-sm text-ink-3">{description}</p>}
-				</div>
-				{action}
-			</div>
+			<SectionHeading id={titleId} note={description} action={action} className="group-first/section:pt-2">
+				{title}
+			</SectionHeading>
 			{children}
 		</section>
 	);
 }
 
 type SettingsRowProps = {
-	id?: string;
+	id?: string | undefined;
+	/** An icon tile or initials at the start of the row. */
+	leading?: ReactNode;
 	title: ReactNode;
 	description?: ReactNode;
+	/** `danger` for a row that removes something. */
+	variant?: "default" | "danger" | undefined;
+	className?: string | undefined;
+	/** What sits at the end: a badge, a switch, a text action. */
 	children?: ReactNode;
 };
 
-/** One setting: what it is on the left, its control on the right. */
-export function SettingsRow({ id, title, description, children }: SettingsRowProps) {
+/** One setting: what it is and its current value on the left, its one action at the end. */
+export function SettingsRow({ id, leading, title, description, variant, className, children }: SettingsRowProps) {
 	return (
-		<div id={id} className="flex scroll-mt-6 flex-wrap items-center gap-3 py-2">
-			<div className="grid min-w-0 flex-1 gap-0.5">
-				<span className="text-sm font-medium">{title}</span>
-				{description && <span className="text-[13px] text-ink-3">{description}</span>}
-			</div>
-			{children}
-		</div>
+		<ListRow
+			{...(id ? { id } : {})}
+			leading={leading}
+			title={title}
+			subtitle={description}
+			variant={variant ?? "default"}
+			// Settings descriptions must not be cut on phones.
+			wrap
+			className={cn("scroll-mt-6", className)}
+			trailing={children ? <span className="flex items-center gap-3.5">{children}</span> : undefined}
+		/>
 	);
 }
+
+/** The text action at the end of a settings row (the boards' `.ttb`): accent words, no box. */
+export function TextAction({ className, ...props }: ComponentProps<typeof Button>) {
+	return <Button variant="link" className={cn("leading-5", className)} {...props} />;
+}
+
+/** A settings row opened in place: its label, the control, and Cancel and Save beside it. */
+export function SettingsOpenRow({ id, className, ...props }: ComponentProps<"div">) {
+	return (
+		<div
+			id={id}
+			className={cn("flex scroll-mt-6 flex-col gap-2 border-b border-line pt-3.5 pb-4 last:border-b-0", className)}
+			{...props}
+		/>
+	);
+}
+
+/** The rows a setting lists under itself when opened: passkeys, signed-in devices. */
+export const subRowsClassName = "flex flex-col border-b border-line py-1.5";
+export const subRowClassName = "ms-2 flex min-h-11 items-center gap-3.5 border-s border-line-2 py-1 ps-5 text-sm/5";

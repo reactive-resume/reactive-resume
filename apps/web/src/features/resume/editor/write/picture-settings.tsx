@@ -19,9 +19,11 @@ import {
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { InputGroup, InputGroupAddon, InputGroupText } from "@reactive-resume/ui/components/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { toast } from "@reactive-resume/ui/components/toast";
 import "react-easy-crop/react-easy-crop.css";
@@ -40,25 +42,17 @@ type PicturePreviewControlsProps = {
 	normalizedPictureUrl: string;
 	picture: PictureValues;
 	onAutoSave: () => void;
-	onDeletePicture: () => void;
 	onSelectPicture: () => void;
 };
 
-function PicturePreviewControls({
-	form,
-	normalizedPictureUrl,
-	picture,
-	onAutoSave,
-	onDeletePicture,
-	onSelectPicture,
-}: PicturePreviewControlsProps) {
+function PicturePreviewControls({ normalizedPictureUrl, picture, onSelectPicture }: PicturePreviewControlsProps) {
 	return (
-		<div className="flex items-center gap-x-4">
+		<div className="flex flex-col gap-3">
 			<button
 				type="button"
-				onClick={picture.url ? onDeletePicture : onSelectPicture}
-				aria-label={picture.url ? t`Remove photo` : t`Upload photo`}
-				className="group/picture relative size-18 cursor-pointer overflow-hidden rounded-md bg-sunken transition-colors hover:bg-sunken/50"
+				onClick={onSelectPicture}
+				aria-label={t`Change photo`}
+				className="group/picture relative h-28 w-full cursor-pointer overflow-hidden rounded-md bg-sunken transition-colors hover:bg-sunken/50"
 			>
 				{normalizedPictureUrl && (
 					<img
@@ -70,46 +64,9 @@ function PicturePreviewControls({
 				)}
 
 				<div className="absolute inset-0 z-0 flex size-full items-center justify-center">
-					{picture.url ? <Icon name="trash" size={24} /> : <Icon name="upload-simple" size={24} />}
+					<Icon name="upload-simple" size={24} />
 				</div>
 			</button>
-
-			<form.Field name="url">
-				{(field) => (
-					<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>URL</Trans>
-						</FormLabel>
-						<div className="flex items-center gap-x-2">
-							<FormControl
-								render={
-									<Input
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(event) => {
-											field.handleChange(event.target.value);
-											onAutoSave();
-										}}
-									/>
-								}
-							/>
-
-							<Button
-								size="icon"
-								variant="ghost"
-								aria-label={picture.hidden ? t`Show photo` : t`Hide photo`}
-								onClick={() => {
-									form.setFieldValue("hidden", !picture.hidden);
-									onAutoSave();
-								}}
-							>
-								{picture.hidden ? <Icon name="eye-slash" size={16} /> : <Icon name="eye" size={16} />}
-							</Button>
-						</div>
-					</FormItem>
-				)}
-			</form.Field>
 		</div>
 	);
 }
@@ -127,32 +84,21 @@ function PictureFitField({ form, onAutoSave }: PictureFieldProps) {
 					<div className="text-sm font-medium">
 						<Trans>Fit</Trans>
 					</div>
-					<ButtonGroup role="group" aria-label={t`Fit`} className="w-full">
-						<Button
-							type="button"
-							variant={field.state.value === "cover" ? "primary" : "secondary"}
-							aria-pressed={field.state.value === "cover"}
-							className="flex-1"
-							onClick={() => {
-								field.handleChange("cover");
-								onAutoSave();
-							}}
-						>
+					<SegmentedControl
+						aria-label={t`Fit`}
+						value={field.state.value}
+						onValueChange={(fit) => {
+							field.handleChange(fit as "cover" | "contain");
+							onAutoSave();
+						}}
+					>
+						<SegmentedControlItem value="cover">
 							<Trans>Cover</Trans>
-						</Button>
-						<Button
-							type="button"
-							variant={field.state.value === "contain" ? "primary" : "secondary"}
-							aria-pressed={field.state.value === "contain"}
-							className="flex-1"
-							onClick={() => {
-								field.handleChange("contain");
-								onAutoSave();
-							}}
-						>
+						</SegmentedControlItem>
+						<SegmentedControlItem value="contain">
 							<Trans>Contain</Trans>
-						</Button>
-					</ButtonGroup>
+						</SegmentedControlItem>
+					</SegmentedControl>
 				</div>
 			)}
 		</form.Field>
@@ -492,7 +438,7 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 				</DialogHeader>
 
 				{shownCrop && (
-					<div className="relative h-64 w-full overflow-hidden rounded-md bg-sunken ring-1 ring-line ring-inset">
+					<div className="relative h-50 w-full overflow-hidden rounded-md bg-sunken ring-1 ring-line ring-inset">
 						<Cropper
 							image={shownCrop.imageSrc}
 							crop={crop}
@@ -534,18 +480,18 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 				</div>
 
 				{shownCrop && shownCrop.file.size > 10 * 1024 * 1024 && (
-					<p
-						role="status"
-						className="text-sm text-warn-text"
-					>{t`This photo is larger than 10 MB. Use Crop and upload to shrink it.`}</p>
+					<p role="status" className="flex items-start gap-1.5 text-sm text-danger-text">
+						<Icon name="warning-circle" size={18} className="mt-px shrink-0" />
+						{t`This photo is larger than 10 MB. Use Crop and upload to shrink it.`}
+					</p>
 				)}
 				<DialogFooter className="flex-row flex-wrap justify-between">
-					<Button variant="secondary" onClick={onClose}>
+					<Button variant="ghost" onClick={onClose}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<div className="flex flex-wrap gap-2">
 						<Button
-							variant="secondary"
+							variant="ghost"
 							disabled={!cropState || cropState.file.size > 10 * 1024 * 1024}
 							onClick={() => {
 								if (!cropState) return;
@@ -556,6 +502,7 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 							<Trans>Skip and upload</Trans>
 						</Button>
 						<Button
+							variant="secondary"
 							disabled={!croppedAreaPixels}
 							onClick={() => {
 								void onConfirmCrop();
@@ -720,6 +667,7 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 				toast.close(toastId);
 				if (!current() || useResumeStore.getState().resume?.data.picture.url !== originalUrl) return;
 				form.setFieldValue("url", url);
+				toast.add({ description: t`Photo added` });
 				updateResumeData(
 					(draft) => {
 						draft.picture.url = url;
@@ -783,7 +731,7 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 	};
 
 	return (
-		<div id="sidebar-picture" className="col-span-full flex items-center gap-3 rounded-lg bg-bg p-2.5">
+		<div id="sidebar-picture" className="col-span-full flex items-center gap-3">
 			<input
 				ref={fileInputRef}
 				type="file"
@@ -817,14 +765,19 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 
 			{!picture.url && (
 				<Button variant="secondary" size="sm" disabled={locked} onClick={onSelectPicture}>
-					<Trans>Add</Trans>
+					<Trans>Add photo</Trans>
 				</Button>
 			)}
 			<Popover>
 				<PopoverTrigger
 					render={
-						<Button variant="secondary" size="sm" disabled={locked}>
-							{picture.url ? <Trans>Edit</Trans> : <Trans>URL</Trans>}
+						<Button
+							variant={picture.url ? "secondary" : "ghost"}
+							size={picture.url ? "sm" : "icon-sm"}
+							aria-label={picture.url ? undefined : t`Photo settings`}
+							disabled={locked}
+						>
+							{picture.url ? <Trans>Edit</Trans> : <Icon name="dots-three" />}
 						</Button>
 					}
 				/>
@@ -842,15 +795,13 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 							normalizedPictureUrl={normalizedPictureUrl}
 							picture={picture}
 							onAutoSave={handleAutoSave}
-							onDeletePicture={onDeletePicture}
 							onSelectPicture={onSelectPicture}
 						/>
 
 						{picture.url && (
 							<>
-								<PictureFitField form={form} onAutoSave={handleAutoSave} />
-
-								<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
+								<div className="grid grid-cols-2 gap-3">
+									<PictureFitField form={form} onAutoSave={handleAutoSave} />
 									<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
 
 									<ColorWidthFields
@@ -874,9 +825,51 @@ export function PictureSettings({ locked }: PictureSettingsProps) {
 								</div>
 							</>
 						)}
+						<form.Field name="url">
+							{(field) => (
+								<FormItem
+									className="flex-1"
+									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								>
+									<FormLabel>
+										<Trans>Or use an image address</Trans>
+									</FormLabel>
+									<div className="flex items-center gap-x-2">
+										<FormControl
+											render={
+												<Input
+													name={field.name}
+													value={field.state.value}
+													onBlur={field.handleBlur}
+													onChange={(event) => {
+														field.handleChange(event.target.value);
+														handleAutoSave();
+													}}
+												/>
+											}
+										/>
+									</div>
+								</FormItem>
+							)}
+						</form.Field>
 					</form>
 				</PopoverContent>
 			</Popover>
+			{picture.url && (
+				<>
+					<IconButton
+						icon={picture.hidden ? "eye-slash" : "eye"}
+						label={picture.hidden ? t`Show photo` : t`Hide photo`}
+						size="icon-sm"
+						disabled={locked}
+						onClick={() => {
+							form.setFieldValue("hidden", !picture.hidden);
+							handleAutoSave();
+						}}
+					/>
+					<IconButton icon="trash" label={t`Remove photo`} size="icon-sm" disabled={locked} onClick={onDeletePicture} />
+				</>
+			)}
 		</div>
 	);
 }

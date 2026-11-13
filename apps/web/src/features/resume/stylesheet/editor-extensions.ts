@@ -247,7 +247,8 @@ function colorDecorations(
 				token.to <= view.state.doc.length &&
 				view.visibleRanges.some(({ from, to }) => token.to >= from && token.from <= to),
 		)
-		.map((token) => Decoration.widget({ widget: new ColorSwatch(token, onSelect), side: 1 }).range(token.to));
+		// The swatch leads its value, as a colour chip reads before the colour's name.
+		.map((token) => Decoration.widget({ widget: new ColorSwatch(token, onSelect), side: -1 }).range(token.from));
 	return Decoration.set(ranges, true);
 }
 
@@ -256,13 +257,14 @@ function colorExtension(tokens: readonly SemanticCssColorToken[], onSelect: Sema
 		EditorView.baseTheme({
 			".semantic-css-color-swatch": {
 				display: "inline-block",
-				width: "0.75rem",
-				height: "0.75rem",
-				marginInline: "0.25rem",
+				width: "10px",
+				height: "10px",
+				marginInlineEnd: "4px",
 				padding: "0",
-				verticalAlign: "middle",
-				border: "1px solid currentColor",
-				borderRadius: "9999px",
+				verticalAlign: "-1px",
+				border: "none",
+				boxShadow: "0 0 0 1px var(--line-2)",
+				borderRadius: "2px",
 				cursor: "pointer",
 			},
 		}),

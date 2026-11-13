@@ -5,7 +5,7 @@ export type VersionSummary = RouterOutput["resume"]["listVersions"][number];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** "Today 14:02", "Yesterday 09:15", "Sep 16", or "Sep 16, 2025" for another year. */
+/** "Today 14:02", "Yesterday 09:15", "Tue 3 Nov", or "Tue 3 Nov 2025" for another year (in en-GB). */
 export function formatVersionTime(date: Date, locale: string, now = new Date()) {
 	const time = date.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
 	const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -13,6 +13,7 @@ export function formatVersionTime(date: Date, locale: string, now = new Date()) 
 	if (date.getTime() >= startOfToday) return t`Today ${time}`;
 	if (date.getTime() >= startOfToday - DAY_MS) return t`Yesterday ${time}`;
 	return date.toLocaleDateString(locale, {
+		weekday: "short",
 		month: "short",
 		day: "numeric",
 		...(date.getFullYear() === now.getFullYear() ? {} : { year: "numeric" }),
@@ -47,10 +48,12 @@ export function getVersionTitle(version: Pick<VersionSummary, "kind" | "name">) 
 }
 
 /** The line under a version's title: how it was saved. */
-export function getVersionDetail(version: Pick<VersionSummary, "kind">) {
+export function getVersionDetail(version: Pick<VersionSummary, "kind" | "name">) {
 	switch (version.kind) {
 		case "named":
-			return t`named`;
+			return t`named by you`;
+		case "sent":
+			return version.name ? t`what ${version.name} received` : t`what went out`;
 		case "auto":
 		case "before-restore":
 			return t`autosaved`;
@@ -59,4 +62,20 @@ export function getVersionDetail(version: Pick<VersionSummary, "kind">) {
 		default:
 			return t`saved`;
 	}
+}
+
+const SINCE_UNITS = [
+	{ unit: "second", ms: 1000, below: 60 },
+	{ unit: "minute", ms: 60 * 1000, below: 60 },
+	{ unit: "hour", ms: 60 * 60 * 1000, below: 24 },
+	{ unit: "day", ms: DAY_MS, below: 7 },
+	{ unit: "week", ms: 7 * DAY_MS, below: 52 },
+	{ unit: "year", ms: 365 * DAY_MS, below: Number.POSITIVE_INFINITY },
+] as const;
+
+/** Time since a moment in words, for sentences: "4 minutes ago", "yesterday". */
+export function formatTimeAgo(date: Date, locale: string, now = Date.now()) {
+	const elapsed = Math.max(0, now - date.getTime());
+	const { unit, ms } = SINCE_UNITS.find(({ ms, below }) => elapsed / ms < below) ?? SINCE_UNITS[5];
+	return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(-Math.floor(elapsed / ms), unit);
 }

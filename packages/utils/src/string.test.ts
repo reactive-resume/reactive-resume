@@ -159,6 +159,11 @@ describe("getInitials", () => {
 		expect(getInitials("ada lovelace byron")).toBe("AL");
 	});
 
+	it("takes the first two letters of a one-word name and skips words that aren't names", () => {
+		expect(getInitials("Lumen")).toBe("LU");
+		expect(getInitials("Marlow & Finch")).toBe("MF");
+	});
+
 	it("keeps Arabic initials apart so they don't join into a word", () => {
 		expect(getInitials("ليلى حداد")).toBe("ل\u200cح");
 	});

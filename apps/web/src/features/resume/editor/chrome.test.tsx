@@ -1,14 +1,15 @@
 // @vitest-environment happy-dom
 
-import { act, render } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
-import { usePageScale } from "./chrome";
+import { i18n } from "@lingui/core";
+import { DocumentMenuTrigger, usePageScale } from "./chrome";
 import { useEditorStore } from "./store";
 
 function Canvas({ pages = 0, loaderPages = 0 }: { pages?: number; loaderPages?: number }) {
-	const { canvasRef } = usePageScale("a4");
+	const { canvasRef, fitScale } = usePageScale("a4");
 	return (
-		<section ref={canvasRef} data-testid="canvas">
+		<section ref={canvasRef} data-testid="canvas" data-fit={fitScale}>
 			{Array.from({ length: pages }, (_, index) => (
 				<div key={index} data-testid={`page-${index + 1}`}>
 					<canvas />
@@ -234,7 +235,8 @@ describe("canvas zoom", () => {
 			"ResizeObserver",
 			class {
 				constructor(private readonly callback: ResizeObserverCallback) {}
-				observe() {
+				observe(element: HTMLElement) {
+					Object.defineProperty(element, "clientWidth", { value: 398 });
 					this.callback([{ contentRect: { width: 318 } } as ResizeObserverEntry], this as never);
 				}
 				disconnect() {}
@@ -242,9 +244,19 @@ describe("canvas zoom", () => {
 		);
 
 		const { getByTestId } = render(<Canvas />);
+		expect(Number(getByTestId("canvas").dataset.fit)).toBeCloseTo((398 - 80) / 595.28);
 		const event = wheel(getByTestId("canvas"), { deltaY: 100, ctrlKey: true });
 
 		expect(event.defaultPrevented).toBe(true);
 		expect(useEditorStore.getState().zoom).toBe("fit");
 	});
+});
+
+// Both resume and letter bars use this trigger.
+it("names the edited document as the page heading while keeping its menu a named button", () => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	render(<DocumentMenuTrigger name="Design portfolio" isLocked={false} />);
+	expect(screen.getByRole("heading", { level: 1, name: "Design portfolio" })).toBeTruthy();
+	expect(screen.getByRole("button", { name: "Document menu: Design portfolio" })).toBeTruthy();
+	cleanup();
 });

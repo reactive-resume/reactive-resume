@@ -1,5 +1,6 @@
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 import type { CSSProperties, ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { ph } from "@lingui/core/macro";
@@ -23,7 +24,12 @@ export type ResumePreviewProps = {
 	/** Drawn above each page (e.g. "Page 1 · Letter"). Replaces the small page-number caption. */
 	renderPageCaption?: (page: { pageNumber: number; totalPages: number }) => ReactNode;
 	/** Drawn over each page, in page-relative coordinates; receives the page map of the render on screen. */
-	renderPageOverlay?: (page: { pageIndex: number; pageMap: PageMap | undefined }) => ReactNode;
+	renderPageOverlay?: (page: {
+		pageIndex: number;
+		pageMap: PageMap | undefined;
+		document: PDFDocumentProxy;
+		pageScale: number;
+	}) => ReactNode;
 	/** Called whenever the render on screen changes, with its physical page count and page map. */
 	/** Each render on screen: its page count, page map and the PDF itself. */
 	onRender?: (render: { pageCount: number; pageMap: PageMap | undefined; file: Blob }) => void;
@@ -85,11 +91,18 @@ export function ResumePreviewLoader({
 							}
 							style={pageSize}
 							className={cn(
-								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-white text-ink-3",
+								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-paper text-ink-3",
 								pageClassName,
 							)}
 						>
-							{failure ? pageNumber === 1 && failure : <Spinner className="size-10" />}
+							{failure ? (
+								pageNumber === 1 && failure
+							) : (
+								<span className="flex items-center gap-2 text-xs">
+									<Spinner decorative />
+									<Trans>Loading page…</Trans>
+								</span>
+							)}
 						</div>
 					</figure>
 				);

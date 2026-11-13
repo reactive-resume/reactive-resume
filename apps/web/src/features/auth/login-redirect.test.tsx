@@ -116,6 +116,19 @@ describe("OAuth callback after sign-in", () => {
 		expect(mocks.navigate).not.toHaveBeenCalled();
 	});
 
+	it("says a wrong password at the field, clears it, and drops the sentence on the next keystroke", async () => {
+		mocks.email.mockResolvedValueOnce({ data: null, error: { code: "INVALID_EMAIL_OR_PASSWORD" } });
+		const { container } = renderLogin();
+		submitLogin(container, "john@example.com", "wrong-password");
+		const alert = await screen.findByRole("alert");
+		expect(alert.textContent).toContain("That email, username or password doesn't match.");
+		const password = container.querySelector<HTMLInputElement>('input[name="password"]');
+		expect(password?.value).toBe("");
+		expect(password?.getAttribute("aria-invalid")).toBe("true");
+		if (password) fireEvent.change(password, { target: { value: "n" } });
+		expect(screen.queryByRole("alert")).toBeNull();
+	});
+
 	it.each(["john@example.com", "john"])(
 		"resumes the signed server callback after email/username sign-in (%s)",
 		async (identifier) => {
@@ -151,7 +164,7 @@ describe("OAuth callback after sign-in", () => {
 
 	it("resumes the callback after passkey sign-in", async () => {
 		renderLogin();
-		fireEvent.click(screen.getByRole("button", { name: "Passkey" }));
+		fireEvent.click(screen.getByRole("button", { name: "Continue with a passkey" }));
 		await waitFor(() =>
 			expect(mocks.navigate).toHaveBeenCalledWith({ href: mocks.callbackURL, reloadDocument: true, replace: true }),
 		);
@@ -268,7 +281,6 @@ describe("OAuth account creation", () => {
 		);
 		for (const [name, value] of Object.entries({
 			name: "New User",
-			username: "newuser",
 			email: "new@example.com",
 			password: "1234567",
 		})) {
@@ -294,6 +306,8 @@ describe("OAuth account creation", () => {
 				<RegisterPage disableEmailAuth={false} />
 			</I18nProvider>,
 		);
+		// The username field shows only when asked for.
+		fireEvent.click(screen.getByRole("button", { name: "Choose your own" }));
 		for (const [name, value] of Object.entries({
 			name: " A ",
 			username: "newuser",

@@ -137,7 +137,7 @@ export function Design() {
 											loading="lazy"
 											decoding="async"
 											draggable={false}
-											className="absolute inset-0 size-full rounded-sm bg-paper object-contain shadow-paper dark:brightness-[.93]"
+											className="absolute inset-0 size-full rounded-paper bg-paper object-contain shadow-paper dark:brightness-[.93]"
 										/>
 										<span className={cn(pageLabel, "absolute start-0 top-[calc(100%+10px)]")}>
 											{templates[cell.template].name}
@@ -153,7 +153,7 @@ export function Design() {
 					data-stack
 					className="absolute top-(--dpt) left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,calc(-50%-var(--z)*8vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] opacity-[clamp(0,var(--p)*20,1)] will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
 				>
-					<div className="absolute inset-0 rounded-sm shadow-paper" />
+					<div className="absolute inset-0 rounded-paper shadow-paper" />
 					{sheetTemplates.map((template, index) => (
 						<div
 							key={template.name.id}
@@ -170,7 +170,7 @@ export function Design() {
 									aria-hidden="true"
 									className="absolute -top-[6%] -bottom-[6%] left-0 -ml-px w-0.5 [transform:translateX(calc((1-var(--w))*var(--pw)))] bg-ink opacity-[calc(clamp(0,var(--w)*30,1)*clamp(0,(1-var(--w))*30,1))] will-change-[transform,opacity]"
 								>
-									<span className="font-martian absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full rounded-sm bg-ink px-[9px] py-[5px] text-[10.5px] leading-none font-medium tracking-[.06em] whitespace-nowrap text-bg">
+									<span className="font-martian absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full rounded-xs bg-ink px-[9px] py-[5px] text-[10.5px] leading-none font-medium tracking-[.06em] whitespace-nowrap text-bg">
 										{pageNumber(index + 1, templateNames[index] ?? "")}
 									</span>
 								</div>
@@ -195,7 +195,7 @@ export function Design() {
 					onValueChange={(value) => goToScene(SCENE.design, TEMPLATE_AT[value as number] ?? 0)}
 					inert={zoomed}
 					className={cn(
-						"blur-ok:backdrop-blur-[8px] absolute bottom-[5vh] left-1/2 flex h-auto max-w-[calc(100vw-2*var(--gutter))] -translate-x-1/2 scroll-px-1 [scrollbar-width:none] overflow-x-auto rounded-sm border border-line bg-[color-mix(in_oklch,var(--surface)_85%,transparent)] p-1 whitespace-nowrap opacity-[calc(1-var(--z)*2)] min-[900px]:bottom-[clamp(20px,5vh,44px)]",
+						"blur-ok:backdrop-blur-[8px] absolute bottom-[5vh] left-1/2 flex h-auto max-w-[calc(100vw-2*var(--gutter))] -translate-x-1/2 scroll-px-1 [scrollbar-width:none] overflow-x-auto rounded-lg bg-sunken p-0.5 whitespace-nowrap opacity-[calc(1-var(--z)*2)] min-[900px]:bottom-[clamp(20px,5vh,44px)]",
 						!active && "pointer-events-none",
 					)}
 				>
@@ -203,7 +203,7 @@ export function Design() {
 						<label key={name} className="contents">
 							<SegmentedControlItem
 								value={index}
-								className="h-8 flex-none rounded-sm px-3 font-ui duration-300 min-[900px]:px-[13px] data-checked:bg-ink data-checked:text-bg data-checked:shadow-none"
+								className="h-8 flex-none rounded-md px-3 font-ui duration-300 min-[900px]:px-[13px]"
 							>
 								{name}
 							</SegmentedControlItem>

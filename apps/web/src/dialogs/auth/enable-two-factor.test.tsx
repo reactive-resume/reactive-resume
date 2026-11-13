@@ -29,7 +29,7 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-it("shows recoverable backup codes before the TOTP verification that activates two-factor authentication", async () => {
+it("verifies the authenticator before showing backup codes and waits for Done before closing", async () => {
 	render(
 		<I18nProvider i18n={i18n}>
 			<Dialog open>
@@ -40,10 +40,34 @@ it("shows recoverable backup codes before the TOTP verification that activates t
 	const password = screen.getByLabelText("Password");
 	fireEvent.change(password, { target: { value: "password123" } });
 	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-	await waitFor(() => expect(screen.getByText("82cNK-qaOiN")).toBeDefined());
-	expect(mocks.verify).not.toHaveBeenCalled();
+	await screen.findByText("Step 2 of 3");
+	expect(screen.queryByText("82cNK-qaOiN")).toBeNull();
 	expect(mocks.close).not.toHaveBeenCalled();
-	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-	await waitFor(() => expect(screen.getByText(/6-digit code/)).toBeDefined());
 	expect(mocks.verify).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+	expect(await screen.findByText("Enter the 6-digit code.")).toBeTruthy();
+	expect(mocks.verify).not.toHaveBeenCalled();
+	mocks.verify.mockResolvedValueOnce({ error: { message: "Invalid code" } });
+
+	const enterCode = async () => {
+		for (let digit = 1; digit <= 6; digit++) {
+			fireEvent.change(
+				await screen.findByRole("textbox", { name: digit === 1 ? "Verification code" : `Digit ${digit} of 6` }),
+				{ target: { value: String(digit) } },
+			);
+		}
+	};
+	await enterCode();
+	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+	await waitFor(() => expect(mocks.verify).toHaveBeenCalledExactlyOnceWith({ code: "123456" }));
+	await waitFor(() => expect(screen.getByRole("textbox", { name: "Verification code" })).toHaveValue(""));
+	expect(screen.queryByText("82cNK-qaOiN")).toBeNull();
+	mocks.verify.mockResolvedValue({ error: null });
+	await enterCode();
+	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+	await screen.findByText("82cNK-qaOiN");
+	expect(screen.getByText("Step 3 of 3")).toBeDefined();
+	expect(mocks.close).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Done" }));
+	expect(mocks.close).toHaveBeenCalledOnce();
 });

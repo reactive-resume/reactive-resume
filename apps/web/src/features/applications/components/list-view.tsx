@@ -2,14 +2,16 @@ import type { ApplicationLane } from "../lanes";
 import type { OfferHint } from "../next-step";
 import type { ApplicationSummary } from "../types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
+import type { ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
-import { Plural, Trans } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro";
 import { HotkeysProvider, useHotkeys } from "@tanstack/react-hotkeys";
 import { useMutation } from "@tanstack/react-query";
-import { AnimatePresence, m } from "motion/react";
+import { Link } from "@tanstack/react-router";
 import { memo, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
@@ -19,29 +21,48 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
-import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
+import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
-import { getStageDisplay } from "../lanes";
-import { getCategoryLane, getDisplayLane, getLaneLabel } from "../lanes";
-import { compareNextStepSortKeys, describeNextStep, getNextStep, nextStepSortKey } from "../next-step";
+import { dayKey } from "../interviews";
+import { getCategoryLane, getDisplayLane, getLaneLabel, getStageDisplay, laneDotColor } from "../lanes";
+import {
+	compareNextStepSortKeys,
+	describeNextStepLine,
+	describeSent,
+	getNextStep,
+	nextStepSortKey,
+	stepDate,
+} from "../next-step";
 import { offerHintFor, useOfferHints } from "../queries";
-import { getStageLabel, LIST_ORDER, PIPELINE } from "../stages";
-import { useApplicationActions, useInvalidateApplications, useMoveWithUndo } from "../use-application-actions";
+import { getStageLabel, PIPELINE } from "../stages";
+import {
+	useApplicationActions,
+	useInvalidateApplications,
+	useMoveWithUndo,
+	useTrashWithUndo,
+} from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
-import { ClosedLaneItems } from "./application-actions-menu";
+import { ApplicationActionsMenu, ClosedLaneItems, LaneDot } from "./application-actions-menu";
 import { TagChips } from "./tag-chips";
+import {
+	DataTable,
+	DataTableBody,
+	DataTableCell,
+	DataTableHead,
+	DataTableHeaderCell,
+	DataTableRow,
+} from "@/components/calm/data-table";
+import { IconTile, List, ListRow, revealOnRowClassName, rowLinkClassName } from "@/components/calm/list-row";
+import { SelectionBar } from "@/components/calm/selection-bar";
+import { StageDot } from "@/components/calm/stage-dot";
 import { useCareerTime, useNow } from "@/features/career/shared";
-import { useConfirm } from "@/hooks/use-confirm";
-import { formatRelativeTime } from "@/libs/locale";
-import { D2, EASE, EXIT } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
-type SortKey = "role" | "next" | "updated";
+type SortKey = "company" | "next" | "updated";
 type Sort = { key: SortKey; direction: "asc" | "desc" };
 type SortValue = string | number | readonly [number, number];
 
@@ -50,7 +71,7 @@ const sortValue: Record<
 	SortKey,
 	(application: ApplicationSummary, now: Date, timeZone: string, offer?: OfferHint | null) => SortValue
 > = {
-	role: (application) => application.role,
+	company: (application) => application.company,
 	next: (application, now, timeZone, offer) => nextStepSortKey(application, now, timeZone, offer),
 	updated: (application) => new Date(application.updatedAt).getTime(),
 };
@@ -62,47 +83,51 @@ const compareValues = (a: SortValue, b: SortValue, aId: string, bId: string, dir
 	return sign * (Number(a) - Number(b));
 };
 
+/** "OH" for Orbital Health, "PC" for Parcel & Co., "LU" for Lumen: the one monogram rule people use too. */
+export const companyInitials = getInitials;
+
+const relativeDay = (days: number, locale: string) => {
+	const text = new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(days, "day");
+	return text.charAt(0).toLocaleUpperCase(locale) + text.slice(1);
+};
+
+// Application, Stage, Next step, Sent, Updated, between the checkbox and the row menu. Narrower windows drop the
+// last two: both are on the application's own page.
+const COLUMNS = {
+	full: "40px minmax(0,1.1fr) 108px minmax(0,1fr) minmax(180px,max-content) 92px 28px",
+	narrow: "40px minmax(0,1.1fr) 108px minmax(0,1fr) 28px",
+};
+
 type ListViewProps = {
 	applications: ApplicationSummary[];
 	showClosed: boolean;
-	selectedId: string | null;
-	onOpen: (application: ApplicationSummary) => void;
 	/** A tag chip filters the page's existing search, rather than starting a second filter state. */
 	onTagSelect?: ((tag: string) => void) | undefined;
+	/** The line under the table (closed applications: Show or Hide). */
+	footer?: ReactNode;
 };
 
 /**
- * The default view: applications grouped by lane, by the stage that needs you first (Interview, Offer, Screening,
- * Applied, Saved, then Closed when shown) and in the owner's lane order within a stage. Within a group rows follow
- * Next step: dated steps soonest first, then the longest wait. Groups collapse, headers sort within groups, and row checkboxes select
- * for bulk moves, tags, closing and deleting. Phones get two-line rows.
+ * The default view: one flat table, by next step, soonest first (dated steps, then the longest wait). Closed
+ * applications join under their own heading when shown. Headers sort, row checkboxes select for bulk moves, tags,
+ * closing and Trash, and a row is a link to the application's page. Phones get two-line rows.
  */
-export function ApplicationList({ applications, showClosed, selectedId, onOpen, onTagSelect }: ListViewProps) {
+export function ApplicationList({ applications, showClosed, onTagSelect, footer }: ListViewProps) {
 	const breakpoint = useBreakpoint();
 	const { timeZone } = useCareerTime();
 	const phone = breakpoint === "mobile";
-	const { lanes, active, isPending: lanesPending, error: lanesError } = useApplicationLanes();
+	const { lanes, isPending: lanesPending, error: lanesError } = useApplicationLanes();
 	const moveWithUndo = useMoveWithUndo();
 	const { logFollowUp } = useApplicationActions();
-	const rowButtons = useRef(new Map<string, HTMLButtonElement>());
+	const rowLinks = useRef(new Map<string, HTMLAnchorElement>());
 	const restoreFocus = useRef<string | null>(null);
 	const now = useNow();
 	const hints = useOfferHints();
-	const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
 	// Next step first: what's dated soonest, then whatever has waited longest in its stage.
 	const [sort, setSort] = useState<Sort>({ key: "next", direction: "asc" });
 	const [checked, setChecked] = useState<ReadonlySet<string>>(new Set());
-	const { ref: selectionBarRef, space: selectionBarSpace } = useFloatingToolbarSpace();
 
-	const laneOf = (application: ApplicationSummary) => getDisplayLane(lanes, application);
-	// Selections only cover what's on screen.
-	const visible = applications.filter(
-		(application) => (application.status !== "closed" || showClosed) && !collapsed.has(laneOf(application).id),
-	);
-	const checkedIds = visible.filter((application) => checked.has(application.id)).map((application) => application.id);
-	if (checkedIds.length !== checked.size) setChecked(new Set(checkedIds));
-
-	const groups = useMemo(() => {
+	const { open, closed } = useMemo(() => {
 		const sign = sort.direction === "asc" ? 1 : -1;
 		const keys = new Map(
 			applications.map((application) => [
@@ -111,44 +136,40 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen, 
 			]),
 		);
 		const key = (application: ApplicationSummary) => keys.get(application.id) ?? 0;
-		const rowsByLane = new Map<string, ApplicationSummary[]>();
-		for (const application of applications) {
-			const id = getDisplayLane(lanes, application).id;
-			const rows = rowsByLane.get(id);
-			if (rows) rows.push(application);
-			else rowsByLane.set(id, [application]);
-		}
-		return LIST_ORDER.filter((status) => status !== "closed" || showClosed)
-			.flatMap((status) => active.filter((lane) => lane.category === status))
-			.map((lane) => ({
-				lane,
-				rows: (rowsByLane.get(lane.id) ?? []).sort(
-					(a, b) =>
-						compareValues(key(a), key(b), a.id, b.id, sort.direction) ||
-						(sort.key === "role" ? sign * a.company.localeCompare(b.company) : 0) ||
-						a.id.localeCompare(b.id),
-				),
-			}))
-			.filter((group) => group.rows.length > 0);
-	}, [applications, showClosed, sort, lanes, active, timeZone, now, hints]);
+		const sorted = applications.toSorted(
+			(a, b) =>
+				compareValues(key(a), key(b), a.id, b.id, sort.direction) ||
+				(sort.key === "company" ? sign * a.role.localeCompare(b.role) : 0) ||
+				a.id.localeCompare(b.id),
+		);
+		return {
+			open: sorted.filter((application) => application.status !== "closed"),
+			closed: showClosed ? sorted.filter((application) => application.status === "closed") : [],
+		};
+	}, [applications, showClosed, sort, timeZone, now, hints]);
 
-	const ordered = groups.flatMap(({ lane, rows }) => (collapsed.has(lane.id) ? [] : rows));
-	const rowRef = (id: string, node: HTMLButtonElement | null) => {
-		const previous = rowButtons.current.get(id);
+	// Selections only cover what's on screen.
+	const ordered = [...open, ...closed];
+	const checkedIds = ordered.filter((application) => checked.has(application.id)).map((application) => application.id);
+	if (checkedIds.length !== checked.size) setChecked(new Set(checkedIds));
+	const selecting = checkedIds.length > 0;
+
+	const rowRef = (id: string, node: HTMLAnchorElement | null) => {
+		const previous = rowLinks.current.get(id);
 		if (!node && previous === document.activeElement) restoreFocus.current = id;
-		if (node) rowButtons.current.set(id, node);
-		else rowButtons.current.delete(id);
+		if (node) rowLinks.current.set(id, node);
+		else rowLinks.current.delete(id);
 	};
 	useLayoutEffect(() => {
 		const id = restoreFocus.current;
 		restoreFocus.current = null;
-		if (id && document.activeElement === document.body) rowButtons.current.get(id)?.focus();
+		if (id && document.activeElement === document.body) rowLinks.current.get(id)?.focus();
 	});
 	const step = (id: string, direction: number) => {
 		const index = ordered.findIndex((row) => row.id === id);
 		if (index < 0) return;
 		const next = ordered[Math.max(0, Math.min(ordered.length - 1, index + direction))];
-		if (next) rowButtons.current.get(next.id)?.focus();
+		if (next) rowLinks.current.get(next.id)?.focus();
 	};
 	const move = (id: string, status: ApplicationStatus) => {
 		const application = ordered.find((row) => row.id === id);
@@ -163,14 +184,6 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen, 
 			return;
 		logFollowUp.mutate({ id });
 	};
-
-	const toggleGroup = (status: string) =>
-		setCollapsed((current) => {
-			const next = new Set(current);
-			if (next.has(status)) next.delete(status);
-			else next.add(status);
-			return next;
-		});
 
 	const toggleRow = (id: string) =>
 		setChecked((current) => {
@@ -187,134 +200,127 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen, 
 				: { key, direction: key === "updated" ? "desc" : "asc" },
 		);
 
-	const header = (key: SortKey, label: string, className?: string) => (
-		<th
-			scope="col"
+	const header = (key: SortKey, label: string) => (
+		<DataTableHeaderCell
 			aria-sort={sort.key === key ? (sort.direction === "asc" ? "ascending" : "descending") : undefined}
-			className={cn("px-2 text-start font-medium", className)}
 		>
 			<button
 				type="button"
 				onClick={() => sortBy(key)}
-				className="inline-flex h-9 items-center gap-1 rounded-md transition-colors hover:text-ink"
+				className="flex min-w-0 flex-1 items-center gap-1 rounded-xs text-start transition-colors hover:text-ink"
 			>
 				{label}
 				{sort.key === key && <Icon name={sort.direction === "asc" ? "arrow-up" : "arrow-down"} size={14} />}
 			</button>
-		</th>
+		</DataTableHeaderCell>
+	);
+
+	const row = (application: ApplicationSummary) => (
+		<ApplicationRow
+			key={application.id}
+			application={application}
+			lane={getDisplayLane(lanes, application)}
+			phone={phone}
+			wide={breakpoint === "desktop" || breakpoint === "wide"}
+			selecting={selecting}
+			checked={checked.has(application.id)}
+			onCheck={toggleRow}
+			onTagSelect={onTagSelect}
+			rowRef={rowRef}
+			onStep={step}
+			onMove={move}
+			onFollowUp={followedUp}
+		/>
+	);
+
+	const closedHeading = (
+		<>
+			<span>
+				<Trans>Closed</Trans>
+			</span>
+			<span className="font-mono text-xs font-medium text-ink-3">{i18n.number(closed.length)}</span>
+		</>
 	);
 
 	return (
-		<div
-			className="grid min-w-0 content-start gap-3"
-			style={{ paddingBottom: checkedIds.length ? selectionBarSpace : undefined }}
-		>
-			<table className={cn("w-full border-collapse text-sm", !phone && "table-fixed")}>
-				{!phone && (
-					<thead>
-						<tr className="border-b border-line text-xs text-ink-3">
-							<th scope="col" className="w-10 ps-3">
+		<>
+			{phone ? (
+				<>
+					<List className="mt-3">{open.map(row)}</List>
+					{closed.length > 0 && (
+						<>
+							<h2 className="flex items-baseline gap-2.5 pt-4 pb-1 text-sm font-semibold">{closedHeading}</h2>
+							<List>{closed.map(row)}</List>
+						</>
+					)}
+				</>
+			) : (
+				<DataTable
+					aria-label={t`Applications`}
+					columns={breakpoint === "tablet" ? COLUMNS.narrow : COLUMNS.full}
+					className="mt-3"
+				>
+					<DataTableHead>
+						<DataTableRow variant="header" className="group/row">
+							<DataTableHeaderCell className="justify-center">
 								<Checkbox
-									checked={visible.length > 0 && checkedIds.length === visible.length}
-									indeterminate={checkedIds.length > 0 && checkedIds.length < visible.length}
-									disabled={visible.length === 0}
+									checked={ordered.length > 0 && checkedIds.length === ordered.length}
+									indeterminate={selecting && checkedIds.length < ordered.length}
+									disabled={ordered.length === 0}
 									onCheckedChange={(on) =>
-										setChecked(on ? new Set(visible.map((application) => application.id)) : new Set())
+										setChecked(on ? new Set(ordered.map((application) => application.id)) : new Set())
 									}
 									aria-label={t`Select all visible applications`}
+									className={cn(!selecting && revealOnRowClassName)}
 								/>
-							</th>
-							{header("role", t`Role`)}
-							{header("next", t`Next step`, "w-1/4")}
-							<th scope="col" className="w-32 px-2 text-start font-medium max-xl:hidden">
+							</DataTableHeaderCell>
+							{header("company", t`Application`)}
+							<DataTableHeaderCell>
 								<Trans>Stage</Trans>
-							</th>
-							<th scope="col" className="w-36 px-2 text-start font-medium">
-								<Trans>Sent</Trans>
-							</th>
-							{header("updated", t`Updated`, "w-28 max-lg:hidden")}
-						</tr>
-					</thead>
-				)}
+							</DataTableHeaderCell>
+							{header("next", t`Next step`)}
+							{breakpoint !== "tablet" && (
+								<>
+									<DataTableHeaderCell>
+										<Trans>Sent</Trans>
+									</DataTableHeaderCell>
+									{header("updated", t`Updated`)}
+								</>
+							)}
+							<DataTableHeaderCell>
+								<span className="sr-only">
+									<Trans>More</Trans>
+								</span>
+							</DataTableHeaderCell>
+						</DataTableRow>
+					</DataTableHead>
+					<DataTableBody>{open.map(row)}</DataTableBody>
+					{closed.length > 0 && (
+						<DataTableBody>
+							<DataTableRow variant="group" className="items-start">
+								<DataTableCell header full className="items-baseline gap-2.5 font-semibold">
+									{closedHeading}
+								</DataTableCell>
+							</DataTableRow>
+							{closed.map(row)}
+						</DataTableBody>
+					)}
+				</DataTable>
+			)}
 
-				{groups.map(({ lane, rows }) => {
-					const open = !collapsed.has(lane.id);
-					const groupId = `applications-group-${lane.id}`;
-					return (
-						<tbody key={lane.id} aria-labelledby={groupId}>
-							<tr>
-								<th
-									scope="colgroup"
-									colSpan={phone ? 1 : breakpoint === "wide" ? 6 : breakpoint === "desktop" ? 5 : 4}
-									className="pt-3 text-start"
-								>
-									<button
-										type="button"
-										id={groupId}
-										aria-expanded={open}
-										onClick={() => toggleGroup(lane.id)}
-										className="flex h-9 max-w-full min-w-0 items-center gap-2 rounded-md px-1.5 text-sm font-semibold transition-colors hover:bg-hover"
-									>
-										<Icon
-											name="caret-right"
-											size={18}
-											className={cn("text-ink-3 transition-transform duration-standard", open && "rotate-90")}
-										/>
-										<span
-											aria-hidden="true"
-											className="size-2 shrink-0 rounded-sm"
-											style={{ background: lane.color }}
-										/>
-										<span className="truncate">{getLaneLabel(lane)}</span>
-										<span className="font-mono text-xs font-normal text-ink-3">{i18n.number(rows.length)}</span>
-									</button>
-								</th>
-							</tr>
-							{open &&
-								rows.map((application) => (
-									<ApplicationRow
-										key={application.id}
-										application={application}
-										lane={lane}
-										phone={phone}
-										selected={application.id === selectedId}
-										checked={checked.has(application.id)}
-										onCheck={toggleRow}
-										onOpen={onOpen}
-										onTagSelect={onTagSelect}
-										rowRef={rowRef}
-										onStep={step}
-										onMove={move}
-										onFollowUp={followedUp}
-									/>
-								))}
-						</tbody>
-					);
-				})}
-			</table>
+			{footer}
 
-			{/* The bulk bar rises from the bottom edge and floats over the list, so the rows never move. */}
-			<AnimatePresence>
-				{checkedIds.length > 0 && (
-					<m.div
-						key="bulk-bar"
-						ref={selectionBarRef}
-						initial={{ opacity: 0, transform: "translateY(100%)" }}
-						animate={{ opacity: 1, transform: "translateY(0%)" }}
-						exit={{ opacity: 0, transform: "translateY(100%)", transition: { duration: D2 * EXIT, ease: EASE } }}
-						transition={{ duration: D2, ease: EASE }}
-						className="fixed inset-x-0 bottom-6 z-30 mx-auto w-fit max-w-[calc(100vw-32px)] max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]"
-					>
-						<BulkBar
-							ids={checkedIds}
-							allSelected={checkedIds.length === visible.length}
-							onSelectAll={() => setChecked(new Set(visible.map((application) => application.id)))}
-							onDone={() => setChecked(new Set())}
-						/>
-					</m.div>
-				)}
-			</AnimatePresence>
-		</div>
+			{/* The bar floats over the list from the first tick to the last, so the rows never move; the page's foot
+			    keeps the last rows clear of it. */}
+			{selecting && (
+				<BulkBar
+					ids={checkedIds}
+					total={ordered.length}
+					onSelectAll={() => setChecked(new Set(ordered.map((application) => application.id)))}
+					onDone={() => setChecked(new Set())}
+				/>
+			)}
+		</>
 	);
 }
 
@@ -322,14 +328,16 @@ type ApplicationRowProps = {
 	application: ApplicationSummary;
 	lane: ApplicationLane;
 	phone: boolean;
-	selected: boolean;
+	/** Wide enough for the Sent and Updated columns. */
+	wide: boolean;
+	/** A selection exists: every row shows its checkbox. */
+	selecting: boolean;
 	checked: boolean;
-	rowRef: (id: string, node: HTMLButtonElement | null) => void;
+	rowRef: (id: string, node: HTMLAnchorElement | null) => void;
 	onStep: (id: string, direction: number) => void;
 	onMove: (id: string, status: ApplicationStatus) => void;
 	onFollowUp: (id: string) => void;
 	onCheck: (id: string) => void;
-	onOpen: (application: ApplicationSummary) => void;
 	onTagSelect?: ((tag: string) => void) | undefined;
 };
 
@@ -338,28 +346,30 @@ const ApplicationRow = memo(function ApplicationRow({
 	application,
 	lane,
 	phone,
-	selected,
+	wide,
+	selecting,
 	checked,
 	rowRef,
 	onStep,
 	onMove,
 	onFollowUp,
 	onCheck,
-	onOpen,
 	onTagSelect,
 }: ApplicationRowProps) {
-	const openRef = useRef<HTMLButtonElement>(null);
+	const openRef = useRef<HTMLAnchorElement>(null);
+	const open = (event: KeyboardEvent) => (event.target as HTMLElement).closest("a")?.click();
 	useHotkeys(
 		[
 			{ hotkey: "J" as const, callback: () => onStep(application.id, 1), meta: { name: t`Next application` } },
 			{ hotkey: "K" as const, callback: () => onStep(application.id, -1), meta: { name: t`Previous application` } },
-			{ hotkey: "Enter" as const, callback: () => onOpen(application), meta: { name: t`Open application` } },
-			{ hotkey: "X" as const, callback: () => onCheck(application.id), meta: { name: t`Toggle selection` } },
-			{ hotkey: "F" as const, callback: () => onFollowUp(application.id), meta: { name: t`Followed up` } },
+			// The link's own Enter is taken by the binding, so it follows the link itself.
+			{ hotkey: "Enter" as const, callback: open, meta: { name: t`Open` } },
+			{ hotkey: "X" as const, callback: () => onCheck(application.id), meta: { name: t`Select` } },
+			{ hotkey: "F" as const, callback: () => onFollowUp(application.id), meta: { name: t`Mark as followed up` } },
 			...PIPELINE.map((status, index) => ({
 				hotkey: `${index + 1}` as "1" | "2" | "3" | "4" | "5",
 				callback: () => onMove(application.id, status),
-				meta: { name: t`Moved to ${getStageLabel(status)}` },
+				meta: { name: t`Move to ${getStageLabel(status)}` },
 			})),
 		].map(({ callback, meta, ...binding }) => ({
 			...binding,
@@ -374,192 +384,199 @@ const ApplicationRow = memo(function ApplicationRow({
 					!event.altKey &&
 					!event.shiftKey
 				)
-					callback();
+					callback(event);
 			},
 		})),
 		{ target: openRef, requireReset: true, ignoreInputs: true },
 	);
 	const { i18n } = useLingui();
-	const { timeZone } = useCareerTime();
+	const { timeZone, relative } = useCareerTime();
+	const now = useNow();
 	const hints = useOfferHints(application.status === "offer");
 	const { lanes } = useApplicationLanes();
-	const accepted = application.status === "closed" && application.closedReason === "accepted";
-	const stage = accepted
-		? getStageDisplay(lanes, application)
-		: { color: lane.color, label: getLaneLabel(lane), accepted: false };
-	const next = describeNextStep(
-		getNextStep(application, undefined, timeZone, offerHintFor(hints, application.id)),
+	const stage = getStageDisplay(lanes, application);
+	const next = describeNextStepLine(
+		getNextStep(application, now, timeZone, offerHintFor(hints, application.id)),
 		application,
 		i18n.locale,
 		timeZone,
+		now,
 	);
-	const sent = application.status !== "saved";
-	const tone = next.tone === "warn" ? "text-warn-text" : next.tone === "muted" ? "text-ink-3" : "text-ink-2";
-
-	const initial = (
-		<span
-			aria-hidden="true"
-			className="grid size-8 shrink-0 place-items-center rounded-lg bg-sunken text-[13px] font-semibold text-ink-2"
-		>
-			{application.company.slice(0, 1).toUpperCase()}
-		</span>
+	const sent = describeSent(application, i18n.locale, timeZone);
+	const updated = new Date(application.updatedAt);
+	// By the calendar, as people say it: "2 hours ago" today, "Yesterday", "3 days ago", then the date.
+	const daysAgo = Math.round((Date.parse(dayKey(now, timeZone)) - Date.parse(dayKey(updated, timeZone))) / 86_400_000);
+	const badge = next.needsYou && (
+		<Badge variant="warn">
+			<Trans>Needs you</Trans>
+		</Badge>
 	);
 
-	const openButton = (
-		<button
-			type="button"
+	const link = (
+		<Link
+			to="/dashboard/applications/$applicationId/{-$tab}"
+			params={{ applicationId: application.id }}
 			ref={(node) => {
 				openRef.current = node;
 				rowRef(application.id, node);
 			}}
 			data-application-open
 			aria-keyshortcuts="j k Enter 1 2 3 4 5 x f"
-			className="focus-visible:outline-focus grid min-w-0 cursor-pointer rounded-sm text-start focus-visible:outline-2 focus-visible:outline-offset-4"
+			title={application.company}
+			dir="auto"
+			className={cn("truncate text-[15px]/[22px] font-medium text-ink", rowLinkClassName)}
 		>
-			<span dir="auto" className="truncate font-medium">
-				{application.role}
-			</span>
-			{/* The company keeps its own direction; on phones the next step after it is interface text. */}
-			{phone ? (
-				<span className="truncate text-xs text-ink-3">
-					<bdi>{application.company}</bdi> · {next.title}
-				</span>
-			) : (
-				<span dir="auto" className="truncate text-xs text-ink-3">
-					{[application.company, application.location].filter(Boolean).join(" · ")}
-				</span>
-			)}
-		</button>
+			{application.company}
+		</Link>
 	);
+	const place = [application.role, application.location].filter(Boolean).join(" · ");
 
 	if (phone) {
 		return (
-			<tr
+			<ListRow
 				data-application-id={application.id}
-				onClick={() => onOpen(application)}
-				className={cn("cursor-pointer border-b border-line", selected && "bg-accent-soft/50")}
+				interactive
+				leading={<IconTile aria-hidden="true">{companyInitials(application.company)}</IconTile>}
 			>
-				<td className="py-2.5 ps-1">
-					<div className="flex items-center gap-3">
-						{initial}
-						<div className="flex min-w-0 flex-1 flex-col gap-0.5">
-							{openButton}
-							<TagChips tags={application.tags} onSelect={onTagSelect} className="ms-0" />
-						</div>
-						<Icon name="caret-right" size={20} className="ms-auto shrink-0 text-ink-3" />
-					</div>
-				</td>
-			</tr>
+				<span className="flex min-w-0 flex-1 flex-col gap-1">
+					<span className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+						{link}
+						<StageDot status={application.status} color={stage.color}>
+							{stage.label}
+						</StageDot>
+					</span>
+					<span dir="auto" className="t-small text-ink-3">
+						{place}
+					</span>
+					<span className="flex flex-wrap items-center gap-x-2 gap-y-1 t-small">
+						<span className={next.muted ? "text-ink-3" : "font-medium"}>{next.title}</span>
+						{next.sub && <span className="text-ink-3">{next.sub}</span>}
+						{badge}
+					</span>
+				</span>
+			</ListRow>
 		);
 	}
 
 	return (
-		<tr
+		<DataTableRow
 			data-application-id={application.id}
-			onClick={() => onOpen(application)}
-			className={cn(
-				"cursor-pointer border-b border-line transition-colors duration-quick hover:bg-hover",
-				selected && "bg-accent-soft/50",
-			)}
+			selected={checked}
+			className={cn(!checked && "focus-within:border-transparent focus-within:before:bg-hover")}
 		>
-			<td onClick={(event) => event.stopPropagation()} className="w-10 cursor-default ps-3">
-				<Checkbox
-					checked={checked}
-					onCheckedChange={() => onCheck(application.id)}
-					aria-label={t`Select ${application.role} at ${application.company}`}
-				/>
-			</td>
-			<td className="py-2 pe-2">
-				<div className="flex items-center gap-3">
-					{initial}
-					<div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-1.5">
-						<div className="col-start-1 row-span-2 min-w-0">{openButton}</div>
-						<TagChips
-							tags={application.tags}
-							onSelect={onTagSelect}
-							className="col-start-2 row-start-2 ms-0 self-center"
-						/>
-					</div>
-				</div>
-			</td>
-			<td className="px-2">
-				<span className={cn("flex items-center gap-1.5", tone)}>
-					<Icon name={next.icon} size={16} className="shrink-0" />
-					<span className="min-w-0 truncate">{next.title}</span>
+			{/* Initials until the row is pointed at or focused; the checkbox for every row while a selection exists. */}
+			<DataTableCell className="relative z-10 justify-center">
+				{!selecting && (
+					<IconTile
+						aria-hidden="true"
+						className="group-focus-within/row:hidden group-hover/row:hidden pointer-coarse:hidden"
+					>
+						{companyInitials(application.company)}
+					</IconTile>
+				)}
+				<span
+					className={cn(
+						"flex",
+						!selecting &&
+							"sr-only group-focus-within/row:not-sr-only group-hover/row:not-sr-only pointer-coarse:not-sr-only",
+					)}
+				>
+					<Checkbox
+						checked={checked}
+						onCheckedChange={() => onCheck(application.id)}
+						aria-label={t`Select ${application.role} at ${application.company}`}
+					/>
 				</span>
-			</td>
-			<td className="px-2 max-xl:hidden">
-				<span className="flex min-w-0 items-center gap-1.5 text-ink-2">
-					<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: stage.color }} />
+			</DataTableCell>
+			<DataTableCell header className="font-normal">
+				{/* The name keeps its width; tags take what is left of the column, and one that doesn't fit whole is left out. */}
+				<span className="flex max-w-full min-w-0 shrink-0 flex-col">
+					{link}
+					<span dir="auto" className="truncate text-[13px]/[18px] text-ink-3">
+						{place}
+					</span>
+				</span>
+				<TagChips
+					fit
+					// A tag the place line already says ("Remote" beside "· Remote") is not repeated.
+					tags={application.tags.filter(
+						(tag) => !application.location?.toLocaleLowerCase().includes(tag.toLocaleLowerCase()),
+					)}
+					onSelect={onTagSelect}
+					className="relative z-10 ms-0 h-4 min-w-0 flex-1 overflow-hidden *:shrink-0"
+				/>
+			</DataTableCell>
+			<DataTableCell>
+				<StageDot
+					status={stage.accepted ? "offer" : application.status}
+					color={stage.accepted ? undefined : laneDotColor(lane)}
+					className="min-w-0 gap-2 text-sm"
+				>
 					{stage.accepted && <Icon name="check" size={14} className="shrink-0 text-accent-text" />}
 					<span className="truncate">{stage.label}</span>
+				</StageDot>
+			</DataTableCell>
+			<DataTableCell>
+				<span className="flex min-w-0 flex-col">
+					<span className={cn("truncate text-sm", next.muted ? "text-ink-3" : "font-medium")}>{next.title}</span>
+					{/* With a badge the line is a row, so its text is cut rather than ended with an ellipsis. */}
+					{(next.sub || badge) && (
+						<span
+							className={cn(
+								"h-[18px] text-[13px]/[18px] text-ink-3",
+								badge ? "flex items-center gap-2 overflow-hidden whitespace-nowrap" : "truncate",
+							)}
+						>
+							{next.sub}
+							{badge}
+						</span>
+					)}
 				</span>
-			</td>
-			<td className="px-2">
-				{application.resumeId ||
-				application.coverLetterId ||
-				application.resumeFileUrl ||
-				application.coverLetterUrl ? (
-					// Before the job is applied to, the documents are only linked: show them muted and say so.
-					<span
-						className={cn("flex items-center gap-1", sent ? "text-ink-2" : "text-ink-3 opacity-70")}
-						title={sent ? undefined : t`Linked · not sent yet`}
-					>
-						{!sent && <span className="sr-only">{t`Linked · not sent yet`}</span>}
-						{application.resumeFileUrl && (
-							<>
-								<Icon name="file-pdf" size={18} />
-								<span className="sr-only">{t`Resume file`}</span>
-							</>
-						)}
-						{application.coverLetterUrl && (
-							<>
-								<Icon name="file-pdf" size={18} />
-								<span className="sr-only">{t`Cover letter file`}</span>
-							</>
-						)}
-						{application.resumeId && (
-							<>
-								<Icon name="file-text" size={18} />
-								<span className="sr-only">{t`Resume`}</span>
-							</>
-						)}
-						{application.coverLetterId && (
-							<>
-								<Icon name="envelope-simple" size={18} />
-								<span className="sr-only">{t`Cover letter`}</span>
-							</>
-						)}
-					</span>
-				) : (
-					<span className={cn("text-xs", sent ? "text-warn-text" : "text-ink-3")}>
-						<Trans>No documents attached</Trans>
-					</span>
-				)}
-			</td>
-			<td className="px-2 text-xs whitespace-nowrap text-ink-3 max-lg:hidden">
-				{formatRelativeTime(application.updatedAt, i18n.locale)}
-			</td>
-		</tr>
+			</DataTableCell>
+			{wide && (
+				<>
+					<DataTableCell>
+						<span className={cn("text-sm whitespace-nowrap", !sent.sent && "text-ink-3")}>{sent.text}</span>
+					</DataTableCell>
+					<DataTableCell>
+						<span className="text-[13px]/[18px] whitespace-nowrap text-ink-3">
+							{daysAgo === 0
+								? relative(updated, now)
+								: daysAgo < 7
+									? relativeDay(-daysAgo, i18n.locale)
+									: stepDate(updated, i18n.locale, timeZone)}
+						</span>
+					</DataTableCell>
+				</>
+			)}
+			<DataTableCell className="relative z-10">
+				<ApplicationActionsMenu application={application} className={revealOnRowClassName} />
+			</DataTableCell>
+		</DataTableRow>
 	);
 });
 
+// A bar button keeps its hover look while its menu is open. Menus open 14px above the bar's own edge.
+const openTrigger = "data-popup-open:bg-hover data-popup-open:text-ink";
+const above = { side: "top", align: "start", sideOffset: 14, alignOffset: -4 } as const;
+
 type BulkBarProps = {
 	ids: string[];
-	allSelected: boolean;
+	total: number;
 	onSelectAll: () => void;
 	onDone: () => void;
 };
 
-/** For the checked rows: move them or close them (with Undo), tag them, or delete them (after asking). */
-function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
+/** For the checked rows: tag them, or move them, close them or move them to Trash, each at once with Undo. */
+function BulkBar({ ids, total, onSelectAll, onDone }: BulkBarProps) {
 	const scope = `applications-bulk-${useId()}`;
 	const invalidate = useInvalidateApplications();
 	const moveWithUndo = useMoveWithUndo();
+	const trashWithUndo = useTrashWithUndo();
 	const rows = ids.map((id) => ({ id }));
-	const confirm = useConfirm();
 	const { lanes, active } = useApplicationLanes();
 	const [tag, setTag] = useState("");
+	const count = ids.length;
 
 	const bulkUpdate = useMutation({
 		...orpc.applications.bulkUpdate.mutationOptions(),
@@ -572,48 +589,35 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 		},
 		onError: () => toast.add({ type: "error", description: t`Couldn't update the applications. Try again.` }),
 	});
-	const bulkDelete = useMutation({
-		...orpc.applications.bulkTrash.mutationOptions(),
-		onSuccess: (result) => {
-			invalidate();
-			onDone();
-			toast.add({
-				description: t`Moved ${result.deleted} to Trash.`,
-			});
-		},
-		onError: () => toast.add({ type: "error", description: t`Couldn't delete the applications. Try again.` }),
-	});
-	const disabled = ids.length > 200 || bulkUpdate.isPending || bulkDelete.isPending;
+	const disabled = count > 200 || bulkUpdate.isPending;
 
 	return (
-		<div
-			role="toolbar"
-			aria-label={t`Applications`}
-			className="flex flex-wrap items-center gap-1 rounded-xl border border-line bg-raised p-1.5 text-ink shadow-e3"
+		<SelectionBar
+			label={plural(count, { one: "# application selected", other: "# applications selected" })}
+			count={count}
+			total={total}
+			onSelectAll={onSelectAll}
+			onClear={onDone}
+			className="fixed max-sm:bottom-[calc(var(--app-tabbar,0px)+16px)] sm:start-[calc(50%+32px)] lg:start-[calc(50%+var(--app-sidebar)/2)]"
 		>
-			<span className="px-2 text-sm font-semibold whitespace-nowrap" aria-live="polite">
-				<Plural value={ids.length} one="# selected" other="# selected" />
-			</span>
-			{!allSelected && (
-				<Button size="sm" variant="ghost" disabled={disabled} onClick={onSelectAll}>
-					<Trans>Select all</Trans>
-				</Button>
-			)}
-			{ids.length > 200 && (
-				<p role="status" className="w-full px-2 text-sm text-warn-text">
+			{count > 200 && (
+				<span role="status" className="px-2 text-sm text-warn-text">
 					<Trans>Choose up to 200 applications per bulk action.</Trans>
-				</p>
+				</span>
 			)}
 
 			<Popover>
-				<PopoverTrigger render={<Button size="sm" variant="ghost" disabled={disabled} />}>
+				<PopoverTrigger render={<Button size="sm" variant="ghost" disabled={disabled} className={openTrigger} />}>
 					<Icon name="tag" />
 					<Trans>Tags…</Trans>
 				</PopoverTrigger>
-				<PopoverContent align="start" className="w-60 p-2">
+				<PopoverContent {...above} className="grid w-60 gap-2 p-3">
 					<HotkeysProvider scope={`${scope}-tags`} exclusive>
+						<p className="text-sm font-medium">
+							{plural(count, { one: "Add a tag to # application", other: "Add a tag to # applications" })}
+						</p>
 						<form
-							className="flex gap-1.5"
+							className="flex gap-2"
 							onSubmit={(event) => {
 								event.preventDefault();
 								if (disabled || !tag.trim()) return;
@@ -622,7 +626,7 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 							}}
 						>
 							<Input aria-label={t`Tag`} value={tag} onChange={(event) => setTag(event.target.value)} autoFocus />
-							<Button size="sm" type="submit" disabled={disabled || !tag.trim()}>
+							<Button type="submit" variant="secondary" disabled={disabled || !tag.trim()}>
 								<Trans>Add</Trans>
 							</Button>
 						</form>
@@ -631,11 +635,15 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 			</Popover>
 
 			<DropdownMenu>
-				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" disabled={disabled} />}>
+				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" disabled={disabled} className={openTrigger} />}>
 					<Icon name="arrow-right" />
 					<Trans>Move to…</Trans>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="start">
+				<DropdownMenuContent
+					{...above}
+					className="min-w-[190px]"
+					aria-label={plural(count, { one: "Move # application to", other: "Move # applications to" })}
+				>
 					<HotkeysProvider scope={`${scope}-0`} exclusive>
 						{active
 							.filter((lane) => lane.category !== "closed")
@@ -647,7 +655,7 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 										moveWithUndo({
 											applications: rows,
 											lane,
-											description: plural(ids.length, {
+											description: plural(count, {
 												one: `# application moved to ${label}`,
 												other: `# applications moved to ${label}`,
 											}),
@@ -655,8 +663,8 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 										onDone();
 									}}
 								>
-									<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: lane.color }} />
-									<span className="truncate">{getLaneLabel(lane)}</span>
+									<LaneDot lane={lane} />
+									{getLaneLabel(lane)}
 								</DropdownMenuItem>
 							))}
 					</HotkeysProvider>
@@ -664,10 +672,11 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 			</DropdownMenu>
 
 			<DropdownMenu>
-				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" disabled={disabled} />}>
+				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" disabled={disabled} className={openTrigger} />}>
+					<Icon name="check-circle" />
 					<Trans>Close…</Trans>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="start">
+				<DropdownMenuContent {...above} className="min-w-[190px]">
 					<HotkeysProvider scope={`${scope}-1`} exclusive>
 						<ClosedLaneItems
 							lanes={active}
@@ -676,7 +685,7 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 									applications: rows,
 									lane: lane ?? getCategoryLane(lanes, "closed"),
 									closedReason: lane ? reason : (reason ?? null),
-									description: plural(ids.length, { one: "# application closed", other: "# applications closed" }),
+									description: plural(count, { one: "# application closed", other: "# applications closed" }),
 								});
 								onDone();
 							}}
@@ -685,25 +694,18 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			<IconButton icon="x" size="icon-sm" label={t`Clear selection`} className="text-ink-2" onClick={onDone} />
 			<Button
 				size="sm"
-				variant="ghost"
+				variant="danger-text"
 				disabled={disabled}
-				className="text-danger-text hover:bg-danger-soft"
-				onClick={async () => {
-					const confirmed = await confirm(t`Move to Trash`, {
-						description: t`Applications and their timelines can be restored from Trash.`,
-						confirmText: t`Move to Trash`,
-						cancelText: plural(ids.length, { one: "Keep application", other: "Keep applications" }),
-						variant: "danger",
-					});
-					if (confirmed) bulkDelete.mutate({ ids });
+				onClick={() => {
+					trashWithUndo(rows);
+					onDone();
 				}}
 			>
 				<Icon name="trash" />
 				<Trans>Move to Trash</Trans>
 			</Button>
-		</div>
+		</SelectionBar>
 	);
 }

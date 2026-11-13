@@ -7,6 +7,7 @@ import { useRef } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
@@ -14,7 +15,6 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "../store";
@@ -98,10 +98,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 	return (
 		<DialogContent closeLabel={t`Close`}>
 			<DialogHeader>
-				<DialogTitle className="flex items-center gap-x-2">
-					<Icon name="pencil-simple" size={16} />
-					{isUpdate ? <Trans>Edit resume</Trans> : <Trans>Duplicate resume</Trans>}
-				</DialogTitle>
+				<DialogTitle>{isUpdate ? <Trans>Edit resume</Trans> : <Trans>Duplicate resume</Trans>}</DialogTitle>
 				{!isUpdate && (
 					<DialogDescription>
 						<Trans>Duplicate your resume to create a new one, just like the original.</Trans>
@@ -172,6 +169,9 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 				</form.Field>
 
 				<DialogFooter>
+					<DialogClose render={<Button type="button" variant="ghost" />}>
+						<Trans>Cancel</Trans>
+					</DialogClose>
 					<Button type="submit" disabled={update.isPending || duplicate.isPending}>
 						{isUpdate ? <Trans>Save changes</Trans> : <Trans>Duplicate</Trans>}
 					</Button>

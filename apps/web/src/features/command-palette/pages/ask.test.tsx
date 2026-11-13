@@ -21,7 +21,14 @@ const providers = vi.hoisted(() => ({
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
 	useHasUsableAiProvider: () => providers,
 }));
-vi.mock("@/features/assistant/provider-setup", () => ({ ProviderSetup: () => <p>Provider form boundary</p> }));
+vi.mock("@/features/ai/set-up-ai", () => ({
+	SetUpAiDialog: ({ open }: { open: boolean }) =>
+		open ? (
+			<div role="dialog" aria-label="Set up AI">
+				<p>Provider form boundary</p>
+			</div>
+		) : null,
+}));
 vi.mock("@/features/assistant/open", () => ({ openAssistantFrom: openAssistant }));
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => vi.fn(),

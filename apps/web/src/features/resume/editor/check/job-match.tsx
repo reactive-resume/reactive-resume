@@ -6,7 +6,7 @@ import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useId, useMemo, useState } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -14,6 +14,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
+import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { formatList } from "@reactive-resume/utils/locale";
@@ -21,6 +22,8 @@ import { generateId, isolate, pendingRequestId, settleRequestId } from "@reactiv
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { checkStateOf, editWithUndo } from "./actions";
+import { CheckAiLine } from "./ai-line";
+import { List, ListRow } from "@/components/calm/list-row";
 import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { useNewDocumentsStore } from "@/features/documents/new-documents";
@@ -31,6 +34,7 @@ import {
 	useIsResumeLocked,
 	usePatchResume,
 } from "@/features/resume/builder/draft";
+import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
@@ -145,10 +149,19 @@ type JobMatchTabProps = { match: JobMatch; data: ResumeData };
 export function JobMatchTab({ match }: JobMatchTabProps) {
 	const { application, posting, result, hiddenTerms } = match;
 	const [openTerm, setOpenTerm] = useState<string | null>(null);
+	const providerState = useHasUsableAiProvider();
+	const { hasUsableProvider } = providerState;
 	const highlightTerm = useEditorStore((state) => state.highlightTerm);
 	const locked = useIsResumeLocked();
 	const { i18n } = useLingui();
 	const hiddenList = formatList(i18n.locale, hiddenTerms);
+
+	const aiLine =
+		!providerState.isUnavailable && !hasUsableProvider ? (
+			<CheckAiLine lead={<Trans>The assistant needs AI.</Trans>}>
+				<Trans>Matching, Add to Skills and hiding a term work without it.</Trans>
+			</CheckAiLine>
+		) : null;
 
 	if (match.applicationLoading)
 		return (
@@ -158,16 +171,22 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 		);
 	if (match.applicationFailed)
 		return (
-			<div role="alert">
+			<div role="alert" className="flex items-center justify-between gap-2 text-sm text-danger-text">
 				<p>
 					<Trans>Couldn't load the linked posting.</Trans>
 				</p>
-				<Button onClick={match.retryApplication}>
+				<Button variant="secondary" onClick={match.retryApplication}>
 					<Trans>Retry</Trans>
 				</Button>
 			</div>
 		);
-	if (!posting) return <NoPosting application={application} />;
+	if (!posting)
+		return (
+			<div className="grid gap-3.5">
+				{aiLine}
+				<NoPosting application={application} />
+			</div>
+		);
 
 	const open = result?.missing.find((term) => term.term === openTerm);
 
@@ -195,11 +214,13 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 	};
 
 	return (
-		<div className="grid gap-3.5">
+		<div className="flex min-h-full flex-col gap-3.5">
+			{aiLine}
 			<PostingSource application={application} contextOnly={match.contextOnly} />
 
 			{!result ? (
 				<p className="flex items-center gap-2 text-sm text-ink-2">
+					<Spinner decorative className="size-3.5" />
 					<Trans>Reading the posting…</Trans>
 				</p>
 			) : result.total === 0 ? (
@@ -210,7 +231,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 				<>
 					<div className="grid gap-1.5">
 						<div className="flex items-baseline justify-between gap-2">
-							<strong className="text-sm font-semibold">
+							<strong className="t-label">
 								<Trans>
 									{i18n.number(result.found.length)} of {i18n.number(result.total)} posting terms appear
 								</Trans>
@@ -236,7 +257,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 					{result.missing.length > 0 && (
 						<section aria-labelledby="match-missing" className="grid gap-2">
-							<h3 id="match-missing" className="text-xs font-semibold text-ink-3">
+							<h3 id="match-missing" className="t-caption text-ink-3">
 								<Trans>Not in your resume · add only if true</Trans>
 							</h3>
 							<div className="flex flex-wrap gap-1.5">
@@ -247,11 +268,13 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 										aria-expanded={openTerm === term.term}
 										onClick={() => setOpenTerm(openTerm === term.term ? null : term.term)}
 										className={cn(
-											"flex h-[30px] items-center gap-1 rounded-lg border border-dashed px-2.5 text-[13px] font-medium transition-colors duration-quick",
-											openTerm === term.term ? "border-accent bg-accent-soft" : "border-line-2 hover:bg-hover",
+											"flex h-7 items-center gap-1.5 rounded-sm border border-dashed px-2.5 text-[13px] leading-[18px] font-medium transition-colors duration-quick",
+											openTerm === term.term
+												? "border-transparent bg-accent-soft text-accent-text"
+												: "border-line-2 hover:bg-hover",
 										)}
 									>
-										<Icon name="plus" size={15} className="text-ink-3" />
+										<Icon name="plus" size={14} className="text-ink-3" />
 										{term.label}
 									</button>
 								))}
@@ -261,7 +284,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 								<section
 									key={open.term}
 									aria-label={t`Add “${open.label}”`}
-									className={cn(ENTER_CLASS, "grid gap-2 rounded-xl border border-line bg-raised p-3 shadow-e2")}
+									className={cn(ENTER_CLASS, "grid gap-1.5 rounded-lg border border-line bg-raised px-3.5 py-3")}
 								>
 									<p className="text-[13px] leading-[19px] text-ink-2">
 										<Plural
@@ -271,24 +294,30 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 										/>{" "}
 										<Trans>If it's part of your experience, add it where it belongs.</Trans>
 									</p>
-									<div className="grid justify-items-start gap-1">
-										{/* Only a skill's name goes into Skills as it is; a phrase from the posting needs a place in context. */}
-										{open.skill && (
-											<Button size="sm" disabled={locked} onClick={() => addToSkills(open)}>
-												<Icon name="plus" size={16} />
-												<Trans>Add to Skills</Trans>
+									<div className="grid justify-items-start gap-0.5">
+										<Button size="sm" variant="soft" disabled={locked} onClick={() => addToSkills(open)}>
+											<Icon name="plus" size={16} />
+											<Trans>Add to Skills</Trans>
+										</Button>
+										{hasUsableProvider && (
+											<Button
+												size="sm"
+												variant="ghost"
+												className="-ms-2.5"
+												disabled={locked}
+												onClick={() => askAssistant(open.label, application ? null : posting)}
+											>
+												<Icon name="sparkle" size={16} />
+												<Trans>Ask the assistant to work it in</Trans>
 											</Button>
 										)}
 										<Button
 											size="sm"
-											variant={open.skill ? "secondary" : "primary"}
+											variant="ghost"
+											className="-ms-2.5"
 											disabled={locked}
-											onClick={() => askAssistant(open.label, application ? null : posting)}
+											onClick={() => hideTerm(open)}
 										>
-											<Icon name="sparkle" size={16} />
-											<Trans>Ask the assistant to work it in</Trans>
-										</Button>
-										<Button size="sm" variant="ghost" disabled={locked} onClick={() => hideTerm(open)}>
 											<Trans>Not true for me, hide it</Trans>
 										</Button>
 									</div>
@@ -299,7 +328,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 					{result.found.length > 0 && (
 						<section aria-labelledby="match-found" className="grid gap-2">
-							<h3 id="match-found" className="text-xs font-semibold text-ink-3">
+							<h3 id="match-found" className="t-caption text-ink-3">
 								<Trans>Already covered · pick one to find it on the page</Trans>
 							</h3>
 							<div className="flex flex-wrap gap-1.5">
@@ -312,8 +341,8 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 											aria-pressed={on}
 											onClick={() => useEditorStore.setState({ highlightTerm: on ? null : term.term })}
 											className={cn(
-												"flex h-7 items-center gap-1 rounded-md px-2 text-xs font-medium transition-colors duration-quick",
-												on ? "bg-[#F2DE8C] text-[oklch(0.3_0.05_80)]" : "bg-accent-soft text-accent-text",
+												"flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-[13px] leading-[18px] font-medium transition-colors duration-quick",
+												on ? "bg-warn-soft text-warn-text" : "border border-line-2 text-ink-2",
 											)}
 										>
 											<Icon name="check" size={14} />
@@ -347,6 +376,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 					</button>
 				</p>
 			)}
+			{application && <ApplicationFooter application={application} />}
 		</div>
 	);
 }
@@ -469,7 +499,7 @@ function CopyOrLink({ application, onDone }: CopyOrLinkProps) {
 	const locked = useIsResumeLocked();
 
 	return (
-		<div className={cn(ENTER_CLASS, "grid gap-2 rounded-lg border border-line p-3")}>
+		<div className={cn(ENTER_CLASS, "grid gap-2 border-y border-line py-3")}>
 			<p className="text-[13px] leading-[19px] text-ink-2">
 				<Trans>
 					Tailor a copy for {application.company} so this resume stays as it is for other jobs, or link this resume
@@ -479,6 +509,7 @@ function CopyOrLink({ application, onDone }: CopyOrLinkProps) {
 			<div className="flex flex-wrap gap-1.5">
 				<Button
 					size="sm"
+					variant="soft"
 					disabled={copying || linking}
 					onClick={() =>
 						void makeCopy({ applicationId: application.id, company: application.company }).then((saved) => {
@@ -512,11 +543,13 @@ function PostingSource({ application, contextOnly }: { application: JobMatch["ap
 	const [pickedId, setPickedId] = useState<string | null>(null);
 	const picked = useApplicationChoice(pickedId);
 	const { link } = useLinkApplication();
+	const navigate = useNavigate({ from: "/builder/$resumeId" });
+	const search = useSearch({ from: "/builder/$resumeId" });
 
 	if (!application) {
 		return (
-			<div className="grid gap-2 rounded-lg bg-bg p-3">
-				<div className="flex items-center gap-2.5">
+			<div className="grid gap-2 border-b border-line py-2.5">
+				<div className="flex items-center gap-3.5">
 					<span className="grid size-7 place-items-center rounded-lg bg-sunken text-ink-2">
 						<Icon name="copy" size={16} />
 					</span>
@@ -538,29 +571,45 @@ function PostingSource({ application, contextOnly }: { application: JobMatch["ap
 	}
 
 	return (
-		<div className="grid gap-2 rounded-lg bg-bg p-3">
-			<div className="flex items-center gap-2.5">
-				<span className="grid size-7 place-items-center rounded-lg bg-sunken text-[13px] font-semibold text-ink-2">
+		<div className="grid gap-2 border-b border-line py-2.5">
+			<div className="flex items-center gap-3.5">
+				<span className="grid size-8 place-items-center rounded-sm bg-sunken text-[12px]/4 font-semibold text-ink-2">
 					{application.company.slice(0, 1).toUpperCase()}
 				</span>
 				<span className="grid min-w-0 flex-1">
-					<b className="truncate text-[13px] font-semibold">
-						{application.role} · {application.company}
-					</b>
+					<b className="truncate t-row-title">{application.company}</b>
 					<span className="text-xs text-ink-3">
-						{contextOnly ? <Trans>For this visit only</Trans> : <Trans>Posting from the linked application</Trans>}
+						{application.role} · {contextOnly ? <Trans>For this visit only</Trans> : <Trans>saved job</Trans>}
 					</span>
 				</span>
-				{!contextOnly && (
-					<Button size="sm" variant="secondary" aria-expanded={changing} onClick={() => setChanging(!changing)}>
-						<Trans>Change</Trans>
-					</Button>
-				)}
+				<Button
+					size="sm"
+					variant="link"
+					className="h-5 p-0 text-sm/5"
+					aria-expanded={changing}
+					onClick={() => setChanging(!changing)}
+				>
+					<Trans>Change</Trans>
+				</Button>
 			</div>
-			{changing && !contextOnly && (
+			{changing && (
 				<div className="grid gap-2">
-					<ApplicationPicker value={picked?.id ?? application.id} onChange={setPickedId} />
-					{picked && picked.id !== application.id && (
+					<ApplicationPicker
+						value={picked?.id ?? application.id}
+						onChange={(id) => {
+							if (!contextOnly) {
+								setPickedId(id);
+								return;
+							}
+							void navigate({
+								to: ".",
+								search: (previous: typeof search) => ({ ...previous, applicationId: id }),
+								replace: true,
+							});
+							setChanging(false);
+						}}
+					/>
+					{!contextOnly && picked && picked.id !== application.id && (
 						<CopyOrLink
 							key={picked.id}
 							application={picked}
@@ -570,17 +619,19 @@ function PostingSource({ application, contextOnly }: { application: JobMatch["ap
 							}}
 						/>
 					)}
-					<Button
-						size="sm"
-						variant="ghost"
-						className="w-fit"
-						onClick={() => {
-							setChanging(false);
-							void link(null);
-						}}
-					>
-						<Trans>Unlink this application</Trans>
-					</Button>
+					{!contextOnly && (
+						<Button
+							size="sm"
+							variant="ghost"
+							className="w-fit"
+							onClick={() => {
+								setChanging(false);
+								void link(null);
+							}}
+						>
+							<Trans>Unlink this application</Trans>
+						</Button>
+					)}
 				</div>
 			)}
 		</div>
@@ -598,23 +649,36 @@ function ApplicationPicker({ value, onChange }: { value: string | null; onChange
 	const choices = (applications ?? []).filter((application) => application.status !== "closed");
 	// Linking changes the document's details, which a locked document keeps as they are.
 	const locked = useIsResumeLocked();
+	const selected = choices.find((application) => application.id === value);
 
 	return (
-		<NativeSelect
-			aria-label={t`Link an application`}
-			disabled={locked}
-			value={value ?? ""}
-			onChange={(event) => event.target.value && onChange(event.target.value)}
-		>
-			<option value="" disabled>
-				{choices.length > 0 ? t`Link an application…` : t`No applications yet`}
-			</option>
-			{choices.map((application) => (
-				<option key={application.id} value={application.id}>
-					{application.role} · {application.company}
+		<div className="relative">
+			{selected && (
+				<span
+					aria-hidden="true"
+					className="pointer-events-none absolute start-2 top-1/2 z-10 grid size-6 -translate-y-1/2 place-items-center rounded-xs bg-sunken t-caption text-ink-2"
+				>
+					{selected.company.slice(0, 1).toUpperCase()}
+				</span>
+			)}
+			<NativeSelect
+				caret="up-down"
+				className={selected ? "ps-10" : undefined}
+				aria-label={t`Link an application`}
+				disabled={locked}
+				value={value ?? ""}
+				onChange={(event) => event.target.value && onChange(event.target.value)}
+			>
+				<option value="" disabled>
+					{choices.length > 0 ? t`Link an application…` : t`No applications yet`}
 				</option>
-			))}
-		</NativeSelect>
+				{choices.map((application) => (
+					<option key={application.id} value={application.id}>
+						{application.company} · {application.role}
+					</option>
+				))}
+			</NativeSelect>
+		</div>
 	);
 }
 
@@ -642,7 +706,7 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 
 	if (application) {
 		return (
-			<div className="grid gap-2.5 rounded-xl border border-line p-4">
+			<div className="grid gap-2.5 py-3">
 				<strong className="text-sm font-semibold">
 					{application.role} · {application.company}
 				</strong>
@@ -659,6 +723,7 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 				/>
 				<Button
 					size="sm"
+					variant="secondary"
 					className="w-fit"
 					disabled={!draft.trim() || saving}
 					onClick={() => savePosting({ id: application.id, jobDescription: draft.trim() })}
@@ -670,7 +735,7 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 	}
 
 	return (
-		<div className="grid gap-2.5 rounded-xl border border-line p-4">
+		<div className="grid gap-2.5 py-3">
 			<strong className="text-sm font-semibold">
 				<Trans>Match against a job</Trans>
 			</strong>
@@ -692,6 +757,7 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 			/>
 			<Button
 				size="sm"
+				variant="secondary"
 				className="w-fit"
 				disabled={!draft.trim()}
 				onClick={() => useEditorStore.setState({ pastedPosting: draft })}
@@ -770,7 +836,10 @@ function SaveAsApplication() {
 				void save("copy");
 			}}
 		>
-			<div className="grid grid-cols-2 gap-2">
+			<h3 className="t-row-title">
+				<Trans>Save as a job</Trans>
+			</h3>
+			<div className="grid gap-3">
 				<div className="grid gap-1">
 					<Label htmlFor={companyId}>
 						<Trans>Company</Trans>
@@ -787,8 +856,8 @@ function SaveAsApplication() {
 			<p className="text-xs leading-[17px] text-ink-3">
 				<Trans>The copy gets the job's posting and keeps this resume as it is for other jobs.</Trans>
 			</p>
-			<div className="flex flex-wrap gap-1.5">
-				<Button size="sm" type="submit" disabled={!company.trim() || !role.trim() || busy}>
+			<div className="grid justify-items-start gap-1.5">
+				<Button size="sm" variant="soft" type="submit" disabled={!company.trim() || !role.trim() || busy}>
 					<Icon name="copy" size={16} />
 					<Trans>Save job and make a copy</Trans>
 				</Button>
@@ -816,4 +885,39 @@ function askAssistant(label: string, pastedPosting: string | null) {
 	const request = t`The posting asks for “${label}”. If it's true for me, work it into my resume where it fits. Ask me first.`;
 	const posting = pastedPosting?.slice(0, MAX_HANDOFF_POSTING).trim();
 	openAssistantFrom({ ask: posting ? `${request}\n\n${t`The posting:`}\n${posting}` : request });
+}
+
+function ApplicationFooter({ application }: { application: NonNullable<JobMatch["application"]> }) {
+	const { makeCopy, isPending } = useMakeCopy();
+	return (
+		<div className="pb-2">
+			<List cap>
+				<ListRow
+					title={<Trans>Tailor a copy for {application.company}</Trans>}
+					subtitle={<Trans>This resume stays as it is for other jobs</Trans>}
+					trailing={
+						<Button
+							size="sm"
+							variant="secondary"
+							disabled={isPending}
+							onClick={() => void makeCopy({ applicationId: application.id, company: application.company })}
+						>
+							<Trans>Make a copy</Trans>
+						</Button>
+					}
+				/>
+				<ListRow
+					title={<Trans>Fit for {application.company}</Trans>}
+					subtitle={<Trans>Each requirement, with the evidence for it</Trans>}
+					caret
+					render={
+						<Link
+							to="/dashboard/applications/$applicationId/{-$tab}"
+							params={{ applicationId: application.id, tab: "fit" }}
+						/>
+					}
+				/>
+			</List>
+		</div>
+	);
 }

@@ -56,7 +56,8 @@ it.each([
 		company: "Lumen",
 		href: "/dashboard/applications?applicationId=job-a",
 	},
-	{ params: { resumeId: "unlinked" }, search: {}, company: null, href: "/dashboard" },
+	{ params: { resumeId: "shared" }, search: {}, company: null, href: "/dashboard/documents" },
+	{ params: { resumeId: "unlinked" }, search: {}, company: null, href: "/dashboard/documents" },
 ])("returns document to its selected application or Documents: $href", ({ params, search, company, href }) => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	context.params = params;

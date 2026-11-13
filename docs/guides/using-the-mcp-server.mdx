@@ -15,12 +15,12 @@ Reactive Resume runs a [Model Context Protocol (MCP)](https://modelcontextprotoc
 
 ## Find your server address
 
-The server address is your instance's address followed by `/mcp`. On the hosted instance it's `https://rxresu.me/mcp`. You can copy it from **Settings** → **AI & developer**, in the **MCP server** section.
+The server address is your instance's address followed by `/mcp`. On the hosted instance it's `https://rxresu.me/mcp`. You can copy it from **Settings** → **Developer**, in the **MCP server** section.
 
-<Frame caption="Copy your own instance MCP address">
+<Frame caption="API keys, connected applications and MCP live in Developer">
   <img
     src="/images/guides/using-the-mcp-server/mcp-server-settings.webp"
-    alt="MCP server settings with the local example instance address, Copy and Setup guide, and four settings destinations"
+    alt="Settings Developer with two fictional API keys, a connected Claude application and the local MCP address"
   />
 </Frame>
 
@@ -41,7 +41,7 @@ The server address is your instance's address followed by `/mcp`. On the hosted 
     Your client opens a browser window. If you aren't signed in, Reactive Resume asks you to sign in first; the sign-in page names the application that's waiting, for example "Sign in to connect Claude."
   </Step>
   <Step title="Approve the connection">
-    Check the application name under **Connect an application**, read what it will be able to do, and select **Allow access**. Select **Deny access** if you don't recognize the application. You can disconnect it anytime in **Settings → AI & developer**.
+    Check the application name under **Connect an application**, read what it will be able to do, and select **Allow access**. Select **Deny access** if you don't recognize the application. You can disconnect it anytime in **Settings → Developer**.
 
     <Frame caption="Review requested access before allowing a client">
       <img src="/images/guides/using-the-mcp-server/oauth-consent.webp" alt="Connect an application consent page for Docs example client with requested account and offline-access permissions, Deny and Allow" />
@@ -272,7 +272,7 @@ The server reads storage directly and verifies the account prefix and path segme
 
 ### Browser and streaming workflows
 
-`open_account_settings` opens account, security, AI & developer, API keys, connected applications or preferences. Use the `page` argument, such as `{"page":"api-keys"}`; `section` and other unknown fields are rejected. Older `profile` and `authentication` page names still work. Provider creation/update and web credential entry return their authenticated settings page. `api_resume_set_password` returns the resume's editor link, where you set, change or remove its share password, and `api_resume_verify_password` returns a password-protected public resume's link, where a visitor enters the password. Account deletion, password changes, passkeys, two-factor authentication and provider credentials require user interaction in that browser. Browser preferences, local undo and document selection remain browser workflows; durable edits and history are available through MCP.
+`open_account_settings` opens account, security, AI, developer integrations, API keys, connected applications or preferences. Use the `page` argument, such as `{"page":"api-keys"}`; `section` and other unknown fields are rejected. Older `profile` and `authentication` page names still work. Provider creation/update and web credential entry return their authenticated settings page. `api_resume_set_password` returns the resume's editor link, where you set, change or remove its share password, and `api_resume_verify_password` returns a password-protected public resume's link, where a visitor enters the password. Account deletion, password changes, passkeys, two-factor authentication and provider credentials require user interaction in that browser. Browser preferences, local undo and document selection remain browser workflows; durable edits and history are available through MCP.
 
 MCP is stateless and accepts POST requests with JSON responses. GET/DELETE return 405; there is no standalone SSE subscription. Draft/message streams are collected up to 500,000 characters; `truncated` identifies longer responses. Read the assistant thread for persisted replies. To watch a resume for changes, poll `read_resume` and compare `updatedAt`.
 
@@ -311,7 +311,7 @@ This section is for client developers and self-hosters.
 - New OAuth clients can request `api:read`, `api:write` and `api:delete`. The consent screen describes these permissions alongside identity scopes. Existing identity-only grants and legacy keys without permission statements retain account-wide access for compatibility.
 - The server checks the user, client and consent grant on every authenticated request. Tokens with `offline_access` outlive the browser session that approved them; other tokens remain bound to their login session. Disabled clients, banned accounts and revoked grants cannot continue using signed tokens. Proof-bound DPoP tokens are rejected: this endpoint supports ordinary bearer access tokens.
 - Revoking a refresh token or signing out in the app leaves already-issued JWT access tokens valid for up to 1 hour. Revoking consent under Connected applications blocks them immediately.
-- Disconnect a connection under Settings → AI & developer → Connected applications. Review its named permissions and connected date, select **Disconnect**, then confirm the named application. A message confirms the result. This cannot be undone; reconnect from the application to allow it again. On mobile, **Settings → AI & developer → Connected applications** lists the same connections with **Disconnect**; the app's own sign-in is marked **(this app)** and signs out from **Settings** instead. Disconnecting the application grant invalidates existing access and refresh tokens. The authorization provider does not support revoking one self-contained JWT independently of its grant.
+- Disconnect a connection under Settings → Developer → Connected applications. Review its named permissions and connected date, select **Disconnect**, then confirm the named application. A message confirms the result. This cannot be undone; reconnect from the application to allow it again. On mobile, **Settings → AI & developer → Connected applications** lists the same connections with **Disconnect**; the app's own sign-in is marked **(this app)** and signs out from **Settings** instead. Disconnecting the application grant invalidates existing access and refresh tokens. The authorization provider does not support revoking one self-contained JWT independently of its grant.
 
 <Frame caption="Confirming a disconnect names the application and explains how to reconnect">
   <img
@@ -326,7 +326,7 @@ This section is for client developers and self-hosters.
 | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | "Unauthorized" and no sign-in window                          | Your client doesn't support MCP OAuth. Connect with an API key.                                       |
 | The sign-in window says the request is invalid or has expired | Start the connection again from your client.                                                          |
-| `401` with an API key                                         | The key is wrong, revoked or expired. Create a new one in **Settings** → **AI & developer**.          |
+| `401` with an API key                                         | The key is wrong, revoked or expired. Create a new one in **Settings** → **Developer**.               |
 | A tool says the resume is locked                              | Unlock it in the app, or ask the client to run `unlock_resume`.                                       |
 | A tool says an ID wasn't found                                | Ask the client to list resumes, letters or applications first to get valid IDs.                       |
 | An edit to dates doesn't stick                                | The client changed the `period` or `date` text. Ask it to write the `dates` object instead.           |

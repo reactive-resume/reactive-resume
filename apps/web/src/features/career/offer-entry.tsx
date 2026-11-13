@@ -4,7 +4,7 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { OfferTerms } from "@reactive-resume/schema/career";
 import type { careerOfferInputSchema } from "@reactive-resume/schema/career";
-import type { ReactNode } from "react";
+import type { FormEvent, ReactNode } from "react";
 import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -21,19 +21,29 @@ import {
 	previousOfferCurrency,
 } from "@reactive-resume/schema/career-offer";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@reactive-resume/ui/components/collapsible";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
-import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
-import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
+import { pendingRequestId, settleRequestId, isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CurrencySelect } from "./currency-select";
 import { CareerLoadError } from "./load-state";
 import { formatMoney } from "./offer-compare";
 import { useCareerTime } from "./shared";
+import { DateField } from "@/components/ui/date-field";
 import { getCategoryLane } from "@/features/applications/lanes";
 import {
 	applicationsListQueryKey,
@@ -42,7 +52,6 @@ import {
 } from "@/features/applications/queries";
 import { useMoveWithUndo } from "@/features/applications/use-application-actions";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
-import { MoreOptions } from "@/features/resume/editor/write/fields";
 import { getAccountId, getAccountGeneration } from "@/libs/auth/account-scope";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -86,7 +95,6 @@ function ScopedOfferEntry({
 	frame = (action) => action,
 }: OfferEntryProps) {
 	const [open, setOpen] = useState(initialOpen);
-	const phone = useBreakpoint() === "mobile";
 	const [requested, setRequested] = useState(initialOpen);
 	if (initialOpen !== requested) {
 		setRequested(initialOpen);
@@ -108,6 +116,7 @@ function ScopedOfferEntry({
 
 	const form = (
 		<OfferForm
+			sheet={!application}
 			application={application}
 			onClose={close}
 			onSaved={(offer) => {
@@ -120,27 +129,14 @@ function ScopedOfferEntry({
 	// and leaves the page as it was (DESIGN.md: dialog, sheet or inline).
 	if (open && application) return form;
 	const sheet = !application && (
-		<Sheet
-			open={open}
-			onOpenChange={(next) => {
-				if (!next) close();
-			}}
-		>
-			<SheetContent
-				side={phone ? "bottom" : "right"}
-				closeLabel={t`Close`}
-				className="gap-0 overflow-y-auto p-4 data-[side=right]:border-s data-[side=right]:border-line data-[side=right]:sm:max-w-[560px]"
-			>
-				<SheetTitle className="sr-only">
-					<Trans>Add offer</Trans>
-				</SheetTitle>
-				{form}
-			</SheetContent>
-		</Sheet>
+		<OfferSheet open={open} onClose={close}>
+			{form}
+		</OfferSheet>
 	);
 	const variant = primary ? "primary" : "secondary";
 	const add = (
 		<Button variant={variant} className="w-fit" onClick={() => setOpen(true)}>
+			{!application && <Icon name="plus" />}
 			{latest && application ? <Trans>Add a newer offer</Trans> : <Trans>Add offer</Trans>}
 		</Button>
 	);
@@ -156,6 +152,24 @@ function ScopedOfferEntry({
 			{frame(action)}
 			{sheet}
 		</>
+	);
+}
+
+type OfferSheetProps = { open: boolean; onClose: () => void; children: ReactNode };
+
+/** The offer form over the page: a 560 dialog, a bottom sheet on phones. The form inside names the dialog. */
+export function OfferSheet({ open, onClose, children }: OfferSheetProps) {
+	return (
+		<Dialog
+			open={open}
+			onOpenChange={(next) => {
+				if (!next) onClose();
+			}}
+		>
+			<DialogContent closeLabel={t`Close`} className="sm:max-w-[560px]">
+				{children}
+			</DialogContent>
+		</Dialog>
 	);
 }
 
@@ -214,6 +228,8 @@ type EditedOffer = { id: string; applicationId: string | null; data: OfferTerms 
 
 type OfferFormProps = OfferEntryProps & {
 	offer?: EditedOffer;
+	/** Inside `OfferSheet`: the title names the sheet and the buttons sit in its footer. */
+	sheet?: boolean;
 	onClose: () => void;
 	onSaved?: (offer: OfferLike | null) => void;
 };
@@ -236,7 +252,7 @@ const zonedFields = (value: string, timeZone: string) => {
 	return { date, time };
 };
 
-export function OfferForm({ application, offer: initialOffer, onClose, onSaved }: OfferFormProps) {
+export function OfferForm({ application, offer: initialOffer, sheet = false, onClose, onSaved }: OfferFormProps) {
 	// Draft and expected terms belong to the same edit session, even when the comparison refetches.
 	const [offer] = useState(initialOffer);
 	const mounted = useRef(true);
@@ -368,7 +384,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 				moveWithUndo({
 					applications: [{ id: input.applicationId }],
 					lane: getCategoryLane(lanes, "offer"),
-					description: t`Offer saved. ${target.company} moved to Offer.`,
+					description: t`Offer saved. ${isolate(target.company)} moved to Offer.`,
 				});
 			} else {
 				toast.add({ description: t`Offer saved` });
@@ -409,19 +425,13 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		// The copy this form started from: a change made elsewhere since is a conflict, not overwritten.
 		update.mutate({ id: offer.id, terms: changed, expected: offerTerms(offer.data), newVersion: true });
 	};
-	const textFields = [
-		{ key: "variableConditions", label: t`Bonus conditions`, max: 1000 },
-		{ key: "equity", label: t`Equity`, max: 1000 },
-		{ key: "location", label: t`Where you work`, max: 500 },
-		{ key: "leave", label: t`Leave`, max: 500 },
-		{ key: "other", label: t`Other benefits`, max: 1000 },
-	] as const;
 	const currencyInvalid = (submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency);
-	const amountField = (key: "base" | "variable" | "learning", label: string) => {
+	const field = "grid content-start gap-1.5";
+	const amountField = (key: "base" | "variable" | "learning", label: string, className: string) => {
 		const invalid = (submitted || touched[key]) && amountErrors[key];
 		return (
-			<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-				<label htmlFor={`${id}-${key}`}>{label}</label>
+			<div className={cn(field, className)}>
+				<Label htmlFor={`${id}-${key}`}>{label}</Label>
 				<Input
 					id={`${id}-${key}`}
 					inputMode="decimal"
@@ -437,15 +447,9 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 					}
 					onChange={(event) => setAmounts((current) => ({ ...current, [key]: event.target.value }))}
 				/>
-				{key === "variable" && (
-					<p
-						id={`${id}-variable-hint`}
-						className="text-xs text-ink-3"
-					>{t`Enter an amount or a percentage of base, such as 10%.`}</p>
-				)}
 				{invalid && (
 					<span id={`${id}-${key}-error`} className="flex items-start gap-1.5 text-xs text-danger-text">
-						<Icon name="warning-circle" />
+						<Icon name="warning-circle" size={16} />
 						<span>
 							{key === "variable"
 								? t`Enter an amount or a percentage such as 10%, or leave blank.`
@@ -456,32 +460,39 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 			</div>
 		);
 	};
-	return (
-		<form
-			noValidate
-			className="grid w-full gap-4 rounded-xl border border-line bg-surface p-4 text-start"
-			onSubmit={(event) => {
-				event.preventDefault();
-				setSubmitted(true);
-				if (amountErrors.variable || amountErrors.learning) setMore(true);
-				if (payload.success && !save.isPending) submitPayload(payload.data);
-			}}
-		>
-			<h2 className="text-base font-semibold">{offer ? <Trans>Edit offer terms</Trans> : <Trans>Add offer</Trans>}</h2>
-			<p className="text-sm text-ink-2">
-				{offer ? (
-					<Trans>
-						Save corrected terms as a new version. The previous version stays available. No AI request is made.
-					</Trans>
-				) : (
-					<Trans>Enter terms yourself. No AI request is made. Leave unknown amounts blank.</Trans>
-				)}
-			</p>
-			<fieldset disabled={save.isPending} className="grid items-start gap-3 sm:grid-cols-2">
-				<div className="grid gap-1.5 sm:col-span-2 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-					<label htmlFor={`${id}-application`}>
+	const textField = (
+		key: "variableConditions" | "equity" | "location" | "leave" | "other",
+		label: string,
+		max: number,
+		className: string,
+		placeholder?: string,
+	) => (
+		<div className={cn(field, className)}>
+			<Label htmlFor={`${id}-${key}`}>{label}</Label>
+			<Input
+				id={`${id}-${key}`}
+				value={terms[key]}
+				maxLength={max}
+				placeholder={placeholder}
+				onChange={(event) => change({ [key]: event.target.value })}
+			/>
+		</div>
+	);
+
+	const title = offer ? <Trans>Edit offer terms</Trans> : <Trans>Add offer</Trans>;
+	const description = offer ? (
+		<Trans>Save corrected terms as a new version. The previous version stays available. No AI request is made.</Trans>
+	) : (
+		<Trans>You enter the terms yourself and no AI request is made. Leave unknown amounts blank.</Trans>
+	);
+
+	const fields = (
+		<>
+			<fieldset disabled={save.isPending} className="grid items-start gap-x-3 gap-y-4 sm:grid-cols-12">
+				<div className={cn(field, "sm:col-span-12")}>
+					<Label htmlFor={`${id}-application`}>
 						<Trans>Application</Trans>
-					</label>
+					</Label>
 					<NativeSelect
 						id={`${id}-application`}
 						value={applicationId}
@@ -506,17 +517,68 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						))}
 					</NativeSelect>
 				</div>
-				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-					<label htmlFor={`${id}-currency`}>
+
+				<div className={cn(field, "sm:col-span-5")}>
+					<Label id={`${id}-version`}>
+						<Trans>Offer type</Trans>
+					</Label>
+					<SegmentedControl
+						aria-labelledby={`${id}-version`}
+						value={terms.version}
+						onValueChange={(version) => change({ version: version as OfferTerms["version"] })}
+						className="h-10 w-full"
+					>
+						<SegmentedControlItem value="written">
+							<Trans context="Offer type: an offer made in writing">Written</Trans>
+						</SegmentedControlItem>
+						<SegmentedControlItem value="verbal">
+							<Trans context="Offer type: an offer made in conversation">Verbal</Trans>
+						</SegmentedControlItem>
+					</SegmentedControl>
+				</div>
+				<div className={cn(field, "sm:col-span-4")}>
+					<Label htmlFor={`${id}-date`}>
+						<Trans>Respond by</Trans>
+					</Label>
+					<DateField
+						id={`${id}-date`}
+						type="date"
+						value={date}
+						onBlur={() => touch("deadline")}
+						aria-invalid={showDeadlineError}
+						aria-describedby={showDeadlineError ? `${id}-deadline-error` : undefined}
+						onChange={(event) => setDate(event.target.value)}
+					/>
+				</div>
+				<div className={cn(field, "sm:col-span-3")}>
+					<Label htmlFor={`${id}-time`}>
+						<Trans>Time</Trans>
+					</Label>
+					<DateField
+						id={`${id}-time`}
+						type="time"
+						onBlur={() => touch("deadline")}
+						aria-invalid={showDeadlineError}
+						aria-describedby={`${id}-time-zone${showDeadlineError ? ` ${id}-deadline-error` : ""}`}
+						// The deadline's time only counts with a date; it is ready before one is chosen.
+						required={Boolean(date)}
+						value={time}
+						onChange={(event) => setTime(event.target.value)}
+					/>
+				</div>
+
+				{amountField("base", t`Base salary`, "sm:col-span-6 sm:col-start-1")}
+				<div className={cn(field, "sm:col-span-3")}>
+					<Label htmlFor={`${id}-currency`}>
 						<Trans>Currency</Trans>
-					</label>
+					</Label>
 					<CurrencySelect
-						clearable
+						symbol={false}
 						id={`${id}-currency`}
 						value={terms.currency}
 						invalid={currencyInvalid}
 						describedBy={`${id}-currency-hint`}
-						className="w-full justify-start font-normal"
+						className="h-10 w-full justify-start font-normal"
 						onChange={(currency) => {
 							setCurrencyTyped(true);
 							touch("currency");
@@ -526,16 +588,16 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 					{/* A hint, not a placeholder: a placeholder "EUR" reads as a currency already chosen. */}
 					<p
 						id={`${id}-currency-hint`}
-						className={cn("flex items-start gap-1.5 text-xs", currencyInvalid ? "text-danger-text" : "text-ink-3")}
+						className={currencyInvalid ? "flex items-start gap-1.5 text-xs text-danger-text" : "sr-only"}
 					>
-						{currencyInvalid && <Icon name="warning-circle" />}
+						{currencyInvalid && <Icon name="warning-circle" size={16} />}
 						<span>{t`Choose a currency.`}</span>
 					</p>
 				</div>
-				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-					<label htmlFor={`${id}-period`}>
+				<div className={cn(field, "sm:col-span-3")}>
+					<Label htmlFor={`${id}-period`}>
 						<Trans>Pay period</Trans>
-					</label>
+					</Label>
 					<NativeSelect
 						id={`${id}-period`}
 						value={terms.period}
@@ -549,92 +611,69 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						<option value="hour">{t`Per hour`}</option>
 					</NativeSelect>
 				</div>
-				{amountField("base", t`Base salary`)}
-				<div className="grid gap-1.5 sm:col-start-1 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-					<label htmlFor={`${id}-date`}>
-						<Trans>Respond by</Trans>
-					</label>
-					<Input
-						id={`${id}-date`}
-						type="date"
-						value={date}
-						onBlur={() => touch("deadline")}
-						aria-invalid={showDeadlineError}
-						aria-describedby={showDeadlineError ? `${id}-deadline-error` : undefined}
-						onChange={(event) => setDate(event.target.value)}
-					/>
-				</div>
-				{date && (
-					<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-						<label htmlFor={`${id}-time`}>
-							<Trans>Time</Trans>
-						</label>
-						<Input
-							id={`${id}-time`}
-							type="time"
-							onBlur={() => touch("deadline")}
-							aria-invalid={showDeadlineError}
-							aria-describedby={`${id}-time-zone${showDeadlineError ? ` ${id}-deadline-error` : ""}`}
-							required
-							value={time}
-							onChange={(event) => setTime(event.target.value)}
-						/>
-						<p id={`${id}-time-zone`} className="text-xs text-ink-3">
-							{t`Times are shown in ${timeZone}.`}
-						</p>
-					</div>
-				)}
-				<MoreOptions open={more} onOpenChange={setMore}>
-					<div className="grid items-start gap-3 sm:grid-cols-2">
-						<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-							<label htmlFor={`${id}-version`}>
-								<Trans>Offer type</Trans>
-							</label>
-							<NativeSelect
-								id={`${id}-version`}
-								value={terms.version}
-								onChange={(event) => change({ version: event.target.value as OfferTerms["version"] })}
-							>
-								<option value="written">{t`Written offer`}</option>
-								<option value="verbal">{t`Verbal offer`}</option>
-							</NativeSelect>
-						</div>
-						{amountField("variable", t`Bonus`)}
-						{amountField("learning", t`Learning budget`)}
-						<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-							<label htmlFor={`${id}-office`}>
-								<Trans>Office days per week</Trans>
-							</label>
-							<NativeSelect
-								id={`${id}-office`}
-								value={terms.officeDays ?? ""}
-								onChange={(event) =>
-									change({ officeDays: event.target.value === "" ? null : Number(event.target.value) })
-								}
-							>
-								<option value="">{t`Unknown`}</option>
-								{[0, 1, 2, 3, 4, 5].map((days) => (
-									<option key={days} value={days}>
-										{/* The word Preferences uses for no office days. */}
-										{days === 0 ? t`Remote (0)` : days}
-									</option>
-								))}
-							</NativeSelect>
-						</div>
-						{textFields.map(({ key, label, max }) => (
-							<div key={key} className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-								<label htmlFor={`${id}-${key}`}>{label}</label>
-								<Input
-									id={`${id}-${key}`}
-									value={terms[key]}
-									maxLength={max}
-									onChange={(event) => change({ [key]: event.target.value })}
-								/>
-							</div>
+
+				{amountField("variable", t`Bonus`, "sm:col-span-4")}
+				{amountField("learning", t`Learning budget`, "sm:col-span-4")}
+				<div className={cn(field, "sm:col-span-4")}>
+					<Label htmlFor={`${id}-office`}>
+						<Trans>Office days a week</Trans>
+					</Label>
+					<NativeSelect
+						id={`${id}-office`}
+						value={terms.officeDays ?? ""}
+						onChange={(event) => change({ officeDays: event.target.value === "" ? null : Number(event.target.value) })}
+					>
+						<option value="">{t`Unknown`}</option>
+						{[0, 1, 2, 3, 4, 5].map((days) => (
+							<option key={days} value={days}>
+								{/* The word Preferences uses for no office days. */}
+								{days === 0 ? t`Remote (0)` : days}
+							</option>
 						))}
-					</div>
-				</MoreOptions>
+					</NativeSelect>
+				</div>
+
+				<Collapsible open={more} onOpenChange={setMore} className="col-span-full">
+					<CollapsibleTrigger className="group/more flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-xs text-sm font-medium text-ink">
+						<Icon
+							name="caret-right"
+							size={16}
+							className="shrink-0 transition-transform duration-standard ease-enter group-data-panel-open/more:rotate-90"
+						/>
+						<span className="shrink-0">
+							<Trans>More terms</Trans>
+						</span>
+						{/* What the fold holds, for the eye; its fields are read once it opens. */}
+						<span aria-hidden="true" className="ms-auto min-w-0 truncate text-[13px]/[18px] font-normal text-ink-3">
+							<Trans>Equity · bonus conditions · where you work · leave · other benefits</Trans>
+						</span>
+					</CollapsibleTrigger>
+					<CollapsibleContent hiddenUntilFound>
+						<div className="grid items-start gap-x-3 gap-y-4 pt-3 sm:grid-cols-12">
+							{textField(
+								"variableConditions",
+								t`Bonus conditions`,
+								1000,
+								"sm:col-span-12",
+								t`What it depends on, when it is paid`,
+							)}
+							{textField("equity", t`Equity`, 1000, "sm:col-span-12")}
+							{textField("location", t`Where you work`, 500, "sm:col-span-8")}
+							{textField("leave", t`Leave`, 500, "sm:col-span-4")}
+							{textField("other", t`Other benefits`, 1000, "sm:col-span-12", t`Pension, allowances, equipment`)}
+						</div>
+					</CollapsibleContent>
+				</Collapsible>
 			</fieldset>
+			<p className="text-xs/4 text-ink-3">
+				<span id={`${id}-variable-hint`}>{t`Bonus takes an amount or a share of base, such as 10%.`}</span>
+				{date && (
+					<>
+						{" "}
+						<span id={`${id}-time-zone`}>{t`Times are shown in ${timeZone}.`}</span>
+					</>
+				)}
+			</p>
 			{!application && applications.isError && <CareerLoadError onRetry={() => void applications.refetch()} />}
 			{!application && applications.data?.length === 0 && (
 				<Link
@@ -647,13 +686,14 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 			)}
 			{showDeadlineError && (
 				<p id={`${id}-deadline-error`} role="alert" className="flex items-start gap-1.5 text-sm text-danger-text">
-					<Icon name="warning-circle" />
+					<Icon name="warning-circle" size={18} />
 					<span>{deadlineMessage}</span>
 				</p>
 			)}
 			{submitted && !payload.success && (
-				<p role="alert" className="text-sm text-danger-text">
-					<Icon name="warning-circle" /> {/* Only what applies: a chosen application isn't asked for again. */}
+				<p role="alert" className="flex items-start gap-1.5 text-sm text-danger-text">
+					<Icon name="warning-circle" size={18} />
+					{/* Only what applies: a chosen application isn't asked for again. */}
 					{applicationId ? (
 						<Trans>Correct the highlighted fields before saving.</Trans>
 					) : (
@@ -662,22 +702,56 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 				</p>
 			)}
 			{save.isError && (
-				<p role="alert" className="text-sm text-danger-text">
-					<Icon name="warning-circle" />{" "}
+				<p role="alert" className="flex items-start gap-1.5 text-sm text-danger-text">
+					<Icon name="warning-circle" size={18} />
 					{/* A conflict says the offer changed elsewhere; anything else keeps the draft and asks to retry. */}
 					{save.error instanceof ORPCError && save.error.code === "CONFLICT"
 						? save.error.message
 						: t`Couldn't save the offer. Your draft is still here. Try again.`}
 				</p>
 			)}
-			<div className="flex gap-2">
-				<Button type="submit" loading={save.isPending}>
-					{save.isPending ? <Trans>Saving…</Trans> : <Trans>Save offer</Trans>}
-				</Button>
-				<Button variant="ghost" disabled={save.isPending} onClick={onClose}>
-					<Trans>Cancel</Trans>
-				</Button>
+		</>
+	);
+	const actions = (
+		<>
+			<Button variant="ghost" disabled={save.isPending} onClick={onClose}>
+				<Trans>Cancel</Trans>
+			</Button>
+			<Button type="submit" loading={save.isPending}>
+				{save.isPending ? <Trans>Saving…</Trans> : <Trans>Save offer</Trans>}
+			</Button>
+		</>
+	);
+	const onSubmit = (event: FormEvent) => {
+		event.preventDefault();
+		setSubmitted(true);
+		if (payload.success && !save.isPending) submitPayload(payload.data);
+	};
+
+	if (sheet)
+		return (
+			<form noValidate className="grid min-w-0 gap-5 text-start" onSubmit={onSubmit}>
+				<DialogHeader>
+					<DialogTitle>{title}</DialogTitle>
+					<DialogDescription>{description}</DialogDescription>
+				</DialogHeader>
+				{fields}
+				<DialogFooter>{actions}</DialogFooter>
+			</form>
+		);
+
+	return (
+		<form
+			noValidate
+			className="grid w-full gap-4 rounded-xl border border-line bg-surface p-5 text-start"
+			onSubmit={onSubmit}
+		>
+			<div className="grid gap-1">
+				<h2 className="t-section-title">{title}</h2>
+				<p className="text-sm/5 text-ink-3">{description}</p>
 			</div>
+			{fields}
+			<div className="flex justify-end gap-2">{actions}</div>
 		</form>
 	);
 }

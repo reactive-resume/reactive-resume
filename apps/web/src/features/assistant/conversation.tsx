@@ -50,7 +50,6 @@ import { ToolApprovals } from "./tool-approvals";
 import { useAssistantChat } from "./use-assistant-chat";
 import { useAttachmentRemoval } from "./use-attachment-removal";
 import { UsedChip } from "./used-chip";
-import { useDialogStore } from "@/dialogs/store";
 import { ContextChip } from "@/features/career/shared";
 import { useResumeStore } from "@/features/resume/builder/draft";
 import { runFit } from "@/features/resume/editor/design/fit";
@@ -79,6 +78,7 @@ type ToolPart = Part & {
 type ConversationProps = {
 	threadId: string;
 	initialMessages: UIMessage[];
+	interrupted?: readonly string[];
 	initialAttachments?: ChatAttachment[];
 	/** A reply was still streaming when the conversation opened. */
 	activeRun: boolean;
@@ -115,7 +115,10 @@ export function Conversation(props: ConversationProps) {
 	const [rejections, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
 	const writes = useRef(0);
 	const owners = useRef(new Map<string, { write: number; previous: EditStatus | undefined }>());
-	const [stopped, setStopped] = useState(false);
+	const [stopped, setStopped] = useState(() => {
+		const last = props.initialMessages.at(-1);
+		return last !== undefined && (props.interrupted ?? []).includes(last.id);
+	});
 	// Messages already in the thread when it opens are history; only new ones rise in.
 	const [initialIds] = useState(() => new Set(props.initialMessages.map((message) => message.id)));
 
@@ -416,7 +419,7 @@ export function Conversation(props: ConversationProps) {
 					<MessageScroller>
 						<MessageScrollerViewport aria-label={t`Conversation`}>
 							{/* Announced when the answer is complete, not token by token. */}
-							<MessageScrollerContent aria-busy={busy} className="gap-4 p-4">
+							<MessageScrollerContent aria-busy={busy} className="gap-4 px-6 py-4">
 								{messages.length === 0 && (status === "submitted" || resuming) && (
 									<MessageScrollerItem>{footer}</MessageScrollerItem>
 								)}
@@ -705,7 +708,10 @@ function UserText({ text }: { text: string }) {
 		<div className="grid justify-items-end gap-1">
 			<p
 				id={id}
-				className={cn("rounded-lg bg-sunken px-3 py-2 text-sm whitespace-pre-wrap", long && !open && "line-clamp-12")}
+				className={cn(
+					"rounded-xl bg-sunken px-3.5 py-2.5 text-[15px]/6 whitespace-pre-wrap",
+					long && !open && "line-clamp-12",
+				)}
 			>
 				{text}
 			</p>
@@ -1070,7 +1076,6 @@ type ComposerProps = {
  */
 export function Composer(props: ComposerProps) {
 	const { document, context, onContextChange, streaming, disabled } = props;
-	const openDialog = useDialogStore((state) => state.openDialog);
 	const [text, setText] = useState(props.initialText ?? "");
 	const [attachments, setAttachments] = useState<ChatAttachment[]>(props.initialAttachments ?? []);
 	const removal = useAttachmentRemoval(`${document.kind}:${document.id}:${props.threadId ?? "draft"}`, (id) =>
@@ -1141,7 +1146,8 @@ export function Composer(props: ComposerProps) {
 		{
 			key: "document" as const,
 			icon: document.kind === "letter" ? ("envelope-simple" as const) : ("file-text" as const),
-			label: document.name,
+			// The kind, as the board draws it: one short row of chips. The document's name is on the panel already.
+			label: document.kind === "letter" ? t`Letter` : t`Resume`,
 		},
 		...(document.posting
 			? [
@@ -1154,34 +1160,9 @@ export function Composer(props: ComposerProps) {
 			: []),
 	];
 
-	const sharesPosting = context.posting && document.posting;
-
-	// Tailoring needs the job's own copy: the server refuses edits that use the posting on a resume other jobs share.
-	const posting = sharesPosting ? document.posting : null;
-	const needsCopy = document.kind === "resume" && !document.jobCopy;
-
 	return (
-		<div className="grid gap-2 border-t border-line bg-surface px-3 pt-2.5 pb-3">
+		<div className="grid gap-2 bg-surface px-6 pt-2.5 pb-5">
 			{props.notice}
-			{needsCopy && posting && (
-				<p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg bg-sunken px-3 py-2 text-xs text-ink-2">
-					<span className="flex-1">
-						<Trans>
-							Edits that use the {posting.company} posting go to a copy made for that job, so this resume stays
-							unchanged.
-						</Trans>
-					</span>
-					<Button
-						size="sm"
-						variant="secondary"
-						onClick={() =>
-							openDialog("document.new", { step: "copy", sourceResumeId: document.id, applicationId: posting.id })
-						}
-					>
-						<Trans>Copy for this job</Trans>
-					</Button>
-				</p>
-			)}
 			{/* The Knowledge switch is always here, so the row is too. */}
 			{text.length >= 4000 && (props.threadId || props.ensureThread) && (
 				<Button
@@ -1193,96 +1174,98 @@ export function Composer(props: ComposerProps) {
 					<Trans>Attach a file instead</Trans>
 				</Button>
 			)}
-			<ChatComposer
-				label={t`Message the assistant`}
-				placeholder={t`Ask, or describe a change…`}
-				value={text}
-				onValueChange={setText}
-				disabled={disabled}
-				sendDisabled={!hasText || disabled || uploading || removal.isPending}
-				streaming={streaming}
-				onSend={submit}
-				onStop={props.onStop}
-				chips={
-					<>
-						<ContextChip
-							pressed={context.memory === true}
-							onPressedChange={(memory) => onContextChange({ ...context, memory })}
-							label={t`Knowledge`}
-							tooltip={
-								context.memory
-									? t`The assistant can search facts and stories you share with all applications. It can't change them.`
-									: t`Let the assistant search facts and stories you share with all applications, read-only`
-							}
-						/>
-						{chips.map((chip) =>
-							context[chip.key] ? (
-								<RemovableChip
-									key={chip.key}
-									icon={chip.icon}
-									label={chip.label}
-									maxWidth="max-w-[160px]"
-									removeLabel={t`Don't send ${chip.label}`}
-									onRemove={() => onContextChange({ ...context, [chip.key]: false })}
-								/>
-							) : (
-								// A chip that's off stays as a dashed outline, so it can be sent again.
-								<button
-									key={chip.key}
-									type="button"
-									aria-label={t`Send ${chip.label} again`}
-									onClick={() => onContextChange({ ...context, [chip.key]: true })}
-									className="touch-target relative flex h-[26px] items-center gap-1 rounded-md border border-dashed border-line-2 px-2 text-xs text-ink-3 transition-colors hover:bg-hover hover:text-ink"
-								>
-									<Icon name="plus" size={14} />
-									<span className="max-w-[160px] truncate">{chip.label}</span>
-								</button>
-							),
-						)}
-						{attachments.map((attachment) => (
-							<RemovableChip
-								key={attachment.id}
-								icon="paperclip"
-								label={attachment.filename}
-								maxWidth="max-w-[140px]"
-								removeLabel={t`Remove ${attachment.filename}`}
-								disabled={disabled || streaming || uploading || removal.isPending}
-								onRemove={() => void removal.remove(attachment.id)}
+			<fieldset disabled={disabled} className="min-w-0 border-0 p-0">
+				<ChatComposer
+					label={t`Message the assistant`}
+					placeholder={t`Ask, or describe a change…`}
+					value={text}
+					onValueChange={setText}
+					disabled={disabled}
+					sendDisabled={!hasText || disabled || uploading || removal.isPending}
+					streaming={streaming}
+					onSend={submit}
+					onStop={props.onStop}
+					chips={
+						<>
+							{chips.map((chip) =>
+								context[chip.key] ? (
+									// No icon: the kind is the label, so the three chips fit one row in the panel.
+									<RemovableChip
+										key={chip.key}
+										label={chip.label}
+										maxWidth="max-w-[160px]"
+										removeLabel={t`Don't send ${chip.label}`}
+										onRemove={() => onContextChange({ ...context, [chip.key]: false })}
+									/>
+								) : (
+									// A chip that's off stays as a dashed outline, so it can be sent again.
+									<button
+										key={chip.key}
+										type="button"
+										aria-label={t`Send ${chip.label} again`}
+										onClick={() => onContextChange({ ...context, [chip.key]: true })}
+										className="touch-target relative flex h-[26px] items-center gap-1 rounded-md border border-dashed border-line-2 px-2 text-xs text-ink-3 transition-colors hover:bg-hover hover:text-ink"
+									>
+										<Icon name="plus" size={14} />
+										<span className="max-w-[160px] truncate">{chip.label}</span>
+									</button>
+								),
+							)}
+							<ContextChip
+								pressed={context.memory === true}
+								onPressedChange={(memory) => onContextChange({ ...context, memory })}
+								label={t`Knowledge`}
+								tooltip={
+									context.memory
+										? t`The assistant can search facts and stories you share with all applications. It can't change them.`
+										: t`Let the assistant search facts and stories you share with all applications, read-only`
+								}
 							/>
-						))}
-					</>
-				}
-				actions={
-					<>
-						{(props.threadId || props.ensureThread) && (
-							<>
-								<IconButton
+							{attachments.map((attachment) => (
+								<RemovableChip
+									key={attachment.id}
 									icon="paperclip"
-									label={t`Attach a file`}
-									size="icon-sm"
-									disabled={disabled || uploading || removal.isPending}
-									className="text-ink-2"
-									onClick={() => fileInput.current?.click()}
+									label={attachment.filename}
+									maxWidth="max-w-[140px]"
+									removeLabel={t`Remove ${attachment.filename}`}
+									disabled={disabled || streaming || uploading || removal.isPending}
+									onRemove={() => void removal.remove(attachment.id)}
 								/>
-								<input
-									ref={fileInput}
-									type="file"
-									multiple
-									accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
-									className="hidden"
-									onChange={(event) => void upload(event.target.files)}
-								/>
-							</>
-						)}
-					</>
-				}
-			/>
+							))}
+						</>
+					}
+					actions={
+						<>
+							{(props.threadId || props.ensureThread) && (
+								<>
+									<IconButton
+										icon="paperclip"
+										label={t`Attach a file`}
+										size="icon-sm"
+										disabled={disabled || uploading || removal.isPending}
+										className="text-ink-2"
+										onClick={() => fileInput.current?.click()}
+									/>
+									<input
+										ref={fileInput}
+										type="file"
+										multiple
+										accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
+										className="hidden"
+										onChange={(event) => void upload(event.target.files)}
+									/>
+								</>
+							)}
+						</>
+					}
+				/>
+			</fieldset>
 		</div>
 	);
 }
 
 type RemovableChipProps = {
-	icon: IconName;
+	icon?: IconName | undefined;
 	label: string;
 	/** The label's max-width class (Tailwind needs the whole class name in the source). */
 	maxWidth: string;
@@ -1293,8 +1276,8 @@ type RemovableChipProps = {
 
 function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove, disabled }: RemovableChipProps) {
 	return (
-		<span className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-xs text-ink-2">
-			<Icon name={icon} size={15} />
+		<span className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-xs font-medium text-ink-2">
+			{icon && <Icon name={icon} size={15} />}
 			<span className={cn(maxWidth, "truncate")}>{label}</span>
 			<button
 				type="button"

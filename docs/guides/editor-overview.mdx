@@ -8,7 +8,7 @@ The editor is where you write and shape a resume. This page explains what each p
 The editor has three parts:
 
 - **The editor bar** across the top, with the document name, the mode switcher and actions such as **History** and **Download PDF**.
-- **The panel** on the left. What it shows depends on the mode you're in.
+- **The panel** on the left. What it shows depends on the mode you're in. In Write, a section replaces the outline and an entry replaces its section. Use the back button to return. The assistant and History take the same panel's place.
 - **The page canvas** on the right. It shows your resume exactly as it will print and updates as you type.
 
 To leave the editor, select the back arrow at the far left of the bar. It reads **Back to documents** normally; opened from an application's workspace or its **What you sent** rows, it names that application (for example **Back to Cloudflare**) and returns there, but only after checking that the application still owns this document.
@@ -22,9 +22,9 @@ From left to right:
 | Back arrow                                     | Returns to your Documents. Any unsaved changes are saved first.                                                                                                   |
 | Document name                                  | Opens the document menu (see below). Under the name is the save status.                                                                                           |
 | **Write** · **Design** · **Check** · **Share** | Switches the panel between modes. **Check** shows how many issues are open, or a check mark when there are none. **Share** shows a dot when the resume is public. |
-| **History** (clock icon)                       | Opens the **History** tab of the **Download & history** sheet, where you can see and restore earlier versions.                                                    |
+| **History** (clock icon)                       | Replaces the current panel with **History**, where you can preview and restore earlier versions.                                                                  |
 | **Assistant** (sparkle icon)                   | Opens or closes the AI assistant.                                                                                                                                 |
-| **Download PDF**                               | Downloads the resume as a PDF straight away. The arrow next to it (**More download formats**) opens the **Download** tab with every other format.                 |
+| **Download PDF**                               | Downloads the resume as a PDF straight away. The arrow next to it (**More download formats**) opens the download menu with other formats and **Print**.           |
 
 On narrower screens some buttons show only their icon, and **History** moves into the document menu. See [Editing on a phone or tablet](/guides/editing-on-mobile).
 
@@ -32,10 +32,10 @@ On narrower screens some buttons show only their icon, and **History** moves int
 
 Select the document name to open the document menu.
 
-<Frame caption="The document menu includes printing, formats and history">
+<Frame caption="Document actions stay in the name menu">
   <img
     src="/images/guides/editor-overview/document-menu.webp"
-    alt="Resume document menu with separate Rename and Tags actions, Translate into, Copy for a job, Lock editing, Notes, Details, Print, download formats, Keyboard shortcuts and History"
+    alt="Resume document menu with rename, duplicate, tags, lock, copy, translation, notes, details, print and Move to Trash"
   />
 </Frame>
 
@@ -48,8 +48,6 @@ Select the document name to open the document menu.
 | **Notes**                             | Opens your private notes for this resume. See [Using private notes](/guides/using-private-notes).                                                                                |
 | **Details**                           | Shows when the resume was created and last edited, its template, language, length in pages and whether it's shared.                                                              |
 | **Print**                             | Prepares the PDF and opens your browser's print dialog.                                                                                                                          |
-| **More download formats**             | Opens the **Download & history** sheet on its **Download** tab, with every format.                                                                                               |
-| **History**                           | Opens the **Download & history** sheet on its **History** tab. See [Undoing changes and version history](/guides/undoing-changes-and-version-history).                           |
 | **Move to Trash**                     | Moves the resume to Trash and takes you back to Documents. A message offers **Undo**, and the resume stays in Trash for 30 days. See [Using the trash](/guides/using-the-trash). |
 
 ## The four modes
@@ -129,7 +127,7 @@ A few things to know:
 - **Leaving the editor waits for the save.** If saving takes more than about 10 seconds, you stay in the editor and see a message that your changes are still open.
 - Pressing <kbd>⌘</kbd> <kbd>S</kbd> (<kbd>Ctrl</kbd> <kbd>S</kbd>) only reminds you that changes are saved automatically.
 
-Each visit in which you make changes also leaves an autosave version in History, so you can go back to how the resume looked before. Within a visit, press <kbd>⌘</kbd> <kbd>Z</kbd> (<kbd>Ctrl</kbd> <kbd>Z</kbd>) while you're not typing in a field to undo your last change, and <kbd>⇧</kbd> <kbd>⌘</kbd> <kbd>Z</kbd> (<kbd>Ctrl</kbd> <kbd>Y</kbd>) to redo it. There's no undo button in the editor bar. See [Undoing changes and version history](/guides/undoing-changes-and-version-history).
+Each visit in which you make changes also leaves an autosave version in History, so you can go back to how the resume looked before. Within a visit, press <kbd>⌘</kbd> <kbd>Z</kbd> (<kbd>Ctrl</kbd> <kbd>Z</kbd>) while you're not typing in a field to undo your last change, and <kbd>⇧</kbd> <kbd>⌘</kbd> <kbd>Z</kbd> (<kbd>Ctrl</kbd> <kbd>Y</kbd>) to redo it. The **Undo** and **Redo** buttons in the editor bar work even while a field is focused. See [Undoing changes and version history](/guides/undoing-changes-and-version-history).
 
 ### Editing in more than one place
 
@@ -147,8 +145,7 @@ Lock a resume when it's finished, or when you've sent it for an application and 
 <Steps>
   <Step title="Open the document menu">Select the document name in the editor bar.</Step>
   <Step title="Select Lock editing">
-    The resume locks straight away. There's no confirmation, because unlocking is one click. A lock icon appears next to
-    the document name.
+    The resume locks straight away and a message offers **Undo**. A lock icon appears next to the document name.
   </Step>
 </Steps>
 

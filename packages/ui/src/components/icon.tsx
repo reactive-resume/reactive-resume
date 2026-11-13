@@ -34,6 +34,7 @@ import {
 	CaretDownIcon,
 	CaretLeftIcon,
 	CaretRightIcon,
+	CaretUpDownIcon,
 	ChartLineUpIcon,
 	ChatCenteredTextIcon,
 	ChatTextIcon,
@@ -169,6 +170,53 @@ import {
 	WrenchIcon,
 	XCircleIcon,
 	XIcon,
+	ArrowBendUpRightIcon,
+	ArrowElbowDownLeftIcon,
+	ArticleIcon,
+	CalendarCheckIcon,
+	CaretUpIcon,
+	CertificateIcon,
+	ChalkboardTeacherIcon,
+	ChartBarIcon,
+	ChatsIcon,
+	CircleDashedIcon,
+	CodeSimpleIcon,
+	CoinsIcon,
+	ColumnsIcon,
+	CompassToolIcon,
+	CursorClickIcon,
+	EraserIcon,
+	EyedropperIcon,
+	FileCsvIcon,
+	FileZipIcon,
+	FilesIcon,
+	FootballIcon,
+	FunnelIcon,
+	GithubLogoIcon,
+	GoogleLogoIcon,
+	HandGrabbingIcon,
+	HouseSimpleIcon,
+	IdentificationCardIcon,
+	ImageIcon,
+	LayoutIcon,
+	LinkIcon,
+	LinkBreakIcon,
+	LinkSimpleIcon,
+	LinkedinLogoIcon,
+	ListIcon,
+	LockSimpleIcon,
+	LockSimpleOpenIcon,
+	MarkdownLogoIcon,
+	PaperPlaneTiltIcon,
+	PlugsIcon,
+	ProhibitIcon,
+	PuzzlePieceIcon,
+	ShieldCheckIcon,
+	SignInIcon,
+	TargetIcon,
+	TrophyIcon,
+	UserIcon,
+	UserGearIcon,
 } from "@phosphor-icons/react";
 import { cn } from "@reactive-resume/utils/style";
 
@@ -207,6 +255,7 @@ const icons = {
 	"caret-down": CaretDownIcon,
 	"caret-left": CaretLeftIcon,
 	"caret-right": CaretRightIcon,
+	"caret-up-down": CaretUpDownIcon,
 	"chart-line-up": ChartLineUpIcon,
 	"chat-centered-text": ChatCenteredTextIcon,
 	"chat-text": ChatTextIcon,
@@ -342,6 +391,53 @@ const icons = {
 	wrench: WrenchIcon,
 	x: XIcon,
 	"x-circle": XCircleIcon,
+	"arrow-bend-up-right": ArrowBendUpRightIcon,
+	"arrow-elbow-down-left": ArrowElbowDownLeftIcon,
+	article: ArticleIcon,
+	"calendar-check": CalendarCheckIcon,
+	"caret-up": CaretUpIcon,
+	certificate: CertificateIcon,
+	"chalkboard-teacher": ChalkboardTeacherIcon,
+	"chart-bar": ChartBarIcon,
+	chats: ChatsIcon,
+	"circle-dashed": CircleDashedIcon,
+	"code-simple": CodeSimpleIcon,
+	coins: CoinsIcon,
+	columns: ColumnsIcon,
+	"compass-tool": CompassToolIcon,
+	"cursor-click": CursorClickIcon,
+	eraser: EraserIcon,
+	eyedropper: EyedropperIcon,
+	"file-csv": FileCsvIcon,
+	"file-zip": FileZipIcon,
+	files: FilesIcon,
+	football: FootballIcon,
+	funnel: FunnelIcon,
+	"github-logo": GithubLogoIcon,
+	"google-logo": GoogleLogoIcon,
+	"hand-grabbing": HandGrabbingIcon,
+	"house-simple": HouseSimpleIcon,
+	"identification-card": IdentificationCardIcon,
+	image: ImageIcon,
+	layout: LayoutIcon,
+	link: LinkIcon,
+	"link-break": LinkBreakIcon,
+	"link-simple": LinkSimpleIcon,
+	"linkedin-logo": LinkedinLogoIcon,
+	list: ListIcon,
+	"lock-simple": LockSimpleIcon,
+	"lock-simple-open": LockSimpleOpenIcon,
+	"markdown-logo": MarkdownLogoIcon,
+	"paper-plane-tilt": PaperPlaneTiltIcon,
+	plugs: PlugsIcon,
+	prohibit: ProhibitIcon,
+	"puzzle-piece": PuzzlePieceIcon,
+	"shield-check": ShieldCheckIcon,
+	"sign-in": SignInIcon,
+	target: TargetIcon,
+	trophy: TrophyIcon,
+	user: UserIcon,
+	"user-gear": UserGearIcon,
 } satisfies Record<string, PhosphorIcon>;
 
 type IconName = keyof typeof icons;
@@ -360,15 +456,16 @@ type IconProps = Omit<React.ComponentProps<"span">, "children"> & {
 	name: IconName;
 	/** The filled glyph. The design system reserves it for the selected navigation item. */
 	filled?: boolean | undefined;
-	/** Glyph size in CSS pixels: 20 on desktop, 24 on touch. */
+	/** Glyph size in CSS pixels. Left out, the icon takes its container's `--icon-size` (20 by default). */
 	size?: number | undefined;
 };
 
 /**
  * A Phosphor glyph sized by the span's font size, so containers can resize it with `text-*` like text.
+ * Controls set `--icon-size` (18 in a button or menu item, 16 in a small button); an explicit `size` wins.
  * Icons are decorative: the control they sit in carries the accessible name.
  */
-function Icon({ name, filled = false, size = 20, className, style, ...props }: IconProps) {
+function Icon({ name, filled = false, size, className, style, ...props }: IconProps) {
 	const Glyph = icons[name];
 
 	return (
@@ -376,8 +473,12 @@ function Icon({ name, filled = false, size = 20, className, style, ...props }: I
 			aria-hidden="true"
 			data-slot="icon"
 			{...props}
-			className={cn("inline-block size-[1em] shrink-0", DIRECTIONAL_ICONS.has(name) && "rtl:-scale-x-100", className)}
-			style={{ fontSize: size, ...style }}
+			className={cn(
+				"inline-block size-[1em] shrink-0 text-[length:var(--icon-size,20px)]",
+				DIRECTIONAL_ICONS.has(name) && "rtl:-scale-x-100",
+				className,
+			)}
+			style={size == null ? style : { fontSize: size, ...style }}
 		>
 			{/* Inline sizing, so the `size-4` rules buttons and menus give bare SVGs can't shrink the glyph. */}
 			<Glyph weight={filled ? "fill" : "regular"} style={{ display: "block", width: "100%", height: "100%" }} />

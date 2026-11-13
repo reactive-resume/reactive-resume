@@ -7,6 +7,7 @@ import { useRouter } from "@tanstack/react-router";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
@@ -14,7 +15,6 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "../store";
 import { PasswordInput } from "@/components/input/password-input";
@@ -90,8 +90,7 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 	return (
 		<DialogContent closeLabel={t`Close`}>
 			<DialogHeader>
-				<DialogTitle className="flex items-center gap-x-2">
-					<Icon name="lock-open" size={16} />
+				<DialogTitle>
 					<Trans>Turn off two-step verification?</Trans>
 				</DialogTitle>
 				<DialogDescription>
@@ -136,10 +135,11 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 				</form.Field>
 
 				<DialogFooter>
+					<DialogClose render={<Button type="button" variant="ghost" />}>
+						<Trans>Keep it on</Trans>
+					</DialogClose>
 					<Button type="submit" variant="danger" disabled={isSubmitting}>
-						<Trans comment="Destructive action button to turn off two-factor authentication">
-							Turn off two-step verification
-						</Trans>
+						<Trans comment="Destructive action button to turn off two-factor authentication">Turn off</Trans>
 					</Button>
 				</DialogFooter>
 			</form>

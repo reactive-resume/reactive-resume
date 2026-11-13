@@ -213,7 +213,7 @@ export function PdfCanvasPage({
 				) : null)}
 
 			{/* Not clipped: overlays may reach past the page edge (Check's margin markers); the canvas rounds itself. */}
-			<div style={scaledPageSize} className={cn("relative aspect-page rounded-md", className)}>
+			<div data-design="paper" style={scaledPageSize} className={cn("relative aspect-page rounded-md", className)}>
 				<canvas
 					ref={canvasRef}
 					aria-label={t`Resume page ${ph({ pageNumber: i18n.number(pageNumber) })} of ${ph({ totalPages: i18n.number(totalPages) })}`}

@@ -6,14 +6,16 @@ import { useQuery } from "@tanstack/react-query";
 import { isEqual } from "es-toolkit";
 import { useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
-import { useDebounceValue } from "usehooks-ts";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { applyProposals } from "@reactive-resume/resume/proposals";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { LetterVersionBar } from "./download-sheet";
 import { templates } from "@/dialogs/resume/template/data";
 import { AiResultUsage } from "@/features/ai/usage";
 import { letterPageData, useLetterWords } from "@/features/letters/compose";
+import { DRAFT_THROTTLE_MS, useThrottledValue } from "@/features/letters/draft-page";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { useLetterMode } from "@/features/letters/use-letter-mode";
 import { CanvasStatusPill, usePageScale, ZoomBar } from "@/features/resume/editor/chrome";
@@ -21,14 +23,9 @@ import { markChange } from "@/features/resume/editor/proposals/proposals";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getScrollBehavior } from "@/features/resume/editor/write/reveal";
 import { ResumePreview } from "@/features/resume/preview/preview";
-import { formatVersionTime, getVersionTitle } from "@/features/resume/share/format";
 import { orpc } from "@/libs/orpc/client";
 
 const NONE: readonly never[] = [];
-
-// A streaming draft re-renders the page a few times a second, not per word: the first change at once, then at most
-// every 400ms. A module constant, so the debounce isn't rebuilt each render.
-const DRAFT_THROTTLE = { leading: true, maxWait: 400 };
 
 /**
  * `value`, kept as the same object while it stays deep-equal. Each save hands back a new but identical letter; without
@@ -43,7 +40,7 @@ function useDeepStable<T>(value: T) {
 
 /**
  * The letter on the desk, as it prints: sender header, recipient and date, greeting, body and sign-off. A draft
- * shows in place on a green wash; History shows a version read-only; Design previews a hovered template.
+ * shows in place on a green wash, tagged; History shows a version read-only; Design previews a hovered template.
  */
 export function LetterPage() {
 	const letter = useLetterEditorStore((state) => state.letter);
@@ -53,6 +50,7 @@ export function LetterPage() {
 	const { i18n } = useLingui();
 	const reducedMotion = useReducedMotion();
 	const previewTemplate = useEditorStore((state) => state.previewTemplate);
+	const [compareId, setCompareId] = useState<string | null>(null);
 	const historyVersionId = useEditorStore((state) => state.historyVersionId);
 	const sheetOpen = useEditorStore((state) => state.sheetTab !== null);
 	const rendered = useEditorStore((state) => state.rendered);
@@ -75,11 +73,11 @@ export function LetterPage() {
 	// Reduced motion puts the whole draft on the page at once.
 	const draftText =
 		draft.phase === "ready" || (draft.phase === "streaming" && !reducedMotion) ? draft.text || null : null;
-	const [shownDraft] = useDebounceValue(draftText, 400, DRAFT_THROTTLE);
+	const shownDraft = useThrottledValue(draftText, DRAFT_THROTTLE_MS);
 
 	const pageData = useMemo(() => {
 		if (!letter) return undefined;
-		if (viewing) return letterPageData({ ...letter, ...viewing.data }, words);
+		if (viewing && compareId !== historyVersionId) return letterPageData({ ...letter, ...viewing.data }, words);
 		// The assistant's pending edits show in the body: the old text struck through, the new highlighted.
 		let content = shownDraft ? coverLetterTextToHtml(shownDraft) : letter.content;
 		if (!shownDraft)
@@ -93,7 +91,17 @@ export function LetterPage() {
 			);
 		const page = letterPageData({ ...letter, content }, words);
 		return previewTemplate ? { ...page, metadata: { ...page.metadata, template: previewTemplate } } : page;
-	}, [letter, viewing, shownDraft, previewTemplate, words, assistantProposals, applications]);
+	}, [
+		letter,
+		viewing,
+		compareId,
+		historyVersionId,
+		shownDraft,
+		previewTemplate,
+		words,
+		assistantProposals,
+		applications,
+	]);
 	const data = useDeepStable(pageData);
 
 	if (!letter || !data) return null;
@@ -109,7 +117,7 @@ export function LetterPage() {
 	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
 
 	return (
-		<div className="relative h-full min-h-0 bg-sunken">
+		<div data-design="canvas" className="@container relative h-full min-h-0 bg-sunken dark:bg-raised">
 			{/* The page has nothing to tab to, so the scroll area itself takes focus for keyboard scrolling. */}
 			<section
 				ref={canvasRef}
@@ -117,8 +125,9 @@ export function LetterPage() {
 				tabIndex={0}
 				aria-label={t`Letter page`}
 				className={cn(
-					"absolute inset-0 overflow-auto pt-7 pb-24 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent",
+					"absolute inset-0 overflow-auto pt-3.5 pb-24 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent",
 					isPhone ? "px-4" : "px-10",
+					viewing && "pt-[88px]",
 				)}
 			>
 				{viewing && <AiResultUsage usage={viewing.aiUsage} />}
@@ -133,28 +142,33 @@ export function LetterPage() {
 						"mx-auto w-fit transition-transform duration-emphasized ease-enter",
 						shifted && "-translate-x-[120px] rtl:translate-x-[120px]",
 					)}
-					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}
+					pageClassName={cn("rounded-paper bg-paper shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}
 					onRender={setRendered}
 					renderPageCaption={({ pageNumber }) =>
-						pageNumber === 1 ? (
-							<figcaption className="mb-2.5 flex min-h-8 flex-wrap items-center justify-center gap-2.5 text-center text-xs font-medium text-ink-3">
-								{viewing ? (
-									<CanvasStatusPill icon="clock-counter-clockwise">
-										<Trans>
-											Viewing {formatVersionTime(viewing.createdAt, i18n.locale)} · {getVersionTitle(viewing)} ·
-											read-only
-										</Trans>
-									</CanvasStatusPill>
-								) : previewTemplate ? (
+						viewing ? null : pageNumber === 1 ? (
+							<figcaption className="relative mb-2.5 flex min-h-4 flex-wrap items-center justify-center gap-2.5 text-center t-mono text-ink-3">
+								{viewing ? null : previewTemplate ? (
 									<CanvasStatusPill icon="eye">
 										<Trans>Previewing {templates[previewTemplate].name} · click to apply</Trans>
 									</CanvasStatusPill>
 								) : (
-									<Trans>Page 1 · {formatLabel}</Trans>
+									// Laid over the canvas's width, like the resume's page label.
+									<span className="absolute start-1/2 top-0 w-[100cqw] -translate-x-1/2 whitespace-nowrap rtl:translate-x-1/2">
+										{letter.isLocked ? (
+											<Trans>
+												Page 1 of {ph({ pages: i18n.number(Math.max(1, rendered.pageCount)) })} · {formatLabel} ·
+												read-only
+											</Trans>
+										) : (
+											<Trans>
+												Page 1 of {ph({ pages: i18n.number(Math.max(1, rendered.pageCount)) })} · {formatLabel}
+											</Trans>
+										)}
+									</span>
 								)}
 							</figcaption>
 						) : (
-							<figcaption className="mb-2.5 text-center text-xs font-medium text-ink-3">
+							<figcaption className="mb-2.5 text-center t-mono text-ink-3">
 								<Trans>Page {ph({ pageNumber: i18n.number(pageNumber) })}</Trans>
 							</figcaption>
 						)
@@ -165,25 +179,31 @@ export function LetterPage() {
 								pageIndex={pageIndex}
 								pageMap={pageMap}
 								itemId={letter.style.itemId}
-								washed={Boolean(shownDraft)}
+								draft={Boolean(shownDraft)}
 							/>
 						)
 					}
 				/>
 			</section>
 
+			{viewing && (
+				<LetterVersionBar
+					showingNow={compareId === historyVersionId}
+					onCompare={(now) => setCompareId(now ? historyVersionId : null)}
+				/>
+			)}
 			<ZoomBar fitScale={fitScale} pageCount={Math.max(1, rendered.pageCount)} />
 		</div>
 	);
 }
 
-type LetterOverlayProps = { pageIndex: number; pageMap: PageMap | undefined; itemId: string; washed: boolean };
+type LetterOverlayProps = { pageIndex: number; pageMap: PageMap | undefined; itemId: string; draft: boolean };
 
 /**
  * Pointer layer over the page: the sender's header leads to From, the letter to its body in the panel. A draft
- * lies on a green wash until it's kept.
+ * lies on a green wash, tagged "not kept yet", until it's kept.
  */
-function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProps) {
+function LetterOverlay({ pageIndex, pageMap, itemId, draft }: LetterOverlayProps) {
 	const [mode, setMode] = useLetterMode();
 	const page = pageMap?.pages[pageIndex];
 	if (!pageMap || !page || page.width <= 0 || page.height <= 0) return null;
@@ -191,10 +211,13 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 	const nodes = pageMap.nodes.filter(
 		(node) => node.page === pageIndex && (node.kind === "header" || (node.kind === "item" && node.itemId === itemId)),
 	);
+	// The tag sits on the letter's first line, at its end, on the first page the letter reaches.
+	const letterNode = draft ? nodes.find((node) => node.kind === "item") : undefined;
+	const firstLetterPage = pageMap.nodes.find((node) => node.kind === "item" && node.itemId === itemId)?.page;
 
 	const reveal = (target: "from" | "body") => {
 		if (mode !== "write") setMode("write");
-		useEditorStore.setState({ mobileView: "write", drawerOpen: true });
+		useEditorStore.setState({ mobileView: "write", panelHidden: false });
 		window.setTimeout(() => {
 			if (target === "body") {
 				const editor = document.getElementById("letter-body-editor");
@@ -207,27 +230,44 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 	};
 
 	return (
-		// A pointer shortcut, hidden from assistive tech: the panel reaches the same fields by keyboard.
-		<div aria-hidden="true" className="absolute inset-0">
-			{nodes.map((node) => (
-				// oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- hidden from assistive tech; the panel offers the same by keyboard.
-				<div
-					key={`${node.key}:${node.y}`}
-					onClick={() => reveal(node.kind === "header" ? "from" : "body")}
-					className={cn(
-						"absolute cursor-pointer rounded-lg outline-[1.5px] transition-[background-color,outline-color] duration-standard outline-solid",
-						washed && node.kind === "item"
-							? "bg-[oklch(0.93_0.05_150/0.55)] mix-blend-multiply outline-[oklch(0.5_0.1_150)]"
-							: "outline-transparent hover:bg-[oklch(0.5_0.1_150/0.06)]",
-					)}
+		<>
+			{/* A pointer shortcut, hidden from assistive tech: the panel reaches the same fields by keyboard. */}
+			<div aria-hidden="true" className="absolute inset-0">
+				{nodes.map((node) => (
+					// oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- hidden from assistive tech; the panel offers the same by keyboard.
+					<div
+						key={`${node.key}:${node.y}`}
+						onClick={() => reveal(node.kind === "header" ? "from" : "body")}
+						className={cn(
+							"absolute cursor-pointer rounded-lg outline-[1.5px] transition-[background-color,outline-color] duration-standard outline-solid",
+							// The PDF paints no text backgrounds, so the wash lies over the letter's box on the page. The paper is
+							// white in both themes; keep the dark-theme tint faint enough to read the paper through it.
+							draft && node.kind === "item"
+								? "bg-accent-soft/60 mix-blend-multiply outline-accent dark:bg-accent/10"
+								: "outline-transparent hover:bg-accent/6",
+						)}
+						style={{
+							left: `calc(${(node.x / page.width) * 100}% - 4px)`,
+							top: `calc(${(node.y / page.height) * 100}% - 3px)`,
+							width: `calc(${(node.width / page.width) * 100}% + 8px)`,
+							height: `calc(${(node.height / page.height) * 100}% + 6px)`,
+						}}
+					/>
+				))}
+			</div>
+			{letterNode && letterNode.page === firstLetterPage && (
+				<Badge
+					variant="solid"
+					data-design="draft-tag"
+					className="pointer-events-none absolute -translate-y-full"
 					style={{
-						left: `calc(${(node.x / page.width) * 100}% - 4px)`,
-						top: `calc(${(node.y / page.height) * 100}% - 3px)`,
-						width: `calc(${(node.width / page.width) * 100}% + 8px)`,
-						height: `calc(${(node.height / page.height) * 100}% + 6px)`,
+						insetInlineEnd: `${((page.width - letterNode.x - letterNode.width) / page.width) * 100}%`,
+						top: `calc(${(letterNode.y / page.height) * 100}% - 4px)`,
 					}}
-				/>
-			))}
-		</div>
+				>
+					<Trans>Draft · not kept yet</Trans>
+				</Badge>
+			)}
+		</>
 	);
 }
