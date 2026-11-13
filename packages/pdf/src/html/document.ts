@@ -27,7 +27,12 @@ export type WebPageDocumentOptions = {
 	wordDownloadUrl?: string | undefined;
 	/** Where the footer credit links; absent when the owner turned it off. */
 	creditUrl?: string | undefined;
+	/** The owner's own stylesheet, applied after the page's styles so it can override them. */
+	css?: string | undefined;
 };
+
+/** The owner's stylesheet, kept inside its `<style>` element: no `</style>` can close it early. */
+const ownerStylesheet = (css: string | undefined) => (css ? `\n${css.replaceAll("</", "<\\/")}\n` : "");
 
 /**
  * The desk around the sheet, the floating actions and the footer, in the product's Desk & Paper values: a warm desk
@@ -167,6 +172,7 @@ export function renderWebPageDocument({
 	downloadUrl,
 	wordDownloadUrl,
 	creditUrl,
+	css,
 }: WebPageDocumentOptions): string {
 	const pdf = downloadUrl
 		? `<a href="${escapeHtml(downloadUrl)}" download>${escapeHtml(messages.downloadPdf)}</a>`
@@ -186,7 +192,7 @@ export function renderWebPageDocument({
 		`<div class="rr-toast" role="status" aria-live="polite">${escapeHtml(messages.linkCopied)}</div>`,
 		`<script>${WEB_PAGE_SCRIPT}</script>`,
 	].join("");
-	return shell(page.lang, metaTags(head), `${SHELL_CSS}${page.css}`, body);
+	return shell(page.lang, metaTags(head), `${SHELL_CSS}${page.css}${ownerStylesheet(css)}`, body);
 }
 
 /** The page a password-protected resume shows until the visitor unlocks it. */

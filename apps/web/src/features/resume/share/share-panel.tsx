@@ -4,7 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import {
 	formatTimeSince,
 	publicResumeUrl,
@@ -12,11 +12,13 @@ import {
 	shortLinkOpens,
 	summarizeViews,
 } from "@reactive-resume/resume/sharing";
+import { WEB_PAGE_CSS_MAX_LENGTH } from "@reactive-resume/schema/resume/data";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
+import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
@@ -280,12 +282,13 @@ function PrimaryRow({ setting: { update, isPending }, current, listState, domain
 	);
 }
 
-/** The web page uses the resume's template and Design; the footer credit is its one setting of its own. */
+/** The web page uses the resume's template and Design; the footer credit and the custom CSS are its own settings. */
 function WebPageSettings() {
 	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();
 	const locked = useIsResumeLocked();
 	const template = data?.metadata.template ?? "onyx";
+	const cssId = useId();
 
 	return (
 		<section aria-labelledby="share-web-page-title" className="grid gap-3">
@@ -310,6 +313,32 @@ function WebPageSettings() {
 				label={t`Show “Made with Reactive Resume”`}
 				className="py-0"
 			/>
+			<div className="grid gap-1.5">
+				<label htmlFor={cssId} className="text-xs font-medium text-ink-2">
+					<Trans>Custom CSS</Trans>
+				</label>
+				<Textarea
+					id={cssId}
+					aria-describedby={`${cssId}-hint`}
+					rows={4}
+					maxLength={WEB_PAGE_CSS_MAX_LENGTH}
+					spellCheck={false}
+					dir="ltr"
+					className="max-h-80 font-mono text-xs"
+					value={data?.metadata.web?.css ?? ""}
+					disabled={locked}
+					placeholder=".rr-page { box-shadow: none }"
+					onChange={(event) => {
+						const css = event.target.value;
+						updateResumeData((draft) => {
+							draft.metadata.web = { showCredit: true, ...draft.metadata.web, css: css || undefined };
+						});
+					}}
+				/>
+				<p id={`${cssId}-hint`} className="text-xs leading-4 text-ink-3">
+					<Trans>Applies to the web page after its own styles, at every screen size. The PDF stays as it is.</Trans>
+				</p>
+			</div>
 		</section>
 	);
 }
