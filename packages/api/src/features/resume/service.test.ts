@@ -225,6 +225,18 @@ describe("versions.restore", () => {
 		expect(versionHistoryMock.writeVersion.mock.calls[0]?.[1].data).toEqual(currentData);
 		expect(versionHistoryMock.saveSessionVersion).not.toHaveBeenCalled();
 	});
+
+	it("restores a version saved before the web page's custom CSS without the current stylesheet", async () => {
+		const currentData = createSemanticResumeData();
+		currentData.metadata.web = { showCredit: true, css: ".rr{}" };
+		const restoredData = createSemanticResumeData();
+		restoredData.metadata.web = { showCredit: false };
+		createRestoreHarness(currentData, restoredData);
+
+		const restored = await resumeService.versions.restore({ resumeId: "r1", versionId: "v1", userId: "u1" });
+
+		expect(restored.data.metadata.web).toEqual({ showCredit: false, css: "" });
+	});
 });
 
 describe("create", () => {

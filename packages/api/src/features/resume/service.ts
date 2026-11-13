@@ -605,10 +605,18 @@ export const resumeService = {
 				...(restoredName ? { name: restoredName } : {}),
 			});
 
+			// A version saved without the web page's custom CSS is restored without it: an empty string clears the current
+			// stylesheet, which the update otherwise keeps for saves from older apps.
+			const web = version.data.metadata.web;
+			const data =
+				web?.css === undefined && (current.data as ResumeData | null)?.metadata?.web?.css
+					? { ...version.data, metadata: { ...version.data.metadata, web: { showCredit: true, ...web, css: "" } } }
+					: version.data;
+
 			const updated = await resumeService.update({
 				id: input.resumeId,
 				userId: input.userId,
-				data: version.data,
+				data,
 				aiOperationIds: version.aiOperationIds,
 				expectedUpdatedAt: current.updatedAt,
 				skipAutoSnapshot: true,
