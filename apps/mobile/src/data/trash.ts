@@ -3,8 +3,8 @@ import type { Backend } from "./resources";
 import { t } from "@lingui/core/macro";
 import { dataClient } from "./client";
 import { activeDataScope, assertDataScope } from "./scope";
-export const TRASH_RETENTION_DAYS = { resume: 30, letter: 30, application: null } as const;
-/** Application Trash has no timed expiry. Capture every page before confirming a destructive count. */
+export const TRASH_RETENTION_DAYS = { resume: 30, letter: 30, application: 30 } as const;
+/** Capture every page before confirming a destructive count. */
 export async function allApplicationTrash(read = dataClient.applications.listTrash) {
 	const result: Awaited<ReturnType<typeof read>>["items"] = [];
 	for (let offset = 0; ;) {

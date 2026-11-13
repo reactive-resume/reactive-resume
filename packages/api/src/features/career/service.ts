@@ -756,12 +756,23 @@ export const careerService = {
 				input.applicationId !== undefined ? input.applicationId : input.share ? null : row.applicationId;
 			const corrected = text !== row.text || category !== row.category || applicationId !== row.applicationId;
 			if (!corrected && (input.status === undefined || input.status === row.status)) return row;
+			const [latestStory] = await tx
+				.select({ updatedAt: tables.careerStory.updatedAt })
+				.from(tables.careerStory)
+				.where(and(eq(tables.careerStory.userId, userId), sql`${tables.careerStory.data}->'factIds' ? ${input.id}`))
+				.orderBy(desc(tables.careerStory.updatedAt))
+				.limit(1);
+			// Corrections must sort after the stories they invalidate, even within one clock tick.
+			const updatedAt = new Date(
+				Math.max(Date.now(), row.updatedAt.getTime() + 1, (latestStory?.updatedAt.getTime() ?? 0) + 1),
+			);
 			const [updated] = await tx
 				.update(tables.careerFact)
 				.set({
 					text,
 					category,
 					applicationId,
+					updatedAt,
 					...(corrected
 						? {
 								revisions: [
@@ -770,7 +781,7 @@ export const careerService = {
 										text: row.text,
 										category: row.category,
 										applicationId: row.applicationId,
-										at: new Date().toISOString(),
+										at: updatedAt.toISOString(),
 									},
 								].slice(-50),
 							}
@@ -827,8 +838,12 @@ export const careerService = {
 			if (application) await assertApplicationVersion(tx, userId, application);
 			if (expectedMemoryVersion && expectedMemoryVersion !== (await memoryVersion(userId, tx)))
 				throw new ORPCError("CONFLICT", { message: "Career memory changed. Start a fresh reply." });
-			await requireFacts({ userId, applicationId: input.applicationId }, input.factIds, tx);
-			const values = { applicationId: input.applicationId, data: input };
+			const facts = await requireFacts({ userId, applicationId: input.applicationId }, input.factIds, tx);
+			const values = {
+				applicationId: input.applicationId,
+				data: input,
+				updatedAt: new Date(Math.max(Date.now(), ...facts.map((fact) => fact.updatedAt.getTime()))),
+			};
 			const [row] = id
 				? await tx
 						.update(tables.careerStory)
