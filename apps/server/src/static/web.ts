@@ -11,7 +11,7 @@ import { isAppSectionPath, isFeedbackPath, RESERVED_SEGMENTS } from "@reactive-r
 import { defaultLocale, getLocaleAlternates, languageTag, localizedUrl } from "@reactive-resume/utils/locale";
 import { escapeHtml } from "@reactive-resume/utils/string";
 import { getPageLocale } from "./locale";
-import { CONTEXT7_ASK_DESCRIPTION, CONTEXT7_ASK_URL } from "./seo";
+import { CONTEXT7_ASK_URL } from "./seo";
 
 function resolveWebDistPath() {
 	const candidates = [
@@ -136,10 +136,10 @@ function preloadLinks(html: string) {
  */
 function htmlResponse(html: string, headers: Record<string, string>, template = html) {
 	const verification = new URL(CONTEXT7_ASK_URL).searchParams.get("siteKey") ?? "";
-	const note = `<blockquote data-context7-ask="true" aria-hidden="true" class="sr-only"><h2>Search</h2><p>Page index: ${escapeHtml(new URL("/llms.txt", env.APP_URL).toString())}.</p><p>${escapeHtml(CONTEXT7_ASK_DESCRIPTION)}</p></blockquote>`;
-	const body = html
-		.replace("</head>", () => `<meta name="context7-site-verification" content="${verification}"></head>`)
-		.replace(/<body\b[^>]*>/i, (tag) => `${tag}${note}`);
+	const body = html.replace(
+		"</head>",
+		() => `<meta name="context7-site-verification" content="${verification}"></head>`,
+	);
 	return new Response(body, {
 		headers: {
 			...headers,

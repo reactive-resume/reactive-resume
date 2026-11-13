@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import { supportedLocales } from "@reactive-resume/utils/locale";
 
-vi.mock("@reactive-resume/env/server", () => ({ env: { APP_URL: "https://rxresu.me/" } }));
+const mocks = vi.hoisted(() => ({ env: { APP_URL: "https://rxresu.me/" } }));
+
+vi.mock("@reactive-resume/env/server", () => ({ env: mocks.env }));
 vi.mock("@reactive-resume/api/features/resume/web-page", () => ({
 	listIndexableResumes: async () => [
 		{ username: "tess", slug: "game-dev", isPrimary: true, updatedAt: new Date("2026-10-01T00:00:00Z") },
@@ -9,7 +11,23 @@ vi.mock("@reactive-resume/api/features/resume/web-page", () => ({
 	],
 }));
 
-const { handlePagesSitemap, handleResumesSitemap } = await import("./seo");
+const { handleLlms, handlePagesSitemap, handleResumesSitemap } = await import("./seo");
+
+it("keeps search documentation in llms.txt with instance-local product and API links", async () => {
+	mocks.env.APP_URL = "https://resume.example.test/";
+	try {
+		const response = handleLlms();
+		const text = await response.text();
+		expect(response.headers.get("Content-Type")).toBe("text/plain; charset=UTF-8");
+		expect(text).toContain("## Search\n\nThis site has a search endpoint: https://context7.com/api/v2/ask?");
+		expect(text).toContain("[Homepage](https://resume.example.test/)");
+		expect(text).toContain("[Get started](https://resume.example.test/dashboard)");
+		expect(text).toContain("[OpenAPI specification](https://resume.example.test/openapi.json)");
+		expect(text).not.toContain("https://rxresu.me");
+	} finally {
+		mocks.env.APP_URL = "https://rxresu.me/";
+	}
+});
 
 it("lists each indexed resume at its canonical address: the primary at /<username>", async () => {
 	const xml = await (await handleResumesSitemap(1)).text();

@@ -46,17 +46,25 @@ const searchLink =
 describe("web app fallback classification", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mocks.env.APP_URL = "https://rxresu.me";
 		vi.mocked(fs.readFile).mockResolvedValue("<html>app</html>");
 	});
 
-	it.each(["/", "/dashboard"])("advertises Context7 Ask in server-rendered %s and its HEAD response", async (path) => {
+	it.each(
+		["https://rxresu.me", "https://resume.example.test"].flatMap((origin) =>
+			["/", "/ats-checker", "/resume-templates", "/dashboard", "/auth/login"].map((path) => ({ origin, path })),
+		),
+	)("keeps search discovery declarative on $origin $path", async ({ origin, path }) => {
+		mocks.env.APP_URL = origin;
 		vi.mocked(fs.readFile).mockResolvedValue('<html><head></head><body><div id="app"></div></body></html>');
-		const response = await handleWebApp(new Request(`https://rxresu.me${path}`));
+		const response = await handleWebApp(new Request(`${origin}${path}`));
 		const html = await response.text();
 		expect(html).toContain('<meta name="context7-site-verification" content="ask_b3fd9335a63f1b21b1a814ac"></head>');
-		expect(html).toContain('</blockquote><div id="app"></div>');
+		expect(html).not.toContain("data-context7-ask");
+		expect(html).not.toContain("Page index:");
+		expect(html).not.toContain("This site has a search endpoint:");
 		expect(response.headers.get("Link")).toBe(searchLink);
-		const head = await handleWebApp(new Request(`https://rxresu.me${path}`, { method: "HEAD" }));
+		const head = await handleWebApp(new Request(`${origin}${path}`, { method: "HEAD" }));
 		expect(head.headers.get("Link")).toBe(searchLink);
 		expect(await head.text()).toBe("");
 	});
