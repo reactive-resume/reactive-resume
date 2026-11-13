@@ -104,6 +104,35 @@ describe("special characters in exported PDFs (#3106)", () => {
 		},
 	);
 
+	it.each(["IBM Plex Serif", "Helvetica", "Noto Serif Armenian", "Noto Sans Armenian"])(
+		"embeds Armenian glyphs with %s",
+		{ timeout: 30_000 },
+		async (family) => {
+			const data = fixture();
+			data.metadata.typography.body.fontFamily = family;
+			data.metadata.typography.heading.fontFamily = family;
+			data.metadata.typography.body.fontWeights = ["400", "700"];
+			const upper = Array.from({ length: 38 }, (_, index) => String.fromCodePoint(0x0531 + index)).join("");
+			const lower = upper.toLowerCase();
+			const text = `Latin 123 ${upper} ${lower}`;
+			data.summary.content = `<p>${text}</p><p><strong>${text}</strong></p><p><em>${text}</em></p>`;
+
+			const { glyphs } = await readPdf(data);
+			const drawn = glyphs
+				.map((glyph) => glyph.unicode)
+				.join("")
+				.replaceAll(" ", "");
+			expect(drawn).toContain(text.replaceAll(" ", "").repeat(3));
+
+			const armenianGlyphs = glyphs.filter((glyph) => /\p{Script=Armenian}/u.test(glyph.unicode));
+			expect(armenianGlyphs).toHaveLength((upper.length + lower.length) * 3);
+			for (const glyph of armenianGlyphs) {
+				expect(glyph.isInFont).toBe(true);
+				expect(glyph.width).toBeGreaterThan(0);
+			}
+		},
+	);
+
 	it("exports a paragraph that ends in a line break in a standard PDF font (#3593)", { timeout: 30_000 }, async () => {
 		const data = fixture();
 		data.metadata.typography.body.fontFamily = "Helvetica";

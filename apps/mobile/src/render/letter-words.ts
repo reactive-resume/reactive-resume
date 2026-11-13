@@ -27,6 +27,7 @@ const loaders: Record<Locale, () => Promise<{ messages: Messages }>> = {
 	"he-IL": () => import("../../locales/he-IL.po"),
 	"hi-IN": () => import("../../locales/hi-IN.po"),
 	"hu-HU": () => import("../../locales/hu-HU.po"),
+	"hy-AM": () => import("../../locales/hy-AM.po"),
 	"id-ID": () => import("../../locales/id-ID.po"),
 	"it-IT": () => import("../../locales/it-IT.po"),
 	"ja-JP": () => import("../../locales/ja-JP.po"),
