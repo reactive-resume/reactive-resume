@@ -13,6 +13,7 @@ rss: true
 
 ## Resume Builder, Sharing & Export
 
+- Fixed uploaded pictures missing from server-rendered PDFs, so exported pages match the pictures shown in the editor. [eeb6c561d](https://github.com/reactive-resume/reactive-resume/commit/eeb6c561d)
 - Fixed editing dates in languages whose printed dates could not be read back, and kept month dates in the Gregorian calendar so the editor and exports show the year you entered. [ceb53ecfe](https://github.com/reactive-resume/reactive-resume/commit/ceb53ecfe), [2a5b69b29](https://github.com/reactive-resume/reactive-resume/commit/2a5b69b29)
 - Added Georgian font fallbacks so Georgian text appears in PDFs, including mixed-language documents. Thanks to @Henglie. [d1d8ad010](https://github.com/reactive-resume/reactive-resume/commit/d1d8ad010)
 - Fixed repeated or missing headers in Word exports, preserved education fields when importing JSON Resume files, and corrected custom line-height lengths. Markdown and assistant checks now leave out sidebars that are not printed on full-width pages. [85e01e7ac](https://github.com/reactive-resume/reactive-resume/commit/85e01e7ac)
