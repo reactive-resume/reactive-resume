@@ -30,7 +30,13 @@
 			}
 		},
 		"apps/server": {
-			"entry": ["vercel.mjs", "src/cloudflare/index.ts", "src/cloudflare/sharp.ts"],
+			"entry": [
+				"vercel.mjs",
+				"src/prepare-deployment.ts",
+				"src/migrate-legacy-styles.ts",
+				"src/cloudflare/index.ts",
+				"src/cloudflare/sharp.ts"
+			],
 			"ignoreDependencies": [
 				"@ai-sdk/anthropic",
 				"@ai-sdk/cerebras",
