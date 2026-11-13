@@ -97,7 +97,7 @@ export function AuthErrorPage({ code, description }: AuthErrorPageProps) {
 			</Alert>
 
 			{detail && (
-				<p className="mt-3 wrap-anywhere text-ink-3 t-mono">
+				<p className="mt-3 t-mono wrap-anywhere text-ink-3">
 					<Trans comment="Label before the raw error text forwarded by the identity provider">
 						Details from the provider: {detail}
 					</Trans>

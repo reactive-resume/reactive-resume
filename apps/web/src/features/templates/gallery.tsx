@@ -126,7 +126,7 @@ export function TemplateGallery() {
 							<Icon name="arrow-square-out" size={16} />
 						</a>
 					</div>
-					<p className="pt-1.5 pb-[18px] text-ink-3 t-small">
+					<p className="pt-1.5 pb-[18px] t-small text-ink-3">
 						{t`One column reads top to bottom, which hiring software follows most reliably. Two columns keep supporting details in a sidebar.`}
 					</p>
 
@@ -189,7 +189,7 @@ export function TemplateGallery() {
 						{t`Sample PDF`}
 					</a>
 				</div>
-				<p className="mt-2.5 text-ink-2 t-small">{i18n._(templates[selected].description)}</p>
+				<p className="mt-2.5 t-small text-ink-2">{i18n._(templates[selected].description)}</p>
 				<ul className="mt-3 flex flex-wrap gap-1.5">
 					{templates[selected].tags
 						.filter((tag) => !/column/i.test(tag))
@@ -217,8 +217,8 @@ export function TemplateGallery() {
 				>
 					<div className="flex shrink-0 items-center gap-1 border-b border-line bg-bg py-2.5 ps-4 pe-3">
 						<div className="flex min-w-0 flex-1 flex-col">
-							<DialogTitle className="truncate font-ui t-label">{name}</DialogTitle>
-							<DialogDescription className="truncate text-ink-3 t-small">
+							<DialogTitle className="truncate t-label font-ui">{name}</DialogTitle>
+							<DialogDescription className="truncate t-small text-ink-3">
 								{t`${columns(selected)} · ${i18n.number(Math.max(shown.indexOf(selected), 0) + 1)} of ${i18n.number(shown.length)}`}
 							</DialogDescription>
 						</div>

@@ -14,7 +14,7 @@ type JdCoverageProps = {
 export function JdCoverage({ jd }: JdCoverageProps) {
 	if (jd.totalTerms === 0) {
 		return (
-			<p className="text-ink-3 t-small">
+			<p className="t-small text-ink-3">
 				<Trans>
 					No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the
 					requirements section for a more useful comparison.
@@ -33,13 +33,13 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 					{i18n.number(jd.matchedCount)} of {i18n.number(jd.totalTerms)} terms found
 				</Trans>
 			</h3>
-			<p className="pt-1 text-ink-3 t-small">
+			<p className="pt-1 t-small text-ink-3">
 				<Trans>Terms the pasted posting stresses, looked for in your file's text.</Trans>
 			</p>
 
 			{matched.length > 0 && (
 				<>
-					<p className="pt-4 pb-1.5 font-semibold t-small">
+					<p className="pt-4 pb-1.5 t-small font-semibold">
 						<Trans>In your resume</Trans>
 					</p>
 					<ul className="flex flex-wrap gap-1.5">
@@ -54,7 +54,7 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 
 			{missing.length > 0 && (
 				<>
-					<p className="pt-4 pb-1.5 font-semibold t-small">
+					<p className="pt-4 pb-1.5 t-small font-semibold">
 						<Trans>Not found</Trans>
 					</p>
 					<ul className="flex flex-wrap gap-1.5">

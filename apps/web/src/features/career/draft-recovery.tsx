@@ -8,7 +8,7 @@ type DraftRecoveryProps = { restored: boolean; storageFailed?: boolean; accept: 
 export function DraftRecovery({ restored, accept, reset, storageFailed }: DraftRecoveryProps) {
 	if (!restored && !storageFailed) return null;
 	return (
-		<div role="status" className="flex items-start gap-3 rounded-xl bg-warn-soft px-4 py-3 text-warn-text t-ui">
+		<div role="status" className="flex items-start gap-3 rounded-xl bg-warn-soft px-4 py-3 t-ui text-warn-text">
 			<Icon name="arrow-counter-clockwise" size={18} className="mt-px shrink-0" />
 			<div className="grid min-w-0 flex-1 gap-2">
 				{restored && (

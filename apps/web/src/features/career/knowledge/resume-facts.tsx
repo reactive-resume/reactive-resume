@@ -159,7 +159,7 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 				</p>
 			)}
 			{preview.isPending && (
-				<p role="status" className="text-ink-3 t-small">
+				<p role="status" className="t-small text-ink-3">
 					<Trans>Reading the resume…</Trans>
 				</p>
 			)}
@@ -184,7 +184,7 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 			{review && (
 				<div className="grid" aria-label={t`Resume fact proposals`}>
 					{drafts.length > 0 ? (
-						<div className="flex items-center justify-between gap-2 border-b border-line pb-2 text-ink-2 t-small">
+						<div className="flex items-center justify-between gap-2 border-b border-line pb-2 t-small text-ink-2">
 							{plural(drafts.length, {
 								one: "Found # fact you don't have yet",
 								other: "Found # facts you don't have yet",
@@ -231,7 +231,7 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 									}}
 									className="field-sizing-content w-full resize-none rounded-xs bg-transparent text-[15px]/[22px] font-medium text-ink outline-none focus:shadow-[0_1px_0_0_var(--accent)] focus-visible:outline-none"
 								/>
-								<p className="line-clamp-2 text-ink-3 t-small">
+								<p className="line-clamp-2 t-small text-ink-3">
 									<select
 										aria-label={t`Type`}
 										value={item.category}

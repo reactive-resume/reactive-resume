@@ -213,7 +213,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 						<p className="text-[13px] leading-[18px] font-semibold">
 							<Trans>No backup codes either?</Trans>
 						</p>
-						<p className="mt-1 text-ink-2 t-small">
+						<p className="mt-1 t-small text-ink-2">
 							<Trans>
 								If you never verified your email address, resetting your password turns two-step verification off.
 								Otherwise, ask the person who runs this server to turn it off for your account.
