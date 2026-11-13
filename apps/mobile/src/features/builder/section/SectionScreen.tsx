@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { createEntry } from "@reactive-resume/resume/entries";
+import { formatList } from "@reactive-resume/utils/locale";
 import { useAnchoredMenu, useAnchorRef, Anchor } from "../shared/anchored-menu";
 import {
 	BuilderScreen,
@@ -30,13 +31,36 @@ import {
 	resolveSection,
 	sectionMeta,
 	sectionName,
+	sortEntriesByDate,
 } from "../shared/model";
 import { sectionActions, useRenameSection } from "../shared/section-actions";
 import { useResumeStore } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
-import { IconButton, ListRow, ReorderList, type ReorderHandle, SwipeRow, Text, TextLink, useTheme } from "@/ui";
+import {
+	IconButton,
+	ListRow,
+	ReorderList,
+	type ReorderHandle,
+	SwipeRow,
+	Text,
+	TextLink,
+	showToast,
+	useTheme,
+} from "@/ui";
 
 const ROW = 71;
+
+function sortSectionByDate(section: BuilderSection, locale: string) {
+	let unresolved: string[] = [];
+	editResume((draft) => {
+		unresolved = sortEntriesByDate(draft, section, locale);
+	});
+	if (unresolved.length === 0) return;
+	const entries = formatList(locale, unresolved);
+	showToast({
+		message: t`Couldn't read the dates on ${entries}, so they stay at the end. Fix their dates and sort again.`,
+	});
+}
 
 function EntryRow({
 	data,
@@ -127,12 +151,18 @@ export function SectionScreen() {
 	].join(" · ");
 	const object = getSectionObject(data, section);
 	const base = `/builder/${id}/section/${section.id}`;
+	const canSort =
+		(section.type === "experience" || section.type === "education" || section.type === "publications") &&
+		entries.length > 1;
 
 	const options = () => {
 		const actions = sectionActions(data, section, () => rename.open(section));
 		const pages = data.metadata.layout.pages;
 		menu.open(optionsRef, [
 			actions.rename,
+			...(canSort
+				? [{ label: t`Sort by date`, onPress: () => sortSectionByDate(section, data.metadata.page.locale) }]
+				: []),
 			actions.up,
 			actions.down,
 			{ ...actions.hide, label: object?.hidden ? t`Show section` : t`Hide section` },

@@ -11,6 +11,7 @@ import type {
 import type { ResumeDates } from "@reactive-resume/schema/resume/dates";
 import type { WritableDraft } from "immer";
 import { t } from "@lingui/core/macro";
+import { sortSectionItemsByPeriod } from "@reactive-resume/resume/section-sort";
 import { readLegacyDates } from "@reactive-resume/schema/resume/dates";
 import { stripHtml } from "@reactive-resume/utils/string";
 
@@ -252,6 +253,21 @@ const str = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
 export function entryTitle(type: CustomSectionType, entry: Entry): string {
 	return str((entry as Record<string, unknown>)[sectionMeta[type].primary]);
+}
+
+/**
+ * Reorders a section's entries by date, newest first. Returns the names of entries whose dates couldn't be read:
+ * they stay at the end, in their previous order.
+ */
+export function sortEntriesByDate(data: Data, section: BuilderSection, locale: string): string[] {
+	const entries = getEntries(data, section);
+	const result = sortSectionItemsByPeriod(entries, locale);
+	const unresolved = result.unresolvedIds.map((id) => {
+		const entry = entries.find((item) => item.id === id);
+		return (entry ? entryTitle(section.type, entry) : "").trim() || id;
+	});
+	entries.splice(0, entries.length, ...result.items);
+	return unresolved;
 }
 
 /** Every field empty (spaces count as empty): nothing worth keeping (B3 and B20 leaving). */

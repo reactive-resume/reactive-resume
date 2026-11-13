@@ -6,8 +6,15 @@ type Item = {
 	period: string;
 };
 
+type DatedItem = {
+	id: string;
+	date?: string;
+	dates?: { start: string | null; end: string | null; present: boolean };
+};
+
 const item = (id: string, period: string): Item => ({ id, period });
-const ids = (items: readonly Item[]) => items.map(({ id }) => id);
+const dateItem = (id: string, date: string): DatedItem => ({ id, date });
+const ids = (items: readonly { id: string }[]) => items.map(({ id }) => id);
 
 describe("sortSectionItemsByPeriod", () => {
 	it("orders ongoing, ended, equal, and unresolved periods by the documented total order", () => {
@@ -60,5 +67,23 @@ describe("sortSectionItemsByPeriod", () => {
 		const result = sortSectionItemsByPeriod(input, "en-US");
 
 		expect(ids(result.items)).toEqual(["ended-2020", "single-2025", "single-2024"]);
+	});
+
+	it("sorts single-date entries from their date text when structured dates are missing", () => {
+		const input = [dateItem("older", "2018"), dateItem("newest", "March 2021"), dateItem("middle", "2020")];
+
+		const result = sortSectionItemsByPeriod(input, "en-US");
+
+		expect(ids(result.items)).toEqual(["newest", "middle", "older"]);
+		expect(result.unresolvedIds).toEqual([]);
+	});
+
+	it("keeps single-date entries with unreadable dates at the end and reports them", () => {
+		const input = [dateItem("blank", ""), dateItem("newer", "2024"), dateItem("prose", "Forthcoming")];
+
+		const result = sortSectionItemsByPeriod(input, "en-US");
+
+		expect(ids(result.items)).toEqual(["newer", "blank", "prose"]);
+		expect(result.unresolvedIds).toEqual(["blank", "prose"]);
 	});
 });
