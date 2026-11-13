@@ -360,7 +360,9 @@ export function mapCsvToApplications(
 					record.status = alias.status;
 					if (alias.closedReason) record.closedReason ??= alias.closedReason;
 				} else if (parsed.success) record.status = parsed.data;
-				else record.laneLabel ??= value.slice(0, 80);
+				// The web import offers an unknown name for stage mapping; other callers (the phone apps) reject it as before.
+				else if (preserveStageNames) record.laneLabel ??= value.slice(0, 80);
+				else invalid.push({ row: index + 2, field, value });
 			} else if (field === "closedReason") {
 				const parsed = applicationClosedReasonSchema.safeParse(value.toLowerCase().replace(/\s+/g, "-"));
 				if (parsed.success) record.closedReason = parsed.data;
