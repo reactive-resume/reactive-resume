@@ -38,10 +38,12 @@ jest.mock("../shared/entries", () => ({}));
 jest.mock("@/data", () => ({ useResumeStore: { getState: () => ({}) } }));
 jest.mock("@/dev/storyboard/harness", () => ({ STORYBOARD: false }));
 jest.mock("@/ui", () => {
-	const { Text, Pressable } = jest.requireActual<typeof import("react-native")>("react-native");
+	const { Text } = jest.requireActual<typeof import("react-native")>("react-native");
 	return {
 		IconButton: ({ label, onPress }: { label: string; onPress: () => void }) => (
-			<Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} />
+			<Text accessibilityRole="button" accessibilityLabel={label} onPress={onPress}>
+				{label}
+			</Text>
 		),
 		Text,
 		TextLink: () => null,
