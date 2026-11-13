@@ -53,6 +53,18 @@ describe("getPdfFallbackFontFamilies", () => {
 		]);
 	});
 
+	it("uses the Armenian Noto fonts for Armenian content and the hy-AM locale", () => {
+		expect(getPdfFallbackFontFamilies("Helvetica", { scripts: ["armenian"] })).toEqual([
+			"Noto Sans Armenian",
+			"Noto Sans",
+		]);
+		expect(getPdfFallbackFontFamilies("Times-Roman", { scripts: ["armenian"] })).toEqual([
+			"Noto Serif Armenian",
+			"Noto Serif",
+		]);
+		expect(getPdfFallbackFontFamilies("Helvetica", { locale: "hy-AM" })).toEqual(["Noto Sans Armenian", "Noto Sans"]);
+	});
+
 	it.each([
 		["hi-IN", "Noto Sans Devanagari", "Noto Sans Devanagari"],
 		["mr-IN", "Noto Sans Devanagari", "Noto Sans Devanagari"],

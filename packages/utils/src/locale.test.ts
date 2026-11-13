@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
 	getLocaleAlternates,
+	getLocaleScript,
 	getPreferredLocale,
 	isLocale,
 	localeSchema,
@@ -27,6 +28,10 @@ it("keeps the testing catalog valid without counting it as a supported translati
 	expect(supportedLocales).not.toContain("zu-ZA");
 	expect(supportedLocales).toContain("de-DE");
 	expect(getLocaleAlternates("https://rxresu.me/")).toHaveLength(supportedLocales.length + 1);
+});
+
+it("maps the Armenian locale to its script", () => {
+	expect(getLocaleScript("hy-AM")).toBe("armenian");
 });
 
 describe("locale URLs", () => {

@@ -154,6 +154,23 @@ describe("resolvePdfFonts", () => {
 		);
 	});
 
+	it("registers the Armenian Noto fallback for Armenian content", () => {
+		const armenianSource = getWebFontSource("Noto Serif Armenian", "400", false);
+		const { registered, registerFonts } = withRegistry();
+
+		const pdfTypography = registerFonts(typography, "en-US", new Set(["armenian"]));
+
+		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif Armenian", "Noto Serif"]);
+		expect(registered).toContainEqual(
+			expect.objectContaining({
+				family: "Noto Serif Armenian",
+				weight: 400,
+				italic: false,
+				src: armenianSource,
+			}),
+		);
+	});
+
 	it("registers the Noto Sans Symbols 2 fallback for text symbols like stars", () => {
 		const symbolsSource = getWebFontSource("Noto Sans Symbols 2", "400", false);
 		const { registered, registerFonts } = withRegistry();
@@ -296,6 +313,11 @@ describe("resumeContentScripts", () => {
 
 	it("detects Georgian text", () => {
 		expect(resumeContentScripts(withSummary("ქართული ენა"))).toEqual(new Set(["georgian"]));
+	});
+
+	it("detects Armenian text, including ligatures", () => {
+		expect(resumeContentScripts(withSummary("Բարև Ձեզ"))).toEqual(new Set(["armenian"]));
+		expect(resumeContentScripts(withSummary("ﬓﬔﬕﬖﬗ"))).toEqual(new Set(["armenian"]));
 	});
 
 	it("returns an empty set for Latin-only content", () => {

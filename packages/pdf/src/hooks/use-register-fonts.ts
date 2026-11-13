@@ -141,6 +141,8 @@ const hanRegex = /[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=K
 const arabicRegex = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-ﻼ]/;
 const hebrewRegex = /[֐-׿יִ-ﭏ]/;
 const thaiRegex = /[฀-๿]/;
+// Armenian block (U+0531–U+058F) and the Armenian ligatures in the Alphabetic Presentation Forms block (U+FB13–U+FB17).
+const armenianRegex = /[Ա-֏ﬓ-ﬗ]/;
 // Each Indic script, Ethiopic and Khmer needs its own Noto face; Latin and CJK fonts have none of them.
 const scriptRegex = (script: string) => new RegExp(`\\p{Script=${script}}`, "u");
 
@@ -177,6 +179,7 @@ const scriptDetectors: { script: Script; regex: RegExp }[] = [
 	{ script: "ethiopic", regex: scriptRegex("Ethiopic") },
 	{ script: "khmer", regex: scriptRegex("Khmer") },
 	{ script: "georgian", regex: scriptRegex("Georgian") },
+	{ script: "armenian", regex: armenianRegex },
 	{ script: "emoji", regex: emojiRegex },
 	{ script: "arrows", regex: arrowsRegex },
 	{ script: "symbols", regex: symbolsRegex },
