@@ -180,12 +180,14 @@ jobs:
         env:
           REQUIRE_DB_TESTS: "1"
         run: |
-          for pool in forks threads forks threads; do
+          for pool in forks forks forks forks; do
             start=$(date +%s)
             if pnpm exec turbo run test:ci --force --filter=!mobile --concurrency=4 -- --maxWorkers=8 --pool=$pool > "$RUNNER_TEMP/pool.log" 2>&1; then status=ok; else status=fail; fi
             echo "POOL $pool $status $(( $(date +%s) - start ))s $(grep -c 'jit_page' "$RUNNER_TEMP/pool.log") crash-lines"
-            awk '/:test:ci$/{t=$NF} / Duration /{print "   " t, $2, $3}' "$RUNNER_TEMP/pool.log" | sort -k3 -rn | head -5
-            if [ "$status" = fail ]; then grep -nE 'ERROR|Unknown|unknown option|FAIL|Failed:|exited \(' "$RUNNER_TEMP/pool.log" | head -12; fi
+            if [ "$status" = fail ]; then
+              grep -E '^ +(FAIL|×) |^ FAIL |Failed:|AssertionError|Error: |exited \([0-9]+\)|#test:ci' "$RUNNER_TEMP/pool.log" | grep -v 'Better Auth' | head -40
+              grep -A12 -E '^ FAIL ' "$RUNNER_TEMP/pool.log" | head -60
+            fi
           done
 
       # Discover every package. The 32-vCPU runner tests four packages at once with eight workers each, which
