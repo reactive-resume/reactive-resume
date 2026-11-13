@@ -80,10 +80,7 @@ export async function loadResumeCardAssets(data: ResumeData, uploadOrigin: strin
 	// Resvg would draw a missing face in another family; the caller shows its banner and retries next time.
 	if (missing.length > 0) throw new Error(`Fonts could not be loaded: ${missing.join(", ")}`);
 	const source = data.picture.url && !data.picture.hidden ? data.picture.url : undefined;
-	// A relative picture is one of the app's own files.
-	const { images } = await loadImages(source ? [source] : [], (url) =>
-		readServerImage(new URL(url, uploadOrigin).href, uploadOrigin),
-	);
+	const { images } = await loadImages(source ? [source] : [], (url) => readServerImage(url, uploadOrigin));
 	return {
 		fonts: fonts.map((font) => font.src as Uint8Array),
 		headingFamily: data.metadata.typography.heading.fontFamily,
