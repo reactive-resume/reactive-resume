@@ -27,6 +27,7 @@ import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { detachEmbeddedLetters } from "@reactive-resume/resume/cover-letter";
 import { applyResumePatches, describeResumePatchError, ResumePatchError } from "@reactive-resume/resume/patch";
+import { withWebPageCss } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { isValidSlug } from "@reactive-resume/schema/resume/slug";
 import { generateId } from "@reactive-resume/utils/string";
@@ -605,18 +606,11 @@ export const resumeService = {
 				...(restoredName ? { name: restoredName } : {}),
 			});
 
-			// A version saved without the web page's custom CSS is restored without it: an empty string clears the current
-			// stylesheet, which the update otherwise keeps for saves from older apps.
-			const web = version.data.metadata.web;
-			const data =
-				web?.css === undefined && (current.data as ResumeData | null)?.metadata?.web?.css
-					? { ...version.data, metadata: { ...version.data.metadata, web: { showCredit: true, ...web, css: "" } } }
-					: version.data;
-
 			const updated = await resumeService.update({
 				id: input.resumeId,
 				userId: input.userId,
-				data,
+				// A version saved without the web page's custom CSS is restored without it.
+				data: withWebPageCss(version.data),
 				aiOperationIds: version.aiOperationIds,
 				expectedUpdatedAt: current.updatedAt,
 				skipAutoSnapshot: true,
