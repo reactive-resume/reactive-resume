@@ -56,6 +56,7 @@ export function useRenderedPage(live: PageRenderRequest | undefined) {
 			return pageRenderer.render(snapshot);
 		},
 		enabled: !!snapshot && !!scope,
+		retry: 3,
 		placeholderData: (previous, query) =>
 			query?.queryKey[0] === scope && (query?.queryKey[2] as PageRenderRequest | undefined)?.id === snapshot?.id
 				? previous

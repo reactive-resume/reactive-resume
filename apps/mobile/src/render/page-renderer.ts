@@ -45,13 +45,13 @@ function oneAtATime<T>(task: () => Promise<T>): Promise<T> {
 	androidPrints = run;
 	return run;
 }
-/** A print that never answers fails after `ms` instead of holding the queue (and the storyboard) forever. */
+/** A print or request that never answers fails after `ms` instead of holding the queue (and the page) forever. */
 function within<T>(task: () => Promise<T>, ms: number): () => Promise<T> {
-	return () =>
-		Promise.race([
-			task(),
-			new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Print timed out")), ms)),
-		]);
+	return () => {
+		let timer: ReturnType<typeof setTimeout> | undefined;
+		const timeout = new Promise<never>((_, reject) => (timer = setTimeout(() => reject(failed()), ms)));
+		return Promise.race([task(), timeout]).finally(() => clearTimeout(timer));
+	};
 }
 
 const fixtureImages = {
@@ -228,7 +228,8 @@ export const pageRenderer: PageRenderer = {
 			let pages: RenderedPage[];
 			if (fake) pages = await fixturePages(request, pdf);
 			else {
-				const bytes = await serverPdf(request, scope);
+				// A request that never answers (the app suspended mid-fetch, a dropped connection) left the page blank for good.
+				const bytes = await within(() => serverPdf(request, scope), 60_000)();
 				if (!current()) throw new Error("The account changed. Try again.");
 				pages = await rasterize(bytes, directory);
 				pdf.write(bytes);

@@ -30,6 +30,8 @@ export function usePageImage(id: string): { source: ImageSourcePropType | undefi
 		queryFn: () => pageRenderer.render({ kind: "resume", id, revision, ...(data ? { data } : {}) }),
 		enabled: !STORYBOARD && !!data,
 		placeholderData: keepPreviousData,
+		// A dropped request or a slow server otherwise leaves a blank page until the resume changes.
+		retry: 3,
 	});
 	const page = query.data?.pages[0];
 	return { source: page ? { uri: page.uri } : undefined, pageCount: query.data?.pageCount ?? 1 };
