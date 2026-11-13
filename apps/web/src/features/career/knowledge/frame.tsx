@@ -52,7 +52,7 @@ export function KnowledgeFrame({ current, actions, children }: KnowledgeFramePro
 							}
 						>
 							<Trans>Facts</Trans>
-							{factCount !== undefined && <TabsCount>{i18n.number(factCount)}</TabsCount>}
+							{factCount !== undefined && factCount > 0 && <TabsCount>{i18n.number(factCount)}</TabsCount>}
 						</TabsTrigger>
 						<TabsTrigger
 							value="stories"
@@ -66,7 +66,7 @@ export function KnowledgeFrame({ current, actions, children }: KnowledgeFramePro
 							}
 						>
 							<Trans>Stories</Trans>
-							{storyCount !== undefined && <TabsCount>{i18n.number(storyCount)}</TabsCount>}
+							{storyCount !== undefined && storyCount > 0 && <TabsCount>{i18n.number(storyCount)}</TabsCount>}
 						</TabsTrigger>
 						<TabsTrigger
 							value="preferences"

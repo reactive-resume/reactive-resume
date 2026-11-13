@@ -18,6 +18,7 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Swap } from "@reactive-resume/ui/components/swap";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -216,27 +217,20 @@ type ChoicesProps = {
 function Choices({ legend, name, options, selected, onSelect, hint }: ChoicesProps) {
 	return (
 		<fieldset className="grid gap-1.5">
-			<legend className="mb-1.5 text-sm font-medium">{legend}</legend>
-			<div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
+			<legend className="mb-1.5 text-[13px]/[18px] font-medium">{legend}</legend>
+			<SegmentedControl
+				aria-label={typeof legend === "string" ? legend : undefined}
+				name={name}
+				value={String(selected)}
+				onValueChange={(value) => onSelect(Number(value))}
+				className="h-10 w-full"
+			>
 				{options.map((option, index) => (
-					<label
-						key={option}
-						className={cn(
-							"flex min-h-9 cursor-pointer items-center justify-center rounded-lg border border-control-border px-2 py-1.5 text-center text-sm font-medium transition-colors duration-quick hover:bg-hover has-focus-visible:outline-2 has-focus-visible:outline-accent",
-							selected === index && "border-accent bg-accent-soft text-accent-text",
-						)}
-					>
-						<input
-							type="radio"
-							name={name}
-							className="sr-only"
-							checked={selected === index}
-							onChange={() => onSelect(index)}
-						/>
+					<SegmentedControlItem key={option} value={String(index)} className="flex-1 px-2">
 						{option}
-					</label>
+					</SegmentedControlItem>
 				))}
-			</div>
+			</SegmentedControl>
 			{hint ? <p className="text-xs text-ink-3">{hint}</p> : null}
 		</fieldset>
 	);
@@ -286,7 +280,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange} onOpenChangeComplete={(next) => !next && reset()}>
-			<DialogContent closeLabel={t`Close`} className="sm:max-w-[500px]">
+			<DialogContent closeLabel={t`Close`} className="sm:max-w-[480px]">
 				<DialogHeader>
 					<DialogTitle>
 						<Trans>New API key</Trans>
@@ -396,7 +390,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 							</p>
 						)}
 						<DialogFooter>
-							<Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
+							<Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
 								<Trans>Cancel</Trans>
 							</Button>
 							<Button type="submit" disabled={!name.trim() || creating} loading={creating}>

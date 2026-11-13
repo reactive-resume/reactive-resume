@@ -684,25 +684,38 @@ function ProposalReview({ proposal, factText }: ProposalReviewProps) {
 					/>
 				</p>
 			)}
-			{unsupported.length > 0 && (
-				// One quiet line: the "New detail" tag is the flag; this says exactly what to check, on request.
-				<details className="text-ink-3">
-					<summary className="w-fit cursor-pointer">
-						<Plural
-							value={unsupported.length}
-							one="# word or detail nothing checked backs"
-							other="# words or details nothing checked backs"
-						/>
-					</summary>
-					<ul className="mt-1 grid gap-0.5 ps-5 text-ink-2">
-						{unsupported.map((claim) => (
-							<li key={`${claim.kind}:${claim.text}`} className="list-disc">
-								{claimKindLabel(claim.kind)}: {claim.text}
-							</li>
-						))}
-					</ul>
-				</details>
-			)}
+			{unsupported.length > 0 &&
+				(proposal.addsClaims ? (
+					<div className="rounded-md bg-warn-soft p-2.5 text-warn-text">
+						<p className="font-medium">
+							<Trans>Nothing checked backs these. Confirm each before accepting:</Trans>
+						</p>
+						<ul className="mt-1 grid gap-0.5 ps-5">
+							{unsupported.map((claim) => (
+								<li key={`${claim.kind}:${claim.text}`} className="list-disc">
+									{claimKindLabel(claim.kind)}: {claim.text}
+								</li>
+							))}
+						</ul>
+					</div>
+				) : (
+					<details className="text-ink-3">
+						<summary className="w-fit cursor-pointer">
+							<Plural
+								value={unsupported.length}
+								one="# word or detail nothing checked backs"
+								other="# words or details nothing checked backs"
+							/>
+						</summary>
+						<ul className="mt-1 grid gap-0.5 ps-5 text-ink-2">
+							{unsupported.map((claim) => (
+								<li key={`${claim.kind}:${claim.text}`} className="list-disc">
+									{claimKindLabel(claim.kind)}: {claim.text}
+								</li>
+							))}
+						</ul>
+					</details>
+				))}
 		</div>
 	);
 }

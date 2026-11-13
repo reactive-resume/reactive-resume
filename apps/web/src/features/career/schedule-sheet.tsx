@@ -406,7 +406,9 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 													<option key={item.interview.id} value={item.interview.id}>
 														{[
 															item.application.company,
-															interviewKindOf(item.interview.kind)?.label ?? item.interview.kind,
+															item.interview.kind === "screening"
+																? t`Screening call`
+																: (interviewKindOf(item.interview.kind)?.label ?? item.interview.kind),
 															when(item.start),
 														].join(" · ")}
 													</option>

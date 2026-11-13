@@ -239,7 +239,7 @@ export async function seedPersona(
 			provider: "openai",
 			model: "gpt-5-mini",
 			baseURL: options.aiBaseURL,
-			apiKey: "sk-calm-not-a-real-key",
+			apiKey: "sk-calm-not-a-real-key-4f2a",
 		});
 		// A connection is switched on, and becomes the default, once its test passes.
 		await call("post", `/ai-providers/${provider.id}/tests`);
@@ -524,7 +524,7 @@ export async function seedPersona(
 		variable: null,
 		variablePercent: 10,
 		equity: "Stock options",
-		location: "Remote · Lisbon hub 2 days a month",
+		location: "Remote, with 2 hub days a month in Lisbon",
 		officeDays: 0,
 		leave: "30 days",
 		learning: 2000,
@@ -564,12 +564,12 @@ export async function seedPersona(
 
 	// --- Career ----------------------------------------------------------------------------------------------
 	await call("put", "/career/profile", {
-		targetRoles: ["Senior product designer", "Lead product designer", "Design systems lead"],
+		targetRoles: ["Senior product designer", "Design systems lead", "Staff product designer"],
 		locations: ["Lisbon", "Remote"],
-		priorities: "Design systems and onboarding work, a team that talks to customers, room to mentor.",
+		priorities: "Design systems work with real ownership, a team that talks to its customers, and room to mentor.",
 		minBase: { amount: 95_000, currency: "EUR", period: "year" },
 		maxOfficeDays: 2,
-		noticeWeeks: 8,
+		noticeWeeks: 6,
 		memoryMode: "ask",
 	});
 
@@ -594,8 +594,18 @@ export async function seedPersona(
 	];
 	for (const [text, category, quote] of facts)
 		seed.facts.push(
-			(await call("post", "/career/facts", { text, category, source: { kind: "resume", id: productDesigner, quote } }))
-				.id,
+			(
+				await call("post", "/career/facts", {
+					text:
+						text === "Built a design system that six product teams use."
+							? "Created a design system used by six product teams."
+							: text.startsWith("Designed checkout")
+								? "Designed checkout and invoicing at Harbour Studio. Completed payments rose 12%."
+								: text,
+					category,
+					source: { kind: "resume", id: productDesigner, quote },
+				})
+			).id,
 		);
 	const factId = (text: string) => seed.facts[facts.findIndex((fact) => fact[0] === text)] as string;
 	// Two facts forgotten since (C2 "2 · gone for good"); only their count and when stay. The caller dates them.
@@ -614,31 +624,35 @@ export async function seedPersona(
 
 	const stories = [
 		{
+			title: "Onboarding redesign at Northwind Labs",
+			situation: "Activation stood at 41%. Most new customers left before they finished setting up.",
+			task: "Lead the redesign of onboarding, from research through launch.",
+			action:
+				"Interviewed customers who had given up, cut setup down to what they needed first, and tested each version before it shipped.",
+			result: "Activation rose from 41% to 58%.",
+			factIds: [
+				factId("Redesigned onboarding at Northwind Labs. Activation rose from 41% to 58%."),
+				factId("Runs more than 40 customer interviews a year at Northwind Labs."),
+			],
+			tags: ["Research", "Onboarding"],
+		},
+		{
 			title: "A design system six teams use",
 			situation: "Six product teams at Northwind Labs each drew their own buttons, forms and tables.",
 			task: "Give them one system without slowing any team down.",
 			action:
 				"I audited what every team had shipped, built the shared parts with two engineers, and moved one team at a time, starting with the team that had the most to gain.",
 			result: "All six teams use it, and new screens ship without a design review of the basics.",
+			reflection: "Start with the team with the most to gain, then use its work to show the next team.",
 			factIds: [factId("Built a design system that six product teams use.")],
 			tags: ["Design systems", "Leadership"],
 		},
 		{
-			title: "Onboarding that lifted activation",
-			situation: "Four in ten new accounts at Northwind Labs finished setting up.",
-			task: "Find where people stopped and why.",
-			action:
-				"I interviewed customers who had given up, rebuilt the flow in the order they described their own work, and tested it with five of them before release.",
-			result: "Activation rose from 41% to 58%.",
-			factIds: [factId("Redesigned onboarding at Northwind Labs. Activation rose from 41% to 58%.")],
-			tags: ["Onboarding", "Research"],
-		},
-		{
-			title: "Testing checkout with shop owners",
+			title: "Checkout for 30 retail clients",
 			situation: "Harbour Studio's retail clients lost payments at checkout.",
 			task: "Redesign checkout and invoicing for 30 shops with different needs.",
 			action: "I sat with shop owners while they took real orders and tested each release with them before it shipped.",
-			result: "Completed payments rose 12%.",
+			result: "",
 			factIds: [
 				factId("Designed checkout and invoicing for 30 retail clients at Harbour Studio. Completed payments rose 12%."),
 			],
@@ -646,6 +660,11 @@ export async function seedPersona(
 		},
 	];
 	for (const story of stories) seed.stories.push((await call("post", "/career/stories", story)).id);
+
+	for (const [index, [text]] of facts.entries()) {
+		if (index !== 1 && index !== 3) continue;
+		await call("patch", `/career/facts/${seed.facts[index]}`, { text });
+	}
 
 	await call("put", "/application-profile", {
 		expectedRevision: null,

@@ -170,8 +170,8 @@ export async function workspaces({ seeds, sql, appUrl, storage }) {
 	};
 	saved.lumenPractice = [
 		await attempt(practice.strong, "spoken", null, at("2026-11-05", "18:31")),
-		await attempt(practice.unclear, "spoken", alex.stories[0], at("2026-11-05", "18:40")),
-		await attempt(practice.missing, "typed", alex.stories[0], at("2026-11-07", "09:12")),
+		await attempt(practice.unclear, "spoken", alex.stories[1], at("2026-11-05", "18:40")),
+		await attempt(practice.missing, "typed", alex.stories[1], at("2026-11-07", "09:12")),
 	];
 	saved.lumenDebrief = (
 		await generate(lumen, {

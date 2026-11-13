@@ -59,10 +59,11 @@ export function ConnectionForm({ cancel, onTesting, onConnected }: ConnectionFor
 	const state = useHasUsableAiProvider();
 	const [provider, setProvider] = useState<AIProvider>("openai");
 	const [fields, setFields] = useState<ProviderFields>(blank("openai"));
-	const [failure, setFailure] = useState<string | null>(null);
+	const [failure, setFailure] = useState<{ message: string; key: boolean } | null>(null);
 	const [pending, setPending] = useState(false);
 	// A failed test keeps the saved row; trying again updates it instead of adding a second one.
 	const createdId = useRef<string | null>(null);
+	const [attemptId, setAttemptId] = useState<string | null>(null);
 	const ready = getAIProviderSetupProblem(provider, fields) === null;
 
 	const save = async () => {
@@ -85,25 +86,27 @@ export function ConnectionForm({ cancel, onTesting, onConnected }: ConnectionFor
 				? await client.aiProviders.update({ id: createdId.current, ...input })
 				: await client.aiProviders.create(input);
 			createdId.current = saved.id;
+			setAttemptId(saved.id);
 			const started = performance.now();
 			const tested = await client.aiProviders.test({ id: saved.id });
 			if (tested.testStatus === "success")
 				onConnected({ provider: tested, milliseconds: performance.now() - started, first });
 			else {
 				onTesting(null);
-				setFailure(providerTestError(tested.testErrorKind));
+				setFailure({ message: providerTestError(tested.testErrorKind), key: tested.testErrorKind === "auth" });
 			}
 		} catch (error) {
 			onTesting(null);
-			setFailure(
-				getOrpcErrorMessage(error, {
+			setFailure({
+				message: getOrpcErrorMessage(error, {
 					byCode: {
 						PRECONDITION_FAILED: t`AI connections aren't available on this server until ENCRYPTION_SECRET is set.`,
 						BAD_REQUEST: t`That connection isn't valid. Check the base URL.`,
 					},
 					fallback: t`Couldn't connect. Check the key and try again.`,
 				}),
-			);
+				key: false,
+			});
 		}
 		setPending(false);
 		void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
@@ -118,7 +121,7 @@ export function ConnectionForm({ cancel, onTesting, onConnected }: ConnectionFor
 				if (ready) void save();
 			}}
 		>
-			{state.providers.length > 0 && !state.hasUsableProvider && (
+			{state.providers.some((saved) => saved.id !== attemptId) && !state.hasUsableProvider && (
 				<p role="status" className="rounded-lg bg-warn-soft px-3 py-2.5 text-[13px]/[18px] text-warn-text">
 					<Trans>
 						Your saved connections need attention. Fix them in{" "}
@@ -137,6 +140,7 @@ export function ConnectionForm({ cancel, onTesting, onConnected }: ConnectionFor
 					id={`${id}-provider`}
 					value={provider}
 					showClear={false}
+					columns={2}
 					options={providerOptions}
 					onValueChange={(next) => {
 						if (!next) return;
@@ -146,11 +150,17 @@ export function ConnectionForm({ cancel, onTesting, onConnected }: ConnectionFor
 					}}
 				/>
 			</div>
-			<ProviderFieldsForm key={provider} provider={provider} value={fields} onChange={setFields} />
-			{failure && (
+			<ProviderFieldsForm
+				key={provider}
+				provider={provider}
+				value={fields}
+				onChange={setFields}
+				keyError={failure?.key ? failure.message : undefined}
+			/>
+			{failure && !failure.key && (
 				<p role="alert" className="-mt-2 flex items-start gap-1.5 text-[13px]/[18px] text-danger-text">
 					<Icon name="warning-circle" size={14} className="mt-0.5 shrink-0" />
-					{failure}
+					{failure.message}
 				</p>
 			)}
 			<p className="text-xs leading-4 text-ink-3">

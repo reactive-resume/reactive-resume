@@ -342,7 +342,6 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 					/>,
 					copySlot,
 				)}
-			<PracticeHandoff />
 		</>
 	);
 
@@ -375,7 +374,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 						open={modelMenuOpen}
 						onOpenChange={setModelMenuOpen}
 						onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
-						providers={usable}
+						providers={providers.providers}
 						current={provider}
 						label={label}
 						onChoose={(id) => void chooseProvider(id)}
@@ -396,6 +395,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 						}
 					/>
 					<DropdownMenuContent align="end" finalFocus={false}>
+						<PracticeHandoff applicationId={summary.applicationId} />
 						<DropdownMenuItem onClick={() => titleButton.current && startRename(titleButton.current)}>
 							<Icon name="pencil-simple" />
 							<Trans>Rename</Trans>

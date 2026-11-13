@@ -3,6 +3,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useEffect } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
@@ -112,6 +113,20 @@ function DesktopBody({ mode, panelLabel, panel, page, assistant, history, narrow
 	const historyOpen = useEditorStore((state) => state.historyOpen);
 	const instant = useEditorStore((state) => state.assistantInstant);
 	const hidden = useEditorStore((state) => state.panelHidden);
+	// Toasts live in a portal; anchor their viewport to the visible panel through the document root.
+	useEffect(() => {
+		if (hidden) return;
+		const root = document.documentElement;
+		const previous = root.style.getPropertyValue("--toast-end");
+		root.style.setProperty(
+			"--toast-end",
+			narrow ? "calc(100vw - 380px + 1rem)" : "calc(100vw - var(--editor-panel) + 1rem)",
+		);
+		return () => {
+			if (previous) root.style.setProperty("--toast-end", previous);
+			else root.style.removeProperty("--toast-end");
+		};
+	}, [hidden, narrow]);
 	const takeover = assistantOpen && assistant ? "assistant" : historyOpen && history ? "history" : null;
 	// Each thing fades up 4px as it takes the slot; ⌘J swaps at once.
 	const enter = instant

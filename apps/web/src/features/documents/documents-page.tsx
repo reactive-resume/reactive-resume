@@ -317,6 +317,20 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const sortLabels: Record<DocumentSort, string> = { edited: t`Last edited`, name: t`Name`, created: t`Created` };
 	const clearFilters = () => onSearchChange({ q: "", tags: [], type: "all", public: false });
 
+	const newDocumentButton = (
+		<Button
+			aria-label={t`New document`}
+			className={cn("max-sm:size-11 max-sm:p-0", rowsCurrent && shown.length === 0 && "hidden")}
+			data-document-new-trigger
+			onClick={() => openDialog("document.new", undefined)}
+		>
+			<Icon name="plus" />
+			<span className="max-sm:hidden">
+				<Trans>New document</Trans>
+			</span>
+		</Button>
+	);
+
 	return (
 		<Page>
 			{/* The grid's cards and the table end the page themselves; the margin keeps the selection bar's anchor at the window's edge. */}
@@ -336,21 +350,10 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 										<Icon name="upload-simple" />
 										<Trans>Import</Trans>
 									</Button>
-									{/* The page's one accent button. New document's dialog returns focus here. */}
-									<Button
-										aria-label={t`New document`}
-										className={cn("max-sm:size-11 max-sm:p-0", rowsCurrent && shown.length === 0 && "hidden")}
-										data-document-new-trigger
-										onClick={() => openDialog("document.new", undefined)}
-									>
-										<Icon name="plus" />
-										<span className="max-sm:hidden">
-											<Trans>New document</Trans>
-										</span>
-									</Button>
+									{!phone && newDocumentButton}
 								</>
 							)}
-							<PhoneHeaderActions />
+							<PhoneHeaderActions>{phone && !firstRun && newDocumentButton}</PhoneHeaderActions>
 						</>
 					}
 				/>

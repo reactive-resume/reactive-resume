@@ -157,7 +157,6 @@ function SuggestRoles({ onUse, onClose }: SuggestRolesProps) {
 							{ai.usableProviders.map((row) => (
 								<option key={row.id} value={row.id}>
 									{row.label} · {row.model}
-									{row.baseURL ? ` · ${new URL(row.baseURL).origin}` : ""}
 								</option>
 							))}
 						</NativeSelect>
@@ -182,22 +181,24 @@ function SuggestRoles({ onUse, onClose }: SuggestRolesProps) {
 							</label>
 						)}
 						{resumeId && resumes.length > 1 && (
-							<NativeSelect
-								aria-label={t`Resume to share for suggestions`}
-								value={resumeId}
-								className="ms-7 w-auto"
-								onChange={(event) => {
-									setResumeId(event.target.value);
-									setLastResume(event.target.value);
-									clear();
-								}}
-							>
-								{resumes.map((row) => (
-									<option key={row.id} value={row.id}>
-										{row.name}
-									</option>
-								))}
-							</NativeSelect>
+							<div className="ms-7 max-w-[calc(100%-1.75rem)]">
+								<NativeSelect
+									aria-label={t`Resume to share for suggestions`}
+									value={resumeId}
+									className="w-full"
+									onChange={(event) => {
+										setResumeId(event.target.value);
+										setLastResume(event.target.value);
+										clear();
+									}}
+								>
+									{resumes.map((row) => (
+										<option key={row.id} value={row.id}>
+											{row.name}
+										</option>
+									))}
+								</NativeSelect>
+							</div>
 						)}
 						{documents.isError && (
 							<Button variant="secondary" className="justify-self-start" onClick={() => void documents.refetch()}>

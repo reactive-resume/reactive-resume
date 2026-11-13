@@ -11,6 +11,7 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { loadAssistantPanel } from "@/features/assistant/dock";
 import { useAssistantShortcutEnabled } from "@/features/assistant/shortcut";
+import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { useResumeData, useResumeStore } from "@/features/resume/builder/draft";
 import { BackLink, DrawerControls } from "@/features/resume/editor/chrome";
 import { pendingProposals } from "@/features/resume/editor/proposals/proposals";
@@ -72,6 +73,14 @@ export function EditorBarFrame({
 				{history}
 				{layout === "desktop" && <HistoryButton inPanel={historyInPanel} />}
 				<AssistantToggle />
+				{layout === "desktop" && (
+					<IconButton
+						icon="question"
+						label={t`Keyboard shortcuts`}
+						shortcut="?"
+						onClick={(event) => showKeyboardShortcuts(event.currentTarget)}
+					/>
+				)}
 				<span className="ms-1 flex">{children}</span>
 			</div>
 		</header>

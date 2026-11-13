@@ -32,12 +32,13 @@ const proposal: Proposal = {
 
 function renderSet(
 	handlers: { onAccept?: () => void; onEdit?: (proposal: Proposal, text: string) => Promise<void> } = {},
+	overrides: Partial<Proposal> = {},
 ) {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 	render(
 		<I18nProvider i18n={i18n}>
 			<ChangeSet
-				proposals={[proposal]}
+				proposals={[{ ...proposal, ...overrides }]}
 				states={["pending"]}
 				locked={false}
 				onAccept={handlers.onAccept ?? (() => {})}
@@ -230,4 +231,10 @@ it("shrinks long kept text around a change on the narrow card, and keeps every c
 		"…seven eight nine ten eleven twelve new words one two three four five six …",
 	);
 	expect(parts[1]).toEqual({ kind: "added", text: "new words " });
+});
+
+it("keeps unverified new details visible before accepting, without opening a disclosure", () => {
+	renderSet({}, { addsClaims: true, unsupported: [{ kind: "figure", text: "58% activation" }] });
+	expect(screen.getByText("Figure: 58% activation")).toBeVisible();
+	expect(screen.getByText("Nothing checked backs these. Confirm each before accepting:")).toBeVisible();
 });

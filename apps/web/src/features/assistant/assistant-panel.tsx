@@ -4,7 +4,7 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { i18n } from "@lingui/core";
-import { ph, t } from "@lingui/core/macro";
+import { ph, plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
@@ -12,6 +12,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
+import { lintResumeForAts } from "@reactive-resume/resume/ats";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
@@ -26,8 +27,10 @@ import { ListRow } from "@/components/calm/list-row";
 import { SetUpAiLine } from "@/components/calm/set-up-ai-line";
 import { useDialogStore } from "@/dialogs/store";
 import { useSetUpAi } from "@/features/ai/set-up-ai";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useResumeStore } from "@/features/resume/builder/draft";
 import { useUnlockResume } from "@/features/resume/builder/use-unlock-resume";
+import { buildIssues } from "@/features/resume/editor/check/issues";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { formatVersionTime } from "@/features/resume/share/format";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -85,6 +88,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const stranded = threadId !== null && summary !== undefined && saved === undefined && !providers.isLoading;
 	const provider = threadId ? saved : (usable.find((item) => item.id === providerId) ?? usable[0]);
 	const providerLabel = provider?.label ?? summary?.providerLabel ?? t`your provider`;
+	const menuLabel = stranded ? t`Choose a connection` : providerLabel;
 	// The resume this conversation started on, once it moved to a copy (its first accepted edit).
 	const original =
 		document.kind === "resume" &&
@@ -163,13 +167,13 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 					<Trans>Assistant</Trans>
 				</h2>
 
-				{usable.length > 0 && (
+				{(providers.providers.length > 0 || summary) && (
 					<ModelMenu
 						open={modelMenuOpen}
 						onOpenChange={setModelMenuOpen}
-						providers={usable}
+						providers={providers.providers}
 						current={provider}
-						label={providerLabel}
+						label={menuLabel}
 						onChoose={(id) => void chooseProvider(id)}
 						onConnect={() => setUp.open()}
 					/>
@@ -206,9 +210,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						size={16}
 						className="mt-px shrink-0 self-start text-ink-3"
 					/>
-					{document.locked ? (
-						<Trans>This {kindLabel(document)} is locked. Questions still work; edits wait for Unlock.</Trans>
-					) : document.kind === "letter" ? (
+					{document.kind === "letter" ? (
 						<Trans>Accepted edits change this letter; history keeps each version.</Trans>
 					) : original ? (
 						<CopyLine original={original} company={document.posting?.company} />
@@ -221,17 +223,6 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 			)}
 			{translating && document.kind === "resume" && (
 				<TranslateResume resumeId={document.id} onClose={() => setTranslating(false)} />
-			)}
-			{threadId && !provider && (
-				<Notice>
-					<Trans>
-						This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose
-						a model before sending again.
-					</Trans>{" "}
-					<Button size="sm" variant="secondary" onClick={setUp.open}>
-						<Trans>Set up AI</Trans>
-					</Button>
-				</Notice>
 			)}
 			{notSetUp ? (
 				<Notice>
@@ -306,13 +297,19 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 				/>
 			) : (
 				<>
-					<EmptyState
-						document={document}
-						disabled={starting}
-						onPick={(text) => void start(text)}
-						onTranslate={() => setTranslating(true)}
-					/>
+					{draft?.trim() ? (
+						<div className="min-h-0 flex-1" />
+					) : (
+						<EmptyState
+							document={document}
+							disabled={starting}
+							onPick={(text) => void start(text)}
+							onTranslate={() => setTranslating(true)}
+						/>
+					)}
+
 					<Composer
+						notice={document.locked ? <LockedNotice document={document} /> : undefined}
 						// A draft arriving while the box is open replaces what's in it.
 						key={`${draftKey}:${draft ?? ""}`}
 						initialText={draft ?? undefined}
@@ -321,7 +318,6 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						onContextChange={setContext}
 						streaming={starting}
 						disabled={false}
-						notice={document.locked ? <LockedNotice document={document} /> : undefined}
 						threadId={null}
 						ensureThread={ensureThread}
 						onSend={(text, attachments) => void start(text, attachments)}
@@ -408,6 +404,7 @@ function ConversationLoader({ threadId, document, destinationUnavailable, ...pro
 		<Conversation
 			threadId={threadId}
 			initialMessages={thread.data.messages}
+			interrupted={thread.data.interrupted ?? []}
 			initialAttachments={(thread.data.attachments ?? []).filter(
 				(file) => !file.messageId && !props.promptAttachments.some((sent) => sent.id === file.id),
 			)}
@@ -550,8 +547,6 @@ type EmptyStateProps = {
 	onPick: (text: string) => void;
 	onTranslate: () => void;
 };
-
-const kindLabel = (document: AssistantDocument) => (document.kind === "letter" ? t`letter` : t`resume`);
 
 /** Above the composer on a locked document: questions still work, edits wait for Unlock. */
 function LockedNotice({ document }: { document: AssistantDocument }) {
@@ -811,6 +806,21 @@ function WithoutAi({ document, onSetUp, onClose }: WithoutAiProps) {
 
 /** Resume editor only: it switches the editor's mode. */
 function ResumeWithoutAi({ resumeId, onClose }: { resumeId: string; onClose: () => void }) {
+	const data = useResumeStore((state) => (state.resume?.id === resumeId ? state.resume.data : undefined));
+	const check = useMemo(() => {
+		if (!data) return null;
+		const report = lintResumeForAts(data);
+		return { report, count: buildIssues(report, data).length };
+	}, [data]);
+	const applications = useQuery(applicationsListQueryOptions());
+	const job = applications.data?.find((application) => application.status === "saved" && !application.resumeId);
+	const checkHint = check
+		? plural(check.count, {
+				one: `# thing to review · ${i18n.number(check.report.passedRules)} of ${i18n.number(check.report.totalRules)} checks pass`,
+				other: `# things to review · ${i18n.number(check.report.passedRules)} of ${i18n.number(check.report.totalRules)} checks pass`,
+			})
+		: t`Spelling, length and what's missing`;
+
 	const navigate = useNavigate();
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const go = (mode: "write" | "check", checkTab?: "issues" | "match") => {
@@ -843,7 +853,7 @@ function ResumeWithoutAi({ resumeId, onClose }: { resumeId: string; onClose: () 
 					render={<button type="button" onClick={() => go("check", "issues")} />}
 					leading={tile("seal-check")}
 					title={<Trans>Check it</Trans>}
-					subtitle={<Trans>Spelling, length and what's missing</Trans>}
+					subtitle={checkHint}
 					trailing={caret}
 				/>
 				<ListRow
@@ -862,7 +872,7 @@ function ResumeWithoutAi({ resumeId, onClose }: { resumeId: string; onClose: () 
 					}
 					leading={tile("copy")}
 					title={<Trans>Copy it for a job</Trans>}
-					subtitle={<Trans>A tailored copy, linked to the job</Trans>}
+					subtitle={job ? t`${job.company} is saved and has no resume yet` : t`A tailored copy, linked to the job`}
 					trailing={caret}
 				/>
 				<ListRow

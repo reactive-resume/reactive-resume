@@ -160,12 +160,15 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 			: days === 0
 				? t`remote only`
 				: plural(days, { one: "at most # office day a week", other: "at most # office days a week" }),
-		draft.locations.length > 0 && new Intl.ListFormat(i18n.locale, { type: "disjunction" }).format(draft.locations),
+		draft.locations.length > 0 &&
+			new Intl.ListFormat(i18n.locale, { type: "disjunction" }).format(
+				draft.locations.map((place) => (place.toLowerCase() === "remote" ? t`remote` : place)),
+			),
 	].filter((item): item is string => Boolean(item));
 	const checked = new Intl.ListFormat(i18n.locale, { type: "conjunction" }).format(checks);
 
 	const saveStatus = (
-		<span role="status" className="flex h-9 items-center gap-1.5 text-ink-3 t-small">
+		<span role="status" className="flex h-9 items-center gap-1.5 t-small text-ink-3">
 			<Icon name={failed ? "cloud-slash" : dirty ? "arrows-clockwise" : "cloud-check"} size={18} />
 			{failed ? (
 				<Trans>Not saved</Trans>
@@ -328,7 +331,7 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 							</span>
 						</div>
 					</div>
-					<p className="pt-5 text-ink-3 t-small">
+					<p className="pt-5 t-small text-ink-3">
 						<Trans>Times are shown in {timeZone}.</Trans>{" "}
 						<Link
 							to="/dashboard/settings/preferences"
@@ -354,8 +357,8 @@ function UsedRow({ to, title, subtitle }: UsedRowProps) {
 	return (
 		<ListRow render={<Link to={to} />} className="min-h-0 items-start py-3">
 			<span className="flex min-w-0 flex-1 flex-col gap-px">
-				<span className="text-ink t-row-title">{title}</span>
-				<span className="text-ink-3 t-small">{subtitle}</span>
+				<span className="t-row-title text-ink">{title}</span>
+				<span className="t-small text-ink-3">{subtitle}</span>
 			</span>
 			<Icon name="caret-right" size={18} className="shrink-0 text-ink-3" />
 		</ListRow>

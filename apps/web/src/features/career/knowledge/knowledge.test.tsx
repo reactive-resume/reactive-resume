@@ -181,7 +181,7 @@ async function chooseCurrency(code: string) {
 	fireEvent.click(screen.getByRole("combobox", { name: "Currency" }));
 	const input = await screen.findByPlaceholderText("Search…");
 	fireEvent.change(input, { target: { value: code } });
-	fireEvent.click(await screen.findByRole("option", { name: new RegExp(`^${code}(?: ·|$)`) }));
+	fireEvent.click(await screen.findByRole("option", { name: new RegExp(`^${code}(?: |$)`) }));
 }
 
 it("keeps the complete correction after a failed save and retries its reviewed type/scope atomically", async () => {
@@ -934,10 +934,20 @@ it("starts in the last offer's currency, keeps the rarer terms under More terms 
 	});
 
 	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
-	fireEvent.click(screen.getByRole("button", { name: "Clear selection" }));
+	fireEvent.click(screen.getByRole("combobox", { name: "Currency" }));
+	fireEvent.click(await screen.findByRole("option", { name: /^USD$/ }));
 	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
-	expect(screen.getByRole("combobox", { name: "Currency" }).textContent).toContain("Select…");
+	await waitFor(() => expect(api.createOffer.mock.calls.at(-1)?.[0]).toMatchObject({ currency: "USD" }));
+});
+
+it("requires an explicit currency when no prior offer or salary preference supplies one", async () => {
+	api.data.savedItems = [];
+	api.data.profile = { minBase: { amount: null, currency: "", period: "year" } };
+	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
 	expect(screen.getByLabelText("Currency").getAttribute("aria-invalid")).toBe("true");
+	expect(api.createOffer).not.toHaveBeenCalled();
 });
 
 it("waits for application metadata before offering an empty-account action", async () => {

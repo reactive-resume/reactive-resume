@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useId } from "react";
 import { aiModelForTask } from "@reactive-resume/ai/task-models";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -136,7 +137,10 @@ export function ChatComposer(props: ChatComposerProps) {
 			data-slot="chat-composer"
 			data-design="composer"
 			// Board padding 12 10 10 14, less the 1px border.
-			className="flex flex-col gap-2.5 rounded-xl border border-control-border bg-raised ps-[13px] pe-[9px] pt-[11px] pb-[9px] transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft"
+			className={cn(
+				props.disabled && "opacity-45",
+				"flex flex-col gap-2.5 rounded-xl border border-control-border bg-raised ps-[13px] pe-[9px] pt-[11px] pb-[9px] transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft",
+			)}
 		>
 			{props.chipsBelow ? (
 				<>
@@ -193,25 +197,40 @@ export function ModelMenu({
 			<DropdownMenuTrigger
 				render={
 					variant === "ghost" ? (
-						<Button variant="ghost" size={size} aria-label={t`Connection: ${text}`} className="max-w-[260px] min-w-0" />
-					) : (
-						<button
-							type="button"
+						<Button
+							variant="ghost"
+							size={size}
 							aria-label={t`Connection: ${text}`}
-							className="flex h-[26px] max-w-[200px] min-w-0 items-center gap-1 rounded-md bg-sunken ps-2 pe-1.5 text-xs font-medium text-ink-2 transition-colors hover:bg-hover"
+							className={cn("max-w-[260px] min-w-0", size === "default" ? "text-sm/5" : "text-[13px]/[18px]")}
+						/>
+					) : (
+						<Button
+							variant="ghost"
+							size="sm"
+							aria-label={t`Connection: ${text}`}
+							className="h-[26px] max-w-[200px] min-w-0 gap-1 rounded-md bg-sunken ps-2 pe-1.5 text-[13px]/[18px] text-ink-2"
 						/>
 					)
 				}
 			>
-				{variant === "ghost" && <Icon name="sparkle" />}
+				{variant === "ghost" ? (
+					<Icon name="sparkle" />
+				) : (
+					!current && <span className="size-1.5 shrink-0 rounded-full bg-warn-mark" />
+				)}
 				<span title={text} className="truncate">
 					{text}
 				</span>
-				<Icon name="caret-down" size={14} />
+				<Icon name="caret-down" size={size === "default" ? 18 : 14} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-64">
 				{providers.map((item) => (
-					<DropdownMenuItem key={item.id} onClick={() => onChoose(item.id)}>
+					<DropdownMenuItem
+						key={item.id}
+						disabled={!item.enabled || item.testStatus !== "success"}
+						className="min-h-14"
+						onClick={() => onChoose(item.id)}
+					>
 						<span className="grid min-w-0 flex-1">
 							<span title={item.label} className="truncate">
 								{item.label}
@@ -220,11 +239,22 @@ export function ModelMenu({
 								{aiModelForTask(item, "capable")}
 							</span>
 						</span>
+						{item.isDefault && (
+							<Badge>
+								<Trans>Default</Trans>
+							</Badge>
+						)}
+						{item.testStatus === "failure" && (
+							<Badge variant="warn">
+								<Trans>Needs attention</Trans>
+							</Badge>
+						)}
 						{item.id === current?.id && <Icon name="check" size={16} />}
 					</DropdownMenuItem>
 				))}
 				{providers.length > 0 && <DropdownMenuSeparator />}
 				<DropdownMenuItem onClick={onConnect}>
+					<Icon name="plus" />
 					<Trans>Connect another…</Trans>
 				</DropdownMenuItem>
 			</DropdownMenuContent>

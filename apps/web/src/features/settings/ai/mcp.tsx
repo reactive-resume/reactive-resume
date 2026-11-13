@@ -20,41 +20,44 @@ export function McpSection() {
 					Lets an AI client work with your documents and applications. Sign in from the client, or use an API key.
 				</Trans>
 			</p>
-			<div className="grid gap-3">
-				<div className="flex items-center gap-2 rounded-lg bg-raised p-1.5 ps-3 shadow-[inset_0_0_0_1px_var(--control-border)]">
-					<Icon name="plugs" size={18} className="shrink-0 text-ink-2" />
-					<span className="min-w-0 flex-1 truncate font-mono text-[13px]/4 font-medium">{address}</span>
-					<Button
-						variant="secondary"
-						size="sm"
-						aria-live="polite"
-						onClick={async () => {
-							await copy(address);
+			<div className="flex flex-wrap items-center gap-2">
+				<span className="flex h-10 min-w-0 flex-1 items-center rounded-lg border border-control-border bg-raised px-3 font-mono text-[13px]/4 font-medium">
+					{address}
+				</span>
+				<Button
+					variant="secondary"
+					aria-live="polite"
+					onClick={async () => {
+						if (await copy(address)) {
 							setCopied(true);
 							setTimeout(() => setCopied(false), 2000);
-						}}
-					>
-						<Icon name={copied ? "check" : "copy"} />
-						<Swap swapped={copied} from={<Trans>Copy</Trans>} to={<Trans>Copied</Trans>} />
-					</Button>
-				</div>
-				<p className="text-sm/5 text-ink-2">
-					<Trans>Sign in from your AI client when it asks, or add a key to its config:</Trans>
-				</p>
-				{/* The same entry New key copies, with a placeholder where the key goes. */}
-				<pre className="overflow-x-auto rounded-lg bg-sunken p-4 font-mono text-[13px]/5 text-ink">
-					{mcpConfig(t`your-api-key`)}
-				</pre>
+						}
+					}}
+				>
+					<Icon name={copied ? "check" : "copy"} />
+					<Swap swapped={copied} from={<Trans>Copy</Trans>} to={<Trans>Copied</Trans>} />
+				</Button>
 				<a
 					href="https://docs.rxresu.me/guides/using-the-mcp-server"
 					target="_blank"
 					rel="noopener noreferrer"
-					className="flex w-fit items-center gap-1.5 text-sm font-medium text-accent-text hover:underline"
+					className="flex h-9 items-center gap-1.5 px-3.5 text-sm font-medium text-ink-2 hover:underline"
 				>
 					<Trans>Setup guide</Trans>
 					<Icon name="arrow-square-out" size={16} />
 				</a>
 			</div>
+			<details className="pt-2 text-[13px]/[18px] text-ink-3">
+				<summary className="w-fit cursor-pointer">
+					<Trans>Connection details</Trans>
+				</summary>
+				<p className="py-3 text-sm/5 text-ink-2">
+					<Trans>Sign in from your AI client when it asks, or add a key to its config:</Trans>
+				</p>
+				<pre className="overflow-x-auto rounded-lg bg-sunken p-4 font-mono text-[13px]/5 text-ink">
+					{mcpConfig(t`your-api-key`)}
+				</pre>
+			</details>
 		</SettingsSection>
 	);
 }

@@ -226,7 +226,8 @@ export function OffersPage({ a, b, highlight }: OffersPageProps) {
 	const query = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "offer" } }));
 	const profileQuery = useQuery(orpc.career.profile.queryOptions());
 	const applications = useQuery(applicationsListQueryOptions());
-	const { format } = useCareerTime();
+	const { format, timeZone } = useCareerTime();
+	const now = useNow();
 	const flashed = useRef<string | null>(null);
 	useEffect(() => {
 		if (!highlight || !query.data?.some((offer) => offer.id === highlight) || flashed.current === highlight) return;
@@ -288,7 +289,10 @@ export function OffersPage({ a, b, highlight }: OffersPageProps) {
 		?.filter((offer) => isDeciding(offer) && offer.data.respondBy)
 		.toSorted((x, y) => String(x.data.respondBy).localeCompare(String(y.data.respondBy)))[0];
 	const dueCompany = due ? companyOf(due) : "";
-	const dueDay = due?.data.respondBy ? format(due.data.respondBy, shortDay) : "";
+	const relativeDay = useRelativeDay();
+	const dueDate = due?.data.respondBy ? new Date(due.data.respondBy) : null;
+	const dueSoon = dueDate && dayNumber(dueDate, timeZone) - dayNumber(now, timeZone) <= 1;
+	const dueDay = dueDate ? (dueSoon ? relativeDay(dueDate) : format(dueDate, shortDay)) : "";
 
 	return (
 		<Page>
@@ -918,12 +922,7 @@ function useCells() {
 		const terms = offer.data;
 		const company = companyOf(offer);
 		// A blank is only "not in the message" if nobody checked it by hand; typed-in blanks were left blank.
-		const blank =
-			terms.origin === "message" && !terms.editedAt
-				? t`Not found in the message`
-				: terms.origin
-					? t`Left blank`
-					: t`Not recorded`;
+		const blank = terms.origin === "message" && !terms.editedAt ? t`Not found in the message` : t`Not recorded`;
 		const unknown: Cell = {
 			value: <span className="text-ink-3">{isDeciding(offer) ? blank : t`Not recorded`}</span>,
 			plain: null,
@@ -1075,7 +1074,9 @@ function requirementsFor(offer: Offer, profile: CareerProfileData, locale: strin
 			key: "place",
 			label:
 				typeof Intl.ListFormat === "function"
-					? new Intl.ListFormat(locale, { type: "disjunction" }).format(profile.locations)
+					? new Intl.ListFormat(locale, { type: "disjunction" }).format(
+							profile.locations.map((place) => (place.toLowerCase() === "remote" ? t`remote` : place)),
+						)
 					: profile.locations.join(", "),
 			met: match ? true : null,
 			text: !where ? t`Place not stated` : match ? where : t`${where}, not one of your places`,
@@ -1085,8 +1086,6 @@ function requirementsFor(offer: Offer, profile: CareerProfileData, locale: strin
 }
 
 type Question = { question: string; why: string; who: Offer[] };
-
-const sentence = (text: string) => (/[.!?…。！？]$/u.test(text.trim()) ? text.trim() : `${text.trim()}.`);
 
 /** What the offers don't say yet, as questions to ask, each with the gap it comes from. */
 function openQuestions(offers: Offer[], locale: string): Question[] {
@@ -1124,14 +1123,20 @@ function openQuestions(offers: Offer[], locale: string): Question[] {
 			],
 			[t`Is equity part of the offer?`, t`The offer doesn't mention equity.`, !terms.equity.trim()],
 			[
-				t`What is the equity worth today: strike price, latest valuation, vesting and exercise window?`,
+				offers.length > 1
+					? t`What is the equity worth today: strike price, latest valuation, vesting and exercise window?`
+					: t`What are the options worth today: strike price, latest valuation, vesting and exercise window?`,
 				t`The offer names equity without a value.`,
 				terms.equity.trim() !== "",
 			],
 			[t`How many days a week are expected in the office?`, missing, terms.officeDays === null],
 			[t`How many days of leave come with it?`, missing, !terms.leave.trim()],
 			[t`Is there a learning budget?`, missing, terms.learning === null],
-			[t`Which other benefits come with it, like pension or allowances?`, missing, !terms.other.trim()],
+			[
+				t`Which other benefits come with it, like pension or allowances?`,
+				missing,
+				offers.length > 1 && !terms.other.trim(),
+			],
 			// Both unknown: one question, as a reply would ask it.
 			[
 				t`When would you start, and when do you need my answer?`,
@@ -1162,7 +1167,6 @@ type QuestionsProps = { offers: readonly Offer[] };
 function Questions({ offers }: QuestionsProps) {
 	const navigate = useNavigate();
 	const { locale } = useCareerTime();
-	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
 	const two = offers.length > 1;
 	const questions = openQuestions([...offers], locale);
 	const count = (offer: Offer) => questions.filter((item) => item.who.includes(offer)).length;
@@ -1170,12 +1174,6 @@ function Questions({ offers }: QuestionsProps) {
 	const askable = offers.filter((offer) => count(offer) > 0).toSorted((x, y) => count(y) - count(x));
 	const ask = (item: Question) =>
 		item.who.length === offers.length ? t`Ask both` : t`Ask ${formatList(locale, item.who.map(companyOf))}`;
-
-	const priorities = profile?.priorities.trim() ?? "";
-	// The first sentence keeps the lead-in short; the full text is in Preferences.
-	const firstPriority = priorities.length > 160 ? (priorities.split(/(?<=[.!?])\s/)[0] ?? priorities) : priorities;
-	// The quote ends its own sentence: a full stop inside it unless it already has one. Named `said` for translators.
-	const said = firstPriority ? sentence(firstPriority) : "";
 
 	const numbered = (list: Question[], suffix: (item: Question) => string) =>
 		list.map((item, index) => `${index + 1}. ${item.question}${suffix(item)}`).join("\n");
@@ -1326,13 +1324,6 @@ function Questions({ offers }: QuestionsProps) {
 				</>
 			)}
 			{totals}
-			{said && questions.length > 0 && (
-				<p className="pt-3.5 t-small text-ink-3">
-					{offers.filter(isDeciding).length > 1
-						? t`You said: “${said}” Ask both companies before deciding.`
-						: t`You said: “${said}” Ask before deciding.`}
-				</p>
-			)}
 		</>
 	);
 }

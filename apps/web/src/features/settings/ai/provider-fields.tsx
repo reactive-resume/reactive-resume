@@ -9,7 +9,9 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { providerDefaults, providerLabel } from "./catalog";
+import { providerOptions } from "./catalog";
 import { ProviderModel } from "./provider-model";
+import { Combobox } from "@/components/ui/combobox";
 
 export type ProviderFields = AIProviderSetupFields & {
 	label: string;
@@ -26,6 +28,8 @@ type ProviderFieldsProps = {
 	keyOptional?: boolean;
 	/** Editing a new address requires a new key instead of forwarding the saved one. */
 	keyAgain?: boolean;
+	keyError?: string | undefined;
+	onProviderChange?: (provider: AIProvider) => void;
 };
 
 /** A folded group of fields: a 36px row with its current value at the end. */
@@ -43,7 +47,15 @@ const secretInputProps = {
 } as const;
 
 /** Shared by settings and in-place setup; callers guard submission and use form noValidate. */
-export function ProviderFieldsForm({ provider, value, onChange, keyOptional, keyAgain }: ProviderFieldsProps) {
+export function ProviderFieldsForm({
+	provider,
+	value,
+	onChange,
+	keyOptional,
+	keyAgain,
+	keyError,
+	onProviderChange,
+}: ProviderFieldsProps) {
 	const id = useId();
 	const [urlTouched, setUrlTouched] = useState(false);
 	const set = (patch: Partial<ProviderFields>) => onChange({ ...value, ...patch });
@@ -172,10 +184,19 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 							: undefined
 				}
 				required={provider !== "ollama" && (!keyOptional || keyAgain)}
-				aria-describedby={keyAgain ? `${id}-key-hint` : undefined}
+				aria-invalid={Boolean(keyError) || undefined}
+				aria-describedby={
+					[keyError && `${id}-key-error`, keyAgain && `${id}-key-hint`].filter(Boolean).join(" ") || undefined
+				}
 				onChange={(event) => set({ apiKey: event.target.value })}
 				{...secretInputProps}
 			/>
+			{keyError && (
+				<p id={`${id}-key-error`} role="alert" className="flex items-start gap-1.5 text-[13px]/[18px] text-danger-text">
+					<Icon name="warning-circle" size={14} className="mt-0.5 shrink-0" />
+					{keyError}
+				</p>
+			)}
 			{!keyURL && (
 				<p className="text-xs text-ink-3">
 					<Trans>Get an API key from your endpoint operator.</Trans>
@@ -203,7 +224,15 @@ export function ProviderFieldsForm({ provider, value, onChange, keyOptional, key
 						<Label htmlFor={`${id}-provider`}>
 							<Trans>Provider</Trans>
 						</Label>
-						<Input id={`${id}-provider`} value={providerLabel(provider)} disabled readOnly />
+						<Combobox
+							id={`${id}-provider`}
+							value={provider}
+							showClear={false}
+							columns={2}
+							options={providerOptions}
+							onValueChange={(next) => next && onProviderChange?.(next)}
+							disabled={!onProviderChange}
+						/>
 					</div>
 				</div>
 				{urlField}

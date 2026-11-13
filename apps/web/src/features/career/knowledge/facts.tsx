@@ -181,6 +181,7 @@ export function FactsPage({ highlight }: FactsPageProps) {
 						<Button
 							variant={adding ? "secondary" : "primary"}
 							aria-expanded={adding}
+							className={adding ? "bg-sunken" : undefined}
 							onClick={() => setAdding((open) => !open)}
 						>
 							<Icon name="plus" />

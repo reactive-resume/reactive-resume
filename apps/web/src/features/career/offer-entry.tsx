@@ -43,6 +43,7 @@ import { CurrencySelect } from "./currency-select";
 import { CareerLoadError } from "./load-state";
 import { formatMoney } from "./offer-compare";
 import { useCareerTime } from "./shared";
+import { DateField } from "@/components/ui/date-field";
 import { getCategoryLane } from "@/features/applications/lanes";
 import {
 	applicationsListQueryKey,
@@ -541,7 +542,7 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 					<Label htmlFor={`${id}-date`}>
 						<Trans>Respond by</Trans>
 					</Label>
-					<Input
+					<DateField
 						id={`${id}-date`}
 						type="date"
 						value={date}
@@ -555,7 +556,7 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 					<Label htmlFor={`${id}-time`}>
 						<Trans>Time</Trans>
 					</Label>
-					<Input
+					<DateField
 						id={`${id}-time`}
 						type="time"
 						onBlur={() => touch("deadline")}
@@ -568,13 +569,13 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 					/>
 				</div>
 
-				{amountField("base", t`Base salary`, "sm:col-span-4 sm:col-start-1")}
-				<div className={cn(field, "sm:col-span-4")}>
+				{amountField("base", t`Base salary`, "sm:col-span-6 sm:col-start-1")}
+				<div className={cn(field, "sm:col-span-3")}>
 					<Label htmlFor={`${id}-currency`}>
 						<Trans>Currency</Trans>
 					</Label>
 					<CurrencySelect
-						clearable
+						symbol={false}
 						id={`${id}-currency`}
 						value={terms.currency}
 						invalid={currencyInvalid}
@@ -595,7 +596,7 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 						<span>{t`Choose a currency.`}</span>
 					</p>
 				</div>
-				<div className={cn(field, "sm:col-span-4")}>
+				<div className={cn(field, "sm:col-span-3")}>
 					<Label htmlFor={`${id}-period`}>
 						<Trans>Pay period</Trans>
 					</Label>
@@ -666,7 +667,7 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 					</CollapsibleContent>
 				</Collapsible>
 			</fieldset>
-			<Caption className="t-caption text-ink-3">
+			<Caption className="text-xs/4 text-ink-3">
 				{sheet && <>{description} </>}
 				<span id={`${id}-variable-hint`}>{t`Bonus takes an amount or a share of base, such as 10%.`}</span>
 				{date && (

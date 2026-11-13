@@ -2,7 +2,7 @@ import type { ProviderFields } from "./provider-fields";
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { AIProvider } from "@reactive-resume/ai/types";
 import { i18n } from "@lingui/core";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -40,6 +40,7 @@ import { IconTile, List, ListRow } from "@/components/calm/list-row";
 import { Combobox } from "@/components/ui/combobox";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
+import { getAccountId } from "@/libs/auth/account-scope";
 import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
@@ -64,8 +65,28 @@ const testedWhen = (date: Date) => {
 
 export function ProvidersSection() {
 	const { data: providers, isLoading, error } = useQuery(orpc.aiProviders.list.queryOptions());
+	const schedules = useQuery({
+		...orpc.career.schedules.queryOptions({ input: {} }),
+		enabled: providers?.some((provider) => provider.testStatus === "failure") ?? false,
+	});
 	const [adding, setAdding] = useState(false);
-	const [connectedId, setConnectedId] = useState<string | null>(null);
+	const readyKey = `ai-ready:${getAccountId()}`;
+	const [connectedId, setConnectedId] = useState<string | null>(() => {
+		try {
+			return localStorage.getItem(readyKey);
+		} catch {
+			return null;
+		}
+	});
+	const showReady = (id: string | null) => {
+		setConnectedId(id);
+		try {
+			if (id) localStorage.setItem(readyKey, id);
+			else localStorage.removeItem(readyKey);
+		} catch {
+			/* Storage may be unavailable; keep the state for this visit. */
+		}
+	};
 	const [editing, setEditing] = useState<SavedProvider | null>(null);
 	const managed = providers?.find((provider) => provider.managed);
 	// The server lists the default first, so the first usable provider is the one every automatic choice uses.
@@ -76,7 +97,7 @@ export function ProvidersSection() {
 
 	return (
 		<>
-			{connected && <NextSteps connection={connected.label} onDismiss={() => setConnectedId(null)} />}
+			{connected && <NextSteps connection={connected.label} onDismiss={() => showReady(null)} />}
 			<SettingsSection title={<Trans>Connections</Trans>}>
 				{
 					// The note stays with the rows it explains; once AI is ready the hero above says enough.
@@ -120,6 +141,10 @@ export function ProvidersSection() {
 								<ProviderRow
 									key={provider.id}
 									provider={provider}
+									pausedSchedules={
+										schedules.data?.filter((schedule) => schedule.aiProviderId === provider.id && !schedule.enabled)
+											.length ?? 0
+									}
 									isDefault={provider.isDefault}
 									onMakeDefault={
 										provider.id !== defaultId && usable.includes(provider)
@@ -156,7 +181,7 @@ export function ProvidersSection() {
 							provider.enabled &&
 							!providers?.some((other) => other.id !== provider.id && other.testStatus === "success")
 						)
-							setConnectedId(provider.id);
+							showReady(provider.id);
 					}}
 				/>
 				<EditProviderDialog
@@ -237,6 +262,7 @@ function useProviderTest() {
 
 type ProviderRowProps = {
 	provider: SavedProvider;
+	pausedSchedules: number;
 	/** Used wherever no connection is picked. */
 	isDefault: boolean;
 	/** Offered on other tested, switched-on connections. */
@@ -245,7 +271,7 @@ type ProviderRowProps = {
 };
 
 /** One connection: what it runs, whether it works, and its actions in the "…" menu. */
-function ProviderRow({ provider, isDefault, onMakeDefault, onEdit }: ProviderRowProps) {
+function ProviderRow({ provider, pausedSchedules, isDefault, onMakeDefault, onEdit }: ProviderRowProps) {
 	const test = useProviderTest();
 	const queryClient = useQueryClient();
 	const confirm = useConfirm();
@@ -264,6 +290,7 @@ function ProviderRow({ provider, isDefault, onMakeDefault, onEdit }: ProviderRow
 			? provider.baseURL.replace(/^https?:\/\//, "").replace(/\/$/, "")
 			: null;
 
+	const testedAt = test.result?.ok ? test.result.at : provider.lastTestedAt;
 	const subtitle = test.isPending ? (
 		<Trans>Testing…</Trans>
 	) : (
@@ -282,9 +309,9 @@ function ProviderRow({ provider, isDefault, onMakeDefault, onEdit }: ProviderRow
 				) : (
 					<Trans>added {shortDate(provider.createdAt)}</Trans>
 				)
-			) : test.result?.ok ? (
+			) : testedAt ? (
 				<Trans>
-					key ends in {keyEnding(provider.apiKeyPreview).replace("…", "")} · tested {testedWhen(test.result.at)}
+					key ends in {keyEnding(provider.apiKeyPreview).replace("…", "")} · tested {testedWhen(testedAt)}
 				</Trans>
 			) : (
 				<Trans>added {shortDate(provider.createdAt)}</Trans>
@@ -348,7 +375,18 @@ function ProviderRow({ provider, isDefault, onMakeDefault, onEdit }: ProviderRow
 				{error && failed && (
 					<span role="alert" className="flex max-w-[380px] items-start gap-1.5 pt-0.5 text-[13px]/4 text-danger-text">
 						<Icon name="warning-circle" size={14} className="mt-px shrink-0" />
-						{error}
+						<span>
+							{error}
+							{pausedSchedules > 0 && (
+								<>
+									{" "}
+									{plural(pausedSchedules, {
+										one: "The schedule that uses it is paused.",
+										other: "# schedules that use it are paused.",
+									})}
+								</>
+							)}
+						</span>
 					</span>
 				)}
 				{test.result?.ok && !provider.enabled && (
@@ -526,7 +564,6 @@ function AddProviderDialog({ open, onOpenChange, onConnected }: AddProviderDialo
 				>
 					<div className="grid gap-1.5">
 						<Label htmlFor={`${id}-provider`} className="flex items-center gap-2">
-							<ProviderLogo key={provider} provider={provider} />
 							<Trans>Provider</Trans>
 						</Label>
 						<Combobox
@@ -605,12 +642,13 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 	// The saved provider as it is now, not as it was when the dialog opened: the switch shows what each save did.
 	const { data: providers } = useQuery(orpc.aiProviders.list.queryOptions());
 	const provider = providers?.find((item) => item.id === opened.id) ?? opened;
+	const [providerType, setProviderType] = useState(provider.provider);
 	const [fields, setFields] = useState<ProviderFields>({
 		label: provider.label,
 		model: provider.model,
 		fastModel: provider.fastModel ?? "",
 		capableModel: provider.capableModel ?? "",
-		baseURL: provider.baseURL ?? AI_PROVIDER_DEFAULT_BASE_URLS[provider.provider] ?? "",
+		baseURL: provider.baseURL ?? AI_PROVIDER_DEFAULT_BASE_URLS[providerType] ?? "",
 		apiKey: "",
 	});
 	const [failure, setFailure] = useState<string | null>(null);
@@ -619,13 +657,14 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 	const remove = useMutation(orpc.aiProviders.delete.mutationOptions({ meta: { noInvalidate: true } }));
 	const test = useProviderTest();
 
-	const defaultURL = AI_PROVIDER_DEFAULT_BASE_URLS[provider.provider] ?? "";
+	const defaultURL = AI_PROVIDER_DEFAULT_BASE_URLS[providerType] ?? "";
 	// An empty field means the provider's own address.
-	const newURL = (fields.baseURL.trim() || defaultURL) !== (provider.baseURL ?? defaultURL);
+	const newURL =
+		providerType !== provider.provider || (fields.baseURL.trim() || defaultURL) !== (provider.baseURL ?? defaultURL);
 	const apiKey = fields.apiKey.trim();
 	// The server won't send the saved key to a new address, so the key comes with it (Ollama may have none).
-	const keyMissing = newURL && provider.provider !== "ollama" && !apiKey;
-	const valid = getAIProviderSetupProblem(provider.provider, fields, !newURL) === null;
+	const keyMissing = newURL && providerType !== "ollama" && !apiKey;
+	const valid = getAIProviderSetupProblem(providerType, fields, !newURL) === null;
 	const changes = {
 		...(fields.label.trim() && fields.label.trim() !== provider.label ? { label: fields.label.trim() } : {}),
 		...(fields.model.trim() && fields.model.trim() !== provider.model ? { model: fields.model.trim() } : {}),
@@ -634,7 +673,7 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 			? { capableModel: fields.capableModel.trim() }
 			: {}),
 		// The provider rides along so validation accepts Ollama's empty key.
-		...(newURL ? { provider: provider.provider, baseURL: fields.baseURL.trim() } : {}),
+		...(newURL ? { provider: providerType, baseURL: fields.baseURL.trim() } : {}),
 		...(newURL || apiKey ? { apiKey } : {}),
 	};
 	const changed = Object.keys(changes).length > 0;
@@ -698,7 +737,11 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 				}}
 			>
 				<ProviderFieldsForm
-					provider={provider.provider}
+					provider={providerType}
+					onProviderChange={(next) => {
+						setProviderType(next);
+						setFields({ label: fields.label, apiKey: "", fastModel: "", capableModel: "", ...providerDefaults(next) });
+					}}
 					value={fields}
 					onChange={setFields}
 					keyOptional

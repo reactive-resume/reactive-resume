@@ -21,6 +21,7 @@ import {
 } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { AskCommandGroup } from "./pages/ask";
 import { CreateItems, JumpItems, MoreItems } from "./pages/navigation";
 import { openShortcutsFromPalette, PreferenceItems, PreferencePages } from "./pages/preferences";
@@ -29,6 +30,7 @@ import { useCommandPaletteStore } from "./store";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 
 export default function CommandPaletteContent() {
+	const phone = useBreakpoint() === "mobile";
 	const { session } = useRouteContext({ strict: false });
 	const inputRef = useRef<HTMLInputElement>(null);
 	const commandRef = useRef<HTMLDivElement>(null);
@@ -148,10 +150,12 @@ export default function CommandPaletteContent() {
 						onValueChange={handleSearchChange}
 						placeholder={
 							isFirstPage
-								? t({
-										comment: "Placeholder in command palette input on root page",
-										message: "Search documents, applications and commands",
-									})
+								? phone
+									? t`Search or jump to…`
+									: t({
+											comment: "Placeholder in command palette input on root page",
+											message: "Search documents, applications and commands",
+										})
 								: t({
 										comment: "Placeholder in command palette input on nested pages",
 										message: "Search…",
@@ -164,7 +168,7 @@ export default function CommandPaletteContent() {
 						hint={
 							<DialogClose
 								aria-label={t`Cancel`}
-								className="grid min-h-11 min-w-11 place-items-center rounded-sm text-ink-2 max-sm:-me-2 max-sm:px-2 max-sm:text-[15px] max-sm:font-medium max-sm:text-ink"
+								className="grid min-h-11 min-w-11 place-items-center rounded-sm text-ink-2 max-sm:px-0 max-sm:text-[15px] max-sm:font-medium max-sm:text-ink"
 							>
 								<Kbd className="max-sm:hidden">esc</Kbd>
 								{/* Phones: the palette fills the screen, and Cancel says how to leave it (M1). */}

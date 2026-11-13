@@ -38,7 +38,7 @@ const at = (date, time = "12:00") => `${date}T${time}:00.000Z`;
 /** What has no create API: rows only scheduled work and the AI write. Shapes follow career/jobs.ts and generate.ts. */
 async function serverOnly(seed) {
 	const { userId, applications } = seed;
-	const query = "Senior product designer, Lisbon or remote";
+	const query = "Senior product designer · Design systems lead · Lisbon · Remote";
 	const found = at("2026-11-07", "07:00");
 	const roles = [
 		[
@@ -253,6 +253,21 @@ async function boardData(seed) {
 	await version("auto", null, "calm-yesterday", at("2026-11-06", "18:05"));
 	await version("auto", null, "calm-today", at("2026-11-07", "08:44"));
 
+	// C2/C9 sort by creation; C5 sorts by the last edit. Match the board without changing live ordering rules.
+	for (const [index, id] of seed.facts.entries()) {
+		const created = new Date(Date.parse(at("2026-10-24", "09:00")) - index * 60_000).toISOString();
+		const corrected = index === 1 || index === 3 ? at("2026-11-03", "14:00") : created;
+		await sql(
+			"update career_fact set created_at = $2, updated_at = $3, revisions = (select coalesce(jsonb_agg(jsonb_set(revision, '{at}', to_jsonb($3::timestamptz))), '[]'::jsonb) from jsonb_array_elements(revisions) revision) where id = $1",
+			[id, created, corrected],
+		);
+	}
+	for (const [index, id] of seed.stories.entries()) {
+		const date = [at("2026-11-06", "11:00"), at("2026-11-05", "11:00"), at("2026-11-02", "11:00")][index];
+		await sql("update career_story set created_at = $2, updated_at = $2 where id = $1", [id, date]);
+	}
+	await sql("update career_profile set updated_at = $2 where user_id = $1", [userId, at("2026-11-04", "10:00")]);
+
 	// C2, C9: the two forgotten facts, forgotten on 21 Oct and 3 Nov.
 	const forgotten = await sql(
 		"select id from career_fact where user_id = $1 and status = 'forgotten' order by created_at, id",
@@ -261,7 +276,7 @@ async function boardData(seed) {
 	for (const [index, { id }] of forgotten.entries())
 		await sql("update career_fact set updated_at = $2 where id = $1", [
 			id,
-			[at("2026-10-21", "09:05"), at("2026-11-03", "14:20")][index],
+			[at("2026-10-21", "08:05"), at("2026-11-03", "14:20")][index],
 		]);
 
 	seed.feedbackLinks = Object.fromEntries(["daniel", "careersOffice", "ines"].map((key) => [key, ids[key]]));
@@ -450,6 +465,15 @@ const clamp = async () => {
 await clamp();
 await workspaces(seeds);
 await clamp();
+// S6's test is also after the board clock; set it after clamping server-created timestamps.
+for (const seed of Object.values(seeds)) {
+	if (seed.aiProviderId)
+		await sql("update ai_providers set created_at = $2, updated_at = $3, last_tested_at = $3 where id = $1", [
+			seed.aiProviderId,
+			at("2026-11-02", "09:00"),
+			at("2026-11-07", "09:12"),
+		]);
+}
 // After the clamp: the boards date two rows after their own "now" (W4 "Today, 09:12"), and the Kiln letter was last
 // edited the evening before (W2), not when the seed linked it to its resume copy.
 await sql("update career_artifact set created_at = $2, updated_at = $2 where id = $1", [

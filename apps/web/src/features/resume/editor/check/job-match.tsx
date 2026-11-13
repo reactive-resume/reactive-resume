@@ -662,6 +662,7 @@ function ApplicationPicker({ value, onChange }: { value: string | null; onChange
 				</span>
 			)}
 			<NativeSelect
+				caret="up-down"
 				className={selected ? "ps-10" : undefined}
 				aria-label={t`Link an application`}
 				disabled={locked}

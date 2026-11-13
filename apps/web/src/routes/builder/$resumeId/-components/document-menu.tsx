@@ -365,8 +365,8 @@ function DocumentMenuItems({ onOpenDialog, onHelp }: DocumentMenuItemsProps) {
 					<Icon name="download-simple" />
 					<Trans>More download formats</Trans>
 				</DropdownMenuItem>
-				{/* The bar has no ? button; the ? key opens the same list. */}
-				<DropdownMenuItem className="pointer-coarse:hidden" onClick={onHelp}>
+				{/* Tablet keeps help here; desktop uses the question control in the bar. */}
+				<DropdownMenuItem className="lg:hidden pointer-coarse:hidden" onClick={onHelp}>
 					<Icon name="keyboard" />
 					<Trans>Keyboard shortcuts</Trans>
 				</DropdownMenuItem>

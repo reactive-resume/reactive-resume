@@ -71,6 +71,7 @@ export function CareerPage({ schedule, onScheduleChange }: ScheduleUrl) {
 					className="mt-3"
 					needs={<Trans>The coach needs AI.</Trans>}
 					works={<Trans>Today, Knowledge, offers and schedules work without it.</Trans>}
+					backLabel={<Trans>Back to Career</Trans>}
 				/>
 				{empty ? (
 					<EmptyState
@@ -219,7 +220,7 @@ function CoachInvitation() {
 								open={menuOpen}
 								onOpenChange={setMenuOpen}
 								onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
-								providers={usable}
+								providers={providers.providers}
 								current={provider}
 								label={connectionName(provider?.label ?? t`Your AI`)}
 								onChoose={setProviderId}
@@ -301,7 +302,13 @@ function useStarters(): Starter[] {
 			case "week": {
 				const companies = formatList(
 					i18n.locale,
-					attention.map((item) => item.application.company),
+					attention
+						.toSorted((a, b) => Number(b.step.kind === "offer") - Number(a.step.kind === "offer"))
+						.map((item) =>
+							item.step.kind === "offer"
+								? t`reply to ${item.application.company}`
+								: t`follow up with ${item.application.company}`,
+						),
 				);
 				return {
 					title: t`What should I do this week?`,
@@ -463,7 +470,7 @@ function CareerAside({
 	const { profile } = useProfile();
 	const factCount = facts.data?.filter((fact) => fact.status !== "forgotten").length;
 	const count = (value: number | undefined) =>
-		value === undefined ? undefined : <span className="t-mono text-ink-3">{i18n.number(value)}</span>;
+		!value ? undefined : <span className="t-mono text-ink-3">{i18n.number(value)}</span>;
 
 	const money =
 		profile?.minBase.amount == null
@@ -525,7 +532,11 @@ function CareerAside({
 			>
 				<Trans>Schedules</Trans>
 			</SectionHeading>
-			<ScheduleRows schedules={schedules} onOpen={onScheduleChange} hide={noAi ? ["prepare"] : undefined} />
+			<ScheduleRows
+				schedules={schedules}
+				onOpen={onScheduleChange}
+				hide={noAi ? ["prepare", "discovery"] : undefined}
+			/>
 			{noAi ? (
 				<p className="pt-2.5 text-[13px]/[18px] text-ink-3">
 					<Trans>Reminders need no AI. A briefing refresh does.</Trans>

@@ -58,6 +58,7 @@ export function SaveStatus() {
 			!(await confirm(t`Reload the saved version?`, {
 				description: t`Your edits will be kept as a separate resume in Documents before loading the saved version.`,
 				confirmText: t`Keep a copy and reload`,
+				variant: "secondary",
 				cancelText: t`Keep editing`,
 			}))
 		)

@@ -73,13 +73,13 @@ export function PrepareNow({ applicationId, interviewId, now }: PrepareNowProps)
 }
 
 /** Practice uses the upcoming round's saved questions; opening it sends no chat content or AI request. */
-export function PracticeHandoff() {
+export function PracticeHandoff({ applicationId }: { applicationId: string | null }) {
 	const applications = useQuery(applicationsListQueryOptions());
 	const now = useNow();
 	if (applications.isError) return <CareerLoadError onRetry={() => void applications.refetch()} />;
-	const next = collectInterviews((applications.data ?? []).filter((item) => item.status !== "closed")).find(
-		(item) => item.start >= now,
-	);
+	const next = collectInterviews(
+		(applications.data ?? []).filter((item) => item.status !== "closed" && item.id === applicationId),
+	).find((item) => item.start >= now);
 	if (!next) return null;
 	const company = next.application.company;
 	return (
