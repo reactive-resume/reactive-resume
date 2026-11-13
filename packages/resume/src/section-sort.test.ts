@@ -6,8 +6,15 @@ type Item = {
 	period: string;
 };
 
+type DatedItem = {
+	id: string;
+	date?: string;
+	dates?: { start: string | null; end: string | null; present: boolean };
+};
+
 const item = (id: string, period: string): Item => ({ id, period });
-const ids = (items: readonly Item[]) => items.map(({ id }) => id);
+const dateItem = (id: string, date: string): DatedItem => ({ id, date });
+const ids = (items: readonly { id: string }[]) => items.map(({ id }) => id);
 
 describe("sortSectionItemsByPeriod", () => {
 	it("orders ongoing, ended, equal, and unresolved periods by the documented total order", () => {
@@ -60,5 +67,41 @@ describe("sortSectionItemsByPeriod", () => {
 		const result = sortSectionItemsByPeriod(input, "en-US");
 
 		expect(ids(result.items)).toEqual(["ended-2020", "single-2025", "single-2024"]);
+	});
+
+	it("sorts single-date entries from their date text when structured dates are missing", () => {
+		const input = [dateItem("older", "2018"), dateItem("newest", "March 2021"), dateItem("middle", "2020")];
+
+		const result = sortSectionItemsByPeriod(input, "en-US");
+
+		expect(ids(result.items)).toEqual(["newest", "middle", "older"]);
+		expect(result.unresolvedIds).toEqual([]);
+	});
+
+	it("keeps single-date entries with unreadable dates at the end and reports them", () => {
+		const input = [dateItem("blank", ""), dateItem("newer", "2024"), dateItem("prose", "Forthcoming")];
+
+		const result = sortSectionItemsByPeriod(input, "en-US");
+
+		expect(ids(result.items)).toEqual(["newer", "blank", "prose"]);
+		expect(result.unresolvedIds).toEqual(["blank", "prose"]);
+	});
+
+	it("uses structured dates over legacy text, keeps ties stable, and leaves input untouched", () => {
+		const input: DatedItem[] = [
+			{ id: "older", date: "2026", dates: { start: "2020", end: null, present: false } },
+			{ id: "cleared", date: "2026", dates: { start: null, end: null, present: false } },
+			dateItem("first-march", "mars 2024"),
+			{ id: "second-march", dates: { start: "2024-03", end: null, present: false } },
+			dateItem("year-only", "2024"),
+		];
+		const before = structuredClone(input);
+
+		const result = sortSectionItemsByPeriod(input, "fr-FR");
+
+		expect(ids(result.items)).toEqual(["first-march", "second-march", "year-only", "older", "cleared"]);
+		expect(result.unresolvedIds).toEqual(["cleared"]);
+		expect(input).toEqual(before);
+		expect(result.items[0]).toBe(input[2]);
 	});
 });

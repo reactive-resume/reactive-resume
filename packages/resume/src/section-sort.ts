@@ -5,7 +5,9 @@ import { isReversedPeriod, parsePeriod } from "@reactive-resume/schema/resume/pe
 
 type SectionItemWithPeriod = {
 	id: string;
-	period: string;
+	period?: string | undefined;
+	/** Single-date sections (awards, certifications, publications) keep their legacy text here. */
+	date?: string | undefined;
 	dates?: ResumeDates | undefined;
 };
 
@@ -33,7 +35,7 @@ function compareEndpointDescending(left: PeriodEndpoint | undefined, right: Peri
 }
 
 function rankItem<T extends SectionItemWithPeriod>(item: T, index: number, locale: string): RankedItem<T> {
-	const period = item.dates ? resumeDatesToPeriod(item.dates) : parsePeriod(item.period, locale);
+	const period = item.dates ? resumeDatesToPeriod(item.dates) : parsePeriod(item.period ?? item.date ?? "", locale);
 	if (!period?.start || (period.end && isReversedPeriod(period.start, period.end))) {
 		return { item, index, group: "unresolved" };
 	}

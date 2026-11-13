@@ -22,6 +22,7 @@ import { EntryRow, moveEntry } from "./entry-row";
 import { TextField } from "./fields";
 import {
 	countEntriesToCheck,
+	describeEntry,
 	getEntries,
 	getSectionKind,
 	getSectionObject,
@@ -150,7 +151,9 @@ function SectionBody({ section, locked }: { section: WriteSection; locked: boole
 }
 
 /** The count line with Sort by date, then the entries. They reorder by the grip, ⌥↑ / ⌥↓, or the row's menu. */
-function Entries({ section, locked }: { section: WriteSection; locked: boolean }) {
+type EntriesProps = { section: WriteSection; locked: boolean };
+
+function Entries({ section, locked }: EntriesProps) {
 	const ids = useCurrentBuilderResumeSelector((resume) =>
 		getEntries(resume.data, section)
 			.map((entry) => entry.id)
@@ -166,7 +169,10 @@ function Entries({ section, locked }: { section: WriteSection; locked: boolean }
 	const updateResumeData = useUpdateResumeData();
 	const sensors = useSortSensors();
 	const count = entryIds.length;
-	const canSort = (section.type === "experience" || section.type === "education") && !locked && count > 1;
+	const canSort =
+		(section.type === "experience" || section.type === "education" || section.type === "publications") &&
+		!locked &&
+		count > 1;
 
 	const onDragEnd = ({ active, over }: DragEndEvent) => {
 		if (!over || active.id === over.id) return;
@@ -177,16 +183,11 @@ function Entries({ section, locked }: { section: WriteSection; locked: boolean }
 		let unresolved: string[] = [];
 		updateResumeData(
 			(draft) => {
-				const entries = getEntries(draft, section) as never as {
-					id: string;
-					period: string;
-					company?: string;
-					school?: string;
-				}[];
+				const entries = getEntries(draft, section);
 				const result = sortSectionItemsByPeriod(entries, locale);
 				unresolved = result.unresolvedIds.map((id) => {
 					const entry = entries.find((item) => item.id === id);
-					return (entry?.company || entry?.school || id).trim();
+					return (entry ? describeEntry(section.type, entry).title || id : id).trim();
 				});
 				entries.splice(0, entries.length, ...result.items);
 			},
