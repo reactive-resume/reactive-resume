@@ -25,7 +25,10 @@ export async function openSidebarSection(page: Page, title: string) {
 	// Sharing is the Share mode, beside Write, Design and Check.
 	if (title === "Sharing") {
 		await page.getByRole("tab", { name: "Share", exact: true }).click();
-		await expect(page.getByRole("textbox", { name: "Address" })).toBeVisible();
+		// A resume that was never published shows only Publish; the address and settings follow publishing.
+		await expect(
+			page.getByRole("textbox", { name: "Address" }).or(page.getByRole("button", { name: "Publish", exact: true })),
+		).toBeVisible();
 		return;
 	}
 
