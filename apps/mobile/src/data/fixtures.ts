@@ -566,7 +566,8 @@ export const fakeBackend: Backend = {
 				value = {
 					items: state.applications
 						.filter((row) => row.trashedAt)
-						.slice(Number(fields.offset ?? 0), Number(fields.offset ?? 0) + Number(fields.limit ?? 100)),
+						.slice(Number(fields.offset ?? 0), Number(fields.offset ?? 0) + Number(fields.limit ?? 100))
+						.map((row) => ({ ...row, expiresAt: new Date("2026-12-31T00:00:00Z") })),
 					total: state.applications.filter((row) => row.trashedAt).length,
 				};
 			else if (resource === "opportunities") value = state.opportunities.filter((row) => !row.dismissedAt);

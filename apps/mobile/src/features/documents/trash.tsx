@@ -1,4 +1,5 @@
 import { t, plural } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
@@ -7,7 +8,7 @@ import Animated from "react-native-reanimated";
 import { daysLeft, destructionCounts, documentHref } from "./model";
 import { CollectionState, DocumentPlaceholders } from "./shared";
 import { getAccountScope } from "@/auth/session";
-import { emptyTrashSnapshot, restore, useTrash, useToday, useDataBackend, type TrashRef } from "@/data";
+import { emptyTrashSnapshot, restore, useTrash, useToday, useDataBackend, timeZone, type TrashRef } from "@/data";
 import {
 	Button,
 	Dialog,
@@ -32,6 +33,7 @@ export function TrashScreen() {
 }
 
 function ScopedTrashScreen() {
+	const { i18n } = useLingui();
 	const query = useTrash();
 	const { scope } = useDataBackend();
 	const { now } = useToday();
@@ -154,7 +156,9 @@ function ScopedTrashScreen() {
 			<PushScreen
 				title={t`Trash`}
 				subtitle={
-					<PageSubtitle status>{t`Documents go after 30 days; applications stay until you delete them.`}</PageSubtitle>
+					<PageSubtitle
+						status
+					>{t`Documents and applications stay here for 30 days, then are deleted for good.`}</PageSubtitle>
 				}
 				barEnd={
 					<Button
@@ -183,7 +187,7 @@ function ScopedTrashScreen() {
 					<DocumentPlaceholders />
 				) : !all.length ? (
 					<CollectionState
-						message={t`Trash is empty. Documents stay here for 30 days; applications until you delete them.`}
+						message={t`Documents and applications you move here stay for 30 days, then are deleted for good.`}
 					/>
 				) : (
 					<>
@@ -200,17 +204,21 @@ function ScopedTrashScreen() {
 							);
 						})}
 						<SectionHeading title={t`Applications`} count={String(applications.length)} />
-						{applications.map((app, index) =>
-							row(
+						{applications.map((app, index) => {
+							const date = new Intl.DateTimeFormat(i18n.locale, {
+								dateStyle: "medium",
+								timeZone: timeZone(),
+							}).format(new Date(app.expiresAt));
+							return row(
 								{
 									ref: { type: "application", id: app.id, trashedAt: app.trashedAt },
 									name: `${app.company} · ${app.role}`,
 								},
-								t`Kept until you delete it`,
+								t`Removal date: ${date}`,
 								<Monogram letters={app.company.slice(0, 2).toUpperCase()} />,
 								index === applications.length - 1,
-							),
-						)}
+							);
+						})}
 					</>
 				)}
 			</PushScreen>

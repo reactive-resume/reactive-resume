@@ -60,7 +60,7 @@ test("Trash loads every page and refuses inconsistent empty pages", async () => 
 	expect(await allApplicationTrash(read)).toEqual([{ id: "first" }, { id: "second" }]);
 	expect(read.mock.calls[1]?.[0]).toEqual({ limit: 100, offset: 1 });
 	await expect(allApplicationTrash(jest.fn().mockResolvedValue({ items: [], total: 1 }))).rejects.toThrow("Refresh");
-	expect(TRASH_RETENTION_DAYS).toEqual({ resume: 30, letter: 30, application: null });
+	expect(TRASH_RETENTION_DAYS).toEqual({ resume: 30, letter: 30, application: 30 });
 });
 test("SSE spans iterator values and replay replaces previous partial output", async () => {
 	const decode = createFrameDecoder();
