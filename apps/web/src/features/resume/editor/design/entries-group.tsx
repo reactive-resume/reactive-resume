@@ -184,7 +184,7 @@ export function EntriesGroup() {
 						<Radio.Root
 							key={option.id}
 							value={option.id}
-							className="group/layout flex min-h-[46px] cursor-pointer items-center gap-3 border-b border-line py-1.5 text-start last:border-0"
+							className="group/layout flex min-h-[46px] cursor-pointer items-center gap-3 border-b border-line py-1 text-start last:border-0"
 						>
 							<RadioDot />
 							<span

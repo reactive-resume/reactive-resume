@@ -243,7 +243,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 						</CrumbLink>
 						{requested && (
 							<Link to="/dashboard/applications/$applicationId/{-$tab}" params={{ applicationId }}>
-								{application.company}
+								<bdi>{application.company}</bdi>
 							</Link>
 						)}
 					</Crumb>
@@ -297,7 +297,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 								params={{ applicationId }}
 								className="mb-4 hidden gap-0.5 px-2.5 pt-1 lg:grid"
 							>
-								<span className="t-label">{application.company}</span>
+								<bdi className="t-label">{application.company}</bdi>
 								<span className="flex items-center gap-1.5 text-[13px]/[18px] text-ink-3">
 									<StageDot status={application.status}>{null}</StageDot>
 									{application.status === "saved"
