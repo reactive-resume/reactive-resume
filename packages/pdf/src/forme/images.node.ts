@@ -17,7 +17,8 @@ export function readServerImage(
 	redirects = 0,
 ): Promise<Uint8Array> {
 	if (/^data:image\/(?:png|jpeg|webp);base64,/i.test(source)) return readImageBytes(source);
-	const url = new URL(source);
+	// The app stores its own pictures as root-relative paths ("/uploads/..."), which belong to the upload origin.
+	const url = new URL(source, uploadOrigin);
 	const ownPicture =
 		uploadOrigin !== undefined &&
 		url.origin === new URL(uploadOrigin).origin &&
