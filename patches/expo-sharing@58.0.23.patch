@@ -1,5 +1,5 @@
 diff --git a/ios/SharingModule.swift b/ios/SharingModule.swift
-index fafe4dacf400561510f8b84b7070bce76486e9c3..953583884eeadbf7260aa738a642297fdd2a96fe 100644
+index eb952f1..72aa39b 100644
 --- a/ios/SharingModule.swift
 +++ b/ios/SharingModule.swift
 @@ -60,6 +60,12 @@ public final class SharingModule: Module {
@@ -15,7 +15,7 @@ index fafe4dacf400561510f8b84b7070bce76486e9c3..953583884eeadbf7260aa738a642297f
      Function("getSharedPayloads") {
        let rawPayloads = try getSharePayloads(appGroupId: appGroupId)
        return rawPayloads.map { ExpoSharePayload(from: $0).toDictionary() }
-@@ -119,15 +125,8 @@ public final class SharingModule: Module {
+@@ -120,15 +126,8 @@ public final class SharingModule: Module {
    }
  
    private func getSharePayloads(appGroupId: String) -> [SharePayload] {
@@ -35,7 +35,7 @@ index fafe4dacf400561510f8b84b7070bce76486e9c3..953583884eeadbf7260aa738a642297f
    private func prepareShareUrl(url: URL, options: SharingOptions) throws -> URL {
 diff --git a/ios/shared/PendingPosting.swift b/ios/shared/PendingPosting.swift
 new file mode 100644
-index 0000000000000000000000000000000000000000..356066aca1380e0ea8662279d23d1f19733e6bd5
+index 0000000..356066a
 --- /dev/null
 +++ b/ios/shared/PendingPosting.swift
 @@ -0,0 +1,65 @@
@@ -105,7 +105,7 @@ index 0000000000000000000000000000000000000000..356066aca1380e0ea8662279d23d1f19
 +  }
 +}
 diff --git a/plugin/build/ios/createInfoPlistFile.js b/plugin/build/ios/createInfoPlistFile.js
-index 30db9ef48746876a9fdd0801f2138d760ed92091..efd2768f91c4a04e78218c8da6a5ace9a68f1f16 100644
+index 30db9ef..efd2768 100644
 --- a/plugin/build/ios/createInfoPlistFile.js
 +++ b/plugin/build/ios/createInfoPlistFile.js
 @@ -68,7 +68,7 @@ function createInfoPlistFile(targetDirectory, appGroupId, urlScheme, activationR
@@ -118,7 +118,7 @@ index 30db9ef48746876a9fdd0801f2138d760ed92091..efd2768f91c4a04e78218c8da6a5ace9
          CFBundleIdentifier: '$(PRODUCT_BUNDLE_IDENTIFIER)',
          CFBundleInfoDictionaryVersion: '6.0',
 diff --git a/plugin/build/ios/xcode/addBuildPhases.js b/plugin/build/ios/xcode/addBuildPhases.js
-index c794498d811dce8e5457882673064146197b3873..a5e102c1d184bcc04d05c15c10fa173b669d934d 100644
+index c794498..a5e102c 100644
 --- a/plugin/build/ios/xcode/addBuildPhases.js
 +++ b/plugin/build/ios/xcode/addBuildPhases.js
 @@ -25,7 +25,7 @@ function addBuildPhases(xcodeProject, targetUuid, targetName, groupName, product
@@ -141,7 +141,7 @@ index c794498d811dce8e5457882673064146197b3873..a5e102c1d184bcc04d05c15c10fa173b
  }
  
 diff --git a/plugin/build/ios/xcode/addXCConfigurationList.js b/plugin/build/ios/xcode/addXCConfigurationList.js
-index ee7a0cb988bf274d8f58305ee2f646189a85e479..021a3e1ff7432392dcbf3d1e0120a5755fa7c5e2 100644
+index ee7a0cb..021a3e1 100644
 --- a/plugin/build/ios/xcode/addXCConfigurationList.js
 +++ b/plugin/build/ios/xcode/addXCConfigurationList.js
 @@ -11,7 +11,8 @@ Object.defineProperty(exports, "addXCConfigurationList", {
@@ -155,7 +155,7 @@ index ee7a0cb988bf274d8f58305ee2f646189a85e479..021a3e1ff7432392dcbf3d1e0120a575
          CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION: 'YES_AGGRESSIVE',
          CODE_SIGN_STYLE: 'Automatic',
 diff --git a/plugin/src/ios/createInfoPlistFile.ts b/plugin/src/ios/createInfoPlistFile.ts
-index 7cd0d027992cefaee765e7afa7df8827bea374b4..d6b95d8c72980593c506406ebe0d4cd448f8e043 100644
+index 7cd0d02..d6b95d8 100644
 --- a/plugin/src/ios/createInfoPlistFile.ts
 +++ b/plugin/src/ios/createInfoPlistFile.ts
 @@ -52,7 +52,7 @@ export default function createInfoPlistFile(
@@ -168,7 +168,7 @@ index 7cd0d027992cefaee765e7afa7df8827bea374b4..d6b95d8c72980593c506406ebe0d4cd4
      CFBundleIdentifier: '$(PRODUCT_BUNDLE_IDENTIFIER)',
      CFBundleInfoDictionaryVersion: '6.0',
 diff --git a/plugin/src/ios/xcode/addBuildPhases.ts b/plugin/src/ios/xcode/addBuildPhases.ts
-index af9471e405c97b84b88d09da3dc6bb8d94238b46..a681e06552a26f15bca50a8346c593675e1cba0e 100644
+index af9471e..a681e06 100644
 --- a/plugin/src/ios/xcode/addBuildPhases.ts
 +++ b/plugin/src/ios/xcode/addBuildPhases.ts
 @@ -22,7 +22,7 @@ export function addBuildPhases(
@@ -190,7 +190,7 @@ index af9471e405c97b84b88d09da3dc6bb8d94238b46..a681e06552a26f15bca50a8346c59367
      groupName,
      targetUuid,
 diff --git a/plugin/src/ios/xcode/addXCConfigurationList.ts b/plugin/src/ios/xcode/addXCConfigurationList.ts
-index 977ceb2551e587c4539e2d85a5f8728ffcf59d16..5d5d6fcad5bdc5e9a6f906c733f014c2398ae494 100644
+index 977ceb2..5d5d6fc 100644
 --- a/plugin/src/ios/xcode/addXCConfigurationList.ts
 +++ b/plugin/src/ios/xcode/addXCConfigurationList.ts
 @@ -10,6 +10,7 @@ export function addXCConfigurationList(
@@ -203,7 +203,7 @@ index 977ceb2551e587c4539e2d85a5f8728ffcf59d16..5d5d6fcad5bdc5e9a6f906c733f014c2
      CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION: 'YES_AGGRESSIVE',
 diff --git a/plugin/template-files/ios/PrivacyInfo.xcprivacy b/plugin/template-files/ios/PrivacyInfo.xcprivacy
 new file mode 100644
-index 0000000000000000000000000000000000000000..4e8a0883a556c78aeea4f364ee4d63881f29bdb5
+index 0000000..4e8a088
 --- /dev/null
 +++ b/plugin/template-files/ios/PrivacyInfo.xcprivacy
 @@ -0,0 +1,21 @@
@@ -229,10 +229,10 @@ index 0000000000000000000000000000000000000000..4e8a0883a556c78aeea4f364ee4d6388
 +</dict>
 +</plist>
 diff --git a/plugin/template-files/ios/ShareIntoViewController.swift b/plugin/template-files/ios/ShareIntoViewController.swift
-index 06680594c880f5a1d55a359de63561799768d7d2..73501f8ee7d3e17cfd98ce01855c6f63b749beae 100644
+index b17d584..73501f8 100644
 --- a/plugin/template-files/ios/ShareIntoViewController.swift
 +++ b/plugin/template-files/ios/ShareIntoViewController.swift
-@@ -1,296 +1,114 @@
+@@ -1,293 +1,114 @@
  import UIKit
 -import Social
 -import MobileCoreServices
@@ -250,7 +250,7 @@ index 06680594c880f5a1d55a359de63561799768d7d2..73501f8ee7d3e17cfd98ce01855c6f63
 -    return _hostAppScheme
 -  }
 -
--  private var appGroupId: String {
+-  nonisolated private var appGroupId: String {
 -    guard let _appGroupId = Bundle.main.object(forInfoDictionaryKey: "AppGroupId") as? String else {
 -      fatalError("Expo-sharing has failed to load the app group ID from `Info.plist`. Make sure the `expo-sharing` config plugin is configured correctly.")
 -    }
@@ -296,6 +296,7 @@ index 06680594c880f5a1d55a359de63561799768d7d2..73501f8ee7d3e17cfd98ce01855c6f63
 -
 -  nonisolated private func processInputItems(_ items: [NSExtensionItem]) async -> [SharePayload] {
 -    var results: [SharePayload] = []
+-    ShareIntoFileStore(appGroupId: appGroupId)?.removeStaleFiles()
 -
 -    for item in items {
 -      guard let attachments = item.attachments else { continue }
@@ -487,9 +488,11 @@ index 06680594c880f5a1d55a359de63561799768d7d2..73501f8ee7d3e17cfd98ce01855c6f63
 -          metadata: nil
 -        )
 -        continuation.resume(returning: payload)
--      }
--    }
--  }
++        continuation.resume(returning: SharePayload(type: isURL ? .url : .text, value: value,
++          mimeType: isURL ? "text/html" : "text/plain", metadata: nil))
+       }
+     }
+   }
 -
 -  private func handleFile(_ provider: NSItemProvider, type: ShareType, utType: UTType) async -> SharePayload? {
 -    return await withCheckedContinuation { continuation in
@@ -531,22 +534,16 @@ index 06680594c880f5a1d55a359de63561799768d7d2..73501f8ee7d3e17cfd98ce01855c6f63
 -  // MARK: - File Management
 -
 -  private func copyAndProcessFile(url: URL, type: ShareType) -> SharePayload? {
--    guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupId) else {
+-    let fileName = safeShareFileName(url.lastPathComponent, fallback: UUID().uuidString)
+-    guard let destinationURL = try? ShareIntoFileStore(appGroupId: appGroupId)?.makeDestination(fileName: fileName) else {
 -      return nil
 -    }
 -
--    let fileName = url.lastPathComponent.isEmpty ? UUID().uuidString : url.lastPathComponent
--    let destinationURL = containerURL.appendingPathComponent(fileName)
--
 -    do {
--      if FileManager.default.fileExists(atPath: destinationURL.path) {
--        try FileManager.default.removeItem(at: destinationURL)
-+        continuation.resume(returning: SharePayload(type: isURL ? .url : .text, value: value,
-+          mimeType: isURL ? "text/html" : "text/plain", metadata: nil))
-       }
 -      try FileManager.default.copyItem(at: url, to: destinationURL)
 -    } catch {
 -      print("Error copying file: \(error)")
+-      try? FileManager.default.removeItem(at: destinationURL.deletingLastPathComponent())
 -      return nil
 -    }
 -
@@ -568,14 +565,14 @@ index 06680594c880f5a1d55a359de63561799768d7d2..73501f8ee7d3e17cfd98ce01855c6f63
 -  }
 -
 -  private func saveDataToAppGroup(data: Data, fileName: String, type: ShareType, mimeType: String?) -> SharePayload? {
--    guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupId) else {
+-    guard let destinationURL = try? ShareIntoFileStore(appGroupId: appGroupId)?.makeDestination(fileName: fileName) else {
 -      return nil
 -    }
--    let destinationURL = containerURL.appendingPathComponent(fileName)
 -
 -    do {
 -      try data.write(to: destinationURL)
 -    } catch {
+-      try? FileManager.default.removeItem(at: destinationURL.deletingLastPathComponent())
 -      return nil
 -    }
 -
@@ -622,7 +619,7 @@ index 06680594c880f5a1d55a359de63561799768d7d2..73501f8ee7d3e17cfd98ce01855c6f63
 -    var ext = ""
 -    if let preferredExtension = UTType(identifier)?.preferredFilenameExtension {
 -      ext = ".\(preferredExtension)"
-     }
+-    }
 -    return UUID().uuidString + ext
-   }
+-  }
  }

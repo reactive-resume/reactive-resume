@@ -1,9 +1,9 @@
-import type { TsdownPlugin } from "tsdown";
+import type { TsdownPlugin } from "vite-plus/pack";
 import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "tsdown";
+import { defineConfig } from "vite-plus";
 
 const rootPackageJson = JSON.parse(readFileSync(new URL("../../package.json", import.meta.url), "utf-8")) as {
 	version?: string;
@@ -123,29 +123,31 @@ const wasmAssetsPlugin: TsdownPlugin = {
 };
 
 export default defineConfig({
-	entry: {
-		index: "src/index.ts",
-		vercel: "src/vercel.ts",
-		"prepare-deployment": "src/prepare-deployment.ts",
-		"migrate-legacy-styles": "src/migrate-legacy-styles.ts",
+	pack: {
+		entry: {
+			index: "src/index.ts",
+			vercel: "src/vercel.ts",
+			"prepare-deployment": "src/prepare-deployment.ts",
+			"migrate-legacy-styles": "src/migrate-legacy-styles.ts",
+		},
+		// Keep import.meta.url-based asset lookup adjacent to the entrypoints.
+		outputOptions: { chunkFileNames: "[name]-[hash].mjs" },
+		format: "esm",
+		platform: "node",
+		target: "node24",
+		outDir: "dist",
+		clean: true,
+		shims: true,
+		dts: false,
+		define: { __APP_VERSION__: JSON.stringify(rootPackageJson.version ?? "0.0.0") },
+		// The flagged dynamic imports are deliberate: they defer evaluation of env-dependent
+		// modules so tests can run without env vars, not to split chunks.
+		suppressWarnings: [/dynamic import will not move module into another chunk/],
+		outExtensions: () => ({ js: ".mjs" }),
+		deps: {
+			alwaysBundle: shouldBundle,
+			neverBundle: shouldExternalizeThirdParty,
+		},
+		plugins: [promptAssetsPlugin, agentSkillAssetsPlugin, wasmAssetsPlugin],
 	},
-	// Keep import.meta.url-based asset lookup adjacent to the entrypoints.
-	outputOptions: { chunkFileNames: "[name]-[hash].mjs" },
-	format: "esm",
-	platform: "node",
-	target: "node24",
-	outDir: "dist",
-	clean: true,
-	shims: true,
-	dts: false,
-	define: { __APP_VERSION__: JSON.stringify(rootPackageJson.version ?? "0.0.0") },
-	// The flagged dynamic imports are deliberate: they defer evaluation of env-dependent
-	// modules so tests can run without env vars, not to split chunks.
-	suppressWarnings: [/dynamic import will not move module into another chunk/],
-	outExtensions: () => ({ js: ".mjs" }),
-	deps: {
-		alwaysBundle: shouldBundle,
-		neverBundle: shouldExternalizeThirdParty,
-	},
-	plugins: [promptAssetsPlugin, agentSkillAssetsPlugin, wasmAssetsPlugin],
 });

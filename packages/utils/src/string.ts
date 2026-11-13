@@ -99,11 +99,7 @@ export const escapeHtml = (text: string) =>
 		.replaceAll("'", "&#39;");
 
 /** Lowercase text without accents, for loose matching: "Österreich" becomes "osterreich". */
-const fold = (text: string) =>
-	text
-		.normalize("NFD")
-		.replace(/[̀-ͯ]/g, "")
-		.toLowerCase();
+const fold = (text: string) => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 /** Match labels and hidden search keywords loosely, or a value exactly, ignoring case and accents. */
 export function filterOptions<T extends { value: string; label: string; keywords?: readonly string[] | undefined }>(

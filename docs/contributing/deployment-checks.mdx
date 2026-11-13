@@ -20,7 +20,7 @@ The job:
 
 ### When the loading check fails
 
-If a new server dependency breaks the loading check, add it and its own dependencies to `bundledInteropPackages` in `apps/server/tsdown.config.ts`. CommonJS dependencies need this, because Vercel's service builder leaves out the pnpm links they load through.
+If a new server dependency breaks the loading check, add it and its own dependencies to `bundledInteropPackages` in `apps/server/vite.config.ts`. CommonJS dependencies need this, because Vercel's service builder leaves out the pnpm links they load through.
 
 ## Live smoke test
 

@@ -149,7 +149,7 @@ files).
 - Without SMTP no email is sent. Production logs only the recipient and subject; `pnpm dev` prints the full email,
   links included.
 - Vercel module-loading failures: bundle CommonJS server dependencies through `bundledInteropPackages` in
-  `apps/server/tsdown.config.ts`; Vercel's service builder drops their pnpm links.
+  `apps/server/vite.config.ts`; Vercel's service builder drops their pnpm links.
 - Playwright starts `node apps/server/dist/index.mjs` directly; build first, and keep that direct command.
 - Deployment smoke tests create and delete accounts; run them only against a dedicated test installation
   (`docs/contributing/deployment-checks.mdx`).

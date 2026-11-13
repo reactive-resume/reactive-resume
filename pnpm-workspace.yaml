@@ -4,15 +4,15 @@ packages:
   - tooling
 catalogMode: prefer
 catalog:
-  "@babel/plugin-transform-parameters": ^7.29.7
-  "@babel/plugin-transform-unicode-sets-regex": ^7.29.7
-  "@better-auth/api-key": "1.7.12"
-  "@better-auth/drizzle-adapter": "1.7.12"
-  "@better-auth/infra": ^0.4.27
-  "@better-auth/oauth-provider": "1.7.12"
-  "@better-auth/passkey": "1.7.12"
-  "@cloudflare/workers-types": ^5.20261106.1
-  "@formatjs/intl-displaynames": ^7.4.0
+  "@babel/plugin-transform-parameters": ^8.0.5
+  "@babel/plugin-transform-unicode-sets-regex": ^8.0.1
+  "@better-auth/api-key": "1.7.23"
+  "@better-auth/drizzle-adapter": "1.7.23"
+  "@better-auth/infra": ^0.4.30
+  "@better-auth/oauth-provider": "1.7.23"
+  "@better-auth/passkey": "1.7.23"
+  "@cloudflare/workers-types": ^5.20261113.1
+  "@formatjs/intl-displaynames": ^8.0.3
   "@orpc/client": ^1.16.2
   "@orpc/server": ^1.16.2
   "@types/node": ^26.6.6
@@ -20,13 +20,13 @@ catalog:
   "@types/react": "^19.3.0"
   "@types/react-dom": "^19.3.0"
   "@uiw/color-convert": "^2.10.3"
-  "ai": ^7.0.164
+  "ai": ^7.0.172
   "bcryptjs": "^3.0.3"
-  "better-auth": "1.7.12"
+  "better-auth": "1.7.23"
   "drizzle-orm": "1.0.0-rc.4"
   "es-toolkit": ^1.53.2
   esbuild: ^0.28.2
-  expo-asset: ~58.0.20
+  expo-asset: ~58.0.21
   "fflate": "^0.8.3"
   "ioredis": "^6.0.0"
   "jsonrepair": "^3.15.0"
@@ -35,24 +35,27 @@ catalog:
   "react": "19.3.1"
   "ts-pattern": ^5.9.2
   "typescript": "^7.0.2"
-  "tsrs": "0.18.0-ts7.1.0-dev.20260929"
-  "vite-plus": "1.3.0"
-  wrangler: ^4.158.0
+  "tsrs": "0.25.0-ts7.1.0-beta"
+  "vite-plus": 1.6.0
+  wrangler: ^4.162.0
   "zod": ^4.6.7
   "@fontsource-variable/figtree": ^5.3.0
   "@fontsource-variable/geist-mono": ^5.3.0
   "@fontsource/instrument-serif": ^5.3.0
   "@shadcn/react": ^0.3.1
-  isbot: ^5.2.2
+  isbot: ^5.2.3
   "@resvg/resvg-wasm": ^2.6.2
   htmlparser2: 12.0.0
   mdast-util-from-markdown: 2.1.0
   "@reactive-resume/utils": workspace:*
-  "@formatjs/intl-relativetimeformat": ^13.0.1
-  expo-background-task: ~58.0.12
+  "@formatjs/intl-relativetimeformat": ^13.0.3
+  expo-background-task: ~58.0.13
   expo-quick-actions: ^6.0.2
-  expo-task-manager: ~58.0.13
+  expo-task-manager: ~58.0.14
   "@testing-library/react-native": ^14.1.0
+  vite: npm:@voidzero-dev/vite-plus-core@1.6.0
+  vitest: 5.1.0
+  "@vitest/coverage-v8": 5.1.0
 allowBuilds:
   # jest-expo (apps/mobile) pulls it through jest-haste-map; its prebuilt binary needs no build script.
   "@parcel/watcher": false
@@ -62,9 +65,6 @@ allowBuilds:
   workerd: true
 minimumReleaseAge: 0
 overrides:
-  # Keep plugin imports on the same Vite and Vitest instances as Vite+.
-  vite: npm:@voidzero-dev/vite-plus-core@1.3.0
-  vitest: 5.0.5
   # enriched-html pins Tiptap 3.27.1 exactly, which has published advisories (@tiptap/core <3.30.5). Its Tiptap
   # packages peer on each other's exact versions, so they move to the web app's version together.
   "react-native-enriched-html>@tiptap/core": 3.32.0
@@ -86,7 +86,6 @@ overrides:
   "react-native-enriched-html>@tiptap/extensions": 3.32.0
   "react-native-enriched-html>@tiptap/pm": 3.32.0
   "react-native-enriched-html>@tiptap/react": 3.32.0
-  "@better-auth/infra>@better-fetch/fetch": 1.3.2
   # Keep Better Auth and its plugins on one core peer graph after infra's utils update.
   "@better-auth/utils": 0.5.1
   next@<16.3.8: 16.3.8
@@ -99,10 +98,13 @@ overrides:
   dompurify@<3.4.17: ^3.4.17
   node-forge@<1.4.1: ^1.4.2
   zod@>=4.0.0 <4.6.6: ^4.6.7
+  # Keep plugin imports on the same Vite and Vitest instances as Vite+.
+  vite@*: "catalog:"
+  vitest@*: "catalog:"
 patchedDependencies:
   deepmerge@4.3.1: patches/deepmerge@4.3.1.patch
-  expo-router@58.0.30: patches/expo-router@58.0.30.patch
-  expo-sharing@58.0.22: patches/expo-sharing@58.0.22.patch
+  expo-router@58.0.31: patches/expo-router@58.0.31.patch
+  expo-sharing@58.0.23: patches/expo-sharing@58.0.23.patch
   react-native-screens@4.30.1: patches/react-native-screens@4.30.1.patch
 skills:
   dirs:
@@ -122,3 +124,21 @@ permissions:
     skills: true
   tsdown:
     skills: true
+peerDependencyRules:
+  allowAny:
+    - vite
+    - vitest
+  allowedVersions:
+    vite: "*"
+    vitest: "*"
+minimumReleaseAgeExclude:
+  - vite-plus
+  - "@voidzero-dev/*"
+  - oxlint
+  - "@oxlint/*"
+  - oxlint-tsgolint
+  - "@oxlint-tsgolint/*"
+  - oxfmt
+  - "@oxfmt/*"
+  - vitest
+  - "@vitest/*"

@@ -113,7 +113,7 @@ Use `pnpm dev:web` to start only Vite. API calls still need a server running.
 
 ## Everyday commands
 
-[Vite+](https://viteplus.dev/) supplies the project-local `vp` CLI for Vite builds/dev servers, Vitest tests, Oxlint, and Oxfmt. Run it with `pnpm exec vp`; no global install is needed. Turbo still schedules workspace tasks and checks package boundaries, while tsdown packages the server and DeepSeek plugin. Root `vite.config.ts` owns lint and formatting settings; package `vitest.config.ts` files retain isolated test configuration.
+[Vite+](https://viteplus.dev/) supplies the project-local `vp` CLI for Vite builds/dev servers, Vitest tests, Oxlint, and Oxfmt. Run it with `pnpm exec vp`; no global install is needed. Turbo still schedules workspace tasks and checks package boundaries, while `vp pack` (tsdown) packages the server and DeepSeek plugin. Root `vite.config.ts` owns lint and formatting settings; package `vitest.config.ts` files retain isolated test configuration.
 
 Keep the pinned `vite-plus` catalog version and `vite` override together. The `vitest` override and `@vitest/coverage-v8` must match Vite+'s bundled Vitest version (`pnpm exec vp toolchain vitest`). The Vite Plus extension pack uses the same tools and root config as scripts and hooks.
 
@@ -326,7 +326,7 @@ Alongside the release's changelog entry:
     </Accordion>
 
     <Accordion title="A server dependency fails to load on Vercel">
-      CommonJS server dependencies must be bundled. Add the package and its dependencies to `bundledInteropPackages` in `apps/server/tsdown.config.ts`. See [Deployment checks](/contributing/deployment-checks).
+      CommonJS server dependencies must be bundled. Add the package and its dependencies to `bundledInteropPackages` in `apps/server/vite.config.ts`. See [Deployment checks](/contributing/deployment-checks).
     </Accordion>
 
 </AccordionGroup>

@@ -12,7 +12,7 @@ type AgentSkill = { name: string; description: string; archive: Buffer; digest: 
 
 function resolveSkillsRoot() {
 	const candidates = [
-		// Bundled layout: apps/server/dist/*.mjs -> apps/server/dist/agent-skills (emitted by tsdown.config.ts)
+		// Bundled layout: apps/server/dist/*.mjs -> apps/server/dist/agent-skills (emitted by vite.config.ts)
 		fileURLToPath(new URL("./agent-skills", import.meta.url)),
 		// Source layout: apps/server/src/static/agent-skills.ts -> plugins/reactive-resume/skills
 		fileURLToPath(new URL("../../../../plugins/reactive-resume/skills", import.meta.url)),

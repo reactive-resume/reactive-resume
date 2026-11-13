@@ -203,10 +203,8 @@ function FeedbackComments({ token, view }: FeedbackReviewProps) {
 			} catch {
 				// Remembering the name is a convenience; the comment is saved either way.
 			}
-			queryClient.setQueryData(
-				orpc.feedback.view.queryKey({ input: { token } }),
-				(current: FeedbackView | undefined) =>
-					current ? { ...current, comments: [...current.comments, created] } : current,
+			queryClient.setQueryData(orpc.feedback.view.queryKey({ input: { token } }), (current: FeedbackView | undefined) =>
+				current ? { ...current, comments: [...current.comments, created] } : current,
 			);
 			setBody("");
 			toast.add({ type: "success", description: t`Comment sent to ${view.ownerName}` });

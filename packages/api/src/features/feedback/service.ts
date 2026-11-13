@@ -16,10 +16,7 @@ const VIEW_EVENT_GAP_MS = 60 * 60 * 1000;
 
 type LinkRow = typeof schema.feedbackLink.$inferSelect;
 
-const statusOf = (
-	link: Pick<LinkRow, "revokedAt" | "expiresAt">,
-	now = Date.now(),
-): "active" | "expired" | "revoked" =>
+const statusOf = (link: Pick<LinkRow, "revokedAt" | "expiresAt">, now = Date.now()): "active" | "expired" | "revoked" =>
 	link.revokedAt ? "revoked" : link.expiresAt && link.expiresAt.getTime() <= now ? "expired" : "active";
 
 const isActive = sql`${schema.feedbackLink.revokedAt} is null and (${schema.feedbackLink.expiresAt} is null or ${schema.feedbackLink.expiresAt} > now())`;
