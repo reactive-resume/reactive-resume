@@ -95,7 +95,7 @@ const applicationIdSchema = z
 	.min(1)
 	.describe(`Application ID. Use \`${T.listApplications}\` to find valid IDs.`);
 const applicationTimelineEntryIdSchema = z.string().min(1).describe("Timeline entry ID from an application response.");
-const applicationDocumentKindSchema = z.enum(["resume", "cover-letter"]);
+const applicationDocumentKindSchema = applicationDto.attachDocument.input.shape.kind;
 const coverLetterIdSchema = z
 	.string()
 	.min(1)
@@ -706,7 +706,7 @@ export const TOOL_META = withAnnotationTitles({
 	[T.attachApplicationDocument]: {
 		title: "Attach Application Document",
 		description:
-			"Upload and attach a resume or cover-letter PDF, maximum 10 MiB. Inline base64 is limited to 3 MiB encoded; larger files require an owned storagePath from POST /api/files. The resulting file URL requires authentication as the owner. Replaces the existing attachment of that kind and deletes its owned file if no other application references it. Does not send the document to an employer.",
+			"Upload and attach a resume, cover-letter or original posting PDF, maximum 10 MiB. Inline base64 is limited to 3 MiB encoded; larger files require an owned storagePath from POST /api/files. The resulting file URL requires authentication as the owner. Replaces the existing attachment of that kind and deletes its owned file if no other application references it. Does not send the document to an employer.",
 		outputSchema: toWireObjectSchema(applicationDto.attachDocument.output),
 		inputSchema: wireInput(
 			z
@@ -732,7 +732,7 @@ export const TOOL_META = withAnnotationTitles({
 	[T.removeApplicationDocument]: {
 		title: "Remove Application Document",
 		description:
-			"Clear a resume or cover-letter attachment and delete its owned uploaded file if no other application references it, removing access through its authenticated file URL.",
+			"Clear a resume, cover-letter or original posting attachment and delete its owned uploaded file if no other application references it, removing access through its authenticated file URL.",
 		outputSchema: toWireObjectSchema(applicationDto.removeDocument.output),
 		inputSchema: wireInput(z.strictObject({ id: applicationIdSchema, kind: applicationDocumentKindSchema })),
 		annotations: WRITE_DESTRUCTIVE,

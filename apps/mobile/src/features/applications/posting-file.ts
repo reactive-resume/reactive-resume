@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
+import { randomUUID } from "expo-crypto";
 import * as DocumentPicker from "expo-document-picker";
-import { File, Paths } from "expo-file-system";
+import { Directory, File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { sanitizeFileName } from "@reactive-resume/utils/file";
 import { readResponseBytes } from "@reactive-resume/utils/http";
@@ -10,6 +11,8 @@ import { isFake } from "@/data/fixtures";
 import { activeDataScope, assertDataScope } from "@/data/scope";
 
 const MAX_POSTING_BYTES = 10 * 1024 * 1024;
+
+export class PostingPdfError extends Error {}
 
 /** The PDF picker's result, validated before any upload starts. */
 export async function pickPostingPdf(): Promise<File | null> {
@@ -21,8 +24,8 @@ export async function pickPostingPdf(): Promise<File | null> {
 	const asset = picked.canceled ? null : picked.assets[0];
 	if (!asset) return null;
 	const file = new File(asset.uri);
-	if (file.size > MAX_POSTING_BYTES) throw new Error(t`Choose a PDF up to 10 MB.`);
-	if (file.type !== "application/pdf") throw new Error(t`Choose a PDF file.`);
+	if (file.size > MAX_POSTING_BYTES) throw new PostingPdfError(t`Choose a PDF up to 10 MB.`);
+	if (file.type !== "application/pdf") throw new PostingPdfError(t`Choose a PDF file.`);
 	return file;
 }
 
@@ -65,8 +68,15 @@ export async function openPostingPdf(url: string, name: string) {
 	assertDataScope(scope);
 	const sanitized = sanitizeFileName(name).slice(0, 80) || "posting";
 	const filename = sanitized.toLowerCase().endsWith(".pdf") ? sanitized : `${sanitized}.pdf`;
-	const file = new File(Paths.cache, filename);
-	file.write(bytes);
-	if (!(await Sharing.isAvailableAsync())) throw new Error(t`Opening PDFs is unavailable on this device.`);
-	await Sharing.shareAsync(file.uri, { mimeType: "application/pdf", UTI: "com.adobe.pdf" });
+	const directory = new Directory(Paths.cache, `posting-${randomUUID()}`);
+	directory.create();
+	try {
+		const file = new File(directory, filename);
+		file.write(bytes);
+		if (!(await Sharing.isAvailableAsync())) throw new PostingPdfError(t`Opening PDFs is unavailable on this device.`);
+		assertDataScope(scope);
+		await Sharing.shareAsync(file.uri, { mimeType: "application/pdf", UTI: "com.adobe.pdf" });
+	} finally {
+		directory.delete();
+	}
 }

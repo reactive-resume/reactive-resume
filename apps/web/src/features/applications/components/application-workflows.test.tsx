@@ -17,6 +17,7 @@ const api = vi.hoisted(() => ({
 	parsePosting: vi.fn(),
 	findPosting: vi.fn(),
 	create: vi.fn(),
+	getById: vi.fn(),
 	update: vi.fn(),
 	moveTo: vi.fn(),
 	close: vi.fn(),
@@ -49,6 +50,7 @@ vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		ai: { capabilities: { queryOptions: () => ({ queryKey: ["capabilities"], queryFn: api.capabilities }) } },
 		applications: {
+			getById: { queryOptions: () => ({ queryKey: ["detail"], queryFn: api.getById }) },
 			lanes: {
 				get: {
 					queryOptions: () => ({ queryKey: ["lanes"], queryFn: () => new Promise(() => {}) }),
@@ -56,6 +58,8 @@ vi.mock("@/libs/orpc/client", () => ({
 				},
 			},
 			priorNoResponse: { queryOptions: () => ({ queryKey: ["prior"], queryFn: async () => [] }) },
+			addInterview: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			updateInterview: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			addNote: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			updateTimelineEntry: { mutationOptions: () => ({ mutationFn: api.updateTimelineEntry }) },
 			deleteTimelineEntry: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
@@ -105,6 +109,7 @@ vi.mock("@/dialogs/store", () => ({ useDialogStore: () => vi.fn() }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
 
 import { AddApplicationDialog } from "./add-application-dialog";
+import { ApplicationDetailSheet } from "./application-detail-sheet";
 import { ApplicationBoard } from "./board";
 import { Activity } from "./detail/activity";
 import { ApplicationList } from "./list-view";
@@ -607,4 +612,28 @@ it("edits a timeline note separately from its date without dropping either value
 			expect.anything(),
 		),
 	);
+});
+
+it.each(["pdf", "text"])("opens the saved %s posting without a source link", async (kind) => {
+	const app = {
+		...application("posting-only", "saved"),
+		postingFileUrl: kind === "pdf" ? "/api/uploads/owner/pictures/posting.pdf" : null,
+		postingFileName: kind === "pdf" ? "Original role.pdf" : null,
+		jobDescription: kind === "text" ? "Fictional role description" : null,
+	};
+	api.getById.mockResolvedValue(app);
+	mount(
+		<ApplicationDetailSheet
+			application={{ ...app, initialDetail: app }}
+			onOpenChange={vi.fn()}
+			onEditDetails={vi.fn()}
+			returnFocus={() => null}
+		/>,
+	);
+	fireEvent.click(await screen.findByRole("button", { name: "Saved copy" }));
+	if (kind === "pdf")
+		expect((await screen.findByRole("link", { name: "Original role.pdf" })).getAttribute("href")).toBe(
+			app.postingFileUrl,
+		);
+	else expect(await screen.findByText("Fictional role description")).toBeTruthy();
 });

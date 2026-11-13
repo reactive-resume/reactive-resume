@@ -554,23 +554,25 @@ function Facts({ application, onOpenPosting }: { application: Application; onOpe
 
 	return (
 		<dl className="grid">
-			{application.sourceUrl && (
+			{(application.sourceUrl || application.postingFileUrl || application.jobDescription) && (
 				<div className={factRowClassName}>
 					<dt className={factLabelClassName}>
 						<Trans>Posting</Trans>
 					</dt>
 					<dd className="flex min-w-0 items-center gap-2">
-						<a
-							href={application.sourceUrl}
-							title={application.sourceUrl}
-							dir="ltr"
-							target="_blank"
-							rel="noreferrer"
-							className="flex min-w-0 items-center gap-2 font-mono text-[13px]/4 font-medium hover:underline"
-						>
-							<span className="truncate">{application.sourceUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span>
-							<Icon name="arrow-square-out" size={16} className="shrink-0 text-ink-3" />
-						</a>
+						{application.sourceUrl && (
+							<a
+								href={application.sourceUrl}
+								title={application.sourceUrl}
+								dir="ltr"
+								target="_blank"
+								rel="noreferrer"
+								className="flex min-w-0 items-center gap-2 font-mono text-[13px]/4 font-medium hover:underline"
+							>
+								<span className="truncate">{application.sourceUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span>
+								<Icon name="arrow-square-out" size={16} className="shrink-0 text-ink-3" />
+							</a>
+						)}
 						<TextButton className="ms-auto shrink-0" onClick={onOpenPosting}>
 							<Trans>Saved copy</Trans>
 						</TextButton>

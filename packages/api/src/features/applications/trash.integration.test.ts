@@ -187,6 +187,32 @@ describe.skipIf(!databaseUrl)("application Trash: real retained rows, storage an
 		}
 	});
 
+	it("keeps posting PDF bytes through Trash and export, then removes them on purge", async () => {
+		const client = api();
+		const id = await client.create({ company: "Fictional Cedar", role: "Lead" });
+		const file = new File(["%PDF-1.7 original posting"], "posting.pdf", { type: "application/pdf" });
+		await expect(api("bob").attachDocument({ id, kind: "posting", file })).rejects.toMatchObject({ code: "NOT_FOUND" });
+		const attached = await client.attachDocument({ id, kind: "posting", file });
+		expect((await client.getById({ id })).postingFileName).toBe("posting.pdf");
+		const url = attached.postingFileUrl;
+		if (!url) throw new Error("Missing posting PDF URL");
+		const key = new URL(url, "http://localhost:3000").pathname.replace(/^\/(?:api\/)?/, "");
+		await client.trash({ id });
+		const backup = await (
+			await import("../auth/service")
+		).authService.exportData({ userId: "alice", includeUploads: true });
+		expect(backup.uploads?.files).toContainEqual({
+			key,
+			base64: Buffer.from(await file.arrayBuffer()).toString("base64"),
+		});
+		await client.restore(await trashRow(id));
+		expect((await client.getById({ id })).postingFileUrl).toBe(url);
+		expect((await storage.read(key))?.data).toEqual(Buffer.from(await file.arrayBuffer()));
+		await client.trash({ id });
+		await client.purge(await trashRow(id));
+		expect(await storage.read(key)).toBeNull();
+	});
+
 	it("retains timeline, linked snapshots, workspace, facts, coach and real attachment bytes across reload/restore", async () => {
 		await getDb()
 			.insert(tables.resume)

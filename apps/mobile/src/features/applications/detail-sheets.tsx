@@ -7,7 +7,7 @@ import { openBrowserAsync } from "expo-web-browser";
 import { useState } from "react";
 import { View } from "react-native";
 import { useApplicationActions } from "./actions";
-import { attachPostingPdf, openPostingPdf, pickPostingPdf, removePostingPdf } from "./posting-file";
+import { attachPostingPdf, openPostingPdf, pickPostingPdf, PostingPdfError, removePostingPdf } from "./posting-file";
 import { useApplications, useDataActions, useDocuments, useLocalValue } from "@/data";
 import { BottomSheet, Button, Checkbox, Icon, layout, ListRow, showToast, TextField, TextLink } from "@/ui";
 
@@ -60,8 +60,10 @@ export function EditDetailsSheet({ app, onClose }: { app: Application; onClose: 
 	);
 }
 
+type PostingSheetProps = { app: Application; onClose: () => void };
+
 /** The posting's link and the employer's original PDF, kept in case the posting changes or disappears. */
-export function PostingSheet({ app, onClose }: { app: Application; onClose: () => void }) {
+export function PostingSheet({ app, onClose }: PostingSheetProps) {
 	const queryClient = useQueryClient();
 	const [busy, setBusy] = useState(false);
 	const run = async (action: () => Promise<void>, failure: string) => {
@@ -70,7 +72,7 @@ export function PostingSheet({ app, onClose }: { app: Application; onClose: () =
 			await action();
 			await queryClient.invalidateQueries();
 		} catch (error) {
-			showToast({ message: error instanceof Error ? error.message : failure });
+			showToast({ message: error instanceof PostingPdfError ? error.message : failure });
 		} finally {
 			setBusy(false);
 		}
