@@ -271,10 +271,10 @@ export function SidebarPanel({ data, template }: SidebarPanelProps) {
 					}
 					className="w-full"
 				>
-					<SegmentedControlItem value="left">
+					<SegmentedControlItem value="left" className="basis-0">
 						<Trans>Left</Trans>
 					</SegmentedControlItem>
-					<SegmentedControlItem value="right">
+					<SegmentedControlItem value="right" className="basis-0">
 						<Trans>Right</Trans>
 					</SegmentedControlItem>
 				</SegmentedControl>
