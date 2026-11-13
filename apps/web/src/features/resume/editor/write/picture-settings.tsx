@@ -480,10 +480,10 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 				</div>
 
 				{shownCrop && shownCrop.file.size > 10 * 1024 * 1024 && (
-					<p
-						role="status"
-						className="text-sm text-warn-text"
-					>{t`This photo is larger than 10 MB. Use Crop and upload to shrink it.`}</p>
+					<p role="status" className="flex items-start gap-1.5 text-sm text-danger-text">
+						<Icon name="warning-circle" size={18} className="mt-px shrink-0" />
+						{t`This photo is larger than 10 MB. Use Crop and upload to shrink it.`}
+					</p>
 				)}
 				<DialogFooter className="flex-row flex-wrap justify-between">
 					<Button variant="ghost" onClick={onClose}>

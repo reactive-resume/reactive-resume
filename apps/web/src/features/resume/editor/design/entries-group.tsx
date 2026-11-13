@@ -208,10 +208,10 @@ export function EntriesGroup() {
 					onValueChange={(value) => set({ lead: value as EntryHeader["lead"] })}
 					className="w-full"
 				>
-					<SegmentedControlItem value="organization">
+					<SegmentedControlItem value="organization" className="flex-1">
 						<Trans>Company first</Trans>
 					</SegmentedControlItem>
-					<SegmentedControlItem value="role">
+					<SegmentedControlItem value="role" className="flex-1">
 						<Trans>Position first</Trans>
 					</SegmentedControlItem>
 				</SegmentedControl>
@@ -238,7 +238,7 @@ export function EntriesGroup() {
 					aria-label={t`Accent`}
 					value={entry.accent}
 					onValueChange={(value) => set({ accent: value as EntryHeader["accent"] })}
-					className="w-full"
+					className="w-full *:flex-1"
 				>
 					<SegmentedControlItem value="none">
 						<Trans context="Entry header accent">None</Trans>

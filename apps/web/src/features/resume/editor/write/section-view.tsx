@@ -120,7 +120,14 @@ function SectionBody({ section, locked }: { section: WriteSection; locked: boole
 							)
 						}
 					/>
-					<TextField label={<Trans>Kind</Trans>} value={getSectionTitle(section.type)} readOnly onChange={() => {}} />
+					<TextField
+						label={<Trans>Kind</Trans>}
+						value={getSectionTitle(section.type)}
+						readOnly
+						onChange={() => {}}
+						// Fixed when the section is added: drawn sunken, as a value rather than a field to type in (B10 tile 16).
+						className="border-transparent bg-sunken text-ink-2"
+					/>
 					<p className="col-span-full t-caption text-ink-3">
 						<Trans>
 							The kind is chosen when the section is added and can be any of the 13. Entries use that kind's form;

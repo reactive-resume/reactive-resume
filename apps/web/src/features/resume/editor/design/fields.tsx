@@ -189,7 +189,9 @@ export function SwitchListRow({
 			render={<label />}
 			className={cn(
 				"cursor-pointer",
-				!tall && "min-h-12 py-0 sm:min-h-12",
+				// 48 tall; a row with a description keeps 6px above and below its two lines (B13).
+				!tall && "min-h-12 sm:min-h-12",
+				!tall && (description ? "py-1.5" : "py-0"),
 				wrap && "[&_.truncate]:whitespace-normal",
 				className,
 			)}

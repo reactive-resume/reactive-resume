@@ -202,8 +202,11 @@ export function DownloadButtons({
 		);
 	}
 
+	// The boards keep the bar's Download PDF filled behind the Download menu and dialogs (B16, B24, B28): the bar's
+	// accent is the editor's, not the view's, so it is exempt from the shared "one accent behind a scrim" rule.
 	const more = (
 		<Button
+			keepAccent
 			size="icon"
 			disabled={disabled || busy}
 			aria-label={t`More download formats`}
@@ -219,6 +222,7 @@ export function DownloadButtons({
 	return (
 		<ButtonGroup aria-label={disabled ? t`Download, needs a connection` : t`Download`}>
 			<Button
+				keepAccent
 				loading={busy}
 				disabled={disabled}
 				size={iconOnly ? "icon" : "default"}

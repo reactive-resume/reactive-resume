@@ -223,7 +223,7 @@ export function ColorGroup() {
 					>
 						<span
 							// The ring takes the swatch's own colour (ink-2 on dark, where a dark accent would vanish).
-							className="grid h-10 place-items-center rounded-md shadow-[inset_0_0_0_1px_rgb(0_0_0/0.08)] group-data-checked/swatch:shadow-[0_0_0_2px_var(--bg),0_0_0_4px_var(--c)] dark:shadow-[0_0_0_1px_var(--control-border)] dark:group-data-checked/swatch:shadow-[0_0_0_2px_var(--bg),0_0_0_4px_var(--ink-2)]"
+							className="grid h-10 place-items-center rounded-md shadow-[inset_0_0_0_1px_var(--line)] group-data-checked/swatch:shadow-[0_0_0_2px_var(--bg),0_0_0_4px_var(--c)] dark:shadow-[0_0_0_1px_var(--control-border)] dark:group-data-checked/swatch:shadow-[0_0_0_2px_var(--bg),0_0_0_4px_var(--ink-2)]"
 							style={{ backgroundColor: accent.hex, "--c": accent.hex } as CSSProperties}
 						>
 							{selectedAccent?.hex === accent.hex && <Icon name="check" size={18} className="text-paper" />}
@@ -337,11 +337,13 @@ export function PageGroup({ showLanguage = true }: { showLanguage?: boolean } = 
 					}
 					className="w-full"
 				>
-					<SegmentedControlItem value="letter">
+					<SegmentedControlItem value="letter" className="flex-1">
 						<Trans context="US Letter paper size (8.5 × 11 in), shown beside A4">Letter</Trans>
 					</SegmentedControlItem>
-					<SegmentedControlItem value="a4">A4</SegmentedControlItem>
-					<SegmentedControlItem value="free-form">
+					<SegmentedControlItem value="a4" className="flex-1">
+						A4
+					</SegmentedControlItem>
+					<SegmentedControlItem value="free-form" className="flex-1">
 						<Trans>Free-form</Trans>
 					</SegmentedControlItem>
 				</SegmentedControl>

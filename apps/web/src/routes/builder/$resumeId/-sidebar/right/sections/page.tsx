@@ -49,7 +49,8 @@ export function PageSectionBuilder() {
 			<Field label={<Trans>Paper</Trans>}>
 				<SegmentedControl
 					aria-label={t`Paper`}
-					className="w-full"
+					// Equal segments, as the board draws them, whatever the words.
+					className="w-full *:flex-1"
 					value={page.format}
 					onValueChange={(value) =>
 						write(
@@ -73,7 +74,8 @@ export function PageSectionBuilder() {
 			<Field label={<Trans>Margins</Trans>} className="mt-3.5">
 				<SegmentedControl
 					aria-label={t`Margins`}
-					className="w-full"
+					// Equal segments, as the board draws them, whatever the words.
+					className="w-full *:flex-1"
 					value={margin ?? ""}
 					onValueChange={(value) => write("margins", (draft) => applyMargins(draft, value as MarginId), true)}
 				>
@@ -96,7 +98,8 @@ export function PageSectionBuilder() {
 			>
 				<SegmentedControl
 					aria-label={t`Density`}
-					className="w-full"
+					// Equal segments, as the board draws them, whatever the words.
+					className="w-full *:flex-1"
 					value={density ?? ""}
 					onValueChange={(value) => write("density", (draft) => applyDensity(draft, value as DensityId), true)}
 				>
@@ -152,7 +155,7 @@ export function PageSectionBuilder() {
 				<SegmentedControl
 					aria-label={t`Date format`}
 					value={page.dateFormat ?? "short"}
-					className="w-full [&_[data-slot=segmented-control-item]]:px-1.5"
+					className="w-full *:flex-1 [&_[data-slot=segmented-control-item]]:px-1.5"
 					onValueChange={(value) =>
 						write(
 							"dateFormat",

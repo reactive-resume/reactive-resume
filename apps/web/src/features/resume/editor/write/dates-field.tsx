@@ -236,44 +236,42 @@ export function DatesField({
 					</p>
 				) : null}
 			</div>
-			<div
-				className={cn(
-					single && "hidden",
-					"flex min-h-5 flex-wrap items-center gap-x-4 gap-y-1 text-[13px]/[18px] text-ink-2",
-				)}
-			>
-				{!custom && !single && (
-					<>
-						{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Checkbox is the wrapped control. */}
-						<label className="flex cursor-pointer items-center gap-2">
-							<Checkbox
-								className="size-4"
-								checked={dates.present}
-								onCheckedChange={(present) => {
-									const { expected: _expected, ...rest } = current;
-									onChange({ ...rest, present, end: dates.end });
-								}}
-							/>
-							<Trans>Present</Trans>
-						</label>
-						{expectable && !dates.present && (
-							// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Checkbox is the wrapped control.
+			{/* A single date keeps Custom text beside its label, so it has no row of options. */}
+			{!single && (
+				<div className="flex min-h-5 flex-wrap items-center gap-x-4 gap-y-1 text-[13px]/[18px] text-ink-2">
+					{!custom && (
+						<>
+							{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Checkbox is the wrapped control. */}
 							<label className="flex cursor-pointer items-center gap-2">
 								<Checkbox
 									className="size-4"
-									checked={dates.expected === true}
-									onCheckedChange={(expected) => {
+									checked={dates.present}
+									onCheckedChange={(present) => {
 										const { expected: _expected, ...rest } = current;
-										onChange(expected ? { ...rest, expected: true } : rest);
+										onChange({ ...rest, present, end: dates.end });
 									}}
 								/>
-								<Trans>Expected</Trans>
+								<Trans>Present</Trans>
 							</label>
-						)}
-					</>
-				)}
-				{!single && customToggle}
-			</div>
+							{expectable && !dates.present && (
+								// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Checkbox is the wrapped control.
+								<label className="flex cursor-pointer items-center gap-2">
+									<Checkbox
+										className="size-4"
+										checked={dates.expected === true}
+										onCheckedChange={(expected) => {
+											const { expected: _expected, ...rest } = current;
+											onChange(expected ? { ...rest, expected: true } : rest);
+										}}
+									/>
+									<Trans>Expected</Trans>
+								</label>
+							)}
+						</>
+					)}
+					{customToggle}
+				</div>
+			)}
 		</fieldset>
 	);
 }

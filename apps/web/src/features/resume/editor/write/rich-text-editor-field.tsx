@@ -199,7 +199,11 @@ export type RichTextEditorProps = {
 	heightClassName?: string;
 	/** Improve's presets for a cover letter's body, instead of the resume ones. */
 	improve?: ImproveKind | undefined;
+	/** Private text (the resume's notes): bold, italic, list and link only; no Improve, formatting menus or footer. */
+	compact?: boolean;
 };
+
+const COMPACT_ACTIONS = ["text-b", "text-italic", "list-bullets", "link-simple-horizontal"] as const;
 
 /**
  * Loaded on demand by ./rich-text-editor.tsx, which keeps Tiptap out of the builder's first render.
@@ -219,11 +223,15 @@ export function RichTextEditor({
 	heightClassName = "max-h-[360px] min-h-11",
 	focusRequest,
 	improve,
+	compact = false,
 }: RichTextEditorProps & { focusRequest?: FocusRequest }) {
 	const [focused, setFocused] = useState(false);
 	const toolbar = useRef<HTMLDivElement>(null);
 	const [improving, setImproving] = useState<ImproveLine | null>(null);
-	const actions = useToolbarActions();
+	const allActions = useToolbarActions();
+	const actions = compact
+		? COMPACT_ACTIONS.flatMap((icon) => allActions.filter((action) => action.icon === icon))
+		: allActions;
 	const ai = useHasUsableAiProvider();
 	const mobile = useBreakpoint() === "mobile";
 	const keyboardInset = useKeyboardInset();
@@ -405,7 +413,7 @@ export function RichTextEditor({
 					<Icon name={action.icon} />
 				</Toolbar.Button>
 			))}
-			{editor && (
+			{editor && !compact && (
 				<FormattingMenus
 					editor={editor}
 					formatting={state?.formatting ?? DEFAULT_FORMATTING}
@@ -414,24 +422,26 @@ export function RichTextEditor({
 					menus={menus}
 				/>
 			)}
-			<Toolbar.Button
-				type="button"
-				aria-expanded={improving !== null}
-				disabled={ai.isUnavailable || !characters || (!state?.canImprove && improving === null)}
-				title={state?.canImprove ? undefined : t`Put the caret in a line to improve it`}
-				onMouseDown={(event) => event.preventDefault()}
-				onClick={() => (improving ? setImproving(null) : startImprove())}
-				className={cn(
-					"ms-auto flex shrink-0 items-center gap-1.5 rounded-sm bg-surface px-2 text-[13px] font-medium text-ink-2 shadow-[inset_0_0_0_1px_var(--line-2)] transition-colors duration-quick hover:bg-hover disabled:opacity-45",
-					mobile ? "h-11" : "h-7",
-				)}
-			>
-				<Icon name="sparkle" size={16} />
-				{/* Icon only where the toolbar is narrow, so the formatting buttons keep one row. */}
-				<span>
-					<Trans>Improve</Trans>
-				</span>
-			</Toolbar.Button>
+			{!compact && (
+				<Toolbar.Button
+					type="button"
+					aria-expanded={improving !== null}
+					disabled={ai.isUnavailable || !characters || (!state?.canImprove && improving === null)}
+					title={state?.canImprove ? undefined : t`Put the caret in a line to improve it`}
+					onMouseDown={(event) => event.preventDefault()}
+					onClick={() => (improving ? setImproving(null) : startImprove())}
+					className={cn(
+						"ms-auto flex shrink-0 items-center gap-1.5 rounded-sm bg-surface px-2 text-[13px] font-medium text-ink-2 shadow-[inset_0_0_0_1px_var(--line-2)] transition-colors duration-quick hover:bg-hover disabled:opacity-45",
+						mobile ? "h-11" : "h-7",
+					)}
+				>
+					<Icon name="sparkle" size={16} />
+					{/* Icon only where the toolbar is narrow, so the formatting buttons keep one row. */}
+					<span>
+						<Trans>Improve</Trans>
+					</span>
+				</Toolbar.Button>
+			)}
 		</>
 	);
 
@@ -516,9 +526,9 @@ export function RichTextEditor({
 				{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
 				{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
 
-				{editing && !improving && !!characters && footer}
+				{editing && !improving && !!characters && !compact && footer}
 			</div>
-			{!editing && !disabled && characters === 0 && !mobile && (
+			{!editing && !disabled && characters === 0 && !mobile && !compact && (
 				<p className="mt-2 text-xs/4 text-ink-3">
 					<Trans>Improve works on a line once you have written one.</Trans>
 				</p>

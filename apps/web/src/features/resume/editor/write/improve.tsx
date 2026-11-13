@@ -136,15 +136,16 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 			) : (
 				<>
 					<div className="flex items-center justify-between gap-2">
-						<span className={!provider || improve.data ? "t-caption font-medium text-ink-3" : "t-label text-ink"}>
+						<span className={!provider || improve.data ? "t-caption font-medium text-ink-2" : "t-label text-ink"}>
 							{letter ? <Trans>Improve this paragraph</Trans> : <Trans>Improve selected line</Trans>}
 						</span>
 						{provider && (
-							<span className="text-xs text-ink-3">
+							<span className="text-xs/[18px] text-ink-3">
 								{provider.label} · {provider.model}
 							</span>
 						)}
-						<Button size="icon-xs" variant="ghost" aria-label={t`Close`} onClick={close}>
+						{/* A 16px mark on the caption's line: the hit area overhangs it instead of making the row taller. */}
+						<Button size="icon-xs" variant="ghost" aria-label={t`Close`} onClick={close} className="-my-1.5 -me-1.5">
 							<Icon name="x" size={16} />
 						</Button>
 					</div>

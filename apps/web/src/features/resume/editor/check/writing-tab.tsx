@@ -23,6 +23,7 @@ import { describeEntry } from "../write/model";
 import { CheckAiLine } from "./ai-line";
 import { getSectionName } from "./issues";
 import { mapWritingReview, editWritingProposal } from "./review";
+import { List, ListRow } from "@/components/calm/list-row";
 import { AiResultUsage } from "@/features/ai/usage";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
@@ -146,20 +147,34 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 	if (!hasUsableProvider && !review)
 		return (
 			<div>
-				<CheckAiLine lead={<Trans>Writing review needs AI.</Trans>}>
+				<CheckAiLine lead={<Trans>A writing review needs AI.</Trans>}>
 					<Trans>Issues and Job match work without it.</Trans>
 				</CheckAiLine>
-				{(["issues", "match"] as const).map((tab) => (
-					<Button
-						key={tab}
-						variant="ghost"
-						className="mt-3 flex w-full justify-between"
-						onClick={() => useEditorStore.setState({ checkTab: tab })}
-					>
-						{tab === "issues" ? <Trans>Issues</Trans> : <Trans>Job match</Trans>}
-						<Icon name="caret-right" />
-					</Button>
-				))}
+				{/* The two tabs that work without AI, as rows (N12 tile 09). */}
+				<List className="mt-3">
+					<ListRow
+						caret
+						title={<Trans>Issues</Trans>}
+						subtitle={
+							issues.length ? (
+								<Plural
+									value={issues.length}
+									one="# thing to review, each with one fix"
+									other="# things to review, each with one fix"
+								/>
+							) : (
+								<Trans>Nothing to review</Trans>
+							)
+						}
+						render={<button type="button" onClick={() => useEditorStore.setState({ checkTab: "issues" })} />}
+					/>
+					<ListRow
+						caret
+						title={<Trans>Job match</Trans>}
+						subtitle={<Trans>Which terms from a posting appear in it</Trans>}
+						render={<button type="button" onClick={() => useEditorStore.setState({ checkTab: "match" })} />}
+					/>
+				</List>
 			</div>
 		);
 
@@ -214,26 +229,31 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 				<strong className="text-sm font-semibold">
 					<Trans>A second opinion on your wording</Trans>
 				</strong>
-				<p className="text-[13px] leading-[18px] text-ink-2">
-					<Trans>
-						The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests
-						rewrites. It isn't part of the checks.
-					</Trans>
-				</p>
-				<div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-ink-3">
-					<Icon name="lock" size={16} />
-					<span>
-						{provider?.label} · {provider?.model}
-					</span>
-					<button
-						type="button"
-						aria-expanded={choosing}
-						className="font-medium text-ink-2 underline underline-offset-2"
-						onClick={() => setChoosing(!choosing)}
-					>
-						<Trans>Change</Trans>
-					</button>
-				</div>
+				{/* Nothing to read yet: the title, the disabled button and why (B22 tile 10). */}
+				{passages.length > 0 && (
+					<>
+						<p className="text-[13px] leading-[18px] text-ink-2">
+							<Trans>
+								The checks are mechanical. This asks a language model how a reader might react to your bullets and
+								suggests rewrites. It isn't part of the checks.
+							</Trans>
+						</p>
+						<div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-ink-3">
+							<Icon name="lock" size={16} />
+							<span>
+								{provider?.label} · {provider?.model}
+							</span>
+							<button
+								type="button"
+								aria-expanded={choosing}
+								className="font-medium text-ink-2 underline underline-offset-2"
+								onClick={() => setChoosing(!choosing)}
+							>
+								<Trans>Change</Trans>
+							</button>
+						</div>
+					</>
+				)}
 				{choosing && (
 					<AiProviderPicker
 						value={provider?.id ?? null}
@@ -260,7 +280,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 	return (
 		<div className="flex min-h-full flex-col gap-2 pt-2">
 			{!hasUsableProvider && (
-				<CheckAiLine lead={<Trans>Writing review needs AI.</Trans>}>
+				<CheckAiLine lead={<Trans>A writing review needs AI.</Trans>}>
 					<Trans>Issues and Job match work without it.</Trans>
 				</CheckAiLine>
 			)}
@@ -282,17 +302,17 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 					</button>
 				)}
 			</div>
+			{reviewInput !== null && reviewInput !== inputText && (
+				<p role="status" className="text-xs text-warn-text">
+					<Trans>Resume changed since this review. Review these suggestions as out of date or run again.</Trans>
+				</p>
+			)}
 			<details className="text-xs text-ink-3">
 				<summary className="cursor-pointer">
 					<Trans>AI request details</Trans>
 				</summary>
 				<AiResultUsage usage={reviewUsage} />
 			</details>
-			{reviewInput !== null && reviewInput !== inputText && (
-				<p role="status" className="text-xs text-warn-text">
-					<Trans>Resume changed since this review. Review these suggestions as out of date or run again.</Trans>
-				</p>
-			)}
 			{review.summary && <p className="text-[13px] leading-[18px] text-ink-2">{review.summary}</p>}
 
 			{proposals.length > 0 && (

@@ -283,7 +283,7 @@ function CategoryRows({ report }: { report: AtsReport }) {
 											t`${passed} of ${total}`
 										)}
 									</span>
-									<Icon name="caret-down" size={16} />
+									<Icon name={open ? "caret-up" : "caret-down"} size={16} />
 								</button>
 								<Collapsible open={open}>
 									<CollapsibleContent id={`check-category-${category}`}>
@@ -351,19 +351,24 @@ function DeepCheck({ data }: { data: ResumeData }) {
 			<List>
 				<ListRow
 					leading={<Icon name="file-pdf" className="text-ink-3" />}
-					title={running ? <Trans>Checking the exported PDF…</Trans> : <Trans>Also check the exported PDF</Trans>}
-					subtitle={<Trans>Checks the file you'd send, on this device</Trans>}
+					title={<Trans>Also check the exported PDF</Trans>}
+					// While it runs, the status replaces the description and the button (B22 tile 16).
+					subtitle={
+						running ? (
+							<span role="status" className="flex items-center gap-1.5">
+								<Spinner />
+								<Trans>Checking the exported PDF…</Trans>
+							</span>
+						) : (
+							<Trans>Checks the file you'd send, on this device</Trans>
+						)
+					}
 					trailing={
-						<Button
-							variant="link"
-							className="text-sm/5"
-							size="sm"
-							aria-label={running ? t`Checking the exported PDF…` : t`Check`}
-							disabled={running}
-							onClick={() => void run()}
-						>
-							{running ? <Spinner /> : <Trans>Check</Trans>}
-						</Button>
+						running ? undefined : (
+							<Button variant="link" className="text-sm/5" size="sm" onClick={() => void run()}>
+								<Trans>Check</Trans>
+							</Button>
+						)
 					}
 				/>
 			</List>
