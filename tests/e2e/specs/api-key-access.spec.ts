@@ -1,8 +1,9 @@
 import { expect, test } from "../fixtures/test";
 
 test("new API keys default to read-only and grant full access only when selected", async ({ authPage: page }) => {
-	await page.goto("/dashboard/settings/ai");
-	const open = () => page.getByRole("button", { name: "New key", exact: true }).click();
+	await page.goto("/dashboard/settings/developer");
+	// The New key row's name carries its hint ("Starts read-only. …").
+	const open = () => page.getByRole("button", { name: /^New key\b/ }).click();
 	const dialog = page.getByRole("dialog", { name: "New API key" });
 	const readOnly = dialog.getByRole("radio", { name: "Read only", exact: true });
 

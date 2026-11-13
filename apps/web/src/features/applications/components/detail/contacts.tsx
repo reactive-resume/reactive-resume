@@ -1,16 +1,22 @@
 import type { Application } from "../../types";
 import type { Contact } from "@reactive-resume/schema/applications/data";
+import type { ReactNode } from "react";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
-import { useId, useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { contactSchema } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
+import { isolate } from "@reactive-resume/utils/string";
+import { cn } from "@reactive-resume/utils/style";
 import { applicationDetailQueryKey } from "../../queries";
+import { companyInitials } from "../list-view";
+import { Chip } from "@/components/calm/filter-bar";
+import { IconTile, List, ListRow } from "@/components/calm/list-row";
 import { withQueryUndo } from "@/features/career/shared";
 import { client, prepareRpc } from "@/libs/orpc/client";
 
@@ -19,7 +25,12 @@ const EMPTY_CONTACT = { name: "", role: "", type: "", email: "", phone: "" };
 type ContactsProps = {
 	application: Pick<Application, "id" | "contacts" | "contactsVersion">;
 	disabled: boolean;
+	inline?: boolean;
 	onChange: (contacts: Contact[]) => void;
+	/** People met at interviews who aren't contacts yet, listed after them. */
+	people?: { name: string; role?: string | undefined }[];
+	/** The heading above the list, given the list's own Add contact action. Without it the action sits below. */
+	renderHeader?: (add: { start: () => void; disabled: boolean }) => ReactNode;
 };
 type Removing = { index: number; contact: Contact };
 
@@ -28,7 +39,7 @@ const contactKey = (contact: Contact) =>
 const sameContact = (a: Contact | undefined, b: Contact | undefined) => !!a && !!b && contactKey(a) === contactKey(b);
 
 /** The Contact cell: the primary contact (the first), and the full list, with add and remove, in a popover. */
-export function Contacts({ application, disabled, onChange }: ContactsProps) {
+export function Contacts({ application, disabled, onChange, inline = false, people, renderHeader }: ContactsProps) {
 	const { contacts } = application;
 	const queryClient = useQueryClient();
 	const [removing, setRemoving] = useState<Removing | null>(null);
@@ -44,7 +55,7 @@ export function Contacts({ application, disabled, onChange }: ContactsProps) {
 		withQueryUndo({
 			queryClient,
 			queryKey: applicationDetailQueryKey(application.id),
-			description: t`Removed ${contact.name}`,
+			description: t`Removed ${isolate(contact.name)}`,
 			errorMessage: t`Couldn't save the change. Try again.`,
 			prepare: () => {
 				if (!application.contactsVersion) throw new Error(t`Couldn't save the change. Try again.`);
@@ -67,6 +78,18 @@ export function Contacts({ application, disabled, onChange }: ContactsProps) {
 	};
 	const [primary, ...others] = shown;
 
+	if (inline)
+		return (
+			<ContactList
+				contacts={contacts}
+				disabled={disabled || preparing}
+				onChange={onChange}
+				removing={removing}
+				onRemove={remove}
+				people={people}
+				renderHeader={renderHeader}
+			/>
+		);
 	return (
 		<Popover>
 			{/* Named for the field, so "—" isn't read out as the button's name. */}
@@ -75,8 +98,8 @@ export function Contacts({ application, disabled, onChange }: ContactsProps) {
 					!primary
 						? t`Contact: none yet`
 						: others.length > 0
-							? t`Contact: ${primary.name} and ${i18n.number(others.length)} more`
-							: t`Contact: ${primary.name}`
+							? t`Contact: ${isolate(primary.name)} and ${i18n.number(others.length)} more`
+							: t`Contact: ${isolate(primary.name)}`
 				}
 				className="grid min-w-0 rounded-md text-start hover:underline"
 			>
@@ -105,10 +128,26 @@ type ContactListProps = {
 	onChange: (contacts: Contact[]) => void;
 	removing: Removing | null;
 	onRemove: (contact: Contact) => void;
+	people?: ContactsProps["people"];
+	renderHeader?: ContactsProps["renderHeader"];
 };
 
-function ContactList({ contacts, disabled, onChange, removing, onRemove }: ContactListProps) {
-	const id = useId();
+/** A contact's initials (`.mono2.sm`). */
+const Initials = ({ name }: { name: string }) => (
+	<IconTile aria-hidden="true" className="size-8 rounded-sm text-xs">
+		{companyInitials(name)}
+	</IconTile>
+);
+
+function ContactList({
+	contacts,
+	disabled,
+	onChange,
+	removing,
+	onRemove,
+	people = [],
+	renderHeader,
+}: ContactListProps) {
 	const [adding, setAdding] = useState(false);
 	// The contact being corrected: its position, and what it said when the form opened.
 	const [editing, setEditing] = useState<{ index: number; original: Contact } | null>(null);
@@ -161,122 +200,148 @@ function ContactList({ contacts, disabled, onChange, removing, onRemove }: Conta
 	};
 
 	const field = (key: keyof typeof EMPTY_CONTACT, label: string, type = "text") => (
-		<Input
-			aria-label={label}
-			placeholder={label}
-			type={type}
-			value={draft[key]}
-			onChange={(event) => {
-				setError("");
-				setDraft((current) => ({ ...current, [key]: event.target.value }));
-			}}
-		/>
+		<label className="grid gap-1.5 t-small text-ink-2">
+			{label}
+			<Input
+				aria-label={label}
+				placeholder={label}
+				type={type}
+				value={draft[key]}
+				onChange={(event) => {
+					setError("");
+					setDraft((current) => ({ ...current, [key]: event.target.value }));
+				}}
+			/>
+		</label>
 	);
 
 	return (
-		<div className="grid gap-2">
-			{shown.length === 0 && !formOpen && (
+		<div className={renderHeader ? "grid" : "grid gap-2"}>
+			{renderHeader?.({ start: () => setAdding(true), disabled: locked || formOpen })}
+			{shown.length === 0 && people.length === 0 && !formOpen && (
 				<p className="text-sm text-ink-3">
 					<Trans>No contacts yet.</Trans>
 				</p>
 			)}
-			{shown.map((contact) => {
-				const index = contacts.indexOf(contact);
-				return (
-					<div key={`${contact.name}-${index}`} className="flex items-start gap-2.5 text-sm">
-						<div className="grid min-w-0 flex-1">
-							<span className="truncate font-medium">
-								<bdi>{contact.name}</bdi>
-								{contact.type && <span className="font-normal text-ink-3"> · {contact.type}</span>}
-							</span>
-							{contact.role && (
-								<span dir="auto" className="truncate text-xs text-ink-3">
-									{contact.role}
-								</span>
-							)}
-							{contact.email && (
-								<a href={`mailto:${contact.email}`} className="truncate text-xs text-accent-text hover:underline">
-									{contact.email}
-								</a>
-							)}
-							{contact.phone && (
-								<a href={`tel:${contact.phone}`} className="truncate text-xs text-accent-text hover:underline">
-									{contact.phone}
-								</a>
-							)}
-						</div>
-						<Button
-							size="icon-xs"
-							variant="ghost"
-							className="touch-target relative"
-							disabled={locked || formOpen}
-							aria-label={t`Edit ${contact.name}`}
-							onClick={() => edit(index)}
-						>
-							<Icon name="pencil-simple" size={16} />
-						</Button>
-						<Button
-							size="icon-xs"
-							variant="ghost"
-							className="touch-target relative"
-							disabled={locked || formOpen}
-							aria-label={t`Remove ${contact.name}`}
-							onClick={() => onRemove(contact)}
-						>
-							<Icon name="x" size={16} />
-						</Button>
-					</div>
-				);
-			})}
+			<List>
+				{shown.map((contact) => {
+					const index = contacts.indexOf(contact);
+					const details = [contact.type, contact.role].filter(Boolean).join(" · ");
+					return (
+						<ListRow
+							key={`${contact.name}-${index}`}
+							className="min-h-[52px] py-1.5 sm:min-h-[52px]"
+							leading={<Initials name={contact.name} />}
+							title={<bdi className="block truncate text-sm/5">{contact.name}</bdi>}
+							subtitle={
+								details || contact.email || contact.phone ? (
+									<>
+										{details}
+										{[contact.email, contact.phone].filter(Boolean).map((value, position) => (
+											<Fragment key={value}>
+												{(details || position > 0) && " · "}
+												<a
+													href={value === contact.email ? `mailto:${value}` : `tel:${value}`}
+													className="font-mono text-xs font-medium hover:underline"
+												>
+													{value}
+												</a>
+											</Fragment>
+										))}
+									</>
+								) : undefined
+							}
+							actions={
+								<Button
+									size="icon-sm"
+									variant="ghost"
+									className="touch-target relative"
+									disabled={locked || formOpen}
+									aria-label={t`Edit ${contact.name}`}
+									onClick={() => edit(index)}
+								>
+									<Icon name="pencil-simple" size={16} />
+								</Button>
+							}
+						/>
+					);
+				})}
+				{people.map((person) => (
+					<ListRow
+						key={person.name}
+						className="min-h-[52px] py-1.5 sm:min-h-[52px]"
+						leading={<Initials name={person.name} />}
+						title={<bdi className="block truncate text-sm/5">{person.name}</bdi>}
+						subtitle={person.role}
+					/>
+				))}
+			</List>
 
 			{formOpen ? (
 				<form
-					className="grid gap-2 rounded-lg border border-line p-2.5"
+					className={cn("grid gap-2 rounded-lg border border-line p-2.5", renderHeader && "mt-2")}
 					onSubmit={(event) => {
 						event.preventDefault();
 						save();
 					}}
 				>
-					{field("name", t`Name`)}
 					<div className="grid grid-cols-2 gap-2">
+						{field("name", t`Name`)}
 						{field("role", t`Role (optional)`)}
-						<div className="relative">
-							<Input
-								aria-label={t`Label`}
-								placeholder={t`Label, e.g. Recruiter`}
-								list={`${id}-types`}
-								value={draft.type}
-								className="pe-8 [&::-webkit-calendar-picker-indicator]:opacity-0"
-								onChange={(event) => setDraft((current) => ({ ...current, type: event.target.value }))}
-							/>
-							<Icon
-								name="caret-down"
-								size={16}
-								className="pointer-events-none absolute inset-e-3 top-1/2 -translate-y-1/2 text-ink-3"
-							/>
-						</div>
 					</div>
+					<fieldset className="grid gap-1.5">
+						<legend className="t-small text-ink-2">
+							<Trans>Label</Trans>
+						</legend>
+						<div className="flex flex-wrap gap-1.5">
+							{[t`Recruiter`, t`Hiring manager`, t`Referral`, t`Interviewer`].map((label) => (
+								<Chip
+									key={label}
+									pressed={draft.type === label}
+									onClick={() => setDraft((current) => ({ ...current, type: label }))}
+								>
+									{label}
+								</Chip>
+							))}
+						</div>
+						<Input
+							aria-label={t`Custom label`}
+							placeholder={t`Or your own label`}
+							value={draft.type}
+							onChange={(event) => setDraft((current) => ({ ...current, type: event.target.value }))}
+						/>
+					</fieldset>
 					<div className="grid grid-cols-2 gap-2">
 						{field("email", t`Email (optional)`, "email")}
 						{field("phone", t`Phone (optional)`, "tel")}
 					</div>
-					<datalist id={`${id}-types`}>
-						<option value={t`Recruiter`} />
-						<option value={t`Hiring manager`} />
-						<option value={t`Referral`} />
-						<option value={t`Interviewer`} />
-					</datalist>
 					{error && <p className="text-xs text-danger-text">{error}</p>}
 					<div className="flex justify-end gap-1.5">
+						{editing !== null && contacts[editing.index] && (
+							<Button
+								type="button"
+								size="sm"
+								variant="danger-text"
+								className="me-auto"
+								disabled={locked}
+								onClick={() => {
+									const contact = contacts[editing.index];
+									close();
+									if (contact) onRemove(contact);
+								}}
+							>
+								<Trans>Remove</Trans>
+							</Button>
+						)}
 						<Button type="button" size="sm" variant="ghost" onClick={close}>
 							<Trans>Cancel</Trans>
 						</Button>
-						<Button type="submit" size="sm" disabled={!draft.name.trim() || disabled}>
-							{editing === null ? <Trans>Add</Trans> : <Trans>Save</Trans>}
+						<Button type="submit" size="sm" variant="secondary" disabled={!draft.name.trim() || disabled}>
+							{editing === null ? <Trans>Add contact</Trans> : <Trans>Save</Trans>}
 						</Button>
 					</div>
 				</form>
-			) : (
+			) : renderHeader ? null : (
 				<Button size="sm" variant="ghost" className="w-fit" disabled={locked} onClick={() => setAdding(true)}>
 					<Icon name="plus" size={16} />
 					<Trans>Add contact</Trans>

@@ -9,10 +9,10 @@ import { Trans } from "@lingui/react/macro";
 import { useEffect } from "react";
 import { EMPTY_RESUME_DATES } from "@reactive-resume/schema/resume/dates";
 import { Button } from "@reactive-resume/ui/components/button";
-import { FormControl, FormDescription, FormItem, FormLabel } from "@reactive-resume/ui/components/form";
+import { FormControl, FormItem, FormLabel } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
-import { Slider } from "@reactive-resume/ui/components/slider";
 import { generateId } from "@reactive-resume/utils/string";
 import { useEditorStore } from "../store";
 import { DatesField } from "./dates-field";
@@ -24,7 +24,7 @@ import { IconPicker } from "@/components/input/icon-picker";
 
 export type PageSettings = { locale: string; dateFormat?: DateFormat | undefined };
 
-type FieldSetProps = { entry: Entry; write: EntryWriter; page: PageSettings };
+type FieldSetProps = { entry: Entry; write: EntryWriter; page: PageSettings; locked: boolean };
 
 type Values = Record<string, unknown> & {
 	website?: Website & { inlineLink?: boolean };
@@ -50,6 +50,7 @@ function Text({
 		<TextField
 			label={label}
 			value={str(valuesOf(entry)[field])}
+			placeholder={field === "grade" || field === "phone" ? t`Optional` : undefined}
 			wide={wide}
 			autoFocus={autoFocus}
 			data-entry-field={field}
@@ -65,7 +66,7 @@ function Text({
 function Dates({ entry, write, page, single, expectable }: FieldSetProps & { single?: boolean; expectable?: boolean }) {
 	return (
 		<DatesField
-			className="col-span-full"
+			className={single ? "" : "col-span-full"}
 			dates={valuesOf(entry).dates ?? EMPTY_RESUME_DATES}
 			single={single}
 			expectable={expectable}
@@ -99,12 +100,16 @@ function Description({
 	write,
 	field = "description",
 	label,
-}: FieldSetProps & { field?: string; label?: string }) {
+	locked,
+	placeholder = t`What you did, and what changed because of it.`,
+}: FieldSetProps & { field?: string; label?: string; placeholder?: string }) {
 	return (
 		<div className="col-span-full grid gap-1.5">
-			<span className="text-[13px] leading-4 font-medium">{label ?? t`Description`}</span>
+			<span className="text-[13px] leading-[18px] font-medium text-ink-2">{label ?? t`Description`}</span>
 			<RichTextEditor
 				label={label ?? t`Description`}
+				disabled={locked}
+				placeholder={placeholder}
 				value={str(valuesOf(entry)[field])}
 				onChange={(html, options) =>
 					write(
@@ -127,7 +132,6 @@ function Keywords({ entry, write, label }: FieldSetProps & { label: ReactNode })
 			<FormControl
 				render={
 					<ChipInput
-						allowCommas
 						value={valuesOf(entry).keywords ?? []}
 						onChange={(keywords) =>
 							write("keywords", (target) => {
@@ -144,27 +148,46 @@ function Keywords({ entry, write, label }: FieldSetProps & { label: ReactNode })
 function Level({ entry, write }: FieldSetProps) {
 	const level = Number(valuesOf(entry).level ?? 0);
 	return (
-		<FormItem className="col-span-full gap-3">
-			<FormLabel>
+		<div className="col-span-full grid gap-1.5">
+			<span className="t-small font-medium text-ink-2">
 				<Trans>Level</Trans>
-			</FormLabel>
-			<FormControl
-				render={
-					<Slider
+			</span>
+			<div className="flex items-center gap-3">
+				<div className="relative flex h-6 items-center gap-1 rounded-sm has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent">
+					{[1, 2, 3, 4, 5].map((pip) => (
+						<span
+							key={pip}
+							aria-hidden="true"
+							className={
+								pip <= level
+									? "h-2 w-6 rounded-full bg-ink"
+									: "h-2 w-6 rounded-full bg-sunken shadow-[inset_0_0_0_1px_var(--line-2)]"
+							}
+						/>
+					))}
+					<input
+						type="range"
 						min={0}
 						max={5}
 						step={1}
-						value={[level]}
-						onValueChange={(value) =>
+						value={level}
+						aria-label={t`Level`}
+						className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+						onChange={(event) =>
 							write("level", (target) => {
-								target.level = Array.isArray(value) ? value[0] : value;
+								target.level = Number(event.target.value);
 							})
 						}
 					/>
-				}
-			/>
-			<FormDescription>{level === 0 ? t`Hidden` : `${i18n.number(level)} / ${i18n.number(5)}`}</FormDescription>
-		</FormItem>
+				</div>
+				<span className="t-mono text-ink-2">
+					<Trans>{i18n.number(level)} of 5</Trans>
+				</span>
+				<span className="ms-auto text-xs text-ink-3">
+					<Trans>0 hides it</Trans>
+				</span>
+			</div>
+		</div>
 	);
 }
 
@@ -181,7 +204,17 @@ function IconAndColor({ entry, write }: FieldSetProps) {
 					})
 				}
 				popoverProps={{ modal: true }}
-			/>
+				variant="secondary"
+				size="default"
+			>
+				{str(values.icon) ? (
+					<i aria-hidden="true" className={`ph ph-${str(values.icon)}`} />
+				) : (
+					<Icon name="circle-dashed" />
+				)}
+				{str(values.icon) ? <Trans>Icon</Trans> : <Trans>No icon</Trans>}
+				<Icon name="caret-down" size={16} />
+			</IconPicker>
 			<ColorPicker
 				value={str(values.iconColor)}
 				onChange={(color) =>
@@ -198,7 +231,7 @@ function IconAndColor({ entry, write }: FieldSetProps) {
 							className="size-4 rounded-sm border border-line-2"
 							style={{ backgroundColor: str(values.iconColor) || "currentColor" }}
 						/>
-						<Trans>Icon color</Trans>
+						{str(values.iconColor) ? <Trans>Icon color</Trans> : <Trans>Template color</Trans>}
 					</PopoverTrigger>
 				}
 			/>
@@ -206,7 +239,7 @@ function IconAndColor({ entry, write }: FieldSetProps) {
 	);
 }
 
-function Roles({ entry, write, page }: FieldSetProps) {
+function Roles({ entry, write, page, locked }: FieldSetProps) {
 	const roles = valuesOf(entry).roles ?? [];
 
 	const writeRoles = (key: string, mutate: (roles: RoleItem[]) => void, options?: Parameters<EntryWriter>[2]) =>
@@ -220,8 +253,16 @@ function Roles({ entry, write, page }: FieldSetProps) {
 
 	return (
 		<div className="col-span-full grid gap-3">
+			<span className="flex items-center justify-between t-small font-medium text-ink-2">
+				<Trans>Roles</Trans>
+				{roles.length > 0 && (
+					<span className="t-caption font-normal text-ink-3">
+						<Trans>{roles.length} · newest first</Trans>
+					</span>
+				)}
+			</span>
 			{roles.map((role, index) => (
-				<div key={role.id} className="grid grid-cols-2 gap-x-3 gap-y-2.5 rounded-lg border border-line bg-bg p-3">
+				<div key={role.id} className="grid grid-cols-2 gap-x-3 gap-y-2.5 border-t border-line pt-3">
 					<div className="col-span-full flex items-center justify-between">
 						<span className="text-[13px] font-medium text-ink-2">
 							<Trans>Role {i18n.number(index + 1)}</Trans>
@@ -277,11 +318,12 @@ function Roles({ entry, write, page }: FieldSetProps) {
 						}
 					/>
 					<div className="col-span-full grid gap-1.5">
-						<span className="text-[13px] leading-4 font-medium">
+						<span className="text-[13px] leading-[18px] font-medium text-ink-2">
 							<Trans>Description</Trans>
 						</span>
 						<RichTextEditor
 							label={t`Description of role ${i18n.number(index + 1)}`}
+							disabled={locked}
 							value={role.description}
 							onChange={(html, options) =>
 								writeRoles(
@@ -314,8 +356,14 @@ function Roles({ entry, write, page }: FieldSetProps) {
 					})
 				}
 			>
+				<Icon name="plus" size={16} />
 				<Trans>Add role</Trans>
 			</Button>
+			{roles.length === 0 && (
+				<p className="t-caption text-ink-3">
+					<Trans>For a promotion at the same company: its own position, dates and description.</Trans>
+				</p>
+			)}
 		</div>
 	);
 }
@@ -335,13 +383,26 @@ export function EntryFields({
 		case "experience":
 			return (
 				<>
-					<Text {...props} field="position" label={<Trans>Position</Trans>} autoFocus={autoFocus} />
-					<Text {...props} field="company" label={<Trans>Company</Trans>} />
-					<Text {...props} field="location" label={<Trans>Location</Trans>} wide />
-					<Dates {...props} />
-					<Link {...props} />
-					<Description {...props} />
+					<Text {...props} field="company" label={<Trans>Company</Trans>} autoFocus={autoFocus} />
+					<Text {...props} field="location" label={<Trans>Location</Trans>} />
+					{!valuesOf(props.entry).roles?.length && (
+						<>
+							<Text {...props} field="position" label={<Trans>Position</Trans>} wide />
+							<Dates {...props} />
+							<Description {...props} />
+						</>
+					)}
 					<Roles {...props} />
+					<MoreOptions>
+						{Boolean(valuesOf(props.entry).roles?.length) && (
+							<>
+								<Text {...props} field="position" label={<Trans>Position</Trans>} wide />
+								<Dates {...props} />
+								<Description {...props} />
+							</>
+						)}
+						<Link {...props} />
+					</MoreOptions>
 				</>
 			);
 		case "education":
@@ -354,7 +415,7 @@ export function EntryFields({
 					<Text {...props} field="location" label={<Trans>Location</Trans>} />
 					<Dates {...props} expectable />
 					<Link {...props} />
-					<Description {...props} />
+					<Description {...props} placeholder={t`Thesis, honors, relevant courses.`} />
 				</>
 			);
 		case "projects":
@@ -401,7 +462,7 @@ export function EntryFields({
 		case "awards":
 			return (
 				<>
-					<Text {...props} field="title" label={<Trans>Title</Trans>} autoFocus={autoFocus} />
+					<Text {...props} field="title" label={<Trans>Title</Trans>} wide autoFocus={autoFocus} />
 					<Text {...props} field="awarder" label={<Trans>Awarder</Trans>} />
 					<Dates {...props} single />
 					<Link {...props} />
@@ -411,17 +472,17 @@ export function EntryFields({
 		case "certifications":
 			return (
 				<>
-					<Text {...props} field="title" label={<Trans>Title</Trans>} autoFocus={autoFocus} />
+					<Text {...props} field="title" label={<Trans>Title</Trans>} wide autoFocus={autoFocus} />
 					<Text {...props} field="issuer" label={<Trans>Issuer</Trans>} />
 					<Dates {...props} single />
 					<Link {...props} />
-					<Description {...props} />
+					<Description {...props} placeholder={t`What it covers, or a credential number.`} />
 				</>
 			);
 		case "publications":
 			return (
 				<>
-					<Text {...props} field="title" label={<Trans>Title</Trans>} autoFocus={autoFocus} />
+					<Text {...props} field="title" label={<Trans>Title</Trans>} wide autoFocus={autoFocus} />
 					<Text {...props} field="publisher" label={<Trans>Publisher</Trans>} />
 					<Dates {...props} single />
 					<Link {...props} />

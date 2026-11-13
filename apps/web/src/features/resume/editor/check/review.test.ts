@@ -1,6 +1,6 @@
 import { expect, it } from "vite-plus/test";
 import { getStateIn } from "@reactive-resume/resume/proposals";
-import { mapWritingReview } from "./review";
+import { editWritingProposal, mapWritingReview } from "./review";
 
 it("does not reuse an accepted proposal identity for a fresh writing review", () => {
 	const passages = [
@@ -47,4 +47,67 @@ it("keeps stale original and rewrite readable without an applicable proposal", (
 			target: null,
 		},
 	]);
+});
+
+it("flags new writing claims for individual confirmation using the shared proposal guard", () => {
+	const passages = [
+		{
+			id: "bullet",
+			target: { sectionId: "experience", itemId: "role", field: "description" },
+			html: "<li>Built systems.</li>",
+			text: "Built systems.",
+			location: "Experience",
+		},
+	];
+	const review = (rewrite: string) =>
+		mapWritingReview(
+			[{ section: "Experience", passageId: "bullet", issue: "Be specific", rewrite, impact: "medium" }],
+			passages,
+		).proposals[0];
+	expect(review("Built systems for 40 engineers.")).toMatchObject({
+		addsClaims: true,
+		unsupported: expect.arrayContaining([expect.objectContaining({ kind: "figure" })]),
+	});
+	expect(review("Built systems.")).toBeUndefined();
+	expect(review("Built systems")).not.toHaveProperty("addsClaims");
+});
+
+it("rechecks edited writing claims while preserving proposal identity and AI receipt", () => {
+	const passages = [
+		{
+			id: "bullet",
+			target: { sectionId: "experience", itemId: "role", field: "description" },
+			html: "<li>Built systems.</li>",
+			text: "Built systems.",
+			location: "Experience",
+		},
+	];
+	const proposal = mapWritingReview(
+		[
+			{
+				section: "Experience",
+				passageId: "bullet",
+				issue: "Clearer",
+				rewrite: "Built better systems.",
+				impact: "medium",
+			},
+		],
+		passages,
+	).proposals[0];
+	if (!proposal) throw new Error("Missing proposal");
+	const original = { ...proposal, aiOperationIds: ["receipt"] };
+	const edited = editWritingProposal(original, "Built systems for 40 engineers.", passages, "Built systems.");
+	expect(edited).toMatchObject({
+		id: original.id,
+		before: original.before,
+		after: "<li>Built systems for 40 engineers.</li>",
+		edited: true,
+		aiOperationIds: ["receipt"],
+		addsClaims: true,
+		unsupported: expect.arrayContaining([expect.objectContaining({ kind: "figure" })]),
+	});
+	expect(editWritingProposal(edited, "Built systems.", passages, "Built systems.")).toMatchObject({
+		addsClaims: false,
+		unsupported: [],
+	});
 });

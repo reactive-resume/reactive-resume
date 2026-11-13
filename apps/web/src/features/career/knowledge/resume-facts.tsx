@@ -1,14 +1,23 @@
 import type { RouterOutput } from "@/libs/orpc/client";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { MAX_RESUME_FACT_CHARACTERS } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Checkbox } from "@reactive-resume/ui/components/checkbox";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
-import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { CATEGORIES, categoryLabel } from "./fact-categories";
 import { getAccountGeneration, getAccountId } from "@/libs/auth/account-scope";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -17,21 +26,23 @@ import { client, orpc } from "@/libs/orpc/client";
 type Review = RouterOutput["career"]["proposeResumeFacts"];
 type Draft = Review["proposals"][number] & { selected: boolean };
 
+/** C10: pull facts from a resume. Runs on the server from the resume's own text; nothing goes to an AI provider. */
 export function ResumeFacts() {
 	const { session } = useRouteContext({ strict: false });
 	const [open, setOpen] = useState(false);
 	return (
-		// Closed, it's one button; the bordered panel holds the review only while it's open.
-		open ? (
-			<section className="grid gap-3 rounded-xl border border-line p-3">
-				<ReviewResumeFacts key={session?.user.id} onClose={() => setOpen(false)} />
-			</section>
-		) : (
-			<Button variant="secondary" className="justify-self-start" onClick={() => setOpen(true)}>
-				<Icon name="file-text" size={18} />
-				<Trans>Pull facts from my resume</Trans>
+		<>
+			<Button variant="ghost" onClick={() => setOpen(true)}>
+				<Icon name="file-text" />
+				<Trans>Pull from my resume</Trans>
 			</Button>
-		)
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent closeLabel={t`Close`}>
+					{/* Mounted only while open, and per account: a cancelled or old-account review never shows late. */}
+					{open && <ReviewResumeFacts key={session?.user.id} onClose={() => setOpen(false)} />}
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 }
 
@@ -58,9 +69,9 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 	const [drafts, setDrafts] = useState<Draft[]>([]);
 	const [receipt, setReceipt] = useState<string | null>(null);
 	const preview = useMutation({
-		mutationFn: () => {
+		mutationFn: (resume: string) => {
 			if (!current() || !account.id) throw new Error("Account changed");
-			return client.career.proposeResumeFacts({ resumeId }, { context: { accountId: account.id } });
+			return client.career.proposeResumeFacts({ resumeId: resume }, { context: { accountId: account.id } });
 		},
 		onSuccess: (result) => {
 			if (current()) {
@@ -97,151 +108,168 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 	const error = preview.error ?? save.error;
 	const change = (index: number, patch: Partial<Draft>) =>
 		setDrafts((items) => items.map((item, i) => (i === index ? { ...item, ...patch } : item)));
+	// Choosing a resume reads it at once: there is nothing else to decide before the review.
+	const choose = (resume: string) => {
+		setResumeId(resume);
+		setReview(null);
+		setDrafts([]);
+		setReceipt(null);
+		preview.reset();
+		save.reset();
+		if (resume) preview.mutate(resume);
+	};
+	const resumes = documents.data?.filter((row) => row.type === "resume") ?? [];
+
 	return (
 		<>
-			<h3 className="font-semibold">
-				<Trans>Pull facts from my resume</Trans>
-			</h3>
-			<p className="text-sm text-ink-3">
-				<Trans>
-					Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to
-					Knowledge for all applications.
-				</Trans>
-			</p>
-			<label htmlFor={id}>
-				<Trans>Resume</Trans>
-			</label>
-			<NativeSelect
-				id={id}
-				value={resumeId}
-				disabled={busy || !documents.isSuccess}
-				onChange={(event) => {
-					setResumeId(event.target.value);
-					setReview(null);
-					setDrafts([]);
-					setReceipt(null);
-					preview.reset();
-					save.reset();
-				}}
-			>
-				<option value="">{t`Choose a resume`}</option>
-				{documents.data
-					?.filter((row) => row.type === "resume")
-					.map((row) => (
+			<DialogHeader>
+				<DialogTitle>
+					<Trans>Pull facts from my resume</Trans>
+				</DialogTitle>
+				<DialogDescription>
+					<Trans>Only the facts you tick are saved, for all applications. Nothing goes to an AI provider.</Trans>
+				</DialogDescription>
+			</DialogHeader>
+			<div className="grid gap-1.5">
+				<Label htmlFor={id}>
+					<Trans>Resume</Trans>
+				</Label>
+				<NativeSelect
+					id={id}
+					value={resumeId}
+					disabled={busy || !documents.isSuccess}
+					onChange={(event) => choose(event.target.value)}
+				>
+					<option value="">{t`Choose a resume`}</option>
+					{resumes.map((row) => (
 						<option key={row.id} value={row.id}>
 							{row.name}
 						</option>
 					))}
-			</NativeSelect>
+				</NativeSelect>
+			</div>
 			{documents.isError && (
 				<Button variant="secondary" onClick={() => void documents.refetch()}>
 					<Trans>Retry documents</Trans>
 				</Button>
 			)}
-			{documents.isSuccess && !documents.data.some((row) => row.type === "resume") && (
-				<p role="status">
+			{documents.isSuccess && resumes.length === 0 && (
+				<p role="status" className="text-ink-2">
 					<Trans>Create or import a resume in Documents first.</Trans>
 				</p>
 			)}
-			<Button
-				variant="secondary"
-				disabled={!resumeId || busy}
-				loading={preview.isPending}
-				onClick={() => {
-					setReview(null);
-					setDrafts([]);
-					setReceipt(null);
-					save.reset();
-					preview.mutate();
-				}}
-			>
-				<Trans>Review resume facts</Trans>
-			</Button>
+			{preview.isPending && (
+				<p role="status" className="t-small text-ink-3">
+					<Trans>Reading the resume…</Trans>
+				</p>
+			)}
 			{error && (
-				<p role="alert" className="text-sm text-danger-text">
+				<div role="alert" className="grid justify-items-start gap-2 text-sm text-danger-text">
 					{getOrpcErrorMessage(error, {
 						fallback: t`Couldn't load or save resume facts. Try again.`,
 						allowServerMessage: true,
 					})}
+					{preview.isError && resumeId && (
+						<Button variant="secondary" size="sm" onClick={() => choose(resumeId)}>
+							<Trans>Try again</Trans>
+						</Button>
+					)}
+				</div>
+			)}
+			{receipt && (
+				<p role="status" className="text-ink-2">
+					{receipt}
 				</p>
 			)}
-			{receipt && <p role="status">{receipt}</p>}
 			{review && (
-				<div className="grid gap-3" aria-label={t`Resume fact proposals`}>
-					<p className="text-sm">{review.name}</p>
-					{!drafts.length && (
-						<p role="status">
+				<div className="grid" aria-label={t`Resume fact proposals`}>
+					{drafts.length > 0 ? (
+						<div className="flex items-center justify-between gap-2 border-b border-line pb-2 t-small text-ink-2">
+							{plural(drafts.length, {
+								one: "Found # fact you don't have yet",
+								other: "Found # facts you don't have yet",
+							})}
+							<button
+								type="button"
+								disabled={save.isPending}
+								onClick={() => {
+									const all = selected.length === drafts.length;
+									setDrafts((items) => items.map((item) => ({ ...item, selected: !all })));
+								}}
+								className="rounded-xs font-medium text-accent-text hover:underline"
+							>
+								{selected.length === drafts.length ? <Trans>Select none</Trans> : <Trans>Select all</Trans>}
+							</button>
+						</div>
+					) : (
+						<p role="status" className="text-ink-2">
 							<Trans>No supported excerpts found. Add a fact manually or choose another resume.</Trans>
-						</p>
-					)}
-					{review.omitted > 0 && (
-						<p role="status">
-							<Trans>Some resume text was left out. Add other facts manually.</Trans>
 						</p>
 					)}
 					{drafts.map((item, index) => (
 						<fieldset
 							key={item.quote}
-							className="grid gap-2 rounded-lg border border-line p-3"
 							disabled={save.isPending}
+							className="flex items-start gap-3 border-b border-line py-2.5"
 						>
-							<label className="flex min-h-11 items-center gap-2">
-								<input
-									type="checkbox"
-									checked={item.selected}
-									onChange={(event) => change(index, { selected: event.target.checked })}
-								/>{" "}
-								<Trans>Save this fact</Trans>
-							</label>
-							<label htmlFor={`${id}-fact-${index}`}>
-								<Trans>Fact</Trans>
-							</label>
-							<Textarea
-								id={`${id}-fact-${index}`}
-								value={item.text}
-								// HTML counts UTF-16 units; the handler enforces the Unicode character limit.
-								maxLength={MAX_RESUME_FACT_CHARACTERS * 2}
-								onChange={(event) => {
-									const text = event.target.value;
-									if (Array.from(text).length <= MAX_RESUME_FACT_CHARACTERS) change(index, { text });
-								}}
+							<Checkbox
+								checked={item.selected}
+								aria-label={t`Save this fact: ${item.text}`}
+								onCheckedChange={(checked) => change(index, { selected: checked })}
+								className="mt-0.5"
 							/>
-							<label htmlFor={`${id}-type-${index}`}>
-								<Trans>Type</Trans>
-							</label>
-							<NativeSelect
-								id={`${id}-type-${index}`}
-								value={item.category}
-								onChange={(event) => change(index, { category: event.target.value as Draft["category"] })}
-							>
-								{CATEGORIES.map((category) => (
-									<option key={category} value={category}>
-										{categoryLabel(category)}
-									</option>
-								))}
-							</NativeSelect>
-							<details>
-								<summary className="cursor-pointer text-sm">
-									<Trans>Source quotation</Trans>
-								</summary>
-								<blockquote className="text-sm whitespace-pre-wrap text-ink-3">{item.quote}</blockquote>
-							</details>
+							<div className="grid min-w-0 flex-1 gap-0.5">
+								<textarea
+									aria-label={t`Fact`}
+									rows={1}
+									value={item.text}
+									// HTML counts UTF-16 units; the handler enforces the Unicode character limit.
+									maxLength={MAX_RESUME_FACT_CHARACTERS * 2}
+									onChange={(event) => {
+										const text = event.target.value;
+										if (Array.from(text).length <= MAX_RESUME_FACT_CHARACTERS) change(index, { text });
+									}}
+									className="field-sizing-content w-full resize-none rounded-xs bg-transparent text-[15px]/[22px] font-medium text-ink outline-none focus:shadow-[0_1px_0_0_var(--accent)] focus-visible:outline-none"
+								/>
+								<p className="line-clamp-2 t-small text-ink-3">
+									<select
+										aria-label={t`Type`}
+										value={item.category}
+										onChange={(event) => change(index, { category: event.target.value as Draft["category"] })}
+										className="field-sizing-content cursor-pointer appearance-none rounded-xs bg-transparent text-ink-2 underline decoration-line-2 underline-offset-2 outline-none hover:text-ink"
+									>
+										{CATEGORIES.map((category) => (
+											<option key={category} value={category}>
+												{categoryLabel(category)}
+											</option>
+										))}
+									</select>{" "}
+									· <Trans>from “{item.quote}”</Trans>
+								</p>
+							</div>
 						</fieldset>
 					))}
-					{!!drafts.length && (
-						<Button
-							loading={save.isPending}
-							disabled={!selected.length || selected.some((item) => !item.text.trim()) || busy}
-							onClick={() => save.mutate()}
-						>
-							<Trans>Save selected facts</Trans>
-						</Button>
+					{review.omitted > 0 && (
+						<p role="status" className="pt-2 text-xs/4 text-ink-3">
+							<Trans>Some resume text was left out; add other facts yourself.</Trans>
+						</p>
 					)}
 				</div>
 			)}
-			<Button variant="ghost" disabled={save.isPending} onClick={onClose}>
-				<Trans>Cancel</Trans>
-			</Button>
+			<DialogFooter>
+				<Button variant="ghost" disabled={save.isPending} onClick={onClose}>
+					{receipt ? <Trans>Done</Trans> : <Trans>Cancel</Trans>}
+				</Button>
+				{drafts.length > 0 && (
+					<Button
+						loading={save.isPending}
+						disabled={!selected.length || selected.some((item) => !item.text.trim()) || busy}
+						onClick={() => save.mutate()}
+					>
+						{plural(selected.length, { one: "Save # fact", other: "Save # facts" })}
+					</Button>
+				)}
+			</DialogFooter>
 		</>
 	);
 }

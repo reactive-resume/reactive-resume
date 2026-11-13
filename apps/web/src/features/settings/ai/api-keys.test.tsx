@@ -37,7 +37,7 @@ async function revoke() {
 		</I18nProvider>,
 	);
 	await waitFor(() => expect(screen.getByText("Claude Desktop")).toBeTruthy());
-	expect(screen.getAllByText("Never")).toHaveLength(2);
+	expect(screen.getByText(/never used · no expiry$/)).toBeTruthy();
 	fireEvent.click(screen.getByRole("button", { name: "Revoke Claude Desktop" }));
 	await waitFor(() => expect(toasts.add).toHaveBeenCalled());
 	return toasts.add.mock.calls.at(-1)?.[0] as ToastOptions;

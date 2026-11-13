@@ -112,7 +112,7 @@ export function Tailor() {
 						<div className="flex items-center gap-[11px]">
 							<span
 								aria-hidden="true"
-								className="font-anybody flex size-9 shrink-0 items-center justify-center rounded-lg bg-ink text-[19px] leading-none text-bg font-stretch-[95%]"
+								className="font-anybody flex size-9 shrink-0 items-center justify-center rounded-md bg-ink text-[19px] leading-none text-bg font-stretch-[95%]"
 							>
 								F
 							</span>
@@ -142,7 +142,7 @@ export function Tailor() {
 						<div className="font-martian grid grid-cols-4 text-xs leading-none font-medium text-ink-3">
 							{stages.map((stage) => (
 								<span key={stage.label} className="flex min-w-0 items-center gap-[5px]">
-									<span aria-hidden="true" className={cn("size-[7px] shrink-0 rounded-sm", stage.dot)} />
+									<span aria-hidden="true" className={cn("size-[7px] shrink-0 rounded-full", stage.dot)} />
 									{stage.label}
 								</span>
 							))}
@@ -159,7 +159,7 @@ export function Tailor() {
 				<div className="absolute end-[14vw] top-[73%] aspect-[612/792] w-(--pw) -translate-y-1/2 opacity-[clamp(0,var(--p)*20,1)] min-[900px]:end-[8vw] min-[900px]:top-[58%]">
 					<div
 						aria-hidden="true"
-						className="@container absolute inset-0 [transform:translate(calc(var(--dir)*var(--cv)*var(--cvx)),calc(var(--cv)*8%))_rotate(calc(var(--dir)*var(--cv)*-8deg))] overflow-hidden rounded-sm bg-[#fbfaf6] shadow-paper [transition:transform_.5s_var(--ease)]"
+						className="@container absolute inset-0 [transform:translate(calc(var(--dir)*var(--cv)*var(--cvx)),calc(var(--cv)*8%))_rotate(calc(var(--dir)*var(--cv)*-8deg))] overflow-hidden rounded-paper bg-[#fbfaf6] shadow-paper [transition:transform_.5s_var(--ease)]"
 					>
 						<div className="flex flex-col gap-[2.6cqw] p-[9cqw] font-display text-[2.2cqw] leading-normal text-[oklch(0.3_0.01_95)]">
 							<span className="font-martian text-[1.6cqw] font-medium text-[oklch(0.48_0.1_150)]">
@@ -171,7 +171,7 @@ export function Tailor() {
 							))}
 						</div>
 					</div>
-					<div data-thread-to className="absolute inset-0 rounded-sm shadow-paper">
+					<div data-thread-to className="absolute inset-0 rounded-paper shadow-paper">
 						<Sheet />
 					</div>
 				</div>

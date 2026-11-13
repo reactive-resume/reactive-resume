@@ -1155,6 +1155,10 @@ msgstr "Aansoek gedoen {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Aansoek gedoen op 28 Okt · 'n kort boodskap is nou gepas"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Geld vir die webblad ná sy eie style, op elke skermgrootte. Die PDF bly soos dit is."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Dit kon nie gelaai word nie"
 msgid "Couldn't load this document. Try again."
 msgstr "Hierdie dokument kon nie gelaai word nie. Probeer weer."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Hierdie weergawe kon nie gelaai word nie. Probeer weer."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Dit kon nie gelaai word nie. Probeer weer."
@@ -2405,6 +2405,10 @@ msgstr "Pasgemaak"
 msgid "Custom colour"
 msgstr "Pasgemaakte kleur"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "Pasgemaakte CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Daagliks"
@@ -2658,10 +2662,6 @@ msgstr "Dokument"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Dokumentaksies"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Dokument onbeskikbaar."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Ongeldige skedulefrekwensie."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Ongeldige transkripsieantwoord."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Uitgawe {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Bladsy {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Bladsy {0} van {1}"
@@ -5445,7 +5440,7 @@ msgstr "Oefen hierdie vrae"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Oefen hierdie storie"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Pas vir die posadvertensie aan"
 msgid "Take photo"
 msgstr "Neem foto"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Tik op 'n afdeling om dit te wysig"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Tik om te kopieer"
@@ -7682,7 +7673,7 @@ msgstr "Skakel eers die openbare skakel in Deel aan."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Afgeskakel"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

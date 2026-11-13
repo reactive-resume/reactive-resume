@@ -1155,6 +1155,10 @@ msgstr "{0} 지원"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "10월 28일 지원 · 지금 짧은 메시지를 보내도 좋습니다"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "웹 페이지 자체 스타일 다음에, 모든 화면 크기에서 적용됩니다. PDF는 그대로 유지됩니다."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "불러올 수 없음"
 msgid "Couldn't load this document. Try again."
 msgstr "이 문서를 불러올 수 없습니다. 다시 시도하세요."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "이 버전을 불러올 수 없습니다. 다시 시도하세요."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "불러올 수 없습니다. 다시 시도하세요."
@@ -2405,6 +2405,10 @@ msgstr "사용자 지정"
 msgid "Custom colour"
 msgstr "사용자 지정 색상"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "사용자 지정 CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "매일"
@@ -2658,10 +2662,6 @@ msgstr "문서"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "문서 작업"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "문서를 사용할 수 없습니다."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "잘못된 일정 반복 주기입니다."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "잘못된 음성 변환 응답입니다."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "{0} 발행"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "페이지 {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "{1}의 페이지 {0}"
@@ -5445,7 +5440,7 @@ msgstr "이 질문 연습"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "이 스토리 연습하기"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "공고에 맞게 수정"
 msgid "Take photo"
 msgstr "사진 찍기"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "섹션을 탭하여 편집"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "탭하여 복사"
@@ -7682,7 +7673,7 @@ msgstr "먼저 공유에서 공개 링크를 켜세요."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "꺼짐"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

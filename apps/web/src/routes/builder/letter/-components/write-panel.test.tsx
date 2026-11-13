@@ -49,6 +49,7 @@ vi.mock("@/features/letters/compose", () => ({
 		greeting: () => "Hi",
 		teamGreeting: "Hi",
 		signOff: "Regards",
+		formatDate: (date: string) => date,
 	}),
 }));
 vi.mock("@/features/letters/use-letter-mode", () => ({ useLetterMode: () => ["write", vi.fn()] }));
@@ -206,4 +207,14 @@ it("late Improve edit cannot write into another letter session", () => {
 	state.sessionId = "another-session";
 	captured?.("<p>Wrong target</p>", { aiOperationIds: ["reviewed-improve"] });
 	expect(state.edit).not.toHaveBeenCalled();
+});
+
+it("shows detached sender fields first and keeps changing the source resume available", () => {
+	renderPanel();
+	expect(screen.getByLabelText("Full name")).toBeTruthy();
+	expect(screen.queryByRole("combobox", { name: "Resume" })).toBeNull();
+	const change = screen.getByRole("button", { name: "Change resume" });
+	expect(change.parentElement?.closest("button")).toBeNull();
+	fireEvent.click(change);
+	expect(screen.getByRole("combobox", { name: "Resume" })).toBeTruthy();
 });

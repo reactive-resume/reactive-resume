@@ -1155,6 +1155,10 @@ msgstr "已於 {0} 申請"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "10 月 28 日投遞 · 現在可以發一則簡短訊息"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "在網頁本身的樣式之後套用，適用於所有螢幕尺寸。PDF 維持不變。"
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "無法載入此內容"
 msgid "Couldn't load this document. Try again."
 msgstr "無法載入此文件。請重試。"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "無法載入此版本。請重試。"
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "無法載入此內容。請重試。"
@@ -2405,6 +2405,10 @@ msgstr "自訂"
 msgid "Custom colour"
 msgstr "自訂色彩"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "自訂 CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "每天"
@@ -2658,10 +2662,6 @@ msgstr "文件"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "文件操作"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "文件無法使用。"
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "無效的排程頻率。"
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "無效的轉錄回應。"
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "問題{0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "第 {0} 頁"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "第 {0} 頁，共 {1} 頁"
@@ -5445,7 +5440,7 @@ msgstr "練習這些問題"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "練習此故事"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "針對徵才資訊客製"
 msgid "Take photo"
 msgstr "拍照"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "點選章節以編輯"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "點一下以複製"
@@ -7682,7 +7673,7 @@ msgstr "請先在分享中開啟公開連結。"
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "已關閉"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

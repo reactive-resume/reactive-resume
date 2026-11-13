@@ -13,8 +13,8 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
 ## Create an API key
 
 <Steps>
-  <Step title="Open AI & developer settings">
-    Select your name at the bottom of the sidebar, choose **Settings**, then open **AI & developer**. You can also press <kbd>⌘</kbd> <kbd>K</kbd> (<kbd>Ctrl</kbd> <kbd>K</kbd> on Windows and Linux) and type "API keys".
+  <Step title="Open Developer settings">
+    Select your name at the bottom of the sidebar to open **Settings**, then open **Developer**. You can also press <kbd>⌘</kbd> <kbd>K</kbd> (<kbd>Ctrl</kbd> <kbd>K</kbd> on Windows and Linux) and type "API keys".
   </Step>
   <Step title="Start a new key">
     In the **API keys** section, select **New key**.
@@ -22,8 +22,8 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
   <Step title="Name the key, choose its access and expiration">
     Under **What's it for?**, enter a name that reminds you where the key is used, such as "Resume sync script". Under **Access**, choose **Read only** unless the tool needs to change your documents; **Read, write and delete** lets it change and delete them too. Under **Expires**, choose **30 days**, **90 days** or **Never**, then select **Create key**. If you signed in more than a day ago, you're asked to sign in again first.
 
-    <Frame caption="Name a key and choose its access and expiration">
-      <img src="/images/guides/using-the-api/new-api-key-dialog.webp" alt="New API key dialog with Resume sync script entered, Read only selected under Access with the note that it can't change or delete anything, 30 days selected under Expires, and Create key" />
+    <Frame caption="Choose a key’s access and expiry">
+      <img src="/images/guides/using-the-api/new-api-key-dialog.webp" alt="New API key dialog with What’s it for, Read only or Read write and delete, and expiry choices" />
     </Frame>
 
   </Step>
@@ -43,10 +43,10 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
 
 Your keys are listed in the **API keys** table with their access (**Read only** or **Full access**), the date each was created, the date it was last used and when it expires. The mobile app shows the same details under **Settings → Account → API keys**. Expired keys disappear from the list and stop working.
 
-<Frame caption="Manage API keys from settings">
+<Frame caption="API keys live in Developer">
   <img
     src="/images/guides/using-the-api/api-keys-section.webp"
-    alt="API keys table with fictional Resume sync script and Claude Desktop keys, their Read only and Full access levels, creation and expiration dates, last use and Revoke"
+    alt="API keys in Developer settings with two fictional keys and their access and expiry"
   />
 </Frame>
 
@@ -258,7 +258,7 @@ Branch on `code` rather than on the message text. Invalid input uses `400`, miss
 
 <Steps>
   <Step title="Find the key">
-    Open **Settings**, then **AI & developer**. In the **API keys** table, find the key you want to stop.
+    Open **Settings**, then **Developer**. In the **API keys** table, find the key you want to stop.
   </Step>
   <Step title="Revoke it">
     Select **Revoke**. The key stops working at once, and a message confirms which key you revoked.

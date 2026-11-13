@@ -1155,6 +1155,10 @@ msgstr "Prijavljeno {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Poslano 28. okt. · zdaj je primeren kratek opomnik"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Velja za spletno stran po njenih lastnih slogih, pri vsaki velikosti zaslona. PDF ostane nespremenjen."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Nalaganje ni uspelo"
 msgid "Couldn't load this document. Try again."
 msgstr "Tega dokumenta ni bilo mogoče naložiti. Poskusite znova."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Te različice ni bilo mogoče naložiti. Poskusite znova."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Nalaganje ni uspelo. Poskusite znova."
@@ -2405,6 +2405,10 @@ msgstr "Po meri"
 msgid "Custom colour"
 msgstr "Barva po meri"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "CSS po meri"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Dnevno"
@@ -2658,10 +2662,6 @@ msgstr "Dokument"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Dejanja dokumenta"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Dokument ni na voljo."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Neveljavna pogostost razporeda."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Neveljaven odgovor prepisa."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Izdaja {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Stran {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Stran {0} od {1}"
@@ -5445,7 +5440,7 @@ msgstr "Vadi ta vprašanja"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Vadite to zgodbo"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Prilagodi oglasu"
 msgid "Take photo"
 msgstr "Posnemi fotografijo"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Tapnite sekcijo za urejanje"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Tapnite za kopiranje"
@@ -7682,7 +7673,7 @@ msgstr "Najprej vklopite javno povezavo v Deljenju."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Izklopljeno"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

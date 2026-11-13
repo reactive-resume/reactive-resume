@@ -15,6 +15,10 @@ import { getPageTitle, createNoindexFollowMeta } from "@/libs/seo";
 const searchSchema = z.object({
 	// Write is the default and stays out of the URL.
 	mode: z.enum(EDITOR_MODES).optional().catch(undefined),
+	designCategory: z
+		.enum(["template", "layout", "entries", "typography", "color", "page", "css"])
+		.optional()
+		.catch(undefined),
 	checkTab: z.enum(["issues", "match", "writing"]).optional().catch(undefined),
 	// Opens History on this version, read-only; Applications' "Open" on what was sent links here.
 	version: z.string().optional().catch(undefined),
@@ -24,6 +28,9 @@ const searchSchema = z.object({
 	ask: z.string().max(2_000).optional().catch(undefined),
 	// Prepare for next step keeps the application clicked, even when a base resume serves several jobs.
 	applicationId: z.string().optional().catch(undefined),
+	// What is open in Write and outlined on the page: a section id (or "basics"), and one of its entries.
+	section: z.string().max(64).optional().catch(undefined),
+	entry: z.string().max(64).optional().catch(undefined),
 	// The file a resume was just imported from; Write says what came in until it's dismissed.
 	imported: z.string().max(255).optional().catch(undefined),
 });
@@ -75,7 +82,7 @@ function UnavailableResume() {
 			if (!active || notified.current) return;
 			notified.current = true;
 			toast.add({ type: "error", description: t`That resume isn't available. It may have been deleted.` });
-			void navigate({ to: "/dashboard", replace: true });
+			void navigate({ to: "/dashboard/documents", replace: true });
 		});
 		return () => {
 			active = false;

@@ -3,9 +3,9 @@ title: "Using the assistant"
 description: "Ask the AI assistant to improve your resume or cover letter, then review and accept or reject its proposed changes. Nothing changes until you accept."
 ---
 
-The assistant is an AI chat panel beside your document in the editor. It reads the resume or letter you have open, and the job posting when the document is linked to an application, then proposes changes for you to review. Text-only suggestions can be accepted individually; changes to fields, entries or sections are reviewed and accepted as one set. It never changes your document on its own.
+The assistant is an AI chat panel beside your document in the editor. It reads the resume or letter you have open, and the job posting when the document is linked to an application, then proposes changes for you to review. Text-only suggestions can be accepted individually; changes to fields, entries or sections are reviewed and accepted as one set. It never changes your document on its own. On web, when you start from a base resume, the first accepted edit makes a copy and opens it with that edit applied. The original stays unchanged. An existing job copy is already separate and is edited in place, as are cover letters.
 
-**Prepare application** in Apply generates a combined review of pending tailoring proposals, a letter draft and answers for pasted form questions after one context disclosure. Each section needs approval; existing version guards and account-scoped draft recovery apply. See [Prepare the application together](/guides/writing-application-answers#prepare-the-application-together). Nothing is submitted to an employer.
+**Prepare drafts** in Apply generates a combined review of pending tailoring proposals, a letter draft and answers for pasted form questions after one context disclosure. Each section needs approval; existing version guards and account-scoped draft recovery apply. See [Prepare the application together](/guides/writing-application-answers#prepare-the-application-together). Nothing is submitted to an employer.
 
 ## Before you start
 
@@ -13,16 +13,16 @@ Connect an AI provider with your own API key. See [Connecting an AI provider](/g
 
 ## Open the assistant
 
-In the editor, select **Assistant** (the sparkle button) in the editor bar, just before **Share**, or press <kbd>⌘</kbd> <kbd>J</kbd> (<kbd>Ctrl</kbd> <kbd>J</kbd> on Windows and Linux). Press it again, or select **Close the assistant** (×) in the panel, to close it.
+In the editor, select **Assistant** (the sparkle button) in the editor bar, beside the clock button, or press <kbd>⌘</kbd> <kbd>J</kbd> (<kbd>Ctrl</kbd> <kbd>J</kbd> on Windows and Linux). Press it again, or select **Close the assistant** (×) in the panel, to close it.
 
-<Frame caption="Start with a suggestion or your own message. This example uses a fictional resume and a local demonstration provider.">
+<Frame caption="Review a pending edit on a fictional guest sample">
   <img
     src="/images/guides/career/chat-assistant.png"
-    alt="Assistant showing What should we work on, resume starter rows, the Fictional Cedar AI connection and stub model, document and Knowledge controls, an unsent message and its privacy disclosure"
+    alt="Assistant replacing the editor panel, with a pending summary edit on the fictional David Kowalski guest sample"
   />
 </Frame>
 
-On wide screens the assistant opens as a third column. On smaller laptops it takes the place of the left panel, on tablets it slides in as a drawer, and on phones it fills the screen.
+The assistant takes the current panel's place, keeping the page visible. Closing it returns to the panel you were using. On phones, it fills the screen.
 
 You can also reach it from elsewhere:
 
@@ -32,7 +32,7 @@ If no tested provider is enabled, the command bar names that requirement and ope
 finishing setup keeps your question; choose Ask again to continue. Native Search uses the same setup-before-opening flow
 and leaves the question unsent in the named document.
 
-For job search and interview coaching, open **Career → Coach**, or select **Open workspace** in an application and then **Ask the coach**. That coach works with your Knowledge and application context. This guide covers editing resumes and letters; [Career and Application Workspaces](/guides/career-overview) covers the career coach.
+For job search and interview coaching, open **Career → Coach**, or open an application and select **Ask the coach**. That coach works with your Knowledge and application context. This guide covers editing resumes and letters; [Career and Application Workspaces](/guides/career-overview) covers the career coach.
 
 Both chats start with **What should we work on?** and a list of suggestions. The connection menu names the connection
 and model in use. Context controls sit inside the message box, with a disclosure underneath explaining what goes with
@@ -90,10 +90,10 @@ A request involving fields, entries or sections appears as one card for the enti
   />
 </Frame>
 
-<Frame caption="A tailored edit on a fictional job copy, shown on the page and in the assistant. The posting chip and the disclosure under the message box show the posting is shared.">
+<Frame caption="Review a pending edit on a fictional guest sample">
   <img
     src="/images/guides/using-the-assistant/proposed-edit-on-page.webp"
-    alt="Resume editor for Game Developer Resume — Lumen Games, where the summary on the page shows the old text struck through and the new text below it, with a banner reading 1 proposed edit on this page · nothing changes until you accept. The Assistant panel shows the matching card with a cited passage, flagged details and Accept, Edit and Reject buttons, and chips for the resume, the Lumen Games posting and Use Knowledge above the message box"
+    alt="Assistant replacing the editor panel, with a pending summary edit on the fictional David Kowalski guest sample"
   />
 </Frame>
 
@@ -254,7 +254,7 @@ On the web, the file stays in the box until removal is confirmed. Sending and fu
 
 ## Search the web
 
-If you connect an optional **Web access** service in Integrations, the assistant uses that selected service for search and enhanced reading. If your installation's administrator set up server search, the assistant searches with it instead, with or without a connection. **Web access** then says **Your server provides search for Applications and the assistant**, and, until you connect a service, **Test search** checks it. Without a connection, the assistant can read supplied public URLs with the built-in reader or work from text you paste. See [Assistant tools](/guides/ai-agent-tools#web-search-support).
+If you connect an optional **Web access** service in **Settings → AI → Web access**, the assistant uses that selected service for search and enhanced reading. If your installation's administrator set up server search, the assistant searches with it instead, with or without a connection. **Web access** then says **Your server provides search for Applications and the assistant**, and, until you connect a service, **Test search** checks it. Without a connection, the assistant can read supplied public URLs with the built-in reader or work from text you paste. See [Assistant tools](/guides/ai-agent-tools#web-search-support).
 
 You can also supply a public page URL: the assistant uses the selected reader or built-in reading. Page reading does not require a separate search account. Failed reading leads to pasted-text recovery; clipped or incomplete pages are identified before you rely on them.
 

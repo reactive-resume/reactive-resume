@@ -4,26 +4,33 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { i18n } from "@lingui/core";
-import { ph, t } from "@lingui/core/macro";
+import { ph, plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
+import { lintResumeForAts } from "@reactive-resume/resume/ats";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
+import { acceptOnCopy } from "./accept-on-copy";
 import { ChatWelcome, ModelMenu } from "./chat-chrome";
 import { ConnectionNotice } from "./connection-notice";
 import { Composer, Conversation } from "./conversation";
-import { ProviderSetup, SetUpAi } from "./provider-setup";
 import { TranslateResume } from "./translate-resume";
+import { ListRow } from "@/components/calm/list-row";
+import { SetUpAiLine } from "@/components/calm/set-up-ai-line";
+import { useDialogStore } from "@/dialogs/store";
+import { useSetUpAi } from "@/features/ai/set-up-ai";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useResumeStore } from "@/features/resume/builder/draft";
 import { useUnlockResume } from "@/features/resume/builder/use-unlock-resume";
+import { buildIssues } from "@/features/resume/editor/check/issues";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { formatVersionTime } from "@/features/resume/share/format";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -50,8 +57,6 @@ const belongsTo = (thread: ThreadSummary, document: AssistantDocument) =>
  * the page and as cards, and asks before writing anything the document doesn't say.
  */
 export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
-	const navigate = useNavigate();
-	const search = useSearch({ strict: false });
 	const queryClient = useQueryClient();
 	const providers = useHasUsableAiProvider();
 	const threads = useQuery(orpc.agent.threads.list.queryOptions());
@@ -59,7 +64,8 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const prompt = useEditorStore((state) => state.assistantPrompt);
 	const draft = useEditorStore((state) => state.assistantDraft);
 	const [view, setView] = useState<"thread" | "history">("thread");
-	const [connecting, setConnecting] = useState(false);
+	const setUp = useSetUpAi();
+
 	const [translating, setTranslating] = useState(false);
 	const [providerId, setProviderId] = useState<string | null>(null);
 	const [modelMenuOpen, setModelMenuOpen] = useState(false);
@@ -82,6 +88,15 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const stranded = threadId !== null && summary !== undefined && saved === undefined && !providers.isLoading;
 	const provider = threadId ? saved : (usable.find((item) => item.id === providerId) ?? usable[0]);
 	const providerLabel = provider?.label ?? summary?.providerLabel ?? t`your provider`;
+	const menuLabel = stranded ? t`Choose a connection` : providerLabel;
+	// The resume this conversation started on, once it moved to a copy (its first accepted edit).
+	const original =
+		document.kind === "resume" &&
+		summary?.workingResumeId === document.id &&
+		summary.sourceResumeId &&
+		summary.sourceResumeId !== document.id
+			? summary.sourceResumeId
+			: null;
 
 	const ensureThread = async (): Promise<string> => {
 		if (draftThread.current) return draftThread.current;
@@ -146,97 +161,68 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 
 	return (
 		<section aria-label={t`Assistant`} className="relative flex h-full min-h-0 flex-col bg-surface">
-			<header className="flex h-[52px] shrink-0 items-center gap-1 border-b border-line ps-4 pe-2">
-				<Icon name="sparkle" size={20} className="text-accent-text" />
-				<h2 className="me-auto text-[15px] font-semibold">
+			<header className="flex shrink-0 items-center gap-1.5 ps-6 pe-2.5 pt-[11px]">
+				<Icon name="sparkle" size={20} className="me-0.5 text-accent-text" />
+				<h2 className="me-1 t-page-title">
 					<Trans>Assistant</Trans>
 				</h2>
 
-				{usable.length > 0 && (
+				{(providers.providers.length > 0 || summary) && (
 					<ModelMenu
 						open={modelMenuOpen}
 						onOpenChange={setModelMenuOpen}
-						providers={usable}
+						providers={providers.providers}
 						current={provider}
-						label={providerLabel}
+						label={menuLabel}
 						onChoose={(id) => void chooseProvider(id)}
-						onConnect={() => setConnecting(true)}
+						onConnect={() => setUp.open()}
 					/>
 				)}
 
-				<IconButton
-					icon="note-pencil"
-					label={t`New conversation`}
-					className="text-ink-2"
-					onClick={() => {
-						draftThread.current = null;
-						creatingThread.current = null;
-						setDraftKey((key) => key + 1);
-						setContext({ document: true, posting: true });
-						setPromptAttachments([]);
-						useEditorStore.setState({ assistantDraft: null, assistantThread: "new" });
-						setView("thread");
-					}}
-				/>
-				<IconButton
-					icon="clock-counter-clockwise"
-					label={t`Past conversations`}
-					aria-pressed={view === "history"}
-					className={cn("text-ink-2", view === "history" && "bg-accent-soft text-accent-text")}
-					onClick={() => setView(view === "history" ? "thread" : "history")}
-				/>
-				<IconButton icon="x" label={t`Close the assistant`} shortcut="⌘J" className="text-ink-2" onClick={onClose} />
+				<span className="ms-auto flex shrink-0 items-center">
+					{providers.hasUsableProvider && (
+						<IconButton
+							icon="chats"
+							label={t`Conversations`}
+							size="icon-sm"
+							aria-pressed={view === "history"}
+							className={cn("text-ink-2", view === "history" && "bg-accent-soft text-accent-text")}
+							onClick={() => setView(view === "history" ? "thread" : "history")}
+						/>
+					)}
+					<IconButton
+						icon="x"
+						label={t`Close the assistant`}
+						shortcut="⌘J"
+						// Alone in the header without AI, the close button is the full 36.
+						size={providers.hasUsableProvider ? "icon-sm" : "icon"}
+						className="text-ink-2"
+						onClick={onClose}
+					/>
+				</span>
 			</header>
+			{setUp.dialog}
 
-			{connecting && (
-				// Over the conversation, which stays mounted underneath: the message being typed is still there on Back.
-				<div className="absolute inset-x-0 top-[52px] bottom-0 z-10 overflow-y-auto bg-surface">
-					<div className="px-4 pt-3">
-						<Button size="sm" variant="ghost" onClick={() => setConnecting(false)}>
-							<Icon name="arrow-left" size={16} className="rtl:rotate-180" />
-							<Trans>Back to the conversation</Trans>
-						</Button>
-					</div>
-					<ProviderSetup connectOnly />
-				</div>
-			)}
-
-			{document.kind === "resume" && (
-				<div className="grid gap-2 border-b border-line p-4 text-xs text-ink-2">
-					<p>
-						<Trans>Review each set before accepting it together. Some fields still need Write.</Trans>
-					</p>
-					<Button
-						size="sm"
-						variant="ghost"
-						onClick={() => {
-							useEditorStore.setState({ mobileView: "write", drawerOpen: true });
-							onClose();
-							void navigate({
-								to: "/builder/$resumeId",
-								params: { resumeId: document.id },
-								search: { ...search, mode: undefined, assistant: undefined },
-							});
-						}}
-					>
-						<Trans>Open Write</Trans>
-					</Button>
-					<Button size="sm" variant="link" onClick={() => setTranslating(true)}>
-						<Trans>Translate into…</Trans>
-					</Button>
-				</div>
+			{providers.hasUsableProvider && view !== "history" && (
+				<p className="mx-6 flex items-center gap-2.5 border-b border-line pt-[13px] pb-3 text-[13px]/[18px] text-ink-2">
+					<Icon
+						name={document.kind === "resume" ? "copy" : "clock-counter-clockwise"}
+						size={16}
+						className="mt-px shrink-0 self-start text-ink-3"
+					/>
+					{document.kind === "letter" ? (
+						<Trans>Accepted edits change this letter; history keeps each version.</Trans>
+					) : original ? (
+						<CopyLine original={original} company={document.posting?.company} />
+					) : document.madeFor && document.posting ? (
+						<Trans>Working on a copy made for {document.posting.company}: the resume it came from is unchanged.</Trans>
+					) : (
+						<Trans>Edits go to a copy, never to this resume.</Trans>
+					)}
+				</p>
 			)}
 			{translating && document.kind === "resume" && (
 				<TranslateResume resumeId={document.id} onClose={() => setTranslating(false)} />
-			)}
-			{threadId && !provider && (
-				<Notice>
-					<Trans>
-						This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose
-						a model before sending again.
-					</Trans>
-					<SetUpAi />
-				</Notice>
 			)}
 			{notSetUp ? (
 				<Notice>
@@ -260,11 +246,18 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 					<Spinner />
 				</div>
 			) : !providers.hasUsableProvider && view !== "history" && !threadId ? (
-				<div className="min-h-0 flex-1 overflow-y-auto">
-					<ProviderSetup />
-				</div>
+				<WithoutAi document={document} onSetUp={setUp.open} onClose={onClose} />
 			) : view === "history" ? (
 				<PastConversations
+					onNew={() => {
+						draftThread.current = null;
+						creatingThread.current = null;
+						setDraftKey((key) => key + 1);
+						setContext({ document: true, posting: true });
+						setPromptAttachments([]);
+						useEditorStore.setState({ assistantDraft: null, assistantThread: "new" });
+						setView("thread");
+					}}
 					threads={threads.data ?? []}
 					document={document}
 					currentId={threadId}
@@ -304,8 +297,19 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 				/>
 			) : (
 				<>
-					<EmptyState document={document} disabled={starting} onPick={(text) => void start(text)} />
+					{draft?.trim() ? (
+						<div className="min-h-0 flex-1" />
+					) : (
+						<EmptyState
+							document={document}
+							disabled={starting}
+							onPick={(text) => void start(text)}
+							onTranslate={() => setTranslating(true)}
+						/>
+					)}
+
 					<Composer
+						notice={document.locked ? <LockedNotice document={document} /> : undefined}
 						// A draft arriving while the box is open replaces what's in it.
 						key={`${draftKey}:${draft ?? ""}`}
 						initialText={draft ?? undefined}
@@ -314,7 +318,6 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						onContextChange={setContext}
 						streaming={starting}
 						disabled={false}
-						notice={document.locked ? <LockedNotice document={document} /> : undefined}
 						threadId={null}
 						ensureThread={ensureThread}
 						onSend={(text, attachments) => void start(text, attachments)}
@@ -342,11 +345,46 @@ type ConversationLoaderProps = {
 
 /** Reads the conversation fresh each time it opens: the chat takes its messages once, when it mounts. */
 function ConversationLoader({ threadId, document, destinationUnavailable, ...props }: ConversationLoaderProps) {
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 	const thread = useQuery({
 		...orpc.agent.threads.get.queryOptions({ input: { id: threadId } }),
 		refetchOnMount: "always",
 		refetchOnWindowFocus: false,
 	});
+	// The assistant never edits a resume a conversation started on: its first accepted edit makes a copy and lands there.
+	const summary = thread.data?.thread;
+	const copyFirst =
+		document.kind === "resume" &&
+		!document.madeFor &&
+		summary?.workingResumeId === document.id &&
+		summary.sourceResumeId === document.id;
+	const working = useMemo<AssistantDocument>(
+		() =>
+			copyFirst
+				? {
+						...document,
+						accept: (proposals) => {
+							void acceptOnCopy({
+								threadId,
+								resumeId: document.id,
+								posting: document.posting,
+								proposals,
+								queryClient,
+								open: (copyId) =>
+									navigate({
+										to: "/builder/$resumeId",
+										params: { resumeId: copyId },
+										search: { assistant: threadId },
+									}),
+							});
+							// Recorded by the copy's save once it's applied there.
+							return { applied: [], stale: [] };
+						},
+					}
+				: document,
+		[copyFirst, document, threadId, queryClient, navigate],
+	);
 
 	if (thread.error)
 		return (
@@ -366,17 +404,49 @@ function ConversationLoader({ threadId, document, destinationUnavailable, ...pro
 		<Conversation
 			threadId={threadId}
 			initialMessages={thread.data.messages}
+			interrupted={thread.data.interrupted ?? []}
 			initialAttachments={(thread.data.attachments ?? []).filter(
 				(file) => !file.messageId && !props.promptAttachments.some((sent) => sent.id === file.id),
 			)}
 			activeRun={Boolean(thread.data.thread.activeRunId)}
-			document={document}
+			document={working}
 			readOnly={thread.data.isReadOnly || destinationUnavailable}
 			localEditsLocked={document.locked || !thread.data.document}
 			{...props}
 			// A locked document still takes questions; the banner says why edits wait, with Unlock.
 			banner={document.locked ? <LockedNotice document={document} /> : undefined}
 		/>
+	);
+}
+
+/** "Working on a copy", with the resume it came from one link away. */
+function CopyLine({ original, company }: { original: string; company: string | undefined }) {
+	// Usually cached: the builder had it open just before the copy.
+	const { data } = useQuery(orpc.resume.getById.queryOptions({ input: { id: original } }));
+	const name = data?.name;
+	return (
+		<span className="flex flex-1 flex-wrap items-start justify-between gap-x-3 gap-y-1">
+			<span>
+				{company && name ? (
+					<Trans>
+						Working on a copy made for {company}: {name} is unchanged.
+					</Trans>
+				) : company ? (
+					<Trans>Working on a copy made for {company}: the resume it came from is unchanged.</Trans>
+				) : name ? (
+					<Trans>Working on a copy. {name} is unchanged.</Trans>
+				) : (
+					<Trans>Working on a copy. The resume it came from is unchanged.</Trans>
+				)}
+			</span>
+			<Link
+				to="/builder/$resumeId"
+				params={{ resumeId: original }}
+				className="font-medium text-accent-text hover:underline"
+			>
+				<Trans>Open original</Trans>
+			</Link>
+		</span>
 	);
 }
 
@@ -471,7 +541,12 @@ function suggestionsFor(document: AssistantDocument, prepare: boolean, overflow?
 	];
 }
 
-type EmptyStateProps = { document: AssistantDocument; disabled: boolean; onPick: (text: string) => void };
+type EmptyStateProps = {
+	document: AssistantDocument;
+	disabled: boolean;
+	onPick: (text: string) => void;
+	onTranslate: () => void;
+};
 
 /** Above the composer on a locked document: questions still work, edits wait for Unlock. */
 function LockedNotice({ document }: { document: AssistantDocument }) {
@@ -495,7 +570,7 @@ function UnlockButton() {
 	);
 }
 
-function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
+function EmptyState({ document, disabled, onPick, onTranslate }: EmptyStateProps) {
 	const kind = document.kind === "letter" ? t`letter` : t`resume`;
 	const prepare = useEditorStore((state) => state.assistantSuggestions === "prepare");
 	const rendered = useEditorStore((state) => state.fitRendered);
@@ -504,7 +579,7 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 		document.kind === "resume" && data && rendered.pageCount > 0 ? measureOverflow(data, rendered) : undefined;
 
 	return (
-		<div className="min-h-0 flex-1 overflow-y-auto p-4">
+		<div className="min-h-0 flex-1 overflow-y-auto px-6 pt-5 pb-4">
 			<ChatWelcome
 				description={
 					<>
@@ -530,6 +605,15 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 					onPick: () => onPick(suggestion.prompt ?? suggestion.label),
 				}))}
 			/>
+			{document.kind === "resume" && (
+				<button
+					type="button"
+					onClick={onTranslate}
+					className="mt-3 text-[13px]/[18px] font-medium text-accent-text hover:underline"
+				>
+					<Trans>Translate into another language…</Trans>
+				</button>
+			)}
 		</div>
 	);
 }
@@ -539,10 +623,11 @@ type PastConversationsProps = {
 	document: AssistantDocument;
 	currentId: string | null;
 	onOpen: (id: string) => void;
+	onNew: () => void;
 };
 
 /** D3: conversations grouped by document, titled by their task, with what came of them. */
-function PastConversations({ threads, document, currentId, onOpen }: PastConversationsProps) {
+function PastConversations({ threads, document, currentId, onOpen, onNew }: PastConversationsProps) {
 	const { i18n } = useLingui();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -588,9 +673,18 @@ function PastConversations({ threads, document, currentId, onOpen }: PastConvers
 	};
 
 	return (
-		<div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-3">
+		<div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 pt-3 pb-4">
+			<div className="flex items-center justify-between gap-3 ps-3 pe-0">
+				<h3 className="text-[15px]/[22px] font-semibold">
+					<Trans>Conversations</Trans>
+				</h3>
+				<Button size="sm" variant="secondary" onClick={onNew}>
+					<Icon name="note-pencil" />
+					<Trans>New conversation</Trans>
+				</Button>
+			</div>
 			<section aria-labelledby="assistant-this-document" className="grid gap-1">
-				<h3 id="assistant-this-document" className="px-3 text-xs font-semibold text-ink-3">
+				<h3 id="assistant-this-document" className="px-3 text-[13px]/[18px] text-ink-3">
 					<Trans>This document</Trans>
 				</h3>
 				{mine.length > 0 ? (
@@ -615,7 +709,7 @@ function PastConversations({ threads, document, currentId, onOpen }: PastConvers
 			</section>
 			{others.length > 0 && (
 				<section aria-labelledby="assistant-other-documents" className="grid gap-1">
-					<h3 id="assistant-other-documents" className="px-3 text-xs font-semibold text-ink-3">
+					<h3 id="assistant-other-documents" className="px-3 text-[13px]/[18px] text-ink-3">
 						<Trans>Other documents · {i18n.number(others.length)}</Trans>
 					</h3>
 					<ul className="grid">
@@ -633,6 +727,12 @@ function PastConversations({ threads, document, currentId, onOpen }: PastConvers
 					</ul>
 				</section>
 			)}
+			<p className="px-3 text-[13px]/[18px] text-ink-3">
+				<Trans>
+					A conversation from another document opens that document. Deleting one removes its messages and files; edits
+					you accepted stay.
+				</Trans>
+			</p>
 		</div>
 	);
 }
@@ -653,7 +753,7 @@ function ConversationRow({ thread, current, detail, index, onOpen, onDelete }: C
 			style={stagger(index)}
 			// cn keeps the last transition list, so the hover colour is named again after ENTER_CLASS's.
 			className={cn(
-				"group/row flex items-center gap-1 rounded-lg hover:bg-hover",
+				"group/row flex items-center gap-1 rounded-lg hover:bg-hover has-[[aria-current]]:bg-sunken",
 				ENTER_CLASS,
 				"transition-[opacity,translate,background-color]",
 			)}
@@ -663,21 +763,134 @@ function ConversationRow({ thread, current, detail, index, onOpen, onDelete }: C
 				aria-current={current ? "true" : undefined}
 				onClick={onOpen}
 				className={cn(
-					"grid min-w-0 flex-1 rounded-lg px-3 py-2 text-start transition-colors duration-quick ease-enter active:bg-press",
-					current && "bg-sunken",
+					"grid min-w-0 flex-1 rounded-lg px-3 py-2.5 text-start transition-colors duration-quick ease-enter active:bg-press",
 				)}
 			>
-				<span className="truncate text-sm font-medium">{thread.title}</span>
-				{thread.firstMessage && <span className="truncate text-sm text-ink-2">{thread.firstMessage}</span>}
-				<span className="truncate text-xs text-ink-3">{detail}</span>
+				<span className="truncate text-[15px]/[22px] font-medium">{thread.title}</span>
+				{thread.firstMessage && <span className="truncate text-sm/5 text-ink-2">{thread.firstMessage}</span>}
+				<span className="truncate text-[13px]/[18px] text-ink-3">{detail}</span>
 			</button>
 			<IconButton
 				icon="x"
 				label={t`Delete ${thread.title}`}
 				size="icon-sm"
-				className="me-1 text-ink-3 opacity-0 transition-[opacity,background-color,border-color,color,filter,scale] group-hover/row:opacity-100 focus-visible:opacity-100"
+				className="me-2 text-ink-3 opacity-0 transition-[opacity,background-color,border-color,color,filter,scale] group-hover/row:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
 				onClick={onDelete}
 			/>
 		</li>
+	);
+}
+
+type WithoutAiProps = { document: AssistantDocument; onSetUp: () => void; onClose: () => void };
+
+/** N1: no connection. The Set up AI line, then what works on this document without AI, one click away. */
+function WithoutAi({ document, onSetUp, onClose }: WithoutAiProps) {
+	return (
+		<div className="min-h-0 flex-1 overflow-y-auto px-6 pt-[11px] pb-6">
+			<SetUpAiLine lead={<Trans>The assistant needs AI.</Trans>} onSetUp={onSetUp}>
+				<Trans>Everything below works without it.</Trans>
+			</SetUpAiLine>
+			{document.kind === "resume" ? (
+				<ResumeWithoutAi resumeId={document.id} onClose={onClose} />
+			) : (
+				<p className="pt-6 text-[13px]/[18px] text-ink-3">
+					<Trans>
+						With a connection, the assistant proposes edits to this letter. You accept or reject each one, and nothing
+						changes until you do.
+					</Trans>
+				</p>
+			)}
+		</div>
+	);
+}
+
+/** Resume editor only: it switches the editor's mode. */
+function ResumeWithoutAi({ resumeId, onClose }: { resumeId: string; onClose: () => void }) {
+	const data = useResumeStore((state) => (state.resume?.id === resumeId ? state.resume.data : undefined));
+	const check = useMemo(() => {
+		if (!data) return null;
+		const report = lintResumeForAts(data);
+		return { report, count: buildIssues(report, data).length };
+	}, [data]);
+	const applications = useQuery(applicationsListQueryOptions());
+	const job = applications.data?.find((application) => application.status === "saved" && !application.resumeId);
+	const checkHint = check
+		? plural(check.count, {
+				one: `# thing to review · ${i18n.number(check.report.passedRules)} of ${i18n.number(check.report.totalRules)} checks pass`,
+				other: `# things to review · ${i18n.number(check.report.passedRules)} of ${i18n.number(check.report.totalRules)} checks pass`,
+			})
+		: t`Spelling, length and what's missing`;
+
+	const navigate = useNavigate();
+	const openDialog = useDialogStore((state) => state.openDialog);
+	const go = (mode: "write" | "check", checkTab?: "issues" | "match") => {
+		if (checkTab) useEditorStore.setState({ checkTab });
+		// A phone keeps its last view otherwise, which may be the page rather than Write.
+		if (mode === "write") useEditorStore.setState({ mobileView: "write" });
+		onClose();
+		void navigate({
+			to: "/builder/$resumeId",
+			params: { resumeId },
+			search: (previous: Record<string, unknown>) => ({
+				...previous,
+				mode: mode === "write" ? undefined : mode,
+				assistant: undefined,
+			}),
+		});
+	};
+	const caret = <Icon name="caret-right" size={18} className="text-ink-3" />;
+	const tile = (icon: IconName) => (
+		<span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-sunken text-ink-2">
+			<Icon name={icon} />
+		</span>
+	);
+
+	return (
+		<>
+			<h3 className="pt-8 pb-1 t-section-title">
+				<Trans>On this resume, without AI</Trans>
+			</h3>
+			<div className="flex flex-col">
+				<ListRow
+					render={<button type="button" onClick={() => go("check", "issues")} />}
+					leading={tile("seal-check")}
+					title={<Trans>Check it</Trans>}
+					subtitle={checkHint}
+					trailing={caret}
+				/>
+				<ListRow
+					render={<button type="button" onClick={() => go("check", "match")} />}
+					leading={tile("target")}
+					title={<Trans>Match it against a job</Trans>}
+					subtitle={<Trans>Which terms from a posting appear in it</Trans>}
+					trailing={caret}
+				/>
+				<ListRow
+					render={
+						<button
+							type="button"
+							onClick={() => openDialog("document.new", { step: "copy", sourceResumeId: resumeId })}
+						/>
+					}
+					leading={tile("copy")}
+					title={<Trans>Copy it for a job</Trans>}
+					subtitle={job ? t`${job.company} is saved and has no resume yet` : t`A tailored copy, linked to the job`}
+					trailing={caret}
+				/>
+				<ListRow
+					render={<button type="button" onClick={() => go("write")} />}
+					leading={tile("pencil-simple")}
+					title={<Trans>Edit a section</Trans>}
+					subtitle={<Trans>Every section and entry, in Write</Trans>}
+					trailing={caret}
+				/>
+			</div>
+			<p className="pt-6 text-[13px]/[18px] text-ink-3">
+				<Trans>
+					With a connection, the assistant proposes numbered edits. You accept or reject each one, and nothing changes
+					until you do.
+				</Trans>
+			</p>
+		</>
 	);
 }

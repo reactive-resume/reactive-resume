@@ -12,7 +12,7 @@ type CurrencySelectProps = {
 	invalid?: boolean | undefined;
 	describedBy?: string | undefined;
 	className?: string | undefined;
-	clearable?: boolean;
+	symbol?: boolean;
 };
 
 export function CurrencySelect({
@@ -22,17 +22,24 @@ export function CurrencySelect({
 	invalid,
 	describedBy,
 	className,
-	clearable = false,
+	symbol = true,
 }: CurrencySelectProps) {
 	const { i18n } = useLingui();
-	const options = useMemo(() => getCurrencyOptions(i18n.locale, value), [i18n.locale, value]);
+	const options = useMemo(
+		() =>
+			getCurrencyOptions(i18n.locale, value).map((option) => ({
+				...option,
+				label: symbol ? option.label.replace(" · ", " ") : option.value,
+			})),
+		[i18n.locale, value, symbol],
+	);
 	return (
 		<Combobox
 			{...(id ? { id } : {})}
 			value={value || null}
 			options={options}
 			onValueChange={(next) => onChange(next ?? "")}
-			showClear={clearable}
+			showClear={false}
 			render={
 				<Button
 					variant="secondary"

@@ -3,7 +3,7 @@ import { strFromU8, unzipSync } from "fflate";
 import { Pool } from "pg";
 import { createAccount } from "../fixtures/data";
 import { deleteE2EUser } from "../fixtures/db";
-import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
+import { createSampleResumeFromDashboard, openSharePrivacy, openSidebarSection } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 test("public Word downloads require owner opt-in, public visibility and current password access", async ({
@@ -57,12 +57,14 @@ test("public Word downloads require owner opt-in, public visibility and current 
 		// The actual Share switch persists, survives reload, and leaves the preview in sync.
 		await owner.reload();
 		await openSidebarSection(owner, "Sharing");
+		await openSharePrivacy(owner);
 		const wordSwitch = owner.getByRole("switch", { name: "Visitors can download Word", exact: true });
 		await expect(wordSwitch).not.toBeChecked();
 		await wordSwitch.click();
 		await expect.poll(async () => (await (await owner.request.get(api)).json()).allowWordDownload).toBe(true);
 		await owner.reload();
 		await openSidebarSection(owner, "Sharing");
+		await openSharePrivacy(owner);
 		await expect(wordSwitch).toBeChecked();
 		const backup = await owner.request.get("/api/openapi/auth/account/export");
 		await expect(backup).toBeOK();

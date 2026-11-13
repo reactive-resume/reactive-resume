@@ -12,9 +12,9 @@ import {
 	toYearMonth,
 } from "@reactive-resume/schema/resume/dates";
 import { readSingleDate } from "@reactive-resume/schema/resume/period";
+import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input, inputBaseClassName } from "@reactive-resume/ui/components/input";
-import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 
 type DateSettings = { locale: string; format?: DateFormat | undefined };
@@ -36,7 +36,9 @@ type MonthYearInputProps = DateSettings & {
 	/** Shown instead of the value, e.g. "Present" while the entry is ongoing. */
 	placeholderValue?: string | undefined;
 	onCommit: (value: YearMonth | null) => void;
-	onInvalid: (invalid: boolean) => void;
+	onInvalid: (invalid: string | null) => void;
+	error?: boolean;
+	noteId: string;
 };
 
 /**
@@ -53,6 +55,8 @@ function MonthYearInput({
 	placeholderValue,
 	onCommit,
 	onInvalid,
+	error,
+	noteId,
 }: MonthYearInputProps) {
 	const [typed, setTyped] = useState<string | null>(null);
 	const [focused, setFocused] = useState(false);
@@ -72,13 +76,15 @@ function MonthYearInput({
 				autoComplete="off"
 				aria-label={label}
 				disabled={disabled}
+				aria-invalid={error || undefined}
+				aria-describedby={noteId}
 				placeholder={t`Mar 2022`}
 				value={placeholderValue ?? typed ?? formatted}
-				className={cn(inputBaseClassName, "h-9 ps-9 disabled:bg-sunken disabled:text-ink-2 disabled:opacity-100")}
+				className={cn(inputBaseClassName, "h-10 ps-9 disabled:bg-sunken disabled:text-ink-2 disabled:opacity-100")}
 				onChange={(event) => {
 					setTyped(event.target.value);
 					const next = readTypedDate(event.target.value, locale);
-					onInvalid(next === undefined);
+					onInvalid(next === undefined ? event.target.value : null);
 					if (next !== undefined && next !== value) onCommit(next);
 				}}
 				onFocus={() => setFocused(true)}
@@ -86,7 +92,7 @@ function MonthYearInput({
 					setFocused(false);
 					if (typed === null) return;
 					const next = readTypedDate(typed, locale);
-					onInvalid(next === undefined);
+					onInvalid(next === undefined ? typed : null);
 					if (next !== undefined) setTyped(null);
 				}}
 			/>
@@ -115,7 +121,7 @@ export function DatesField({
 	className,
 }: DatesFieldProps) {
 	const id = useId();
-	const [invalid, setInvalid] = useState<Record<"start" | "end", boolean>>({ start: false, end: false });
+	const [invalid, setInvalid] = useState<Record<"start" | "end", string | null>>({ start: null, end: null });
 	const current: ResumeDates = {
 		start: dates.start,
 		end: dates.end,
@@ -128,30 +134,34 @@ export function DatesField({
 	const parsed = custom && dates.raw !== preset ? readLegacyDates(dates.raw ?? "", { locale, single }) : current;
 	const canUseFields = parsed.raw === undefined;
 	const unreadable = hasUnreadableDateText(dates);
-	const hasError = !custom && (invalid.start || (!dates.present && invalid.end));
+	const invalidText = !custom ? invalid.start || (!dates.present ? invalid.end : null) : null;
 
-	const setInvalidFor = (part: "start" | "end") => (value: boolean) =>
+	const setInvalidFor = (part: "start" | "end") => (value: string | null) =>
 		setInvalid((state) => (state[part] === value ? state : { ...state, [part]: value }));
+
+	const customToggle = (
+		// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Checkbox is the wrapped control.
+		<label className="flex cursor-pointer items-center gap-2">
+			<Checkbox
+				className="size-4"
+				checked={custom}
+				disabled={custom && !canUseFields}
+				aria-describedby={`${id}-note`}
+				onCheckedChange={(checked) => {
+					setInvalid({ start: null, end: null });
+					onChange(checked ? { ...current, raw: preset } : parsed);
+				}}
+			/>
+			<Trans>Custom text</Trans>
+		</label>
+	);
 
 	return (
 		<fieldset className={cn("grid min-w-0 gap-1.5", className)} aria-describedby={`${id}-note`}>
-			<legend className="mb-1.5 text-[13px] leading-4 font-medium text-ink">
+			<legend className="mb-1.5 flex w-full items-center justify-between gap-2 text-[13px]/[18px] font-medium text-ink-2">
 				{single ? <Trans>Date</Trans> : <Trans>Dates</Trans>}
+				{single && customToggle}
 			</legend>
-
-			{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Switch is the wrapped control. */}
-			<label className="flex w-fit items-center gap-2 p-1 text-sm">
-				<Switch
-					checked={custom}
-					disabled={custom && !canUseFields}
-					aria-describedby={`${id}-note`}
-					onCheckedChange={(checked) => {
-						setInvalid({ start: false, end: false });
-						onChange(checked ? { ...current, raw: preset } : parsed);
-					}}
-				/>
-				<Trans>Custom date text</Trans>
-			</label>
 
 			{custom ? (
 				<Input
@@ -172,6 +182,8 @@ export function DatesField({
 						format={format}
 						onCommit={(start) => onChange({ ...current, start })}
 						onInvalid={setInvalidFor("start")}
+						error={!!invalid.start}
+						noteId={`${id}-note`}
 					/>
 
 					{!single && (
@@ -188,43 +200,15 @@ export function DatesField({
 								placeholderValue={dates.present ? getPresentLabel(locale) : undefined}
 								onCommit={(end) => onChange({ ...current, end })}
 								onInvalid={setInvalidFor("end")}
+								error={!!invalid.end}
+								noteId={`${id}-note`}
 							/>
 						</>
 					)}
 				</div>
 			)}
 
-			{!custom && !single && (
-				<>
-					{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI's Switch is the control; wrapping it in a label is its documented pattern. */}
-					<label className="flex w-fit cursor-pointer items-center gap-2 p-1 text-sm">
-						<Switch
-							checked={dates.present}
-							onCheckedChange={(present) => {
-								const { expected: _expected, ...rest } = current;
-								// The end date stays while Present hides it, so switching back off restores it.
-								onChange({ ...rest, present, end: dates.end });
-							}}
-						/>
-						<Trans>Present</Trans>
-					</label>
-					{expectable && !dates.present && (
-						// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI's Switch is the control; wrapping it in a label is its documented pattern.
-						<label className="flex w-fit cursor-pointer items-center gap-2 p-1 text-sm">
-							<Switch
-								checked={dates.expected === true}
-								onCheckedChange={(expected) => {
-									const { expected: _expected, ...rest } = current;
-									onChange(expected ? { ...rest, expected: true } : rest);
-								}}
-							/>
-							<Trans comment="Switch on an education entry's dates: the end date is still to come">Expected</Trans>
-						</label>
-					)}
-				</>
-			)}
-
-			<div id={`${id}-note`}>
+			<div id={`${id}-note`} className="empty:hidden">
 				{unreadable && (
 					<p className="text-xs leading-4 text-warn-text">
 						<Trans>Saved as written. Automated date checks and sorting are unavailable for this text.</Trans>
@@ -235,13 +219,15 @@ export function DatesField({
 						<Trans>Enter a readable date or clear the text to use date fields.</Trans>
 					</p>
 				)}
-				{hasError ? (
+				{invalidText ? (
 					<p className="flex items-start gap-1 text-xs leading-4 text-danger-text">
 						<Icon name="warning-circle" size={16} className="shrink-0" />
-						<Trans>
-							This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the
-							last valid date. Turn on Custom date text to save other wording.
-						</Trans>
+						<span>
+							<Trans>
+								“{invalidText}” isn't saved. Use a month and year, like Mar 2025, or just a year. To print other
+								wording, turn on Custom text.
+							</Trans>
+						</span>
 					</p>
 				) : reversed ? (
 					<p className="flex items-start gap-1 text-xs leading-4 text-warn-text">
@@ -250,6 +236,42 @@ export function DatesField({
 					</p>
 				) : null}
 			</div>
+			{/* A single date keeps Custom text beside its label, so it has no row of options. */}
+			{!single && (
+				<div className="flex min-h-5 flex-wrap items-center gap-x-4 gap-y-1 text-[13px]/[18px] text-ink-2">
+					{!custom && (
+						<>
+							{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Checkbox is the wrapped control. */}
+							<label className="flex cursor-pointer items-center gap-2">
+								<Checkbox
+									className="size-4"
+									checked={dates.present}
+									onCheckedChange={(present) => {
+										const { expected: _expected, ...rest } = current;
+										onChange({ ...rest, present, end: dates.end });
+									}}
+								/>
+								<Trans>Present</Trans>
+							</label>
+							{expectable && !dates.present && (
+								// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Checkbox is the wrapped control.
+								<label className="flex cursor-pointer items-center gap-2">
+									<Checkbox
+										className="size-4"
+										checked={dates.expected === true}
+										onCheckedChange={(expected) => {
+											const { expected: _expected, ...rest } = current;
+											onChange(expected ? { ...rest, expected: true } : rest);
+										}}
+									/>
+									<Trans>Expected</Trans>
+								</label>
+							)}
+						</>
+					)}
+					{customToggle}
+				</div>
+			)}
 		</fieldset>
 	);
 }

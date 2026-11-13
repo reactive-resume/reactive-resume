@@ -1,240 +1,167 @@
-import type { ReactNode } from "react";
-import type z from "zod";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useSelector } from "@tanstack/react-form";
-import { typographySchema } from "@reactive-resume/schema/resume/data";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { InputGroup, InputGroupAddon, InputGroupText } from "@reactive-resume/ui/components/input-group";
-import { Separator } from "@reactive-resume/ui/components/separator";
-import { Switch } from "@reactive-resume/ui/components/switch";
-import { SectionBase } from "../shared/section-base";
-import { NumberInput } from "@/components/input/number-input";
-import { FontFamilyCombobox, FontWeightCombobox } from "@/components/typography/combobox";
+import { getFont, sortFontWeights } from "@reactive-resume/fonts";
+import { Chip } from "@/components/calm/filter-bar";
+import { List } from "@/components/calm/list-row";
+import { FontFamilyCombobox } from "@/components/typography/combobox";
 import { getNextWeights } from "@/components/typography/get-next-weights";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { useSyncFormValues } from "@/hooks/use-sync-form-values";
-import { useAppForm } from "@/libs/tanstack-form";
+import { DesignHeading, Field, Stepper, SwitchListRow } from "@/features/resume/editor/design/fields";
+import { useDesign } from "@/features/resume/editor/design/style-groups";
 
 export function TypographySectionBuilder() {
+	const { metadata, write } = useDesign();
+	if (!metadata) return null;
 	return (
-		<SectionBase type="typography">
-			<TypographySectionForm />
-		</SectionBase>
-	);
-}
-
-const formSchema = typographySchema;
-
-type FormValues = z.infer<typeof formSchema>;
-type FontWeight = FormValues["body"]["fontWeights"][number];
-type TypographyPrefix = "body" | "heading";
-
-function useTypographyForm(typography: FormValues) {
-	const form = useAppForm({
-		defaultValues: typography,
-		validators: { onChange: formSchema },
-	});
-	useSyncFormValues(form, typography);
-	return form;
-}
-
-type TypographyForm = ReturnType<typeof useTypographyForm>;
-
-function TypographySectionForm() {
-	const resume = useCurrentResume();
-	const typography = resume.data.metadata.typography;
-	const updateResumeData = useUpdateResumeData();
-
-	const persist = (data: FormValues) => {
-		updateResumeData((draft) => {
-			draft.metadata.typography.body = data.body;
-			draft.metadata.typography.heading = data.heading;
-			if (data.hyphenation !== undefined) draft.metadata.typography.hyphenation = data.hyphenation;
-		});
-	};
-
-	const form = useTypographyForm(typography);
-
-	const handleAutoSave = () => {
-		persist(form.state.values);
-	};
-
-	return (
-		<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
-			<TypographyFieldGroup label={<Trans context="Body Text (paragraphs, lists, etc.)">Body</Trans>} />
-			<TypographyGroupFields form={form} prefix="body" handleAutoSave={handleAutoSave} />
-			<TypographyFieldGroup label={<Trans context="Headings or Titles (H1, H2, H3, H4, H5, H6)">Heading</Trans>} />
-			<TypographyGroupFields form={form} prefix="heading" handleAutoSave={handleAutoSave} />
-			<form.Field name="hyphenation">
-				{(field) => (
-					<FormItem className="col-span-full mt-2">
-						<div className="flex items-center gap-x-3">
-							<FormControl
-								render={
-									<Switch
-										checked={field.state.value === true}
-										onCheckedChange={(checked) => {
-											field.handleChange(checked);
-											handleAutoSave();
-										}}
-									/>
-								}
+		<div className="grid gap-0">
+			{(["body", "heading"] as const).map((prefix) => {
+				const value = metadata.typography[prefix];
+				const weights = sortFontWeights(getFont(value.fontFamily)?.weights ?? ["400"]);
+				return (
+					<section key={prefix} className="grid gap-0">
+						<DesignHeading className={prefix === "body" ? "pt-[18px]" : "pt-[22px]"}>
+							{prefix === "body" ? <Trans>Body</Trans> : <Trans>Headings</Trans>}
+						</DesignHeading>
+						<Field label={<Trans>Font</Trans>} htmlFor={`font-${prefix}`}>
+							<FontFamilyCombobox
+								id={`font-${prefix}`}
+								value={value.fontFamily}
+								onValueChange={(family) => {
+									if (!family) return;
+									write(
+										`${prefix}.font`,
+										(draft) => {
+											draft.typography[prefix].fontFamily = family;
+											const next = getNextWeights(family, prefix === "heading");
+											if (next) draft.typography[prefix].fontWeights = next;
+										},
+										true,
+									);
+								}}
 							/>
-							<FormLabel>
-								<Trans>Hyphenation</Trans>
-							</FormLabel>
+						</Field>
+						<Field
+							className="mt-3"
+							label={prefix === "body" ? <Trans>Weights</Trans> : <Trans>Weight</Trans>}
+							help={
+								weights.length === 1
+									? t`${value.fontFamily} has one weight`
+									: prefix === "body"
+										? t`${value.fontWeights[0] ?? "400"} for text, ${value.fontWeights.at(-1) ?? "700"} for bold`
+										: undefined
+							}
+						>
+							<div
+								role="group"
+								aria-label={prefix === "body" ? t`Body weights` : t`Heading weight`}
+								className="flex flex-wrap gap-1.5"
+							>
+								{weights.map((weight) => (
+									<Chip
+										key={weight}
+										pressed={value.fontWeights.includes(weight)}
+
+										onClick={() => {
+											const next =
+												prefix === "heading"
+													? [weight]
+													: value.fontWeights.includes(weight)
+														? value.fontWeights.filter((entry) => entry !== weight)
+														: sortFontWeights([...value.fontWeights, weight]);
+											if (next.length)
+												write(
+													`${prefix}.weights`,
+													(draft) => {
+														draft.typography[prefix].fontWeights = next;
+													},
+													true,
+												);
+										}}
+									>
+										{weight}
+									</Chip>
+								))}
+							</div>
+						</Field>
+						<div className="mt-3 grid grid-cols-2 gap-3">
+							<Field
+								label={<Trans>Size</Trans>}
+								help={prefix === "body" ? <Trans>10 to 11 reads best</Trans> : undefined}
+								htmlFor={`size-${prefix}`}
+							>
+								<Stepper
+									id={`size-${prefix}`}
+									label={t`Size`}
+									decrease={prefix === "body" ? t`Smaller body text` : t`Smaller headings`}
+									increase={prefix === "body" ? t`Larger body text` : t`Larger headings`}
+									value={value.fontSize}
+									min={6}
+									max={24}
+									step={0.1}
+									unit="pt"
+									onStep={(next) =>
+										write(
+											`${prefix}.size`,
+											(draft) => {
+												draft.typography[prefix].fontSize = next;
+											},
+											true,
+										)
+									}
+									onValueChange={(next) =>
+										write(`${prefix}.size`, (draft) => {
+											draft.typography[prefix].fontSize = next;
+										})
+									}
+								/>
+							</Field>
+							<Field label={<Trans>Line height</Trans>} htmlFor={`line-${prefix}`}>
+								<Stepper
+									id={`line-${prefix}`}
+									label={t`Line height`}
+									decrease={prefix === "body" ? t`Tighter body lines` : t`Tighter heading lines`}
+									increase={prefix === "body" ? t`Looser body lines` : t`Looser heading lines`}
+									value={value.lineHeight}
+									min={0.5}
+									max={4}
+									step={0.05}
+									onStep={(next) =>
+										write(
+											`${prefix}.lineHeight`,
+											(draft) => {
+												draft.typography[prefix].lineHeight = next;
+											},
+											true,
+										)
+									}
+									onValueChange={(next) =>
+										write(`${prefix}.lineHeight`, (draft) => {
+											draft.typography[prefix].lineHeight = next;
+										})
+									}
+								/>
+							</Field>
 						</div>
-						<FormDescription>
-							<Trans>Breaks long words between syllables, using the language set in Page.</Trans>
-						</FormDescription>
-					</FormItem>
-				)}
-			</form.Field>
-		</div>
-	);
-}
-
-type TypographyGroupFieldsProps = {
-	form: TypographyForm;
-	prefix: TypographyPrefix;
-	handleAutoSave: () => void;
-};
-
-function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroupFieldsProps) {
-	const fontFamily = useSelector(form.store, (s) => s.values[prefix].fontFamily);
-
-	return (
-		<>
-			<form.Field name={`${prefix}.fontFamily`}>
-				{(field) => (
-					<FormItem
-						className="col-span-full"
-						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-					>
-						<FormLabel>
-							<Trans>Font family</Trans>
-						</FormLabel>
-						<FormControl
-							render={
-								<FontFamilyCombobox
-									value={field.state.value}
-									className="text-base"
-									onValueChange={(value: string | null) => {
-										if (value === null) return;
-										field.handleChange(value);
-										const nextWeights = getNextWeights(value, prefix === "heading");
-										if (nextWeights) form.setFieldValue(`${prefix}.fontWeights`, nextWeights);
-										handleAutoSave();
-									}}
-								/>
-							}
-						/>
-						<FormMessage errors={field.state.meta.errors} />
-					</FormItem>
-				)}
-			</form.Field>
-
-			<form.Field name={`${prefix}.fontWeights`}>
-				{(field) => (
-					<FormItem
-						className="col-span-full"
-						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-					>
-						<FormLabel>{prefix === "body" ? <Trans>Font weights</Trans> : <Trans>Font weight</Trans>}</FormLabel>
-						<FormControl
-							render={
-								<FontWeightCombobox
-									single={prefix === "heading"}
-									value={field.state.value}
-									fontFamily={fontFamily}
-									onValueChange={(value) => {
-										if (value?.length === 0) return;
-										field.handleChange(value as FontWeight[]);
-										handleAutoSave();
-									}}
-								/>
-							}
-						/>
-						<FormMessage errors={field.state.meta.errors} />
-					</FormItem>
-				)}
-			</form.Field>
-
-			<form.Field name={`${prefix}.fontSize`}>
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Font size</Trans>
-						</FormLabel>
-						<InputGroup>
-							<FormControl
-								render={
-									<NumberInput
-										name={field.name}
-										value={field.state.value}
-										min={6}
-										max={24}
-										step={0.1}
-										onBlur={field.handleBlur}
-										onValueChange={(value) => {
-											field.handleChange(value);
-											handleAutoSave();
-										}}
-									/>
-								}
-							/>
-							<InputGroupAddon align="inline-end">
-								<InputGroupText>pt</InputGroupText>
-							</InputGroupAddon>
-						</InputGroup>
-					</FormItem>
-				)}
-			</form.Field>
-
-			<form.Field name={`${prefix}.lineHeight`}>
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Line height</Trans>
-						</FormLabel>
-						<InputGroup>
-							<FormControl
-								render={
-									<NumberInput
-										name={field.name}
-										value={field.state.value}
-										min={0.5}
-										max={4}
-										step={0.05}
-										onBlur={field.handleBlur}
-										onValueChange={(value) => {
-											field.handleChange(value);
-											handleAutoSave();
-										}}
-									/>
-								}
-							/>
-							<InputGroupAddon align="inline-end">
-								<InputGroupText>x</InputGroupText>
-							</InputGroupAddon>
-						</InputGroup>
-					</FormItem>
-				)}
-			</form.Field>
-		</>
-	);
-}
-
-type TypographyFieldGroupProps = {
-	label: ReactNode;
-};
-
-function TypographyFieldGroup({ label }: TypographyFieldGroupProps) {
-	return (
-		<div className="col-span-full flex items-center gap-x-2">
-			<Separator className="basis-[16px]" />
-			<div className="shrink-0 text-base leading-none font-medium">{label}</div>
-			<Separator className="flex-1" />
+					</section>
+				);
+			})}
+			<List cap className="mt-3.5">
+				<SwitchListRow
+					wrap
+					tall
+					label={t`Hyphenation`}
+					description={t`Breaks long words between syllables, using the language set in Page.`}
+					checked={metadata.typography.hyphenation === true}
+					onCheckedChange={(checked) =>
+						write(
+							"hyphenation",
+							(draft) => {
+								draft.typography.hyphenation = checked;
+							},
+							true,
+						)
+					}
+				/>
+			</List>
 		</div>
 	);
 }

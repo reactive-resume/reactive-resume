@@ -10,6 +10,15 @@ import { useShareOrigin } from "@/features/resume/share/use-share-origin";
 import { authClient } from "@/libs/auth/client";
 import { formatRelativeTime, localeMap, resolveLocale } from "@/libs/locale";
 
+/** The page language as Design › Page and the letter name it: "British English", not "English (United Kingdom)". */
+function languageName(locale: string, displayLocale: string) {
+	try {
+		return new Intl.DisplayNames([displayLocale], { type: "language", languageDisplay: "dialect" }).of(locale);
+	} catch {
+		return undefined;
+	}
+}
+
 type RowProps = { label: ReactNode; children: ReactNode };
 
 function Row({ label, children }: RowProps) {
@@ -58,7 +67,9 @@ export function DocumentDetails() {
 					</time>
 				</Row>
 				<Row label={<Trans>Template</Trans>}>{templates[template].name}</Row>
-				<Row label={<Trans>Language</Trans>}>{i18n._(localeMap[resolveLocale(page.locale)])}</Row>
+				<Row label={<Trans>Language</Trans>}>
+					{languageName(page.locale, i18n.locale) ?? i18n._(localeMap[resolveLocale(page.locale)])}
+				</Row>
 				<Row label={<Trans>Length</Trans>}>
 					{pageCount > 0 ? <Plural value={pageCount} one="# page" other="# pages" /> : "—"}
 				</Row>
@@ -70,7 +81,7 @@ export function DocumentDetails() {
 								href={url}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="mt-0.5 block truncate font-mono text-[13px] text-accent-text underline-offset-2 hover:underline"
+								className="mt-0.5 block font-mono text-[13px] break-all text-accent-text underline-offset-2 hover:underline"
 							>
 								{url.replace(/^https?:\/\//, "")}
 							</a>

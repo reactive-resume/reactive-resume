@@ -169,6 +169,59 @@ export function useMoveWithUndo() {
 	};
 }
 
+const TRASH_PAGE = 100;
+
+/**
+ * Says what went to Trash, with Undo. Restoring needs each application's Trash timestamp, which only the Trash list
+ * returns, so Undo reads it there first (newest in Trash come first).
+ */
+function trashedToast(ids: readonly string[], invalidate: () => void) {
+	const generation = getAccountGeneration();
+	const undo = async () => {
+		const wanted = new Set(ids);
+		const found: { id: string; trashedAt: Date }[] = [];
+		try {
+			for (let offset = 0; found.length < wanted.size; offset += TRASH_PAGE) {
+				const { items, total } = await client.applications.listTrash({ limit: TRASH_PAGE, offset });
+				found.push(...items.filter((item) => wanted.has(item.id)));
+				if (offset + TRASH_PAGE >= total) break;
+			}
+			if (generation !== getAccountGeneration()) return;
+			await Promise.all(found.map(({ id, trashedAt }) => client.applications.restore({ id, trashedAt })));
+		} catch (error) {
+			toastError(error, t`Couldn't restore the application. Try again.`);
+		} finally {
+			if (generation === getAccountGeneration()) invalidate();
+		}
+	};
+	toast.add({
+		description:
+			ids.length === 1
+				? t`Moved to Trash`
+				: plural(ids.length, { one: "# application moved to Trash", other: "# applications moved to Trash" }),
+		actionProps: { children: t`Undo`, onClick: () => void undo() },
+	});
+}
+
+/** Moves applications to Trash at once and offers Undo; nothing asks first, because Trash keeps them for 30 days. */
+export function useTrashWithUndo() {
+	const invalidate = useInvalidateApplications();
+
+	return async (applications: readonly Pick<ApplicationSummary, "id">[]) => {
+		const ids = applications.map((application) => application.id);
+		const [only] = ids;
+		if (!only) return;
+		try {
+			if (ids.length === 1) await client.applications.trash({ id: only });
+			else await client.applications.bulkTrash({ ids });
+			invalidate();
+			trashedToast(ids, invalidate);
+		} catch (error) {
+			toastError(error, t`Couldn't move the applications to Trash. Try again.`);
+		}
+	};
+}
+
 /**
  * Stage changes, closing and deleting, shared by the list, board and detail sheet. A move shows at once (the list
  * updates optimistically) and says so in a toast, whichever way it was made. Reaching Offer offers to add the offer's
@@ -308,13 +361,7 @@ export function useApplicationActions() {
 		...orpc.applications.trash.mutationOptions(),
 		onSuccess: (_data, input) => {
 			invalidate(input.id);
-			toast.add({
-				description: t`Moved to Trash`,
-				actionProps: {
-					children: t`Trash`,
-					onClick: () => void router.navigate({ to: "/dashboard/applications/trash" }),
-				},
-			});
+			trashedToast([input.id], invalidate);
 		},
 		onError: (error) => toastError(error, t`Couldn't delete the application. Try again.`),
 	});

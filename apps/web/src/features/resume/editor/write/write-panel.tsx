@@ -1,23 +1,31 @@
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useRouteContext, useSearch } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { formatShortcut } from "@reactive-resume/ui/components/kbd";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { AddSectionMenu, isSuggestedSection, StartSuggestions, SUGGESTED_SECTIONS } from "./add-section";
-import { BasicsCard } from "./basics-card";
+import { BasicsView } from "./basics-card";
+import { EntryView } from "./entry-view";
 import { getOutlineRows, summarizeContent } from "./model";
 import { Outline } from "./outline";
-import { ResumeLanguage } from "./resume-language";
+import { SectionView } from "./section-view";
+import { viewOf } from "./view";
 import { useDialogStore } from "@/dialogs/store";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useCurrentBuilderResumeSelector, useIsResumeLocked } from "@/features/resume/builder/draft";
 import { useUnlockResume } from "@/features/resume/builder/use-unlock-resume";
+import { PanelBody, PanelFoot, PanelHeader } from "@/features/resume/editor/chrome/panel";
 
 /**
- * Write: the Basics card, then the outline of sections in print order with their entries, then Add
- * section. Every field saves as you type; a locked resume shows the same panel read-only.
+ * Write shows one thing at a time, which is whatever is selected: the outline of sections, one section and its
+ * entries, or one entry. Every field saves as you type; a locked resume shows the same panels read-only.
  */
 export function WritePanel() {
 	const locked = useIsResumeLocked();
@@ -25,7 +33,22 @@ export function WritePanel() {
 	// The selector hook reads `undefined` as "no resume yet", so optional values need a fallback.
 	const dateFormat = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.dateFormat ?? null);
 	const page = { locale, dateFormat: dateFormat ?? undefined };
+	const selection = useEditorStore((state) => state.selection);
+	const view = viewOf(selection);
+
+	if (view.kind === "basics") return <BasicsView locked={locked} />;
+	if (view.kind === "section") return <SectionView key={view.sectionId} sectionId={view.sectionId} locked={locked} />;
+	if (view.kind === "entry")
+		return <EntryView sectionId={view.sectionId} entryId={view.entryId} locked={locked} page={page} />;
+	return <OutlineView locked={locked} />;
+}
+
+/** The whole resume as rows: Basics, then each section with a line saying what it holds. */
+function OutlineView({ locked }: { locked: boolean }) {
 	const added = useEditorStore((state) => state.addedSections);
+	// Phones and tablets show the page as its own view, edited by touch.
+	const breakpoint = useBreakpoint();
+	const touch = breakpoint === "mobile" || breakpoint === "tablet";
 	// The section ids in the outline, joined so the selector returns a stable value.
 	const inUse = useCurrentBuilderResumeSelector((resume) =>
 		getOutlineRows(resume.data, new Set(added))
@@ -33,50 +56,59 @@ export function WritePanel() {
 			.join(" "),
 	);
 	const rows = inUse ? inUse.split(" ") : [];
-	const isEmpty = rows.length === 0;
 	// While the resume is still being started (only suggested sections so far), the rest of the starter chips stay.
 	const remaining = rows.every((id) => isSuggestedSection(id))
 		? SUGGESTED_SECTIONS.filter((id) => !rows.includes(id))
 		: [];
 	const openDialog = useDialogStore((state) => state.openDialog);
-	const reorderKeys = formatShortcut("⌥↑↓");
 
 	return (
-		<div className="grid gap-4 p-4">
-			{locked && <LockedNote />}
+		<PanelBody>
+			<PanelHeader fit={!locked} title={<Trans>Sections</Trans>} actions={!locked && <AddSectionMenu />} />
+			{locked && <LockedNote className="mt-3" />}
 			<ImportedNote />
 
-			<ResumeLanguage locked={locked} />
-			<BasicsCard locked={locked} />
+			<Outline locked={locked} />
+			{!locked && remaining.length > 0 && (
+				<StartSuggestions
+					suggestions={remaining}
+					onImport={rows.length === 0 ? () => openDialog("document.new", undefined) : undefined}
+				/>
+			)}
 
-			<div>
-				<p className="mb-1.5 flex items-baseline justify-between px-1 text-xs font-semibold text-ink-3">
-					<Trans>Sections · print order</Trans>
-					{!locked && (
-						<span className="font-normal tracking-normal normal-case pointer-coarse:hidden">
-							<bdi dir="ltr">
-								<Trans>drag · {reorderKeys}</Trans>
-							</bdi>
+			{!locked && (
+				<Link
+					to="."
+					search={(previous: Record<string, unknown>) => ({ ...previous, mode: "design", designCategory: "layout" })}
+					className="mt-3 flex min-h-11 w-fit items-center gap-2 t-small text-ink-2 hover:text-ink sm:hidden"
+				>
+					<Icon name="columns" size={18} />
+					<Trans>Arrange sections</Trans>
+				</Link>
+			)}
+
+			<PanelFoot className={locked ? undefined : "items-center"}>
+				{locked ? (
+					<>
+						<Icon name="info" size={16} className="mt-px shrink-0" />
+						<span>
+							<Trans>
+								Rows open to read. Download, Check and History work as usual; Design and Share settings wait for Unlock.
+							</Trans>
 						</span>
-					)}
-				</p>
-
-				{isEmpty && !locked ? (
-					<StartSuggestions suggestions={remaining} onImport={() => openDialog("document.new", undefined)} />
+					</>
 				) : (
 					<>
-						<Outline locked={locked} page={page} />
-						{!locked && remaining.length > 0 && <StartSuggestions suggestions={remaining} />}
+						<Icon name={touch ? "file-text" : "cursor-click"} size={16} className="shrink-0" />
+						{touch ? (
+							<Trans>Page shows the result. Tap a block there to edit it.</Trans>
+						) : (
+							<Trans>Click any block on the page to edit it.</Trans>
+						)}
 					</>
 				)}
-
-				{!locked && <AddSectionMenu />}
-			</div>
-
-			<p className="px-1 text-xs leading-4 text-ink-3">
-				<Trans>Hidden sections keep their content but aren't printed or shared. Fields save as you type.</Trans>
-			</p>
-		</div>
+			</PanelFoot>
+		</PanelBody>
 	);
 }
 
@@ -100,8 +132,8 @@ function ImportedNote() {
 		});
 
 	return (
-		<Alert variant="success" className="items-start">
-			<Icon name="check-circle" size={20} />
+		<Alert variant="info" className="mt-3 items-start">
+			<Icon name="info" size={20} />
 			<AlertDescription className="flex items-start justify-between gap-3">
 				<span role="status">
 					<Trans>Imported from {imported}.</Trans> <Plural value={sections} one="# section" other="# sections" />,{" "}
@@ -125,21 +157,44 @@ function ImportedNote() {
 	);
 }
 
-/** Locked resumes read as they print; Unlock is one click and reversible. Write and Design both show it. */
-export function LockedNote() {
+/**
+ * Locked resumes read as they print; Unlock is one click and reversible, so it does not ask first. Write and Design
+ * both show the note. Under the app's line, the reason this copy is locked, when it was sent with an application.
+ */
+export function LockedNote({ className }: { className?: string }) {
 	const { unlock, isPending } = useUnlockResume();
+	const reason = useLockReason();
 
 	return (
-		<Alert variant="info" className="items-center">
-			<Icon name="lock" size={20} />
-			<AlertDescription className="flex items-center justify-between gap-3">
-				<span>
+		<div role="status" className={cn("flex flex-col gap-1 rounded-md bg-sunken px-3.5 pt-3 pb-3.5", className)}>
+			<div className="flex items-center gap-2.5">
+				<Icon name="lock-simple" size={18} className="shrink-0 text-ink-2" />
+				<span className="flex-1 text-sm/5 font-semibold">
 					<Trans>Locked. Unlock to edit.</Trans>
 				</span>
 				<Button size="sm" variant="secondary" loading={isPending} onClick={unlock} aria-label={t`Unlock editing`}>
 					<Trans>Unlock</Trans>
 				</Button>
-			</AlertDescription>
-		</Alert>
+			</div>
+			{reason && <span className="t-small text-ink-2">{reason}</span>}
+		</div>
 	);
+}
+
+/** "Sent to Lumen on 2 Nov…": why a copy that went out with an application is locked. */
+function useLockReason() {
+	const { session } = useRouteContext({ strict: false });
+	const id = useCurrentBuilderResumeSelector((resume) => resume.id);
+	const applicationId = useCurrentBuilderResumeSelector((resume) => resume.applicationId ?? null);
+	const { data: applications } = useQuery({ ...applicationsListQueryOptions(), enabled: !!applicationId });
+	const application = applications?.find((item) => item.id === applicationId && item.resumeId === id);
+	if (!application?.sentResumeVersionId || !application.appliedAt) return null;
+	const company = application.company;
+	const date = i18n.date(application.appliedAt, {
+		day: "numeric",
+		month: "short",
+		timeZone: session?.user.timezone ?? "UTC",
+	});
+
+	return t`Sent to ${company} on ${date}. The version they received stays in History whatever you change.`;
 }

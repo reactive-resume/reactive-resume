@@ -1155,6 +1155,10 @@ msgstr "{0} मा आवेदन गरियो"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "28 अक्टोबरमा आवेदन · अब छोटो सन्देश उपयुक्त छ"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "वेब पेजका आफ्नै शैलीहरूपछि, हरेक स्क्रिन आकारमा लागू हुन्छ। PDF जस्तो छ त्यस्तै रहन्छ।"
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "लोड भएन"
 msgid "Couldn't load this document. Try again."
 msgstr "यो कागजात लोड भएन। फेरि प्रयास गर्नुहोस्।"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "यो संस्करण लोड भएन। फेरि प्रयास गर्नुहोस्।"
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "यो लोड भएन। फेरि प्रयास गर्नुहोस्।"
@@ -2405,6 +2405,10 @@ msgstr "अनुकूलित"
 msgid "Custom colour"
 msgstr "आफ्नो रङ"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "अनुकूल CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "दैनिक"
@@ -2658,10 +2662,6 @@ msgstr "कागजात"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "कागजात कार्य"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "कागजात उपलब्ध छैन।"
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "अमान्य तालिका आवृत्ति।"
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "अमान्य प्रतिलेखन जवाफ।"
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "{0} जारी गर्नुहोस्"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "पृष्ठ {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "पृष्ठ {0} को {1}"
@@ -5445,7 +5440,7 @@ msgstr "यी प्रश्नको अभ्यास गर्नुहो
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "यो कथाको अभ्यास गर्नुहोस्"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "विज्ञापनमा मिलाउनुहोस्"
 msgid "Take photo"
 msgstr "फोटो खिच्नुहोस्"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "सम्पादन गर्न खण्ड थिच्नुहोस्"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "प्रतिलिपि गर्न थिच्नुहोस्"
@@ -7682,7 +7673,7 @@ msgstr "पहिले साझामा सार्वजनिक लिङ
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "बन्द गरियो"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

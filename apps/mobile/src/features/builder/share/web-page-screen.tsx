@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { isValidSlug } from "@reactive-resume/resume/sharing";
+import { WEB_PAGE_CSS_MAX_LENGTH } from "@reactive-resume/schema/resume/data";
 import { DocumentState, useDocumentId, useBuilderDocument } from "./document";
 import { useSession } from "@/auth/session";
 import { useAccount, useDocuments, useResumeStore, useSharing } from "@/data";
@@ -72,6 +73,8 @@ export function WebPageScreen() {
 	};
 	const hidden = useSwitchRow(document?.hideContactDetails ?? false, setting("hideContactDetails"));
 	const search = useSwitchRow(document?.showInSearchEngines ?? false, setting("showInSearchEngines"));
+	// The web page's own stylesheet lives in the resume data, so it edits through this resume's open draft.
+	const css = draft.document?.id === id ? (draft.document.data.metadata.web?.css ?? "") : undefined;
 	const saveSlug = () => {
 		if (slug === undefined || !isValidSlug(slug) || taken(slug)) return;
 		if (draft.document?.id !== id) {
@@ -177,6 +180,36 @@ export function WebPageScreen() {
 						boxHidden
 						onPress={() => router.push(`/builder/${id}/share/password`)}
 					/>
+					{css !== undefined && (
+						<>
+							<SectionHeading title={t`Custom CSS`} />
+							<Form>
+								<TextField
+									accessibilityLabel={t`Custom CSS`}
+									value={css}
+									onChangeText={(next) =>
+										draft.update(
+											(d) => {
+												d.metadata.web = { showCredit: true, ...d.metadata.web, css: next };
+											},
+											{ coalesceKey: "web.css" },
+										)
+									}
+									placeholder=".rr-page { box-shadow: none }"
+									multiline
+									mono
+									maxLength={WEB_PAGE_CSS_MAX_LENGTH}
+									editable={!draft.locked}
+									autoCapitalize="none"
+									autoCorrect={false}
+									spellCheck={false}
+								/>
+							</Form>
+							<Text variant="small" color="ink3" style={{ marginHorizontal: 24, marginTop: 8 }}>
+								{t`Applies to the web page after its own styles, at every screen size. The PDF stays as it is.`}
+							</Text>
+						</>
+					)}
 					{error ? (
 						<Text accessibilityRole="alert" color="dangerText" style={{ margin: 24 }}>
 							{error}

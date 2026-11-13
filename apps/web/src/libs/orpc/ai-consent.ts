@@ -1,6 +1,7 @@
 import type { client } from "./client";
 import type { AiVoiceOperation } from "@reactive-resume/ai/types";
 import { t } from "@lingui/core/macro";
+import { createElement } from "react";
 import { aiConfiguredModels, aiModelForTask, aiTaskForOperation } from "@reactive-resume/ai/task-models";
 import { aiDestination, NO_AI_DESTINATION, supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { confirmOperation } from "@/hooks/use-confirm";
@@ -175,16 +176,55 @@ export async function authorizeAiRequest(
 					? aiConfiguredModels(provider).join(", ")
 					: operation === "applications.ai.prepare"
 						? [...new Set([provider.model, aiModelForTask(provider, "capable")])].join(", ")
-						: task
-							? aiModelForTask(provider, task)
-							: provider.model))
+						: rebind
+							? aiModelForTask(provider, "capable")
+							: task
+								? aiModelForTask(provider, task)
+								: provider.model))
 			: "";
-		const allowed = await confirmOperation(provider ? t`Share data with ${provider.label}?` : t`Use web access?`, {
-			description: `${provider ? `${provider.label} · ${disclosedModel} · ${provider.baseURL ?? provider.provider}` : t`No AI provider is used for this operation.`}\n\n${data}\n\n${webNotice} ${nativeSearchNotice} ${scheduled ? t`This allows recurring processing until you turn the schedule off.` : ""} ${t`Provider retention follows its own policy. Your provider may charge for this request.`}`,
-			confirmText: rebind ? t`Use this destination` : scheduled ? t`Allow scheduled sharing` : t`Allow this operation`,
-			cancelText: t`Don't share`,
-			...(signal ? { signal } : {}),
-		});
+		let currentLabel: string | undefined;
+		if (rebind && typeof fields.id === "string") {
+			const [currentThread, providers] = await Promise.all([
+				api.agent.threads.get({ id: fields.id }, options),
+				api.aiProviders.list({}, options),
+			]);
+			currentLabel = providers.find((entry) => entry.id === currentThread.thread.aiProviderId)?.label;
+		}
+		const destinationLabel = provider
+			? `${provider.label} · ${disclosedModel} · ${provider.baseURL ?? provider.provider}`
+			: t`No AI provider is used for this operation.`;
+		const notice = `${data}\n\n${webNotice} ${nativeSearchNotice} ${scheduled ? t`This allows recurring processing until you turn the schedule off.` : ""} ${t`Provider retention follows its own policy. Your provider may charge for this request.`}`;
+		const allowed = await confirmOperation(
+			rebind && provider
+				? t`Use ${provider.label} for this conversation?`
+				: provider
+					? t`Share data with ${provider.label}?`
+					: t`Use web access?`,
+			{
+				description: rebind
+					? createElement(
+							"div",
+							{ className: "grid gap-3" },
+							createElement(
+								"code",
+								{
+									className: "block rounded-md bg-sunken p-3 font-mono text-xs break-all whitespace-pre-wrap",
+									dir: "ltr",
+								},
+								destinationLabel,
+							),
+							createElement("p", { className: "whitespace-pre-line" }, notice),
+						)
+					: `${destinationLabel}\n\n${notice}`,
+				confirmText: rebind
+					? t`Use this destination`
+					: scheduled
+						? t`Allow scheduled sharing`
+						: t`Allow this operation`,
+				cancelText: rebind ? (currentLabel ? t`Keep ${currentLabel}` : t`Keep current connection`) : t`Don't share`,
+				...(signal ? { signal } : {}),
+			},
+		);
 		signal?.throwIfAborted();
 		if (!allowed) throw new DOMException(t`Data sharing canceled. Nothing was sent to the AI provider.`, "AbortError");
 		const current = webOnly ? null : await resolve(provider?.id);

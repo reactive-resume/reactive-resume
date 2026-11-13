@@ -7,14 +7,14 @@ import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Icon } from "@reactive-resume/ui/components/icon";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "../store";
 import { PasswordInput } from "@/components/input/password-input";
@@ -90,8 +90,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 	return (
 		<DialogContent closeLabel={t`Close`}>
 			<DialogHeader>
-				<DialogTitle className="flex items-center gap-x-2">
-					<Icon name="password" size={16} />
+				<DialogTitle>
 					<Trans>Change your password</Trans>
 				</DialogTitle>
 				<DialogDescription>
@@ -151,6 +150,9 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 									/>
 								}
 							/>
+							<FormDescription>
+								<Trans>At least 8 characters, and different from the current one.</Trans>
+							</FormDescription>
 							<FormMessage errors={field.state.meta.errors} />
 						</FormItem>
 					)}
@@ -170,6 +172,9 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 				</form.Field>
 
 				<DialogFooter>
+					<DialogClose render={<Button type="button" variant="ghost" />}>
+						<Trans>Cancel</Trans>
+					</DialogClose>
 					<Button type="submit" disabled={isSubmitting}>
 						<Trans comment="Primary action button to submit changed password">Change password</Trans>
 					</Button>

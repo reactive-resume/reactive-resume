@@ -4,7 +4,6 @@ import { I18nProvider } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -22,27 +21,23 @@ export function ErrorScreen({ error }: ErrorComponentProps) {
 	return (
 		<I18nProvider i18n={i18n}>
 			<div className="mx-auto flex h-svh max-w-md flex-col items-center justify-center gap-y-4 px-4">
-				<BrandIcon variant="logo" className="size-12" />
+				<BrandIcon variant="icon" className="size-12" />
 
-				<Alert>
-					<Icon name="warning" size={16} />
-					<AlertTitle>
-						<Trans>This page didn't load</Trans>
-					</AlertTitle>
-					<AlertDescription>
-						<Trans>Reload to try again.</Trans>
-					</AlertDescription>
-				</Alert>
+				<h1 className="text-center t-page-title">
+					<Trans>This page didn't load</Trans>
+				</h1>
+				<p className="text-center text-ink-2">
+					<Trans>Reload to try again.</Trans>
+				</p>
 
-				<div className="flex items-center gap-x-2">
+				<div className="flex flex-wrap items-center justify-center gap-2">
 					<Button onClick={() => window.location.reload()}>
 						<Icon name="arrow-clockwise" size={16} />
 						<Trans>Reload</Trans>
 					</Button>
 
 					<Link to="/dashboard" className={buttonVariants({ variant: "secondary" })}>
-						<Icon name="house" size={16} />
-						<Trans>Go to dashboard</Trans>
+						<Trans>Go to Today</Trans>
 					</Link>
 				</div>
 			</div>

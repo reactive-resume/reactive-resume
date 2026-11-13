@@ -50,6 +50,7 @@ export function PublicResumeScreen() {
 					revision: JSON.stringify(resume.data),
 					data: resume.data,
 					public: true,
+					publicPath: { username, slug },
 					fixture: "page-public-full",
 				})
 				.then((result) => {
@@ -64,7 +65,7 @@ export function PublicResumeScreen() {
 		return () => {
 			current = false;
 		};
-	}, [resume]);
+	}, [resume, username, slug]);
 	const url = `${getServer()}/${encodeURIComponent(username)}/${encodeURIComponent(resume?.slug ?? slug)}`;
 	const save = async () => {
 		if (!rendered || saving) return;

@@ -1,10 +1,14 @@
 import type { EditorSelection } from "./store";
 import type { PageMap, PageMapNode } from "@reactive-resume/pdf/page-map";
+import type { SectionType } from "@reactive-resume/schema/resume/data";
 import type { MouseEvent } from "react";
 import { Trans } from "@lingui/react/macro";
 import { cn } from "@reactive-resume/utils/style";
 import { isSameSelection, useEditorStore } from "./store";
 import { useEditorMode } from "./use-editor-mode";
+import { describeEntry, findEntry, getSectionObject, resolveSection } from "./write/model";
+import { useCurrentBuilderResumeSelector } from "@/features/resume/builder/draft";
+import { getSectionTitle } from "@/libs/resume/section";
 
 type PageOverlayProps = {
 	pageIndex: number;
@@ -27,9 +31,8 @@ const readSelection = (element: HTMLElement): EditorSelection | null => {
 };
 
 /**
- * Pointer layer over one rendered page: hovering a block tints it, clicking selects its entry, and the
- * selected block gets an accent outline with an "Editing" tag. (Row order is a resume-wide choice: it lives in
- * Design → Entries, not on one entry's tag.)
+ * Pointer layer over one rendered page: hovering a block outlines it, clicking opens it in the panel, and what the
+ * panel has open is outlined in accent and named on a tag: an entry, or a whole section while its list is open.
  */
 export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) {
 	const selection = useEditorStore((state) => state.selection);
@@ -45,6 +48,11 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 	const sectionsWithItems = new Set(nodes.flatMap((node) => (node.kind === "item" ? [node.sectionId] : [])));
 	const blocks = nodes.filter((node) => node.kind !== "section" || !sectionsWithItems.has(node.sectionId));
 	const selected = blocks.filter((node) => isSameSelection(selection, toSelection(node)));
+	// A section's list is open: the whole section is outlined, entries and all (they stay clickable inside it).
+	const openSection =
+		selection?.kind === "section" && selected.length === 0
+			? nodes.filter((node) => node.kind === "section" && node.sectionId === selection.sectionId)
+			: [];
 
 	// Custom Styles: each node the rule under the cursor matches, outlined as the closest block the page map knows
 	// (a field inside an entry lights up its entry).
@@ -81,9 +89,18 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 						data-section-id={node.kind === "header" ? undefined : node.sectionId}
 						data-item-id={node.kind === "item" ? node.itemId : undefined}
 						className={cn(
-							"absolute cursor-pointer rounded-lg outline-[1.5px] transition-[background-color,outline-color] duration-quick outline-solid hover:bg-[oklch(0.5_0.1_150/0.06)]",
-							selected.includes(node) ? "outline-accent" : "outline-transparent",
+							"absolute cursor-pointer rounded-md transition-[outline-color] duration-quick outline-solid",
+							selected.includes(node)
+								? "outline-2 outline-accent"
+								: "outline-1 outline-transparent hover:outline-line-2",
 						)}
+						style={boxOf(node)}
+					/>
+				))}
+				{openSection.map((node) => (
+					<div
+						key={`section:${node.key}:${node.y}`}
+						className="pointer-events-none absolute rounded-md outline-2 outline-accent"
 						style={boxOf(node)}
 					/>
 				))}
@@ -91,27 +108,45 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 					<div
 						key={`style:${node.key}:${node.y}`}
 						data-slot="style-highlight"
-						className="pointer-events-none absolute rounded-lg bg-[oklch(0.5_0.1_150/0.08)] outline-[1.5px] outline-accent transition-opacity duration-quick ease-enter outline-dashed starting:opacity-0"
+						className="pointer-events-none absolute rounded-lg bg-accent/8 outline-[1.5px] outline-accent transition-opacity duration-quick ease-enter outline-dashed starting:opacity-0"
 						style={boxOf(node)}
 					/>
 				))}
 			</div>
 			{/* The tag is in the app's language and direction, not the resume's. */}
 			{mode === "write" &&
-				selected.map((node) => (
+				[...selected, ...openSection].map((node) => (
 					<div
 						key={`tag:${node.key}:${node.y}`}
 						className="pointer-events-none absolute max-sm:hidden"
 						style={boxOf(node)}
 					>
-						{/* On the outline's lower end, clear of the section heading that sits right above an entry. */}
-						<div className="absolute end-1 -bottom-2 flex gap-1 text-xs leading-4 font-semibold">
-							<span aria-hidden="true" className="rounded-md bg-accent px-1 text-on-accent">
-								<Trans>Editing</Trans>
-							</span>
-						</div>
+						{/* On the outline's top edge, at its end. */}
+						<span
+							aria-hidden="true"
+							className="absolute -end-0.5 -top-2.5 h-5 max-w-full truncate rounded-xs bg-accent px-1.5 text-[11px]/5 font-medium whitespace-nowrap text-on-accent"
+						>
+							<SelectionName node={node} />
+						</span>
 					</div>
 				))}
 		</>
 	);
+}
+
+/** What a tag says: the section, and for an entry its name after it ("Experience · Northwind Labs"). */
+function SelectionName({ node }: { node: PageMapNode }) {
+	const name = useCurrentBuilderResumeSelector((resume) => {
+		if (node.kind === "header") return "";
+		const section = resolveSection(resume.data, node.sectionId);
+		if (!section) return "";
+		const title =
+			getSectionObject(resume.data, section)?.title.trim() ||
+			getSectionTitle(section.kind === "custom" ? section.type : (section.id as SectionType | "summary"));
+		if (node.kind !== "item") return title;
+		const entry = findEntry(resume.data, node.sectionId, node.itemId);
+		const entryTitle = entry ? describeEntry(section.type, entry).title : "";
+		return entryTitle ? `${title} · ${entryTitle}` : title;
+	});
+	return name || <Trans>Basics</Trans>;
 }

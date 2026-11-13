@@ -10,7 +10,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { DocumentsPage } from "./documents-page";
 import { DocumentLibraryProvider } from "./library-session";
-import { TrashPage } from "./trash-page";
 import { useDialogStore } from "@/dialogs/store";
 import { orpc } from "@/libs/orpc/client";
 
@@ -53,6 +52,7 @@ vi.mock("@tanstack/react-router", () => ({
 	useRouter: () => ({ subscribe: () => () => {} }),
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
+vi.mock("@/components/layout/phone-header-actions", () => ({ PhoneHeaderActions: () => null }));
 vi.mock("./use-start-document", () => ({
 	IMPORT_ACCEPT: ".pdf,.docx,.json",
 	useStartDocument: () => ({ newLetter: requests.newLetter, creating: false }),
@@ -120,16 +120,20 @@ function page(offset: number, total = 19500): Page {
 		hasPublic: false,
 	};
 }
-function setup(trashed = false, view: "grid" | "list" = "list", cacheNext = true, initialQuery = "") {
+function setup(view: "grid" | "list" = "list", cacheNext = true, initialQuery = "") {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
-	const input = { trashed, type: "all" as const, q: "", tags: [], sort: "edited" as const, public: false, limit: 100 };
+	const input = {
+		trashed: false,
+		type: "all" as const,
+		q: "",
+		tags: [],
+		sort: "edited" as const,
+		public: false,
+		limit: 100,
+	};
 	for (const offset of cacheNext ? [0, 100] : [0])
 		client.setQueryData(orpc.documents.page.queryKey({ input: { ...input, offset } }), page(offset));
-	// Trash uses defaults instead of explicit filters.
-	if (trashed)
-		for (const offset of cacheNext ? [0, 100] : [0])
-			client.setQueryData(orpc.documents.page.queryKey({ input: { trashed, limit: 100, offset } }), page(offset));
 	function Library() {
 		const [search, setSearch] = useState<DocumentsSearch>({
 			type: "all",
@@ -145,20 +149,22 @@ function setup(trashed = false, view: "grid" | "list" = "list", cacheNext = true
 	render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={client}>
-				<DocumentLibraryProvider>{trashed ? <TrashPage /> : <Library />}</DocumentLibraryProvider>
+				<DocumentLibraryProvider>
+					<Library />
+				</DocumentLibraryProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
 	return { client, input };
 }
 
-it.each([false, true])("bounds 19.5k documents to one page and replaces rows on Next (trash=%s)", async (trashed) => {
-	setup(trashed);
+it("bounds 19.5k documents to one page and replaces rows on Next", async () => {
+	setup();
 	// 100 documents and the header row.
 	const role = "row";
 	const count = 101;
 	expect(screen.getAllByRole(role)).toHaveLength(count);
-	if (!trashed) expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19,500")).toBeVisible();
+	expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19,500")).toBeVisible();
 	expect(screen.getByText("Document 0")).toBeVisible();
 	expect(screen.queryByText("Document 100")).toBeNull();
 	fireEvent.click(screen.getByRole("button", { name: "Next" }));
@@ -178,47 +184,37 @@ it("search starts at page zero, preserves global filtered counts and clears page
 		...page(0, 1),
 		items: page(0, 1).items.map((row) => ({ ...row, name: "needle" })),
 	});
-	fireEvent.change(screen.getByRole("searchbox", { name: "Search documents" }), { target: { value: "needle" } });
+	fireEvent.change(screen.getByRole("searchbox", { name: "Filter documents" }), { target: { value: "needle" } });
 	await waitFor(() => expect(screen.getByText("needle")).toBeVisible());
 	expect(screen.getAllByRole("row")).toHaveLength(2);
 	expect(screen.queryByRole("navigation", { name: "Pagination" })).toBeNull();
 	expect(screen.queryByText("100 selected")).toBeNull();
 });
 
-it.each([
-	{ trashed: false, view: "list" },
-	{ trashed: false, view: "grid" },
-	{ trashed: true, view: "list" },
-] as const)(
-	"blocks retained-row callbacks while another page loads ($view, trash=$trashed)",
-	async ({ trashed, view }) => {
-		let finish!: (value: Page) => void;
-		requests.load.mockReset().mockReturnValue(
-			new Promise<Page>((resolve) => {
-				finish = resolve;
-			}),
-		);
-		setup(trashed, view, false);
-		fireEvent.click(screen.getByRole("button", { name: "Next" }));
-		await waitFor(() => expect(requests.load).toHaveBeenCalledTimes(1));
-		expect(screen.getByText("Document 0")).toBeVisible();
-		expect(screen.getByRole("checkbox", { name: "Select Document 0" })).toBeDisabled();
-		if (view === "list")
-			fireEvent.click(
-				screen.getByRole("checkbox", { name: trashed ? "Select this page in Trash" : "Select this page" }),
-			);
-		fireEvent.click(screen.getByRole("checkbox", { name: "Select Document 0" }));
-		expect(screen.queryByText("100 selected")).toBeNull();
-		expect(screen.queryByText("1 selected")).toBeNull();
-		await act(async () => {
-			finish(page(100));
-		});
-		const current = await screen.findByRole("checkbox", { name: "Select Document 100" });
-		expect(current).not.toBeDisabled();
-		fireEvent.click(current);
-		expect(screen.getByText("1 selected")).toBeVisible();
-	},
-);
+it.each(["list", "grid"] as const)("blocks retained-row callbacks while another page loads (%s)", async (view) => {
+	let finish!: (value: Page) => void;
+	requests.load.mockReset().mockReturnValue(
+		new Promise<Page>((resolve) => {
+			finish = resolve;
+		}),
+	);
+	setup(view, false);
+	fireEvent.click(screen.getByRole("button", { name: "Next" }));
+	await waitFor(() => expect(requests.load).toHaveBeenCalledTimes(1));
+	expect(screen.getByText("Document 0")).toBeVisible();
+	expect(screen.getByRole("checkbox", { name: "Select Document 0" })).toBeDisabled();
+	if (view === "list") fireEvent.click(screen.getByRole("checkbox", { name: "Select this page" }));
+	fireEvent.click(screen.getByRole("checkbox", { name: "Select Document 0" }));
+	expect(screen.queryByText("100 selected")).toBeNull();
+	expect(screen.queryByText("1 selected")).toBeNull();
+	await act(async () => {
+		finish(page(100));
+	});
+	const current = await screen.findByRole("checkbox", { name: "Select Document 100" });
+	expect(current).not.toBeDisabled();
+	fireEvent.click(current);
+	expect(screen.getByText("1 selected")).toBeVisible();
+});
 
 it("blocks raw-search debounce and failed-fetch actions while retaining controls and last-successful metadata", async () => {
 	let fail!: (error: Error) => void;
@@ -236,7 +232,7 @@ it("blocks raw-search debounce and failed-fetch actions while retaining controls
 	);
 	fireEvent.click(screen.getByRole("checkbox", { name: "Select Document 0" }));
 	expect(screen.getByText("1 selected")).toBeVisible();
-	const search = screen.getByRole("searchbox", { name: "Search documents" });
+	const search = screen.getByRole("searchbox", { name: "Filter documents" });
 	fireEvent.change(search, { target: { value: "new query" } });
 	expect(screen.getByRole("checkbox", { name: "Select Document 0" })).toBeDisabled();
 	fireEvent.click(screen.getByRole("checkbox", { name: "Select this page" }));
@@ -261,8 +257,8 @@ it("blocks raw-search debounce and failed-fetch actions while retaining controls
 
 it("bounds a URL search to the server's 500-character limit", async () => {
 	requests.load.mockReset().mockResolvedValue(page(0));
-	setup(false, "list", true, "x".repeat(501));
-	const search = screen.getByRole("searchbox", { name: "Search documents" });
+	setup("list", true, "x".repeat(501));
+	const search = screen.getByRole("searchbox", { name: "Filter documents" });
 	expect(search).toHaveValue("x".repeat(500));
 	await waitFor(() => expect(requests.load).toHaveBeenCalled());
 	expect(requests.load.mock.calls.every(([input]) => input.q.length <= 500)).toBe(true);
@@ -274,7 +270,7 @@ it("retains rows, counts, tags and keyboard focus while the next page loads", as
 		finish = resolve;
 	});
 	requests.load.mockReset().mockReturnValue(response);
-	const { client, input } = setup(false, "list", false);
+	const { client, input } = setup("list", false);
 	act(() => {
 		client.setQueryData(orpc.documents.page.queryKey({ input: { ...input, offset: 0 } }), {
 			...page(0),
@@ -299,22 +295,18 @@ it("retains rows, counts, tags and keyboard focus while the next page loads", as
 	expect(next).toHaveFocus();
 });
 
-it.each([false, true])(
-	"returns to the previous page after its last remaining row is removed (trash=%s)",
-	async (trashed) => {
-		const { client, input } = setup(trashed);
-		fireEvent.click(screen.getByRole("button", { name: "Next" }));
-		await waitFor(() => expect(screen.getByText("Document 100")).toBeVisible());
-		const filters = trashed ? { trashed, limit: 100 } : input;
-		act(() => {
-			client.setQueryData(orpc.documents.page.queryKey({ input: { ...filters, offset: 0 } }), page(0, 100));
-			client.setQueryData(orpc.documents.page.queryKey({ input: { ...filters, offset: 100 } }), page(100, 100));
-		});
-		await waitFor(() => expect(screen.getByText("Document 0")).toBeVisible());
-		expect(screen.getAllByRole("row")).toHaveLength(101);
-		expect(screen.queryByRole("navigation", { name: "Pagination" })).toBeNull();
-	},
-);
+it("returns to the previous page after its last remaining row is removed", async () => {
+	const { client, input } = setup();
+	fireEvent.click(screen.getByRole("button", { name: "Next" }));
+	await waitFor(() => expect(screen.getByText("Document 100")).toBeVisible());
+	act(() => {
+		client.setQueryData(orpc.documents.page.queryKey({ input: { ...input, offset: 0 } }), page(0, 100));
+		client.setQueryData(orpc.documents.page.queryKey({ input: { ...input, offset: 100 } }), page(100, 100));
+	});
+	await waitFor(() => expect(screen.getByText("Document 0")).toBeVisible());
+	expect(screen.getAllByRole("row")).toHaveLength(101);
+	expect(screen.queryByRole("navigation", { name: "Pagination" })).toBeNull();
+});
 
 it("opens the top match with Enter, even before the typed search returns, then â†“ and Esc work from the field", async () => {
 	let finish!: (value: Page) => void;
@@ -325,7 +317,7 @@ it("opens the top match with Enter, even before the typed search returns, then â
 		}),
 	);
 	setup();
-	const search = screen.getByRole("searchbox", { name: "Search documents" });
+	const search = screen.getByRole("searchbox", { name: "Filter documents" });
 	search.focus();
 	fireEvent.change(search, { target: { value: "riot" } });
 	// An IME confirming its conversion and modified Enter keep their own meaning.
@@ -383,7 +375,7 @@ it("does not carry queued navigation into a replacement query client", async () 
 	);
 	const view = render(tree(first));
 	await waitFor(() => expect(requests.load).toHaveBeenCalled());
-	fireEvent.keyDown(screen.getByRole("searchbox", { name: "Search documents" }), { key: "Enter" });
+	fireEvent.keyDown(screen.getByRole("searchbox", { name: "Filter documents" }), { key: "Enter" });
 	view.rerender(tree(second));
 	await act(async () => finish(page(0, 1)));
 	await screen.findByText("Document 0");
@@ -405,9 +397,9 @@ it.each(["empty", "error"])(
 				fail = reject;
 			}),
 		);
-		const { client, input } = setup(false, "list", false, "Shared");
+		const { client, input } = setup("list", false, "Shared");
 		await waitFor(() => expect(requests.load).toHaveBeenCalled());
-		const search = screen.getByRole("searchbox", { name: "Search documents" });
+		const search = screen.getByRole("searchbox", { name: "Filter documents" });
 		fireEvent.keyDown(search, { key: "Enter" });
 		await act(async () => {
 			if (completion === "empty") finish(page(0, 0));
@@ -546,7 +538,7 @@ it.each([0, 1])("recovers the correct empty state after a failed counts request 
 });
 
 it.each(["list", "grid"] as const)(
-	"groups a job's resume and letter in %s view, keeping closed jobs collapsed until opened",
+	"lists every document in %s view with no job headings, a closed job's included",
 	async (view) => {
 		i18n.loadAndActivate({ locale: "en-US", messages: {} });
 		const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
@@ -594,27 +586,20 @@ it.each(["list", "grid"] as const)(
 			</I18nProvider>,
 		);
 
-		const closed = await screen.findByRole("button", { name: /Closed Co/ });
-		expect(closed).toHaveAttribute("aria-expanded", "false");
-		expect(screen.getByText("Open Co resume")).toBeVisible();
-		expect(screen.getByText("Open Co letter")).toBeVisible();
-		expect(screen.queryByText("Closed Co resume")).toBeNull();
-		expect(screen.queryByText("Closed Co letter")).toBeNull();
-		expect(screen.getByText("Loose letter")).toBeVisible();
+		// The redesign dropped the job headings: each card and row names its own job, so nothing is folded away.
+		for (const name of ["Open Co resume", "Open Co letter", "Closed Co resume", "Closed Co letter", "Loose letter"])
+			expect(await screen.findByText(name)).toBeVisible();
+		// The job is a filter chip now, not a disclosure.
+		expect(screen.getByRole("button", { name: "For Closed Co" })).not.toHaveAttribute("aria-expanded");
 
-		// Select this page covers the open groups only: the closed group's documents stay out of the selection.
+		// Selecting everything covers the whole page.
 		if (view === "list") fireEvent.click(screen.getByRole("checkbox", { name: "Select this page" }));
 		else {
 			fireEvent.click(screen.getByRole("checkbox", { name: "Select Open Co resume" }));
-			fireEvent.click(screen.getByRole("button", { name: "Select this page" }));
+			fireEvent.click(screen.getByRole("button", { name: "Select all 5" }));
 		}
-		for (const name of ["Open Co resume", "Open Co letter", "Loose letter"])
+		for (const name of ["Open Co resume", "Open Co letter", "Closed Co resume", "Closed Co letter", "Loose letter"])
 			expect(screen.getByRole("checkbox", { name: `Select ${name}` })).toBeChecked();
-		expect(screen.queryByRole("checkbox", { name: "Select Closed Co resume" })).toBeNull();
-
-		fireEvent.click(closed);
-		expect(closed).toHaveAttribute("aria-expanded", "true");
-		expect(await screen.findByText("Closed Co resume")).toBeVisible();
-		expect(screen.getByText("Closed Co letter")).toBeVisible();
+		expect(screen.getByText("5 selected")).toBeVisible();
 	},
 );

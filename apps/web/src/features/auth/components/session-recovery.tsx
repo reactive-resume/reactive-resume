@@ -47,9 +47,15 @@ export function SessionRecovery() {
 
 	if (!accountId || accountId !== getAccountId()) return null;
 	return (
-		<div className="fixed inset-x-4 top-4 z-200 mx-auto flex max-w-xl flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-raised p-4 shadow-e3">
-			<p role="alert" className="text-sm">
-				<Trans>Your session ended. Sign in again to keep working.</Trans>
+		<div
+			role="alert"
+			className="fixed inset-x-4 top-4 z-200 mx-auto flex max-w-xl flex-wrap items-center justify-between gap-x-4 gap-y-3 rounded-xl border border-line bg-raised py-4 ps-5 pe-4 shadow-e3"
+		>
+			<p className="min-w-0 flex-1 basis-60 t-ui">
+				<Trans>
+					<span className="font-semibold">Your session ended.</span> Sign in again to keep working. Nothing on this page
+					is lost.
+				</Trans>
 			</p>
 			<Button
 				nativeButton={false}
@@ -57,6 +63,9 @@ export function SessionRecovery() {
 			>
 				<Trans>Sign in again</Trans>
 			</Button>
+			<p className="basis-full t-small text-ink-3">
+				<Trans>Sign-in opens in a new tab. This page carries on and saves once you are signed in.</Trans>
+			</p>
 		</div>
 	);
 }

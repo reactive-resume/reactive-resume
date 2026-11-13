@@ -1155,6 +1155,10 @@ msgstr "{0} tarihinde başvuruldu"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "28 Eki. tarihinde başvuruldu · şimdi kısa bir not uygun"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Web sayfasına kendi stillerinden sonra, her ekran boyutunda uygulanır. PDF olduğu gibi kalır."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Yüklenemedi"
 msgid "Couldn't load this document. Try again."
 msgstr "Bu belge yüklenemedi. Tekrar deneyin."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Bu sürüm yüklenemedi. Tekrar deneyin."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Yüklenemedi. Tekrar deneyin."
@@ -2405,6 +2405,10 @@ msgstr "Özel"
 msgid "Custom colour"
 msgstr "Özel renk"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "Özel CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Günlük"
@@ -2658,10 +2662,6 @@ msgstr "Belge"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Belge işlemleri"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Belge kullanılamıyor."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Geçersiz zamanlama sıklığı."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Geçersiz yazıya dökme yanıtı."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Sorun {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Sayfa {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Sayfa {0} / {1}"
@@ -5445,7 +5440,7 @@ msgstr "Bu sorularla alıştırma yap"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Bu hikayeyle pratik yap"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "İlana uyarla"
 msgid "Take photo"
 msgstr "Fotoğraf çek"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Düzenlemek için bölüme dokunun"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Kopyalamak için dokunun"
@@ -7682,7 +7673,7 @@ msgstr "Önce Paylaş'ta herkese açık bağlantıyı açın."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Kapatıldı"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

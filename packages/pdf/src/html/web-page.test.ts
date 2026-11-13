@@ -129,3 +129,34 @@ describe("a header band in a row", () => {
 		expect(css).toContain(".rr [data-region][data-fill]{flex-grow:1!important}");
 	});
 });
+
+it("marks only contact details that Share can hide in the rendered template", async () => {
+	const data = structuredClone(sampleResumeData);
+	data.metadata.template = "onyx";
+	data.basics.email = "sam@example.com";
+	data.basics.phone = "+1 555 0100";
+	data.basics.location = "Lisbon";
+	data.basics.website = { url: "https://example.com", label: "Portfolio" };
+	const { html } = await renderResumeWebPage({ data });
+	const { parse } = await import("node-html-parser");
+	const marked = parse(html)
+		.querySelectorAll("[data-contact-detail]")
+		.map((node) => node.textContent);
+	expect(marked).toHaveLength(3);
+	expect(marked.join(" ")).toContain(data.basics.email);
+	expect(marked.join(" ")).toContain(data.basics.phone);
+	expect(marked.join(" ")).toContain(data.basics.location);
+	expect(marked.join(" ")).not.toContain("Portfolio");
+});
+
+it("renders the translated password-page credit only when its URL is provided, escaping both", async () => {
+	const { renderPasswordDocument } = await import("./document");
+	const { webPageMessages } = await import("./messages");
+	const messages = { ...webPageMessages("en-US"), credit: "Made <with> Reactive Resume" };
+	const options = { lang: "en-US", messages, wrongPassword: false };
+	expect(renderPasswordDocument(options)).not.toContain('class="password-credit"');
+	const html = renderPasswordDocument({ ...options, creditUrl: 'https://example.com/?a=1&b="x"' });
+	expect(html).toContain('class="password-credit"');
+	expect(html).toContain("Made &lt;with&gt; Reactive Resume");
+	expect(html).toContain('href="https://example.com/?a=1&amp;b=&quot;x&quot;"');
+});

@@ -34,8 +34,8 @@ export type EditorSelection = PageMapTarget;
 
 export const ZOOM_MIN = 0.6;
 export const ZOOM_MAX = 3;
-/** Fit never draws the page larger than this, however wide the canvas: zooming in goes past it, up to ZOOM_MAX. */
-export const FIT_MAX = 1.5;
+/** Fit never draws the page larger than life, however wide the canvas: zooming in goes past it, up to ZOOM_MAX. */
+export const FIT_MAX = 1;
 export const ZOOM_STEP = 0.1;
 
 type EditorStore = {
@@ -44,14 +44,14 @@ type EditorStore = {
 	selection: EditorSelection | null;
 	/** "fit" fits the page width to the canvas; otherwise an explicit scale between 60% and 300%. */
 	zoom: number | "fit";
-	/** Tablet only: the panel is a drawer over the page. */
-	drawerOpen: boolean;
-	/** Tablet in landscape: the panel sits beside the page instead of over it. */
-	drawerPinned: boolean;
 	/** The open tab of the Download & history sheet, or null while it's closed. */
 	sheetTab: SheetTab | null;
 	/** History: the version shown on the page, read-only, instead of the current resume. */
 	historyVersionId: string | null;
+	/** Version history has taken the panel's place (the clock in the bar). The assistant and it take turns. */
+	historyOpen: boolean;
+	/** The panel is hidden and the pages have the whole canvas, side by side when they fit. */
+	panelHidden: boolean;
 	assistantOpen: boolean;
 	/** ⌘J toggled the assistant: its column, drawer or screen switches without a transition. */
 	assistantInstant: boolean;
@@ -107,10 +107,14 @@ type EditorStore = {
 	 */
 	exportCheck: { report: PdfAtsReport; data: ResumeData } | null;
 	exportReportOpen: boolean;
+	/** The resume published in this visit: Share keeps its switch after it is turned off, until reload. */
+	publishedResumeId: string | null;
 	setZoom: (zoom: number | "fit") => void;
 	/** Opens the sheet on a tab, or closes it (which also returns the page to now). */
 	setSheetTab: (tab: SheetTab | null) => void;
 	setAssistantOpen: (open: boolean, instant?: boolean) => void;
+	/** Opens History in the panel's place, or closes it (which also returns the page to now). */
+	setHistoryOpen: (open: boolean) => void;
 	setSectionOpen: (sectionId: string, open: boolean) => void;
 	markSectionAdded: (sectionId: string) => void;
 	/** `marked`: the render shows proposed edits (or a template preview), so it doesn't measure fit. */
@@ -135,10 +139,10 @@ const initialState = {
 	pendingMode: null,
 	selection: null,
 	zoom: "fit",
-	drawerOpen: false,
-	drawerPinned: false,
 	sheetTab: null,
 	historyVersionId: null,
+	historyOpen: false,
+	panelHidden: false,
 	assistantOpen: false,
 	assistantInstant: false,
 	assistantThread: null,
@@ -164,13 +168,24 @@ const initialState = {
 	writingReview: null,
 	exportCheck: null,
 	exportReportOpen: false,
+	publishedResumeId: null,
 } as const;
 
 export const useEditorStore = create<EditorStore>()((set) => ({
 	...initialState,
 	setZoom: (zoom) => set({ zoom: zoom === "fit" ? "fit" : clampZoom(zoom) }),
 	setSheetTab: (sheetTab) => set(sheetTab ? { sheetTab } : { sheetTab, historyVersionId: null }),
-	setAssistantOpen: (assistantOpen, instant = false) => set({ assistantOpen, assistantInstant: instant }),
+	// One panel slot: opening the assistant or History closes the other and brings a hidden panel back.
+	setAssistantOpen: (assistantOpen, instant = false) =>
+		set(
+			assistantOpen
+				? { assistantOpen, assistantInstant: instant, historyOpen: false, historyVersionId: null, panelHidden: false }
+				: { assistantOpen, assistantInstant: instant },
+		),
+	setHistoryOpen: (historyOpen) =>
+		set(
+			historyOpen ? { historyOpen, assistantOpen: false, panelHidden: false } : { historyOpen, historyVersionId: null },
+		),
 	setSectionOpen: (sectionId, open) =>
 		set((state) => {
 			const isOpen = state.openSections.includes(sectionId);

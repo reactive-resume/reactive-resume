@@ -71,18 +71,30 @@ export function computeInsights(byStage: StageCount[], locale: string): Insights
 
 export type TimelineBucket = { label: string; count: number };
 
-// Bucket application dates into the last `weeks` calendar weeks (Sunday-started) so the Insights
-// view can show application velocity over time — a dimension the funnel/tiles don't capture.
-export function computeTimeline(applications: readonly OutcomeSource[], locale: string, weeks = 8): TimelineBucket[] {
-	const format = new Intl.DateTimeFormat(locale, { month: "numeric", day: "numeric" });
+// Bucket application dates into the last `weeks` calendar weeks (Monday first, as the calendar draws them) so the
+// Insights view can show application velocity over time — a dimension the funnel/tiles don't capture.
+export function computeTimeline(
+	applications: readonly OutcomeSource[],
+	locale: string,
+	weeks = 8,
+	now = new Date(),
+): TimelineBucket[] {
+	const format = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short" });
 	const msWeek = 7 * 86_400_000;
-	const startOfWeek = new Date();
+	const startOfWeek = new Date(now);
 	startOfWeek.setHours(0, 0, 0, 0);
-	startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+	startOfWeek.setDate(startOfWeek.getDate() - ((startOfWeek.getDay() + 6) % 7));
 
 	const buckets = Array.from({ length: weeks }, (_, i) => {
 		const start = new Date(startOfWeek.getTime() - (weeks - 1 - i) * msWeek);
-		return { start: start.getTime(), label: format.format(start), count: 0 };
+		return {
+			start: start.getTime(),
+			label: format
+				.formatToParts(start)
+				.map((part) => (part.type === "month" && part.value === "Sept" ? "Sep" : part.value))
+				.join(""),
+			count: 0,
+		};
 	});
 
 	const first = buckets[0]?.start ?? 0;

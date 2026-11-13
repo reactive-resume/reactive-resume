@@ -14,7 +14,7 @@ and the `MOTION-*.md` files are the build's review records.
 | `src/ui/`                | Design system: tokens (`src/ui/tokens.ts`), motion, `Text`, `Icon`, Kit    |
 | `src/data/`              | Query client, drafts, offline queue, undo history, storyboard fakes        |
 | `src/api/`, `src/auth/`  | Typed oRPC client and the OAuth session                                    |
-| `src/render/`, `modules` | On-device page rendering with Forme (`packages/forme-native`)              |
+| `src/render/`, `modules` | Server-rendered PDFs, rasterized into page images (`modules/pdf-pages`)    |
 | `src/dev/storyboard/`    | Storyboard harness, scenarios and fixtures                                 |
 | `store/`                 | Store listing copy and per-locale `releaseNotes`                           |
 

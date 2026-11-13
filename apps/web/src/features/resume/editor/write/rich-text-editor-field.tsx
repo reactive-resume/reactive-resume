@@ -7,7 +7,8 @@ import type { ReactNode } from "react";
 import { Toolbar } from "@base-ui/react/toolbar";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { NodeSelection, TextSelection } from "@tiptap/pm/state";
+import { NodeSelection, Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -15,12 +16,11 @@ import {
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuGroup,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -44,8 +44,8 @@ type ToolbarAction = {
 };
 
 /**
- * Bold, Italic, Underline, Link, then lists; alignment and the rarer formatting (strikethrough, code, highlight,
- * headings, colour, indent, a rule and Clear formatting) sit in two menus so the toolbar fits a narrow column.
+ * Bold, Italic, Underline, Link, then lists; the rarer formatting (strikethrough, code, highlight, colour,
+ * alignment, headings, indent, a rule and Clear formatting) sits in one menu so the toolbar fits a narrow column.
  */
 
 /** An address as typed, with `https://` when it names no scheme ("priya.dev"); mailto:, tel: and the rest stay. */
@@ -109,7 +109,6 @@ function useToolbarActions(): ToolbarAction[] {
 }
 
 // The first list button starts a new group in the toolbar.
-const LIST_GROUP_START = 4;
 
 const ALIGNMENTS = ["left", "center", "right", "justify"] as const;
 type Alignment = (typeof ALIGNMENTS)[number];
@@ -191,20 +190,25 @@ export type RichTextEditorProps = {
 	) => void;
 	/** Guidance under the text while editing, e.g. "2–3 sentences reads best". */
 	hint?: ReactNode;
+	placeholder?: string;
 	disabled?: boolean;
 	className?: string;
 	/** The text area's id, so other controls can focus it. */
 	id?: string;
-	/** Replaces the text area's default height (88px to 360px). */
+	/** Replaces the text area's default height (44px to 360px). */
 	heightClassName?: string;
 	/** Improve's presets for a cover letter's body, instead of the resume ones. */
 	improve?: ImproveKind | undefined;
+	/** Private text (the resume's notes): bold, italic, list and link only; no Improve, formatting menus or footer. */
+	compact?: boolean;
 };
+
+const COMPACT_ACTIONS = ["text-b", "text-italic", "list-bullets", "link-simple-horizontal"] as const;
 
 /**
  * Loaded on demand by ./rich-text-editor.tsx, which keeps Tiptap out of the builder's first render.
  *
- * Rich text for descriptions: the toolbar and footer show while the text has focus, the toolbar never
+ * Rich text for descriptions: empty desktop fields keep formatting visible; otherwise focus shows it. The toolbar never
  * takes focus from it, and Markdown shortcuts work ("- " starts a list, "**bold**").
  */
 export function RichTextEditor({
@@ -212,17 +216,22 @@ export function RichTextEditor({
 	value,
 	onChange,
 	hint,
+	placeholder,
 	disabled = false,
 	className,
 	id,
-	heightClassName = "max-h-[360px] min-h-[88px]",
+	heightClassName = "max-h-[360px] min-h-11",
 	focusRequest,
 	improve,
+	compact = false,
 }: RichTextEditorProps & { focusRequest?: FocusRequest }) {
 	const [focused, setFocused] = useState(false);
 	const toolbar = useRef<HTMLDivElement>(null);
 	const [improving, setImproving] = useState<ImproveLine | null>(null);
-	const actions = useToolbarActions();
+	const allActions = useToolbarActions();
+	const actions = compact
+		? COMPACT_ACTIONS.flatMap((icon) => allActions.filter((action) => action.icon === icon))
+		: allActions;
 	const ai = useHasUsableAiProvider();
 	const mobile = useBreakpoint() === "mobile";
 	const keyboardInset = useKeyboardInset();
@@ -282,7 +291,7 @@ export function RichTextEditor({
 				role: "textbox",
 				spellcheck: "true",
 				class: cn(
-					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none",
+					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none [&_li]:my-1.5 [&_li]:ps-0 [&_li>p]:my-0 [&_ol]:ps-[14px] [&_ol]:pe-0 [&_ul]:ps-[14px] [&_ul]:pe-0",
 					heightClassName,
 					"[&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
 				),
@@ -313,6 +322,7 @@ export function RichTextEditor({
 					}
 				: { characters: 0, active: [] as boolean[], canImprove: false, formatting: DEFAULT_FORMATTING },
 	});
+	const characters = editor?.getText().length ?? 0;
 	const menus = useToolbarMenus(editor, () => setFocused(false));
 	useEffect(() => {
 		const link = actions.find((action) => action.icon === "link-simple-horizontal");
@@ -344,6 +354,26 @@ export function RichTextEditor({
 		return () => cancelAnimationFrame(frame);
 	}, [editor, focusRequest]);
 
+	useEffect(() => {
+		if (!editor || !improving) return;
+		const key = new PluginKey("improve-line");
+		editor.registerPlugin(
+			new Plugin({
+				key,
+				props: {
+					decorations: ({ doc }) => {
+						const { from, to, text } = improving;
+						if (to > doc.content.size || doc.textBetween(from, to) !== text) return null;
+						return DecorationSet.create(doc, [Decoration.node(from - 1, to + 1, { class: "bg-accent-soft" })]);
+					},
+				},
+			}),
+		);
+		return () => {
+			editor.unregisterPlugin(key);
+		};
+	}, [editor, improving]);
+
 	const editing = focused || improving !== null || menus.open;
 
 	const acceptImprove = (line: ImproveLine, text: string, aiOperationIds?: string[]) => {
@@ -365,7 +395,7 @@ export function RichTextEditor({
 	};
 
 	// Smaller buttons in a narrow field (the builder sidebar), so the toolbar stays one row under the text.
-	const buttonSize = mobile ? "size-11" : "size-8 @max-[24rem]:size-7";
+	const buttonSize = mobile ? "size-11" : "size-[26px] [--icon-size:16px]";
 	const toolbarButtons = (
 		<>
 			{actions.map((action, index) => (
@@ -378,17 +408,12 @@ export function RichTextEditor({
 					// Keep the caret in the text while formatting.
 					onMouseDown={(event) => event.preventDefault()}
 					onClick={() => editor && void action.run(editor)}
-					className={cn(
-						toolbarButtonClassName,
-						buttonSize,
-						state?.active[index] && "bg-accent-soft text-accent-text",
-						index === LIST_GROUP_START && "ms-1.5",
-					)}
+					className={cn(toolbarButtonClassName, buttonSize, state?.active[index] && "bg-accent-soft text-accent-text")}
 				>
 					<Icon name={action.icon} />
 				</Toolbar.Button>
 			))}
-			{editor && (
+			{editor && !compact && (
 				<FormattingMenus
 					editor={editor}
 					formatting={state?.formatting ?? DEFAULT_FORMATTING}
@@ -397,91 +422,117 @@ export function RichTextEditor({
 					menus={menus}
 				/>
 			)}
-			<Toolbar.Button
-				type="button"
-				aria-expanded={improving !== null}
-				disabled={ai.isUnavailable || (!state?.canImprove && improving === null)}
-				title={state?.canImprove ? undefined : t`Put the caret in a line to improve it`}
-				onMouseDown={(event) => event.preventDefault()}
-				onClick={() => (improving ? setImproving(null) : startImprove())}
-				className={cn(
-					"ms-auto flex shrink-0 items-center gap-1.5 rounded-md bg-accent-soft px-2.5 text-xs font-semibold text-accent-text transition-[filter] duration-quick hover:brightness-95 disabled:opacity-50",
-					mobile ? "h-11" : "h-8",
-				)}
-			>
-				<Icon name="sparkle" size={16} />
-				{/* Icon only where the toolbar is narrow, so the formatting buttons keep one row. */}
-				<span className="@max-[24rem]:sr-only">
-					<Trans>Improve</Trans>
-				</span>
-			</Toolbar.Button>
+			{!compact && (
+				<Toolbar.Button
+					type="button"
+					aria-expanded={improving !== null}
+					disabled={ai.isUnavailable || !characters || (!state?.canImprove && improving === null)}
+					title={state?.canImprove ? undefined : t`Put the caret in a line to improve it`}
+					onMouseDown={(event) => event.preventDefault()}
+					onClick={() => (improving ? setImproving(null) : startImprove())}
+					className={cn(
+						"ms-auto flex shrink-0 items-center gap-1.5 rounded-sm bg-surface px-2 text-[13px] font-medium text-ink-2 shadow-[inset_0_0_0_1px_var(--line-2)] transition-colors duration-quick hover:bg-hover disabled:opacity-45",
+						mobile ? "h-11" : "h-7",
+					)}
+				>
+					<Icon name="sparkle" size={16} />
+					{/* Icon only where the toolbar is narrow, so the formatting buttons keep one row. */}
+					<span>
+						<Trans>Improve</Trans>
+					</span>
+				</Toolbar.Button>
+			)}
 		</>
 	);
 
+	const footer = (
+		<div className="flex items-center justify-between gap-3 border-t border-line px-3 py-1.5 text-xs text-ink-3">
+			<span>{hint ?? <Trans>Markdown shortcuts on</Trans>}</span>
+			<span className="font-mono">
+				<Plural value={characters} one="# character" other="# characters" />
+			</span>
+		</div>
+	);
+
 	return (
-		<div
-			onFocus={() => setFocused(true)}
-			onBlur={(event) => {
-				const next = event.relatedTarget;
-				// Opening a toolbar menu moves focus into it; the menu reports leaving the field itself.
-				const inMenu = next instanceof Element && next.closest("[data-toolbar-menu]") !== null;
-				if (!event.currentTarget.contains(next) && !toolbar.current?.contains(next) && !inMenu) setFocused(false);
-			}}
-			className={cn(
-				"rounded-lg border border-control-border bg-raised transition-[border-color,box-shadow] duration-quick",
-				editing && "border-accent shadow-[0_0_0_3px_var(--accent-soft)]",
-				disabled && "bg-sunken",
-				className,
-			)}
-		>
-			{readOnlyTable && (
-				<p role="status" className="border-b border-line px-3 py-2 text-xs text-ink-2">
-					<Trans>
-						Original table formatting is preserved. This content is read-only because it cannot be edited safely.
-					</Trans>
+		<>
+			<div
+				onFocus={() => setFocused(true)}
+				onBlur={(event) => {
+					const next = event.relatedTarget;
+					// Opening a toolbar menu moves focus into it; the menu reports leaving the field itself.
+					const inMenu = next instanceof Element && next.closest("[data-toolbar-menu]") !== null;
+					if (!event.currentTarget.contains(next) && !toolbar.current?.contains(next) && !inMenu) setFocused(false);
+				}}
+				className={cn(
+					"@container flex flex-col overflow-hidden rounded-md border border-control-border bg-raised transition-[border-color,box-shadow] duration-quick",
+					editing && "border-accent shadow-[0_0_0_3px_var(--accent-soft)]",
+					disabled && "bg-sunken",
+					className,
+				)}
+			>
+				{readOnlyTable && (
+					<p role="status" className="border-b border-line px-3 py-2 text-xs text-ink-2">
+						<Trans>
+							Original table formatting is preserved. This content is read-only because it cannot be edited safely.
+						</Trans>
+					</p>
+				)}
+
+				<div className="relative">
+					<EditorContent editor={editor} />
+					{placeholder && editor && editor.getText().length === 0 && (
+						<span aria-hidden="true" className="pointer-events-none absolute start-3 top-2 text-sm/5 text-ink-3">
+							{placeholder}
+						</span>
+					)}
+				</div>
+				{/* Formatting sits above the focused text; keyboard and menu actions keep its selection. */}
+				{(editing || (!disabled && characters === 0)) && !readOnlyTable && !mobile && (
+					<Toolbar.Root
+						ref={toolbar}
+						aria-label={t`Formatting`}
+						className="order-first flex gap-0 border-b border-line px-1 py-1"
+					>
+						{toolbarButtons}
+					</Toolbar.Root>
+				)}
+
+				{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
+				{editing && !readOnlyTable && mobile && (
+					<Toolbar.Root
+						ref={toolbar}
+						aria-label={t`Formatting`}
+						style={{ bottom: keyboardInset }}
+						className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
+					>
+						<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
+						<Toolbar.Button
+							type="button"
+							onMouseDown={(event) => event.preventDefault()}
+							onClick={() => {
+								setImproving(null);
+								setFocused(false);
+								editor?.commands.blur();
+							}}
+							className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
+						>
+							<Trans>Done</Trans>
+						</Toolbar.Button>
+					</Toolbar.Root>
+				)}
+
+				{editing && <AiProviderLoadState state={ai} />}
+				{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
+				{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
+
+				{editing && !improving && !!characters && !compact && footer}
+			</div>
+			{!editing && !disabled && characters === 0 && !mobile && !compact && (
+				<p className="mt-2 text-xs/4 text-ink-3">
+					<Trans>Improve works on a line once you have written one.</Trans>
 				</p>
 			)}
-
-			<EditorContent editor={editor} />
-			{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
-			{editing && !readOnlyTable && mobile && (
-				<Toolbar.Root
-					ref={toolbar}
-					aria-label={t`Formatting`}
-					style={{ bottom: keyboardInset }}
-					className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
-				>
-					<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
-					<Toolbar.Button
-						type="button"
-						onMouseDown={(event) => event.preventDefault()}
-						onClick={() => {
-							setImproving(null);
-							setFocused(false);
-							editor?.commands.blur();
-						}}
-						className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
-					>
-						<Trans>Done</Trans>
-					</Toolbar.Button>
-				</Toolbar.Root>
-			)}
-
-			{editing && <AiProviderLoadState state={ai} />}
-			{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
-			{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
-
-			{/* Under the text, so focusing the field never moves the line you clicked. */}
-			{editing && !readOnlyTable && !mobile && (
-				<Toolbar.Root
-					ref={toolbar}
-					aria-label={t`Formatting`}
-					className="@container flex flex-wrap gap-0.5 border-t border-line px-1.5 py-1"
-				>
-					{toolbarButtons}
-				</Toolbar.Root>
-			)}
-
 			{editor && improving && (
 				<ImprovePanel
 					key={improving.from}
@@ -493,16 +544,8 @@ export function RichTextEditor({
 					kind={improve}
 				/>
 			)}
-
-			{editing && (
-				<div className="flex items-center justify-between gap-3 border-t border-line px-3 py-1.5 text-xs text-ink-3">
-					<span>{hint ?? <Trans>Markdown shortcuts on</Trans>}</span>
-					<span className="font-mono">
-						<Plural value={state?.characters ?? 0} one="# character" other="# characters" />
-					</span>
-				</div>
-			)}
-		</div>
+			{editing && improving && footer}
+		</>
 	);
 }
 
@@ -517,7 +560,7 @@ type FormattingMenusProps = {
 	menus: ReturnType<typeof useToolbarMenus>;
 };
 
-/** Alignment, then everything else the toolbar has no room for. */
+/** Everything the toolbar has no room for, alignment included, in one "More formatting" menu. */
 function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: FormattingMenusProps) {
 	const chain = () => editor.chain().focus();
 	const alignLabels: Record<Alignment, string> = {
@@ -550,32 +593,6 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 
 	return (
 		<>
-			<DropdownMenu {...menus.rootProps("align")}>
-				<Toolbar.Button
-					render={<DropdownMenuTrigger />}
-					aria-label={t`Text alignment`}
-					title={t`Text alignment`}
-					className={cn(buttonClassName, "ms-1.5", formatting.align !== "left" && "bg-accent-soft text-accent-text")}
-				>
-					<Icon name={ALIGNMENT_ICONS[formatting.align]} />
-				</Toolbar.Button>
-				<DropdownMenuContent side={side} className="w-44" {...menus.contentProps}>
-					<DropdownMenuRadioGroup
-						value={formatting.align}
-						onValueChange={(align: Alignment) =>
-							align === "left" ? chain().unsetTextAlign().run() : chain().setTextAlign(align).run()
-						}
-					>
-						{ALIGNMENTS.map((align) => (
-							<DropdownMenuRadioItem key={align} value={align}>
-								<Icon name={ALIGNMENT_ICONS[align]} />
-								{alignLabels[align]}
-							</DropdownMenuRadioItem>
-						))}
-					</DropdownMenuRadioGroup>
-				</DropdownMenuContent>
-			</DropdownMenu>
-
 			<DropdownMenu {...menus.rootProps("more")}>
 				<Toolbar.Button
 					render={<DropdownMenuTrigger />}
@@ -602,46 +619,51 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 						<Trans>Highlight</Trans>
 					</DropdownMenuCheckboxItem>
 
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger>
-							<Icon name="palette" />
+					<DropdownMenuGroup>
+						<DropdownMenuLabel>
 							<Trans>Text color</Trans>
-						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent {...menus.contentProps}>
-							<DropdownMenuRadioGroup
-								value={formatting.color}
-								onValueChange={(color: string) => (color ? chain().setColor(color).run() : chain().unsetColor().run())}
-							>
-								{TEXT_COLORS.map((color) => (
-									<DropdownMenuRadioItem key={color || "default"} value={color}>
-										<span
-											aria-hidden="true"
-											className="size-3.5 rounded-sm border border-line-2"
-											style={{ background: color || "var(--ink)" }}
-										/>
-										{colorLabels[color]}
-									</DropdownMenuRadioItem>
-								))}
-							</DropdownMenuRadioGroup>
-						</DropdownMenuSubContent>
-					</DropdownMenuSub>
-
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger>
-							<Icon name="text-aa" />
+						</DropdownMenuLabel>
+						<div className="flex gap-1.5 px-2.5 pt-0.5 pb-2">
+							{TEXT_COLORS.map((color) => (
+								<button
+									key={color || "default"}
+									type="button"
+									aria-label={colorLabels[color]}
+									aria-pressed={formatting.color === color}
+									className="size-6 rounded-full border border-line-2 aria-pressed:outline-2 aria-pressed:outline-offset-2 aria-pressed:outline-ink"
+									style={{ background: color || "var(--ink)" }}
+									onClick={() => (color ? chain().setColor(color).run() : chain().unsetColor().run())}
+								/>
+							))}
+						</div>
+					</DropdownMenuGroup>
+					<DropdownMenuRadioGroup
+						value={formatting.align}
+						onValueChange={(align: Alignment) =>
+							align === "left" ? chain().unsetTextAlign().run() : chain().setTextAlign(align).run()
+						}
+					>
+						<DropdownMenuLabel>
+							<Trans>Text alignment</Trans>
+						</DropdownMenuLabel>
+						{ALIGNMENTS.map((align) => (
+							<DropdownMenuRadioItem key={align} value={align}>
+								<Icon name={ALIGNMENT_ICONS[align]} />
+								{alignLabels[align]}
+							</DropdownMenuRadioItem>
+						))}
+					</DropdownMenuRadioGroup>
+					<DropdownMenuRadioGroup value={formatting.block} onValueChange={(level: number) => setBlock(level)}>
+						<DropdownMenuLabel>
 							<Trans>Text style</Trans>
-						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent {...menus.contentProps}>
-							<DropdownMenuRadioGroup value={formatting.block} onValueChange={(level: number) => setBlock(level)}>
-								{blocks.map((block) => (
-									<DropdownMenuRadioItem key={block.level} value={block.level}>
-										<Icon name={block.icon} />
-										{block.label}
-									</DropdownMenuRadioItem>
-								))}
-							</DropdownMenuRadioGroup>
-						</DropdownMenuSubContent>
-					</DropdownMenuSub>
+						</DropdownMenuLabel>
+						{blocks.map((block) => (
+							<DropdownMenuRadioItem key={block.level} value={block.level}>
+								<Icon name={block.icon} />
+								<span>{block.label}</span>
+							</DropdownMenuRadioItem>
+						))}
+					</DropdownMenuRadioGroup>
 
 					<DropdownMenuSeparator />
 					<DropdownMenuItem onClick={() => chain().increaseIndent().run()}>

@@ -142,7 +142,7 @@ function ClockReadout({ step }: { step: number }) {
 }
 
 /** Paper drawn on in either theme: the light theme's tokens, so the product's own colours read the same. */
-const sheet = "on-paper relative h-full overflow-hidden rounded-md bg-paper shadow-paper";
+const sheet = "on-paper relative h-full overflow-hidden rounded-paper bg-paper shadow-paper";
 const note = "font-ui text-[.86em] text-ink-3";
 
 /** A pencil tick in a pencil box, drawn as `tick` goes from 0 to 1. */
@@ -194,7 +194,7 @@ function MessagesPanel() {
 				<span className="mt-[.3em] block italic">{t`Sam`}</span>
 			</p>
 
-			<div className="flex [transform:translateY(calc((1-var(--mr))*10px))] flex-col gap-[.7em] rounded-sm border border-line bg-raised p-[1.1em] opacity-(--mr) shadow-e2 [transition:transform_.4s_var(--ease)]">
+			<div className="flex [transform:translateY(calc((1-var(--mr))*10px))] flex-col gap-[.7em] rounded-[.7em] border border-line bg-raised p-[1.1em] opacity-(--mr) shadow-e2 [transition:transform_.4s_var(--ease)]">
 				<span className="flex items-center gap-[.45em] text-[.86em] font-medium text-ink-2">
 					<Icon name="sparkle" size={15} className="text-accent-text" />
 					{t`Read it for me`}
@@ -208,16 +208,16 @@ function MessagesPanel() {
 					<Icon name="check" size={17} className="mt-[.1em] shrink-0 text-accent-text" />
 					{t`Asks for an example of your onboarding work.`}
 				</span>
-				<div className="mt-[.2em] flex flex-wrap items-center justify-between gap-[.6em] rounded-sm border border-accent bg-surface px-[.9em] py-[.7em]">
+				<div className="mt-[.2em] flex flex-wrap items-center justify-between gap-[.6em] rounded-[.6em] border border-accent bg-surface px-[.9em] py-[.7em]">
 					<span className="flex items-center gap-[.6em] font-medium text-ink">
-						<span className="relative grid size-[1.25em] place-items-center rounded-sm border border-line-2">
-							<span className="absolute inset-[-1px] grid place-items-center rounded-sm bg-accent text-on-accent opacity-(--mc)">
+						<span className="relative grid size-[1.25em] place-items-center rounded-[.3em] border border-line-2">
+							<span className="absolute inset-[-1px] grid place-items-center rounded-[.3em] bg-accent text-on-accent opacity-(--mc)">
 								<Icon name="check" size={13} />
 							</span>
 						</span>
 						{t`Move to Interview`}
 					</span>
-					<span className="grid h-[2.3em] place-items-center rounded-sm bg-accent px-[1em] font-semibold text-on-accent">
+					<span className="grid h-[2.3em] place-items-center rounded-[.6em] bg-accent px-[1em] font-semibold text-on-accent">
 						<span className="col-start-1 row-start-1 opacity-[calc(1-var(--mc))]">{t`Apply 1 change`}</span>
 						<span className="col-start-1 row-start-1 flex items-center gap-[.4em] opacity-(--mc)">
 							<Icon name="check" size={16} />
@@ -322,8 +322,8 @@ function PlanPanel() {
 		>
 			<h3 className="font-display text-[1.55em] leading-[1.15] text-ink">{t`A focused 30-minute plan`}</h3>
 			<span className="text-ink-2">{t`Built from the posting, Sam’s message and your two strongest stories.`}</span>
-			<div aria-hidden="true" className="h-[.3em] overflow-hidden rounded-sm bg-[oklch(0.93_0.006_95)]">
-				<div className="h-full origin-left [transform:scaleX(calc((var(--k1)*10+var(--k2)*10+var(--k3)*5+var(--k4)*5)/30))] rounded-sm bg-[oklch(0.5_0.1_150)] rtl:origin-right" />
+			<div aria-hidden="true" className="h-[.3em] overflow-hidden rounded-full bg-[oklch(0.93_0.006_95)]">
+				<div className="h-full origin-left [transform:scaleX(calc((var(--k1)*10+var(--k2)*10+var(--k3)*5+var(--k4)*5)/30))] rounded-full bg-[oklch(0.5_0.1_150)] rtl:origin-right" />
 			</div>
 			<ul className="flex flex-col gap-[.35em]">
 				{rows.map((row, index) => (
@@ -388,14 +388,14 @@ function PractisePanel({ active }: { active: boolean }) {
 					onClick={hear}
 					aria-pressed={speaking}
 					title={t`Uses your browser’s voice`}
-					className="-me-[.5em] inline-flex h-[2.2em] items-center gap-[.4em] rounded-sm px-[.6em] font-medium text-ink transition-colors hover:bg-hover"
+					className="-me-[.5em] inline-flex h-[2.2em] items-center gap-[.4em] rounded-[.5em] px-[.6em] font-medium text-ink transition-colors hover:bg-hover"
 				>
 					<Icon name={speaking ? "stop" : "speaker-high"} size={17} />
 					{speaking ? t`Stop` : t`Hear it`}
 				</button>
 			</div>
 			<p className="font-display text-[1.4em] leading-[1.25] text-pretty text-ink">{question}</p>
-			<p className="min-h-[5.6em] rounded-sm border border-line-2 px-[.9em] py-[.7em] leading-[1.55] text-ink">
+			<p className="min-h-[5.6em] rounded-[.6em] border border-line-2 px-[.9em] py-[.7em] leading-[1.55] text-ink">
 				<TypedText
 					text={t`At Northwind Labs I led research for our onboarding redesign. I interviewed 14 customers, found three drop-off points, and we shipped a shorter setup. Activation rose from 31% to 44%.`}
 					progress="--ty"
@@ -441,7 +441,7 @@ function DebriefPanel() {
 						<span
 							key={outcome}
 							className={cn(
-								"inline-flex h-[2.1em] items-center rounded-sm border border-line-2 px-[.85em] text-[.92em] font-medium text-ink",
+								"inline-flex h-[2.1em] items-center rounded-[.6em] border border-line-2 px-[.85em] text-[.92em] font-medium text-ink",
 								index === 1 &&
 									"bg-[color-mix(in_oklch,var(--ink)_calc(var(--db1)*100%),transparent)] text-[color-mix(in_oklch,white_calc(var(--db1)*100%),var(--ink))]",
 							)}
@@ -454,13 +454,13 @@ function DebriefPanel() {
 			<div className="flex flex-col gap-[.6em] border-t border-line pt-[.8em]">
 				<b className="font-semibold text-ink">{t`Keep the evidence precise`}</b>
 				<p className="flex items-start gap-[.6em] text-ink opacity-(--db2)">
-					<span className="font-martian mt-[.1em] shrink-0 rounded-sm bg-accent-soft px-[.45em] py-[.15em] text-[.74em] text-accent-text">
+					<span className="font-martian mt-[.1em] shrink-0 rounded-[.35em] bg-accent-soft px-[.45em] py-[.15em] text-[.74em] text-accent-text">
 						{t`Supported`}
 					</span>
 					{t`The 13-point activation lift. Knowledge has the before and after.`}
 				</p>
 				<p className="flex items-start gap-[.6em] text-ink opacity-(--db3)">
-					<span className="font-martian mt-[.1em] shrink-0 rounded-sm bg-warn-soft px-[.45em] py-[.15em] text-[.74em] text-warn-text">
+					<span className="font-martian mt-[.1em] shrink-0 rounded-[.35em] bg-warn-soft px-[.45em] py-[.15em] text-[.74em] text-warn-text">
 						{t`Observation`}
 					</span>
 					{t`Fewer support tickets isn’t backed by a number yet. Say it as something you noticed.`}
@@ -632,14 +632,14 @@ export function Prepare() {
 									<>
 										{tab.label}
 										{tab.badge && (
-											<span className="rounded-sm bg-[oklch(0.42_0.1_150)] px-[.5em] py-[.15em] text-[.92em] leading-none text-white tabular-nums">
+											<span className="rounded-[.35em] bg-[oklch(0.42_0.1_150)] px-[.5em] py-[.15em] text-[.92em] leading-none text-white tabular-nums">
 												{tab.badge}
 											</span>
 										)}
 									</>
 								);
 								const tabClass = cn(
-									"font-martian flex h-[2.6em] shrink-0 items-center gap-[.5em] rounded-t-sm px-[1em] text-[.74em] font-medium whitespace-nowrap transition-[transform,background-color,color] duration-300",
+									"font-martian flex h-[2.6em] shrink-0 items-center gap-[.5em] rounded-t-[3px] px-[1em] text-[.74em] font-medium whitespace-nowrap transition-[transform,background-color,color] duration-300",
 									front
 										? "bg-[oklch(0.87_0.05_80)] text-[oklch(0.25_0.03_70)] dark:bg-[oklch(0.62_0.045_78)] dark:text-[oklch(0.16_0.02_70)]"
 										: "translate-y-[.4em] bg-[oklch(0.8_0.05_74)] text-[oklch(0.38_0.03_70)] dark:bg-[oklch(0.5_0.04_72)] dark:text-[oklch(0.14_0.02_70)]",
@@ -668,25 +668,25 @@ export function Prepare() {
 							})}
 						</div>
 						{/* The folder's label: the same Fieldnote role Tailor applied to, its stage moving on when the change is applied. */}
-						<span className="me-[.6em] mb-[.45em] hidden shrink-0 -rotate-1 items-center gap-[.5em] rounded-sm bg-paper py-[.3em] ps-[.35em] pe-[.7em] text-[.8em] font-medium text-[oklch(0.3_0.01_95)] shadow-e1 @min-[640px]:flex">
-							<span className="font-anybody grid size-[1.6em] place-items-center rounded-sm bg-[oklch(0.22_0.01_95)] text-[1.05em] leading-none text-white">
+						<span className="me-[.6em] mb-[.45em] hidden shrink-0 -rotate-1 items-center gap-[.5em] rounded-paper bg-paper py-[.3em] ps-[.35em] pe-[.7em] text-[.8em] font-medium text-[oklch(0.3_0.01_95)] shadow-e1 @min-[640px]:flex">
+							<span className="font-anybody grid size-[1.6em] place-items-center rounded-[.35em] bg-[oklch(0.22_0.01_95)] text-[1.05em] leading-none text-white">
 								F
 							</span>
 							{t`Fieldnote`}
 							<span className="grid">
 								<span className="col-start-1 row-start-1 flex items-center gap-[.35em] opacity-[calc(1-var(--mc))]">
-									<span className="size-[.5em] rounded-sm bg-stage-applied" />
+									<span className="size-[.5em] rounded-full bg-stage-applied" />
 									{t`Applied`}
 								</span>
 								<span className="col-start-1 row-start-1 flex items-center gap-[.35em] opacity-(--mc)">
-									<span className="size-[.5em] rounded-sm bg-stage-interview" />
+									<span className="size-[.5em] rounded-full bg-stage-interview" />
 									{t`Interview`}
 								</span>
 							</span>
 						</span>
 					</div>
 
-					<div className="grid min-h-0 flex-1 overflow-hidden rounded-lg bg-[linear-gradient(165deg,oklch(0.87_0.05_80),oklch(0.81_0.055_72))] p-[clamp(10px,1.6vw,22px)] shadow-paper dark:bg-[linear-gradient(165deg,oklch(0.62_0.045_78),oklch(0.55_0.05_70))]">
+					<div className="grid min-h-0 flex-1 overflow-hidden rounded-[4px] bg-[linear-gradient(165deg,oklch(0.87_0.05_80),oklch(0.81_0.055_72))] p-[clamp(10px,1.6vw,22px)] shadow-paper dark:bg-[linear-gradient(165deg,oklch(0.62_0.045_78),oklch(0.55_0.05_70))]">
 						{panels.map(([panelStep, entry, rotation, panel]) => (
 							<div
 								key={panelStep}

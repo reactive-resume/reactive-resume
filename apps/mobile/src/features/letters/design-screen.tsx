@@ -43,6 +43,7 @@ export function LetterDesignScreen() {
 					kind: "letter",
 					id,
 					revision: `${document.revision}:${document.style.metadata.template}`,
+					letter: document,
 					fixture: "thumb-letter-L2",
 				}
 			: undefined,

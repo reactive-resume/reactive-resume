@@ -4,6 +4,7 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useApplicationLanes } from "../use-application-lanes";
 import { orpc } from "@/libs/orpc/client";
@@ -46,19 +47,21 @@ export function PriorNoResponseNotice({ company, excludeId }: PriorNoResponseNot
 	if (!data?.length) return null;
 
 	return (
-		<div role="status" className="grid gap-1.5 rounded-lg bg-warn-soft p-3 text-sm text-warn-text">
-			<p className="flex items-center gap-1.5 font-medium">
-				<Icon name="clock" size={18} className="shrink-0" />
+		<Alert variant="warn" role="status">
+			<Icon name="clock" />
+			<AlertTitle>
 				<Trans>You applied to {data[0]?.company} before.</Trans>
-			</p>
-			<ul className="grid gap-0.5 ps-6 text-xs">
-				{data.map((prior) => (
-					<li key={prior.id}>
-						{prior.role} · {new Date(prior.at).toLocaleDateString(i18n.locale, { dateStyle: "medium" })} ·{" "}
-						{outcomeText(prior.closedReason === undefined ? "no-response" : prior.closedReason)}
-					</li>
-				))}
-			</ul>
-		</div>
+			</AlertTitle>
+			<AlertDescription>
+				<ul className="grid gap-0.5">
+					{data.map((prior) => (
+						<li key={prior.id}>
+							{prior.role} · {new Date(prior.at).toLocaleDateString(i18n.locale, { dateStyle: "medium" })} ·{" "}
+							{outcomeText(prior.closedReason === undefined ? "no-response" : prior.closedReason)}
+						</li>
+					))}
+				</ul>
+			</AlertDescription>
+		</Alert>
 	);
 }

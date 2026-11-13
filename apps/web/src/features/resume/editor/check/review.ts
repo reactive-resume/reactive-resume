@@ -1,7 +1,7 @@
 import type { WritingNote } from "../store";
 import type { PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { Passage, Proposal } from "@reactive-resume/resume/proposals";
-import { replaceBlockText } from "@reactive-resume/resume/proposals";
+import { replaceBlockText, unverifiedClaims } from "@reactive-resume/resume/proposals";
 import { generateId } from "@reactive-resume/utils/string";
 
 type ReviewSuggestion = {
@@ -25,6 +25,7 @@ export function mapWritingReview(
 	suggestions: readonly ReviewSuggestion[],
 	passages: readonly Passage[],
 	savedPassages: readonly { id: string; where: string; text: string }[] = [],
+	documentText = passages.map((passage) => passage.text).join("\n"),
 ) {
 	const byId = new Map(passages.map((passage) => [passage.id, passage]));
 	const proposals: Proposal[] = [];
@@ -36,21 +37,32 @@ export function mapWritingReview(
 		const saved = savedPassages.find((entry) => entry.id === suggestion.passageId);
 
 		if (passage && rewrite && rewrite !== passage.text) {
+			const entryText = passages
+				.filter(
+					(entry) =>
+						entry.target.sectionId === passage.target.sectionId &&
+						entry.target.itemId === passage.target.itemId &&
+						entry.target.roleId === passage.target.roleId,
+				)
+				.map((entry) => entry.text)
+				.join("\n");
+			const unsupported = unverifiedClaims(rewrite, { entry: entryText, document: documentText });
 			proposals.push({
 				id: generateId(),
 				target: passage.target,
-				location: passage.location,
+				location: passage.location.replaceAll(" · ", " › "),
 				before: passage.html,
 				after: replaceBlockText(passage.html, rewrite),
 				why: suggestion.issue,
 				status: "pending",
 				source: "check",
+				...(unsupported.length ? { unsupported, addsClaims: true } : {}),
 			});
 			continue;
 		}
 
 		notes.push({
-			location: passage?.location ?? saved?.where ?? suggestion.section ?? "",
+			location: (passage?.location ?? saved?.where ?? suggestion.section ?? "").replaceAll(" · ", " › "),
 			impact: suggestion.impact,
 			quote: passage?.text ?? saved?.text ?? "",
 			...(rewrite ? { rewrite } : {}),
@@ -60,4 +72,30 @@ export function mapWritingReview(
 	}
 
 	return { proposals, notes };
+}
+
+/** Editing a suggestion rechecks its claims before the shared acceptance guard can apply it. */
+export function editWritingProposal(
+	proposal: Proposal,
+	text: string,
+	passages: readonly Passage[],
+	documentText: string,
+): Proposal {
+	const entry = passages
+		.filter(
+			(passage) =>
+				passage.target.sectionId === proposal.target.sectionId &&
+				passage.target.itemId === proposal.target.itemId &&
+				passage.target.roleId === proposal.target.roleId,
+		)
+		.map((passage) => passage.text)
+		.join("\n");
+	const unsupported = unverifiedClaims(text, { entry, document: documentText });
+	return {
+		...proposal,
+		after: replaceBlockText(proposal.before, text),
+		edited: true,
+		unsupported,
+		addsClaims: unsupported.length > 0,
+	};
 }

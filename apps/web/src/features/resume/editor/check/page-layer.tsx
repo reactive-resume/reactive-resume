@@ -1,19 +1,21 @@
+import "./page-layer.css";
 import type { CheckIssue } from "./issues";
 import type { PageMap, PageMapNode, PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 import type { CSSProperties } from "react";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { isSameSelection, useEditorStore } from "../store";
 import { findEntry } from "../write/model";
 import { scrollToIssue, useCheckActions } from "./actions";
+import { TermHighlights } from "./term-highlights";
 import { useCheck } from "./use-check";
 import { getPdfFindingMessage } from "@/features/ats-checker/messages";
 import { useResumeStore } from "@/features/resume/builder/draft";
@@ -81,13 +83,18 @@ function targetsMentioning(data: ResumeData, term: string): PageMapTarget[] {
 	return targets;
 }
 
-type CheckPageLayerProps = { pageIndex: number; pageMap: PageMap | undefined };
+type CheckPageLayerProps = {
+	pageIndex: number;
+	pageMap: PageMap | undefined;
+	document: PDFDocumentProxy;
+	pageScale: number;
+};
 
 /**
  * Check's marks on one page: numbered warn pins with a wavy underline for open issues, numbered accent markers for
  * proposed edits (while Writing is open), and a highlight on the entries that mention the picked job-match term.
  */
-export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
+export function CheckPageLayer({ pageIndex, pageMap, document, pageScale }: CheckPageLayerProps) {
 	const check = useCheck();
 	const applications = useResumeStore((state) => state.proposalApplications);
 	const tab = useEditorStore((state) => state.checkTab);
@@ -99,20 +106,18 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	const onPage = breakpoint === "mobile";
 	const page = pageMap?.pages[pageIndex];
 
-	const highlighted = check && highlightTerm && tab === "match" ? targetsMentioning(check.data, highlightTerm) : [];
-
 	if (!check || !pageMap || !page || page.width <= 0 || page.height <= 0) return null;
 
 	const pickIssue = (issue: CheckIssue) => {
 		useEditorStore.setState({ checkIssue: issue.key, checkTab: "issues" });
 		// Tablets: the drawer opens on the issue. Phones stay on the page, where the issue bar steps through them.
-		if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: true });
+		if (breakpoint === "tablet") useEditorStore.setState({ panelHidden: false });
 		if (breakpoint !== "mobile") scrollToIssue(issue.key, "panel");
 	};
 
 	const perBlock = new Map<string, number>();
 	const pins =
-		tab === "writing"
+		tab !== "issues"
 			? []
 			: check.issues.flatMap((issue) => {
 					const node = issue.target ? findNode(pageMap, issue.target) : undefined;
@@ -144,21 +149,11 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				})
 			: [];
 
-	const tinted = highlighted.flatMap((target) =>
-		pageMap.nodes.filter((node) => node.page === pageIndex && isSameSelection(toTarget(node), target)),
-	);
-
 	return (
 		<div data-slot="check-page-layer" className="pointer-events-none absolute inset-0">
-			{tinted.map((node) => (
-				<div
-					key={`tint:${node.key}:${node.y}`}
-					aria-hidden="true"
-					className="absolute -m-[3px] rounded-md bg-[#F2DE8C]/45 p-[3px] mix-blend-multiply"
-					style={boxStyle(node, page)}
-				/>
-			))}
-
+			{tab === "match" && highlightTerm && (
+				<TermHighlights document={document} pageIndex={pageIndex} scale={pageScale} term={highlightTerm} />
+			)}
 			{pins.map(({ issue, node, stack }) => {
 				const isSelected = selected === issue.key;
 				return (
@@ -180,7 +175,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 							onClick={() => pickIssue(issue)}
 							style={marginStyle(node, page, stack, onPage)}
 							className={cn(
-								"pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-paper bg-warn text-xs font-semibold text-warn-ink shadow-[0_1px_3px_oklch(0_0_0/0.25)]",
+								"pointer-events-auto absolute grid size-5 place-items-center rounded-xs bg-warn-mark t-caption font-semibold text-warn-ink",
 								isSelected && "outline-2 outline-offset-1 outline-warn",
 							)}
 						>
@@ -204,7 +199,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 						title={getPdfFindingMessage(finding.code).title}
 						onClick={() => useEditorStore.setState({ exportReportOpen: true })}
 						style={marginStyle(box, page, 0, onPage)}
-						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-paper bg-info-text text-bg shadow-[0_1px_3px_oklch(0_0_0/0.25)]"
+						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-paper bg-info-text text-bg shadow-e1"
 					>
 						<Icon name="file-pdf" size={13} />
 					</button>
@@ -215,7 +210,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				<span
 					key={`marker:${number}`}
 					aria-hidden="true"
-					className="absolute grid size-5 place-items-center rounded-sm bg-accent text-xs font-semibold text-on-accent"
+					className="absolute grid size-5 place-items-center rounded-xs bg-accent text-xs font-semibold text-on-accent"
 					style={marginStyle(node, page, 0, onPage)}
 				>
 					{i18n.number(number)}
@@ -228,26 +223,70 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 /** "What a person sees / What a parser reads", floating over the canvas in Check. Switching is instant. */
 export function PageViewToggle() {
 	const view = useEditorStore((state) => state.pageView);
-	const options = [
-		{ value: "page", label: t`What a person sees`, icon: "file-text" },
-		{ value: "parser", label: t`What a parser reads`, icon: "brackets-curly" },
-	] as const;
-
-	// The product's one in-canvas switcher (Share's Computer / Phone uses it too), floating over the page.
+	const count = useEditorStore((state) => state.rendered.pageCount);
+	const tab = useEditorStore((state) => state.checkTab);
+	const check = useCheck();
+	const highlightTerm = useEditorStore((state) => state.highlightTerm);
+	const pageMap = useEditorStore((state) => state.rendered.pageMap);
+	const mentions =
+		check && highlightTerm
+			? targetsMentioning(check.data, highlightTerm).filter((target) =>
+					pageMap?.nodes.some((node) => isSameSelection(toTarget(node), target)),
+				).length
+			: 0;
+	const proposals = useEditorStore((state) => state.proposals);
+	const applications = useResumeStore((state) => state.proposalApplications);
+	const pending =
+		check && tab === "writing"
+			? proposals.filter((proposal) => getProposalState(check.data, proposal, applications) === "pending").length
+			: 0;
+	const writing = view === "page" && count === 1 && pending > 0;
 	return (
-		<SegmentedControl
-			aria-label={t`Page view`}
-			value={view}
-			onValueChange={(value) => useEditorStore.setState({ pageView: value as typeof view })}
-			className="absolute top-3.5 left-1/2 z-10 -translate-x-1/2 border border-line shadow-e1"
-		>
-			{options.map((option) => (
-				<SegmentedControlItem key={option.value} value={option.value}>
-					<Icon name={option.icon} size={18} />
-					<span className="max-sm:sr-only">{option.label}</span>
-				</SegmentedControlItem>
-			))}
-		</SegmentedControl>
+		<>
+			{writing && (
+				<span
+					data-check-writing-caption
+					className="pointer-events-none absolute inset-x-0 top-3.5 text-center t-mono text-ink-3"
+				>
+					<Plural
+						value={pending}
+						one="# suggested rewrite on this page · nothing changes until you accept"
+						other="# suggested rewrites on this page · nothing changes until you accept"
+					/>
+				</span>
+			)}
+			{view === "parser" && (
+				<span className="pointer-events-none absolute inset-x-0 top-3.5 text-center t-mono text-ink-3">
+					<Trans>What a parser reads · page 1 of {i18n.number(Math.max(1, count))}</Trans>
+				</span>
+			)}
+
+			{tab === "match" && view === "page" && highlightTerm ? (
+				<span
+					data-check-page-toggle
+					className="absolute end-[calc(50%-310px)] top-[13px] t-small text-ink-2 max-sm:end-4"
+				>
+					<Trans>“{highlightTerm}”</Trans>
+					{" · "}
+					<Plural value={mentions} one="found in # place" other="found in # places" />
+				</span>
+			) : (
+				<Button
+					data-check-page-toggle
+					variant="ghost"
+					size="sm"
+					className={cn(
+						"absolute end-[calc(50%-310px)] top-3 z-10 h-5 gap-1.5 p-0 text-[13px]/5 text-accent-text max-sm:end-4",
+						view === "parser" && "end-[calc(50%-350px)]",
+						tab === "writing" && view === "page" && "top-10",
+					)}
+					onClick={() => useEditorStore.setState({ pageView: view === "page" ? "parser" : "page" })}
+				>
+					<Icon name={view === "page" ? "code" : "file-text"} size={16} />
+					{view === "page" ? <Trans>See what a parser reads</Trans> : <Trans>Back to the page</Trans>}
+				</Button>
+			)}
+		</>
 	);
 }
 

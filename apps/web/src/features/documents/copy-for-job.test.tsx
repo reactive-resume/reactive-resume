@@ -112,7 +112,7 @@ it("adds the job right here, then copies the base resume for it (J2-23)", async 
 	fireEvent.change(screen.getByLabelText("Company"), { target: { value: "Fieldnote" } });
 	fireEvent.change(screen.getByLabelText("Role"), { target: { value: "VP of Engineering" } });
 	fireEvent.change(screen.getByLabelText("Job posting (optional)"), { target: { value: "Own delivery." } });
-	expect(screen.getByLabelText("Name")).toHaveValue("Morgan Chen — Fieldnote");
+	expect(screen.getByLabelText("Name")).toHaveValue("Morgan Chen · Fieldnote");
 	fireEvent.click(screen.getByRole("button", { name: "Save job, create and open" }));
 
 	await waitFor(() => expect(api.copyForJob).toHaveBeenCalled());
@@ -126,7 +126,7 @@ it("adds the job right here, then copies the base resume for it (J2-23)", async 
 			jobDescription: "Own delivery.",
 			postingSource: { method: "paste", format: "text", truncated: false, completeness: "unknown" },
 		},
-		name: "Morgan Chen — Fieldnote",
+		name: "Morgan Chen · Fieldnote",
 		newId: expect.stringMatching(/^[0-9a-f-]{36}$/),
 	});
 	expect(api.navigate).toHaveBeenCalledWith(

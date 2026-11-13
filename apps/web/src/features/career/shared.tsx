@@ -3,13 +3,12 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { PreparedRequest } from "@reactive-resume/utils/deferred-request";
 import type { QueryClient, QueryKey } from "@tanstack/react-query";
 import type { ComponentProps, ReactNode } from "react";
-import { i18n } from "@lingui/core";
-import { ph, t } from "@lingui/core/macro";
+import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -17,6 +16,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
 import { pendingCommits } from "./pending-commits";
+import { IconTile, List, ListRow } from "@/components/calm/list-row";
 import { deviceTimeZone } from "@/features/settings/use-save-timezone";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -37,15 +37,24 @@ export function useNow(intervalMs = 60_000) {
 
 const capitalize = (text: string) => text.charAt(0).toLocaleUpperCase() + text.slice(1);
 
+/** Inside it, the page names the timezone once (Today's note under the date), so clock times carry no zone. */
+const ZoneNamed = createContext(false);
+export function ZoneNamedOnPage({ children }: { children: ReactNode }) {
+	return <ZoneNamed.Provider value>{children}</ZoneNamed.Provider>;
+}
+
 /** Formatters in the user's timezone (Settings → Preferences) and interface locale. */
 export function useCareerTime() {
 	const { i18n } = useLingui();
 	const { session } = useRouteContext({ strict: false });
 	const timeZone = session?.user.timezone ?? "UTC";
 	const locale = i18n.locale;
+	const zoneNamed = useContext(ZoneNamed);
 	const device = deviceTimeZone();
-	// When the account's timezone isn't this device's, clock times say which zone they're in ("16:56 UTC").
-	const labelled = !!device && device !== timeZone;
+	const differs = !!device && device !== timeZone;
+	// When the account's timezone isn't this device's, clock times say which zone they're in ("16:56 UTC"), unless
+	// the page already said it once.
+	const labelled = differs && !zoneNamed;
 	const format = (value: Date | string, options: Intl.DateTimeFormatOptions) =>
 		new Intl.DateTimeFormat(locale, { timeZone, ...options }).format(new Date(value));
 	// The locale decides 12- or 24-hour, as the interview dialog's own time field does.
@@ -56,7 +65,7 @@ export function useCareerTime() {
 	return {
 		timeZone,
 		/** This device's timezone, when it differs from the account's: times then carry their zone. */
-		deviceTimeZone: labelled ? device : undefined,
+		deviceTimeZone: differs ? device : undefined,
 		locale,
 		/** "Thu 8 Oct, 17:58" ("Thu 8 Oct, 17:58 UTC" when the account's timezone isn't this device's) */
 		when: (value: Date | string) =>
@@ -402,45 +411,6 @@ export function Eyebrow({ children, className }: EyebrowProps) {
 	return <h2 className={cn("text-xs font-semibold text-ink-3", className)}>{children}</h2>;
 }
 
-const statusPill = {
-	supported: { icon: "check-circle", tone: "bg-accent-soft text-accent-text" },
-	added: { icon: "check-circle", tone: "bg-accent-soft text-accent-text" },
-	partial: { icon: "circle-half", tone: "bg-warn-soft text-warn-text" },
-	missing: { icon: "question", tone: "bg-sunken text-ink-2" },
-} satisfies Record<string, { icon: IconName; tone: string }>;
-
-/** Evidence status: colour, icon and words together. */
-export function StatusPill({ status }: { status: keyof typeof statusPill }) {
-	const labels = {
-		supported: t`Supported`,
-		added: t`Added by you`,
-		partial: t`Partly supported`,
-		missing: t`No evidence yet`,
-	};
-	const { icon, tone } = statusPill[status];
-	return (
-		<span className={cn("inline-flex h-6 w-fit items-center gap-1 rounded-sm px-2 text-xs font-semibold", tone)}>
-			<Icon name={icon} size={15} />
-			{labels[status]}
-		</span>
-	);
-}
-
-/** A match in the user's own words, or a fact that's unknown. */
-export function InfoChip({ tone, children }: { tone: "match" | "unknown"; children: ReactNode }) {
-	return (
-		<span
-			className={cn(
-				"inline-flex h-6 items-center gap-1 rounded-sm px-2 text-xs font-medium",
-				tone === "match" ? "bg-accent-soft text-accent-text" : "bg-warn-soft text-warn-text",
-			)}
-		>
-			<Icon name={tone === "match" ? "check" : "question"} size={15} />
-			{children}
-		</span>
-	);
-}
-
 type FilterChipProps = { pressed: boolean; onClick: () => void; children: ReactNode; className?: string };
 
 /** A 30px pill toggle for filters and single choices; selected is ink-filled. */
@@ -467,12 +437,25 @@ type ContextChipProps = {
 	onPressedChange: (pressed: boolean) => void;
 	label: string;
 	tooltip: string;
-	/** Shown when off instead of `add`; Web research uses `public`. */
+	/** What the chip stands for, shown while it's on. */
+	icon?: IconName;
+	/** Shown when off instead of `plus`; Web research uses a globe. */
 	offIcon?: IconName;
+	/** "on": the workspace sheet's accent chip without a remove mark (W12); default: Career's sunken chip. */
+	tone?: "ctx" | "on";
 };
 
-/** Composer context switches: on is sunken with a check, off is quiet with add. */
-export function ContextChip({ pressed, onPressedChange, label, tooltip, offIcon = "plus" }: ContextChipProps) {
+/** Composer context switches: on is a sunken chip with its remove mark, off is a dashed offer to add it. */
+export function ContextChip({
+	pressed,
+	onPressedChange,
+	label,
+	tooltip,
+	icon,
+	offIcon = "plus",
+	tone = "ctx",
+}: ContextChipProps) {
+	const on = tone === "on";
 	return (
 		<Tooltip>
 			<TooltipTrigger
@@ -482,14 +465,20 @@ export function ContextChip({ pressed, onPressedChange, label, tooltip, offIcon 
 						aria-pressed={pressed}
 						onClick={() => onPressedChange(!pressed)}
 						className={cn(
-							"touch-target relative inline-flex h-7 items-center gap-1 rounded-sm border px-[9px] text-xs font-medium transition-[background-color,border-color,color] duration-quick",
-							pressed ? "border-line-2 bg-sunken text-ink" : "border-line text-ink-3 hover:text-ink-2",
+							"touch-target relative inline-flex items-center gap-1.5 rounded-sm font-medium whitespace-nowrap transition-colors duration-quick",
+							on ? "h-7 text-[13px]/[18px]" : "h-[26px] text-xs/[18px]",
+							pressed
+								? on
+									? "bg-accent-soft px-2.5 text-accent-text"
+									: "bg-sunken ps-2 pe-1.5 text-ink-2 hover:text-ink"
+								: "border border-dashed border-line-2 px-2 text-ink-3 hover:text-ink-2",
 						)}
 					/>
 				}
 			>
-				<Icon name={pressed ? "check" : offIcon} size={16} />
+				<Icon name={pressed ? (icon ?? "check") : offIcon} size={16} />
 				{label}
+				{pressed && !on && <Icon name="x" size={16} className="text-ink-3" />}
 			</TooltipTrigger>
 			<TooltipContent>{tooltip}</TooltipContent>
 		</Tooltip>
@@ -529,37 +518,6 @@ export function PrivacyLine({
 /** Whole minutes until `at`; negative once it has started. */
 export const minutesUntil = (at: Date, now: Date) => Math.round((at.getTime() - now.getTime()) / 60_000);
 
-type CountdownChipProps = { at: Date; now: Date; className?: string };
-
-/** "In 23 hours" on sunken; within the hour it turns warn and reads "Starts in 10 minutes". */
-export function CountdownChip({ at, now, className }: CountdownChipProps) {
-	const { relative } = useCareerTime();
-	const minutes = minutesUntil(at, now);
-	const soon = minutes <= 60;
-	const label =
-		minutes <= 0
-			? t`Started`
-			: soon
-				? t`Starts in ${ph({ minutes: i18n.number(minutes) })} minutes`
-				: relative(at, now);
-	return (
-		<span
-			className={cn(
-				"inline-flex h-6 w-fit items-center gap-1 rounded-sm px-2 text-xs font-semibold",
-				soon ? "bg-warn-soft text-warn-text" : "bg-sunken text-ink-2",
-				className,
-			)}
-		>
-			<Icon name="clock" size={15} />
-			{label}
-			{/* Announced only when it crosses the hour and ten minutes, not every minute. */}
-			<span className="sr-only" aria-live="polite">
-				{minutes === 60 || minutes === 10 ? label : ""}
-			</span>
-		</span>
-	);
-}
-
 type MemoryProposalProps = {
 	/** "Remember this for future coaching?" or "Remember for Northstar only?" */
 	question: string;
@@ -570,6 +528,10 @@ type MemoryProposalProps = {
 	onRemember: (selected: number[]) => void;
 	onDismiss: () => void;
 	busy?: boolean;
+	/** "row": a list row with an icon tile (W5 Debrief); default: a card (coach answers). */
+	variant?: "card" | "row";
+	/** The card's quiet note at the end of its actions: "Private to this application" (W12). */
+	note?: ReactNode;
 };
 
 /** Offers to remember durable facts from an answer. Several facts become a checklist inside one proposal. */
@@ -583,30 +545,72 @@ export function MemoryProposal(props: MemoryProposalProps) {
 					<Icon name="check-circle" size={18} />
 					{props.remembered}
 				</p>
+			) : props.variant === "row" ? (
+				<List cap className="mt-[18px]">
+					<ListRow
+						className="flex-wrap"
+						leading={
+							<IconTile>
+								<Icon name="bookmark-simple" size={20} />
+							</IconTile>
+						}
+						title={props.question}
+						subtitle={
+							props.facts.length === 1 ? (
+								<q>{props.facts[0]}</q>
+							) : (
+								props.facts.map((fact, index) => (
+									<label key={fact} className="flex items-start gap-2 pt-1">
+										<Checkbox
+											checked={selected.includes(index)}
+											onCheckedChange={(checked) =>
+												setSelected((current) =>
+													checked ? [...current, index] : current.filter((item) => item !== index),
+												)
+											}
+										/>
+										<q>{fact}</q>
+									</label>
+								))
+							)
+						}
+						trailing={
+							<span className="flex items-center gap-3">
+								<Button
+									variant="link"
+									className="h-auto p-0 text-sm/5 font-medium text-accent-text"
+									loading={props.busy ?? false}
+									disabled={selected.length === 0}
+									onClick={() => props.onRemember(selected)}
+								>
+									<Trans>Remember</Trans>
+								</Button>
+								<Button size="sm" variant="ghost" onClick={props.onDismiss}>
+									<Trans>Not now</Trans>
+								</Button>
+							</span>
+						}
+					/>
+				</List>
 			) : (
-				<div className="flex flex-wrap items-center gap-3 rounded-lg bg-info-soft px-3.5 py-3">
-					<Icon name="bookmark-simple" className="shrink-0 text-info-text" />
-					<div className="grid min-w-0 flex-1 basis-60 gap-1 text-[13px] leading-[19px]">
-						<p className="font-semibold text-ink">{props.question}</p>
-						{props.facts.length === 1 ? (
-							<q className="text-ink-2">{props.facts[0]}</q>
-						) : (
-							props.facts.map((fact, index) => (
-								<label key={fact} className="flex items-start gap-2 text-ink-2">
-									<Checkbox
-										checked={selected.includes(index)}
-										onCheckedChange={(checked) =>
-											setSelected((current) =>
-												checked ? [...current, index] : current.filter((item) => item !== index),
-											)
-										}
-									/>
-									<q>{fact}</q>
-								</label>
-							))
-						)}
-					</div>
-					<div className="flex shrink-0 gap-1">
+				<div className="grid gap-2.5 rounded-lg border border-line bg-raised p-3.5">
+					<p className="t-label text-sm">{props.question}</p>
+					{props.facts.length === 1 ? (
+						<q className="t-ui text-ink-2">{props.facts[0]}</q>
+					) : (
+						props.facts.map((fact, index) => (
+							<label key={fact} className="flex items-start gap-2 t-ui text-ink-2">
+								<Checkbox
+									checked={selected.includes(index)}
+									onCheckedChange={(checked) =>
+										setSelected((current) => (checked ? [...current, index] : current.filter((item) => item !== index)))
+									}
+								/>
+								<q>{fact}</q>
+							</label>
+						))
+					)}
+					<div className="flex flex-wrap items-center gap-x-1 gap-y-2">
 						<Button
 							size="sm"
 							variant="secondary"
@@ -619,9 +623,14 @@ export function MemoryProposal(props: MemoryProposalProps) {
 						<Button size="sm" variant="ghost" onClick={props.onDismiss}>
 							<Trans>Not now</Trans>
 						</Button>
+						{props.note && <span className="ms-auto text-xs text-ink-3">{props.note}</span>}
 					</div>
 				</div>
 			)}
 		</Swap>
 	);
 }
+
+/** A meeting place in the middle of a sentence ("· video call."): the generic kinds read in lower case. */
+export const midSentence = (place: string | undefined) =>
+	place && /^(video|phone) call$/i.test(place.trim()) ? place.trim().toLocaleLowerCase() : place;

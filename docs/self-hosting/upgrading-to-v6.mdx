@@ -69,7 +69,7 @@ This page is for installations already on v5. Coming from v4? Follow [Migrating 
 ## Check the upgrade
 
 1. Open `/api/health`. `status` should be `healthy` and `version` should start with `6`.
-2. Sign in. You land on **Documents**, which lists resumes and cover letters together.
+2. Sign in. You land on **Today**. Open **Documents** for resumes and cover letters.
 3. If a resume used to contain a cover letter, that letter now appears in **Documents** as a document of its own, named after the resume.
 4. If the server log shows `Database schema verification failed`, read [Schema check](#schema-check).
 
@@ -181,11 +181,11 @@ These v5 addresses redirect to their v6 place, so bookmarks and old links keep w
 
 | v5 address                                                                                           | Now goes to                                                                                               |
 | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `/dashboard/resumes`                                                                                 | `/dashboard?type=resume` (tags, sort, and list view carry over)                                           |
-| `/dashboard/cover-letters`                                                                           | `/dashboard?type=letter`                                                                                  |
+| `/dashboard/resumes`                                                                                 | `/dashboard/documents?type=resume` (tags, sort, and list view carry over)                                 |
+| `/dashboard/cover-letters`                                                                           | `/dashboard/documents?type=letter`                                                                        |
 | `/dashboard/settings/authentication`                                                                 | `/dashboard/settings/account`                                                                             |
 | `/dashboard/settings/integrations`, `/dashboard/settings/api-keys`, `/dashboard/settings/job-search` | `/dashboard/settings/ai`                                                                                  |
-| `/agent`                                                                                             | `/dashboard`                                                                                              |
+| `/agent`                                                                                             | `/dashboard/documents`                                                                                    |
 | `/agent/new?resumeId=<id>`                                                                           | `/builder/<id>?assistant=new` (or `/dashboard` without a resume)                                          |
 | `/agent/<threadId>`                                                                                  | The conversation's document in the editor, with the assistant open. `/dashboard` if the document is gone. |
 

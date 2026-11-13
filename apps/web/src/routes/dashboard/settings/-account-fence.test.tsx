@@ -19,11 +19,16 @@ vi.mock("@tanstack/react-router", () => ({
 		useRouteContext: () => ({ session: { user: { id: state.page } } }),
 	}),
 	retainSearchParams: () => undefined,
+	// The section rail's links.
+	createLink:
+		() =>
+		({ children }: { children?: ReactNode }) => <a href="#section">{children}</a>,
 	useRouterState: () => ({ pathname: "/dashboard/settings/account", search: "", href: "/dashboard/settings/account" }),
 	Link: ({ children }: { children?: ReactNode }) => <a href="#settings">{children}</a>,
 	Outlet: () => <p>Private settings</p>,
 }));
 vi.mock("@/libs/auth/client", () => ({ authClient: { useSession: () => state.browser } }));
+vi.mock("@/features/user/sign-out", () => ({ useSignOut: () => () => undefined }));
 
 // Vite defines the version at build time.
 vi.stubGlobal("__APP_VERSION__", "0.0.0");

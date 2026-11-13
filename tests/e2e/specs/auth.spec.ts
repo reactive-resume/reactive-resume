@@ -37,7 +37,7 @@ test("failed settings sign-out retains the session and drafts; successful sign-o
 
 test("signs up without a username and lands on the dashboard", async ({ page, account }) => {
 	await registerViaUi(page, { ...account, username: "" });
-	await expect(page.getByRole("heading", { name: "Documents", level: 1 })).toBeVisible();
+	await expect(page.getByRole("heading", { name: "Today", level: 1 })).toBeVisible();
 	const session = await page.request.get("/api/auth/get-session");
 	expect((await session.json()).user.username).toBe(account.email.split("@")[0]);
 });
@@ -48,7 +48,7 @@ test("registers and logs in with email credentials", async ({ page, account }) =
 		if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documentRequests++;
 	});
 	await registerViaUi(page, account, "/dashboard?from=signup#documents");
-	await expect(page.getByRole("heading", { name: "Documents", level: 1 })).toBeVisible();
+	await expect(page.getByRole("heading", { name: "Today", level: 1 })).toBeVisible();
 	await expect(page).toHaveURL(/\/dashboard\?from=signup#documents$/);
 	expect(documentRequests).toBe(1);
 
@@ -58,7 +58,7 @@ test("registers and logs in with email credentials", async ({ page, account }) =
 
 	const beforeLogin = documentRequests;
 	await loginViaUi(page, account, "/dashboard?from=login#documents");
-	await expect(page.getByRole("heading", { name: "Documents", level: 1 })).toBeVisible();
+	await expect(page.getByRole("heading", { name: "Today", level: 1 })).toBeVisible();
 	await expect(page).toHaveURL(/\/dashboard\?from=login#documents$/);
 	expect(documentRequests).toBe(beforeLogin + 1);
 });

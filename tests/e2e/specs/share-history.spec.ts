@@ -10,7 +10,11 @@ test("renames the public address and keeps the old one redirecting", async ({ br
 	await expect(page.getByText("Use Latin letters a–z, numbers and single dashes.")).toBeVisible();
 
 	await address.fill("renamed-address");
-	await expect(page.getByText(/^Live at .*\/renamed-address$/)).toBeVisible();
+	const resumeId = new URL(page.url()).pathname.split("/")[2];
+	await expect
+		.poll(async () => (await (await page.request.get(`/api/openapi/resumes/${resumeId}`)).json()).slug)
+		.toBe("renamed-address");
+	await expect(page.getByRole("button", { name: "Copy link", exact: true })).toBeEnabled();
 	expect(await getPublicUrl(page)).toMatch(/\/renamed-address$/);
 
 	const visitor = await browser.newPage();

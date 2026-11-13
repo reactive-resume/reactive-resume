@@ -5,16 +5,6 @@ import { STAGES } from "@reactive-resume/schema/applications/data";
 /** The standard stages an application moves through; closed ends it from any of them. Lanes map onto these. */
 export const PIPELINE: readonly ApplicationStatus[] = ["saved", "applied", "screening", "interview", "offer"];
 
-/** The list's group order: what needs you first, closed last. */
-export const LIST_ORDER: readonly ApplicationStatus[] = [
-	"interview",
-	"offer",
-	"screening",
-	"applied",
-	"saved",
-	"closed",
-];
-
 export const CLOSED_REASONS: readonly ApplicationClosedReason[] = [
 	"accepted",
 	"not-selected",

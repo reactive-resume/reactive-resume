@@ -47,12 +47,9 @@ test("uses the configured mirror for browser PDF, server PDF and public HTML", a
 	expect(serverPdf.status()).toBe(200);
 	expect((await serverPdf.body()).subarray(0, 5).toString()).toBe("%PDF-");
 	await page.getByRole("tab", { name: "Design", exact: true }).click();
-	await page
-		.getByRole("navigation", { name: "Design groups" })
-		.getByRole("button", { name: "Advanced", exact: true })
-		.click();
-	await page.getByLabel("Font family", { exact: true }).first().click();
-	await page.locator('input[placeholder="Search…"]:visible').fill("Source Sans 3");
+	await page.getByRole("button", { name: /^Typography/ }).click();
+	await page.getByLabel("Font", { exact: true }).first().click();
+	await page.getByLabel("Search fonts", { exact: true }).fill("Source Sans 3");
 	await expect
 		.poll(() =>
 			page.evaluate(() =>

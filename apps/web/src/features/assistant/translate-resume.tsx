@@ -5,7 +5,6 @@ import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useId, useRef, useState } from "react";
-import { languageCopyRequest } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -15,6 +14,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import { Icon } from "@reactive-resume/ui/components/icon";
+import { Label } from "@reactive-resume/ui/components/label";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { handToAssistant } from "./handoff";
 import { Combobox } from "@/components/ui/combobox";
@@ -39,6 +40,8 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 	const [chosenLocale, setChosenLocale] = useState<Locale | null>(null);
 	const fallbackLocale: Locale = sourceLocale === "de-DE" ? "en-US" : "de-DE";
 	const locale = chosenLocale && chosenLocale !== sourceLocale ? chosenLocale : fallbackLocale;
+	const sourceName = useResumeStore((state) => (state.resume?.id === resumeId ? state.resume.name : ""));
+	const copyName = `${sourceName} — ${i18n._(localeMap[locale])}`;
 	const [busy, setBusy] = useState(false);
 	const active = useRef(false);
 	const create = async () => {
@@ -56,7 +59,12 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 				pageLocale: locale,
 			});
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
-			handToAssistant(session.user.id, copy, languageCopyRequest(locale));
+			handToAssistant(
+				session.user.id,
+				copy,
+				// The board's short request; the server shows a language copy's assistant only its visible fields.
+				t`Translate this resume into ${language}. Keep names, dates and numbers as they are.`,
+			);
 			await navigate({ to: "/builder/$resumeId", params: { resumeId: copy }, search: {} });
 			onClose();
 		} catch (error) {
@@ -79,23 +87,49 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 						<Trans>Translate into…</Trans>
 					</DialogTitle>
 					<DialogDescription>
-						<Trans>
-							The original stays unchanged. Send the copy for translations to review. Hidden content stays untranslated.
-						</Trans>
+						<Trans>The original stays unchanged. Hidden content stays untranslated.</Trans>
 					</DialogDescription>
 				</DialogHeader>
-				<label htmlFor={languageId}>
-					<Trans>Language</Trans>
-				</label>
-				<Combobox
-					id={languageId}
-					value={locale}
-					disabled={busy}
-					onValueChange={setChosenLocale}
-					options={getLocaleOptions().filter(({ value }) => value !== sourceLocale)}
-				/>
+				<div className="grid gap-1.5">
+					<Label htmlFor={languageId}>
+						<Trans>Language</Trans>
+					</Label>
+					<Combobox
+						render={(props) => (
+							<Button {...props} variant="secondary" className="h-10 w-full justify-start font-normal">
+								<Icon name="translate" size={18} />
+								{props.children}
+							</Button>
+						)}
+						id={languageId}
+						value={locale}
+						disabled={busy}
+						onValueChange={setChosenLocale}
+						options={getLocaleOptions()
+							.filter(({ value }) => value !== sourceLocale)
+							.map((option) => ({
+								...option,
+								label: i18n._(localeMap[option.value]),
+								textValue: i18n._(localeMap[option.value]),
+							}))}
+						aria-describedby={`${languageId}-hint`}
+					/>
+					<p id={`${languageId}-hint`} className="text-[13px]/[18px] text-ink-3">
+						<Trans>
+							Makes a copy named “{copyName}” and opens it with a request ready for the assistant. Nothing is sent until
+							you send it.
+						</Trans>
+					</p>
+				</div>
 				<DialogFooter>
-					<Button disabled={busy || !sourceLocale || locale === sourceLocale} onClick={() => void create()}>
+					<Button variant="ghost" disabled={busy} onClick={onClose}>
+						<Trans>Cancel</Trans>
+					</Button>
+					<Button
+						variant="secondary"
+						disabled={busy || !sourceLocale || locale === sourceLocale}
+						onClick={() => void create()}
+					>
 						<Trans>Create language copy</Trans>
 					</Button>
 				</DialogFooter>

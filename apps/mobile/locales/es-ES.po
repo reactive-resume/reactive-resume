@@ -1155,6 +1155,10 @@ msgstr "Enviada el {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Enviada el 28 de oct. · ahora basta con un mensaje breve"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Se aplica a la página web después de sus propios estilos, en cualquier tamaño de pantalla. El PDF se queda como está."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "No se ha podido cargar este contenido"
 msgid "Couldn't load this document. Try again."
 msgstr "No se ha podido cargar este documento. Volver a intentarlo."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "No se ha podido cargar esta versión. Volver a intentarlo."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "No se ha podido cargar este contenido. Volver a intentarlo."
@@ -2405,6 +2405,10 @@ msgstr "A medida"
 msgid "Custom colour"
 msgstr "Color personalizado"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "CSS personalizado"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "A diario"
@@ -2658,10 +2662,6 @@ msgstr "Documento"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Acciones del documento"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Documento no disponible."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Frecuencia de programación no válida."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Respuesta de transcripción no válida."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Problema {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Página {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Página {0} de {1}"
@@ -5445,7 +5440,7 @@ msgstr "Practicar estas preguntas"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Practicar esta historia"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Adaptar a la oferta"
 msgid "Take photo"
 msgstr "Hacer foto"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Tocar una sección para editarla"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Tocar para copiar"
@@ -7682,7 +7673,7 @@ msgstr "Activar primero el enlace público en Compartir."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Desactivado"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

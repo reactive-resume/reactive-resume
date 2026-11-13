@@ -43,20 +43,24 @@ const mount = () =>
 it("shows server week, connection/action/model totals and refreshes without provider-list dependency", async () => {
 	api.read.mockResolvedValue(report);
 	mount();
+	fireEvent.click(await screen.findByRole("button", { name: /By connection/ }));
 	await screen.findByText("Removed connection · openai");
-	expect(screen.getAllByText("AI request attempts: 5")).toHaveLength(2);
+	expect(screen.getByText("5 request attempts")).toBeVisible();
+	expect(screen.getAllByText("AI request attempts: 5")).toHaveLength(1);
 	expect(screen.getByText("Reply · fast · Removed connection · 2")).toBeVisible();
 	expect(screen.getByText("Form answer · capable · Removed connection · 3")).toBeVisible();
-	expect(screen.getByText("Oct 26, 2026 – Nov 1, 2026 · Europe/Berlin")).toBeVisible();
+	expect(screen.getByText(/Oct 26 – .*Nov 1/)).toBeVisible();
+	expect(screen.getByText(/^Europe\/Berlin/)).toBeVisible();
 	api.read.mockResolvedValue({ ...report, requests: 0, groups: [] });
 	fireEvent.click(screen.getByRole("button", { name: "Refresh usage" }));
-	await screen.findByText("No AI request attempts recorded this week.");
+	await screen.findByText(/No AI request attempts recorded this week\./);
 	expect(screen.queryByText("Removed connection · openai")).toBeNull();
 });
 
 it("replaces stale totals with an honest failure and retries through the visible refresh control", async () => {
 	api.read.mockResolvedValueOnce(report).mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce(report);
 	mount();
+	fireEvent.click(await screen.findByRole("button", { name: /By connection/ }));
 	await screen.findByText("Removed connection · openai");
 	fireEvent.click(screen.getByRole("button", { name: "Refresh usage" }));
 	await screen.findByRole("alert");

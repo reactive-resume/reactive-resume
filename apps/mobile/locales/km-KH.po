@@ -1155,6 +1155,10 @@ msgstr "បានដាក់ពាក្យ {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "បានដាក់ពាក្យ 28 តុលា · អាចផ្ញើសារខ្លីឥឡូវ"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "អនុវត្តលើទំព័របណ្ដាញ បន្ទាប់ពីរចនាប័ទ្មផ្ទាល់របស់វា នៅគ្រប់ទំហំអេក្រង់។ PDF នៅដដែល។"
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "មិនអាចផ្ទុកបាន"
 msgid "Couldn't load this document. Try again."
 msgstr "មិនអាចផ្ទុកឯកសារនេះបាន។ ព្យាយាមម្តងទៀត។"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "មិនអាចផ្ទុកកំណែនេះបាន។ ព្យាយាមម្តងទៀត។"
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "មិនអាចផ្ទុកបាន។ ព្យាយាមម្តងទៀត។"
@@ -2405,6 +2405,10 @@ msgstr "ផ្ទាល់ខ្លួន"
 msgid "Custom colour"
 msgstr "ពណ៌ផ្ទាល់ខ្លួន"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "CSS ផ្ទាល់ខ្លួន"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "ប្រចាំថ្ងៃ"
@@ -2658,10 +2662,6 @@ msgstr "ឯកសារ"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "សកម្មភាពឯកសារ"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "ឯកសារមិនមាន។"
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "ប្រេកង់កាលវិភាគមិនត្រឹមត
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "ចម្លើយបម្លែងសំឡេងជាអត្ថបទមិនត្រឹមត្រូវ។"
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "ចេញផ្សាយ {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "ទំព័រ {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "ទំព័រ {0} នៃ {1}"
@@ -5445,7 +5440,7 @@ msgstr "ហាត់សំណួរទាំងនេះ"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "ហាត់រឿងនេះ"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "កែតម្រូវសម្រាប់ប្រកាស"
 msgid "Take photo"
 msgstr "ថតរូប"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "ប៉ះផ្នែកដើម្បីកែសម្រួល"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "ប៉ះដើម្បីចម្លង"
@@ -7682,7 +7673,7 @@ msgstr "បើកតំណសាធារណៈក្នុងចែករំល
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "បានបិទ"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

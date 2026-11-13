@@ -1155,6 +1155,10 @@ msgstr "Υποβλήθηκε {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Υποβλήθηκε 28 Οκτ · ένα σύντομο μήνυμα ταιριάζει τώρα"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Εφαρμόζεται στην ιστοσελίδα μετά τα δικά της στυλ, σε κάθε μέγεθος οθόνης. Το PDF μένει ως έχει."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Δεν ήταν δυνατή η φόρτωση"
 msgid "Couldn't load this document. Try again."
 msgstr "Δεν ήταν δυνατή η φόρτωση αυτού του εγγράφου. Δοκιμάστε ξανά."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Δεν ήταν δυνατή η φόρτωση αυτής της έκδοσης. Δοκιμάστε ξανά."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Δεν ήταν δυνατή η φόρτωση. Δοκιμάστε ξανά."
@@ -2405,6 +2405,10 @@ msgstr "Προσαρμοσμένο"
 msgid "Custom colour"
 msgstr "Προσαρμοσμένο χρώμα"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "Προσαρμοσμένο CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Καθημερινά"
@@ -2658,10 +2662,6 @@ msgstr "Έγγραφο"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Ενέργειες εγγράφου"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Το έγγραφο δεν είναι διαθέσιμο."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Μη έγκυρη συχνότητα προγράμματος."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Μη έγκυρη απόκριση απομαγνητοφώνησης."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Τεύχος {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Σελίδα {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Σελίδα {0} από {1}"
@@ -5445,7 +5440,7 @@ msgstr "Εξασκηθείτε σε αυτές τις ερωτήσεις"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Εξάσκηση σε αυτή την ιστορία"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Προσαρμογή στην αγγελία"
 msgid "Take photo"
 msgstr "Λήψη φωτογραφίας"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Πατήστε μια ενότητα για επεξεργασία"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Πατήστε για αντιγραφή"
@@ -7682,7 +7673,7 @@ msgstr "Ενεργοποιήστε πρώτα τον δημόσιο σύνδεσ
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Απενεργοποιήθηκε"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

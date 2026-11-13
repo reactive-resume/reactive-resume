@@ -1155,6 +1155,10 @@ msgstr "Ansökt {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Inskickad 28 okt. · ett kort meddelande passar nu"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Gäller för webbsidan efter dess egna stilar, på alla skärmstorlekar. PDF:en förblir som den är."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Kunde inte läsa in detta"
 msgid "Couldn't load this document. Try again."
 msgstr "Kunde inte läsa in det här dokumentet. Försök igen."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Kunde inte läsa in den här versionen. Försök igen."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Kunde inte läsa in detta. Försök igen."
@@ -2405,6 +2405,10 @@ msgstr "Anpassad"
 msgid "Custom colour"
 msgstr "Egen färg"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "Anpassad CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Dagligen"
@@ -2658,10 +2662,6 @@ msgstr "Dokument"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Dokumentåtgärder"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Dokumentet är inte tillgängligt."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Ogiltig schemafrekvens."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Ogiltigt transkriptionssvar."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Utgåva {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Sida {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Sida {0} av {1}"
@@ -5445,7 +5440,7 @@ msgstr "Öva på dessa frågor"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Öva på den här berättelsen"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Anpassa till annonsen"
 msgid "Take photo"
 msgstr "Ta foto"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Tryck på ett avsnitt för att redigera"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Tryck för att kopiera"
@@ -7682,7 +7673,7 @@ msgstr "Aktivera den offentliga länken i Dela först."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Avstängd"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

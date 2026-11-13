@@ -1,7 +1,7 @@
 import { call } from "@orpc/server";
 import z from "zod";
 import { protectedProcedure } from "../context";
-import { documentExports } from "../features/documents/exports";
+import { documentExports, documentRenders } from "../features/documents/exports";
 import { checkResume, checkPdf, matchResume } from "../features/resume/checks";
 import { importResumeFile, previewPdfImport } from "../features/resume/imports";
 import { uploadFileOutputSchema } from "../features/storage/router";
@@ -10,6 +10,7 @@ import router from "./index";
 // Add resource-oriented aliases without changing the routes existing clients use.
 export const restAliases = {
 	documentExports,
+	documentRenders,
 	checkResume,
 	checkPdf,
 	matchResume,

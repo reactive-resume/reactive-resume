@@ -1155,6 +1155,10 @@ msgstr "{0} அன்று விண்ணப்பிக்கப்பட்�
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "அக். 28 அன்று விண்ணப்பிக்கப்பட்டது · இப்போது சிறு செய்தி அனுப்பலாம்"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "வலைப்பக்கத்தின் சொந்த நடைகளுக்குப் பிறகு, ஒவ்வொரு திரை அளவிலும் பொருந்தும். PDF அப்படியே இருக்கும்."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "இதை ஏற்ற முடியவில்லை"
 msgid "Couldn't load this document. Try again."
 msgstr "இந்த ஆவணத்தை ஏற்ற முடியவில்லை. மீண்டும் முயலவும்."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "இந்தப் பதிப்பை ஏற்ற முடியவில்லை. மீண்டும் முயலவும்."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "இதை ஏற்ற முடியவில்லை. மீண்டும் முயலவும்."
@@ -2405,6 +2405,10 @@ msgstr "தனிப்பயன்"
 msgid "Custom colour"
 msgstr "தனிப்பயன் நிறம்"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "தனிப்பயன் CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "தினமும்"
@@ -2658,10 +2662,6 @@ msgstr "ஆவணம்"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "ஆவணச் செயல்கள்"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "ஆவணம் கிடைக்கவில்லை."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "செல்லாத அட்டவணை இடைவெளி."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "செல்லாத உரையாக்கப் பதில்."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "வெளியீடு {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "பக்கம் {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "{1} இன் பக்கம் {0}"
@@ -5445,7 +5440,7 @@ msgstr "இந்தக் கேள்விகளைப் பயிற்ச�
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "இந்தக் கதையைப் பயிற்சி செய்"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "அறிவிப்புக்கேற்ப மாற்றவு�
 msgid "Take photo"
 msgstr "புகைப்படம் எடு"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "திருத்தப் பிரிவைத் தொடவும்"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "நகலெடுக்கத் தொடவும்"
@@ -7682,7 +7673,7 @@ msgstr "முதலில் பகிர்வில் பொது இணை
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "முடக்கப்பட்டது"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

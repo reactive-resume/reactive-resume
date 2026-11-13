@@ -1155,6 +1155,10 @@ msgstr "আবেদন করা হয়েছে {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "২৮ অক্টোবর আবেদন করা · এখন ছোট বার্তা দেওয়া যায়"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "ওয়েব পেজের নিজস্ব স্টাইলের পরে, প্রতিটি স্ক্রিন সাইজে প্রযোজ্য। PDF যেমন আছে তেমনই থাকে।"
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "এটি লোড করা যায়নি"
 msgid "Couldn't load this document. Try again."
 msgstr "এই নথি লোড করা যায়নি। আবার চেষ্টা করুন।"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "এই সংস্করণ লোড করা যায়নি। আবার চেষ্টা করুন।"
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "এটি লোড করা যায়নি। আবার চেষ্টা করুন।"
@@ -2405,6 +2405,10 @@ msgstr "কাস্টম"
 msgid "Custom colour"
 msgstr "নিজস্ব রং"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "কাস্টম CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "প্রতিদিন"
@@ -2658,10 +2662,6 @@ msgstr "নথি"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "নথির কাজগুলো"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "নথি পাওয়া যাচ্ছে না।"
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "সময়সূচির পুনরাবৃত্তি অবৈ�
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "প্রতিলিপির উত্তর অবৈধ।"
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "ইস্যু {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "পৃষ্ঠা {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "{1} এর পৃষ্ঠা {0}"
@@ -5445,7 +5440,7 @@ msgstr "এই প্রশ্নগুলো অনুশীলন করুন
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "এই গল্পটি অনুশীলন করুন"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "বিজ্ঞপ্তির উপযোগী করুন"
 msgid "Take photo"
 msgstr "ছবি তুলুন"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "সম্পাদনার জন্য বিভাগে ট্যাপ করুন"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "কপি করতে ট্যাপ করুন"
@@ -7682,7 +7673,7 @@ msgstr "আগে শেয়ারে প্রকাশ্য লিংক �
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "বন্ধ করা হয়েছে"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

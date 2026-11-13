@@ -14,6 +14,7 @@ export const Route = createFileRoute("/dashboard/applications/$applicationId/{-$
 			.union([z.literal(true), z.string().min(1)])
 			.optional()
 			.catch(undefined),
+		details: z.boolean().optional().catch(undefined),
 		edit: z.literal("interview").optional().catch(undefined),
 		version: z.string().min(1).optional().catch(undefined),
 		// Practise opens with Speak selected ("Rehearse one answer aloud").

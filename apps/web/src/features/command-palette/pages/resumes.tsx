@@ -3,14 +3,14 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
-import { CommandLoading } from "cmdk";
+import { CommandLoading, useCommandState } from "cmdk";
 import { useEffect, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
-import { CommandGroup, CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
+import { CommandGroup, CommandItem } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { useCommandPaletteStore } from "../store";
-import { BaseCommandGroup } from "./base";
+import { BaseCommandGroup, RowNote } from "./base";
+import { CreateItems } from "./navigation";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { orpc } from "@/libs/orpc/client";
@@ -33,6 +33,8 @@ const matchesSearch = (search: string, values: Array<string | null | undefined>)
 const PREVIEW = 3;
 /** Letters continue into the existing paginated Documents library. */
 const LETTER_PREVIEW = 8;
+/** Rows in the first screen's Recent group. */
+const RECENT = 2;
 
 const applicationValues = (application: Application) => [
 	application.company,
@@ -77,7 +79,6 @@ const documentKeywords = (document: Document) => [
 export function ResumesCommandGroup() {
 	const { session } = useRouteContext({ strict: false });
 	const peekPage = useCommandPaletteStore((state) => state.peekPage);
-	const pushPage = useCommandPaletteStore((state) => state.pushPage);
 
 	const commandPage = peekPage();
 	const searchPage = isSearchPage(commandPage) ? commandPage : undefined;
@@ -87,27 +88,6 @@ export function ResumesCommandGroup() {
 	return (
 		<>
 			{commandPage === undefined ? <RootMatches /> : null}
-			<BaseCommandGroup heading={<Trans>Search for…</Trans>}>
-				<CommandItem keywords={[t`Resumes`]} value="search.resumes" onSelect={() => pushPage("resumes")}>
-					<Icon name="file-text" size={16} />
-					<Trans>Resumes</Trans>
-				</CommandItem>
-
-				<CommandItem keywords={[t`Applications`]} value="search.applications" onSelect={() => pushPage("applications")}>
-					<Icon name="briefcase" size={16} />
-					<Trans>Applications</Trans>
-				</CommandItem>
-
-				<CommandItem
-					keywords={[t`Conversations`, t`Assistant`, t`Threads`]}
-					value="search.threads"
-					onSelect={() => pushPage("threads")}
-				>
-					<Icon name="chat-text" size={16} />
-					<Trans>Assistant conversations</Trans>
-				</CommandItem>
-			</BaseCommandGroup>
-
 			{searchPage === "resumes" ? <ResumesPage page={searchPage} /> : null}
 			{searchPage === "applications" ? <ApplicationsPage page={searchPage} /> : null}
 			{searchPage === "threads" ? <ThreadsPage page={searchPage} /> : null}
@@ -150,6 +130,10 @@ function RootMatches() {
 	useEffect(() => {
 		if (topMatch && !selectionMoved) setSelected(topMatch);
 	}, [topMatch, setSelected, selectionMoved, search]);
+	// Nothing matched once every search has answered: no document, application, conversation or command.
+	const matches = useCommandState((state) => state.filtered.count);
+	const settled = !resumes.loading && !letters.loading && applications !== undefined && threads !== undefined;
+	const nothing = typing && settled && matches === 0;
 	if (!typing) return null;
 
 	const openDocument = async (document: Document) => {
@@ -172,15 +156,15 @@ function RootMatches() {
 			}}
 			className="text-ink-2"
 		>
-			<Icon name="arrow-right" size={16} className="rtl:-scale-x-100" />
+			<Icon name="arrow-right" className="rtl:-scale-x-100" />
 			{label}
 		</CommandItem>
 	);
 
 	return (
 		<>
-			{resumes.documents.length > 0 && (
-				<CommandGroup heading={<Trans>Resumes</Trans>}>
+			{(resumes.documents.length > 0 || letters.documents.length > 0 || letters.error) && (
+				<CommandGroup forceMount={letters.error} heading={<Trans>Documents</Trans>}>
 					{resumes.documents.slice(0, PREVIEW).map((document) => (
 						<CommandItem
 							key={document.id}
@@ -188,32 +172,26 @@ function RootMatches() {
 							keywords={documentKeywords(document)}
 							onSelect={() => void openDocument(document)}
 						>
-							<Icon name="file-text" size={16} />
+							<Icon name="file-text" />
 							<span className="min-w-0 truncate">{document.name}</span>
-							{document.application && (
-								<span className="truncate text-xs text-ink-3">{document.application.company}</span>
-							)}
+							<RowNote>
+								<Trans>Resume</Trans>
+							</RowNote>
 						</CommandItem>
 					))}
 					{resumes.documents.length > PREVIEW && more("resumes", t`Show all resumes`)}
-				</CommandGroup>
-			)}
-			{letters.error && (
-				<CommandGroup forceMount heading={<Trans>Letters</Trans>}>
-					<CommandItem
-						forceMount
-						value="retry.letters"
-						onSelect={() => {
-							void letters.refetch();
-						}}
-					>
-						<Icon name="arrow-clockwise" size={16} />
-						<Trans>Couldn't load letters. Try again.</Trans>
-					</CommandItem>
-				</CommandGroup>
-			)}
-			{letters.documents.length > 0 && (
-				<CommandGroup heading={<Trans>Letters</Trans>}>
+					{letters.error && (
+						<CommandItem
+							forceMount
+							value="retry.letters"
+							onSelect={() => {
+								void letters.refetch();
+							}}
+						>
+							<Icon name="arrow-clockwise" />
+							<Trans>Couldn't load letters. Try again.</Trans>
+						</CommandItem>
+					)}
 					{letters.documents.slice(0, LETTER_PREVIEW).map((document) => (
 						<CommandItem
 							key={document.id}
@@ -221,11 +199,11 @@ function RootMatches() {
 							keywords={documentKeywords(document)}
 							onSelect={() => void openDocument(document)}
 						>
-							<Icon name="envelope-simple" size={16} />
+							<Icon name="envelope-simple" />
 							<span className="min-w-0 truncate">{document.name}</span>
-							{document.application && (
-								<span className="truncate text-xs text-ink-3">{document.application.company}</span>
-							)}
+							<RowNote>
+								<Trans>Cover letter</Trans>
+							</RowNote>
 						</CommandItem>
 					))}
 					{letters.documents.length > LETTER_PREVIEW && (
@@ -233,12 +211,15 @@ function RootMatches() {
 							forceMount
 							value="more.letters"
 							onSelect={async () => {
-								await navigate({ to: "/dashboard", search: { type: "letter", q: search.trim().slice(0, 500) } });
+								await navigate({
+									to: "/dashboard/documents",
+									search: { type: "letter", q: search.trim().slice(0, 500) },
+								});
 								reset();
 							}}
 							className="text-ink-2"
 						>
-							<Icon name="arrow-right" size={16} className="rtl:-scale-x-100" />
+							<Icon name="arrow-right" className="rtl:-scale-x-100" />
 							<Trans>Show all letters</Trans>
 						</CommandItem>
 					)}
@@ -253,9 +234,13 @@ function RootMatches() {
 							keywords={applicationValues(application).filter((value): value is string => !!value)}
 							onSelect={() => void openApplication(application)}
 						>
-							<Icon name="briefcase" size={16} />
-							<span className="min-w-0 truncate">{application.company}</span>
-							<span className="truncate text-xs text-ink-3">{application.role}</span>
+							<Icon name="briefcase" />
+							<span className="min-w-0 truncate">
+								{application.company} · {application.role}
+							</span>
+							<RowNote>
+								<Trans>Application</Trans>
+							</RowNote>
 						</CommandItem>
 					))}
 					{matchingApplications.length > PREVIEW && more("applications", t`Show all applications`)}
@@ -269,7 +254,73 @@ function RootMatches() {
 					{matchingThreads.length > PREVIEW && more("threads", t`Show all conversations`)}
 				</CommandGroup>
 			)}
+			{nothing && (
+				<>
+					<p role="status" className="px-3 pt-6 pb-4 text-center text-sm text-ink-3">
+						<Trans>Nothing found for “{search.trim()}”</Trans>
+					</p>
+					<CommandGroup forceMount heading={<Trans>Create</Trans>}>
+						<CreateItems forceMount />
+					</CommandGroup>
+				</>
+			)}
 		</>
+	);
+}
+
+/** The first screen's Recent group: the documents and applications touched last, newest first. */
+export function RecentItems() {
+	const navigate = useNavigate();
+	const reset = useCommandPaletteStore((state) => state.reset);
+	const { data: documents } = useQuery(
+		orpc.documents.list.queryOptions({
+			input: { type: "all", q: "", limit: RECENT, offset: 0, sort: "edited", tags: [], trashed: false },
+		}),
+	);
+	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const recent = [
+		...(documents ?? []).map((document) => ({ at: document.editedAt, document, application: undefined })),
+		...(applications ?? []).map((application) => ({ at: application.updatedAt, document: undefined, application })),
+	]
+		.sort((a, b) => b.at.getTime() - a.at.getTime())
+		.slice(0, RECENT);
+
+	return recent.map(({ document, application }) =>
+		document ? (
+			<CommandItem
+				key={document.id}
+				value={`recent.${document.type}.${document.id}`}
+				keywords={documentKeywords(document)}
+				onSelect={async () => {
+					if (document.type === "resume")
+						await navigate({ to: "/builder/$resumeId", params: { resumeId: document.id } });
+					else await navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: document.id } });
+					reset();
+				}}
+			>
+				<Icon name={document.type === "resume" ? "file-text" : "envelope-simple"} />
+				<span className="min-w-0 truncate">{document.name}</span>
+				<RowNote>{document.type === "resume" ? <Trans>Resume</Trans> : <Trans>Cover letter</Trans>}</RowNote>
+			</CommandItem>
+		) : (
+			<CommandItem
+				key={application.id}
+				value={`recent.application.${application.id}`}
+				keywords={[application.company, application.role]}
+				onSelect={async () => {
+					await navigate({ to: "/dashboard/applications", search: { applicationId: application.id } });
+					reset();
+				}}
+			>
+				<Icon name="briefcase" />
+				<span className="min-w-0 truncate">
+					{application.company} · {application.role}
+				</span>
+				<RowNote>
+					<Trans>Application</Trans>
+				</RowNote>
+			</CommandItem>
+		),
 	);
 }
 
@@ -297,7 +348,7 @@ function ResumesPage({ page }: SearchPageProps) {
 	return (
 		<BaseCommandGroup page={page} heading={<Trans>Resumes</Trans>}>
 			<CommandItem value="resumes.create" onSelect={onCreate}>
-				<Icon name="plus" size={16} />
+				<Icon name="plus" />
 				<Trans>Create a new resume</Trans>
 			</CommandItem>
 
@@ -313,14 +364,8 @@ function ResumesPage({ page }: SearchPageProps) {
 						keywords={documentKeywords(resume)}
 						onSelect={() => onNavigate(`/builder/${resume.id}`)}
 					>
-						<Icon name="file-text" size={16} />
-						{resume.name}
-
-						<CommandShortcut className="opacity-0 group-data-[selected=true]/command-item:opacity-100">
-							<Trans comment="Command palette hint that pressing Enter opens the selected resume">
-								Press <Kbd>Enter</Kbd> to open
-							</Trans>
-						</CommandShortcut>
+						<Icon name="file-text" />
+						<span className="min-w-0 truncate">{resume.name}</span>
 					</CommandItem>
 				))
 			)}
@@ -331,7 +376,7 @@ function ResumesPage({ page }: SearchPageProps) {
 					disabled={query.loading}
 					onSelect={() => setPaging({ search, offset: Math.max(0, offset - 100) })}
 				>
-					<Icon name="arrow-left" size={16} />
+					<Icon name="arrow-left" />
 					<Trans>Previous</Trans>
 				</CommandItem>
 			)}
@@ -342,7 +387,7 @@ function ResumesPage({ page }: SearchPageProps) {
 					disabled={query.loading}
 					onSelect={() => setPaging({ search, offset: offset + 100 })}
 				>
-					<Icon name="arrow-right" size={16} />
+					<Icon name="arrow-right" />
 					<Trans>Next</Trans>
 				</CommandItem>
 			)}
@@ -375,7 +420,7 @@ function ApplicationsPage({ page }: SearchPageProps) {
 	return (
 		<BaseCommandGroup page={page} heading={<Trans>Applications</Trans>}>
 			<CommandItem value="applications.create" onSelect={onCreateApplication}>
-				<Icon name="plus" size={16} />
+				<Icon name="plus" />
 				<Trans>Save job</Trans>
 			</CommandItem>
 
@@ -391,9 +436,10 @@ function ApplicationsPage({ page }: SearchPageProps) {
 						keywords={applicationValues(application).filter((value): value is string => !!value)}
 						onSelect={() => onOpenApplication(application)}
 					>
-						<Icon name="briefcase" size={16} />
-						<span className="min-w-0 truncate">{application.company}</span>
-						<span className="truncate text-xs text-ink-3">{application.role}</span>
+						<Icon name="briefcase" />
+						<span className="min-w-0 truncate">
+							{application.company} · {application.role}
+						</span>
 					</CommandItem>
 				))
 			)}
@@ -446,9 +492,9 @@ function ThreadItem({ thread, onOpen }: ThreadItemProps) {
 
 	return (
 		<CommandItem value={`thread.${thread.id}`} keywords={[thread.title, documentName]} onSelect={() => void open()}>
-			<Icon name="chat-text" size={16} />
+			<Icon name="chat-text" />
 			<span className="min-w-0 truncate">{thread.title}</span>
-			<span className="truncate text-xs text-ink-3">{documentName}</span>
+			<RowNote>{documentName}</RowNote>
 		</CommandItem>
 	);
 }

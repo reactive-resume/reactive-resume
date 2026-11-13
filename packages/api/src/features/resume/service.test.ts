@@ -240,8 +240,8 @@ describe("create", () => {
 });
 
 describe("update", () => {
-	const updateHarness = (existing: { slug: string; updatedAt?: Date }) => {
-		const row = { ...createResumeRow(defaultResumeData, existing.updatedAt), slug: existing.slug };
+	const updateHarness = (existing: { slug: string; updatedAt?: Date; data?: ResumeData }) => {
+		const row = { ...createResumeRow(existing.data ?? defaultResumeData, existing.updatedAt), slug: existing.slug };
 		const select = createLockedSelectChain([row]);
 		const update = createUpdateChain([row]);
 		const tx = { select: () => select.chain, update: () => update.chain };
@@ -300,6 +300,35 @@ describe("update", () => {
 			applications: { edit: false },
 			conflict: expect.any(Function),
 		});
+	});
+
+	it("keeps the web page's saved CSS when an older app's save leaves it out, and clears it on an empty string", async () => {
+		const saved = {
+			...defaultResumeData,
+			metadata: { ...defaultResumeData.metadata, web: { showCredit: true, css: ".rr{}" } },
+		};
+		const olderApp = { ...defaultResumeData, metadata: { ...defaultResumeData.metadata, web: { showCredit: false } } };
+
+		const kept = updateHarness({ slug: "resume", data: saved });
+		await resumeService.update({ id: "r1", userId: "u1", data: olderApp });
+		expect(kept.update.set).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					metadata: expect.objectContaining({ web: { showCredit: false, css: ".rr{}" } }),
+				}),
+			}),
+		);
+
+		const cleared = updateHarness({ slug: "resume", data: saved });
+		const clearing = { ...olderApp, metadata: { ...olderApp.metadata, web: { showCredit: false, css: "" } } };
+		await resumeService.update({ id: "r1", userId: "u1", data: clearing });
+		expect(cleared.update.set).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					metadata: expect.objectContaining({ web: { showCredit: false, css: "" } }),
+				}),
+			}),
+		);
 	});
 
 	it("keeps the old address as a redirect when the slug changes", async () => {

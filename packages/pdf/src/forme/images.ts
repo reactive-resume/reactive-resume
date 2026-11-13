@@ -8,16 +8,9 @@ const MIME_TYPES = { png: "image/png", jpeg: "image/jpeg", webp: "image/webp" } 
 export const MAX_IMAGE_BYTES = 12_000_000;
 export const IMAGE_TIMEOUT_MS = 10_000;
 
-let fetchImage: typeof fetch = (...args) => fetch(...args);
-
-/** Sets the streaming fetch implementation, e.g. `expo/fetch` on mobile, before rendering. */
-export function configureImageFetch(fetcher: typeof fetch) {
-	fetchImage = fetcher;
-}
-
 export async function readImageBytes(source: string): Promise<Uint8Array> {
 	if (source.startsWith("data:") && source.length > MAX_IMAGE_BYTES * 1.4 + 100) throw new Error("Image exceeds 12 MB");
-	const response = await fetchImage(source, { signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS) });
+	const response = await fetch(source, { signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS) });
 	if (!response.ok) throw new Error(`HTTP ${response.status}`);
 	const reader = response.body?.getReader();
 	if (!reader) throw new Error("Image has no body");

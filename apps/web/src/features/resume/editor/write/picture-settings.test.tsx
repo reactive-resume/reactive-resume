@@ -85,7 +85,7 @@ it("removes only this resume's photo reference and offers undo", async () => {
 	expect(sharedUpload.get(url)).toBe("photo bytes");
 	expect(mocks.removeFile).not.toHaveBeenCalled();
 	expect(mocks.confirm).not.toHaveBeenCalled();
-	expect(screen.getByRole("button", { name: "Add" })).toBeInTheDocument();
+	expect(screen.getByRole("button", { name: "Add photo" })).toBeInTheDocument();
 	const action = mocks.toast.mock.lastCall?.[0].actionProps;
 	expect(action?.children).toBe("Undo");
 	act(() =>
@@ -187,7 +187,7 @@ it("opens the file picker directly from Add before showing photo settings", () =
 	const { client } = renderPhoto("");
 	const input = screen.getByLabelText("Upload photo");
 	const choose = vi.spyOn(input, "click");
-	fireEvent.click(screen.getByRole("button", { name: "Add" }));
+	fireEvent.click(screen.getByRole("button", { name: "Add photo" }));
 	expect(choose).toHaveBeenCalledTimes(1);
 	expect(screen.queryByRole("textbox", { name: "URL" })).toBeNull();
 	client.clear();
@@ -247,7 +247,8 @@ it.each(["current", "resume", "locked", "account", "url"])(
 				size: 144,
 			});
 		else expect(useResumeStore.getState().resume).toBe(before);
-		expect(mocks.toast).toHaveBeenCalledTimes(1);
+		expect(mocks.toast).toHaveBeenCalledTimes(scenario === "current" ? 2 : 1);
+		if (scenario === "current") expect(mocks.toast).toHaveBeenLastCalledWith({ description: "Photo added" });
 		if (scenario !== "resume") expect(mocks.closeToast).toHaveBeenCalledWith("photo-toast");
 		client.clear();
 	},

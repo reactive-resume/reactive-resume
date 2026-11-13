@@ -17,7 +17,7 @@ export function LibraryError({ retrying, onRetry }: LibraryErrorProps) {
 			</AlertTitle>
 			<AlertDescription>
 				<p>
-					<Trans>Check your connection and try again.</Trans>
+					<Trans>Your saved data hasn't changed.</Trans>
 				</p>
 				<Button variant="secondary" className="mt-2" loading={retrying} onClick={onRetry}>
 					{retrying ? <Trans>Retrying…</Trans> : <Trans>Try again</Trans>}

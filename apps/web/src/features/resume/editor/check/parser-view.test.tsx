@@ -97,9 +97,9 @@ it("preserves fused heading/content rows and their continuations in reading orde
 	);
 	await screen.findByText("University of Example");
 	expect([...view.container.querySelectorAll("section h3, section p")].map((element) => element.textContent)).toEqual([
-		"▸ EXPERIENCE",
+		"▸ Experience",
 		...lines.slice(1, 5),
-		"▸ EDUCATION",
+		"▸ Education",
 		"University of Example",
 	]);
 	view.unmount();

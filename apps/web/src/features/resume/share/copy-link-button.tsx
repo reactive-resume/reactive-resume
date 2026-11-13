@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Swap } from "@reactive-resume/ui/components/swap";
 import { toast } from "@reactive-resume/ui/components/toast";
 
 const COPIED_MS = 2000;
@@ -13,10 +12,11 @@ type CopyLinkButtonProps = {
 	url: string;
 	disabled?: boolean;
 	className?: string;
+	size?: "default" | "sm";
 };
 
 /** Copies `url` and shows "Copied" for two seconds. */
-export function CopyLinkButton({ url, disabled, className }: CopyLinkButtonProps) {
+export function CopyLinkButton({ url, disabled, className, size }: CopyLinkButtonProps) {
 	const [copied, setCopied] = useState(false);
 	const [, copyToClipboard] = useCopyToClipboard();
 	const timer = useRef<number>(undefined);
@@ -35,26 +35,23 @@ export function CopyLinkButton({ url, disabled, className }: CopyLinkButtonProps
 	return (
 		<Button
 			variant="secondary"
+			size={size}
 			className={className}
 			disabled={disabled}
 			aria-live="polite"
 			onClick={() => void copy()}
 		>
-			<Swap
-				swapped={copied}
-				from={
-					<>
-						<Icon name="copy" size={18} />
-						<Trans>Copy</Trans>
-					</>
-				}
-				to={
-					<>
-						<Icon name="check" size={18} />
-						<Trans>Copied</Trans>
-					</>
-				}
-			/>
+			{copied ? (
+				<>
+					<Icon name="check" />
+					<Trans>Copied</Trans>
+				</>
+			) : (
+				<>
+					<Icon name="copy" />
+					<Trans>Copy link</Trans>
+				</>
+			)}
 		</Button>
 	);
 }

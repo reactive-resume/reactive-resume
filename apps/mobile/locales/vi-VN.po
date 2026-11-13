@@ -1155,6 +1155,10 @@ msgstr "Đã ứng tuyển {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Ứng tuyển ngày 28/10 · giờ có thể gửi tin nhắn ngắn"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Áp dụng cho trang web sau các kiểu riêng của trang, ở mọi kích thước màn hình. PDF vẫn giữ nguyên."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Không tải được"
 msgid "Couldn't load this document. Try again."
 msgstr "Không tải được tài liệu này. Hãy thử lại."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Không tải được phiên bản này. Hãy thử lại."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Không tải được. Hãy thử lại."
@@ -2405,6 +2405,10 @@ msgstr "Tùy chỉnh"
 msgid "Custom colour"
 msgstr "Màu tùy chỉnh"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "CSS tùy chỉnh"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Hằng ngày"
@@ -2658,10 +2662,6 @@ msgstr "Tài liệu"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Thao tác tài liệu"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Tài liệu không khả dụng."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Tần suất lịch chạy không hợp lệ."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Phản hồi chép lời không hợp lệ."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Vấn đề {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Trang {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Trang {0} của {1}"
@@ -5445,7 +5440,7 @@ msgstr "Luyện các câu hỏi này"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Luyện tập câu chuyện này"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Điều chỉnh theo tin"
 msgid "Take photo"
 msgstr "Chụp ảnh"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Chạm phần để sửa"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Chạm để sao chép"
@@ -7682,7 +7673,7 @@ msgstr "Bật liên kết công khai trong Chia sẻ trước."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Đã tắt"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

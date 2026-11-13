@@ -350,7 +350,12 @@ export function ResumePreviewClient({
 												caption={renderPageCaption?.({ pageNumber, totalPages })}
 												overlay={
 													visiblePdf.phase === "active"
-														? renderPageOverlay?.({ pageIndex: index, pageMap: visiblePdf.pageMap })
+														? renderPageOverlay?.({
+																pageIndex: index,
+																pageMap: visiblePdf.pageMap,
+																document,
+																pageScale,
+															})
 														: undefined
 												}
 												onLoadSuccess={(_, pageSize) => {

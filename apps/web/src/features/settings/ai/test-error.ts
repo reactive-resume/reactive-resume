@@ -15,6 +15,6 @@ export function providerTestError(kind?: string | null) {
 		case "server":
 			return t`The provider reported a server error. Try again later.`;
 		default:
-			return t`The connection test failed. Check the key, model and address, then try again.`;
+			return t`It didn't answer. Check the key, the model and the base URL.`;
 	}
 }

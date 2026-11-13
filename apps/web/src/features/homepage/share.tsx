@@ -131,7 +131,7 @@ export function Share() {
 					/>
 				</svg>
 
-				<div className="absolute top-1/2 left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,-50%)_translate(calc(var(--dir)*var(--fl)*46vw),calc(var(--fl)*var(--fl)*-70vh))_rotate(calc(var(--dir)*var(--fl)*26deg))_scale(calc(1-var(--fl)*.78))] rounded-sm opacity-[calc(clamp(0,var(--p)*20,1)*(1-clamp(0,(var(--fl)-.6)*4,1)))] shadow-paper [transition:transform_.35s_var(--ease)]">
+				<div className="absolute top-1/2 left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,-50%)_translate(calc(var(--dir)*var(--fl)*46vw),calc(var(--fl)*var(--fl)*-70vh))_rotate(calc(var(--dir)*var(--fl)*26deg))_scale(calc(1-var(--fl)*.78))] rounded-paper opacity-[calc(clamp(0,var(--p)*20,1)*(1-clamp(0,(var(--fl)-.6)*4,1)))] shadow-paper [transition:transform_.35s_var(--ease)]">
 					<Sheet />
 				</div>
 
@@ -179,13 +179,13 @@ export function Share() {
 							aria-label={t`Visibility`}
 							value={visibility}
 							onValueChange={(value) => setVisibility(value as number)}
-							className="h-auto rounded-sm border border-(--night-line) bg-(--night-fill) p-1"
+							className="h-auto rounded-lg border border-(--night-line) bg-(--night-fill) p-1"
 						>
 							{[t`Public`, t`Password`, t`Private`].map((label, index) => (
 								<label key={label} className="contents">
 									<SegmentedControlItem
 										value={index}
-										className="h-[34px] flex-none rounded-sm px-3.5 font-ui text-(--night-ink-2) duration-300 not-data-checked:hover:text-(--night-ink) data-checked:bg-(--night-ink) data-checked:text-(--night-on-ink) data-checked:shadow-none"
+										className="h-[34px] flex-none rounded-md px-3.5 font-ui text-(--night-ink-2) duration-300 not-data-checked:hover:text-(--night-ink) data-checked:bg-(--night-ink) data-checked:text-(--night-on-ink) data-checked:shadow-none"
 									>
 										<Icon name={visibilityIcons[index] ?? "globe-hemisphere-west"} size={17} />
 										{label}
@@ -197,7 +197,7 @@ export function Share() {
 							type="button"
 							onClick={copy}
 							className={cn(
-								"flex h-11 items-center gap-1.5 rounded-sm px-[18px] font-ui text-sm font-semibold text-(--night-on-ink) transition-colors duration-standard",
+								"flex h-11 items-center gap-1.5 rounded-lg px-[18px] font-ui text-sm font-semibold text-(--night-on-ink) transition-colors duration-standard",
 								copied ? "bg-(--night-accent)" : "bg-(--night-ink)",
 							)}
 						>

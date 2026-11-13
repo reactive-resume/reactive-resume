@@ -45,6 +45,7 @@ function ContextMenuContent({
 			>
 				<ContextMenuPrimitive.Popup
 					data-slot="context-menu-content"
+					data-design="menu"
 					className={cn(menuPopupClassName, className)}
 					{...props}
 				/>

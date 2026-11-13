@@ -4,12 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
 import { useLayoutEffect, useState } from "react";
 import { CommandItem } from "@reactive-resume/ui/components/command";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useCommandPaletteStore } from "../store";
-import { BaseCommandGroup } from "./base";
+import { BaseCommandGroup, RowNote } from "./base";
+import { SetUpAiDialog } from "@/features/ai/set-up-ai";
 import { openAssistantFrom } from "@/features/assistant/open";
-import { ProviderSetup } from "@/features/assistant/provider-setup";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { orpc } from "@/libs/orpc/client";
@@ -81,12 +80,12 @@ function AccountAskCommandGroup() {
 						}}
 						disabled={providers.isLoading}
 					>
-						<Icon name="sparkle" size={16} />
+						<Icon name="sparkle" />
 						<span className="min-w-0 truncate">
 							<Trans>Ask the assistant “{question}”</Trans>
 						</span>
 						{!providers.hasUsableProvider && (
-							<span className="ms-auto shrink-0 text-xs text-ink-2">
+							<RowNote>
 								{providers.isLoading ? (
 									<Trans>Loading…</Trans>
 								) : providers.error ? (
@@ -94,7 +93,7 @@ function AccountAskCommandGroup() {
 								) : (
 									<Trans>Connect an AI provider</Trans>
 								)}
-							</span>
+							</RowNote>
 						)}
 					</CommandItem>
 				</BaseCommandGroup>
@@ -122,22 +121,13 @@ function AccountAskCommandGroup() {
 								keywords={[document.name]}
 								onSelect={() => void choose(document)}
 							>
-								<Icon name={document.type === "letter" ? "envelope-simple" : "file-text"} size={16} />
+								<Icon name={document.type === "letter" ? "envelope-simple" : "file-text"} />
 								{document.name}
 							</CommandItem>
 						))
 				)}
 			</BaseCommandGroup>
-			<Dialog open={setup} onOpenChange={setSetup}>
-				<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto">
-					<DialogHeader>
-						<DialogTitle>
-							<Trans>Set up AI</Trans>
-						</DialogTitle>
-					</DialogHeader>
-					<ProviderSetup />
-				</DialogContent>
-			</Dialog>
+			<SetUpAiDialog open={setup} onOpenChange={setSetup} />
 		</>
 	);
 }

@@ -95,7 +95,7 @@ export function QuestionCard({ part, readOnly, busy = false, passed = false, onA
 							placeholder={t`Or in your own words…`}
 							className="h-8 min-w-0 flex-1 rounded-md border border-control-border bg-raised px-2 text-sm text-ink transition-[border-color,box-shadow] outline-none focus:border-accent pointer-coarse:h-11 pointer-coarse:text-base"
 						/>
-						<Button type="submit" size="sm" disabled={busy || !other.trim()}>
+						<Button type="submit" size="sm" variant="secondary" disabled={busy || !other.trim()}>
 							<Trans>Send</Trans>
 						</Button>
 					</form>

@@ -22,7 +22,13 @@ vi.mock("@/libs/orpc/client", () => ({
 	streamClient: {},
 	orpc: { documents: { key: () => ["documents"] } },
 }));
-vi.mock("@tanstack/react-query", () => ({ useQueryClient: () => ({ invalidateQueries: mocks.invalidate }) }));
+vi.mock("@/features/applications/queries", () => ({
+	applicationsListQueryOptions: () => ({ queryKey: ["applications"] }),
+}));
+vi.mock("@tanstack/react-query", () => ({
+	useQuery: () => ({ data: [] }),
+	useQueryClient: () => ({ invalidateQueries: mocks.invalidate }),
+}));
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn() }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: mocks.toast } }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => "wide" }));

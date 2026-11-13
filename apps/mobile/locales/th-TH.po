@@ -1155,6 +1155,10 @@ msgstr "สมัครเมื่อ {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "สมัคร 28 ต.ค. · ส่งข้อความสั้น ๆ ได้แล้ว"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "ใช้กับหน้าเว็บต่อจากสไตล์ของหน้าเว็บเอง ในทุกขนาดหน้าจอ PDF ยังคงเหมือนเดิม"
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "โหลดรายการนี้ไม่ได้"
 msgid "Couldn't load this document. Try again."
 msgstr "โหลดเอกสารนี้ไม่ได้ ลองอีกครั้ง"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "โหลดเวอร์ชันนี้ไม่ได้ ลองอีกครั้ง"
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "โหลดรายการนี้ไม่ได้ ลองอีกครั้ง"
@@ -2405,6 +2405,10 @@ msgstr "กำหนดเอง"
 msgid "Custom colour"
 msgstr "สีกำหนดเอง"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "CSS กำหนดเอง"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "ทุกวัน"
@@ -2658,10 +2662,6 @@ msgstr "เอกสาร"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "การดำเนินการกับเอกสาร"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "เอกสารไม่พร้อมใช้งาน"
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "ความถี่กำหนดการไม่ถูกต้อ
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "ผลถอดเสียงไม่ถูกต้อง"
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "ออก {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "หน้า {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "หน้า {0} ของ {1}"
@@ -5445,7 +5440,7 @@ msgstr "ฝึกคำถามเหล่านี้"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "ฝึกเล่าเรื่องราวนี้"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "ปรับให้เข้ากับประกาศ"
 msgid "Take photo"
 msgstr "ถ่ายภาพ"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "แตะส่วนเพื่อแก้ไข"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "แตะเพื่อคัดลอก"
@@ -7682,7 +7673,7 @@ msgstr "เปิดลิงก์สาธารณะในแบ่งปั
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "ปิดแล้ว"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

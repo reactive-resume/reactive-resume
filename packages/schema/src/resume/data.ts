@@ -800,7 +800,7 @@ export const metadataSchema = z.object({
 				.optional()
 				.catch(undefined)
 				.describe(
-					"The author's own CSS for the web page, applied after the template's styles. The PDF doesn't use it.",
+					"The author's own CSS for the web page, applied after the template's styles. The PDF doesn't use it. A save without this field keeps the saved CSS; an empty string clears it.",
 				),
 		})
 		.optional()

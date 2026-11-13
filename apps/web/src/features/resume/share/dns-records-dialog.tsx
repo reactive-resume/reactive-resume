@@ -1,17 +1,18 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { formatTimeSince } from "@reactive-resume/resume/sharing";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
 	DialogContent,
+	DialogClose,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { CopyText } from "./copy-text";
+import { formatTimeAgo } from "./format";
 
 const cellClass =
 	"py-2.5 pe-4 last:pe-0 max-sm:grid max-sm:py-0 max-sm:pe-0 max-sm:before:text-xs max-sm:before:text-ink-3 max-sm:before:content-[attr(data-label)]";
@@ -28,13 +29,13 @@ type DnsRecordsDialogProps = {
 export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck }: DnsRecordsDialogProps) {
 	const { i18n } = useLingui();
 	const hasCname = domain.records.some((record) => record.type === "CNAME");
-	const lastChecked = domain.lastCheckedAt ? formatTimeSince(domain.lastCheckedAt, i18n.locale) : null;
+	const lastChecked = domain.lastCheckedAt ? formatTimeAgo(domain.lastCheckedAt, i18n.locale) : null;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent closeLabel={t`Close`} className="sm:max-w-[680px]">
-				<DialogHeader>
-					<DialogTitle>
+				<DialogHeader className="gap-1.5 pe-0">
+					<DialogTitle className="pe-9">
 						<Trans>Connect {domain.hostname}</Trans>
 					</DialogTitle>
 					<DialogDescription>
@@ -45,9 +46,9 @@ export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck
 				</DialogHeader>
 
 				{/* On a phone each record stacks: its type, then its name and value on their own labelled lines. */}
-				<table className="w-full text-[13px]" dir="ltr">
+				<table className="w-full table-fixed text-[13px]/[18px]" dir="ltr">
 					<thead className="max-sm:sr-only">
-						<tr className="text-xs text-ink-3">
+						<tr className="text-xs/4.5 text-ink-3">
 							<th scope="col" className="w-16 pb-2 text-start font-normal">
 								<Trans context="DNS record">Type</Trans>
 							</th>
@@ -67,10 +68,10 @@ export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck
 							>
 								<td className="py-2.5 font-medium max-sm:row-span-2 max-sm:py-0">{record.type}</td>
 								<td data-label={t({ message: "Name", context: "DNS record" })} className={cellClass}>
-									<CopyText value={record.name} className="font-mono" />
+									<CopyText icon value={record.name} className="font-mono" />
 								</td>
 								<td data-label={t`Value`} className={cellClass}>
-									<CopyText value={record.value} className="font-mono" />
+									<CopyText icon value={record.value} className="font-mono" />
 								</td>
 							</tr>
 						))}
@@ -89,10 +90,18 @@ export function DnsRecordsDialog({ domain, open, onOpenChange, checking, onCheck
 				<DialogFooter className="items-center">
 					{lastChecked && (
 						<p className="me-auto text-xs text-ink-3">
-							<Trans>Last checked {lastChecked} ago</Trans>
+							<Trans>Last checked {lastChecked}</Trans>
 						</p>
 					)}
-					<Button loading={checking} onClick={onCheck}>
+					<DialogClose render={<Button variant="ghost" />}>
+						<Trans>Close</Trans>
+					</DialogClose>
+					{/* Ink, not accent: the bar's Download PDF stays the view's one accent behind the dialog. */}
+					<Button
+						loading={checking}
+						className="bg-ink text-bg hover:bg-[color-mix(in_oklab,var(--ink),var(--bg)_14%)]"
+						onClick={onCheck}
+					>
 						<Trans>Check DNS</Trans>
 					</Button>
 				</DialogFooter>

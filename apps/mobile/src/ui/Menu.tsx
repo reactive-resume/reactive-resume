@@ -1,14 +1,19 @@
 // Menu / popover (MOTION.md §6.5): opens 8 dp from its trigger, starting 4 dp toward it at 98% scale and settling
 // outward with a fade, d2 `ease`; exit fade 140 ms. Reduced motion: a d1 fade in place. Tapping outside closes it.
+// It opens below the trigger when it fits, above it when only that side fits, and otherwise takes the larger side
+// and scrolls, always inside the safe area and clear of the dock and the keyboard.
 import { type ReactNode, useEffect } from "react";
-import { BackHandler, StyleSheet, useWindowDimensions, View } from "react-native";
+import { BackHandler, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { useKeyboardState } from "react-native-keyboard-controller";
 import Animated, { interpolate, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Touch } from "./base";
 import { useOverlayPresence } from "./Dialog";
 import { Icon, type IconName } from "./Icon";
 import { enter, leave, useMotionPolicy } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
+import { useCoveredBottom } from "./Toast";
 import { motion, radius, space } from "./tokens";
 import { useDesignTag } from "@/dev/storyboard/harness";
 
@@ -34,6 +39,22 @@ export type MenuProps = {
 
 const GAP = 8;
 
+/**
+ * Where a menu of `height` goes around `anchor`, inside `top`..`bottom` of the window (safe area, dock, keyboard
+ * already taken off). `height` 0 means unknown: it opens below. A menu taller than either side takes the larger one
+ * and scrolls.
+ */
+export function placeMenu(anchor: Rect, height: number, bounds: { top: number; bottom: number }) {
+	const below = bounds.bottom - (anchor.y + anchor.height + GAP);
+	const above = anchor.y - GAP - bounds.top;
+	if (height <= below || (height > above && below >= above)) {
+		const fit = Math.min(height, below);
+		return { top: anchor.y + anchor.height + GAP, height: fit, below: true, scroll: fit < height };
+	}
+	const fit = Math.min(height, above);
+	return { top: anchor.y - GAP - fit, height: fit, below: false, scroll: fit < height };
+}
+
 export function Menu(props: MenuProps) {
 	const { visible, onExited } = useOverlayPresence(props.open);
 	return visible ? <MenuView {...props} onExited={onExited} /> : null;
@@ -54,7 +75,14 @@ function MenuView({
 	const { reduced, overlayFade } = useMotionPolicy();
 	const ref = useDesignTag({ kind: "component", component: "Menu", radius: radius.lg, bg: "raised" });
 	const win = useWindowDimensions();
-	const below = anchor.y + anchor.height + GAP + height <= win.height - space.s6;
+	const insets = useSafeAreaInsets();
+	const covered = useCoveredBottom();
+	const keyboard = useKeyboardState((s) => (s.isVisible ? s.height : 0));
+	const place = placeMenu(anchor, height, {
+		top: insets.top + space.s3,
+		bottom: win.height - Math.max(covered, keyboard, insets.bottom) - space.s3,
+	});
+	const below = place.below;
 	const toward = below ? -motion.popupStartOffset : motion.popupStartOffset;
 	const p = useSharedValue(0);
 
@@ -92,8 +120,9 @@ function MenuView({
 	const travelOnly = useAnimatedStyle(() => ({ transform: travel(p.value) }));
 
 	const left = align === "start" ? anchor.x : anchor.x + anchor.width - width;
-	const position = below ? { top: anchor.y + anchor.height + GAP } : { bottom: win.height - anchor.y + GAP };
-	const frame = [styles.menu, position, { left: Math.max(space.s3, left), width }, height ? { height } : null];
+	const position = height || below ? { top: place.top } : { bottom: win.height - anchor.y + GAP };
+	const x = Math.max(space.s3, Math.min(left, win.width - space.s3 - width));
+	const frame = [styles.menu, position, { left: x, width }, height ? { height: place.height } : null];
 	return (
 		<View style={StyleSheet.absoluteFill} pointerEvents={open ? "box-none" : "none"}>
 			<View
@@ -109,7 +138,13 @@ function MenuView({
 				testID="menu"
 				style={[...frame, { backgroundColor: labMarker ?? colors.raised, boxShadow: shadows.sh2 }, style]}
 			>
-				<View style={labMarker ? { opacity: 0 } : null}>{children}</View>
+				{place.scroll ? (
+					<ScrollView style={[styles.scroll, labMarker ? { opacity: 0 } : null]} showsVerticalScrollIndicator>
+						{children}
+					</ScrollView>
+				) : (
+					<View style={labMarker ? { opacity: 0 } : null}>{children}</View>
+				)}
 			</Animated.View>
 			{labMarker ? (
 				<Animated.View pointerEvents="none" style={[...frame, styles.labCentre, travelOnly]}>
@@ -149,6 +184,7 @@ export function MenuItem({
 
 const styles = StyleSheet.create({
 	menu: { position: "absolute", borderRadius: radius.lg, paddingVertical: 4 },
+	scroll: { flex: 1 },
 	labCentre: { alignItems: "center", justifyContent: "center" },
 	item: { minHeight: 48, flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16 },
 });

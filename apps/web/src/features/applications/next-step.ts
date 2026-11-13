@@ -1,8 +1,12 @@
 import type { ApplicationSummary } from "./types";
 import type { ApplicationStageSource, NextStep } from "@reactive-resume/schema/applications/next-step";
 export type { NextStep, OfferHint } from "@reactive-resume/schema/applications/next-step";
+import type { InterviewKind } from "@reactive-resume/schema/applications/data";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
+import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
+import { needsAttention } from "@reactive-resume/schema/applications/next-step";
+import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { interviewKindOf } from "./interviews";
 import { isCurrentLaneEvent } from "./lanes";
 import { getClosedReasonLabel } from "./stages";
@@ -146,4 +150,134 @@ export function describeNextStep(
 				tone: "muted",
 			};
 	}
+}
+
+/**
+ * "Needs you" on Applications: a step the user owes (a due follow-up, a late reply, an offer to answer). An interview
+ * this week is on the calendar; it is not something owed.
+ */
+export const needsYou = (step: NextStep, now = new Date()) => step.kind !== "interview" && needsAttention(step, now);
+
+export type NextStepLine = {
+	title: string;
+	sub: string;
+	/** The row wears the "Needs you" badge. */
+	needsYou: boolean;
+	/** Nothing to do: the title is quiet. */
+	muted: boolean;
+};
+
+type LineSource = Pick<ApplicationSummary, "status" | "closedReason" | "createdAt" | "appliedAt" | "activity">;
+
+/** "9 Nov", "Mon 9 Nov" or "Monday 9 Nov" in the account's timezone; always the 24-hour clock beside it. */
+export function stepDate(date: Date | string, locale: string, timeZone: string, weekday?: "short" | "long") {
+	return new Intl.DateTimeFormat(locale, { timeZone, weekday, day: "numeric", month: "short" }).format(new Date(date));
+}
+export function stepTime(date: Date | string, locale: string, timeZone: string) {
+	return new Intl.DateTimeFormat(locale, { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(
+		new Date(date),
+	);
+}
+
+/** What an interview is called in a next step: "Screening call", "Technical interview". */
+export const interviewStepTitle = (kind: InterviewKind) => {
+	if (kind === "screening") return t`Screening call`;
+	const label = interviewKindOf(kind)?.label ?? kind;
+	return t`${label} interview`;
+};
+
+/**
+ * The next step as the list and the board write it: what to do, then when. `weekday` is long in the list and short on
+ * a board card.
+ */
+export function describeNextStepLine(
+	step: NextStep,
+	application: LineSource,
+	locale: string,
+	timeZone: string,
+	now = new Date(),
+	weekday: "short" | "long" = "long",
+): NextStepLine {
+	const day = (date: Date | string, withWeekday = false) =>
+		stepDate(date, locale, timeZone, withWeekday ? weekday : undefined);
+	const owed = needsYou(step, now);
+	const sentAt = applicationSentAt({ ...application, resumeId: null });
+	const sent = sentAt ? day(sentAt) : "";
+
+	switch (step.kind) {
+		case "interview":
+			return {
+				title: interviewStepTitle(step.interview.kind),
+				sub: `${day(step.at, true)}, ${stepTime(step.at, locale, timeZone)}`,
+				needsYou: false,
+				muted: false,
+			};
+		case "follow-up": {
+			const due = day(step.at, true);
+			return {
+				title: step.note || t`Send a follow-up`,
+				sub: step.overdue ? (sent ? t`Overdue · applied ${sent}` : t`Overdue · was due ${due}`) : due,
+				needsYou: owed,
+				muted: false,
+			};
+		}
+		case "no-reply":
+			return {
+				title: t`Send a follow-up`,
+				sub:
+					step.after === "interview"
+						? plural(step.days, { one: "No word for # day", other: "No word for # days" })
+						: plural(step.days, { one: "No reply in # day", other: "No reply in # days" }),
+				needsYou: true,
+				muted: false,
+			};
+		case "offer":
+			if (step.respondBy) {
+				const by = day(step.respondBy, true);
+				return {
+					title: t`Reply to the offer`,
+					sub: step.overdue ? t`Overdue · was due ${by}` : t`By ${by}`,
+					needsYou: true,
+					muted: false,
+				};
+			}
+			break;
+		case "not-applied":
+			return {
+				title: t`Not applied yet`,
+				sub: t`Saved ${day(application.createdAt)}`,
+				needsYou: false,
+				muted: true,
+			};
+		case "closed": {
+			const closedAt = application.activity
+				.filter((entry) => entry.type === "stage" && entry.stage === "closed" && !entry.dateUnknown)
+				.toSorted((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())[0]?.at;
+			const closed = closedAt ? day(closedAt) : "";
+			return {
+				title: application.closedReason ? getClosedReasonLabel(application.closedReason) : t`Closed`,
+				sub: sent && closed ? t`Applied ${sent} · closed ${closed}` : closed ? t`Closed ${closed}` : "",
+				needsYou: false,
+				muted: true,
+			};
+		}
+	}
+	const text = describeNextStep(step, application, locale, timeZone);
+	return { title: text.title, sub: text.sub, needsYou: owed, muted: text.tone === "muted" };
+}
+
+export type SentLine = { text: string; sent: boolean };
+
+/** The Sent column in words: "Resume, letter · 2 Nov", or "Not sent" before the job is applied to. */
+export function describeSent(
+	application: LineSource & Pick<ApplicationSummary, "resumeId" | "coverLetterId" | "resumeFileUrl" | "coverLetterUrl">,
+	locale: string,
+	timeZone: string,
+): SentLine {
+	if (!hasApplicationSubmission(application)) return { text: t`Not sent`, sent: false };
+	const resume = Boolean(application.resumeId || application.resumeFileUrl);
+	const letter = Boolean(application.coverLetterId || application.coverLetterUrl);
+	const what = resume && letter ? t`Resume, letter` : resume ? t`Resume` : letter ? t`Letter` : t`No documents`;
+	const sentAt = applicationSentAt(application);
+	return { text: sentAt ? `${what} · ${stepDate(sentAt, locale, timeZone)}` : what, sent: true };
 }

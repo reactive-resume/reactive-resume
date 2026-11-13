@@ -50,7 +50,7 @@ function FormLabel({ className, ...props }: React.ComponentProps<typeof Label>) 
 			id={`${id}-form-item-label`}
 			data-slot="form-label"
 			data-error={hasError}
-			className={cn("data-[error=true]:text-danger-text", className)}
+			className={className}
 			htmlFor={`${id}-form-item`}
 			{...props}
 		/>
@@ -146,7 +146,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 		<p
 			data-slot="form-description"
 			id={`${id}-form-item-description`}
-			className={cn("text-[13px] leading-[18px] text-ink-3", className)}
+			className={cn("text-xs leading-4 text-ink-3", className)}
 			{...props}
 		/>
 	);
@@ -182,13 +182,13 @@ function FormMessage({ className, errors, ...props }: FormMessageProps) {
 			data-error={hasError}
 			data-slot="form-message"
 			className={cn(
-				"flex items-start gap-1 text-xs leading-4 transition-opacity duration-quick ease-enter starting:opacity-0",
+				"flex items-center gap-1 text-xs leading-4 transition-opacity duration-quick ease-enter starting:opacity-0",
 				hasError ? "text-danger-text" : "text-ink-3",
 				className,
 			)}
 			{...props}
 		>
-			{hasError && <Icon name="warning-circle" size={16} className="shrink-0" />}
+			{hasError && <Icon name="warning-circle" size={14} className="shrink-0" />}
 			<span>{body}</span>
 		</p>
 	);

@@ -1,8 +1,8 @@
+import type { ShortcutLine } from "./groups";
 import type { HotkeyRegistrationView } from "@tanstack/react-hotkeys";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { formatForDisplay, HotkeysProvider, useHotkey } from "@tanstack/react-hotkeys";
+import { HotkeysProvider, useHotkey } from "@tanstack/react-hotkeys";
 import { useId } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
 	DialogContent,
@@ -10,19 +10,18 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
-import { Icon } from "@reactive-resume/ui/components/icon";
+import { Kbd } from "@reactive-resume/ui/components/kbd";
+import { cn } from "@reactive-resume/utils/style";
 import { shortcutOverlayOpen } from "./blocking";
 import { CharacterShortcutSetting } from "./character-shortcuts";
+import { APP_GROUP, groupShortcuts } from "./groups";
 import { useShortcutSettings } from "./settings";
 import { showKeyboardShortcuts, useShortcutHelp } from "./store";
 
-/**
- * `showTrigger` hides the floating button (marketing pages); the `?` shortcut and dialog stay.
- * The button also stays hidden on phone and tablet screens, where it covers the UI.
- */
-export function KeyboardShortcuts({ showTrigger = true }: { showTrigger?: boolean }) {
+/** The `?` shortcut and its dialog. The sidebar's Shortcuts row and the command palette open the same list. */
+export function KeyboardShortcuts() {
 	const { t } = useLingui();
-	const { shortcuts, opener, close } = useShortcutHelp();
+	const { shortcuts, opener, page, description, close } = useShortcutHelp();
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const scope = useId();
 	useHotkey(
@@ -37,47 +36,41 @@ export function KeyboardShortcuts({ showTrigger = true }: { showTrigger?: boolea
 			requireReset: true,
 			preventDefault: false,
 			stopPropagation: false,
-			meta: { name: t`Keyboard shortcuts` },
+			meta: { name: t`This list`, group: APP_GROUP },
 		},
 	);
 
 	return (
-		<>
-			{showTrigger && (
-				<Button
-					id="keyboard-shortcuts-trigger"
-					variant="secondary"
-					className="fixed end-3 bottom-[max(0.75rem,var(--floating-toolbar-clearance,0px))] z-30 gap-2 max-lg:hidden print:hidden pointer-coarse:hidden"
-					onClick={() => showKeyboardShortcuts()}
-					aria-keyshortcuts={characterShortcuts ? "?" : undefined}
-				>
-					<Icon name="keyboard" />
-					<Trans>Keyboard shortcuts</Trans>
-				</Button>
+		<Dialog
+			open={shortcuts !== null}
+			onOpenChange={(value) => {
+				if (!value) close();
+			}}
+		>
+			{shortcuts !== null && (
+				<HotkeysProvider scope={scope} exclusive>
+					<ShortcutContent
+						shortcuts={shortcuts}
+						page={page}
+						description={description}
+						onClose={close}
+						opener={opener}
+					/>
+				</HotkeysProvider>
 			)}
-			<Dialog
-				open={shortcuts !== null}
-				onOpenChange={(value) => {
-					if (!value) close();
-				}}
-			>
-				{shortcuts !== null && (
-					<HotkeysProvider scope={scope} exclusive>
-						<ShortcutContent shortcuts={shortcuts} onClose={close} opener={opener} />
-					</HotkeysProvider>
-				)}
-			</Dialog>
-		</>
+		</Dialog>
 	);
 }
 
 type ShortcutContentProps = {
 	shortcuts: HotkeyRegistrationView[];
+	page: string | null;
+	description: string | null;
 	onClose: () => void;
 	opener: HTMLElement | null;
 };
 
-function ShortcutContent({ shortcuts, onClose, opener }: ShortcutContentProps) {
+function ShortcutContent({ shortcuts, page, description, onClose, opener }: ShortcutContentProps) {
 	const { t } = useLingui();
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	useHotkey(
@@ -87,11 +80,9 @@ function ShortcutContent({ shortcuts, onClose, opener }: ShortcutContentProps) {
 		},
 		{ enabled: characterShortcuts, requireReset: true },
 	);
-	const named = [
-		...new Map(
-			shortcuts.map((shortcut) => [`${shortcut.options.meta?.name}:${formatForDisplay(shortcut.hotkey)}`, shortcut]),
-		).values(),
-	];
+	// A page that names itself lists ? as "This list"; otherwise the line under the title says what ? does.
+	const groups = groupShortcuts(page ? shortcuts : shortcuts.filter((shortcut) => shortcut.hotkey !== "?"));
+	const rowId = useId();
 	return (
 		<DialogContent
 			closeLabel={t`Close`}
@@ -102,27 +93,44 @@ function ShortcutContent({ shortcuts, onClose, opener }: ShortcutContentProps) {
 						document.getElementById("keyboard-shortcuts-trigger"))
 			}
 		>
-			<DialogHeader>
-				<DialogTitle>
-					<Trans>Keyboard shortcuts</Trans>
-				</DialogTitle>
-				<DialogDescription>
-					<Trans>Shortcuts available on this page. List commands require focus inside their list.</Trans>
-				</DialogDescription>
+			<DialogHeader className="gap-1.5">
+				<DialogTitle>{page ? <Trans>Shortcuts on {page}</Trans> : <Trans>Keyboard shortcuts</Trans>}</DialogTitle>
+				{!page && (
+					<DialogDescription>
+						{description && <>{description} </>}
+						<Trans>
+							<Kbd>?</Kbd> opens this list on any page.
+						</Trans>
+					</DialogDescription>
+				)}
 			</DialogHeader>
-			<dl className="grid gap-3">
-				{named.map((shortcut) => (
-					<div key={shortcut.id} className="flex items-center justify-between gap-4">
-						<dt>{shortcut.options.meta?.name}</dt>
-						<dd>
-							<kbd className="rounded border border-line px-2 py-1 font-mono text-xs">
-								{formatForDisplay(shortcut.hotkey)}
-							</kbd>
-						</dd>
-					</div>
-				))}
-			</dl>
+			{/* One group reads in two columns, down then across, so related keys (the editor's 1 to 4) stay together. */}
+			<ShortcutList lines={groups.page} columns={groups.row.length === 0} />
+			{groups.row.length > 0 && (
+				<section aria-labelledby={`${rowId}-label`} className="grid gap-1">
+					<h3 id={`${rowId}-label`} className="t-small text-ink-3">
+						<Trans>On a row</Trans>
+					</h3>
+					<ShortcutList lines={groups.row} />
+				</section>
+			)}
+			<div className="h-px bg-line" />
 			<CharacterShortcutSetting />
 		</DialogContent>
+	);
+}
+
+function ShortcutList({ lines, columns = false }: { lines: ShortcutLine[]; columns?: boolean }) {
+	return (
+		<dl className={cn("gap-x-8", columns && "sm:columns-2")}>
+			{lines.map((line) => (
+				<div key={line.id} className="flex min-h-[30px] break-inside-avoid items-center justify-between gap-4">
+					<dt className="min-w-0 truncate">{line.name}</dt>
+					<dd className="flex items-center gap-1">
+						{line.keys.map((key, index) => (key === "–" ? <span key={index}>–</span> : <Kbd key={index}>{key}</Kbd>))}
+					</dd>
+				</div>
+			))}
+		</dl>
 	);
 }

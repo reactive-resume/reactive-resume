@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -7,7 +8,6 @@ import { isValidSlug, MAX_SLUG_LENGTH, normalizeSlug } from "@reactive-resume/re
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
-import { CopyLinkButton } from "./copy-link-button";
 import { useCurrentResume } from "@/features/resume/builder/draft";
 import { orpc } from "@/libs/orpc/client";
 
@@ -52,13 +52,16 @@ function useSlugAvailability(update: SaveSlug) {
 
 type AddressFieldProps = {
 	url: string;
+	className?: string;
+	/** The row under the field (Copy link, Open web page, QR code); Copy waits while a new address isn't saved. */
+	actions?: (copyDisabled: boolean) => ReactNode;
 	username: string;
 	/** Saves a new address; Share's one `resume.update`, so every Share control sees it pending. */
 	update: SaveSlug;
 };
 
 /** The address, checked as you type. The old one stays live until the new one is valid and saved. */
-export function AddressField({ url, username, update }: AddressFieldProps) {
+export function AddressField({ url, username, update, className, actions }: AddressFieldProps) {
 	const resume = useCurrentResume();
 	const id = useId();
 	const isPublic = resume.isPublic ?? false;
@@ -81,49 +84,49 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 		return t`Checking… Copy is available after saving.`;
 	};
 
+	const host = new URL(url).host;
+	// Saved and live: the address speaks for itself, so the line is only for screen readers' status updates.
+	const quiet = isPublic && !changed && !invalid;
+
 	return (
-		<div className="grid gap-1.5">
-			<label htmlFor={id} className="text-xs font-medium text-ink-2">
+		<div className={cn("flex flex-col", className)}>
+			<label htmlFor={id} className="mb-2 text-[13px]/[18px] font-medium text-ink-2">
 				<Trans>Address</Trans>
 			</label>
-			<div className="flex gap-1.5">
+			<div className="flex items-center gap-1.5" dir="ltr">
+				{/* The fixed part sits outside the field, so a long address has the field's whole width. */}
+				<span className="max-w-[45%] shrink-0 truncate font-mono text-[13px]/4 font-medium text-ink-3">
+					{host}/{username}/
+				</span>
 				<div
 					className={cn(
-						"flex h-[38px] min-w-0 flex-1 items-center overflow-hidden rounded-lg border bg-raised transition-colors duration-quick focus-within:ring-3",
+						"flex h-10 min-w-0 flex-1 items-center overflow-hidden rounded-md border bg-raised transition-colors duration-quick focus-within:ring-3",
 						invalid
 							? "border-danger focus-within:border-danger focus-within:ring-danger/15"
 							: "border-control-border focus-within:border-accent focus-within:ring-accent-soft",
+						!isPublic && "text-ink-3",
 					)}
 				>
-					{/* Only the path: the host is in the "Live at" line, so the part being edited keeps the room. */}
-					<span className="max-w-[40%] truncate ps-2.5 font-mono text-[13px] font-medium text-ink-3" dir="ltr">
-						/{username}/
-					</span>
 					<input
 						id={id}
 						value={slug}
 						disabled={resume.isLocked}
 						spellCheck={false}
-						dir="ltr"
 						aria-invalid={invalid}
 						aria-describedby={`${id}-message`}
 						onChange={(event) => setSlug(normalizeSlug(event.target.value))}
-						className="h-full min-w-0 flex-1 bg-transparent pe-1.5 font-mono text-[13px] font-medium text-ink outline-none"
+						className="h-full min-w-0 flex-1 bg-transparent px-3 font-mono text-[13px] font-medium text-current outline-none"
 					/>
-					{slug && (
-						<Icon
-							name={invalid ? "warning-circle" : "check-circle"}
-							size={18}
-							className={cn("me-2.5", invalid ? "text-danger-text" : "text-accent-text")}
-						/>
-					)}
+					{slug && invalid && <Icon name="warning-circle" size={18} className="me-2.5 text-danger-text" />}
 				</div>
-				<CopyLinkButton url={url} className="h-[38px] gap-1.5" disabled={!isPublic || changed} />
 			</div>
 			<p
 				id={`${id}-message`}
 				role="status"
-				className={cn("text-xs leading-4 break-all", invalid ? "text-danger-text" : "text-ink-3")}
+				className={cn(
+					quiet ? "sr-only" : "pt-2 t-small [overflow-wrap:anywhere]",
+					invalid ? "text-danger-text" : "text-ink-3",
+				)}
 			>
 				{result?.status === "taken" ? (
 					<>
@@ -146,10 +149,11 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 					hint()
 				)}
 			</p>
+			{actions?.(!isPublic || changed)}
 			{isPublic && canShare && (
 				<Button
-					variant="secondary"
-					className="w-fit gap-1.5 pointer-fine:hidden"
+					variant="ghost"
+					className="mt-2 w-fit gap-1.5 pointer-fine:hidden"
 					onClick={() => void navigator.share({ title: resume.name, url }).catch(() => undefined)}
 				>
 					<Icon name="export" size={18} />

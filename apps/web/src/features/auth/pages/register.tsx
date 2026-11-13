@@ -3,12 +3,13 @@ import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouteContext, useRouter, useSearch } from "@tanstack/react-router";
+import { useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { AuthFoot, AuthTitle } from "../components/auth-page";
 import { ConnectingClient } from "../components/connecting-client";
 import { GuestTransferNote } from "../components/guest-banner";
 import { SocialAuth } from "../components/social-auth";
@@ -61,6 +62,8 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 	const navigate = useNavigate();
 	// A server without email sends no verification link, so there's nothing to mention.
 	const smtpEnabled = useRouteContext({ strict: false }).flags?.smtpEnabled ?? false;
+	// The username is made from the email address unless they ask to choose one.
+	const [ownUsername, setOwnUsername] = useState(false);
 
 	const form = useAppForm({
 		defaultValues: { name: "", username: "", email: "", password: "" },
@@ -112,7 +115,7 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 					id: toastId,
 					type: "success",
 					title: t`Check your email`,
-					description: t`We sent a link to verify your account. It's optional, and you can resend it from Settings.`,
+					description: t`A link to verify your account is on its way. It's optional.`,
 					timeout: 10_000,
 				});
 			else toast.close(toastId);
@@ -124,42 +127,31 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 
 	return (
 		<>
-			<div className="space-y-1 text-center">
-				<h1 className="text-[30px] leading-9">
+			<AuthTitle>
+				{isGuest ? (
+					<Trans comment="Title on the registration page for a guest, who is here to keep what they made">
+						Keep your work
+					</Trans>
+				) : (
 					<Trans comment="Title on the registration page">Start your resume</Trans>
-				</h1>
-				<ConnectingClient callbackURL={callbackURL} register />
-
-				<p dir="auto" className="text-ink-2">
+				)}
+			</AuthTitle>
+			<ConnectingClient callbackURL={callbackURL} register>
+				{isGuest ? (
+					<Trans>Create an account and what you made as a guest moves into it.</Trans>
+				) : (
 					<Trans comment="Reassurance under the registration title, repeating the homepage's promise">
-						Free, no ads, no paywall.
+						Free, with no ads and no paywall.
 					</Trans>
-				</p>
+				)}
+			</ConnectingClient>
 
-				<div className="text-ink-3">
-					<Trans>
-						Already have an account?{" "}
-						<Button
-							variant="link"
-							nativeButton={false}
-							className="h-auto gap-1.5 px-1! py-0"
-							render={
-								<Link to="/auth/login" search={{ callbackURL, reauthenticate }}>
-									<Trans comment="Call-to-action link from registration page to login page">Sign in now</Trans>{" "}
-									<Icon name="arrow-right" size={16} />
-								</Link>
-							}
-						/>
-					</Trans>
-				</div>
-			</div>
-
-			{isGuest && <GuestTransferNote />}
+			{isGuest && <GuestTransferNote signUp />}
 
 			{!disableEmailAuth && (
 				<form
 					noValidate
-					className="space-y-6"
+					className={isGuest ? "mt-5 flex flex-col gap-5" : "mt-7 flex flex-col gap-5"}
 					onSubmit={(event) => {
 						event.preventDefault();
 						event.stopPropagation();
@@ -168,7 +160,7 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 				>
 					<form.Field name="name">
 						{(field) => (
-							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormItem data-route-focus hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 								<FormLabel>
 									<Trans comment="Label for full name input on registration form">Name</Trans>
 								</FormLabel>
@@ -178,10 +170,6 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 											minLength={1}
 											maxLength={64}
 											autoComplete="section-register name"
-											placeholder={t({
-												comment: "Example full name placeholder on registration form",
-												message: "John Doe",
-											})}
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
@@ -189,38 +177,6 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 										/>
 									}
 								/>
-								<FormMessage errors={field.state.meta.errors} />
-							</FormItem>
-						)}
-					</form.Field>
-
-					<form.Field name="username">
-						{(field) => (
-							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-								<FormLabel>
-									<Trans comment="Label for username input on registration form">Username</Trans>
-								</FormLabel>
-								<FormControl
-									render={
-										<Input
-											minLength={3}
-											maxLength={64}
-											autoComplete="section-register username"
-											// Usernames are Latin letters a–z: a transliterated example would invite other scripts.
-											placeholder="john.doe"
-											dir="ltr"
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
-										/>
-									}
-								/>
-								<FormDescription>
-									<Trans comment="Hint under the optional username field on registration form">
-										Optional. Leave it empty and we'll make one from your email. You can change it in Settings.
-									</Trans>
-								</FormDescription>
 								<FormMessage errors={field.state.meta.errors} />
 							</FormItem>
 						)}
@@ -237,7 +193,6 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 										<Input
 											type="email"
 											autoComplete="section-register email"
-											placeholder="john.doe@example.com"
 											className="lowercase"
 											name={field.name}
 											value={field.state.value}
@@ -246,10 +201,57 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 										/>
 									}
 								/>
+								{!ownUsername && (
+									<FormDescription>
+										<Trans>
+											Your username is made from your email.{" "}
+											<button
+												type="button"
+												className="font-medium text-accent-text underline-offset-4 hover:underline"
+												onClick={() => setOwnUsername(true)}
+											>
+												Choose your own
+											</button>
+										</Trans>
+									</FormDescription>
+								)}
 								<FormMessage errors={field.state.meta.errors} />
 							</FormItem>
 						)}
 					</form.Field>
+
+					{ownUsername && (
+						<form.Field name="username">
+							{(field) => (
+								<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+									<FormLabel>
+										<Trans comment="Label for username input on registration form">Username</Trans>
+									</FormLabel>
+									<FormControl
+										render={
+											<Input
+												minLength={3}
+												maxLength={64}
+												autoComplete="section-register username"
+												autoFocus
+												dir="ltr"
+												name={field.name}
+												value={field.state.value}
+												onBlur={field.handleBlur}
+												onChange={(event) => field.handleChange(event.target.value)}
+											/>
+										}
+									/>
+									<FormDescription>
+										<Trans comment="Hint under the optional username field on registration form">
+											Leave it empty to make one from your email. You can change it in Settings.
+										</Trans>
+									</FormDescription>
+									<FormMessage errors={field.state.meta.errors} />
+								</FormItem>
+							)}
+						</form.Field>
+					)}
 
 					<form.Field name="password">
 						{(field) => (
@@ -280,13 +282,22 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 						)}
 					</form.Field>
 
-					<Button type="submit" className="w-full" disabled={isSubmitting}>
-						<Trans comment="Primary action button label on registration form">Sign up</Trans>
+					<Button type="submit" size="lg" className="mt-1 w-full leading-5" disabled={isSubmitting}>
+						<Trans comment="Primary action button label on registration form">Create account</Trans>
 					</Button>
 				</form>
 			)}
 
-			<SocialAuth signUp />
+			<SocialAuth signUp rule={!disableEmailAuth} />
+
+			<AuthFoot>
+				<Trans>
+					Already have an account?{" "}
+					<Link to="/auth/login" search={{ callbackURL, reauthenticate }}>
+						Sign in
+					</Link>
+				</Trans>
+			</AuthFoot>
 		</>
 	);
 }

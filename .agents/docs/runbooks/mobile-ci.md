@@ -10,10 +10,7 @@ EAS Submit or EAS Update, no `eas.json` and no `EXPO_TOKEN`. How a change reache
 
 - **Push to `main`** touching `apps/mobile/**`, `packages/**`, `patches/**`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`,
   `tooling/mobile/**` or the workflow file runs a release.
-- **Dispatch** with `task=release` (on `main` only) reruns a release. `task=forme-build` rebuilds the Forme native
-  libraries as a workflow artifact; `task=forme-publish` also publishes them as a prerelease. Releases never use that
-  output: they fetch the archive pinned in the reviewed `packages/forme-native/scripts/prebuilt.json`
-  (`packages/forme-native/README.md` has the pinning steps).
+- **Dispatch** (on `main` only) reruns a release.
 
 A release runs three jobs:
 

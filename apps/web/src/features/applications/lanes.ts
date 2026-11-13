@@ -1,7 +1,11 @@
 import type { ApplicationTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { ApplicationLane } from "@reactive-resume/schema/applications/lanes";
-import { getActiveApplicationLanes, getApplicationLane } from "@reactive-resume/schema/applications/lanes";
+import {
+	createDefaultApplicationLanes,
+	getActiveApplicationLanes,
+	getApplicationLane,
+} from "@reactive-resume/schema/applications/lanes";
 import { getClosedReasonLabel, getStageColor, getStageLabel } from "./stages";
 
 export type { ApplicationLane };
@@ -32,6 +36,15 @@ export function getStageDisplay(
 	const lane = getDisplayLane(lanes, application);
 	return { color: lane.color, label: getLaneLabel(lane), accepted: false };
 }
+
+const DEFAULT_LANE_COLORS = new Map(createDefaultApplicationLanes().map((lane) => [lane.category, lane.color]));
+
+/**
+ * A lane's own colour for its dot, or undefined while it still has its stage's standard colour: the dot then takes
+ * the stage token, which follows the theme.
+ */
+export const laneDotColor = (lane: Pick<ApplicationLane, "category" | "color">) =>
+	lane.color.toLowerCase() === DEFAULT_LANE_COLORS.get(lane.category)?.toLowerCase() ? undefined : lane.color;
 
 /** The default lane of a category, where legacy writes land. */
 export const getCategoryLane = (lanes: readonly ApplicationLane[], category: ApplicationStatus) =>

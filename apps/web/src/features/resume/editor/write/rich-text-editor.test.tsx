@@ -52,3 +52,56 @@ it.each([false, true])(
 		expect(screen.queryByRole("toolbar")).toBeNull();
 	},
 );
+
+it("shows the placeholder only for empty content before the field receives focus", async () => {
+	i18n.load("en", {});
+	i18n.activate("en");
+	render(
+		<I18nProvider i18n={i18n}>
+			<RichTextEditor
+				label="Description"
+				value="<ul><li><p>Existing line</p></li></ul>"
+				placeholder="Describe your work"
+				onChange={vi.fn()}
+			/>
+		</I18nProvider>,
+	);
+	await screen.findByRole("textbox", { name: "Description" });
+	expect(screen.queryByText("Describe your work")).toBeNull();
+	expect(screen.queryByRole("toolbar", { name: "Formatting" })).toBeNull();
+	expect(screen.queryByText("Improve works on a line once you have written one.")).toBeNull();
+});
+
+it("keeps empty desktop entry formatting visible before typing, with Improve disabled", async () => {
+	mocks.mobile = false;
+	i18n.load("en", {});
+	i18n.activate("en");
+	render(
+		<I18nProvider i18n={i18n}>
+			<RichTextEditor label="Description" value="" onChange={vi.fn()} />
+		</I18nProvider>,
+	);
+	await screen.findByRole("textbox", { name: "Description" });
+	expect(await screen.findByRole("toolbar", { name: "Formatting" })).toBeVisible();
+	expect(screen.getByRole("button", { name: "Improve" })).toHaveAttribute("aria-disabled", "true");
+	expect(screen.getByText("Improve works on a line once you have written one.")).toBeVisible();
+});
+
+it("opens More formatting without writing content or losing the editor", async () => {
+	mocks.mobile = false;
+	i18n.load("en", {});
+	i18n.activate("en");
+	const onChange = vi.fn();
+	render(
+		<I18nProvider i18n={i18n}>
+			<RichTextEditor label="Description" value="<p>Existing line</p>" onChange={onChange} />
+		</I18nProvider>,
+	);
+	const editor = await screen.findByRole("textbox", { name: "Description" });
+	await act(async () => editor.focus());
+	await userEvent.click(screen.getByRole("button", { name: "More formatting" }));
+	expect(await screen.findByRole("menu")).toBeVisible();
+	expect(screen.getByText("Text color")).toBeVisible();
+	expect(screen.getByRole("menuitemradio", { name: "Heading 1" })).toBeVisible();
+	expect(onChange).not.toHaveBeenCalled();
+});

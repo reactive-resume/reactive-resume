@@ -1,146 +1,297 @@
+import type { Template } from "@reactive-resume/schema/templates";
+import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { templateLayouts, templateSchema } from "@reactive-resume/schema/templates";
+import { Badge } from "@reactive-resume/ui/components/badge";
+import { Button } from "@reactive-resume/ui/components/button";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogTitle,
+} from "@reactive-resume/ui/components/dialog";
+import { Icon } from "@reactive-resume/ui/components/icon";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
+import { Chip } from "@/components/calm/filter-bar";
 import { templates } from "@/dialogs/resume/template/data";
-import { LandingBackground } from "@/features/homepage/background";
-import { CtaLink, Doodle, labelClass } from "@/features/homepage/ui";
 
-const linkClass = "text-accent-text underline underline-offset-4 transition-colors hover:text-accent-hover";
+type Filter = "all" | "one" | "two" | "ats";
 
-/** The template gallery, on the homepage's desk: its grain and window light, paper shadows, type and French curve. */
+const all = templateSchema.options;
+
+const shows = (id: Template, filter: Filter) => {
+	const layout = templateLayouts[id];
+	if (filter === "one") return layout.columns === 1;
+	if (filter === "two") return layout.columns === 2;
+	if (filter === "ats") return layout.atsSafe;
+	return true;
+};
+
+const isTemplate = (value: string): value is Template => (all as readonly string[]).includes(value);
+
+/** Columns and ATS-safe come from the layout data, never from a template's description. */
+const columns = (id: Template) => (templateLayouts[id].columns === 1 ? t`One column` : t`Two columns`);
+const facts = (id: Template) => (templateLayouts[id].atsSafe ? `${columns(id)} · ${t`ATS-safe`}` : columns(id));
+
+const pdfUrl = (id: Template) => `/templates/pdf/${id}.pdf`;
+
+/**
+ * The public template gallery: every template in the first screen, filtered by the two facts that matter, and the
+ * chosen one at reading size beside the grid, with the page's one accent button.
+ */
 export function TemplateGallery() {
 	const { i18n } = useLingui();
-	const count = i18n.number(templateSchema.options.length);
+	const [filter, setFilter] = useState<Filter>("all");
+	// Old links name a template in the hash (/resume-templates#bronzor): open on it. The build-time HTML has no window.
+	const [selected, setSelected] = useState<Template>(() => {
+		const id = typeof window === "undefined" ? "" : window.location.hash.slice(1);
+		return isTemplate(id) ? id : "onyx";
+	});
+	const [fullSize, setFullSize] = useState(false);
+
+	const filters: { id: Filter; label: string }[] = [
+		{ id: "all", label: t`All` },
+		{ id: "one", label: t`One column` },
+		{ id: "two", label: t`Two columns` },
+		{ id: "ats", label: t`ATS-safe` },
+	];
+	const shown = all.filter((id) => shows(id, filter));
+	const name = templates[selected].name;
+
+	const pick = (id: Template) => {
+		setSelected(id);
+		// Under 1024 there is no room for the preview beside the grid: it opens over it.
+		if (!window.matchMedia("(min-width: 1024px)").matches) setFullSize(true);
+	};
+
+	const actions = (
+		<>
+			<Tooltip>
+				<TooltipTrigger
+					render={
+						<Button
+							variant="ghost"
+							size="icon"
+							nativeButton={false}
+							aria-label={t`Download ${name} sample PDF`}
+							render={
+								// oxlint-disable-next-line jsx-a11y/anchor-has-content -- the button's aria-label names it
+								<a href={pdfUrl(selected)} download={`${name}-resume-example.pdf`} />
+							}
+						/>
+					}
+				>
+					<Icon name="download-simple" />
+				</TooltipTrigger>
+				<TooltipContent>{t`Download sample PDF`}</TooltipContent>
+			</Tooltip>
+			<UseTemplate id={selected} />
+		</>
+	);
 
 	return (
-		<div className="landing relative isolate overflow-x-clip bg-bg font-ui text-ink">
-			<LandingBackground />
-			<main id="main-content" className="relative px-5 pt-28 pb-16 sm:px-8">
-				<div className="relative mx-auto max-w-6xl">
-					<Doodle
-						name="curve"
-						wipe="1"
-						sizes="(min-width: 900px) 14vw, 1px"
-						className="end-0 top-4 w-[clamp(140px,14vw,220px)] rotate-[8deg] max-[900px]:hidden"
-					/>
+		<div className="flex flex-1 items-start">
+			<main id="main-content" data-design="main" className="min-h-[calc(100svh-4rem)] min-w-0 flex-1">
+				<div data-design="page" className="px-4 pt-[26px] pb-16 sm:px-8 lg:px-10">
+					<header data-design="rh" className="flex min-h-11 items-center">
+						<h1 className="t-root-title">{t`${i18n.number(all.length)} free resume templates`}</h1>
+					</header>
+					<p className="pt-0.5 text-sm text-ink-3">
+						{t`Free to customize, with PDF and Word downloads and no watermark. Switch templates anytime without rewriting your content.`}
+					</p>
 
-					<div className="relative max-w-3xl">
-						<h1 className="font-anybody text-[clamp(40px,6vw,80px)] leading-[1.02] font-light tracking-[-.03em] text-balance">
-							{t`${count} free resume templates. Find your fit.`}
-						</h1>
-						<p className="mt-6 max-w-2xl font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
-							{t`Compare real resume layouts before you sign up. Every template is free to customize, with PDF and Word downloads and no watermark.`}
-						</p>
-
-						<div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-							<CtaLink size="hero" />
-							<a
-								href="https://docs.rxresu.me/guides/choosing-a-template"
-								className={cn(linkClass, "inline-flex min-h-11 items-center")}
-							>
-								{t`How to choose a template`}
-							</a>
+					<div className="flex flex-wrap items-center gap-2 pt-[18px] pb-1">
+						<div role="group" aria-label={t`Show templates`} className="flex flex-wrap items-center gap-1.5">
+							{filters.map(({ id, label }) => (
+								<Chip key={id} pressed={filter === id} onClick={() => setFilter(id)}>
+									{label}
+									<span className={cn("t-mono", filter !== id && "text-ink-3")}>
+										{i18n.number(all.filter((template) => shows(template, id)).length)}
+									</span>
+								</Chip>
+							))}
 						</div>
-						<p className="mt-3 text-sm text-ink-3">
-							{t`Pick a template below to start with it, or choose later in Design. Switch layouts anytime without rewriting your content.`}
-						</p>
-
-						<section aria-labelledby="layout-advice" className="mt-10 max-w-2xl">
-							<h2 id="layout-advice" className={cn(labelClass, "text-ink-3")}>
-								{t`One column or two?`}
-							</h2>
-							<p className="mt-2 font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
-								{t`One-column templates give hiring software a simple top-to-bottom reading order. Two-column templates put supporting details in a sidebar and leave more room for visual hierarchy. Choose for your content, then check the exported PDF.`}
-							</p>
-							<p className="mt-2 text-sm text-ink-3">
-								<Link to="/ats-checker" className={linkClass}>
-									{t`Check your resume’s ATS readability`}
-								</Link>{" "}
-								{t`Readability does not guarantee an interview or a particular ATS result.`}
-							</p>
-						</section>
+						<a
+							href="https://docs.rxresu.me/guides/choosing-a-template"
+							target="_blank"
+							rel="noreferrer"
+							className="ms-auto inline-flex items-center gap-1.5 rounded-xs text-sm font-medium text-accent-text"
+						>
+							{t`How to choose a template`}
+							<Icon name="arrow-square-out" size={16} />
+						</a>
 					</div>
+					<p className="pt-1.5 pb-[18px] t-small text-ink-3">
+						{t`One column reads top to bottom, which hiring software follows most reliably. Two columns keep supporting details in a sidebar.`}
+					</p>
 
-					{/* Two side by side even on phones, so the page compares layouts; the description and the sample PDF link
-					    join from sm up. */}
-					<div className="mt-16 grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-8 sm:gap-y-14 lg:grid-cols-3">
-						{templateSchema.options.map((id, index) => {
-							const template = templates[id];
-							const name = template.name;
-							const layout = templateLayouts[id];
+					<ul className="grid grid-cols-2 gap-x-6 gap-y-[26px] sm:grid-cols-3 xl:grid-cols-4 min-[90rem]:grid-cols-5">
+						{shown.map((id, index) => {
+							const on = id === selected;
 							return (
-								<article key={id} id={id} className="scroll-mt-24">
-									<a
-										href={`/templates/pdf/${id}.pdf`}
-										aria-label={t`Preview ${name} sample PDF`}
-										className="mx-auto block w-full max-w-74.5 rounded-sm focus-visible:outline-offset-4"
+								<li key={id} className="min-w-0">
+									<button
+										type="button"
+										aria-pressed={on}
+										onClick={() => pick(id)}
+										className="group flex w-full flex-col gap-2 rounded-xs text-start"
 									>
 										<img
 											src={`/templates/thumb/${id}.webp`}
 											srcSet={`/templates/thumb/${id}-small.webp 300w, /templates/thumb/${id}.webp 596w`}
-											sizes="(min-width: 640px) 298px, 45vw"
-											alt={t`${name} resume template preview`}
+											sizes="(min-width: 90rem) 150px, (min-width: 640px) 200px, 45vw"
+											alt={t`${templates[id].name} resume template preview`}
 											width={298}
 											height={420}
-											// The first row is on the first screen, and the first preview is its largest paint.
-											loading={index < 3 ? "eager" : "lazy"}
+											// The first rows are on the first screen, and the first preview is its largest paint.
+											loading={index < 10 ? "eager" : "lazy"}
 											fetchPriority={index === 0 ? "high" : "auto"}
 											decoding="async"
-											className="aspect-[298/420] w-full rounded-sm bg-paper object-contain shadow-paper dark:brightness-[.93]"
+											className={cn(
+												"aspect-[210/297] w-full rounded-paper bg-paper object-cover object-top transition-shadow duration-quick",
+												on
+													? "shadow-[0_0_0_2px_var(--bg),0_0_0_4px_var(--accent)]"
+													: "shadow-[var(--shadow-1),0_0_0_1px_var(--line)] group-hover:shadow-[var(--shadow-1),0_0_0_1px_var(--line-2)]",
+											)}
 										/>
-									</a>
-									<h2 className="font-anybody mt-4 text-[22px] leading-tight font-light tracking-[-.02em] sm:mt-6 sm:text-[32px]">
-										{name}
-									</h2>
-									<p className={cn(labelClass, "mt-1 text-ink-3")}>
-										{layout.columns === 1 ? t`One column` : t`Two columns`}
-									</p>
-									<p className="mt-3 hidden font-display text-[17px] leading-[1.45] text-pretty text-ink-2 sm:block">
-										{i18n._(template.description)}
-									</p>
-									<div className="mt-2 flex flex-wrap items-center gap-x-5">
-										{/* Signed out, through sign-up; signed in, straight to a blank resume in this template. */}
-										<Link
-											to="/auth/register"
-											search={{ callbackURL: `/dashboard?new=resume&template=${id}` }}
-											className={cn(linkClass, "inline-flex min-h-11 items-center text-sm font-semibold")}
-											aria-label={t`Use the ${name} template`}
-										>
-											{t`Use this template`}
-										</Link>
-										<a
-											href={`/templates/pdf/${id}.pdf`}
-											download={`${name}-resume-example.pdf`}
-											className={cn(linkClass, "hidden min-h-11 items-center text-sm font-semibold sm:inline-flex")}
-											aria-label={t`Download ${name} sample PDF`}
-										>
-											{t`Download sample PDF`}
-										</a>
-									</div>
-								</article>
+										<span className="text-sm font-medium">{templates[id].name}</span>
+										<span className="-mt-[7px] text-xs/4 text-ink-3">{facts(id)}</span>
+									</button>
+								</li>
 							);
 						})}
-					</div>
-
-					<section
-						className="mt-20 flex flex-col items-start gap-5 border-t border-line pt-10"
-						aria-labelledby="make-it-yours"
-					>
-						<h2
-							id="make-it-yours"
-							className="font-anybody text-[clamp(36px,4vw,56px)] leading-[1.02] font-light tracking-[-.03em] text-balance"
-						>
-							{t`Make it yours, then take it with you.`}
-						</h2>
-						<p className="max-w-[34em] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
-							{t`Adjust fonts, colors, spacing and sections in the resume builder. Export your finished resume to PDF or Word, or share a link. The PDFs above are examples to help you compare designs.`}
-						</p>
-						<CtaLink size="closing" />
-					</section>
+					</ul>
 				</div>
 			</main>
+
+			<aside
+				aria-label={t`Selected template`}
+				className="sticky top-16 flex h-[calc(100svh-4rem)] w-[400px] shrink-0 flex-col overflow-y-auto border-s border-line bg-sunken px-8 pt-7 pb-8 max-lg:hidden xl:w-[520px] dark:bg-raised"
+			>
+				<div className="flex items-center gap-3">
+					<h2 className="min-w-0 flex-1 t-page-title">{name}</h2>
+					<UseTemplate id={selected} />
+				</div>
+				<div className="flex items-center gap-2 pt-0.5">
+					<p className="min-w-0 flex-1 text-sm text-ink-3">{facts(selected)}</p>
+					<a
+						href={pdfUrl(selected)}
+						download={`${name}-resume-example.pdf`}
+						aria-label={t`Download ${name} sample PDF`}
+						className="inline-flex items-center gap-1.5 rounded-xs text-[13px]/5 font-medium text-accent-text"
+					>
+						<Icon name="download-simple" size={16} />
+						{t`Sample PDF`}
+					</a>
+				</div>
+				<p className="mt-2.5 t-small text-ink-2">{i18n._(templates[selected].description)}</p>
+				<ul className="mt-3 flex flex-wrap gap-1.5">
+					{templates[selected].tags.map((tag) => (
+						<Badge key={tag.id} variant="outline" render={<li />}>
+							{i18n._(tag)}
+						</Badge>
+					))}
+				</ul>
+				<div className="relative mt-[18px] w-full max-w-[456px] shrink-0 self-center">
+					<div data-design="paper" className="rounded-paper bg-paper">
+						<Preview id={selected} />
+					</div>
+					<Button variant="secondary" size="sm" className="absolute end-2.5 top-2.5" onClick={() => setFullSize(true)}>
+						<Icon name="arrows-out-simple" />
+						{t`View full size`}
+					</Button>
+				</div>
+			</aside>
+
+			<Dialog open={fullSize} onOpenChange={setFullSize}>
+				<DialogContent
+					showCloseButton={false}
+					className="flex h-[calc(100svh-2rem)] flex-col gap-0 overflow-hidden bg-sunken p-0 sm:max-w-[920px] dark:bg-raised"
+				>
+					<div className="flex shrink-0 items-center gap-1 border-b border-line bg-bg py-2.5 ps-4 pe-3">
+						<div className="flex min-w-0 flex-1 flex-col">
+							<DialogTitle className="truncate t-label font-ui">{name}</DialogTitle>
+							<DialogDescription className="truncate t-small text-ink-3">
+								{t`${columns(selected)} · ${i18n.number(Math.max(shown.indexOf(selected), 0) + 1)} of ${i18n.number(shown.length)}`}
+							</DialogDescription>
+						</div>
+						<Step
+							label={t`Previous template`}
+							icon="caret-left"
+							onClick={() => setSelected(step(shown, selected, -1))}
+						/>
+						<Step label={t`Next template`} icon="caret-right" onClick={() => setSelected(step(shown, selected, 1))} />
+						{actions}
+						<Tooltip>
+							<TooltipTrigger
+								render={<DialogClose render={<Button variant="ghost" size="icon" aria-label={t`Close`} />} />}
+							>
+								<Icon name="x" />
+							</TooltipTrigger>
+							<TooltipContent>{t`Close`}</TooltipContent>
+						</Tooltip>
+					</div>
+					<div className="flex min-h-0 flex-1 justify-center overflow-y-auto p-5">
+						{/* The page itself opens the sample PDF in a new tab. */}
+						<a
+							href={pdfUrl(selected)}
+							target="_blank"
+							rel="noreferrer"
+							aria-label={t`Preview ${name} sample PDF`}
+							className="block h-fit w-full max-w-[760px] rounded-paper"
+						>
+							<Preview id={selected} />
+						</a>
+					</div>
+				</DialogContent>
+			</Dialog>
 		</div>
+	);
+}
+
+/** The neighbour in the filtered list, wrapping at the ends; from a template the filter hides, the first one. */
+const step = (shown: readonly Template[], current: Template, by: number): Template =>
+	shown[(shown.indexOf(current) + by + shown.length) % shown.length] ?? current;
+
+function Step({ label, icon, onClick }: { label: string; icon: "caret-left" | "caret-right"; onClick: () => void }) {
+	return (
+		<Tooltip>
+			<TooltipTrigger render={<Button variant="ghost" size="icon" aria-label={label} onClick={onClick} />}>
+				<Icon name={icon} className="rtl:-scale-x-100" />
+			</TooltipTrigger>
+			<TooltipContent>{label}</TooltipContent>
+		</Tooltip>
+	);
+}
+
+/** The template's real sample page. Paper never inverts; it dims a little in the dark. */
+function Preview({ id }: { id: Template }): ReactNode {
+	return (
+		<img
+			key={id}
+			src={templates[id].imageUrl}
+			alt={t`${templates[id].name} resume template preview`}
+			width={600}
+			height={848}
+			decoding="async"
+			className="block h-auto w-full rounded-paper bg-paper shadow-page"
+		/>
+	);
+}
+
+/** The page's one accent button. Signed out, sign-up comes first and the choice is carried to Documents. */
+function UseTemplate({ id }: { id: Template }) {
+	return (
+		<Button
+			nativeButton={false}
+			render={<Link to="/auth/register" search={{ callbackURL: `/dashboard/documents?new=resume&template=${id}` }} />}
+		>
+			{t`Use this template`}
+		</Button>
 	);
 }

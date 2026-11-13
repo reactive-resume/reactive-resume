@@ -1155,6 +1155,10 @@ msgstr "Кандидатствано на {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Кандидатствано на 28 окт. · сега е уместно кратко съобщение"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Прилага се към уеб страницата след собствените ѝ стилове, при всеки размер на екрана. PDF файлът остава непроменен."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Това не можа да се зареди"
 msgid "Couldn't load this document. Try again."
 msgstr "Този документ не можа да се зареди. Опитайте отново."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Тази версия не можа да се зареди. Опитайте отново."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Това не можа да се зареди. Опитайте отново."
@@ -2405,6 +2405,10 @@ msgstr "Потребителски"
 msgid "Custom colour"
 msgstr "Персонализиран цвят"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "Потребителски CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Ежедневно"
@@ -2658,10 +2662,6 @@ msgstr "Документ"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Действия с документа"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Документът не е наличен."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Невалидна честота на графика."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Невалиден отговор на транскрипцията."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Издаване {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Страница {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Страница {0} от {1}"
@@ -5445,7 +5440,7 @@ msgstr "Упражняване на тези въпроси"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Упражняване на тази история"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Адаптиране към обявата"
 msgid "Take photo"
 msgstr "Направете снимка"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Докоснете раздел, за да го редактирате"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Докоснете за копиране"
@@ -7682,7 +7673,7 @@ msgstr "Първо включете публичната връзка в Спо�
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Изключена"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

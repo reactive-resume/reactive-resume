@@ -9,17 +9,24 @@ import { invalidateAccountScope, setAccountScope } from "@/libs/auth/account-sco
 
 const mocks = vi.hoisted(() => ({
 	selected: null as string | null,
+	draft: null as string | null,
 	threads: [] as unknown[],
+	threadData: null as unknown,
 	start: vi.fn(),
 	attach: vi.fn(),
 	setState: vi.fn(),
 	invalidate: vi.fn(),
 	navigate: vi.fn(),
+	usable: true,
 }));
 vi.mock("@tanstack/react-query", async (importOriginal) => ({
 	...(await importOriginal<typeof import("@tanstack/react-query")>()),
 	useQuery: (options: { queryKey: string[] }) =>
-		options.queryKey[0] === "threads" ? { data: mocks.threads, isPending: false } : {},
+		options.queryKey[0] === "threads"
+			? { data: mocks.threads, isPending: false }
+			: options.queryKey[0] === "thread"
+				? { data: mocks.threadData, isFetchedAfterMount: true }
+				: {},
 	useQueryClient: () => ({ invalidateQueries: mocks.invalidate }),
 }));
 vi.mock("@tanstack/react-router", () => ({
@@ -29,16 +36,23 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 vi.mock("@/features/resume/editor/store", () => ({
 	useEditorStore: Object.assign(
-		(select: (state: unknown) => unknown) => select({ assistantThread: mocks.selected, assistantPrompt: null }),
+		(select: (state: unknown) => unknown) =>
+			select({ assistantThread: mocks.selected, assistantPrompt: null, assistantDraft: mocks.draft }),
 		{ setState: mocks.setState },
 	),
 }));
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
-	useHasUsableAiProvider: () => ({ usableProviders: [{ id: "provider-1", label: "Local" }], hasUsableProvider: true }),
+	useHasUsableAiProvider: () => ({
+		providers: [{ id: "provider-1", label: "Local", enabled: true, testStatus: "success" }],
+		usableProviders: [{ id: "provider-1", label: "Local", enabled: true, testStatus: "success" }],
+		hasUsableProvider: mocks.usable,
+	}),
 }));
 vi.mock("@/libs/orpc/client", () => ({
 	client: { agent: { threads: { start: mocks.start }, attachments: { create: mocks.attach } } },
 	orpc: {
+		career: { facts: { queryOptions: () => ({ queryKey: ["facts"] }) } },
+		applications: { listSummary: { queryOptions: () => ({ queryKey: ["applications"] }) } },
 		agent: {
 			threads: {
 				list: { key: () => ["threads"], queryOptions: () => ({ queryKey: ["threads"] }) },
@@ -48,6 +62,9 @@ vi.mock("@/libs/orpc/client", () => ({
 	},
 }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
+vi.mock("./use-assistant-chat", () => ({
+	useAssistantChat: () => ({ messages: [], sendMessage: vi.fn(), status: "ready", clearError: vi.fn() }),
+}));
 vi.mock("./chat", async (importOriginal) => ({
 	...(await importOriginal<typeof import("./chat")>()),
 	fileToBase64: async () => "Zm9v",
@@ -71,7 +88,10 @@ beforeEach(() => {
 	vi.clearAllMocks();
 	setAccountScope("account-1");
 	mocks.selected = null;
+	mocks.draft = null;
 	mocks.threads = [];
+	mocks.threadData = null;
+	mocks.usable = true;
 	mocks.setState.mockImplementation((partial: { assistantThread?: string }) => {
 		if (partial.assistantThread !== undefined) mocks.selected = partial.assistantThread;
 	});
@@ -106,7 +126,7 @@ it("keeps task titles and shows the original message in history, with old-server
 		</I18nProvider>
 	);
 	const { rerender } = render(panel());
-	fireEvent.click(screen.getByRole("button", { name: "Past conversations" }));
+	fireEvent.click(screen.getByRole("button", { name: "Conversations" }));
 	const row = screen.getByRole("button", { name: /Tailor summary to payments roles.*I'm applying/ });
 	expect(row.textContent).toContain(thread.firstMessage);
 	expect(row.textContent).toContain("1 of 2 edits accepted");
@@ -117,23 +137,38 @@ it("keeps task titles and shows the original message in history, with old-server
 	expect(screen.getByText(thread.title)).toBeDefined();
 });
 
-it("states resume scope before sending and routes Open Write to this resume", () => {
+it("states what an accepted edit changes before sending, and offers translation", () => {
+	render(
+		<I18nProvider i18n={i18n}>
+			<AssistantPanel document={document} onClose={vi.fn()} />
+		</I18nProvider>,
+	);
+	expect(screen.getByText(/Edits go to a copy, never to this resume|Working on a copy made for/)).toBeDefined();
+	expect(screen.getByRole("button", { name: "Translate into another language…" })).toBeDefined();
+	expect(mocks.start).not.toHaveBeenCalled();
+});
+
+it("hands Edit a section to Write on this resume, closing the assistant without starting a thread", () => {
+	mocks.usable = false;
 	const onClose = vi.fn();
 	render(
 		<I18nProvider i18n={i18n}>
 			<AssistantPanel document={document} onClose={onClose} />
 		</I18nProvider>,
 	);
-	expect(screen.getByText(/Some fields still need Write/)).toBeDefined();
-	expect(screen.getByRole("button", { name: "Translate into…" })).toBeDefined();
-	fireEvent.click(screen.getByRole("button", { name: "Open Write" }));
+	fireEvent.click(screen.getByRole("button", { name: /Edit a section/ }));
 	expect(onClose).toHaveBeenCalledOnce();
-	expect(mocks.navigate).toHaveBeenCalledWith({
-		to: "/builder/$resumeId",
-		params: { resumeId: "resume-1" },
-		search: { applicationId: "application-2", mode: undefined, assistant: undefined },
+	expect(mocks.setState).toHaveBeenCalledWith({ mobileView: "write" });
+	expect(mocks.navigate).toHaveBeenCalledExactlyOnceWith(
+		expect.objectContaining({ to: "/builder/$resumeId", params: { resumeId: "resume-1" } }),
+	);
+	const [navigation] = mocks.navigate.mock.calls[0] as [{ search: (previous: object) => object }];
+	const { search } = navigation;
+	expect(search({ applicationId: "application-2", mode: "check", assistant: "open" })).toEqual({
+		applicationId: "application-2",
+		mode: undefined,
+		assistant: undefined,
 	});
-	expect(mocks.setState).toHaveBeenCalledWith({ mobileView: "write", drawerOpen: true });
 	expect(mocks.start).not.toHaveBeenCalled();
 });
 
@@ -160,4 +195,42 @@ it("keeps first-message text and attachments when the draft appears in a backgro
 	expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("Keep my first message");
 	expect(screen.getByText("posting.txt")).toBeDefined();
 	expect(mocks.setState).toHaveBeenCalledWith({ assistantThread: "new" });
+});
+
+it("keeps a stranded conversation readable with one notice and a disabled composer, while other connections work", () => {
+	mocks.selected = "old-thread";
+	const thread = {
+		id: "old-thread",
+		workingResumeId: document.id,
+		aiProviderId: null,
+		providerLabel: "Home Ollama",
+		sourceResumeId: null,
+	};
+	mocks.threads = [thread];
+	mocks.threadData = { thread, messages: [], attachments: [], document: {}, interrupted: [], isReadOnly: true };
+	render(
+		<I18nProvider i18n={i18n}>
+			<AssistantPanel document={document} onClose={() => {}} />
+		</I18nProvider>,
+	);
+	expect(screen.getByRole("button", { name: "Connection: Choose a connection" })).toBeDefined();
+	expect(screen.getAllByRole("status")).toHaveLength(1);
+	expect(screen.getByRole("status").textContent).toContain("Home Ollama is off or was removed");
+	expect(screen.queryByRole("button", { name: "Set up AI" })).toBeNull();
+	expect(screen.getByRole("textbox", { name: "Message the assistant" })).toBeDisabled();
+	expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
+	expect(mocks.start).not.toHaveBeenCalled();
+});
+
+it("keeps a handed-off request unsent without competing starter cards", () => {
+	mocks.draft = "Translate this resume into German. Keep names, dates and figures.";
+	render(
+		<I18nProvider i18n={i18n}>
+			<AssistantPanel document={document} onClose={() => {}} />
+		</I18nProvider>,
+	);
+	expect(screen.getByRole("textbox", { name: "Message the assistant" })).toHaveValue(mocks.draft);
+	expect(screen.queryByText("What should we work on?")).toBeNull();
+	expect(screen.queryByRole("button", { name: "Find weak bullets" })).toBeNull();
+	expect(mocks.start).not.toHaveBeenCalled();
 });

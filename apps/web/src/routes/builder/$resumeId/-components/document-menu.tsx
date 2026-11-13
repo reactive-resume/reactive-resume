@@ -15,7 +15,9 @@ import {
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
+	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
@@ -61,13 +63,18 @@ export function DocumentMenu() {
 	return (
 		<>
 			{dialog === "rename" && !isLocked ? (
-				<InlineNameInput
-					key={id}
-					name={name}
-					disabled={isLocked}
-					onSave={(next) => saveMetadata({ name: next })}
-					onDone={() => setDialog(null)}
-				/>
+				<>
+					<h1 className="sr-only" dir="auto">
+						{name}
+					</h1>
+					<InlineNameInput
+						key={id}
+						name={name}
+						disabled={isLocked}
+						onSave={(next) => saveMetadata({ name: next })}
+						onDone={() => setDialog(null)}
+					/>
+				</>
 			) : (
 				<DropdownMenu
 					onOpenChangeComplete={(open) => {
@@ -108,22 +115,47 @@ export function DocumentMenu() {
 			)}
 
 			<Dialog open={dialog === "notes"} onOpenChange={(open) => !open && setDialog(null)}>
-				<DialogContent closeLabel={t`Close`} className="sm:max-w-[560px]">
+				<DialogContent closeLabel={t`Close`}>
 					<DialogHeader>
 						<DialogTitle>
 							<Trans>Notes</Trans>
 						</DialogTitle>
 					</DialogHeader>
+					{/* The notes section says what they are for itself. */}
 					<NotesSectionBuilder />
+					{/* Notes save as you type, so the dialog ends with Done, not an accent (X3). */}
+					<DialogFooter className="items-center">
+						<NotesSaveState />
+						<Button variant="secondary" onClick={() => setDialog(null)}>
+							<Trans>Done</Trans>
+						</Button>
+					</DialogFooter>
 				</DialogContent>
 			</Dialog>
 
 			<Dialog open={dialog === "details"} onOpenChange={(open) => !open && setDialog(null)}>
-				<DialogContent closeLabel={t`Close`} className="sm:max-w-[440px]">
+				<DialogContent closeLabel={t`Close`}>
 					<DocumentDetails />
 				</DialogContent>
 			</Dialog>
 		</>
+	);
+}
+
+/** Whether the notes have reached the server: the resume's own save state, in a word. */
+function NotesSaveState() {
+	const status = useResumeStore((state) => state.saveStatus);
+	return (
+		<p role="status" className="me-auto flex items-center gap-1.5 t-small text-ink-3">
+			{status === "saving" ? (
+				<Trans>Saving…</Trans>
+			) : status === "saved" || status === "idle" ? (
+				<>
+					<Icon name="check" size={16} />
+					<Trans>Saved</Trans>
+				</>
+			) : null}
+		</p>
 	);
 }
 
@@ -230,7 +262,7 @@ function DocumentMenuItems({ onOpenDialog, onHelp }: DocumentMenuItemsProps) {
 			{ type: "resume", id },
 			{
 				onSuccess: () => {
-					void navigate({ to: "/dashboard" });
+					void navigate({ to: "/dashboard/documents" });
 					toast.add({
 						description: t`“${ph({ name: isolate(name) })}” moved to Trash`,
 						actionProps: {
@@ -251,74 +283,99 @@ function DocumentMenuItems({ onOpenDialog, onHelp }: DocumentMenuItemsProps) {
 	};
 
 	return (
-		<DropdownMenuContent align="start" className="w-60">
-			<DropdownMenuItem disabled={isLocked} onClick={() => onOpenDialog("rename")}>
-				<Icon name="pencil-simple" />
-				<Trans>Rename…</Trans>
-			</DropdownMenuItem>
-			<DropdownMenuItem
-				onClick={() =>
-					void orpc.documents.suggestDuplicateName
-						.call({ type: "resume", id })
-						.then((suggested) => openDialog("resume.duplicate", { id, name: suggested, slug, tags }))
-						.catch((error: unknown) => toast.add({ type: "error", description: getResumeErrorMessage(error) }))
-				}
-			>
-				<Icon name="copy" />
-				<Trans>Duplicate</Trans>
-			</DropdownMenuItem>
-			{/* The library card's job copy, from inside the editor: a copy of this resume linked to a job. */}
-			<DropdownMenuItem onClick={() => onOpenDialog("translate")}>
-				<Icon name="translate" />
-				<Trans>Translate into…</Trans>
-			</DropdownMenuItem>
-			<DropdownMenuItem
-				onClick={async () => {
-					// The copy is made from the saved resume: save what's on screen first, as History does.
-					if (!(await savePendingChanges(id))) {
-						toast.add({ type: "error", description: t`Save this resume's changes before copying it.` });
-						return;
+		<DropdownMenuContent align="start" className="w-[248px]">
+			{/* X5: three groups. History, the formats and shortcuts appear only where the bar lacks them. */}
+			<DropdownMenuGroup>
+				<DropdownMenuLabel>
+					<Trans>This resume</Trans>
+				</DropdownMenuLabel>
+				<DropdownMenuItem disabled={isLocked} onClick={() => onOpenDialog("rename")}>
+					<Icon name="pencil-simple" />
+					<Trans>Rename…</Trans>
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					onClick={() =>
+						void orpc.documents.suggestDuplicateName
+							.call({ type: "resume", id })
+							.then((suggested) => openDialog("resume.duplicate", { id, name: suggested, slug, tags }))
+							.catch((error: unknown) => toast.add({ type: "error", description: getResumeErrorMessage(error) }))
 					}
-					openDialog("document.new", { step: "copy", sourceResumeId: id });
-				}}
-			>
-				<Icon name="briefcase" />
-				<Trans>Copy for a job…</Trans>
-			</DropdownMenuItem>
-			<DropdownMenuItem disabled={isLocked} onClick={() => onOpenDialog("tags")}>
-				<Icon name="tag" />
-				<Trans>Tags…</Trans>
-			</DropdownMenuItem>
-			<DropdownMenuItem onClick={handleToggleLock}>
-				<Icon name={isLocked ? "lock-open" : "lock"} />
-				{isLocked ? <Trans>Unlock editing</Trans> : <Trans>Lock editing</Trans>}
-			</DropdownMenuItem>
-			<DropdownMenuSeparator />
-			<DropdownMenuItem onClick={() => onOpenDialog("notes")}>
-				<Icon name="note" />
-				<Trans>Notes</Trans>
-			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => onOpenDialog("details")}>
-				<Icon name="info" />
-				<Trans>Details</Trans>
-			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => void onPrint()}>
-				<Icon name="printer" />
-				<Trans>Print</Trans>
-			</DropdownMenuItem>
-			{/* Download & history, from every layout: phones have no ▾ beside Download PDF and no clock in the bar. */}
-			<DropdownMenuItem disabled={offline} onClick={() => setSheetTab("download")}>
-				<Icon name="download-simple" />
-				<Trans>More download formats</Trans>
-			</DropdownMenuItem>
-			<DropdownMenuItem className="pointer-coarse:hidden" onClick={onHelp}>
-				<Icon name="keyboard" />
-				<Trans>Keyboard shortcuts</Trans>
-			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => setSheetTab("history")}>
-				<Icon name="clock-counter-clockwise" />
-				<Trans>History</Trans>
-			</DropdownMenuItem>
+				>
+					<Icon name="copy" />
+					<Trans>Duplicate</Trans>
+				</DropdownMenuItem>
+				<DropdownMenuItem disabled={isLocked} onClick={() => onOpenDialog("tags")}>
+					<Icon name="tag" />
+					<Trans>Tags…</Trans>
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={handleToggleLock}>
+					<Icon name={isLocked ? "lock-open" : "lock"} />
+					{isLocked ? <Trans>Unlock editing</Trans> : <Trans>Lock editing</Trans>}
+				</DropdownMenuItem>
+			</DropdownMenuGroup>
+			<DropdownMenuGroup>
+				<DropdownMenuLabel>
+					<Trans>Make another</Trans>
+				</DropdownMenuLabel>
+				{/* The library card's job copy, from inside the editor: a copy of this resume linked to a job. */}
+				<DropdownMenuItem
+					onClick={async () => {
+						// The copy is made from the saved resume: save what's on screen first, as History does.
+						if (!(await savePendingChanges(id))) {
+							toast.add({ type: "error", description: t`Save this resume's changes before copying it.` });
+							return;
+						}
+						openDialog("document.new", { step: "copy", sourceResumeId: id });
+					}}
+				>
+					<Icon name="briefcase" />
+					<Trans>Copy for a job…</Trans>
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => onOpenDialog("translate")}>
+					<Icon name="translate" />
+					<Trans>Translate into…</Trans>
+				</DropdownMenuItem>
+			</DropdownMenuGroup>
+			<DropdownMenuGroup>
+				<DropdownMenuLabel>
+					<Trans>Keep with it</Trans>
+				</DropdownMenuLabel>
+				<DropdownMenuItem onClick={() => onOpenDialog("notes")}>
+					<Icon name="note" />
+					<Trans>Notes</Trans>
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => onOpenDialog("details")}>
+					<Icon name="info" />
+					<Trans>Details</Trans>
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => void onPrint()}>
+					<Icon name="printer" />
+					<Trans>Print</Trans>
+				</DropdownMenuItem>
+				{/* The bar's clock shows from 1280 (B15). */}
+				<DropdownMenuItem
+					className="xl:hidden"
+					onClick={() =>
+						// The slot takes History from 1024 (B15); narrower layouts keep the sheet's History tab.
+						window.matchMedia("(min-width: 1024px)").matches
+							? useEditorStore.getState().setHistoryOpen(true)
+							: setSheetTab("history")
+					}
+				>
+					<Icon name="clock-counter-clockwise" />
+					<Trans>Version history</Trans>
+				</DropdownMenuItem>
+				{/* Phones have no ▾ beside Download PDF. */}
+				<DropdownMenuItem className="sm:hidden" disabled={offline} onClick={() => setSheetTab("download")}>
+					<Icon name="download-simple" />
+					<Trans>More download formats</Trans>
+				</DropdownMenuItem>
+				{/* Tablet keeps help here; desktop uses the question control in the bar. */}
+				<DropdownMenuItem className="lg:hidden pointer-coarse:hidden" onClick={onHelp}>
+					<Icon name="keyboard" />
+					<Trans>Keyboard shortcuts</Trans>
+				</DropdownMenuItem>
+			</DropdownMenuGroup>
 			<DropdownMenuSeparator />
 			<DropdownMenuItem variant="destructive" disabled={isLocked} onClick={handleTrash}>
 				<Icon name="trash" />

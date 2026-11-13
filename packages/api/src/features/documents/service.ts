@@ -26,10 +26,10 @@ const locked = (type: DocumentType) =>
 		? new ORPCError("RESUME_LOCKED", { status: 403 })
 		: new ORPCError("DOCUMENT_LOCKED", { status: 400, message: "Unlock the letter first." });
 
-/** "{source} — {company}" for a copy made for a job, "{source} (copy)" without one. */
+/** "{source} · {company}" for a copy made for a job, "{source} (copy)" without one. Older copies used " — ". */
 function suggestCopyName(sourceName: string, company?: string) {
-	const base = sourceName.split(" — ")[0]?.trim() || sourceName;
-	return (company ? `${base} — ${company}` : `${base} (copy)`).slice(0, 100);
+	const base = sourceName.split(/ [·—] /)[0]?.trim() || sourceName;
+	return (company ? `${base} · ${company}` : `${base} (copy)`).slice(0, 100);
 }
 
 async function assertOwnedApplication(userId: string, applicationId: string, reader: DbOrTx = db) {

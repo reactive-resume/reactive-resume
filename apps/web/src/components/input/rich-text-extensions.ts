@@ -70,6 +70,8 @@ export const richTextExtensions = [
 		heading: false,
 		paragraph: false,
 		codeBlock: false,
+		// Focusing a list must not append content or create an autosaved version.
+		trailingNode: false,
 		link: {
 			openOnClick: false,
 			enableClickSelection: true,

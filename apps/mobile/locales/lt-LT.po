@@ -1155,6 +1155,10 @@ msgstr "Pateikta {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Pateikta spalio 28 d. · dabar tinka trumpa žinutė"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Taikoma tinklalapiui po jo paties stilių, bet kokio dydžio ekrane. PDF lieka nepakitęs."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Nepavyko įkelti"
 msgid "Couldn't load this document. Try again."
 msgstr "Nepavyko įkelti šio dokumento. Bandykite dar kartą."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Nepavyko įkelti šios versijos. Bandykite dar kartą."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Nepavyko įkelti. Bandykite dar kartą."
@@ -2405,6 +2405,10 @@ msgstr "Pasirinktinis"
 msgid "Custom colour"
 msgstr "Pasirinktinė spalva"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "Pasirinktinis CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Kasdien"
@@ -2658,10 +2662,6 @@ msgstr "Dokumentas"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Dokumento veiksmai"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Dokumentas nepasiekiamas."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Netinkamas tvarkaraščio dažnis."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Netinkamas transkripcijos atsakymas."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "{0} numeris"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Puslapis {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "{0} psl. iš {1}"
@@ -5445,7 +5440,7 @@ msgstr "Praktikuoti šiuos klausimus"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Praktikuoti šią istoriją"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Pritaikyti skelbimui"
 msgid "Take photo"
 msgstr "Fotografuoti"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Bakstelėkite skyrių, kad redaguotumėte"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Bakstelėkite kopijuoti"
@@ -7682,7 +7673,7 @@ msgstr "Pirma įjunkite viešą nuorodą bendrinimo režime."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Išjungta"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

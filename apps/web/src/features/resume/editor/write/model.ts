@@ -119,8 +119,8 @@ const text = (value: unknown) => (typeof value === "string" ? value.trim() : "")
 const join = (...parts: unknown[]) => parts.map(text).filter(Boolean).join(" · ");
 
 /**
- * How an entry reads in the outline: a title and a line of details ("company · location · dates"). Dates come
- * from the legacy text, which is kept formatted from the structured dates.
+ * How an entry reads in a list: a title and one quiet line of details ("role · dates"). Dates come from the legacy
+ * text, which is kept formatted from the structured dates.
  */
 export function describeEntry(type: CustomSectionType, entry: Entry): { title: string; meta: string } {
 	const e = entry as Record<string, unknown> & { website?: { label?: string }; keywords?: string[] };
@@ -128,13 +128,14 @@ export function describeEntry(type: CustomSectionType, entry: Entry): { title: s
 
 	switch (type) {
 		case "experience": {
-			const position = text(e.position);
-			return { title: position || text(e.company), meta: join(position ? e.company : "", e.location, e.period) };
+			// The company names the entry everywhere (the list, the page tag, Check); the role is its quiet line.
+			const company = text(e.company);
+			return { title: company || text(e.position), meta: join(company ? e.position : "", e.period) };
 		}
 		case "education":
 			return {
 				title: text(e.school),
-				meta: join([text(e.degree), text(e.area)].filter(Boolean).join(", "), e.location, e.period),
+				meta: join([text(e.degree), text(e.area)].filter(Boolean).join(", "), e.period),
 			};
 		case "projects":
 			return { title: text(e.name), meta: join(e.period, e.website?.label) };
@@ -162,6 +163,26 @@ export function describeEntry(type: CustomSectionType, entry: Entry): { title: s
 			return { title: body.length > 80 ? `${body.slice(0, 80)}…` : body, meta: "" };
 		}
 	}
+}
+
+/**
+ * What a section holds, for its row in the outline: the entries that print (their names when there are few), and how
+ * many are set aside. The summary gives its own text; the row words the counts.
+ */
+export function summarizeSection(
+	data: Data,
+	section: WriteSection,
+): { names: string[]; printed: number; hidden: number; text: string } {
+	if (section.kind === "summary")
+		return { names: [], printed: 0, hidden: 0, text: stripHtml(data.summary.content).replace(/\s+/g, " ").trim() };
+	const entries = getEntries(data, section);
+	const printed = entries.filter((entry) => !entry.hidden && !isDraftEntry(section.type, entry));
+	return {
+		names: printed.map((entry) => describeEntry(section.type, entry).title).filter(Boolean),
+		printed: printed.length,
+		hidden: entries.filter((entry) => entry.hidden).length,
+		text: "",
+	};
 }
 
 /** Entries (and roles) with nonempty custom date text that could not be read. */

@@ -1,5 +1,6 @@
 import type { PdfFontRequest } from "../hooks/use-register-fonts";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { parse } from "node-html-parser";
 import { createElement } from "react";
 import { resolveFontSource } from "@reactive-resume/fonts/sources";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
@@ -70,9 +71,18 @@ export async function renderResumeWebPage(input: RenderResumeWebPageInput): Prom
 	// Icons load on first use: a tree that asked for new ones is drawn again once they arrive.
 	if (await loadRequestedIcons()) tree = renderHostTree(element);
 	const { html, css } = toHtml(tree, { imageUrl: input.imageUrl });
+	const page = parse(html);
+	// Share can outline exactly the contact fields its privacy switch hides, without marking the website.
+	for (const header of page.querySelectorAll("[data-region=header]")) {
+		for (const contact of header.querySelectorAll('a[href^="mailto:"],a[href^="tel:"]'))
+			contact.setAttribute("data-contact-detail", "");
+		if (data.basics.location.trim())
+			for (const text of header.querySelectorAll(".t"))
+				if (text.textContent.trim() === data.basics.location.trim()) text.setAttribute("data-contact-detail", "");
+	}
 	return {
 		lang: data.metadata.page.locale,
-		html,
+		html: page.toString(),
 		css: `${fontFaces(resumeFontRequests(data), input.fontMirrorUrl)}\n${css}`,
 	};
 }

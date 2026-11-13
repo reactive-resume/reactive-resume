@@ -7,8 +7,8 @@ export function CharacterShortcutSetting() {
 	const { characterShortcuts, setCharacterShortcuts } = useShortcutSettings();
 	return (
 		<SwitchRow
-			label={t`Single-character shortcuts`}
-			description={t`Allow keys such as ?, N, / and editor mode numbers outside text fields. Turn off when using speech input.`}
+			label={t`Single-key shortcuts`}
+			description={t`Turn off if you use speech input. Shortcuts with ⌘ keep working.`}
 			checked={characterShortcuts}
 			onCheckedChange={setCharacterShortcuts}
 		/>

@@ -92,12 +92,12 @@ it("requires explicit review after adaptation before using an independent answer
 	show();
 	fireEvent.click(screen.getByRole("button", { name: "Use a saved answer" }));
 	fireEvent.click(await screen.findByRole("button", { name: "Review and use" }));
-	const dialog = screen.getByRole("dialog", { name: "Review for this application" });
-	expect(within(dialog).getByText("Source employer", { exact: false })).toHaveTextContent("Harbor Labs");
+	const dialog = screen.getByRole("dialog", { name: "Review before you reuse it" });
+	expect(within(dialog).getByText(/Written for Harbor Labs on/)).toBeVisible();
 	const use = within(dialog).getByRole("button", { name: "Use reviewed answer" });
 	expect(use).toBeDisabled();
 	const review = within(dialog).getByRole("checkbox", {
-		name: "I reviewed this answer, its evidence and the application context.",
+		name: "I removed wording about Harbor Labs and checked every claim.",
 	});
 	await userEvent.click(review);
 	expect(use).toBeEnabled();
@@ -153,8 +153,9 @@ it("flags stale evidence and requires delete confirmation while preserving other
 	fireEvent.click(screen.getByRole("button", { name: "Use a saved answer" }));
 	expect(await screen.findByText("Evidence changed or was removed. Edit and review before reuse.")).toBeVisible();
 	expect(screen.getByRole("button", { name: "Review and use" })).toBeDisabled();
-	expect(screen.getByRole("button", { name: "Edit saved answer" })).toBeEnabled();
-	fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+	expect(screen.getByRole("button", { name: "Edit" })).toBeEnabled();
+	fireEvent.click(screen.getByRole("button", { name: "More saved answer actions" }));
+	fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }));
 	expect(api.remove).not.toHaveBeenCalled();
 	fireEvent.click(screen.getByRole("button", { name: "Delete saved answer" }));
 	await waitFor(() => expect(api.remove).toHaveBeenCalled());
@@ -168,7 +169,7 @@ it("disables editing answers restricted to another employer or application", asy
 	];
 	show();
 	fireEvent.click(screen.getByRole("button", { name: "Use a saved answer" }));
-	const editButtons = await screen.findAllByRole("button", { name: "Edit saved answer" });
+	const editButtons = await screen.findAllByRole("button", { name: "Edit" });
 	expect(editButtons).toHaveLength(2);
 	for (const button of editButtons) expect(button).toBeDisabled();
 });
@@ -185,7 +186,7 @@ it("offers only stories backed by active facts and lets stale story references b
 	api.rows = [{ ...saved, storyIds: ["blocked-story"], stale: true, canReuse: false }];
 	show();
 	fireEvent.click(screen.getByRole("button", { name: "Use a saved answer" }));
-	fireEvent.click(await screen.findByRole("button", { name: "Edit saved answer" }));
+	fireEvent.click(await screen.findByRole("button", { name: "Edit" }));
 	expect(await screen.findByRole("checkbox", { name: "Active evidence" })).toBeVisible();
 	expect(await screen.findByRole("checkbox", { name: "Current story" })).toBeVisible();
 	expect(screen.queryByRole("checkbox", { name: "Stale story" })).toBeNull();

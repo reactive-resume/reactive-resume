@@ -1,25 +1,37 @@
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useRouteContext, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import z from "zod";
+import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { AuthFoot, AuthLead, AuthTitle, authAction } from "../components/auth-page";
+import { offeredSocial } from "../components/social-auth";
 import { authErrorMessage } from "../error";
+import { List, ListRow } from "@/components/calm/list-row";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
+import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
 	email: z.email({ error: () => t`Enter a valid email address.` }),
 });
 
-export function ForgotPasswordPage() {
+type ForgotPasswordPageProps = {
+	/** Reached from a reset link that expired or was used: the same form under its own title. */
+	expired?: boolean;
+};
+
+export function ForgotPasswordPage({ expired = false }: ForgotPasswordPageProps) {
 	const [submitted, setSubmitted] = useState(false);
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const resetSearch = new URLSearchParams({
@@ -74,80 +86,146 @@ export function ForgotPasswordPage() {
 			/>
 		);
 
+	const backToSignIn = (
+		<Link to="/auth/login" search={{ callbackURL, reauthenticate }}>
+			<Trans>Back to sign in</Trans>
+		</Link>
+	);
+
 	return (
 		<>
-			<div className="space-y-1 text-center">
-				<h1 className="text-[30px] leading-9">
-					<Trans>Forgot your password?</Trans>
-				</h1>
-
-				<div className="text-ink-3">
-					<Trans>
-						Remember your password?{" "}
-						<Button
-							variant="link"
-							className="h-auto gap-1.5 px-1! py-0"
-							nativeButton={false}
-							render={
-								<Link to="/auth/login" search={{ callbackURL, reauthenticate }}>
-									<Trans comment="Call-to-action link from forgot-password page to login page">Sign in now</Trans>{" "}
-									<Icon name="arrow-right" size={16} />
-								</Link>
-							}
-						/>
-					</Trans>
-				</div>
-			</div>
+			<AuthTitle>{expired ? <Trans>Link expired</Trans> : <Trans>Reset your password</Trans>}</AuthTitle>
 
 			{!smtpEnabled ? (
-				<p role="status" className="rounded-lg bg-sunken p-3 text-center text-sm text-ink-2">
-					<Trans>
-						This server can't send email, so password reset isn't available. Ask the person who runs it to reset your
-						password.
-					</Trans>
-				</p>
+				<WaysBackIn expired={expired} />
 			) : (
-				<form
-					noValidate
-					className="space-y-6"
-					onSubmit={(event) => {
-						event.preventDefault();
-						event.stopPropagation();
-						void form.handleSubmit();
-					}}
-				>
-					<form.Field name="email">
-						{(field) => (
-							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-								<FormLabel>
-									<Trans comment="Label for email input on forgot-password form">Email address</Trans>
-								</FormLabel>
-								<FormControl
-									render={
-										<Input
-											type="email"
-											autoComplete="email"
-											placeholder="john.doe@example.com"
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
-										/>
-									}
-								/>
-								<FormMessage errors={field.state.meta.errors} />
-							</FormItem>
+				<>
+					<AuthLead role={expired ? "alert" : undefined}>
+						{expired ? (
+							<Trans>This reset link expired or was already used. Send yourself a new one.</Trans>
+						) : (
+							<Trans>Enter your account's email address to get a reset link.</Trans>
 						)}
-					</form.Field>
+					</AuthLead>
+					<form
+						noValidate
+						className="mt-7 flex flex-col gap-5"
+						onSubmit={(event) => {
+							event.preventDefault();
+							event.stopPropagation();
+							void form.handleSubmit();
+						}}
+					>
+						<form.Field name="email">
+							{(field) => (
+								<FormItem data-route-focus hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+									<FormLabel>
+										<Trans comment="Label for email input on forgot-password form">Email address</Trans>
+									</FormLabel>
+									<FormControl
+										render={
+											<Input
+												type="email"
+												autoComplete="email"
+												placeholder="you@example.com"
+												name={field.name}
+												value={field.state.value}
+												onBlur={field.handleBlur}
+												onChange={(event) => field.handleChange(event.target.value)}
+											/>
+										}
+									/>
+									<FormMessage errors={field.state.meta.errors} />
+								</FormItem>
+							)}
+						</form.Field>
 
-					<Button type="submit" className="w-full" disabled={isSubmitting}>
-						<Trans comment="Primary action button label on forgot-password form">Send reset link</Trans>
-					</Button>
-				</form>
+						<Button type="submit" size="lg" className="mt-1 w-full leading-5" disabled={isSubmitting}>
+							{expired ? (
+								<Trans>Send a new link</Trans>
+							) : (
+								<Trans comment="Primary action button label on forgot-password form">Send reset link</Trans>
+							)}
+						</Button>
+					</form>
+					<AuthFoot>{backToSignIn}</AuthFoot>
+				</>
 			)}
 		</>
 	);
 }
+
+/** Without email there's no reset link: list the ways back in that this server has, so the page isn't a dead end. */
+function WaysBackIn({ expired }: { expired: boolean }) {
+	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
+	const { data: providers = {} } = useQuery(orpc.auth.providers.list.queryOptions());
+	const social = offeredSocial(providers).map((key) => (key === "custom" ? providers.custom : providerNames[key]));
+	const signIn = <Link to="/auth/login" search={{ callbackURL, reauthenticate }} />;
+
+	return (
+		<>
+			<Alert variant="warn" role="status" className="mt-[18px]">
+				<Icon name="warning-circle" />
+				<AlertDescription>
+					{expired ? (
+						<Trans>
+							This reset link expired or was already used, and this server can't send email, so it can't send you a new
+							one.
+						</Trans>
+					) : (
+						<Trans>This server can't send email, so it can't send you a reset link.</Trans>
+					)}
+				</AlertDescription>
+			</Alert>
+
+			<h2 className="mt-[26px] pb-1 t-label">
+				<Trans>Other ways back in</Trans>
+			</h2>
+			<List cap>
+				{"passkey" in providers && (
+					<ListRow
+						caret
+						leading={<Icon name="fingerprint" size={18} className="text-ink-2" />}
+						title={<Trans>Sign in with a passkey</Trans>}
+						subtitle={<Trans>Works without your password, if you added one</Trans>}
+						render={signIn}
+					/>
+				)}
+				{social.length > 0 && (
+					<ListRow
+						caret
+						leading={<Icon name="sign-in" size={18} className="text-ink-2" />}
+						title={
+							<Trans>
+								Sign in with {new Intl.ListFormat(i18n.locale, { type: "disjunction" }).format(social as string[])}
+							</Trans>
+						}
+						subtitle={
+							social.length > 1 ? (
+								<Trans>If your account is linked to one of them</Trans>
+							) : (
+								<Trans>If your account is linked to it</Trans>
+							)
+						}
+						render={signIn}
+					/>
+				)}
+				<ListRow
+					leading={<Icon name="user-gear" size={18} className="text-ink-2" />}
+					title={<Trans>Ask the person who runs this server</Trans>}
+					subtitle={<Trans>They can set a new password for you</Trans>}
+				/>
+			</List>
+
+			<Link to="/auth/login" search={{ callbackURL, reauthenticate }} className={authAction("secondary", "mt-6")}>
+				<Trans>Back to sign in</Trans>
+			</Link>
+		</>
+	);
+}
+
+// Brand names: not translated.
+const providerNames = { apple: "Apple", google: "Google", github: "GitHub", linkedin: "LinkedIn" } as const;
 
 type PostForgotPasswordScreenProps = { onResend: () => Promise<void> };
 
@@ -157,39 +235,33 @@ function PostForgotPasswordScreen({ onResend }: PostForgotPasswordScreenProps) {
 	useEffect(() => heading.current?.focus(), []);
 	const [resending, setResending] = useState(false);
 	return (
-		// Replaces the form in place: fades up into the auth column, with the layout's 24px gap.
-		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
-			<div className="space-y-1 text-center">
-				<h1 ref={heading} tabIndex={-1} className="text-[30px] leading-9">
-					<Trans>Check your email</Trans>
-				</h1>
-				{/* Worded so it doesn't reveal whether an account uses the address. */}
-				<p className="text-ink-3">
-					<Trans>If an account uses that address, a reset link is on its way.</Trans>
-				</p>
-			</div>
+		// Replaces the form in place: fades up into the auth column.
+		<div className={cn(ENTER_CLASS, "flex flex-col")}>
+			<AuthTitle ref={heading} tabIndex={-1}>
+				<Trans>Check your email</Trans>
+			</AuthTitle>
+			{/* Worded so it doesn't reveal whether an account uses the address. */}
+			<AuthLead>
+				<Trans>If an account uses that address, a reset link is on its way.</Trans>
+			</AuthLead>
 
-			<Button
-				nativeButton={false}
-				variant="secondary"
-				render={<Link to="/auth/login" search={{ callbackURL, reauthenticate }} />}
-			>
+			<Link to="/auth/login" search={{ callbackURL, reauthenticate }} className={authAction("primary", "mt-7")}>
 				<Trans>Back to sign in</Trans>
-			</Button>
-			<p className="text-center text-sm text-ink-3">
-				<Trans>Didn't get it?</Trans>{" "}
-				<Button
-					variant="link"
-					className="h-auto px-1 py-0"
-					loading={resending}
+			</Link>
+			<AuthFoot>
+				<Trans>Didn't get it?</Trans>
+				<button
+					type="button"
+					aria-busy={resending || undefined}
+					disabled={resending}
 					onClick={() => {
 						setResending(true);
 						void onResend().finally(() => setResending(false));
 					}}
 				>
 					<Trans>Send again</Trans>
-				</Button>
-			</p>
+				</button>
+			</AuthFoot>
 		</div>
 	);
 }

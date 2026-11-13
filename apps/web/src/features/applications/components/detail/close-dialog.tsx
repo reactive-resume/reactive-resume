@@ -22,6 +22,8 @@ type CloseDialogProps = {
 	open: boolean;
 	/** Where the application stands now: closing from Offer is usually accepting it, so that's the default there. */
 	status?: ApplicationStatus | undefined;
+	company?: string;
+	role?: string;
 	onOpenChange: (open: boolean) => void;
 	/** Active lanes; custom Closed lanes among them can be chosen. */
 	lanes: readonly ApplicationLane[];
@@ -30,7 +32,7 @@ type CloseDialogProps = {
 };
 
 /** "Mark as closed": one reason, kept for Insights, and the Closed lane when there's more than one. */
-export function CloseDialog({ open, status, onOpenChange, lanes, onClose }: CloseDialogProps) {
+export function CloseDialog({ open, status, company, role, onOpenChange, lanes, onClose }: CloseDialogProps) {
 	const id = useId();
 	const initialReason: ApplicationClosedReason = status === "offer" ? "accepted" : "not-selected";
 	const [reason, setReason] = useState<ApplicationClosedReason>(initialReason);
@@ -46,12 +48,17 @@ export function CloseDialog({ open, status, onOpenChange, lanes, onClose }: Clos
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent closeLabel={t`Close`} className="sm:max-w-sm">
+			<DialogContent closeLabel={t`Close`} className="sm:max-w-[480px]">
 				<DialogHeader>
 					<DialogTitle>
 						<Trans>Mark as closed</Trans>
 					</DialogTitle>
 					<DialogDescription>
+						{company && (
+							<Trans>
+								Closing {company} · {role}.{" "}
+							</Trans>
+						)}
 						<Trans>The reason is kept for Insights. Linked documents aren't touched.</Trans>
 					</DialogDescription>
 				</DialogHeader>
@@ -77,12 +84,12 @@ export function CloseDialog({ open, status, onOpenChange, lanes, onClose }: Clos
 						aria-label={t`Reason`}
 						value={reason}
 						onValueChange={(value) => setReason(value as ApplicationClosedReason)}
-						className="grid gap-1"
+						className="grid gap-0"
 					>
 						{CLOSED_REASONS.map((value) => (
 							<div
 								key={value}
-								className="flex h-10 items-center gap-2.5 rounded-lg px-2 transition-colors hover:bg-hover"
+								className="flex h-[34px] items-center gap-2.5 rounded-lg px-2 transition-colors hover:bg-hover pointer-coarse:h-11"
 							>
 								<RadioGroupItem id={`${id}-${value}`} value={value} />
 								<label htmlFor={`${id}-${value}`} className="flex-1 cursor-pointer text-sm">
@@ -93,7 +100,7 @@ export function CloseDialog({ open, status, onOpenChange, lanes, onClose }: Clos
 					</RadioGroup>
 				)}
 				<DialogFooter>
-					<Button variant="secondary" onClick={() => onOpenChange(false)}>
+					<Button variant="ghost" onClick={() => onOpenChange(false)}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button

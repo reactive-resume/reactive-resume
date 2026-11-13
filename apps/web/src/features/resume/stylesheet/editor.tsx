@@ -30,6 +30,7 @@ import { isFatalStylesheetDiagnostic } from "@reactive-resume/resume/stylesheet"
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
+import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../editor/store";
 import { serializeStylesheetColor, toStylesheetPickerColor } from "./color-format";
 import {
@@ -64,7 +65,8 @@ type EditorCompartments = {
 const highlightStyle = HighlightStyle.define([
 	{ tag: [tags.comment, tags.meta], color: "var(--ink-3)", fontStyle: "italic" },
 	{ tag: [tags.tagName, tags.className, tags.labelName], color: "var(--accent-text)" },
-	{ tag: [tags.propertyName, tags.attributeName], color: "var(--info-text)" },
+	{ tag: tags.propertyName, color: "var(--info-text)" },
+	{ tag: tags.attributeName, color: "var(--ink)" },
 	{ tag: [tags.string, tags.number, tags.unit, tags.color, tags.atom], color: "var(--warn-text)" },
 	{ tag: [tags.keyword, tags.modifier, tags.definitionKeyword, tags.controlKeyword], color: "var(--danger-text)" },
 	{ tag: [tags.variableName, tags.function(tags.variableName)], color: "var(--ink)", fontWeight: "500" },
@@ -81,20 +83,26 @@ const editorTheme = (dark: boolean): Extension =>
 				color: "var(--ink)",
 				direction: "ltr",
 			},
+			// In the panel the editor is as tall as its rules, up to --stylesheet-max-height; focus mode fills its sheet.
 			".cm-scroller": {
 				overflow: "auto",
+				maxHeight: "var(--stylesheet-max-height, none)",
 				fontFamily: "var(--font-mono)",
-				lineHeight: "1.5",
+				fontSize: "12px",
+				lineHeight: "20px",
 			},
-			".cm-content": { minHeight: "100%", padding: "0.75rem 0" },
+			".cm-content": { minHeight: "100%", padding: "4px 0" },
+			".cm-line": { padding: "0 0 0 10px" },
 			".cm-gutters": {
-				backgroundColor: "var(--sunken)",
+				backgroundColor: "transparent",
 				color: "var(--ink-3)",
-				borderRight: "1px solid var(--line)",
+				border: "none",
 			},
+			".cm-lineNumbers .cm-gutterElement": { minWidth: "30px", padding: "0 8px 0 0", boxSizing: "border-box" },
 			".cm-activeLine, .cm-activeLineGutter": {
 				backgroundColor: "var(--hover)",
 			},
+			".cm-activeLineGutter": { color: "var(--ink)" },
 			"&.cm-focused": { outline: "none" },
 		},
 		{ dark },
@@ -298,7 +306,11 @@ function StylesheetCodeEditor({
 	};
 
 	return (
-		<div ref={hostRef} className="relative h-full overflow-hidden rounded-md border text-xs" dir="ltr">
+		<div
+			ref={hostRef}
+			className="relative h-full overflow-hidden rounded-md shadow-[inset_0_0_0_1px_var(--control-border)] focus-within:shadow-[inset_0_0_0_1px_var(--accent),0_0_0_3px_var(--accent-soft)] [&_.cm-editor]:bg-transparent!"
+			dir="ltr"
+		>
 			{shownColor && (
 				<div className="pointer-events-none absolute z-20" style={{ left: shownColor.left, top: shownColor.top }}>
 					<ColorPicker
@@ -324,7 +336,7 @@ function StylesheetCodeEditor({
 										type="button"
 										title={t`Edit color ${shownColor.token.value}`}
 										aria-label={t`Edit color ${shownColor.token.value}`}
-										className="pointer-events-auto size-3 rounded-sm border border-ink/40"
+										className="pointer-events-auto size-2.5 rounded-xs shadow-[0_0_0_1px_var(--line-2)]"
 										style={{ backgroundColor: shownColor.token.value }}
 									/>
 								}
@@ -381,6 +393,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	const [compiled, setCompiled] = useState<{
 		source: StylesheetSource;
 		tokens: readonly SemanticCssColorToken[];
+		ruleCount: number;
 		diagnostics: readonly SemanticCssDiagnostic[];
 	}>();
 	const [compiler, setCompiler] = useState<ReturnType<typeof createCompileWorkerClient>>();
@@ -455,6 +468,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 					if (cancelled || result.editGeneration !== compileGenerationRef.current) return;
 					setCompiled({
 						source,
+						ruleCount: result.program?.rules.length ?? 0,
 						tokens: result.colorTokens ?? [],
 						diagnostics: result.diagnostics.filter(isFatalStylesheetDiagnostic),
 					});
@@ -501,7 +515,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 		/>
 	);
 	const editorChrome = (
-		<div className="space-y-3">
+		<div className="flex flex-col">
 			<StylesheetToolbar
 				source={text}
 				canUndo={canUndo}
@@ -516,8 +530,28 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				}}
 				onFocusToggle={toggleFocus}
 			/>
+			<div
+				className={cn(
+					"mt-1.5 bg-raised",
+					focusOpen ? "h-[55svh] rounded-md sm:h-[calc(100svh-14rem)]" : "rounded-md [--stylesheet-max-height:320px]",
+				)}
+			>
+				{editor}
+			</div>
+			{compiled?.source === source && compiled.diagnostics.length === 0 && (
+				<div role="status" className="mt-2 flex items-center justify-between gap-2">
+					<span className="flex items-center gap-1.5 t-small text-accent-text">
+						<Icon name="check-circle" size={16} />
+						<Trans>Applied · {compiled.ruleCount} rules, no errors</Trans>
+					</span>
+					<span className="font-mono text-xs/4 font-medium text-ink-3">
+						<Trans>{text.split("\n").length} lines</Trans>
+					</span>
+				</div>
+			)}
+
 			{compiled?.source === source && compiled.diagnostics.length > 0 && (
-				<div role="alert" className="text-xs text-danger-text">
+				<div role="alert" className="mt-2 text-xs text-danger-text">
 					<p>
 						<Trans>Custom styles aren't applied. Fix these errors to apply them:</Trans>
 					</p>
@@ -528,40 +562,13 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 					</ul>
 				</div>
 			)}
-			<p className="text-xs text-ink-3">
-				<Trans>
-					PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are
-					ignored.
-				</Trans>
-			</p>
 
-			<p className="flex items-center gap-1.5 text-xs text-ink-3">
+			<p className="mt-2.5 flex items-start gap-2 text-xs/4 text-ink-3">
 				<Icon name="highlighter" size={16} aria-hidden="true" className="shrink-0" />
 				<span>
 					<Trans>Click anything on the page to style it. The rule you're in is outlined on the page.</Trans>
 				</span>
 			</p>
-
-			<p className="flex items-center gap-1.5 text-xs text-ink-3">
-				<Icon name="book-open-text" size={16} aria-hidden="true" className="shrink-0" />
-				<span>
-					<Trans>Not sure what to write?</Trans>{" "}
-					<a
-						className="text-accent-text underline underline-offset-4"
-						href="https://docs.rxresu.me/applying-custom-styles"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<Trans>Read the “Applying custom styles” guide.</Trans>
-						<span className="sr-only">
-							{" "}
-							(<Trans>opens in new tab</Trans>)
-						</span>
-					</a>
-				</span>
-			</p>
-
-			<div className={focusOpen ? "h-[55svh] sm:h-[calc(100svh-14rem)]" : "h-72"}>{editor}</div>
 		</div>
 	);
 

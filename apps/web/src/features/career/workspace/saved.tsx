@@ -2,7 +2,6 @@ import type { SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
 import type { SavedItemKind, WorkspaceTab } from "@reactive-resume/schema/career";
 import type { IconName } from "@reactive-resume/ui/components/icon";
-import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -10,18 +9,22 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
-import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { Button } from "@reactive-resume/ui/components/button";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
+import { cn } from "@reactive-resume/utils/style";
 import { useSavedItems } from "../hooks";
 import { CareerLoadError } from "../load-state";
 import { formatMoney } from "../offer-compare";
 import { useRemoving } from "../removing";
-import { CollapseRow, FilterChip, tabLabel, useCareerTime, withQueryUndo } from "../shared";
-import { AiResultUsage } from "@/features/ai/usage";
+import { CollapseRow, tabLabel, useCareerTime, useNow, withQueryUndo } from "../shared";
+import { Chip } from "@/components/calm/filter-bar";
+import { HeroCard } from "@/components/calm/hero-card";
+import { ListRow, IconTile, revealOnRowClassName } from "@/components/calm/list-row";
+import { PageHeader } from "@/components/calm/page";
 import { client, orpc, prepareRpc } from "@/libs/orpc/client";
 
 const KINDS: { kind: SavedItemKind; icon: IconName; tab: WorkspaceTab | null }[] = [
@@ -46,8 +49,9 @@ const kindLabel = (kind: SavedItemKind) =>
 	})[kind];
 
 /** W18: saved records for this job, newest first, each opening read-only in the tab that made it. */
-export function SavedTab({ application, go }: WorkspaceTabProps) {
+export function SavedTab({ application, interview, go }: WorkspaceTabProps) {
 	const company = application.company;
+	const time = useCareerTime();
 	const queryClient = useQueryClient();
 	const saved = useSavedItems(application.id);
 	const [filter, setFilter] = useState<SavedItemKind | null>(null);
@@ -57,6 +61,7 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 	if (saved.isPending)
 		return (
 			<div className="grid gap-3">
+				<PageHeader title={t`Library`} />
 				<Skeleton className="h-8 w-1/2" />
 				<Skeleton className="h-72 rounded-xl" />
 			</div>
@@ -68,18 +73,26 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 	// useSavedItems already leaves out items whose Undo is still showing.
 	const items = saved.data ?? [];
 	const present = KINDS.filter(({ kind }) => items.some((item) => item.data.kind === kind));
-	const shown = items.filter((item) => filter === null || item.data.kind === filter);
+	const current =
+		application.status === "interview"
+			? items.find((item) => item.data.kind === "briefing" && (!interview || item.interviewId === interview.id))
+			: undefined;
+	const shown = items.filter((item) => item.id !== current?.id && (filter === null || item.data.kind === filter));
 
 	if (items.length === 0)
 		return (
-			<EmptyState
-				title={<Trans>Nothing in your library yet</Trans>}
-				description={
-					<Trans>
-						Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them.
-					</Trans>
-				}
-			/>
+			<>
+				<PageHeader title={t`Library`} />
+				<EmptyState
+					title={<Trans>Nothing in your library yet</Trans>}
+					description={
+						<Trans>
+							Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save
+							them.
+						</Trans>
+					}
+				/>
+			</>
 		);
 
 	const onDelete = (item: SavedItem) => {
@@ -97,22 +110,54 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 	};
 
 	return (
-		<div className="grid gap-4">
-			<div className="flex flex-wrap items-center justify-between gap-3">
+		<div>
+			<PageHeader
+				title={t`Library`}
+				className="[&>div]:min-h-9 [&>p]:pt-1 [&>p]:text-sm/5"
+				subtitle={t`What you saved while working on ${company}. Each opens read-only in the place that made it.`}
+			/>
+			{current && (
+				<HeroCard
+					wide
+					className="relative mt-5 gap-4 py-4 ps-[76px] pe-5 sm:gap-4 sm:py-4 sm:ps-[76px] sm:pe-5 [&_h2]:t-label [&>div:first-child]:gap-0 [&>div:first-child>p:last-child]:max-w-none [&>div:first-child>p:last-child]:text-[13px]/[18px] [&>div:first-child>p:last-child]:text-ink-3 [&>div:last-child]:flex-none"
+					title={current.data.kind === "briefing" ? current.data.headline : current.title}
+					kicker={
+						<>
+							<IconTile accent className="absolute start-5 top-1/2 -translate-y-1/2">
+								<Icon name="clipboard-text" size={20} />
+							</IconTile>
+							{interview
+								? t`In use for ${time.format(interview.at, { weekday: "long" })}'s interview`
+								: t`In use for the next interview`}
+						</>
+					}
+					actions={
+						<Button onClick={() => go("prepare", { version: current.id })}>
+							<Trans>Open briefing</Trans>
+						</Button>
+					}
+				>
+					{t`Briefing · ${time.when(current.createdAt)} · used ${sourcesOf(current)}`}
+				</HeroCard>
+			)}
+			<div className="flex flex-wrap items-center justify-between gap-3 pt-6 pb-2">
 				<div className="flex flex-wrap gap-1.5">
-					<FilterChip pressed={filter === null} onClick={() => setFilter(null)}>
+					<Chip pressed={filter === null} onClick={() => setFilter(null)}>
 						<Trans>All</Trans>
-					</FilterChip>
+						{items.length > 0 && <span className="font-mono text-xs">{items.length}</span>}
+					</Chip>
 					{present.map(({ kind }) => (
-						<FilterChip key={kind} pressed={filter === kind} onClick={() => setFilter(kind)}>
+						<Chip key={kind} pressed={filter === kind} onClick={() => setFilter(kind)}>
 							{kindLabel(kind)}
-						</FilterChip>
+						</Chip>
 					))}
 				</div>
-				<p className="text-xs text-ink-3">{t`Library items for ${company}, newest first.`}</p>
+				<p className="text-[13px]/[18px] text-ink-3">
+					<Trans>Newest first</Trans>
+				</p>
 			</div>
 
-			<div role="list" className="overflow-hidden rounded-xl border border-line bg-surface">
+			<div role="list" className="">
 				<AnimatePresence initial={false}>
 					{shown.map((item) => (
 						<CollapseRow key={item.id} role="listitem" className="border-t border-line first:border-t-0">
@@ -142,86 +187,97 @@ type SavedRowProps = {
 };
 
 function SavedRow({ item, applicationId, expanded, onToggle, onOpen, onDelete }: SavedRowProps) {
-	const { when } = useCareerTime();
+	const { when, day, time } = useCareerTime();
+	const now = useNow();
 	const { i18n } = useLingui();
+	const sent = item.data.kind === "answers" && item.submission;
+	// "today, 09:12" mid-line; answers sent with the application carry their day only.
+	const at = sent
+		? day(item.createdAt)
+		: day(item.createdAt) === day(now)
+			? t`today, ${time(item.createdAt)}`
+			: when(item.createdAt);
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId } }));
 	const meta = KINDS.find(({ kind }) => kind === item.data.kind) ?? KINDS[0];
 	const used = sourcesOf(item);
 	const usedFacts = item.evidence.factIds.flatMap((id) => facts?.find((fact) => fact.id === id)?.text ?? []);
 	const summaryId = `${item.id}-summary`;
+	// One line, so it reads (and wraps) as one: "Practice · today, 09:12 · typed · used 2 facts, 1 story".
+	const line = [
+		kindLabel(item.data.kind),
+		at,
+		item.data.kind === "answers" ? plural(item.data.answers.length, { one: "# answer", other: "# answers" }) : null,
+		item.data.kind === "practice" ? (item.data.mode === "typed" ? t`typed` : t`spoken`) : null,
+		used && !sent ? t`used ${used}` : null,
+	]
+		.filter(Boolean)
+		.join(" · ");
 
 	return (
-		<div className="grid grid-cols-[34px_minmax(0,1fr)] items-start gap-x-3 px-4 py-3.5 sm:grid-cols-[34px_minmax(0,1fr)_auto]">
-			<span className="grid size-[34px] place-items-center rounded-lg bg-sunken text-ink-2">
-				<Icon name={meta?.icon ?? "file-text"} size={19} />
-			</span>
-			<div className="grid min-w-0 gap-0.5">
+		<ListRow
+			className="items-start [&>span:first-child]:mt-0.5"
+			interactive
+			leading={
+				<IconTile>
+					<Icon name={meta?.icon ?? "file-text"} size={20} />
+				</IconTile>
+			}
+			title={
 				<button
 					type="button"
 					aria-expanded={expanded}
 					aria-controls={summaryId}
 					onClick={onToggle}
-					className="w-fit text-start text-sm font-semibold hover:underline hover:underline-offset-3"
+					className="text-start hover:underline"
 				>
-					{item.title}
+					{sent ? t`Answers sent with the application` : item.title}
 				</button>
-				<p className="text-xs text-ink-3">
-					{kindLabel(item.data.kind)} · {when(item.createdAt)}
-					{used && (
-						<>
-							{" · "}
-							{usedFacts.length > 0 ? (
-								<Tooltip>
-									<TooltipTrigger
-										render={<span className="cursor-help underline decoration-dotted underline-offset-3" />}
-									>
-										{t`used ${used}`}
-									</TooltipTrigger>
-									<TooltipContent className="grid max-w-sm gap-1">
-										{usedFacts.map((text) => (
-											<span key={text}>{text}</span>
-										))}
-									</TooltipContent>
-								</Tooltip>
-							) : (
-								t`used ${used}`
-							)}
-						</>
+			}
+			subtitle={
+				<>
+					{usedFacts.length > 0 && !sent ? (
+						<Tooltip>
+							<TooltipTrigger render={<span className="block cursor-help" />}>{line}</TooltipTrigger>
+							<TooltipContent className="grid max-w-sm gap-1">
+								{usedFacts.map((text) => (
+									<span key={text}>{text}</span>
+								))}
+							</TooltipContent>
+						</Tooltip>
+					) : (
+						<span className="block">{line}</span>
 					)}
-				</p>
-				<AiResultUsage usage={item.aiUsage} />
-			</div>
-			<div className="col-start-2 mt-2 flex items-center gap-1 sm:col-start-3 sm:row-start-1 sm:mt-0">
-				{meta?.tab ? (
-					<Button size="sm" variant="secondary" className="h-8" onClick={() => meta.tab && onOpen(meta.tab)}>
-						{t`Open in ${tabLabel(meta.tab)}`}
-					</Button>
-				) : (
-					<Link
-						to="/dashboard/career/offers"
-						search={{ a: item.id }}
-						className={buttonVariants({ size: "sm", variant: "secondary", className: "h-8" })}
-					>
-						<Trans>Open in Offers</Trans>
-					</Link>
-				)}
-				<IconButton
-					icon="trash"
-					label={t`Delete`}
-					size="icon-sm"
-					iconSize={18}
-					className="text-ink-2"
-					onClick={onDelete}
-				/>
-			</div>
-			<AnimatePresence initial={false}>
-				{expanded && (
-					<CollapseRow id={summaryId} className="col-span-full sm:ps-[46px]">
-						<p className="pt-2.5 text-sm leading-[21px] text-ink-2">{summaryOf(item, i18n.locale)}</p>
-					</CollapseRow>
-				)}
-			</AnimatePresence>
-		</div>
+					{expanded && (
+						<span id={summaryId} className="block pt-1.5 text-[13px]/[18px] whitespace-normal text-ink-2">
+							{summaryOf(item, i18n.locale)}
+						</span>
+					)}
+				</>
+			}
+			trailing={
+				<div className="flex items-center gap-3.5 pt-2.5">
+					<IconButton
+						icon="trash"
+						label={t`Delete`}
+						size="icon-sm"
+						iconSize={16}
+						className={cn("text-ink-2", revealOnRowClassName)}
+						onClick={onDelete}
+					/>
+					{meta?.tab ? (
+						<Button
+							variant="link"
+							className="h-auto p-0 text-sm/5 text-accent-text"
+							onClick={() => meta.tab && onOpen(meta.tab)}
+						>{t`Open in ${tabLabel(meta.tab)}`}</Button>
+					) : (
+						<Link to="/dashboard/career/offers" search={{ a: item.id }} className="text-sm/5 text-accent-text">
+							<Trans>Open in Offers</Trans>
+						</Link>
+					)}
+				</div>
+			}
+		/>
 	);
 }
 
@@ -243,10 +299,8 @@ function sourcesOf(item: SavedItem) {
 function summaryOf(item: SavedItem, locale: string): string {
 	const data = item.data;
 	switch (data.kind) {
-		case "fit": {
-			const count = (status: string) => data.requirements.filter((requirement) => requirement.status === status).length;
-			return t`${i18n.number(count("supported"))} supported, ${i18n.number(count("partial"))} partly supported, ${i18n.number(count("missing"))} with no evidence yet. ${data.summary}`;
-		}
+		case "fit":
+			return data.summary;
 		case "briefing":
 			return [data.focus, data.honesty].filter(Boolean).join(" ");
 		case "practice":

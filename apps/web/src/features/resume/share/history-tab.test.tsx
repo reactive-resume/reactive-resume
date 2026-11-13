@@ -4,8 +4,9 @@ import { beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 import { useEditorStore } from "../editor/store";
-import { HistoryTab } from "./history-tab";
+import { HistoryTab, HistoryTimeline, HistoryVersionBar, ResumeVersionBar } from "./history-tab";
 
 const mocks = vi.hoisted(() => ({
 	save: vi.fn(),
@@ -48,21 +49,21 @@ beforeEach(() => {
 	i18n.activate("en");
 });
 
-it.each(["name", "restore"])("stops History %s after the save barrier fails", async (action) => {
-	if (action === "restore") useEditorStore.setState({ historyVersionId: "version" });
+it.each(["name", "restore", "canvas restore"])("stops History %s after the save barrier fails", async (action) => {
+	if (action !== "name") useEditorStore.setState({ historyVersionId: "version" });
 	const client = new QueryClient();
 	render(
 		<QueryClientProvider client={client}>
 			<I18nProvider i18n={i18n}>
-				<HistoryTab />
+				{action === "canvas restore" ? <ResumeVersionBar showingNow={false} onCompare={() => {}} /> : <HistoryTab />}
 			</I18nProvider>
 		</QueryClientProvider>,
 	);
 	if (action === "name") {
-		fireEvent.change(screen.getByRole("textbox", { name: "Name this version" }), {
+		fireEvent.change(screen.getByRole("textbox", { name: "Name the resume as it is now" }), {
 			target: { value: "Unsaved draft" },
 		});
-		fireEvent.click(screen.getByRole("button", { name: "Save" }));
+		fireEvent.click(screen.getByRole("button", { name: "Save version" }));
 	} else fireEvent.click(await screen.findByRole("button", { name: "Restore this version" }));
 	await waitFor(() =>
 		expect(mocks.toast).toHaveBeenCalledWith({
@@ -75,9 +76,61 @@ it.each(["name", "restore"])("stops History %s after the save barrier fails", as
 	expect(mocks.restore).not.toHaveBeenCalled();
 	expect(mocks.replace).not.toHaveBeenCalled();
 	if (action === "name")
-		expect((screen.getByRole("textbox", { name: "Name this version" }) as HTMLInputElement).value).toBe(
+		expect((screen.getByRole("textbox", { name: "Name the resume as it is now" }) as HTMLInputElement).value).toBe(
 			"Unsaved draft",
 		);
 	else expect(useEditorStore.getState().historyVersionId).toBe("version");
 	client.clear();
+});
+
+function CompareVersion() {
+	const [showingNow, onCompare] = useState(false);
+	return <ResumeVersionBar showingNow={showingNow} onCompare={onCompare} />;
+}
+
+it("compares with Now without restoring or losing the picked version, then leaves the preview", async () => {
+	useEditorStore.setState({ historyVersionId: "version", historyOpen: true });
+	const client = new QueryClient();
+	render(
+		<QueryClientProvider client={client}>
+			<I18nProvider i18n={i18n}>
+				<CompareVersion />
+			</I18nProvider>
+		</QueryClientProvider>,
+	);
+	fireEvent.click(await screen.findByRole("radio", { name: "Now" }));
+	expect(screen.getByRole("radio", { name: "Now" })).toBeChecked();
+	expect(useEditorStore.getState().historyVersionId).toBe("version");
+	expect(mocks.restore).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Back to now" }));
+	expect(useEditorStore.getState().historyVersionId).toBeNull();
+	client.clear();
+});
+
+it("shows an immutable banner when History opens on a sent version, then returns to the current draft", async () => {
+	useEditorStore.setState({ historyVersionId: "sent", historyOpen: true });
+	const restore = vi.fn();
+	const source = {
+		versions: [{ id: "sent", kind: "sent" as const, name: "Example", createdAt: new Date("2026-11-02T09:00:00Z") }],
+		loading: false,
+		locked: false,
+		nowDetail: "Current draft",
+		save: vi.fn(),
+		restore,
+		rename: vi.fn(),
+		remove: vi.fn(),
+		errorMessage: String,
+	};
+	render(
+		<I18nProvider i18n={i18n}>
+			<HistoryTimeline source={source} />
+			<HistoryVersionBar source={source} showingNow={false} onCompare={() => {}} />
+		</I18nProvider>,
+	);
+	expect(await screen.findByText(/The version sent to Example.*it never changes/)).toBeTruthy();
+	expect(screen.queryByRole("button", { name: "Restore this version" })).toBeNull();
+	fireEvent.click(screen.getByRole("button", { name: "Edit current draft" }));
+	expect(useEditorStore.getState().historyVersionId).toBeNull();
+	expect(useEditorStore.getState().historyOpen).toBe(false);
+	expect(restore).not.toHaveBeenCalled();
 });

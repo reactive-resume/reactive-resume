@@ -104,6 +104,12 @@ export function useToastOffset(bottom: number) {
 	}, [bottom]);
 }
 
+/** What the docks and footers cover at the bottom of the screen, safe area included (menus keep clear of it). */
+export function useCoveredBottom(): number {
+	const insets = useSafeAreaInsets();
+	return useToasts((s) => s.offsets.at(-1)?.bottom ?? insets.bottom);
+}
+
 // Android: any per-frame layout or transform change sends accessibility a content change (through the toast's live
 // region too), so the screen never reads as idle to TalkBack or UiAutomator while a toast is up. There the fuse is an
 // SVG rect whose width only redraws.

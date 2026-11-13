@@ -1,61 +1,48 @@
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ComponentProps, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
-import { Plural, Trans, useLingui } from "@lingui/react/macro";
+import { useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams, useSearch } from "@tanstack/react-router";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
-import { cn } from "@reactive-resume/utils/style";
 import { clampZoom, FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
 import { anchoredScroll, wheelZoom, type ZoomAnchor } from "./zoom-wheel";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { DOCUMENT_GROUP } from "@/features/keyboard-shortcuts/groups";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { usePreviewPausedStore, useResumeStore } from "@/features/resume/builder/draft";
 
 // The editor chrome resumes and letters share: the back link and drawer controls in the bar, the canvas width
 // and the zoom bar.
 
-const LANDSCAPE_QUERY = "(orientation: landscape)";
-
-function subscribeToOrientation(onChange: () => void) {
-	const list = window.matchMedia(LANDSCAPE_QUERY);
-	list.addEventListener("change", onChange);
-	return () => list.removeEventListener("change", onChange);
-}
-
-/** Tablets in landscape can pin the panel beside the page. */
-export const useIsLandscape = () =>
-	useSyncExternalStore(
-		subscribeToOrientation,
-		() => window.matchMedia(LANDSCAPE_QUERY).matches,
-		() => false,
-	);
-
 // Page widths in PDF points; 1pt renders as 1 CSS px at 100%.
 const PAGE_WIDTH = { a4: 595.28, letter: 612, "free-form": 595.28 } as const;
 // Horizontal room the canvas keeps around the page: 40px each side, 16px on phones.
 const CANVAS_GUTTER = { wide: 80, narrow: 32 } as const;
 
-function useCanvasWidth() {
+function useCanvasSize() {
 	const ref = useRef<HTMLDivElement>(null);
-	const [width, setWidth] = useState(0);
+	const [size, setSize] = useState({ width: 0, height: 0 });
 
 	useEffect(() => {
 		const element = ref.current;
 		if (!element) return;
-		const observer = new ResizeObserver(([entry]) => setWidth(entry?.contentRect.width ?? 0));
+		// Fit subtracts the horizontal gutters once; contentRect already excludes that padding.
+		const observer = new ResizeObserver(([entry]) =>
+			setSize({ width: element.clientWidth, height: entry?.contentRect.height ?? 0 }),
+		);
 		observer.observe(element);
 		return () => observer.disconnect();
 	}, []);
 
-	return [ref, width] as const;
+	return [ref, size.width, size.height] as const;
 }
 
 /**
@@ -94,12 +81,22 @@ function pageUnderPointer(canvas: HTMLElement, clientX: number, clientY: number)
  * The canvas ref, the fit scale for the page format, and the scale the page is drawn at (zoom, or fit). `covered` is
  * the canvas width something lies over (a sheet), which fit leaves out.
  */
-export function usePageScale(format: keyof typeof PAGE_WIDTH, covered = 0) {
+export function usePageScale(
+	format: keyof typeof PAGE_WIDTH,
+	covered = 0,
+	/** Pages side by side: fit divides what's left of the width between them, and keeps one whole page in view. */
+	across?: { pages: number; gap: number; pageHeight: number; chrome: number },
+) {
 	const zoom = useEditorStore((state) => state.zoom);
 	const isPhone = useBreakpoint() === "mobile";
-	const [canvasRef, canvasWidth] = useCanvasWidth();
+	const [canvasRef, canvasWidth, canvasHeight] = useCanvasSize();
 	const gutter = isPhone ? CANVAS_GUTTER.narrow : CANVAS_GUTTER.wide;
-	const fitScale = canvasWidth > 0 ? Math.min(FIT_MAX, (canvasWidth - gutter - covered) / PAGE_WIDTH[format]) : 1;
+	const pages = across?.pages ?? 1;
+	const widthFit = (canvasWidth - gutter - covered - (across?.gap ?? 0) * (pages - 1)) / (PAGE_WIDTH[format] * pages);
+	// Side by side, a page is seen whole: the canvas's height counts too, in steps of 10%.
+	const heightFit = across ? (canvasHeight - across.chrome) / across.pageHeight : Number.POSITIVE_INFINITY;
+	const fit = Math.min(FIT_MAX, widthFit, heightFit);
+	const fitScale = canvasWidth > 0 ? (across ? Math.max(ZOOM_MIN, Math.floor(fit * 10) / 10) : fit) : 1;
 	const pageScale = zoom === "fit" ? Math.max(0.25, fitScale) : zoom;
 
 	// The wheel handler outlives renders: keep the current fit scale where it can read it.
@@ -235,23 +232,28 @@ export function CanvasStatusPill({ icon, children }: CanvasStatusPillProps) {
 // Base UI's trigger hands its ref, handlers and aria state to the element it renders.
 type DocumentMenuTriggerProps = ComponentProps<"button"> & { name: string; isLocked: boolean };
 
-/** The document name in the editor bar, as the button that opens the document menu. */
-export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTriggerProps) {
+/**
+ * The document name in the editor bar, as the button that opens the document menu. The name is the button's own
+ * text and takes its own direction; the hover ground bleeds 6px past it. A locked resume says so in the status line.
+ */
+export function DocumentMenuTrigger({ name, isLocked: _isLocked, ...props }: DocumentMenuTriggerProps) {
 	return (
-		<button
-			type="button"
-			{...props}
-			aria-label={t`Document menu: ${name}`}
-			className="touch-target relative -mx-1.5 flex max-w-[calc(100%+0.75rem)] min-w-0 flex-col items-start justify-center rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover"
-		>
-			<span className="flex max-w-full min-w-0 items-center gap-1.5">
-				<span dir="auto" className="truncate text-sm leading-[18px] font-semibold text-ink">
-					{name}
-				</span>
-				{isLocked && <Icon name="lock" size={16} className="text-ink-3" />}
-				<Icon name="caret-down" size={16} className="text-ink-3" />
-			</span>
-		</button>
+		<>
+			<h1 className="sr-only" dir="auto">
+				{name}
+			</h1>
+			<button
+				type="button"
+				dir="auto"
+				{...props}
+				aria-label={t`Document menu: ${name}`}
+				title={name}
+				className="touch-target relative isolate flex max-w-full min-w-0 items-center gap-1 text-start text-[15px]/5 font-semibold text-ink before:absolute before:-inset-x-1.5 before:-inset-y-0.5 before:-z-10 before:rounded-sm before:transition-colors before:duration-quick hover:before:bg-hover aria-expanded:before:bg-hover pointer-coarse:after:top-5.5"
+			>
+				<span className="truncate">{name}</span>
+				<Icon name="caret-down" size={14} className="shrink-0 text-ink-3" />
+			</button>
+		</>
 	);
 }
 
@@ -276,10 +278,8 @@ export function BackLink() {
 				item.id === applicationId &&
 				(params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId),
 		) ??
-		(!search.applicationId
-			? applications?.find((item) =>
-					params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId,
-				)
+		(!params.resumeId && !search.applicationId
+			? applications?.find((item) => item.coverLetterId === params.coverLetterId)
 			: undefined);
 	const label = application ? t`Back to ${application.company}` : t`Back to documents`;
 
@@ -288,64 +288,47 @@ export function BackLink() {
 			<TooltipTrigger
 				render={
 					<Link
-						to={application ? "/dashboard/applications" : "/dashboard"}
+						to={application ? "/dashboard/applications" : "/dashboard/documents"}
 						search={application ? { applicationId: application.id } : {}}
 						aria-label={label}
 						className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
 					/>
 				}
 			>
-				<Icon name="arrow-left" />
+				<Icon name="caret-left" />
 			</TooltipTrigger>
 			<TooltipContent side="bottom">{label}</TooltipContent>
 		</Tooltip>
 	);
 }
 
-/** Tablet: show or hide the panel drawer and, in landscape, pin it beside the page. */
-export function DrawerControls({ pinnable }: { pinnable: boolean }) {
-	const open = useEditorStore((state) => state.drawerOpen);
-	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
-
+/** Tablet: hide the panel to give the page the whole canvas. */
+export function DrawerControls({ pinnable: _pinnable }: { pinnable: boolean }) {
+	const hidden = useEditorStore((state) => state.panelHidden);
 	return (
-		<>
-			{!pinned && (
-				<IconButton
-					icon={open ? "sidebar-simple" : "sidebar-simple"}
-					id="editor-panel-toggle"
-					aria-controls="editor-panel"
-					label={open ? t`Hide panel` : t`Show panel`}
-					aria-expanded={open}
-					className="text-ink-2"
-					onClick={() => useEditorStore.setState({ drawerOpen: !open })}
-				/>
-			)}
-			{pinnable && (open || pinned) && (
-				<IconButton
-					icon="square-split-horizontal"
-					label={t`Keep the panel beside the page`}
-					aria-pressed={pinned}
-					className={cn("text-ink-2", pinned && "bg-accent-soft text-accent-text")}
-					onClick={() => {
-						// Unpinning leaves the drawer open over the page.
-						useEditorStore.setState({ drawerPinned: !pinned, drawerOpen: true });
-					}}
-				/>
-			)}
-		</>
+		<IconButton
+			icon="sidebar-simple"
+			id="editor-panel-toggle"
+			aria-controls="editor-panel"
+			label={hidden ? t`Show panel` : t`Hide panel`}
+			aria-expanded={!hidden}
+			className="text-ink-2"
+			onClick={() => useEditorStore.setState({ panelHidden: !hidden })}
+		/>
 	);
 }
 
 type ZoomBarProps = {
 	fitScale: number;
-	pageCount: number;
+	/** Kept for callers; the status line under the document's name counts the pages. */
+	pageCount?: number;
 };
 
 /**
- * − · Fit · + and the page count, floating 18px above the bottom of the canvas. Zoom runs from 60% to 300%, and
- * Ctrl/Cmd+wheel over the canvas zooms around the pointer.
+ * − · the scale · + · Fit, in the canvas's lower end corner, so nothing floats over the page. Zoom runs from 60% to
+ * 300%, and Ctrl/Cmd+wheel over the canvas zooms around the pointer.
  */
-export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
+export function ZoomBar({ fitScale }: ZoomBarProps) {
 	const { t } = useLingui();
 	const { ref } = useFloatingToolbarSpace();
 	const paused = usePreviewPausedStore((state) => state.paused);
@@ -353,55 +336,38 @@ export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 	const setZoom = useEditorStore((state) => state.setZoom);
 	const current = zoom === "fit" ? fitScale : zoom;
 
-	useHotkey("Mod+0", () => setZoom("fit"), { meta: { name: t`Fit page to width` } });
-	// Toasts sit bottom center, where this bar is: lift them above it while it's on screen.
-	useEffect(() => {
-		const root = document.documentElement;
-		root.style.setProperty("--toast-bottom", "4.5rem");
-		return () => {
-			root.style.removeProperty("--toast-bottom");
-		};
-	}, []);
-
-	const buttonClassName =
-		// touch-target: a 44px hit area on touch screens around the 32px button; the bar's coarse-pointer gap keeps
-		// neighbouring hit areas from overlapping.
-		"touch-target relative flex size-8 items-center justify-center rounded-lg text-ink-2 transition-colors duration-quick hover:bg-hover disabled:text-ink-3 disabled:hover:bg-transparent";
+	useHotkey("Mod+0", () => setZoom("fit"), { meta: { name: t`Fit page to width`, group: DOCUMENT_GROUP } });
 
 	return (
 		<div
 			ref={paused ? undefined : ref}
-			className="absolute bottom-[18px] left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-line bg-raised p-1 shadow-e2 pointer-coarse:gap-1.5"
+			className="absolute end-5 bottom-5 flex h-10 items-center gap-0.5 rounded-lg border border-line bg-raised px-1 shadow-e2 pointer-coarse:gap-1.5"
 		>
-			<button
-				type="button"
-				aria-label={t`Zoom out`}
+			<IconButton
+				icon="minus"
+				label={t`Zoom out`}
+				size="icon-sm"
+				tooltipSide="top"
 				disabled={current <= ZOOM_MIN}
-				className={buttonClassName}
 				onClick={() => setZoom(current - ZOOM_STEP)}
-			>
-				<Icon name="minus" />
-			</button>
-			<button
-				type="button"
-				aria-label={t`Fit page to width`}
-				className="touch-target relative h-8 min-w-[52px] rounded-lg px-1.5 font-mono text-xs font-medium text-ink transition-colors duration-quick hover:bg-hover"
-				onClick={() => setZoom("fit")}
-			>
-				{zoom === "fit" ? <Trans>Fit</Trans> : `${Math.round(current * 100)}%`}
-			</button>
-			<button
-				type="button"
-				aria-label={t`Zoom in`}
+			/>
+			<span className="px-2 text-center t-mono text-ink-2">{`${Math.round(current * 100)}%`}</span>
+			<IconButton
+				icon="plus"
+				label={t`Zoom in`}
+				size="icon-sm"
+				tooltipSide="top"
 				disabled={current >= ZOOM_MAX}
-				className={buttonClassName}
 				onClick={() => setZoom(current + ZOOM_STEP)}
-			>
-				<Icon name="plus" />
-			</button>
-			<span className="px-2 font-mono text-xs whitespace-nowrap text-ink-3">
-				<Plural value={pageCount} one="# page" other="# pages" />
-			</span>
+			/>
+			<IconButton
+				icon="arrows-in-simple"
+				label={t`Fit page to window`}
+				shortcut="⌘0"
+				size="icon-sm"
+				tooltipSide="top"
+				onClick={() => setZoom("fit")}
+			/>
 		</div>
 	);
 }

@@ -1155,6 +1155,10 @@ msgstr "Trimisă pe {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Trimisă pe 28 oct. · poți trimite acum un mesaj scurt"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Se aplică paginii web după stilurile ei proprii, la orice dimensiune a ecranului. PDF-ul rămâne la fel."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Încărcare nereușită"
 msgid "Couldn't load this document. Try again."
 msgstr "Acest document nu a putut fi încărcat. Încearcă din nou."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Această versiune nu a putut fi încărcată. Încearcă din nou."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Încărcare nereușită. Încearcă din nou."
@@ -2405,6 +2405,10 @@ msgstr "Personalizat"
 msgid "Custom colour"
 msgstr "Culoare personalizată"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "CSS personalizat"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Zilnic"
@@ -2658,10 +2662,6 @@ msgstr "Document"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Acțiuni pentru document"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Document indisponibil."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Frecvență de programare nevalidă."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Răspuns de transcriere nevalid."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Problema {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Pagina {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Pagina {0} din {1}"
@@ -5445,7 +5440,7 @@ msgstr "Exersează aceste întrebări"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Exersați această poveste"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Adaptează la anunț"
 msgid "Take photo"
 msgstr "Faceți o fotografie"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Atinge o secțiune pentru editare"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Atinge pentru copiere"
@@ -7682,7 +7673,7 @@ msgstr "Activează mai întâi linkul public în Partajare."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Dezactivat"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

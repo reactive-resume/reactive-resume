@@ -10,22 +10,22 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@reactive-resume/ui/components/alert-dialog";
-import { HoldButton } from "@reactive-resume/ui/components/hold-button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { cn } from "@reactive-resume/utils/style";
 import { isImeComposing } from "@/libs/keyboard";
 
 type AskOptions = {
-	description?: string;
+	description?: React.ReactNode;
 	confirmText?: string;
-	variant?: "primary" | "danger";
+	variant?: "primary" | "secondary" | "danger";
 	cancelText?: string;
 	/** Prompts only: the text the field starts with. */
 	defaultValue?: string;
 	maxLength?: number;
 	/** An aborted request dismisses its pending confirmation. */
 	signal?: AbortSignal;
-	/** Confirmations only: the confirm button must be held, for actions that can't be undone. */
+	/** @deprecated Ignored. A permanent delete asks once with a plain danger button (`variant: "danger"`). */
 	hold?: boolean;
 };
 
@@ -96,10 +96,12 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 			<AlertDialog open={state.open} onOpenChange={(open) => !open && answer(null)}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>{state.title}</AlertDialogTitle>
-						<AlertDialogDescription className={cn(!state.description && "sr-only")}>
-							{state.description}
-						</AlertDialogDescription>
+						<AlertDialogTitle className="pe-8">{state.title}</AlertDialogTitle>
+						{!state.withInput && (
+							<AlertDialogDescription render={<div />} className={cn(!state.description && "sr-only")}>
+								{state.description}
+							</AlertDialogDescription>
+						)}
 					</AlertDialogHeader>
 
 					{state.withInput && (
@@ -107,6 +109,8 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 							value={value}
 							maxLength={state.maxLength}
 							aria-label={state.title}
+							// A prompt opens with its text selected: typing replaces the name.
+							onFocus={(event) => event.currentTarget.select()}
 							onChange={(event) => setValue(event.target.value)}
 							onKeyDown={(event) => {
 								if (isImeComposing(event)) return;
@@ -115,18 +119,34 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 						/>
 					)}
 
+					{state.withInput && (
+						<AlertDialogDescription className={cn("t-caption text-ink-3", !state.description && "sr-only")}>
+							{state.description}
+						</AlertDialogDescription>
+					)}
+
 					<AlertDialogFooter>
-						<AlertDialogCancel onClick={() => answer(null)}>{state.cancelText ?? t`Cancel`}</AlertDialogCancel>
-						{state.hold ? (
-							<HoldButton variant="danger" onConfirm={() => answer("")}>
-								{state.confirmText}
-							</HoldButton>
-						) : (
-							<AlertDialogAction variant={state.variant} onClick={() => answer(state.withInput ? value : "")}>
-								{state.confirmText ?? t`Confirm`}
-							</AlertDialogAction>
-						)}
+						<AlertDialogCancel variant="ghost" onClick={() => answer(null)}>
+							{state.cancelText ?? t`Cancel`}
+						</AlertDialogCancel>
+						<AlertDialogAction
+							variant={state.hold ? "danger" : (state.variant ?? (state.withInput ? "secondary" : "primary"))}
+							onClick={() => answer(state.withInput ? value : "")}
+						>
+							{state.confirmText ?? t`Confirm`}
+						</AlertDialogAction>
 					</AlertDialogFooter>
+
+					{/* calm: request to lead: AlertDialogContent has no close button; this is DialogContent's, by hand. */}
+					<AlertDialogCancel
+						variant="ghost"
+						size="icon"
+						aria-label={t`Close`}
+						className="absolute inset-e-[calc(var(--dialog-pad)-8px)] top-[calc(var(--dialog-pad)-4px)]"
+						onClick={() => answer(null)}
+					>
+						<Icon name="x" />
+					</AlertDialogCancel>
 				</AlertDialogContent>
 			</AlertDialog>
 		</AskContext.Provider>

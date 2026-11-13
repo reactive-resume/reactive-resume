@@ -7,6 +7,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const api = vi.hoisted(() => ({
+	navigate: vi.fn(),
+	edit: vi.fn(),
+	linkCall: vi.fn(),
+	copy: vi.fn(),
+	patch: vi.fn(),
 	application: { id: "job-a", company: "Example", role: "Engineer", jobDescription: null as string | null },
 	load: vi.fn(async () => api.application),
 	update: vi.fn(async (input: { jobDescription: string }) => {
@@ -29,21 +34,33 @@ vi.mock("@/libs/orpc/client", () => ({
 				queryOptions: () => ({ queryKey: ["applications", "summary"], queryFn: async () => [] }),
 			},
 			update: { mutationOptions: () => ({ mutationFn: api.update }) },
+			create: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 		},
-		documents: { linkApplication: { mutationOptions: () => ({ mutationFn: vi.fn() }) } },
+		documents: {
+			key: () => ["documents"],
+			copyForJob: { mutationOptions: () => ({ mutationFn: api.copy }) },
+			linkApplication: { call: api.linkCall, mutationOptions: () => ({ mutationFn: api.linkCall }) },
+		},
 	},
 }));
 vi.mock("@/features/resume/builder/draft", () => ({
 	useCurrentBuilderResumeSelector: (select: (resume: { id: string; applicationId: string }) => unknown) =>
 		select({ id: "resume-a", applicationId: "job-a" }),
 	useIsResumeLocked: () => false,
-	usePatchResume: () => vi.fn(),
+	usePatchResume: () => api.patch,
 }));
 vi.mock("@/features/assistant/open", () => ({ openAssistantFrom: vi.fn() }));
-vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn(), useSearch: () => ({}) }));
-vi.mock("./actions", () => ({ checkStateOf: vi.fn(), editWithUndo: vi.fn() }));
+vi.mock("@tanstack/react-router", () => ({
+	useNavigate: () => api.navigate,
+	useSearch: () => ({}),
+	Link: ({ children }: { children: React.ReactNode }) => <a href="/dashboard/applications/fixture/fit">{children}</a>,
+}));
+vi.mock("./actions", () => ({ checkStateOf: vi.fn(), editWithUndo: api.edit }));
 vi.mock("@reactive-resume/resume/ats-pdf", () => ({ matchJobDescription: () => ({ terms: [] }) }));
 
+vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
+	useHasUsableAiProvider: () => ({ hasUsableProvider: true }),
+}));
 import { useEditorStore } from "../store";
 import { JobMatchTab, useJobMatch } from "./job-match";
 
@@ -85,6 +102,13 @@ it("keeps the selected application's posting isolated from a different stored li
 	useEditorStore.setState({ pastedPosting: "Unrelated pasted posting" });
 	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
 	client.setQueryData(["applications", "detail", { id: "job-a" }], api.application);
+	client.setQueryData(
+		["applications", "summary"],
+		[
+			{ id: "job-b", company: "Selected company", role: "Analyst", status: "saved" },
+			{ id: "job-c", company: "Other company", role: "Designer", status: "saved" },
+		],
+	);
 	let resolve!: (value: typeof api.application) => void;
 	api.load.mockImplementationOnce(
 		() =>
@@ -103,9 +127,38 @@ it("keeps the selected application's posting isolated from a different stored li
 	expect(screen.getByTestId("posting").textContent).toBe("");
 	resolve({ id: "job-b", company: "Selected company", role: "Analyst", jobDescription: "Selected posting" });
 	await waitFor(() => expect(screen.getByTestId("posting").textContent).toBe("Selected posting"));
-	expect(screen.getByText("Analyst · Selected company")).toBeTruthy();
-	expect(screen.getByText("For this visit only")).toBeTruthy();
-	expect(screen.queryByRole("button", { name: "Change" })).toBeNull();
+	expect(screen.getByText("Selected company")).toBeTruthy();
+	// Picked for this visit, not the resume's stored link.
+	expect(screen.getByText("Analyst · For this visit only")).toBeTruthy();
+	expect(screen.queryByText(/saved job/)).toBeNull();
+	api.update.mockClear();
+
+	fireEvent.click(screen.getByRole("button", { name: "Change" }));
+	fireEvent.change(screen.getByRole("combobox", { name: "Link an application" }), { target: { value: "job-c" } });
+	expect(api.navigate).toHaveBeenCalled();
+	const navigation = api.navigate.mock.calls.at(-1)?.[0];
+	expect(navigation.search({ mode: "check", checkTab: "match", applicationId: "job-b" })).toEqual({
+		mode: "check",
+		checkTab: "match",
+		applicationId: "job-c",
+	});
+	// Switching the visit's job only changes the address; nothing is linked, copied or saved.
+	expect(api.linkCall).not.toHaveBeenCalled();
+	expect(api.copy).not.toHaveBeenCalled();
+	expect(api.update).not.toHaveBeenCalled();
+	expect(api.patch).not.toHaveBeenCalled();
+	cleanup();
+
+	// Without the visit's job, the stored link is back.
+	render(
+		<QueryClientProvider client={client}>
+			<I18nProvider i18n={i18n}>
+				<Match />
+			</I18nProvider>
+		</QueryClientProvider>,
+	);
+	expect(await screen.findByText("Engineer · saved job")).toBeTruthy();
+	expect(screen.queryByText(/For this visit only/)).toBeNull();
 	client.clear();
 });
 
@@ -130,5 +183,41 @@ it("shows a failed selected posting with retry instead of matching an unrelated 
 	expect(screen.getByTestId("posting").textContent).toBe("");
 	fireEvent.click(screen.getByRole("button", { name: "Retry" }));
 	await waitFor(() => expect(screen.getByTestId("posting").textContent).toBe("Selected posting"));
+	client.clear();
+});
+
+it("offers Add to Skills for an uncatalogued term and adds only the chosen wording", () => {
+	i18n.loadAndActivate({ locale: "en", messages: {} });
+	const data = structuredClone(defaultResumeData);
+	const client = new QueryClient();
+	render(
+		<QueryClientProvider client={client}>
+			<I18nProvider i18n={i18n}>
+				<JobMatchTab
+					data={data}
+					match={{
+						application: null,
+						posting: "Work with real users",
+						result: {
+							found: [],
+							missing: [{ term: "real users", label: "real users", jdCount: 2, resumeCount: 0, weight: 1 }],
+							total: 1,
+						},
+						hiddenTerms: [],
+						contextOnly: false,
+						applicationLoading: false,
+						applicationFailed: false,
+						retryApplication: vi.fn(),
+					}}
+				/>
+			</I18nProvider>
+		</QueryClientProvider>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "real users" }));
+	fireEvent.click(screen.getByRole("button", { name: "Add to Skills" }));
+	const edit = api.edit.mock.calls.at(-1)?.[0];
+	expect(edit).toBeTypeOf("function");
+	edit(data);
+	expect(data.sections.skills.items.at(-1)?.name).toBe("real users");
 	client.clear();
 });

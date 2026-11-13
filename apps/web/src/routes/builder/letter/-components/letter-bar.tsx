@@ -1,6 +1,7 @@
-import { ph, t } from "@lingui/core/macro";
+import { ph, plural, t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import {
@@ -18,6 +19,8 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { LetterDownloadMenu } from "./download-sheet";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
@@ -25,6 +28,7 @@ import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
 import { DownloadButtons, EditorBarFrame } from "@/features/resume/editor/chrome/bar";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useConfirm, usePrompt } from "@/hooks/use-confirm";
+import { sessionSignInURL, useSessionRecovery } from "@/libs/auth/session-recovery";
 import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -49,14 +53,14 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 			layout={layout}
 			pinnable={pinnable}
 			menu={<LetterMenu />}
+			history={<LetterUndoRedo />}
+			historyInPanel
 			modes={
-				<TabsList aria-label={t`Editor mode`} className="h-9" data-mode-switch="">
-					<TabsTrigger value="write" className="px-4">
-						<Icon name="pencil-simple" size={18} />
+				<TabsList aria-label={t`Editor mode`} data-mode-switch="">
+					<TabsTrigger value="write">
 						<Trans>Write</Trans>
 					</TabsTrigger>
-					<TabsTrigger value="design" className="px-4">
-						<Icon name="palette" size={18} />
+					<TabsTrigger value="design">
 						<Trans>Design</Trans>
 					</TabsTrigger>
 				</TabsList>
@@ -69,8 +73,24 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 				onDownload={() => void download.run()}
 				compact={layout === "mobile"}
 				iconOnly={layout === "tablet"}
+				renderMore={(button) => <LetterDownloadMenu trigger={button} />}
 			/>
 		</EditorBarFrame>
+	);
+}
+
+/** P8: the letter's Undo and Redo, as on the resume bar; ⌘Z and ⇧⌘Z do the same outside a field. */
+function LetterUndoRedo() {
+	const undo = useLetterEditorStore((state) => state.undo);
+	const redo = useLetterEditorStore((state) => state.redo);
+	const canUndo = useLetterEditorStore((state) => state.undoStack.length > 0 && !state.letter?.isLocked);
+	const canRedo = useLetterEditorStore((state) => state.redoStack.length > 0 && !state.letter?.isLocked);
+
+	return (
+		<>
+			<IconButton icon="arrow-u-up-left" label={t`Undo`} shortcut="⌘Z" disabled={!canUndo} onClick={undo} />
+			<IconButton icon="arrow-u-up-right" label={t`Redo`} shortcut="⇧⌘Z" disabled={!canRedo} onClick={redo} />
+		</>
 	);
 }
 
@@ -105,23 +125,13 @@ const failed = (error: unknown) =>
 		description: getOrpcErrorMessage(error, { fallback: t`Couldn't update the letter. Try again.` }),
 	});
 
-/** The name opens the letter's menu: rename, duplicate, lock and Move to Trash. The save state sits under it. */
-function LetterMenu() {
-	const helpRequested = useRef(false);
-	const menuTrigger = useRef<HTMLButtonElement>(null);
+/** Duplicate (asks for the copy's name, then opens it) and Lock, shared by the name's menu and the locked panel (L5). */
+export function useLetterActions() {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const prompt = usePrompt();
 	const id = useLetterEditorStore((state) => state.letter?.id ?? "");
-	const name = useLetterEditorStore((state) => state.letter?.name ?? "");
-	const isLocked = useLetterEditorStore((state) => state.letter?.isLocked ?? false);
 	const ref = { type: "letter" as const, id };
-
-	const rename = async () => {
-		const next = await prompt(t`Rename letter`, { defaultValue: name });
-		const trimmed = next?.trim().slice(0, 100);
-		if (trimmed && trimmed !== name) useLetterEditorStore.getState().edit({ name: trimmed });
-	};
 
 	const duplicate = async () => {
 		try {
@@ -150,6 +160,29 @@ function LetterMenu() {
 			})
 			.catch(failed);
 
+	return { duplicate, setLocked };
+}
+
+/** The name opens the letter's menu: rename, duplicate, lock and Move to Trash. The save state sits under it. */
+function LetterMenu() {
+	const helpRequested = useRef(false);
+	const menuTrigger = useRef<HTMLButtonElement>(null);
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const prompt = usePrompt();
+	const id = useLetterEditorStore((state) => state.letter?.id ?? "");
+	const name = useLetterEditorStore((state) => state.letter?.name ?? "");
+	const isLocked = useLetterEditorStore((state) => state.letter?.isLocked ?? false);
+	const ref = { type: "letter" as const, id };
+
+	const rename = async () => {
+		const next = await prompt(t`Rename letter`, { defaultValue: name, confirmText: t`Rename` });
+		const trimmed = next?.trim().slice(0, 100);
+		if (trimmed && trimmed !== name) useLetterEditorStore.getState().edit({ name: trimmed });
+	};
+
+	const { duplicate, setLocked } = useLetterActions();
+
 	// Undoable, so it doesn't ask first: the letter waits in Trash for 30 days.
 	const trash = async () => {
 		try {
@@ -157,7 +190,7 @@ function LetterMenu() {
 				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 			await client.documents.trash(ref);
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
-			void navigate({ to: "/dashboard" });
+			void navigate({ to: "/dashboard/documents" });
 			toast.add({
 				description: t`“${ph({ name: isolate(name) })}” moved to Trash`,
 				actionProps: {
@@ -185,7 +218,7 @@ function LetterMenu() {
 				}}
 			>
 				<DropdownMenuTrigger ref={menuTrigger} render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
-				<DropdownMenuContent align="start" className="w-60">
+				<DropdownMenuContent align="start" className="w-[220px]">
 					<DropdownMenuItem disabled={isLocked} onClick={() => void rename()}>
 						<Icon name="pencil-simple" />
 						<Trans>Rename…</Trans>
@@ -208,6 +241,7 @@ function LetterMenu() {
 						<Icon name="keyboard" />
 						<Trans>Keyboard shortcuts</Trans>
 					</DropdownMenuItem>
+					<DropdownMenuSeparator className="pointer-coarse:hidden" />
 					<DropdownMenuItem variant="destructive" disabled={isLocked} onClick={() => void trash()}>
 						<Icon name="trash" />
 						<Trans>Move to Trash</Trans>
@@ -219,9 +253,33 @@ function LetterMenu() {
 	);
 }
 
-/** Saved, Saving…, Not saved · Retry, or Review saved version · Reload. */
+/** The same save line as the resume editor, with recovery actions beside the status. */
 function LetterSaveStatus() {
+	const letter = useLetterEditorStore((state) => state.letter);
 	const status = useLetterEditorStore((state) => state.status);
+	const pageCount = useEditorStore((state) => state.rendered.pageCount);
+	const { data: applications } = useQuery({
+		...applicationsListQueryOptions(),
+		enabled: !!letter?.sourceApplicationId,
+	});
+	const application = applications?.find((item) => item.id === letter?.sourceApplicationId);
+	const { i18n } = useLingui();
+	const company = application?.company ?? "";
+	const sent = Boolean(application?.sentCoverLetterVersionId && application.coverLetterId === letter?.id);
+	// The status keeps both the destination and submission date visible.
+	const sentOn =
+		sent && application?.appliedAt ? i18n.date(application.appliedAt, { day: "numeric", month: "short" }) : null;
+	const standing = sent
+		? sentOn
+			? t`Sent to ${company} ${sentOn}`
+			: t`Sent to ${company}`
+		: company
+			? t`For ${company}`
+			: t`Draft`;
+	const facts = [pageCount > 0 ? plural(pageCount, { one: "# page", other: "# pages" }) : null, standing]
+		.filter(Boolean)
+		.join(" · ");
+	const sessionEnded = useSessionRecovery((state) => state.accountId !== null);
 	const confirm = useConfirm();
 	const queryClient = useQueryClient();
 	const [reloading, setReloading] = useState(false);
@@ -254,16 +312,18 @@ function LetterSaveStatus() {
 	const announcement =
 		status === "saving"
 			? t`Saving…`
-			: status === "saved"
-				? t`Saved`
+			: status === "offline"
+				? t`Offline · saved on this device`
 				: status === "error"
-					? t`Not saved`
+					? sessionEnded
+						? t`Not saved · Sign in to save`
+						: t`Not saved`
 					: status === "conflict"
 						? t`Review saved version`
-						: "";
+						: [letter?.isLocked ? (sent ? t`Locked` : t`Locked · unlock to save`) : t`Saved`, facts].join(" · ");
 
 	return (
-		<span className="flex min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
+		<span className="flex max-w-full min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
 			<span
 				className="sr-only"
 				role={status === "error" ? "alert" : "status"}
@@ -273,29 +333,41 @@ function LetterSaveStatus() {
 			</span>
 			{status === "saving" && (
 				<>
-					<Spinner decorative className="size-3" />
+					<Spinner decorative className="size-3.5" />
 					<Trans>Saving…</Trans>
 				</>
 			)}
-			{status === "saved" && (
-				<>
-					<Icon name="cloud-check" size={16} />
-					<Trans>Saved</Trans>
-				</>
+			{status === "saved" && <span className="truncate">{announcement}</span>}
+			{status === "offline" && (
+				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-warn-text")}>
+					<Icon name="cloud-slash" size={14} />
+					<span className="truncate">{announcement}</span>
+				</span>
 			)}
 			{status === "error" && (
 				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-danger-text")}>
 					<Icon name="cloud-warning" size={16} />
 					<Trans>Not saved</Trans>
 					<span aria-hidden="true">·</span>
-					<button
-						type="button"
-						onClick={() => void useLetterEditorStore.getState().flush()}
-						aria-label={t`Retry saving`}
-						className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
-					>
-						<Trans>Retry</Trans>
-					</button>
+					{sessionEnded ? (
+						<a
+							href={sessionSignInURL()}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="touch-target relative rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
+						>
+							<Trans>Sign in to save</Trans>
+						</a>
+					) : (
+						<button
+							type="button"
+							onClick={() => void useLetterEditorStore.getState().flush()}
+							aria-label={t`Retry saving`}
+							className="touch-target relative rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
+						>
+							<Trans>Retry</Trans>
+						</button>
+					)}
 				</span>
 			)}
 			{status === "conflict" && (
@@ -309,7 +381,7 @@ function LetterSaveStatus() {
 						type="button"
 						disabled={reloading}
 						onClick={() => void reload()}
-						className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80 disabled:opacity-50"
+						className="touch-target relative rounded-sm font-semibold underline underline-offset-2 hover:opacity-80 disabled:opacity-50"
 					>
 						<Trans>Reload</Trans>
 					</button>

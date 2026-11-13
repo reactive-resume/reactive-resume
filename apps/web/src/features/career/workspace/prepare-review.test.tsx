@@ -10,11 +10,15 @@ import { PrepareReview } from "./prepare-review";
 
 const workspace = vi.hoisted(() => ({
 	answers: [{ id: "written", question: "Why us?", answer: "Written by hand", factIds: [] as string[] }],
-	save: vi.fn(async () => true),
+	save: vi.fn(async (next: { answers: { id: string; question: string; answer: string; factIds: string[] }[] }) => {
+		workspace.answers = next.answers;
+		return true;
+	}),
 }));
 
 vi.mock("../hooks", async (importOriginal) => ({
 	...(await importOriginal<typeof import("../hooks")>()),
+	useDefaultProvider: () => ({ provider: {} }),
 	useWorkspace: () => ({ settled: async () => ({ answers: workspace.answers }), save: workspace.save }),
 }));
 vi.mock("@tanstack/react-router", () => ({
@@ -43,15 +47,27 @@ it("keeps a prepared answer beside the existing answers", async () => {
 			<PrepareReview application={{ id: "job" } as Application} disabled={false} />
 		</I18nProvider>,
 	);
-	fireEvent.click(screen.getByRole("button", { name: "Keep answer" }));
+	fireEvent.click(screen.getByRole("button", { name: "Prepare drafts" }));
+	expect(workspace.save).not.toHaveBeenCalled();
+	fireEvent.click(await screen.findByRole("button", { name: "Keep answer" }));
 	await waitFor(() => expect(workspace.save).toHaveBeenCalled());
-	expect(workspace.save.mock.lastCall).toEqual([
+	expect(await screen.findByText("Kept")).toBeVisible();
+	expect(
+		screen.queryByRole("textbox", { name: "Questions from the employer's form · optional" }),
+	).not.toBeInTheDocument();
+	expect(screen.getByRole("button", { name: "Done" })).toBeVisible();
+	const saved = workspace.save.mock.lastCall;
+	expect(saved).toEqual([
 		{
 			answers: [
-				...workspace.answers,
+				{ id: "written", question: "Why us?", answer: "Written by hand", factIds: [] },
 				{ id: expect.any(String), question: "Notice period?", answer: "Two weeks", factIds: [] },
 			],
 		},
-		{ answers: workspace.answers },
+		{ answers: [{ id: "written", question: "Why us?", answer: "Written by hand", factIds: [] }] },
 	]);
+
+	fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+	await screen.findByRole("button", { name: "Keep answer" });
+	expect(workspace.answers).toEqual([{ id: "written", question: "Why us?", answer: "Written by hand", factIds: [] }]);
 });

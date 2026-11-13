@@ -1155,6 +1155,10 @@ msgstr "{0} को आवेदन किया"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "28 अक्टूबर को आवेदन भेजा · अब छोटा संदेश भेजना ठीक है"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "वेब पेज की अपनी स्टाइल के बाद, हर स्क्रीन आकार पर लागू होता है। PDF जैसा है वैसा ही रहता है।"
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "यह लोड नहीं हो सका"
 msgid "Couldn't load this document. Try again."
 msgstr "यह दस्तावेज़ लोड नहीं हो सका। फिर कोशिश करें।"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "यह संस्करण लोड नहीं हो सका। फिर कोशिश करें।"
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "लोड नहीं हो सका। फिर कोशिश करें।"
@@ -2405,6 +2405,10 @@ msgstr "अनुकूलित"
 msgid "Custom colour"
 msgstr "मनचाहा रंग"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "कस्टम CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "रोज़ाना"
@@ -2658,10 +2662,6 @@ msgstr "दस्तावेज़"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "दस्तावेज़ की कार्रवाइयाँ"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "दस्तावेज़ उपलब्ध नहीं है।"
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "समय-सारणी की आवृत्ति अमान्�
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "ट्रांसक्रिप्ट का उत्तर अमान्य है।"
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "अंक {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "पृष्ठ {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "पृष्ठ {0} का {1}"
@@ -5445,7 +5440,7 @@ msgstr "इन प्रश्नों का अभ्यास करें"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "इस कहानी का अभ्यास करें"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "विज्ञापन के लिए अनुकूल बना�
 msgid "Take photo"
 msgstr "फोटो लो"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "संपादन के लिए सेक्शन पर टैप करें"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "कॉपी करने के लिए टैप करें"
@@ -7682,7 +7673,7 @@ msgstr "पहले साझाकरण में सार्वजनिक
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "बंद किया गया"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

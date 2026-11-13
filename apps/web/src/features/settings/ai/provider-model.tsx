@@ -101,7 +101,16 @@ export function ProviderModel({ id, provider, value, onChange, label, hint = tru
 					<div ref={anchor}>
 						<ComboboxInput {...inputProps} className="w-full">
 							<InputGroupAddon align="inline-end">
-								<ComboboxTrigger aria-label={t`Choose model`} render={<InputGroupButton size="icon-xs" />} />
+								{value === defaultModel && (
+									<span aria-hidden="true" className="truncate text-[13px]/[18px] text-ink-3 max-sm:hidden">
+										<Trans>Default · fast, low cost</Trans>
+									</span>
+								)}
+								<ComboboxTrigger
+									caret="down"
+									aria-label={t`Choose model`}
+									render={<InputGroupButton size="icon-xs" />}
+								/>
 							</InputGroupAddon>
 						</ComboboxInput>
 					</div>
@@ -115,7 +124,7 @@ export function ProviderModel({ id, provider, value, onChange, label, hint = tru
 			) : (
 				<Input {...inputProps} value={value} onChange={(event) => onChange(event.target.value)} />
 			)}
-			<div id={`${id}-hint`} className="grid gap-1 text-xs leading-5 text-ink-3">
+			<div id={`${id}-hint`} className="grid gap-1 text-xs leading-5 text-ink-3 empty:hidden">
 				{hint && defaultModel && (
 					<p>
 						<Trans>
@@ -129,9 +138,11 @@ export function ProviderModel({ id, provider, value, onChange, label, hint = tru
 						<Trans>No built-in suggestions for this provider.</Trans>
 					</p>
 				)}
-				<p>
-					<Trans>Enter any model ID supported by your endpoint.</Trans>
-				</p>
+				{(hint || !models.length) && (
+					<p>
+						<Trans>Enter any model ID supported by your endpoint.</Trans>
+					</p>
+				)}
 			</div>
 		</div>
 	);

@@ -14,7 +14,10 @@ export type EmptyStateProps = {
 	className?: string;
 };
 
-/** The same "nothing here yet" moment in every module: a dashed card, or a compact row inside a list. */
+/**
+ * The same "nothing here yet" moment in every module: a dashed card with a serif headline, one sentence and one
+ * action, or one quiet 13px line inside a list or under a section heading.
+ */
 export function EmptyState({
 	title,
 	description,
@@ -30,20 +33,27 @@ export function EmptyState({
 	return (
 		<div
 			data-slot="empty-state"
+			data-design={compact ? undefined : "empty"}
 			data-variant={variant}
 			className={cn(
 				compact
-					? "flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 py-3"
-					: "grid justify-items-center gap-2 rounded-xl border border-dashed border-line-2 p-7 text-center",
+					? "flex flex-wrap items-center justify-between gap-x-3 gap-y-1 py-3"
+					: "grid justify-items-center gap-2 rounded-xl border border-dashed border-line-2 px-6 py-8 text-center",
 				className,
 			)}
 		>
-			<div className={cn("grid gap-1", compact ? "min-w-0" : "justify-items-center")}>
-				<Title className={cn(compact ? "text-[13px] leading-[19px] text-ink" : "font-display text-[22px] leading-7")}>
+			<div className={cn("grid", compact ? "min-w-0 gap-px" : "justify-items-center gap-2")}>
+				<Title
+					className={cn(
+						compact ? "text-[13px] leading-[18px] text-ink-3" : "font-display text-[22px] leading-7 text-ink",
+					)}
+				>
 					{title}
 				</Title>
 				{description && (
-					<p className={compact ? "text-[13px] leading-[19px] text-ink-2" : "max-w-[340px] text-sm text-ink-2"}>
+					<p
+						className={compact ? "text-[13px] leading-[18px] text-ink-3" : "max-w-[460px] text-sm leading-5 text-ink-2"}
+					>
 						{description}
 					</p>
 				)}
@@ -52,7 +62,7 @@ export function EmptyState({
 				<div className={cn("grid w-full justify-items-center gap-3", compact && "justify-items-start")}>{children}</div>
 			)}
 			{(action || secondary) && (
-				<div className={cn("flex flex-wrap items-center gap-2", !compact && "justify-center")}>
+				<div className={cn("flex flex-wrap items-center gap-2", !compact && "mt-2 justify-center")}>
 					{action}
 					{secondary}
 				</div>

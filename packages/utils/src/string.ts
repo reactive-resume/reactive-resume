@@ -55,20 +55,18 @@ export function settleRequestId(key: string, storage?: RequestIdStorage, expecte
 	} else pendingRequestIds.delete(key);
 }
 
-/**
- * Generates initials from a name.
- * @param name - The name to generate initials from.
- * @returns The initials.
- */
 // Scripts whose letters join to the next one: two initials side by side would read as a word ("لح").
 const JOINING_SCRIPT = /[\p{Script=Arabic}\p{Script=Syriac}\p{Script=Nko}\p{Script=Mongolian}\p{Script=Adlam}]/u;
 
+/**
+ * The two-letter monogram of a person or a company: the first letters of the first two words ("AM" for Alex Morgan,
+ * "MF" for Marlow & Finch), or the first two letters of a one-word name ("LU" for Lumen). Words that don't start with
+ * a letter or digit ("&", "·") are skipped.
+ */
 export function getInitials(name: string) {
-	const letters = name
-		.split(" ")
-		.filter(Boolean)
-		.map((part) => [...part][0] ?? "")
-		.slice(0, 2);
+	const words = name.split(/\s+/).filter((word) => /^[\p{L}\p{N}]/u.test(word));
+	const letters =
+		words.length > 1 ? words.slice(0, 2).map((word) => [...word][0] ?? "") : [...(words[0] ?? "")].slice(0, 2);
 	// A zero-width non-joiner keeps joining initials apart, as two letters.
 	return letters.join(letters.some((letter) => JOINING_SCRIPT.test(letter)) ? "\u200c" : "").toUpperCase();
 }

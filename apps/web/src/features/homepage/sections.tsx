@@ -168,7 +168,7 @@ export function Languages() {
 					type="button"
 					onClick={() => setPaused((value) => !value)}
 					aria-label={paused ? t`Play the list of languages` : t`Pause the list of languages`}
-					className="touch-target relative grid size-6 place-items-center rounded-sm text-ink-3 transition-colors hover:bg-hover hover:text-ink motion-reduce:hidden"
+					className="touch-target relative grid size-6 place-items-center rounded-xs text-ink-3 transition-colors hover:bg-hover hover:text-ink motion-reduce:hidden"
 				>
 					<Icon name={paused ? "play" : "pause"} size={16} filled />
 				</button>
@@ -366,7 +366,7 @@ export function Support() {
 			<div className="flex w-[min(100%,400px)] flex-col items-center justify-self-center">
 				<div
 					aria-hidden="true"
-					className="relative z-2 h-[18px] w-[calc(100%+36px)] rounded-lg bg-ink shadow-[inset_0_-4px_0_oklch(0_0_0/.35),0_6px_14px_-6px_oklch(0_0_0/.4)]"
+					className="relative z-2 h-[18px] w-[calc(100%+36px)] rounded-[4px] bg-ink shadow-[inset_0_-4px_0_oklch(0_0_0/.35),0_6px_14px_-6px_oklch(0_0_0/.4)]"
 				>
 					<span className="absolute inset-x-[18px] top-2 h-[3px] rounded-sm bg-[oklch(0_0_0/.6)]" />
 				</div>
@@ -465,7 +465,7 @@ export function Closing() {
 				<div className="font-martian grid grid-cols-4 gap-2 text-xs leading-none font-medium text-ink-3">
 					{stages.map((stage) => (
 						<span key={stage.label} className="flex min-w-0 items-center gap-[5px]">
-							<span className={cn("size-[7px] shrink-0 rounded-sm", stage.dot)} />
+							<span className={cn("size-[7px] shrink-0 rounded-full", stage.dot)} />
 							{stage.label}
 						</span>
 					))}

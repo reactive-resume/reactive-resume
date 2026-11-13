@@ -1155,6 +1155,10 @@ msgstr "Odoslané {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "Odoslané 28. okt. · teraz stačí krátka správa"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Použije sa na webovú stránku po jej vlastných štýloch, pri každej veľkosti obrazovky. PDF zostane bez zmeny."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Nepodarilo sa načítať"
 msgid "Couldn't load this document. Try again."
 msgstr "Nepodarilo sa načítať tento dokument. Skúste to znova."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Nepodarilo sa načítať túto verziu. Skúste to znova."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Nepodarilo sa načítať. Skúste to znova."
@@ -2405,6 +2405,10 @@ msgstr "Vlastné"
 msgid "Custom colour"
 msgstr "Vlastná farba"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "Vlastné CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Denne"
@@ -2658,10 +2662,6 @@ msgstr "Dokument"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Akcie dokumentu"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Dokument nie je dostupný."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Neplatná frekvencia plánu."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Neplatná odpoveď prepisu."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "Vydanie {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "Strana {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "Strana {0} z {1}"
@@ -5445,7 +5440,7 @@ msgstr "Precvičiť tieto otázky"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Nacvičiť tento príbeh"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "Prispôsobiť inzerátu"
 msgid "Take photo"
 msgstr "Fotografujte"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Ťuknutím na sekciu ju upravíte"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Ťuknutím skopírujete"
@@ -7682,7 +7673,7 @@ msgstr "Najprv zapnite verejný odkaz v Zdieľaní."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "Vypnuté"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

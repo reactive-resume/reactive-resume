@@ -1155,6 +1155,10 @@ msgstr "ارسال‌شده در {0}"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "ارسال در ۲۸ اکتبر · اکنون یادداشتی کوتاه مناسب است"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "پس از سبک‌های خود صفحهٔ وب، در همهٔ اندازه‌های صفحه‌نمایش اعمال می‌شود. PDF همان‌طور که هست می‌ماند."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "بارگیری این مورد ممکن نشد"
 msgid "Couldn't load this document. Try again."
 msgstr "بارگیری این سند ممکن نشد. دوباره امتحان کنید."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "بارگیری این نسخه ممکن نشد. دوباره امتحان کنید."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "بارگیری ممکن نشد. دوباره امتحان کنید."
@@ -2405,6 +2405,10 @@ msgstr "سفارشی"
 msgid "Custom colour"
 msgstr "رنگ دلخواه"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "CSS سفارشی"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "روزانه"
@@ -2658,10 +2662,6 @@ msgstr "سند"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "اقدام‌های سند"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "سند در دسترس نیست."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "تناوب زمان‌بندی نامعتبر است."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "پاسخ رونویسی نامعتبر است."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "شماره {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "صفحه {0}"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "صفحه {0} از {1}"
@@ -5445,7 +5440,7 @@ msgstr "تمرین این پرسش‌ها"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "تمرین این داستان"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "متناسب‌سازی با آگهی"
 msgid "Take photo"
 msgstr "عکس بگیرید"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "برای ویرایش روی بخش بزنید"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "برای کپی بزنید"
@@ -7682,7 +7673,7 @@ msgstr "ابتدا پیوند عمومی را در اشتراک‌گذاری ر�
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "خاموش‌شده"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

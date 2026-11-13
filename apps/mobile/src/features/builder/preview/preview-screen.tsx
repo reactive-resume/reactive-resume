@@ -19,7 +19,6 @@ import {
 	Page,
 	Button,
 	IconButton,
-	IssueMarker,
 	Text,
 	FooterBar,
 	Spinner,
@@ -98,7 +97,7 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 		router.back();
 	};
 	const shown = version ? versionPreview.preview : page;
-	const current = shown.data?.pages[index];
+	const current = shown.data?.pages[Math.min(index, (shown.data?.pageCount ?? 1) - 1)];
 	const footer = version ? (
 		<FooterBar>
 			<Button label={t`Back to now`} onPress={close} grow size="lg" />
@@ -122,7 +121,9 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 			back="close"
 			onBack={close}
 			bg="sunken"
-			barCenter={<Text variant="topBarTitle" weight={500}>{t`Page ${index + 1} of ${page.data?.pageCount ?? 1}`}</Text>}
+			barCenter={
+				<Text variant="topBarTitle" weight={500}>{t`Page ${index + 1} of ${shown.data?.pageCount ?? 1}`}</Text>
+			}
 			barEnd={
 				<IconButton
 					icon="share-network"
@@ -183,50 +184,20 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 			) : (
 				<PageZoom ref={zoom} onDismiss={close}>
 					<View style={{ alignItems: "center", paddingTop: 16 }}>
-						{version ? (
-							<Text>{t`Couldn't load this version. Try again.`}</Text>
-						) : current ? (
-							<>
-								<HeroTarget id={`resume-page-${id}`}>
-									<Page
-										source={{ uri: current.uri }}
-										width={pageWidth}
-										height={pageHeight}
-										fixtureText={paperText["B18-Preview"]}
-									>
-										{page.data?.issueMarkers?.map((marker, n) => {
-											const size = page.data?.pages[marker.page];
-											if (marker.page !== index || !size) return null;
-											return (
-												<View
-													key={marker.key}
-													style={{
-														position: "absolute",
-														left: (marker.x / size.width) * pageWidth,
-														top: (marker.y / size.height) * pageHeight,
-													}}
-												>
-													<IssueMarker
-														// The storyboard page's text already reports the number.
-														numberTagged={!STORYBOARD}
-														n={n + 1}
-														label={t`Issue ${n + 1}`}
-														onPress={() => router.push(`/builder/${id}/check`)}
-													/>
-												</View>
-											);
-										})}
-									</Page>
-								</HeroTarget>
-								<View style={{ paddingTop: 20 }}>
-									<Text color="ink3">{t`Tap a section to edit it`}</Text>
-								</View>
-							</>
+						{current ? (
+							<HeroTarget id={`resume-page-${id}`}>
+								<Page
+									source={{ uri: current.uri }}
+									width={pageWidth}
+									height={pageHeight}
+									fixtureText={paperText["B18-Preview"]}
+								/>
+							</HeroTarget>
 						) : (
 							<DocumentState
-								loading={page.isPending}
-								error={page.isError}
-								retry={() => void page.refetch()}
+								loading={shown.isPending}
+								error={shown.isError}
+								retry={() => void shown.refetch()}
 								height={pageHeight}
 							/>
 						)}
@@ -238,21 +209,21 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 					{shareError}
 				</Text>
 			)}
-			{((page.isFetching && page.data) || (STORYBOARD && params.preset === "updating")) && (
+			{((shown.isFetching && shown.data) || (STORYBOARD && params.preset === "updating")) && (
 				<View style={{ flexDirection: "row", gap: 8, margin: 16 }}>
 					<Spinner />
 					<Text>{t`Updating…`}</Text>
 				</View>
 			)}
-			{(page.data?.stale || (STORYBOARD && params.preset === "offline")) && (
+			{(shown.data?.stale || (STORYBOARD && params.preset === "offline")) && (
 				<Text style={{ marginHorizontal: 24 }}>{t`Offline. Showing the last saved page.`}</Text>
 			)}
-			{(page.data?.pageCount ?? 0) > 1 && (
+			{(shown.data?.pageCount ?? 0) > 1 && (
 				<View style={{ flexDirection: "row", justifyContent: "center", gap: 12 }}>
 					<Button label={t`Previous page`} disabled={index === 0} onPress={() => setIndex(index - 1)} />
 					<Button
 						label={t`Next page`}
-						disabled={index + 1 === page.data?.pageCount}
+						disabled={index + 1 === shown.data?.pageCount}
 						onPress={() => setIndex(index + 1)}
 					/>
 				</View>

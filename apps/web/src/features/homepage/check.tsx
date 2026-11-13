@@ -221,12 +221,12 @@ export function Check() {
 					onPointerMove={moveLens}
 					onPointerLeave={releaseLens}
 					data-lens-page
-					className="@container absolute end-[calc(50%-var(--pw)/2)] bottom-[3vh] aspect-[612/792] w-(--pw) [transform:rotate(1deg)] cursor-crosshair rounded-sm opacity-[clamp(.85,var(--p)*20,1)] shadow-paper min-[900px]:end-[10vw] min-[900px]:top-[52%] min-[900px]:bottom-auto min-[900px]:[transform:translateY(-50%)_rotate(1deg)]"
+					className="@container absolute end-[calc(50%-var(--pw)/2)] bottom-[3vh] aspect-[612/792] w-(--pw) [transform:rotate(1deg)] cursor-crosshair rounded-paper opacity-[clamp(.85,var(--p)*20,1)] shadow-paper min-[900px]:end-[10vw] min-[900px]:top-[52%] min-[900px]:bottom-auto min-[900px]:[transform:translateY(-50%)_rotate(1deg)]"
 				>
 					<Sheet />
 					<div
 						aria-hidden="true"
-						className="check-lens font-martian absolute inset-0 flex flex-col gap-[2.2cqw] overflow-hidden rounded-sm p-[7cqw] text-[2.15cqw] leading-[1.7] text-[oklch(0.9_0.09_150)] opacity-(--lo)"
+						className="check-lens font-martian absolute inset-0 flex flex-col gap-[2.2cqw] overflow-hidden rounded-paper p-[7cqw] text-[2.15cqw] leading-[1.7] text-[oklch(0.9_0.09_150)] opacity-(--lo)"
 					>
 						<ParsedTextLive />
 					</div>
@@ -239,7 +239,7 @@ export function Check() {
 					/>
 					<span
 						aria-hidden="true"
-						className="font-martian pointer-events-none absolute top-[calc(var(--ly,16%)-14.5cqw)] left-(--lx,50%) -translate-x-1/2 -translate-y-full rounded-sm bg-[oklch(0.2_0.03_160)] px-[9px] py-[5px] text-xs leading-none font-medium whitespace-nowrap text-[oklch(0.88_0.09_150)] opacity-(--lo)"
+						className="font-martian pointer-events-none absolute top-[calc(var(--ly,16%)-14.5cqw)] left-(--lx,50%) -translate-x-1/2 -translate-y-full rounded-xs bg-[oklch(0.2_0.03_160)] px-[9px] py-[5px] text-xs leading-none font-medium whitespace-nowrap text-[oklch(0.88_0.09_150)] opacity-(--lo)"
 					>
 						{/* The same name as the ATS checker and the editor's Check, so the doorway leads into the same world. */}
 						{t`What a parser reads`}

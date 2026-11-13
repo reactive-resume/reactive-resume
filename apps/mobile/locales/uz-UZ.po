@@ -1155,6 +1155,10 @@ msgstr "{0} topshirilgan"
 msgid "Applied 28 Oct · a short note is fine now"
 msgstr "28-okt. topshirilgan · hozir qisqa xabar yuborish mumkin"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Applies to the web page after its own styles, at every screen size. The PDF stays as it is."
+msgstr "Veb sahifaga uning o'z uslublaridan keyin, har qanday ekran o'lchamida qo'llanadi. PDF o'zgarmaydi."
+
 #: src/features/applications/DetailScreen.tsx
 #: src/features/workspace/ApplyScreen.tsx
 msgid "Apply"
@@ -2106,10 +2110,6 @@ msgstr "Yuklanmadi"
 msgid "Couldn't load this document. Try again."
 msgstr "Bu hujjat yuklanmadi. Qayta urinib ko‘ring."
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Couldn't load this version. Try again."
-msgstr "Bu versiya yuklanmadi. Qayta urinib ko‘ring."
-
 #: src/features/career/shared.tsx
 msgid "Couldn't load this. Try again."
 msgstr "Yuklanmadi. Qayta urinib ko‘ring."
@@ -2405,6 +2405,10 @@ msgstr "Moslashtirilgan"
 msgid "Custom colour"
 msgstr "Maxsus rang"
 
+#: src/features/builder/share/web-page-screen.tsx
+msgid "Custom CSS"
+msgstr "Maxsus CSS"
+
 #: src/features/career/schedules.tsx
 msgid "Daily"
 msgstr "Har kuni"
@@ -2658,10 +2662,6 @@ msgstr "Hujjat"
 #: src/features/documents/actions.tsx
 msgid "Document actions"
 msgstr "Hujjat amallari"
-
-#: src/data/preview.ts
-msgid "Document unavailable."
-msgstr "Hujjat mavjud emas."
 
 #: src/features/documents/library.tsx
 #: src/features/documents/search.tsx
@@ -3684,11 +3684,6 @@ msgstr "Jadval takrorlanishi noto‘g‘ri."
 #: src/data/workspace.ts
 msgid "Invalid transcript response."
 msgstr "Matnga aylantirish javobi noto‘g‘ri."
-
-#. placeholder {0}: n + 1
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Issue {0}"
-msgstr "{0} nashri"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
@@ -5211,7 +5206,7 @@ msgid "Page {0}"
 msgstr "{0} sahifa"
 
 #. placeholder {0}: index + 1
-#. placeholder {1}: page.data?.pageCount ?? 1
+#. placeholder {1}: shown.data?.pageCount ?? 1
 #: src/features/builder/preview/preview-screen.tsx
 msgid "Page {0} of {1}"
 msgstr "{0}-sahifa, jami {1}"
@@ -5445,7 +5440,7 @@ msgstr "Bu savollarni mashq qilish"
 
 #: src/features/career/stories.tsx
 msgid "Practice this story"
-msgstr ""
+msgstr "Bu hikoyani mashq qilish"
 
 #: src/features/applications/DetailScreen.tsx
 msgid "Practise likely questions aloud"
@@ -7011,10 +7006,6 @@ msgstr "E’longa moslash"
 msgid "Take photo"
 msgstr "Suratga olish"
 
-#: src/features/builder/preview/preview-screen.tsx
-msgid "Tap a section to edit it"
-msgstr "Tahrirlash uchun bo‘limga bosing"
-
 #: src/features/workspace/PrepScreen.tsx
 msgid "Tap to copy"
 msgstr "Nusxalash uchun bosing"
@@ -7682,7 +7673,7 @@ msgstr "Avval Ulashishda ochiq havolani yoqing."
 
 #: src/features/builder/share/activity-screen.tsx
 msgid "Turned off"
-msgstr ""
+msgstr "O'chirilgan"
 
 #: src/features/builder/design/DesignScreen.tsx
 #: src/features/builder/design/LayoutScreen.tsx

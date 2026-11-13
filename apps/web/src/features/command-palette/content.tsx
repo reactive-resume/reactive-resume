@@ -3,21 +3,34 @@ import { Trans } from "@lingui/react/macro";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { useRouteContext } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
-import { Command, CommandEmpty, CommandInput, CommandList } from "@reactive-resume/ui/components/command";
+import {
+	Command,
+	CommandEmpty,
+	CommandFooter,
+	CommandGroup,
+	CommandInput,
+	CommandList,
+} from "@reactive-resume/ui/components/command";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import { Icon } from "@reactive-resume/ui/components/icon";
+import { Kbd } from "@reactive-resume/ui/components/kbd";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { AskCommandGroup } from "./pages/ask";
-import { NavigationCommandGroup } from "./pages/navigation";
-import { PreferencesCommandGroup } from "./pages/preferences";
-import { ResumesCommandGroup } from "./pages/resumes";
+import { CreateItems, JumpItems, MoreItems } from "./pages/navigation";
+import { openShortcutsFromPalette, PreferenceItems, PreferencePages } from "./pages/preferences";
+import { RecentItems, ResumesCommandGroup } from "./pages/resumes";
 import { useCommandPaletteStore } from "./store";
+import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 
 export default function CommandPaletteContent() {
+	const phone = useBreakpoint() === "mobile";
 	const { session } = useRouteContext({ strict: false });
 	const inputRef = useRef<HTMLInputElement>(null);
 	const commandRef = useRef<HTMLDivElement>(null);
@@ -32,7 +45,9 @@ export default function CommandPaletteContent() {
 		goBack,
 	} = useCommandPaletteStore();
 
+	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const isFirstPage = pages.length === 0;
+	const typing = search.trim().length > 0;
 	const currentPage = pages[pages.length - 1];
 	const commandListPage = currentPage ?? "root";
 
@@ -84,28 +99,30 @@ export default function CommandPaletteContent() {
 		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogHeader className="sr-only print:hidden">
 				<DialogTitle>
-					<Trans comment="Screen-reader dialog title for the command palette">Command palette</Trans>
+					<Trans comment="Screen-reader dialog title for the command palette">Search and commands</Trans>
 				</DialogTitle>
 				<DialogDescription>
 					<Trans comment="Screen-reader dialog description instructing users how to use the command palette">
-						Type a command or search…
+						Search documents, applications and commands
 					</Trans>
 				</DialogDescription>
 			</DialogHeader>
 
 			<DialogContent
-				closeLabel={t`Close`}
+				data-design="pal"
+				showCloseButton={false}
 				instant
-				className="overflow-hidden p-0"
+				// 600 wide, 120 from the top; the whole screen on phones.
+				className="gap-0 overflow-hidden p-0 max-sm:top-0 max-sm:h-dvh max-sm:max-h-none max-sm:rounded-none sm:top-[120px] sm:max-w-[600px] sm:translate-y-0"
 				aria-label={
 					isFirstPage
 						? t({
 								comment: "Accessible label for the command palette dialog",
-								message: "Command palette",
+								message: "Search and commands",
 							})
 						: t({
 								comment: "Accessible label for command palette dialog when browsing a nested command page",
-								message: `Command palette: ${currentPage}`,
+								message: `Search and commands: ${currentPage}`,
 							})
 				}
 			>
@@ -124,9 +141,8 @@ export default function CommandPaletteContent() {
 					}}
 					aria-label={t({
 						comment: "Accessible label for command list region inside command palette",
-						message: "Command palette",
+						message: "Search and commands",
 					})}
-					className="[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-ink-3 **:[[cmdk-group]]:px-2 **:[[cmdk-input]]:h-12 **:[[cmdk-item]]:px-2 **:[[cmdk-item]]:py-3"
 				>
 					<CommandInput
 						ref={inputRef}
@@ -134,10 +150,12 @@ export default function CommandPaletteContent() {
 						onValueChange={handleSearchChange}
 						placeholder={
 							isFirstPage
-								? t({
-										comment: "Placeholder in command palette input on root page",
-										message: "Type a command or search…",
-									})
+								? phone
+									? t`Search or jump to…`
+									: t({
+											comment: "Placeholder in command palette input on root page",
+											message: "Search documents, applications and commands",
+										})
 								: t({
 										comment: "Placeholder in command palette input on nested pages",
 										message: "Search…",
@@ -145,13 +163,44 @@ export default function CommandPaletteContent() {
 						}
 						aria-label={t({
 							comment: "Accessible label for command palette search input",
-							message: "Search commands",
+							message: "Search documents, applications and commands",
 						})}
+						hint={
+							<DialogClose
+								aria-label={t`Cancel`}
+								className="grid min-h-11 min-w-11 place-items-center rounded-sm text-ink-2 max-sm:px-0 max-sm:text-[15px] max-sm:font-medium max-sm:text-ink"
+							>
+								<Kbd className="max-sm:hidden">esc</Kbd>
+								{/* Phones: the palette fills the screen, and Cancel says how to leave it (M1). */}
+								<span aria-hidden="true" className="sm:hidden">
+									<Trans>Cancel</Trans>
+								</span>
+							</DialogClose>
+						}
 					/>
 
-					<CommandList key={commandListPage} data-command-page={commandListPage}>
-						{/* The Ask row is always offered on the first screen once something is typed, so nothing is empty there. */}
-						{!(isFirstPage && session && search.trim()) && (
+					{/* A second step (theme, language, a kind's full list) says how to return; Backspace in the empty field does too. */}
+					{!isFirstPage && (
+						<button
+							type="button"
+							onClick={() => {
+								goBack();
+								inputRef.current?.focus();
+							}}
+							className="mx-2 mt-2 inline-flex h-8 items-center gap-1.5 self-start rounded-sm px-2.5 text-[13px] leading-[18px] text-ink-2 [--icon-size:16px] hover:bg-hover hover:text-ink"
+						>
+							<Icon name="arrow-left" className="rtl:-scale-x-100" />
+							<Trans comment="Command palette: return from a second step to the first list">Back</Trans>
+						</button>
+					)}
+
+					<CommandList
+						key={commandListPage}
+						data-command-page={commandListPage}
+						className="max-h-[min(680px,calc(100svh-236px))] max-sm:max-h-none max-sm:flex-1"
+					>
+						{/* Signed in, the first screen answers a search itself: results, then "Nothing found" with Create. */}
+						{!(isFirstPage && session && typing) && (
 							<CommandEmpty>
 								<Trans comment="Empty-state message when no command palette results match the search query">
 									No commands match that search.
@@ -159,11 +208,68 @@ export default function CommandPaletteContent() {
 							</CommandEmpty>
 						)}
 
+						{/* Typing replaces the groups with results by kind: documents, applications, commands, then Ask. */}
 						<ResumesCommandGroup />
-						<PreferencesCommandGroup />
-						<NavigationCommandGroup />
+						{isFirstPage &&
+							(typing ? (
+								<CommandGroup heading={<Trans>Commands</Trans>}>
+									<JumpItems />
+									<CreateItems />
+									<MoreItems />
+									<PreferenceItems />
+								</CommandGroup>
+							) : (
+								<>
+									<CommandGroup heading={<Trans>Jump to</Trans>}>
+										<JumpItems />
+									</CommandGroup>
+									<CommandGroup heading={<Trans>Create</Trans>}>
+										<CreateItems />
+									</CommandGroup>
+									{session && (
+										<CommandGroup heading={<Trans>Recent</Trans>}>
+											<RecentItems />
+										</CommandGroup>
+									)}
+									<CommandGroup heading={<Trans>Preferences</Trans>}>
+										<PreferenceItems />
+									</CommandGroup>
+								</>
+							))}
+						<PreferencePages />
 						<AskCommandGroup />
 					</CommandList>
+
+					{/* The keys, and the way to the full list. */}
+					<CommandFooter className="max-sm:hidden">
+						<span>
+							<Kbd>
+								<Icon name="arrow-up" size={12} />
+							</Kbd>
+							<Kbd>
+								<Icon name="arrow-down" size={12} />
+							</Kbd>
+							<Trans comment="Command palette key hint: arrow keys move the selection">move</Trans>
+						</span>
+						<span>
+							<Kbd>
+								<Icon name="arrow-elbow-down-left" size={12} />
+							</Kbd>
+							<Trans comment="Command palette key hint: Enter opens the selected row">open</Trans>
+						</span>
+						<span>
+							<Kbd>esc</Kbd>
+							<Trans comment="Command palette key hint: Escape closes the palette">close</Trans>
+						</span>
+						<button
+							type="button"
+							onClick={openShortcutsFromPalette}
+							className="ms-auto rounded-xs text-ink-2 hover:text-ink"
+						>
+							<Trans>All shortcuts</Trans>
+							{characterShortcuts && <Kbd>?</Kbd>}
+						</button>
+					</CommandFooter>
 				</Command>
 			</DialogContent>
 		</Dialog>

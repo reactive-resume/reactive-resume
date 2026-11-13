@@ -1,20 +1,30 @@
 let mockScope: string | null = null;
 const mockFiles = new Map<string, string | Uint8Array>([["file://source.png", "png"]]);
-const mockRender = jest.fn(async () => ({
-	pdf: new Uint8Array([37, 80, 68, 70]),
-	pages: [{ index: 0, uri: "file://source.png", width: 595, height: 842 }],
-}));
+const pdfResponse = (status = 200) => ({ ok: status === 200, status, arrayBuffer: async () => new ArrayBuffer(4) });
+const mockRest = jest.fn(async (_path: string, _init?: unknown) => pdfResponse());
 jest.mock("@/auth/session", () => ({ getAccountScope: () => mockScope, getServer: () => "https://example.org" }));
-jest.mock("@/api/client", () => ({ rest: jest.fn() }));
+jest.mock("@/api/client", () => ({ rest: (path: string, init?: unknown) => mockRest(path, init) }));
 jest.mock("@/data/client", () => ({ dataClient: {} }));
+jest.mock("expo/fetch", () => ({ fetch: async () => pdfResponse() }));
+jest.mock("../../modules/pdf-pages", () => ({
+	pdfPages: {
+		open: async () => ({
+			id: "pdf",
+			pages: [
+				{ width: 595, height: 842 },
+				{ width: 595, height: 842 },
+			],
+		}),
+		rasterize: async (_id: string, pages: number[]) =>
+			pages.map((index) => ({ index, uri: "file://source.png", width: 595, height: 842 })),
+		close: async () => {},
+	},
+}));
 jest.mock("@/data/fixtures", () => ({ isFake: () => false }));
 jest.mock("expo-asset", () => ({ Asset: {} }));
 jest.mock("expo-crypto", () => ({
 	CryptoDigestAlgorithm: { SHA256: "sha256" },
 	digestStringAsync: async (_kind: string, value: string) => encodeURIComponent(value),
-}));
-jest.mock("./pipeline", () => ({
-	createPreviewPipeline: () => ({ render: () => mockRender(), dispose: async () => {} }),
 }));
 jest.mock("expo-file-system", () => {
 	const uriOf = (parts: unknown[]) =>
@@ -56,8 +66,8 @@ test("signed-out public resume data renders and last good pages remain available
 	await expect(pageRenderer.render({ kind: "resume", id: "private", revision: 1 })).rejects.toThrow("Sign in");
 	const request = { kind: "resume" as const, id: "public-resume", revision: 1, public: true, data: defaultResumeData };
 	const first = await pageRenderer.render(request);
-	expect(first.pageCount).toBe(1);
-	mockRender.mockRejectedValueOnce(new Error("Offline"));
+	expect(first.pageCount).toBe(2);
+	mockRest.mockRejectedValueOnce(new Error("Offline"));
 	const offline = await pageRenderer.render({ ...request, revision: 2 });
 	expect(offline.pdfFile).toBe(first.pdfFile);
 	expect(offline.stale).toBe(true);
@@ -65,12 +75,9 @@ test("signed-out public resume data renders and last good pages remain available
 });
 test("a render completing after account change cannot return old account's PDF", async () => {
 	mockScope = "alex";
-	mockRender.mockImplementationOnce(async () => {
+	mockRest.mockImplementationOnce(async () => {
 		mockScope = "other";
-		return {
-			pdf: new Uint8Array([37, 80, 68, 70]),
-			pages: [{ index: 0, uri: "file://source.png", width: 595, height: 842 }],
-		};
+		return pdfResponse();
 	});
 	await expect(
 		pageRenderer.render({ kind: "resume", id: "owned", revision: 1, data: defaultResumeData }),
@@ -86,6 +93,17 @@ test("historical previews never fall back to another version's last good PDF", a
 		snapshot: true,
 	};
 	await pageRenderer.render(request);
-	mockRender.mockRejectedValueOnce(new Error("Offline"));
+	mockRest.mockRejectedValueOnce(new Error("Offline"));
 	await expect(pageRenderer.render({ ...request, revision: "second" })).rejects.toThrow("Offline");
+});
+test("a server without preview renders shows the saved resume's PDF", async () => {
+	mockScope = "alex";
+	mockRest.mockResolvedValueOnce(pdfResponse(404));
+	const result = await pageRenderer.render({ kind: "resume", id: "draft", revision: 1, data: defaultResumeData });
+	expect(mockRest.mock.calls.slice(-2).map(([path]) => path)).toEqual(["/resumes/pdf-renders", "/resumes/draft/pdf"]);
+	expect(result).toMatchObject({ pageCount: 2, stale: false });
+	expect(result.pages.map((page) => page.uri)).toEqual([
+		expect.stringMatching(/0\.png$/),
+		expect.stringMatching(/1\.png$/),
+	]);
 });

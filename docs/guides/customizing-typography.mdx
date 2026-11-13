@@ -1,45 +1,33 @@
 ---
 title: "Customizing typography"
-description: "Choose a font pairing, text size and density for your resume, or pick any of about 500 fonts with exact sizes, weights and line height."
+description: "Choose body and heading fonts, sizes, weights and line height for your resume, and set page density."
 ---
 
-The **Type** group in Design controls how your text looks: the fonts, the text size and how tightly lines and sections are spaced. Five ready-made font pairings cover most resumes. If you need a specific font, **Advanced** lets you choose from about 500.
+The **Typography** category in Design controls body and heading fonts, sizes, weights and line height. **Page** controls density and spacing.
 
-## Pick a font pairing
+## Pick your fonts
 
 <Steps>
-  <Step title="Open Type">
-    In the editor, select **Design** (or press <kbd>2</kbd>), then select **Type** in the row of links at the top of the
-    panel.
+  <Step title="Open Typography">
+    In the editor, select **Design** (or press <kbd>2</kbd>), then open **Typography**.
   </Step>
-  <Step title="Choose a pairing">
-    Select one of the five pairings. The page updates straight away. Each pairing shows the fonts it uses next to its
-    name.
+  <Step title="Choose a body font">
+    Under **Body**, open **Font** and search by name. The list is alphabetical and each font appears in its own
+    typeface. Select one to apply it.
   </Step>
+  <Step title="Choose a heading font">Do the same under **Headings**.</Step>
 </Steps>
 
-<Frame caption="Font pairings, text size and density">
+<Frame caption="Set body and heading fonts separately">
   <img
     src="/images/guides/customizing-typography/type-group.webp"
-    alt="Type controls with Classic, Traditional, Balanced, Professional and Clean font pairings, a Custom row, Text size and Density"
+    alt="Typography with Body and Headings font, weight, size, line height and Hyphenation controls"
   />
 </Frame>
 
-| Pairing          | Heading font   | Body font     |
-| ---------------- | -------------- | ------------- |
-| **Classic**      | EB Garamond    | EB Garamond   |
-| **Traditional**  | Tinos          | Tinos         |
-| **Balanced**     | Source Serif 4 | Source Sans 3 |
-| **Professional** | Carlito        | Carlito       |
-| **Clean**        | Lato           | Lato          |
-
-A pairing sets body text in Regular and Bold, and headings in a single bolder weight. Tinos and Carlito match the widths of Times New Roman and Calibri, so they suit employers who expect a traditional look.
-
-If your resume uses fonts that aren't one of the pairings, no pairing is selected and the **Custom** row shows your current fonts instead.
-
 ## Set the text size
 
-Drag the **Text size** slider. It goes from 9 pt to 12.5 pt in half-point steps, and the current value shows on the right. Headings grow and shrink with it, keeping the same proportion to the body text. The panel suggests 10–11 pt, which reads comfortably on screen and on paper.
+Set **Size** under **Body** and **Headings** separately. Each accepts 6 to 24 pt in steps of 0.1 pt. Body text around 10–11 pt reads comfortably on screen and paper.
 
 <Tip>
   Dragging a slider counts as one change, so a single <kbd>⌘</kbd> <kbd>Z</kbd> (<kbd>Ctrl</kbd> <kbd>Z</kbd> on Windows
@@ -48,7 +36,7 @@ Drag the **Text size** slider. It goes from 9 pt to 12.5 pt in half-point steps,
 
 ## Choose a density
 
-**Density** sets the line height of your body text and the vertical spacing in and between entries:
+In **Design → Page**, **Density** sets the line height of your body text and the vertical spacing in and between entries:
 
 | Density     | Line height | Vertical spacing |
 | ----------- | ----------- | ---------------- |
@@ -56,7 +44,7 @@ Drag the **Text size** slider. It goes from 9 pt to 12.5 pt in half-point steps,
 | **Normal**  | 1.5         | 6 pt             |
 | **Roomy**   | 1.65        | 8 pt             |
 
-If you set an exact body line height or **Vertical spacing** in Advanced that doesn't match one of these, no density is selected.
+If you set a body line height or spacing that does not match a preset, no density is selected.
 
 <Note>
   Self-hosting operators can [mirror Computer Modern fonts for server PDFs](/self-hosting/fonts). This setting does not
@@ -66,15 +54,12 @@ If you set an exact body line height or **Vertical spacing** in Advanced that do
 ## Use any font
 
 <Steps>
-  <Step title="Open the font editor">
-    Select the **Custom** row under the pairings. Design opens **Advanced** and moves you to its **Typography** editor,
-    with the body font picker ready.
-  </Step>
+  <Step title="Open the font editor">Open **Design → Typography**.</Step>
   <Step title="Choose a body font">
-    Open **Font family** under **Body** and type part of a font's name to search. Each font is shown in its own
-    typeface. Choose one to apply it.
+    Open **Font** under **Body** and type part of a font's name to search. Each font is shown in its own typeface.
+    Choose one to apply it.
   </Step>
-  <Step title="Choose a heading font">Do the same under **Heading**.</Step>
+  <Step title="Choose a heading font">Do the same under **Headings**.</Step>
 </Steps>
 
 <Frame caption="Search fonts by name">
@@ -99,27 +84,27 @@ If none of the available fonts can draw a character, the PDF shows a question ma
 
 ### Exact typography settings
 
-**Advanced → Typography** has the same fields for **Body** and **Heading**, plus one **Hyphenation** switch for both:
+**Design → Typography** has the same fields for **Body** and **Headings**, plus one **Hyphenation** switch for both:
 
-<Frame caption="Exact typography controls for body and headings">
+<Frame caption="Set body and heading fonts separately">
   <img
     src="/images/guides/customizing-typography/advanced-typography.webp"
-    alt="Advanced Typography with Body and Heading font families, weights, sizes, line heights and Hyphenation"
+    alt="Typography with Body and Headings font, weight, size, line height and Hyphenation controls"
   />
 </Frame>
 
-| Field                                               | What it does                                                                                                                                                           |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Font family**                                     | The font, from the full list. Choosing a new family picks regular and bold body weights, preferably 400 and 700 when available, or one heading weight, preferably 600. |
-| **Font weights** (body) / **Font weight** (heading) | Which weights to use, from those the font offers. Body text can use several (for example 400 for regular and 700 for bold).                                            |
-| **Font size**                                       | Any size from 6 to 24 pt, in steps of 0.1 pt.                                                                                                                          |
-| **Line height**                                     | A multiple of the font size, from 0.5 to 4.                                                                                                                            |
-| **Hyphenation** (one switch for all text)           | Breaks long words between syllables, using the language set in **Page**. Useful for languages with long compound words, such as German.                                |
+| Field                                      | What it does                                                                                                                                                           |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Font**                                   | The font, from the full list. Choosing a new family picks regular and bold body weights, preferably 400 and 700 when available, or one heading weight, preferably 600. |
+| **Weights** (body) / **Weight** (headings) | Which weights to use, from those the font offers. Body text can use several (for example 400 for regular and 700 for bold).                                            |
+| **Size**                                   | Any size from 6 to 24 pt, in steps of 0.1 pt.                                                                                                                          |
+| **Line height**                            | A multiple of the font size, from 0.5 to 4.                                                                                                                            |
+| **Hyphenation** (one switch for all text)  | Breaks long words between syllables, using the language set in **Page**. Useful for languages with long compound words, such as German.                                |
 
-The **Text size** slider in Type only goes from 9 to 12.5 pt. If you type a size outside that range in Advanced, the slider stops at its nearest end but your exact size is kept.
+Sizes are stored separately for body text and headings; changing one does not change the other.
 
 <Note>
-  Cover letters have the same Type controls in their own Design mode, without the Custom row. See [Writing a cover
+  Cover letters keep their own Typography controls in Design mode. See [Writing a cover
   letter](/guides/writing-a-cover-letter).
 </Note>
 

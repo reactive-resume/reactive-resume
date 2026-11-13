@@ -1,0 +1,50 @@
+/* Check's switch shares the caption line; it needs no extra row above the real PDF. */
+[data-design="canvas"]:has(> [data-check-page-toggle]) > section {
+	padding-block-start: 14px;
+}
+[data-design="canvas"]:has(> [data-check-page-toggle]) > section:has(> [role="document"]) {
+	padding-block-start: 40px;
+}
+
+[data-design="canvas"]:has(> [data-check-writing-caption]) figcaption {
+	visibility: hidden;
+}
+
+/* PDF.js positions transparent glyph runs over the canvas; only matched words receive a background. */
+.term-highlights {
+	position: absolute;
+	inset: 0;
+	overflow: clip;
+	line-height: 1;
+	text-align: initial;
+	transform-origin: 0 0;
+	--min-font-size: 1;
+	--text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+	--min-font-size-inv: calc(1 / var(--min-font-size));
+}
+.term-highlights :is(span, br) {
+	color: transparent;
+	position: absolute;
+	white-space: pre;
+	transform-origin: 0 0;
+}
+.term-highlights > :not(.markedContent),
+.term-highlights .markedContent span:not(.markedContent) {
+	--font-height: 0;
+	font-size: calc(var(--text-scale-factor) * var(--font-height));
+	--scale-x: 1;
+	--rotate: 0deg;
+	transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+}
+.term-highlights .markedContent {
+	display: contents;
+}
+.term-highlights mark {
+	color: transparent;
+	background: color-mix(in oklch, var(--warn-mark) 25%, transparent);
+}
+
+/* Writing's caption and parser action share one line above the paper. */
+[data-design="canvas"]:has(> [data-check-writing-caption]) > section {
+	padding-block-start: 40px;
+}

@@ -1,9 +1,9 @@
 ---
 title: "Using the Trash"
-description: "Restore resumes and cover letters within 30 days, recover applications with their timelines intact, or explicitly delete them for good."
+description: "Restore documents and applications within 30 days, or explicitly delete them for good."
 ---
 
-When you remove a resume or cover letter, it goes to **Trash** instead of disappearing. It stays there for 30 days, so you can bring it back if you change your mind.
+When you remove a resume, cover letter or application, it goes to **Trash** instead of disappearing. It stays there for 30 days, so you can bring it back if you change your mind.
 
 ## Move a document to Trash
 
@@ -26,18 +26,18 @@ While a resume is in Trash, its public link stops working. Restoring it brings t
 
 ## Open the Trash
 
-Once Trash holds something, a **Trash** item with a count appears at the bottom of the sidebar. Select it to open the Trash page. The item stays while the Trash page is open, even after you restore its last document. On a phone, the sidebar becomes a tab bar, so a **Trash** row with the count appears at the end of Documents instead, as in the Android and iPhone apps.
+**Trash** always appears at the bottom of the sidebar. Select it to open the Trash page. Its count covers documents and applications; there is no count when it is empty. On a phone, the sidebar becomes a tab bar, so a **Trash** row with the count appears at the end of Documents instead, as in the Android and iPhone apps.
 
-<Frame caption="Trash appears while it contains documents">
+<Frame caption="Trash stays in the sidebar">
   <img
     src="/images/guides/using-the-trash/trash-in-sidebar.webp"
-    alt="Current app navigation with a Trash count after a document was deleted"
+    alt="Calm sidebar with Search, Today, Documents, Applications, Career, Trash, Shortcuts and account settings"
   />
 </Frame>
 
 You can also open the [command bar](/guides/using-the-command-bar) with <kbd>⌘</kbd> <kbd>K</kbd> (<kbd>Ctrl</kbd> <kbd>K</kbd> on Windows and Linux) and choose **Trash**, or go to `https://rxresu.me/dashboard/trash`. Self-hosters use their own address.
 
-The Trash page lists each document with its **Type**, linked **Application**, and how many days are left under **Deleted in**. It loads up to 100 documents at a time; use **Previous** and **Next** below the rows to browse more. The sidebar count covers all documents still within the 30-day retention period. When it's empty, it says **Trash is empty**.
+The Trash page has **All**, **Documents** and **Applications** filters. Each row shows its kind, when it moved to Trash and how many days are left. It loads up to 100 documents at a time; use **Previous** and **Next** below the rows to browse more. The sidebar count covers both kinds of item in Trash. When it's empty, it says **Trash is empty**.
 
 Previous rows stay visible while another page loads, but selection and actions wait until the requested page arrives. If loading fails, choose **Try again**; the previous rows remain visible and unavailable for changes.
 
@@ -48,12 +48,12 @@ Previous rows stay visible while another page loads, but selection and actions w
   />
 </Frame>
 
-Select a row's checkbox to act on one document, or select several. **Select this page** chooses the rows currently loaded on the page. The bar at the bottom offers **Restore** and **Delete permanently…** for that selection. **Empty trash…** in the page header is separate: it deletes everything in Trash, not only the rows you selected.
+Select a row's checkbox to act on one document, or select several. **Select all** chooses the rows currently loaded on the page. The bar at the bottom offers **Restore** and **Delete permanently…** for that selection. **Empty Trash…** in the page header is separate: it deletes everything in Trash, not only the rows you selected.
 
-<Frame caption="Selecting documents in Trash">
+<Frame caption="Act on selected items in Trash">
   <img
     src="/images/guides/using-the-trash/trash-page-selection.webp"
-    alt="The Trash page with three documents selected and a bar showing Restore, Delete permanently and Clear selection"
+    alt="Shared Trash with Old draft selected and Select all, Restore and Delete permanently actions"
   />
 </Frame>
 
@@ -61,7 +61,7 @@ Select a row's checkbox to act on one document, or select several. **Select this
 
 <Steps>
   <Step title="Select the documents">
-    Tick the checkbox beside each document you want back, or select **Select this page** for the loaded rows.
+    Tick the checkbox beside each document you want back, or select **Select all** for the loaded rows.
   </Step>
   <Step title="Choose Restore">
     Select **Restore**. Restoring asks for no confirmation. The documents go back to Documents with their content, tags
@@ -71,31 +71,31 @@ Select a row's checkbox to act on one document, or select several. **Select this
 
 You can still restore one document from its row menu. On the Trash page, select **⋯** at the end of the document's row, then choose **Restore**.
 
-<Frame caption="The Trash page with a row's menu open">
+<Frame caption="Restore or delete one item from its row menu">
   <img
     src="/images/guides/using-the-trash/trash-page-row-menu.webp"
-    alt="The Trash page listing Product Designer, Frontend Engineer and Cover Letter - Orbital, with the Product Designer row menu showing Restore and Delete now"
+    alt="Shared Trash with documents and an application, and the Old draft row menu open"
   />
 </Frame>
 
 ## Restore an application
 
-Choose **Move to Trash** from an application's menu, or from its bulk selection controls. The confirmation explains that applications and their timelines can be restored. This saves the move on the server; reloading does not lose the recovery option.
+Choose **Move to Trash** from an application's menu, or from its bulk selection controls. The move happens at once, without confirmation, and a message offers **Undo**. This saves the move on the server; reloading does not lose the recovery option.
 
-Open **Applications → More → Trash** on web, or **Trash** on the native Applications screen. From the document Trash page, choose **Applications**. The sidebar count and document retention information cover documents only. The Applications view loads 100 rows at a time, with **Previous** and **Next** for more.
+Open **Trash** in the web sidebar and choose **Applications**, or open **Trash** on the native Applications screen. The Applications view loads 100 rows at a time, with **Previous** and **Next** for more.
 
 Select **Restore** beside the application. Its identity, timeline, document links, submitted snapshots, workspace, application-specific Knowledge, coach history and attached bytes stay intact. The move itself changes no linked document. Later explicit edits or permanent deletion of a linked document can still change that relationship.
 
-Applications stay in Trash until you delete them permanently; they do not use documents' automatic 30-day expiry. **Delete permanently…** asks for a held confirmation and removes the application and its dependent records. It keeps linked resumes, cover letters and their versions. **Empty Trash…** on the Documents view empties documents only.
+Applications stay in Trash for 30 days, then are deleted permanently. Applications already in Trash before this retention rule takes effect get 30 days from that date; their displayed time remaining can be longer during the transition. **Delete permanently…** asks for confirmation and removes the application and its dependent records. It keeps linked resumes, cover letters and their versions. **Empty Trash…** deletes both documents and applications, even with one kind filtered.
 
 Restore and permanent deletion check the exact listed Trash generation. If another session restores or re-trashes the application, an older action fails instead of deleting or restoring the newer state. Refresh the list and review the current row before retrying. If the posting was tracked again while this application was in Trash, resolve that duplicate before restoring it.
 
 Application schedules and notifications are hidden while it is in Trash; queued work is canceled and existing coach runs receive cancellation. Restore does not replay canceled work. Review upcoming schedules and turn device reminders back on where needed.
 
-<Frame caption="Application recovery remains available after reload.">
+<Frame caption="Restore an application from the shared Trash">
   <img
     src="/images/guides/using-the-trash/application-trash.png"
-    alt="Trash Applications view showing a fictional Cedar application with Restore and Delete permanently controls, and its explicit retention policy."
+    alt="Trash filtered to Applications, with the fictional Brightwell job and Restore"
   />
 </Frame>
 
@@ -105,13 +105,13 @@ Documents are deleted permanently 30 days after you moved them to Trash. To dele
 
 <Steps>
   <Step title="Select what to delete">
-    Tick the checkbox beside each document, or use **Select this page** for the loaded rows. To delete everything in Trash instead, choose **Empty trash…** in the page header.
+    Tick the checkbox beside each document, or use **Select all** for the loaded rows. To delete everything in Trash instead, choose **Empty Trash…** in the page header.
   </Step>
   <Step title="Confirm">
-    Select **Delete permanently…** or **Empty trash…**, then hold **Hold to delete** to confirm. Choose **Keep in Trash** to change your mind.
+    Select **Delete permanently…** or **Empty Trash…**, then select the plain **Delete permanently** or **Empty Trash** button to confirm. Choose **Keep in Trash** to change your mind.
 
-    <Frame caption="Confirming a permanent delete">
-      <img src="/images/guides/using-the-trash/delete-now-confirmation.webp" alt="A dialog asking Delete Product Designer forever? It will be deleted for good and can't be restored, with Keep in Trash and Hold to delete buttons" />
+    <Frame caption="Permanent deletion asks with a plain button">
+      <img src="/images/guides/using-the-trash/delete-now-confirmation.webp" alt="Delete Old draft permanently dialog with Keep in Trash and Delete permanently buttons" />
     </Frame>
 
   </Step>
@@ -122,10 +122,10 @@ Documents are deleted permanently 30 days after you moved them to Trash. To dele
   trash…**. The distinction matters when only some rows are loaded: Empty trash always covers the whole Trash.
 </Note>
 
-<Frame caption="Empty Trash covers every document in Trash">
+<Frame caption="Empty Trash covers documents and applications">
   <img
     src="/images/guides/using-the-trash/empty-trash-confirmation.webp"
-    alt="A dialog asking Empty Trash? All 3 documents in Trash will be deleted for good and can't be restored, with Keep in Trash and Hold to delete buttons"
+    alt="Empty Trash confirmation naming three documents and one application, with Keep in Trash and Empty Trash buttons"
   />
 </Frame>
 
