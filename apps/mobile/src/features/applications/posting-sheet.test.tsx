@@ -14,16 +14,12 @@ jest.mock("./posting-file", () => ({
 	openPostingPdf: jest.fn(),
 }));
 jest.mock("@/ui", () => {
-	const { View, Text, Pressable } = require("react-native");
+	const { View, Text } = require("react-native");
 	return {
 		layout: { screenMargin: 24 },
 		BottomSheet: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
 		Icon: () => null,
-		ListRow: ({ title, onPress }: { title: string; onPress: () => void }) => (
-			<Pressable onPress={onPress}>
-				<Text>{title}</Text>
-			</Pressable>
-		),
+		ListRow: ({ title, onPress }: { title: string; onPress: () => void }) => <Text onPress={onPress}>{title}</Text>,
 		showToast: (value: unknown) => mockToast(value),
 	};
 });
