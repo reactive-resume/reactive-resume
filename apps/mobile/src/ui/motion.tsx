@@ -338,14 +338,17 @@ export function Touchable({
 			"worklet";
 			pressDown(pressed, washDelay);
 		};
-		const up = () => {
+		const up = (_e: unknown, success: boolean) => {
 			"worklet";
-			pressUp(pressed, washDelay);
+			// A cancelled press (the finger moved to scroll or swipe) clears without the short-tap flash.
+			pressUp(pressed, success ? washDelay : 0);
 		};
 		const tap = Gesture.Tap()
 			.enabled(!disabled && !!onPress)
 			.hitSlop(hitSlop ?? 0)
 			.maxDuration(60_000)
+			// Without a movement limit, a drag that scrolls the list still ends as a tap on the row under the finger.
+			.maxDistance(10)
 			.onBegin(down)
 			.onFinalize(up)
 			.onEnd((_e, success) => {
