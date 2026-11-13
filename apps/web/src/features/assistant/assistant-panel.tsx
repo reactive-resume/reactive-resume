@@ -825,6 +825,8 @@ function ResumeWithoutAi({ resumeId, onClose }: { resumeId: string; onClose: () 
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const go = (mode: "write" | "check", checkTab?: "issues" | "match") => {
 		if (checkTab) useEditorStore.setState({ checkTab });
+		// A phone keeps its last view otherwise, which may be the page rather than Write.
+		if (mode === "write") useEditorStore.setState({ mobileView: "write" });
 		onClose();
 		void navigate({
 			to: "/builder/$resumeId",

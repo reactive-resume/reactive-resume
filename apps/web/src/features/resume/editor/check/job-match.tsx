@@ -579,7 +579,7 @@ function PostingSource({ application, contextOnly }: { application: JobMatch["ap
 				<span className="grid min-w-0 flex-1">
 					<b className="truncate t-row-title">{application.company}</b>
 					<span className="text-xs text-ink-3">
-						{application.role} · <Trans>saved job</Trans>
+						{application.role} · {contextOnly ? <Trans>For this visit only</Trans> : <Trans>saved job</Trans>}
 					</span>
 				</span>
 				<Button

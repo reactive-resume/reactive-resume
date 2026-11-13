@@ -17,7 +17,7 @@ type DateFieldProps = Omit<React.ComponentProps<"input">, "type" | "value"> & {
 };
 
 /** The words a `YYYY-MM-DD` or `HH:mm` value reads as: "Sat 7 Nov 2026" ("Today, 7 Nov" given today), "09:00". */
-export function formatFieldValue(type: "date" | "time", value: string, locale: string, today: Date | null = null) {
+function formatFieldValue(type: "date" | "time", value: string, locale: string, today: Date | null = null) {
 	if (type === "time") {
 		const [hour, minute] = value.split(":").map(Number);
 		if (hour === undefined || minute === undefined || Number.isNaN(hour) || Number.isNaN(minute)) return value;

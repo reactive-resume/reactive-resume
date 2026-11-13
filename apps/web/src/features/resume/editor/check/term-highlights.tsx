@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
 
 /** Marks text-layer ranges, including phrases split across font runs or lines, without changing the PDF. */
-export function markTerm(divs: readonly HTMLElement[], strings: readonly string[], forms: readonly string[]) {
+function markTerm(divs: readonly HTMLElement[], strings: readonly string[], forms: readonly string[]) {
 	const text = strings
 		.map((value, index) => value + (divs[index]?.nextElementSibling?.tagName === "BR" ? "\n" : ""))
 		.join("");

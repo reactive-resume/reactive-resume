@@ -17,6 +17,7 @@ const mocks = vi.hoisted(() => ({
 	setState: vi.fn(),
 	invalidate: vi.fn(),
 	navigate: vi.fn(),
+	usable: true,
 }));
 vi.mock("@tanstack/react-query", async (importOriginal) => ({
 	...(await importOriginal<typeof import("@tanstack/react-query")>()),
@@ -44,13 +45,14 @@ vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () 
 	useHasUsableAiProvider: () => ({
 		providers: [{ id: "provider-1", label: "Local", enabled: true, testStatus: "success" }],
 		usableProviders: [{ id: "provider-1", label: "Local", enabled: true, testStatus: "success" }],
-		hasUsableProvider: true,
+		hasUsableProvider: mocks.usable,
 	}),
 }));
 vi.mock("@/libs/orpc/client", () => ({
 	client: { agent: { threads: { start: mocks.start }, attachments: { create: mocks.attach } } },
 	orpc: {
 		career: { facts: { queryOptions: () => ({ queryKey: ["facts"] }) } },
+		applications: { listSummary: { queryOptions: () => ({ queryKey: ["applications"] }) } },
 		agent: {
 			threads: {
 				list: { key: () => ["threads"], queryOptions: () => ({ queryKey: ["threads"] }) },
@@ -89,6 +91,7 @@ beforeEach(() => {
 	mocks.draft = null;
 	mocks.threads = [];
 	mocks.threadData = null;
+	mocks.usable = true;
 	mocks.setState.mockImplementation((partial: { assistantThread?: string }) => {
 		if (partial.assistantThread !== undefined) mocks.selected = partial.assistantThread;
 	});
@@ -142,6 +145,30 @@ it("states what an accepted edit changes before sending, and offers translation"
 	);
 	expect(screen.getByText(/Edits go to a copy, never to this resume|Working on a copy made for/)).toBeDefined();
 	expect(screen.getByRole("button", { name: "Translate into another language…" })).toBeDefined();
+	expect(mocks.start).not.toHaveBeenCalled();
+});
+
+it("hands Edit a section to Write on this resume, closing the assistant without starting a thread", () => {
+	mocks.usable = false;
+	const onClose = vi.fn();
+	render(
+		<I18nProvider i18n={i18n}>
+			<AssistantPanel document={document} onClose={onClose} />
+		</I18nProvider>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: /Edit a section/ }));
+	expect(onClose).toHaveBeenCalledOnce();
+	expect(mocks.setState).toHaveBeenCalledWith({ mobileView: "write" });
+	expect(mocks.navigate).toHaveBeenCalledExactlyOnceWith(
+		expect.objectContaining({ to: "/builder/$resumeId", params: { resumeId: "resume-1" } }),
+	);
+	const [navigation] = mocks.navigate.mock.calls[0] as [{ search: (previous: object) => object }];
+	const { search } = navigation;
+	expect(search({ applicationId: "application-2", mode: "check", assistant: "open" })).toEqual({
+		applicationId: "application-2",
+		mode: undefined,
+		assistant: undefined,
+	});
 	expect(mocks.start).not.toHaveBeenCalled();
 });
 

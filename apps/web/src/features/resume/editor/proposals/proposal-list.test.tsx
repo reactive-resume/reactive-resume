@@ -9,7 +9,7 @@ vi.mock("../store", () => ({ useEditorStore: () => () => {} }));
 vi.mock("./proposals", () => ({ acceptResumeProposals: () => {} }));
 vi.mock("@/features/resume/builder/draft", () => ({ useIsResumeLocked: () => false }));
 
-import { ChangeSet, changeParts, Coverage, inContext } from "./proposal-list";
+import { ChangeSet, Coverage } from "./proposal-list";
 
 afterEach(cleanup);
 
@@ -200,9 +200,22 @@ it("checks identical posting gaps independently", () => {
 	expect(requirements.map((item) => item.status)).toEqual(["missing", "unassessed"]);
 });
 
+/** The card's one-passage view of a wording edit: kept, removed and added runs, in order. */
+function shownChange(before: string, after: string) {
+	renderSet({}, { before: `<p>${before}</p>`, after: `<p>${after}</p>` });
+	const passage = document.querySelector("ins")?.parentElement;
+	if (!passage) throw new Error("Missing the change");
+	const parts = Array.from(passage.children, (part) => ({
+		kind: part.tagName === "INS" ? "added" : part.tagName === "DEL" ? "removed" : "same",
+		text: part.textContent,
+	}));
+	cleanup();
+	return parts;
+}
+
 it("shows a clause added to a short bullet as the sentence once, with only the new words marked", () => {
 	expect(
-		changeParts(
+		shownChange(
 			"Run more than 40 customer interviews a year.",
 			"Run more than 40 customer interviews a year, and plan each quarter's design work from what they show.",
 		),
@@ -212,7 +225,7 @@ it("shows a clause added to a short bullet as the sentence once, with only the n
 		{ kind: "same", text: "." },
 	]);
 	// A changed word is never split: "launch" → "launched" marks the whole word.
-	expect(changeParts("We launch it.", "We launched it.")).toEqual([
+	expect(shownChange("We launch it.", "We launched it.")).toEqual([
 		{ kind: "same", text: "We " },
 		{ kind: "removed", text: "launch " },
 		{ kind: "added", text: "launched " },
@@ -222,23 +235,14 @@ it("shows a clause added to a short bullet as the sentence once, with only the n
 
 it("shrinks long kept text around a change on the narrow card, and keeps every changed word", () => {
 	const long = "one two three four five six seven eight nine ten eleven twelve ";
-	const parts = inContext([
-		{ kind: "same", text: long },
-		{ kind: "added", text: "new words " },
-		{ kind: "same", text: long.trim() },
-	]);
+	const parts = shownChange(long + long.trim(), `${long}new words ${long.trim()}`);
 	expect(parts.map((part) => part.text).join("")).toBe(
 		"…seven eight nine ten eleven twelve new words one two three four five six …",
 	);
 	expect(parts[1]).toEqual({ kind: "added", text: "new words " });
 	// A short sentence opening stays whole instead of losing its first words.
 	const opening = "Tested each release with shop owners before it shipped";
-	expect(
-		inContext([
-			{ kind: "same", text: opening },
-			{ kind: "added", text: ", so problems surfaced" },
-		])[0]?.text,
-	).toBe(opening);
+	expect(shownChange(opening, `${opening}, so problems surfaced`)[0]?.text).toBe(opening);
 });
 
 it("keeps unverified new details visible before accepting, without opening a disclosure", () => {

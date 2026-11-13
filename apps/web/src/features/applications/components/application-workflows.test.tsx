@@ -28,9 +28,10 @@ const api = vi.hoisted(() => ({
 	searchPostings: vi.fn(),
 	webStatus: vi.fn(),
 	capabilities: vi.fn(),
+	navigate: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({
-	useNavigate: () => vi.fn(),
+	useNavigate: () => api.navigate,
 	Link: ({
 		to: _to,
 		params,
@@ -255,8 +256,23 @@ it("offers one board-card link and a separate options control without a dead dra
 	for (let parent = open.parentElement; parent && parent !== view.container; parent = parent.parentElement) {
 		expect(parent.tabIndex).toBeLessThan(0);
 	}
-	fireEvent.click(options);
-	await screen.findByRole("menu");
+	const opened: (string | null)[] = [];
+	const record = (event: MouseEvent) => {
+		const link = (event.target as Element).closest("a");
+		if (!link) return;
+		event.preventDefault();
+		opened.push(link.getAttribute("href"));
+	};
+	document.addEventListener("click", record);
+	try {
+		fireEvent.click(options);
+		await screen.findByRole("menu");
+		// Working the card's menu never opens the application under it.
+		expect(opened).toEqual([]);
+		expect(api.navigate).not.toHaveBeenCalled();
+	} finally {
+		document.removeEventListener("click", record);
+	}
 });
 
 it("does not report successful extraction when role and company are blank", async () => {

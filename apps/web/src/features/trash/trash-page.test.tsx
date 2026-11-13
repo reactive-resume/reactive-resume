@@ -189,6 +189,13 @@ it("keeps the selection after a failed run so it can be retried", async () => {
 
 	await waitFor(() => expect(batch.purge).toHaveBeenCalledWith([oldDraft]));
 	expect(screen.getByLabelText("Select Old draft")).toBeChecked();
+	// The action stays offered, and works, for the retry.
+	const retry = within(screen.getByRole("toolbar")).purge();
+	await waitFor(() => expect(retry).toBeEnabled());
+	expect(retry).toBeVisible();
+	fireEvent.click(retry);
+	await waitFor(() => expect(batch.purge).toHaveBeenCalledTimes(2));
+	expect(batch.purge).toHaveBeenLastCalledWith([oldDraft]);
 });
 
 it("empties both kinds after a confirmation that counts each", async () => {

@@ -194,7 +194,7 @@ export function WebAccessSection() {
 						{tile("magnifying-glass")}
 						<span className="flex min-w-0 flex-1 flex-col gap-px pt-px">
 							<span className="text-[15px]/[22px] font-medium text-ink">
-								{connectedProvider ? (
+								{connectedProvider && !serverSearch ? (
 									<Trans>Search and reading · {connectedProvider}</Trans>
 								) : (
 									<Trans>Search · your server</Trans>
@@ -219,6 +219,23 @@ export function WebAccessSection() {
 									)
 								) : (
 									<Trans>Your server provides search · connect a service to read pages the reader can't</Trans>
+								)}
+							</span>
+							<span className="text-xs text-ink-3">
+								{serverSearch && connectedProvider ? (
+									<Trans>
+										Searches with your server's search and reads pages with {connectedProvider}, whichever AI provider
+										you use.
+									</Trans>
+								) : serverSearch ? (
+									<Trans>
+										Searches with your server's search and reads links with the built-in reader, whichever AI provider
+										you use.
+									</Trans>
+								) : (
+									connectedProvider && (
+										<Trans>Searches and reads pages with {connectedProvider}, whichever AI provider you use.</Trans>
+									)
 								)}
 							</span>
 							{!test.isPending && results}

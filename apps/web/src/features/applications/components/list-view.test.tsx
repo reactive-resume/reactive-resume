@@ -100,6 +100,18 @@ function renderList(applications: Application[], breakpoint = "desktop", onTagSe
 
 const header = (container: HTMLElement, label: string) =>
 	Array.from(container.querySelectorAll("thead th")).find((th) => th.textContent === label) as HTMLElement;
+/** Records every link the user follows, wherever it is in the page, instead of navigating. */
+function observeOpens() {
+	const opened: (string | null)[] = [];
+	const record = (event: MouseEvent) => {
+		const link = (event.target as Element).closest("a");
+		if (!link) return;
+		event.preventDefault();
+		opened.push(link.getAttribute("href"));
+	};
+	document.addEventListener("click", record);
+	return { opened, stop: () => document.removeEventListener("click", record) };
+}
 /** Companies, in the order the rows are drawn. */
 const order = (container: HTMLElement) =>
 	Array.from(container.querySelectorAll("[data-application-open]"), (link) => link.textContent);
@@ -146,12 +158,28 @@ const twoApplications = () => [
 	application({ id: "app-2", role: "Product Designer", company: "Initech", location: "Austin" }),
 ];
 
-it.each(["desktop", "mobile"] as const)("links each row to its application's page on %s", (breakpoint) => {
-	renderList(twoApplications(), breakpoint);
+it.each(["desktop", "mobile"] as const)(
+	"opens each row's own application once per click or Enter on %s",
+	async (breakpoint) => {
+		const user = userEvent.setup();
+		renderList(twoApplications(), breakpoint);
+		const initech = screen.getByRole("link", { name: "Initech" });
+		const globex = screen.getByRole("link", { name: "Globex" });
+		expect(initech).toHaveAttribute("href", "/dashboard/applications/app-2");
+		expect(globex).toHaveAttribute("href", "/dashboard/applications/app-1");
 
-	expect(screen.getByRole("link", { name: "Initech" })).toHaveAttribute("href", "/dashboard/applications/app-2");
-	expect(screen.getByRole("link", { name: "Globex" })).toHaveAttribute("href", "/dashboard/applications/app-1");
-});
+		const { opened, stop } = observeOpens();
+		try {
+			await user.click(initech);
+			expect(opened).toEqual(["/dashboard/applications/app-2"]);
+			globex.focus();
+			await user.keyboard("{Enter}");
+			expect(opened).toEqual(["/dashboard/applications/app-2", "/dashboard/applications/app-1"]);
+		} finally {
+			stop();
+		}
+	},
+);
 
 it("runs one flat table by next step whatever the stage, with closed applications under their own heading", () => {
 	const rows = [
@@ -197,27 +225,33 @@ it("writes what was sent in words and marks only owed steps as Needs you", () =>
 });
 
 it("selects a row without opening it", () => {
-	const { container } = renderList(twoApplications());
-	const clicks = vi.fn();
-	for (const link of container.querySelectorAll("[data-application-open]")) link.addEventListener("click", clicks);
-
-	const checkbox = screen.getByRole("checkbox", { name: "Select Product Designer at Initech" });
-	fireEvent.click(checkbox);
-
-	expect(clicks).not.toHaveBeenCalled();
-	expect(checkbox.getAttribute("aria-checked")).toBe("true");
+	renderList(twoApplications());
+	const { opened, stop } = observeOpens();
+	try {
+		const checkbox = screen.getByRole("checkbox", { name: "Select Product Designer at Initech" });
+		fireEvent.click(checkbox);
+		expect(checkbox.getAttribute("aria-checked")).toBe("true");
+		// The cell around the checkbox is part of its hit area, not the row's link.
+		const cell = checkbox.closest("td, th");
+		if (!cell) throw new Error("Missing selection cell");
+		fireEvent.click(cell);
+		expect(opened).toEqual([]);
+	} finally {
+		stop();
+	}
 });
 
 it("passes a tag chip selection to onTagSelect without opening the row", () => {
 	const onTagSelect = vi.fn();
-	const { container } = renderList([application({ tags: ["remote", "design"] })], "desktop", onTagSelect);
-	const clicks = vi.fn();
-	container.querySelector("[data-application-open]")?.addEventListener("click", clicks);
-
-	fireEvent.click(screen.getByRole("button", { name: "Filter by remote" }));
-
-	expect(onTagSelect).toHaveBeenCalledExactlyOnceWith("remote");
-	expect(clicks).not.toHaveBeenCalled();
+	renderList([application({ tags: ["remote", "design"] })], "desktop", onTagSelect);
+	const { opened, stop } = observeOpens();
+	try {
+		fireEvent.click(screen.getByRole("button", { name: "Filter by remote" }));
+		expect(onTagSelect).toHaveBeenCalledExactlyOnceWith("remote");
+		expect(opened).toEqual([]);
+	} finally {
+		stop();
+	}
 });
 
 it("selects the visible rows from the header and shows an indeterminate state for a partial selection", () => {
@@ -373,10 +407,7 @@ it("triages only focused rows in displayed order, preserving focus across stage 
 	const view = renderList([first, second]);
 	const alpha = () => screen.getByRole("link", { name: "Alpha" });
 	const beta = () => screen.getByRole("link", { name: "Beta" });
-	const opened = vi.fn((event: Event) => event.preventDefault());
-	view.container.addEventListener("click", (event) => {
-		if ((event.target as Element).closest("[data-application-open]")) opened(event);
-	});
+	const opens = observeOpens();
 	await user.keyboard("x");
 	expect(screen.queryByText("1 selected")).toBeNull();
 	beta().focus();
@@ -400,7 +431,9 @@ it("triages only focused rows in displayed order, preserving focus across stage 
 	await user.keyboard("f");
 	expect(mocks.logFollowUp).toHaveBeenCalledExactlyOnceWith({ id: "b" });
 	await user.keyboard("{Enter}");
-	expect(opened).toHaveBeenCalledOnce();
+	opens.stop();
+	// Enter after the reorder and stage change opens Beta, the focused row, and only it.
+	expect(opens.opened).toEqual(["/dashboard/applications/b"]);
 	view.update([first]);
 	await user.keyboard("1");
 	expect(mocks.moveWithUndo).toHaveBeenCalledTimes(1);

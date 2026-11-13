@@ -58,7 +58,7 @@ const WORD_CHAR = /[\p{L}\p{N}'’]/u;
  * sentence once with the new words tinted, even when the old text is short. Changes in several places fall back to
  * the word-level comparison; null when the two share too little, so the card shows old and new whole.
  */
-export function changeParts(before: string, after: string): WordDiffSegment[] | null {
+function changeParts(before: string, after: string): WordDiffSegment[] | null {
 	let start = 0;
 	while (start < before.length && start < after.length && before[start] === after[start]) start++;
 	// Never split a word: back off to the last boundary both texts agree on.
@@ -93,7 +93,7 @@ const CONTEXT_WORDS = 6;
  * The card's view of a change: long kept stretches shrink to a few words beside each change, so a one-clause
  * edit to a long paragraph reads as that clause in context. Nothing changed is ever dropped.
  */
-export function inContext(segments: readonly WordDiffSegment[]): WordDiffSegment[] {
+function inContext(segments: readonly WordDiffSegment[]): WordDiffSegment[] {
 	return segments.map((segment, index) => {
 		if (segment.kind !== "same") return segment;
 		const words = segment.text.split(/(?<=\s)/u);

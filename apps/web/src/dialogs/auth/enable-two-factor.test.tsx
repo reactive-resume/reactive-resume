@@ -43,6 +43,10 @@ it("verifies the authenticator before showing backup codes and waits for Done be
 	await screen.findByText("Step 2 of 3");
 	expect(screen.queryByText("82cNK-qaOiN")).toBeNull();
 	expect(mocks.close).not.toHaveBeenCalled();
+	expect(mocks.verify).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+	expect(await screen.findByText("Enter the 6-digit code.")).toBeTruthy();
+	expect(mocks.verify).not.toHaveBeenCalled();
 	mocks.verify.mockResolvedValueOnce({ error: { message: "Invalid code" } });
 
 	const enterCode = async () => {
@@ -55,7 +59,7 @@ it("verifies the authenticator before showing backup codes and waits for Done be
 	};
 	await enterCode();
 	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-	await waitFor(() => expect(mocks.verify).toHaveBeenCalled());
+	await waitFor(() => expect(mocks.verify).toHaveBeenCalledExactlyOnceWith({ code: "123456" }));
 	await waitFor(() => expect(screen.getByRole("textbox", { name: "Verification code" })).toHaveValue(""));
 	expect(screen.queryByText("82cNK-qaOiN")).toBeNull();
 	mocks.verify.mockResolvedValue({ error: null });

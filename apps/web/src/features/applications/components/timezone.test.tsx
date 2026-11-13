@@ -20,8 +20,19 @@ vi.mock("@reactive-resume/utils/file", async (importOriginal) => ({
 }));
 vi.mock("@tanstack/react-router", () => ({
 	useRouteContext: () => ({ session: { user: { timezone: account.timeZone } } }),
-	Link: ({ children, to: _to, params: _params, ...props }: ComponentProps<"a"> & { to?: string; params?: object }) => (
-		<a href="/dashboard/career/offers" {...props}>
+	Link: ({
+		children,
+		to = "",
+		params = {},
+		...props
+	}: ComponentProps<"a"> & { to?: string; params?: Record<string, string> }) => (
+		<a
+			href={Object.entries(params).reduce(
+				(href, [key, value]) => href.replace(`$${key}`, value),
+				to.replace("/{-$tab}", ""),
+			)}
+			{...props}
+		>
 			{children}
 		</a>
 	),
@@ -232,9 +243,9 @@ it("uses the calendar-selected civil day in the real interview editor", async ()
 });
 
 it.each([
-	["UTC", "November 2026", ["Northstar 1", "Northstar 2"]],
-	["Europe/Berlin", "December 2026", []],
-])("keeps the phone list and month navigation on the %s account calendar", (timeZone, nextMonth, inNextMonth) => {
+	["UTC", "November 2026", ["Northstar 1", "Northstar 2"], ["Sat 31 · 23:30", "Sun 1 · 00:30"]],
+	["Europe/Berlin", "December 2026", [], ["Sun 1 · 00:30", "Sun 1 · 01:30"]],
+])("keeps the phone list and month navigation on the %s account calendar", (timeZone, nextMonth, inNextMonth, when) => {
 	account.timeZone = timeZone;
 	vi.setSystemTime(new Date("2026-10-31T23:15:00Z"));
 	const rows = ["2026-10-31T23:30:00Z", "2026-11-01T00:30:00Z", "2026-11-04T14:00:00Z"].map((at, index) => {
@@ -257,6 +268,28 @@ it.each([
 	// Until a month is picked, the phone header titles the list rather than a month (G1B-17).
 	expect(screen.getByRole("heading", { name: "Coming up" })).toBeDefined();
 	expect(listed()).toEqual(["Northstar 0", "Northstar 1", "Northstar 2"]);
+	const agendaRows = Array.from(agenda.querySelectorAll<HTMLAnchorElement>("[data-upcoming-interview]"));
+	// Each row's own date column and time range are on the account clock, either side of midnight.
+	expect(
+		agendaRows.slice(0, 2).map((row) => {
+			const [weekday, day] = Array.from(row.querySelectorAll("span span"), (part) => part.textContent);
+			return `${weekday} ${day} · ${row.textContent?.match(/(\d\d:\d\d)–/)?.[1]}`;
+		}),
+	).toEqual(when);
+	expect(agendaRows.map((row) => row.getAttribute("href"))).toEqual(
+		rows.map((row) => `/dashboard/applications/${row.id}`),
+	);
+	const opened: (string | null)[] = [];
+	const intercept = (event: MouseEvent) => {
+		const link = (event.target as Element).closest("a");
+		if (!link) return;
+		event.preventDefault();
+		opened.push(link.getAttribute("href"));
+	};
+	document.addEventListener("click", intercept);
+	fireEvent.click(within(agenda).getByText("Northstar 0"));
+	document.removeEventListener("click", intercept);
+	expect(opened).toEqual(["/dashboard/applications/application-0"]);
 	fireEvent.click(screen.getByRole("button", { name: "Next month" }));
 	expect(screen.getByRole("heading", { name: nextMonth })).toBeDefined();
 	expect(listed()).toEqual(inNextMonth);
