@@ -1,9 +1,9 @@
 name: Mobile release
-run-name: Mobile ${{ inputs.task || 'release' }} · ${{ github.ref_name }}
+run-name: Mobile release · ${{ github.ref_name }}
 
 # Every push to main that can change the app builds signed iOS and Android binaries with one shared build number and
 # uploads them to TestFlight (internal testers) and Google Play Internal testing. There is no EAS and no OTA update:
-# every fix reaches users as a store build. Dispatch reruns the release, or rebuilds the Forme native libraries.
+# every fix reaches users as a store build. Dispatch reruns the release.
 on:
   push:
     branches: [main]
@@ -16,12 +16,6 @@ on:
       - tooling/mobile/**
       - .github/workflows/mobile-release.yml
   workflow_dispatch:
-    inputs:
-      task:
-        description: release uploads store builds (main only); forme-build packages the Forme native libraries; forme-publish also publishes them as a prerelease
-        type: choice
-        options: [release, forme-build, forme-publish]
-        default: release
 
 permissions:
   contents: read
@@ -42,7 +36,7 @@ env:
 jobs:
   prepare:
     name: Read store build numbers
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.task == 'release')
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     environment: mobile-store
     runs-on: blacksmith-32vcpu-ubuntu-2404
     timeout-minutes: 15
@@ -148,7 +142,7 @@ jobs:
         uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
         if: matrix.platform == 'android'
         with:
-          packages: platform-tools platforms;android-37.0 build-tools;37.0.0 ndk;27.1.12297006 ndk;28.2.13676358 cmake;3.22.1
+          packages: platform-tools platforms;android-37.0 build-tools;37.0.0 ndk;27.1.12297006 cmake;3.22.1
       - name: Check signing secrets
         env:
           ANDROID_KEYSTORE_BASE64: ${{ matrix.platform == 'android' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
@@ -174,8 +168,6 @@ jobs:
             apps/mobile/node_modules/expo-sharing/ios/shared/PendingPosting.swift \
             tooling/mobile/incoming_share_test.swift -o "$RUNNER_TEMP/incoming-share-test"
           "$RUNNER_TEMP/incoming-share-test"
-      - name: Fetch reviewed Forme binaries
-        run: node packages/forme-native/scripts/fetch-prebuilt.mjs --platform "$PLATFORM"
       - name: Generate native project
         working-directory: apps/mobile
         run: pnpm exec expo prebuild --platform "$PLATFORM" --clean --no-install
@@ -264,97 +256,3 @@ jobs:
         run: |
           node release.ts --store
           bundle exec fastlane "$PLATFORM" upload
-
-  # Forme native libraries: releases never use this job's output. They fetch the archive pinned in the reviewed
-  # packages/forme-native/scripts/prebuilt.json; a rebuilt archive is used only after its manifest is committed.
-  forme-build:
-    name: Build Forme native binaries
-    if: github.event_name == 'workflow_dispatch' && inputs.task != 'release'
-    runs-on: blacksmith-12vcpu-macos-latest
-    timeout-minutes: 60
-    outputs:
-      tag: ${{ steps.artifact.outputs.tag }}
-    env:
-      CARGO_BUILD_JOBS: "4"
-    steps:
-      - name: Check out source
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
-        with:
-          packages: ndk;28.2.13676358
-      - name: Install pinned Rust toolchain and tools
-        working-directory: packages/forme-native/rust
-        run: |
-          rustup toolchain install 1.95.0 --profile minimal \
-            --target aarch64-apple-ios,aarch64-apple-ios-sim,aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android
-          cargo install cbindgen --version 0.29.4 --locked
-          cargo install cargo-ndk --version 4.1.2 --locked
-      - name: Build native binaries and verify notices and headers
-        run: |
-          export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/28.2.13676358"
-          bash packages/forme-native/rust/build.sh
-          node packages/forme-native/scripts/notices.mjs
-          git diff --exit-code -- packages/forme-native/THIRD_PARTY_NOTICES.md packages/forme-native/ios/include/forme_native.h
-      - name: Package content-addressed native binaries
-        id: artifact
-        env:
-          RELEASE_BASE: https://github.com/${{ github.repository }}/releases/download
-        run: |
-          node packages/forme-native/scripts/artifact.mjs pack "$RUNNER_TEMP/forme-native" "$RELEASE_BASE" > "$RUNNER_TEMP/forme-native-build.json"
-          node --input-type=module <<'JS'
-          import { appendFileSync, readFileSync } from 'node:fs';
-          const build = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/forme-native-build.json`));
-          appendFileSync(process.env.GITHUB_OUTPUT, `tag=${build.tag}\narchive=${build.archive}\nmanifest=${build.manifest}\n`);
-          JS
-      - name: Verify native binaries can be fetched without Cargo
-        env:
-          MANIFEST: ${{ steps.artifact.outputs.manifest }}
-        run: |
-          node --input-type=module <<'JS'
-          import { readFileSync, writeFileSync } from 'node:fs';
-          import { pathToFileURL } from 'node:url';
-          const manifest = JSON.parse(readFileSync(process.env.MANIFEST));
-          const build = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/forme-native-build.json`));
-          manifest.artifacts[0].url = pathToFileURL(build.archive).href;
-          writeFileSync(`${process.env.RUNNER_TEMP}/local-prebuilt.json`, JSON.stringify(manifest));
-          JS
-          node_bin="$(command -v node)"
-          PATH=/usr/bin:/bin "$node_bin" packages/forme-native/scripts/fetch-prebuilt.mjs --platform android --manifest "$RUNNER_TEMP/local-prebuilt.json"
-          PATH=/usr/bin:/bin "$node_bin" packages/forme-native/scripts/fetch-prebuilt.mjs --platform ios --manifest "$RUNNER_TEMP/local-prebuilt.json"
-      - name: Upload native binary artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ steps.artifact.outputs.tag }}
-          path: ${{ runner.temp }}/forme-native/
-          if-no-files-found: error
-          retention-days: 30
-
-  forme-publish:
-    name: Publish Forme native binaries
-    needs: forme-build
-    if: inputs.task == 'forme-publish'
-    runs-on: blacksmith-32vcpu-ubuntu-2404
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-      - name: Download native binary artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: ${{ needs.forme-build.outputs.tag }}
-          path: ${{ runner.temp }}/forme-native
-      - name: Publish immutable native binary assets
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          TAG: ${{ needs.forme-build.outputs.tag }}
-          ARTIFACT_DIR: ${{ runner.temp }}/forme-native
-        run: |
-          gh release create "$TAG" "$ARTIFACT_DIR/$TAG.tar.gz" "$ARTIFACT_DIR/prebuilt.json" --target "$GITHUB_SHA" --title "$TAG" --notes "Native Forme binaries. Review and commit prebuilt.json before building mobile apps." --prerelease

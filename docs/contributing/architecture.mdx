@@ -11,7 +11,7 @@ There are three apps and a set of shared packages:
 
 - **`apps/web`** is a client-rendered React 19 single-page app built with Vite, TanStack Router, TanStack Query, Tailwind CSS, and Lingui for translations.
 - **`apps/server`** is a Hono application on Node.js. It serves the API, authentication, the MCP server, uploads, OpenAPI, and the built web app.
-- **`apps/mobile`** is an Expo / React Native app for iOS and Android, with Expo Router navigation and a native Forme PDF renderer.
+- **`apps/mobile`** is an Expo / React Native app for iOS and Android, with Expo Router navigation; it shows PDFs the server renders.
 - **`packages/*`** hold everything the apps share: API business logic, authentication, database access, schemas, document rendering and export, and UI primitives.
 
 The browser and native app talk to the same server through [oRPC](https://orpc.dev/) at `/api/rpc`. The browser sends session cookies; the native client sends the signed-in server's bearer token. [Better Auth](https://www.better-auth.com/) handles sign-in, sessions, passkeys, two-factor authentication, API keys, and the OAuth provider used by MCP clients. [Drizzle](https://orm.drizzle.team/) talks to PostgreSQL.
@@ -21,7 +21,6 @@ flowchart TD
   Browser["Browser: apps/web SPA"] -->|"oRPC /api/rpc"| Server
   Browser -->|"Forme (WebAssembly)"| BrowserPDF["PDF in the browser"]
   Mobile["Native app: apps/mobile"] -->|"oRPC /api/rpc"| Server
-  Mobile -->|"packages/forme-native"| NativePDF["PDF on the device"]
   MCPClient["MCP client"] -->|"/mcp"| Server
 
   subgraph Server["apps/server (Hono)"]
@@ -54,31 +53,30 @@ The server checks the environment, applies database migrations, and verifies the
 
 ## Workspace map
 
-| Workspace               | What it owns                                                                                                                                          |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/web`              | Routes (`src/routes`, file-based), user-facing features (`src/features`), the PDF.js preview and public viewer, the PWA, and the oRPC browser client  |
-| `apps/server`           | Hono route composition (`src/http`), RPC and OpenAPI adapters, the MCP transport, static and upload handlers, SEO for HTML shells, and startup checks |
-| `apps/mobile`           | Expo Router screens (`app`), native workflows (`src/features`), account-scoped drafts, the bearer-token API client and device UI                      |
-| `packages/api`          | oRPC procedures and business logic, one folder per feature under `src/features/*`                                                                     |
-| `packages/auth`         | Better Auth configuration, helpers, and types                                                                                                         |
-| `packages/db`           | Drizzle client and schema; generated migrations live in the root `migrations/` folder                                                                 |
-| `packages/env`          | Server environment validation; loads the root `.env`                                                                                                  |
-| `packages/schema`       | Zod schemas for resumes, cover letters, applications, pages, and templates                                                                            |
-| `packages/resume`       | Pure resume logic with no database, HTTP, or DOM dependencies, such as JSON Patch helpers and social network icons                                    |
-| `packages/pdf`          | Resume templates (which also lay out cover letters), the Forme adapter, font resolution, custom-style support, and browser and server PDF adapters    |
-| `packages/docx`         | DOCX export                                                                                                                                           |
-| `packages/odt`          | ODT export                                                                                                                                            |
-| `packages/forme-native` | Native Forme renderer and its iOS/Android bindings                                                                                                    |
-| `packages/mcp`          | MCP tools, prompts, resources, and the server card                                                                                                    |
-| `packages/ai`           | AI provider types, prompts, and model-facing helpers                                                                                                  |
-| `packages/import`       | Resume importers                                                                                                                                      |
-| `packages/ui`           | Shared UI primitives and hooks in the Base UI / shadcn style                                                                                          |
-| `packages/fonts`        | Font metadata                                                                                                                                         |
-| `packages/email`        | Email transport and templates                                                                                                                         |
-| `packages/utils`        | Narrow cross-cutting helpers behind explicit export subpaths                                                                                          |
-| `packages/config`       | Shared TypeScript and tooling configuration                                                                                                           |
-| `packages/dsh-plugin`   | A separately built and published plugin that connects a DeepSeek Harness session to Reactive Resume over MCP                                          |
-| `tooling`               | Development-only scripts: PDF translation catalog, icon builds, deployment smoke test                                                                 |
+| Workspace             | What it owns                                                                                                                                          |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web`            | Routes (`src/routes`, file-based), user-facing features (`src/features`), the PDF.js preview and public viewer, the PWA, and the oRPC browser client  |
+| `apps/server`         | Hono route composition (`src/http`), RPC and OpenAPI adapters, the MCP transport, static and upload handlers, SEO for HTML shells, and startup checks |
+| `apps/mobile`         | Expo Router screens (`app`), native workflows (`src/features`), account-scoped drafts, the bearer-token API client and device UI                      |
+| `packages/api`        | oRPC procedures and business logic, one folder per feature under `src/features/*`                                                                     |
+| `packages/auth`       | Better Auth configuration, helpers, and types                                                                                                         |
+| `packages/db`         | Drizzle client and schema; generated migrations live in the root `migrations/` folder                                                                 |
+| `packages/env`        | Server environment validation; loads the root `.env`                                                                                                  |
+| `packages/schema`     | Zod schemas for resumes, cover letters, applications, pages, and templates                                                                            |
+| `packages/resume`     | Pure resume logic with no database, HTTP, or DOM dependencies, such as JSON Patch helpers and social network icons                                    |
+| `packages/pdf`        | Resume templates (which also lay out cover letters), the Forme adapter, font resolution, custom-style support, and browser and server PDF adapters    |
+| `packages/docx`       | DOCX export                                                                                                                                           |
+| `packages/odt`        | ODT export                                                                                                                                            |
+| `packages/mcp`        | MCP tools, prompts, resources, and the server card                                                                                                    |
+| `packages/ai`         | AI provider types, prompts, and model-facing helpers                                                                                                  |
+| `packages/import`     | Resume importers                                                                                                                                      |
+| `packages/ui`         | Shared UI primitives and hooks in the Base UI / shadcn style                                                                                          |
+| `packages/fonts`      | Font metadata                                                                                                                                         |
+| `packages/email`      | Email transport and templates                                                                                                                         |
+| `packages/utils`      | Narrow cross-cutting helpers behind explicit export subpaths                                                                                          |
+| `packages/config`     | Shared TypeScript and tooling configuration                                                                                                           |
+| `packages/dsh-plugin` | A separately built and published plugin that connects a DeepSeek Harness session to Reactive Resume over MCP                                          |
+| `tooling`             | Development-only scripts: PDF translation catalog, icon builds, deployment smoke test                                                                 |
 
 Internal packages are consumed as source through the `exports` map in each `package.json`, which points at `src` files. Don't expect a `dist` folder unless a package builds one explicitly.
 
@@ -99,7 +97,6 @@ Turbo hashes shared Vitest configuration and setup files, tracks transitive sour
 | PDF.js canvas or viewer UI                      | `apps/web/src/features/resume` (never `packages/pdf`)                                                                           |
 | DOCX export                                     | `packages/docx`                                                                                                                 |
 | ODT export                                      | `packages/odt`                                                                                                                  |
-| Native PDF engine or platform bindings          | `packages/forme-native`                                                                                                         |
 | An MCP tool, prompt, or resource                | `packages/mcp`                                                                                                                  |
 | A generic UI primitive or hook                  | `packages/ui`; workflow-specific UI stays in its web feature                                                                    |
 | A database column or table                      | `packages/db/src/schema/*`, then `pnpm db:generate`                                                                             |
@@ -142,7 +139,7 @@ Keep helpers inside the feature that uses them. Don't reintroduce technical-laye
 
 ## PDF rendering
 
-`packages/pdf` owns the shared resume templates and their conversion to [Forme](https://www.formepdf.com/) documents. Templates are React components built from the package's primitives; `src/forme` renders them with a small React reconciler. The browser and server use Forme's WebAssembly engine to lay out and draw pages, while the native app uses `packages/forme-native`. No Chromium, Browserless, or print service is involved.
+`packages/pdf` owns the shared resume templates and their conversion to [Forme](https://www.formepdf.com/) documents. Templates are React components built from the package's primitives; `src/forme` renders them with a small React reconciler. The browser and server use Forme's WebAssembly engine to lay out and draw pages; the native app shows PDFs the server renders from the document data it sends. No Chromium, Browserless, or print service is involved.
 
 - `@reactive-resume/pdf/browser` creates PDFs in the browser. The editor's download and preview use it.
 - `@reactive-resume/pdf/server` creates PDFs on the server, for the public resume download and API exports.

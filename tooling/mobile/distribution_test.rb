@@ -118,7 +118,7 @@ raise "Releases must queue rather than cancel pending uploads" unless
   workflow.fetch("concurrency").values_at("group", "cancel-in-progress") == ["mobile-release", false]
 raise "No EAS, Expo token or OTA in the release" if source.match?(/\beas\b|EXPO_TOKEN|expo-updates|MOBILE_BUILD_NUMBER_BASE/)
 jobs = workflow.fetch("jobs")
-raise "Unexpected jobs" unless jobs.keys.sort == %w[build forme-build forme-publish prepare upload]
+raise "Unexpected jobs" unless jobs.keys.sort == %w[build prepare upload]
 raise "Store numbers and uploads must stay on main" unless
   jobs.fetch("prepare").fetch("if").start_with?("github.ref == 'refs/heads/main' &&") &&
     jobs.fetch("upload").fetch("if") == "github.ref == 'refs/heads/main'"
@@ -126,7 +126,4 @@ raise "Uploads must wait for both builds" unless jobs.fetch("upload").fetch("nee
 raise "Builds must use the store-derived number for the production variant" unless
   jobs.fetch("build").fetch("env").values_at("APP_VARIANT", "MOBILE_BUILD_NUMBER") ==
     ["production", "${{ needs.prepare.outputs.build_number }}"]
-raise "Releases must not depend on an unreviewed Forme rebuild" if
-  [jobs["prepare"], jobs["build"], jobs["upload"]].any? { |job| Array(job["needs"]).any? { |name| name.start_with?("forme") } } ||
-    !jobs.fetch("forme-build").fetch("if").include?("workflow_dispatch")
 puts "Release workflow routing passed"

@@ -42,10 +42,6 @@ GitHub Releases; mobile store builds come from `mobile-release.yml` (see [mobile
 Product GitHub Releases and `v*` tags are created only by an explicit versioned release operation. Docker promotion
 consumes an existing tag or commit; it does not create either.
 
-Forme's manually published, checksum-pinned binary assets remain available at their
-existing URLs. Moving those rare artifacts to dedicated storage is deferred; never
-remove an asset still referenced by `packages/forme-native/scripts/prebuilt.json`.
-
 ### Stable promotions
 
 Before moving any container aliases or deploying production, the latest `ci.yml`

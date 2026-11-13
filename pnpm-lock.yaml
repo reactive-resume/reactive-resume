@@ -465,12 +465,6 @@ importers:
       '@reactive-resume/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@reactive-resume/fonts':
-        specifier: workspace:*
-        version: link:../../packages/fonts
-      '@reactive-resume/forme-native':
-        specifier: workspace:*
-        version: link:../../packages/forme-native
       '@reactive-resume/import':
         specifier: workspace:*
         version: link:../../packages/import
@@ -1693,28 +1687,6 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 1.3.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.0.5)(esbuild@0.28.2)(happy-dom@21.0.4)(jiti@2.7.0)(jsdom@26.1.0(supports-color@10.2.2))(playwright@1.65.0)(terser@5.51.2)(tsx@4.23.15)(typescript@7.0.2)(yaml@2.9.1)
-
-  packages/forme-native:
-    dependencies:
-      expo:
-        specifier: ^58.0.0
-        version: 58.0.23(@babel/core@7.29.13(supports-color@7.2.0))(@expo/metro-runtime@58.0.17)(expo-router@58.0.30)(react-dom@19.3.1(react@19.3.1))(react-native-web@0.21.4(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-native-worklets@0.13.1(@babel/core@7.29.13(supports-color@7.2.0))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(supports-color@7.2.0))(react-native@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0))(react@19.3.1)(supports-color@7.2.0))(react-native@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0))(react@19.3.1)(supports-color@7.2.0)(typescript@7.0.2)
-      expo-modules-core:
-        specifier: ~58.0.30
-        version: 58.0.30(react-native-worklets@0.13.1(@babel/core@7.29.13(supports-color@7.2.0))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(supports-color@7.2.0))(react-native@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0))(react@19.3.1)(supports-color@7.2.0))(react-native@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0))(react@19.3.1)
-      react-native:
-        specifier: ^0.88.0
-        version: 0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0)
-    devDependencies:
-      '@formepdf/core':
-        specifier: 0.31.0
-        version: 0.31.0(react@19.3.1)
-      '@reactive-resume/config':
-        specifier: workspace:*
-        version: link:../config
-      tsrs:
-        specifier: 'catalog:'
-        version: 0.18.0-ts7.1.0-dev.20260929
 
   packages/import:
     dependencies:
