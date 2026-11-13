@@ -134,6 +134,8 @@ const application = (id: string, status: Application["status"]): Application => 
 	resumeId: null,
 	jobDescription: null,
 	postingSource: null,
+	postingFileUrl: null,
+	postingFileName: null,
 	matchScore: null,
 	aiMetadata: null,
 	resumeFileUrl: null,

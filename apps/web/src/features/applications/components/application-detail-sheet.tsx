@@ -862,7 +862,7 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 	);
 }
 
-/** The saved posting: its link, what it asks for, and its text. */
+/** The saved posting: its link, attached PDF, what it asks for, and its text. */
 function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) {
 	const now = useNow();
 	const { i18n } = useLingui();
@@ -908,6 +908,18 @@ function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) 
 					<p className="text-xs text-warn-text" role="alert">
 						<Trans>This saved description is clipped or incomplete. Review before preparing documents.</Trans>
 					</p>
+				)}
+				{application.postingFileUrl && (
+					<a
+						href={application.postingFileUrl}
+						target="_blank"
+						rel="noreferrer"
+						className="flex items-center gap-2.5 rounded-lg border border-line px-3 py-2.5 text-sm transition-[background-color] duration-quick hover:bg-hover"
+					>
+						<Icon name="file-pdf" size={18} className="shrink-0 text-ink-2" />
+						<span className="min-w-0 flex-1 truncate">{application.postingFileName ?? t`Original posting (PDF)`}</span>
+						<Icon name="arrow-square-out" size={16} className="shrink-0 text-ink-3" />
+					</a>
 				)}
 				{application.requirements.length > 0 && (
 					<section aria-labelledby="posting-requirements" className="grid gap-2">

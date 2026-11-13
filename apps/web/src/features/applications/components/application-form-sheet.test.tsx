@@ -77,6 +77,8 @@ const application: Application = {
 	status: "saved",
 	closedReason: null,
 	postingSource: null,
+	postingFileUrl: null,
+	postingFileName: null,
 	coverLetterId: null,
 	sentResumeVersionId: null,
 	sentCoverLetterVersionId: null,
@@ -142,8 +144,12 @@ it("shows the recorded letter even when locked, without offering other locked le
 });
 
 async function pickResumeFile(file: File) {
-	const input = document.querySelector<HTMLInputElement>('input[type="file"]');
-	if (!input) throw new Error("Missing attachment picker");
+	const input = screen.getByLabelText("Or upload a resume PDF") as HTMLInputElement;
+	await act(async () => fireEvent.change(input, { target: { files: [file] } }));
+}
+
+async function pickPostingFile(file: File) {
+	const input = screen.getByLabelText("Attach the posting PDF (up to 10 MB)") as HTMLInputElement;
 	await act(async () => fireEvent.change(input, { target: { files: [file] } }));
 }
 
@@ -191,6 +197,20 @@ it("saves picked files with the application in one request and blocks dismissal 
 	await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
 	expect(mocks.upload).not.toHaveBeenCalled();
 	expect(mocks.removeFile).not.toHaveBeenCalled();
+});
+
+it("saves the original posting PDF with the application", async () => {
+	renderSheet();
+	const file = pdfFile("posting.pdf");
+	await pickPostingFile(file);
+	await act(async () => fireEvent.click(screen.getByRole("button", { name: "Save changes" })));
+	await waitFor(() =>
+		expect(mocks.update).toHaveBeenCalledWith(
+			expect.objectContaining({ postingFile: file, postingFileName: "posting.pdf" }),
+			expect.anything(),
+		),
+	);
+	expect(mocks.upload).not.toHaveBeenCalled();
 });
 
 it("keeps a failed save editable and cancellation performs no client storage cleanup", async () => {

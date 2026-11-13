@@ -372,13 +372,14 @@ function storageKeyFromApplicationUrl(userId: string, value: string | null | und
 
 async function deleteApplicationAttachments(
 	userId: string,
-	applications: Pick<EditableFields, "resumeFileUrl" | "coverLetterUrl">[],
+	applications: Pick<EditableFields, "resumeFileUrl" | "coverLetterUrl" | "postingFileUrl">[],
 ) {
 	const candidateKeys = [
 		...new Set(
 			applications.flatMap((application) => [
 				storageKeyFromApplicationUrl(userId, application.resumeFileUrl),
 				storageKeyFromApplicationUrl(userId, application.coverLetterUrl),
+				storageKeyFromApplicationUrl(userId, application.postingFileUrl),
 			]),
 		),
 	].filter((key): key is string => !!key);
@@ -389,6 +390,7 @@ async function deleteApplicationAttachments(
 		.select({
 			resumeFileUrl: schema.application.resumeFileUrl,
 			coverLetterUrl: schema.application.coverLetterUrl,
+			postingFileUrl: schema.application.postingFileUrl,
 		})
 		.from(schema.application)
 		.where(eq(schema.application.userId, userId));
@@ -397,6 +399,7 @@ async function deleteApplicationAttachments(
 		remainingApplications.flatMap((application) => [
 			storageKeyFromApplicationUrl(userId, application.resumeFileUrl),
 			storageKeyFromApplicationUrl(userId, application.coverLetterUrl),
+			storageKeyFromApplicationUrl(userId, application.postingFileUrl),
 		]),
 	);
 	const keys = candidateKeys.filter((key) => !referencedKeys.has(key));
@@ -574,19 +577,29 @@ function documentFields(kind: ApplicationDocumentKind) {
 				url: "resumeFileUrl",
 				name: "resumeFileName",
 			} as const)
-		: ({
-				file: "coverLetterFile",
-				url: "coverLetterUrl",
-				name: "coverLetterName",
-			} as const);
+		: kind === "posting"
+			? ({
+					file: "postingFile",
+					url: "postingFileUrl",
+					name: "postingFileName",
+				} as const)
+			: ({
+					file: "coverLetterFile",
+					url: "coverLetterUrl",
+					name: "coverLetterName",
+				} as const);
 }
 
 type UploadedDocumentFields = Pick<
 	EditableFields,
-	"resumeFileUrl" | "resumeFileName" | "coverLetterUrl" | "coverLetterName"
+	"resumeFileUrl" | "resumeFileName" | "coverLetterUrl" | "coverLetterName" | "postingFileUrl" | "postingFileName"
 >;
 
-type DocumentFiles = { resumeFile?: File | undefined; coverLetterFile?: File | undefined };
+type DocumentFiles = {
+	resumeFile?: File | undefined;
+	coverLetterFile?: File | undefined;
+	postingFile?: File | undefined;
+};
 
 // One request owns the uploads and record write; browser dismissal cannot strand an upload.
 async function withDocumentFiles<T>(
@@ -596,8 +609,8 @@ async function withDocumentFiles<T>(
 ) {
 	const uploadedFields: UploadedDocumentFields = {};
 	try {
-		// ponytail: at most two sequential uploads; use allSettled if measured latency warrants concurrency.
-		for (const kind of ["resume", "cover-letter"] as const) {
+		// ponytail: at most three sequential uploads; use allSettled if measured latency warrants concurrency.
+		for (const kind of ["resume", "cover-letter", "posting"] as const) {
 			const fields = documentFields(kind);
 			const file = files[fields.file];
 			if (!file) continue;
@@ -610,7 +623,8 @@ async function withDocumentFiles<T>(
 				contentType: file.type,
 			});
 			uploadedFields[fields.url] = uploaded.url;
-			uploadedFields[fields.name] = file.name;
+			// Native pickers can hand over a nameless Blob; keep a useful filename in that case.
+			uploadedFields[fields.name] = file.name && file.name !== "blob" ? file.name : `${kind}.pdf`;
 		}
 		return await save(uploadedFields);
 	} catch (error) {
@@ -838,8 +852,18 @@ export const applicationService = {
 				stageEnteredAt?: string | undefined;
 			},
 	) => {
-		const { userId, status, laneId, stageEnteredAt, closedReason, resumeFile, coverLetterFile, newId, ...fields } =
-			input;
+		const {
+			userId,
+			status,
+			laneId,
+			stageEnteredAt,
+			closedReason,
+			resumeFile,
+			coverLetterFile,
+			postingFile,
+			newId,
+			...fields
+		} = input;
 		const file = async (value: File | undefined) =>
 			value && {
 				name: value.name,
@@ -853,13 +877,17 @@ export const applicationService = {
 			operation: "applications.create",
 			fields,
 			stage: { status, laneId, closedReason, stageEnteredAt },
-			files: { resume: await file(resumeFile), coverLetter: await file(coverLetterFile) },
+			files: {
+				resume: await file(resumeFile),
+				coverLetter: await file(coverLetterFile),
+				posting: await file(postingFile),
+			},
 		};
 		// A retry of a create that already landed (a lost response, a second press) returns the same application.
 		if (newId && (await isRetriedCreate(db, { table: "application", id: newId, userId, request }))) return newId;
 		await assertOwnedResume(userId, fields.resumeId);
 		await assertOwnedCoverLetter(userId, fields.coverLetterId);
-		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, (uploadedFields) =>
+		return withDocumentFiles(userId, { resumeFile, coverLetterFile, postingFile }, (uploadedFields) =>
 			db.transaction((tx) =>
 				insertApplication(tx, {
 					userId,
@@ -986,6 +1014,7 @@ export const applicationService = {
 			closedReason,
 			resumeFile,
 			coverLetterFile,
+			postingFile,
 			canDeleteAttachments = false,
 			...fields
 		} = input;
@@ -996,7 +1025,9 @@ export const applicationService = {
 					(resumeFile || (fields.resumeFileUrl !== undefined && fields.resumeFileUrl !== current.resumeFileUrl))) ||
 					(current.coverLetterUrl &&
 						(coverLetterFile ||
-							(fields.coverLetterUrl !== undefined && fields.coverLetterUrl !== current.coverLetterUrl))))
+							(fields.coverLetterUrl !== undefined && fields.coverLetterUrl !== current.coverLetterUrl))) ||
+					(current.postingFileUrl &&
+						(postingFile || (fields.postingFileUrl !== undefined && fields.postingFileUrl !== current.postingFileUrl))))
 			)
 				throw new ORPCError("FORBIDDEN", {
 					message: "Replacing or removing an attachment requires api:delete permission.",
@@ -1018,7 +1049,7 @@ export const applicationService = {
 		await assertOwnedResume(userId, fields.resumeId);
 		await assertOwnedCoverLetter(userId, fields.coverLetterId);
 
-		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, async (uploadedFields) => {
+		return withDocumentFiles(userId, { resumeFile, coverLetterFile, postingFile }, async (uploadedFields) => {
 			const result = await db.transaction(async (tx) => {
 				await lockUser(tx, userId);
 				const [current] = await tx
@@ -1115,7 +1146,14 @@ export const applicationService = {
 				}
 				return applicationView(result);
 			});
-			if (fields.resumeFileUrl !== undefined || fields.coverLetterUrl !== undefined || resumeFile || coverLetterFile) {
+			if (
+				fields.resumeFileUrl !== undefined ||
+				fields.coverLetterUrl !== undefined ||
+				fields.postingFileUrl !== undefined ||
+				resumeFile ||
+				coverLetterFile ||
+				postingFile
+			) {
 				await deleteApplicationAttachments(userId, [existing]).catch(() => {});
 			}
 			return result;

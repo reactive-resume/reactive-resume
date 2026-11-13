@@ -89,6 +89,10 @@ export const application = pg.pgTable(
 		sourceUrl: pg.text("source_url"),
 		jobDescription: pg.text("job_description"),
 		postingSource: pg.jsonb("posting_source").$type<PostingSource>(),
+		// The original job posting kept as an uploaded PDF, so it survives the posting changing or disappearing.
+		// Stored as the storage URL + original filename for display.
+		postingFileUrl: pg.text("posting_file_url"),
+		postingFileName: pg.text("posting_file_name"),
 		// What the posting asks for, as read from it when the application was added.
 		requirements: pg.jsonb("requirements").notNull().$type<string[]>().default([]),
 		matchScore: pg.integer("match_score"),

@@ -538,6 +538,7 @@ export async function linkAnonymousAccount({
 					),
 					resumeFileUrl: rewriteUploadsUrl(schema.application.resumeFileUrl),
 					coverLetterUrl: rewriteUploadsUrl(schema.application.coverLetterUrl),
+					postingFileUrl: rewriteUploadsUrl(schema.application.postingFileUrl),
 				})
 				.where(and(eq(schema.application.id, application.id), eq(schema.application.userId, fromUserId)));
 		}

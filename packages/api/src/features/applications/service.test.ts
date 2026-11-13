@@ -31,6 +31,7 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		updatedAt: "updated_at",
 		resumeFileUrl: "resume_file_url",
 		coverLetterUrl: "cover_letter_url",
+		postingFileUrl: "posting_file_url",
 	},
 	careerJob: { userId: "job_user_id", scheduleId: "schedule_id", status: "job_status" },
 	agentThread: {
@@ -457,6 +458,33 @@ describe("applicationService.attachDocument", () => {
 		expect(uploadFileMock).not.toHaveBeenCalled();
 	});
 
+	it("attaches the original posting PDF under the posting fields", async () => {
+		const updated = {
+			...existing,
+			postingFileUrl: "/api/uploads/user-1/pictures/new.pdf",
+			postingFileName: "posting.pdf",
+		};
+		setSelectResults([{ ...existing }], [{ id: "user-1" }], [{ ...existing }], [updated]);
+		const set = vi.fn(() => ({ where: () => ({ returning: () => Promise.resolve([updated]) }) }));
+		dbMock.update.mockReturnValue({ set });
+
+		const result = await applicationService.attachDocument({
+			canDeleteAttachments: true,
+			id: "app-1",
+			userId: "user-1",
+			kind: "posting",
+			file: new File(["%PDF"], "posting.pdf", { type: "application/pdf" }),
+		});
+
+		const [[fields]] = set.mock.calls as unknown as [[Record<string, unknown>]];
+		expect(fields).toMatchObject({
+			postingFileUrl: "/api/uploads/user-1/pictures/new.pdf",
+			postingFileName: "posting.pdf",
+		});
+		expect(result).toMatchObject({ postingFileUrl: updated.postingFileUrl });
+		expect(storageDeleteMock).not.toHaveBeenCalled();
+	});
+
 	it("does not delete the replaced upload when another application still references it", async () => {
 		const updated = { ...existing, resumeFileUrl: "/api/uploads/user-1/pictures/new.pdf" };
 		setSelectResults(
@@ -581,8 +609,9 @@ describe("application attachment lifecycle", () => {
 	const newUrl = "/api/uploads/user-1/pictures/new.pdf";
 	const newKey = "uploads/user-1/pictures/new.pdf";
 
-	function storedApplication(shared = false, fail = false) {
-		let row: Record<string, unknown> = { ...existing };
+	function storedApplication(shared = false, fail = false, overrides: Record<string, unknown> = {}) {
+		let row: Record<string, unknown> = { ...existing, ...overrides };
+		dbMock.select.mockReset();
 		dbMock.select.mockImplementation(() => ({
 			from: () => ({
 				where: () =>
@@ -707,6 +736,37 @@ describe("application attachment lifecycle", () => {
 		await applicationService.removeDocument({ id: "app-1", userId: "user-1", kind: "resume" });
 		expect(row().resumeFileUrl).toBeNull();
 		expect(storageDeleteMock).toHaveBeenCalledExactlyOnceWith("uploads/user-1/pictures/resume.pdf");
+	});
+
+	it("requires delete permission before replacing or clearing the attached posting", async () => {
+		const row = storedApplication(false, false, {
+			postingFileUrl: "/api/uploads/user-1/pictures/posting.pdf",
+			postingFileName: "posting.pdf",
+		});
+		await expect(
+			applicationService.update({ id: "app-1", userId: "user-1", postingFileUrl: null, postingFileName: null }),
+		).rejects.toMatchObject({ code: "FORBIDDEN" });
+		await expect(
+			applicationService.update({
+				id: "app-1",
+				userId: "user-1",
+				postingFile: pdf("replacement.pdf"),
+			}),
+		).rejects.toMatchObject({ code: "FORBIDDEN" });
+		expect(row().postingFileUrl).toBe("/api/uploads/user-1/pictures/posting.pdf");
+		expect(uploadFileMock).not.toHaveBeenCalled();
+		expect(storageDeleteMock).not.toHaveBeenCalled();
+	});
+
+	it("removes the attached posting PDF and deletes only its file", async () => {
+		const row = storedApplication(false, false, {
+			postingFileUrl: "/api/uploads/user-1/pictures/posting.pdf",
+			postingFileName: "posting.pdf",
+		});
+		await applicationService.removeDocument({ id: "app-1", userId: "user-1", kind: "posting" });
+		expect(row().postingFileUrl).toBeNull();
+		expect(row().postingFileName).toBeNull();
+		expect(storageDeleteMock).toHaveBeenCalledExactlyOnceWith("uploads/user-1/pictures/posting.pdf");
 	});
 });
 

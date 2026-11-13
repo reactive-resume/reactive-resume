@@ -87,6 +87,7 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 				ref={inputRef}
 				type="file"
 				accept="application/pdf"
+				aria-label={attachLabel}
 				className="hidden"
 				disabled={disabled}
 				onChange={onSelect}

@@ -1,7 +1,7 @@
 {
 	"info": {
 		"title": "Reactive Resume",
-		"version": "6.1.0",
+		"version": "6.1.1",
 		"description": "Reactive Resume API. Mutations do not support Idempotency-Key. Do not automatically retry POST, PUT, PATCH or DELETE requests after a timeout: first read the resource to determine whether the operation succeeded. Existing enum values and response shapes are retained for compatibility.",
 		"license": {
 			"name": "MIT",
@@ -19839,6 +19839,26 @@
 													}
 												]
 											},
+											"postingFileUrl": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"postingFileName": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
 											"requirements": {
 												"type": "array",
 												"items": {
@@ -20264,6 +20284,8 @@
 											"sourceUrl",
 											"jobDescription",
 											"postingSource",
+											"postingFileUrl",
+											"postingFileName",
 											"requirements",
 											"matchScore",
 											"aiMetadata",
@@ -20513,6 +20535,26 @@
 											}
 										]
 									},
+									"postingFileUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingFileName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
 									"notes": {
 										"anyOf": [
 											{
@@ -20691,6 +20733,10 @@
 										"type": "string",
 										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
 									},
+									"postingFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
+									},
 									"newId": {
 										"type": "string",
 										"format": "uuid",
@@ -20844,6 +20890,26 @@
 													"truncated",
 													"completeness"
 												]
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingFileUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingFileName": {
+										"anyOf": [
+											{
+												"type": "string"
 											},
 											{
 												"type": "null"
@@ -21033,6 +21099,10 @@
 										"contentMediaType": "application/pdf"
 									},
 									"coverLetterFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
+									},
+									"postingFile": {
 										"type": "string",
 										"contentMediaType": "application/pdf"
 									},
@@ -22315,6 +22385,26 @@
 															}
 														]
 													},
+													"postingFileUrl": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"postingFileName": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
 													"requirements": {
 														"type": "array",
 														"items": {
@@ -22740,6 +22830,8 @@
 													"sourceUrl",
 													"jobDescription",
 													"postingSource",
+													"postingFileUrl",
+													"postingFileName",
 													"requirements",
 													"matchScore",
 													"aiMetadata",
@@ -23138,6 +23230,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -23563,6 +23675,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -23802,6 +23916,26 @@
 											}
 										]
 									},
+									"postingFileUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingFileName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
 									"notes": {
 										"anyOf": [
 											{
@@ -23943,6 +24077,10 @@
 										"items": {
 											"type": "string"
 										}
+									},
+									"postingFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
 									},
 									"status": {
 										"enum": [
@@ -24131,6 +24269,26 @@
 											}
 										]
 									},
+									"postingFileUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingFileName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
 									"notes": {
 										"anyOf": [
 											{
@@ -24278,6 +24436,10 @@
 										"contentMediaType": "application/pdf"
 									},
 									"coverLetterFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
+									},
+									"postingFile": {
 										"type": "string",
 										"contentMediaType": "application/pdf"
 									},
@@ -24583,6 +24745,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -25008,6 +25190,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -25319,6 +25503,26 @@
 											}
 										]
 									},
+									"postingFileUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingFileName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
 									"notes": {
 										"anyOf": [
 											{
@@ -25460,6 +25664,10 @@
 										"items": {
 											"type": "string"
 										}
+									},
+									"postingFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
 									},
 									"status": {
 										"enum": [
@@ -25648,6 +25856,26 @@
 											}
 										]
 									},
+									"postingFileUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingFileName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
 									"notes": {
 										"anyOf": [
 											{
@@ -25795,6 +26023,10 @@
 										"contentMediaType": "application/pdf"
 									},
 									"coverLetterFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
+									},
+									"postingFile": {
 										"type": "string",
 										"contentMediaType": "application/pdf"
 									},
@@ -26094,6 +26326,26 @@
 														"truncated",
 														"completeness"
 													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
 												},
 												{
 													"type": "null"
@@ -26525,6 +26777,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -26757,6 +27011,26 @@
 																"truncated",
 																"completeness"
 															]
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"postingFileUrl": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"postingFileName": {
+													"anyOf": [
+														{
+															"type": "string"
 														},
 														{
 															"type": "null"
@@ -27140,7 +27414,7 @@
 			"post": {
 				"operationId": "attachApplicationDocument",
 				"summary": "Attach an application document",
-				"description": "Uploads and attaches a PDF document to an application. Kind must be either resume or cover-letter. Requires authentication.",
+				"description": "Uploads and attaches a PDF document to an application. Kind is resume, cover-letter or posting (the original job posting). Requires authentication.",
 				"tags": [
 					"Applications"
 				],
@@ -27160,7 +27434,8 @@
 						"schema": {
 							"enum": [
 								"resume",
-								"cover-letter"
+								"cover-letter",
+								"posting"
 							],
 							"type": "string"
 						}
@@ -27445,6 +27720,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -27870,6 +28165,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -27933,7 +28230,7 @@
 			"delete": {
 				"operationId": "removeApplicationDocument",
 				"summary": "Remove an application document",
-				"description": "Removes a resume or cover-letter PDF from an application and clears the stored document fields. Requires authentication.",
+				"description": "Removes a resume, cover-letter or posting PDF from an application and clears the stored document fields. Requires authentication.",
 				"tags": [
 					"Applications"
 				],
@@ -27953,7 +28250,8 @@
 						"schema": {
 							"enum": [
 								"resume",
-								"cover-letter"
+								"cover-letter",
+								"posting"
 							],
 							"type": "string"
 						}
@@ -28219,6 +28517,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -28644,6 +28962,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -29017,6 +29337,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -29442,6 +29782,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -29792,6 +30134,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -30217,6 +30579,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -30588,6 +30952,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -31013,6 +31397,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -31455,6 +31841,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -31880,6 +32286,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -32321,6 +32729,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -32746,6 +33174,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -33184,6 +33614,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -33609,6 +34059,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -33988,6 +34440,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -34413,6 +34885,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -34769,6 +35243,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -35194,6 +35688,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -35570,6 +36066,26 @@
 												}
 											]
 										},
+										"postingFileUrl": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"postingFileName": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -35995,6 +36511,8 @@
 										"sourceUrl",
 										"jobDescription",
 										"postingSource",
+										"postingFileUrl",
+										"postingFileName",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -51669,6 +52187,26 @@
 															}
 														]
 													},
+													"postingFileUrl": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"postingFileName": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
 													"requirements": {
 														"type": "array",
 														"items": {
@@ -52107,6 +52645,8 @@
 													"sourceUrl",
 													"jobDescription",
 													"postingSource",
+													"postingFileUrl",
+													"postingFileName",
 													"requirements",
 													"matchScore",
 													"aiMetadata",
@@ -175140,6 +175680,26 @@
 																"truncated",
 																"completeness"
 															]
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"postingFileUrl": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"postingFileName": {
+													"anyOf": [
+														{
+															"type": "string"
 														},
 														{
 															"type": "null"

@@ -11,6 +11,7 @@ import {
 	CloseOthersSheet,
 	EditDetailsSheet,
 	LinkDocumentSheet,
+	PostingSheet,
 	useClosedForOffer,
 	useOtherOpen,
 } from "./detail-sheets";
@@ -105,7 +106,7 @@ export function DetailScreen() {
 	const saved = useSavedItems(id);
 	const actions = useApplicationActions();
 	const more = useBarMenu();
-	const [sheet, setSheet] = useState<"edit" | "link" | "others" | null>(null);
+	const [sheet, setSheet] = useState<"edit" | "link" | "posting" | "others" | null>(null);
 	const app = application.data;
 	const zone = timeZone();
 	const at = now();
@@ -226,6 +227,7 @@ export function DetailScreen() {
 					)}
 					{sheet === "edit" ? <EditDetailsSheet app={app} onClose={() => setSheet(null)} /> : null}
 					{sheet === "link" ? <LinkDocumentSheet app={app} onClose={() => setSheet(null)} /> : null}
+					{sheet === "posting" ? <PostingSheet app={app} onClose={() => setSheet(null)} /> : null}
 					{sheet === "others" ? <OthersSheet app={app} onClose={() => setSheet(null)} /> : null}
 				</>
 			}
@@ -274,8 +276,9 @@ export function DetailScreen() {
 			/>
 			<ListRow
 				title={t`Posting`}
+				secondary={app.postingFileUrl ? t`Original posting attached` : undefined}
 				trailing="caret"
-				onPress={app.sourceUrl ? () => void openBrowserAsync(app.sourceUrl ?? "") : undefined}
+				onPress={() => setSheet("posting")}
 			/>
 			<ListRow title={t`People`} secondary={people.join(", ") || t`Add a contact`} trailing="caret" />
 			<ListRow title={t`Notes`} secondary={notes === 1 ? t`1 note` : t`${notes} notes`} trailing="caret" />
