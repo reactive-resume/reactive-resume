@@ -76,18 +76,27 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-          fetch-depth: ${{ matrix.suite == 'Unit' && '0' || '1' }}
-          # Full history without old file contents; Git fetches the few blobs a diff needs.
-          filter: ${{ matrix.suite == 'Unit' && 'blob:none' || '' }}
+          # The unit job compares against its base, which is one commit back; see the next step.
+          fetch-depth: ${{ matrix.suite == 'Unit' && '2' || '1' }}
 
       - name: Check out source (Blacksmith)
         if: ${{ vars.USE_BLACKSMITH == 'true' }}
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
-          fetch-depth: ${{ matrix.suite == 'Unit' && '0' || '1' }}
-          # Full history without old file contents; Git fetches the few blobs a diff needs.
-          filter: ${{ matrix.suite == 'Unit' && 'blob:none' || '' }}
+          # The unit job compares against its base, which is one commit back; see the next step.
+          fetch-depth: ${{ matrix.suite == 'Unit' && '2' || '1' }}
+
+      # A pull request checks out its merge commit, whose first parent is the base it was merged with.
+      # A push of several commits starts further back than the two commits fetched, so that one is fetched.
+      - name: Resolve the comparison base
+        if: matrix.suite == 'Unit'
+        env:
+          PUSH_BASE: ${{ github.event_name == 'push' && github.event.before || '' }}
+        run: |
+          base="${PUSH_BASE:-HEAD^1}"
+          git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$base" || base=HEAD^1
+          echo "BASE_REF=$(git rev-parse "$base")" >> "$GITHUB_ENV"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
@@ -120,10 +129,8 @@ jobs:
 
       - name: Review documentation drift
         if: matrix.suite == 'Unit'
-        env:
-          DOCS_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
         run: |
-          if git diff --quiet "$DOCS_BASE_REF" HEAD -- docs/ tooling/docs/; then
+          if git diff --quiet "$BASE_REF" HEAD -- docs/ tooling/docs/; then
             exit 0
           fi
           pnpm docs:check
@@ -134,14 +141,11 @@ jobs:
 
       - name: Review translation changes
         if: matrix.suite == 'Unit' && github.event_name == 'pull_request'
-        env:
-          LOCALES_BASE_REF: ${{ github.event.pull_request.base.sha }}
         run: |
-          # A full diff (not --quiet) fetches every changed catalog blob in one batch for locales:diff.
-          if git diff --exit-code "$LOCALES_BASE_REF" HEAD -- apps/web/locales/ apps/mobile/locales/ > /dev/null; then
+          if git diff --quiet "$BASE_REF" HEAD -- apps/web/locales/ apps/mobile/locales/; then
             exit 0
           fi
-          pnpm locales:diff --base "$LOCALES_BASE_REF"
+          pnpm locales:diff --base "$BASE_REF"
 
       - name: Install PDF text extraction tools
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
@@ -154,20 +158,10 @@ jobs:
         if: matrix.suite == 'Unit'
         run: pnpm check:agent-docs
 
+      # Without an explicit base Turbo can't find one in a pull request checkout and typechecks every package.
       - name: Typecheck affected packages
         if: matrix.suite == 'Unit'
-        run: pnpm exec turbo run typecheck --affected
-
-      - name: Install Chromium, WebKit and browser dependencies
-        if: matrix.suite == 'Browser'
-        timeout-minutes: 20
-        run: pnpm exec playwright install --with-deps chromium webkit
-
-      # The tooling unit tests include an Android import reader test that drives headless Chromium.
-      - name: Install headless Chromium for tooling tests
-        if: matrix.suite == 'Unit'
-        timeout-minutes: 10
-        run: pnpm exec playwright install --with-deps --only-shell chromium
+        run: TURBO_SCM_BASE="$BASE_REF" pnpm exec turbo run typecheck --affected
 
       - name: Prepare test storage
         run: mkdir -p "$LOCAL_STORAGE_PATH"
@@ -181,18 +175,28 @@ jobs:
           psql "$DATABASE_URL" -c "CREATE DATABASE oauth_test"
           DATABASE_URL="$OAUTH_TEST_DATABASE_URL" pnpm db:migrate
 
-      # Discover every package. Four pools of two workers fit the 32-vCPU runner;
-      # keep smaller GitHub runners serial to avoid PDF/rate-limit timeouts.
+      # Discover every package. The 32-vCPU runner tests four packages at once with eight workers each, which
+      # also stops Jest from taking every core; smaller GitHub runners stay serial with two workers to avoid
+      # PDF/rate-limit timeouts. Vitest and Jest both take --maxWorkers.
       - name: Run unit tests
         if: matrix.suite == 'Unit'
         env:
           # A missing test database URL fails the run instead of skipping the real-database suites.
           REQUIRE_DB_TESTS: "1"
-        run: pnpm exec turbo run test:ci --concurrency=${{ vars.USE_BLACKSMITH == 'true' && 4 || 1 }}
+        run: >-
+          pnpm exec turbo run test:ci
+          --concurrency=${{ vars.USE_BLACKSMITH == 'true' && 4 || 1 }}
+          -- --maxWorkers=${{ vars.USE_BLACKSMITH == 'true' && 8 || 2 }}
 
-      - name: Build application
+      # The build and the browser download don't depend on each other, so they overlap.
+      - name: Build application and install Chromium, WebKit and browser dependencies
         if: matrix.suite == 'Browser'
-        run: pnpm build
+        timeout-minutes: 20
+        run: |
+          pnpm exec playwright install --with-deps chromium webkit > "$RUNNER_TEMP/playwright-install.log" 2>&1 &
+          install=$!
+          pnpm build
+          wait "$install" || { cat "$RUNNER_TEMP/playwright-install.log"; exit 1; }
 
       - name: Run browser tests
         if: matrix.suite == 'Browser'
@@ -225,22 +229,23 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-          fetch-depth: 0
-          filter: blob:none
+          fetch-depth: 2
       - name: Check out source (Blacksmith)
         if: ${{ vars.USE_BLACKSMITH == 'true' }}
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
-          fetch-depth: 0
-          filter: blob:none
+          fetch-depth: 2
       # App, shared-package and dependency-resolution changes can alter the bundle.
+      # The base is resolved as in the unit job: the merge commit's first parent, or where the push started.
       - name: Detect mobile changes
         id: changes
         env:
-          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
+          PUSH_BASE: ${{ github.event_name == 'push' && github.event.before || '' }}
         run: |
-          if git diff --quiet "$BASE_REF" HEAD -- apps/mobile/ packages/ pnpm-lock.yaml pnpm-workspace.yaml patches/; then
+          base="${PUSH_BASE:-HEAD^1}"
+          git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$base" || base=HEAD^1
+          if git diff --quiet "$base" HEAD -- apps/mobile/ packages/ pnpm-lock.yaml pnpm-workspace.yaml patches/; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
