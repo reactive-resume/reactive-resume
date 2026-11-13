@@ -8,7 +8,7 @@ import { generateId } from "@reactive-resume/utils/string";
  * Templates for heuristic edge cases. Run against every template, mutations of the PDF parser's heading, link,
  * column and Education rules failed each such case in at least one of these: the default, heading rules, the
  * sidebar rails and letter-spaced headings. Per-template fidelity stays on all 18 templates in import-layouts and
- * imports.
+ * import-ownership.
  */
 export const edgeCaseTemplates = [
 	"azurill",
@@ -19,12 +19,23 @@ export const edgeCaseTemplates = [
 	"smeargle",
 ] as const satisfies readonly Template[];
 
+/**
+ * Templates for the flow, boundary, geometry and record matrices in imports. Of 48 operator mutations of the PDF
+ * line parser, the matrices caught 25 on all 18 templates; these nine caught every one of them in every case kind
+ * that failed. The six above missed two outright: only Kakuna, Leafish or Porygon failed.
+ */
+export const importMatrixTemplates = [
+	...edgeCaseTemplates,
+	"kakuna",
+	"leafish",
+	"porygon",
+] as const satisfies readonly Template[];
+
 export const pdfImportCases = templateSchema.options.flatMap((template) => [
 	...["2018", "Jan 2020", ""].flatMap((period) =>
 		[0, 1, 2].map((index) => ({ template, kind: "date", period, index })),
 	),
 	...[0, 1].map((index) => ({ template, kind: "wrapped", period: index ? "" : "2020 – 2021", index })),
-	{ template, kind: "identity", period: "2020 – 2021", index: 0 },
 ]);
 
 export function pdfImportSource(c: (typeof pdfImportCases)[number]) {
@@ -56,14 +67,12 @@ export function pdfImportSource(c: (typeof pdfImportCases)[number]) {
 	}));
 	const role = data.sections.experience.items[c.index];
 	if (!role) throw new Error("Missing indexed role");
-	if (c.kind !== "identity") {
-		role.period = c.period;
-		role.dates = {
-			start: c.period === "2018" ? "2018" : c.period === "Jan 2020" ? "2020-01" : c.period ? "2020" : null,
-			end: c.period.includes("–") ? "2021" : null,
-			present: false,
-		};
-	}
+	role.period = c.period;
+	role.dates = {
+		start: c.period === "2018" ? "2018" : c.period === "Jan 2020" ? "2020-01" : c.period ? "2020" : null,
+		end: c.period.includes("–") ? "2021" : null,
+		present: false,
+	};
 	if (c.kind === "wrapped") {
 		role.company = "The Extremely Long Fictional Enterprise Technology Corporation International";
 		role.position = "Principal Engineer for Platform Reliability and Developer Experience";
