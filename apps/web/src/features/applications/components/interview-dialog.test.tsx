@@ -149,7 +149,7 @@ it.each([false, true])(
 	async (editing) => {
 		mount(editing);
 		fireEvent.change(await screen.findByLabelText("Date"), { target: { value: "2027-03-28" } });
-		const time = screen.getByLabelText("Time · Europe/Berlin");
+		const time = screen.getByLabelText("Time · Berlin");
 		fireEvent.change(time, { target: { value: "02:30" } });
 		expect((await screen.findByRole("alert")).textContent).toContain(
 			"This time does not exist in the selected timezone",
@@ -166,7 +166,7 @@ it.each([false, true])(
 it("Delete then Undo restores the existing round without deleting or recreating its identity", async () => {
 	mount(true);
 	await waitFor(() => expect(api.read).toHaveBeenCalled());
-	fireEvent.click(await screen.findByRole("button", { name: /^Delete$/ }));
+	fireEvent.click(await screen.findByRole("button", { name: /^Delete interview$/ }));
 	const undo = await screen.findByRole("button", { name: "Undo" });
 	expect(api.remove).not.toHaveBeenCalled();
 	fireEvent.click(undo);
@@ -179,7 +179,7 @@ it("Delete then Undo restores the existing round without deleting or recreating 
 
 it("offers Update your calendar after a successful reschedule", async () => {
 	mount(true);
-	fireEvent.change(await screen.findByLabelText("Time · Europe/Berlin"), { target: { value: "13:00" } });
+	fireEvent.change(await screen.findByLabelText("Time · Berlin"), { target: { value: "13:00" } });
 	fireEvent.click(screen.getByRole("button", { name: "Save interview" }));
 	expect(await screen.findByRole("button", { name: "Update your calendar" })).toBeVisible();
 	expect(api.update).toHaveBeenCalledWith(expect.objectContaining({ entryId: "original-round" }), expect.anything());
@@ -204,7 +204,7 @@ it("late deletion preparation cannot close a departed interview editor", async (
 			</I18nProvider>
 		</QueryClientProvider>,
 	);
-	fireEvent.click(await screen.findByRole("button", { name: /^Delete$/ }));
+	fireEvent.click(await screen.findByRole("button", { name: /^Delete interview$/ }));
 	await waitFor(() => expect(api.prepare).toHaveBeenCalled());
 	view.unmount();
 	release(await prepareRequest((defer) => defer(() => Promise.resolve(new Response()))));

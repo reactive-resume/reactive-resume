@@ -13,12 +13,12 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@reactive-resume/ui/components/radio-group";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { exportApplicationsCsv, selectApplicationsForExport } from "../csv";
 import { useApplicationLanes } from "../use-application-lanes";
+import { DateField } from "./date-field";
 
 type ExportApplicationsSheetProps = {
 	open: boolean;
@@ -94,9 +94,9 @@ export function ExportApplicationsSheet({ open, onOpenChange, applications, filt
 							<Label htmlFor={`${id}-from`}>
 								<Trans>Applied from</Trans>
 							</Label>
-							<Input
+							<DateField
 								id={`${id}-from`}
-								type="date"
+								emptyLabel={t`Any date`}
 								value={from}
 								max={to || undefined}
 								aria-invalid={!validRange || undefined}
@@ -108,9 +108,9 @@ export function ExportApplicationsSheet({ open, onOpenChange, applications, filt
 							<Label htmlFor={`${id}-to`}>
 								<Trans>Applied to</Trans>
 							</Label>
-							<Input
+							<DateField
 								id={`${id}-to`}
-								type="date"
+								emptyLabel={t`Any date`}
 								value={to}
 								min={from || undefined}
 								aria-invalid={!validRange || undefined}

@@ -179,7 +179,7 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 				</div>
 
 				{ready && (
-					<SheetFooter className="flex-row items-center justify-between">
+					<SheetFooter className="flex-row items-center justify-between sm:justify-between">
 						{hasGhosted ? (
 							<span />
 						) : (
@@ -265,7 +265,7 @@ function LaneRow({ lane, count, first, last, disabled, onRename, onColor, onMove
 
 	if (draft !== null)
 		return (
-			<ListRow role="listitem" className="min-h-[52px] py-2" leading={swatch}>
+			<ListRow role="listitem" className="min-h-[52px] py-2 sm:min-h-[52px]" leading={swatch}>
 				<Input
 					aria-label={t`Name of ${label}`}
 					value={draft}
@@ -294,7 +294,7 @@ function LaneRow({ lane, count, first, last, disabled, onRename, onColor, onMove
 		<ListRow
 			role="listitem"
 			interactive
-			className="min-h-[52px] py-2"
+			className="min-h-[52px] py-2 sm:min-h-[52px]"
 			leading={swatch}
 			title={
 				<button
@@ -308,7 +308,8 @@ function LaneRow({ lane, count, first, last, disabled, onRename, onColor, onMove
 				</button>
 			}
 			subtitle={
-				count === null ? (
+				// An empty stage shows no count, not a zero.
+				count === null || count === 0 ? (
 					note
 				) : (
 					<>
@@ -474,7 +475,10 @@ function AddLaneForm({ id, disabled, full, onAdd }: AddLaneFormProps) {
 							<Trans>Counts as</Trans>
 						</Label>
 						<div className="relative">
-							<StageDot status={category} className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2">
+							<StageDot
+								status={category}
+								className="pointer-events-none absolute start-3 top-1/2 z-10 -translate-y-1/2"
+							>
 								{null}
 							</StageDot>
 							<NativeSelect
@@ -583,7 +587,7 @@ function RetireLaneDialog({ lane, lanes, count, disabled, onCancel, onRetire }: 
 									<StageDot
 										status={lane.category}
 										color={options.find((option) => option.id === replacementId)?.color}
-										className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2"
+										className="pointer-events-none absolute start-3 top-1/2 z-10 -translate-y-1/2"
 									>
 										{null}
 									</StageDot>

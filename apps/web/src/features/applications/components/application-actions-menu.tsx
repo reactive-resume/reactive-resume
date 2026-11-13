@@ -38,7 +38,7 @@ const stop = (event: React.SyntheticEvent) => event.stopPropagation();
 
 type ApplicationActionsMenuProps = { application: ApplicationSummary; className?: string };
 
-/** A row's or card's ⋯ menu, the keyboard alternative to dragging: Move to…, Mark as closed…, and Move to Trash (with Undo). */
+/** A row's or card's ⋯ menu, the keyboard alternative to dragging: Move to, Mark as closed, and Move to Trash (with Undo). */
 export function ApplicationActionsMenu({ application, className }: ApplicationActionsMenuProps) {
 	const { moveTo, close, remove } = useApplicationActions();
 	const { lanes, active } = useApplicationLanes();
@@ -73,7 +73,7 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 				>
 					<Icon name="dots-three" size={16} />
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end" className="w-[212px]" onClick={stop}>
+				<DropdownMenuContent align="end" className="w-[234px]" onClick={stop}>
 					<DropdownMenuItem
 						render={
 							<Link to="/dashboard/applications/$applicationId/{-$tab}" params={{ applicationId: application.id }} />
@@ -94,7 +94,7 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>
 							<Icon name="arrow-right" size={18} />
-							<Trans>Move to…</Trans>
+							<Trans>Move to</Trans>
 						</DropdownMenuSubTrigger>
 						<DropdownMenuSubContent className="w-[212px]">
 							{active
@@ -114,8 +114,8 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>
-							<Icon name="check" size={18} />
-							<Trans>Mark as closed…</Trans>
+							<Icon name="check-circle" size={18} />
+							<Trans>Mark as closed</Trans>
 						</DropdownMenuSubTrigger>
 						<DropdownMenuSubContent className="w-[212px]">
 							<ClosedLaneItems

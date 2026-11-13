@@ -247,6 +247,7 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 					</Label>
 					<Textarea
 						id={`prepare-questions-${application.id}`}
+						className="resize-none"
 						placeholder={t`For example: Why do you want this role?`}
 						value={questions.value}
 						onChange={(event) => questions.setValue(event.target.value)}

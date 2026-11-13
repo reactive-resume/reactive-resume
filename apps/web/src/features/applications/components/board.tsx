@@ -208,7 +208,9 @@ function Column({ lane, applications, onSaveJob }: ColumnProps) {
 					{null}
 				</StageDot>
 				{label}
-				<span className="font-mono text-xs font-medium text-ink-3">{i18n.number(applications.length)}</span>
+				{applications.length > 0 && (
+					<span className="font-mono text-xs font-medium text-ink-3">{i18n.number(applications.length)}</span>
+				)}
 				{onSaveJob && (
 					<IconButton
 						icon="plus"

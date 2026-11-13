@@ -229,7 +229,7 @@ function ContactList({
 					return (
 						<ListRow
 							key={`${contact.name}-${index}`}
-							className="min-h-[52px] py-1.5"
+							className="min-h-[52px] py-1.5 sm:min-h-[52px]"
 							leading={<Initials name={contact.name} />}
 							title={<bdi className="block truncate text-sm/5">{contact.name}</bdi>}
 							subtitle={
@@ -268,7 +268,7 @@ function ContactList({
 				{people.map((person) => (
 					<ListRow
 						key={person.name}
-						className="min-h-[52px] py-1.5"
+						className="min-h-[52px] py-1.5 sm:min-h-[52px]"
 						leading={<Initials name={person.name} />}
 						title={<bdi className="block truncate text-sm/5">{person.name}</bdi>}
 						subtitle={person.role}

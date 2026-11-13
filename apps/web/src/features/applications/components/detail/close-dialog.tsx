@@ -84,12 +84,12 @@ export function CloseDialog({ open, status, company, role, onOpenChange, lanes, 
 						aria-label={t`Reason`}
 						value={reason}
 						onValueChange={(value) => setReason(value as ApplicationClosedReason)}
-						className="grid gap-1"
+						className="grid gap-0"
 					>
 						{CLOSED_REASONS.map((value) => (
 							<div
 								key={value}
-								className="flex h-10 items-center gap-2.5 rounded-lg px-2 transition-colors hover:bg-hover"
+								className="flex h-[34px] items-center gap-2.5 rounded-lg px-2 transition-colors hover:bg-hover pointer-coarse:h-11"
 							>
 								<RadioGroupItem id={`${id}-${value}`} value={value} />
 								<label htmlFor={`${id}-${value}`} className="flex-1 cursor-pointer text-sm">

@@ -165,6 +165,7 @@ export function DebriefTab({ application, version, now, go, interview }: Workspa
 								leading={<Icon name="note-pencil" size={20} className="text-ink-2" />}
 								title={<span className="block text-sm/5">{t`Kept in your notes`}</span>}
 								subtitle={t`On this application, with the question, your answer and how it landed`}
+								wrap
 							/>
 						</List>
 						{nextRound && (

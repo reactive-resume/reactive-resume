@@ -329,7 +329,7 @@ function PrepWithoutAi({ application, interview, now, go }: PrepWithoutAiProps) 
 					</List>
 					{stories && stories.length > 0 && (
 						<>
-							<SectionHeading className="pt-6" note={stories.length}>
+							<SectionHeading className="pt-6" note={stories.length || undefined}>
 								<Trans>Your stories</Trans>
 							</SectionHeading>
 							<List tight>
@@ -513,7 +513,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 							</div>
 							<div className="col-start-2 @xl:col-start-auto">
 								{index === 0 && row.action === "none" ? (
-									<Button variant="link" size="sm" className="h-auto p-0 text-accent-text" onClick={() => go("fit")}>
+									<Button variant="link" className="h-auto p-0 text-sm/5 text-accent-text" onClick={() => go("fit")}>
 										<Trans>Open Fit</Trans>
 									</Button>
 								) : (
@@ -534,7 +534,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 				)}
 				{questions.length > 0 && (
 					<div>
-						<SectionHeading className="pt-6" note={questions.length}>
+						<SectionHeading className="pt-6" note={questions.length || undefined}>
 							<Trans>Questions to ask</Trans>
 						</SectionHeading>
 						<ol className="grid">

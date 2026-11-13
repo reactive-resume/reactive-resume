@@ -144,7 +144,7 @@ export function SavedTab({ application, interview, go }: WorkspaceTabProps) {
 				<div className="flex flex-wrap gap-1.5">
 					<Chip pressed={filter === null} onClick={() => setFilter(null)}>
 						<Trans>All</Trans>
-						<span className="font-mono text-xs">{items.length}</span>
+						{items.length > 0 && <span className="font-mono text-xs">{items.length}</span>}
 					</Chip>
 					{present.map(({ kind }) => (
 						<Chip key={kind} pressed={filter === kind} onClick={() => setFilter(kind)}>
@@ -248,7 +248,7 @@ function SavedRow({ item, applicationId, expanded, onToggle, onOpen, onDelete }:
 						<span className="block">{line}</span>
 					)}
 					{expanded && (
-						<span id={summaryId} className="block pt-1.5 text-sm/[21px] whitespace-normal text-ink-2">
+						<span id={summaryId} className="block pt-1.5 text-[13px]/[18px] whitespace-normal text-ink-2">
 							{summaryOf(item, i18n.locale)}
 						</span>
 					)}

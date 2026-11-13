@@ -41,6 +41,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { getCategoryLane, getLaneLabel, laneMoveInput } from "../lanes";
 import { useInvalidateApplications } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
+import { DateField } from "./date-field";
 import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { rowGroundClassName } from "@/components/calm/list-row";
 import { SetUpAiLine } from "@/components/calm/set-up-ai-line";
@@ -235,6 +236,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 	const [coverLetterId, setCoverLetterId] = useState("");
 	const [location, setLocation] = keep("location");
 	const [salary, setSalary] = keep("salary");
+	// A field that once held something stays on screen while it is cleared.
+	const [shown, setShown] = useState({ location: false, salary: false });
+	if ((location && !shown.location) || (salary && !shown.salary))
+		setShown({ location: shown.location || !!location, salary: shown.salary || !!salary });
 	const [authoredFields, setAuthoredFields] = keep("authored");
 	const authored = useRef(new Set<AuthoredField>(authoredFields));
 	const markAuthored = (field: AuthoredField) => {
@@ -486,7 +491,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 			>
 				<TabsList
 					aria-label={t`How to add it`}
-					className={cn("w-full max-sm:h-auto max-sm:min-h-11 max-sm:items-stretch", stage === "applied" && "hidden")}
+					className={cn(
+						"w-full max-sm:h-auto max-sm:min-h-11 max-sm:items-stretch",
+						(stage === "applied" || duplicate.data) && "hidden",
+					)}
 				>
 					<TabsTrigger value="link" className="max-sm:min-w-0 max-sm:py-2 max-sm:whitespace-normal">
 						<Icon name="link" />
@@ -541,7 +549,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 								autoFocus
 							/>
 							{/* Reading needs AI: with none connected the button is left out and the line above says why. */}
-							{readAI && (
+							{/* A job already saved has nothing to read: the notice below says what to do instead. */}
+							{readAI && !duplicate.data && (
 								<InputGroupAddon align="inline-end" className={oneLine ? "py-0" : "pt-0"}>
 									<Button
 										type="button"
@@ -572,39 +581,42 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 								</InputGroupAddon>
 							)}
 						</InputGroup>
-						{((oneLine && !pasteOpen && !initialCapture) || (readable && link)) && (
-							<p className="text-xs/4 text-ink-3">
-								{oneLine && !pasteOpen && !initialCapture && (
-									<Trans>
-										Or{" "}
-										<button
-											type="button"
-											className="font-medium text-accent-text hover:underline"
-											onClick={() => {
-												setPasteOpen(true);
-												setDescription(null);
-												resetRead();
-											}}
-										>
-											paste the posting text
-										</button>
-									</Trans>
-								)}
-								{!readAI && readable && link && (
-									<span>
-										{oneLine && !pasteOpen && !initialCapture && " · "}
-										<button
-											type="button"
-											className="font-medium text-accent-text hover:underline disabled:opacity-45"
-											disabled={read.isPending}
-											onClick={() => readPosting(false)}
-										>
-											<Trans>Read the page without AI</Trans>
-										</button>
-									</span>
-								)}
-							</p>
-						)}
+						{/* Recording an application, or a job already saved, keeps to the link (J9-01, J9-02). */}
+						{stage !== "applied" &&
+							!duplicate.data &&
+							((oneLine && !pasteOpen && !initialCapture) || (readable && link)) && (
+								<p className="text-xs/4 text-ink-3">
+									{oneLine && !pasteOpen && !initialCapture && (
+										<Trans>
+											Or{" "}
+											<button
+												type="button"
+												className="font-medium text-accent-text hover:underline"
+												onClick={() => {
+													setPasteOpen(true);
+													setDescription(null);
+													resetRead();
+												}}
+											>
+												paste the posting text
+											</button>
+										</Trans>
+									)}
+									{!readAI && readable && link && (
+										<span>
+											{oneLine && !pasteOpen && !initialCapture && " · "}
+											<button
+												type="button"
+												className="font-medium text-accent-text hover:underline disabled:opacity-45"
+												disabled={read.isPending}
+												onClick={() => readPosting(false)}
+											>
+												<Trans>Read the page without AI</Trans>
+											</button>
+										</span>
+									)}
+								</p>
+							)}
 						{/* A longer paste is cut at the limit: say so, rather than drop the rest silently. */}
 						{input.length >= MAX_INPUT && (
 							<p role="status" className="text-xs/4 text-warn-text">
@@ -786,10 +798,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 							</div>
 						</div>
 
-						<details open={stage === "saved" || !!location || !!salary} className="grid gap-3">
-							<summary className={cn("cursor-pointer t-small text-accent-text", stage === "saved" && "hidden")}>
-								<Trans>Additional details</Trans>
-							</summary>
+						{/* J5 and J9-01: Location when saving (or once it holds something), Salary once a reading found one. Both
+						    stay editable in the application's details. */}
+						{(stage === "saved" || shown.location) && (
 							<div className="grid gap-1.5">
 								<Label htmlFor={`${id}-location`}>
 									<Trans>Location</Trans>
@@ -803,10 +814,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 									}}
 								/>
 							</div>
-							<details className="grid gap-1.5">
-								<summary className="cursor-pointer t-small text-accent-text">
-									<Trans>Add salary</Trans>
-								</summary>
+						)}
+						{shown.salary && (
+							<div className="grid gap-1.5">
 								<Label htmlFor={`${id}-salary`}>
 									<Trans>Salary</Trans>
 								</Label>
@@ -818,8 +828,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 										setSalary(event.target.value);
 									}}
 								/>
-							</details>
-						</details>
+							</div>
+						)}
 
 						<div className="grid gap-1.5">
 							<span id={`${id}-stage`} className="text-[13px]/[18px] font-medium text-ink-2">
@@ -860,9 +870,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 										<Label htmlFor={`${id}-date`}>
 											<Trans>Applied on</Trans>
 										</Label>
-										<Input
+										<DateField
 											id={`${id}-date`}
-											type="date"
+											relative
 											value={stageDate}
 											required
 											onChange={(event) => setStageDate(event.target.value)}

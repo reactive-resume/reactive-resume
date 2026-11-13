@@ -189,7 +189,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 											placeholder={kind === "letter" ? t`Optional · none selected` : t`None selected`}
 											disabled={busy}
 											aria-label={label}
-											className="h-[22px] w-full min-w-0 border-transparent bg-transparent p-0 text-[15px]/[22px] font-medium shadow-none [&_svg]:hidden"
+											className="h-[22px] w-full min-w-0 border-transparent bg-transparent p-0 text-[15px]/[22px] font-medium shadow-none [&_svg]:hidden!"
 											onValueChange={select}
 										/>
 									) : (

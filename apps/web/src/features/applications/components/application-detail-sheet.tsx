@@ -26,6 +26,7 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
@@ -46,6 +47,7 @@ import { getClosedReasonLabel } from "../stages";
 import { useApplicationActions, useInvalidateApplications } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { ApplicationNotes } from "./application-notes";
+import { DateField } from "./date-field";
 import { Activity } from "./detail/activity";
 import { CloseDialog } from "./detail/close-dialog";
 import { Contacts } from "./detail/contacts";
@@ -371,7 +373,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 						{upcoming ? (
 							<List cap className="mt-3.5">
 								<ListRow
-									className="min-h-[46px] py-1.5"
+									className="min-h-[46px] py-1.5 sm:min-h-[46px]"
 									title={
 										<span className="block truncate text-sm/5">
 											{t`${interviewKindOf(upcoming.kind)?.label ?? ""} interview`}
@@ -728,6 +730,8 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 	const [resumeFileSent, setResumeFileSent] = useState(true);
 	const [letterFileSent, setLetterFileSent] = useState(true);
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	// Focus starts on the first choice, not the date: a focused date input takes the first Escape for itself.
+	const resumeRef = useRef<HTMLSelectElement>(null);
 	const update = useMutation({
 		...orpc.applications.update.mutationOptions(),
 		onSuccess: () => {
@@ -742,7 +746,7 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 				if (!open) onClose();
 			}}
 		>
-			<DialogContent closeLabel={t`Close`}>
+			<DialogContent closeLabel={t`Close`} initialFocus={resumeRef}>
 				<form
 					className="grid gap-4"
 					onSubmit={(event) => {
@@ -764,32 +768,27 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 						</DialogTitle>
 						<DialogDescription>
 							<Trans>
-								This moves {application.company} to Applied and saves the versions of the documents you sent.
+								{application.company} · {application.role}. Choose what you sent; those versions are kept as sent and
+								never change.
 							</Trans>
 						</DialogDescription>
 					</DialogHeader>
 					<PriorNoResponseNotice company={application.company} excludeId={application.id} />
 					<div className="grid gap-1.5">
 						<label htmlFor={`${id}-date`}>
-							<Trans>Applied on</Trans>
+							<Trans>Date applied</Trans>
 						</label>
-						<Input
-							id={`${id}-date`}
-							type="date"
-							required
-							value={date}
-							onChange={(event) => setDate(event.target.value)}
-						/>
+						<DateField id={`${id}-date`} required value={date} onChange={(event) => setDate(event.target.value)} />
 					</div>
 					<div className="grid gap-1.5">
 						<label htmlFor={`${id}-resume`}>
-							<Trans>Resume submitted (optional)</Trans>
+							<Trans>Resume you sent</Trans>
 						</label>
-						<select
+						<NativeSelect
+							ref={resumeRef}
 							id={`${id}-resume`}
 							value={resumeId}
 							onChange={(event) => setResumeId(event.target.value)}
-							className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
 						>
 							<option value="">{t`No resume selected`}</option>
 							{documents
@@ -799,17 +798,16 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 										{document.name}
 									</option>
 								))}
-						</select>
+						</NativeSelect>
 					</div>
 					<div className="grid gap-1.5">
 						<label htmlFor={`${id}-letter`}>
-							<Trans>Cover letter submitted (optional)</Trans>
+							<Trans>Cover letter you sent</Trans>
 						</label>
-						<select
+						<NativeSelect
 							id={`${id}-letter`}
 							value={coverLetterId}
 							onChange={(event) => setCoverLetterId(event.target.value)}
-							className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
 						>
 							<option value="">{t`No cover letter selected`}</option>
 							{documents
@@ -819,7 +817,10 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 										{document.name}
 									</option>
 								))}
-						</select>
+						</NativeSelect>
+						<p className="text-xs/4 text-ink-3">
+							<Trans>Both are optional. Leave one unselected if you didn't send it.</Trans>
+						</p>
 					</div>
 					{application.resumeFileUrl && (
 						<label className="flex items-center gap-2 text-sm">
@@ -846,9 +847,6 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 							{getOrpcErrorMessage(update.error, { fallback: t`Couldn't record submission. Try again.` })}
 						</p>
 					)}
-					<p className="t-small text-ink-3">
-						<Trans>Documents are optional. You can record what you sent later.</Trans>
-					</p>
 					<DialogFooter>
 						<Button variant="ghost" onClick={onClose}>
 							<Trans>Cancel</Trans>

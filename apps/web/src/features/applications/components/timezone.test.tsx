@@ -197,7 +197,7 @@ it("keeps an edited interview's exact instant during the repeated DST hour", asy
 	interview.timezone = "Europe/Berlin";
 	show(<InterviewDialog open application={row} interview={interview} onOpenChange={vi.fn()} />);
 	expect((screen.getByLabelText("Date") as HTMLInputElement).value).toBe("2026-10-25");
-	expect((screen.getByLabelText("Time · Europe/Berlin") as HTMLInputElement).value).toBe("02:30");
+	expect((screen.getByLabelText("Time · Berlin") as HTMLInputElement).value).toBe("02:30");
 	await act(async () => {
 		fireEvent.click(screen.getByRole("button", { name: "Save interview" }));
 	});

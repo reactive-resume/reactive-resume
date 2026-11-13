@@ -273,17 +273,18 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 	const factCount = item.evidence.factIds.length;
 	// The resume the check read is the one linked now; "sent" when it is the version that went to the employer.
 	const sent = resume && application.sentResumeVersionId ? time.date(application.appliedAt) : null;
+	const factWords = plural(factCount, { one: "# Knowledge fact", other: "# Knowledge facts" });
 	const provenance = resume ? (
 		<Trans>
 			The {application.company} posting, checked against{" "}
 			<Link to="/builder/$resumeId" params={{ resumeId: resume.id }} className="font-medium text-ink-2">
 				{resume.name}
 			</Link>
-			{sent ? t` (sent ${sent})` : ""} and {factCount} Knowledge facts · {checked}
+			{sent ? t` (sent ${sent})` : ""} and {factWords} · {checked}
 		</Trans>
 	) : (
 		<Trans>
-			The {application.company} posting, checked against {factCount} Knowledge facts · {checked}
+			The {application.company} posting, checked against {factWords} · {checked}
 		</Trans>
 	);
 
@@ -327,8 +328,8 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 			{expanded ? (
 				<p className="pt-1 text-sm/5 text-ink-3">
 					{resume
-						? t`${supported + partial} of ${item.data.requirements.length} requirements have evidence · checked ${checked} against ${resume.name} and ${factCount} Knowledge facts`
-						: t`${supported + partial} of ${item.data.requirements.length} requirements have evidence · checked ${checked} against ${factCount} Knowledge facts`}
+						? t`${supported + partial} of ${item.data.requirements.length} requirements have evidence · checked ${checked} against ${resume.name} and ${factWords}`
+						: t`${supported + partial} of ${item.data.requirements.length} requirements have evidence · checked ${checked} against ${factWords}`}
 				</p>
 			) : (
 				<>
@@ -388,7 +389,7 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 
 			<div className={cn("grid items-start gap-10", expanded && "@3xl:grid-cols-[minmax(0,1fr)_272px]")}>
 				<div role="table" aria-label={t`Requirements and your evidence`} className="grid">
-					<SectionHeading className={expanded ? "pt-[22px]" : "pt-7"} note={item.data.requirements.length}>
+					<SectionHeading className={expanded ? "pt-[22px]" : "pt-7"} note={item.data.requirements.length || undefined}>
 						<Trans>Requirements</Trans>
 					</SectionHeading>
 					{item.data.requirements.map((requirement) => {
@@ -433,17 +434,17 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 				)}
 
 				{(item.data.checks.length > 0 || item.data.ask) && (
-					<div className={cn("grid items-start gap-8", !expanded && "@xl:grid-cols-2")}>
+					<div className={cn("grid items-start", expanded ? "gap-0" : "gap-8 @xl:grid-cols-2")}>
 						{item.data.checks.length > 0 && (
 							<section className="grid">
 								<SectionHeading className="pt-[22px]">
 									<Trans>Against your requirements</Trans>
 								</SectionHeading>
-								<List tight={Boolean(expanded)}>
+								<List>
 									{item.data.checks.map((entry) => (
 										<ListRow
 											key={entry.label}
-											className="min-h-[62px] [&_span.truncate]:whitespace-normal"
+											className="min-h-[62px] sm:min-h-[62px] [&_span.truncate]:whitespace-normal"
 											leading={
 												<Icon
 													name={entry.met === true ? "check-circle" : entry.met === false ? "x-circle" : "question"}
@@ -457,7 +458,7 @@ export function FitTab({ application, version, now, go }: WorkspaceTabProps) {
 													}
 												/>
 											}
-											title={entry.label}
+											title={expanded ? <span className="block text-sm/[22px]">{entry.label}</span> : entry.label}
 											subtitle={entry.text}
 										/>
 									))}

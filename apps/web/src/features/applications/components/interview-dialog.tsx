@@ -22,6 +22,7 @@ import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { interviewCalendarAction, showInterviewCancellation } from "../calendar";
 import { dayKey, interviewTypeLabel } from "../interviews";
 import { applicationDetailQueryOptions, applicationsListQueryKey } from "../queries";
+import { DateField } from "./date-field";
 import { Combobox } from "@/components/ui/combobox";
 import { useCareerTime, withQueryUndo } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
@@ -48,7 +49,8 @@ const zoneFormatter = (timeZone: string) =>
 	});
 
 /** A time zone as people read it: "America/New_York" is "America/New York", as the zone picker lists it. */
-const timeZoneName = (zone: string) => zone.replaceAll("_", " ");
+/** "Europe/Lisbon" reads as "Lisbon". */
+const timeZoneName = (zone: string) => (zone.split("/").at(-1) ?? zone).replaceAll("_", " ");
 
 /** An instant as the date ("2026-10-08") and time ("17:58") on a clock in `timeZone`. */
 function zonedParts(instant: Date | string, timeZone: string) {
@@ -400,11 +402,10 @@ export function InterviewDialog({
 					/>
 				</Field>
 
-				<div className="grid gap-2.5 sm:grid-cols-3">
+				<div className="grid gap-2.5 sm:grid-cols-[minmax(0,1.25fr)_minmax(0,0.8fr)_auto]">
 					<Field label={t`Date`} htmlFor={`${id}-date`}>
-						<Input
+						<DateField
 							id={`${id}-date`}
-							type="date"
 							required
 							aria-invalid={!draft.date}
 							value={draft.date}
@@ -412,7 +413,7 @@ export function InterviewDialog({
 						/>
 					</Field>
 					<Field label={t`Time · ${timeZoneName(draft.timezone)}`} htmlFor={`${id}-time`}>
-						<Input
+						<DateField
 							id={`${id}-time`}
 							type="time"
 							required
@@ -475,9 +476,12 @@ export function InterviewDialog({
 						id={`${id}-location`}
 						value={draft.location}
 						maxLength={500}
-						placeholder={t`Video link, office address, or phone number`}
+						aria-describedby={`${id}-location-help`}
 						onChange={(event) => set("location", event.target.value)}
 					/>
+					<p id={`${id}-location-help`} className="text-xs/4 text-ink-3">
+						<Trans>A video link, an office address or a phone number.</Trans>
+					</p>
 				</Field>
 
 				<fieldset className="grid gap-2">
@@ -553,9 +557,6 @@ export function InterviewDialog({
 						<Icon name="user-plus" size={18} />
 						<Trans>Add a person</Trans>
 					</Button>
-					<p className="text-xs text-ink-3">
-						<Trans>Public profile links are optional and only used if Web research is on.</Trans>
-					</p>
 				</fieldset>
 
 				<Field label={t`What they asked you to prepare`} htmlFor={`${id}-notes`}>
@@ -568,15 +569,14 @@ export function InterviewDialog({
 				</Field>
 			</div>
 
-			<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-6 py-3.5 pb-[max(14px,env(safe-area-inset-bottom))] max-sm:flex-col-reverse max-sm:items-stretch">
+			<div className="flex flex-wrap items-center justify-between gap-2 px-6 py-3.5 pb-[max(14px,env(safe-area-inset-bottom))] max-sm:flex-col-reverse max-sm:items-stretch">
 				{editing && (
-					<Button variant="ghost" className="text-danger-text" disabled={pending} onClick={deleteInterview}>
-						<Icon name="trash" size={18} />
-						<Trans>Delete</Trans>
+					<Button variant="danger-text" disabled={pending} onClick={deleteInterview}>
+						<Trans>Delete interview</Trans>
 					</Button>
 				)}
 				<div className="ms-auto flex max-w-full flex-wrap items-center justify-end gap-2 max-sm:w-full max-sm:flex-col-reverse max-sm:items-stretch">
-					<Button variant="secondary" onClick={() => onOpenChange(false)}>
+					<Button variant="ghost" onClick={() => onOpenChange(false)}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button loading={pending} disabled={!canSave} onClick={() => void save()}>

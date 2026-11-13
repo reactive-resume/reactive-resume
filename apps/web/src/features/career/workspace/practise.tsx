@@ -264,16 +264,8 @@ export function PractiseTab({ application, version, interview, speak, story, war
 					/>
 				)}
 				{!speaking && (
-					<aside className="grid gap-0">
-						{noAi && (
-							<>
-								<SectionHeading className="pt-[22px]">
-									<Trans>Voice</Trans>
-								</SectionHeading>
-								<VoiceSettingsPanel voice={voice} audio={null} disabled={false} />
-							</>
-						)}
-						<SectionHeading className="pt-[22px]" note={attempts.length}>
+					<aside className="grid content-start gap-0">
+						<SectionHeading className={noAi ? "pt-[18px]" : "pt-[22px]"} note={attempts.length || undefined}>
 							{noAi ? <Trans>Your answers</Trans> : <Trans>Your attempts</Trans>}
 						</SectionHeading>
 						{attempts.length === 0 ? (
@@ -302,6 +294,14 @@ export function PractiseTab({ application, version, interview, speak, story, war
 							<p className="pt-3 text-[13px]/[18px] text-ink-3">
 								<Trans>Open an attempt to compare it with this one and see what improved.</Trans>
 							</p>
+						)}
+						{noAi && (
+							<>
+								<SectionHeading className="pt-6">
+									<Trans>Voice</Trans>
+								</SectionHeading>
+								<VoiceSettingsPanel voice={voice} audio={null} disabled={false} />
+							</>
 						)}
 					</aside>
 				)}
@@ -850,24 +850,26 @@ function Session({
 										? t`Your words appear as you speak. Nothing is sent until you stop; then you can correct the text before asking for feedback.`
 										: t`Nothing is sent until you stop. After transcription, correct the text before asking for feedback.`}
 								</p>
-								<Button variant="link" size="sm" className="w-fit p-0" onClick={() => chooseMode("typed")}>
-									<Trans>Type instead</Trans>
-								</Button>
-								{!browserDictation && (
-									<Button
-										variant="link"
-										size="sm"
-										className="w-fit p-0"
-										onClick={() => {
-											recording.current?.cancel();
-											recording.current = null;
-											setStep({ name: "idle" });
-											fileInput.current?.click();
-										}}
-									>
-										<Trans>Choose an audio file · up to 2 MB</Trans>
+								<div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+									<Button variant="link" size="sm" className="w-fit p-0" onClick={() => chooseMode("typed")}>
+										<Trans>Type instead</Trans>
 									</Button>
-								)}
+									{!browserDictation && (
+										<Button
+											variant="link"
+											size="sm"
+											className="w-fit p-0"
+											onClick={() => {
+												recording.current?.cancel();
+												recording.current = null;
+												setStep({ name: "idle" });
+												fileInput.current?.click();
+											}}
+										>
+											<Trans>Choose an audio file · up to 2 MB</Trans>
+										</Button>
+									)}
+								</div>
 							</>
 						)}
 						{step.name === "blocked" && (
@@ -1168,6 +1170,23 @@ function VoiceSettingsPanel({ voice, audio, disabled }: VoiceSettingsPanelProps)
 	const { settings, update, transcribers, readers } = voice;
 	const browserTranscribes = settings.transcribe.providerId === BROWSER;
 	if (voice.providerState.isUnavailable) return null;
+	// Nothing to choose: no connection offers speech, so the browser does both. Two quiet lines say so (N7).
+	if (transcribers.length === 0 && readers.length === 0)
+		return (
+			<ul className="grid">
+				{[
+					{ label: t`Read questions with`, works: canSpeakAloud() },
+					{ label: t`Take dictation with`, works: canDictate() },
+				].map(({ label, works }) => (
+					<li key={label} className="grid min-h-12 content-center border-b border-line py-2.5 last:border-b-0">
+						<span className="text-sm/5 font-medium text-ink">{label}</span>
+						<span className="text-[13px]/[18px] text-ink-3">
+							{works ? t`Your browser` : t`Not available in this browser`}
+						</span>
+					</li>
+				))}
+			</ul>
+		);
 	return (
 		<div className="grid">
 			<CollapseRow>

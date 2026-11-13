@@ -33,6 +33,7 @@ import { dayKey } from "../../interviews";
 import { describeNextStep, getNextStep } from "../../next-step";
 import { offerHintFor, useOfferHints } from "../../queries";
 import { useInvalidateApplications } from "../../use-application-actions";
+import { DateField } from "../date-field";
 import { useCareerTime } from "@/features/career/shared";
 import { orpc } from "@/libs/orpc/client";
 
@@ -160,6 +161,8 @@ type FollowUpDialogProps = { application: Application; open: boolean; onOpenChan
 function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps) {
 	const id = useId();
 	const { timeZone } = useCareerTime();
+	// "Europe/Lisbon" reads as "Lisbon".
+	const zone = (timeZone.split("/").at(-1) ?? timeZone).replaceAll("_", " ");
 	const invalidate = useInvalidateApplications();
 	const [date, setDate] = useState("");
 	const [time, setTime] = useState("09:00");
@@ -244,13 +247,13 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 							<Label htmlFor={`${id}-date`}>
 								<Trans>Date</Trans>
 							</Label>
-							<Input id={`${id}-date`} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+							<DateField id={`${id}-date`} value={date} onChange={(event) => setDate(event.target.value)} />
 						</div>
 						<div className="grid gap-1.5">
 							<Label htmlFor={`${id}-time`}>
 								<Trans>Time</Trans>
 							</Label>
-							<Input id={`${id}-time`} type="time" value={time} onChange={(event) => setTime(event.target.value)} />
+							<DateField id={`${id}-time`} type="time" value={time} onChange={(event) => setTime(event.target.value)} />
 						</div>
 					</div>
 
@@ -266,7 +269,7 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 						/>
 					</div>
 					<p className="t-small text-ink-3">
-						<Trans>Shown on Today and in the list as the next step. Times are in {timeZone}.</Trans>
+						<Trans>Shown on Today and in the list as the next step. Times are in {zone}.</Trans>
 					</p>
 				</form>
 				<DialogFooter>

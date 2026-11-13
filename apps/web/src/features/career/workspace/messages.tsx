@@ -520,8 +520,8 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 						</div>
 					</div>
 					{placeholders.length > 0 && (
-						<p role="status" className="flex items-center gap-1.5 t-small text-ink-3">
-							<Icon name="warning" size={14} />
+						<p role="status" className="flex items-center gap-1.5 text-xs/4 text-ink-3">
+							<Icon name="warning-circle" size={14} className="text-warn-text" />
 							<Trans>Replace the marked placeholder before sending.</Trans>
 						</p>
 					)}

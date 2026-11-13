@@ -44,6 +44,7 @@ import {
 import { applicationLanesQueryOptions, useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { useCareerTime, useNow } from "@/features/career/shared";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
+import { useShortcutsPage } from "@/features/keyboard-shortcuts/store";
 import { toastError } from "@/libs/error-message";
 import { getPageTitle } from "@/libs/seo";
 
@@ -119,6 +120,7 @@ function matches(application: ApplicationSummary, query: string) {
 
 function RouteComponent() {
 	const { t } = useLingui();
+	useShortcutsPage(t`Applications`);
 	const { q, view, closed, followUp, needsYou, create } = Route.useSearch();
 	const navigate = useNavigate({ from: Route.fullPath });
 	const phone = useBreakpoint() === "mobile";
@@ -287,6 +289,20 @@ function RouteComponent() {
 		</p>
 	);
 
+	const saveJobButton = (
+		<Button
+			variant="primary"
+			onClick={() => setAdding(true)}
+			aria-label={t`Save a job`}
+			className="max-sm:size-11 max-sm:p-0"
+		>
+			<Icon name="plus" />
+			<span className="max-sm:hidden">
+				<Trans>Save a job</Trans>
+			</span>
+		</Button>
+	);
+
 	return (
 		<Page ref={pageRef} tabIndex={-1} className="pb-24 outline-none">
 			<PageBody className="pb-0">
@@ -296,7 +312,9 @@ function RouteComponent() {
 						<>
 							{/* One More menu beside the one accent action: icon-only buttons are for back, close and more. */}
 							<DropdownMenu>
-								<DropdownMenuTrigger render={<Button size="icon" variant="secondary" aria-label={t`More`} />}>
+								<DropdownMenuTrigger
+									render={<Button size="icon" variant="secondary" className="max-sm:hidden" aria-label={t`More`} />}
+								>
 									<Icon name="dots-three" size={20} />
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end" className="w-[212px]">
@@ -324,21 +342,8 @@ function RouteComponent() {
 									</HotkeysProvider>
 								</DropdownMenuContent>
 							</DropdownMenu>
-							{/* The empty state has its own Save a job: one accent action, not two. */}
-							{!empty && (
-								<Button
-									variant="primary"
-									onClick={() => setAdding(true)}
-									aria-label={t`Save a job`}
-									className="max-sm:size-11 max-sm:p-0"
-								>
-									<Icon name="plus" />
-									<span className="max-sm:hidden">
-										<Trans>Save a job</Trans>
-									</span>
-								</Button>
-							)}
-							<PhoneHeaderActions />
+							{!empty && !phone && saveJobButton}
+							<PhoneHeaderActions>{!empty && phone && saveJobButton}</PhoneHeaderActions>
 						</>
 					}
 				/>
@@ -379,14 +384,14 @@ function RouteComponent() {
 								<FilterField
 									ref={searchRef}
 									label={t`Filter applications`}
-									{...(characterShortcuts ? { shortcut: "/" } : {})}
+									{...(characterShortcuts && !phone ? { shortcut: "/" } : {})}
 									value={query}
 									onChange={(event) => setQuery(event.target.value)}
 									className="max-sm:w-auto max-sm:flex-1"
 								/>
 								<Chip pressed={needsYou} onClick={() => setSearch({ needsYou: !needsYou })}>
 									<Trans>Needs you</Trans>
-									<span className="font-mono text-xs font-medium text-ink-3">{owedCount}</span>
+									{owedCount > 0 && <span className="font-mono text-xs font-medium text-ink-3">{owedCount}</span>}
 								</Chip>
 							</>
 						)}
@@ -411,38 +416,34 @@ function RouteComponent() {
 				)}
 
 				{(isError || retryingLoad) && (
-					<div
-						role="alert"
-						className="my-4 flex min-h-24 flex-wrap items-center justify-between gap-3 rounded-xl border border-line p-5"
-					>
-						<p className="text-sm text-danger-text">
-							<Trans>Couldn't load applications. Your saved data hasn't changed.</Trans>
+					<div role="alert" className="my-4 grid gap-3.5 rounded-xl border border-line p-5">
+						<p className="flex items-start gap-2.5 text-sm/5 text-ink">
+							<Icon name="warning-circle" size={20} className="shrink-0 text-warn-text" />
+							<Trans>Couldn't load this. Your saved data hasn't changed.</Trans>
 						</p>
 						<Button
 							variant="secondary"
 							size="sm"
+							className="justify-self-start"
 							loading={isFetching}
 							onClick={() => {
 								setRetryingLoad(true);
 								void refetch().finally(() => setRetryingLoad(false));
 							}}
 						>
-							{isFetching ? <Trans>Retrying…</Trans> : <Trans>Retry</Trans>}
+							{isFetching ? <Trans>Retrying…</Trans> : <Trans>Try again</Trans>}
 						</Button>
 					</div>
 				)}
 
 				{lanes.error && (
-					<div
-						role="alert"
-						className="my-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-warn-soft p-3.5 text-warn-text"
-					>
-						<p className="text-sm text-danger-text">
-							<Icon name="warning-circle" className="me-2 inline" />
-							<Trans>Couldn't load your stages, so the standard ones are shown. Try again.</Trans>
+					<div role="alert" className="my-4 flex items-center gap-3 rounded-lg bg-warn-soft px-4 py-3.5 text-warn-text">
+						<Icon name="warning-circle" size={20} className="shrink-0" />
+						<p className="min-w-0 flex-1 text-sm/5">
+							<Trans>Couldn't load your stages, so the standard ones are shown.</Trans>
 						</p>
-						<Button variant="secondary" size="sm" onClick={() => void lanes.refetch()}>
-							<Trans>Retry</Trans>
+						<Button variant="secondary" size="sm" className="shrink-0" onClick={() => void lanes.refetch()}>
+							<Trans>Try again</Trans>
 						</Button>
 					</div>
 				)}

@@ -498,7 +498,10 @@ const ApplicationRow = memo(function ApplicationRow({
 				</span>
 				<TagChips
 					fit
-					tags={application.tags}
+					// A tag the place line already says ("Remote" beside "· Remote") is not repeated.
+					tags={application.tags.filter(
+						(tag) => !application.location?.toLocaleLowerCase().includes(tag.toLocaleLowerCase()),
+					)}
 					onSelect={onTagSelect}
 					className="relative z-10 ms-0 h-4 min-w-0 flex-1 overflow-hidden *:shrink-0"
 				/>

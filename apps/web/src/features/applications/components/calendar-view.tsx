@@ -247,7 +247,11 @@ export function ApplicationCalendar({
 
 			{!compact && (
 				<aside className="flex min-w-0 flex-col" data-testid="interview-agenda">
-					<SectionHeading first note={i18n.number(comingUp.length)} className="min-h-9 items-center p-0">
+					<SectionHeading
+						first
+						note={comingUp.length ? i18n.number(comingUp.length) : undefined}
+						className="min-h-9 items-center p-0"
+					>
 						<Trans>Coming up</Trans>
 					</SectionHeading>
 					{/* Its first hairline sits on the line under the weekday names. */}
