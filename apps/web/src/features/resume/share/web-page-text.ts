@@ -17,7 +17,7 @@ msg`Enter the password the resume owner shared with you.`;
 msg`Password`;
 msg`Unlock`;
 msg`That password isn't correct. Check it with the resume owner and try again.`;
-msg`This resume isn't shared right now.`;
+msg`This resume isn't shared right now`;
 msg`If someone sent you this link, ask them for a new one.`;
 msg`Go to Reactive Resume`;
 msg`Only you can see this address. Publish it in Share.`;

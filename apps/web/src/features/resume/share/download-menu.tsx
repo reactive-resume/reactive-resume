@@ -2,7 +2,7 @@ import type { DownloadFormat } from "./download-tab";
 import type { ReactElement, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
@@ -57,6 +57,7 @@ export function DownloadMenu<Id extends string>({
 	issues,
 }: DownloadMenuProps<Id>) {
 	const id = useId();
+	const popup = useRef<HTMLDivElement>(null);
 	const phone = useBreakpoint() === "mobile";
 	const [open, setOpen] = useState(false);
 	const [fileName, setFileName] = useState<string | null>(null);
@@ -91,6 +92,10 @@ export function DownloadMenu<Id extends string>({
 				className="[&_[data-slot=icon]]:transition-transform data-popup-open:[&_[data-slot=icon]]:rotate-180"
 			/>
 			<PopoverContent
+				ref={popup}
+				initialFocus={() =>
+					popup.current?.querySelector<HTMLButtonElement>("[data-download-format]:not(:disabled)") ?? true
+				}
 				align="end"
 				sideOffset={14}
 				aria-label={t`Download`}
@@ -249,6 +254,7 @@ function FormatRow<Id extends string>({ format, busy, disabled, onHover, onClick
 		<button
 			type="button"
 			disabled={disabled}
+			data-download-format={format.id}
 			aria-busy={busy}
 			onPointerEnter={() => onHover(format.id)}
 			onPointerLeave={() => onHover(null)}
@@ -257,7 +263,7 @@ function FormatRow<Id extends string>({ format, busy, disabled, onHover, onClick
 			onClick={onClick}
 			className={cn(
 				rowGroundClassName,
-				"mx-2 flex min-h-14 items-center gap-3 py-2 text-start before:-inset-x-2 hover:before:bg-hover focus-visible:before:bg-hover disabled:cursor-not-allowed disabled:opacity-60",
+				"mx-2 flex min-h-14 items-center gap-3 py-2 text-start before:-inset-x-2 hover:before:bg-hover focus:before:bg-hover disabled:cursor-not-allowed disabled:opacity-60",
 			)}
 		>
 			<IconTile className="bg-surface shadow-[inset_0_0_0_1px_var(--line)]">

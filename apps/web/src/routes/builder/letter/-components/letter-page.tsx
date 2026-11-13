@@ -241,9 +241,9 @@ function LetterOverlay({ pageIndex, pageMap, itemId, draft }: LetterOverlayProps
 						className={cn(
 							"absolute cursor-pointer rounded-lg outline-[1.5px] transition-[background-color,outline-color] duration-standard outline-solid",
 							// The PDF paints no text backgrounds, so the wash lies over the letter's box on the page. The paper is
-							// white in both themes, so the wash is the page mark's own green (proposals.ts), not a theme token.
+							// white in both themes; keep the dark-theme tint faint enough to read the paper through it.
 							draft && node.kind === "item"
-								? "bg-[#d4efd9]/60 mix-blend-multiply outline-accent"
+								? "bg-accent-soft/60 mix-blend-multiply outline-accent dark:bg-accent/10"
 								: "outline-transparent hover:bg-accent/6",
 						)}
 						style={{

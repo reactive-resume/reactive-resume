@@ -5,7 +5,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import {
 	formatTimeSince,
 	publicResumeUrl,
@@ -24,6 +24,7 @@ import { AddressField } from "./address-field";
 import { CopyLinkButton } from "./copy-link-button";
 import { CustomDomainField } from "./custom-domain-field";
 import { FeedbackLinksSection } from "./feedback-links";
+import { useSharePreviewStore } from "./privacy-preview";
 import { useShareOrigin } from "./use-share-origin";
 import { Crumb, CrumbButton } from "@/components/calm/crumb";
 import { List, ListRow, rowGroundClassName } from "@/components/calm/list-row";
@@ -55,6 +56,7 @@ type ShareView = "share" | "privacy" | "domain" | "feedback";
  * level too. Private is the default; turning the link off keeps the address.
  */
 export function SharePanel() {
+	useEffect(() => () => useSharePreviewStore.setState({ contactDetails: false }), []);
 	const [view, setView] = useState<ShareView>("share");
 	const setting = useShareSetting();
 	const back = () => setView("share");
@@ -86,33 +88,41 @@ function ShareHome({ setting, open }: ShareHomeProps) {
 	const { data: session } = authClient.useSession();
 	const { update, isPending } = setting;
 	const isPublic = resume.isPublic ?? false;
+	// shortcut: publication history lasts for this editor session; durable history needs an owner API field.
+	const [publishedResumeId, setPublishedResumeId] = useState(isPublic ? resume.id : null);
+	const hasPublished = isPublic || publishedResumeId === resume.id;
 	const origin = useShareOrigin();
 	const username = session?.user.username ?? "";
 	const url = publicResumeUrl(origin, { username, slug: resume.slug });
 
 	const setPublic = async (checked: boolean) => {
 		const done = await update({ isPublic: checked });
-		if (done) toast.add({ description: checked ? t`Your web page is live` : t`Link turned off. The address is kept` });
+		if (done) {
+			if (checked) setPublishedResumeId(resume.id);
+			toast.add({ description: checked ? t`Your web page is live` : t`Link turned off. The address is kept` });
+		}
 	};
 
 	return (
 		<>
-			{isPublic ? (
+			{hasPublished ? (
 				<>
 					<SectionHeading first className="items-center">
 						<Trans>Public link</Trans>
 						<Switch
 							className="ms-auto"
-							checked
+							checked={isPublic}
 							aria-label={t`Public link`}
 							disabled={isPending || resume.isLocked}
 							onCheckedChange={(checked) => void setPublic(checked)}
 						/>
 					</SectionHeading>
 					<p className="t-small text-ink-3">
-						{resume.hasPassword
-							? t`Visitors need the link and password to see your web page.`
-							: t`Anyone with the link can see your web page.`}
+						{!isPublic
+							? t`Off. Only you can see your web page.`
+							: resume.hasPassword
+								? t`Visitors need the link and password to see your web page.`
+								: t`Anyone with the link can see your web page.`}
 					</p>
 				</>
 			) : (
@@ -137,44 +147,50 @@ function ShareHome({ setting, open }: ShareHomeProps) {
 				</div>
 			)}
 
-			<AddressField
-				url={url}
-				username={username}
-				update={update}
-				className={isPublic ? "mt-4" : "mt-5"}
-				actions={(copyDisabled) =>
-					isPublic && (
-						<div className={cn(ENTER_CLASS, "mt-3.5 flex flex-wrap items-center gap-5")}>
-							<CopyLinkButton url={url} disabled={copyDisabled} />
-							<a href={url} target="_blank" rel="noopener" className={textLinkClassName}>
-								<Trans>Open web page</Trans>
-							</a>
-							<QrCodeButton url={url} />
-						</div>
-					)
-				}
-			/>
+			{hasPublished && (
+				<>
+					<AddressField
+						url={url}
+						username={username}
+						update={update}
+						className={isPublic ? "mt-4" : "mt-5"}
+						actions={(copyDisabled) =>
+							isPublic && (
+								<div className={cn(ENTER_CLASS, "mt-3.5 flex flex-wrap items-center gap-5")}>
+									<CopyLinkButton url={url} disabled={copyDisabled} />
+									<a href={url} target="_blank" rel="noopener" className={textLinkClassName}>
+										<Trans>Open web page</Trans>
+									</a>
+									<QrCodeButton url={url} />
+								</div>
+							)
+						}
+					/>
 
-			<ViewsAndDownloads isPublic={isPublic} />
-			<FeedbackRow onOpen={() => open("feedback")} />
+					<ViewsAndDownloads isPublic={isPublic} />
+					<div inert={!isPublic} className={cn(!isPublic && "opacity-50")}>
+						<FeedbackRow onOpen={() => open("feedback")} />
 
-			<SectionHeading className="pt-6">
-				<Trans>Web page</Trans>
-			</SectionHeading>
-			<List role="navigation" aria-label={t`Web page settings`}>
-				<ListRow
-					render={<button type="button" onClick={() => open("privacy")} />}
-					title={<Trans>Privacy and downloads</Trans>}
-					subtitle={<PrivacySummary />}
-					caret
-				/>
-				<ListRow
-					render={<button type="button" onClick={() => open("domain")} />}
-					title={<AddressesTitle />}
-					subtitle={<AddressesSummary origin={origin} username={username} />}
-					caret
-				/>
-			</List>
+						<SectionHeading className="pt-6">
+							<Trans>Web page</Trans>
+						</SectionHeading>
+						<List role="navigation" aria-label={t`Web page settings`}>
+							<ListRow
+								render={<button type="button" onClick={() => open("privacy")} />}
+								title={<Trans>Privacy and downloads</Trans>}
+								subtitle={<PrivacySummary />}
+								caret
+							/>
+							<ListRow
+								render={<button type="button" onClick={() => open("domain")} />}
+								title={<AddressesTitle />}
+								subtitle={<AddressesSummary origin={origin} username={username} />}
+								caret
+							/>
+						</List>
+					</div>
+				</>
+			)}
 		</>
 	);
 }
@@ -290,15 +306,30 @@ type SettingRowProps = {
 	checked: boolean;
 	disabled?: boolean;
 	onCheckedChange: (checked: boolean) => void;
+	previewContactDetails?: boolean;
 	/** Controls under the description (a password's Change). */
 	children?: ReactNode;
 };
 
 /** A Share setting: a 15px name, the app's sentence under it and the switch at the end, rows split by hairlines. */
-function SettingRow({ label, description, checked, disabled, onCheckedChange, children }: SettingRowProps) {
+function SettingRow({
+	label,
+	description,
+	checked,
+	disabled,
+	onCheckedChange,
+	children,
+	previewContactDetails,
+}: SettingRowProps) {
 	const id = useId();
 	return (
 		<div
+			onPointerEnter={previewContactDetails ? () => useSharePreviewStore.setState({ contactDetails: true }) : undefined}
+			onPointerLeave={
+				previewContactDetails ? () => useSharePreviewStore.setState({ contactDetails: false }) : undefined
+			}
+			onFocusCapture={previewContactDetails ? () => useSharePreviewStore.setState({ contactDetails: true }) : undefined}
+			onBlurCapture={previewContactDetails ? () => useSharePreviewStore.setState({ contactDetails: false }) : undefined}
 			className={cn(
 				rowGroundClassName,
 				"flex min-h-14 items-start gap-3.5 border-b border-line pt-3 pb-3.5 before:-inset-x-3 last:border-b-0 hover:before:bg-hover has-[:focus-visible]:before:bg-hover",
@@ -464,6 +495,7 @@ function PrimaryRow({ setting: { update, isPending }, current, listState, domain
 			const confirmed = await confirm(t`Make this your primary resume?`, {
 				description: t`“${current.name}” stops being your primary resume.`,
 				confirmText: t`Make primary`,
+				variant: "secondary",
 			});
 			if (!confirmed) return;
 		}
@@ -547,6 +579,7 @@ function PrivacySettings({ setting: { update, isPending } }: ShareSettingProps) 
 					disabled={disabled}
 					onCheckedChange={(checked) => void update({ hideContactDetails: checked })}
 					label={t`Hide contact details`}
+					previewContactDetails
 					description={t`Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays.`}
 				/>
 				<SettingRow
@@ -746,7 +779,6 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 					</dl>
 					<div
 						role="img"
-						// When the last view counted rides on the chart's title, not a line of its own (B5).
 						aria-label={[
 							t`Views per day, ${firstLabel} to today. The busiest day had ${i18n.number(summary.peak)}.`,
 							lastView ? t`Last counted view ${lastView} ago. Each visitor counts once an hour.` : "",
@@ -768,8 +800,13 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 							),
 						)}
 					</div>
-					<div className="flex justify-between pt-1.5 t-mono text-ink-3">
+					<div className="flex flex-wrap justify-between gap-x-2 pt-1.5 t-mono text-ink-3">
 						<span>{firstLabel}</span>
+						{lastView && (
+							<span className="t-caption font-sans">
+								<Trans>Last counted view {lastView} ago</Trans>
+							</span>
+						)}
 						<span>
 							<Trans>Today</Trans>
 						</span>

@@ -4,7 +4,8 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import { create } from "zustand";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -35,6 +36,9 @@ import { orpc } from "@/libs/orpc/client";
 
 /** A version as History lists it; resumes and letters share it. */
 type HistoryVersion = Pick<VersionSummary, "id" | "kind" | "name" | "createdAt">;
+
+// A version already selected when History opens came from an Open sent version entry point.
+const useHistoryEntry = create<{ versionId: string | null }>(() => ({ versionId: null }));
 
 /** What History shows and does for one document: its versions, and saving, restoring, renaming and deleting them. */
 export type HistorySource = {
@@ -129,6 +133,10 @@ function useResumeHistory(): HistorySource {
 export function HistoryTimeline({ source }: { source: HistorySource }) {
 	const { i18n } = useLingui();
 	const selectedId = useEditorStore((state) => state.historyVersionId);
+	const initialVersionId = useRef(selectedId);
+	useEffect(() => {
+		useHistoryEntry.setState({ versionId: initialVersionId.current });
+	}, []);
 	const [name, setName] = useState("");
 	const [busy, setBusy] = useState(false);
 	const nameId = useId();
@@ -227,7 +235,10 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 					detail={source.nowDetail}
 					selected={!selected}
 					current
-					onSelect={() => useEditorStore.setState({ historyVersionId: null })}
+					onSelect={() => {
+						useHistoryEntry.setState({ versionId: null });
+						useEditorStore.setState({ historyVersionId: null });
+					}}
 				/>
 				{versions?.map((version) => (
 					<TimelineItem
@@ -236,7 +247,10 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 						detail={`${when(version)} · ${getVersionDetail(version)}`}
 						icon={versionIcon(version)}
 						selected={version.id === selectedId}
-						onSelect={() => useEditorStore.setState({ historyVersionId: version.id })}
+						onSelect={() => {
+							useHistoryEntry.setState({ versionId: null });
+							useEditorStore.setState({ historyVersionId: version.id });
+						}}
 						trailing={
 							version.kind === "named" ? (
 								<NamedVersionMenu version={version} source={source} />
@@ -293,10 +307,38 @@ export function ResumeVersionBar(props: VersionBarProps) {
 /** Compare without changing selection; restoring uses the same guarded write as the History sheet. */
 export function HistoryVersionBar({ source, showingNow, onCompare }: VersionBarProps & { source: HistorySource }) {
 	const { i18n } = useLingui();
+	const linkedVersionId = useHistoryEntry((state) => state.versionId);
 	const selectedId = useEditorStore((state) => state.historyVersionId);
 	const selected = source.versions?.find((version) => version.id === selectedId);
 	const { restore, restoring } = useRestoreVersion(source);
 	if (!selected) return null;
+	if (selected.kind === "sent" && selected.id === linkedVersionId) {
+		const company = selected.name;
+		const sentOn = i18n.date(selected.createdAt, { day: "numeric", month: "short" });
+		return (
+			<div
+				aria-label={t`Version preview`}
+				className="absolute inset-x-4 top-3 z-10 flex flex-wrap items-center gap-3 rounded-lg bg-info-soft px-3.5 py-3 t-small text-info-text"
+			>
+				<Icon name="lock-simple" size={20} className="shrink-0" />
+				<span className="min-w-0 flex-1">
+					{company
+						? t`The version sent to ${company} on ${sentOn} · it never changes`
+						: t`The version sent on ${sentOn} · it never changes`}
+				</span>
+				<Button
+					variant="ghost"
+					size="sm"
+					className="text-inherit"
+					onClick={() => {
+						useEditorStore.getState().setHistoryOpen(false);
+					}}
+				>
+					<Trans>Edit current draft</Trans>
+				</Button>
+			</div>
+		);
+	}
 	return (
 		<div
 			aria-label={t`Version preview`}

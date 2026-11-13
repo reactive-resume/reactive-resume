@@ -12,6 +12,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
+import { useSharePreviewStore } from "./privacy-preview";
 import { useShareOrigin } from "./use-share-origin";
 import { useCurrentResume, useResumeData } from "@/features/resume/builder/draft";
 import { ZoomBar } from "@/features/resume/editor/chrome";
@@ -28,6 +29,7 @@ type PreviewSettings = {
 	hideContactDetails: boolean;
 	showDownloadButtons: boolean;
 	allowWordDownload: boolean;
+	contactDetails: boolean;
 };
 
 /** The page a visitor gets, from the draft: same renderer as the server, contact details hidden as they'd be. */
@@ -50,7 +52,10 @@ async function renderPreview(data: ResumeData, settings: PreviewSettings, fontMi
 		wordDownloadUrl: settings.allowWordDownload ? "#" : undefined,
 		creditUrl: data.metadata.web?.showCredit === false ? undefined : window.location.origin,
 		// The visitor's bar would look live here (Copy link, Download PDF); the frame names the address instead.
-	}).replace("</head>", "<style>.rr-bar{display:none!important}</style></head>");
+	}).replace(
+		"</head>",
+		`<style>.rr-bar{display:none!important}${settings.contactDetails ? `.rr [data-contact-detail]{outline:1px dashed ${getComputedStyle(document.documentElement).getPropertyValue("--warn-mark")};outline-offset:3px}` : ""}</style></head>`,
+	);
 }
 
 /**
@@ -60,6 +65,7 @@ async function renderPreview(data: ResumeData, settings: PreviewSettings, fontMi
 export function WebPagePreview() {
 	const data = useResumeData();
 	const resume = useCurrentResume();
+	const contactDetails = useSharePreviewStore((state) => state.contactDetails);
 	const [device, setDevice] = useState<Device>("desktop");
 	const [document, setDocument] = useState<string>();
 
@@ -92,7 +98,11 @@ export function WebPagePreview() {
 	useEffect(() => {
 		if (!debouncedData) return;
 		let current = true;
-		void renderPreview(debouncedData, { hideContactDetails, showDownloadButtons, allowWordDownload }, fontMirrorUrl)
+		void renderPreview(
+			debouncedData,
+			{ hideContactDetails, showDownloadButtons, allowWordDownload, contactDetails },
+			fontMirrorUrl,
+		)
 			.then((html) => {
 				if (current) setDocument(html);
 			})
@@ -100,7 +110,7 @@ export function WebPagePreview() {
 		return () => {
 			current = false;
 		};
-	}, [debouncedData, hideContactDetails, showDownloadButtons, allowWordDownload, fontMirrorUrl]);
+	}, [debouncedData, hideContactDetails, showDownloadButtons, allowWordDownload, fontMirrorUrl, contactDetails]);
 
 	const { data: session } = authClient.useSession();
 	const origin = useShareOrigin();

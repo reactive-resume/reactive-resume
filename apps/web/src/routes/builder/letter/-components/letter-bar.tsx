@@ -218,7 +218,7 @@ function LetterMenu() {
 				}}
 			>
 				<DropdownMenuTrigger ref={menuTrigger} render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
-				<DropdownMenuContent align="start" className="w-60">
+				<DropdownMenuContent align="start" className="w-[220px]">
 					<DropdownMenuItem disabled={isLocked} onClick={() => void rename()}>
 						<Icon name="pencil-simple" />
 						<Trans>Rename…</Trans>
@@ -264,12 +264,18 @@ function LetterSaveStatus() {
 	});
 	const application = applications?.find((item) => item.id === letter?.sourceApplicationId);
 	const { i18n } = useLingui();
-	const company = application?.company;
+	const company = application?.company ?? "";
 	const sent = Boolean(application?.sentCoverLetterVersionId && application.coverLetterId === letter?.id);
-	// "Sent 2 Nov", as the resume's line says it; the panel names where it went.
+	// The status keeps both the destination and submission date visible.
 	const sentOn =
 		sent && application?.appliedAt ? i18n.date(application.appliedAt, { day: "numeric", month: "short" }) : null;
-	const standing = sent ? (sentOn ? t`Sent ${sentOn}` : t`Sent`) : company ? t`For ${company}` : t`Draft`;
+	const standing = sent
+		? sentOn
+			? t`Sent to ${company} ${sentOn}`
+			: t`Sent to ${company}`
+		: company
+			? t`For ${company}`
+			: t`Draft`;
 	const facts = [pageCount > 0 ? plural(pageCount, { one: "# page", other: "# pages" }) : null, standing]
 		.filter(Boolean)
 		.join(" · ");
@@ -314,7 +320,7 @@ function LetterSaveStatus() {
 						: t`Not saved`
 					: status === "conflict"
 						? t`Review saved version`
-						: [letter?.isLocked ? t`Locked` : t`Saved`, facts].join(" · ");
+						: [letter?.isLocked ? (sent ? t`Locked` : t`Locked · unlock to save`) : t`Saved`, facts].join(" · ");
 
 	return (
 		<span className="flex max-w-full min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">

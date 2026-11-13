@@ -384,7 +384,13 @@ function FeedbackLinkDialog({ id, onClose }: FeedbackLinkDialogProps) {
 					<div className="grid max-h-[60svh] gap-5 overflow-y-auto">
 						{link.status === "active" && (
 							<div className="flex min-w-0 items-center gap-2">
-								<Input readOnly value={link.url} aria-label={t`Feedback link`} className="min-w-0 flex-1" dir="ltr" />
+								<Input
+									readOnly
+									value={link.url.replace(/^https?:\/\//, "")}
+									aria-label={t`Feedback link`}
+									className="min-w-0 flex-1 font-mono"
+									dir="ltr"
+								/>
 								<CopyLinkButton url={link.url} />
 							</div>
 						)}

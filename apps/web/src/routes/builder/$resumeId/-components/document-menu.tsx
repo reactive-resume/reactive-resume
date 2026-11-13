@@ -278,7 +278,7 @@ function DocumentMenuItems({ onOpenDialog, onHelp }: DocumentMenuItemsProps) {
 	};
 
 	return (
-		<DropdownMenuContent align="start" className="w-60">
+		<DropdownMenuContent align="start" className="w-[248px]">
 			{/* X5: three groups. History, the formats and shortcuts appear only where the bar lacks them. */}
 			<DropdownMenuGroup>
 				<DropdownMenuLabel>

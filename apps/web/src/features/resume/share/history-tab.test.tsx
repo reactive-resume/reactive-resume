@@ -6,7 +6,7 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { useEditorStore } from "../editor/store";
-import { HistoryTab, ResumeVersionBar } from "./history-tab";
+import { HistoryTab, HistoryTimeline, HistoryVersionBar, ResumeVersionBar } from "./history-tab";
 
 const mocks = vi.hoisted(() => ({
 	save: vi.fn(),
@@ -105,4 +105,32 @@ it("compares with Now without restoring or losing the picked version, then leave
 	fireEvent.click(screen.getByRole("button", { name: "Back to now" }));
 	expect(useEditorStore.getState().historyVersionId).toBeNull();
 	client.clear();
+});
+
+it("shows an immutable banner when History opens on a sent version, then returns to the current draft", async () => {
+	useEditorStore.setState({ historyVersionId: "sent", historyOpen: true });
+	const restore = vi.fn();
+	const source = {
+		versions: [{ id: "sent", kind: "sent" as const, name: "Example", createdAt: new Date("2026-11-02T09:00:00Z") }],
+		loading: false,
+		locked: false,
+		nowDetail: "Current draft",
+		save: vi.fn(),
+		restore,
+		rename: vi.fn(),
+		remove: vi.fn(),
+		errorMessage: String,
+	};
+	render(
+		<I18nProvider i18n={i18n}>
+			<HistoryTimeline source={source} />
+			<HistoryVersionBar source={source} showingNow={false} onCompare={() => {}} />
+		</I18nProvider>,
+	);
+	expect(await screen.findByText(/The version sent to Example.*it never changes/)).toBeTruthy();
+	expect(screen.queryByRole("button", { name: "Restore this version" })).toBeNull();
+	fireEvent.click(screen.getByRole("button", { name: "Edit current draft" }));
+	expect(useEditorStore.getState().historyVersionId).toBeNull();
+	expect(useEditorStore.getState().historyOpen).toBe(false);
+	expect(restore).not.toHaveBeenCalled();
 });

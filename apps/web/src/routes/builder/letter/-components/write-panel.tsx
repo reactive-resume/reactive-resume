@@ -25,7 +25,7 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
-import { Switch, SwitchRow } from "@reactive-resume/ui/components/switch";
+import { Switch } from "@reactive-resume/ui/components/switch";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
@@ -589,7 +589,7 @@ function FromSection({ letter, disabled: readOnly }: FromSectionProps) {
 	const resume = resumes?.find((item) => item.id === letter.sourceResumeId);
 	// A linked letter names its resume in the switch; the list opens from Change.
 	const [choosing, setChoosing] = useState(false);
-	const showResumes = choosing || !letter.sourceResumeId || !letter.senderLinked;
+	const showResumes = choosing || !letter.sourceResumeId;
 
 	const setResume = (resumeId: string | null) =>
 		void updateLetter({
@@ -608,54 +608,41 @@ function FromSection({ letter, disabled: readOnly }: FromSectionProps) {
 			.catch(failed);
 
 	return (
-		<Section
-			id="letter-from"
-			title={<Trans>Sender</Trans>}
-			action={
-				showResumes || disabled ? undefined : (
-					<button type="button" onClick={() => setChoosing(true)}>
-						<Trans>Change resume</Trans>
-					</button>
-				)
-			}
-		>
+		<Section id="letter-from" title={<Trans>Sender</Trans>}>
 			{letter.sourceResumeId ? (
-				<SwitchRow
-					label={t`Use details from “${resume?.name ?? t`the resume`}”`}
-					description={
+				<ListRow
+					wrap
+					title={
+						<button
+							type="button"
+							aria-label={t`Change resume`}
+							disabled={disabled}
+							className="rounded-xs text-start hover:underline"
+							onClick={() => setChoosing(!choosing)}
+						>
+							<Trans>Use details from “{resume?.name ?? t`the resume`}”</Trans>
+						</button>
+					}
+					subtitle={
 						letter.senderLinked
 							? t`Linked. The header (name, contact details, links and photo) updates when the resume does.`
 							: t`Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details.`
 					}
-					checked={letter.senderLinked}
-					disabled={disabled}
-					onCheckedChange={setLinked}
-					className="items-start py-2.5 [&_[id$=-description]]:text-ink-3 [&>span:first-child>span:first-child]:text-[15px]/[22px]"
+					trailing={
+						<Switch
+							aria-label={t`Use details from “${resume?.name ?? t`the resume`}”`}
+							checked={letter.senderLinked}
+							disabled={disabled}
+							onCheckedChange={setLinked}
+							className="mt-px"
+						/>
+					}
+					className="items-start border-b-0 py-2.5"
 				/>
 			) : (
 				<p className="t-small text-ink-3">
 					<Trans>Enter your details below. Choosing a resume replaces them and links its design.</Trans>
 				</p>
-			)}
-			{showResumes && (
-				<div className="grid gap-2">
-					<Label htmlFor={`${id}-resume`}>
-						<Trans>Resume</Trans>
-					</Label>
-					<NativeSelect
-						id={`${id}-resume`}
-						value={letter.sourceResumeId ?? ""}
-						disabled={disabled}
-						onChange={(event) => setResume(event.target.value || null)}
-					>
-						<option value="">{t`No resume`}</option>
-						{resumes?.map((item) => (
-							<option key={item.id} value={item.id}>
-								{item.name}
-							</option>
-						))}
-					</NativeSelect>
-				</div>
 			)}
 			{(!letter.sourceResumeId || !letter.senderLinked) && (
 				<fieldset disabled={disabled} className="grid min-w-0 grid-cols-2 gap-3">
@@ -712,6 +699,26 @@ function FromSection({ letter, disabled: readOnly }: FromSectionProps) {
 						}}
 					/>
 				</fieldset>
+			)}
+			{showResumes && (
+				<div className="grid gap-2">
+					<Label htmlFor={`${id}-resume`}>
+						<Trans>Resume</Trans>
+					</Label>
+					<NativeSelect
+						id={`${id}-resume`}
+						value={letter.sourceResumeId ?? ""}
+						disabled={disabled}
+						onChange={(event) => setResume(event.target.value || null)}
+					>
+						<option value="">{t`No resume`}</option>
+						{resumes?.map((item) => (
+							<option key={item.id} value={item.id}>
+								{item.name}
+							</option>
+						))}
+					</NativeSelect>
+				</div>
 			)}
 		</Section>
 	);
