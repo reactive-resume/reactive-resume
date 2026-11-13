@@ -3,6 +3,9 @@ import { templateSchema } from "../templates";
 import { dateFormatSchema, resumeDatesSchema, syncResumeDates, upgradeResumeDates } from "./dates";
 import { semanticStylesheetSchema } from "./stylesheet";
 
+/** The longest stylesheet the web page takes from its author. */
+export const WEB_PAGE_CSS_MAX_LENGTH = 20_000;
+
 const iconSchema = z
 	.string()
 	.describe(
@@ -791,6 +794,14 @@ export const metadataSchema = z.object({
 				.boolean()
 				.catch(true)
 				.describe("Whether the web page shows the small 'Made with Reactive Resume' footer."),
+			css: z
+				.string()
+				.max(WEB_PAGE_CSS_MAX_LENGTH)
+				.optional()
+				.catch(undefined)
+				.describe(
+					"The author's own CSS for the web page, applied after the template's styles. The PDF doesn't use it. A save without this field keeps the saved CSS; an empty string clears it.",
+				),
 		})
 		.optional()
 		.catch(undefined)

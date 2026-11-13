@@ -605,10 +605,18 @@ export const resumeService = {
 				...(restoredName ? { name: restoredName } : {}),
 			});
 
+			// A version saved without the web page's custom CSS is restored without it: an empty string clears the current
+			// stylesheet, which the update otherwise keeps for saves from older apps.
+			const web = version.data.metadata.web;
+			const data =
+				web?.css === undefined && (current.data as ResumeData | null)?.metadata?.web?.css
+					? { ...version.data, metadata: { ...version.data.metadata, web: { showCredit: true, ...web, css: "" } } }
+					: version.data;
+
 			const updated = await resumeService.update({
 				id: input.resumeId,
 				userId: input.userId,
-				data: version.data,
+				data,
 				aiOperationIds: version.aiOperationIds,
 				expectedUpdatedAt: current.updatedAt,
 				skipAutoSnapshot: true,
@@ -877,6 +885,11 @@ export const resumeService = {
 				}
 
 				const normalizedData = input.data ? parseWritableResumeData(input.data) : undefined;
+				// Apps built before the web page's custom CSS drop `metadata.web.css` from the data they send; keep the
+				// saved stylesheet then. Clearing it sends an empty string.
+				const savedCss = (existing.data as ResumeData | null)?.metadata?.web?.css;
+				if (normalizedData && savedCss && normalizedData.metadata.web?.css === undefined)
+					normalizedData.metadata.web = { showCredit: true, ...normalizedData.metadata.web, css: savedCss };
 				if (normalizedData)
 					await adoptEmbeddedLetters(tx, {
 						userId: input.userId,

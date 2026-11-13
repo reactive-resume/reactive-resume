@@ -51,6 +51,7 @@ async function renderPreview(data: ResumeData, settings: PreviewSettings, fontMi
 		downloadUrl: settings.showDownloadButtons ? "#" : undefined,
 		wordDownloadUrl: settings.allowWordDownload ? "#" : undefined,
 		creditUrl: data.metadata.web?.showCredit === false ? undefined : window.location.origin,
+		css: data.metadata.web?.css,
 		// The visitor's bar would look live here (Copy link, Download PDF); the frame names the address instead.
 	}).replace(
 		"</head>",

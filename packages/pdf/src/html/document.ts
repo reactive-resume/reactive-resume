@@ -32,7 +32,12 @@ export type WebPageDocumentOptions = {
 	creditUrl?: string | undefined;
 	/** The operator's font mirror, for the interface fonts; the sheet's own faces come with `page`. */
 	fontMirrorUrl?: string | undefined;
+	/** The owner's own stylesheet, applied after the page's styles so it can override them. */
+	css?: string | undefined;
 };
+
+/** The owner's stylesheet, kept inside its `<style>` element: no `</style>` can close it early. */
+const ownerStylesheet = (css: string | undefined) => (css ? `\n${css.replaceAll("</", "<\\/")}\n` : "");
 
 // The interface fonts, from the catalog the resume fonts come from, so a font mirror serves them too.
 const FIGTREE = "https://fonts.gstatic.com/s/figtree/v9/_Xmz-HUzqDCFdgfMsYiV_F7wfS-Bs_";
@@ -264,6 +269,7 @@ export function renderWebPageDocument({
 	wordDownloadUrl,
 	creditUrl,
 	fontMirrorUrl,
+	css,
 }: WebPageDocumentOptions): string {
 	const pdf = downloadUrl
 		? `<a href="${escapeHtml(downloadUrl)}" download>${escapeHtml(messages.downloadPdf)}</a>`
@@ -290,7 +296,7 @@ export function renderWebPageDocument({
 	return shell(
 		page.lang,
 		metaTags(head),
-		`${fontFaces(["ui400", "ui500", "ui600"], fontMirrorUrl)}${TOKENS_CSS}${SHELL_CSS}${page.css}`,
+		`${fontFaces(["ui400", "ui500", "ui600"], fontMirrorUrl)}${TOKENS_CSS}${SHELL_CSS}${page.css}${ownerStylesheet(css)}`,
 		body,
 	);
 }

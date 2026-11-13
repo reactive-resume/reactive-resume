@@ -13,10 +13,12 @@ import {
 	shortLinkOpens,
 	summarizeViews,
 } from "@reactive-resume/resume/sharing";
+import { WEB_PAGE_CSS_MAX_LENGTH } from "@reactive-resume/schema/resume/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Switch } from "@reactive-resume/ui/components/switch";
+import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
@@ -561,7 +563,42 @@ function CreditRow() {
 	);
 }
 
-/** B27: who can find the page, open it, reach the author and take a copy, and the footer credit. */
+/** The owner's own stylesheet for the web page, applied after the page's styles. Empty clears it. */
+function CustomCssField() {
+	const data = useResumeData();
+	const updateResumeData = useUpdateResumeData();
+	const locked = useIsResumeLocked();
+	const id = useId();
+
+	return (
+		<div className="grid gap-1.5 pb-3.5">
+			<Textarea
+				id={id}
+				aria-label={t`Custom CSS`}
+				aria-describedby={`${id}-hint`}
+				rows={4}
+				maxLength={WEB_PAGE_CSS_MAX_LENGTH}
+				spellCheck={false}
+				dir="ltr"
+				className="max-h-80 font-mono text-xs"
+				value={data?.metadata.web?.css ?? ""}
+				disabled={locked}
+				placeholder=".rr-page { box-shadow: none }"
+				onChange={(event) => {
+					const css = event.target.value;
+					updateResumeData((draft) => {
+						draft.metadata.web = { showCredit: true, ...draft.metadata.web, css };
+					});
+				}}
+			/>
+			<p id={`${id}-hint`} className="t-small text-ink-3">
+				<Trans>Applies to the web page after its own styles, at every screen size. The PDF stays as it is.</Trans>
+			</p>
+		</div>
+	);
+}
+
+/** B27: who can find the page, open it, reach the author and take a copy, the footer credit and the custom CSS. */
 function PrivacySettings({ setting: { update, isPending } }: ShareSettingProps) {
 	const resume = useCurrentResume();
 	const isPublic = resume.isPublic ?? false;
@@ -621,6 +658,10 @@ function PrivacySettings({ setting: { update, isPending } }: ShareSettingProps) 
 				<Trans>Credit</Trans>
 			</SubHeading>
 			<CreditRow />
+			<SubHeading>
+				<Trans>Custom CSS</Trans>
+			</SubHeading>
+			<CustomCssField />
 		</section>
 	);
 }

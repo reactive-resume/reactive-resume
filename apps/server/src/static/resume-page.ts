@@ -206,6 +206,7 @@ async function showPage(request: Request, match: ResumeMatch, trustedClient: str
 		downloadUrl: result.showDownloadButtons ? `/api/resumes${own}/pdf?download` : undefined,
 		wordDownloadUrl: result.allowWordDownload ? `/api/resumes${own}/docx` : undefined,
 		creditUrl: data.metadata.web?.showCredit === false ? undefined : origin(),
+		css: data.metadata.web?.css,
 	});
 	return html(
 		body,
