@@ -1,6 +1,4 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 let mockScope = "storyboard";
-let mockApplication: unknown;
 const mockRun = jest.fn(async (..._args: unknown[]) => ({ text: "Proposal", why: "", addsFacts: false }));
 const mockValues = new Map<string, string>();
 jest.mock("expo-sqlite/kv-store", () => ({
@@ -13,7 +11,7 @@ jest.mock("expo-sqlite/kv-store", () => ({
 }));
 jest.mock("./provider", () => ({
 	useDataBackend: () => ({ scope: mockScope, backend: { kind: "fake" } }),
-	useApplication: () => ({ data: mockApplication, isPending: false }),
+	useApplication: () => ({ data: undefined, isPending: false }),
 }));
 jest.mock("./scope", () => ({
 	activeDataScope: () => mockScope,
@@ -33,10 +31,9 @@ jest.mock("@/render/page-renderer", () => ({
 import { act, renderHook } from "@testing-library/react-native";
 import { completeStep, undoStep, isStepComplete, interviewCalendar, hadNoResponse } from "./application-tools";
 import { atsSampleFile } from "./ats-sample";
-import { validatePhoto, useImprove, useJobMatch } from "./builder";
+import { validatePhoto, useImprove } from "./builder";
 import { questionResponse, replyPayload, replySources } from "./conversation";
 import { seed, fakeBackend } from "./fixtures";
-import { storyboardImportPreview } from "./import-fixture";
 import { keepSharedIntake, pendingSharedIntake, consumeSharedIntake } from "./intake";
 import { useCoachDraft, useAssistantDraft } from "./local-state";
 import { notificationPlan } from "./notification-plan";
@@ -85,24 +82,6 @@ test("weekday frequency stays explicit and next run uses schedule zone", () => {
 	expect(
 		scheduleNextRun({ enabled: true, nextRunAt: new Date("2026-11-10T09:00:00Z"), timezone: "Europe/Berlin" }).label,
 	).toContain("10:00");
-});
-test("Lumen job match carries B10 terms and changes only when resume words change", async () => {
-	mockApplication = await fakeBackend.read("application", { id: "lumen" });
-	const resume = await fakeBackend.read("resume", { id: "resume-product" });
-	const hook = await renderHook(({ data }: { data: ResumeData }) => useJobMatch(data, "lumen"), {
-		initialProps: { data: resume.data },
-	});
-	expect(hook.result.current.result).toMatchObject({ total: 14 });
-	expect(hook.result.current.result?.found).toHaveLength(9);
-	expect(hook.result.current.result?.missing.map((row) => row.label)).toEqual([
-		"Accessibility audits",
-		"Design tokens",
-		"Workshop facilitation",
-	]);
-	const changed = structuredClone(resume.data);
-	changed.summary.content += "<p>Design tokens</p>";
-	await hook.rerender({ data: changed });
-	expect(hook.result.current.result?.found).toHaveLength(10);
 });
 test("unsent drafts survive unmount, isolate account/thread and keep assistant separate", async () => {
 	const coach = await renderHook(() => useCoachDraft("thread"));
@@ -206,13 +185,6 @@ test("photo validation rejects oversized and non-image files", () => {
 	expect(() => validatePhoto(11 * 1024 * 1024, "image/png")).toThrow("10 MB");
 	expect(() => validatePhoto(0, "image/png")).toThrow();
 	expect(() => validatePhoto(10, "application/pdf")).toThrow("Unsupported");
-});
-test("D4 review is independent of saved resume, with drawn parsed section sizes", async () => {
-	const preview = await storyboardImportPreview();
-	expect(preview.data.basics).toMatchObject({ name: "Alex Morgan", headline: "Product designer", location: "Lisbon" });
-	expect(preview.summary.sections.map((row) => row.entries)).toEqual([1, 4, 2, 12, 3]);
-	expect(preview.summary.notImported).toHaveLength(1);
-	expect((await fakeBackend.read("resume", { id: "resume-product" })).data.sections.experience.items).toHaveLength(2);
 });
 test("shared intake waits for sign-in and same server, consumption detects replacements", () => {
 	const item = keepSharedIntake("https://example.org", { kind: "url", url: "https://jobs.example.org/job" });

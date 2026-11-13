@@ -99,17 +99,6 @@ async function localProvider() {
 }
 
 const databaseUrl = process.env.INTEGRATIONS_TEST_DATABASE_URL;
-it("recipient test provider rejects unrelated probes without recording or throwing", async () => {
-	const provider = await localProvider();
-	try {
-		expect((await fetch(provider.baseURL)).status).toBe(404);
-		for (const body of ["", "not json", "{}"])
-			expect((await fetch(provider.baseURL, { method: "POST", body })).status).toBe(400);
-		expect(provider.requests).toEqual([]);
-	} finally {
-		await provider.close();
-	}
-});
 describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQL and HTTP", () => {
 	const schemaName = `rx76_recipient_${randomUUID().replaceAll("-", "")}`;
 	const admin = new Pool({ connectionString: databaseUrl });

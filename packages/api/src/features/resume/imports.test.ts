@@ -5,8 +5,8 @@ import { call } from "@orpc/server";
 import { createResumePdfFile } from "@reactive-resume/pdf/server";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
-import { templateSchema } from "@reactive-resume/schema/templates";
 import { generateId } from "@reactive-resume/utils/string";
+import { importMatrixTemplates } from "./fixtures/pdf-import";
 const create = vi.hoisted(() => vi.fn());
 vi.mock("./service", () => ({ resumeService: { create } }));
 vi.mock("@reactive-resume/auth/config", () => ({
@@ -186,7 +186,7 @@ const bulletText = (role: number, bullet: number) =>
 		`Mentored engineers ${role}.${bullet} through design reviews and pairing sessions and ownership of production services`,
 	][bullet - 1] ?? "";
 
-it.each(templateSchema.options)(
+it.each(importMatrixTemplates)(
 	"exports and imports complete role headers and bullets through %s",
 	async (template) => {
 		const source = structuredClone(sampleResumeData);
@@ -232,7 +232,7 @@ const flowCases = [
 	"column-page",
 	"long-a4",
 ] as const;
-const flowTemplates = templateSchema.options.flatMap((template) => flowCases.map((kind) => ({ template, kind })));
+const flowTemplates = importMatrixTemplates.flatMap((template) => flowCases.map((kind) => ({ template, kind })));
 const flowingBullet = "TARGET " + "Built useful systems for Global Customers. ".repeat(15).trim() + " END";
 const spacedBullet =
 	"Built useful systems for Global Customers With Careful Accessibility Reviews Across Every Product Surface And Deployment And Better Reliability Across All Supported Devices";
@@ -330,7 +330,8 @@ it.each(flowTemplates)(
 );
 
 const boundaryCases = ["custom-only", "custom-localized", "short", "empty", "paragraph-a4", "paragraph-small"] as const;
-const boundaryTemplates = templateSchema.options.flatMap((template) =>
+// Ditto stays for its centred-header identity check below.
+const boundaryTemplates = [...importMatrixTemplates, "ditto" as const].flatMap((template) =>
 	boundaryCases.map((kind) => ({ template, kind })),
 );
 it.each(boundaryTemplates)(
@@ -454,7 +455,7 @@ const geometryCases = [
 	"prose-2.5",
 	"wrapped-prose",
 ] as const;
-it.each(templateSchema.options.flatMap((template) => geometryCases.map((kind) => ({ template, kind }))))(
+it.each(importMatrixTemplates.flatMap((template) => geometryCases.map((kind) => ({ template, kind }))))(
 	"preserves geometry boundaries in $template / $kind",
 	async ({ template, kind }) => {
 		const source = structuredClone(defaultResumeData);
@@ -614,7 +615,7 @@ const recordCases = [
 	"custom-links",
 	"custom-sentence",
 ] as const;
-it.each(templateSchema.options.flatMap((template) => recordCases.map((kind) => ({ template, kind }))))(
+it.each(importMatrixTemplates.flatMap((template) => recordCases.map((kind) => ({ template, kind }))))(
 	"imports structured records and complete wording in $template / $kind",
 	async ({ template, kind }) => {
 		const source = structuredClone(defaultResumeData);

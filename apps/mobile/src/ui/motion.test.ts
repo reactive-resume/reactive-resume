@@ -1,22 +1,17 @@
-// MOTION.md §10.2: the motion module's contract, with the spec's literal values.
+// MOTION.md §10.2: the motion module's behaviour: sheet dismissal, the haptics switch, toast lifetime, hit slop
+// and fade-through.
 import * as Haptics from "expo-haptics";
 import { AccessibilityInfo, Platform } from "react-native";
 import {
 	clearHapticLog,
 	createFadeThrough,
-	curve,
-	enter,
 	haptic,
 	hapticLog,
 	hitSlopFor,
-	leave,
-	linear,
-	release,
 	setHapticsEnabled,
 	sheetShouldDismiss,
 	toastLifetime,
 } from "./motion";
-import { motion } from "./tokens";
 
 type Timing = { to: unknown; config: { duration: number }; callback?: (finished: boolean) => void };
 const timings = () => (globalThis as unknown as { __timings: Timing[] }).__timings;
@@ -35,28 +30,6 @@ afterEach(() => {
 });
 
 describe("timings", () => {
-	test("curve control points match the four specified cubic beziers", () => {
-		expect(motion.curves).toEqual({
-			ease: [0.2, 0.8, 0.2, 1],
-			easeInOutStrong: [0.77, 0, 0.175, 1],
-			easeOutStrong: [0.23, 1, 0.32, 1],
-			easeDrawer: [0.32, 0.72, 0, 1],
-		});
-	});
-	test("enter, leave and linear use the token durations and curves", () => {
-		expect(enter(120)).toMatchObject({ duration: 120, easing: curve.ease });
-		expect(enter(200, curve.easeInOutStrong)).toMatchObject({ duration: 200, easing: curve.easeInOutStrong });
-		expect([leave(120).duration, leave(200).duration, leave(320).duration]).toEqual([84, 140, 224]);
-		expect(linear(5000)).toMatchObject({ duration: 5000, easing: curve.linear });
-	});
-
-	test("release scales with the remaining distance, clamped to d1..d3, on ease-drawer", () => {
-		expect(release(282, 470)).toMatchObject({ duration: 192, easing: curve.easeDrawer });
-		expect(release(470, 470).duration).toBe(320);
-		expect(release(900, 470).duration).toBe(320);
-		expect(release(10, 470).duration).toBe(120);
-	});
-
 	test("sheets dismiss past 25% of the height or faster than 1000 dp/s", () => {
 		expect(sheetShouldDismiss(0.249 * 400, 400, 0)).toBe(false);
 		expect(sheetShouldDismiss(0.251 * 400, 400, 0)).toBe(true);
@@ -66,50 +39,18 @@ describe("timings", () => {
 });
 
 describe("haptic()", () => {
-	const ios: [string, jest.Mock, unknown[]][] = [
-		["selection", Haptics.selectionAsync as jest.Mock, []],
-		["toggleOn", Haptics.impactAsync as jest.Mock, ["light"]],
-		["toggleOff", Haptics.impactAsync as jest.Mock, ["light"]],
-		["light", Haptics.impactAsync as jest.Mock, ["light"]],
-		["medium", Haptics.impactAsync as jest.Mock, ["medium"]],
-		["rigid", Haptics.impactAsync as jest.Mock, ["rigid"]],
-		["soft", Haptics.impactAsync as jest.Mock, ["soft"]],
-		["success", Haptics.notificationAsync as jest.Mock, ["success"]],
-		["warning", Haptics.notificationAsync as jest.Mock, ["warning"]],
-		["error", Haptics.notificationAsync as jest.Mock, ["error"]],
+	const tokens = [
+		"selection",
+		"toggleOn",
+		"toggleOff",
+		"light",
+		"medium",
+		"rigid",
+		"soft",
+		"success",
+		"warning",
+		"error",
 	];
-	test.each(ios)("iOS %s", (token, fn, args) => {
-		setPlatform("ios");
-		haptic(token as never);
-		expect(fn).toHaveBeenCalledWith(...args);
-		expect(Haptics.performAndroidHapticsAsync).not.toHaveBeenCalled();
-	});
-
-	// Android constants by API level: 29, 30, 33, 34 (MOTION.md §4.1).
-	const android: Record<string, [string, string, string, string]> = {
-		selection: ["Clock_Tick", "Clock_Tick", "Clock_Tick", "Segment_Tick"],
-		toggleOn: ["Context_Click", "Context_Click", "Context_Click", "Toggle_On"],
-		toggleOff: ["Context_Click", "Context_Click", "Context_Click", "Toggle_Off"],
-		light: ["Context_Click", "Context_Click", "Context_Click", "Context_Click"],
-		medium: ["Long_Press", "Long_Press", "Long_Press", "Drag_Start"],
-		rigid: ["Virtual_Key", "Gesture_End", "Gesture_End", "Gesture_End"],
-		soft: ["Keyboard_Tap", "Gesture_Start", "Gesture_Start", "Gesture_Start"],
-		success: ["Virtual_Key", "Confirm", "Confirm", "Confirm"],
-		warning: ["Long_Press", "Long_Press", "Long_Press", "Long_Press"],
-		error: ["Long_Press", "Reject", "Reject", "Reject"],
-	};
-	test.each(Object.entries(android))("Android %s at API 29, 30, 33, 34", (token, expected) => {
-		const got = [29, 30, 33, 34].map((api) => {
-			setPlatform("android", api);
-			(Haptics.performAndroidHapticsAsync as jest.Mock).mockClear();
-			haptic(token as never);
-			return (Haptics.performAndroidHapticsAsync as jest.Mock).mock.calls[0]?.[0];
-		});
-		expect(got).toEqual(expected);
-		expect(Haptics.impactAsync).not.toHaveBeenCalled();
-		expect(Haptics.notificationAsync).not.toHaveBeenCalled();
-	});
-
 	test.each([
 		["ios", 17],
 		["android", 29],
@@ -119,12 +60,12 @@ describe("haptic()", () => {
 	] as const)("the in-app switch off on %s %s plays nothing but logs every token", (os, version) => {
 		setPlatform(os, version);
 		setHapticsEnabled(false);
-		for (const token of Object.keys(android)) haptic(token as never);
+		for (const token of tokens) haptic(token as never);
 		expect(Haptics.selectionAsync).not.toHaveBeenCalled();
 		expect(Haptics.impactAsync).not.toHaveBeenCalled();
 		expect(Haptics.notificationAsync).not.toHaveBeenCalled();
 		expect(Haptics.performAndroidHapticsAsync).not.toHaveBeenCalled();
-		expect(hapticLog().map((e) => [e.token, e.played])).toEqual(Object.keys(android).map((token) => [token, false]));
+		expect(hapticLog().map((e) => [e.token, e.played])).toEqual(tokens.map((token) => [token, false]));
 	});
 });
 

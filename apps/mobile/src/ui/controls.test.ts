@@ -1,42 +1,12 @@
-// MOTION.md §5, §7 and §10.2: each control plays exactly its haptics for one interaction, through the same
-// functions the components call.
+// MOTION.md §5, §7 and §10.2: gesture thresholds, through the same functions the components call. Switch,
+// Segmented and Radio haptics are covered through the components in interactions.test.tsx.
 import { edgeZone } from "./BoardDrag";
 import { stripShouldOpen } from "./ExpandingStrip";
-import { clearHapticLog, hapticLog } from "./motion";
-import { selectRadio } from "./Radio";
 import { reorderSlots } from "./ReorderList";
-import { selectSegment } from "./Segmented";
 import { snapTarget } from "./SnapCarousel";
 import { swipeArm } from "./SwipeRow";
-import { toggleValue } from "./Switch";
 
 jest.mock("@lingui/core", () => ({ i18n: { _: (d: { message?: string; id: string }) => d.message ?? d.id } }));
-
-const log = () => hapticLog().map((e) => e.token);
-beforeEach(() => clearHapticLog());
-
-test("Switch: toggleOn turning on, toggleOff turning off", () => {
-	const set = jest.fn();
-	toggleValue(false, set);
-	toggleValue(true, set);
-	expect(log()).toEqual(["toggleOn", "toggleOff"]);
-	expect(set.mock.calls).toEqual([[true], [false]]);
-});
-
-test("Segmented: selection on a change, nothing for the selected option", () => {
-	const change = jest.fn();
-	selectSegment("list", "list", change);
-	selectSegment("list", "board", change);
-	expect(log()).toEqual(["selection"]);
-	expect(change).toHaveBeenCalledWith("board");
-});
-
-test("Radio: selection when picked, nothing when already selected", () => {
-	const pick = jest.fn();
-	selectRadio(true, pick);
-	selectRadio(false, pick);
-	expect(log()).toEqual(["selection"]);
-});
 
 describe("SwipeRow threshold (40% of a 390 dp row)", () => {
 	const run = (xs: number[]) => {

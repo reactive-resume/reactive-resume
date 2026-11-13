@@ -35,22 +35,18 @@ test("failed settings sign-out retains the session and drafts; successful sign-o
 	]);
 });
 
-test("signs up without a username and lands on the dashboard", async ({ page, account }) => {
-	await registerViaUi(page, { ...account, username: "" });
-	await expect(page.getByRole("heading", { name: "Today", level: 1 })).toBeVisible();
-	const session = await page.request.get("/api/auth/get-session");
-	expect((await session.json()).user.username).toBe(account.email.split("@")[0]);
-});
-
 test("registers and logs in with email credentials", async ({ page, account }) => {
 	let documentRequests = 0;
 	page.on("request", (request) => {
 		if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documentRequests++;
 	});
-	await registerViaUi(page, account, "/dashboard?from=signup#documents");
+	// No username is chosen, so one is made from the email address.
+	await registerViaUi(page, { ...account, username: "" }, "/dashboard?from=signup#documents");
 	await expect(page.getByRole("heading", { name: "Today", level: 1 })).toBeVisible();
 	await expect(page).toHaveURL(/\/dashboard\?from=signup#documents$/);
 	expect(documentRequests).toBe(1);
+	const session = await page.request.get("/api/auth/get-session");
+	expect((await session.json()).user.username).toBe(account.email.split("@")[0]);
 
 	// Signing out lands on the site's homepage.
 	await logoutViaUi(page, account);

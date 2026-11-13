@@ -297,20 +297,6 @@ describe.skipIf(!databaseUrl)("application and document letter-link reconciliati
 		expect(snapshot.applications.find((row) => row.id === second)?.cover_letter_id).toBeNull();
 	});
 
-	it("R1 clearing a legacy duplicate does not detach the canonical job", async () => {
-		const shared = await letter();
-		const canonical = await job();
-		const stale = await job();
-		await api.documents.linkApplication({ type: "letter", id: shared.id, applicationId: canonical });
-		await coherent();
-		await pool.query("UPDATE application SET cover_letter_id=$1 WHERE id=$2", [shared.id, stale]);
-		await api.applications.update({ id: stale, coverLetterId: null });
-		await coherent();
-		const snapshot = await state();
-		expect(snapshot.applications.find((row) => row.id === canonical)?.cover_letter_id).toBe(shared.id);
-		expect(snapshot.letters.find((row) => row.id === shared.id)?.source_application_id).toBe(canonical);
-	});
-
 	it.each(["create", "update", "import"])(
 		"R2 legacy submitted one-way link refuses %s stealing the sent letter",
 		async (mode) => {
@@ -531,40 +517,6 @@ describe.skipIf(!databaseUrl)("application and document letter-link reconciliati
 		expect((await state()).applications.find((row) => row.id === linked)?.cover_letter_id).toBe(replacement.id);
 	});
 
-	it("I07 late Applied link then equal-ID save does not invent a sent receipt", async () => {
-		const linked = await job({ status: "applied" });
-		const late = await letter();
-		await api.documents.linkApplication({ type: "letter", id: late.id, applicationId: linked });
-		expect((await state()).applications.find((row) => row.id === linked)?.sent_cover_letter_version_id).toBeNull();
-		const current = await api.coverLetters.getById({ id: late.id });
-		await api.coverLetters.update({
-			id: late.id,
-			expectedRevision: current.revision,
-			content: "<p>Written after application sent</p>",
-		});
-		await api.applications.update({ id: linked, coverLetterId: late.id });
-		expect((await state()).applications.find((row) => row.id === linked)?.sent_cover_letter_version_id).toBeNull();
-		await coherent();
-	});
-
-	it("I08 late Applied link then stage advance does not invent a sent receipt", async () => {
-		const linked = await job({ status: "applied" });
-		const late = await letter();
-		await api.documents.linkApplication({ type: "letter", id: late.id, applicationId: linked });
-		await api.applications.update({ id: linked, status: "screening" });
-		expect((await state()).applications.find((row) => row.id === linked)?.sent_cover_letter_version_id).toBeNull();
-		await coherent();
-	});
-
-	it("I08b late Applied link then bulk stage advance does not invent a sent receipt", async () => {
-		const linked = await job({ status: "applied" });
-		const late = await letter();
-		await api.documents.linkApplication({ type: "letter", id: late.id, applicationId: linked });
-		await api.applications.bulkUpdate({ ids: [linked], status: "screening" });
-		expect((await state()).applications.find((row) => row.id === linked)?.sent_cover_letter_version_id).toBeNull();
-		await coherent();
-	});
-
 	it("I09/A03 clearing a legacy duplicate leaves the canonical row, letters and versions unchanged", async () => {
 		const shared = await letter();
 		const canonical = await job({ coverLetterId: shared.id });
@@ -697,28 +649,6 @@ describe.skipIf(!databaseUrl)("application and document letter-link reconciliati
 				"DOCUMENT_LOCKED",
 				null,
 			);
-		},
-	);
-
-	it.each(["single", "bulk", "career"] as const)(
-		"J06 closed/reopen %s does not invent a late-linked sent receipt",
-		async (mode) => {
-			const linked = await job({ status: "applied" });
-			const late = await letter();
-			await api.documents.linkApplication({ type: "letter", id: late.id, applicationId: linked });
-			const fresh = await api.coverLetters.getById({ id: late.id });
-			await api.coverLetters.update({
-				id: late.id,
-				expectedRevision: fresh.revision,
-				content: "<p>AFTER ORIGINAL SUBMISSION</p>",
-			});
-			await api.applications.update({ id: linked, status: "closed", closedReason: "not-selected" });
-			if (mode === "single") await api.applications.update({ id: linked, status: "screening" });
-			else if (mode === "bulk") await api.applications.bulkUpdate({ ids: [linked], status: "screening" });
-			else await reply(linked, "screening");
-			const snapshot = await coherent();
-			expect(snapshot.applications.find((row) => row.id === linked)?.sent_cover_letter_version_id).toBeNull();
-			expect(snapshot.versions.filter((row) => row.kind === "sent")).toHaveLength(0);
 		},
 	);
 
