@@ -98,7 +98,7 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 					<AlertDialogHeader>
 						<AlertDialogTitle className="pe-8">{state.title}</AlertDialogTitle>
 						{!state.withInput && (
-							<AlertDialogDescription className={cn(!state.description && "sr-only")}>
+							<AlertDialogDescription render={<div />} className={cn(!state.description && "sr-only")}>
 								{state.description}
 							</AlertDialogDescription>
 						)}

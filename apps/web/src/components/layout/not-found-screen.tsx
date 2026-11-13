@@ -18,7 +18,7 @@ export function NotFoundScreen({ inLayout = false }: NotFoundScreenProps) {
 		<div
 			className={cn("mx-auto flex max-w-md flex-col items-center justify-center gap-y-4 px-4", !inLayout && "h-svh")}
 		>
-			{!inLayout && <BrandIcon variant="logo" className="size-12" />}
+			{!inLayout && <BrandIcon variant="icon" className="size-12" />}
 
 			<h1 className="text-center t-page-title">
 				<Trans>Page not found</Trans>

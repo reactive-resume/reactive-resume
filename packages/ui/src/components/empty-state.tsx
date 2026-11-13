@@ -52,9 +52,7 @@ export function EmptyState({
 				</Title>
 				{description && (
 					<p
-						className={
-							compact ? "text-[13px] leading-[18px] text-ink-3" : "max-w-[460px] text-[13px] leading-[18px] text-ink-2"
-						}
+						className={compact ? "text-[13px] leading-[18px] text-ink-3" : "max-w-[460px] text-sm leading-5 text-ink-2"}
 					>
 						{description}
 					</p>

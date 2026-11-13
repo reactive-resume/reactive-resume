@@ -678,7 +678,7 @@ function KitPage() {
 									<SidebarItem icon="trash" end={<SidebarCount>4</SidebarCount>}>
 										Trash
 									</SidebarItem>
-									<SidebarItem icon="keyboard" end={<Kbd className="ms-auto">?</Kbd>}>
+									<SidebarItem icon="keyboard" end={<Kbd>?</Kbd>}>
 										Shortcuts
 									</SidebarItem>
 									<div data-design="acct" className="mt-1 flex h-12 items-center gap-2.5 rounded-md px-2">
@@ -872,7 +872,7 @@ function KitPage() {
 					<div className="flex min-w-0 flex-col gap-2.5">
 						<Group first title="Empty state" note="EmptyState · dashed line-2">
 							<EmptyState
-								className="px-[18px] py-6"
+								className="px-[18px] py-6 [&_p]:text-[13px]/[18px]"
 								title="Follow each job from saved to offer"
 								description="Paste a job link. The posting is kept, so Check, the assistant and your letter can use it."
 								action={

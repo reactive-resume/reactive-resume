@@ -1,5 +1,5 @@
 import type { AuthSession } from "@reactive-resume/auth/types";
-import { plural, t } from "@lingui/core/macro";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext, useRouter } from "@tanstack/react-router";
@@ -226,26 +226,41 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 	const host = window.location.host;
 	const ask = useConfirm();
 
-	// The username is part of every public link: changing it moves them, so say how many first.
-	const confirmUsername = async () => {
-		let total: number;
+	// Show an actual public link before changing its username; still warn when the lookup is unavailable.
+	const confirmUsername = async (next: string) => {
+		let total = -1;
+		let slug: string | null | undefined;
 		try {
-			({ total } = await client.documents.page({ type: "resume", public: true, limit: 1 }));
+			const page = await client.documents.page({ type: "resume", public: true, limit: 1 });
+			total = page.total;
+			slug = page.items[0]?.slug;
 		} catch {
 			// Unknown is not none: still warn, without a count.
-			total = -1;
 		}
 		if (total === 0) return true;
-		return ask(
-			total > 0
-				? plural(total, { one: "# public link will change", other: "# public links will change" })
-				: t`Your public links will change`,
-			{
-				description: t`Links you've already shared keep working for 30 days, then stop. Share the new ones before then.`,
-				confirmText: t`Change username`,
-				cancelText: t`Keep username`,
-			},
-		);
+		const oldAddress = `${host}/${user.username}${slug ? `/${slug}` : ""}`;
+		const newAddress = `${host}/${next.trim().toLowerCase()}${slug ? `/${slug}` : ""}`;
+		return ask(total === 1 ? t`Your public link will change` : t`Your public links will change`, {
+			description: (
+				<>
+					<Trans>
+						<code dir="ltr" className="font-mono text-xs">
+							{oldAddress}
+						</code>{" "}
+						becomes{" "}
+						<code dir="ltr" className="font-mono text-xs">
+							{newAddress}
+						</code>
+						.
+					</Trans>{" "}
+					<Trans>
+						Links you've already shared keep working for 30 days, then stop. Share the new ones before then.
+					</Trans>
+				</>
+			),
+			confirmText: t`Change username`,
+			cancelText: t`Keep username`,
+		});
 	};
 
 	const updateUser = async (patch: Parameters<typeof authClient.updateUser>[0]) => {

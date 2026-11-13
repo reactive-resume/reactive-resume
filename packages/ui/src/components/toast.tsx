@@ -13,7 +13,7 @@ const DEFAULT_TIMEOUT = 6000;
 function ToastIcon({ type }: { type: string | undefined }) {
 	if (type === "loading") return <Spinner decorative />;
 	if (type === "success") return <Icon name="check-circle" />;
-	if (type === "info") return <Icon name="info" />;
+	if (type === "info") return null;
 	if (type === "warning") return <Icon name="warning" />;
 	if (type === "error") return <Icon name="warning-circle" />;
 	return null;
@@ -77,7 +77,7 @@ function ToastList({ closeLabel, timeout }: { closeLabel: string; timeout: numbe
 						className="ms-auto inline-flex h-7 shrink-0 items-center rounded-sm px-2 font-semibold transition-colors hover:bg-bg/10"
 					/>
 				)}
-				{toastItem.timeout === 0 && (
+				{toastItem.timeout === 0 && toastItem.type !== "info" && (
 					<ToastPrimitive.Close
 						data-slot="toast-close"
 						aria-label={closeLabel}
@@ -115,7 +115,7 @@ function Toaster({
 				<ToastPrimitive.Viewport
 					data-slot="toast-viewport"
 					aria-label={regionLabel}
-					className="pointer-events-none fixed inset-x-4 bottom-[var(--toast-bottom,1.5rem)] z-200 grid justify-items-center outline-none"
+					className="pointer-events-none fixed start-[var(--toast-start,1rem)] end-[var(--toast-end,1rem)] bottom-[var(--toast-bottom,1.5rem)] z-200 grid justify-items-center outline-none"
 				>
 					<ToastList closeLabel={closeLabel} timeout={timeout} />
 				</ToastPrimitive.Viewport>

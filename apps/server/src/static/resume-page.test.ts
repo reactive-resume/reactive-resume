@@ -98,6 +98,8 @@ it("authorizes the password page's own script and shows the address, nothing abo
 	expect(html).toContain(`<script>${PASSWORD_PAGE_SCRIPT}</script>`);
 	expect(response.headers.get("content-security-policy")).toContain(`'sha256-${hash}'`);
 	expect(html).toContain('<p class="address">resume.example/ada/resume</p>');
+	expect(html).toContain('<footer class="password-credit"><a href="https://resume.example">');
+	expect(html).toContain("Made with Reactive Resume");
 });
 
 it("sends a mistyped app address to the app instead of saying a resume isn't shared (J2-16)", async () => {

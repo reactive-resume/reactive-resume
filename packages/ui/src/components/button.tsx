@@ -19,9 +19,10 @@ const baseButtonVariants = cva(
 	"group/button touch-target relative inline-flex shrink-0 items-center justify-center gap-2 text-sm leading-5 font-medium whitespace-nowrap transition-[background-color,box-shadow,color,filter,opacity,scale] duration-quick ease-enter select-none disabled:pointer-events-none aria-busy:cursor-progress data-disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 	{
 		variants: {
+			keepAccent: { true: "" },
 			variant: {
 				// One accent per view: while a dialog or sheet is open, a primary button behind its scrim looks secondary.
-				primary: `bg-accent text-on-accent hover:bg-accent-hover ${behindTopLayer}`,
+				primary: "bg-accent text-on-accent hover:bg-accent-hover",
 				secondary:
 					"bg-surface text-ink shadow-[inset_0_0_0_1px_var(--line-2)] hover:bg-sunken active:bg-press aria-expanded:bg-sunken",
 				ghost:
@@ -43,6 +44,7 @@ const baseButtonVariants = cva(
 			},
 		},
 		compoundVariants: [
+			{ variant: "primary", keepAccent: false, className: behindTopLayer },
 			// Press feedback; a text link doesn't press, and a loading button blocks activation.
 			{
 				variant: ["primary", "secondary", "ghost", "soft", "danger", "danger-text"],
@@ -51,6 +53,7 @@ const baseButtonVariants = cva(
 		],
 		defaultVariants: {
 			variant: "primary",
+			keepAccent: false,
 			size: "default",
 		},
 	},
@@ -64,7 +67,7 @@ type ButtonVariantProps = VariantProps<typeof baseButtonVariants> & { className?
  * Touch inputs are 44px, so on touch screens a default button, and a bordered icon button that sits beside inputs,
  * grow to match. A caller that sets its own height or size keeps it.
  */
-function buttonVariants({ variant, size, className }: ButtonVariantProps = {}) {
+function buttonVariants({ variant, size, keepAccent, className }: ButtonVariantProps = {}) {
 	const ownHeight = !!className && OWN_HEIGHT.test(className);
 	const touch =
 		ownHeight || variant === "link"
@@ -74,7 +77,7 @@ function buttonVariants({ variant, size, className }: ButtonVariantProps = {}) {
 				: size === "icon" && variant === "secondary"
 					? "pointer-coarse:size-11"
 					: undefined;
-	return cn(baseButtonVariants({ variant, size }), touch, className);
+	return cn(baseButtonVariants({ variant, size, keepAccent }), touch, className);
 }
 
 type ButtonProps = ButtonPrimitive.Props &
@@ -88,6 +91,7 @@ function Button({
 	type = "button",
 	variant = "primary",
 	size = "default",
+	keepAccent = false,
 	loading = false,
 	onClick,
 	children,
@@ -103,7 +107,12 @@ function Button({
 			type={type}
 			{...(isLink ? { role: "link" } : {})}
 			aria-busy={loading || undefined}
-			className={buttonVariants({ variant, size, className: typeof className === "string" ? className : undefined })}
+			className={buttonVariants({
+				variant,
+				size,
+				keepAccent,
+				className: typeof className === "string" ? className : undefined,
+			})}
 			onClick={loading ? (event) => event.preventDefault() : onClick}
 			{...props}
 		>

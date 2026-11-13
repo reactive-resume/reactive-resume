@@ -1,6 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -42,6 +42,7 @@ type BackupCodesDialogProps = { open: boolean; onOpenChange: (open: boolean) => 
 
 function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 	const id = useId();
+	const passwordInput = useRef<HTMLInputElement>(null);
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [pending, setPending] = useState(false);
@@ -59,7 +60,11 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 		setError(null);
 		const { data, error } = await authClient.twoFactor.generateBackupCodes({ password });
 		setPending(false);
-		if (error?.code === "INVALID_PASSWORD") return setError(t`That password isn't right. Try again or reset it.`);
+		if (error?.code === "INVALID_PASSWORD") {
+			setPassword("");
+			passwordInput.current?.focus();
+			return setError(t`That password isn't right. Try again or reset it.`);
+		}
 		if (error || !data) return setError(getReadableErrorMessage(error, t`Couldn't make new codes. Try again.`));
 		setCodes(data.backupCodes);
 	};
@@ -144,17 +149,20 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 								<Trans>Password</Trans>
 							</Label>
 							<PasswordInput
+								ref={passwordInput}
 								id={`${id}-password`}
 								autoComplete="current-password"
 								value={password}
 								aria-invalid={!!error || undefined}
+								aria-describedby={error ? `${id}-error` : undefined}
 								onChange={(event) => {
 									setError(null);
 									setPassword(event.target.value);
 								}}
 							/>
 							{error && (
-								<p role="alert" className="text-xs/4 text-danger-text">
+								<p id={`${id}-error`} role="alert" className="flex items-start gap-1 text-xs/4 text-danger-text">
+									<Icon name="info" size={14} />
 									{error}
 								</p>
 							)}

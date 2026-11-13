@@ -6,7 +6,7 @@ import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { match } from "ts-pattern";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -271,8 +271,13 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 											<Trans>Can't scan? Enter this key in the app:</Trans>
 										</p>
 										<div className="flex items-start gap-2">
-											<code className="min-w-0 flex-1 rounded-md bg-sunken px-2.5 py-2 font-mono text-xs leading-5 break-all">
-												{secret.match(/.{1,4}/g)?.join(" ")}
+											<code className="min-w-0 flex-1 rounded-md bg-sunken px-2.5 py-2 font-mono text-xs leading-5">
+												{secret.match(/.{1,4}/g)?.map((group, index) => (
+													<Fragment key={index}>
+														{index > 0 && " "}
+														<span className="whitespace-nowrap">{group}</span>
+													</Fragment>
+												))}
 											</code>
 											<Button
 												size="icon-sm"
@@ -345,7 +350,10 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 							<div className="space-y-4">
 								<div className="grid grid-cols-2 gap-2">
 									{backupCodes.map((code) => (
-										<div key={code} className="rounded-md border border-line p-2 text-center font-mono text-sm">
+										<div
+											key={code}
+											className="flex min-h-[50px] items-center justify-center rounded-md border border-line p-2 text-center font-mono text-sm"
+										>
 											{code}
 										</div>
 									))}
@@ -407,7 +415,10 @@ function TwoFactorDialogDescription({ step }: TwoFactorStepProps) {
 			<Trans>Scan the QR code with your authenticator app, or copy the secret and paste it into the app.</Trans>
 		))
 		.with("backup", () => (
-			<Trans>Store these backup codes somewhere safe. Each one signs you in once if you lose your device.</Trans>
+			<Trans>
+				Store these backup codes somewhere safe. Each one signs you in once if you lose your device, and they won't be
+				shown again.
+			</Trans>
 		))
 		.exhaustive();
 }

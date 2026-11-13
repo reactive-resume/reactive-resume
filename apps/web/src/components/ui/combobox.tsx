@@ -43,6 +43,8 @@ type SingleComboboxProps<TValue extends string | number = string> = {
 	caret?: "down" | "up-down";
 	/** Two columns for long, named provider lists. */
 	columns?: 1 | 2;
+	/** An action beneath the searchable options. */
+	footer?: React.ReactNode;
 	placeholder?: string;
 	emptyMessage?: React.ReactNode;
 	className?: string;
@@ -65,6 +67,8 @@ type MultiComboboxProps<TValue extends string | number = string> = {
 	caret?: "down" | "up-down";
 	/** Two columns for long, named provider lists. */
 	columns?: 1 | 2;
+	/** An action beneath the searchable options. */
+	footer?: React.ReactNode;
 	placeholder?: string;
 	emptyMessage?: React.ReactNode;
 	className?: string;
@@ -98,6 +102,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 	} = props;
 
 	const { contains } = useFilter();
+	const [open, setOpen] = React.useState(false);
 
 	const optionMap = new Map(options.map((opt) => [String(opt.value), opt]));
 
@@ -181,6 +186,8 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 	return (
 		<ComboboxRoot
+			open={open}
+			onOpenChange={setOpen}
 			name={name}
 			items={options}
 			filter={filter}
@@ -222,6 +229,11 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 				>
 					{listContent}
 				</ComboboxList>
+				{props.footer && (
+					<div role="presentation" className="border-t border-line p-1" onClick={() => setOpen(false)}>
+						{props.footer}
+					</div>
+				)}
 			</ComboboxContent>
 		</ComboboxRoot>
 	);

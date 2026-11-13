@@ -156,6 +156,10 @@ input[aria-invalid]{box-shadow:inset 0 0 0 1px var(--danger),0 0 0 3px var(--dan
 .eye[aria-pressed=true] svg+svg{display:block}
 .error{display:flex;align-items:flex-start;gap:4px;font:400 12px/16px var(--font-ui);color:var(--danger-text)}
 .error svg{width:14px;height:14px;flex:none;margin-top:1px}
+.password-credit{padding:20px;font:500 12px/16px var(--font-ui)}
+.password-credit a{display:inline-flex;align-items:center;gap:8px;color:var(--ink-2);text-decoration:none;border-radius:6px}
+.password-credit svg{width:18px;height:18px}
+.password-credit a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .address{text-align:center;overflow-wrap:anywhere;font:500 12px/18px var(--font-mono);color:var(--ink-3)}
 main.state{justify-content:center;padding:40px 20px;text-align:center}
 .state>div{display:flex;flex-direction:column;align-items:center;gap:8px;max-width:400px}
@@ -294,6 +298,8 @@ export function renderWebPageDocument({
 /** The page a password-protected resume shows until the visitor unlocks it. Nothing about the owner shows. */
 export function renderPasswordDocument(options: {
 	lang: string;
+	/** App origin for the credit; absent when credit is hidden. */
+	creditUrl?: string | undefined;
 	messages: WebPageMessages;
 	wrongPassword: boolean;
 	/** The page's address without its scheme, so the visitor can check the link. */
@@ -306,7 +312,10 @@ export function renderPasswordDocument(options: {
 		: "";
 	const eye = `<button type="button" class="eye" data-eye hidden aria-pressed="false" aria-label="${escapeHtml(messages.showPassword)}" data-show="${escapeHtml(messages.showPassword)}" data-hide="${escapeHtml(messages.hidePassword)}">${icon(ICON.eye)}${icon(ICON.eyeSlash)}</button>`;
 	const address = options.address ? `<p class="address">${escapeHtml(options.address)}</p>` : "";
-	const body = `<main><form method="post"><span class="tile">${icon(ICON.lockSimple)}</span><div class="intro"><h1>${escapeHtml(messages.passwordTitle)}</h1><p>${escapeHtml(messages.passwordHint)}</p></div><div class="field"><label for="password">${escapeHtml(messages.password)}</label><div class="control"><input id="password" name="password" type="password" autocomplete="current-password" minlength="6" maxlength="64" required autofocus${options.wrongPassword ? ' aria-invalid="true" aria-describedby="error"' : ""}>${eye}</div>${error}</div><button type="submit" class="rr-btn rr-primary rr-lg">${escapeHtml(messages.unlock)}</button>${address}</form></main><script>${PASSWORD_PAGE_SCRIPT}</script>`;
+	const credit = options.creditUrl
+		? `<footer class="password-credit"><a href="${escapeHtml(options.creditUrl)}">${LOGO}${escapeHtml(messages.credit)}</a></footer>`
+		: "";
+	const body = `<main><form method="post"><span class="tile">${icon(ICON.lockSimple)}</span><div class="intro"><h1>${escapeHtml(messages.passwordTitle)}</h1><p>${escapeHtml(messages.passwordHint)}</p></div><div class="field"><label for="password">${escapeHtml(messages.password)}</label><div class="control"><input id="password" name="password" type="password" autocomplete="current-password" minlength="6" maxlength="64" required autofocus${options.wrongPassword ? ' aria-invalid="true" aria-describedby="error"' : ""}>${eye}</div>${error}</div><button type="submit" class="rr-btn rr-primary rr-lg">${escapeHtml(messages.unlock)}</button>${address}</form></main>${credit}<script>${PASSWORD_PAGE_SCRIPT}</script>`;
 	return shell(
 		options.lang,
 		`<title>${escapeHtml(messages.passwordTitle)}</title><meta name="robots" content="noindex, nofollow">`,

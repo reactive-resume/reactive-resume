@@ -21,7 +21,7 @@ export function ErrorScreen({ error }: ErrorComponentProps) {
 	return (
 		<I18nProvider i18n={i18n}>
 			<div className="mx-auto flex h-svh max-w-md flex-col items-center justify-center gap-y-4 px-4">
-				<BrandIcon variant="logo" className="size-12" />
+				<BrandIcon variant="icon" className="size-12" />
 
 				<h1 className="text-center t-page-title">
 					<Trans>This page didn't load</Trans>
@@ -37,7 +37,6 @@ export function ErrorScreen({ error }: ErrorComponentProps) {
 					</Button>
 
 					<Link to="/dashboard" className={buttonVariants({ variant: "secondary" })}>
-						<Icon name="house" size={16} />
 						<Trans>Go to Today</Trans>
 					</Link>
 				</div>

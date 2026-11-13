@@ -18,7 +18,7 @@ const ENGLISH = {
 	hidePassword: "Hide password",
 	unlock: "Unlock",
 	wrongPassword: "That password isn't correct. Check it with the resume owner and try again.",
-	unavailableTitle: "This resume isn't shared right now.",
+	unavailableTitle: "This resume isn't shared right now",
 	unavailableHint: "If someone sent you this link, ask them for a new one.",
 	home: "Go to Reactive Resume",
 	ownerUnavailableHint: "Only you can see this address. Publish it in Share.",

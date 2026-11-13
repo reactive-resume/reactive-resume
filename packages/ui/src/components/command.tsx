@@ -23,16 +23,24 @@ type CommandInputProps = React.ComponentProps<typeof CommandPrimitive.Input> & {
 /** The 56px search row of the command palette. */
 function CommandInput({ className, hint, ...props }: CommandInputProps) {
 	return (
-		<div data-slot="command-input-wrapper" className="flex h-14 shrink-0 items-center gap-3 border-b border-line px-5">
-			<Icon name="magnifying-glass" className="text-ink-3" />
-			<CommandPrimitive.Input
-				data-slot="command-input"
-				className={cn(
-					"h-full w-full bg-transparent text-base leading-6 text-ink outline-hidden placeholder:text-ink-3 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed",
-					className,
-				)}
-				{...props}
-			/>
+		<div
+			data-slot="command-input-wrapper"
+			className="flex h-14 shrink-0 items-center gap-3 border-b border-line px-5 max-sm:h-16 max-sm:px-4"
+		>
+			<div
+				data-slot="command-search-field"
+				className="flex h-full min-w-0 flex-1 items-center gap-3 max-sm:h-10 max-sm:gap-2 max-sm:rounded-md max-sm:border max-sm:border-control-border max-sm:bg-raised max-sm:px-3 max-sm:focus-within:border-accent max-sm:focus-within:ring-[3px] max-sm:focus-within:ring-accent-soft"
+			>
+				<Icon name="magnifying-glass" className="text-ink-3" />
+				<CommandPrimitive.Input
+					data-slot="command-input"
+					className={cn(
+						"h-full w-full bg-transparent text-base leading-6 text-ink outline-hidden placeholder:text-ink-3 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed",
+						className,
+					)}
+					{...props}
+				/>
+			</div>
 			{hint}
 		</div>
 	);

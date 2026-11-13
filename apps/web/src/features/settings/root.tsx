@@ -37,6 +37,14 @@ export function SettingsRoot() {
 
 	return (
 		<div className="grid gap-5">
+			<Link
+				to="/dashboard"
+				viewTransition={popTransition}
+				className="touch-target relative inline-flex h-5 w-fit items-center gap-1 text-sm text-ink-2"
+			>
+				<Icon name="caret-left" size={20} />
+				<Trans>Back</Trans>
+			</Link>
 			<RootHeader title={<Trans>Settings</Trans>} />
 			<div className="flex items-center gap-3">
 				<Avatar className="size-12">

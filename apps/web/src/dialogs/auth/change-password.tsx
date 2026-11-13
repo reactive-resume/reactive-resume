@@ -14,7 +14,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "../store";
 import { PasswordInput } from "@/components/input/password-input";
@@ -150,6 +150,9 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 									/>
 								}
 							/>
+							<FormDescription>
+								<Trans>At least 8 characters, and different from the current one.</Trans>
+							</FormDescription>
 							<FormMessage errors={field.state.meta.errors} />
 						</FormItem>
 					)}

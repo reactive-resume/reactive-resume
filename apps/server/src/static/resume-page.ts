@@ -163,6 +163,7 @@ async function showPage(request: Request, match: ResumeMatch, trustedClient: str
 		const address = `${options.customDomain ?? new URL(env.APP_URL).host}${pathname === "/" ? "" : pathname}`;
 		return html(
 			renderPasswordDocument({
+				creditUrl: origin(),
 				lang,
 				messages: webPageMessages(lang),
 				wrongPassword,

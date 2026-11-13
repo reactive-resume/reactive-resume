@@ -176,7 +176,7 @@ function Passkeys() {
 			const name = passkey.name || t`Unnamed passkey`;
 			if (
 				!(await confirm(t`Remove “${name}”?`, {
-					description: t`You can no longer sign in with this passkey.`,
+					description: t`You can no longer sign in with this passkey. Your password and other passkeys still work.`,
 					confirmText: t`Remove passkey`,
 					cancelText: t`Keep passkey`,
 					variant: "danger",

@@ -28,7 +28,7 @@ export function SetUpAiLine({ lead, onSetUp, className, children, ...props }: Se
 		>
 			<Icon name="sparkle" size={18} className="text-ink-3" />
 			<p className="min-w-0 flex-1">
-				<b className="font-semibold text-ink @max-[400px]:block">{lead}</b> {children}
+				<b className="font-semibold text-ink">{lead}</b> {children}
 			</p>
 			<Button variant="secondary" size="sm" onClick={onSetUp}>
 				<Trans>Set up AI</Trans>

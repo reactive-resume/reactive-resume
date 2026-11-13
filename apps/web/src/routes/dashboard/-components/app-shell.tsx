@@ -23,7 +23,6 @@ import { GuestBanner } from "@/features/auth/components/guest-banner";
 import { useNeedsYouCount } from "@/features/career/needs-you";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
 import { DocumentLibraryProvider } from "@/features/documents/library-session";
-import { useStartDocument } from "@/features/documents/use-start-document";
 import { shortcutOverlayOpen } from "@/features/keyboard-shortcuts/blocking";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
@@ -144,7 +143,6 @@ export function AppShell({ children }: AppShellProps) {
 	const openNew = useNewAction();
 	const navigate = useNavigate();
 	const openDialog = useDialogStore((state) => state.openDialog);
-	const { newLetter } = useStartDocument();
 	const pendingNew = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const cancelNew = () => {
 		if (pendingNew.current !== null) clearTimeout(pendingNew.current);
@@ -154,7 +152,9 @@ export function AppShell({ children }: AppShellProps) {
 	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const matchRoute = useMatchRoute();
 	const tabs =
-		breakpoint === "mobile" && !matchRoute({ to: "/dashboard/applications/$applicationId/{-$tab}", fuzzy: true });
+		breakpoint === "mobile" &&
+		!matchRoute({ to: "/dashboard/applications/$applicationId/{-$tab}", fuzzy: true }) &&
+		!matchRoute({ to: "/dashboard/settings", fuzzy: true });
 
 	useHotkey(
 		"N",
@@ -185,7 +185,7 @@ export function AppShell({ children }: AppShellProps) {
 		["N", "L"],
 		() => {
 			cancelNew();
-			if (!isEditableElementFocused() && !shortcutOverlayOpen()) void newLetter();
+			if (!isEditableElementFocused() && !shortcutOverlayOpen()) openDialog("document.new", { context: "letters" });
 		},
 		{ enabled: characterShortcuts, timeout: 600, meta: { name: t`New cover letter` } },
 	);

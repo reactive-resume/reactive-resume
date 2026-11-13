@@ -162,12 +162,16 @@ function DeleteAccountDialog({ open, onOpenChange, onExport, exporting }: Delete
 					<AlertDialogDescription>
 						<Trans>
 							All your documents, applications, API keys and public links are deleted for good. This can't be undone.
-						</Trans>
+						</Trans>{" "}
+						<TextAction
+							disabled={exporting}
+							onClick={onExport}
+							className="inline h-auto p-0 align-baseline underline underline-offset-2"
+						>
+							{exporting ? <Trans>Exporting…</Trans> : <Trans>Export everything first</Trans>}
+						</TextAction>
 					</AlertDialogDescription>
 				</AlertDialogHeader>
-				<TextAction disabled={exporting} onClick={onExport}>
-					{exporting ? <Trans>Exporting…</Trans> : <Trans>Export everything first</Trans>}
-				</TextAction>
 				<div className="grid gap-1.5">
 					<label htmlFor={id} className="text-[13px]/[18px] font-medium">
 						<Trans>
@@ -177,7 +181,7 @@ function DeleteAccountDialog({ open, onOpenChange, onExport, exporting }: Delete
 					<Input id={id} value={typed} autoComplete="off" onChange={(event) => setTyped(event.target.value)} />
 				</div>
 				<AlertDialogFooter>
-					<AlertDialogCancel>
+					<AlertDialogCancel variant="ghost">
 						<Trans>Keep account</Trans>
 					</AlertDialogCancel>
 					<AlertDialogAction
