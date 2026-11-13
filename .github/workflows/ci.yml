@@ -175,16 +175,18 @@ jobs:
           psql "$DATABASE_URL" -c "CREATE DATABASE oauth_test"
           DATABASE_URL="$OAUTH_TEST_DATABASE_URL" pnpm db:migrate
 
-      # Discover every package. The 32-vCPU runner tests four packages at once with up to eight Vitest workers
-      # each; smaller GitHub runners stay serial with the configured two workers to avoid PDF/rate-limit timeouts.
+      # Discover every package. The 32-vCPU runner tests four packages at once with eight workers each, which
+      # also stops Jest from taking every core; smaller GitHub runners stay serial with two workers to avoid
+      # PDF/rate-limit timeouts. Vitest and Jest both take --maxWorkers.
       - name: Run unit tests
         if: matrix.suite == 'Unit'
         env:
           # A missing test database URL fails the run instead of skipping the real-database suites.
           REQUIRE_DB_TESTS: "1"
-          # Vitest reads this itself; empty keeps `maxWorkers` from vitest.shared.mts.
-          VITEST_MAX_WORKERS: ${{ vars.USE_BLACKSMITH == 'true' && '8' || '' }}
-        run: pnpm exec turbo run test:ci --concurrency=${{ vars.USE_BLACKSMITH == 'true' && 4 || 1 }}
+        run: >-
+          pnpm exec turbo run test:ci
+          --concurrency=${{ vars.USE_BLACKSMITH == 'true' && 4 || 1 }}
+          -- --maxWorkers=${{ vars.USE_BLACKSMITH == 'true' && 8 || 2 }}
 
       # The build and the browser download don't depend on each other, so they overlap.
       - name: Build application and install Chromium, WebKit and browser dependencies
