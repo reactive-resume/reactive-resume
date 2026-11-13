@@ -263,7 +263,7 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 								maxLength={4000}
 								value={draft.priorities}
 								onChange={(event) => change({ priorities: event.target.value })}
-								className="min-h-[74px]"
+								className="min-h-[74px] resize-none"
 							/>
 						</div>
 					</div>

@@ -197,6 +197,7 @@ function ResumePageCanvas() {
 									overflow={overflow}
 									locked={locked}
 									sideBySide={sideBySide}
+									fitsWidth={isPhone}
 									// A page's own menu, where the pages on screen are the pages of the layout (nothing spills).
 									menu={
 										sideBySide &&
@@ -247,7 +248,8 @@ function ResumePageCanvas() {
 			)}
 
 			{mode === "check" && !viewing && <PageViewToggle />}
-			{!parser && <ZoomBar fitScale={fitScale} />}
+			{/* Phones zoom by pinching; the page fits the width and the caption says so. */}
+			{!parser && !isPhone && <ZoomBar fitScale={fitScale} />}
 		</div>
 	);
 }
@@ -262,6 +264,8 @@ type ResumePageCaptionProps = {
 	overflow: ReturnType<typeof measureOverflow>;
 	locked: boolean;
 	sideBySide: boolean;
+	/** Phones: the page always fits the width, and the caption says so. */
+	fitsWidth: boolean;
 	menu: ReactNode;
 };
 
@@ -270,8 +274,19 @@ type ResumePageCaptionProps = {
  * menu). Above the first page also what stands in for the live document (a version, a template) and what overflows.
  */
 function ResumePageCaption(props: ResumePageCaptionProps) {
-	const { pageNumber, pageCount, viewing, previewTemplate, pendingOnPage, format, overflow, locked, sideBySide, menu } =
-		props;
+	const {
+		pageNumber,
+		pageCount,
+		viewing,
+		previewTemplate,
+		pendingOnPage,
+		format,
+		overflow,
+		locked,
+		sideBySide,
+		fitsWidth,
+		menu,
+	} = props;
 	const { i18n } = useLingui();
 	const formatLabel = {
 		a4: "A4",
@@ -310,6 +325,12 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 						<div className={label}>
 							<Trans>
 								Page {page} of {pages} · {formatLabel} · read-only
+							</Trans>
+						</div>
+					) : fitsWidth ? (
+						<div className={label}>
+							<Trans>
+								Page {page} of {pages} · {formatLabel} · fits the width
 							</Trans>
 						</div>
 					) : (

@@ -5,7 +5,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -36,10 +36,15 @@ import { getAccountGeneration } from "@/libs/auth/account-scope";
 // bubble synthetic events through the React tree, so a menu item's click would otherwise reach the card.
 const stop = (event: React.SyntheticEvent) => event.stopPropagation();
 
-type ApplicationActionsMenuProps = { application: ApplicationSummary; className?: string };
+type ApplicationActionsMenuProps = {
+	application: ApplicationSummary;
+	className?: string;
+	/** Items after Schedule an interview (the workspace's Ask the coach, on phones). */
+	children?: ReactNode;
+};
 
 /** A row's or card's ⋯ menu, the keyboard alternative to dragging: Move to, Mark as closed, and Move to Trash (with Undo). */
-export function ApplicationActionsMenu({ application, className }: ApplicationActionsMenuProps) {
+export function ApplicationActionsMenu({ application, className, children }: ApplicationActionsMenuProps) {
 	const { moveTo, close, remove } = useApplicationActions();
 	const { lanes, active } = useApplicationLanes();
 	const current = getDisplayLane(lanes, application);
@@ -90,6 +95,7 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 						<Icon name="calendar-plus" />
 						<Trans>Schedule an interview…</Trans>
 					</DropdownMenuItem>
+					{children}
 					<DropdownMenuSeparator />
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>

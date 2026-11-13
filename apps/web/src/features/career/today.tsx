@@ -22,6 +22,7 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
@@ -350,6 +351,8 @@ function NeedsYou({ now, compact = false, first = false, readCount = 0, onShowRe
 	const attention = owed.toSorted((a, b) => Number(b.step.kind === "offer") - Number(a.step.kind === "offer"));
 	const actions = useApplicationActions();
 	const line = useNeedLine();
+	// Phones keep the whole title and its line, one caret: the row opens Messages to draft a note, and Done stays on the application's row in Applications.
+	const phone = useBreakpoint() === "mobile";
 
 	return (
 		<section aria-labelledby="needs-you">
@@ -381,7 +384,7 @@ function NeedsYou({ now, compact = false, first = false, readCount = 0, onShowRe
 					{attention.map(({ application, step }) => {
 						const { title, subtitle } = line(application, step, compact);
 						const leading = <StageDot status={application.status}>{null}</StageDot>;
-						if (step.kind === "offer" || compact)
+						if (step.kind === "offer" || compact || phone)
 							return (
 								<ListRow
 									key={application.id}

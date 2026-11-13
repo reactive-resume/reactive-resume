@@ -5,7 +5,7 @@ import { legacyDocumentsSearch } from "./-documents-search";
 import { Page, PageBody, RootHeader } from "@/components/calm/page";
 import { PhoneHeaderActions } from "@/components/layout/phone-header-actions";
 import { useOverlayHistory } from "@/features/career/hooks";
-import { useCareerTime, useNow } from "@/features/career/shared";
+import { useCareerTime, useNow, ZoneNamedOnPage } from "@/features/career/shared";
 import { TodayPage, TodayTimezoneNote } from "@/features/career/today";
 import { getPageTitle } from "@/libs/seo";
 
@@ -52,7 +52,9 @@ function RouteComponent() {
 					}
 					actions={<PhoneHeaderActions />}
 				/>
-				<TodayPage schedule={schedule} onScheduleChange={onScheduleChange} />
+				<ZoneNamedOnPage>
+					<TodayPage schedule={schedule} onScheduleChange={onScheduleChange} />
+				</ZoneNamedOnPage>
 			</PageBody>
 		</Page>
 	);

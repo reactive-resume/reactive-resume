@@ -220,7 +220,10 @@ function PrepWithoutAi({ application, interview, now, go }: PrepWithoutAiProps) 
 				<Trans context="Button: rehearse interview answers">Practice</Trans>
 			</Button>
 		) : index === 2 ? (
-			<Link to="/dashboard/career/knowledge/stories/{-$storyId}" className="text-sm/5 font-medium text-accent-text">
+			<Link
+				to="/dashboard/career/knowledge/stories/{-$storyId}"
+				className="inline-flex text-sm/5 font-medium text-accent-text"
+			>
 				<Trans>Open stories</Trans>
 			</Link>
 		) : null;

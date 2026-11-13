@@ -354,9 +354,9 @@ function StoryReader({ story, facts, onEdit }: StoryReaderProps) {
 					<ListRow
 						key={fact.id}
 						render={<Link to="/dashboard/career/knowledge/facts" search={{ highlight: fact.id }} />}
-						className="min-h-0 items-start gap-2.5 py-2.5"
+						className="min-h-[41px] items-start gap-2.5 py-2.5 sm:min-h-[41px]"
 					>
-						<Icon name="link-simple-horizontal" size={18} className="mt-px shrink-0 text-accent-text" />
+						<Icon name="link-simple-horizontal" size={18} className="mt-px shrink-0 text-ink-2" />
 						<span className={cn("min-w-0 flex-1 t-ui", fact.status !== "active" && "text-ink-3")}>{fact.text}</span>
 						<Icon name="caret-right" size={18} className="shrink-0 text-ink-3" />
 					</ListRow>

@@ -107,6 +107,8 @@ type EditorStore = {
 	 */
 	exportCheck: { report: PdfAtsReport; data: ResumeData } | null;
 	exportReportOpen: boolean;
+	/** The resume published in this visit: Share keeps its switch after it is turned off, until reload. */
+	publishedResumeId: string | null;
 	setZoom: (zoom: number | "fit") => void;
 	/** Opens the sheet on a tab, or closes it (which also returns the page to now). */
 	setSheetTab: (tab: SheetTab | null) => void;
@@ -166,6 +168,7 @@ const initialState = {
 	writingReview: null,
 	exportCheck: null,
 	exportReportOpen: false,
+	publishedResumeId: null,
 } as const;
 
 export const useEditorStore = create<EditorStore>()((set) => ({

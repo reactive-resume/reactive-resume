@@ -44,8 +44,8 @@ type ToolbarAction = {
 };
 
 /**
- * Bold, Italic, Underline, Link, then lists; alignment and the rarer formatting (strikethrough, code, highlight,
- * headings, colour, indent, a rule and Clear formatting) sit in two menus so the toolbar fits a narrow column.
+ * Bold, Italic, Underline, Link, then lists; the rarer formatting (strikethrough, code, highlight, colour,
+ * alignment, headings, indent, a rule and Clear formatting) sits in one menu so the toolbar fits a narrow column.
  */
 
 /** An address as typed, with `https://` when it names no scheme ("priya.dev"); mailto:, tel: and the rest stay. */
@@ -560,7 +560,7 @@ type FormattingMenusProps = {
 	menus: ReturnType<typeof useToolbarMenus>;
 };
 
-/** Alignment, then everything else the toolbar has no room for. */
+/** Everything the toolbar has no room for, alignment included, in one "More formatting" menu. */
 function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: FormattingMenusProps) {
 	const chain = () => editor.chain().focus();
 	const alignLabels: Record<Alignment, string> = {
@@ -593,32 +593,6 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 
 	return (
 		<>
-			<DropdownMenu {...menus.rootProps("align")}>
-				<Toolbar.Button
-					render={<DropdownMenuTrigger />}
-					aria-label={t`Text alignment`}
-					title={t`Text alignment`}
-					className={cn(buttonClassName, formatting.align !== "left" && "bg-accent-soft text-accent-text")}
-				>
-					<Icon name={ALIGNMENT_ICONS[formatting.align]} />
-				</Toolbar.Button>
-				<DropdownMenuContent side={side} className="w-44" {...menus.contentProps}>
-					<DropdownMenuRadioGroup
-						value={formatting.align}
-						onValueChange={(align: Alignment) =>
-							align === "left" ? chain().unsetTextAlign().run() : chain().setTextAlign(align).run()
-						}
-					>
-						{ALIGNMENTS.map((align) => (
-							<DropdownMenuRadioItem key={align} value={align}>
-								<Icon name={ALIGNMENT_ICONS[align]} />
-								{alignLabels[align]}
-							</DropdownMenuRadioItem>
-						))}
-					</DropdownMenuRadioGroup>
-				</DropdownMenuContent>
-			</DropdownMenu>
-
 			<DropdownMenu {...menus.rootProps("more")}>
 				<Toolbar.Button
 					render={<DropdownMenuTrigger />}
@@ -663,6 +637,22 @@ function FormattingMenus({ editor, formatting, buttonClassName, side, menus }: F
 							))}
 						</div>
 					</DropdownMenuGroup>
+					<DropdownMenuRadioGroup
+						value={formatting.align}
+						onValueChange={(align: Alignment) =>
+							align === "left" ? chain().unsetTextAlign().run() : chain().setTextAlign(align).run()
+						}
+					>
+						<DropdownMenuLabel>
+							<Trans>Text alignment</Trans>
+						</DropdownMenuLabel>
+						{ALIGNMENTS.map((align) => (
+							<DropdownMenuRadioItem key={align} value={align}>
+								<Icon name={ALIGNMENT_ICONS[align]} />
+								{alignLabels[align]}
+							</DropdownMenuRadioItem>
+						))}
+					</DropdownMenuRadioGroup>
 					<DropdownMenuRadioGroup value={formatting.block} onValueChange={(level: number) => setBlock(level)}>
 						<DropdownMenuLabel>
 							<Trans>Text style</Trans>

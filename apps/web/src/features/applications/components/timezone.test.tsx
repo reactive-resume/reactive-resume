@@ -158,7 +158,7 @@ it.each([
 it("keeps stage and note dates as UTC whole days even east of the date boundary", () => {
 	account.timeZone = "Pacific/Kiritimati";
 	show(<Activity application={application("2026-10-30T09:00:00Z")} onOpenInterview={vi.fn()} />);
-	expect(screen.getAllByText("Thu 1 Oct")).toHaveLength(2);
+	expect(screen.getAllByLabelText("Thu 1 Oct")).toHaveLength(2);
 });
 
 it.each([

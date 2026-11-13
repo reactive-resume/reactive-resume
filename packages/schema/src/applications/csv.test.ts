@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { mapCsvToApplications, parseCsv, rowsToCsv } from "./csv";
+import { applyLaneMapping, collectCsvLanes, compatibleLanes, mapCsvToApplications, parseCsv, rowsToCsv } from "./csv";
 
 describe("parseCsv", () => {
 	it("neutralizes formulas in skipped rows and headers, preserving quotes and newlines", () => {
@@ -38,15 +38,12 @@ describe("mapCsvToApplications", () => {
 		);
 	});
 
-	it("reports invalid stages and dates without silently importing different values", () => {
+	it("reports invalid dates without silently importing different values", () => {
 		const csv =
 			"company,role,status,stage date\nStripe,Eng,bogus,2026-99-99\n,NoCompany,applied,2026-07-01\nAcme,,saved,2026-07-01";
 		const { rows, skipped, invalidValues } = mapCsvToApplications(parseCsv(csv));
 		expect(rows).toHaveLength(0);
-		expect(invalidValues).toEqual([
-			{ row: 2, field: "status", value: "bogus" },
-			{ row: 2, field: "stageEnteredAt", value: "2026-99-99" },
-		]);
+		expect(invalidValues).toEqual([{ row: 2, field: "stageEnteredAt", value: "2026-99-99" }]);
 		expect(skipped).toBe(2);
 	});
 	it("reads other trackers' stage names, outcomes and date formats", () => {
@@ -81,17 +78,34 @@ describe("mapCsvToApplications", () => {
 			"2026-09-15",
 		]);
 	});
-	it("ignores impossible day-first dates when choosing a column's order, and inherited names as stages", () => {
+	it("ignores impossible day-first dates when choosing a column's order, and treats inherited object names as custom stage labels", () => {
 		const csv = "company,role,stage,stage date\nA,Eng,applied,31/02/2026\nB,Eng,applied,02/10/2026\nC,Eng,constructor,";
 		const { rows, invalidValues } = mapCsvToApplications(parseCsv(csv));
 		expect(rows.find((row) => row.company === "B")?.stageEnteredAt).toBe("2026-02-10");
-		expect(invalidValues).toEqual(
-			expect.arrayContaining([
-				{ row: 2, field: "stageEnteredAt", value: "31/02/2026" },
-				{ row: 4, field: "status", value: "constructor" },
-			]),
-		);
+		expect(rows.find((row) => row.company === "C")).toMatchObject({
+			lane: { label: "constructor", unclassified: true },
+		});
+		expect(invalidValues).toEqual(expect.arrayContaining([{ row: 2, field: "stageEnteredAt", value: "31/02/2026" }]));
 	});
+	it("keeps unknown Status values for stage mapping without changing known names", () => {
+		const result = mapCsvToApplications(parseCsv("Company,Role,Status\nA,Designer,Take-home\nB,Designer,Interview"));
+		expect(result.invalidValues).toEqual([]);
+		expect(result.rows).toHaveLength(2);
+		expect(result.rows[1]).toEqual({ company: "B", role: "Designer", status: "interview" });
+		const [lane] = collectCsvLanes(result.rows);
+		expect(lane).toMatchObject({ label: "Take-home", unclassified: true });
+		if (!lane) throw new Error("Unknown CSV stage was dropped");
+		const existing = [{ id: "interview", category: "interview", closedReason: null, retiredAt: null }] as Parameters<
+			typeof compatibleLanes
+		>[1];
+		expect(compatibleLanes(lane, existing)).toEqual(existing);
+		expect(applyLaneMapping(result.rows, new Map([[lane.key, "interview"]]))[0]).toEqual({
+			company: "A",
+			role: "Designer",
+			laneId: "interview",
+		});
+	});
+
 	it("reports malformed posting metadata and lets an explicit column omission resolve it", () => {
 		const table = parseCsv("Company,Role,Posting Source\nAcme,Engineer,not-json");
 		expect(mapCsvToApplications(table).invalidValues).toEqual([{ row: 2, field: "postingSource", value: "not-json" }]);

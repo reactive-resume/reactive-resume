@@ -30,6 +30,7 @@ import { dayKey, interviewKindOf, interviewTypeLabel } from "../../interviews";
 import { getCategoryLane, getLaneLabel, isCurrentLaneEvent } from "../../lanes";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { useApplicationLanes } from "../../use-application-lanes";
+import { DateColumn } from "@/components/calm/list-row";
 import { useCareerTime, useNow } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -201,16 +202,26 @@ export function Activity({ application, onOpenInterview, renderHeader, logAction
 			<ol className="grid">
 				{sorted.map((entry) => {
 					const { dot, text } = describe(entry);
+					const dateOptions =
+						entry.type === "interview" || (entry.type === "note" && entry.followedUp) ? {} : { timeZone: "UTC" };
 					return (
 						<li
 							key={entry.id}
-							className="group relative grid min-h-7 grid-cols-[72px_8px_minmax(0,1fr)] items-center gap-2.5 text-[13px]/[18px]"
+							className="group relative grid min-h-[52px] grid-cols-[36px_8px_minmax(0,1fr)] items-center gap-2.5 text-[13px]/[18px]"
 						>
-							<span className="text-ink-3">
-								{entry.type === "stage" && entry.dateUnknown
-									? t`Not recorded`
-									: formatDay(entry.at, entry.type === "interview" || (entry.type === "note" && !!entry.followedUp))}
-							</span>
+							{entry.type === "stage" && entry.dateUnknown ? (
+								<span className="text-ink-3">{t`Not recorded`}</span>
+							) : (
+								<DateColumn
+									className="w-9 [&>span:last-child]:text-[18px]/[22px]"
+									aria-label={formatDay(
+										entry.at,
+										entry.type === "interview" || (entry.type === "note" && !!entry.followedUp),
+									)}
+									label={format(entry.at, { weekday: "short", ...dateOptions })}
+									day={format(entry.at, { day: "numeric", ...dateOptions })}
+								/>
+							)}
 							<span aria-hidden="true" className="size-2 rounded-full" style={{ background: dot }} />
 							{entry.type === "interview" ? (
 								<button

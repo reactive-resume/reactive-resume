@@ -1,5 +1,35 @@
 import type { ComponentProps, ReactNode } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@reactive-resume/utils/style";
+
+/**
+ * True when the action buttons, at their own widths, don't fit one line: they then stack, each the full width, the
+ * accent first. Widths are read while the buttons are in a line and kept while stacked.
+ */
+// ponytail: widths measured in line are reused while stacked; a label change while stacked re-measures only on unstack.
+function useStacked() {
+	const ref = useRef<HTMLDivElement>(null);
+	const widths = useRef(0);
+	const [stacked, setStacked] = useState(false);
+	useLayoutEffect(() => {
+		const row = ref.current;
+		if (!row) return;
+		const measure = () => {
+			const items = [...row.children] as HTMLElement[];
+			if (items.length < 2) return setStacked(false);
+			if (row.dataset.stacked === undefined) {
+				const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
+				widths.current = items.reduce((sum, item) => sum + item.offsetWidth, gap * (items.length - 1));
+			}
+			setStacked(widths.current > row.clientWidth + 0.5);
+		};
+		measure();
+		const observer = new ResizeObserver(measure);
+		observer.observe(row);
+		return () => observer.disconnect();
+	}, []);
+	return [ref, stacked] as const;
+}
 
 type HeroCardProps = Omit<ComponentProps<"section">, "title"> & {
 	/** The quiet context line: when, and in which stage (a `StageDot` fits here). */
@@ -25,6 +55,7 @@ export function HeroCard({
 	children,
 	...props
 }: HeroCardProps) {
+	const [actionsRef, stacked] = useStacked();
 	return (
 		<section
 			data-design="hero"
@@ -45,7 +76,14 @@ export function HeroCard({
 				{children && <p className="max-w-[60ch] t-body text-ink-2">{children}</p>}
 			</div>
 			{actions && (
-				<div className={cn("flex flex-wrap items-center gap-2", wide || leading ? "max-sm:mt-3" : "mt-3")}>
+				<div
+					ref={actionsRef}
+					data-stacked={stacked || undefined}
+					className={cn(
+						"flex flex-wrap items-center gap-2 data-stacked:flex-col data-stacked:items-stretch",
+						wide || leading ? "max-sm:mt-3" : "mt-3",
+					)}
+				>
 					{actions}
 				</div>
 			)}

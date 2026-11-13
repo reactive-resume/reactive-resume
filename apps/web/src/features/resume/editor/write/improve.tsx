@@ -144,10 +144,6 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: I
 								{provider.label} · {provider.model}
 							</span>
 						)}
-						{/* A 16px mark on the caption's line: the hit area overhangs it instead of making the row taller. */}
-						<Button size="icon-xs" variant="ghost" aria-label={t`Close`} onClick={close} className="-my-1.5 -me-1.5">
-							<Icon name="x" size={16} />
-						</Button>
 					</div>
 					{!provider && (
 						<SetUpAi

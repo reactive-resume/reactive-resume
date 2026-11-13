@@ -231,6 +231,14 @@ it("shrinks long kept text around a change on the narrow card, and keeps every c
 		"…seven eight nine ten eleven twelve new words one two three four five six …",
 	);
 	expect(parts[1]).toEqual({ kind: "added", text: "new words " });
+	// A short sentence opening stays whole instead of losing its first words.
+	const opening = "Tested each release with shop owners before it shipped";
+	expect(
+		inContext([
+			{ kind: "same", text: opening },
+			{ kind: "added", text: ", so problems surfaced" },
+		])[0]?.text,
+	).toBe(opening);
 });
 
 it("keeps unverified new details visible before accepting, without opening a disclosure", () => {

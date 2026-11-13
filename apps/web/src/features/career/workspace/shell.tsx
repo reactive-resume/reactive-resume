@@ -12,6 +12,7 @@ import { m, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { WORKSPACE_TABS } from "@reactive-resume/schema/career";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { DropdownMenuItem } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
@@ -33,6 +34,7 @@ import { Crumb, CrumbLink } from "@/components/calm/crumb";
 import { Page, PageBody } from "@/components/calm/page";
 import { SectionRail, SectionRailItem } from "@/components/calm/section-rail";
 import { StageDot } from "@/components/calm/stage-dot";
+import { ApplicationActionsMenu } from "@/features/applications/components/application-actions-menu";
 import { ApplicationDetailSheet } from "@/features/applications/components/application-detail-sheet";
 import { ApplicationFormSheet } from "@/features/applications/components/application-form-sheet";
 import { InterviewDialog } from "@/features/applications/components/interview-dialog";
@@ -245,10 +247,29 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 						)}
 					</Crumb>
 					{ai.provider && (
-						<Button size="sm" variant="ghost" className="-me-2.5" onClick={() => openSearch({ coach: true })}>
+						<Button
+							size="sm"
+							variant="ghost"
+							className={cn("-me-2.5", !requested && "max-sm:hidden")}
+							onClick={() => openSearch({ coach: true })}
+						>
 							<Icon name="sparkle" />
 							<Trans>Ask the coach</Trans>
 						</Button>
+					)}
+					{/* Phones, on the overview: back and ⋯ in the top bar; Ask the coach moves into the menu. */}
+					{!requested && (
+						<ApplicationActionsMenu
+							application={application}
+							className="-me-1.5 sm:hidden [&_[data-slot=icon]]:size-5 [&_button]:size-9"
+						>
+							{ai.provider && (
+								<DropdownMenuItem onClick={() => openSearch({ coach: true })}>
+									<Icon name="sparkle" />
+									<Trans>Ask the coach</Trans>
+								</DropdownMenuItem>
+							)}
+						</ApplicationActionsMenu>
 					)}
 				</div>
 				{!requested ? (

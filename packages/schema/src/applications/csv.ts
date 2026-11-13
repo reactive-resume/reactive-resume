@@ -63,7 +63,12 @@ export function parseCsv(input: string): string[][] {
 }
 
 /** A lane named in a CSV, by what it counts as; another account's IDs are never trusted. */
-export type CsvLane = { label: string; category: ApplicationStatus; closedReason: ApplicationClosedReason | null };
+export type CsvLane = {
+	label: string;
+	category: ApplicationStatus;
+	closedReason: ApplicationClosedReason | null;
+	unclassified?: boolean;
+};
 
 type ParsedApplication = {
 	company: string;
@@ -350,7 +355,7 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 					record.status = alias.status;
 					if (alias.closedReason) record.closedReason ??= alias.closedReason;
 				} else if (parsed.success) record.status = parsed.data;
-				else invalid.push({ row: index + 2, field, value });
+				else record.laneLabel ??= value.slice(0, 80);
 			} else if (field === "closedReason") {
 				const parsed = applicationClosedReasonSchema.safeParse(value.toLowerCase().replace(/\s+/g, "-"));
 				if (parsed.success) record.closedReason = parsed.data;
@@ -412,8 +417,14 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 				invalidValues.push({ row: index + 2, field: "laneCategory", value: laneCategory ?? category });
 				continue;
 			}
-			application.status = category;
-			application.lane = { label: laneLabel, category, closedReason: laneClosedReason ?? null };
+			const unclassified = !laneCategory && !application.status;
+			if (!unclassified) application.status = category;
+			application.lane = {
+				label: laneLabel,
+				category,
+				closedReason: laneClosedReason ?? null,
+				...(unclassified ? { unclassified: true } : {}),
+			};
 		}
 		// An outcome belongs only to a closed application (a lane may have just made it one).
 		if (application.closedReason && application.status !== "closed") delete application.closedReason;
@@ -447,7 +458,9 @@ export function collectCsvLanes(rows: readonly { lane?: CsvLane }[]): (CsvLane &
 /** This account's lanes a CSV lane may go to: active, counting the same, with the same preset outcome. */
 export const compatibleLanes = (csvLane: CsvLane, lanes: readonly ApplicationLane[]) =>
 	lanes.filter(
-		(lane) => !lane.retiredAt && lane.category === csvLane.category && lane.closedReason === csvLane.closedReason,
+		(lane) =>
+			!lane.retiredAt &&
+			(csvLane.unclassified || (lane.category === csvLane.category && lane.closedReason === csvLane.closedReason)),
 	);
 
 /** A suggested match: a compatible lane with the same name (default lanes by their standard name), else none. */

@@ -234,27 +234,6 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 						)}
 						{!readOnly && offer && (
 							<List cap className="mt-3.5">
-								{offer.data.respondBy && (
-									<ListRow
-										leading={<Icon name="calendar-blank" size={20} className="text-ink-3" />}
-										title={
-											<span className="block text-sm/5">
-												{t`Reply by ${time.format(offer.data.respondBy, { weekday: "short", day: "numeric", month: "short" })}`}
-											</span>
-										}
-										subtitle={offer.aiUsage ? t`Read from their message` : t`Set by you`}
-										trailing={
-											<Link
-												to="/dashboard/career/offers"
-												search={{ a: offer.id }}
-												className="text-sm/5 font-medium text-accent-text"
-												aria-label={t`Edit the reply-by date`}
-											>
-												<Trans>Edit</Trans>
-											</Link>
-										}
-									/>
-								)}
 								<ListRow
 									leading={<Icon name="scales" size={20} className="text-ink-3" />}
 									title={<span className="block text-sm/5">{t`Offer terms`}</span>}
@@ -387,6 +366,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	);
 	const text = readOnly && reply ? reply.data.reply : draft.value;
 	const placeholders = replyPlaceholders(text);
+	const [editingReply, setEditingReply] = useState(false);
 	const highlight = useRef<HTMLDivElement>(null);
 	// The employer's language is the default; this is the explicit way back to the words the user reads everything else in.
 	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
@@ -447,7 +427,7 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 		<section className="grid gap-3">
 			{(reply?.data.reply || !reply) && (
 				<>
-					<div className="grid gap-1.5">
+					<div className="grid gap-0">
 						<SectionHeading
 							className={reply?.data.changes.length ? "pt-7" : "pt-[22px]"}
 							note={t`edit before sending`}
@@ -455,25 +435,33 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 								reply &&
 								!readOnly &&
 								provider && (
-									<DropdownMenu>
-										<DropdownMenuTrigger render={<Button size="sm" variant="ghost" loading={generate.isPending} />}>
+									<span className="flex items-center gap-1">
+										<Button
+											size="sm"
+											variant="ghost"
+											loading={generate.isPending}
+											onClick={() =>
+												void generate.run({ task: "reply", message: reply.data.message }).catch(() => undefined)
+											}
+										>
 											<Icon name="sparkle" size={16} />
 											<Trans>Redraft</Trans>
-											<Icon name="caret-down" size={14} />
-										</DropdownMenuTrigger>
-										<DropdownMenuContent align="end">
-											<DropdownMenuItem
-												onClick={() =>
-													void generate.run({ task: "reply", message: reply.data.message }).catch(() => undefined)
-												}
-											>
-												<Trans>Redraft</Trans>
-											</DropdownMenuItem>
-											<DropdownMenuItem onClick={rewrite}>
-												<Trans>Write a new reply in {languageName}</Trans>
-											</DropdownMenuItem>
-										</DropdownMenuContent>
-									</DropdownMenu>
+										</Button>
+										{languageName && (
+											<DropdownMenu>
+												<DropdownMenuTrigger
+													render={<Button size="icon-sm" variant="ghost" aria-label={t`Reply language`} />}
+												>
+													<Icon name="translate" size={16} />
+												</DropdownMenuTrigger>
+												<DropdownMenuContent align="end">
+													<DropdownMenuItem onClick={rewrite}>
+														<Trans>Write a new reply in {languageName}</Trans>
+													</DropdownMenuItem>
+												</DropdownMenuContent>
+											</DropdownMenu>
+										)}
+									</span>
 								)
 							}
 						>
@@ -483,7 +471,27 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							<Trans>Suggested reply · edit before sending</Trans>
 						</label>
 						<div className="relative">
-							{placeholders.length > 0 && (
+							{!editingReply && (
+								<div
+									aria-hidden="true"
+									className="min-h-[170px] w-full rounded-md border border-control-border bg-raised px-3 py-2.5 text-start text-sm/[22px] [&>p+p]:mt-1.5"
+								>
+									{text.split(/\n\s*\n/).map((paragraph, index) => (
+										<p key={index} className="whitespace-pre-wrap">
+											{paragraph.split(/(\[[^\]\n]+\])/g).map((part, position) =>
+												placeholders.includes(part) ? (
+													<mark key={position} className="bg-warn-soft text-warn-text">
+														{part}
+													</mark>
+												) : (
+													part
+												),
+											)}
+										</p>
+									))}
+								</div>
+							)}
+							{editingReply && placeholders.length > 0 && (
 								<div
 									ref={highlight}
 									aria-hidden="true"
@@ -509,22 +517,25 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 								readOnly={readOnly}
 								maxLength={4000}
 								onChange={(event) => draft.setValue(event.target.value)}
+								onBlur={() => setEditingReply(false)}
+								onFocus={() => setEditingReply(true)}
 								className={cn(
-									"relative min-h-[196px] resize-none px-3 py-2.5 text-sm leading-[22px] pointer-coarse:text-base",
+									"relative min-h-[170px] resize-none px-3 py-2.5 text-sm leading-[22px] pointer-coarse:text-base",
 									placeholders.length > 0 && "bg-transparent text-transparent caret-ink dark:bg-transparent",
+									!editingReply && "absolute inset-0 h-full min-h-0 opacity-0",
 								)}
 								onScroll={(event) => {
 									if (highlight.current) highlight.current.scrollTop = event.currentTarget.scrollTop;
 								}}
 							/>
 						</div>
+						{placeholders.length > 0 && (
+							<p role="status" className="mt-0.5 flex min-h-6 items-center gap-1.5 text-xs/4 text-ink-3">
+								<Icon name="warning-circle" size={14} className="text-warn-text" />
+								<Trans>Replace the marked placeholder before sending.</Trans>
+							</p>
+						)}
 					</div>
-					{placeholders.length > 0 && (
-						<p role="status" className="flex items-center gap-1.5 text-xs/4 text-ink-3">
-							<Icon name="warning-circle" size={14} className="text-warn-text" />
-							<Trans>Replace the marked placeholder before sending.</Trans>
-						</p>
-					)}
 					<div className="flex flex-wrap items-center gap-2">
 						<Button
 							variant={(reply?.data.changes.length ?? 0) > 0 && !reply?.data.applied ? "secondary" : "primary"}
@@ -931,7 +942,7 @@ function ProposalCard({ reply, application, now, readOnly, onDismiss }: Proposal
 			{!applied &&
 				reply.data.unconfirmed.length > 0 &&
 				!reply.data.changes.some((change) => change.type === "offer") && (
-					<div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3.5 border-b border-line py-2.5 ps-8">
+					<div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3.5 border-b border-line py-2.5 ps-8">
 						<div className="contents">
 							<p className="col-span-2 text-[15px]/[22px] font-medium">
 								<Trans>No interview added</Trans>
@@ -947,7 +958,7 @@ function ProposalCard({ reply, application, now, readOnly, onDismiss }: Proposal
 								to="/dashboard/applications/$applicationId/{-$tab}"
 								params={{ applicationId: application.id, tab: "messages" }}
 								search={{ edit: "interview" }}
-								className="text-[13px]/[18px] font-medium text-accent-text"
+								className="text-sm/5 font-medium text-accent-text"
 							>
 								<Trans>Schedule…</Trans>
 							</Link>

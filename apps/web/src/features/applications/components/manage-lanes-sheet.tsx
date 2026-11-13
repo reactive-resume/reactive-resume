@@ -1,6 +1,9 @@
 import type { ApplicationLane } from "../lanes";
 import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { ApplicationPipeline } from "@reactive-resume/schema/applications/lanes";
+import { closestCenter, DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
@@ -41,6 +44,7 @@ import { CLOSED_REASONS, getClosedReasonLabel, getStageLabel } from "../stages";
 import { applicationLanesQueryKey, useApplicationLanes } from "../use-application-lanes";
 import { List, ListRow } from "@/components/calm/list-row";
 import { StageDot } from "@/components/calm/stage-dot";
+import { dndContextProps } from "@/libs/dnd";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
 import { client } from "@/libs/orpc/client";
@@ -92,14 +96,17 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 		},
 	});
 	const busy = save.isPending;
-
-	const move = (index: number, by: -1 | 1) => {
-		const ids = active.map((lane) => lane.id);
-		const [id] = ids.splice(index, 1);
-		if (!id) return;
-		ids.splice(index + by, 0, id);
+	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+	const reorder = (from: number, to: number) => {
+		if (busy || from < 0 || to < 0 || from === to) return;
+		const ids = arrayMove(
+			active.map((lane) => lane.id),
+			from,
+			to,
+		);
 		save.mutate((expectedRevision) => client.applications.lanes.reorder({ expectedRevision, ids }));
 	};
+
 	const add = (lane: NewLane, done?: () => void) =>
 		save.mutate(
 			(expectedRevision) => client.applications.lanes.create({ expectedRevision, ...lane }),
@@ -144,30 +151,45 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 						</Alert>
 					) : mode === "lanes" ? (
 						<>
-							<List className="mt-2" role="list" aria-label={t`Stages, in order`}>
-								{active.map((lane, index) => (
-									<LaneRow
-										key={lane.id}
-										lane={lane}
-										count={applications ? (counts.get(lane.id) ?? 0) : null}
-										first={index === 0}
-										last={index === active.length - 1}
-										disabled={busy}
-										onRename={(label) =>
-											save.mutate((expectedRevision) =>
-												client.applications.lanes.update({ expectedRevision, id: lane.id, label }),
-											)
-										}
-										onColor={(color) =>
-											save.mutate((expectedRevision) =>
-												client.applications.lanes.update({ expectedRevision, id: lane.id, color }),
-											)
-										}
-										onMove={(by) => move(index, by)}
-										onRetire={() => setRetiring(lane)}
-									/>
-								))}
-							</List>
+							<DndContext
+								{...dndContextProps(false)}
+								sensors={sensors}
+								collisionDetection={closestCenter}
+								onDragEnd={({ active: dragged, over }) => {
+									if (over)
+										reorder(
+											active.findIndex((lane) => lane.id === dragged.id),
+											active.findIndex((lane) => lane.id === over.id),
+										);
+								}}
+							>
+								<SortableContext items={active.map((lane) => lane.id)} strategy={verticalListSortingStrategy}>
+									<List className="mt-2" role="list" aria-label={t`Stages, in order`}>
+										{active.map((lane, index) => (
+											<LaneRow
+												key={lane.id}
+												lane={lane}
+												count={applications ? (counts.get(lane.id) ?? 0) : null}
+												first={index === 0}
+												last={index === active.length - 1}
+												disabled={busy}
+												onRename={(label) =>
+													save.mutate((expectedRevision) =>
+														client.applications.lanes.update({ expectedRevision, id: lane.id, label }),
+													)
+												}
+												onColor={(color) =>
+													save.mutate((expectedRevision) =>
+														client.applications.lanes.update({ expectedRevision, id: lane.id, color }),
+													)
+												}
+												onMove={(by) => reorder(index, index + by)}
+												onRetire={() => setRetiring(lane)}
+											/>
+										))}
+									</List>
+								</SortableContext>
+							</DndContext>
 
 							<AddLaneForm id={formId} disabled={busy || full} full={full} onAdd={add} />
 						</>
@@ -254,6 +276,40 @@ function LaneRow({ lane, count, first, last, disabled, onRename, onColor, onMove
 			: lane.systemKey
 				? null
 				: t`counts as ${getStageLabel(lane.category)}`;
+	const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
+		id: lane.id,
+		disabled,
+		data: { label, group: t`Stages` },
+	});
+	const drag = {
+		render: (
+			<div
+				ref={setNodeRef}
+				style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : undefined }}
+			/>
+		),
+	};
+	const handle = (
+		<button
+			{...attributes}
+			{...listeners}
+			ref={setActivatorNodeRef}
+			type="button"
+			disabled={disabled}
+			aria-label={t`Reorder ${label}`}
+			aria-keyshortcuts="ArrowUp ArrowDown"
+			onKeyDown={(event) => {
+				if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+				event.preventDefault();
+				event.stopPropagation();
+				const by = event.key === "ArrowUp" ? -1 : 1;
+				if (!disabled && !(by === -1 ? first : last)) onMove(by);
+			}}
+			className="relative cursor-grab touch-none text-ink-3 before:absolute before:-inset-1 active:cursor-grabbing"
+		>
+			<Icon name="dots-six-vertical" size={16} />
+		</button>
+	);
 	const swatch = (
 		<ColorSwatches
 			value={lane.color}
@@ -265,7 +321,17 @@ function LaneRow({ lane, count, first, last, disabled, onRename, onColor, onMove
 
 	if (draft !== null)
 		return (
-			<ListRow role="listitem" className="min-h-[52px] py-2 sm:min-h-[52px]" leading={swatch}>
+			<ListRow
+				{...drag}
+				role="listitem"
+				className="min-h-[52px] py-2 sm:min-h-[52px]"
+				leading={
+					<span className="flex items-center gap-2">
+						{handle}
+						{swatch}
+					</span>
+				}
+			>
 				<Input
 					aria-label={t`Name of ${label}`}
 					value={draft}
@@ -292,10 +358,16 @@ function LaneRow({ lane, count, first, last, disabled, onRename, onColor, onMove
 
 	return (
 		<ListRow
+			{...drag}
 			role="listitem"
 			interactive
 			className="min-h-[52px] py-2 sm:min-h-[52px]"
-			leading={swatch}
+			leading={
+				<span className="flex items-center gap-2">
+					{handle}
+					{swatch}
+				</span>
+			}
 			title={
 				<button
 					type="button"

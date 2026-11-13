@@ -182,7 +182,7 @@ export function OfflineBanner({ className }: { className?: string }) {
 
 	return (
 		<Alert variant="warn" role="status" className={cn(ENTER_CLASS, className)}>
-			<Icon name="wifi-slash" size={20} />
+			<Icon name="wifi-slash" />
 			<AlertDescription>
 				<Trans>You can keep editing. Changes sync when you're back online. Download and Share need a connection.</Trans>
 			</AlertDescription>

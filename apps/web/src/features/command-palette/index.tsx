@@ -14,7 +14,7 @@ export function CommandPalette() {
 	useHotkeys([
 		{
 			hotkey: "Mod+K",
-			options: { meta: { name: t`Search or jump`, group: APP_GROUP }, requireReset: true },
+			options: { meta: { name: t`Search or jump to`, group: APP_GROUP }, requireReset: true },
 			callback: () => setOpen(!open),
 		},
 	]);

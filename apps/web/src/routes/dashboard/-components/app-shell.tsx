@@ -24,6 +24,7 @@ import { useNeedsYouCount } from "@/features/career/needs-you";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
 import { DocumentLibraryProvider } from "@/features/documents/library-session";
 import { shortcutOverlayOpen } from "@/features/keyboard-shortcuts/blocking";
+import { LEAD_GROUP } from "@/features/keyboard-shortcuts/groups";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
@@ -169,7 +170,10 @@ export function AppShell({ children }: AppShellProps) {
 		},
 		{
 			enabled: characterShortcuts,
-			meta: { name: matchRoute({ to: "/dashboard/applications", fuzzy: true }) ? t`Save a job` : t`New` },
+			meta: {
+				name: matchRoute({ to: "/dashboard/applications", fuzzy: true }) ? t`Save a job` : t`New`,
+				group: LEAD_GROUP,
+			},
 		},
 	);
 
@@ -333,7 +337,8 @@ function NavLink({ item, current }: { item: NavItem; current: boolean }) {
 			<Icon name={item.icon} filled={current} />
 			{item.label}
 			{item.badge ? (
-				<span className={cn(badge, "ms-auto")}>{i18n.number(item.badge)}</span>
+				// The pill's padding hangs into the row's own padding, so its digit ends on the same edge as the counts.
+				<span className={cn(badge, "ms-auto -me-[5px]")}>{i18n.number(item.badge)}</span>
 			) : item.count ? (
 				<span className={cn(count, !current && "text-ink-3")}>{i18n.number(item.count)}</span>
 			) : null}

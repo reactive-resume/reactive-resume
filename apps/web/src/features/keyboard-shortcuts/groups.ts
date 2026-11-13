@@ -5,6 +5,10 @@ import { formatForDisplay } from "@tanstack/react-hotkeys";
 export const APP_GROUP = "app";
 /** `meta.group` for keys that need a focused row in a list. */
 export const ROW_GROUP = "row";
+/** `meta.group` for the page's main action set by the shell ("Save a job"): listed before the page's own keys. */
+export const LEAD_GROUP = "lead";
+/** `meta.group` for keys that act on the open document (undo, save, download): listed after the app-wide ones. */
+export const DOCUMENT_GROUP = "document";
 
 export type ShortcutLine = { id: string; name: string; keys: string[] };
 export type ShortcutGroups = { page: ShortcutLine[]; row: ShortcutLine[] };
@@ -40,13 +44,15 @@ function collapseRanges(lines: ShortcutLine[]): ShortcutLine[] {
 }
 
 /**
- * The page's keys first, then the app-wide ones, then the keys that need a focused row ("On a row"): `ROW_GROUP`, or
- * keys bound to a row's link. One line per name, the first key it was registered with.
+ * The lead key, the page's keys, the app-wide ones and the document's, then the keys that need a focused row ("On a
+ * row"): `ROW_GROUP`, or keys bound to a row's link. One line per name, the first key it was registered with.
  */
 export function groupShortcuts(shortcuts: HotkeyRegistrationView[]): ShortcutGroups {
 	const seen = new Set<string>();
+	const lead: ShortcutLine[] = [];
 	const page: ShortcutLine[] = [];
 	const app: ShortcutLine[] = [];
+	const onDocument: ShortcutLine[] = [];
 	const row: ShortcutLine[] = [];
 	for (const shortcut of shortcuts) {
 		const name = shortcut.options.meta?.name;
@@ -59,9 +65,12 @@ export function groupShortcuts(shortcuts: HotkeyRegistrationView[]): ShortcutGro
 		if (seen.has(key)) continue;
 		seen.add(key);
 		const line = { id: shortcut.id, name, keys: [display(shortcut)] };
+		const group = shortcut.options.meta?.group;
 		if (onRow) row.push(line);
-		else if (shortcut.options.meta?.group === APP_GROUP) app.push(line);
+		else if (group === LEAD_GROUP) lead.push(line);
+		else if (group === APP_GROUP) app.push(line);
+		else if (group === DOCUMENT_GROUP) onDocument.push(line);
 		else page.push(line);
 	}
-	return { page: collapseRanges([...page, ...app]), row: collapseRanges(row) };
+	return { page: collapseRanges([...lead, ...page, ...app, ...onDocument]), row: collapseRanges(row) };
 }

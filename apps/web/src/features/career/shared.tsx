@@ -9,7 +9,7 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -38,15 +38,24 @@ export function useNow(intervalMs = 60_000) {
 
 const capitalize = (text: string) => text.charAt(0).toLocaleUpperCase() + text.slice(1);
 
+/** Inside it, the page names the timezone once (Today's note under the date), so clock times carry no zone. */
+const ZoneNamed = createContext(false);
+export function ZoneNamedOnPage({ children }: { children: ReactNode }) {
+	return <ZoneNamed.Provider value>{children}</ZoneNamed.Provider>;
+}
+
 /** Formatters in the user's timezone (Settings → Preferences) and interface locale. */
 export function useCareerTime() {
 	const { i18n } = useLingui();
 	const { session } = useRouteContext({ strict: false });
 	const timeZone = session?.user.timezone ?? "UTC";
 	const locale = i18n.locale;
+	const zoneNamed = useContext(ZoneNamed);
 	const device = deviceTimeZone();
-	// When the account's timezone isn't this device's, clock times say which zone they're in ("16:56 UTC").
-	const labelled = !!device && device !== timeZone;
+	const differs = !!device && device !== timeZone;
+	// When the account's timezone isn't this device's, clock times say which zone they're in ("16:56 UTC"), unless
+	// the page already said it once.
+	const labelled = differs && !zoneNamed;
 	const format = (value: Date | string, options: Intl.DateTimeFormatOptions) =>
 		new Intl.DateTimeFormat(locale, { timeZone, ...options }).format(new Date(value));
 	// The locale decides 12- or 24-hour, as the interview dialog's own time field does.
@@ -57,7 +66,7 @@ export function useCareerTime() {
 	return {
 		timeZone,
 		/** This device's timezone, when it differs from the account's: times then carry their zone. */
-		deviceTimeZone: labelled ? device : undefined,
+		deviceTimeZone: differs ? device : undefined,
 		locale,
 		/** "Thu 8 Oct, 17:58" ("Thu 8 Oct, 17:58 UTC" when the account's timezone isn't this device's) */
 		when: (value: Date | string) =>

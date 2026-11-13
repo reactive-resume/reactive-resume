@@ -475,6 +475,15 @@ function PipelineFlow({ ref, funnel, active, closed }: PipelineFlowProps) {
 
 			{/* export-only watermark: the Reactive Resume mark, bottom-right, 8px from each edge, in the theme's ink
 			    so it reads on the light and dark surface alike. Paths are apps/web/public/icon/dark.svg verbatim. */}
+			<text
+				data-export-only
+				style={{ display: "none" }}
+				x={W - 34}
+				y={H - 12}
+				textAnchor="end"
+				fontSize={11}
+				fill="var(--ink-2)"
+			>{t`Tracked using Reactive Resume`}</text>
 			<g
 				data-export-only
 				style={{ display: "none" }}

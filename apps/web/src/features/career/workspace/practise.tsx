@@ -214,9 +214,9 @@ export function PractiseTab({ application, version, interview, speak, story, war
 					selectedStory
 						? application
 							? interview
-								? t`Practising your story “${selectedStory.data.title}” for ${time.format(interview.at, { weekday: "long" })}'s ${interviewTypeLabel(interview.kind).toLocaleLowerCase(time.locale)} interview. The question is simulated, not from ${application.company}.`
-								: t`Practising your story “${selectedStory.data.title}”. The question is simulated, not from ${application.company}.`
-							: t`Practising your story “${selectedStory.data.title}”. The question is simulated.`
+								? t`Practicing your story “${selectedStory.data.title}” for ${time.format(interview.at, { weekday: "long" })}'s ${interviewTypeLabel(interview.kind).toLocaleLowerCase(time.locale)} interview. The question is simulated, not from ${application.company}.`
+								: t`Practicing your story “${selectedStory.data.title}”. The question is simulated, not from ${application.company}.`
+							: t`Practicing your story “${selectedStory.data.title}”. The question is simulated.`
 						: application
 							? interview
 								? general && questions.length === 3
@@ -899,7 +899,7 @@ function Session({
 					</aside>
 				)}
 
-				<div className="grid gap-2.5">
+				<div className={cn("grid gap-2.5", !provider && "pt-1.5")}>
 					<div className="flex flex-wrap items-center gap-x-3 gap-y-2">
 						{!provider && !connection.isUnavailable && !recordingNow && !storyTitle && (
 							<>

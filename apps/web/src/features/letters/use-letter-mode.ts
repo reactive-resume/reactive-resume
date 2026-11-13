@@ -29,12 +29,13 @@ export function useLetterMode() {
 
 /** `?version=` opens History on that version (the page shows it read-only), then leaves the URL. */
 export function useOpenLetterVersionFromUrl() {
-	const { version } = routeApi.useSearch();
+	const { version, applicationId } = routeApi.useSearch();
 	const navigate = routeApi.useNavigate();
 
 	useEffect(() => {
 		if (!version) return;
-		useEditorStore.getState().setSheetTab("history");
+		// From an application the page and its banner are the whole view: History stays closed.
+		if (!applicationId) useEditorStore.getState().setSheetTab("history");
 		useEditorStore.setState({ historyVersionId: version });
 		void navigate({
 			to: ".",
@@ -42,7 +43,7 @@ export function useOpenLetterVersionFromUrl() {
 			search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, version: undefined }),
 			replace: true,
 		});
-	}, [version, navigate]);
+	}, [version, applicationId, navigate]);
 }
 
 /** `?assistant=` opens the assistant on that conversation; `?ask=` only fills its composer. Both then leave the URL. */

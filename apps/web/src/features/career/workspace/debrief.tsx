@@ -444,7 +444,7 @@ function ReviewCard({ application, review, readOnly }: ReviewCardProps) {
 
 	return (
 		<section aria-label={t`Review`} className={cn("grid gap-0", ENTER_CLASS)}>
-			<SectionHeading className="pt-3">{data.title}</SectionHeading>
+			<SectionHeading className="pt-0.5">{data.title}</SectionHeading>
 			<p className="pb-1 text-[13px]/[18px] text-ink-3">
 				<Trans>Review · compared with your Knowledge and your notes</Trans>
 			</p>
@@ -454,7 +454,7 @@ function ReviewCard({ application, review, readOnly }: ReviewCardProps) {
 						<li key={verdict.text} className="flex items-center gap-3.5 border-b border-line py-3 last:border-0">
 							<span
 								className={cn(
-									"inline-flex h-[22px] w-[88px] shrink-0 items-center justify-center rounded-xs px-1.5 text-xs font-medium",
+									"inline-flex h-5 w-[88px] shrink-0 items-center justify-center rounded-xs px-1.5 text-xs font-medium",
 									verdict.tag === "supported" ? "bg-accent-soft text-accent-text" : "bg-warn-soft text-warn-text",
 								)}
 							>

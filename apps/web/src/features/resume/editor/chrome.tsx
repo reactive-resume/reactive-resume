@@ -15,6 +15,7 @@ import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-
 import { clampZoom, FIT_MAX, useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
 import { anchoredScroll, wheelZoom, type ZoomAnchor } from "./zoom-wheel";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { DOCUMENT_GROUP } from "@/features/keyboard-shortcuts/groups";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { usePreviewPausedStore, useResumeStore } from "@/features/resume/builder/draft";
 
@@ -330,7 +331,7 @@ export function ZoomBar({ fitScale }: ZoomBarProps) {
 	const setZoom = useEditorStore((state) => state.setZoom);
 	const current = zoom === "fit" ? fitScale : zoom;
 
-	useHotkey("Mod+0", () => setZoom("fit"), { meta: { name: t`Fit page to window` } });
+	useHotkey("Mod+0", () => setZoom("fit"), { meta: { name: t`Fit page to width`, group: DOCUMENT_GROUP } });
 
 	return (
 		<div

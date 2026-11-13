@@ -101,8 +101,8 @@ export function ApplicationOverview({
 		prepare: briefing ? t`Briefing ready` : t`Plan for your next interview`,
 		practise: practice
 			? time.date(practice.createdAt) === time.date(now)
-				? t`Practised today`
-				: t`Practised ${time.date(practice.createdAt)}`
+				? t`Practiced today`
+				: t`Practiced ${time.date(practice.createdAt)}`
 			: t`Rehearse an answer, typed or spoken`,
 		debrief: !debrief
 			? t`Write down what happened after a round`
@@ -169,9 +169,13 @@ export function ApplicationOverview({
 						{getLaneLabel(lane)}
 						<Icon name="caret-down" className="text-ink-3" />
 					</Button>
-					<ApplicationActionsMenu application={application} className="[&_[data-slot=icon]]:size-5 [&_button]:size-9" />
+					{/* Phones: the ⋯ menu sits in the top bar (shell.tsx). */}
+					<ApplicationActionsMenu
+						application={application}
+						className="max-sm:hidden [&_[data-slot=icon]]:size-5 [&_button]:size-9"
+					/>
 					{stagePosition > 0 && (
-						<p className="basis-full t-small text-ink-3 sm:hidden">
+						<p className="t-small text-ink-3 sm:hidden">
 							{stageSince && stageSince.type === "stage" && !stageSince.dateUnknown
 								? t`Stage ${stagePosition} of ${PIPELINE.length} · since ${time.date(stageSince.at)}`
 								: t`Stage ${stagePosition} of ${PIPELINE.length}`}

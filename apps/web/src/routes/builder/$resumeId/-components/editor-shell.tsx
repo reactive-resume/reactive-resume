@@ -81,14 +81,17 @@ const routeApi = getRouteApi("/builder/$resumeId");
 
 /** `?version=` opens History on that version (the page shows it read-only), then leaves the URL. */
 function useOpenVersionFromUrl(panelBesidePage: boolean) {
-	const { version } = routeApi.useSearch();
+	const { version, applicationId } = routeApi.useSearch();
 	const navigate = routeApi.useNavigate();
 
 	useEffect(() => {
 		if (!version) return;
-		// Beside the page, History takes the panel's place; on smaller screens it is still the sheet.
-		if (panelBesidePage) useEditorStore.getState().setHistoryOpen(true);
-		else useEditorStore.getState().setSheetTab("history");
+		// From an application ("What you sent") the page and its banner are the whole view: History stays closed.
+		// Otherwise History takes the panel's place beside the page; on smaller screens it is still the sheet.
+		if (!applicationId) {
+			if (panelBesidePage) useEditorStore.getState().setHistoryOpen(true);
+			else useEditorStore.getState().setSheetTab("history");
+		}
 		useEditorStore.setState({ historyVersionId: version });
 		void navigate({
 			to: ".",
@@ -96,7 +99,7 @@ function useOpenVersionFromUrl(panelBesidePage: boolean) {
 			search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, version: undefined }),
 			replace: true,
 		});
-	}, [version, navigate, panelBesidePage]);
+	}, [version, applicationId, navigate, panelBesidePage]);
 }
 
 /**

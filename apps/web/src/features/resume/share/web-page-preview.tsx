@@ -119,6 +119,8 @@ export function WebPagePreview() {
 		"",
 	);
 	const isPublic = resume.isPublic ?? false;
+	// Never published: Share shows only Publish, so there is no switch to point to.
+	const published = useEditorStore((state) => isPublic || state.publishedResumeId === resume.id);
 	// The corner zoom, as on the page canvas; "fit" is the page at its own width.
 	const zoom = useEditorStore((state) => state.zoom);
 	const scale = zoom === "fit" ? 1 : zoom;
@@ -170,9 +172,11 @@ export function WebPagePreview() {
 								<p className="text-sm font-medium text-ink">
 									<Trans>Only you can see this page</Trans>
 								</p>
-								<p className="t-small text-ink-3">
-									<Trans>Turn Public link on to share it.</Trans>
-								</p>
+								{published && (
+									<p className="t-small text-ink-3">
+										<Trans>Turn Public link on to share it.</Trans>
+									</p>
+								)}
 							</div>
 						</div>
 					) : document ? (

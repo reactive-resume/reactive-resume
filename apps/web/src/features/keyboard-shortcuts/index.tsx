@@ -108,7 +108,7 @@ function ShortcutContent({ shortcuts, page, description, onClose, opener }: Shor
 			<ShortcutList lines={groups.page} columns={groups.row.length === 0} />
 			{groups.row.length > 0 && (
 				<section aria-labelledby={`${rowId}-label`} className="grid gap-1">
-					<h3 id={`${rowId}-label`} className="t-label text-ink-3">
+					<h3 id={`${rowId}-label`} className="t-small text-ink-3">
 						<Trans>On a row</Trans>
 					</h3>
 					<ShortcutList lines={groups.row} />

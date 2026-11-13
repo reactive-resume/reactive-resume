@@ -206,7 +206,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 			{providers.hasUsableProvider && view !== "history" && (
 				<p className="mx-6 flex items-center gap-2.5 border-b border-line pt-[13px] pb-3 text-[13px]/[18px] text-ink-2">
 					<Icon
-						name={(original || document.madeFor) && document.kind === "resume" ? "copy" : "clock-counter-clockwise"}
+						name={document.kind === "resume" ? "copy" : "clock-counter-clockwise"}
 						size={16}
 						className="mt-px shrink-0 self-start text-ink-3"
 					/>
@@ -217,7 +217,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 					) : document.madeFor && document.posting ? (
 						<Trans>Working on a copy made for {document.posting.company}: the resume it came from is unchanged.</Trans>
 					) : (
-						<Trans>Nothing changes until you accept an edit.</Trans>
+						<Trans>Edits go to a copy, never to this resume.</Trans>
 					)}
 				</p>
 			)}

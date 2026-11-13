@@ -1103,6 +1103,7 @@ function Checklist({
 					<p className="flex h-[30px] items-center gap-2 text-[13px]/[18px]">
 						<Icon name="calendar-blank" size={16} className="text-ink-3" />
 						<span className="flex-1">{t`Today, ${time.date(now)}`}</span>
+						<Icon name="caret-down" size={16} className="text-ink-3" />
 					</p>
 				</div>
 			)}

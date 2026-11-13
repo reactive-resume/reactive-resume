@@ -7,6 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { AddSectionMenu, isSuggestedSection, StartSuggestions, SUGGESTED_SECTIONS } from "./add-section";
@@ -45,6 +46,9 @@ export function WritePanel() {
 /** The whole resume as rows: Basics, then each section with a line saying what it holds. */
 function OutlineView({ locked }: { locked: boolean }) {
 	const added = useEditorStore((state) => state.addedSections);
+	// Phones and tablets show the page as its own view, edited by touch.
+	const breakpoint = useBreakpoint();
+	const touch = breakpoint === "mobile" || breakpoint === "tablet";
 	// The section ids in the outline, joined so the selector returns a stable value.
 	const inUse = useCurrentBuilderResumeSelector((resume) =>
 		getOutlineRows(resume.data, new Set(added))
@@ -95,8 +99,12 @@ function OutlineView({ locked }: { locked: boolean }) {
 					</>
 				) : (
 					<>
-						<Icon name="cursor-click" size={16} className="shrink-0" />
-						<Trans>Click any block on the page to edit it.</Trans>
+						<Icon name={touch ? "file-text" : "cursor-click"} size={16} className="shrink-0" />
+						{touch ? (
+							<Trans>Page shows the result. Tap a block there to edit it.</Trans>
+						) : (
+							<Trans>Click any block on the page to edit it.</Trans>
+						)}
 					</>
 				)}
 			</PanelFoot>

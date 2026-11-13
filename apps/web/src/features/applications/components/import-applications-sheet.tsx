@@ -1,4 +1,5 @@
 import type { CsvField } from "@reactive-resume/schema/applications/csv";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { i18n } from "@lingui/core";
 import { ph, plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -89,6 +90,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	const [text, setText] = useState("");
 	const [overrides, setOverrides] = useState<Record<number, CsvField | null>>({});
 	const [laneChoices, setLaneChoices] = useState<Record<string, string>>({});
+	const [laneCategories, setLaneCategories] = useState<Record<string, ApplicationStatus>>({});
 	const [needsStageRefresh, setNeedsStageRefresh] = useState(false);
 	const [reading, setReading] = useState(false);
 	// The chosen file's name, until its rows are edited or pasted over.
@@ -121,6 +123,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	const changeText = (value: string) => {
 		setOverrides({});
 		setLaneChoices({});
+		setLaneCategories({});
 		setFileName(null);
 		setText(value);
 	};
@@ -129,6 +132,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 		setText("");
 		setOverrides({});
 		setLaneChoices({});
+		setLaneCategories({});
 		setNeedsStageRefresh(false);
 		setFileName(null);
 		setPasting(false);
@@ -150,7 +154,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 				const pipeline = await client.applications.lanes.create({
 					expectedRevision,
 					label: lane.label,
-					category: lane.category,
+					category: laneCategories[lane.key] ?? lane.category,
 					closedReason: lane.closedReason,
 					color: LANE_COLORS[(index + 6) % LANE_COLORS.length] ?? LANE_COLORS[0],
 				});
@@ -160,7 +164,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 					(item) =>
 						!before.has(item.id) &&
 						item.label === lane.label &&
-						item.category === lane.category &&
+						item.category === (laneCategories[lane.key] ?? lane.category) &&
 						item.closedReason === lane.closedReason,
 				);
 				if (!created) throw new Error("The new application stage wasn't returned. Refresh stages and try again.");
@@ -383,7 +387,9 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 											const hint =
 												lane.category === "closed" && lane.closedReason
 													? `${getStageLabel("closed")} · ${getClosedReasonLabel(lane.closedReason)}`
-													: getStageLabel(lane.category);
+													: lane.unclassified
+														? t`Choose what this stage counts as`
+														: getStageLabel(lane.category);
 											return (
 												<li key={lane.key} className={mapRowClassName}>
 													<span className="grid min-w-0">
@@ -410,6 +416,29 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 														))}
 														<option value={NEW_LANE}>{t`Add “${lane.label}” as a new stage`}</option>
 													</NativeSelect>
+													{lane.unclassified && choiceFor(lane) === NEW_LANE && (
+														<label className="col-span-full flex items-center gap-2 t-small text-ink-3">
+															<Trans>Counts as</Trans>
+															<NativeSelect
+																aria-label={t`What ${lane.label} counts as`}
+																value={laneCategories[lane.key] ?? lane.category}
+																onChange={(event) =>
+																	setLaneCategories((current) => ({
+																		...current,
+																		[lane.key]: event.target.value as ApplicationStatus,
+																	}))
+																}
+															>
+																{(["saved", "applied", "screening", "interview", "offer", "closed"] as const).map(
+																	(stage) => (
+																		<option key={stage} value={stage}>
+																			{getStageLabel(stage)}
+																		</option>
+																	),
+																)}
+															</NativeSelect>
+														</label>
+													)}
 												</li>
 											);
 										})}

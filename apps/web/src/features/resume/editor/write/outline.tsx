@@ -192,17 +192,20 @@ function Divider({ label }: { label: ReactNode }) {
 	return <div className="border-b border-line pt-4 pb-1.5 t-caption text-ink-3">{label}</div>;
 }
 
-/** The grip at the start of a row. Without handlers it is only drawn (Basics always comes first). */
+/**
+ * The grip at the start of a row. Without handlers it is only drawn (Basics always comes first). Phones draw none:
+ * Arrange sections (Design › Layout) reorders there, and ⌥↑ / ⌥↓ still work on a row.
+ */
 function Grip({ label, className, ...props }: Omit<ComponentProps<"button">, "aria-label"> & { label?: string }) {
 	const icon = <Icon name="dots-six-vertical" size={18} />;
-	if (!label) return <span className={cn("flex shrink-0 text-ink-3", className)}>{icon}</span>;
+	if (!label) return <span className={cn("flex shrink-0 text-ink-3 max-sm:hidden", className)}>{icon}</span>;
 
 	return (
 		<button
 			type="button"
 			aria-label={label}
 			className={cn(
-				"touch-target relative z-10 flex shrink-0 cursor-grab rounded-xs text-ink-3 hover:text-ink active:cursor-grabbing",
+				"touch-target relative z-10 flex shrink-0 cursor-grab rounded-xs text-ink-3 hover:text-ink active:cursor-grabbing max-sm:hidden",
 				className,
 			)}
 			{...props}
@@ -244,6 +247,7 @@ function BasicsRow({ locked }: { locked: boolean }) {
 			leading={locked ? undefined : <Grip />}
 			title={getSectionTitle("basics")}
 			subtitle={line || <Trans>Your name and how to reach you</Trans>}
+			subtitleContent
 			caret
 		>
 			<OpenRow label={getSectionTitle("basics")} onOpen={() => openSection(BASICS)} />
@@ -283,6 +287,8 @@ function SectionRowBody({ section, locked, hidden, dragGroup, onMove }: SectionR
 		return [names.join("\u0000"), printed, hidden, text].join("\u0001");
 	});
 	const toCheck = useCurrentBuilderResumeSelector((resume) => countEntriesToCheck(getEntries(resume.data, section)));
+	// Entry names are the resume's own words: they're listed in its language ("A, B", not the interface's "A، B").
+	const contentLocale = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.locale);
 	const proposed = useProposedCount(section.id);
 	const updateResumeData = useUpdateResumeData();
 	const { setNodeRef, transform, transition, isDragging, attributes, listeners } = useSortable({
@@ -318,7 +324,7 @@ function SectionRowBody({ section, locked, hidden, dragGroup, onMove }: SectionR
 			Number(printed) === 0
 				? t`Nothing on the page yet`
 				: names.length === Number(printed) && names.length <= NAMED_ENTRIES
-					? new Intl.ListFormat(i18n.locale, { type: "unit", style: "short" }).format(names)
+					? new Intl.ListFormat(contentLocale, { type: "unit", style: "short" }).format(names)
 					: countLabel(section.type, Number(printed)),
 			Number(hiddenCount) > 0 ? plural(Number(hiddenCount), { one: "# hidden", other: "# hidden" }) : "",
 		]
@@ -351,6 +357,7 @@ function SectionRowBody({ section, locked, hidden, dragGroup, onMove }: SectionR
 			}
 			title={title}
 			subtitle={line}
+			subtitleContent
 			value={
 				proposed > 0 || toCheck > 0 ? (
 					<>

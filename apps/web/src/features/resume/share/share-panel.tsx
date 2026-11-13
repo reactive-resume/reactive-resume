@@ -39,6 +39,7 @@ import {
 } from "@/features/resume/builder/draft";
 import { ResumePasswordDialog } from "@/features/resume/builder/password-dialog";
 import { PanelBody, PanelHeader } from "@/features/resume/editor/chrome/panel";
+import { useEditorStore } from "@/features/resume/editor/store";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { toastError } from "@/libs/error-message";
@@ -89,8 +90,7 @@ function ShareHome({ setting, open }: ShareHomeProps) {
 	const { update, isPending } = setting;
 	const isPublic = resume.isPublic ?? false;
 	// shortcut: publication history lasts for this editor session; durable history needs an owner API field.
-	const [publishedResumeId, setPublishedResumeId] = useState(isPublic ? resume.id : null);
-	const hasPublished = isPublic || publishedResumeId === resume.id;
+	const hasPublished = useEditorStore((state) => isPublic || state.publishedResumeId === resume.id);
 	const origin = useShareOrigin();
 	const username = session?.user.username ?? "";
 	const url = publicResumeUrl(origin, { username, slug: resume.slug });
@@ -98,7 +98,7 @@ function ShareHome({ setting, open }: ShareHomeProps) {
 	const setPublic = async (checked: boolean) => {
 		const done = await update({ isPublic: checked });
 		if (done) {
-			if (checked) setPublishedResumeId(resume.id);
+			if (checked) useEditorStore.setState({ publishedResumeId: resume.id });
 			toast.add({ description: checked ? t`Your web page is live` : t`Link turned off. The address is kept` });
 		}
 	};

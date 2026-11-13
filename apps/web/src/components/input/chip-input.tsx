@@ -41,6 +41,7 @@ type ChipItemProps = {
 	chip: string;
 	index: number;
 	isEditing: boolean;
+	hash: boolean;
 	onEdit: (index: number) => void;
 	onRemove: (index: number) => void;
 };
@@ -75,7 +76,7 @@ function ChipDragOverlay({ activeChip }: ChipDragOverlayProps) {
 	return createPortal(overlay, document.body);
 }
 
-function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProps) {
+function ChipItem({ id, chip, index, isEditing, hash, onEdit, onRemove }: ChipItemProps) {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id,
 		data: { label: chip } satisfies DndLabel,
@@ -104,7 +105,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 					isDragging && "border-accent bg-sunken shadow-sm",
 				)}
 			>
-				<span className="max-w-32 truncate sm:max-w-44">{chip}</span>
+				<span className="max-w-32 truncate sm:max-w-44">{hash ? `#${chip}` : chip}</span>
 				<div
 					className={cn(
 						"ms-1.5 flex shrink-0 items-center gap-x-0.5 transition-opacity duration-quick group-focus-within/chip:opacity-100 group-hover/chip:opacity-100",
@@ -114,7 +115,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 					<button
 						type="button"
 						tabIndex={-1}
-						className="hidden rounded-sm p-0.5 text-ink/70 transition-colors group-focus-within/chip:inline-flex group-hover/chip:inline-flex hover:bg-sunken hover:text-ink focus:outline-none"
+						className="hidden rounded-sm p-0.5 text-ink/70 transition-colors group-hover/chip:inline-flex hover:bg-sunken hover:text-ink focus:outline-none"
 						aria-label={t({
 							comment:
 								"Screen reader label for button that edits a keyword chip. Variable is the current keyword text.",
@@ -162,6 +163,8 @@ type Props = Omit<React.ComponentProps<"div">, "value" | "onChange"> & {
 	suggestions?: readonly string[];
 	/** A caption above the suggestions, for example "Your tags". */
 	suggestionsLabel?: string;
+	/** Writes tags as "#Design" and offers suggestions in one line after the caption, dashed (the bulk Tags dialog). */
+	hash?: boolean;
 };
 
 export function ChipInput({
@@ -174,6 +177,7 @@ export function ChipInput({
 	placeholder,
 	suggestions,
 	suggestionsLabel,
+	hash = false,
 	id: idProp,
 	"aria-describedby": ariaDescribedByProp,
 	"aria-invalid": ariaInvalidProp,
@@ -354,6 +358,7 @@ export function ChipInput({
 											chip={chip}
 											index={idx}
 											isEditing={editingIndex === idx}
+											hash={hash}
 											onEdit={handleEdit}
 											onRemove={removeChip}
 										/>
@@ -406,9 +411,9 @@ export function ChipInput({
 			)}
 
 			{offered.length > 0 && (
-				<div className="grid gap-1.5">
+				<div className={cn("gap-1.5", hash ? "flex flex-wrap items-center gap-x-2.5" : "grid")}>
 					{suggestionsLabel && <p className="text-xs text-ink-3">{suggestionsLabel}</p>}
-					<div className="flex max-h-28 flex-wrap gap-1.5 overflow-y-auto">
+					<div className={cn("flex max-h-28 flex-wrap gap-1.5 overflow-y-auto", hash && "contents")}>
 						{offered.map((suggestion) => (
 							<button
 								key={suggestion}
@@ -417,7 +422,10 @@ export function ChipInput({
 									comment: "Button that adds a suggested tag. Variable is the tag text.",
 									message: `Add ${suggestion}`,
 								})}
-								className="inline-flex min-h-7 max-w-full items-center gap-1 rounded-sm border border-line-2 px-2.5 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none pointer-coarse:min-h-11"
+								className={cn(
+									"inline-flex min-h-7 max-w-full items-center gap-1 rounded-sm border border-line-2 px-2.5 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none pointer-coarse:min-h-11",
+									hash && "border-dashed",
+								)}
 								onClick={() => {
 									if (editingIndex === null) addChips([suggestion]);
 									else updateChip(editingIndex, suggestion);
@@ -426,8 +434,8 @@ export function ChipInput({
 									inputRef.current?.focus();
 								}}
 							>
-								<Icon name="plus" size={12} className="shrink-0 text-ink-3" />
-								<span className="truncate">{suggestion}</span>
+								{!hash && <Icon name="plus" size={12} className="shrink-0 text-ink-3" />}
+								<span className="truncate">{hash ? `#${suggestion}` : suggestion}</span>
 							</button>
 						))}
 					</div>

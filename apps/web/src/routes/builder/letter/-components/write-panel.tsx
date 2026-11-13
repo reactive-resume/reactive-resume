@@ -508,7 +508,6 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 					/>
 				</div>
 			</div>
-			<LetterDateField letter={letter} disabled={disabled} />
 			<p className="-mt-1.5 text-xs/4 text-ink-3">
 				{greetingName(letter.recipientName) ? (
 					application ? (
@@ -520,6 +519,8 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 					<Trans>No name yet, so the greeting reads “Dear hiring team”.</Trans>
 				)}
 			</p>
+			{/* The hint belongs to the name above it; the date the page prints comes after. */}
+			<LetterDateField letter={letter} disabled={disabled} />
 		</Section>
 	);
 }

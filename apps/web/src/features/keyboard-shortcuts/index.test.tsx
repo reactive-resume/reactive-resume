@@ -7,6 +7,7 @@ import { I18nProvider } from "@lingui/react";
 import { HotkeyManager, HotkeysProvider, useHotkey, useHotkeys } from "@tanstack/react-hotkeys";
 import { useRef } from "react";
 import { KeyboardShortcuts } from ".";
+import { DOCUMENT_GROUP, LEAD_GROUP } from "./groups";
 import { useShortcutSettings } from "./settings";
 import { showKeyboardShortcuts, useShortcutHelp, useShortcutsPage } from "./store";
 
@@ -146,7 +147,7 @@ it("offers a non-keyboard entry and persists the off switch without disabling mo
 	trigger.focus();
 	fireEvent.click(trigger);
 	await screen.findByRole("dialog");
-	fireEvent.click(screen.getByRole("switch", { name: "Single-character shortcuts" }));
+	fireEvent.click(screen.getByRole("switch", { name: "Single-key shortcuts" }));
 	expect(localStorage.getItem("character-shortcuts")).toBe("off");
 	fireEvent.click(screen.getByRole("button", { name: "Close" }));
 	await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
@@ -160,11 +161,14 @@ it("offers a non-keyboard entry and persists the off switch without disabling mo
 	expect(await screen.findByRole("dialog")).toBeTruthy();
 });
 
-it("names the page, lists keys that need a focused row under On a row and folds a run of digit keys into one line", async () => {
+it("names the page, orders lead, page, app-wide and document keys, lists row keys under On a row and folds digit runs", async () => {
 	function RowPage() {
 		useShortcutsPage("Applications");
 		const row = useRef<HTMLAnchorElement>(null);
-		useHotkey("N", () => {}, { meta: { name: "Save a job" } });
+		useHotkey("Mod+Z", () => {}, { meta: { name: "Undo", group: DOCUMENT_GROUP } });
+		useHotkey("/", () => {}, { meta: { name: "Filter applications" } });
+		// The shell registers its N after the page's own keys; it still leads the list.
+		useHotkey("N", () => {}, { meta: { name: "Save a job", group: LEAD_GROUP } });
 		useHotkeys(
 			["Saved", "Applied", "Screening", "Interview", "Offer"].map((stage, index) => ({
 				hotkey: `${index + 1}` as "1",
@@ -198,6 +202,5 @@ it("names the page, lists keys that need a focused row under On a row and folds 
 	expect(Array.from(rows.querySelectorAll("dt"), (element) => element.textContent)).toEqual(["Move to Saved … Offer"]);
 	expect(rows.querySelector("dd")?.textContent).toBe("1–5");
 	const names = Array.from(dialog.querySelectorAll("dt"), (element) => element.textContent);
-	expect(names).toContain("Save a job");
-	expect(names).toContain("This list");
+	expect(names.slice(0, 4)).toEqual(["Save a job", "Filter applications", "This list", "Undo"]);
 });

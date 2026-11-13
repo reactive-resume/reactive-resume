@@ -361,11 +361,13 @@ it("retains edited replies across navigation while saved versions keep the gener
 	api.data.savedItems = [savedReply];
 	const first = mount(<MessagesTab {...props} />);
 	fireEvent.change(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" }), {
-		target: { value: "My reply draft" },
+		target: { value: "My reply draft\n\nSecond paragraph" },
 	});
 	first.unmount();
 	const next = mount(<MessagesTab {...props} />);
-	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue("My reply draft");
+	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue(
+		"My reply draft\n\nSecond paragraph",
+	);
 	next.rerender(<MessagesTab {...props} version={savedReply} />);
 	expect(screen.getByRole("textbox", { name: "Suggested reply · edit before sending" })).toHaveValue("Original reply");
 });

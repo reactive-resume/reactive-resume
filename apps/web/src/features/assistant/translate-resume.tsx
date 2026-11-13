@@ -62,7 +62,8 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 			handToAssistant(
 				session.user.id,
 				copy,
-				t`Translate this resume into ${language}. Keep names, dates, figures, meaning and facts. Leave hidden content unchanged. Propose every visible field as one complete set for review; no tailoring.`,
+				// The board's short request; the server shows a language copy's assistant only its visible fields.
+				t`Translate this resume into ${language}. Keep names, dates and numbers as they are.`,
 			);
 			await navigate({ to: "/builder/$resumeId", params: { resumeId: copy }, search: {} });
 			onClose();

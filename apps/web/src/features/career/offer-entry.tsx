@@ -486,8 +486,6 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 		<Trans>You enter the terms yourself and no AI request is made. Leave unknown amounts blank.</Trans>
 	);
 
-	// In the dialog the note about how terms are entered is its description, under the fields as the board draws it.
-	const Caption = sheet ? DialogDescription : "p";
 	const fields = (
 		<>
 			<fieldset disabled={save.isPending} className="grid items-start gap-x-3 gap-y-4 sm:grid-cols-12">
@@ -667,8 +665,7 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 					</CollapsibleContent>
 				</Collapsible>
 			</fieldset>
-			<Caption className="text-xs/4 text-ink-3">
-				{sheet && <>{description} </>}
+			<p className="text-xs/4 text-ink-3">
 				<span id={`${id}-variable-hint`}>{t`Bonus takes an amount or a share of base, such as 10%.`}</span>
 				{date && (
 					<>
@@ -676,7 +673,7 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 						<span id={`${id}-time-zone`}>{t`Times are shown in ${timeZone}.`}</span>
 					</>
 				)}
-			</Caption>
+			</p>
 			{!application && applications.isError && <CareerLoadError onRetry={() => void applications.refetch()} />}
 			{!application && applications.data?.length === 0 && (
 				<Link
@@ -736,6 +733,7 @@ export function OfferForm({ application, offer: initialOffer, sheet = false, onC
 			<form noValidate className="grid min-w-0 gap-5 text-start" onSubmit={onSubmit}>
 				<DialogHeader>
 					<DialogTitle>{title}</DialogTitle>
+					<DialogDescription>{description}</DialogDescription>
 				</DialogHeader>
 				{fields}
 				<DialogFooter>{actions}</DialogFooter>

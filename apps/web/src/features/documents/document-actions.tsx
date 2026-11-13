@@ -9,7 +9,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useId, useRef, useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { publicResumeUrl } from "@reactive-resume/resume/sharing";
-import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from "@reactive-resume/ui/components/context-menu";
 import {
@@ -27,17 +26,17 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { menuLabelClassName } from "@reactive-resume/ui/components/menu-styles";
+import { RadioGroup, RadioGroupItem } from "@reactive-resume/ui/components/radio-group";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { isolate } from "@reactive-resume/utils/string";
+import { cn } from "@reactive-resume/utils/style";
 import { useDocumentSentDate } from "./document-status";
 import { useDocumentEffect } from "./library-session";
 import { useNewDocumentsStore } from "./new-documents";
 import { useExistingTags } from "./tag-suggestions";
-import { IconTile, List, ListRow } from "@/components/calm/list-row";
-import { StageDot } from "@/components/calm/stage-dot";
+import { List, ListRow } from "@/components/calm/list-row";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
-import { companyInitials } from "@/features/applications/components/list-view";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useDocumentDownload } from "@/features/applications/use-document-download";
 import { useShareOrigin } from "@/features/resume/share/use-share-origin";
@@ -591,6 +590,8 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 	const [tags, setTags] = useState<string[] | null>(null);
 	const commitTags = useRef<(() => string[]) | null>(null);
 	const limitsId = useId();
+	// Tags for several documents: the shared tags as #Tag, the rest offered in one dashed line, no limits line.
+	const bulk = (documents?.length ?? 0) > 1;
 	const setDocumentTags = useMutation(orpc.documents.setTags.mutationOptions());
 	const shared = documents ? sharedTags(documents) : [];
 	const suggestions = useExistingTags(documents?.map((document) => document.type) ?? [], requested !== null);
@@ -659,11 +660,14 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 						placeholder={t`Add a tag…`}
 						suggestions={suggestions}
 						suggestionsLabel={t`Your tags`}
-						aria-describedby={limitsId}
+						hash={bulk}
+						aria-describedby={bulk ? undefined : limitsId}
 					/>
-					<p id={limitsId} className="t-small text-ink-3">
-						<Trans>Up to 20 tags per document, 40 characters each.</Trans>
-					</p>
+					{!bulk && (
+						<p id={limitsId} className="t-small text-ink-3">
+							<Trans>Up to 20 tags per document, 40 characters each.</Trans>
+						</p>
+					)}
 				</div>
 				<DialogFooter>
 					<Button variant="ghost" onClick={onClose}>
@@ -687,22 +691,32 @@ const AddApplicationDialog = lazy(() =>
 
 type LinkApplicationDialogProps = { document: DocumentSummary | null; onClose: () => void };
 
-/** Link to application…: the job the document is for. Rows are buttons; choosing one links it and closes. */
+/** Link to application…: the job the document is for. Pick a row, then Done links it; Unlink clears it. */
 export function LinkApplicationDialog({ document: requested, onClose }: LinkApplicationDialogProps) {
 	const queryClient = useQueryClient();
-	// Closing keeps the list, its highlight and Unlink on screen until the dialog has faded out.
+	// Closing keeps the list, its choice and Unlink on screen until the dialog has faded out.
 	const [document, onOpenChangeComplete] = useClosingValue(requested);
 	const { data: applications } = useQuery({ ...applicationsListQueryOptions(), enabled: requested !== null });
 	const link = useMutation(orpc.documents.linkApplication.mutationOptions());
 	const [addingJob, setAddingJob] = useState(false);
+	// The row picked in this dialog; until one is picked, the current link.
+	const [picked, setPicked] = useState<string | null>(null);
+	const current = document?.application?.id ?? null;
+	const choice = picked ?? current;
+
+	const close = () => {
+		setPicked(null);
+		onClose();
+	};
 
 	const choose = async (applicationId: string | null) => {
 		if (!document) return;
+		if (applicationId === current) return close();
 		try {
 			await link.mutateAsync({ type: document.type, id: document.id, applicationId });
 			await queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 			await queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
-			onClose();
+			close();
 		} catch (error) {
 			toastError(
 				error,
@@ -719,7 +733,7 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 	return (
 		<Dialog
 			open={requested !== null}
-			onOpenChange={(open) => !open && onClose()}
+			onOpenChange={(open) => !open && close()}
 			onOpenChangeComplete={onOpenChangeComplete}
 		>
 			<DialogContent closeLabel={t`Close`}>
@@ -728,11 +742,7 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 						<Trans>Link to application</Trans>
 					</DialogTitle>
 					<DialogDescription>
-						{document?.type === "letter" ? (
-							<Trans>The job this letter is for. Choosing one links it and closes.</Trans>
-						) : (
-							<Trans>The job this resume is for. Choosing one links it and closes.</Trans>
-						)}
+						<Trans>The application this document is for.</Trans>
 					</DialogDescription>
 				</DialogHeader>
 				{submitted && (
@@ -745,66 +755,55 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 						<Trans>No applications yet.</Trans>
 					</p>
 				) : (
-					// The rows' hover ground bleeds 12px past the text; the scroller makes room for it.
-					<List cap className="-mx-3 max-h-80 overflow-y-auto px-3">
-						{jobs.map((application) => {
-							// Another letter already went out with this job, so it keeps that one.
-							const taken = Boolean(
-								document?.type === "letter" &&
-								application.sentCoverLetterVersionId &&
-								application.coverLetterId !== document.id,
-							);
-							return (
-								<ListRow
-									key={application.id}
-									render={
-										<button
-											type="button"
-											disabled={link.isPending || Boolean(submitted) || taken}
-											onClick={() => void choose(application.id)}
-										/>
-									}
-									className="disabled:pointer-events-none"
-									variant={taken || submitted ? "dim" : "default"}
-									leading={
-										<IconTile aria-hidden="true" className="size-8 rounded-sm text-xs">
-											{companyInitials(application.company)}
-										</IconTile>
-									}
-									title={application.company}
-									subtitle={taken ? t`${application.role} · letter already sent` : application.role}
-									value={<StageDot status={application.status} />}
-									trailing={
-										document?.application?.id === application.id && (
-											<Badge variant="accent">
-												<Icon name="check" />
-												<Trans comment="Marks the application a document is already linked to">Linked</Trans>
-											</Badge>
-										)
-									}
-								/>
-							);
-						})}
-					</List>
+					<RadioGroup
+						aria-label={t`Application`}
+						value={choice}
+						onValueChange={(value) => setPicked(value as string)}
+						disabled={link.isPending || Boolean(submitted)}
+						className="gap-0"
+					>
+						{/* The rows' hover ground bleeds 12px past the text; the scroller makes room for it. */}
+						<List cap tight className="-mx-3 max-h-80 overflow-y-auto px-3">
+							{jobs.map((application) => {
+								// Another letter already went out with this job, so it keeps that one.
+								const taken = Boolean(
+									document?.type === "letter" &&
+									application.sentCoverLetterVersionId &&
+									application.coverLetterId !== document.id,
+								);
+								return (
+									<ListRow
+										key={application.id}
+										// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- ListRow fills the label with the radio and the job's name.
+										render={<label />}
+										className={cn("cursor-pointer", taken && "pointer-events-none")}
+										variant={taken || submitted ? "dim" : "default"}
+										leading={<RadioGroupItem value={application.id} disabled={taken} />}
+										title={`${application.company} · ${application.role}`}
+										subtitle={taken ? t`Letter already sent` : undefined}
+									/>
+								);
+							})}
+						</List>
+					</RadioGroup>
 				)}
 				<DialogFooter>
-					{document?.application && (
-						<Button
-							variant="ghost"
-							className="-ms-3.5 me-auto"
-							disabled={link.isPending || Boolean(submitted)}
-							onClick={() => void choose(null)}
-						>
-							<Trans>Unlink</Trans>
-						</Button>
-					)}
 					<Button
-						variant="secondary"
+						variant="ghost"
+						className="-ms-3.5 me-auto"
 						disabled={link.isPending || Boolean(submitted)}
 						onClick={() => setAddingJob(true)}
 					>
 						<Icon name="plus" />
 						<Trans>Add a job…</Trans>
+					</Button>
+					{current && (
+						<Button variant="ghost" disabled={link.isPending || Boolean(submitted)} onClick={() => void choose(null)}>
+							<Trans>Unlink</Trans>
+						</Button>
+					)}
+					<Button variant="secondary" disabled={link.isPending} onClick={() => void choose(choice)}>
+						<Trans>Done</Trans>
 					</Button>
 				</DialogFooter>
 				{addingJob && (

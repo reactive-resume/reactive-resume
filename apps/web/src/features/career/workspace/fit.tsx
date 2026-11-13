@@ -670,7 +670,7 @@ function EvidenceEditor({ requirement, onCancel, onSaved, onPropose }: EvidenceE
 				onKeyDown={(event) => {
 					if (event.key === "Escape") onCancel();
 				}}
-				className="min-h-[68px] border-accent text-sm shadow-[0_0_0_3px_var(--accent-soft)]"
+				className="min-h-[68px] resize-none border-accent text-sm shadow-[0_0_0_3px_var(--accent-soft)]"
 			/>
 			<p className="text-xs/4 text-ink-3">
 				<Trans>
@@ -693,7 +693,7 @@ function EvidenceEditor({ requirement, onCancel, onSaved, onPropose }: EvidenceE
 					<Button
 						size="sm"
 						variant="ghost"
-						className="ms-auto text-accent-text"
+						className="ms-auto text-ink-2"
 						loading={saveFact.isPending}
 						disabled={empty}
 						onClick={() => void save(true)}

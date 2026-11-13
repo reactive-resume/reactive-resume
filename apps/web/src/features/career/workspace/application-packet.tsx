@@ -353,9 +353,9 @@ function PacketForm({ application, onClose }: ApplicationPacketPanelProps & { on
 					</div>
 					<p className="ps-9 text-xs/4 text-ink-3">
 						<Trans>
-							Import this file into the browser helper, review the destination and fill report. Unsupported forms use
-							exact PDF downloads and copyable answers below. Native browser integration requires its own verified
-							build.
+							The browser helper can fill plain form fields from the packet file. It is experimental: sign-in steps,
+							captchas, custom controls and sensitive questions stay with you. Use the PDF downloads and copyable
+							answers for forms it cannot fill.
 						</Trans>
 					</p>
 					{packet.review.answers.map((answer) => (

@@ -319,6 +319,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 				<div className="check-writing-proposals mt-1">
 					<ChangeSet
 						compact
+						untitled
 						proposals={proposals}
 						states={proposals.map((proposal) => getProposalState(data, proposal, applications))}
 						locked={locked}

@@ -140,7 +140,7 @@ it("states what an accepted edit changes before sending, and offers translation"
 			<AssistantPanel document={document} onClose={vi.fn()} />
 		</I18nProvider>,
 	);
-	expect(screen.getByText(/Nothing changes until you accept an edit|Working on a copy made for/)).toBeDefined();
+	expect(screen.getByText(/Edits go to a copy, never to this resume|Working on a copy made for/)).toBeDefined();
 	expect(screen.getByRole("button", { name: "Translate into another language…" })).toBeDefined();
 	expect(mocks.start).not.toHaveBeenCalled();
 });

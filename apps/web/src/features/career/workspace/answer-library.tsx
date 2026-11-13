@@ -397,11 +397,20 @@ export function AnswerLibrary({ applicationId, company, current, disabled, onUse
 							</label>
 							<p className="text-xs">{t`${i18n.number(answer.split(/\s+/).filter(Boolean).length)} words · ${i18n.number([...answer].length)} characters`}</p>
 							{mode === "reuse" && (
-								<div className="grid gap-2 text-sm text-ink-2">
+								<div className="grid justify-items-start gap-1.5 text-sm text-ink-2">
+									<p className="t-label">
+										<Trans>Backed by</Trans>
+									</p>
 									{(facts.data ?? [])
 										.filter((fact) => selected?.evidence.some((ref) => ref.kind === "fact" && ref.id === fact.id))
 										.map((fact) => (
-											<p key={fact.id}>{fact.text}</p>
+											<span
+												key={fact.id}
+												className="inline-flex items-start gap-1.5 rounded-sm border border-line-2 px-2 py-1 text-xs/4 font-medium"
+											>
+												<Icon name="link-simple-horizontal" size={14} className="mt-px shrink-0" />
+												{fact.text}
+											</span>
 										))}
 									{(stories.data ?? [])
 										.filter((story) => selected?.storyIds.includes(story.id))

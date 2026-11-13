@@ -342,7 +342,7 @@ function useStarters(): Starter[] {
 				};
 			case "practice":
 				return {
-					title: t`What interview answers should I practise?`,
+					title: t`What interview answers should I practice?`,
 					note: t`Uses your stories and applications`,
 					page: {
 						note: t`Stories · ready to tell in interviews`,

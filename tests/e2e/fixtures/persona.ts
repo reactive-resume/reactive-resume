@@ -549,8 +549,8 @@ export async function seedPersona(
 		followUpNote: "Send a follow-up",
 	});
 
-	await move(halden, "applied", "2026-10-05", { resumeId: productDesigner });
-	await move(halden, "closed", "2026-10-19", { closedReason: "not-selected" });
+	await move(halden, "applied", "2026-09-22", { resumeId: productDesigner });
+	await move(halden, "closed", "2026-10-14", { closedReason: "not-selected" });
 
 	await move(brightwell, "applied", "2026-10-27", { resumeId: productDesigner, coverLetterId: brightwellLetter });
 
@@ -766,7 +766,7 @@ export async function seedPersona(
 		{ table: "application", id: lumen, at: day("2026-11-06", "17:20"), created: day("2026-10-24", "12:00") },
 		{ table: "application", id: parcel, at: day("2026-11-07", "07:00"), created: day("2026-09-29", "12:00") },
 		{ table: "application", id: kiln, at: day("2026-11-05", "14:05"), created: day("2026-11-05", "12:00") },
-		{ table: "application", id: halden, at: day("2026-10-19", "12:00"), created: day("2026-10-01", "12:00") },
+		{ table: "application", id: halden, at: day("2026-10-14", "12:00"), created: day("2026-09-21", "12:00") },
 		{
 			table: "application",
 			id: brightwell,

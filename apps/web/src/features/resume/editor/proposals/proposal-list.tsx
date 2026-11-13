@@ -100,7 +100,8 @@ export function inContext(segments: readonly WordDiffSegment[]): WordDiffSegment
 		const first = index === 0;
 		const last = index === segments.length - 1;
 		const keep = first || last ? CONTEXT_WORDS : CONTEXT_WORDS * 2;
-		if (words.length <= keep + 2) return segment;
+		// Shrinking saves little on a short stretch and cuts a sentence's opening words: keep up to four more whole.
+		if (words.length <= keep + 4) return segment;
 		if (first) return { kind: "same", text: `…${words.slice(-CONTEXT_WORDS).join("")}` };
 		if (last) return { kind: "same", text: `${words.slice(0, CONTEXT_WORDS).join("")}…` };
 		return {
@@ -181,6 +182,8 @@ type ChangeSetProps = {
 	 * stays: sources, the "New detail" tag, Accept, Edit and Reject.
 	 */
 	compact?: boolean | undefined;
+	/** Check's Writing tab: no heading row above the cards; Reject all and Accept all sit under them. */
+	untitled?: boolean | undefined;
 };
 
 /**
@@ -234,32 +237,41 @@ export function ChangeSet(props: ChangeSetProps) {
 		}
 	};
 
+	const bulk = (checked.length > 1 || rejectable.length > 1) && (
+		<div className="flex gap-1">
+			{rejectable.length > 1 && (
+				<Button size="sm" variant="ghost" onClick={() => onReject(rejectable)}>
+					<Trans>Reject all</Trans>
+				</Button>
+			)}
+			{checked.length > 1 && (
+				<Button size="sm" variant="soft" disabled={locked} onClick={() => accept(checked)}>
+					{toConfirm > 0 ? <Trans>Accept the others</Trans> : <Trans>Accept all</Trans>}
+				</Button>
+			)}
+		</div>
+	);
+	const heading = title ?? <Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />;
+
 	return (
-		<section aria-labelledby={headingId} className="grid gap-3">
-			<header className="flex min-h-8 flex-wrap items-center justify-between gap-x-2 gap-y-1">
-				<h3 id={headingId} className="min-w-0 flex-1 text-[15px]/[22px] font-semibold">
-					{title ?? <Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />}
-				</h3>
-				{(checked.length > 1 || rejectable.length > 1) && (
-					<div className="flex gap-1">
-						{rejectable.length > 1 && (
-							<Button size="sm" variant="ghost" onClick={() => onReject(rejectable)}>
-								<Trans>Reject all</Trans>
-							</Button>
-						)}
-						{checked.length > 1 && (
-							<Button size="sm" variant="soft" disabled={locked} onClick={() => accept(checked)}>
-								{toConfirm > 0 ? <Trans>Accept the others</Trans> : <Trans>Accept all</Trans>}
-							</Button>
-						)}
-					</div>
-				)}
-				{props.resumeId && !locked && checked.length > 0 && (
-					<div className="basis-full">
-						<ProposalPageFit resumeId={props.resumeId} proposals={checked} />
-					</div>
-				)}
-			</header>
+		<section
+			aria-labelledby={props.untitled ? undefined : headingId}
+			aria-label={props.untitled ? t`Proposed edits` : undefined}
+			className="grid gap-3"
+		>
+			{!props.untitled && (
+				<header className="flex min-h-8 flex-wrap items-center justify-between gap-x-2 gap-y-1">
+					<h3 id={headingId} className="min-w-0 flex-1 text-[15px]/[22px] font-semibold">
+						{heading}
+					</h3>
+					{bulk}
+					{props.resumeId && !locked && checked.length > 0 && (
+						<div className="basis-full">
+							<ProposalPageFit resumeId={props.resumeId} proposals={checked} />
+						</div>
+					)}
+				</header>
+			)}
 
 			{requirements.length > 0 && <Coverage requirements={requirements} factText={props.factText} />}
 
@@ -298,6 +310,7 @@ export function ChangeSet(props: ChangeSetProps) {
 				))}
 			</ol>
 
+			{props.untitled && bulk && <div className="-ms-2.5">{bulk}</div>}
 			<p className="text-xs text-ink-3">
 				{toConfirm > 0 && checked.length > 1 && (
 					<>

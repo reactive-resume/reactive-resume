@@ -55,6 +55,11 @@ type ListRowProps = Omit<useRender.ComponentProps<"div">, "title"> & {
 	detail?: ReactNode;
 	/** Let a string subtitle wrap instead of truncating (`.s.w`); the title always wraps. */
 	wrap?: boolean;
+	/**
+	 * The subtitle is the person's own content (a summary, entry names): it takes the direction of its text, so English
+	 * in an Arabic interface reads and truncates left to right, while still sitting at the row's start.
+	 */
+	subtitleContent?: boolean;
 	/** A quiet value before the trailing element. */
 	value?: ReactNode;
 	/** The one thing at the end: a badge, a switch, a text action. */
@@ -83,6 +88,7 @@ export function ListRow({
 	subtitle,
 	detail,
 	wrap = false,
+	subtitleContent = false,
 	value,
 	trailing,
 	actions,
@@ -128,8 +134,11 @@ export function ListRow({
 								{subtitle && (
 									<span
 										title={typeof subtitle === "string" ? subtitle : undefined}
+										dir={subtitleContent ? "auto" : undefined}
 										className={cn(
 											"text-[13px]/[18px] text-ink-3",
+											// Its own direction, but at the row's start: the right edge in a right-to-left interface.
+											subtitleContent && "rtl:text-right",
 											typeof subtitle === "string" && !wrap ? "truncate" : "[overflow-wrap:anywhere]",
 										)}
 									>

@@ -59,7 +59,7 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 	const review = reviewDraft.value;
 	const setReview = reviewDraft.setValue;
 	const [decisions, setDecisions] = useState<ProposalApplications>({});
-	const [keptAnswers, setKeptAnswers] = useState<Review["answers"]>([]);
+	const [keptAnswers, setKeptAnswers] = useState<{ item: Review["answers"][number]; undo: () => Promise<void> }[]>([]);
 	const [busy, setBusy] = useState(false);
 	const [stoppable, setStoppable] = useState(false);
 	const [undo, setUndo] = useState<(() => Promise<void>) | null>(null);
@@ -216,19 +216,18 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 			if (!(await workspace.save({ answers: [...before, answer] }, { answers: before }))) return;
 			if (!current()) return;
 			setReview({ ...review, answers: review.answers.filter((_, position) => position !== index) });
-			setKeptAnswers((kept) => [...kept, item]);
-			setUndo(() => async () => {
+			const undoAnswer = async () => {
 				const latest = (await workspace.settled()).answers;
 				if (JSON.stringify(latest.find((value) => value.id === answer.id)) !== JSON.stringify(answer))
 					throw new Error(t`The answer changed since, so it wasn't restored.`);
 				if (await workspace.save({ answers: latest.filter((value) => value.id !== answer.id) }, { answers: latest })) {
 					if (current()) {
 						setReview((value) => (value ? { ...value, answers: [...value.answers, item] } : value));
-						setKeptAnswers((kept) => kept.filter((value) => value !== item));
-						setUndo(null);
+						setKeptAnswers((kept) => kept.filter((value) => value.item !== item));
 					}
 				}
-			});
+			};
+			setKeptAnswers((kept) => [...kept, { item, undo: undoAnswer }]);
 		});
 	return (
 		<section aria-label={t`Prepare application`} className="grid gap-4">
@@ -237,11 +236,6 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 			</DialogHeader>
 			{!review && (
 				<>
-					<p className="text-sm text-ink-2">
-						<Trans>
-							Review tailoring proposals, a letter draft and answers together. Nothing is submitted to the employer.
-						</Trans>
-					</p>
 					<Label htmlFor={`prepare-questions-${application.id}`}>
 						<Trans>Questions from the employer's form · optional</Trans>
 					</Label>
@@ -253,9 +247,6 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 						onChange={(event) => questions.setValue(event.target.value)}
 						disabled={busy}
 					/>
-					<p className="text-xs text-ink-2">
-						<Trans>Separate questions with a blank line. Up to five questions, 2,000 characters each.</Trans>
-					</p>
 					{!valid && (
 						<p role="alert">
 							<Trans>Separate questions with a blank line. Up to five questions, 2,000 characters each.</Trans>
@@ -384,13 +375,14 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 						})}
 					</details>
 					{review.letter && (
-						<div className="grid gap-2 border-b border-line pb-4">
+						<div className="relative grid gap-1.5 border-b border-line py-3 ps-[38px]">
+							<Icon name="envelope-simple" size={20} className="absolute start-2.5 top-3 text-ink-3" />
 							<h3 className="font-medium">
 								<Trans>Letter draft</Trans>
 							</h3>
 							<Textarea
 								aria-label={t`Letter draft`}
-								className="min-h-20 resize-none border-transparent bg-sunken text-[13px]/[18px] shadow-none"
+								className="h-[78px] min-h-[78px] resize-none border-transparent bg-sunken text-[13px]/[18px] shadow-none"
 								value={review.letter.text}
 								disabled={busy}
 								onChange={(event) =>
@@ -427,11 +419,15 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 						</div>
 					)}
 					{review.answers.map((item, index) => (
-						<div key={`${index}:${item.question}`} className="grid gap-2 border-b border-line pb-4">
+						<div
+							key={`${index}:${item.question}`}
+							className="relative grid gap-1.5 border-b border-line py-3 ps-[38px]"
+						>
+							<Icon name="pencil-line" size={20} className="absolute start-2.5 top-3 text-ink-3" />
 							<h3 className="font-medium">{item.question}</h3>
 							<Textarea
 								aria-label={item.question}
-								className="min-h-20 resize-none border-transparent bg-sunken text-[13px]/[18px] shadow-none"
+								className="h-[78px] min-h-[78px] resize-none border-transparent bg-sunken text-[13px]/[18px] shadow-none"
 								value={item.answer.answer}
 								maxLength={6000}
 								disabled={busy}
@@ -466,21 +462,39 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 								>
 									<Trans>Discard</Trans>
 								</Button>
+								<span className="ms-auto t-small text-ink-3">
+									{plural(item.answer.factIds.length, { one: "Backed by # fact", other: "Backed by # facts" })}
+								</span>
 							</div>
 						</div>
 					))}
 
-					{keptAnswers.map((item, index) => (
-						<div key={`kept:${index}`} className="grid gap-2 border-b border-line pb-4">
+					{keptAnswers.map(({ item, undo: undoAnswer }, index) => (
+						<div key={`kept:${index}`} className="relative grid gap-1.5 border-b border-line py-3 ps-[38px]">
+							<Icon name="pencil-line" size={20} className="absolute start-2.5 top-3 text-ink-3" />
 							<h3 className="font-medium">{item.question}</h3>
 							<p className="rounded-lg bg-sunken px-3 py-2 text-[13px]/[18px]">{item.answer.answer}</p>
-							<span className="flex items-center gap-1.5 t-small text-ink-3">
-								<Icon name="check" size={16} />
-								<Trans>Kept</Trans>
-							</span>
+							<div className="flex items-center gap-1.5 t-small">
+								<span className="flex items-center gap-1.5 text-ink-3">
+									<Icon name="check" size={16} />
+									<Trans>Kept</Trans>
+								</span>
+								<Button
+									variant="ghost"
+									size="sm"
+									className="text-accent-text"
+									disabled={busy}
+									onClick={() => void run(undoAnswer)}
+								>
+									<Trans>Undo</Trans>
+								</Button>
+								<span className="ms-auto text-ink-3">
+									{plural(item.answer.factIds.length, { one: "Backed by # fact", other: "Backed by # facts" })}
+								</span>
+							</div>
 						</div>
 					))}
-					<DialogFooter className="justify-between">
+					<DialogFooter className="justify-between sm:justify-between">
 						<Button
 							variant="ghost"
 							disabled={busy}

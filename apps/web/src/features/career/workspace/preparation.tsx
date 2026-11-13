@@ -4,7 +4,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import {
@@ -25,6 +25,7 @@ import { DocumentThumb } from "@/components/calm/document-thumb";
 import { SectionHeading } from "@/components/calm/section-heading";
 import { Combobox } from "@/components/ui/combobox";
 import { useDialogStore } from "@/dialogs/store";
+import { FileAttachmentField } from "@/features/applications/components/file-attachment-field";
 import { useInvalidateApplications } from "@/features/applications/use-application-actions";
 import { useDocumentDownload } from "@/features/applications/use-document-download";
 import { toastError } from "@/libs/error-message";
@@ -49,6 +50,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 	const [postingOpen, setPostingOpen] = useState(false);
 	const { download, downloading } = useDocumentDownload();
 	const id = useId();
+	const letterFile = useRef<HTMLInputElement>(null);
 	const update = useMutation({
 		...orpc.applications.update.mutationOptions(),
 		onSuccess: () => invalidate(application.id),
@@ -168,6 +170,85 @@ export function Preparation({ application, disabled }: PreparationProps) {
 								id: application.id,
 								...(kind === "resume" ? { resumeId: value } : { coverLetterId: value }),
 							});
+						// No letter yet: the ways to get one are visible actions, not a menu.
+						if (editing && kind === "letter" && !selected)
+							return (
+								<Row
+									key={kind}
+									label={
+										<>
+											<DocumentThumb kind="letter" />
+											<Label htmlFor={fieldId} className="sr-only">
+												{label}
+											</Label>
+										</>
+									}
+								>
+									<div className="min-w-0 @md:col-span-2">
+										<p className="truncate text-[15px]/[22px] font-medium">
+											<Trans>No cover letter yet</Trans>
+										</p>
+										<p className="text-[13px]/[18px] text-ink-3">
+											<Trans>Optional</Trans>
+										</p>
+									</div>
+									<div className="col-span-full grid justify-items-start gap-1.5 pt-1.5">
+										<div className="flex flex-wrap items-center gap-1.5">
+											<Button size="sm" variant="secondary" disabled={busy} onClick={() => void writeLetter()}>
+												<Icon name="envelope-simple" />
+												<Trans>Write a letter</Trans>
+											</Button>
+											{choices.length > 0 && (
+												<Combobox
+													id={fieldId}
+													value={null}
+													options={choices.map((item) => ({ value: item.id, label: item.name }))}
+													placeholder={t`Use an existing letter…`}
+													disabled={busy}
+													aria-label={t`Use an existing letter`}
+													render={<Button size="sm" variant="ghost" className="font-normal [&_svg]:hidden!" />}
+													onValueChange={select}
+												/>
+											)}
+										</div>
+										{application.coverLetterUrl ? (
+											<FileAttachmentField
+												value={{
+													url: application.coverLetterUrl,
+													name: application.coverLetterName || t`Cover letter file`,
+												}}
+												attachLabel={t`Attach a file`}
+												disabled={busy}
+												onChange={(file) =>
+													update.mutate({
+														id: application.id,
+														...(file ? { coverLetterFile: file } : { coverLetterUrl: null, coverLetterName: null }),
+													})
+												}
+											/>
+										) : (
+											<Button size="sm" variant="ghost" disabled={busy} onClick={() => letterFile.current?.click()}>
+												<Icon name="paperclip" />
+												<Trans>Attach a file</Trans>
+											</Button>
+										)}
+										<input
+											ref={letterFile}
+											type="file"
+											accept="application/pdf"
+											className="hidden"
+											onChange={(event) => {
+												const file = event.target.files?.[0];
+												event.target.value = "";
+												if (file) update.mutate({ id: application.id, coverLetterFile: file });
+											}}
+										/>
+										<p className="text-[13px]/[18px] text-ink-3">
+											<Trans>A file is a PDF up to 10 MB that you wrote elsewhere.</Trans>
+										</p>
+									</div>
+								</Row>
+							);
 						return (
 							<Row
 								key={kind}
@@ -283,12 +364,6 @@ export function Preparation({ application, disabled }: PreparationProps) {
 												>
 													<Icon name="sparkle" size={18} />
 													<Trans>Review with assistant</Trans>
-												</DropdownMenuItem>
-											)}
-											{editing && kind === "letter" && !selected && (
-												<DropdownMenuItem onClick={() => void writeLetter()}>
-													<Icon name="envelope-simple" size={18} />
-													<Trans>Write a letter</Trans>
 												</DropdownMenuItem>
 											)}
 											{editing && selected && (

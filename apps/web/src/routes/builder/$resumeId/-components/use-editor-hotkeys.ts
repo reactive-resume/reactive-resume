@@ -3,7 +3,9 @@ import { useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useAssistantShortcutEnabled } from "@/features/assistant/shortcut";
+import { DOCUMENT_GROUP } from "@/features/keyboard-shortcuts/groups";
 import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
+import { useShortcutsPage } from "@/features/keyboard-shortcuts/store";
 import { isEditableElementFocused, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { stepUp } from "@/features/resume/editor/write/view";
@@ -25,6 +27,7 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	const resume = useCurrentResume();
 	const { onDownloadPDF } = useResumeExport(resume);
 	const isOnline = () => useResumeStore.getState().saveStatus !== "offline";
+	useShortcutsPage(null, t`The resume editor.`);
 
 	useHotkey("1", () => switchModeInstantly(() => setMode("write")), {
 		enabled: characterShortcuts,
@@ -48,21 +51,28 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 		() => {
 			if (!isEditableElementFocused()) undo();
 		},
-		{ meta: { name: t`Undo` } },
+		{ meta: { name: t`Undo`, group: DOCUMENT_GROUP } },
 	);
 	useHotkey(
 		"Mod+Shift+Z",
 		() => {
 			if (!isEditableElementFocused()) redo();
 		},
-		{ meta: { name: t`Redo` } },
+		{ meta: { name: t`Redo`, group: DOCUMENT_GROUP } },
 	);
 	useHotkey(
 		"Control+Y",
 		() => {
 			if (!isEditableElementFocused()) redo();
 		},
-		{ meta: { name: t`Redo` } },
+		{ meta: { name: t`Redo`, group: DOCUMENT_GROUP } },
+	);
+	useHotkey(
+		"Mod+S",
+		() => {
+			toast.add({ type: "info", description: t`Your changes are saved automatically.`, id: "auto-save" });
+		},
+		{ meta: { name: t`Save`, group: DOCUMENT_GROUP } },
 	);
 
 	useHotkey(
@@ -70,14 +80,14 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 		() => {
 			if (isOnline()) void onDownloadPDF();
 		},
-		{ meta: { name: t`Download PDF` } },
+		{ meta: { name: t`Download PDF`, group: DOCUMENT_GROUP } },
 	);
 	useHotkey(
 		"Mod+Shift+E",
 		() => {
 			if (isOnline()) useEditorStore.getState().setSheetTab("download");
 		},
-		{ meta: { name: t`Download & history` } },
+		{ meta: { name: t`Download and history`, group: DOCUMENT_GROUP } },
 	);
 	useHotkey(
 		"Mod+J",
@@ -107,13 +117,5 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 			conflictBehavior: "allow",
 			meta: hasSelection ? { name: t`Back to the list` } : {},
 		},
-	);
-
-	useHotkey(
-		"Mod+S",
-		() => {
-			toast.add({ type: "info", description: t`Your changes are saved automatically.`, id: "auto-save" });
-		},
-		{ meta: { name: t`Save` } },
 	);
 }
