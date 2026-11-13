@@ -21,9 +21,12 @@ Run every command from the repository root unless a step says otherwise.
 <Steps>
   <Step title="Clone the repository">
     ```bash
-    git clone https://github.com/reactive-resume/reactive-resume.git
+    git clone --filter=blob:none https://github.com/reactive-resume/reactive-resume.git
     cd reactive-resume
     ```
+
+    `--filter=blob:none` downloads the full commit history but only the current files, which keeps the clone near 130 MB instead of over 2 GB. Git fetches older file versions when a command such as `git blame` or `git checkout` needs them.
+
   </Step>
 
     <Step title="Install dependencies">
@@ -246,7 +249,7 @@ const label = t`Download PDF`;
 <Trans>Your resume is ready.</Trans>;
 ```
 
-Then run `pnpm lingui:extract`. It updates the web catalogs in `apps/web/locales/*.po` and regenerates the PDF section-title catalog. For native app strings, also run `pnpm --filter mobile lingui:extract`. Fill and review the affected translations in both apps before release; the repository has no automatic Crowdin synchronization workflow. See [Contributing translations](/contributing/translations).
+Then run `pnpm lingui:extract`. It updates the web catalogs in `apps/web/locales/*.po`, the mobile catalogs in `apps/mobile/locales/*.po` (seeding empty entries from matching web translations), and regenerates the PDF section-title catalog. Fill and review the affected translations in both apps before release; the repository has no automatic Crowdin synchronization workflow. See [Contributing translations](/contributing/translations).
 
 ## Code style
 

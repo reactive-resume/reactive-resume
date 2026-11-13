@@ -1,0 +1,13 @@
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://ats-checker
+- assertVisible: "ATS checker"
+- assertNotVisible: "Sign in"
+- tapOn:
+    id: ats-choose
+# The system document picker opens: its Browse tab on iOS, its roots menu on Android.
+- extendedWaitUntil:
+    visible: "Browse|Show roots"
+    timeout: 20000

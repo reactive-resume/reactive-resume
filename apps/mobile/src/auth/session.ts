@@ -24,7 +24,6 @@ import { i18n } from "@lingui/core";
 import * as AuthSession from "expo-auth-session";
 import * as Network from "expo-network";
 import * as SecureStore from "expo-secure-store";
-import Storage from "expo-sqlite/kv-store";
 import * as WebBrowser from "expo-web-browser";
 import { useSyncExternalStore } from "react";
 import { fnv1a } from "@reactive-resume/utils/string";
@@ -39,6 +38,8 @@ import {
 	scopes,
 	storeKey,
 } from "./oauth";
+import { now } from "@/data/clock";
+import { isFake, subscribeFixture, fixtureSeedVersion } from "@/data/fixtures";
 
 export const DEFAULT_SERVER = "https://rxresu.me";
 
@@ -48,7 +49,7 @@ export const DEFAULT_SERVER = "https://rxresu.me";
  * - `signed-in`: an access token (or a refresh token to get one) is stored.
  * - `expired`: the refresh token was rejected; the user must sign in again. The server is kept.
  */
-export type SessionStatus = "loading" | "signed-out" | "signed-in" | "expired";
+export type SessionStatus = "loading" | "signed-out" | "signed-in" | "signing-out" | "expired" | "guest";
 
 export type Session = {
 	status: SessionStatus;
@@ -72,6 +73,16 @@ const expirySkewSeconds = 60;
 const refreshTimeout = 20_000;
 const revokeTimeout = 5_000;
 
+let fixtureSession: Session = { status: "signed-in", server: DEFAULT_SERVER };
+let fixtureSeed = -1;
+function getFixtureSession(): Session {
+	const seed = fixtureSeedVersion();
+	if (seed !== fixtureSeed) {
+		fixtureSeed = seed;
+		fixtureSession = { status: "signed-in", server: DEFAULT_SERVER };
+	}
+	return fixtureSession;
+}
 let session: Session = { status: "loading", server: DEFAULT_SERVER };
 let tokens: Tokens | null = null;
 // The signed-in account, `JSON.stringify([server, sub])` (the draft store's scope). Kept through `expired`, so signing
@@ -142,17 +153,24 @@ export function subscribeIdentity(listener: () => void): () => void {
 
 /** The current session, outside React. */
 export function getSession(): Session {
-	return session;
+	return isFake() ? getFixtureSession() : session;
 }
 
 /** The current session. Re-renders when the status or server changes. */
 export function useSession(): Session {
-	return useSyncExternalStore(subscribeSession, () => session);
+	return useSyncExternalStore((listener) => {
+		const a = subscribeSession(listener);
+		const b = subscribeFixture(listener);
+		return () => {
+			a();
+			b();
+		};
+	}, getSession);
 }
 
 /** The server origin requests go to. */
 export function getServer(): string {
-	return session.server;
+	return getSession().server;
 }
 
 /**
@@ -160,7 +178,17 @@ export function getServer(): string {
  * token without a network refresh, so drafts open offline. Null unless signed in.
  */
 export function getAccountScope(): string | null {
-	return session.status === "signed-in" ? accountScope : null;
+	return isFake()
+		? getFixtureSession().status === "signed-in"
+			? "storyboard"
+			: null
+		: session.status === "signed-in" || session.status === "guest"
+			? accountScope
+			: null;
+}
+
+export function getRetainedAccountScope(): string | null {
+	return isFake() ? getAccountScope() : accountScope;
 }
 
 /**
@@ -228,8 +256,6 @@ export function restoreSession(): Promise<void> {
 
 async function readStoredSession(): Promise<void> {
 	try {
-		const { clearAccountExportCache } = await import("@/features/settings/export-cache");
-		clearAccountExportCache();
 		const storedServer = await SecureStore.getItemAsync(serverKey);
 		const server = storedServer && isAllowedServer(storedServer) ? storedServer : DEFAULT_SERVER;
 		const stored = await SecureStore.getItemAsync(tokensKey(server));
@@ -250,37 +276,18 @@ async function readStoredSession(): Promise<void> {
 	}
 }
 
-/** Development previews may install a local fixture only when no real account is present. */
-export async function installDevelopmentSession(origin: string): Promise<void> {
-	if (!__DEV__ || !["localhost", "127.0.0.1", "[::1]", "10.0.2.2"].includes(new URL(origin).hostname))
-		throw new Error("Preview sessions require a local development server.");
-	if (new URL(origin).origin !== origin) throw new Error("Expected a development server origin.");
-	await restoreSession();
-	return transition(async () => {
-		if (
-			session.status !== "signed-out" ||
-			tokens ||
-			accountScope ||
-			(await SecureStore.getItemAsync(tokensKey(origin)))
-		)
-			throw new Error("Sign out before opening a development preview.");
-		const next = { accessToken: `fixture.${btoa(JSON.stringify({ sub: "rr-M3T4-preview" }))}.fixture` };
-		await SecureStore.setItemAsync(tokensKey(origin), JSON.stringify(next));
-		await SecureStore.setItemAsync(serverKey, origin);
-		tokens = next;
-		accountScope = scopeOf(origin, next.accessToken);
-		changeIdentity();
-		setSession({ status: "signed-in", server: origin });
-	});
-}
-
 /**
  * Signs in to `server` (an origin) in the system browser, then makes it the current server with its tokens in one
  * queued step. Until then nothing changes: a cancelled or failed sign-in leaves the current server and tokens as they
  * were. Resolves true when signed in and false when the user cancelled; throws on discovery, registration, redirect
  * or token errors.
  */
-export async function signIn(server: string): Promise<boolean> {
+export async function signIn(server: string = getServer()): Promise<boolean> {
+	if (isFake()) {
+		fixtureSession = { status: "signed-in", server };
+		for (const listener of listeners) listener();
+		return true;
+	}
 	const origin = new URL(server).origin;
 	if (!isAllowedServer(origin)) throw new Error("The app needs an https server.");
 	const attempt = ++attempts;
@@ -296,8 +303,6 @@ export async function signIn(server: string): Promise<boolean> {
 			await revoke(origin, next.refreshToken);
 			return false;
 		}
-		const { clearAccountExportCache } = await import("@/features/settings/export-cache");
-		clearAccountExportCache();
 		await SecureStore.setItemAsync(tokensKey(origin), JSON.stringify(next));
 		await SecureStore.setItemAsync(serverKey, origin);
 		await SecureStore.deleteItemAsync(refreshMarkerKey(origin));
@@ -394,10 +399,6 @@ export function cancelSignIn(): void {
 	WebBrowser.dismissAuthSession();
 }
 
-// kv-store prefixes other features keep per account (`<prefix><scope>:<id>`): application notes (M5-T2) and Career
-// workspace drafts (M6-T2). Resume and letter drafts are cleared by the draft runtime.
-const scopedStoragePrefixes = ["reactive-resume:application-notes:", "reactive-resume:career-draft:"];
-
 /** Best-effort revocation of a refresh token on `server`, given up after `revokeTimeout`. */
 async function revoke(server: string, refreshToken: string | undefined): Promise<void> {
 	if (!refreshToken) return;
@@ -430,9 +431,27 @@ export class SignOutCleanupError extends AggregateError {
  * Credentials are always removed and the session always ends signed out; a cleanup that fails does not stop the others
  * and is reported afterwards as a `SignOutCleanupError`.
  */
-export function signOut(): Promise<void> {
+export async function signOut({ discard = false }: { discard?: boolean } = {}): Promise<void> {
+	if (isFake())
+		return (async () => {
+			const { prepareSignOut, clearAccountData } = await import("@/data/account");
+			await prepareSignOut("storyboard", discard);
+			await clearAccountData("storyboard");
+			fixtureSession = { ...fixtureSession, status: "signed-out" };
+			for (const listener of listeners) listener();
+		})();
 	attempts++;
+	const account = identity;
+	const { prepareSignOut, pendingCounts, PendingChangesError } = await import("@/data/account");
+	// A draft flush may refresh credentials, so it must run outside the session transition queue.
+	await prepareSignOut(accountScope, discard);
 	return transition(async () => {
+		if (identity !== account) throw new Error("The account changed. Try again.");
+		if (!discard) {
+			const counts = await pendingCounts(accountScope);
+			if (Object.values(counts).some(Boolean)) throw new PendingChangesError(counts);
+		}
+		setSession({ ...session, status: "signing-out" });
 		const departing = { server: session.server, tokens, scope: accountScope, account: identity };
 		const errors: unknown[] = [];
 		const attempt = async (step: () => unknown) => {
@@ -445,30 +464,9 @@ export function signOut(): Promise<void> {
 
 		await revoke(departing.server, departing.tokens?.refreshToken);
 		await attempt(async () => {
-			// Imported here, like the draft runtime below, to keep this module free of feature imports.
-			const { clearStoredThumbnails } = await import("@/features/documents/thumbnail-store");
-			await clearStoredThumbnails();
+			const { clearAccountData } = await import("@/data/account");
+			if (departing.scope) await clearAccountData(departing.scope);
 		});
-		await attempt(async () => {
-			const { clearAccountExportCache } = await import("@/features/settings/export-cache");
-			clearAccountExportCache();
-		});
-		const { scope } = departing;
-		if (scope) {
-			await attempt(async () => {
-				// Imported here: the draft runtime imports the API client, which imports this module.
-				const { clearDraftsFor } = await import("@/draft/runtime");
-				clearDraftsFor(scope);
-			});
-			await attempt(() => {
-				const prefixes = [
-					...scopedStoragePrefixes.map((prefix) => `${prefix}${scope}:`),
-					`letter-draft:${departing.server}:${scope}:`,
-				];
-				for (const key of Storage.getAllKeysSync())
-					if (prefixes.some((prefix) => key.startsWith(prefix))) Storage.removeItemSync(key);
-			});
-		}
 
 		try {
 			await SecureStore.deleteItemAsync(tokensKey(departing.server));
@@ -496,7 +494,7 @@ export function getAccessToken(): Promise<string | null> {
 	if (!tokens) return Promise.resolve(null);
 	// The refresh token is retired while its refresh is out; wait for that refresh.
 	if (refreshing?.account === identity) return refreshing.result;
-	const expiresSoon = tokens.expiresAt !== undefined && tokens.expiresAt - expirySkewSeconds <= Date.now() / 1000;
+	const expiresSoon = tokens.expiresAt !== undefined && tokens.expiresAt - expirySkewSeconds <= now().getTime() / 1000;
 	if (!expiresSoon) return Promise.resolve(tokens.accessToken);
 	if (!tokens.refreshToken) return Promise.resolve(null);
 	return refreshOnce(identity, tokens.refreshToken);
@@ -573,12 +571,7 @@ async function expire(account: number): Promise<void> {
 	tokens = null;
 	changeIdentity();
 	setSession({ status: "expired", server });
-	try {
-		const { clearAccountExportCache } = await import("@/features/settings/export-cache");
-		clearAccountExportCache();
-	} finally {
-		await retireTokens(server);
-	}
+	await retireTokens(server);
 }
 
 /**
@@ -592,4 +585,33 @@ async function retireTokens(server: string): Promise<void> {
 		return;
 	}
 	await SecureStore.deleteItemAsync(refreshMarkerKey(server)).catch(() => null);
+}
+
+/** Server choice never silently leaves a signed-in account or its queued work. */
+export async function chooseServer(url: string): Promise<void> {
+	const { toOrigin, healthCheck } = await import("./oauth");
+	const origin = toOrigin(url);
+	if (!origin || !isAllowedServer(origin)) throw new Error("The app needs an https server.");
+	await healthCheck(origin);
+	await discover(origin);
+	return transition(async () => {
+		if (tokens || accountScope) throw new Error("Sign out before changing servers.");
+		await SecureStore.setItemAsync(serverKey, origin);
+		changeIdentity();
+		setSession({ status: "signed-out", server: origin });
+	});
+}
+
+/** Local-only documents; enabled only when this server permits guest entry. */
+export async function continueAsGuest(): Promise<void> {
+	const { getFlags } = await import("./oauth");
+	const server = getServer();
+	if (!(await getFlags(server)).allowGuestLogin) throw new Error("Guest access is disabled on this server.");
+	await transition(() => {
+		if (tokens || accountScope) throw new Error("Sign out before continuing as a guest.");
+		accountScope = JSON.stringify([server, "local-guest"]);
+		changeIdentity();
+		setSession({ status: "guest", server });
+		return Promise.resolve();
+	});
 }

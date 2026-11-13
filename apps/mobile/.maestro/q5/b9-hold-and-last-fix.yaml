@@ -1,0 +1,37 @@
+# B9 · Long-pressing an issue card opens the same sheet as tapping it (Fix, Show on page, Ignore); each Fix plays
+# `light` and the last one `success`, leaving "Nothing to review."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B9-Check?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- longPressOn: "Issue 1: .*"
+- extendedWaitUntil:
+    visible: Ignore
+    timeout: 10000
+- assertVisible: Show on page
+- tapOn: Close
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- tapOn:
+    text: "Use https://morgan.design"
+    waitToSettleTimeoutMs: 1000
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: One thing to fix.
+    timeout: 5000
+- tapOn:
+    text: "Use 1.2 line height"
+    waitToSettleTimeoutMs: 1000
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: Nothing to review.
+    timeout: 5000
+- assertVisible:
+    id: haptic-log
+    text: "light success"

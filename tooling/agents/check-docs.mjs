@@ -15,7 +15,7 @@ const HISTORICAL = [".agents/docs/decisions/", ".agents/docs/research/"];
 const TICKET_ID = /(^|[^a-z])rx-?\d+/i;
 // Build and test outputs the docs name on purpose; they only exist after a build or test run. Any other missing
 // path fails, even when git ignores it.
-const GENERATED = new Set(["apps/server/dist/index.mjs", "apps/mobile/reports/node-junit.xml", "node_modules/.bin"]);
+const GENERATED = new Set(["apps/server/dist/index.mjs", "node_modules/.bin"]);
 
 const tracked = git("ls-files", "-z").split("\0").filter(Boolean);
 const topLevel = new Set(tracked.map((path) => path.split("/")[0]));

@@ -1,0 +1,47 @@
+# B8 · Fit runs the web's spacing and size steps and offers Undo once it lands on one page (`fit=over` starts a step
+# too long), and Undo takes the step back; while it measures, "Measuring page fit…" sits beside the spinner, and a
+# preview that never answers stops Fit with "The preview took too long to update, so Fit stopped." (`fit=slow`).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B8-Layout?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://builder/resume-product/design/layout?fit=over
+- extendedWaitUntil:
+    visible: Fit to one page
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    text: Fit to one page
+    waitToSettleTimeoutMs: 1000
+- extendedWaitUntil:
+    visible: Fits on one page
+    timeout: 20000
+- tapOn:
+    id: toast-action
+    waitToSettleTimeoutMs: 1
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible:
+      id: status-redo
+    timeout: 5000
+- openLink: me.rxresu.storyboard://builder/resume-product/design/layout?fit=slow
+- extendedWaitUntil:
+    visible: Fit to one page
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    text: Fit to one page
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Measuring page fit…
+    timeout: 5000
+- extendedWaitUntil:
+    visible: The preview took too long to update, so Fit stopped.
+    timeout: 25000
+- assertNotVisible: Measuring page fit…

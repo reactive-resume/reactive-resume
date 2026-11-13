@@ -1,279 +1,328 @@
-import type { Fact, Story } from "./hooks";
 import type { CareerStoryData } from "@reactive-resume/schema/career";
-import type { ComponentRef } from "react";
-import { plural, t } from "@lingui/core/macro";
-import { useLingui } from "@lingui/react/macro";
-import { useRef, useState } from "react";
-import { type TextInput, View } from "react-native";
-import Animated from "react-native-reanimated";
+import { t } from "@lingui/core/macro";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import { View } from "react-native";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
-import { storyDraftFactIds } from "@reactive-resume/schema/career-practice";
-import { client, prepareRpc, useCareerAction, useCareerQueries, useUndoRows } from "./hooks";
-import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
-import { StoryPracticeButton } from "./story-practice-button";
-import { orpc } from "@/api/client";
+import { generateId } from "@reactive-resume/utils/string";
+import { ResourceState, useCareerLeaveGuard } from "./shared";
+import { useApplications, useCareerActions, useCareerStories, useDataActions, useDataBackend } from "@/data";
 import {
-	Banner,
 	Button,
-	Card,
-	ChipInput,
-	EmptyState,
+	Dialog,
+	haptic,
+	Chip,
+	IconButton,
+	ListRow,
+	Menu,
+	MenuItem,
+	PageSubtitle,
+	PushScreen,
+	SectionHeading,
 	Text,
-	TextArea,
 	TextField,
-	listItemMotion,
-	listLayout,
-	useFirstAppearance,
-	useReducedMotion,
-	useTheme,
+	TextLink,
+	Touch,
+	showToast,
 } from "@/ui";
 
-const parts = () =>
-	(
-		[
-			{ key: "situation", label: t`Situation`, max: 4000 },
-			{ key: "task", label: t`Task`, max: 4000 },
-			{ key: "action", label: t`Action`, max: 6000 },
-			{ key: "result", label: t`Result`, max: 4000 },
-			{ key: "reflection", label: t`Reflection`, max: 4000 },
-		] as const
-	).map((part) => ({
-		...part,
-		required: !careerStoryInputSchema.shape[part.key].safeParse("").success,
-	}));
-export function Stories() {
-	const { t } = useLingui();
-	const { space } = useTheme();
-	const { stories, facts } = useCareerQueries();
-	const [editor, setEditor] = useState<{ story: Story | null } | null>(null);
-	const undo = useUndoRows();
-	const rows = (stories.data ?? []).filter((row) => !undo.hidden.includes(row.id));
-	const firstAppearance = useFirstAppearance(!stories.isPending);
-	const reduced = useReducedMotion();
+export function StoriesScreen() {
+	const query = useCareerStories();
+	const router = useRouter();
 	return (
-		<View style={{ gap: space.s4 }}>
-			<Text color="ink3">{t`Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank.`}</Text>
-			{rows.length || editor || stories.isPending || stories.isError ? (
-				<Button label={t`Add a story`} onPress={() => setEditor({ story: null })} />
-			) : null}
-			<LoadState query={stories} />
-			<LoadState query={facts} />
-			{!stories.isError && !stories.isPending && !rows.length && !editor ? (
-				<EmptyState
-					variant="card"
-					title={t`No stories yet`}
-					action={{ label: t`Add a story`, onPress: () => setEditor({ story: null }) }}
-					message={t`Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them.`}
-				/>
-			) : null}
-			{rows.map((story, index) => {
-				const changed = story.data.factIds.some((id) => {
-					const fact = facts.data?.find((row) => row.id === id);
-					const revision = fact?.revisions.at(-1);
-					return !fact || fact.status !== "active" || (revision && new Date(revision.at) > new Date(story.updatedAt));
-				});
-				return (
-					<Animated.View key={story.id} {...listItemMotion(index, firstAppearance, { reduced })} layout={listLayout}>
-						<Card style={{ gap: space.s3 }}>
-							<Text variant="title">{story.data.title}</Text>
-							{changed ? <Banner tone="warn" message={t`A fact changed. Review this story.`} /> : null}
-							{parts().map((part) => (
-								<View key={part.key}>
-									<Text variant="label">{part.label}</Text>
-									<Text>{story.data[part.key] || t`Not recorded yet. Leave blank until you can support it.`}</Text>
+		<PushScreen title={t`Stories`}>
+			<ResourceState pending={query.isPending} error={query.isError} retry={() => void query.refetch()}>
+				{query.data?.length ? (
+					query.data.map((s, i) => (
+						<ListRow
+							key={s.id}
+							title={s.data.title}
+							trailing="caret"
+							last={i === query.data.length - 1}
+							onPress={() => router.push(`/career/knowledge/stories/${s.id}`)}
+						/>
+					))
+				) : (
+					<View style={{ padding: 24 }}>
+						<Text variant="body">{t`No stories yet`}</Text>
+					</View>
+				)}
+			</ResourceState>
+		</PushScreen>
+	);
+}
+const parts = ["situation", "task", "action", "result", "reflection"] as const;
+type Part = (typeof parts)[number];
+export function StoryScreen() {
+	const applications = useApplications();
+	const router = useRouter();
+	const { id } = useLocalSearchParams<{ id: string }>();
+	const query = useCareerStories();
+	const actions = useDataActions();
+	const careerActions = useCareerActions();
+	const [deleting, setDeleting] = useState(false);
+	const { backend } = useDataBackend();
+	const row = query.data?.find((s) => s.id === id);
+	const [draft, setDraft] = useState<CareerStoryData | null>(null);
+	const [editing, setEditing] = useState<Part | "tags" | null>(null);
+	const [menu, setMenu] = useState(false);
+	const [failed, setFailed] = useState(false);
+	const [saving, setSaving] = useState(false);
+	const data = draft ?? row?.data;
+	const guard = useCareerLeaveGuard(draft !== null && JSON.stringify(draft) !== JSON.stringify(row?.data));
+	const names = {
+		situation: t`Situation`,
+		task: t`Task`,
+		action: t`What I did`,
+		result: t`Result`,
+		reflection: t`Reflection`,
+	};
+	const save = async () => {
+		if (!draft || saving) return;
+		const parsed = careerStoryInputSchema.safeParse(draft);
+		if (!parsed.success) {
+			setFailed(true);
+			return;
+		}
+		setSaving(true);
+		try {
+			await actions.write("stories-and-facts", "career.saveStory", { ...parsed.data, id });
+			setEditing(null);
+			setDraft(null);
+			setFailed(false);
+		} catch {
+			setFailed(true);
+		} finally {
+			setSaving(false);
+		}
+	};
+	return (
+		<PushScreen
+			title={data?.title}
+			subtitle={
+				backend.kind === "fake" ? <PageSubtitle status>{t`Used in 2 interview briefings`}</PageSubtitle> : undefined
+			}
+			barEnd={
+				editing ? (
+					<Button label={t`Done`} tone="accentGhost" disabled={saving} onPress={() => void save()} />
+				) : (
+					<IconButton icon="dots-three" label={t`More`} onPress={() => setMenu(true)} />
+				)
+			}
+			overlay={
+				<>
+					{guard.confirmation}
+					<Dialog
+						open={deleting}
+						onClose={() => setDeleting(false)}
+						title={t`Delete 1 story permanently?`}
+						message={t`It can't be restored.`}
+						actions={[
+							{
+								label: t`Delete permanently`,
+								tone: "danger",
+								onPress: () => {
+									void careerActions
+										.deleteStory({ id })
+										.then(() => {
+											haptic("warning");
+											guard.allowLeave();
+											router.back();
+										})
+										.catch(() => setFailed(true));
+								},
+							},
+							{ label: t`Cancel`, tone: "secondary", onPress: () => setDeleting(false) },
+						]}
+					/>
+					<Menu open={menu} onClose={() => setMenu(false)} anchor={{ x: 334, y: 53, width: 44, height: 44 }}>
+						<MenuItem
+							label={t`Practice this story`}
+							onPress={() => {
+								setMenu(false);
+								// W4 with this story's one question, on the application you're most likely interviewing for.
+								const target =
+									applications.data?.find((app) => app.status === "interview") ??
+									applications.data?.find((app) => app.status !== "closed");
+								if (target) router.push(`/applications/${target.id}/practise?story=${id}`);
+								else showToast({ message: t`Save a job to practise for it.` });
+							}}
+						/>
+						<MenuItem
+							label={t`Duplicate`}
+							onPress={() => {
+								setMenu(false);
+								if (data)
+									void actions
+										.write("stories-and-facts", "career.saveStory", { ...data, title: t`${data.title} (copy)` })
+										.catch(() => setFailed(true));
+							}}
+						/>
+						<MenuItem
+							label={t`Delete`}
+							onPress={() => {
+								setMenu(false);
+								setDeleting(true);
+							}}
+						/>
+					</Menu>
+				</>
+			}
+		>
+			<ResourceState pending={query.isPending} error={query.isError} retry={() => void query.refetch()}>
+				{!data ? (
+					<View style={{ padding: 24 }}>
+						<Text variant="body">{t`This story is unavailable or uses facts that are switched off.`}</Text>
+					</View>
+				) : (
+					<>
+						{failed ? (
+							<View style={{ padding: 24 }}>
+								<Text
+									variant="body"
+									color="dangerText"
+								>{t`Couldn't save your story. Your edits are kept on this device. Try again.`}</Text>
+								<Button label={t`Retry`} onPress={() => void save()} />
+							</View>
+						) : null}
+						{parts.map((part) => (
+							<View key={part}>
+								<SectionHeading title={names[part]} />
+								<View
+									style={{
+										paddingHorizontal: 24,
+										paddingTop: editing === part || data[part] ? 4 : 12,
+										paddingBottom: editing === part || data[part] ? 0 : 12,
+									}}
+								>
+									{editing === part ? (
+										<TextField
+											accessibilityLabel={names[part]}
+											multiline
+											forceFocus
+											autoFocus
+											value={data[part]}
+											onChangeText={(value) => setDraft({ ...data, [part]: value })}
+											maxLength={part === "action" ? 6000 : 4000}
+										/>
+									) : data[part] ? (
+										<Touch
+											onPress={() => {
+												setDraft(data);
+												setEditing(part);
+											}}
+											accessibilityLabel={data[part]}
+											accessibilityHint={t`Edit ${names[part]}`}
+										>
+											<Text variant="prose">{data[part]}</Text>
+										</Touch>
+									) : (
+										<TextLink
+											label={part === "reflection" ? t`Add what you'd do differently` : t`Add ${names[part]}`}
+											icon="plus"
+											onPress={() => {
+												setDraft(data);
+												setEditing(part);
+											}}
+										/>
+									)}
 								</View>
-							))}
-							<Text variant="label">{t`Backed by`}</Text>
-							{story.data.factIds.map((id) => (
-								<Text key={id} color="ink2">
-									{facts.data?.find((row) => row.id === id)?.text ?? t`Fact no longer available`}
-								</Text>
-							))}
-							<Text color="ink3">{story.data.tags.join(" · ")}</Text>
-							<StoryPracticeButton story={story} />
-							<Actions>
-								<Button label={t`Edit`} variant="secondary" onPress={() => setEditor({ story })} />
-								<Button
-									label={t`Delete story`}
-									variant="ghost"
-									onPress={() =>
-										undo.remove(
-											story.id,
-											t`Story deleted`,
-											() => prepareRpc(client.career.deleteStory, { id: story.id }),
-											orpc.career.stories.key(),
-										)
+							</View>
+						))}
+						<View style={{ paddingHorizontal: 24, paddingTop: 20, flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+							{editing === "tags" ? (
+								<TextField
+									label={t`Tags, separated by commas`}
+									value={data.tags.join(", ")}
+									onChangeText={(value) =>
+										setDraft({
+											...data,
+											tags: value
+												.split(",")
+												.map((v) => v.trim())
+												.filter(Boolean),
+										})
 									}
 								/>
-							</Actions>
-						</Card>
-					</Animated.View>
-				);
-			})}
-			{editor && facts.data ? (
-				<StoryEditor
-					key={editor.story?.id ?? "new"}
-					story={editor.story}
-					facts={facts.data}
-					onClose={() => setEditor(null)}
-				/>
-			) : null}
-		</View>
+							) : (
+								data.tags.map((tag) => (
+									<Chip
+										key={tag}
+										label={tag}
+										onPress={() => {
+											setDraft(data);
+											setEditing("tags");
+										}}
+									/>
+								))
+							)}
+						</View>
+					</>
+				)}
+			</ResourceState>
+		</PushScreen>
 	);
 }
 
-type StoryEditorProps = {
-	story: Story | null;
-	facts: Fact[];
-	onClose: () => void;
-	/**
-	 * A coach's proposal opened with Edit first: its parts and scope start the draft, edits are handed back as they're
-	 * typed (so closing keeps them for the review card), and `onSaved` follows a successful save.
-	 */
-	proposal?: { story: CareerStoryData; onChange: (story: CareerStoryData) => void; onSaved: () => void };
-	/** A new story from an interview plan's "Draft story" step: its title, and the step's detail shown as a note. */
-	start?: { title: string; note: string; factIds?: string[] | undefined } | undefined;
-};
-export function StoryEditor({ story, facts, onClose, proposal, start }: StoryEditorProps) {
-	const { t } = useLingui();
-	const { space } = useTheme();
-	const [draft, setDraft] = useState<CareerStoryData>(
-		() =>
-			proposal?.story ??
-			story?.data ?? {
-				applicationId: null,
-				title: start?.title ?? "",
-				situation: "",
-				task: "",
-				action: "",
-				result: "",
-				reflection: "",
-				factIds: start ? storyDraftFactIds({ detail: start.note, factIds: start.factIds }, facts) : [],
-				tags: [],
-			},
-	);
-	const action = useCareerAction();
-	const [tried, setTried] = useState(false);
-	const inputs = useRef<
-		Partial<Record<"title" | ReturnType<typeof parts>[number]["key"], ComponentRef<typeof TextInput> | null>>
-	>({});
-	const available = facts.filter(
-		(fact) => fact.status === "active" && (!fact.applicationId || fact.applicationId === draft.applicationId),
-	);
-	const change = (patch: Partial<CareerStoryData>) =>
-		setDraft((current) => {
-			const next = { ...current, ...patch };
-			proposal?.onChange(next);
-			return next;
-		});
-	// Proposed facts this scope can't use: they won't back the story, and the server would refuse them.
-	const unavailable = draft.factIds.filter((id) => !available.some((fact) => fact.id === id));
-	const payload = { ...draft, factIds: draft.factIds.filter((id) => available.some((fact) => fact.id === id)) };
-	const valid = careerStoryInputSchema.safeParse(payload).success;
-	const missingTitle = !draft.title.trim();
-	const missingParts = parts().filter((part) => part.required && !draft[part.key].trim());
-	const firstMissing = missingTitle ? "title" : missingParts[0]?.key;
-	const dirty =
-		JSON.stringify(draft) !==
-		JSON.stringify(
-			story?.data ?? {
-				applicationId: null,
-				title: start?.title ?? "",
-				situation: "",
-				task: "",
-				action: "",
-				result: "",
-				reflection: "",
-				factIds: start ? storyDraftFactIds({ detail: start.note, factIds: start.factIds }, facts) : [],
-				tags: [],
-			},
-		);
+/** W3's missing-story link starts locally; nothing is stored until the complete story validates. */
+export function NewStoryScreen() {
+	const router = useRouter();
+	const actions = useDataActions();
+	const [id] = useState(() => generateId());
+	const [draft, setDraft] = useState({ title: "", situation: "", task: "", action: "", result: "", reflection: "" });
+	const [saving, setSaving] = useState(false);
+	const [failed, setFailed] = useState(false);
+	const guard = useCareerLeaveGuard(Object.values(draft).some(Boolean));
+	const labels = {
+		title: t`Title`,
+		situation: t`Situation`,
+		task: t`Task`,
+		action: t`What I did`,
+		result: t`Result`,
+		reflection: t`Reflection`,
+	};
+	const save = async () => {
+		const parsed = careerStoryInputSchema.safeParse(draft);
+		if (!parsed.success) {
+			setFailed(true);
+			return;
+		}
+		if (saving) return;
+		setSaving(true);
+		setFailed(false);
+		try {
+			await actions.write("stories-and-facts", "career.saveStory", { ...parsed.data, id });
+			guard.allowLeave();
+			router.replace(`/career/knowledge/stories/${id}`);
+		} catch {
+			setFailed(true);
+		} finally {
+			setSaving(false);
+		}
+	};
 	return (
-		<EditorSheet
-			// A proposal's edits are kept for its review card, so closing never discards them.
-			dirty={proposal ? false : dirty}
-			pending={action.pending}
-			onClose={onClose}
-			title={proposal ? t`Edit the proposed story` : story ? t`Edit STARR story` : t`New STARR story`}
+		<PushScreen
+			title={t`New story`}
+			overlay={guard.confirmation}
+			barEnd={<Button label={t`Save`} disabled={saving} onPress={() => void save()} />}
 		>
-			<View style={{ padding: space.s4, gap: space.s4 }}>
-				{start?.note ? <Banner tone="info" message={t`From your interview plan: ${start.note}`} /> : null}
-				<Text color="ink3">{t`Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them.`}</Text>
-				<TextField
-					label={t`Title`}
-					ref={(input) => {
-						inputs.current.title = input;
-					}}
-					value={draft.title}
-					maxLength={200}
-					error={tried && missingTitle ? t`Give the story a title before you can save.` : undefined}
-					onChangeText={(title) => change({ title })}
-				/>
-				<ChipInput label={t`Tags`} values={draft.tags} onChange={(tags) => change({ tags })} />
-				{parts().map((part) => (
-					<TextArea
-						key={part.key}
-						label={part.required ? part.label : `${part.label} ${t`(optional)`}`}
-						// The visible label marks only optional parts; a screen reader still hears which are required.
-						{...(part.required ? { accessibilityLabel: `${part.label} ${t`(required)`}` } : {})}
-						ref={(input) => {
-							inputs.current[part.key] = input;
-						}}
-						error={
-							tried && missingParts.some((missing) => missing.key === part.key)
-								? t`Complete ${part.label} before saving.`
-								: undefined
-						}
-						value={draft[part.key]}
-						maxLength={part.max}
-						onChangeText={(value) => change({ [part.key]: value })}
+			<View style={{ padding: 24, gap: 20 }}>
+				{(Object.keys(labels) as (keyof typeof draft)[]).map((key) => (
+					<TextField
+						key={key}
+						label={labels[key]}
+						value={draft[key]}
+						multiline={key !== "title"}
+						onChangeText={(value) => setDraft((current) => ({ ...current, [key]: value }))}
 					/>
 				))}
-				<Text variant="label">{t`Backed by`}</Text>
-				<Text color="ink3">{t`Only enabled facts can back a story. Leave unsupported outcomes blank.`}</Text>
-				{available.map((fact) => (
-					<SwitchRow
-						key={fact.id}
-						label={fact.text}
-						value={draft.factIds.includes(fact.id)}
-						onValueChange={(enabled) =>
-							change({ factIds: enabled ? [...draft.factIds, fact.id] : draft.factIds.filter((id) => id !== fact.id) })
-						}
-					/>
-				))}
-				{/* The coach and Practice send only backed stories: say so before saving one without a fact. */}
-				{payload.factIds.length === 0 ? (
-					<Banner tone="warn" message={t`Without a fact, the coach and practice can't use this story.`} />
+				{failed ? (
+					<Text
+						variant="body"
+						color="dangerText"
+					>{t`Couldn't save your story. Check its title, situation, task and action, then try again. Your edits are kept here.`}</Text>
 				) : null}
-				{unavailable.length > 0 ? (
-					<Banner
-						tone="warn"
-						message={plural(unavailable.length, {
-							one: "# proposed fact isn't available here and won't back the story.",
-							other: "# proposed facts aren't available here and won't back the story.",
-						})}
-					/>
-				) : null}
-				{action.error ? <Banner tone="danger" message={action.error} /> : null}
-				<Button
-					label={t`Save story`}
-					loading={action.pending}
-					disabled={!valid && !firstMissing}
-					onPress={() => {
-						setTried(true);
-						if (!valid) {
-							if (firstMissing) {
-								requestAnimationFrame(() => inputs.current[firstMissing]?.focus());
-							}
-							return;
-						}
-						void action.run(
-							() => client.career.saveStory({ ...payload, ...(story ? { id: story.id } : {}) }),
-							proposal ? proposal.onSaved : onClose,
-						);
-					}}
-				/>
 			</View>
-		</EditorSheet>
+		</PushScreen>
 	);
 }

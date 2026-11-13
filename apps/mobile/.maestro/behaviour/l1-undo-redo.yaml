@@ -1,0 +1,20 @@
+# L1 · Undo in the status line reverts the last edit to the letter; Redo restores it.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/L1-Letter?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- tapOn: ".*Your posting asks for.*"
+- tapOn: Letter paragraph 1
+- inputText: " New wording."
+- hideKeyboard
+- tapOn:
+    id: status-undo
+- assertNotVisible: ".*New wording.*"
+- tapOn:
+    id: status-redo
+- assertVisible: ".*New wording.*"

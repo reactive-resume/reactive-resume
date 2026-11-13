@@ -114,6 +114,10 @@ export function createApp(options: AppOptions = {}) {
 				);
 			},
 		});
+	// Preview renders carry a whole document as JSON; under Vercel's 4.5 MB function body ceiling. A larger body (an
+	// embedded data-URI picture) gets 413 and the app shows the saved server PDF instead.
+	app.use("/api/openapi/resumes/pdf-renders", limitBody(4 * 1024 * 1024));
+	app.use("/api/openapi/cover-letters/pdf-renders", limitBody(4 * 1024 * 1024));
 	app.use("/api/openapi/*", limitBody(40 * 1024 * 1024));
 	// Hono's `/x/*` also matches `/x`, so each wildcard below covers its base path too.
 	app.use("/api/rpc/*", limitBody(160 * 1024 * 1024));

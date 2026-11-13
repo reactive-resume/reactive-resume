@@ -1,0 +1,36 @@
+# A3 · Backup code switches to one text field; five wrong codes then say "Too many attempts".
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/A1-Welcome?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- openLink: me.rxresu.storyboard://two-step
+- tapOn: Use a backup code instead
+- waitForAnimationToEnd
+- assertVisible: Backup code
+- assertVisible: Enter one of your saved backup codes.
+- assertNotVisible:
+    id: two-step-code
+- tapOn: Use the authenticator app instead
+- waitForAnimationToEnd
+- assertVisible:
+    id: two-step-code
+- repeat:
+    times: 5
+    commands:
+      - tapOn:
+          id: two-step-code
+      - inputText: "000000"
+      - extendedWaitUntil:
+          visible: "That code doesn't match. Check it and try again."
+          timeout: 5000
+- tapOn:
+    id: two-step-code
+- inputText: "123456"
+- extendedWaitUntil:
+    visible: Too many attempts. Wait a moment, then try again.
+    timeout: 5000

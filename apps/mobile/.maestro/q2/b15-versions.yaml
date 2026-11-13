@@ -1,0 +1,27 @@
+# B15 · A version opens the full-screen preview with "Restore this version" and "Back to now"; Name this version names
+# the current state.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B15-Versions?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: Editing session
+- extendedWaitUntil:
+    visible: Restore this version
+    timeout: 10000
+- assertVisible: Back to now
+- tapOn: Back to now
+- extendedWaitUntil:
+    visible: Name this version
+    timeout: 10000
+- tapOn: Name this version
+- inputText: Before Lumen
+- tapOn: Save
+- extendedWaitUntil:
+    visible: Before Lumen
+    timeout: 10000

@@ -1,0 +1,76 @@
+# B1 · The page opens the preview (B18); a section opens its screen (B2), Basics opens B5; long-press a section offers
+# Move up, Move down, Hide from page and Rename, and Hide dims it with "Not on the page"; sparkle opens the assistant
+# (B16) and ··· the document menu (B19).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B1-Overview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- assertVisible: "Saved · 1 page · Public"
+- tapOn:
+    id: page-band
+- extendedWaitUntil:
+    visible: Page 1 of 1
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- tapOn: Experience
+- extendedWaitUntil:
+    visible: Add experience
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- tapOn: Basics
+- extendedWaitUntil:
+    visible: Full name
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- longPressOn: Experience
+- assertVisible: Move up
+- assertVisible: Move down
+- assertVisible: Rename section
+- tapOn: Hide from page
+# Rows don't expose their second line to accessibility; the hidden state shows as the menu's "Show on page".
+- longPressOn: Experience
+- tapOn: Show on page
+- longPressOn: Experience
+- assertVisible: Hide from page
+- tapOn: Move up
+- longPressOn: Experience
+- tapOn: Rename section
+- assertVisible: Leave it empty to use the original title.
+- inputText: Work
+- tapOn: Rename
+- assertVisible: Work
+- tapOn: Assistant
+- extendedWaitUntil:
+    visible: "Ask about this resume…"
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- tapOn: More
+- extendedWaitUntil:
+    visible: Duplicate
+    timeout: 10000
+- assertVisible: "Translate into…"
+- assertVisible: "Copy for a job…"
+- assertVisible: Lock editing
+- assertVisible: Move to trash

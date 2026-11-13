@@ -1,0 +1,41 @@
+# B6 · Template and Colour open B7; Layout opens B8.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B6-Design?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: Template
+- extendedWaitUntil:
+    visible: Filter templates
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Typography
+    timeout: 10000
+- tapOn: Colour
+- extendedWaitUntil:
+    visible: Filter templates
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Typography
+    timeout: 10000
+- scrollUntilVisible:
+    element: Reset design defaults
+    direction: DOWN
+- tapOn: Layout
+- extendedWaitUntil:
+    visible: Fit to one page
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Typography
+    timeout: 10000

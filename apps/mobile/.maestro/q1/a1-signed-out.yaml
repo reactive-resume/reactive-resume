@@ -1,0 +1,44 @@
+# A1 · Signed out, the app opens A1; a link opened before sign-in is kept and opened after it.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S1-Settings?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- tapOn:
+    id: settings-sign-out
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Your resume, from first draft to the offer.
+    timeout: 10000
+- openLink: me.rxresu.storyboard://trash
+- extendedWaitUntil:
+    visible: Your resume, from first draft to the offer.
+    timeout: 10000
+- openLink: me.rxresu.storyboard://sign-in
+- waitForAnimationToEnd
+- tapOn:
+    id: sign-in-email
+- waitForAnimationToEnd
+- inputText: alex@morgan.design
+- tapOn:
+    id: sign-in-password
+- waitForAnimationToEnd
+- inputText: storyboard
+- tapOn:
+    id: sign-in-submit
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: Save Password?
+    commands:
+      - tapOn: Not Now
+- tapOn:
+    id: two-step-code
+- inputText: "123456"
+- extendedWaitUntil:
+    visible: Documents go after 30 days; applications stay until you delete them.
+    timeout: 10000

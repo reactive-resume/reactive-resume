@@ -1,0 +1,32 @@
+# C3 · Search stays at the top of the list; "No facts match. Try another word or type." when nothing matches.
+# Empty: "No facts yet" with Add a fact and Pull facts from my resume.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C3-AllFacts?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Led the onboarding redesign at Northwind Labs
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn:
+    id: facts-search
+- inputText: onboarding
+- assertVisible: Led the onboarding redesign at Northwind Labs
+- assertNotVisible: Design systems used by six teams
+- inputText: zzz
+- assertVisible: No facts match\. Try another word or type\.
+- openLink: me.rxresu.storyboard://storyboard/C3-Empty?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: No facts yet
+    timeout: 20000
+- assertVisible: Add a fact
+- assertVisible: Pull facts from my resume

@@ -1,0 +1,45 @@
+# S3 · Timezone: the row opens a search list with "Use the phone's timezone" first; choosing a zone saves it and the
+# row shows it; the phone's timezone switches back to automatic; a failed save says so and stays on the list.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S3-Preferences?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- assertVisible: "Timezone, Berlin · automatic"
+- tapOn: "Timezone, .*"
+- waitForAnimationToEnd
+- assertVisible: Use the phone's timezone
+- tapOn:
+    id: timezone-search
+- inputText: lisbon
+- pressKey: Enter
+- waitForAnimationToEnd
+- tapOn:
+    text: Lisbon
+    below: Use the phone's timezone
+- waitForAnimationToEnd
+- assertVisible: Preferences
+- assertVisible: "Timezone, Lisbon"
+- tapOn: "Timezone, .*"
+- waitForAnimationToEnd
+# The list starts at A; search for the chosen zone to see it marked.
+- tapOn:
+    id: timezone-search
+- inputText: lisbon
+- assertVisible:
+    text: Lisbon
+    below: Use the phone's timezone
+    selected: true
+- tapOn: Use the phone's timezone
+- waitForAnimationToEnd
+- assertVisible: "Timezone, Berlin · automatic"
+- openLink: me.rxresu.storyboard://settings/timezone?state=save-error
+- waitForAnimationToEnd
+- tapOn: Use the phone's timezone
+- waitForAnimationToEnd
+- assertVisible: Couldn't save the timezone. Try again.
+- assertVisible: Use the phone's timezone

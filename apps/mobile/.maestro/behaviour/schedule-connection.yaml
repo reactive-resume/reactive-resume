@@ -1,0 +1,22 @@
+# Only fake storyboard data. Reopen the real route, not the scenario: re-seeding would approve the new connection.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C7-Schedule?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- assertNotVisible:
+    id: schedule-paused
+- openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
+- tapOn: API key
+- inputText: storyboard-replacement-key
+- hideKeyboard
+- tapOn:
+    id: provider-save
+- openLink: me.rxresu.storyboard://career/schedules/discovery
+- assertVisible:
+    id: schedule-paused
+- assertVisible: Review and resume

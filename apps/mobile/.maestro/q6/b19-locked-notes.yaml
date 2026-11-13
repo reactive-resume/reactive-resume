@@ -1,0 +1,29 @@
+# B19 · Locked, typing in Notes says "This resume is locked. Unlock it to make changes."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B1-Overview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: More
+- extendedWaitUntil:
+    visible: Lock editing
+    timeout: 10000
+- tapOn: Lock editing
+- extendedWaitUntil:
+    visible: Unlock editing
+    timeout: 10000
+- tapOn: Notes
+- extendedWaitUntil:
+    visible: Notes, locked
+    timeout: 10000
+- tapOn:
+    text: Notes, locked
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: This resume is locked. Unlock it to make changes.
+    timeout: 5000

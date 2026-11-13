@@ -1,0 +1,28 @@
+# B6 · Locked, the design rows show their values but don't open.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B6-Design?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: More
+- extendedWaitUntil:
+    visible: Lock editing
+    timeout: 10000
+- tapOn: Lock editing
+- extendedWaitUntil:
+    visible: Unlock editing
+    timeout: 10000
+- tapOn: Close
+- waitForAnimationToEnd
+- assertVisible: Onyx
+- tapOn: Template
+- waitForAnimationToEnd
+- assertNotVisible: Filter templates
+- tapOn: Typography
+- waitForAnimationToEnd
+- assertNotVisible: Font pairing

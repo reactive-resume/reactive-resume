@@ -1,0 +1,26 @@
+# Applied means sent: swiping a Saved row toward the end (its next stage is Applied) opens "What did you send?";
+# closing it changes nothing. The flow-only scenario has Kiln Studio Saved.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J1-KilnSaved?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- scrollUntilVisible:
+    element: Kiln Studio
+# Calibrated on the iPhone 14 (390 × 844): with the list scrolled to its end, Kiln's row sits at 84%. A swipe from
+# the row's centre (Maestro's `from`) is too short to arm the action.
+- swipe:
+    start: 15%, 84%
+    end: 85%, 84%
+    duration: 600
+- assertVisible: What did you send?
+- tapOn: Close
+- assertNotVisible: What did you send?
+- assertVisible: Saved
+- tapOn: Kiln Studio
+- scrollUntilVisible:
+    element: "Stage, Saved"

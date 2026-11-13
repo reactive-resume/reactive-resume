@@ -145529,6 +145529,878 @@
 				]
 			}
 		},
+		"/resumes/pdf-renders": {
+			"post": {
+				"operationId": "createResumePdfRender",
+				"summary": "Render resume data as a PDF",
+				"description": "Renders the resume data in the request body, saved or not, and returns the PDF. Nothing is stored. Pictures are read with the same rules as exports. Request bodies are limited to 4 MiB. Requires authentication.",
+				"tags": [
+					"Resumes"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"data": {
+										"$ref": "#/components/schemas/ResumeData"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "The rendered resume PDF.",
+						"headers": {
+							"content-disposition": {
+								"schema": {
+									"type": "string"
+								},
+								"required": true
+							}
+						},
+						"content": {
+							"application/pdf": {
+								"schema": {
+									"type": "string",
+									"contentMediaType": "application/pdf"
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/pdf-renders\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
+				]
+			}
+		},
+		"/cover-letters/pdf-renders": {
+			"post": {
+				"operationId": "createCoverLetterPdfRender",
+				"summary": "Render cover letter data as a PDF",
+				"description": "Renders the cover letter in the request body, saved or not, with the same composition as its export, and returns the PDF. Linked sender details and design are taken as sent in `style`. Structured letter greetings default to English; pass `words` to localize them. Nothing is stored. Request bodies are limited to 4 MiB. Requires authentication.",
+				"tags": [
+					"Cover Letters"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"letter": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 100
+											},
+											"recipient": {
+												"type": "string",
+												"maxLength": 20000
+											},
+											"content": {
+												"type": "string",
+												"maxLength": 100000
+											},
+											"greeting": {
+												"anyOf": [
+													{
+														"type": "string",
+														"maxLength": 2000
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null,
+												"description": "Custom greeting; null uses the document language default, empty omits it."
+											},
+											"signOff": {
+												"anyOf": [
+													{
+														"type": "string",
+														"maxLength": 2000
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null,
+												"description": "Custom signature including name and optional contact details; null uses the document language default with the sender's name, empty omits it."
+											},
+											"style": {
+												"type": "object",
+												"properties": {
+													"basics": {
+														"type": "object",
+														"properties": {
+															"name": {
+																"type": "string",
+																"description": "The full name of the author of the resume."
+															},
+															"headline": {
+																"type": "string",
+																"description": "The headline of the author of the resume."
+															},
+															"email": {
+																"type": "string",
+																"description": "The email address of the author of the resume."
+															},
+															"phone": {
+																"type": "string",
+																"description": "The phone number of the author of the resume."
+															},
+															"location": {
+																"type": "string",
+																"description": "The location of the author of the resume."
+															},
+															"website": {
+																"type": "object",
+																"properties": {
+																	"url": {
+																		"type": "string",
+																		"description": "The URL to show as a link. Must be a valid URL with a protocol (http:// or https://)."
+																	},
+																	"label": {
+																		"type": "string",
+																		"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																	}
+																},
+																"required": [
+																	"url",
+																	"label"
+																],
+																"description": "The website of the author of the resume."
+															},
+															"customFields": {
+																"type": "array",
+																"items": {
+																	"type": "object",
+																	"properties": {
+																		"id": {
+																			"type": "string",
+																			"description": "The unique identifier for the custom field. Usually generated as a UUID."
+																		},
+																		"icon": {
+																			"type": "string",
+																			"description": "The icon to display for the custom field. Must be a valid icon name from @phosphor-icons/web icon set, or an empty string to hide. Default to '' (empty string) when unsure which icons are available."
+																		},
+																		"text": {
+																			"type": "string",
+																			"description": "The text to display for the custom field."
+																		},
+																		"link": {
+																			"type": "string",
+																			"description": "If the custom field should be a link, the URL to link to."
+																		}
+																	},
+																	"required": [
+																		"id",
+																		"icon",
+																		"text",
+																		"link"
+																	]
+																},
+																"description": "The custom fields to display on the resume."
+															}
+														},
+														"required": [
+															"name",
+															"headline",
+															"email",
+															"phone",
+															"location",
+															"website",
+															"customFields"
+														]
+													},
+													"picture": {
+														"type": "object",
+														"properties": {
+															"hidden": {
+																"type": "boolean",
+																"description": "Whether to hide the picture from the resume."
+															},
+															"fit": {
+																"enum": [
+																	"cover",
+																	"contain"
+																],
+																"type": "string",
+																"description": "How the picture fits its frame: cover crops overflow, while contain preserves the whole image."
+															},
+															"url": {
+																"type": "string",
+																"description": "The URL to the picture to display on the resume. Prefer local app-served paths (for example /uploads/...) populated via upload."
+															},
+															"size": {
+																"type": "number",
+																"minimum": 32,
+																"maximum": 512,
+																"description": "The size of the picture to display on the resume, defined in points (pt)."
+															},
+															"rotation": {
+																"type": "number",
+																"minimum": 0,
+																"maximum": 360,
+																"description": "The rotation of the picture to display on the resume, defined in degrees (°)."
+															},
+															"aspectRatio": {
+																"type": "number",
+																"minimum": 0.5,
+																"maximum": 2.5,
+																"description": "The aspect ratio of the picture to display on the resume, defined as width / height (e.g. 1.5 for 1.5:1 or 0.5 for 1:2)."
+															},
+															"borderRadius": {
+																"type": "number",
+																"minimum": 0,
+																"maximum": 100,
+																"description": "The border radius of the picture to display on the resume, defined in points (pt)."
+															},
+															"borderColor": {
+																"type": "string",
+																"description": "The color of the border of the picture to display on the resume, defined as rgba(r, g, b, a)."
+															},
+															"borderWidth": {
+																"type": "number",
+																"minimum": 0,
+																"description": "The width of the border of the picture to display on the resume, defined in points (pt)."
+															},
+															"shadowColor": {
+																"type": "string",
+																"description": "The color of the shadow of the picture to display on the resume, defined as rgba(r, g, b, a)."
+															},
+															"shadowWidth": {
+																"type": "number",
+																"minimum": 0,
+																"description": "The width of the shadow of the picture to display on the resume, defined in points (pt)."
+															}
+														},
+														"required": [
+															"hidden",
+															"fit",
+															"url",
+															"size",
+															"rotation",
+															"aspectRatio",
+															"borderRadius",
+															"borderColor",
+															"borderWidth",
+															"shadowColor",
+															"shadowWidth"
+														]
+													},
+													"metadata": {
+														"type": "object",
+														"properties": {
+															"template": {
+																"enum": [
+																	"azurill",
+																	"bronzor",
+																	"chikorita",
+																	"ditgar",
+																	"ditto",
+																	"gengar",
+																	"glalie",
+																	"kakuna",
+																	"lapras",
+																	"leafish",
+																	"meowth",
+																	"onyx",
+																	"persian",
+																	"pikachu",
+																	"porygon",
+																	"rhyhorn",
+																	"scizor",
+																	"smeargle"
+																],
+																"type": "string",
+																"description": "The template to use for the resume. Determines the overall design and appearance of the resume."
+															},
+															"page": {
+																"type": "object",
+																"properties": {
+																	"gapX": {
+																		"type": "number",
+																		"minimum": 0,
+																		"description": "The horizontal gap between the sections of the page, defined in points (pt)."
+																	},
+																	"gapY": {
+																		"type": "number",
+																		"minimum": 0,
+																		"description": "The vertical gap between the sections of the page, defined in points (pt)."
+																	},
+																	"marginX": {
+																		"type": "number",
+																		"minimum": 0,
+																		"maximum": 100,
+																		"description": "The horizontal margin of the page, defined in points (pt)."
+																	},
+																	"marginY": {
+																		"type": "number",
+																		"minimum": 0,
+																		"maximum": 100,
+																		"description": "The vertical margin of the page, defined in points (pt)."
+																	},
+																	"format": {
+																		"enum": [
+																			"a4",
+																			"letter",
+																			"free-form"
+																		],
+																		"type": "string",
+																		"description": "The format of the page. Can be 'a4', 'letter', or 'free-form'."
+																	},
+																	"locale": {
+																		"type": "string",
+																		"description": "The locale of the page. Used for displaying pre-translated section headings, if not overridden."
+																	},
+																	"dateFormat": {
+																		"enum": [
+																			"short",
+																			"long",
+																			"numeric",
+																			"iso"
+																		],
+																		"type": "string",
+																		"description": "How dates print: 'short' (Mar 2022), 'long' (March 2022), 'numeric' (03/2022) or 'iso' (2022-03). When missing, it's read from how the dates were typed."
+																	},
+																	"hideLinkUnderline": {
+																		"type": "boolean",
+																		"description": "Whether to hide the underlines of the links."
+																	},
+																	"hideIcons": {
+																		"type": "boolean",
+																		"description": "Whether to hide the item-level icons (skills, profiles, interests)."
+																	},
+																	"hideSectionIcons": {
+																		"type": "boolean",
+																		"description": "Whether to hide the section heading icons displayed before section titles."
+																	}
+																},
+																"required": [
+																	"gapX",
+																	"gapY",
+																	"marginX",
+																	"marginY",
+																	"format",
+																	"locale",
+																	"hideLinkUnderline",
+																	"hideIcons",
+																	"hideSectionIcons"
+																],
+																"description": "The page settings of the resume. Determines the margins, format, and locale of the resume."
+															},
+															"design": {
+																"type": "object",
+																"properties": {
+																	"level": {
+																		"type": "object",
+																		"properties": {
+																			"icon": {
+																				"type": "string",
+																				"description": "The icon to display for the custom field. Must be a valid icon name from @phosphor-icons/web icon set, or an empty string to hide. Default to '' (empty string) when unsure which icons are available."
+																			},
+																			"type": {
+																				"enum": [
+																					"hidden",
+																					"circle",
+																					"square",
+																					"rectangle",
+																					"rectangle-full",
+																					"progress-bar",
+																					"icon"
+																				],
+																				"type": "string",
+																				"description": "The type of the level design. 'hidden' will hide the level design, 'circle' will display a circle, 'square' will display a square, 'rectangle' will display a rectangle, 'rectangle-full' will display a full rectangle, 'progress-bar' will display a progress bar, and 'icon' will display an icon. If 'icon' is selected, the icon to display should be specified in the 'icon' field."
+																			}
+																		},
+																		"required": [
+																			"icon",
+																			"type"
+																		]
+																	},
+																	"colors": {
+																		"type": "object",
+																		"properties": {
+																			"primary": {
+																				"type": "string",
+																				"description": "The primary color of the design, defined as rgba(r, g, b, a)."
+																			},
+																			"text": {
+																				"type": "string",
+																				"description": "The text color of the design, defined as rgba(r, g, b, a). Usually set to black: rgba(0, 0, 0, 1)."
+																			},
+																			"background": {
+																				"type": "string",
+																				"description": "The background color of the design, defined as rgba(r, g, b, a). Usually set to white: rgba(255, 255, 255, 1)."
+																			}
+																		},
+																		"required": [
+																			"primary",
+																			"text",
+																			"background"
+																		]
+																	},
+																	"entry": {
+																		"type": "object",
+																		"properties": {
+																			"layout": {
+																				"enum": [
+																					"stacked",
+																					"inline",
+																					"compact",
+																					"date-column",
+																					"eyebrow"
+																				],
+																				"type": "string",
+																				"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																			},
+																			"lead": {
+																				"enum": [
+																					"organization",
+																					"role"
+																				],
+																				"type": "string",
+																				"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																			},
+																			"accent": {
+																				"enum": [
+																					"none",
+																					"rule",
+																					"bar",
+																					"band"
+																				],
+																				"type": "string",
+																				"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																			}
+																		},
+																		"required": [
+																			"layout",
+																			"lead",
+																			"accent"
+																		],
+																		"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
+																	}
+																},
+																"required": [
+																	"level",
+																	"colors"
+																],
+																"description": "The design settings of the resume. Determines the colors, level designs, and typography of the resume."
+															},
+															"typography": {
+																"type": "object",
+																"properties": {
+																	"body": {
+																		"type": "object",
+																		"properties": {
+																			"fontFamily": {
+																				"type": "string",
+																				"description": "The family of the font to use. Must be a supported resume font."
+																			},
+																			"fontWeights": {
+																				"type": "array",
+																				"items": {
+																					"enum": [
+																						"100",
+																						"200",
+																						"300",
+																						"400",
+																						"500",
+																						"600",
+																						"700",
+																						"800",
+																						"900"
+																					],
+																					"type": "string"
+																				},
+																				"description": "The weight of the font, defined as a number between 100 and 900. Default to 400 when unsure if the weight is available in the font."
+																			},
+																			"fontSize": {
+																				"type": "number",
+																				"minimum": 6,
+																				"maximum": 24,
+																				"description": "The size of the font to use, defined in points (pt)."
+																			},
+																			"lineHeight": {
+																				"type": "number",
+																				"minimum": 0.5,
+																				"maximum": 4,
+																				"description": "The line height of the font to use, defined as a multiplier of the font size (e.g. 1.5 for 1.5x)."
+																			}
+																		},
+																		"required": [
+																			"fontFamily",
+																			"fontWeights",
+																			"fontSize",
+																			"lineHeight"
+																		],
+																		"description": "The typography for the body of the resume."
+																	},
+																	"heading": {
+																		"type": "object",
+																		"properties": {
+																			"fontFamily": {
+																				"type": "string",
+																				"description": "The family of the font to use. Must be a supported resume font."
+																			},
+																			"fontWeights": {
+																				"type": "array",
+																				"items": {
+																					"enum": [
+																						"100",
+																						"200",
+																						"300",
+																						"400",
+																						"500",
+																						"600",
+																						"700",
+																						"800",
+																						"900"
+																					],
+																					"type": "string"
+																				},
+																				"description": "The weight of the font, defined as a number between 100 and 900. Default to 400 when unsure if the weight is available in the font."
+																			},
+																			"fontSize": {
+																				"type": "number",
+																				"minimum": 6,
+																				"maximum": 24,
+																				"description": "The size of the font to use, defined in points (pt)."
+																			},
+																			"lineHeight": {
+																				"type": "number",
+																				"minimum": 0.5,
+																				"maximum": 4,
+																				"description": "The line height of the font to use, defined as a multiplier of the font size (e.g. 1.5 for 1.5x)."
+																			}
+																		},
+																		"required": [
+																			"fontFamily",
+																			"fontWeights",
+																			"fontSize",
+																			"lineHeight"
+																		],
+																		"description": "The typography for the headings of the resume."
+																	},
+																	"hyphenation": {
+																		"type": "boolean",
+																		"description": "Enable automatic PDF hyphenation using the resume language. Defaults to false."
+																	}
+																},
+																"required": [
+																	"body",
+																	"heading"
+																],
+																"description": "The typography settings of the resume. Determines the fonts and sizes of the body and headings of the resume."
+															},
+															"styleRules": {
+																"type": "array",
+																"items": {},
+																"description": "Structured style rules that target semantic resume sections and slots for PDF rendering."
+															},
+															"stylesheet": {
+																"type": "object",
+																"properties": {
+																	"mode": {
+																		"enum": [
+																			"legacy",
+																			"semantic"
+																		],
+																		"type": "string"
+																	},
+																	"source": {
+																		"type": "object",
+																		"properties": {
+																			"languageVersion": {
+																				"type": "integer",
+																				"minimum": -9007199254740991,
+																				"maximum": 9007199254740991,
+																				"exclusiveMinimum": 0
+																			},
+																			"text": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"languageVersion",
+																			"text"
+																		],
+																		"additionalProperties": false
+																	}
+																},
+																"required": [
+																	"mode",
+																	"source"
+																],
+																"additionalProperties": false
+															},
+															"web": {
+																"type": "object",
+																"properties": {
+																	"showCredit": {
+																		"type": "boolean",
+																		"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																	}
+																},
+																"required": [
+																	"showCredit"
+																],
+																"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+															},
+															"check": {
+																"type": "object",
+																"properties": {
+																	"ignored": {
+																		"type": "array",
+																		"items": {
+																			"type": "string"
+																		},
+																		"description": "Check issues the author chose to ignore, by issue key (the rule code and where it applies)."
+																	},
+																	"hiddenTerms": {
+																		"type": "array",
+																		"items": {
+																			"type": "string"
+																		},
+																		"description": "Job-posting terms the author hid from Job match as not true for them."
+																	}
+																},
+																"required": [
+																	"ignored",
+																	"hiddenTerms"
+																],
+																"description": "The author's Check choices for this resume. Not printed; missing until a choice is made."
+															}
+														},
+														"required": [
+															"template",
+															"page",
+															"design",
+															"typography",
+															"styleRules"
+														]
+													},
+													"sectionId": {
+														"type": "string",
+														"minLength": 1
+													},
+													"itemId": {
+														"type": "string",
+														"minLength": 1
+													}
+												},
+												"required": [
+													"basics",
+													"picture",
+													"metadata",
+													"sectionId",
+													"itemId"
+												]
+											},
+											"layout": {
+												"enum": [
+													"structured",
+													"freeform"
+												],
+												"type": "string",
+												"description": "structured: recipient name, company and date fields, a greeting from the name, the body and a sign-off. freeform: the recipient block and body as written (letters from before structured letters).",
+												"default": "freeform"
+											},
+											"recipientName": {
+												"type": "string",
+												"maxLength": 200,
+												"default": "",
+												"description": "Who the letter is to: a person, or a team."
+											},
+											"recipientCompany": {
+												"type": "string",
+												"maxLength": 200,
+												"default": ""
+											},
+											"letterDate": {
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null,
+												"description": "The letter's date, as YYYY-MM-DD."
+											}
+										},
+										"required": [
+											"name",
+											"recipient",
+											"content",
+											"style"
+										]
+									},
+									"words": {
+										"type": "object",
+										"properties": {
+											"greeting": {
+												"type": "string",
+												"maxLength": 500,
+												"description": "Use {name} for the recipient."
+											},
+											"teamGreeting": {
+												"type": "string",
+												"maxLength": 500
+											},
+											"hiringTeam": {
+												"type": "string",
+												"maxLength": 500
+											},
+											"signOff": {
+												"type": "string",
+												"maxLength": 500
+											}
+										},
+										"required": [
+											"greeting",
+											"teamGreeting",
+											"hiringTeam",
+											"signOff"
+										]
+									}
+								},
+								"required": [
+									"letter"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "The rendered cover letter PDF.",
+						"headers": {
+							"content-disposition": {
+								"schema": {
+									"type": "string"
+								},
+								"required": true
+							}
+						},
+						"content": {
+							"application/pdf": {
+								"schema": {
+									"type": "string",
+									"contentMediaType": "application/pdf"
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/pdf-renders\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"letter\": {\n    \"name\": \"<string>\",\n    \"recipient\": \"<string>\",\n    \"content\": \"<string>\",\n    \"style\": {\n      \"basics\": {\n        \"name\": \"<string>\",\n        \"headline\": \"<string>\",\n        \"email\": \"<string>\",\n        \"phone\": \"<string>\",\n        \"location\": \"<string>\",\n        \"website\": {\n          \"url\": \"<string>\",\n          \"label\": \"<string>\"\n        },\n        \"customFields\": [\n          {\n            \"id\": \"<string>\",\n            \"icon\": \"<string>\",\n            \"text\": \"<string>\",\n            \"link\": \"<string>\"\n          }\n        ]\n      },\n      \"picture\": {\n        \"hidden\": true,\n        \"fit\": \"cover\",\n        \"url\": \"<string>\",\n        \"size\": 123,\n        \"rotation\": 123,\n        \"aspectRatio\": 123,\n        \"borderRadius\": 123,\n        \"borderColor\": \"<string>\",\n        \"borderWidth\": 123,\n        \"shadowColor\": \"<string>\",\n        \"shadowWidth\": 123\n      },\n      \"metadata\": {\n        \"template\": \"azurill\",\n        \"page\": {\n          \"gapX\": 123,\n          \"gapY\": 123,\n          \"marginX\": 123,\n          \"marginY\": 123,\n          \"format\": \"a4\",\n          \"locale\": \"<string>\",\n          \"hideLinkUnderline\": true,\n          \"hideIcons\": true,\n          \"hideSectionIcons\": true\n        },\n        \"design\": {\n          \"level\": {\n            \"icon\": \"<string>\",\n            \"type\": \"hidden\"\n          },\n          \"colors\": {\n            \"primary\": \"<string>\",\n            \"text\": \"<string>\",\n            \"background\": \"<string>\"\n          }\n        },\n        \"typography\": {\n          \"body\": {\n            \"fontFamily\": \"<string>\",\n            \"fontWeights\": [\n              \"100\"\n            ],\n            \"fontSize\": 123,\n            \"lineHeight\": 123\n          },\n          \"heading\": {\n            \"fontFamily\": \"<string>\",\n            \"fontWeights\": [\n              \"100\"\n            ],\n            \"fontSize\": 123,\n            \"lineHeight\": 123\n          }\n        },\n        \"styleRules\": [\n          \"<string>\"\n        ]\n      },\n      \"sectionId\": \"<string>\",\n      \"itemId\": \"<string>\"\n    }\n  }\n}'"
+					}
+				]
+			}
+		},
 		"/resumes/{id}/checks": {
 			"get": {
 				"operationId": "getResumeChecks",

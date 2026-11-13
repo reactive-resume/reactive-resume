@@ -1,0 +1,68 @@
+# S5 › API keys: Revoke asks first with the spec's dialog and a danger Revoke key button, and the key goes at once
+# (no Undo). S2/S5 › Connected applications list each app with what it can do and Disconnect.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S5-AI?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- scrollUntilVisible:
+    element: API keys
+    direction: DOWN
+- tapOn: API keys
+- waitForAnimationToEnd
+- assertVisible: Read only
+- assertVisible: Desktop
+- tapOn:
+    id: revoke-key-0
+- waitForAnimationToEnd
+- assertVisible: Revoke this key?
+- assertVisible: Apps using it stop working at once. This can't be undone; make a new key if you need one.
+- tapOn: Cancel
+- waitForAnimationToEnd
+- assertVisible: Read only
+- tapOn:
+    id: revoke-key-0
+- waitForAnimationToEnd
+- tapOn:
+    text: Revoke key
+    waitToSettleTimeoutMs: 1
+# Read the toast at once: waiting for its countdown to settle outlasts it.
+- extendedWaitUntil:
+    visible: Key revoked. Apps using it stop working now.
+    timeout: 5000
+- assertNotVisible: Undo
+- assertNotVisible: Read only
+- assertVisible: Desktop
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element: Connected applications
+    direction: DOWN
+- tapOn: Connected applications
+- waitForAnimationToEnd
+- assertVisible: Claude Desktop
+- tapOn:
+    id: disconnect-connection-0
+- waitForAnimationToEnd
+- assertVisible: Disconnect “Claude Desktop”?
+- tapOn:
+    text: Disconnect
+    below: It loses access now.*
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Disconnected “Claude Desktop”.
+    timeout: 5000
+- assertNotVisible:
+    id: disconnect-connection-0
+# S2's Connected apps row opens the same list.
+- openLink: me.rxresu.storyboard://settings/account
+- waitForAnimationToEnd
+- tapOn: Connected apps
+- waitForAnimationToEnd
+- assertVisible: Connected applications
+- assertVisible: Reactive Resume

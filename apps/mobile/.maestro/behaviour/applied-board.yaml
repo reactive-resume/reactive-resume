@@ -1,0 +1,35 @@
+# Applied means sent: a Saved card dropped over Applied opens "What did you send?"; closing it puts the card back.
+# The flow-only scenario has Kiln Studio Saved. The swipe is slow so the card holds still long enough to lift, and it
+# ends over Applied's edge without staying in the edge zone long enough to page (paging: haptics/board-drop).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J2-KilnSaved?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- assertVisible: "Kiln Studio.*"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 156, 320
+          end: 344, 322
+          duration: 11000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "468,960"
+          end: "1032,966"
+          duration: 19000
+- extendedWaitUntil:
+    visible: What did you send?
+    timeout: 10000
+- tapOn: Close
+- assertNotVisible: What did you send?
+- assertVisible: "Kiln Studio.*"

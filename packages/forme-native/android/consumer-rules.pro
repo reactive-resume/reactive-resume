@@ -1,1 +1,0 @@
--keep class expo.modules.formenative.FormeNativeModule { *; }

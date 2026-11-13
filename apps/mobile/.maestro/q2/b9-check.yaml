@@ -1,0 +1,74 @@
+# B9 · Fix applies the change with "Issue resolved" and Undo; tapping a card outside Fix opens Fix, Show on page and
+# Ignore; ignored issues come back from "Show them again"; Show on page opens the preview; the number explains itself;
+# "Check the exported PDF" runs on the phone; with every issue fixed it reads "Nothing to review." and the Check tab
+# loses its warn dot (named "issues to review").
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B9-Check?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- assertVisible: Two things to fix.
+- tapOn: "Readability score: .*"
+- assertVisible: "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
+- tapOn: Close
+- tapOn: Edit
+- assertVisible: "Check, issues to review"
+- tapOn: "Check, issues to review"
+- extendedWaitUntil:
+    visible: Two things to fix.
+    timeout: 10000
+- tapOn: "Issue 2: Lines are packed tightly"
+- extendedWaitUntil:
+    visible: Ignore
+    timeout: 10000
+- assertVisible: Show on page
+- tapOn: Ignore
+- extendedWaitUntil:
+    visible: One thing to fix.
+    timeout: 10000
+- tapOn: Show them again
+- assertVisible: Two things to fix.
+- tapOn: "Issue 2: Lines are packed tightly"
+- extendedWaitUntil:
+    visible: Show on page
+    timeout: 10000
+- tapOn: Show on page
+- extendedWaitUntil:
+    visible: Page 1 of 1
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Two things to fix.
+    timeout: 10000
+- tapOn:
+    text: "Use https://morgan.design"
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Issue resolved
+- assertVisible: One thing to fix.
+- tapOn:
+    id: status-undo
+- extendedWaitUntil:
+    notVisible: "Issue resolved"
+    timeout: 15000
+- assertVisible: Two things to fix.
+- tapOn:
+    text: "Use https://morgan.design"
+    waitToSettleTimeoutMs: 1000
+- tapOn:
+    text: "Use 1.2 line height"
+    waitToSettleTimeoutMs: 1000
+- extendedWaitUntil:
+    visible: Nothing to review.
+    timeout: 5000
+- tapOn: Check the exported PDF
+- extendedWaitUntil:
+    visible: "Exported PDF checked.*"
+    timeout: 30000
+- tapOn: Edit
+- assertNotVisible: "Check, issues to review"

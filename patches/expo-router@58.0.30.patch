@@ -1,0 +1,14 @@
+diff --git a/build/react-navigation/stack/views/Stack/CardContainer.js b/build/react-navigation/stack/views/Stack/CardContainer.js
+index fa47a5fb1613405e92f1cc5b79088a815784b2cd..630f3b52cfe9d64f4d8b0c0eb801c238385703d0 100644
+--- a/build/react-navigation/stack/views/Stack/CardContainer.js
++++ b/build/react-navigation/stack/views/Stack/CardContainer.js
+@@ -146,6 +146,9 @@ function CardContainerInner({ interpolationIndex, index, active, opening, closin
+     };
+     const { colors } = (0, _native.useTheme)();
+     _react().useEffect(()=>{
++        // With no screen above any more (several screens left at once), nothing will report the cover's last
++        // value: the card must take touches again.
++        if (!scene.progress.next) wrapperRef.current?.setInert(false);
+         const listener = scene.progress.next?.addListener?.(({ value })=>{
+             wrapperRef.current?.setInert(value > EPSILON);
+         });

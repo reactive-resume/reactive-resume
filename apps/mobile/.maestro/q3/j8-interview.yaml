@@ -1,0 +1,107 @@
+# J8 · People autocomplete from the application's contacts. "Prepare a briefing" starts off; its line names the
+# connection and that it may charge. Save closes the sheet and J6's hero becomes this interview. "Where" holding a
+# meeting link is tappable on J6 (system browser). "Couldn't schedule the interview. Try again." keeps every field.
+# Away from home both zones show.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J6-Detail?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 20000
+# The meeting link on J6 opens in the system browser.
+- tapOn: "With Priya Raman and Tomás Silva · video call"
+# The in-app browser: Done on iOS, the custom tab's close button on Android.
+- extendedWaitUntil:
+    visible: "Done|Close tab"
+    timeout: 15000
+- tapOn: "Done|Close tab"
+# A new interview for Fieldnote: contacts as suggestions; briefing off with its connection line.
+- openLink: me.rxresu.storyboard://applications/fieldnote/interview
+- extendedWaitUntil:
+    visible: Add interview
+    timeout: 10000
+- waitForAnimationToEnd
+- assertVisible: ".*Sends the posting and resume to Work OpenAI, which may charge.*"
+- tapOn:
+    id: suggest-Joana Reis
+- assertNotVisible:
+    id: suggest-Joana Reis
+- assertVisible: Joana Reis
+- tapOn: Close
+- tapOn:
+    text: Discard
+    optional: true
+# Edit Lumen's interview: Behavioral, saved; the hero becomes it.
+- openLink: me.rxresu.storyboard://applications/lumen/interview?interview=lumen-interview
+- extendedWaitUntil:
+    visible: Save interview
+    timeout: 10000
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,190"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,570"
+- waitForAnimationToEnd
+- tapOn: Behavioral interview
+- tapOn:
+    id: interview-save
+- extendedWaitUntil:
+    notVisible: Save interview
+    timeout: 10000
+- openLink: me.rxresu.storyboard://applications/lumen
+- extendedWaitUntil:
+    visible: Behavioral interview
+    timeout: 10000
+# Saving fails: every field is kept.
+- openLink: me.rxresu.storyboard://storyboard/J8-SaveFails?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Save interview
+    timeout: 20000
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,190"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,570"
+- waitForAnimationToEnd
+- tapOn: Onsite interview
+- tapOn:
+    id: interview-save
+    waitToSettleTimeoutMs: 1
+- assertVisible: Couldn't schedule the interview\. Try again\.
+- assertVisible: Save interview
+- assertVisible: Onsite interview
+# Away from home: both zones.
+- openLink: me.rxresu.storyboard://storyboard/J8-Away?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: ".*Lisbon · .* here"
+    timeout: 20000

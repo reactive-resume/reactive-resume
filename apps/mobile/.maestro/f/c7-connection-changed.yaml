@@ -1,0 +1,19 @@
+# C7 · Choosing another connection for an approved schedule pauses it: "Paused: your AI connection changed" with
+# Review and resume. Storyboard data only (it used to need a signed-in dev account and a real schedule).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C7-Schedule?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- assertNotVisible:
+    id: schedule-paused
+- tapOn: "Runs with .*"
+- tapOn: Ollama on my Mac
+- extendedWaitUntil:
+    visible: "Paused: your AI connection changed"
+    timeout: 10000
+- assertVisible: Review and resume

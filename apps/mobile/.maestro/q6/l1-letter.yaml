@@ -1,0 +1,94 @@
+# L1 · The Resume and Application rows open pickers: choosing an application links it (and the posting with it); a
+# letter recorded as sent (Lumen's) keeps its link ("This letter is recorded as sent."); "Draft from the posting" starts the
+# assistant at once, with no confirmation sheet.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/L1-Letter?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+# The Lumen letter went with its application: it keeps the link.
+- scrollUntilVisible:
+    element: Recipient
+    direction: DOWN
+- assertVisible: This letter is recorded as sent.
+# The Orbital Health letter: the pickers.
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Letter for Orbital Health
+    timeout: 10000
+- tapOn: Letter for Orbital Health
+- extendedWaitUntil:
+    visible: Details
+    timeout: 10000
+- scrollUntilVisible:
+    element: Recipient
+    direction: DOWN
+- tapOn: Resume
+- extendedWaitUntil:
+    visible: Design lead
+    timeout: 10000
+- tapOn: Design lead
+- extendedWaitUntil:
+    notVisible:
+      text: Design lead
+      below: Resume
+    timeout: 3000
+    optional: true
+- tapOn: Application
+- extendedWaitUntil:
+    visible: ".*Parcel.*"
+    timeout: 10000
+- tapOn: ".*Parcel.*"
+- extendedWaitUntil:
+    notVisible: ".*Parcel.* · .*"
+    timeout: 3000
+    optional: true
+- assertNotVisible: This letter is recorded as sent.
+- scrollUntilVisible:
+    element: Draft from the posting
+    direction: DOWN
+- tapOn: Draft from the posting
+- extendedWaitUntil:
+    visible: Send to Work OpenAI?
+    timeout: 15000
+- tapOn:
+    id: first-send-send
+- tapOn:
+    id: first-send-send
+    optional: true
+# The sent message lands below the fold; Android only reports what is on screen.
+- scrollUntilVisible:
+    element: Redraft this letter from the posting
+    timeout: 15000
+- tapOn: Close
+# ⋯ is the document menu (B19) for the letter: Lock editing locks it, and tapping the letter says so.
+- tapOn: More
+- extendedWaitUntil:
+    visible: Lock editing
+    timeout: 10000
+- tapOn: Lock editing
+- extendedWaitUntil:
+    visible: Unlock editing
+    timeout: 10000
+- tapOn: Close
+# The status line sits above where the letter is scrolled to; Android only reports what is on screen.
+- scrollUntilVisible:
+    element: Locked
+    direction: UP
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Dear .*"
+    direction: UP
+- tapOn:
+    below: "Dear .*"
+    index: 0
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: This letter is locked. Unlock it to make changes.
+    timeout: 5000

@@ -2,6 +2,7 @@ import type { RouterOutput } from "@/api/client";
 // The OAuth plumbing behind session.ts: discovery, dynamic client registration, the redirect URI and the server
 // check the server picker runs. Nothing here reads or writes tokens.
 import type { DiscoveryDocument } from "expo-auth-session";
+import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
@@ -20,7 +21,7 @@ const appHost = "rxresu.me";
  * no https callback can be verified locally; that server must run with `FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI=true`.
  */
 export function redirectUri(origin: string): string {
-	if (__DEV__ && origin.startsWith("http:")) return "me.rxresu:/auth/native-callback";
+	if (__DEV__ && origin.startsWith("http:")) return `${appScheme()}:/auth/native-callback`;
 	return `https://${appHost}/auth/native-callback`;
 }
 
@@ -29,9 +30,13 @@ const developmentHosts = new Set(["localhost", "127.0.0.1", "10.0.2.2"]);
 
 /** Servers the app talks to: https only; development builds also allow http on the local machine. */
 export function isAllowedServer(origin: string): boolean {
-	if (origin.startsWith("https://")) return true;
-	if (!__DEV__ || !origin.startsWith("http://")) return false;
-	return developmentHosts.has(origin.slice("http://".length).replace(/:\d+$/, ""));
+	try {
+		const url = new URL(origin);
+		if (url.origin !== origin || url.username || url.password) return false;
+		return url.protocol === "https:" || (__DEV__ && url.protocol === "http:" && developmentHosts.has(url.hostname));
+	} catch {
+		return false;
+	}
 }
 
 // SecureStore keys allow only `[A-Za-z0-9._-]`. Hex of the origin's UTF-8 bytes is collision-free within that set.
@@ -44,6 +49,7 @@ export function toOrigin(input: string): string | null {
 	if (!trimmed || /\s/.test(trimmed)) return null;
 	try {
 		const url = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`);
+		if (url.username || url.password) return null;
 		if (url.protocol !== "https:" && url.protocol !== "http:") return null;
 		if (!url.hostname.includes(".") && url.hostname !== "localhost") return null;
 		return url.origin;
@@ -234,4 +240,17 @@ export type ServerFlags = RouterOutput["flags"]["get"];
 /** `flags.get` on a server the app is not signed in to yet (sign-ups, guest login). */
 export async function getFlags(origin: string): Promise<ServerFlags> {
 	return (await getJson(`${origin}/api/openapi/flags`)) as ServerFlags;
+}
+
+export function appScheme(): string {
+	const scheme = Constants.expoConfig?.scheme;
+	return (Array.isArray(scheme) ? scheme[0] : scheme) ?? "me.rxresu";
+}
+export async function healthCheck(origin: string): Promise<void> {
+	if (!isAllowedServer(origin)) throw new ServerError("mismatch");
+	const response = await fetch(`${origin}/api/health`, {
+		signal: AbortSignal.timeout(requestTimeout),
+		redirect: "error",
+	});
+	if (!response.ok) throw new ServerError("unreachable");
 }

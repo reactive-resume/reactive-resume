@@ -1,0 +1,99 @@
+# B20 · Add opens the new entry with the keyboard on the first field; the first character creates the entry at the
+# end of the section (the screen becomes B3: ···, See it on the page, Delete entry); spaces count as empty; Discard
+# after typing goes back with "Entry discarded" and Undo; clearing every field of a created entry and leaving
+# removes it with "Empty entry removed".
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B2-Section?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: Add experience
+- extendedWaitUntil:
+    visible: "Experience · saved once you start typing"
+    timeout: 10000
+- assertNotVisible: Entry options
+- assertNotVisible: See it on the page
+# The keyboard is on the first field: typing goes straight into Company. Discard sits under the keyboard, which
+# Android's hierarchy leaves out, so there it is checked after typing with the keyboard down.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - assertVisible: Discard
+      - inputText: "   "
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - inputText: "   "
+      - hideKeyboard
+      - assertVisible: Discard
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: "2 entries · on page 1.*"
+    timeout: 10000
+- assertNotVisible: Entry discarded
+- tapOn: Add experience
+- extendedWaitUntil:
+    visible: "Experience · saved once you start typing"
+    timeout: 10000
+- inputText: Kiln
+- assertVisible: Entry options
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+- assertVisible: See it on the page
+- assertVisible: Delete entry
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: "3 entries · on page 1.*"
+    timeout: 10000
+- assertVisible:
+    text: Kiln
+    below: Harbour Studio
+# Discard with nothing typed keeps nothing and says nothing.
+- tapOn: Add experience
+- extendedWaitUntil:
+    visible: "Experience · saved once you start typing"
+    timeout: 10000
+- hideKeyboard
+- assertVisible: Discard
+- tapOn: Discard
+- extendedWaitUntil:
+    visible: "3 entries · on page 1.*"
+    timeout: 10000
+- assertNotVisible: Entry discarded
+# After typing, the screen is B3: Discard has become Delete entry.
+- tapOn: Add experience
+- extendedWaitUntil:
+    visible: "Experience · saved once you start typing"
+    timeout: 10000
+- inputText: Lumen
+- hideKeyboard
+- tapOn: Delete entry
+- extendedWaitUntil:
+    visible: Entry deleted
+    timeout: 5000
+- assertVisible: "3 entries · on page 1.*"
+# Clearing a created entry's only field and leaving removes it.
+- tapOn: Add experience
+- extendedWaitUntil:
+    visible: "Experience · saved once you start typing"
+    timeout: 10000
+- inputText: Q
+- eraseText: 1
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Empty entry removed
+    timeout: 5000
+- assertVisible: "3 entries · on page 1.*"

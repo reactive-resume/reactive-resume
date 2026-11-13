@@ -1,0 +1,155 @@
+# W5 · Messages: pick a kind (Thank-you), edit the draft in place, Copy offers Log follow-up ("Followed up"). No contact:
+# To shows "Add a contact", which opens J6. A failed log says "Couldn't log the follow-up…". Debrief: typed what
+# happened gets Remember / Not now rows; an offer message offers to save its terms in Career → Offers. Library lists
+# saved work newest first and opens one read-only with Back to current.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/W5-Messages?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: "Hi Joana,.*"
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: "Kind.*"
+- tapOn: Thank-you
+- extendedWaitUntil:
+    visible: ".*Thank you for your time today.*"
+    timeout: 5000
+# Edit in place.
+- tapOn: ".*Thank you for your time today.*"
+- inputText: " P.S. Thanks again."
+# Dragging the form puts the keyboard away and ends the edit.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,250"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,750"
+          end: "585,1260"
+          duration: 300
+- waitForAnimationToEnd
+- assertVisible: ".*P\\.S\\. Thanks again\\..*"
+- tapOn:
+    text: Copy
+    waitToSettleTimeoutMs: 1
+# Android 13+ puts its clipboard preview over the app after a copy; while it is up every read takes ~20 s.
+# Swipe it away (it sits over the bottom start corner).
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "200,2190"
+          end: "0,2190"
+          duration: 150
+          waitToSettleTimeoutMs: 1
+- assertVisible: Copied
+- tapOn:
+    id: toast-action
+    text: Log follow-up
+    waitToSettleTimeoutMs: 1
+- assertVisible: Followed up
+# No contact.
+- openLink: me.rxresu.storyboard://applications/kiln/messages
+- extendedWaitUntil:
+    visible: ".*Add a contact.*"
+    timeout: 10000
+- tapOn: ".*Add a contact.*"
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000
+# Library.
+- openLink: me.rxresu.storyboard://applications/lumen/library
+- extendedWaitUntil:
+    visible: Library
+    timeout: 10000
+- tapOn:
+    text: Fit check.*
+    index: 0
+- extendedWaitUntil:
+    visible: Back to current
+    timeout: 10000
+- tapOn: Back to current
+# Debrief.
+- openLink: me.rxresu.storyboard://applications/lumen/debrief
+- extendedWaitUntil:
+    visible: What happened\?
+    timeout: 10000
+- tapOn: Type your answer instead
+- inputText: They made an offer with a base salary of 70000 a year and 10% bonus.
+- assertVisible: Save these offer terms to compare\. Opens in Career → Offers\.
+# Review it sits under the keyboard: scrolling the form up brings it into view and puts the keyboard away.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,450"
+          end: "195,250"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,1350"
+          end: "585,750"
+          duration: 300
+- waitForAnimationToEnd
+- tapOn: Review it
+# The first send to this connection asks first; wait for the sheet to rise.
+- extendedWaitUntil:
+    visible:
+      id: first-send-send
+    timeout: 5000
+    optional: true
+- tapOn:
+    id: first-send-send
+    optional: true
+- extendedWaitUntil:
+    visible: Worth remembering
+    timeout: 20000
+- assertVisible: Remember
+- assertVisible: Not now
+# A failed log.
+- openLink: me.rxresu.storyboard://storyboard/W5-LogFails?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: "Hi Joana,.*"
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn:
+    text: Copy
+    waitToSettleTimeoutMs: 1
+# Android 13+ puts its clipboard preview over the app after a copy; while it is up every read takes ~20 s.
+# Swipe it away (it sits over the bottom start corner).
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "200,2190"
+          end: "0,2190"
+          duration: 150
+          waitToSettleTimeoutMs: 1
+- tapOn:
+    id: toast-action
+    text: Log follow-up
+    waitToSettleTimeoutMs: 1
+- assertVisible: Couldn't log the follow-up\. Check the timeline before trying again\.

@@ -1,0 +1,12 @@
+# Android half of pick-folder.yaml: Documents (the storage root itself is refused), then allow access.
+appId: me.rxresu.storyboard
+---
+- extendedWaitUntil:
+    visible: Documents
+    timeout: 20000
+- tapOn: Documents
+- tapOn: (?i)use this folder
+- extendedWaitUntil:
+    visible: (?i)allow
+    timeout: 10000
+- tapOn: (?i)allow

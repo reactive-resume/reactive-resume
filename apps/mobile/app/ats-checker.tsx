@@ -1,3 +1,1 @@
-import { AtsChecker } from "@/features/ats-checker/checker";
-
-export default AtsChecker;
+export { ATSCheckerScreen as default } from "@/features/public/ats";

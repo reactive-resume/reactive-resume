@@ -1,0 +1,50 @@
+# J4 · Range: 30 days, 90 days, All time from the bar button. Tap a funnel row → J1 filtered to that stage.
+# States: "No replies to chart yet…" and "Not enough applications to compare yet: this needs 3 of each."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J4-Insights?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Your search over the last 90 days\.
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: 90 days
+- tapOn: 30 days
+- extendedWaitUntil:
+    visible: Your search over the last 30 days\.
+    timeout: 5000
+- tapOn: 30 days
+- tapOn: All time
+- extendedWaitUntil:
+    visible: Your whole search so far\.
+    timeout: 5000
+- tapOn: "Interviewed: .*"
+- extendedWaitUntil:
+    visible: Show all stages
+    timeout: 10000
+- assertVisible: "Interviewing"
+- assertNotVisible: "Applied"
+- tapOn: Show all stages
+- assertNotVisible: Show all stages
+- assertVisible: "Applied"
+- openLink: me.rxresu.storyboard://storyboard/J4-Empty?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: No replies to chart yet\. Once you've sent a few applications, this shows how far they get and how quickly people reply\.
+    timeout: 20000
+- openLink: me.rxresu.storyboard://storyboard/J4-Few?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: "Not enough applications to compare yet: this needs 3 of each\\."
+    timeout: 20000

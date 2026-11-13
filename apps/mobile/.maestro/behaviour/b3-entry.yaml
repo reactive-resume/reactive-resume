@@ -1,0 +1,36 @@
+# B3 · An entry without its company says it isn't on the page yet. ··· opens B21, whose Delete entry goes back to B2
+# without a dialog; the toast "Entry deleted" offers Undo, and Undo in the status line puts the entry back.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B2-Section?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+# Opened from B2 like a person does (the B3 scenario fakes an earlier undo step for its drawing).
+- tapOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Company
+    timeout: 10000
+- tapOn:
+    text: Northwind Labs
+    index: 1
+- eraseText: 20
+- assertVisible: Appears on the page once it has a company.
+- inputText: Northwind Labs
+- assertNotVisible: Appears on the page once it has a company.
+- tapOn: Entry options
+- extendedWaitUntil:
+    visible: Move down
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: entry-action-delete
+- assertVisible: Entry deleted
+- assertVisible: "1 entry · on page 1.*"
+- tapOn:
+    id: status-undo
+- assertVisible: Northwind Labs
+- assertVisible: "2 entries · on page 1.*"

@@ -1,0 +1,71 @@
+# C1 · The hero opens the coach (C2); rows push their screens; past conversations are C2 › ··· › Conversations.
+# No AI connection: "Connect an AI provider to use the coach" with Connect (→ AI settings); Knowledge, Offers and
+# schedules still work. A server without scheduled work: the Discovery row says "Not available on this server".
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C1-Career?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Start a conversation
+    timeout: 20000
+- waitForAnimationToEnd
+# Rows push their screens.
+- tapOn: Facts
+- extendedWaitUntil:
+    visible: What the coach and assistant may use\. Edit or forget any of them\.
+    timeout: 10000
+- tapOn: Back
+- extendedWaitUntil:
+    visible: Start a conversation
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn: Start a conversation
+- extendedWaitUntil:
+    visible:
+      id: composer-send
+    timeout: 10000
+- tapOn: More for this conversation
+- tapOn: Conversations
+- extendedWaitUntil:
+    visible: Conversations
+    timeout: 10000
+- openLink: me.rxresu.storyboard://career/knowledge/facts
+- extendedWaitUntil:
+    visible: What the coach and assistant may use\. Edit or forget any of them\.
+    timeout: 10000
+- openLink: me.rxresu.storyboard://career/knowledge/stories
+- extendedWaitUntil:
+    visible: Stories
+    timeout: 10000
+- openLink: me.rxresu.storyboard://storyboard/C1-NoAI?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Connect an AI provider to use the coach
+    timeout: 20000
+- tapOn: Connect
+- extendedWaitUntil:
+    visible: AI and developer
+    timeout: 10000
+# Offers still work without a connection.
+- openLink: me.rxresu.storyboard://career/offers
+- extendedWaitUntil:
+    visible: Draft a counter
+    timeout: 10000
+# The schedules failure only shows if Career hasn't read them yet in this launch.
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C1-NoSchedules?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- scrollUntilVisible:
+    element: "Discovery, Not available on this server"

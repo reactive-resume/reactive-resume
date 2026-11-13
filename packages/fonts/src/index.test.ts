@@ -42,6 +42,17 @@ describe("getPdfFallbackFontFamilies", () => {
 		expect(getPdfFallbackFontFamilies("Times-Roman", { locale: "th-TH" })).toEqual(["Noto Sans Thai", "Noto Serif"]);
 	});
 
+	it("uses the Georgian Noto fonts for Georgian content", () => {
+		expect(getPdfFallbackFontFamilies("Helvetica", { scripts: ["georgian"] })).toEqual([
+			"Noto Sans Georgian",
+			"Noto Sans",
+		]);
+		expect(getPdfFallbackFontFamilies("Times-Roman", { scripts: ["georgian"] })).toEqual([
+			"Noto Serif Georgian",
+			"Noto Serif",
+		]);
+	});
+
 	it.each([
 		["hi-IN", "Noto Sans Devanagari", "Noto Sans Devanagari"],
 		["mr-IN", "Noto Sans Devanagari", "Noto Sans Devanagari"],

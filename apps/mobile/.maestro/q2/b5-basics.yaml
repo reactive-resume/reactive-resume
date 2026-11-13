@@ -1,0 +1,27 @@
+# B5 · Change photo opens Take photo, Choose from library and Remove photo; links are tapped to edit and Add link sits
+# at the end. (The email field's inline message is proved by q5/b5-basics.)
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B5-Basics?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: Change photo
+- extendedWaitUntil:
+    visible: Take photo
+    timeout: 10000
+- assertVisible: Choose from library
+- assertVisible: Remove photo
+- tapOn: Close
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element: Add link
+    direction: DOWN
+- tapOn: linkedin.com/in/alexmorgan
+- extendedWaitUntil:
+    visible: Entry options
+    timeout: 10000

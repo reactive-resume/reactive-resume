@@ -1,0 +1,43 @@
+# P1 · Public resume: the zoom bar works without pinch and Read as text shows the words; Share opens the system
+# share sheet; the owner sees "This is how visitors see it" with Edit; an unknown link isn't shared.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/P1-Public?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- tapOn: Zoom in
+- waitForAnimationToEnd
+- tapOn: Fit
+- waitForAnimationToEnd
+- tapOn: Zoom out
+- waitForAnimationToEnd
+- tapOn: Read as text
+- waitForAnimationToEnd
+- assertVisible: Show page
+- assertVisible: ".*Alex Morgan.*"
+- tapOn: Show page
+- waitForAnimationToEnd
+- assertVisible: Read as text
+- tapOn: Share
+- waitForAnimationToEnd
+# The system share sheet: Copy on iOS, "Sharing link" on Android.
+- extendedWaitUntil:
+    visible: "Copy|Sharing link"
+    timeout: 10000
+# Dismiss the share sheet by tapping above it.
+- tapOn:
+    point: "50%,8%"
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://r/alex/product-designer?as=owner
+- assertVisible: This is how visitors see it
+- tapOn: Edit
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- openLink: me.rxresu.storyboard://r/alex/not-a-resume
+- assertVisible: This resume isn't shared right now.

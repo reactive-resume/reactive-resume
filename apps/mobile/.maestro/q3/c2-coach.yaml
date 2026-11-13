@@ -1,0 +1,73 @@
+# C2 · Remember acts on that one fact and lands it in Facts. Unsent text survives leaving the screen. A reply's tap
+# (and long-press) offers Copy and Share; ··· has Conversations, New conversation, Rename, Copy conversation, Delete.
+# Without a connection the line under the composer says so and sending is blocked.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C2-Coach?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Remember “At most 2 office days a week”\?
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn:
+    text: Remember
+    index: 0
+- assertNotVisible: Remember “At most 2 office days a week”\?
+- tapOn: More for this conversation
+- assertVisible: Conversations
+- assertVisible: New conversation
+- tapOn: New conversation
+# Draft recovery.
+# The composer's field (a point: its placeholder isn't exposed as text).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,734"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,2202"
+- inputText: Which offer should I take?
+- tapOn: Back
+- openLink: me.rxresu.storyboard://career/coach
+- extendedWaitUntil:
+    visible: Which offer should I take\?
+    timeout: 10000
+# Send: S7 first, then a reply to tap.
+- tapOn: Send
+- tapOn:
+    id: first-send-send
+    optional: true
+- tapOn:
+    id: first-send-send
+    optional: true
+- tapOn:
+    id: first-send-send
+    optional: true
+- extendedWaitUntil:
+    notVisible: Thinking|Still working
+    timeout: 30000
+- openLink: me.rxresu.storyboard://career/knowledge/facts
+- extendedWaitUntil:
+    visible: Search facts
+    timeout: 10000
+- scrollUntilVisible:
+    element: At most 2 office days a week
+- openLink: me.rxresu.storyboard://storyboard/C1-NoAI?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- openLink: me.rxresu.storyboard://career/coach
+- extendedWaitUntil:
+    visible: Connect an AI provider to use the coach
+    timeout: 10000

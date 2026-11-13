@@ -1,0 +1,36 @@
+# Confirming "What did you send?" freezes what was ticked and moves the application to Applied (`success`).
+# Opens J7 from J6's Stage row (the J7 storyboard scenario draws a backdrop under the sheet).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J6-Detail?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 20000
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element: "Stage, .*"
+- tapOn: "Stage, .*"
+- extendedWaitUntil:
+    visible: Move Lumen
+    timeout: 10000
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn:
+    id: stage-applied
+- waitForAnimationToEnd
+# The 5 s toast's fuse keeps the screen moving; don't wait for it to settle or the toast is gone.
+- tapOn:
+    id: sent-confirm
+    waitToSettleTimeoutMs: 500
+- assertVisible: Marked as applied. The versions you sent are kept.
+- assertVisible:
+    id: haptic-log
+    text: selection success
+- assertNotVisible: What did you send?

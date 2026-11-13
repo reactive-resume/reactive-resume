@@ -42,7 +42,7 @@ pnpm test:e2e:local --build tests/e2e/specs/form-fill-engine.spec.ts
 
 Set `RUN_CAPTURE_EXTENSION=1` for the actual Chromium helper case; otherwise that case is intentionally omitted. The shared-engine spec launches Chromium and host WebKit to check the desktop script. The earlier loopback lab under `tooling/autofill/` remains historical experiment evidence and does not verify the new product integration.
 
-Mobile packet changes use JavaScript, copy and existing native dependencies, so they are OTA eligible by source inspection. Compare the installed native fingerprint during release verification. Deploy the additive backend first; old mobile APIs stay compatible. The owner-approved native-autofill exception is listed under "Parity exceptions" in `apps/mobile/AGENTS.md`.
+Mobile packet changes reach users with the next store build; the app has no OTA updates. Deploy the additive backend first; old mobile APIs stay compatible. The owner-approved native-autofill exception is listed under "Parity exceptions" in `apps/mobile/AGENTS.md`.
 
 Refresh `writing-application-answers`, `career-workspace-reference` and `exporting-your-data` with packet changes. `employer-form-packet-v2.png` is an actual fictional-account product screenshot; it makes no native-device claim. Keep the original `employer-form-prototype.png` as historical lab evidence.
 
@@ -237,7 +237,7 @@ Application-only contact, address, links, country-specific authorization/sponsor
 
 Guest linking moves a profile only into an empty destination and changes its revision. Two profiles cause a conflict before ownership changes; the user must export and delete one. Account deletion cascades the row. Profile deletion does not alter shared preferences, documents, application answers or submitted snapshots. Self-identification storage is deliberately excluded for this phase; categories, retention, consent and prompt exclusion require independent review before any extension.
 
-Mobile changes use JavaScript/copy and existing dependencies, so they are assessed as OTA eligible. No native dependency, permission, entitlement, native config or Forme pin changed. Compare against the installed native fingerprint as part of release verification. Deploy the additive database migration/backend before the new mobile bundle.
+Mobile changes use JavaScript, copy and existing dependencies; no native dependency, permission, entitlement, native config or Forme pin changed. They ship with the next store build. Deploy the additive database migration/backend before that build.
 
 ## Keep product guides current
 
@@ -275,7 +275,7 @@ Discovery retains the existing URL identity, validation, weekly recheck, suppres
 
 Use `discovery.spec.ts` against an explicitly disposable `DATABASE_URL` for source/unknown/bulk triage. Role suggestion browser tests use the local scripted AI provider with `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`. Controlled queue tests include duplicates, closed/list pages, transient reader failures and unchanged retrieval budgets. Synthetic measurements are regression evidence, not live freshness or hiring-quality claims. Role suggestions add one optional provider operation; generation's actual SDK retries and provider pricing still apply.
 
-The mobile change is JavaScript, copy and catalogs with existing native dependencies: OTA eligible by source inspection. No native binary, config, permission, entitlement or Forme pin changes. Installed-fingerprint comparison and native-device workflow verification remain release gates; do not describe an Expo export as device proof.
+The mobile change is JavaScript, copy and catalogs with existing native dependencies; no native config, permission, entitlement or Forme pin changes. It ships with the next store build. Native-device workflow verification remains a release gate; do not describe an Expo export as device proof.
 
 ### Target-role recipient versions
 

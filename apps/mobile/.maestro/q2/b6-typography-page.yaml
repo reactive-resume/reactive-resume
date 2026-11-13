@@ -1,0 +1,59 @@
+# B6 · Typography offers font pairings, a text size stepper (10–11 recommended) and density, each change applied at
+# once with Undo in a toast; Page offers paper, margins and language with its note, and the rows show the new values.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B6-Design?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: Typography
+- extendedWaitUntil:
+    visible: Font pairing
+    timeout: 10000
+- assertVisible: 10–11 recommended
+- tapOn:
+    text: Balanced
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Font pairing changed
+- tapOn:
+    id: status-undo
+- extendedWaitUntil:
+    notVisible: "Font pairing changed"
+    timeout: 15000
+- tapOn:
+    text: Larger
+    waitToSettleTimeoutMs: 1000
+- assertVisible: "11 pt"
+- assertVisible: Text size changed
+- tapOn:
+    text: Roomy
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Density changed
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Page
+    timeout: 10000
+- assertVisible: "Classic · 11 pt"
+- tapOn: Page
+- extendedWaitUntil:
+    visible: Paper
+    timeout: 10000
+- assertVisible: "Sets section titles, date words and text direction. Your content isn't translated."
+- tapOn:
+    text: Letter
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Paper changed
+- tapOn:
+    text: Wide
+    waitToSettleTimeoutMs: 1000
+- assertVisible: Margins changed
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: "Letter · wide margins"
+    timeout: 10000

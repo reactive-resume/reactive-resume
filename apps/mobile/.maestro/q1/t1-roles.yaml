@@ -1,0 +1,57 @@
+# T1 · New roles open the posting with Track in Applications and Not for me; Select and long-press choose several;
+# re-tapping the Today tab scrolls back to the top.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: Open briefing
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: today-role-opportunity-kiln
+    direction: DOWN
+- tapOn:
+    id: today-role-opportunity-kiln
+- waitForAnimationToEnd
+- assertVisible: Track in Applications
+- assertVisible: Not for me
+- tapOn: Track in Applications
+- waitForAnimationToEnd
+- assertVisible: Save a job
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: today-role-opportunity-kiln
+    direction: DOWN
+- longPressOn:
+    id: today-role-opportunity-kiln
+- waitForAnimationToEnd
+- assertVisible: Done
+- assertVisible: Not for me
+- tapOn: Done
+- waitForAnimationToEnd
+- assertNotVisible: Not for me
+- tapOn: Select
+- waitForAnimationToEnd
+- assertVisible: Done
+# One tap toggles the checkbox; Maestro's retry would toggle it back.
+- tapOn:
+    id: today-role-opportunity-kiln
+    retryTapIfNoChange: false
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element: Not for me
+    direction: DOWN
+- tapOn: Not for me
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element: No new roles today. Next run tomorrow, 07:00.
+    direction: DOWN
+# Re-tapping the Today tab scrolls back to the top (the tab, not the collapsed "Today" title above).
+- tapOn:
+    point: "14%,93%"
+- waitForAnimationToEnd
+- assertVisible: Open briefing

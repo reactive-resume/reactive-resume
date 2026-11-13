@@ -1,0 +1,35 @@
+# B10 · Add opens Add to Skills, Ask the assistant to work it in (B16 with the request filled in, not sent) and Not
+# true for me; an added term leaves the list with its toast.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B10-JobMatch?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- assertVisible: "9 of 14"
+- tapOn:
+    text: Add
+    index: 2
+- assertVisible: Add to Skills
+- assertVisible: Not true for me
+- tapOn: Ask the assistant to work it in
+- extendedWaitUntil:
+    visible: ".*Workshop facilitation.*"
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: "9 of 14"
+    timeout: 10000
+- tapOn:
+    text: Add
+    index: 0
+- tapOn:
+    text: Add to Skills
+    waitToSettleTimeoutMs: 1000
+- assertVisible: "Accessibility audits added to Skills"
+- assertNotVisible: Accessibility audits

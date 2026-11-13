@@ -1,0 +1,49 @@
+# T1 · Today: a Needs-you row opens its screen; swiping it toward the start marks it done with Undo.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: Open briefing
+    timeout: 30000
+- tapOn:
+    id: today-needs-fieldnote
+- waitForAnimationToEnd
+- assertVisible: Messages
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- assertVisible:
+    id: today-needs-fieldnote
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- swipe:
+    start: "85%,64%"
+    end: "20%,64%"
+    duration: 400
+    waitToSettleTimeoutMs: 1
+# Maestro waits about 3.4 s per command while the toast's countdown animates, and the toast lasts 8 s:
+# one check that the row left, then Undo straight away.
+- extendedWaitUntil:
+    notVisible:
+      id: today-needs-fieldnote
+    timeout: 5000
+- tapOn:
+    text: Undo
+    waitToSettleTimeoutMs: 1
+- assertVisible:
+    id: haptic-log
+    text: light
+- extendedWaitUntil:
+    visible:
+      id: today-needs-fieldnote
+    timeout: 5000
+# Swipe it away again to read the toast's words, which the Undo above had no time for.
+- swipe:
+    start: "85%,64%"
+    end: "20%,64%"
+    duration: 400
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Marked done
+    timeout: 5000

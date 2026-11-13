@@ -1,0 +1,16 @@
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S1-Settings?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- openLink: me.rxresu.storyboard://settings?queued=offline
+- tapOn:
+    id: settings-sign-out
+- tapOn: Sign out and discard
+- assertNotVisible: 3 changes haven't synced
+- assertNotVisible:
+    id: settings-sign-out

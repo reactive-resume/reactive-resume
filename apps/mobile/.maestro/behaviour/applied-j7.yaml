@@ -1,0 +1,30 @@
+# Applied means sent: J7's Applied opens "What did you send?"; closing it changes nothing.
+# Opens J7 from J6's Stage row (the J7 storyboard scenario draws a backdrop under the sheet).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J6-Detail?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 20000
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element: "Stage, .*"
+- tapOn: "Stage, .*"
+- extendedWaitUntil:
+    visible: Move Lumen
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: stage-applied
+- assertVisible: What did you send?
+- assertVisible:
+    id: sent-confirm
+- tapOn: Close
+- assertNotVisible: What did you send?
+- assertVisible: "Stage, Interviewing"

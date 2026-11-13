@@ -1,0 +1,47 @@
+# B1 · ··· offers the whole document menu with its details; Lock editing makes the status line say Locked, hides Add
+# section and the section actions, and sections open read-only ("Locked. Unlock it from ··· on the resume.").
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B1-Overview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: More
+- extendedWaitUntil:
+    visible: Lock editing
+    timeout: 10000
+- assertVisible: "Rename…"
+- assertVisible: Tags
+- assertVisible: Duplicate
+- assertVisible: "Translate into…"
+- assertVisible: "Copy for a job…"
+- assertVisible: Notes
+- assertVisible: Print
+- assertVisible: Move to trash
+- assertVisible: Created
+- tapOn: Lock editing
+- extendedWaitUntil:
+    visible: Unlock editing
+    timeout: 10000
+- tapOn: Close
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: "Locked · 1 page · Public"
+    timeout: 10000
+- assertNotVisible: Add section
+- longPressOn: Experience
+- assertNotVisible: Move up
+- tapOn: Experience
+- extendedWaitUntil:
+    visible: Northwind Labs
+    timeout: 10000
+- assertNotVisible: Add experience
+- tapOn: Northwind Labs
+- extendedWaitUntil:
+    visible: "Locked. Unlock it from ··· on the resume."
+    timeout: 10000
+- assertNotVisible: Delete entry

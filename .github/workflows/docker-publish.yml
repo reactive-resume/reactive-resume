@@ -199,10 +199,6 @@ jobs:
     timeout-minutes: 45
     runs-on: ${{ vars.USE_BLACKSMITH == 'true' && 'blacksmith-2vcpu-ubuntu-2404' || 'ubuntu-latest' }}
 
-    outputs:
-      sha: ${{ steps.version.outputs.sha }}
-      mobile_ota: ${{ needs.plan.outputs.release == 'true' && steps.version.outputs.prerelease != 'true' && steps.deploy.outcome == 'success' }}
-
     env:
       DEPLOY: ${{ secrets.SSH_KEY != '' && secrets.SSH_HOST != '' && secrets.SSH_USER != '' }}
       PURGE_CLOUDFLARE: ${{ secrets.CLOUDFLARE_ZONE_ID != '' && secrets.CLOUDFLARE_API_TOKEN != '' }}
@@ -499,15 +495,3 @@ jobs:
           fi
 
           echo "Cloudflare cache purged successfully."
-
-  mobile-ota-update:
-    name: Mobile OTA update
-    needs: publish
-    if: ${{ !cancelled() && needs.publish.result == 'success' && needs.publish.outputs.mobile_ota == 'true' }}
-    permissions:
-      contents: read
-    uses: ./.github/workflows/mobile-ota-update.yml
-    with:
-      sha: ${{ needs.publish.outputs.sha }}
-    secrets:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

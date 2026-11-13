@@ -1,0 +1,56 @@
+# J2: a Saved card held 500 ms lifts (`medium`); held at the board's end edge it pages (`selection` per column);
+# dropped over a new column it moves there (`rigid` and "Moved to …"). The swipe is slow so the card holds still
+# long enough to lift, and ends just inside the 48 dp edge zone.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J2-KilnSaved?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- assertVisible: "Kiln Studio.*"
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 156, 320
+          end: 352, 322
+          duration: 11000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "468,960"
+          end: "1086,966"
+          duration: 20600
+# The swipe's end hold varies by a few hundred ms, so the board may page once or twice: `selection` per page.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - extendedWaitUntil:
+          visible:
+            id: haptic-log
+            text: "medium (selection )+rigid"
+          timeout: 10000
+      - assertVisible: "Moved to .*\\."
+# Android (partial): how long Maestro's swipe dwells in the edge zone varies with load, so the board pages 0 to 4
+# times and the card lands on Applied (its gate holds the drop) or a later column. The lift and the drop are proved.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - extendedWaitUntil:
+          visible:
+            id: haptic-log
+            text: "medium.*"
+          timeout: 10000
+      - extendedWaitUntil:
+          visible: "What did you send\\?|Moved to .*\\."
+          timeout: 10000

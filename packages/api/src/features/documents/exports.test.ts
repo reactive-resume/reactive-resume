@@ -4,6 +4,7 @@ import { unzipSync, strFromU8 } from "fflate";
 import { copyCoverLetterStyle, createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 
 const getResume = vi.hoisted(() => vi.fn());
 const getLetter = vi.hoisted(() => vi.fn());
@@ -16,7 +17,7 @@ vi.mock("@reactive-resume/auth/config", () => ({
 vi.mock("@reactive-resume/db/client", () => ({
 	db: { select: () => ({ from: () => ({ where: () => ({ limit: async () => [{ id: "owner", banned: false }] }) }) }) },
 }));
-const { documentExports } = await import("./exports");
+const { documentExports, documentRenders } = await import("./exports");
 const context = { locale: "en-US" as const, reqHeaders: new Headers() };
 beforeEach(() => {
 	const data = structuredClone(defaultResumeData);
@@ -176,4 +177,42 @@ it.each(["docx", "odt"] as const)("retains header omission for legacy embedded-o
 			: await (await import("@reactive-resume/odt")).buildOdt(data);
 	const text = await documentText(blob, format);
 	expect(text).toBe("I build analytical engines.");
+});
+
+async function pdfPagesText(blob: Blob) {
+	const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
+	const task = getDocument({ data: new Uint8Array(await blob.arrayBuffer()), useSystemFonts: false });
+	const document = await task.promise;
+	const pages: string[] = [];
+	for (let number = 1; number <= document.numPages; number++) {
+		const content = await (await document.getPage(number)).getTextContent();
+		pages.push(content.items.map((item) => ("str" in item ? item.str : "")).join(" "));
+	}
+	await task.destroy();
+	return pages;
+}
+
+it("renders unsaved resume data as sent, every page with its own text, and rejects invalid data", async () => {
+	const data = structuredClone(sampleResumeData);
+	data.basics.name = "Unsaved Draft Name";
+	const response = await call(documentRenders.resume, { data }, { context });
+	expect(response.body.type).toBe("application/pdf");
+	const pages = await pdfPagesText(response.body);
+	expect(pages.length).toBeGreaterThan(1);
+	expect(pages[0]).toContain("Unsaved Draft Name");
+	for (const text of pages.slice(1)) expect(text.trim().length).toBeGreaterThan(100);
+	expect(getResume).not.toHaveBeenCalled();
+	await expect(
+		call(documentRenders.resume, { data: { basics: "not a resume" } } as never, { context }),
+	).rejects.toMatchObject({ code: "BAD_REQUEST" });
+});
+
+it("renders unsaved cover letter data with the export's composition and the sent words", async () => {
+	const words = { greeting: "Hallo {name},", teamGreeting: "Hallo Team,", hiringTeam: "Team", signOff: "Grüße," };
+	const response = await call(documentRenders.letter, { letter: letterFixture(), words }, { context });
+	const [text] = await pdfPagesText(response.body);
+	expect(text).toContain("Hallo Dana,");
+	expect(text).toContain("I build analytical engines.");
+	expect(text).toContain("Grüße,");
+	expect(getLetter).not.toHaveBeenCalled();
 });

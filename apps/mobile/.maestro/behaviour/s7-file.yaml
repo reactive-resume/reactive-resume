@@ -1,0 +1,93 @@
+# Clean storyboard sandbox required. Uses real request guard, repeats same kind, changes fake key, requests again. The picker chooses q1-resume.pdf, copied into Files by q1/lib/files.sh.
+appId: me.rxresu.storyboard
+---
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- openLink: me.rxresu.storyboard://import
+# D4 keeps the last file: Change picks another. Checked first: once the picker is up, neither button is visible.
+- runFlow:
+    when:
+      visible: Change
+    commands:
+      - tapOn: Change
+- runFlow:
+    when:
+      visible:
+        id: import-choose
+    commands:
+      - tapOn:
+          id: import-choose
+- runFlow:
+    file: ../q1/lib/pick-file.yaml
+    env:
+      FILE: q1-resume, pdf
+      NAME: q1-resume.pdf
+- tapOn: Read with AI
+- assertVisible: Send to Work OpenAI?
+- assertVisible: "Don't ask again for files"
+- tapOn:
+    id: first-send-send
+- assertNotVisible: Send to Work OpenAI?
+- openLink: me.rxresu.storyboard://import
+- openLink: me.rxresu.storyboard://import
+# D4 keeps the last file: Change picks another. Checked first: once the picker is up, neither button is visible.
+- runFlow:
+    when:
+      visible: Change
+    commands:
+      - tapOn: Change
+- runFlow:
+    when:
+      visible:
+        id: import-choose
+    commands:
+      - tapOn:
+          id: import-choose
+- runFlow:
+    file: ../q1/lib/pick-file.yaml
+    env:
+      FILE: q1-resume, pdf
+      NAME: q1-resume.pdf
+- tapOn: Read with AI
+- assertNotVisible: Send to Work OpenAI?
+- openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
+- tapOn:
+    id: provider-key
+- inputText: storyboard-replacement-key
+- hideKeyboard
+- tapOn:
+    id: provider-save
+- openLink: me.rxresu.storyboard://import
+- openLink: me.rxresu.storyboard://import
+# D4 keeps the last file: Change picks another. Checked first: once the picker is up, neither button is visible.
+- runFlow:
+    when:
+      visible: Change
+    commands:
+      - tapOn: Change
+- runFlow:
+    when:
+      visible:
+        id: import-choose
+    commands:
+      - tapOn:
+          id: import-choose
+- runFlow:
+    file: ../q1/lib/pick-file.yaml
+    env:
+      FILE: q1-resume, pdf
+      NAME: q1-resume.pdf
+# Read with AI is still the chosen way on this screen, so picking the file reads with AI at once, and asks again.
+- extendedWaitUntil:
+    visible: Send to Work OpenAI?
+    timeout: 10000

@@ -1,0 +1,164 @@
+# J9: close with each outcome from J6's ··· (`success` only for "I accepted this offer"), then Reopen from J6, which
+# puts the application back at its stage. Runs over the real J6 (the J9 storyboard scenario draws a backdrop instead).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J6-Detail?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 20000
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://applications/parcel
+- extendedWaitUntil:
+    visible: Decide on the offer
+    timeout: 10000
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: More
+- tapOn: Close…
+- extendedWaitUntil:
+    visible: How did it end?
+    timeout: 10000
+- waitForAnimationToEnd
+# An offer starts on "I accepted this offer"; choosing another outcome first makes the radio change audible.
+- tapOn:
+    id: outcome-not-selected
+- tapOn:
+    id: outcome-accepted
+- tapOn:
+    id: close-confirm
+    waitToSettleTimeoutMs: 1
+# The toast first: on Android the steps below take longer than its lifetime.
+- assertVisible: Closed
+- extendedWaitUntil:
+    visible: This application is closed
+    timeout: 10000
+- assertVisible:
+    id: haptic-log
+    text: "selection selection success"
+- tapOn:
+    text: Reopen
+    index: 0
+- extendedWaitUntil:
+    visible: Decide on the offer
+    timeout: 10000
+- assertNotVisible: This application is closed
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: More
+- tapOn: Close…
+- extendedWaitUntil:
+    visible: How did it end?
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: outcome-accepted-other
+- tapOn:
+    id: close-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Closed
+- extendedWaitUntil:
+    visible: This application is closed
+    timeout: 10000
+- assertVisible:
+    id: haptic-log
+    text: "selection"
+- tapOn:
+    text: Reopen
+    index: 0
+- extendedWaitUntil:
+    visible: Decide on the offer
+    timeout: 10000
+- assertNotVisible: This application is closed
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: More
+- tapOn: Close…
+- extendedWaitUntil:
+    visible: How did it end?
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: outcome-not-selected
+- tapOn:
+    id: close-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Closed
+- extendedWaitUntil:
+    visible: This application is closed
+    timeout: 10000
+- assertVisible:
+    id: haptic-log
+    text: "selection"
+- tapOn:
+    text: Reopen
+    index: 0
+- extendedWaitUntil:
+    visible: Decide on the offer
+    timeout: 10000
+- assertNotVisible: This application is closed
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: More
+- tapOn: Close…
+- extendedWaitUntil:
+    visible: How did it end?
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: outcome-withdrew
+- tapOn:
+    id: close-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Closed
+- extendedWaitUntil:
+    visible: This application is closed
+    timeout: 10000
+- assertVisible:
+    id: haptic-log
+    text: "selection"
+- tapOn:
+    text: Reopen
+    index: 0
+- extendedWaitUntil:
+    visible: Decide on the offer
+    timeout: 10000
+- assertNotVisible: This application is closed
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: More
+- tapOn: Close…
+- extendedWaitUntil:
+    visible: How did it end?
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: outcome-no-response
+- tapOn:
+    id: close-confirm
+    waitToSettleTimeoutMs: 1
+- assertVisible: Closed
+- extendedWaitUntil:
+    visible: This application is closed
+    timeout: 10000
+- assertVisible:
+    id: haptic-log
+    text: "selection"
+- tapOn:
+    text: Reopen
+    index: 0
+- extendedWaitUntil:
+    visible: Decide on the offer
+    timeout: 10000
+- assertNotVisible: This application is closed
+- waitForAnimationToEnd

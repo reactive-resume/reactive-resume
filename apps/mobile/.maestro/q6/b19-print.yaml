@@ -1,0 +1,25 @@
+# B19 · Print renders the PDF and opens the system print dialog.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B1-Overview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: More
+- extendedWaitUntil:
+    visible: Print
+    timeout: 10000
+- tapOn: Print
+# The system print preview: Options on iOS, the printer picker (Save as PDF) on Android.
+- extendedWaitUntil:
+    visible: ".*Options.*|Save as PDF|Select a printer"
+    timeout: 20000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back

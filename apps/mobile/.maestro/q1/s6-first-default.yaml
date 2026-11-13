@@ -1,0 +1,26 @@
+# S6 · Saving the first provider tests it, makes it the default and returns to S5.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/T2-FirstRun?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- openLink: me.rxresu.storyboard://settings/ai
+- assertNotVisible: Work OpenAI
+- tapOn: Add AI provider
+- waitForAnimationToEnd
+- tapOn:
+    id: provider-key
+- waitForAnimationToEnd
+- inputText: sk-first-key
+- hideKeyboard
+- tapOn:
+    id: provider-save
+- waitForAnimationToEnd
+# Saved and back on S5 with the new provider (its "· default" line is a row secondary Maestro can't read).
+- extendedWaitUntil:
+    visible: OpenAI
+    timeout: 10000

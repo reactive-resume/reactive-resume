@@ -1,0 +1,53 @@
+# D5 · Search: the field is focused on arrival and searches as you type; Enter hides the keyboard and remembers the
+# search; Remove plays selection; the kind chip opens its picker; no results say so; Cancel goes back.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/T1-Today?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- tapOn: Search
+- waitForAnimationToEnd
+- inputText: lumen
+- extendedWaitUntil:
+    visible: Lumen
+    timeout: 5000
+- pressKey: Enter
+- assertNotVisible: space
+- tapOn: All kinds
+- waitForAnimationToEnd
+- assertVisible: Kind
+- tapOn: Cover letters
+- waitForAnimationToEnd
+- assertNotVisible: Applications
+- tapOn: Cover letters
+- waitForAnimationToEnd
+- tapOn: All kinds
+- waitForAnimationToEnd
+- tapOn:
+    text: Search everything
+    index: 0
+- waitForAnimationToEnd
+- eraseText: 10
+- assertVisible: Recent searches
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn: Remove
+- waitForAnimationToEnd
+- assertVisible:
+    id: haptic-log
+    text: selection
+- tapOn:
+    text: Search everything
+    index: 0
+- waitForAnimationToEnd
+- inputText: qqqq
+- extendedWaitUntil:
+    visible: No matches for “qqqq”. Try different words.
+    timeout: 5000
+- tapOn: Cancel
+- waitForAnimationToEnd
+- assertVisible: Open briefing

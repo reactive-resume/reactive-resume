@@ -1,0 +1,27 @@
+# B21 › Move down → `selection`; the entry moves under its neighbour on B2.
+# Opens B21 by holding the real B2 row (the B21 storyboard scenario draws a backdrop under the sheet).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B2-Section?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- longPressOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Move down
+    timeout: 10000
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn:
+    id: entry-action-down
+- assertVisible:
+    id: haptic-log
+    text: selection
+- assertVisible:
+    text: Northwind Labs
+    below: Harbour Studio

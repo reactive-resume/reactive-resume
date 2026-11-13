@@ -1,0 +1,73 @@
+# B17 · Swiping an edit toward the end accepts it; "Accept the others" accepts the edits without unverified claims
+# and leaves "New detail: check it's true" open; an out-of-date edit says so with Suggest again; a failing save of
+# your wording keeps the text and says "Couldn't save your wording. Your text is still here; try again."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B17-Proposals?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- assertVisible: 2 of 3 open
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 60, 330
+          end: 380, 330
+          duration: 500
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "180,990"
+          end: "1140,990"
+          duration: 500
+- extendedWaitUntil:
+    visible: ".*Northwind Labs › line 2 · Accepted"
+    timeout: 5000
+- assertVisible: 1 of 3 open
+- tapOn:
+    text: Undo
+    index: 0
+- extendedWaitUntil:
+    visible: 2 of 3 open
+    timeout: 5000
+# Out of date.
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant/proposals?preset=stale
+- extendedWaitUntil:
+    visible: "Out of date: the text has changed since."
+    timeout: 10000
+- assertVisible: Suggest again
+# Saving your wording fails.
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant/proposals?preset=save-fail
+- extendedWaitUntil:
+    visible: Edit
+    timeout: 10000
+- tapOn: Edit
+- extendedWaitUntil:
+    visible: Save wording
+    timeout: 5000
+- tapOn: Save wording
+- scrollUntilVisible:
+    element: Couldn't save your wording. Your text is still here; try again.
+    direction: DOWN
+    timeout: 10000
+- assertVisible: Your wording
+
+# Three open edits: two can go together.
+- openLink: me.rxresu.storyboard://builder/resume-product/assistant/proposals?preset=three
+- extendedWaitUntil:
+    visible: Accept the others
+    timeout: 10000
+- assertVisible: 3 of 3 open
+- tapOn: Accept the others
+- extendedWaitUntil:
+    visible: 1 of 3 open
+    timeout: 5000
+- assertVisible: "New detail: check it's true"

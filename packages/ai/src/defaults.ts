@@ -61,6 +61,10 @@ export const AI_PROVIDER_KEY_URLS: Record<AIProvider, string> = {
 	"openai-compatible": "",
 };
 
+/** Ollama and OpenAI-compatible servers (LM Studio, for one) often run locally without authentication. */
+export const isAPIKeyOptional = (provider: AIProvider | undefined) =>
+	provider === "ollama" || provider === "openai-compatible";
+
 /** Form syntax only; the server still enforces endpoint policy and saved-key protection. */
 export function getAIProviderSetupProblem(
 	provider: AIProvider,
@@ -77,7 +81,7 @@ export function getAIProviderSetupProblem(
 			return "baseURL";
 		}
 	}
-	if (!hasSavedKey && provider !== "ollama" && !fields.apiKey.trim()) return "apiKey";
+	if (!hasSavedKey && !isAPIKeyOptional(provider) && !fields.apiKey.trim()) return "apiKey";
 	if (!fields.model.trim()) return "model";
 	return null;
 }

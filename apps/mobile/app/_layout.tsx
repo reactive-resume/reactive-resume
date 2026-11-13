@@ -1,167 +1,90 @@
-import type { DefaultTheme } from "expo-router";
+import "@/polyfills";
 import { I18nProvider } from "@lingui/react";
-import { useLingui } from "@lingui/react/macro";
-import { TrueSheetProvider } from "@lodev09/react-native-true-sheet";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
-import { Observe, ObserveErrorBoundary, ObserveRoot } from "expo-observe";
-import { Stack, ThemeProvider } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
+import { DefaultTheme, ThemeProvider } from "expo-router";
+import { Stack } from "expo-router/js-stack";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { DevSettings } from "react-native";
+import { useEffect, useMemo, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { followStageWrites } from "@reactive-resume/schema/applications/stage-baselines";
 import { restoreSession } from "@/auth/session";
-import { SessionGate } from "@/auth/session-gate";
-import { IncomingPosting } from "@/features/applications/incoming-posting";
-import { stageScope } from "@/features/applications/queries";
-import { listedApplication } from "@/features/applications/stage-actions";
-import { useOpenReminder } from "@/features/reminders/open";
-import { useReviewPrompt } from "@/features/reviews/use-review-prompt";
-import { useAccountLocale } from "@/features/settings/account-locale";
+import { DataProvider, isBusy, seed } from "@/data";
+import { setNow } from "@/data/clock";
+import { registerStoryboardDeps, StoryboardController } from "@/dev/storyboard/capture";
+import { StoryboardInsets } from "@/dev/storyboard/harness";
+import { registerFirstSend } from "@/features/settings/first-send";
+import { TodayNotifications } from "@/features/system/notifications";
 import { i18n, initI18n } from "@/i18n";
-import { KeyboardShortcuts, ShortcutHelpButton } from "@/shell/shortcut-help";
-import { ConfirmDialog, EmptyState, Screen, Toaster, WindowSafeAreaProvider, useReducedMotion, useTheme } from "@/ui";
-import { fontAssets } from "@/ui/fonts";
-import { initTheme } from "@/ui/theme";
+import { DevHost } from "@/ui/DevMenu";
+import { HeroOverlay } from "@/ui/Hero";
+import { useScreenOptions } from "@/ui/navigation";
+import { useTheme } from "@/ui/theme";
+import { ToastHost } from "@/ui/Toast";
+import { fonts } from "@/ui/tokens";
 
-// One configure call: each call replaces the whole config, and it must run before any screen mounts.
-// The OAuth callback carries `code` and `state`; `server` can name a private self-hosted instance.
-Observe.configure({ integrations: { "expo-router": { filteredParams: ["code", "state", "token", "server"] } } });
+registerStoryboardDeps({ seed: (fixture) => seed(fixture as "storyboard" | "empty-account"), setNow, isBusy });
+// S7: the first time a kind of data goes to an AI connection, ask before sending.
+registerFirstSend();
 
-void SplashScreen.preventAutoHideAsync();
-
-const queryClient = new QueryClient();
-// A bulk move chosen while a single stage change is on its way starts from what that change saved.
-followStageWrites(queryClient, stageScope, (id) => listedApplication(queryClient, id));
-
-function useNavigationTheme() {
-	const { scheme, colors, fonts } = useTheme();
-	return {
-		dark: scheme === "dark",
-		colors: {
-			primary: colors.accent,
-			background: colors.bg,
-			card: colors.surface,
-			text: colors.ink,
-			border: colors.line,
-			notification: colors.danger,
-		},
-		fonts: {
-			regular: { fontFamily: fonts.ui[400], fontWeight: "400" as const },
-			medium: { fontFamily: fonts.ui[500], fontWeight: "500" as const },
-			bold: { fontFamily: fonts.ui[600], fontWeight: "600" as const },
-			heavy: { fontFamily: fonts.ui[700], fontWeight: "700" as const },
-		},
-	} satisfies typeof DefaultTheme;
-}
-
-type CrashScreenProps = { onRetry: () => void };
-
-function CrashScreen({ onRetry }: CrashScreenProps) {
-	const { t } = useLingui();
-	return (
-		<Screen scroll={false} edges={["top", "bottom"]} contentStyle={{ flex: 1, justifyContent: "center" }}>
-			<EmptyState
-				icon="warning-circle"
-				title={t`This screen stopped working`}
-				message={t`Try again, or restart the app.`}
-				action={{ label: t`Try again`, onPress: onRetry }}
-			/>
-		</Screen>
-	);
-}
-
-function RootStack() {
-	const { t } = useLingui();
-	const navigationTheme = useNavigationTheme();
-	const reduced = useReducedMotion();
-	useOpenReminder();
-	useReviewPrompt();
-	const accountLocale = useAccountLocale();
-
-	return (
-		<ThemeProvider value={navigationTheme}>
-			<StatusBar style="auto" />
-			<Stack
-				screenOptions={{
-					animation: reduced ? "fade" : "default",
-					headerRight: () => <ShortcutHelpButton />,
-					headerTitleStyle: { fontFamily: navigationTheme.fonts.bold.fontFamily },
-				}}
-			>
-				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-				<Stack.Screen name="(auth)" options={{ headerShown: false }} />
-				<Stack.Screen name="builder/[id]" options={{ headerShown: false, title: t`Resume` }} />
-				<Stack.Screen name="letter/[id]" options={{ headerShown: false, title: t`Cover letter` }} />
-				<Stack.Screen
-					name="new"
-					options={{ presentation: "formSheet", sheetAllowedDetents: [0.5, 0.9], title: t`New` }}
-				/>
-				<Stack.Screen name="search" options={{ presentation: "modal", headerShown: false, title: t`Search` }} />
-				<Stack.Screen name="ats-checker" options={{ title: t`ATS checker` }} />
-				<Stack.Screen name="applications/[id]" options={{ headerShown: false, title: t`Application` }} />
-				<Stack.Screen name="r/[username]/[slug]" options={{ title: t`Resume` }} />
-			</Stack>
-			<KeyboardShortcuts />
-			<ConfirmDialog
-				open={accountLocale.restart}
-				title={t`Restart to change text direction`}
-				message={t`Your language is saved. Restart Reactive Resume to apply the new left-to-right or right-to-left layout.`}
-				confirmLabel={__DEV__ ? t`Reload now` : t`Done`}
-				cancelLabel={t`Later`}
-				onCancel={accountLocale.dismissRestart}
-				onConfirm={() => {
-					accountLocale.dismissRestart();
-					if (__DEV__) DevSettings.reload();
-				}}
-			/>
-		</ThemeProvider>
-	);
-}
-
-function RootLayout() {
-	const [fontsLoaded, fontError] = useFonts(fontAssets);
+export default function RootLayout() {
 	const [ready, setReady] = useState(false);
-
 	useEffect(() => {
-		initTheme();
 		void Promise.all([initI18n(), restoreSession()]).finally(() => setReady(true));
 	}, []);
-
-	const loaded = ready && (fontsLoaded || !!fontError);
-
-	useEffect(() => {
-		if (loaded) void SplashScreen.hideAsync();
-	}, [loaded]);
-
-	if (!loaded) return null;
-
+	const [loaded] = useFonts({
+		[fonts.ui400]: require("../assets/fonts/Figtree-Regular.ttf"),
+		[fonts.ui500]: require("../assets/fonts/Figtree-Medium.ttf"),
+		[fonts.ui600]: require("../assets/fonts/Figtree-SemiBold.ttf"),
+		[fonts.ui700]: require("../assets/fonts/Figtree-Bold.ttf"),
+		[fonts.display]: require("../assets/fonts/InstrumentSerif-Regular.ttf"),
+		[fonts.mono]: require("../assets/fonts/GeistMono-Regular.ttf"),
+	});
+	const { name, colors } = useTheme();
+	const options = useScreenOptions();
+	// Navigators paint their own background behind screens (visible under transparent sheet routes): use the token.
+	const navigationTheme = useMemo(
+		() => ({
+			...DefaultTheme,
+			dark: name === "dark",
+			colors: {
+				...DefaultTheme.colors,
+				background: colors.bg,
+				card: colors.bg,
+				text: colors.ink,
+				border: colors.line,
+				primary: colors.accent,
+			},
+		}),
+		[name, colors],
+	);
+	if (!loaded || !ready) return null;
 	return (
-		<GestureHandlerRootView style={{ flex: 1 }}>
+		<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg }}>
 			<SafeAreaProvider>
-				<WindowSafeAreaProvider>
+				<StoryboardInsets>
 					<KeyboardProvider>
-						<QueryClientProvider client={queryClient}>
-							<I18nProvider i18n={i18n}>
-								<TrueSheetProvider>
-									<ObserveErrorBoundary fallback={({ resetError }) => <CrashScreen onRetry={resetError} />}>
-										<RootStack />
-										<SessionGate />
-										<IncomingPosting />
-									</ObserveErrorBoundary>
-									<Toaster />
-								</TrueSheetProvider>
-							</I18nProvider>
-						</QueryClientProvider>
+						<StatusBar style={name === "dark" ? "light" : "dark"} />
+						<I18nProvider i18n={i18n}>
+							<DataProvider>
+								<ThemeProvider value={navigationTheme}>
+									<Stack screenOptions={options.push}>
+										{/* The storyboard link only hands its request to the capture controller, which replaces this route
+										at once. Animating it in left the stack mid-transition when a link opened it in a running app, and
+										every touch after that was ignored. */}
+										<Stack.Screen name="(dev)/storyboard/[id]" options={{ animation: "none" }} />
+									</Stack>
+								</ThemeProvider>
+								<ToastHost />
+								<TodayNotifications />
+								<HeroOverlay />
+								<DevHost />
+								<StoryboardController />
+							</DataProvider>
+						</I18nProvider>
 					</KeyboardProvider>
-				</WindowSafeAreaProvider>
+				</StoryboardInsets>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>
 	);
 }
-
-export default ObserveRoot.wrap(RootLayout);

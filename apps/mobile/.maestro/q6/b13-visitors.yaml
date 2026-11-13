@@ -1,0 +1,53 @@
+# B13 · "By day" lists the daily views; New link asks who it's for, comments and expiry, then makes the link and
+# opens the share sheet; a link opens with its comments, Copy link and Turn off link… (it moves to Past links; a row's second line isn't exposed, so the row is found under the heading);
+# with no visitors: "No visitors yet. Share your link to see views here."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B13-Visitors?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: By day
+- extendedWaitUntil:
+    visible: ".* views"
+    timeout: 5000
+- tapOn: Hide days
+- tapOn: Careers office
+- extendedWaitUntil:
+    visible: Turn off link…
+    timeout: 10000
+- tapOn:
+    text: Copy link
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: Link copied
+    timeout: 5000
+- tapOn: Turn off link…
+- extendedWaitUntil:
+    visible: Turn off this link?
+    timeout: 5000
+- tapOn: Turn off link
+- extendedWaitUntil:
+    visible: Past links
+    timeout: 10000
+- assertVisible:
+    text: Careers office
+    below: Past links
+- tapOn: New link
+- extendedWaitUntil:
+    visible: Who is it for?
+    timeout: 10000
+- assertVisible: Only you see this.
+- inputText: Sam, coach
+- pressKey: Enter
+- tapOn: 7 days
+- tapOn: Allow comments
+- tapOn: Make link
+# The system share sheet opens with the link.
+- extendedWaitUntil:
+    visible: ".*rxresu\\.me.*"
+    timeout: 10000

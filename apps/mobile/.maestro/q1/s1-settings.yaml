@@ -1,0 +1,75 @@
+# S1 · Settings opens from the avatar on every root tab as a modal; × closes it from a pushed screen too; the AI row
+# a plain sign-out (nothing queued) signs out at once with no haptic.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: Open briefing
+    timeout: 30000
+- tapOn: Settings
+- waitForAnimationToEnd
+- assertVisible: Account and security
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- tapOn: Documents
+- waitForAnimationToEnd
+- tapOn: Settings
+- waitForAnimationToEnd
+- assertVisible: Account and security
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- tapOn: Applications
+- waitForAnimationToEnd
+- tapOn: Settings
+- waitForAnimationToEnd
+- assertVisible: Account and security
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- tapOn: Career
+- waitForAnimationToEnd
+- tapOn: Settings
+- waitForAnimationToEnd
+- assertVisible: Account and security
+- tapOn: Preferences
+- waitForAnimationToEnd
+- assertVisible: Notify me about
+# iOS closes the whole modal by swiping it down; Android has no such gesture (MOTION.md §6.1): back pops
+# Preferences, back again closes Settings.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "50%,12%"
+          end: "50%,90%"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+      - extendedWaitUntil:
+          visible: Account and security
+          timeout: 5000
+      - back
+- extendedWaitUntil:
+    notVisible: Notify me about
+    timeout: 5000
+- assertNotVisible: Account and security
+- tapOn: Settings
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn:
+    id: settings-sign-out
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Your resume, from first draft to the offer.
+    timeout: 10000
+- assertVisible:
+    id: haptic-log
+    text: ""

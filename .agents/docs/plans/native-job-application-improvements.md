@@ -277,7 +277,7 @@ Credit subscriptions and funded inference require a separate business and sustai
 - [ ] Preserve submitted snapshots when profiles, answers, or documents later change.
 - [ ] Support keyboard, screen-reader, localized, and narrow-screen workflows.
 - [ ] Add Lingui strings and update mapped guides and fictional screenshots with feature changes.
-- [ ] Assess whether mobile changes need an OTA update or a new native store build.
+- [ ] Ship mobile changes as a store build through the mobile release workflow (there are no OTA updates).
 - [ ] Run affected typechecks/tests, package boundaries, lint, formatting, and runtime/build checks appropriate to implementation.
 
 ## Validation plan

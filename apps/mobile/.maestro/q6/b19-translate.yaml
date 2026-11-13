@@ -1,0 +1,36 @@
+# B19 · Translate into… makes a language copy, opens it and sends the translation request to its assistant at once.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B1-Overview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: More
+- extendedWaitUntil:
+    visible: Translate into…
+    timeout: 10000
+- tapOn: Translate into…
+- extendedWaitUntil:
+    visible: Deutsch
+    timeout: 10000
+- tapOn: Deutsch
+- extendedWaitUntil:
+    visible: Send to Work OpenAI?
+    timeout: 15000
+- tapOn:
+    id: first-send-send
+- tapOn:
+    id: first-send-send
+    optional: true
+# The sent message lands below the fold; Android only reports what is on screen.
+- scrollUntilVisible:
+    element: "Translate every visible text field of this language copy into de-DE.*"
+    timeout: 15000
+- tapOn: Close
+- extendedWaitUntil:
+    visible: ".*Deutsch"
+    timeout: 10000

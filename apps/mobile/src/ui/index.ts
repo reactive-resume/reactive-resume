@@ -1,66 +1,41 @@
-// The Desk & Paper primitives (M2-T1). `app/dev/ui.tsx` shows every one of them in a dev build.
-export { Button, IconButton, type ButtonProps, type ButtonVariant, type IconButtonProps } from "./button";
-export {
-	Chip,
-	ChipInput,
-	Segmented,
-	SelectSheet,
-	Switch,
-	TextArea,
-	TextField,
-	type ChipInputProps,
-	type ChipProps,
-	type SegmentedProps,
-	type SelectOption,
-	type SelectSheetProps,
-	type SwitchProps,
-	type TextAreaProps,
-	type TextFieldProps,
-} from "./fields";
-export { Icon, type IconName, type IconProps } from "./icon";
-export {
-	Avatar,
-	Banner,
-	Card,
-	EmptyState,
-	ListGroup,
-	ListRow,
-	Skeleton,
-	type AvatarProps,
-	type BannerProps,
-	type BannerTone,
-	type BannerVariant,
-	type CardProps,
-	type EmptyStateProps,
-	type ListGroupProps,
-	type ListRowProps,
-	type SkeletonProps,
-} from "./layout";
-export {
-	ConfirmDialog,
-	EditorSheet,
-	Sheet,
-	Toaster,
-	dismissToast,
-	showToast,
-	toast,
-	toastLifetime,
-	type ConfirmDialogProps,
-	type SheetProps,
-	type ToastOptions,
-} from "./overlays";
-export { SortableList, type SortableItemInfo, type SortableListProps } from "./sortable";
-export {
-	haptics,
-	listItemMotion,
-	setHapticsEnabled,
-	useHapticsEnabled,
-	listLayout,
-	useFirstAppearance,
-	useReducedMotion,
-	workletEaseMove,
-} from "./motion";
-export { usePullRefresh } from "./use-pull-refresh";
-export { Screen, Text, type ScreenProps, type TextProps, type TextVariant } from "./text";
-export { WindowSafeAreaProvider, useWindowSafeAreaInsets } from "./safe-area";
-export { setThemePreference, useTheme, useThemePreference, type Theme, type ThemePreference } from "./theme";
+export * from "./base";
+export * from "./buttons";
+export * from "./cards";
+export * from "./fields";
+export * from "./Icon";
+export * from "./layout";
+export * from "./page";
+export * from "./rows";
+export * from "./Text";
+export * from "./theme";
+export * from "./BottomSheet";
+export * from "./Checkbox";
+export * from "./CollapsingHeader";
+export * from "./Dialog";
+export * from "./Dock";
+export * from "./Fold";
+export * from "./FocusRing";
+export * from "./Hero";
+export * from "./Menu";
+export * from "./PageZoom";
+export * from "./PullToRefresh";
+export * from "./Radio";
+export * from "./ReorderList";
+export * from "./Segmented";
+export * from "./Spinner";
+export * from "./SwipeRow";
+export * from "./Switch";
+export * from "./Toast";
+export * from "./WorkingLabel";
+export * from "./ZoomBar";
+export * from "./scaffold";
+export * from "./navigation";
+export { haptic, hitSlopFor, minHit, useFadeUp, useMotionPolicy, shake, FadeThroughProvider } from "./motion";
+export * from "./tokens";
+export * from "./SnapCarousel";
+export * from "./BoardDrag";
+export * from "./ExpandingStrip";
+export * from "./Crossfade";
+export * from "./ChatFollow";
+export * from "./large-text";
+export * from "./Logo";

@@ -1,0 +1,34 @@
+# D6 · Trash: Empty counts exactly what it destroys by kind; tapping a row offers Restore or Delete permanently;
+# Restore puts the item back with an Open toast.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D6-Trash?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- tapOn: Empty
+- assertVisible: Delete 2 documents and 1 application permanently?
+- assertVisible: They can't be restored.
+- tapOn: Cancel
+- assertNotVisible: Delete 2 documents and 1 application permanently?
+- tapOn:
+    id: trash-resume-junior
+- assertVisible: Delete permanently…
+- tapOn:
+    text: Restore
+    childOf:
+      id: dialog
+    waitToSettleTimeoutMs: 1
+- assertVisible: Restored “Junior designer 2021”
+# Tap Open at once: Maestro waits about 3 s for the screen to settle before each command while the toast's fuse runs,
+# so every extra step eats into its 8 s.
+- tapOn:
+    text: Open
+    waitToSettleTimeoutMs: 1
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible: Junior designer 2021
+    timeout: 10000

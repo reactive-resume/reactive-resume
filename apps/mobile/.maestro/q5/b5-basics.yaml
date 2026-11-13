@@ -1,0 +1,67 @@
+# B5 · The email field explains a missing domain inline after the first visit, as the web does, and the message stays
+# in view above the keyboard while Return moves on to the next field; a photo chosen from the library uploads (`success`); a file that can't be read says
+# which photos work. `photo=fixture` and `photo=unreadable` stand in for the system picker.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B5-Basics?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: alex@morgan.design
+- eraseText: 30
+- inputText: "alex@"
+# Return moves on to Phone; Email's message shows above it, clear of the keyboard.
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: "Add the domain after the @, like alex@example.com"
+    timeout: 5000
+- tapOn: "alex@"
+- eraseText: 10
+- inputText: "alex@morgan.design"
+- assertNotVisible: "Add the domain after the @, like alex@example.com"
+- hideKeyboard
+# Back to B1 first, so only one Basics screen is open for the preset links.
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- openLink: me.rxresu.storyboard://builder/resume-product/basics?photo=fixture
+- extendedWaitUntil:
+    visible: Change photo
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn: Change photo
+- extendedWaitUntil:
+    visible: Choose from library
+    timeout: 10000
+- tapOn: Choose from library
+- extendedWaitUntil:
+    visible:
+      id: haptic-log
+      text: ".*success"
+    timeout: 10000
+- assertNotVisible: "Couldn't upload the photo.*"
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- openLink: me.rxresu.storyboard://builder/resume-product/basics?photo=unreadable
+- extendedWaitUntil:
+    visible: Change photo
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn: Change photo
+- extendedWaitUntil:
+    visible: Choose from library
+    timeout: 10000
+- tapOn: Choose from library
+- extendedWaitUntil:
+    visible: "Couldn't upload the photo. Choose a PNG, JPEG, WebP or GIF up to 10 MB, then try again."
+    timeout: 10000

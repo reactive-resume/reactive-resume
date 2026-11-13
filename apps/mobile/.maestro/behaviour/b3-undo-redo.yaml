@@ -1,0 +1,25 @@
+# B3: Undo in the status line reverts the last field edit; Redo appears after an Undo and restores it.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B3-Entry?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Location
+    timeout: 15000
+- waitForAnimationToEnd
+- tapOn: Lisbon
+- eraseText: 6
+- inputText: Porto
+- hideKeyboard
+- assertVisible: Porto
+- tapOn:
+    id: status-undo
+- assertVisible: Lisbon
+- tapOn:
+    id: status-redo
+- assertVisible: Porto

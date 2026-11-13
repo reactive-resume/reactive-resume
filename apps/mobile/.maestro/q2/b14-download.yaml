@@ -1,0 +1,24 @@
+# B14 · The file name's extension follows the format and can't be edited; OpenDocument sits under More formats.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B14-Download?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- assertVisible: ".pdf"
+- tapOn: Word
+- assertVisible: ".docx"
+- tapOn: Plain text
+- assertVisible: ".md"
+- tapOn: JSON backup
+- assertVisible: ".json"
+- tapOn: More formats
+- tapOn: OpenDocument
+# With every format listed the file name sits below the sheet's fold (Android reports only what is on screen).
+- scrollUntilVisible:
+    element: ".odt"
+- assertVisible: ".odt"

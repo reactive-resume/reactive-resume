@@ -1,0 +1,33 @@
+# S5 · AI and developer: tapping a provider opens its edit screen with Test, Make default and Delete (which names
+# what it deletes); load failures say what to do.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S5-AI?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- tapOn: Work OpenAI
+- waitForAnimationToEnd
+- assertVisible: Test
+- assertVisible: Make default
+# Delete sits at the end of the form, just under the footer: scroll it up first.
+- swipe:
+    start: "50%,70%"
+    end: "50%,30%"
+    duration: 400
+- tapOn: Delete
+- waitForAnimationToEnd
+- assertVisible: Delete “Work OpenAI”?
+- assertVisible: Its saved key is deleted.
+- tapOn: Cancel
+- waitForAnimationToEnd
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://settings/ai?state=no-secret
+- assertVisible: AI providers aren't available on this server until ENCRYPTION_SECRET is set.
+- openLink: me.rxresu.storyboard://settings/ai?state=load-error
+- assertVisible: AI providers couldn't be loaded. Reload to try again.

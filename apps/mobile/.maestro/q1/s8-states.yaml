@@ -1,0 +1,40 @@
+# S8 · Online the first button is Sync and sign out; a tap on the scrim keeps working; each failed sync names its
+# cause with its own first action.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S1-Settings?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- openLink: me.rxresu.storyboard://settings?queued=online
+- tapOn:
+    id: settings-sign-out
+- waitForAnimationToEnd
+- assertVisible: Sync and sign out
+- tapOn:
+    point: "50%,8%"
+- waitForAnimationToEnd
+- assertNotVisible: Sync and sign out
+- assertVisible:
+    id: settings-sign-out
+- openLink: me.rxresu.storyboard://storyboard/S8-SessionExpired?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- assertVisible: Sign in again
+- openLink: me.rxresu.storyboard://storyboard/S8-Conflict?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- assertVisible: Review
+- openLink: me.rxresu.storyboard://storyboard/S8-NoResponse?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- assertVisible: Try again

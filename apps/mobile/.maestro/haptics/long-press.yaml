@@ -1,0 +1,18 @@
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- assertVisible: Product designer
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- longPressOn:
+    id: document-resume-lead
+- assertVisible: Move to Trash
+- assertVisible:
+    id: haptic-log
+    text: light

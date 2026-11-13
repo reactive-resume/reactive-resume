@@ -1,0 +1,47 @@
+# D2 · Document actions: Rename edits the name in the sheet; Duplicate toasts with Open; Tailor for a job picks an
+# open application, then the copy opens in B1 and the toast says the original is unchanged.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D2-Actions?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- tapOn: Rename
+- waitForAnimationToEnd
+- assertVisible: Name
+- eraseText: 40
+- inputText: Design lead 2026
+- tapOn:
+    text: Save
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Design lead 2026
+    timeout: 5000
+- assertNotVisible: Cancel
+- tapOn:
+    text: Duplicate
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Duplicated “Design lead 2026”
+    timeout: 5000
+- tapOn:
+    text: Open
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- openLink: me.rxresu.storyboard://documents/resume-lead/actions?type=resume
+- tapOn: Tailor for a job…
+- waitForAnimationToEnd
+- assertVisible: Save a job
+- tapOn:
+    text: Lumen
+    index: 0
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Copy made for Lumen. This resume is unchanged.
+    timeout: 10000
+- assertVisible: ".* — Lumen"

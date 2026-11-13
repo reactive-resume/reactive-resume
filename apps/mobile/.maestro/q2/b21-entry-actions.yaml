@@ -1,0 +1,93 @@
+# B21 · Held from a B2 row: Move up is dimmed for the first entry; Move down moves it under its neighbour; Hide from
+# page dims the row with "Not on the page" and the sheet then offers Show on page; Duplicate adds the copy under the
+# original with "Entry duplicated" and Undo; from B3's ···, Delete entry goes back to B2 with "Entry deleted", and
+# Undo in the status line brings it back.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B2-Section?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- longPressOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Move down
+    timeout: 10000
+- waitForAnimationToEnd
+- assertVisible:
+    id: entry-action-up
+    enabled: false
+- tapOn:
+    id: entry-action-down
+- waitForAnimationToEnd
+- assertVisible:
+    text: Northwind Labs
+    below: Harbour Studio
+- longPressOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Hide from page
+    timeout: 10000
+- waitForAnimationToEnd
+- assertVisible:
+    id: entry-action-down
+    enabled: false
+- tapOn:
+    id: entry-action-hide
+- waitForAnimationToEnd
+- longPressOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Show on page
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: entry-action-hide
+- waitForAnimationToEnd
+- longPressOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Hide from page
+    timeout: 10000
+- tapOn: Close
+- waitForAnimationToEnd
+- longPressOn: Harbour Studio
+- extendedWaitUntil:
+    visible: Duplicate
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: entry-action-duplicate
+    waitToSettleTimeoutMs: 1000
+- extendedWaitUntil:
+    visible: Entry duplicated
+    timeout: 5000
+- assertVisible: "3 entries · on page 1.*"
+- tapOn:
+    id: status-undo
+- assertVisible: "2 entries · on page 1.*"
+# From B3's ···, with a field edited and the keyboard up.
+- tapOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Company
+    timeout: 10000
+- tapOn:
+    text: Northwind Labs
+    index: 1
+- inputText: " Ltd"
+- tapOn: Entry options
+- extendedWaitUntil:
+    visible: Move down
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: entry-action-delete
+    waitToSettleTimeoutMs: 1000
+- extendedWaitUntil:
+    visible: Entry deleted
+    timeout: 5000
+- assertVisible: "1 entry · on page 1.*"
+- tapOn:
+    id: status-undo
+- assertVisible: Northwind Labs Ltd
+- assertVisible: "2 entries · on page 1.*"

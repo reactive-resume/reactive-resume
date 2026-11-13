@@ -1,0 +1,40 @@
+# D3 · New: rows open their screen and the sheet closes behind them; Cover letter asks which application when
+# several are open.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- tapOn: New
+- waitForAnimationToEnd
+- tapOn: Import a resume
+- waitForAnimationToEnd
+- assertVisible: Choose a file
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- assertNotVisible: Import a resume
+- assertVisible:
+    id: document-resume-lead
+- tapOn: New
+- waitForAnimationToEnd
+- tapOn: Cover letter
+- waitForAnimationToEnd
+- assertVisible: Which application?
+- tapOn:
+    text: Lumen
+    index: 0
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Recipient
+    timeout: 10000
+- openLink: me.rxresu.storyboard://documents
+- tapOn: New
+- waitForAnimationToEnd
+- tapOn: Save a job
+- waitForAnimationToEnd
+- assertVisible: Job link or posting text

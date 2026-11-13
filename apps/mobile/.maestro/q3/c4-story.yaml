@@ -1,0 +1,41 @@
+# C4 · Tap a paragraph to edit it in place (Done in the bar); ⋯ has Practice this story (W4 with its one question),
+# Duplicate and Delete. Tap a tag to change tags. A missing story: "This story is unavailable or uses facts that are
+# switched off."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C4-Story?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Situation
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: "New customers stalled in setup.*"
+- extendedWaitUntil:
+    visible: Done
+    timeout: 5000
+- inputText: " It was urgent."
+- tapOn: Done
+- extendedWaitUntil:
+    visible: ".*It was urgent\\..*"
+    timeout: 10000
+- tapOn: More
+- assertVisible: Practice this story
+- assertVisible: Duplicate
+- assertVisible: Delete
+- tapOn: Practice this story
+- extendedWaitUntil:
+    visible: "Tell me about a time when: .*"
+    timeout: 10000
+- openLink: me.rxresu.storyboard://storyboard/C4-Unavailable?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: This story is unavailable or uses facts that are switched off\.
+    timeout: 20000

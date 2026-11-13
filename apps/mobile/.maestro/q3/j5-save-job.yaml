@@ -1,0 +1,271 @@
+# J5 · Read posting fills the fields; Save job → J6 for the new job with "Added <role> at <company>". A tracked link
+# shows "Already tracked" with Open tracked job. Pasted text that is only part of a posting warns it's clipped. Read
+# with AI asks S7 the first time. Save and prepare resume opens a copy of the resume for the job. A posting that can't
+# be read says so; a share-sheet link missing its role warns and says capture does not use AI.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J5-Blank?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Save a job
+    timeout: 20000
+- waitForAnimationToEnd
+# Duplicate.
+# The field by point: after a modal comes and goes, Maestro's element frames can be stale.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
+- inputText: https://lumen.com/careers
+- assertVisible: "Already tracked: Senior product designer at Lumen\\. Open it or update only its posting details\\."
+# Dragging the form puts the keyboard away.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
+- waitForAnimationToEnd
+- tapOn: Open tracked job
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000
+# Read posting, then Save job.
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J5-Blank?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Job link or posting text
+    timeout: 20000
+- waitForAnimationToEnd
+# The field by point: after a modal comes and goes, Maestro's element frames can be stale.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
+- inputText: https://jobs.example.com/designer
+# Dragging the form puts the keyboard away.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
+- tapOn: Read posting
+- extendedWaitUntil:
+    visible: Found the role and company\. Review before saving\.
+    timeout: 10000
+- tapOn:
+    id: save-job
+    waitToSettleTimeoutMs: 1
+- assertVisible: Added Senior product designer at Lumen
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000
+# Pasted text that is only part of a posting.
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J5-Blank?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Job link or posting text
+    timeout: 20000
+- waitForAnimationToEnd
+# The field by point: after a modal comes and goes, Maestro's element frames can be stale.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
+- inputText: Senior product designer at Lumen. You will own the design system.
+# Dragging the form puts the keyboard away.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
+- tapOn: Read posting
+- extendedWaitUntil:
+    visible: This description is clipped or incomplete\. Review it or paste the full description before preparing\.
+    timeout: 10000
+# Read with AI asks first (S7).
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J5-Blank?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Job link or posting text
+    timeout: 20000
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
+- inputText: https://jobs.example.com/lead
+# Dragging the form puts the keyboard away.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
+- tapOn: Read with AI
+- extendedWaitUntil:
+    visible: Send to Work OpenAI\?
+    timeout: 10000
+- tapOn:
+    id: first-send-send
+- extendedWaitUntil:
+    visible: Found the role and company\. Review before saving\.
+    timeout: 10000
+# Save and prepare resume: a copy for this job opens in the builder.
+- tapOn: Save and prepare resume
+- extendedWaitUntil:
+    visible: "Edit"
+    timeout: 15000
+# A posting that can't be read.
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J5-ReadFails?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Job link or posting text
+    timeout: 20000
+- waitForAnimationToEnd
+# The field by point: after a modal comes and goes, Maestro's element frames can be stale.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,213"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "585,639"
+- inputText: https://jobs.example.com/broken
+# Dragging the form puts the keyboard away.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "195,330"
+          end: "195,420"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "585,990"
+          end: "585,1260"
+          duration: 300
+- tapOn: Read posting
+- extendedWaitUntil:
+    visible: Couldn't read this posting\. Paste the posting text instead, or fill in the details\.
+    timeout: 10000
+# From the share sheet with the role missing.
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J5-Missing?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Some job details couldn't be read\. Fill in the role and company, or paste one job's posting text\.
+    timeout: 20000
+- assertVisible: Capture does not use AI\. Review every field before saving\.

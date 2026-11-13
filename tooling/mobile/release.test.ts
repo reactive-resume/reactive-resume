@@ -4,138 +4,82 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, it } from "vite-plus/test";
-import { buildNumber, prepareRelease, validateRelease, validateUpload } from "./release";
-
-const version = { MOBILE_BUILD_NUMBER_BASE: "100", GITHUB_RUN_NUMBER: "1", GITHUB_RUN_ATTEMPT: "1" };
-const android = {
-	...version,
-	PLATFORM: "android",
-	UPLOAD: "false",
-	EXPO_TOKEN: "fixture",
-	ANDROID_KEYSTORE_BASE64: "fixture",
-	ANDROID_KEYSTORE_PASSWORD: "fixture",
-	ANDROID_KEY_ALIAS: "fixture",
-	ANDROID_KEY_PASSWORD: "fixture",
-};
-
-it("increments once per workflow run and reuses the number on retries", () => {
-	expect(buildNumber(version)).toBe(100);
-	expect(buildNumber({ ...version, GITHUB_RUN_ATTEMPT: "2" })).toBe(100);
-	expect(buildNumber({ ...version, GITHUB_RUN_NUMBER: "2" })).toBe(101);
-	expect(buildNumber({ ...version, GITHUB_RUN_NUMBER: "3" })).toBe(102);
-	expect(buildNumber({ ...version, MOBILE_BUILD_NUMBER_BASE: "298", GITHUB_RUN_NUMBER: "4" })).toBe(301);
-	expect(buildNumber({ ...version, MOBILE_BUILD_NUMBER_BASE: "2100000000" })).toBe(2_100_000_000);
-	expect(validateRelease(android)).toBe(100);
-});
+import { appVersion, nextBuildNumber, prepareRelease, requireSecrets } from "./release";
 
 it.each([
-	{ MOBILE_BUILD_NUMBER_BASE: "" },
-	{ MOBILE_BUILD_NUMBER_BASE: "0" },
-	{ MOBILE_BUILD_NUMBER_BASE: "-1" },
-	{ MOBILE_BUILD_NUMBER_BASE: "1e3" },
-	{ MOBILE_BUILD_NUMBER_BASE: "9007199254740992" },
-	{ MOBILE_BUILD_NUMBER_BASE: "2100000001" },
-	{ MOBILE_BUILD_NUMBER_BASE: "2100000000", GITHUB_RUN_NUMBER: "2" },
-	{ GITHUB_RUN_NUMBER: "0" },
-])("rejects absent, ambiguous or overflowing version allocation: %j", (override) => {
-	expect(() => buildNumber({ ...version, ...override })).toThrow();
+	[0, 0, 1],
+	[41, 41, 42],
+	[42, 41, 50],
+	[41, 42, 50],
+	[49, 50, 60],
+	[50, 49, 60],
+	[50, 0, 60],
+	[0, 9, 10],
+	[118, 120, 130],
+])("iOS %i and Android %i give %i", (ios, android, next) => {
+	expect(nextBuildNumber(ios, android)).toBe(next);
 });
 
-it("requires signing before build, and store credentials only when uploading", () => {
-	expect(() => validateRelease({ ...android, ANDROID_KEY_PASSWORD: "" })).toThrow("ANDROID_KEY_PASSWORD");
-	expect(() => validateRelease({ ...android, PLATFORM: "all" })).toThrow("IOS_DISTRIBUTION_P12_BASE64");
-	expect(() => validateRelease({ ...android, UPLOAD: "true" })).toThrow("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON");
-	expect(validateRelease({ ...android, UPLOAD: "true", GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: "fixture" })).toBe(100);
-	const ios = {
-		...version,
-		PLATFORM: "ios",
-		UPLOAD: "false",
-		EXPO_TOKEN: "fixture",
-		IOS_DISTRIBUTION_P12_BASE64: "fixture",
-		IOS_DISTRIBUTION_P12_PASSWORD: "fixture",
-		IOS_PROVISION_PROFILE_BASE64: "fixture",
-		IOS_SHARE_PROVISION_PROFILE_BASE64: "fixture",
-	};
-	expect(validateRelease(ios)).toBe(100);
-	expect(() => validateRelease({ ...ios, IOS_SHARE_PROVISION_PROFILE_BASE64: "" })).toThrow(
-		"IOS_SHARE_PROVISION_PROFILE_BASE64",
-	);
-	expect(() => validateRelease({ ...ios, UPLOAD: "true" })).toThrow("ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY");
-});
-
-it("prepares store or APK builds without reading signing or publishing credentials", () => {
-	expect(prepareRelease({ ...version, PLATFORM: "all", UPLOAD: "false" })).toEqual({
-		buildNumber: 100,
-		platforms: ["android", "ios"],
-	});
-	expect(prepareRelease({ ...version, PLATFORM: "android", FORMAT: "apk", ABI: "arm64-v8a", UPLOAD: "false" })).toEqual(
-		{ buildNumber: 100, platforms: ["android"] },
-	);
-});
-
-it.each([{ PLATFORM: "ios" }, { PLATFORM: "all" }, { ABI: "invalid" }, { UPLOAD: "true" }, { FORMAT: "invalid" }])(
-	"rejects invalid APK requests before signing: %j",
-	(override) => {
-		expect(() =>
-			prepareRelease({
-				...version,
-				PLATFORM: "android",
-				FORMAT: "apk",
-				ABI: "arm64-v8a",
-				UPLOAD: "false",
-				...override,
-			}),
-		).toThrow();
-	},
-);
-
-it("builds the native Android app on the shared counter and store lane, without Expo or iOS credentials", () => {
-	const native = { ...android, PLATFORM: "android-native", EXPO_TOKEN: "" };
-	expect(validateRelease(native)).toBe(100);
-	expect(() => validateRelease({ ...native, ANDROID_KEYSTORE_BASE64: "" })).toThrow("ANDROID_KEYSTORE_BASE64");
-	expect(() => validateRelease({ ...android, EXPO_TOKEN: "" })).toThrow("EXPO_TOKEN");
-	expect(prepareRelease({ ...version, PLATFORM: "android-native", UPLOAD: "false" }).platforms).toEqual(["android"]);
-	expect(prepareRelease({ ...version, PLATFORM: "android-native", FORMAT: "preview", UPLOAD: "false" })).toEqual({
-		buildNumber: 100,
-		platforms: ["android"],
-	});
-	for (const override of [{ PLATFORM: "android" }, { UPLOAD: "true" }]) {
-		expect(() =>
-			prepareRelease({ ...version, PLATFORM: "android-native", FORMAT: "preview", UPLOAD: "false", ...override }),
-		).toThrow("Preview builds");
+it("never guesses a number from a missing, partial or out-of-range store reading", () => {
+	for (const reading of [{}, { IOS_BUILD_NUMBER: "12" }, { IOS_BUILD_NUMBER: "", ANDROID_VERSION_CODE: "12" }]) {
+		expect(() => prepareRelease(reading)).toThrow("latest build number");
 	}
+	for (const value of ["-1", "1.2", "1e3", " 12", "null"]) {
+		expect(() => prepareRelease({ IOS_BUILD_NUMBER: value, ANDROID_VERSION_CODE: "12" })).toThrow();
+	}
+	expect(prepareRelease({ IOS_BUILD_NUMBER: "12", ANDROID_VERSION_CODE: "12" })).toBe(13);
+	expect(() => nextBuildNumber(2_100_000_000, 2_100_000_000)).toThrow("versionCode limit");
+	expect(() => nextBuildNumber(Number.NaN, 1)).toThrow();
 });
 
-it("validates store uploads independently of signing and rejects APK uploads", () => {
-	expect(() => validateUpload({ PLATFORM: "android", GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: "fixture" })).not.toThrow();
-	expect(() => validateUpload({ PLATFORM: "ios" })).toThrow("ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY");
-	expect(() => validateUpload({ PLATFORM: "android", FORMAT: "apk" })).toThrow("cannot upload to stores");
+it("names missing signing or store secrets for the platform that needs them", () => {
+	const android = {
+		PLATFORM: "android",
+		ANDROID_KEYSTORE_BASE64: "fixture",
+		ANDROID_KEYSTORE_PASSWORD: "fixture",
+		ANDROID_KEY_ALIAS: "fixture",
+		ANDROID_KEY_PASSWORD: "fixture",
+	};
+	expect(() => requireSecrets("signing", android)).not.toThrow();
+	expect(() => requireSecrets("signing", { ...android, ANDROID_KEY_PASSWORD: " " })).toThrow("ANDROID_KEY_PASSWORD");
+	expect(() => requireSecrets("signing", { ...android, PLATFORM: "ios" })).toThrow(
+		"IOS_DISTRIBUTION_P12_BASE64, IOS_DISTRIBUTION_P12_PASSWORD, IOS_PROVISION_PROFILE_BASE64, IOS_SHARE_PROVISION_PROFILE_BASE64",
+	);
+	expect(() => requireSecrets("signing", { ...android, PLATFORM: "all" })).toThrow("Invalid release platform");
+	expect(() => requireSecrets("store", { PLATFORM: "all", GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: "fixture" })).toThrow(
+		"ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY",
+	);
+	expect(() =>
+		requireSecrets("store", { PLATFORM: "android", GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: "fixture" }),
+	).not.toThrow();
+	expect(() => requireSecrets("store", { PLATFORM: "untrusted" })).toThrow("Invalid release platform");
 });
 
-it("CLI emits only validated version output and never echoes credential values on failure", () => {
+it("reads the store version from the app config", async () => {
+	expect(await appVersion()).toMatch(/^[0-9]+\.[0-9]+\.[0-9]+$/);
+});
+
+it("CLI writes only validated outputs and never echoes secret values", () => {
 	const directory = mkdtempSync(join(tmpdir(), "mobile-release-"));
 	const script = fileURLToPath(new URL("./release.ts", import.meta.url));
 	const output = join(directory, "output");
+	const run = (args: string[], env: Record<string, string>) =>
+		spawnSync(process.execPath, [script, ...args], {
+			env: { PATH: process.env.PATH, GITHUB_OUTPUT: output, ...env },
+			encoding: "utf8",
+		});
 	try {
-		const env = { ...process.env, ...android, GITHUB_OUTPUT: output };
-		const valid = spawnSync(process.execPath, [script], { env, encoding: "utf8" });
-		expect(valid.status, valid.stderr).toBe(0);
-		expect(readFileSync(output, "utf8")).toBe("build_number=100\n");
-		const preparedOutput = join(directory, "prepared");
-		const prepared = spawnSync(process.execPath, [script, "--prepare"], {
-			env: { ...process.env, ...version, PLATFORM: "all", UPLOAD: "false", GITHUB_OUTPUT: preparedOutput },
-			encoding: "utf8",
-		});
+		const prepared = run(["--prepare"], { IOS_BUILD_NUMBER: "7", ANDROID_VERSION_CODE: "12" });
 		expect(prepared.status, prepared.stderr).toBe(0);
-		expect(readFileSync(preparedOutput, "utf8")).toBe('build_number=100\nplatforms=["android","ios"]\n');
-		const invalid = spawnSync(process.execPath, [script], {
-			env: { ...env, PLATFORM: "untrusted", ANDROID_KEYSTORE_PASSWORD: "private-fixture" },
-			encoding: "utf8",
-		});
+		const version = run(["--version"], {});
+		expect(version.status, version.stderr).toBe(0);
+		expect(readFileSync(output, "utf8")).toMatch(/^build_number=20\nversion=[0-9]+\.[0-9]+\.[0-9]+\n$/);
+		const invalid = run(["--signing"], { PLATFORM: "android", ANDROID_KEYSTORE_PASSWORD: "private-fixture" });
 		expect(invalid.status).toBe(1);
-		expect(invalid.stderr).toContain("Invalid release platform");
+		expect(invalid.stderr).toContain("ANDROID_KEYSTORE_BASE64");
 		expect(invalid.stderr).not.toContain("private-fixture");
-		expect(readFileSync(output, "utf8")).toBe("build_number=100\n");
+		expect(run(["--prepare"], { IOS_BUILD_NUMBER: "7" }).status).toBe(1);
+		expect(readFileSync(output, "utf8").split("\n")).toHaveLength(3);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

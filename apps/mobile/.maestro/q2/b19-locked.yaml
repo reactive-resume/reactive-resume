@@ -1,0 +1,88 @@
+# B19 and the locked states · ··· on B1 opens the document menu; Lock editing locks the resume: the overview reads
+# "Locked", Unlock editing comes first, Move to trash is dimmed; locked, B2 shows no Add, B3's fields are read-only
+# with "Locked. Unlock it from ··· on the resume.", B21's actions are dimmed under the same line, and Design rows
+# don't open; Notes opens the private notes; Unlock editing returns the status line to "Saved".
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B1-Overview?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: More
+- extendedWaitUntil:
+    visible: Lock editing
+    timeout: 10000
+- tapOn: Notes
+- extendedWaitUntil:
+    visible: ".*Keep private notes about this resume here. Nobody else can see them."
+    timeout: 10000
+# Back from Notes lands on the menu again.
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Lock editing
+    timeout: 10000
+- tapOn: Lock editing
+- extendedWaitUntil:
+    visible: Unlock editing
+    timeout: 10000
+- assertVisible:
+    text: Move to trash
+    enabled: false
+- tapOn: Close
+- extendedWaitUntil:
+    visible: "Locked · 1 page · Public"
+    timeout: 10000
+- tapOn: Experience
+- extendedWaitUntil:
+    visible: Northwind Labs
+    timeout: 10000
+- assertNotVisible: Add experience
+- longPressOn: Northwind Labs
+- assertNotVisible: Move down
+- tapOn: Northwind Labs
+- extendedWaitUntil:
+    visible: "Locked. Unlock it from ··· on the resume."
+    timeout: 10000
+- assertNotVisible: Delete entry
+- tapOn: Entry options
+- extendedWaitUntil:
+    visible: Move down
+    timeout: 10000
+- assertVisible: "Locked. Unlock it from ··· on the resume."
+- assertVisible:
+    id: entry-action-delete
+    enabled: false
+- tapOn: Close
+- waitForAnimationToEnd
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Sections
+    timeout: 10000
+- tapOn: Design
+- extendedWaitUntil:
+    visible: Typography
+    timeout: 10000
+- tapOn: Typography
+- assertNotVisible: Font pairing
+- tapOn: More
+- extendedWaitUntil:
+    visible: Unlock editing
+    timeout: 10000
+- tapOn: Unlock editing
+- extendedWaitUntil:
+    visible: Lock editing
+    timeout: 10000
+- tapOn: Close
+- tapOn: Edit
+- extendedWaitUntil:
+    visible: "Saved · 1 page · Public"
+    timeout: 10000

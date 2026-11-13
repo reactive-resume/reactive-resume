@@ -1,0 +1,29 @@
+# W2 · Applied means sent: on a Saved application, Mark as applied opens "What did you send?"; closing it changes
+# nothing. The storyboard's applications are all sent, so the flow saves a new job (J5) first.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J5-SaveJob?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Save a job
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn:
+    id: save-job
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn: "Apply, .*"
+- assertVisible: Before you apply
+- tapOn: Mark as applied
+- assertVisible: What did you send?
+- tapOn: Close
+- assertNotVisible: What did you send?
+- assertVisible: Before you apply
+- assertVisible: Mark as applied

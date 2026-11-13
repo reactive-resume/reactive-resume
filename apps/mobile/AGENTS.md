@@ -1,95 +1,67 @@
 # Mobile app (`apps/mobile`)
 
-Expo / React Native app. The root `AGENTS.md` still applies; this guide covers mobile-only workflows.
+The Reactive Resume phone app for iOS and Android: Expo SDK 58, React Native 0.88, Expo Router. Production installs
+as `me.rxresu`, the same identifiers as the first Expo app it replaced. The root `AGENTS.md` still applies; this guide
+covers mobile-only work. `PLAN.md` holds the build decisions, route map and data hooks; `REVIEW.md`, `FIDELITY-LOG.md`
+and the `MOTION-*.md` files are the build's review records.
 
-## Tests
+## Layout
 
-Mobile tests are host tests, not Vitest: `scripts/*.test.mjs` run under `node --test` on Node 24. They need no simulator, emulator or Metro.
+| Path                     | Holds                                                                      |
+| ------------------------ | -------------------------------------------------------------------------- |
+| `app/`                   | Expo Router routes; thin files that compose feature screens                |
+| `src/features/<area>/`   | Screens and view models per area (builder, letters, applications, career…) |
+| `src/ui/`                | Design system: tokens (`src/ui/tokens.ts`), motion, `Text`, `Icon`, Kit    |
+| `src/data/`              | Query client, drafts, offline queue, undo history, storyboard fakes        |
+| `src/api/`, `src/auth/`  | Typed oRPC client and the OAuth session                                    |
+| `src/render/`, `modules` | Server-rendered PDFs, rasterized into page images (`modules/pdf-pages`)    |
+| `src/dev/storyboard/`    | Storyboard harness, scenarios and fixtures                                 |
+| `store/`                 | Store listing copy and per-locale `releaseNotes`                           |
 
-```sh
-pnpm --filter mobile test                     # every file
-pnpm --filter mobile test:ci                  # same run, plus JUnit at apps/mobile/reports/node-junit.xml
-node --test apps/mobile/scripts/layout.test.mjs                               # one file
-node --test --test-name-pattern "Undo" apps/mobile/scripts/career-undo.test.mjs # matching cases
-```
+Web routes map to `app/(app)/…` by name: documents, builder, letter, applications, career, settings; the public
+resume page is `app/r/[username]/[slug].tsx` and the ATS checker `app/ats-checker.tsx`.
 
-CI's unit job runs `test:ci` through Turbo, so a failing mobile test fails the pull request.
+## Checks
 
-Tests never import app source directly. `scripts/harness.mjs` compiles one source file with esbuild and runs it against a mock map:
-
-- `load(path, mocks, { globals, append, ...esbuildOptions })` compiles one file. `path` is relative to `scripts/` (`"../src/…"`). `globals` become free variables (`React`, `__DEV__`, `setTimeout`).
-- `bundle(path, mocks, options)` also bundles the relative imports the file reaches; only `mocks` keys stay external.
-- `run(code, mocks, globals)` evaluates already-compiled CommonJS. `tag` stands in for Lingui `t`. `mobileRequire` loads real packages from the app's dependencies. `esbuild` is the compiler.
-
-`AssertionError: Missing boundary: X` means the file under test imports `X` and the test's mock map has no key for it. Most files keep a shared map near the top (`mocks`, `dependencies`, `common`, `defaults`) that their local `load` merges with per-call `extra`. Add the stub there:
-
-```js
-"@/ui/new-thing": { NewThing: "NewThing" }, // component: render as a string tag
-"expo-haptics": { impactAsync: async () => {} }, // native module: no-op
-immer: mobileRequire("immer"), // pure library: real module
-```
-
-When a source file gains an import, grep `scripts/` for its path (for example `features/write/dates`) to find every test that loads it; each one needs the stub. A few files keep their own loader because their setup differs (real-module fallback, `.po` handling, source-string mocks); edit those in place.
-
-### `experience.test.mjs`
-
-About 5,000 lines, written as one script rather than separate `test()` cases. The first failing assertion stops the rest.
-
-- Lines 1–190 hold the shared setup: a fake `react` whose hooks are keyed by call order, `ui` and `mocks` (the shared boundary map), and `load(path, extra, append)` with `path` relative to `src/`.
-- Helpers: `render(Component, props)` calls the component and returns its element tree. `nodes(tree)` flattens it. `control(tree, label)` returns the props of the element with that `label`, or fails. `reset()` clears hook state and the `calls` log. `settle()` flushes pending promises.
-- Each case ends with `console.log("PASS …")`. Find a case by grepping its PASS line or the source path it loads (`load("features/…`).
-
-### Adding cases
-
-Put tests for a new feature in a new `scripts/<feature>.test.mjs` that uses `test()` from `node:test` and the harness. Extend `experience.test.mjs` only when a case needs its fake React and shared mocks: add the block beside related cases, start it with `reset()`, and end it with `console.log("PASS …")`.
-
-- Test logic from `packages/*` in that package. Mobile tests cover the mobile call site: account fences, drafts, Undo and routes.
-- Don't copy app modules into mocks; copies drift. `src/routes.ts` has only type imports, so load the real one.
-- Drive debounces and delays with a fake `setTimeout` passed through `globals`, or with `mock.timers`. Never wait real time.
-
-## Bundle check
+Run from the repository root with Node 24 (`mise exec node@24 -- …`). None needs a device.
 
 ```sh
-pnpm --filter mobile check:bundle
+pnpm --filter mobile typecheck
+pnpm --filter mobile test            # Jest (jest-expo), src/**/*.test.ts(x)
+pnpm --filter mobile test:ci         # CI's run; skips the storyboard edge test, which needs the local handoff bundle
+sh apps/mobile/scripts/check-motion.sh   # prints nothing when clean
+pnpm --filter mobile check:bundle    # Metro + Hermes export for both platforms, about 1.5 minutes
 ```
 
-This runs `expo export` for iOS and Android: Metro bundles the whole app and compiles Hermes bytecode. It uses a fresh Metro cache in a temporary directory and deletes it afterwards, so it needs no `TMPDIR` or `--clear` flags and leaves nothing in the checkout. It takes about 1.5 minutes on an Apple-silicon Mac.
+CI runs typecheck and `test:ci` through Turbo, and the motion check and bundle export when `apps/mobile/`,
+`packages/` or dependency files change. Strings use Lingui macros; `pnpm lingui:extract` updates
+`apps/mobile/locales` and fills empty translations from the web catalogs (`scripts/seed-locales.mjs`).
 
-Run it after changing imports, dependencies, Babel or Metro config, or shared-package code the app reaches, and before handing off mobile work. CI runs it when `apps/mobile/` or `packages/` changes.
+## Variants and devices
 
-## Where web features live on mobile
+`APP_VARIANT` picks the build: `production` (`me.rxresu`), `development` (`me.rxresu.dev`, the default) or
+`storyboard` (`me.rxresu.storyboard`, fake data from `src/data`). The dev and storyboard variants install beside the
+store app. Start the storyboard with `pnpm --filter mobile start:storyboard`. The spec for screens, layout and motion
+is the handoff bundle in the git-ignored .agents/handoff/mobile-final folder (BUILD.md first); it exists only on the
+maintainer's machine.
 
-Names differ between the apps; start from this map instead of guessing paths.
+Simulators and emulators: one at a time on this machine, machine-wide, never in parallel. Take the device lock that
+`PLAN.md` describes before any `xcrun simctl`, `adb`, capture or Maestro run, release it as soon as the capture ends,
+and reuse the running Metro instead of starting another. `.maestro/` holds the storyboard UI flows; never point them at
+a production account.
 
-| Web (`apps/web/src/…`)                                                        | Mobile (`apps/mobile/…`)                                                                                                          |
-| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `routes/builder/$resumeId`, `features/resume`                                 | `app/builder/[id]`, `src/features/{write,design,check,share,history,document-menu}`                                               |
-| `routes/builder/letter`, `features/letters`                                   | `app/letter/[id]`, `src/features/letters`                                                                                         |
-| `routes/dashboard/applications`, `features/applications`                      | `app/(tabs)/applications`, `app/applications/[id]`, `src/features/{applications,applications-board,application-detail,reminders}` |
-| `routes/dashboard/career`, `features/career` (incl. `workspace`, `knowledge`) | `app/(tabs)/career`, `src/features/{career,workspace}`                                                                            |
-| `routes/agent`, `features/assistant`                                          | `app/builder/[id]/assistant.tsx`, `src/features/assistant`                                                                        |
-| `routes/dashboard/resumes`, `features/documents`                              | `app/(tabs)/documents`, `src/features/documents`                                                                                  |
-| `routes/dashboard/settings`, `features/settings`                              | `app/(tabs)/settings`, `src/features/settings`                                                                                    |
-| `apps/web/src/routes/_home/ats-checker.tsx`, `features/ats-checker`           | `app/ats-checker.tsx`, `src/features/ats-checker`                                                                                 |
-| `features/command-palette`                                                    | `app/search.tsx`, `src/features/search`                                                                                           |
-| `features/keyboard-shortcuts`                                                 | `src/shell/key-commands.ts`, `src/shell/shortcut-help.tsx`                                                                        |
-| `routes/auth`, `features/auth`                                                | `app/(auth)`, `src/auth`                                                                                                          |
-| Public resume page (server: `apps/server/src/static/resume-page.ts`)          | `app/r/[username]/[slug].tsx`                                                                                                     |
-| `packages/ui` primitives                                                      | `src/ui` (tokens in `src/ui/tokens.ts`)                                                                                           |
+## Releases
 
-## OTA update or store build
-
-The runtime version is an Expo fingerprint (`fingerprint.config.js`). JavaScript, styling, copy, translations and
-bundled assets ship as an OTA update with the next stable release. Native dependencies or config plugins, permissions,
-`app.config.ts` native fields, Expo SDK upgrades, `patches/`, and Forme native sources or
-`packages/forme-native/scripts/prebuilt.json` need a new store build. Say which one a change needs in its PR. Release
-steps: `.agents/docs/runbooks/mobile-releases.md`; workflow and signing setup: `.agents/docs/runbooks/mobile-ci.md`.
+There is no EAS and no OTA update: every change, JavaScript included, reaches users as a store build. A push to `main`
+that touches the app's inputs builds both platforms and uploads them to TestFlight and Play Internal testing
+(`.github/workflows/mobile-release.yml`, Fastlane in `tooling/mobile`). Bump `version` in `app.config.ts` before a new
+App Store version and update `store/metadata.json` release notes. Procedure: `.agents/docs/runbooks/mobile-releases.md`;
+workflow and secrets: `.agents/docs/runbooks/mobile-ci.md`.
 
 ## Parity exceptions
 
 The owner's explicit decisions; every other web/mobile gap is a bug. Add new exceptions here with the date.
 
-- iOS hides the Donate row (store policy, first release).
-- Applications CSV export is web-only (2026-10-19). CSV import shipped on mobile in RX-183.
-- Employer-form autofill and the embedded browser are not on Android or iOS (2026-11-01, RX-75). Mobile keeps review
+- Applications CSV export is web-only (2026-10-19). CSV import is on mobile.
+- Employer-form autofill and the embedded browser are not on Android or iOS (2026-11-01). Mobile keeps review
   packets, copyable answers, exact approved PDFs and opening the form in the system browser.

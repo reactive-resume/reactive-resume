@@ -6,18 +6,20 @@ import { Alert } from "react-native";
 import { aiConfiguredModels, aiModelForTask, aiTaskForOperation } from "@reactive-resume/ai/task-models";
 import { aiDestination, NO_AI_DESTINATION, supportsNativeWebSearch } from "@reactive-resume/ai/types";
 import { getAccountScope, getServer } from "@/auth/session";
+import { ensureApproved, providerConnection, recurringStatus, type RecurringApproval } from "@/data/consent";
 
 type ConsentApi = Pick<typeof client, "aiProviders" | "agent" | "webAccess" | "applications" | "ai">;
 
 let dialogs: Promise<unknown> = Promise.resolve();
 
-/** Consent is per operation, never persisted or silently reused for another account, provider, or data scope. */
+/** First-send approval is per account, connection and kind; recipient headers remain pinned per operation. */
 export async function authorizeAiRequest(
 	path: readonly string[],
 	input: unknown,
 	api: ConsentApi,
 	scope: string | null,
 	signal?: AbortSignal,
+	recurringApproval?: RecurringApproval,
 ): Promise<{ aiDestination?: string; webDestination?: string; nativeSearchFallback?: boolean } | undefined> {
 	const operation = path.join(".");
 	const fields = input && typeof input === "object" ? (input as Record<string, unknown>) : {};
@@ -200,17 +202,36 @@ export async function authorizeAiRequest(
 
 	const result = dialogs.then(async () => {
 		current();
-		const allowed = await new Promise<boolean>((resolve) => {
-			Alert.alert(
-				provider ? t`Share data with ${provider.label}?` : t`Use web access?`,
-				`${t`Server`}: ${server}\n${t`Provider`}: ${destination}\n\n${data}\n\n${webNotice}\n${nativeSearchNotice}\n${scheduleNotice}\n${t`Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available.`}`,
-				[
-					{ text: t`Don't share`, style: "cancel", onPress: () => resolve(false) },
-					{ text: scheduled ? t`Allow scheduled sharing` : t`Allow this operation`, onPress: () => resolve(true) },
-				],
-				{ cancelable: true, onDismiss: () => resolve(false) },
-			);
-		});
+		const connection = provider ? providerConnection(provider) : undefined;
+		const kind =
+			operation === "career.voice.transcribe"
+				? ("audio" as const)
+				: operation === "agent.attachments.create" || operation === "ai.parsePdf" || operation === "ai.parseDocx"
+					? ("file" as const)
+					: operation === "applications.ai.parsePosting"
+						? ("posting" as const)
+						: chat || operation === "coverLetters.draft"
+							? ("chat" as const)
+							: ("resume-and-facts" as const);
+		const allowed =
+			connection && scheduled && recurringApproval && recurringStatus(recurringApproval, connection) === "active"
+				? true
+				: connection && !scheduled && !rebind && !connectionTest
+					? await ensureApproved(kind, connection, [data, webNotice, nativeSearchNotice].filter(Boolean).join("\n\n"))
+					: await new Promise<boolean>((resolve) => {
+							Alert.alert(
+								provider ? t`Share data with ${provider.label}?` : t`Use web access?`,
+								`${t`Server`}: ${server}\n${t`Provider`}: ${destination}\n\n${data}\n\n${webNotice}\n${nativeSearchNotice}\n${scheduleNotice}\n${t`Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available.`}`,
+								[
+									{ text: t`Don't share`, style: "cancel", onPress: () => resolve(false) },
+									{
+										text: scheduled ? t`Allow scheduled sharing` : t`Allow this operation`,
+										onPress: () => resolve(true),
+									},
+								],
+								{ cancelable: true, onDismiss: () => resolve(false) },
+							);
+						});
 		current();
 		if (!allowed) throw new DOMException(t`Data sharing canceled. Nothing was sent to the AI provider.`, "AbortError");
 		// The approval covers the provider shown. If its settings or the default changed while the dialog was open,

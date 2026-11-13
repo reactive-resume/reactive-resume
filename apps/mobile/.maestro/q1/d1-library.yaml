@@ -1,0 +1,60 @@
+# D1 · Documents: tap opens the editor; + opens D3; search opens D5; pull to refresh keeps the list; a search
+# with no match offers Clear filters.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- tapOn:
+    id: document-resume-lead
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: Design
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- waitForAnimationToEnd
+- tapOn: New
+- waitForAnimationToEnd
+- assertVisible: Import a resume
+- tapOn:
+    id: sheet-scrim
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: "50%,40%"
+    end: "50%,95%"
+    duration: 300
+- extendedWaitUntil:
+    notVisible: Import a resume
+    timeout: 5000
+- tapOn: Search
+- waitForAnimationToEnd
+- assertVisible: Search everything
+- tapOn: Cancel
+- waitForAnimationToEnd
+- swipe:
+    start: "50%,30%"
+    end: "50%,70%"
+    duration: 500
+- assertVisible:
+    id: document-resume-lead
+- openLink: me.rxresu.storyboard://documents?q=zzzz
+- extendedWaitUntil:
+    visible: No matching documents
+    timeout: 10000
+- tapOn: Clear filters
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: document-resume-lead
+    timeout: 10000
+- openLink: me.rxresu.storyboard://documents?state=error
+- extendedWaitUntil:
+    visible: Couldn't load your documents. Try again.
+    timeout: 10000
+- assertVisible: Retry

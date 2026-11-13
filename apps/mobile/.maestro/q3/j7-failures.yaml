@@ -1,0 +1,73 @@
+# J7 · "Couldn't update the application. Try again." keeps the sheet open; stages changed elsewhere: "Your stages
+# changed somewhere else. They've been refreshed; try again." J9 · "Couldn't close the application. Try again." keeps
+# the choice and the note.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J7-MoveFails?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Move Lumen
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn:
+    id: stage-offer
+    waitToSettleTimeoutMs: 1
+- assertVisible: Couldn't update the application\. Try again\.
+- assertVisible: Move Lumen
+# A fresh app: the earlier refused write stays queued on the device.
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J7-StagesChanged?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Move Lumen
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn:
+    id: stage-offer
+    waitToSettleTimeoutMs: 1
+- assertVisible: Your stages changed somewhere else\. They've been refreshed; try again\.
+- assertVisible: Move Lumen
+# A fresh app: the earlier refused write stays queued on the device.
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J9-CloseFails?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: How did it end?
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: Add a note
+- inputText: They chose an internal candidate
+- waitForAnimationToEnd
+# Close application, just above the keyboard (a point: the sheet has moved up with the keyboard).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "195,482"
+          waitToSettleTimeoutMs: 1
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      # Android keeps the button's frame current: tap it by name (the iOS point is above it here).
+      - tapOn:
+          text: Close application
+          waitToSettleTimeoutMs: 1
+- assertVisible: Couldn't close the application\. Try again\.
+- assertVisible: They chose an internal candidate
+- assertVisible:
+    id: outcome-accepted

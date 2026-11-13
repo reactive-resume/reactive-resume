@@ -1,0 +1,54 @@
+# B17 · Accept decides the focused edit (it folds to one line with Undo) and focus moves to the next open edit; Undo
+# reopens it; swiping an edit toward the start rejects it; Review focuses another edit; Edit opens "Your wording" with
+# Save wording and Cancel.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B17-Proposals?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- assertVisible: 2 of 3 open
+- tapOn:
+    text: Accept
+    waitToSettleTimeoutMs: 1000
+- extendedWaitUntil:
+    visible: ".*Northwind Labs › line 2 · Accepted"
+    timeout: 5000
+- assertVisible: 1 of 3 open
+- tapOn:
+    text: Undo
+    index: 0
+- extendedWaitUntil:
+    visible: 2 of 3 open
+    timeout: 5000
+# Reject the first edit by swiping it toward the start.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 360, 330
+          end: 20, 330
+          duration: 500
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "990,990"
+          end: "60,990"
+          duration: 500
+- extendedWaitUntil:
+    visible: ".*Northwind Labs › line 2 · Rejected"
+    timeout: 5000
+- tapOn: Edit
+- extendedWaitUntil:
+    visible: Your wording
+    timeout: 5000
+- assertVisible: Save wording
+- tapOn: Cancel
+- assertNotVisible: Your wording

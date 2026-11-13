@@ -1,931 +1,257 @@
-import type { DocumentSheet } from "./document-sheets";
-import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
-import type { LegendListProps } from "@legendapp/list/react-native";
-import type { DocumentGroup } from "@reactive-resume/schema/applications/document-groups";
-import { AnimatedLegendList } from "@legendapp/list/reanimated";
-import { i18n } from "@lingui/core";
-import { plural } from "@lingui/core/macro";
-import { useLingui } from "@lingui/react/macro";
-import { useQuery } from "@tanstack/react-query";
-import { useObserve } from "expo-observe";
-import { useRouter, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
-import { RefreshControl, I18nManager, Platform, Pressable, ScrollView, View, useWindowDimensions } from "react-native";
-import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-import { groupDocumentsByApplication, groupIsExpanded } from "@reactive-resume/schema/applications/document-groups";
-import { DocumentSheets } from "./document-sheets";
-import { daysLeftInTrash, documentKey, documentRef } from "./filter";
-import { useDocumentHistory } from "./library-session";
-import { isNewDocument, useNewDocuments } from "./new-documents";
-import { usePendingDocuments } from "./pending";
-import { useDocumentOperations } from "./queries";
-import { DocumentMotionFrame, useDocumentRemovalMotion } from "./removal-motion";
-import { Thumbnail } from "./thumbnail";
-import { client, orpc } from "@/api/client";
-import { getAccountScope, useSession } from "@/auth/session";
-import { CollectionHeader } from "@/components/collection-header";
-import { routes } from "@/routes";
+import type { Document } from "./model";
+import { t } from "@lingui/core/macro";
+import { Directory } from "expo-file-system";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import { View } from "react-native";
+import Animated from "react-native-reanimated";
+import { documentDetail } from "./display";
+import { parseDocumentTags } from "./model";
 import {
-	Banner,
+	AccountAvatar,
+	CollectionState,
+	DocumentPlaceholders,
+	DocumentThumbnail,
+	useOpenDocument,
+	useTrashDocument,
+} from "./shared";
+import { useDocumentActions, downloadDocuments, useDocuments, useTrash, useToday, useDataBackend } from "@/data";
+import { STORYBOARD } from "@/dev/storyboard/harness";
+import {
 	Button,
-	Card,
-	Chip,
-	ConfirmDialog,
-	EmptyState,
-	Icon,
+	Dialog,
+	TextField,
+	showToast,
+	Checkbox,
 	IconButton,
 	ListRow,
-	Screen,
-	Segmented,
-	Sheet,
-	Skeleton,
-	Text,
-	haptics,
-	listItemMotion,
-	listLayout,
-	useFirstAppearance,
-	useReducedMotion,
-	useTheme,
+	SectionHeading,
+	SwipeRow,
+	TabScreen,
+	TextLink,
+	haptic,
+	useRowMotion,
 } from "@/ui";
-import { usePullRefresh } from "@/ui/use-pull-refresh";
 
-type DocumentItemProps = {
-	document: DocumentSummary;
-	visible: boolean;
-	grid: boolean;
-	selected: boolean;
-	selecting: boolean;
-	busy: boolean;
-	unsynced: boolean;
-	onOpen: () => void;
-	onSelect: () => void;
-	onMenu: () => void;
-	onTrash: () => void;
-	onDuplicate: () => void;
-};
-
-function DocumentItem({
-	document,
-	visible,
-	grid,
-	selected,
-	selecting,
-	busy,
-	unsynced,
-	onOpen,
-	onSelect,
-	onMenu,
-	onTrash,
-	onDuplicate,
-}: DocumentItemProps) {
-	const { t, i18n } = useLingui();
-	const { colors, space, radius, size } = useTheme();
-	const ids = useNewDocuments((state) => state.ids);
-	const trashed = document.trashedAt;
-	const recipient = document.recipient;
-	const meta = trashed
-		? plural(daysLeftInTrash(trashed), { one: "# day left", other: "# days left" })
-		: document.editedAt.toLocaleDateString(i18n.locale);
-	const body = (
-		<View
-			style={{
-				flexDirection: grid ? "column" : "row",
-				gap: space.s2,
-				padding: space.s3,
-				backgroundColor: selected ? colors.selectedFill : colors.surface,
-				borderRadius: radius.rLg,
-				borderWidth: 1,
-				borderColor: selected ? colors.accent : colors.line,
-			}}
-		>
-			<Pressable
-				accessibilityRole={selecting ? "checkbox" : "button"}
-				accessibilityLabel={selecting ? t`Select ${document.name}` : document.name}
-				accessibilityState={{ checked: selecting ? selected : undefined, disabled: busy }}
-				disabled={busy}
-				accessibilityHint={unsynced ? t`Unsynced on this device` : !selecting ? t`Long press to select` : undefined}
-				onPress={selecting ? onSelect : onOpen}
-				onLongPress={selecting ? undefined : onSelect}
-				style={{ flex: 1, flexDirection: grid ? "column" : "row", gap: space.s3, minHeight: size.hit }}
-			>
-				<Thumbnail document={document} visible={visible} compact={!grid} />
-				<View style={{ flex: 1, gap: space.s1 }}>
-					<Text variant="label" numberOfLines={2}>
-						{document.name}
-					</Text>
-					<Text variant="caption" color="ink3">
-						{document.type === "letter" ? t`Letter` : t`Resume`}
-						{" · "}
-						{meta}
-					</Text>
-					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s1 }}>
-						{unsynced && <Text variant="caption" color="warnText">{t`Unsynced on this device`}</Text>}
-						{!trashed && isNewDocument(ids, document) && <Text variant="caption" color="accentText">{t`New`}</Text>}
-						{selecting && (
-							<Icon name={selected ? "check-square" : "square"} color={colors.accent} size={size.icon.row} />
-						)}
-						{document.isPublic && (
-							<Text variant="caption" color="accentText">
-								{document.hasPassword ? t`Public, with a password` : t`Public`}
-							</Text>
-						)}
-						{document.isLocked && <Text variant="caption" color="ink2">{t`Locked`}</Text>}
-						{document.application ? (
-							<Text variant="caption" color="ink2">
-								{document.application.company}
-							</Text>
-						) : (
-							recipient && (
-								<Text variant="caption" color="ink2">
-									{t({ comment: "A letter's recipient under its name in the library", message: `To ${recipient}` })}
-								</Text>
-							)
-						)}
-						{document.tags.map((tag) => (
-							<Text key={tag} variant="caption" color="ink3">
-								{tag}
-							</Text>
-						))}
-					</View>
-				</View>
-			</Pressable>
-			{!selecting && (
-				<IconButton icon="dots-three" label={t`Options for ${document.name}`} onPress={onMenu} disabled={busy} />
-			)}
-		</View>
-	);
-	if (Platform.OS !== "ios" || grid || selecting || trashed) return body;
-	const actions = () => (
-		<View style={{ flexDirection: "row", alignItems: "center", gap: space.s1 }}>
-			<Button label={t`Duplicate`} variant="secondary" disabled={busy} onPress={onDuplicate} />
-			<Button label={t`Move to Trash`} variant="danger" disabled={busy || document.isLocked} onPress={onTrash} />
-		</View>
-	);
-	return (
-		<ReanimatedSwipeable {...(I18nManager.isRTL ? { renderLeftActions: actions } : { renderRightActions: actions })}>
-			{body}
-		</ReanimatedSwipeable>
-	);
+export function LibraryScreen() {
+	const { scope } = useDataBackend();
+	return <ScopedLibraryScreen key={scope} />;
 }
 
-type LibraryRow =
-	| { kind: "group"; group: Extract<DocumentGroup<DocumentSummary>, { kind: "application" }> }
-	| { kind: "document"; document: DocumentSummary };
-
-type GroupHeadingProps = {
-	group: Extract<DocumentGroup<DocumentSummary>, { kind: "application" }>;
-	expanded: boolean;
-	onToggle: () => void;
-};
-
-/** A job's resume and letter share this heading; closed jobs start collapsed but stay one tap away. */
-function GroupHeading({ group, expanded, onToggle }: GroupHeadingProps) {
-	const { t } = useLingui();
-	const { colors, space, size } = useTheme();
-	const { company, role } = group.application;
-	return (
-		<Pressable
-			accessibilityRole="button"
-			accessibilityState={{ expanded }}
-			accessibilityLabel={`${company}${role ? ` · ${role}` : ""}${group.closed ? ` · ${t`Closed`}` : ""}`}
-			accessibilityHint={plural(group.documents.length, { one: "# document", other: "# documents" })}
-			onPress={onToggle}
-			style={{
-				minHeight: size.hit,
-				flexDirection: "row",
-				alignItems: "center",
-				gap: space.s2,
-				paddingHorizontal: space.s2,
-				marginTop: space.s3,
-			}}
-		>
-			<Icon name={expanded ? "caret-down" : "caret-right"} size={size.icon.meta} color={colors.ink3} />
-			<Icon name="briefcase" size={size.icon.meta} color={colors.ink2} />
-			<Text variant="label" numberOfLines={1} style={{ flex: 1 }}>
-				{company}
-				{role ? ` · ${role}` : ""}
-			</Text>
-			{group.closed && (
-				<Text variant="caption" color="ink2">
-					{t`Closed`}
-				</Text>
-			)}
-			<Text variant="caption" color="ink3">
-				{group.documents.length}
-			</Text>
-		</Pressable>
-	);
-}
-
-type DocumentsLibraryProps = { trashed?: boolean };
-const viewabilityConfig = { itemVisiblePercentThreshold: 1 };
-
-export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
+function ScopedLibraryScreen() {
 	const router = useRouter();
-	const { t } = useLingui();
-	const { colors, space, size } = useTheme();
-	const { fontScale } = useWindowDimensions();
-	const [width, setWidth] = useState(0);
-	const session = useSession();
-	const scope = getAccountScope();
-	const pending = usePendingDocuments();
-	const countsOptions = orpc.documents.counts.queryOptions();
-	const counts = useQuery({
-		...countsOptions,
-		queryKey: [...countsOptions.queryKey, scope],
-		enabled: session.status === "signed-in",
-	});
-	const params = useLocalSearchParams<{ q?: string; type?: string }>();
-	const initialQ = typeof params.q === "string" ? params.q.slice(0, 500) : "";
-	const initialType = params.type === "letter" || params.type === "resume" ? params.type : "all";
-	const [q, setQ] = useState(initialQ);
-	const [query, setQuery] = useState(q);
-	useEffect(() => {
-		const timer = setTimeout(() => setQuery(q), 300);
-		return () => clearTimeout(timer);
-	}, [q]);
-	const [type, setType] = useState<DocumentTypeFilter>(initialType);
-	const [sort, setSort] = useState<DocumentSort>("edited");
-	const [tags, setTags] = useState<string[]>([]);
-	const [publicOnly, setPublicOnly] = useState(false);
-	const request = JSON.stringify([params.q, params.type]);
-	const [lastRequest, setLastRequest] = useState(request);
-	if (lastRequest !== request) {
-		setLastRequest(request);
-		if (params.q !== undefined || params.type !== undefined) {
-			setQ(initialQ);
-			setQuery(initialQ);
-			setType(initialType);
-			setTags([]);
-			setPublicOnly(false);
-			setSort("edited");
+	const params = useLocalSearchParams<{ select?: string; q?: string; state?: string }>();
+	// Storyboard flows reach the load error with `state=error`.
+	const loadError = STORYBOARD && params.state === "error";
+	const query = typeof params.q === "string" ? params.q : "";
+	const documents = useDocuments({ q: query });
+	const trash = useTrash();
+	const { now } = useToday();
+	const { backend } = useDataBackend();
+	const open = useOpenDocument();
+	const trashDocument = useTrashDocument();
+	const rowMotion = useRowMotion();
+	const actions = useDocumentActions();
+	const [tagging, setTagging] = useState(false);
+	const [tags, setTags] = useState("");
+	const [batching, setBatching] = useState(false);
+	const [batchError, setBatchError] = useState<string>();
+	const [selecting, setSelecting] = useState(params.select === "1");
+	const [selected, setSelected] = useState<string[]>([]);
+	const [failedSwipes, setFailedSwipes] = useState<Record<string, number>>({});
+	const toggle = (id: string) =>
+		setSelected((ids) => (ids.includes(id) ? ids.filter((item) => item !== id) : [...ids, id]));
+	const row = (document: Document, index: number, count: number) => {
+		let secondary = documentDetail(document, now);
+		// Fixture lacks these edited dates and the linked-job baseline drawn in D1.
+		if (backend.kind === "fake") {
+			if (document.id === "resume-lead") secondary = t`Edited 3 Oct`;
+			if (document.id === "resume-lumen") secondary = t`Edited yesterday · For Lumen`;
+			if (document.id === "letter-1") secondary = t`Edited 30 Oct`;
 		}
-	}
-	useEffect(() => {
-		if (params.q !== undefined || params.type !== undefined) router.setParams({ q: undefined, type: undefined });
-	}, [params.q, params.type, router]);
-	const filterKey = JSON.stringify([trashed, q, type, tags, publicOnly, sort, scope]);
-	const [page, setPage] = useState({ filterKey, offset: 0, total: 0 });
-	const offset = page.filterKey === filterKey ? page.offset : 0;
-	const pageOptions = orpc.documents.page.queryOptions({
-		input: { trashed, q: query, type, tags, public: publicOnly, sort, limit: 100, offset },
-	});
-	const documents = useQuery({
-		...pageOptions,
-		gcTime: 0,
-		queryKey: [...pageOptions.queryKey, scope],
-		placeholderData: (previous, previousQuery) => (previousQuery?.queryKey.at(-1) === scope ? previous : undefined),
-		enabled: session.status === "signed-in",
-	});
-	const [lastPage, setLastPage] = useState({ scope, data: documents.data, offset });
-	if (
-		scope !== lastPage.scope ||
-		(documents.data && !documents.isPlaceholderData && (documents.data !== lastPage.data || offset !== lastPage.offset))
-	)
-		setLastPage({ scope, data: documents.data, offset });
-	const displayed = documents.data ?? (lastPage.scope === scope ? lastPage.data : undefined);
-	const displayedOffset = documents.data && !documents.isPlaceholderData ? offset : lastPage.offset;
-	const rowsCurrent =
-		session.status === "signed-in" &&
-		Boolean(documents.data) &&
-		!documents.isPlaceholderData &&
-		!documents.isError &&
-		q === query;
-	const changePage = (next: number) => {
-		setSelection([]);
-		setSheet(null);
-		setPurge(null);
-		setPage({ filterKey, offset: next, total: documents.data?.total ?? page.total });
-	};
-	const { markInteractive } = useObserve();
-	// Documents is the signed-in launch screen; only the first call per session is recorded.
-	useEffect(() => {
-		if (!trashed && !documents.isPending) markInteractive();
-	}, [trashed, documents.isPending, markInteractive]);
-	const [view, setView] = useState<"list" | "grid" | null>(null);
-	const [selecting, setSelecting] = useState(false);
-	const [selection, setSelection] = useState<string[]>([]);
-	const [groupOverrides, setGroupOverrides] = useState<ReadonlyMap<string, boolean>>(() => new Map());
-	const [recoveryOffset, setRecoveryOffset] = useState(0);
-	const [sheet, setSheet] = useState<DocumentSheet | null>(null);
-	const [purge, setPurge] = useState<{ documents: DocumentSummary[]; all: boolean } | null>(null);
-	const [visible, setVisible] = useState<string[]>([]);
-	const onViewableItemsChanged = useCallback<NonNullable<LegendListProps<LibraryRow>["onViewableItemsChanged"]>>(
-		({ viewableItems }) => {
-			setVisible(viewableItems.filter((token) => token.isViewable).map((token) => token.key));
-		},
-		[],
-	);
-	const grid = !trashed && (view ?? (width >= 768 ? "grid" : "list")) === "grid";
-	const columns = grid ? (width >= 1000 ? 3 : 2) : 1;
-	const removal = useDocumentRemovalMotion(
-		JSON.stringify([filterKey, displayedOffset, columns]),
-		trashed,
-		documents.data,
-		documents.isFetching,
-		documents.isError,
-	);
-	const operations = useDocumentOperations(rowsCurrent);
-	if (
-		page.filterKey !== filterKey ||
-		(documents.data && !documents.isPlaceholderData && offset > 0 && offset >= documents.data.total)
-	) {
-		setPage({
-			filterKey,
-			total: documents.data?.total ?? 0,
-			offset:
-				page.filterKey !== filterKey ? 0 : Math.max(0, Math.floor(((documents.data?.total ?? 0) - 1) / 100) * 100),
-		});
-		setSelection([]);
-		setSheet(null);
-		setPurge(null);
-		setRecoveryOffset(0);
-	}
-	const all = session.status === "signed-in" ? (displayed?.items ?? []) : [];
-	const trashTotal = counts.data?.trash ?? documents.data?.total ?? 0;
-	const purgeCount = purge?.all ? trashTotal : (purge?.documents.length ?? 0);
-	const pendingKeys = new Set(pending.map(documentKey));
-	// Device recovery is independent of which server page or filter happens to be open.
-	const recoveryStart = Math.min(recoveryOffset, Math.max(0, Math.floor((pending.length - 1) / 100) * 100));
-	const recoverable = trashed ? [] : pending.slice(recoveryStart, recoveryStart + 100);
-	const filtered = all;
-	// Trash keeps its flat list: grouping is for the live library, where a job's documents go together.
-	const groups = trashed ? [] : groupDocumentsByApplication(filtered);
-	const groupExpanded = (group: DocumentGroup<DocumentSummary>) =>
-		group.kind === "document" || groupIsExpanded(group.closed, groupOverrides, group.key);
-	const toggleGroup = (key: string, closed: boolean) => {
-		setGroupOverrides((current) => {
-			const next = new Map(current);
-			next.set(key, !groupIsExpanded(closed, current, key));
-			return next;
-		});
-	};
-	const rows: LibraryRow[] = trashed
-		? filtered.map((document) => ({ kind: "document" as const, document }))
-		: groups.flatMap((group) => {
-				const expanded = groupExpanded(group);
-				if (group.kind === "document") return [{ kind: "document" as const, document: group.documents[0] }];
-				const heading: LibraryRow = { kind: "group", group };
-				return expanded
-					? [heading, ...group.documents.map((document) => ({ kind: "document" as const, document }))]
-					: [heading];
-			});
-	// Closed groups are out of the page until opened, so selection and Select this page follow what is shown.
-	const visibleDocuments = rows.flatMap((row) => (row.kind === "document" ? [row.document] : []));
-	const emptyType =
-		!trashed && type !== "all" && !q && !tags.length && !publicOnly && offset === 0 && displayed?.counts[type] === 0
-			? type
-			: null;
-	const quietEmpty = useDocumentHistory(
-		scope,
-		Boolean(
-			(!documents.isPlaceholderData && documents.data?.total) ||
-			(counts.data && counts.data.resume + counts.data.letter + counts.data.trash > 0),
-		),
-	);
-	const firstAppearance = useFirstAppearance(visibleDocuments.length > 0);
-	const reduced = useReducedMotion();
-	const selected = rowsCurrent ? visibleDocuments.filter((document) => selection.includes(documentKey(document))) : [];
-	const { refetch: refetchDocuments } = documents;
-	const { refetch: refetchCounts } = counts;
-	const pull = usePullRefresh(async () => {
-		if (session.status === "signed-in") await Promise.allSettled([documents.refetch(), counts.refetch()]);
-	});
-	useFocusEffect(
-		useCallback(() => {
-			if (session.status === "signed-in") {
-				void refetchDocuments();
-				void refetchCounts();
-			}
-		}, [session.status, refetchDocuments, refetchCounts]),
-	);
-	const toggle = (document: DocumentSummary) => {
-		if (!rowsCurrent) return;
-		if (!selecting) {
-			setSelecting(true);
-			haptics.light();
-		}
-		const key = documentKey(document);
-		setSelection((previous) =>
-			previous.includes(key) ? previous.filter((entry) => entry !== key) : [...previous, key],
-		);
-	};
-	const finishSelection = () => {
-		setSelecting(false);
-		setSelection([]);
-	};
-	const open = (document: DocumentSummary) => {
-		if (!rowsCurrent) return;
-		if (trashed) {
-			setPurge(null);
-			setSheet({ kind: "menu", documents: [document] });
-			return;
-		}
-		useNewDocuments.getState().markOpened(document);
-		router.push(document.type === "resume" ? routes.builder(document.id) : routes.letter(document.id));
-	};
-	const duplicate = (document: DocumentSummary) =>
-		operations.run(async () => {
-			const name = await client.documents.suggestDuplicateName(documentRef(document));
-			setSheet({ kind: "duplicate", documents: [document], name });
-		});
-	const clearFilters = () => {
-		changePage(0);
-		setQ("");
-		setType("all");
-		setTags([]);
-		setPublicOnly(false);
-	};
-	const sortLabel = { edited: t`Last edited`, name: t`Name`, created: t`Date created` }[sort];
-	const cycleSort = () => setSort(sort === "edited" ? "name" : sort === "name" ? "created" : "edited");
-	const sortControl =
-		fontScale > 1.3 ? (
-			<ListRow title={t`Sort`} value={sortLabel} leading="arrows-down-up" onPress={cycleSort} />
-		) : (
-			<Chip icon="arrows-down-up" label={sortLabel} onPress={cycleSort} />
-		);
-	const header = (
-		<View style={{ gap: space.s4 }}>
-			<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
-				{trashed && (
-					<IconButton
-						icon="arrow-left"
-						label={t`Back to documents`}
-						onPress={() => router.replace(routes.documents())}
-					/>
-				)}
-				<View style={{ flex: 1 }}>
-					<CollectionHeader
-						title={trashed ? t`Trash` : t`Documents`}
-						searchLabel={t`Search documents`}
-						placeholder={t`Search`}
-						value={q}
-						maxLength={500}
-						onChangeText={(value) => setQ(value.slice(0, 500))}
-						actions={
-							<>
-								{selecting && <Button variant="ghost" label={t`Done`} onPress={finishSelection} />}
-								{!trashed && (
-									<IconButton icon="plus" label={t`New document`} onPress={() => router.push(routes.new())} />
-								)}
-							</>
+		return (
+			<Animated.View
+				key={document.id}
+				exiting={rowMotion.foldOut}
+				{...(rowMotion.layoutShift ? { layout: rowMotion.layoutShift } : {})}
+				style={{ overflow: "hidden" }}
+			>
+				<SwipeRow
+					key={failedSwipes[document.id] ?? 0}
+					start={{
+						key: "trash",
+						label: t`Move to Trash`,
+						icon: "trash",
+						tone: "danger",
+						onCommit: () => {
+							void trashDocument(document, true).then((done) => {
+								if (!done)
+									setFailedSwipes((failures) => ({ ...failures, [document.id]: (failures[document.id] ?? 0) + 1 }));
+							});
+						},
+					}}
+				>
+					<ListRow
+						wrapTitle
+						wrapSecondary
+						title={document.name}
+						secondary={secondary}
+						leading={
+							selecting ? (
+								<Checkbox value={selected.includes(document.id)} interactive={false} />
+							) : (
+								<DocumentThumbnail document={document} />
+							)
 						}
+						trailing="caret"
+						last={index === count - 1}
+						onPress={() => (selecting ? toggle(document.id) : void open(document))}
+						onLongPress={() => router.push(`/documents/${document.id}/actions?type=${document.type}`)}
+						testID={`document-${document.id}`}
 					/>
-				</View>
-			</View>
-			{session.status === "signed-in" && (
-				<>
-					{trashed && (
-						<>
-							<Button
-								variant="secondary"
-								label={t`Applications`}
-								onPress={() => router.push(routes.applicationTrash())}
-							/>
-							<Text color="ink2">{t`Documents are deleted permanently after 30 days.`}</Text>
-						</>
-					)}
-					{recoverable.length > 0 && (
-						<View style={{ gap: space.s2 }}>
-							<Text variant="title" accessibilityRole="header">{t`Unsynced on this device`}</Text>
-							{recoverable.map((document) => (
-								<ListRow
-									key={documentKey(document)}
-									title={document.name}
-									subtitle={document.type === "resume" ? t`Resume` : t`Letter`}
-									leading="cloud-slash"
-									chevron
-									onPress={() =>
-										router.push(document.type === "resume" ? routes.builder(document.id) : routes.letter(document.id))
-									}
-								/>
-							))}
-							{pending.length > 100 && (
-								<View style={{ gap: space.s2 }}>
-									<Text>{t`${i18n.number(recoveryStart + 1)}–${i18n.number(Math.min(recoveryStart + 100, pending.length))} of ${i18n.number(pending.length)}`}</Text>
-									<View style={{ flexDirection: "row", gap: space.s2 }}>
-										<Button
-											label={t`Previous unsynced drafts`}
-											variant="secondary"
-											disabled={recoveryStart === 0}
-											onPress={() => setRecoveryOffset(Math.max(0, recoveryStart - 100))}
-										/>
-										<Button
-											label={t`Next unsynced drafts`}
-											variant="secondary"
-											disabled={recoveryStart + 100 >= pending.length}
-											onPress={() => setRecoveryOffset(recoveryStart + 100)}
-										/>
-									</View>
-								</View>
-							)}
-						</View>
-					)}
-					{(documents.isError || counts.isError) && (
-						<Banner
-							tone="danger"
-							message={t`Couldn't refresh your documents.`}
-							action={{
-								label: t`Retry`,
-								onPress: () => {
-									void documents.refetch();
-									void counts.refetch();
-								},
-							}}
-						/>
-					)}
-					{operations.error && <Banner tone="danger" message={operations.error} />}
-					{!trashed && (
-						<>
-							<Segmented
-								orientation={fontScale > 1.3 ? "vertical" : "horizontal"}
-								value={type}
-								label={t`Document type`}
-								onChange={setType}
-								options={[
-									{
-										value: "all",
-										label: t`All (${i18n.number((displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0))})`,
-									},
-									{
-										value: "resume",
-										label: plural(displayed?.counts.resume ?? 0, {
-											one: "Resume (#)",
-											other: "Resumes (#)",
-										}),
-									},
-									{
-										value: "letter",
-										label: plural(displayed?.counts.letter ?? 0, {
-											one: "Letter (#)",
-											other: "Letters (#)",
-										}),
-									},
-								]}
-							/>
-							{fontScale > 1.3 && sortControl}
-							<ScrollView
-								horizontal
-								showsHorizontalScrollIndicator={false}
-								contentContainerStyle={{ alignItems: "center", gap: space.s2 }}
-								style={{ flexGrow: 0 }}
-							>
-								{fontScale <= 1.3 && sortControl}
-								<Chip label={t`Public`} selected={publicOnly} onPress={() => setPublicOnly(!publicOnly)} />
-								{(displayed?.tags ?? []).map((tag) => (
-									<Chip
-										key={tag}
-										label={tag}
-										selected={tags.includes(tag)}
-										onPress={() =>
-											setTags(tags.includes(tag) ? tags.filter((entry) => entry !== tag) : [...tags, tag].slice(0, 20))
-										}
-									/>
-								))}
-								<IconButton
-									icon={grid ? "rows" : "squares-four"}
-									label={grid ? t`List view` : t`Grid view`}
-									onPress={() => setView(grid ? "list" : "grid")}
-								/>
-							</ScrollView>
-						</>
-					)}
-					{trashed && <View style={{ alignItems: fontScale > 1.3 ? "stretch" : "flex-start" }}>{sortControl}</View>}
-					{selecting && (
-						<View style={{ gap: space.s2 }}>
-							<Text variant="label">{plural(selected.length, { one: "# selected", other: "# selected" })}</Text>
-							<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
-								<Button
-									label={t`Select this page`}
-									variant="ghost"
-									disabled={!rowsCurrent}
-									onPress={() => {
-										if (rowsCurrent) setSelection(visibleDocuments.map(documentKey));
-									}}
-								/>
-								{trashed ? (
-									<>
-										<Button
-											label={t`Restore`}
-											variant="secondary"
-											disabled={!rowsCurrent || !selected.length || operations.busy}
-											loading={operations.busy}
-											onPress={() =>
-												void operations.restoreSelected(selected).then((success) => {
-													if (success) finishSelection();
-												})
-											}
-										/>
-										<Button
-											label={t`Delete permanently…`}
-											variant="danger"
-											disabled={!selected.length || operations.busy}
-											onPress={() => setPurge({ documents: selected, all: false })}
-										/>
-									</>
-								) : (
-									<>
-										{(["tags", "sharing", "lock"] as const).map((kind) => (
-											<Button
-												key={kind}
-												label={{ tags: t`Tags…`, sharing: t`Sharing`, lock: t`Lock` }[kind]}
-												variant="secondary"
-												disabled={!selected.length || operations.busy}
-												onPress={() => setSheet({ kind, documents: selected })}
-											/>
-										))}
-										<Button
-											label={t`Move to Trash`}
-											variant="danger"
-											disabled={!selected.length}
-											loading={operations.busy}
-											onPress={() => void operations.trash(selected)}
-										/>
-									</>
-								)}
-							</View>
-						</View>
-					)}
-					{trashed && all.length > 0 && (
-						<Button
-							label={t`Empty Trash`}
-							variant="danger"
-							disabled={!rowsCurrent || operations.busy}
-							onPress={() => setPurge({ documents: all, all: true })}
-						/>
-					)}
-				</>
-			)}
-		</View>
-	);
+				</SwipeRow>
+			</Animated.View>
+		);
+	};
+	const resumes = documents.data?.filter((doc) => doc.type === "resume") ?? [];
+	const letters = documents.data?.filter((doc) => doc.type === "letter") ?? [];
 	return (
-		<Screen
-			scroll={false}
-			edges={["top"]}
-			onLayout={(event) => setWidth(event.nativeEvent.layout.width - space.s4 * 2)}
-		>
-			<Stack.Screen options={{ title: trashed ? t`Trash` : t`Documents`, headerShown: false }} />
-			<AnimatedLegendList
-				data={session.status === "signed-in" ? rows : []}
-				ListHeaderComponent={header}
-				numColumns={columns}
-				keyExtractor={(row) => (row.kind === "group" ? row.group.key : documentKey(row.document))}
-				getItemType={(row) => row.kind}
-				overrideItemLayout={(layout, row) => {
-					if (row.kind === "group") layout.span = columns;
+		<>
+			<TabScreen
+				title={t`Documents`}
+				avatar={<AccountAvatar />}
+				refreshing={documents.isRefetching && !documents.isPlaceholderData}
+				onRefresh={() => {
+					void documents.refetch();
 				}}
-				extraData={visible}
-				viewabilityConfig={viewabilityConfig}
-				onViewableItemsChanged={onViewableItemsChanged}
-				refreshControl={<RefreshControl {...pull} tintColor={colors.accent} colors={[colors.accent]} />}
-				style={{ flex: 1 }}
-				keyboardShouldPersistTaps="handled"
-				contentContainerStyle={{ paddingBottom: space.s4 }}
-				ItemSeparatorComponent={() => <View style={{ height: space.s3 }} />}
-				{...(columns > 1 ? { columnWrapperStyle: { gap: space.s3 } } : {})}
-				// Reanimated's item layout animation supports one column only.
-				{...(columns === 1 ? { itemLayoutAnimation: listLayout } : {})}
-				renderItem={({ item, index }) => {
-					if (item.kind === "group")
-						return (
-							<View style={{ flex: 1, width }}>
-								<GroupHeading
-									group={item.group}
-									expanded={groupExpanded(item.group)}
-									onToggle={() => toggleGroup(item.group.key, item.group.closed)}
-								/>
-							</View>
-						);
-					const document = item.document;
-					return (
-						<DocumentMotionFrame
-							itemKey={documentKey(document)}
-							register={removal.register}
-							{...listItemMotion(index, firstAppearance, { reduced, exiting: false })}
-							style={{ flex: 1, maxWidth: Math.max(0, (width - space.s3 * (columns - 1)) / columns) }}
-						>
-							<DocumentItem
-								document={document}
-								visible={visible.includes(documentKey(document))}
-								grid={grid}
-								selected={rowsCurrent && selection.includes(documentKey(document))}
-								selecting={selecting}
-								busy={operations.busy || !rowsCurrent}
-								unsynced={!trashed && pendingKeys.has(documentKey(document))}
-								onOpen={() => open(document)}
-								onSelect={() => toggle(document)}
-								onMenu={() => {
-									if (rowsCurrent) setSheet({ kind: "menu", documents: [document] });
-								}}
-								onTrash={() => {
-									if (rowsCurrent) void operations.trash([document]);
-								}}
-								onDuplicate={() => {
-									if (rowsCurrent) void duplicate(document);
-								}}
-							/>
-						</DocumentMotionFrame>
-					);
-				}}
-				ListEmptyComponent={
-					session.status !== "signed-in" ? (
-						<EmptyState
-							icon="file-text"
-							title={t`Sign in to see your documents`}
-							action={{ label: t`Sign in`, onPress: () => router.push(routes.signIn()) }}
-						/>
-					) : recoverable.length > 0 ? undefined : documents.isPending ||
-					  counts.isPending ||
-					  (!rowsCurrent && !documents.isError) ? (
-						<View style={{ gap: space.s3 }}>
-							<Skeleton height={size.row * 2} />
-							<Skeleton height={size.row * 2} />
-							<Skeleton height={size.row * 2} />
-						</View>
-					) : documents.isError ? undefined : emptyType ? (
-						// A type tab with nothing of its kind is empty, not filtered: it offers to make one.
-						<EmptyState
-							variant="card"
-							icon={emptyType === "letter" ? "envelope-simple" : "file-text"}
-							title={emptyType === "letter" ? t`No cover letters yet` : t`No resumes yet`}
-							message={
-								emptyType === "letter"
-									? t`Write one for a job, or start from your latest resume.`
-									: t`Import the one you have, or start blank.`
-							}
-							action={{ label: t`New document`, onPress: () => router.push(routes.new()) }}
-						/>
-					) : (
-						<EmptyState
-							variant="card"
-							icon={trashed ? "trash" : "file-text"}
-							title={
-								q || type !== "all" || tags.length || publicOnly || offset > 0
-									? t`No matches`
-									: trashed
-										? t`Trash is empty`
-										: quietEmpty
-											? t`No documents`
-											: t`Let's start with what you have`
-							}
-							message={
-								q || type !== "all" || tags.length || publicOnly || offset > 0
-									? t`Try another search or clear your filters.`
-									: trashed
-										? t`Documents you move here stay for 30 days.`
-										: quietEmpty
-											? undefined
-											: t`Import your current resume, or start fresh with your name.`
-							}
-							action={
-								q || type !== "all" || tags.length || publicOnly || offset > 0
-									? { label: t`Clear filters`, onPress: clearFilters }
-									: trashed
-										? undefined
-										: { label: t`New document`, onPress: () => router.push(routes.new()) }
-							}
-						/>
-					)
+				actions={
+					<>
+						<IconButton icon="magnifying-glass" label={t`Search`} onPress={() => router.push("/search")} />
+						<IconButton icon="plus" label={t`New`} onPress={() => router.push("/new")} />
+					</>
 				}
-				ListFooterComponent={
-					<View style={{ gap: space.s3 }}>
-						{session.status === "signed-in" && (offset > 0 || (displayed?.total ?? page.total) > 100) && (
-							<View style={{ gap: space.s2 }}>
-								<Text accessibilityLiveRegion="polite">{t`${i18n.number(Math.min(displayedOffset + 1, displayed?.total ?? page.total))}–${i18n.number(Math.min(displayedOffset + 100, displayed?.total ?? page.total))} of ${i18n.number(displayed?.total ?? page.total)}`}</Text>
-								<View style={{ flexDirection: "row", gap: space.s2 }}>
-									<Button
-										label={t`Previous`}
-										variant="secondary"
-										disabled={!rowsCurrent || documents.isFetching || operations.busy || offset === 0}
-										onPress={() => changePage(Math.max(0, offset - 100))}
-									/>
-									<Button
-										label={t`Next`}
-										variant="secondary"
-										disabled={
-											!rowsCurrent ||
-											documents.isFetching ||
-											operations.busy ||
-											offset + 100 >= (documents.data?.total ?? page.total)
-										}
-										onPress={() => changePage(offset + 100)}
-									/>
-								</View>
-							</View>
-						)}
-						{session.status === "signed-in" && !trashed && counts.data?.trash ? (
-							<Card style={{ paddingVertical: space.s3 / 2 }}>
-								<ListRow
-									title={t`Trash`}
-									subtitle={plural(counts.data.trash, { one: "# document", other: "# documents" })}
-									leading="trash"
-									chevron
-									onPress={() => router.push(routes.trash())}
-								/>
-							</Card>
-						) : undefined}
-					</View>
-				}
-			/>
-			{session.status === "signed-in" &&
-				rowsCurrent &&
-				sheet &&
-				(trashed ? (
-					<SheetForTrash
-						document={sheet.documents[0]}
-						busy={operations.busy}
-						onClose={() => setSheet(null)}
-						onRestore={(document) =>
-							void operations.restoreSelected([document]).then((success) => {
-								if (success) setSheet(null);
-							})
-						}
-						onDelete={(document) => {
-							setSheet(null);
-							setPurge({ documents: [document], all: false });
+			>
+				{batchError ? (
+					<CollectionState message={batchError} action={t`Dismiss`} onPress={() => setBatchError(undefined)} />
+				) : null}
+				{documents.isError || loadError ? (
+					<CollectionState
+						message={t`Couldn't load your documents. Try again.`}
+						action={t`Retry`}
+						onPress={() => {
+							void documents.refetch();
 						}}
 					/>
-				) : (
-					<DocumentSheets
-						operations={operations}
-						key={`${sheet.kind}:${sheet.documents.map(documentKey).join(",")}`}
-						value={sheet}
-						onClose={() => setSheet(null)}
-						onChange={setSheet}
-						onSelect={toggle}
+				) : null}
+				{loadError ? null : documents.isPending ? (
+					<>
+						<SectionHeading title={t`Resumes`} first />
+						<DocumentPlaceholders />
+						<SectionHeading title={t`Cover letters`} />
+						<DocumentPlaceholders count={2} />
+					</>
+				) : documents.data?.length ? (
+					<>
+						<SectionHeading title={t`Resumes`} count={String(resumes.length)} first />
+						{resumes.map((doc, index) => row(doc, index, resumes.length))}
+						<SectionHeading title={t`Cover letters`} count={String(letters.length)} />
+						{letters.map((doc, index) => row(doc, index, letters.length))}
+						<View
+							style={{ paddingHorizontal: 24, paddingTop: 24, flexDirection: "row", gap: 28, alignItems: "center" }}
+						>
+							<TextLink
+								label={selecting ? t`Done` : t`Select`}
+								icon="check-square"
+								color="ink3"
+								onPress={() => {
+									setSelecting(!selecting);
+									setSelected([]);
+								}}
+							/>
+							<TextLink
+								label={t`Trash · ${trash.documents.data?.length ?? 0}`}
+								icon="trash"
+								color="ink3"
+								onPress={() => router.push("/trash")}
+							/>
+						</View>
+						{selecting && selected.length > 0 ? (
+							<View style={{ padding: 24, gap: 12 }}>
+								<Button label={t`Tags`} onPress={() => setTagging(true)} />
+								<Button
+									label={t`Download`}
+									disabled={batching}
+									onPress={() => {
+										setBatching(true);
+										void (async () => {
+											try {
+												const directory = await Directory.pickDirectoryAsync();
+												await downloadDocuments(
+													(documents.data ?? []).filter((doc) => selected.includes(doc.id)),
+													"pdf",
+													directory,
+													new AbortController().signal,
+												);
+												showToast({ message: t`Saved to Files` });
+											} catch {
+												setBatchError(t`Couldn't download every document. Completed files are kept. Try again.`);
+											} finally {
+												setBatching(false);
+											}
+										})();
+									}}
+								/>
+								<Button
+									label={t`Move to Trash`}
+									onPress={() => {
+										void (async () => {
+											let moved = false;
+											for (const doc of documents.data.filter((item) => selected.includes(item.id)))
+												moved = (await trashDocument(doc, true)) || moved;
+											if (moved) haptic("light");
+											setSelected([]);
+										})();
+									}}
+								/>
+							</View>
+						) : null}
+					</>
+				) : !documents.isError ? (
+					<CollectionState
+						message={query ? t`No matching documents` : t`Import or create a resume`}
+						action={query ? t`Clear filters` : t`New`}
+						onPress={() => (query ? router.replace("/documents") : router.push("/new"))}
 					/>
-				))}
-			<ConfirmDialog
-				open={rowsCurrent && purge !== null}
-				title={
-					purge?.all
-						? t`Empty Trash?`
-						: purgeCount === 1
-							? t`Delete “${purge?.documents[0]?.name}” forever?`
-							: plural(purgeCount, {
-									one: "Delete # selected document forever?",
-									other: "Delete # selected documents forever?",
-								})
-				}
-				message={
-					purge?.all
-						? t`All documents in Trash will be deleted for good and can't be restored.`
-						: purgeCount === 1
-							? t`“${purge?.documents[0]?.name}” will be deleted for good and can't be restored.`
-							: t`The selected documents will be deleted for good and can't be restored.`
-				}
-				confirmLabel={t`Hold to delete`}
-				destructive
-				hold
-				onCancel={() => {
-					if (!operations.busy) setPurge(null);
-				}}
-				onConfirm={() => {
-					if (!rowsCurrent || !purge) return;
-					const action = purge.all ? operations.emptyTrash() : operations.purgeSelected(purge.documents);
-					void action.then((success) => {
-						if (!success) return;
-						setPurge(null);
-						finishSelection();
-					});
-				}}
-			/>
-		</Screen>
-	);
-}
-
-type SheetForTrashProps = {
-	document: DocumentSummary | undefined;
-	busy: boolean;
-	onClose: () => void;
-	onRestore: (document: DocumentSummary) => void;
-	onDelete: (document: DocumentSummary) => void;
-};
-
-function SheetForTrash({ document, busy, onClose, onRestore, onDelete }: SheetForTrashProps) {
-	const { t } = useLingui();
-	if (!document) return null;
-	return (
-		<Sheet
-			open
-			onClose={() => {
-				if (!busy) onClose();
-			}}
-			title={document.name}
-		>
-			<ListRow
-				title={t`Restore`}
-				leading="arrow-counter-clockwise"
-				disabled={busy}
-				onPress={() => onRestore(document)}
-			/>
-			<ListRow
-				title={t`Delete forever…`}
-				leading="trash"
-				destructive
-				disabled={busy}
-				onPress={() => onDelete(document)}
-			/>
-		</Sheet>
+				) : null}
+			</TabScreen>
+			<Dialog
+				open={tagging}
+				onClose={() => setTagging(false)}
+				title={t`Tags`}
+				actions={[
+					{
+						label: t`Save`,
+						tone: "primary",
+						onPress: () => {
+							const parsed = parseDocumentTags(tags);
+							if (!parsed || batching) return;
+							setBatching(true);
+							void actions
+								.batchTags(
+									(documents.data ?? [])
+										.filter((doc) => selected.includes(doc.id))
+										.map((doc) => ({ id: doc.id, type: doc.type, tags: parsed })),
+								)
+								.then(() => setTagging(false))
+								.catch(() => setBatchError(t`Couldn't save your changes. Try again.`))
+								.finally(() => setBatching(false));
+						},
+					},
+					{ label: t`Cancel`, tone: "secondary", onPress: () => setTagging(false) },
+				]}
+			>
+				<TextField label={t`Tags`} value={tags} onChangeText={setTags} />
+			</Dialog>
+		</>
 	);
 }

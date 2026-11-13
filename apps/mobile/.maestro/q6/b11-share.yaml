@@ -1,0 +1,81 @@
+# B11 · The link row (tap or long-press) offers Copy full address ("Link copied"); turning Public link on the first
+# time asks for the address in a sheet, then "Your web page is live"; a password can be set; a failing export says "Download failed. Try again."
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B11-Share?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- longPressOn: rx.cv/alex
+- extendedWaitUntil:
+    visible: Copy full address
+    timeout: 10000
+- tapOn:
+    text: Copy full address
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: Link copied
+    timeout: 5000
+# A private resume going public for the first time.
+- openLink: me.rxresu.storyboard://builder/resume-lumen/share
+- extendedWaitUntil:
+    visible: Public link
+    timeout: 10000
+- tapOn: Public link
+- extendedWaitUntil:
+    visible: Your web page address
+    timeout: 10000
+- tapOn:
+    text: Publish
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: Your web page is live
+    timeout: 10000
+- extendedWaitUntil:
+    visible: rxresu.me/alex/product-designer1
+    timeout: 10000
+# A password: the switch row says so.
+- tapOn: Web page settings
+- extendedWaitUntil:
+    visible: Password
+    timeout: 10000
+- scrollUntilVisible:
+    element: Password
+    direction: DOWN
+- tapOn: Password
+- extendedWaitUntil:
+    visible: Set password
+    timeout: 10000
+- inputText: lumen-2026
+- pressKey: Enter
+- inputText: lumen-2026
+- hideKeyboard
+- tapOn:
+    text: Set password
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: Password set
+    timeout: 10000
+- extendedWaitUntil:
+    visible: Hide contact details
+    timeout: 10000
+# The switch row then reads "Public, with a password" (drawn; a row's second line is an accessibility hint Maestro
+# can't read, so it is checked on the screenshot, not here).
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Web page settings
+    timeout: 10000
+# Export failure.
+- openLink: me.rxresu.storyboard://builder/resume-product/share?preset=export-fail
+- extendedWaitUntil:
+    visible: Share PDF
+    timeout: 10000
+- tapOn: Share PDF
+- extendedWaitUntil:
+    visible: Download failed. Try again.
+    timeout: 10000

@@ -1,0 +1,82 @@
+# J2 · The stage button ("Interviewing · 4 of 6") opens the stages with counts; choosing one pages the board there,
+# and swiping pages too. An empty column shows "Drag an application here". A card's tap is the visible path for the
+# drag: card → J6 → Stage. A move into a stage that expects an interview toasts "Moved to Interviewing." with Undo and
+# "Schedule it", which opens J8.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/J2-Board?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: "Interviewing, .*"
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: "Interviewing, .*"
+- extendedWaitUntil:
+    visible: Stages
+    timeout: 10000
+- tapOn: Screening
+- extendedWaitUntil:
+    visible: "Screening, 3 of 6"
+    timeout: 10000
+- assertVisible: Drag an application here
+# Swiping pages the board (to Interviewing).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "300,500"
+          end: "40,500"
+          duration: 300
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "900,1500"
+          end: "120,1500"
+          duration: 300
+- extendedWaitUntil:
+    visible: "Interviewing, 4 of 6"
+    timeout: 10000
+# The visible tap for the drag: card → J6 → Stage → Screening.
+- tapOn: "Orbital Health.*"
+- extendedWaitUntil:
+    visible: Work on it
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Stage, .*"
+- tapOn: "Stage, .*"
+- extendedWaitUntil:
+    visible: Move Orbital Health
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: stage-screening
+    waitToSettleTimeoutMs: 1
+- assertVisible: Moved to Screening\.
+- assertNotVisible: Schedule it
+- scrollUntilVisible:
+    element: "Stage, Screening"
+# Back to Interviewing: the toast offers Schedule it, which opens J8.
+- tapOn: "Stage, .*"
+- extendedWaitUntil:
+    visible: Move Orbital Health
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: stage-interview
+    waitToSettleTimeoutMs: 1
+- assertVisible: Moved to Interviewing\.
+- assertVisible: Undo
+- tapOn:
+    text: Schedule it
+    waitToSettleTimeoutMs: 1
+- extendedWaitUntil:
+    visible: Add interview
+    timeout: 10000

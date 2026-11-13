@@ -1,0 +1,99 @@
+# B12 · An address another resume uses is refused ("Another of your resumes uses this address."); a valid one saves
+# on blur; Primary resume asks first; a password can be removed after asking; a failing write says "Couldn't update
+# sharing. Try again." and the switch stays as saved.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B12-WebPage?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+# Android puts the cursor where the tap lands; tap the field's empty end so the erase takes the whole address.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: product-designer
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          text: product-designer
+          point: "98%,50%"
+- eraseText: 20
+- inputText: product-designer1
+- extendedWaitUntil:
+    visible: Another of your resumes uses this address.
+    timeout: 5000
+- eraseText: 1
+- inputText: -alex
+- hideKeyboard
+- tapOn: Privacy
+# Saved on blur: Share shows the new address.
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Web page settings
+    timeout: 10000
+- tapOn: Web page settings
+- extendedWaitUntil:
+    visible: product-designer-alex
+    timeout: 10000
+# Primary resume asks first (another resume is primary).
+- openLink: me.rxresu.storyboard://builder/resume-lumen/share/web-page
+- extendedWaitUntil:
+    visible: Primary resume
+    timeout: 10000
+- tapOn: Primary resume
+- extendedWaitUntil:
+    visible: Make this your primary resume?
+    timeout: 5000
+- assertVisible: “Product designer” stops being your primary resume.
+- tapOn: Cancel
+- assertNotVisible: Make this your primary resume?
+# Password set, then removed after asking.
+- tapOn: Password
+- extendedWaitUntil:
+    visible: Set password
+    timeout: 10000
+- inputText: lumen-2026
+- pressKey: Enter
+- inputText: lumen-2026
+- hideKeyboard
+- tapOn:
+    text: Set password
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: Password set
+    timeout: 10000
+- tapOn: Password
+- extendedWaitUntil:
+    visible: Remove password
+    timeout: 10000
+- tapOn: Remove password
+- extendedWaitUntil:
+    visible: Remove the password?
+    timeout: 5000
+- assertVisible: Anyone with the link will be able to view your resume.
+- tapOn:
+    text: Remove
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: Password removed
+    timeout: 10000
+# A failing write: the switch returns to its saved state.
+- openLink: me.rxresu.storyboard://builder/resume-product/share/web-page?preset=write-fail
+- extendedWaitUntil:
+    visible: Hide contact details
+    timeout: 10000
+- tapOn: Hide contact details
+- extendedWaitUntil:
+    visible: Couldn't update sharing. Try again.
+    timeout: 5000
+- assertVisible:
+    text: Hide contact details
+    checked: false

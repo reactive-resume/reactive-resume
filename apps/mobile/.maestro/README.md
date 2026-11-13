@@ -1,25 +1,114 @@
-# Store smoke flows
+# Storyboard Maestro contracts
 
-Run later on an installed development/preview build, **phone portrait**, English app/browser/OS UI, against an isolated HTTPS test server with a disposable account. These flows change private resume notes. Never use personal resumes, production credentials or production data. No emulator, simulator or native build is started by these files.
+Run on iOS (iPhone 14 simulator, Release storyboard build) in Pass 8; the scoreboard and the bullet coverage are in `build/behaviour-coverage.md`, written by that run (not committed).
 
-Maestro is not installed on the M8-T2 host. YAML parsing passed; `maestro check-syntax` and all device runs remain for the coordinator:
+Every flow starts with `launchApp: clearState: true` and waits for `storyboard-ready` after each storyboard link: the capture harness holds motion at time scale 0 for about 4 s after a scenario loads, and toasts would run out instantly. Maestro waits for the screen to settle after each command, and a toast's running fuse keeps it busy, so taps that raise a 5 s toast use `waitToSettleTimeoutMs`. `dev/haptics` links switch the haptic log in place (`app/+native-intent.tsx`) and never move the screen.
 
-```sh
-for flow in apps/mobile/.maestro/*.yaml; do maestro check-syntax "$flow"; done
-```
-
-Supply `SERVER_ORIGIN`, `EMAIL` and `PASSWORD` through the runner environment for `sign-in.yaml`. Start signed out, with browser cookies cleared for the test server, email sign-in enabled and no 2FA. The flow selects Another server, discovers it, signs in through the system browser, accepts OAuth consent when shown, and waits for Documents. Do not store credentials in YAML or commit runner output: input steps and screenshots may expose test credentials.
-
-For each remaining flow, supply `RESUME_ID` for an **unlocked disposable resume** belonging to that signed-in account. Start with empty notes for edit-and-save; use a different disposable resume for offline-and-reconnect. Existing Notes editor exercises the shared draft owner; Write is now implemented after the native-app merge. Flow opens Share → Document options → Notes, modifies the draft, dismisses the phone sheet, checks Saved (or Offline then Saved), and reopens notes after restarting the app. Rich-text accessibility selection and the sheet swipe need device verification; this is authored coverage, not a passing device claim. Saved confirms server acknowledgement in the current draft implementation; restarting alone is insufficient because local drafts persist.
-
-- `edit-and-save.yaml`: online note save and restart/readback, both platforms.
-- `offline-and-reconnect.yaml`: **Android**; Maestro `setAirplaneMode`, offline edit, reconnect, server acknowledgement, restart/readback. `onFlowComplete` turns airplane mode off even after failure. Verify Wi-Fi is also disabled while airplane mode is on. If interrupted externally, restore connectivity manually. For iOS, coordinator repeats the scenario with connectivity controlled outside Maestro; do not treat Android YAML as an iOS pass.
-- `export.yaml`: both platforms; Download PDF → actual OS share sheet. Supply `SHARE_SHEET_TEXT` for the visible OS share-sheet control (for example `Save to Files` on English iOS, or the tested Android share target). It asserts the share UI, not the contents or saving of the PDF. Coordinator should save/open the exported PDF and verify pages manually.
-
-Example for a non-secret parameter:
+Run from `apps/mobile` with a storyboard development build (`APP_VARIANT=storyboard`, `EXPO_PUBLIC_STORYBOARD=1`, app ID and scheme `me.rxresu.storyboard`). Metro and the native app must already be available. Never point these flows at a production account. S7 flows clear the storyboard sandbox with `launchApp.clearState`; install a dedicated test variant.
 
 ```sh
-maestro test -e RESUME_ID="$RESUME_ID" -e SHARE_SHEET_TEXT="Save to Files" apps/mobile/.maestro/export.yaml
+maestro test .maestro/haptics/segment.yaml
+maestro test .maestro/haptics
+maestro test .maestro/behaviour
 ```
 
-OS browser-consent text, native rich-text accessibility and sheet gestures may need selector adjustments after the first device run. No app-only test flags, authentication bypasses or production test seams were added.
+The picker flows (`q1/d4-import`, `q1/p2-ats`, `behaviour/s7-file`) choose nonpersonal files that `q1/lib/files.sh <udid>` copies into Files › On My iPhone; run it once per simulator. Microphone permission must be granted for `s7-audio.yaml`.
+
+Each haptic flow clears the visible `haptic-log` pill and asserts an exact sequence, including an empty string for silent actions. The four former motion-lab placeholders now use actual screens. Existing screen flows were relocated without removing their assertions. `settings?queued=offline-two` supplies the specification row’s two queued changes; `queued=offline` keeps S8's drawn three.
+
+Storyboard capture temporarily sets `timeScale=0`, restoring 1 four seconds after capture completion. Wait for that restoration before measuring motion. `waitForAnimationToEnd` alone does not prove the scale has reset. The tour contains no frame-pacing instrumentation; the lead records gfxinfo/xctrace, real pinch and busy-JS evidence separately. No supported pinch syntax was established by the fetched Maestro documentation, so no invented command is included.
+
+`j8-repeated-hour.yaml` and `s8-export.yaml` are explicitly incomplete drafts: their comments identify native interactions the lead must author before they can pass. No fake app selector substitutes for a native picker. Board gestures and row swipes use inherited/calibrated coordinates only as authoring starting points; remeasure on both platforms before relying on them. Board drags hold still long enough to lift only in a slow swipe (about 18 dp/s), so the board flows use 11 s swipes from fixed points measured on the iPhone 14; remeasure on another device. Maestro's double tap reaches PageZoom only some of the time: the double-tap snap is proved in `src/ui/page-zoom.test.tsx`. J5 intentionally expects success and the Applied gate even though SaveJobScreen currently cannot save.
+
+## Android
+
+The same flows run on the `Pixel_10_Pro` emulator at 390 × 844 dp (`adb shell wm size 1170x2532 && adb shell wm density 480`) with a Release storyboard build; pass `--device emulator-5554`.
+
+- `q1/lib/files.sh emulator-5554` pushes the picker fixtures to Downloads and creates Documents (the folder picker's destination; Android refuses the storage root). `pick-file.yaml` and `pick-folder.yaml` branch by platform; Android callers pass the file name as `NAME`.
+- Set Android's "Time to take action" before each flow: `adb shell settings put secure accessibility_interactive_ui_timeout_ms 30000` and the same for `accessibility_non_interactive_ui_timeout_ms`. Maestro on the software-rendered emulator needs 7–9 s for a tap and the next check, longer than a 5 s toast; the app lengthens toasts by that setting (MOTION.md: "Android's accessibility timeout can only lengthen it"). `behaviour/toast-touch` and `behaviour/c3-forget-finalises` prove the 8 s lifetime itself, so run them with the setting deleted (`adb shell settings delete secure …`).
+- Absolute coordinates are points on iOS and pixels on Android, and Maestro takes only whole percentages. Steps with absolute coordinates are split into `when: platform:` branches: iOS keeps its points, Android uses the same points × 3.
+- Android reports only what is on screen; iOS also reports elements below the fold. Scroll (`scrollUntilVisible`) before asserting anything that can sit under a footer or the fold.
+- The screen under a sheet, dialog or menu stays in Android's hierarchy, so a label that appears in both (Restore, Applied) can match the wrong one. Scope such taps with `childOf: { id: sheet | dialog | menu }`.
+- Board drags on Android go at about 10 dp/s (`applied-board`, `board-drop`): the card lifts after a 500 ms hold, and a faster finger passes the touch slop first and scrolls the board. How long the swipe dwells in the edge zone varies with load, so `board-drop` on Android proves the lift and the drop, not the page count.
+- Cold-launched flows wait up to 90 s for `storyboard-ready`: on a loaded emulator the fixture pages behind builder screens can take that long to print before the harness settles.
+- Run the suite with the emulator settled (guest load under 5 after a cold boot) and the host quiet; at host load above about 15 flows start timing out.
+- iOS-only gestures and system UI get platform branches: modals close by swiping down on iOS and with back on Android (MOTION.md §6.1); the interview time uses the system date then time dialogs (OK, OK) on Android.
+
+## Flow inventory
+
+| Flow                                                                       | Contract / limitation                                                                                            |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [b/restore.yaml](b/restore.yaml)                                           | b · restore                                                                                                      |
+| [behaviour/applied-board.yaml](behaviour/applied-board.yaml)               | A Saved card dropped over Applied opens "What did you send?"; Close puts it back. Slow swipe: the hold lifts it. |
+| [behaviour/applied-bulk.yaml](behaviour/applied-bulk.yaml)                 | Applied means sent: a bulk move to Applied asks for each application in turn; cancelling changes nothing.        |
+| [behaviour/applied-confirm.yaml](behaviour/applied-confirm.yaml)           | Confirming "What did you send?" freezes what was ticked and moves the application to Applied (`success`).        |
+| [behaviour/applied-j5.yaml](behaviour/applied-j5.yaml)                     | Expected failure: save/create and gate unimplemented.                                                            |
+| [behaviour/applied-j7.yaml](behaviour/applied-j7.yaml)                     | Applied means sent: J7's Applied opens "What did you send?"; closing it changes nothing.                         |
+| [behaviour/applied-swipe.yaml](behaviour/applied-swipe.yaml)               | Kiln is Saved; lead must calibrate swipe to its row. Cancellation must retain Saved.                             |
+| [behaviour/applied-w2.yaml](behaviour/applied-w2.yaml)                     | behaviour · applied w2                                                                                           |
+| [behaviour/b20-empty-back.yaml](behaviour/b20-empty-back.yaml)             | B20: leaving a new entry with nothing typed creates nothing and shows no toast.                                  |
+| [behaviour/b3-undo-redo.yaml](behaviour/b3-undo-redo.yaml)                 | B3: Undo in the status line reverts the last field edit; Redo appears after an Undo and restores it.             |
+| [behaviour/j8-repeated-hour.yaml](behaviour/j8-repeated-hour.yaml)         | Incomplete draft: native picker date/time selection needed.                                                      |
+| [behaviour/j9-close-reopen.yaml](behaviour/j9-close-reopen.yaml)           | J9: close with an outcome (`success` for "I accepted this offer"), then Reopen from J6.                          |
+| [behaviour/l1-undo-redo.yaml](behaviour/l1-undo-redo.yaml)                 | behaviour · l1 undo redo                                                                                         |
+| [behaviour/s7-audio.yaml](behaviour/s7-audio.yaml)                         | Needs microphone permission and nonempty native recording.                                                       |
+| [behaviour/s7-chat.yaml](behaviour/s7-chat.yaml)                           | Authored; repeated send may expose disabled retry after failure.                                                 |
+| [behaviour/s7-file.yaml](behaviour/s7-file.yaml)                           | Needs preloaded IMPORT_FIXTURE_NAME and native Files picker.                                                     |
+| [behaviour/s7-posting.yaml](behaviour/s7-posting.yaml)                     | Authored; awaits lead device validation.                                                                         |
+| [behaviour/s7-resume-and-facts.yaml](behaviour/s7-resume-and-facts.yaml)   | Authored; awaits lead device validation.                                                                         |
+| [behaviour/s8-discard.yaml](behaviour/s8-discard.yaml)                     | behaviour · s8 discard                                                                                           |
+| [behaviour/s8-export.yaml](behaviour/s8-export.yaml)                       | Incomplete draft: native Files destination selection needed.                                                     |
+| [behaviour/s8-offline.yaml](behaviour/s8-offline.yaml)                     | behaviour · s8 offline                                                                                           |
+| [behaviour/schedule-connection.yaml](behaviour/schedule-connection.yaml)   | Authored against fake provider key update.                                                                       |
+| [behaviour/toast-touch.yaml](behaviour/toast-touch.yaml)                   | behaviour · toast touch                                                                                          |
+| [behaviour/trash-restore-delete.yaml](behaviour/trash-restore-delete.yaml) | behaviour · trash restore delete                                                                                 |
+| [d/preview-zoom.yaml](d/preview-zoom.yaml)                                 | d · preview zoom                                                                                                 |
+| [f/c7-connection-changed.yaml](f/c7-connection-changed.yaml)               | C7: choosing another connection pauses the schedule ("Paused: your AI connection changed", Review and resume).   |
+| [f/p2-signed-out.yaml](f/p2-signed-out.yaml)                               | f · p2 signed out                                                                                                |
+| [haptics/board-drop.yaml](haptics/board-drop.yaml)                         | J2 drag: lift, one page at the edge, drop on the next column: `medium selection rigid`.                          |
+| [haptics/builder-dock.yaml](haptics/builder-dock.yaml)                     | B1: the dock's Edit → Design switch plays `selection`.                                                           |
+| [haptics/delete-entry.yaml](haptics/delete-entry.yaml)                     | B21 › Delete entry → `light`; the toast offers Undo.                                                             |
+| [haptics/delete-permanently.yaml](haptics/delete-permanently.yaml)         | haptics · delete permanently                                                                                     |
+| [haptics/forget.yaml](haptics/forget.yaml)                                 | C3 Forget emits one light; Show forgotten and Restore retain the reversible action.                              |
+| [haptics/long-press.yaml](haptics/long-press.yaml)                         | haptics · long press                                                                                             |
+| [haptics/move-down.yaml](haptics/move-down.yaml)                           | B21 › Move down → `selection`; the entry moves under its neighbour.                                              |
+| [haptics/proposal.yaml](haptics/proposal.yaml)                             | haptics · proposal                                                                                               |
+| [haptics/refresh-today.yaml](haptics/refresh-today.yaml)                   | haptics · refresh today                                                                                          |
+| [haptics/reorder.yaml](haptics/reorder.yaml)                               | B8: drag a section down two slots by its handle → "medium selection selection rigid".                            |
+| [haptics/root-tab.yaml](haptics/root-tab.yaml)                             | haptics · root tab                                                                                               |
+| [haptics/save-job.yaml](haptics/save-job.yaml)                             | Expected failure: saving is unimplemented.                                                                       |
+| [haptics/segment.yaml](haptics/segment.yaml)                               | J1 List → Board: the view switch plays `selection` (MOTION.md §12, J1).                                          |
+| [haptics/sign-out-offline.yaml](haptics/sign-out-offline.yaml)             | S1 → S8: Sign out with three queued changes while offline opens S8 and plays `warning`; Keep working closes it.  |
+| [haptics/swipe-cancel.yaml](haptics/swipe-cancel.yaml)                     | haptics · swipe cancel                                                                                           |
+| [haptics/swipe-trash.yaml](haptics/swipe-trash.yaml)                       | haptics · swipe trash                                                                                            |
+| [haptics/switch-on.yaml](haptics/switch-on.yaml)                           | haptics · switch on                                                                                              |
+| [haptics/typing.yaml](haptics/typing.yaml)                                 | B3: typing plays no haptic (MOTION.md §4.2).                                                                     |
+| [haptics/wrong-code.yaml](haptics/wrong-code.yaml)                         | A3: a wrong two-step code clears the boxes, says so and plays `error` (MOTION.md §5, §12).                       |
+| [haptics/zoom-fit.yaml](haptics/zoom-fit.yaml)                             | haptics · zoom fit                                                                                               |
+| [tour/motion-tour.yaml](tour/motion-tour.yaml)                             | Partial tour: manual pinch, calibrated gestures and real end-of-list confirmation required.                      |
+
+## Missing app hooks and selectors
+
+These are requests to owners, not selectors used speculatively by the flows:
+
+| File / element                                                                                              | Request                                                                                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/features/applications/ApplicationsScreen.tsx`, `BoardView` card and columns                            | Wire real `BoardDrag` + `SnapCarousel`; expose `board-card-${id}`, `board-column-${status}`, `applications-board` so edge hold/drop targets can be measured. Current board is static.                                 |
+| `src/features/builder/design/LayoutScreen.tsx`, `SectionRow` drag handle                                    | `section-drag-${id}` for B8’s two-slot drag. Existing labels permit Move up/down but do not locate the handle.                                                                                                        |
+| `src/ui/SwipeRow.tsx`, gesture surface                                                                      | Expose real accessibility actions for start/end actions (also usable in Jest). No imperative handle or accessibility action exists on SwipeRow itself; pure `swipeArm` tests do not prove gesture emission or commit. |
+| `src/ui/BottomSheet.tsx`, grabber                                                                           | `sheet-grabber` for precise drag-dismiss targeting.                                                                                                                                                                   |
+| `src/ui/PageZoom.tsx`, page gesture surface                                                                 | `page-zoom` for double-tap/pinch target bounds.                                                                                                                                                                       |
+| `src/ui/Toast.tsx`, toast surface                                                                           | `toast` for holding the full surface without accidentally triggering Undo. Native touch pause is covered by the rendered Jest test.                                                                                   |
+| `src/features/applications/InterviewSheet.tsx`, Starts row and native picker                                | `interview-starts` and `interview-starts-picker`; platform date/time picker automation must select 2026-10-25 02:30 Europe/Berlin. Save currently always reports an error.                                            |
+| `src/features/today/screen.tsx` and `src/features/applications/ApplicationsScreen.tsx`, scroll content ends | Stable end-of-content markers (`today-end`, `applications-end`) for actual end-to-end tour scrolling. Current tour uses known bottom sections/rows, which cannot prove absolute end.                                  |
+| Storyboard S1 offline queue preset                                                                          | Two queued writes fixture needed for the literal 10.3 row; existing preset supplies three.                                                                                                                            |
+
+S7 file and S8 export require platform-native Files steps; no missing app test ID can replace selecting a real file/destination. Direct links to `/ai/consent` are not proof of once-per-kind behavior: the new S7 flows invoke actual feature request guards and change the fake provider key without reseeding between requests. Native recording and picker dialogs remain lead-owned.
+
+## Jest boundary and navigation limitations
+
+`src/ui/interactions.test.tsx` uses resolver-backed Reanimated with fake timers; existing helper/config tests remain in `motion.test.ts` and `controls.test.ts`. Controls are activated through their real accessibility tap/action handlers. Pan/reorder use real imperative handles. Their initial render is silent; accessibility activation does **not** prove physical touch-down silence. Haptic Maestro rows and device review must establish that gesture phase.
+
+BoardDrag’s handle requires measured native root/card views; Jest host refs do not deliver those measurements. No production test-only geometry seam was added. Its pure edge-zone helper remains covered; real `medium selection rigid` must be proved after board integration on-device. SwipeRow likewise remains helper-only in Jest until an honest allowed driver is available.
+
+`edges.test.ts` reads every `navigatesTo` element from the external layout bundle and checks the single ID-to-pathname table plus actual route files. It searches local imports of the source route for literal/template `router.push`, `router.replace` or `Link` pathnames. It is syntactic evidence, not route execution. Query-selected subviews share a pathname and are not distinguished. Back/dismiss, navigator-owned docks, computed hrefs, indirect helpers and conditional branches may remain unproved. Every unproved element is listed in the test failure; none is silently waived. Only an absent external bundle skips this test, with an explicit test title. Re-run after owner fixes; do not convert navigation gaps to skips.

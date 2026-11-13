@@ -1,0 +1,16 @@
+# iOS half of pick-folder.yaml: On My iPhone in the system folder picker.
+appId: me.rxresu.storyboard
+---
+- extendedWaitUntil:
+    visible: Browse
+    timeout: 20000
+- tapOn: Browse
+- runFlow:
+    when:
+      visible: On My iPhone
+    commands:
+      - tapOn: On My iPhone
+- extendedWaitUntil:
+    visible: Open
+    timeout: 10000
+- tapOn: Open

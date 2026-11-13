@@ -2,29 +2,17 @@
 	"$schema": "https://unpkg.com/knip@6/schema.json",
 	"tags": ["-lintignore"],
 	"ignoreBinaries": ["pdftotext", "mktemp"],
+	"ignoreIssues": {
+		"apps/mobile/src/**": ["exports", "types", "duplicates"]
+	},
 	"workspaces": {
 		".": {
 			"entry": ["tests/e2e/autofill-prototype.mjs"]
 		},
 		"apps/mobile": {
 			"ignoreExportsUsedInFile": true,
-			"ignoreIssues": {
-				"src/ui/overlays.tsx": ["duplicates"]
-			},
-			"entry": [
-				"fingerprint.config.js",
-				"lingui.config.ts",
-				"scripts/**/*.{mjs,mts,tsx}",
-				"src/features/licences/generate.cjs",
-				"src/draft/index.ts",
-				"src/features/applications/next-step.ts",
-				"src/features/applications/stages.ts",
-				"src/features/assistant/chat-view.tsx",
-				"src/features/workspace/hooks.ts",
-				"src/features/write/{fields,rich-text}.ts",
-				"src/features/write/outline.tsx",
-				"src/ui/{index,tokens}.ts"
-			]
+			"entry": ["plugins/*.js", "scripts/**/*.mjs"],
+			"ignoreDependencies": ["babel-jest", "expo-task-manager", "expo-updates", "uuid"]
 		},
 		"apps/web": {
 			"entry": [

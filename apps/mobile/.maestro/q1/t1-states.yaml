@@ -1,0 +1,31 @@
+# T1 · States: nothing pending, discovery off and paused, and the offline strip.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/T1-Today?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- openLink: me.rxresu.storyboard://?preset=up-to-date
+- extendedWaitUntil:
+    visible: You're up to date. New roles, reminders and finished briefings appear here.
+    timeout: 10000
+- assertNotVisible: Open briefing
+- openLink: me.rxresu.storyboard://?preset=offline
+- extendedWaitUntil:
+    visible: Offline. Edits are saved on this device and sync when you reconnect.
+    timeout: 10000
+- openLink: me.rxresu.storyboard://?preset=discovery-off
+- scrollUntilVisible:
+    element: Discovery is off.
+    direction: DOWN
+- tapOn: Turn on
+- waitForAnimationToEnd
+- assertVisible: Find new roles for me
+- openLink: me.rxresu.storyboard://?preset=discovery-paused
+- scrollUntilVisible:
+    element: Discovery is paused.
+    direction: DOWN
+- assertVisible: Resume

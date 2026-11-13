@@ -1,0 +1,52 @@
+diff --git a/ios/RNSScreenContainer.mm b/ios/RNSScreenContainer.mm
+index b13e665fd09666aa332089f91847ff64d814c86c..f95e5b6f79f173901cf5770a202649597ebda733 100644
+--- a/ios/RNSScreenContainer.mm
++++ b/ios/RNSScreenContainer.mm
+@@ -157,24 +157,26 @@ RNS_IGNORE_SUPER_CALL_END
+ 
+ - (void)updateContainer
+ {
++  // Iterate over copies: detaching a screen can unmount a sibling and mutate _reactSubviews mid-loop
++  // (NSFastEnumerationMutation crash when a deep link resets nested stacks).
+   BOOL screenRemoved = NO;
+   // remove screens that are no longer active
+   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
+-  for (RNSScreenView *screen in _reactSubviews) {
++  for (RNSScreenView *screen in [_reactSubviews copy]) {
+     if (screen.activityState == RNSActivityStateInactive && [_activeScreens containsObject:screen]) {
+       screenRemoved = YES;
+       [self detachScreen:screen];
+     }
+     [orphaned removeObject:screen];
+   }
+-  for (RNSScreenView *screen in orphaned) {
++  for (RNSScreenView *screen in [orphaned copy]) {
+     screenRemoved = YES;
+     [self detachScreen:screen];
+   }
+ 
+   // detect if new screen is going to be activated
+   BOOL screenAdded = NO;
+-  for (RNSScreenView *screen in _reactSubviews) {
++  for (RNSScreenView *screen in [_reactSubviews copy]) {
+     if (screen.activityState != RNSActivityStateInactive && ![_activeScreens containsObject:screen]) {
+       screenAdded = YES;
+     }
+@@ -183,7 +185,7 @@ RNS_IGNORE_SUPER_CALL_END
+   if (screenAdded) {
+     // add new screens in order they are placed in subviews array
+     NSInteger index = 0;
+-    for (RNSScreenView *screen in _reactSubviews) {
++    for (RNSScreenView *screen in [_reactSubviews copy]) {
+       if (screen.activityState != RNSActivityStateInactive) {
+         if ([_activeScreens containsObject:screen] && screen.activityState == RNSActivityStateTransitioningOrBelowTop) {
+           // for screens that were already active we want to mimick the effect UINavigationController
+@@ -197,7 +199,7 @@ RNS_IGNORE_SUPER_CALL_END
+     }
+   }
+ 
+-  for (RNSScreenView *screen in _reactSubviews) {
++  for (RNSScreenView *screen in [_reactSubviews copy]) {
+     if (screen.activityState == RNSActivityStateOnTop) {
+       [screen notifyFinishTransitioning];
+     }

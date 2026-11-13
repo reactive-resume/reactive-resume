@@ -1,0 +1,76 @@
+# C7 · Pause offers 1 week, 2 weeks, Until I turn it back on. Saving approves; a
+# changed key pauses it ("Paused: your AI connection changed") until Review and resume. No server support, no
+# connection, and a different phone zone (next run in both) each say so.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C7-Schedule?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Discovery
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: "Pause.*"
+- assertVisible: 1 week
+- assertVisible: 2 weeks
+- assertVisible: Until I turn it back on
+- tapOn: 1 week
+- assertVisible: "Pause, 7 days"
+- assertNotVisible:
+    id: schedule-paused
+# The key changes: paused until reviewed, then Review and resume saves it again.
+- openLink: me.rxresu.storyboard://settings/ai/providers/work-openai
+- extendedWaitUntil:
+    visible: API key
+    timeout: 10000
+- tapOn: API key
+- inputText: storyboard-replacement-key
+- hideKeyboard
+- tapOn:
+    id: provider-save
+- openLink: me.rxresu.storyboard://career/schedules/discovery
+- extendedWaitUntil:
+    visible:
+      id: schedule-paused
+    timeout: 10000
+- tapOn: Review and resume
+- openLink: me.rxresu.storyboard://career/schedules/discovery
+- extendedWaitUntil:
+    visible: Save
+    timeout: 10000
+- assertNotVisible:
+    id: schedule-paused
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C7-Unavailable?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Scheduled work is not available on this server\. Ask your server administrator to configure it\.
+    timeout: 20000
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C7-NoConnection?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Its connection is unavailable\. Choose and approve a connection before enabling this schedule\.
+    timeout: 20000
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/C7-Away?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: "Next run: .* America/New_York · .* here"
+    timeout: 20000

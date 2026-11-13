@@ -1,0 +1,24 @@
+# S8 · Export a copy first saves the queued changes to a folder chosen in the system picker (On My iPhone); the
+# dialog stays open and reads "Saved to Files".
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/S1-Settings?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- openLink: me.rxresu.storyboard://settings?queued=offline
+- tapOn:
+    id: settings-sign-out
+- tapOn: Export a copy first
+- runFlow:
+    file: ../q1/lib/pick-folder.yaml
+- extendedWaitUntil:
+    visible: Saved to Files
+    timeout: 15000
+- assertVisible: 3 changes haven't synced
+- tapOn: Keep working
+- assertVisible:
+    id: settings-sign-out

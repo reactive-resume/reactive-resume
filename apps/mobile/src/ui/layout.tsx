@@ -1,596 +1,441 @@
-import type { IconName } from "./icon";
-import type { ColorToken } from "./tokens";
-import type { ReactElement, ReactNode } from "react";
-import type { DimensionValue, LayoutChangeEvent, StyleProp, ViewStyle } from "react-native";
-import { useLingui } from "@lingui/react/macro";
-import { Image } from "expo-image";
-import { Children, cloneElement, isValidElement, useEffect, useState } from "react";
-import { Platform, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
-import Animated, {
-	cancelAnimation,
-	Easing,
-	FadeIn,
-	FadeInUp,
-	FadeOut,
-	FadeOutUp,
-	useAnimatedStyle,
-	useSharedValue,
-	withRepeat,
-	withTiming,
-} from "react-native-reanimated";
-import { getInitials } from "@reactive-resume/utils/string";
-import { Button, IconButton } from "./button";
-import { Icon } from "./icon";
-import { haptics, useReducedMotion } from "./motion";
-import { FeedbackPressable } from "./pressable";
-import { Text } from "./text";
+// Screen chrome: root header, top bar, page title, section heading, footer bar (COMPONENTS.md §2–§4, §14).
+import type { ReactNode } from "react";
+import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Box, Touch } from "./base";
+import { IconButton } from "./buttons";
+import { HeroTarget } from "./Hero";
+import { Icon } from "./Icon";
+import { Stacked, useLargeText } from "./large-text";
+import { hitSlopFor } from "./motion";
+import { Text } from "./Text";
 import { useTheme } from "./theme";
+import { type ColorToken, layout, radius } from "./tokens";
 
-const android = Platform.OS === "android";
-
-export type ListRowProps = {
-	title: string;
-	/** Strings use standard subtitle styling; an element owns its text layout. */
-	subtitle?: string | ReactElement | undefined;
-	/** An icon name, or any element (avatar, checkbox, thumbnail). */
-	leading?: IconName | ReactNode;
-	/** A value, switch or badge at the end. */
-	trailing?: ReactNode;
-	/** A short value at the end in `ink3`, for example the current choice of a setting. */
-	value?: string | undefined;
-	onPress?: (() => void) | undefined;
-	onLongPress?: (() => void) | undefined;
-	/** Shows a caret: the row opens another screen. */
-	chevron?: boolean | undefined;
-	/** Shows an "opens outside the app" glyph instead of the caret (web settings in the browser tab). */
-	external?: boolean | undefined;
-	destructive?: boolean | undefined;
-	/** Accent title and icon, for an action row such as "Add server". */
-	accent?: boolean | undefined;
-	selected?: boolean | undefined;
-	disabled?: boolean | undefined;
-	accessibilityHint?: string | undefined;
-	/** iOS: a hairline above the row. ListGroup sets it on every row after the first. */
-	divider?: boolean | undefined;
-};
-
-/** Strings share row typography; elements retain their own layout and truncation. */
-export function ListRow({
-	title,
-	subtitle,
-	leading,
-	trailing,
-	value,
+/** The 32 dp avatar in a 44 dp touch area; opens Settings from every root tab. */
+export function AvatarButton({
+	initials,
 	onPress,
-	onLongPress,
-	chevron,
-	external,
-	destructive,
-	accent,
-	selected,
-	disabled,
-	accessibilityHint,
-	divider,
-}: ListRowProps) {
-	const { colors, size, space } = useTheme();
-	const { fontScale } = useWindowDimensions();
-	const stacked = fontScale > 1.3;
-	const tone: ColorToken = destructive ? "dangerText" : accent ? "accentText" : "ink";
-	// ink3 is too light on selectedFill (tokens.md §1); secondary text uses ink2 there.
-	const quiet: ColorToken = selected ? "ink2" : "ink3";
-	const pressable = !!onPress || !!onLongPress;
-	const Container = pressable ? Pressable : View;
-	const rowStyle = (pressed: boolean): ViewStyle => ({
-		minHeight: subtitle ? size.row + space.s3 : android ? size.row + space.s1 : size.row,
-		flexDirection: stacked ? "column" : "row",
-		alignItems: stacked ? "stretch" : "center",
-		gap: stacked ? space.s2 : android ? space.s4 : space.s3,
-		paddingVertical: space.s2,
-		paddingStart: space.s4,
-		paddingEnd: android ? space.s4 : space.s3,
-		backgroundColor: pressed && !android ? colors.press : selected ? colors.selectedFill : "transparent",
-		opacity: disabled ? 0.45 : 1,
-	});
-	const leadingGraphic =
-		typeof leading === "string" ? (
-			<Icon name={leading as IconName} size={size.icon.row} color={colors[tone === "ink" ? "ink2" : tone]} />
-		) : (
-			leading
-		);
-	const indicators = (
-		<>
-			{selected && !trailing && !chevron ? <Icon name="check" size={size.icon.row} color={colors.accentText} /> : null}
-			{chevron ? <Icon name="caret-right" size={size.icon.meta} color={colors.ink3} /> : null}
-			{external ? <Icon name="arrow-square-out" size={size.icon.meta} color={colors.ink3} /> : null}
-		</>
-	);
-	const accessory = (
-		<>
-			{value ? (
-				<Text
-					color={quiet}
-					numberOfLines={stacked ? undefined : 1}
-					style={stacked ? undefined : { flexShrink: 1, maxWidth: "50%" }}
-				>
-					{value}
-				</Text>
-			) : null}
-			{trailing}
-		</>
-	);
-
-	return (
-		<Container
-			accessible={pressable || trailing === undefined}
-			accessibilityRole={pressable ? "button" : undefined}
-			accessibilityState={{ disabled: !!disabled, selected: !!selected }}
-			accessibilityHint={accessibilityHint}
-			disabled={disabled}
-			onPress={onPress}
-			onLongPress={
-				onLongPress
-					? () => {
-							haptics.light();
-							onLongPress();
-						}
-					: undefined
-			}
-			android_ripple={pressable ? { color: colors.press } : undefined}
-			style={pressable ? ({ pressed }) => rowStyle(pressed) : rowStyle(false)}
-		>
-			{divider && !android ? (
-				<View
-					style={{
-						position: "absolute",
-						top: 0,
-						end: 0,
-						start: leading && !stacked ? space.s4 + size.icon.row + space.s3 : space.s4,
-						height: StyleSheet.hairlineWidth,
-						backgroundColor: colors.line,
-					}}
-				/>
-			) : null}
-			{stacked ? (
-				leading || chevron || external || (selected && !trailing) ? (
-					<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
-						{leadingGraphic}
-						<View style={{ flex: 1 }} />
-						{indicators}
-					</View>
-				) : null
-			) : (
-				leadingGraphic
-			)}
-			<View style={{ flex: stacked ? undefined : 1, minWidth: 0, gap: 1 }}>
-				<Text variant="bodyLarge" color={tone}>
-					{title}
-				</Text>
-				{subtitle ? (
-					typeof subtitle === "string" ? (
-						<Text variant="callout" color={quiet}>
-							{subtitle}
-						</Text>
-					) : (
-						subtitle
-					)
-				) : null}
-				{stacked && (value || trailing) ? (
-					<View style={{ alignItems: "flex-start", gap: space.s1, paddingTop: space.s1 }}>{accessory}</View>
-				) : null}
-			</View>
-			{!stacked && (
-				<>
-					{accessory}
-					{indicators}
-				</>
-			)}
-		</Container>
-	);
-}
-
-export type ListGroupProps = {
-	/** Group header: `ink3` caption on iOS, `accentText` on Android. */
-	title?: string | undefined;
-	/** Small print under the group. */
-	footer?: string | undefined;
-	children?: ReactNode;
-};
-
-/**
- * Rows grouped like the platform's settings lists (tokens.md §7): iOS inset grouped (`raised`, `rLg`, hairlines
- * between rows); Android full-width rows on `bg`, so the group bleeds through the screen's `s4` side padding.
- */
-export function ListGroup({ title, footer, children }: ListGroupProps) {
-	const { colors, fonts, radius, space } = useTheme();
-	const rows = Children.toArray(children).filter(isValidElement) as ReactElement<ListRowProps>[];
-
-	return (
-		<View style={{ marginHorizontal: android ? -space.s4 : 0 }}>
-			{title ? (
-				<Text
-					accessibilityRole="header"
-					variant="callout"
-					color={android ? "accentText" : "ink3"}
-					style={[
-						{ paddingHorizontal: space.s4, paddingBottom: space.s1 },
-						android ? { fontFamily: fonts.ui[600], paddingTop: space.s2 } : null,
-					]}
-				>
-					{title}
-				</Text>
-			) : null}
-			<View style={android ? null : { backgroundColor: colors.raised, borderRadius: radius.rLg, overflow: "hidden" }}>
-				{rows.map((row, index) => (row.type === ListRow && index > 0 ? cloneElement(row, { divider: true }) : row))}
-			</View>
-			{footer ? (
-				<Text variant="callout" color="ink3" style={{ paddingHorizontal: space.s4, paddingTop: space.s1 }}>
-					{footer}
-				</Text>
-			) : null}
-		</View>
-	);
-}
-
-export type CardProps = {
-	children?: ReactNode;
+	label = "Settings",
+}: {
+	initials: string;
 	onPress?: (() => void) | undefined;
-	onLongPress?: (() => void) | undefined;
-	selected?: boolean | undefined;
-	/** The accessible name when the card is pressable. */
-	accessibilityLabel?: string | undefined;
-	style?: StyleProp<ViewStyle>;
-};
-
-export function Card({ children, onPress, onLongPress, selected, accessibilityLabel, style }: CardProps) {
-	const { colors, radius, shadows, space } = useTheme();
-	const cardStyle = {
-		padding: space.s3,
-		borderRadius: radius.rLg,
-		borderWidth: 1,
-		borderColor: selected ? colors.accent : colors.line,
-		backgroundColor: selected ? colors.selectedFill : colors.surface,
-		boxShadow: shadows.e1.boxShadow,
-	};
-
-	// A card that is not pressable stays a plain container, so the controls inside it remain separate
-	// accessibility elements.
-	if (!onPress && !onLongPress) return <View style={[cardStyle, style]}>{children}</View>;
-
+	label?: string | undefined;
+}) {
 	return (
-		<FeedbackPressable
-			accessibilityRole="button"
-			accessibilityLabel={accessibilityLabel}
-			accessibilityState={{ selected: !!selected }}
+		<Touch
 			onPress={onPress}
-			onLongPress={
-				onLongPress
-					? () => {
-							haptics.light();
-							onLongPress();
-						}
-					: undefined
-			}
-			android_ripple={{ color: colors.press }}
-			style={({ pressed }) => [
-				cardStyle,
-				{ overflow: "hidden" },
-				pressed && !android ? { backgroundColor: selected ? colors.accentSoft : colors.sunken } : null,
-				style,
-			]}
+			accessibilityLabel={label}
+			hitSlop={hitSlopFor(44, 44)}
+			style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center", marginStart: 4 }}
 		>
-			{children}
-		</FeedbackPressable>
+			<Avatar initials={initials} />
+		</Touch>
 	);
 }
 
-type Action = { label: string; onPress: () => void };
-
-export type EmptyStateProps = {
-	icon?: IconName | undefined;
-	title: string;
-	message?: string | undefined;
-	action?: Action | undefined;
-	/** A second, quieter action under the first. */
-	secondaryAction?: Action | undefined;
-	/** Content that needs more than a button, such as the AI notice and its privacy line. */
-	children?: ReactNode;
-	/** `card` is the dashed first-run card; `compact` is a row. Defaults to the original unframed state. */
-	variant?: "default" | "card" | "compact" | undefined;
-};
-
-export function EmptyState({
-	icon,
-	title,
-	message,
-	action,
-	secondaryAction,
-	children,
-	variant = "default",
-}: EmptyStateProps) {
-	const { colors, radius, size, space } = useTheme();
-	const compact = variant === "compact";
-	const card = variant === "card";
-
-	if (compact) {
-		return (
-			<View
-				style={{
-					flexDirection: "row",
-					flexWrap: "wrap",
-					alignItems: "center",
-					justifyContent: "space-between",
-					gap: space.s2,
-					paddingVertical: space.s3,
-					paddingHorizontal: space.s4,
-				}}
-			>
-				<View style={{ flexShrink: 1, gap: space.s1 }}>
-					<Text variant="callout" color="ink">
-						{title}
-					</Text>
-					{message ? (
-						<Text variant="callout" color="ink2">
-							{message}
-						</Text>
-					) : null}
-				</View>
-				{action ? <Button size="sm" variant="secondary" label={action.label} onPress={action.onPress} /> : null}
-				{secondaryAction ? (
-					<Button variant="link" label={secondaryAction.label} onPress={secondaryAction.onPress} />
-				) : null}
-			</View>
-		);
-	}
-
+export function Avatar({ initials, size = 32 }: { initials: string; size?: 32 | 56 }) {
 	return (
-		<View
-			style={
-				card
-					? {
-							alignItems: "center",
-							gap: space.s2,
-							paddingVertical: space.s6,
-							paddingHorizontal: space.s6,
-							borderRadius: radius.rLg,
-							borderWidth: 1,
-							borderStyle: "dashed",
-							borderColor: colors.line2,
-						}
-					: {
-							alignItems: "center",
-							gap: space.s3,
-							paddingVertical: space.s10,
-							paddingHorizontal: space.s6,
-						}
-			}
+		<Box
+			component="Avatar"
+			bg="accentSoft"
+			radius={size === 56 ? radius.xl : radius.sm}
+			style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
 		>
-			{icon ? (
-				<View
-					style={{
-						width: size.hit + space.s5,
-						height: size.hit + space.s5,
-						marginBottom: space.s1,
-						borderRadius: radius.rLg,
-						alignItems: "center",
-						justifyContent: "center",
-						backgroundColor: colors.sunken,
-					}}
-				>
-					<Icon name={icon} size={size.icon.bar + space.s2} color={colors.ink2} />
-				</View>
-			) : null}
-			<Text accessibilityRole="header" variant="heading" align="center" style={{ alignSelf: "stretch" }}>
-				{title}
-			</Text>
-			{message ? (
-				<Text color="ink2" align="center" style={{ maxWidth: size.panel - space.s12 * 2 }}>
-					{message}
-				</Text>
-			) : null}
-			{children ? <View style={{ alignSelf: "stretch", alignItems: "center", gap: space.s3 }}>{children}</View> : null}
-			{action ? (
-				<View style={{ alignSelf: "center" }}>
-					<Button label={action.label} onPress={action.onPress} />
-				</View>
-			) : null}
-			{secondaryAction ? (
-				<View style={{ alignSelf: "center" }}>
-					<Button variant="ghost" label={secondaryAction.label} onPress={secondaryAction.onPress} />
-				</View>
-			) : null}
-		</View>
-	);
-}
-
-/** `accent` is the success banner (for example "Imported from LinkedIn"). */
-export type BannerTone = "info" | "warn" | "danger" | "accent";
-
-/** The app-wide banners from tokens.md §1: each sets its tone and icon. The screen still supplies the copy. */
-export type BannerVariant = "offline" | "locked" | "guest" | "sessionExpired";
-
-export type BannerProps = {
-	/** `info`: offline and neutral guidance. `warn`: guest, session expired. `danger`: errors. Defaults from `variant`. */
-	tone?: BannerTone | undefined;
-	variant?: BannerVariant | undefined;
-	message: string;
-	title?: string | undefined;
-	icon?: IconName | undefined;
-	action?: Action | undefined;
-	/** Several actions, for example Create account and Sign in on the guest banner. */
-	actions?: Action[] | undefined;
-	onDismiss?: (() => void) | undefined;
-	/** A full-width status strip under the top bar (offline), instead of a rounded card in the content. */
-	strip?: boolean | undefined;
-};
-
-const bannerColors = {
-	info: { background: "infoSoft", text: "infoText" },
-	warn: { background: "warnSoft", text: "warnText" },
-	danger: { background: "dangerSoft", text: "dangerText" },
-	accent: { background: "accentSoft", text: "accentText" },
-} as const satisfies Record<BannerTone, { background: ColorToken; text: ColorToken }>;
-
-const bannerVariants = {
-	offline: { tone: "info", icon: "cloud-slash" },
-	locked: { tone: "info", icon: "lock" },
-	guest: { tone: "warn", icon: "warning-circle" },
-	sessionExpired: { tone: "warn", icon: "clock" },
-} as const satisfies Record<BannerVariant, { tone: BannerTone; icon: IconName }>;
-
-export function Banner({ tone, variant, message, title, icon, action, actions, onDismiss, strip }: BannerProps) {
-	const { t } = useLingui();
-	const { colors, fonts, motion, radius, size, space } = useTheme();
-	const reduced = useReducedMotion();
-	const preset = variant ? bannerVariants[variant] : undefined;
-	const palette = bannerColors[tone ?? preset?.tone ?? "info"];
-	const glyph = icon ?? preset?.icon;
-	const buttons = [...(action ? [action] : []), ...(actions ?? [])];
-
-	return (
-		<Animated.View
-			entering={reduced ? FadeIn.duration(motion.d1) : FadeInUp.duration(motion.d2)}
-			exiting={reduced ? FadeOut.duration(motion.d1) : FadeOutUp.duration(motion.d2)}
-			accessibilityRole={palette.text === "dangerText" ? "alert" : undefined}
-			accessibilityLiveRegion="polite"
-			style={{
-				flexDirection: "row",
-				alignItems: strip ? "center" : "flex-start",
-				gap: strip ? space.s2 : space.s3,
-				minHeight: strip ? size.hit - space.s2 : undefined,
-				paddingVertical: strip ? space.s1 + space.s0 : space.s3,
-				paddingHorizontal: strip ? space.s4 : space.s3,
-				borderRadius: strip ? 0 : radius.rLg,
-				backgroundColor: colors[palette.background],
-			}}
-		>
-			{glyph ? <Icon name={glyph} size={strip ? size.icon.meta : size.icon.row} color={colors[palette.text]} /> : null}
-			<View style={{ flex: 1, gap: space.s0 }}>
-				{title ? (
-					<Text variant="callout" weight={600} color={palette.text}>
-						{title}
-					</Text>
-				) : null}
-				<Text variant={strip ? "caption" : "callout"} color={palette.text}>
-					{message}
-				</Text>
-				{buttons.length > 0 ? (
-					<View style={{ flexDirection: "row", flexWrap: "wrap", marginStart: -space.s2, marginBottom: -space.s2 }}>
-						{buttons.map((button) => (
-							<Pressable
-								key={button.label}
-								accessibilityRole="button"
-								onPress={button.onPress}
-								style={({ pressed }) => ({
-									minHeight: size.hit,
-									justifyContent: "center",
-									paddingHorizontal: space.s2,
-									opacity: pressed ? 0.6 : 1,
-								})}
-							>
-								<Text
-									variant="callout"
-									color={palette.text}
-									style={{ fontFamily: fonts.ui[600], textDecorationLine: "underline" }}
-								>
-									{button.label}
-								</Text>
-							</Pressable>
-						))}
-					</View>
-				) : null}
-			</View>
-			{onDismiss ? (
-				<View style={{ margin: -space.s3 }}>
-					<IconButton icon="x" label={t`Dismiss`} size={size.icon.meta} color={palette.text} onPress={onDismiss} />
-				</View>
-			) : null}
-		</Animated.View>
-	);
-}
-
-export type AvatarProps = {
-	name: string;
-	uri?: string | null | undefined;
-	/** Diameter in pt. Defaults to 40. */
-	size?: number | undefined;
-};
-
-export function Avatar({ name, uri, size = 40 }: AvatarProps) {
-	const { colors, fonts, motion, radius } = useTheme();
-	// Shared with web: whole characters, and joining scripts (Arabic) kept apart so the letters don't read as a word.
-	const initials = getInitials(name.replace(/\s+/g, " ").trim());
-	const circle = { width: size, height: size, borderRadius: radius.rLg };
-
-	if (uri)
-		return (
-			<Image
-				source={{ uri }}
-				transition={motion.d2}
-				style={circle}
-				accessible
-				accessibilityRole="image"
-				accessibilityLabel={name}
-			/>
-		);
-
-	return (
-		<View
-			accessible
-			accessibilityRole="image"
-			accessibilityLabel={name}
-			style={[circle, { alignItems: "center", justifyContent: "center", backgroundColor: colors.accentSoft }]}
-		>
-			{/* Initials scale with the circle (mockups: 14 at 36, 26 at 72), not with the font-size setting. */}
 			<Text
-				allowFontScaling={false}
+				variant="caption"
+				weight={600}
 				color="accentText"
-				style={{ fontFamily: fonts.ui[700], fontSize: Math.round(size * 0.37), lineHeight: Math.round(size * 0.5) }}
+				style={size === 56 ? { fontSize: 18, lineHeight: 16 } : null}
+				maxFontSizeMultiplier={1.3}
 			>
 				{initials}
 			</Text>
+		</Box>
+	);
+}
+
+/** Root tabs: the 34/40 serif title on the background with at most two icons and the avatar, then one quiet line. */
+export function RootHeader({
+	title,
+	subtitle,
+	actions,
+	avatar,
+	inset = true,
+}: {
+	title: string;
+	subtitle?: string | undefined;
+	actions?: ReactNode | undefined;
+	avatar?: ReactNode | undefined;
+	/** False inside a frame that isn't at the top of the screen (the Kit). */
+	inset?: boolean | undefined;
+}) {
+	const insets = useSafeAreaInsets();
+	return (
+		<View style={{ paddingTop: inset ? insets.top : 0 }}>
+			<View
+				style={{
+					paddingTop: 8,
+					paddingHorizontal: layout.screenMargin,
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					gap: 12,
+					minHeight: 54,
+				}}
+			>
+				<Text variant="rootTitle" accessibilityRole="header" numberOfLines={1} style={{ flexShrink: 1 }}>
+					{title}
+				</Text>
+				<View style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingBottom: 2 }}>
+					{actions}
+					{avatar}
+				</View>
+			</View>
+			{subtitle ? (
+				<View style={{ paddingHorizontal: layout.screenMargin }}>
+					<Text variant="ui" color="ink3">
+						{subtitle}
+					</Text>
+				</View>
+			) : null}
 		</View>
 	);
 }
 
-export type SkeletonProps = {
-	width?: DimensionValue | undefined;
-	height: number;
-	radius?: number | undefined;
-};
-
-/** A loading placeholder: `sunken` with a `line` shimmer. Reduced motion shows the static block. */
-export function Skeleton({ width = "100%", height, radius }: SkeletonProps) {
-	const { colors, motion, radius: radii } = useTheme();
-	const reduced = useReducedMotion();
-	const [measured, setMeasured] = useState(0);
-	const progress = useSharedValue(0);
-
-	useEffect(() => {
-		if (reduced || measured === 0) return;
-		// One sweep is about the mockups' 1.4 s.
-		progress.set(0);
-		progress.set(withRepeat(withTiming(1, { duration: motion.d3 * 4, easing: Easing.linear }), -1));
-		return () => cancelAnimation(progress);
-	}, [reduced, measured, motion.d3, progress]);
-
-	const sweep = useAnimatedStyle(() => ({ transform: [{ translateX: (progress.get() * 2 - 1) * measured }] }));
-
+/** Pushed screens: a bare 56 dp bar with back or close, an optional centred title and at most two end actions. */
+export function TopBar({
+	onBack,
+	back = "back",
+	backLabel,
+	title,
+	center,
+	end,
+	bg = "bg",
+	divider = false,
+	inset = true,
+}: {
+	onBack?: (() => void) | undefined;
+	back?: "back" | "close" | "none";
+	backLabel?: string | undefined;
+	title?: string | undefined;
+	/** Replaces the centred title (the connection chip on B16 and C2). */
+	center?: ReactNode | undefined;
+	end?: ReactNode | undefined;
+	bg?: ColorToken | "transparent";
+	divider?: boolean | undefined;
+	/** False inside modals and sheets that already sit below the status area. */
+	inset?: boolean | undefined;
+}) {
+	const { colors } = useTheme();
+	const insets = useSafeAreaInsets();
 	return (
 		<View
-			accessible={false}
-			importantForAccessibility="no-hide-descendants"
-			onLayout={(event: LayoutChangeEvent) => setMeasured(event.nativeEvent.layout.width)}
-			style={{ width, height, overflow: "hidden", borderRadius: radius ?? radii.rSm, backgroundColor: colors.sunken }}
+			style={{ paddingTop: inset ? insets.top : 0, backgroundColor: bg === "transparent" ? "transparent" : colors[bg] }}
 		>
-			{reduced || measured === 0 ? null : (
-				<Animated.View
-					style={[
-						StyleSheet.absoluteFill,
-						{ backgroundImage: `linear-gradient(90deg, ${colors.sunken}, ${colors.line}, ${colors.sunken})` },
-						sweep,
-					]}
-				/>
+			<View
+				style={{
+					height: layout.topBar,
+					paddingHorizontal: 12,
+					flexDirection: "row",
+					alignItems: "center",
+					gap: 4,
+					borderBottomWidth: divider ? 1 : 0,
+					borderBottomColor: colors.line,
+				}}
+			>
+				<View style={{ minWidth: 44, flexDirection: "row" }}>
+					{back === "none" ? null : (
+						<IconButton
+							icon={back === "close" ? "x" : "caret-left"}
+							label={backLabel ?? (back === "close" ? "Close" : "Back")}
+							onPress={onBack}
+							testID="top-bar-back"
+						/>
+					)}
+				</View>
+				<View style={{ flex: 1, minWidth: 0, alignItems: "center", justifyContent: "center" }}>
+					{center ??
+						(title ? (
+							<Text variant="topBarTitle" numberOfLines={1} accessibilityRole="header">
+								{title}
+							</Text>
+						) : null)}
+				</View>
+				<View style={{ minWidth: 44, flexDirection: "row", alignItems: "center", justifyContent: "flex-end", gap: 4 }}>
+					{end}
+				</View>
+			</View>
+		</View>
+	);
+}
+
+/** A quiet text in the top bar's end slot ("2 of 3 open"). */
+export function TopBarNote({ children }: { children: string }) {
+	return (
+		<View style={{ paddingEnd: 12 }}>
+			<Text variant="ui" color="ink3">
+				{children}
+			</Text>
+		</View>
+	);
+}
+
+/** The 28/34 serif page title, with the edit cue where the title opens a field (B3, C4). */
+export function PageTitle({
+	children,
+	editCue = false,
+	onPress,
+	numberOfLines,
+	heroId,
+}: {
+	children: string;
+	editCue?: boolean | undefined;
+	onPress?: (() => void) | undefined;
+	numberOfLines?: number | undefined;
+	/** A shared-element landing place around the text only (PushScreen's `titleHeroId`). */
+	heroId?: string | undefined;
+}) {
+	const text = (
+		<Text
+			variant="pageTitle"
+			accessibilityRole="header"
+			{...(numberOfLines ? { numberOfLines } : {})}
+			style={{ flexShrink: 1 }}
+		>
+			{children}
+		</Text>
+	);
+	const title = (
+		<View style={{ paddingTop: 4, paddingHorizontal: layout.screenMargin, flexDirection: "row", alignItems: "center" }}>
+			{heroId ? (
+				<HeroTarget id={heroId} style={{ flexShrink: 1 }}>
+					{text}
+				</HeroTarget>
+			) : (
+				text
 			)}
+			{editCue ? (
+				<Icon name="pencil-simple" size={18} color="ink3" style={{ marginStart: 6, marginBottom: 2 }} />
+			) : null}
+		</View>
+	);
+	if (!onPress) return title;
+	return (
+		<Touch onPress={onPress} feedback="none" accessibilityLabel={children} accessibilityHint="Edit the name">
+			{title}
+		</Touch>
+	);
+}
+
+/** One 15/24 line under the page title: `ink-2` for a description, `ink-3` for a status line. */
+export function PageSubtitle({ children, status = false }: { children: ReactNode; status?: boolean | undefined }) {
+	return (
+		<View style={{ paddingTop: 6, paddingHorizontal: layout.screenMargin }}>
+			<Text variant="body" color={status ? "ink3" : "ink2"}>
+				{children}
+			</Text>
+		</View>
+	);
+}
+
+/**
+ * The document's status line with Undo · Redo (BUILD.md §3.3): "Saved · 1 page · Public" then the two text
+ * buttons in `accent-text`, each with a 48 dp tall hit area. They appear once there is something to undo or redo
+ * (SCREENS.md, builder rules); at rest the line is the status alone, as B1 and L1 draw it.
+ */
+export function StatusLine({
+	status,
+	onUndo,
+	onRedo,
+	canUndo = false,
+	canRedo = false,
+}: {
+	status: string;
+	onUndo?: (() => void) | undefined;
+	onRedo?: (() => void) | undefined;
+	canUndo?: boolean | undefined;
+	canRedo?: boolean | undefined;
+}) {
+	const action = (label: string, onPress: (() => void) | undefined, enabled: boolean) => (
+		<Touch
+			onPress={onPress}
+			disabled={!enabled}
+			feedback="none"
+			accessibilityLabel={label}
+			hitSlop={hitSlopFor(48, 24)}
+			style={{ paddingHorizontal: 2, opacity: enabled ? 1 : 0.45 }}
+			testID={`status-${label.toLowerCase()}`}
+		>
+			<Text variant="body" weight={500} color="accentText">
+				{label}
+			</Text>
+		</Touch>
+	);
+	return (
+		<View
+			style={{
+				paddingTop: 6,
+				paddingHorizontal: layout.screenMargin,
+				flexDirection: "row",
+				flexWrap: "wrap",
+				alignItems: "center",
+			}}
+		>
+			<Text variant="body" color="ink3">
+				{status}
+			</Text>
+			{(onUndo || onRedo) && (canUndo || canRedo) ? (
+				<>
+					<Text variant="body" color="ink3">
+						{" · "}
+					</Text>
+					{action("Undo", onUndo, canUndo)}
+					<Text variant="body" color="ink3">
+						{" · "}
+					</Text>
+					{action("Redo", onRedo, canRedo)}
+				</>
+			) : null}
+		</View>
+	);
+}
+
+/**
+ * A 22/28 serif section heading. `first`: directly under a title block (20 dp top instead of 32). A heading with an
+ * action gets 12 dp under it and the link its own 48 dp slot, so it never overlaps the first row's hit area.
+ */
+export function SectionHeading({
+	title,
+	count,
+	action,
+	onAction,
+	first = false,
+	paddingBottom,
+}: {
+	title: string;
+	count?: string | undefined;
+	action?: string | undefined;
+	onAction?: (() => void) | undefined;
+	first?: boolean | undefined;
+	/** Space under the heading. Default 12 with an action (T1), else 4; B8 and B13 keep 4 beside their link. */
+	paddingBottom?: number | undefined;
+}) {
+	return (
+		<View
+			style={{
+				paddingTop: first ? layout.sectionGapTopFirst : layout.sectionGapTop,
+				paddingHorizontal: layout.screenMargin,
+				paddingBottom: paddingBottom ?? (action ? 12 : 4),
+				flexDirection: "row",
+				alignItems: "baseline",
+				justifyContent: "space-between",
+				gap: 12,
+			}}
+		>
+			<Text variant="sheetTitle" accessibilityRole="header">
+				{title}
+			</Text>
+			{count ? (
+				<View style={{ flex: 1, paddingStart: 2, alignItems: "flex-start" }}>
+					<Text variant="ui" color="ink3">
+						{count}
+					</Text>
+				</View>
+			) : null}
+			{action ? (
+				<Touch
+					onPress={onAction}
+					feedback="none"
+					accessibilityRole="link"
+					accessibilityLabel={action}
+					hitSlop={hitSlopFor(48, 20)}
+				>
+					<Text variant="linkSmall" color="accentText">
+						{action}
+					</Text>
+				</Touch>
+			) : null}
+		</View>
+	);
+}
+
+/**
+ * One or two Large buttons in thumb reach. `stacked` puts the primary above the others (J5, dialogs); buttons also
+ * stack above 130% system text (COMPONENTS.md §20).
+ * Sits above the bottom safe area; `raised` inside sheets.
+ */
+export function FooterBar({
+	children,
+	bg = "bg",
+	divider = true,
+	stacked = false,
+	gap,
+	inset = true,
+}: {
+	children: ReactNode;
+	bg?: ColorToken | undefined;
+	divider?: boolean | undefined;
+	stacked?: boolean | undefined;
+	gap?: number | undefined;
+	inset?: boolean | undefined;
+}) {
+	const { colors } = useTheme();
+	const insets = useSafeAreaInsets();
+	const column = useLargeText() || stacked;
+	return (
+		// The fill stops at the bar: the screen's own background runs under the home indicator (P1's sunken page).
+		<View
+			style={{
+				paddingBottom: inset ? insets.bottom : 0,
+				borderTopWidth: divider ? 1 : 0,
+				borderTopColor: colors.line,
+			}}
+		>
+			<Stacked.Provider value={column}>
+				<Box
+					component="FooterBar"
+					style={{
+						backgroundColor: colors[bg],
+						paddingVertical: 12,
+						paddingHorizontal: layout.screenMargin,
+						flexDirection: column ? "column" : "row",
+						gap: gap ?? (column ? 8 : 12),
+					}}
+				>
+					{children}
+				</Box>
+			</Stacked.Provider>
+		</View>
+	);
+}
+
+/** A 24 dp-margin column for rows; rows carry their own dividers. */
+export function List({ children }: { children: ReactNode }) {
+	return <View>{children}</View>;
+}
+
+/** The offline strip under the header: a quiet line that says work is queued. */
+export function OfflineStrip({ children }: { children: string }) {
+	const { colors } = useTheme();
+	return (
+		<View
+			accessibilityRole="alert"
+			style={{
+				flexDirection: "row",
+				alignItems: "center",
+				gap: 8,
+				paddingVertical: 8,
+				paddingHorizontal: layout.screenMargin,
+				backgroundColor: colors.sunken,
+				borderBottomWidth: 1,
+				borderBottomColor: colors.line,
+			}}
+		>
+			<Icon name="cloud-slash" size={16} color="ink3" />
+			<Text variant="small" color="ink2" style={{ flex: 1 }}>
+				{children}
+			</Text>
 		</View>
 	);
 }

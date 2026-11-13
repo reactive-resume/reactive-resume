@@ -1,71 +1,56 @@
-import type { SwitchProps } from "@/ui";
-import type { ReactNode } from "react";
-import { useLingui } from "@lingui/react/macro";
-import { Pressable, View } from "react-native";
-import { Banner, Button, Skeleton, Switch, Text, useTheme } from "@/ui";
+import { t } from "@lingui/core/macro";
+import { usePreventRemove } from "expo-router";
+import { type ReactNode, useRef, useState } from "react";
+import { View } from "react-native";
+import { Button, Card, DiscardDialog, Skeleton, Text } from "@/ui";
 
-type SectionProps = { title: string; children: ReactNode };
-export function Section({ title, children }: SectionProps) {
-	const { space } = useTheme();
-	return (
-		<View style={{ gap: space.s3 }}>
-			<Text variant="title" accessibilityRole="header">
-				{title}
-			</Text>
-			{children}
-		</View>
-	);
-}
-type LoadStateProps = { query: { isError: boolean; isPending: boolean; refetch: () => unknown } };
-export function LoadState({ query }: LoadStateProps) {
-	const { t } = useLingui();
-	const { space } = useTheme();
-	if (query.isError)
+export type ResourceStateProps = { pending: boolean; error: boolean; retry: () => void; children: ReactNode };
+export function ResourceState({ pending, error, retry, children }: ResourceStateProps) {
+	if (error)
 		return (
-			<>
-				<Banner tone="danger" message={t`Couldn't load this. Check your connection and try again.`} />
-				<Button
-					variant="secondary"
-					label={t`Retry`}
-					onPress={() => {
-						void query.refetch();
-					}}
-				/>
-			</>
-		);
-	return query.isPending ? <Skeleton height={space.s12 * 2} /> : null;
-}
-type ActionsProps = { children: ReactNode };
-export function Actions({ children }: ActionsProps) {
-	const { space } = useTheme();
-	return (
-		<View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: space.s2 }}>{children}</View>
-	);
-}
-
-export function SwitchRow(props: SwitchProps) {
-	const { colors, size, space } = useTheme();
-	return (
-		<Pressable
-			accessibilityRole="switch"
-			accessibilityLabel={props.label}
-			accessibilityState={{ checked: props.value, disabled: !!props.disabled }}
-			disabled={props.disabled}
-			onPress={() => props.onValueChange(!props.value)}
-			style={({ pressed }) => ({
-				minHeight: size.hit,
-				flexDirection: "row",
-				alignItems: "center",
-				gap: space.s3,
-				backgroundColor: pressed ? colors.press : undefined,
-			})}
-		>
-			<Text style={{ flex: 1 }}>{props.label}</Text>
-			<View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-				<Switch {...props} />
+			<View style={{ margin: 24 }}>
+				<Card>
+					<Text variant="body">{t`Couldn't load this. Try again.`}</Text>
+					<Button label={t`Retry`} onPress={retry} />
+				</Card>
 			</View>
-		</Pressable>
-	);
+		);
+	if (pending)
+		return (
+			<View style={{ padding: 24, gap: 12 }}>
+				{[0, 1, 2].map((key) => (
+					<Skeleton key={key} height={71} />
+				))}
+			</View>
+		);
+	return <>{children}</>;
 }
 
-export { EditorSheet } from "@/ui";
+export function useCareerLeaveGuard(dirty: boolean) {
+	const [allowed, setAllowed] = useState(false);
+	const saved = useRef(false);
+	const [pending, setPending] = useState<{ repeat: () => void } | null>(null);
+	usePreventRemove(dirty && !allowed, ({ repeat }) => {
+		if (saved.current) {
+			repeat();
+			return;
+		}
+		setPending({ repeat });
+	});
+	return {
+		allowLeave: () => {
+			saved.current = true;
+			setAllowed(true);
+		},
+		confirmation: (
+			<DiscardDialog
+				open={pending !== null}
+				onKeep={() => setPending(null)}
+				onDiscard={() => {
+					setAllowed(true);
+					pending?.repeat();
+				}}
+			/>
+		),
+	};
+}

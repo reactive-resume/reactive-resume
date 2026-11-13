@@ -1,0 +1,28 @@
+# B21 › Delete entry → `light`; the sheet closes, the row folds on B2 and the toast offers Undo.
+# Opens B21 by holding the real B2 row (the B21 storyboard scenario draws a backdrop under the sheet).
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B2-Section?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- longPressOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Move down
+    timeout: 10000
+- waitForAnimationToEnd
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn:
+    id: entry-action-delete
+    waitToSettleTimeoutMs: 1
+- assertVisible:
+    id: haptic-log
+    text: light
+- assertVisible: Entry deleted
+- assertVisible: "1 entry · on page 1.*"
+- assertNotVisible: Northwind Labs

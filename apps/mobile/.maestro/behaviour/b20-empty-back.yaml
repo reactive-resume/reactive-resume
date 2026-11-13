@@ -1,0 +1,19 @@
+# B20: leaving a new entry with nothing typed creates nothing and shows no toast.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B20-NewEntry?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: New language
+    timeout: 15000
+- waitForAnimationToEnd
+- tapOn:
+    id: top-bar-back
+- assertVisible: 2 entries · on page 1
+- assertNotVisible: Entry discarded
+- assertNotVisible: Untitled language

@@ -1,0 +1,30 @@
+# A4 · Allow plays success and returns; Deny returns; a request without its redirect is invalid.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/A4-Allow?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- openLink: me.rxresu.storyboard://dev/haptics?overlay=1&clear=1
+- waitForAnimationToEnd
+- tapOn:
+    id: consent-allow
+- waitForAnimationToEnd
+- assertNotVisible: Allow Claude to use your Reactive Resume?
+- assertVisible:
+    id: haptic-log
+    text: success
+- openLink: me.rxresu.storyboard://consent
+- assertVisible: Allow Claude to use your Reactive Resume?
+- tapOn: Deny
+- waitForAnimationToEnd
+- assertNotVisible: Allow Claude to use your Reactive Resume?
+- openLink: me.rxresu.storyboard://consent?client_id=unknown&sig=stale
+- assertVisible: This connection request is invalid or has expired. Start the connection again from your client.
+# Loading: the spinner with its words (storyboard `preset=loading` holds the request in flight).
+- openLink: me.rxresu.storyboard://consent?preset=loading
+- waitForAnimationToEnd
+- assertVisible: Loading connection request…

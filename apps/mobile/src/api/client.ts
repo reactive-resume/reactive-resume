@@ -16,12 +16,14 @@ import { prepareRequest } from "@reactive-resume/utils/deferred-request";
 import { privateUploadUrl } from "@reactive-resume/utils/http";
 import { authorizeAiRequest } from "./ai-consent";
 import { getAccountScope, getCredentials, recoverFromUnauthorized, rejectCredentials } from "@/auth/session";
+import { timeZone } from "@/data/clock";
 
 /**
  * Per-call context. `scope` binds a call to one account (the draft store's scope, `JSON.stringify([server, user id])`):
  * the call fails instead of going out when the session no longer belongs to that account.
  */
 export type ClientContext = {
+	recurringApproval?: import("@/data/consent").RecurringApproval;
 	defer?: DeferredFetch | undefined;
 	scope?: string | undefined;
 	aiDestination?: string | undefined;
@@ -41,7 +43,7 @@ export class SessionChangedError extends Error {
  * token that still looked valid refreshes once and retries; a second 401 marks the session expired.
  * `send` must be repeatable (buffered body). 401s that are not about the token (`NEED_PASSWORD`) pass through.
  */
-async function withCredentials(
+export async function withCredentials(
 	send: (credentials: Credentials) => Promise<Response>,
 	scope?: string | undefined,
 ): Promise<Response> {
@@ -56,12 +58,12 @@ async function withCredentials(
 	const retry = await recoverFromUnauthorized(credentials);
 	if (!retry) return rejected;
 	const second = await send(retry);
-	if (second.status === 401) await rejectCredentials(retry);
+	if (second.status === 401 && (await second.clone().text()).includes("UNAUTHORIZED")) await rejectCredentials(retry);
 	return second;
 }
 
 const bearer = (credentials: Credentials, headers: Headers) => {
-	headers.set("x-client-timezone", Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC");
+	headers.set("x-client-timezone", timeZone());
 	if (credentials.accessToken) headers.set("authorization", `Bearer ${credentials.accessToken}`);
 	else headers.delete("authorization");
 	return headers;
@@ -106,7 +108,7 @@ const createLink = (label: string) =>
 			async (options) => {
 				const { path, input, context, signal, next } = options;
 				const scope = context.scope ?? getAccountScope();
-				const destination = await authorizeAiRequest(path, input, client, scope, signal);
+				const destination = await authorizeAiRequest(path, input, client, scope, signal, context.recurringApproval);
 				return next({ ...options, context: { ...context, ...(scope ? { scope } : {}), ...destination } });
 			},
 			// Logs the failure only: errors can carry request data, which must never reach the device log.

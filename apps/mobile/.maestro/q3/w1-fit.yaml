@@ -1,0 +1,58 @@
+# W1 · Later runs: ··· → Check again, and the first send of this kind asks S7 first. Tap a requirement to see its
+# evidence ("check the sources say this"). Tailor opens the assistant with "Tailor to the Lumen posting". First run on
+# an application without a posting: "This application has no posting saved yet…" with Check fit. Without AI: the
+# requirements still show, with Set up AI.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/W1-Fit?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: requirements have evidence
+    timeout: 20000
+- waitForAnimationToEnd
+- tapOn: More
+- tapOn: Check again
+- extendedWaitUntil:
+    visible: Send to Work OpenAI\?
+    timeout: 10000
+- tapOn:
+    id: first-send-send
+- extendedWaitUntil:
+    notVisible: Send to Work OpenAI\?
+    timeout: 10000
+- extendedWaitUntil:
+    visible: ".*checked today .*"
+    timeout: 20000
+- tapOn: Design systems at scale
+- extendedWaitUntil:
+    visible: Check the sources say this before you rely on it\.
+    timeout: 10000
+- tapOn: Close
+- tapOn: Tailor the resume to this job
+# The assistant (B16) opens on the linked resume with the posting attached.
+- extendedWaitUntil:
+    visible: Ask about this resume…|Lumen posting
+    timeout: 15000
+# First run without a posting.
+- openLink: me.rxresu.storyboard://applications/kiln/fit
+- extendedWaitUntil:
+    visible: This application has no posting saved yet\. Paste it to check fit\.
+    timeout: 10000
+- assertVisible: Check this role against your evidence
+# Without AI.
+- openLink: me.rxresu.storyboard://storyboard/W1-NoAI?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- extendedWaitUntil:
+    visible: Set up AI
+    timeout: 20000
+- assertVisible: Set up AI to match each requirement to your resume and Knowledge\.
+- assertVisible: Design systems at scale
+- assertNotVisible: No evidence yet

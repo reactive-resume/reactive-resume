@@ -1,255 +1,383 @@
-import type { RouterOutput } from "@/api/client";
-import type { CareerProfileData } from "@reactive-resume/schema/career";
-import { useLingui } from "@lingui/react/macro";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AppState, View } from "react-native";
-import { careerProfileDataSchema } from "@reactive-resume/schema/career";
-import { getCurrencyOptions, parseAmount } from "@reactive-resume/utils/amount";
-import { useCareerTime } from "./hooks";
-import { RoleSuggestions } from "./role-suggestions";
-import { SearchRegionsField } from "./search-regions-field";
-import { client, orpc } from "@/api/client";
-import { getServer, useSession } from "@/auth/session";
-import { useDraft } from "@/features/workspace/hooks";
-import { routes } from "@/routes";
-import { Banner, Button, ChipInput, SelectSheet, Text, TextArea, TextField, useTheme } from "@/ui";
+import type { CareerProfileUpdate } from "@reactive-resume/schema/career";
+import { t } from "@lingui/core/macro";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRef, useState } from "react";
+import { View } from "react-native";
+import { careerProfileUpdateSchema } from "@reactive-resume/schema/career";
+import { priorityItems, movePriority } from "./model";
+import { ResourceState, useCareerLeaveGuard } from "./shared";
+import {
+	ensureApproved,
+	providerConnection,
+	useAIProviders,
+	useCareerActions,
+	useCareerPreferences,
+	useCareerSchedules,
+	useDataActions,
+	useDataBackend,
+	useDocuments,
+} from "@/data";
+import {
+	Button,
+	FooterBar,
+	Icon,
+	IconButton,
+	ListRow,
+	PushScreen,
+	ReorderList,
+	type ReorderHandle,
+	SectionHeading,
+	Switch,
+	Text,
+	TextField,
+	Chip,
+	TextLink,
+} from "@/ui";
 
-type PreferencesProps = { initial: CareerProfileData };
-export function Preferences({ initial }: PreferencesProps) {
-	const { t } = useLingui();
-	const { space } = useTheme();
-	const { locale, timeZone, profile: account } = useCareerTime();
+function PreferencesContent() {
+	const query = useCareerPreferences();
+	const schedules = useCareerSchedules();
+	const actions = useDataActions();
 	const router = useRouter();
-	const session = useSession();
-	const queryClient = useQueryClient();
-	const kept = useDraft(
-		"preferences",
-		{
-			draft: initial,
-			amount:
-				initial.minBase.amount === null
-					? ""
-					: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(initial.minBase.amount),
-			notice: initial.noticeWeeks === null ? "" : String(initial.noticeWeeks),
-		},
-		true,
+	const { edit } = useLocalSearchParams<{ edit?: string }>();
+	const { backend } = useDataBackend();
+	const [value, setValue] = useState(() =>
+		edit === "roles"
+			? (query.data?.targetRoles.join(", ") ?? "")
+			: edit === "places"
+				? (query.data?.locations.join(", ") ?? "")
+				: edit === "work"
+					? (query.data?.maxOfficeDays?.toString() ?? "")
+					: edit === "pay"
+						? (query.data?.minBase.amount?.toString() ?? "")
+						: "",
 	);
-	const draft = kept.value.draft;
-	const currencies = useMemo(
-		() => getCurrencyOptions(locale, draft.minBase.currency),
-		[locale, draft.minBase.currency],
-	);
-	const setDraft = (update: CareerProfileData | ((value: CareerProfileData) => CareerProfileData)) =>
-		kept.setValue((current) => ({ ...current, draft: typeof update === "function" ? update(current.draft) : update }));
-	const amount = kept.value.amount;
-	const setAmount = (amount: string) => kept.setValue((current) => ({ ...current, amount }));
-	const notice = kept.value.notice;
-	const setNotice = (notice: string) => kept.setValue((current) => ({ ...current, notice }));
-	const parsedAmount = parseAmount(amount, locale);
-	const noticeValue =
-		notice.trim() === "" ? null : /^\d+$/.test(notice) && Number(notice) <= 52 ? Number(notice) : undefined;
-	const next = { ...draft, minBase: { ...draft.minBase, amount: parsedAmount }, noticeWeeks: noticeValue };
-	const valid =
-		parsedAmount === undefined || noticeValue === undefined ? null : careerProfileDataSchema.safeParse(next);
-	const json = valid?.success ? JSON.stringify(valid.data) : null;
-	const [saved, setSaved] = useState(JSON.stringify(initial));
-	const [error, setError] = useState(false);
+	const [failure, setFailure] = useState<string | null>(null);
 	const [saving, setSaving] = useState(false);
-	const latest = useRef({
-		blocked: !!kept.blocked,
-		clear: kept.clear,
-		unblock: () => kept.setBlocked(null),
-		raw: kept.value,
-		json,
-		server: session.server,
-		accountId: account.data?.id,
-	});
-	const queue = useRef<Promise<unknown>>(Promise.resolve());
-	const attempted = useRef<string | null>(saved);
-	useLayoutEffect(() => {
-		latest.current = {
-			blocked: !!kept.blocked,
-			clear: kept.clear,
-			unblock: () => kept.setBlocked(null),
-			raw: kept.value,
-			json,
-			server: session.server,
-			accountId: account.data?.id,
-		};
-	});
-	const flush = useCallback(
-		(retry = false) => {
-			const current = latest.current;
-			if (
-				(!retry && current.blocked) ||
-				!current.accountId ||
-				!current.json ||
-				(!retry && attempted.current === current.json)
-			)
-				return;
-			attempted.current = current.json;
-			const queuedJson = current.json;
-			const value = careerProfileDataSchema.parse(JSON.parse(queuedJson));
-			setSaving(true);
-			setError(false);
-			const write = queue.current.then(async () => {
-				const identity = queryClient.getQueryData<RouterOutput["auth"]["getProfile"]>([
-					...orpc.auth.getProfile.key(),
-					current.server,
-				]);
-				if (getServer() !== current.server || identity?.id !== current.accountId) return;
-				// Recovered Preferences drafts can contain an old memory choice, now owned by Facts.
-				await client.career.updateProfile(
-					{ ...value, memoryMode: undefined },
-					{ context: { scope: JSON.stringify([current.server, current.accountId]) } },
-				);
-				setSaved(queuedJson);
-				current.clear(current.raw);
-				current.unblock();
-				void queryClient.invalidateQueries({ queryKey: orpc.career.profile.key() });
+	const profile = query.data;
+	// Roles: suggestions from your resume, as dashed chips to add (optional AI; S7 asks the first time).
+	const career = useCareerActions();
+	const providers = useAIProviders();
+	const documents = useDocuments({ type: "resume" });
+	const [suggested, setSuggested] = useState<string[] | null>(null);
+	const suggest = async () => {
+		const provider = providers.data?.find((p) => p.isDefault && p.enabled) ?? providers.data?.find((p) => p.enabled);
+		if (!provider || !(await ensureApproved("resume-and-facts", providerConnection(provider)))) return;
+		try {
+			const result = await career.suggestRoles({
+				providerId: provider.id,
+				recipientVersion: provider.recipientVersion,
+				resumeId: documents.data?.find((doc) => doc.type === "resume")?.id ?? null,
+				includeKnowledge: true,
+				locale: "en-US",
 			});
-			queue.current = write
-				.catch(() => {
-					setError(true);
-				})
-				.finally(() => {
-					if (attempted.current === current.json) setSaving(false);
-				});
-		},
-		[queryClient],
-	);
-	useEffect(() => {
-		const timer = setTimeout(() => flush(), 2000);
-		return () => clearTimeout(timer);
-	}, [json, account.data?.id, flush]);
-	useEffect(() => {
-		const listener = AppState.addEventListener("change", (state) => {
-			if (state !== "active") flush();
-		});
-		return () => {
-			listener.remove();
-			flush();
-		};
-	}, [flush]);
-	const change = (patch: Partial<CareerProfileData>) => setDraft((current) => ({ ...current, ...patch }));
+			setSuggested(result.suggestions.map((row) => row.role));
+		} catch {
+			setFailure(t`Couldn't suggest roles. Try again.`);
+		}
+	};
+	const chosen = value
+		.split(",")
+		.map((v) => v.trim().toLowerCase())
+		.filter(Boolean);
+	const discovery = schedules.data?.find((s) => s.kind === "discovery");
+	const initialValue =
+		edit === "roles"
+			? (profile?.targetRoles.join(", ") ?? "")
+			: edit === "places"
+				? (profile?.locations.join(", ") ?? "")
+				: edit === "work"
+					? (profile?.maxOfficeDays?.toString() ?? "")
+					: edit === "pay"
+						? (profile?.minBase.amount?.toString() ?? "")
+						: "";
+	const guard = useCareerLeaveGuard(!!edit && value !== initialValue);
+	const open = (key: string, _initial: string) => {
+		setFailure(null);
+		router.push({ pathname: "/career/knowledge/preferences", params: { edit: key } });
+	};
+	const save = async () => {
+		if (!profile || saving) return;
+		let patch: CareerProfileUpdate = {};
+		if (edit === "roles")
+			patch = {
+				targetRoles: value
+					.split(",")
+					.map((v) => v.trim())
+					.filter(Boolean),
+			};
+		if (edit === "places")
+			patch = {
+				locations: value
+					.split(",")
+					.map((v) => v.trim())
+					.filter(Boolean),
+			};
+		if (edit === "work") patch = { maxOfficeDays: value === "" ? null : Number(value) };
+		if (edit === "pay") {
+			if (value !== "" && !/^\d+$/.test(value)) {
+				setFailure(t`Enter a full amount, such as 95000. Your previous amount is unchanged.`);
+				return;
+			}
+			patch = { minBase: { ...profile.minBase, amount: value === "" ? null : Number(value) } };
+		}
+		const parsed = careerProfileUpdateSchema.safeParse(patch);
+		if (!parsed.success) {
+			setFailure(t`Check your entries and try again.`);
+			return;
+		}
+		setSaving(true);
+		try {
+			await actions.write("profile", "career.updateProfile", parsed.data);
+			guard.allowLeave();
+			router.back();
+		} catch {
+			setFailure(t`Couldn't save your preferences. Try again.`);
+		} finally {
+			setSaving(false);
+		}
+	};
+	if (edit)
+		return (
+			<PushScreen
+				overlay={guard.confirmation}
+				title={edit === "roles" ? t`Roles` : edit === "places" ? t`Places` : edit === "work" ? t`Work` : t`Pay`}
+				footer={
+					<FooterBar>
+						<Button
+							label={failure === t`Couldn't save your preferences. Try again.` ? t`Retry` : t`Save`}
+							block
+							tone="primary"
+							size="lg"
+							disabled={saving}
+							onPress={() => void save()}
+						/>
+					</FooterBar>
+				}
+			>
+				<View style={{ padding: 24, gap: 20 }}>
+					<TextField
+						label={
+							edit === "roles"
+								? t`Target roles, separated by commas`
+								: edit === "places"
+									? t`Places, separated by commas`
+									: edit === "work"
+										? t`Maximum office days a week`
+										: t`Minimum base salary`
+						}
+						value={value}
+						onChangeText={setValue}
+						keyboardType={edit === "pay" || edit === "work" ? "number-pad" : "default"}
+					/>
+					{edit === "roles" ? (
+						suggested && suggested.every((role) => chosen.includes(role.toLowerCase())) ? (
+							<Text variant="ui" color="ink3">{t`You already have every role your resume suggests.`}</Text>
+						) : suggested ? (
+							<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+								{suggested
+									.filter((role) => !chosen.includes(role.toLowerCase()))
+									.map((role) => (
+										<Chip
+											key={role}
+											label={role}
+											icon="plus"
+											dashed
+											testID={`role-${role}`}
+											onPress={() => setValue((current) => [current.trim(), role].filter(Boolean).join(", "))}
+										/>
+									))}
+							</View>
+						) : (
+							<TextLink label={t`Suggest roles from my resume`} icon="sparkle" onPress={() => void suggest()} />
+						)
+					) : null}
+					{edit === "pay" ? (
+						<>
+							<Text variant="body">
+								{profile?.minBase.currency} · {profile?.minBase.period}
+							</Text>
+							<Button label={t`Don't use pay to filter`} onPress={() => setValue("")} />
+						</>
+					) : null}
+					{failure ? (
+						<Text variant="body" color="dangerText">
+							{failure}
+						</Text>
+					) : null}
+				</View>
+			</PushScreen>
+		);
+	const payLine = !profile
+		? ""
+		: profile.minBase.amount === null
+			? t`Don't use pay to filter`
+			: t`From ${new Intl.NumberFormat("en", { style: "currency", currency: profile.minBase.currency, maximumFractionDigits: 0 }).format(profile.minBase.amount)} a ${profile.minBase.period}`;
 	return (
-		<View style={{ gap: space.s4 }}>
-			<Text variant="title">{t`What you're looking for`}</Text>
-			<Text accessibilityLiveRegion="polite" color={error ? "dangerText" : "ink3"}>
-				{!valid?.success ? t`Not saved` : error ? t`Not saved` : saving || json !== saved ? t`Saving…` : t`Saved`}
-			</Text>
-			{error || kept.blocked ? (
-				<>
-					<Banner
-						tone="danger"
-						message={
-							kept.blocked
-								? t`Recovered an unsaved draft. Review it before saving over the current version.`
-								: t`Couldn't save your preferences. Your draft is still here.`
+		<PushScreen title={t`Job search`} subtitle={t`Used to find new roles and to judge fit.`}>
+			<ResourceState pending={query.isPending} error={query.isError} retry={() => void query.refetch()}>
+				{profile ? (
+					<>
+						<View style={{ marginTop: 20 }}>
+							<ListRow
+								top
+								title={t`Roles`}
+								secondary={profile.targetRoles.join(", ")}
+								trailing="caret"
+								onPress={() => open("roles", profile.targetRoles.join(", "))}
+							/>
+							<ListRow
+								title={t`Places`}
+								secondary={profile.locations.join(" · ")}
+								trailing="caret"
+								onPress={() => open("places", profile.locations.join(", "))}
+							/>
+							<ListRow
+								title={t`Work`}
+								secondary={
+									profile.maxOfficeDays === null
+										? t`Hybrid or remote`
+										: t`At most ${profile.maxOfficeDays} office days a week`
+								}
+								trailing="caret"
+								onPress={() => open("work", profile.maxOfficeDays?.toString() ?? "")}
+							/>
+							<ListRow
+								title={t`Pay`}
+								secondary={payLine}
+								// The amount is read with the row's name (VoiceOver, and the flow that checks it).
+								accessibilityLabel={`${t`Pay`}, ${payLine}`}
+								trailing="caret"
+								onPress={() => open("pay", profile.minBase.amount?.toString() ?? "")}
+							/>
+							{backend.kind === "fake" ? (
+								// The profile has no field for industries to avoid yet; the storyboard draws one.
+								<ListRow title={t`Avoid`} secondary={t`Gambling, defence`} trailing="caret" />
+							) : null}
+							<ListRow
+								title={t`Priorities`}
+								secondary={profile.priorities}
+								last
+								boxHidden
+								trailing="caret"
+								onPress={() => router.push("/career/knowledge/priorities")}
+							/>
+						</View>
+						<SectionHeading title={t`Discovery`} />
+						<ListRow
+							title={t`Find new roles for me`}
+							secondary={
+								backend.kind === "fake"
+									? t`07:00 Berlin · Work OpenAI · may charge`
+									: t`Uses this server's web-search connection`
+							}
+							trailing={<Switch value={!!discovery?.enabled} interactive={false} />}
+							onPress={() => router.push(`/career/schedules/${discovery?.id ?? "new"}`)}
+						/>
+						<ListRow
+							title={t`Where to look`}
+							secondary={backend.kind === "fake" ? t`Job boards and 12 company sites` : profile.locations.join(" · ")}
+							trailing="caret"
+							last
+							onPress={() => router.push(`/career/schedules/${discovery?.id ?? "new"}`)}
+						/>
+					</>
+				) : null}
+			</ResourceState>
+		</PushScreen>
+	);
+}
+
+export function PrioritiesScreen() {
+	const query = useCareerPreferences();
+	return (
+		<PushScreen title={t`Priorities`} subtitle={t`Put what matters most first.`}>
+			<ResourceState pending={query.isPending} error={query.isError} retry={() => void query.refetch()}>
+				{query.data ? <PrioritiesEditor initial={query.data.priorities} /> : null}
+			</ResourceState>
+		</PushScreen>
+	);
+}
+type PrioritiesEditorProps = { initial: string };
+function PrioritiesEditor({ initial }: PrioritiesEditorProps) {
+	const [items, setItems] = useState(() => priorityItems(initial).map((text, index) => ({ id: String(index), text })));
+	const [failed, setFailed] = useState(false);
+	const actions = useDataActions();
+	const ref = useRef<ReorderHandle>(null);
+	const [selected, setSelected] = useState<string | null>(null);
+	const reorder = (from: number, to: number) => {
+		const next = movePriority(items, from, to);
+		setItems(next);
+		void actions
+			.write("profile", "career.updateProfile", { priorities: next.map((item) => item.text).join(", then ") })
+			.then(() => setFailed(false))
+			.catch(() => setFailed(true));
+	};
+	return (
+		<>
+			{failed ? (
+				<View style={{ padding: 24 }}>
+					<Text variant="body" color="dangerText">{t`Couldn't save your preferences. Try again.`}</Text>
+					<Button
+						label={t`Retry`}
+						onPress={() =>
+							void actions
+								.flush()
+								.then(() => setFailed(false))
+								.catch(() => setFailed(true))
 						}
 					/>
-					<Button variant="secondary" label={t`Retry`} onPress={() => flush(true)} />
-					{kept.blocked && (
-						<Button
-							variant="ghost"
-							label={t`Use saved version`}
-							onPress={() =>
-								kept.reset({
-									draft: initial,
-									amount:
-										initial.minBase.amount === null
-											? ""
-											: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(initial.minBase.amount),
-									notice: initial.noticeWeeks === null ? "" : String(initial.noticeWeeks),
-								})
-							}
-						/>
-					)}
-				</>
+				</View>
 			) : null}
-			<ChipInput
-				label={t`Target roles`}
-				values={draft.targetRoles}
-				onChange={(targetRoles) => change({ targetRoles })}
+			<ReorderList
+				ref={ref}
+				data={items}
+				keyOf={(item) => item.id}
+				label={(item) => item.text}
+				itemHeight={64}
+				onReorder={reorder}
+				renderItem={(item, { handle }) => (
+					<ListRow
+						title={item.text}
+						leading={handle(
+							<View style={{ width: 24, height: 48, justifyContent: "center" }}>
+								<Icon name="dots-six-vertical" />
+							</View>,
+						)}
+						trailing={
+							<IconButton icon="dots-three" label={t`Actions for ${item.text}`} onPress={() => setSelected(item.id)} />
+						}
+					/>
+				)}
 			/>
-			<RoleSuggestions locale={locale} onUse={(targetRoles) => change({ targetRoles })} />
-			<ChipInput
-				label={t`Where you want to work`}
-				values={draft.locations}
-				onChange={(locations) => change({ locations })}
-			/>
-			{account.data ? (
-				// Waits for the account, so its time zone (not the UTC stand-in) decides the automatic country.
-				<SearchRegionsField
-					value={draft.searchRegions}
-					accountTimeZone={timeZone}
-					onChange={(searchRegions) => change({ searchRegions })}
-				/>
+			{selected ? (
+				<View style={{ padding: 24, gap: 20 }}>
+					<Button
+						label={t`Move up`}
+						disabled={items.findIndex((item) => item.id === selected) === 0}
+						onPress={() => ref.current?.moveBy(selected, -1)}
+					/>
+					<Button
+						label={t`Move down`}
+						disabled={items.findIndex((item) => item.id === selected) === items.length - 1}
+						onPress={() => ref.current?.moveBy(selected, 1)}
+					/>
+				</View>
 			) : null}
-			<TextArea
-				label={t`What matters to you`}
-				value={draft.priorities}
-				maxLength={4000}
-				onChangeText={(priorities) => change({ priorities })}
-				onBlur={() => flush()}
-			/>
-			<Text variant="title">{t`Requirements`}</Text>
-			<Text color="ink3">{t`Used to check roles and offers. Each is a number, so the coach can compare without guessing.`}</Text>
-			<TextField
-				label={t`Minimum base salary`}
-				keyboardType="decimal-pad"
-				value={amount}
-				onChangeText={setAmount}
-				onBlur={() => flush()}
-				error={
-					parsedAmount === undefined
-						? t`Enter a full amount, such as 95000. Your previous amount is unchanged.`
-						: undefined
-				}
-			/>
-			<SelectSheet
-				label={t`Currency`}
-				value={draft.minBase.currency}
-				searchable
-				options={currencies}
-				onChange={(currency) => change({ minBase: { ...draft.minBase, currency } })}
-			/>
-			<SelectSheet
-				label={t`Pay period`}
-				value={draft.minBase.period}
-				onChange={(period) => change({ minBase: { ...draft.minBase, period } })}
-				options={[
-					{ value: "year", label: t`Per year` },
-					{ value: "month", label: t`Per month` },
-					{ value: "hour", label: t`Per hour` },
-				]}
-			/>
-			<SelectSheet
-				label={t`Office days a week, at most`}
-				value={draft.maxOfficeDays === null ? "any" : String(draft.maxOfficeDays)}
-				onChange={(value) => change({ maxOfficeDays: value === "any" ? null : Number(value) })}
-				options={[
-					{ value: "any", label: t`Any` },
-					{ value: "0", label: t`Remote` },
-					...[1, 2, 3, 4, 5].map((days) => ({ value: String(days), label: String(days) })),
-				]}
-			/>
-			<TextField
-				label={t`Notice period (weeks)`}
-				keyboardType="number-pad"
-				value={notice}
-				maxLength={3}
-				onChangeText={setNotice}
-				onBlur={() => flush()}
-				error={noticeValue === undefined ? t`Enter a whole number from 0 to 52, or leave blank.` : undefined}
-			/>
-			{!valid?.success ? (
-				<Banner tone="warn" message={t`Check your preferences. Invalid changes are not saved.`} />
-			) : null}
-			<Text color="ink3">{t`Times are shown in ${timeZone}.`}</Text>
-			<Button label={t`Change timezone`} variant="ghost" onPress={() => router.push(routes.settings("preferences"))} />
-		</View>
+		</>
+	);
+}
+
+export function PreferencesScreen() {
+	const query = useCareerPreferences();
+	const { edit } = useLocalSearchParams<{ edit?: string }>();
+	return query.data ? (
+		<PreferencesContent key={edit ?? "list"} />
+	) : (
+		<PushScreen title={t`Job search`}>
+			<ResourceState pending={query.isPending} error={query.isError} retry={() => void query.refetch()}>
+				{null}
+			</ResourceState>
+		</PushScreen>
 	);
 }

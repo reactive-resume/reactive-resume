@@ -1,0 +1,96 @@
+# B3 · Saves as you type; Return moves to the next field; Undo in the status line reverts the last field edit even
+# with the keyboard up, and Redo restores it; End opens the month picker with Present, and an end before the start
+# says so under End; "See it on the page" opens the preview at this entry; Delete entry goes back to B2 with "Entry
+# deleted", and Undo brings it back.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B2-Section?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Location
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn: Lisbon
+- eraseText: 6
+- inputText: Porto
+- assertVisible: "Experience · sav.*"
+# Undo with the keyboard still up.
+- tapOn:
+    id: status-undo
+- assertVisible: Lisbon
+- tapOn:
+    id: status-redo
+- assertVisible: Porto
+# Return moves to the next field: from Company, typing lands in Position.
+- tapOn:
+    text: Northwind Labs
+    below: Company
+- pressKey: Enter
+- inputText: X
+- assertVisible: "Senior product designerX"
+- hideKeyboard
+# The field after the label of the same name; Android reads the field as its label and value together.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: End
+          index: 1
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "End, .*"
+- extendedWaitUntil:
+    visible: January
+    timeout: 10000
+- assertVisible: Present
+- tapOn: "2026"
+- tapOn: Close
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: Start
+          index: 1
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Start, .*"
+- extendedWaitUntil:
+    visible: January
+    timeout: 10000
+- tapOn: "2031"
+- tapOn: Close
+- waitForAnimationToEnd
+- assertVisible: The end date is before the start date.
+- tapOn: See it on the page
+- extendedWaitUntil:
+    visible: Page 1 of 1
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Delete entry
+    timeout: 10000
+- tapOn: Delete entry
+- extendedWaitUntil:
+    visible: Entry deleted
+    timeout: 5000
+- assertVisible: "1 entry · on page 1.*"
+- assertNotVisible: Northwind Labs
+- tapOn:
+    id: status-undo
+- assertVisible: Northwind Labs
+- assertVisible: "2 entries · on page 1.*"

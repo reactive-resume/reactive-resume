@@ -1,0 +1,17 @@
+# Picks a fixture in the system document picker: ${FILE} (iOS resource id "<name>, <type>") from On My iPhone on
+# iOS, ${NAME} (the file name) from Downloads on Android. The fixtures are nonpersonal files copied to the device
+# first (q1/lib/files.sh).
+appId: me.rxresu.storyboard
+---
+- runFlow:
+    when:
+      platform: iOS
+    file: pick-file-ios.yaml
+    env:
+      FILE: ${FILE}
+- runFlow:
+    when:
+      platform: Android
+    file: pick-file-android.yaml
+    env:
+      NAME: ${NAME}

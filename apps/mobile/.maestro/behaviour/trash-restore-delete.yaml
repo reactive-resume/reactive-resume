@@ -1,0 +1,54 @@
+# D2 → D6 · Move to Trash, Restore with Open, then Delete permanently, which counts what it destroys.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/D1-Library?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- longPressOn:
+    id: document-resume-lead
+- tapOn:
+    text: Move to Trash
+    waitToSettleTimeoutMs: 1
+- assertVisible: “Design lead” moved to Trash
+- tapOn: Trash · 3
+- tapOn:
+    text: Restore
+    index: 0
+    waitToSettleTimeoutMs: 1
+- assertVisible: Restored “Design lead”
+- tapOn:
+    id: toast-action
+    text: Open
+    waitToSettleTimeoutMs: 1
+- assertVisible: Design lead
+# Open went from Trash to the resume: back returns to Trash, then to Documents.
+- tapOn:
+    id: top-bar-back
+- runFlow:
+    when:
+      visible: Trash
+    commands:
+      - tapOn:
+          id: top-bar-back
+- extendedWaitUntil:
+    visible:
+      id: document-resume-lead
+    timeout: 10000
+- waitForAnimationToEnd
+- longPressOn:
+    id: document-resume-lead
+- tapOn:
+    text: Move to Trash
+    waitToSettleTimeoutMs: 1
+- tapOn: Trash · 3
+- tapOn:
+    id: trash-resume-lead
+- tapOn: Delete permanently…
+- assertVisible: Delete 1 document permanently?
+- tapOn: Delete permanently
+- assertNotVisible:
+    id: trash-resume-lead

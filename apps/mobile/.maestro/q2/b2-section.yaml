@@ -1,0 +1,99 @@
+# B2 · A row opens its entry (B3); Add experience opens New entry (B20) and leaving it empty adds nothing; swiping a
+# row toward the start past 40% deletes it with "Entry deleted" and Undo; holding a row opens its actions (B21); ···
+# offers the section options; with every entry gone the section says "Nothing here yet".
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B2-Section?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- tapOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Company
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: Add experience
+    timeout: 10000
+- tapOn: Add experience
+- extendedWaitUntil:
+    visible: "Experience · saved once you start typing"
+    timeout: 10000
+- tapOn:
+    id: top-bar-back
+- extendedWaitUntil:
+    visible: "2 entries · on page 1"
+    timeout: 10000
+# Swipe Harbour Studio toward the start, past 40% of the row.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 350, 295
+          end: 30, 295
+          duration: 600
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: "1050,885"
+          end: "90,885"
+          duration: 600
+- extendedWaitUntil:
+    visible: Entry deleted
+    timeout: 5000
+- assertVisible: "1 entry · on page 1.*"
+- tapOn:
+    id: status-undo
+- extendedWaitUntil:
+    notVisible: "Entry deleted"
+    timeout: 15000
+- extendedWaitUntil:
+    visible: Harbour Studio
+    timeout: 5000
+- assertVisible: "2 entries · on page 1.*"
+- longPressOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Move down
+    timeout: 10000
+- assertVisible: Hide from page
+- assertVisible: Duplicate
+- assertVisible: Delete entry
+- tapOn: Close
+- waitForAnimationToEnd
+- tapOn: Section options
+- assertVisible: Rename section
+- assertVisible: Move up
+- assertVisible: Move down
+- assertVisible: Hide section
+- assertVisible: Columns
+- tapOn: Columns
+- assertVisible: 2 columns
+- tapOn: 2 columns
+- waitForAnimationToEnd
+# Empty: delete both entries from their actions.
+- longPressOn: Northwind Labs
+- extendedWaitUntil:
+    visible: Delete entry
+    timeout: 10000
+- tapOn:
+    id: entry-action-delete
+    waitToSettleTimeoutMs: 1000
+- longPressOn: Harbour Studio
+- extendedWaitUntil:
+    visible: Delete entry
+    timeout: 10000
+- tapOn:
+    id: entry-action-delete
+    waitToSettleTimeoutMs: 1000
+- extendedWaitUntil:
+    visible: Nothing here yet
+    timeout: 5000
+- assertVisible: Add experience

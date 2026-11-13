@@ -1,0 +1,51 @@
+# B10 · On a linked resume Change opens the application picker, and a term already covered opens the page preview.
+appId: me.rxresu.storyboard
+---
+- launchApp:
+    clearState: true
+- openLink: me.rxresu.storyboard://storyboard/B10-JobMatch?theme=light
+- extendedWaitUntil:
+    visible:
+      id: storyboard-ready
+    timeout: 90000
+- waitForAnimationToEnd
+- assertVisible: "9 of 14"
+- tapOn: Change
+- extendedWaitUntil:
+    visible: Link an application
+    timeout: 10000
+- assertVisible: Lumen
+# Maestro's gentle scroll doesn't move this sheet's list on Android; a firmer swipe does.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - scrollUntilVisible:
+          element: "Paste a job posting…"
+          direction: DOWN
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - repeat:
+          while:
+            notVisible: "Paste a job posting…"
+          times: 10
+          commands:
+            - swipe:
+                start: "50%,79%"
+                end: "50%,36%"
+                duration: 400
+      - assertVisible: "Paste a job posting…"
+- tapOn: Close
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element: Already covered
+    direction: DOWN
+- scrollUntilVisible:
+    element: Onboarding
+    direction: DOWN
+- tapOn: Onboarding
+- extendedWaitUntil:
+    visible: Page 1 of 1
+    timeout: 10000
