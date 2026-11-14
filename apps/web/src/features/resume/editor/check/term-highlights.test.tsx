@@ -26,6 +26,8 @@ vi.mock("@/features/resume/preview/pdfjs", () => ({
 }));
 
 const { TermHighlights } = await import("./term-highlights");
+// The component lazy-loads the matcher; load it here so a cold import on a busy runner can't outlast waitFor.
+await import("@reactive-resume/resume/ats-pdf");
 
 afterEach(cleanup);
 
