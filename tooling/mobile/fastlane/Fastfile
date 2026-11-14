@@ -26,8 +26,8 @@ def asc_api_key
   )
 end
 
-# Every version code in every Play track (internal, testing, production and custom), read in one aborted edit.
-def play_version_codes
+# Every Play track (internal, testing, production and custom), read in one aborted edit.
+def play_tracks
   require "supply"
   require "supply/options"
   Supply.config = FastlaneCore::Configuration.create(
@@ -37,10 +37,14 @@ def play_version_codes
   client = Supply::Client.make_from_config
   client.begin_edit(package_name: "me.rxresu")
   begin
-    client.tracks.flat_map { |track| Array(track.releases).flat_map { |release| Array(release.version_codes) } }
+    client.tracks
   ensure
     client.abort_current_edit
   end
+end
+
+def play_version_codes
+  play_tracks.flat_map { |track| Array(track.releases).flat_map { |release| Array(release.version_codes) } }
 end
 
 def whole_number(value)
@@ -63,6 +67,28 @@ lane :store_build_numbers do |options|
 end
 
 platform :android do
+  desc "Write the newest production release users can install (full or staged rollout) to GITHUB_OUTPUT"
+  lane :production_release do
+    releases = Array(play_tracks.find { |track| track.track == "production" }&.releases)
+      .select { |release| %w[completed inProgress].include?(release.status) }
+    # Play names a release after its versionName unless someone renames it.
+    code, name = releases.map { |release| [Array(release.version_codes).map { |c| whole_number(c) }.max, release.name] }
+      .select(&:first).max_by(&:first)
+    if code
+      File.write(ENV.fetch("GITHUB_OUTPUT"), "version_code=#{code}\nversion_name=#{name.to_s.gsub(/\s+/, ' ').strip}\n", mode: "a")
+    end
+    UI.message(code ? "Production release: #{name} (#{code})" : "No production release users can install")
+  end
+
+  desc "Download the universal APK Play generated and signed for a version code"
+  lane :universal_apk do |options|
+    download_universal_apk_from_google_play(
+      package_name: "me.rxresu", json_key_data: ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
+      version_code: whole_number(options.fetch(:version_code)),
+      destination: File.join(OUTPUT, "ReactiveResume.apk")
+    )
+  end
+
   desc "Build a signed App Bundle"
   lane :build do
     FileUtils.mkdir_p(OUTPUT)

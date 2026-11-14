@@ -8,17 +8,21 @@ module UI
   def self.message(_message); end
 end
 
+PlayTrack = Struct.new(:track, :releases)
+PlayRelease = Struct.new(:status, :version_codes, :name)
+
 # Exercise the real lanes at the store SDK boundary without credentials or network calls.
 class DistributionContract
   attr_reader :uploads, :testflight_queries
 
-  def initialize(testflight: {}, play: [])
+  def initialize(testflight: {}, play: [], tracks: [])
     @lanes = {}
     @uploads = []
     @testflight_queries = []
     instance_eval(File.read(File.join(__dir__, "fastlane/Fastfile")), File.join(__dir__, "fastlane/Fastfile"))
     # The Fastfile's helper replaces only the Supply client call; its parsing and selection stay under test.
     define_singleton_method(:play_version_codes) { play }
+    define_singleton_method(:play_tracks) { tracks }
     @testflight = testflight
   end
 
@@ -84,6 +88,23 @@ Dir.mktmpdir do |directory|
       raise "An unreadable store must not write a number" if File.exist?(output)
     end
   end
+
+  # The APK mirror follows the newest production release users can install; drafts, halted rollouts and other
+  # tracks never reach GitHub.
+  FileUtils.rm_f(output)
+  DistributionContract.new(tracks: [
+    PlayTrack.new("internal", [PlayRelease.new("completed", ["60"], "1.0.3")]),
+    PlayTrack.new("production", [
+      PlayRelease.new("completed", ["40"], "1.0.1"), PlayRelease.new("inProgress", ["50"], "1.0.2"),
+      PlayRelease.new("halted", ["55"], "1.0.2"), PlayRelease.new("draft", ["58"], "1.0.3")
+    ])
+  ]).run(:android, :production_release)
+  raise "The mirror must take the newest installable production release" unless
+    File.read(output) == "version_code=50\nversion_name=1.0.2\n"
+  FileUtils.rm_f(output)
+  DistributionContract.new(tracks: [PlayTrack.new("production", [PlayRelease.new("draft", ["58"], "1.0.3")])])
+    .run(:android, :production_release)
+  raise "Without an installable production release nothing may be mirrored" if File.exist?(output)
 
   contract = DistributionContract.new
   contract.run(:android, :upload)

@@ -30,8 +30,10 @@ outside the repository.
    reviewer details, and submit for App Review.
 2. Play Console: promote the tested internal release to production (or a staged rollout) and send it for review. With
    Managed Publishing on, publish the approved change.
-3. Verify both public store versions. Stable distribution uses the stores only; IPA and AAB files are not attached to
-   GitHub Releases.
+3. Verify both public store versions. Within about 15 minutes of a production release going live (full or staged
+   rollout), workflow **Mobile Android APK** publishes Play's universal APK as GitHub release `android-<versionCode>`
+   (not marked Latest). Dispatch it to mirror sooner. iOS ships through the App Store only; IPA and AAB files are never
+   attached.
 
 ## Reverting
 
