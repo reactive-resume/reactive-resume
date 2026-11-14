@@ -260,7 +260,7 @@ This builds the checked-out source. For a deployment using published images, fol
 | Category         | Technology                               |
 | ---------------- | ---------------------------------------- |
 | Web app          | React 19 SPA, TanStack Router, and Vite  |
-| Server           | Hono on Node.js 24 or Cloudflare Workers |
+| Server           | Hono on Node.js 26 or Cloudflare Workers |
 | Language         | TypeScript                               |
 | Monorepo         | pnpm and Turborepo                       |
 | Database         | PostgreSQL with Drizzle ORM              |

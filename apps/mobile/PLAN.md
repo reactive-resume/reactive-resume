@@ -84,7 +84,7 @@ Merge order: foundation → navigation → screens A–F in parallel on disjoint
    switch branches or run `pnpm install`; the lead does those. Never edit the handoff bundle or files
    another agent owns. A missing component, motion primitive, data hook or dependency is a request to the lead in your
    report, never a local look-alike.
-2. Node 24: prefix commands with `mise exec node@24 --`. Typecheck: `mise exec node@24 -- pnpm typecheck` in the app
+2. Node 26: prefix commands with `mise exec node@26 --`. Typecheck: `mise exec node@26 -- pnpm typecheck` in the app
    folder. It must pass before you report.
 3. Tokens only (`src/ui/tokens.ts`): no hex colours, font names, durations or curves outside `src/ui`. Text goes
    through `Text`, icons through `Icon`, touches through `Touchable` or a design-system control.
@@ -241,8 +241,8 @@ Screen agents (A–F) each work in their own git worktree and commit there; the 
 "never commit" and rule 4's Metro note for them; everything else in "Rules for every sub-agent" holds.
 
 **Setup (once).** In your worktree's `apps/mobile`: if `node_modules` is missing run
-`mise exec node@24 -- pnpm install --offline --frozen-lockfile` from the repo root of the worktree. Start your own Metro
-on your port: `APP_VARIANT=storyboard EXPO_PUBLIC_STORYBOARD=1 mise exec node@24 -- npx expo start --dev-client --port <port> > build/metro.log 2>&1 &`
+`mise exec node@26 -- pnpm install --offline --frozen-lockfile` from the repo root of the worktree. Start your own Metro
+on your port: `APP_VARIANT=storyboard EXPO_PUBLIC_STORYBOARD=1 mise exec node@26 -- npx expo start --dev-client --port <port> > build/metro.log 2>&1 &`
 (create `build/` first; it is git-ignored). Ports: A 8082, B 8083, C 8084, D 8085, E 8086, F 8087. Stop it when you finish.
 
 **What to build with.**
@@ -289,8 +289,8 @@ A screen passes with 0 layout failures, at most 3.0% differing pixels in each th
 draws a floating gear button at the top end; differences from it alone are expected until the lead's Release run, so
 say so in your report instead of working around it.
 
-**Finish.** `mise exec node@24 -- pnpm typecheck`, `mise exec node@24 -- pnpm test` and `sh scripts/check-motion.sh`
-(prints nothing) pass; `mise exec node@24 -- pnpm exec vp lint --fix <your paths>` and `pnpm exec vp fmt <your paths>`
+**Finish.** `mise exec node@26 -- pnpm typecheck`, `mise exec node@26 -- pnpm test` and `sh scripts/check-motion.sh`
+(prints nothing) pass; `mise exec node@26 -- pnpm exec vp lint --fix <your paths>` and `pnpm exec vp fmt <your paths>`
 from the worktree's repo root. Commit your work in your worktree with a Conventional Commit message
 (`feat(mobile): …`, no AI attribution, no trailers). Report: your branch name and commit; one scoreboard line per
 screen; each remaining difference with its cause; every request to the lead; behaviour bullets from `SCREENS.md` you

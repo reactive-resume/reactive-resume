@@ -112,7 +112,7 @@ All adapters await the same bounded PostgreSQL-backed processor. Node prevents o
 
 An operator can trigger a tick for diagnostics or use a custom scheduler. Set `CRON_SECRET` (at least 16 characters), then call `GET` or `POST /api/career/run` with `Authorization: Bearer <secret>`. Without this token the HTTP endpoint returns `404`; invalid authorization returns `401`. Internal Node and Cloudflare ticks continue without this token.
 
-From a source checkout with Node.js 24, a manual tick can use a protected environment file outside the repository:
+From a source checkout with Node.js 26, a manual tick can use a protected environment file outside the repository:
 
 ```dotenv
 APP_URL=https://resume.example.com

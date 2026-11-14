@@ -54,6 +54,8 @@ function* chunks(...parts: (string | { aiOperationId: string })[]) {
 
 beforeEach(() => {
 	vi.resetAllMocks();
+	// Node's built-in sessionStorage lives for the whole file; a draft one test stores must not reach the next.
+	sessionStorage.clear();
 	setAccountScope("account-a");
 	store().load(letter);
 });

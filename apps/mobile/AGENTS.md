@@ -23,7 +23,7 @@ resume page is `app/r/[username]/[slug].tsx` and the ATS checker `app/ats-checke
 
 ## Checks
 
-Run from the repository root with Node 24 (`mise exec node@24 -- …`). None needs a device.
+Run from the repository root with Node 26 (`mise exec node@26 -- …`). None needs a device.
 
 ```sh
 pnpm --filter mobile typecheck

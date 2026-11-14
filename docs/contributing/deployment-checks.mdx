@@ -14,7 +14,7 @@ The job:
 1. Starts an isolated PostgreSQL service.
 2. Writes a local `.vercel/project.json` with the `services` framework, then runs `vercel build --prod --standalone` offline with placeholder Blob credentials. Vercel packages dependencies into the Function output; the build applies migrations to the isolated database.
 3. Checks the `backend` service Function:
-   - its runtime is `nodejs24.x`, `maxDuration` is `300`, and its handler is `apps/server/vercel.mjs`;
+   - its runtime is `nodejs26.x`, `maxDuration` is `300`, and its handler is `apps/server/vercel.mjs`;
    - a copy of the Function outside the checkout loads with `--no-experimental-require-module`, like the Vercel runtime does, so a dependency the build left out fails the job;
    - the copy rejects an unauthenticated upload-staging request with `401` and serves the prerendered homepage with its JSON-LD metadata.
 
@@ -56,7 +56,7 @@ The installation needs `ENCRYPTION_SECRET` set to save the provider. A provider 
 
 ## Run the smoke test yourself
 
-The script needs only Node.js 24 and a checkout. Set `SMOKE_URL` to the installation's origin:
+The script needs only Node.js 26 and a checkout. Set `SMOKE_URL` to the installation's origin:
 
 ```bash
 SMOKE_URL=http://localhost:3000 node tooling/deployment/smoke.mjs

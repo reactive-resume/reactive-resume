@@ -13,7 +13,7 @@ export async function main() {
 	const { startCareerScheduler } = await import("./startup/career-scheduler");
 	const { startStorageCleanupScheduler } = await import("./startup/storage-cleanup");
 
-	// Safety net: Node 24 crashes the whole process on an unhandled rejection. One request's
+	// Safety net: Node crashes the whole process on an unhandled rejection. One request's
 	// stray promise must not take the server down for everyone, so log and keep serving.
 	// Registered after startup checks so a broken startup still fails loudly. (Left uncaught
 	// exceptions on Node's default crash-and-restart, since process state is unsafe after one.)

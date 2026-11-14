@@ -46,8 +46,8 @@ Boundaries: code/commits/PRs written normal.
 
 ## Environment
 
-- Node 24 (`.nvmrc`). This machine's default may be newer; run commands as `mise exec node@24 -- <cmd>` when
-  `node -v` isn't 24. pnpm version: root `packageManager`.
+- Node 26 (`.nvmrc`). This machine's default may be newer; run commands as `mise exec node@26 -- <cmd>` when
+  `node -v` isn't 26. pnpm version: root `packageManager`.
 - Setup, `.env.local`, dev servers, storage and database workflow: `docs/contributing/development.mdx`. Local Postgres,
   Redis and SeaweedFS come from `compose.dev.yml`; host-run code uses `localhost`, containers use service names.
 - Root `.env` is auto-loaded by `packages/env`; root dev and `db:*` scripts load `.env.local` through `dotenvx`; tests,

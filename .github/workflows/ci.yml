@@ -368,10 +368,10 @@ jobs:
           cat > .vercel/project.json <<'JSON'
           {
             "projectId": "prj_ci", "orgId": "team_ci", "projectName": "reactive-resume-ci",
-            "settings": { "framework": "services", "nodeVersion": "24.x", "createdAt": 0 }
+            "settings": { "framework": "services", "nodeVersion": "26.x", "createdAt": 0 }
           }
           JSON
-          pnpm dlx --allow-build=esbuild vercel@61.0.0 build --prod --standalone --yes --global-config "$RUNNER_TEMP/vercel-offline"
+          pnpm dlx --allow-build=esbuild vercel@65.10.0 build --prod --standalone --yes --global-config "$RUNNER_TEMP/vercel-offline"
       # Runs the backend Function from a copy outside the checkout, so a dependency the build left out fails here.
       - name: Verify Vercel function loading and limits
         run: |
@@ -381,7 +381,7 @@ jobs:
           import { join } from 'node:path';
           const func = '.vercel/output/services/backend/functions/index.func';
           const config = JSON.parse(readFileSync(`${func}/.vc-config.json`));
-          assert.equal(config.runtime, 'nodejs24.x');
+          assert.equal(config.runtime, 'nodejs26.x');
           assert.equal(config.maxDuration, 300);
           assert.equal(config.handler, 'apps/server/vercel.mjs');
           const root = join(process.env.RUNNER_TEMP, 'backend-function');
