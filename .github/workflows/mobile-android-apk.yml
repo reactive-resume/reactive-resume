@@ -5,7 +5,7 @@ name: Mobile Android APK
 # Play sends no event when a release is promoted, so this polls; a release already mirrored is skipped.
 on:
   schedule:
-    - cron: "7,22,37,52 * * * *"
+    - cron: "7 3 * * *"
   workflow_dispatch:
 
 permissions:

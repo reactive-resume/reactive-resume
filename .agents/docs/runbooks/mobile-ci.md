@@ -35,7 +35,7 @@ are done by hand in the store consoles from a tested internal build.
 
 ## Android APK mirror
 
-`.github/workflows/mobile-android-apk.yml` polls every 15 minutes (and on dispatch) on a free hosted runner. Lane
+`.github/workflows/mobile-android-apk.yml` polls daily at 03:07 UTC (and on dispatch) on a free hosted runner. Lane
 `android production_release` reads the newest Play production release with status `completed` or `inProgress`; when
 GitHub has no release `android-<versionCode>` yet, lane `android universal_apk` downloads the universal APK Play
 generated from that bundle and the workflow publishes it, tagged at the commit Mobile release built it from (found
