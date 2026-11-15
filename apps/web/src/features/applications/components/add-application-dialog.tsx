@@ -46,6 +46,7 @@ import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { rowGroundClassName } from "@/components/calm/list-row";
 import { SetUpAiLine } from "@/components/calm/set-up-ai-line";
 import { StageDot } from "@/components/calm/stage-dot";
+import { pageFocusTarget } from "@/components/layout/navigation-focus";
 import { SetUpAiDialog } from "@/features/ai/set-up-ai";
 import { useSessionDraft } from "@/features/career/hooks";
 import { useNow } from "@/features/career/shared";
@@ -165,7 +166,13 @@ export function AddApplicationDialog({ open, onOpenChange, onAdded, initialCaptu
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent
 				closeLabel={t`Close`}
-				finalFocus={opener instanceof HTMLElement ? () => opener : undefined}
+				// Opened by ?create after a route change, the opener is body (or gone): return to the page start, not
+				// body's first tabbable (the skip link).
+				finalFocus={() =>
+					opener instanceof HTMLElement && opener !== document.body && opener.isConnected
+						? opener
+						: (pageFocusTarget() ?? true)
+				}
 				className="sm:max-w-[560px]"
 			>
 				<AddApplicationForm

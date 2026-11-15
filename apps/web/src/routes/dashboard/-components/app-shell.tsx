@@ -219,7 +219,7 @@ export function AppShell({ children }: AppShellProps) {
 		>
 			<a
 				href="#main-content"
-				className="sr-only rounded-md bg-raised px-4 py-2 text-sm focus:not-sr-only focus:absolute focus:inset-s-2 focus:top-2 focus:z-[100]"
+				className="sr-only rounded-md bg-raised px-4 py-2 text-sm focus-visible:not-sr-only focus-visible:absolute focus-visible:inset-s-2 focus-visible:top-2 focus-visible:z-[100]"
 			>
 				<Trans>Skip to main content</Trans>
 			</a>
