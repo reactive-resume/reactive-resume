@@ -22,7 +22,7 @@ export function MarketingLayout({ children }: MarketingLayoutProps) {
 		<div className="relative isolate flex min-h-svh flex-col bg-bg font-ui text-ink">
 			<a
 				href="#main-content"
-				className="sr-only focus:not-sr-only focus:fixed focus:inset-s-4 focus:top-4 focus:z-100 focus:rounded-md focus:bg-bg focus:px-4 focus:py-2 focus:text-ink focus:shadow-lg focus:ring-2 focus:ring-accent"
+				className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:inset-s-4 focus-visible:top-4 focus-visible:z-100 focus-visible:rounded-md focus-visible:bg-bg focus-visible:px-4 focus-visible:py-2 focus-visible:text-ink focus-visible:shadow-lg focus-visible:ring-2 focus-visible:ring-accent"
 			>
 				<Trans>Skip to main content</Trans>
 			</a>
