@@ -90,10 +90,11 @@ export function FontFamilyCombobox({
 	);
 	const list = useListRef(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
-	// A new search starts at its first match, which takes Enter.
+	// A new search starts at its first match, which takes Enter. react-window throws on an empty list (#3985).
+	const hasMatches = options.length > 0;
 	useEffect(() => {
-		if (query) list.current?.scrollToRow({ index: 0, align: "start" });
-	}, [query, list]);
+		if (query && hasMatches) list.current?.scrollToRow({ index: 0, align: "start" });
+	}, [query, hasMatches, list]);
 	return (
 		<ComboboxRoot
 			items={FONT_FAMILY_OPTIONS}
