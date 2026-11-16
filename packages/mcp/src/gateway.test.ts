@@ -1,7 +1,7 @@
 import type { MCP_ROUTER } from "./parity";
 import type { RouterClient } from "@orpc/server";
 import type { RequestAuthentication } from "@reactive-resume/api/context";
-import { expect, it } from "vite-plus/test";
+import { expect, it, vi } from "vite-plus/test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -86,4 +86,50 @@ it("rejects unknown operations and invalid arguments", async () => {
 		arguments: { name: "api_resume_list_versions", arguments: { resumeId: 42 } },
 	});
 	expect(invalid.isError).toBe(true);
+});
+
+it("lets a read-only credential find and run only read operations", async () => {
+	const server = new McpServer({ name: "gateway-test", version: "1.0.0" });
+	const readOnly: RequestAuthentication = { ...authentication, permissions: ["read"] };
+	const apiClient = {
+		resume: { listVersions: async () => [{ id: "v1" }] },
+	} as unknown as RouterClient<typeof MCP_ROUTER>;
+	registerApiGateway(
+		server,
+		(target) =>
+			registerParityTools(target, apiClient, new Headers(), {
+				authentication: readOnly,
+				resHeaders: new Headers(),
+				locale: "en-US",
+				trustedClient: "127.0.0.1",
+			}),
+		{ expose: true, canWrite: false },
+	);
+	vi.stubEnv("MCP_API_TOOLS", "search");
+	vi.resetModules();
+	const { registerToolDiscovery } = await import("./discovery");
+	registerToolDiscovery(server, { canWrite: false });
+	vi.unstubAllEnvs();
+	const client = new Client({ name: "gateway-client", version: "1.0.0" });
+	const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+	await server.connect(serverTransport);
+	await client.connect(clientTransport);
+
+	const listed = (await client.listTools()).tools.map((tool) => tool.name);
+	expect(listed).toContain("api_search");
+	expect(listed).toContain("api_execute");
+	const found = await client.callTool({ name: "api_search", arguments: { query: "resume version" } });
+	const names = (found.structuredContent as { tools: { name: string }[] }).tools.map((tool) => tool.name);
+	expect(names).toContain("api_resume_list_versions");
+	expect(names).not.toContain("api_resume_delete_version");
+	const run = await client.callTool({
+		name: "api_execute",
+		arguments: { name: "api_resume_list_versions", arguments: { resumeId: "00000000-0000-0000-0000-000000000000" } },
+	});
+	expect(run.isError).toBeFalsy();
+	const denied = await client.callTool({
+		name: "api_execute",
+		arguments: { name: "api_resume_delete_version", arguments: {} },
+	});
+	expect(denied.isError).toBe(true);
 });

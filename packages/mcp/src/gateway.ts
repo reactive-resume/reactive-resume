@@ -4,7 +4,7 @@ import { toJsonSchemaCompat } from "@modelcontextprotocol/sdk/server/zod-json-sc
 import z from "zod";
 import { env } from "@reactive-resume/env/server";
 import { READ_IDEMPOTENT, WRITE_DESTRUCTIVE_EXTERNAL } from "./annotations";
-import { PARITY_TOOL_META } from "./parity";
+import { PARITY_TOOL_META, PARITY_WRITE_TOOLS } from "./parity";
 import { json } from "./results";
 
 /**
@@ -49,13 +49,19 @@ export const API_GATEWAY_TOOL_META = {
 	},
 };
 
-function searchApiTools(query: string, limit = 8) {
+export const GATEWAY_TOOL_NAMES: ReadonlySet<string> = new Set(["api_search", "api_execute"]);
+
+/** Same rule as read-only discovery: read-only by annotation and by the permission its route needs. */
+const readableWithoutWrite = (name: string) =>
+	PARITY_TOOL_META[name]?.annotations.readOnlyHint === true && !PARITY_WRITE_TOOLS.has(name);
+
+function searchApiTools(callable: ReadonlySet<string>, query: string, limit = 8) {
 	const words = query
 		.toLowerCase()
 		.split(/[^a-z0-9]+/)
 		.filter(Boolean);
 	const scored = Object.entries(PARITY_TOOL_META)
-		.filter(([name]) => isApiTool(name))
+		.filter(([name]) => callable.has(name))
 		.map(([name, meta]) => {
 			const haystack = `${name.replaceAll("_", " ")} ${meta.title} ${meta.description}`.toLowerCase();
 			const score = words.reduce(
@@ -86,7 +92,7 @@ const toolError = (text: string): CallToolResult => ({ isError: true, content: [
 export function registerApiGateway(
 	server: McpServer,
 	register: (target: McpServer) => void,
-	{ expose }: { expose: boolean },
+	{ expose, canWrite = true }: { expose: boolean; canWrite?: boolean },
 ) {
 	const handlers = new Map<string, ToolCallback>();
 	const capture = new Proxy(server, {
@@ -107,13 +113,16 @@ export function registerApiGateway(
 	register(capture);
 	if (!expose) return;
 
+	// A read-only credential only finds, and only runs, what it may call.
+	const callable = new Set([...handlers.keys()].filter((name) => canWrite || readableWithoutWrite(name)));
 	server.registerTool("api_search", API_GATEWAY_TOOL_META.api_search, ({ query, limit }) =>
-		json({ tools: searchApiTools(query, limit) }),
+		json({ tools: searchApiTools(callable, query, limit) }),
 	);
 	server.registerTool("api_execute", API_GATEWAY_TOOL_META.api_execute, ({ name, arguments: args }, extra) => {
 		const handler = handlers.get(name);
 		const meta = PARITY_TOOL_META[name];
 		if (!handler || !meta) return toolError(`Unknown operation ${name}. Find one with api_search.`);
+		if (!callable.has(name)) return toolError(`${name} needs write access; this credential is read-only.`);
 		const parsed = (meta.inputSchema as z.ZodType).safeParse(args ?? {});
 		if (!parsed.success) return toolError(`Invalid arguments for ${name}:\n${z.prettifyError(parsed.error)}`);
 		return handler(parsed.data, extra);

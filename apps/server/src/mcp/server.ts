@@ -57,6 +57,7 @@ export function createMcpServer(
 	resHeaders: Headers,
 ) {
 	const apiTools = apiToolsMode();
+	const canWrite = authentication.permissions.includes("write");
 	const server = new McpServer(buildMcpServerInfo(appVersion, env.APP_URL), {
 		instructions: [
 			"Reactive Resume holds the user's resumes, cover letters and job applications.",
@@ -90,9 +91,9 @@ export function createMcpServer(
 			signal: request.signal,
 		});
 	if (apiTools === "all") registerApi(server);
-	else registerApiGateway(server, registerApi, { expose: apiTools === "search" });
+	else registerApiGateway(server, registerApi, { expose: apiTools === "search", canWrite });
 	registerPrompts(server, client);
-	registerToolDiscovery(server, { canWrite: authentication.permissions.includes("write") });
+	registerToolDiscovery(server, { canWrite });
 
 	return server;
 }
