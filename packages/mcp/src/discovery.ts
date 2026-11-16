@@ -2,11 +2,17 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { toJsonSchemaCompat } from "@modelcontextprotocol/sdk/server/zod-json-schema-compat.js";
 import { ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { API_GATEWAY_TOOL_META, apiToolsMode, isApiTool } from "./gateway";
 import { PARITY_TOOL_META, PARITY_WRITE_TOOLS } from "./parity";
 import { TOOL_META } from "./tool-meta";
 
 function buildToolDefinitions() {
-	return Object.entries({ ...TOOL_META, ...PARITY_TOOL_META }).map(
+	const mode = apiToolsMode();
+	const parity =
+		mode === "all"
+			? PARITY_TOOL_META
+			: Object.fromEntries(Object.entries(PARITY_TOOL_META).filter(([name]) => !isApiTool(name)));
+	return Object.entries({ ...TOOL_META, ...parity, ...(mode === "search" ? API_GATEWAY_TOOL_META : {}) }).map(
 		([name, { title, description, inputSchema, outputSchema, annotations }]) => ({
 			name,
 			title,

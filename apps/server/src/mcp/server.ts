@@ -8,6 +8,8 @@ import {
 	buildMcpServerInfo,
 	MCP_TOOL_NAME,
 	MCP_ROUTER,
+	apiToolsMode,
+	registerApiGateway,
 	registerParityTools,
 	registerPrompts,
 	registerResources,
@@ -54,6 +56,7 @@ export function createMcpServer(
 	trustedClient: string,
 	resHeaders: Headers,
 ) {
+	const apiTools = apiToolsMode();
 	const server = new McpServer(buildMcpServerInfo(appVersion, env.APP_URL), {
 		instructions: [
 			"Reactive Resume holds the user's resumes, cover letters and job applications.",
@@ -61,7 +64,15 @@ export function createMcpServer(
 			`Edit resume content with JSON Patch through \`${MCP_TOOL_NAME.patchResume}\`, and change a resume's name, slug, tags or public visibility with \`${MCP_TOOL_NAME.updateResume}\`.`,
 			`Track job applications with the application tools, starting from \`${MCP_TOOL_NAME.listApplications}\`.`,
 			`Get a short-lived PDF link with \`${MCP_TOOL_NAME.downloadResumePdf}\`; export cover letters with \`${MCP_TOOL_NAME.exportCoverLetter}\`.`,
-			"Tools named api_* expose the rest of the Reactive Resume API. Tools that involve passwords, API keys or AI provider keys return a link to finish in the app.",
+			...(apiTools === "all"
+				? [
+						"Tools named api_* expose the rest of the Reactive Resume API. Tools that involve passwords, API keys or AI provider keys return a link to finish in the app.",
+					]
+				: apiTools === "search"
+					? [
+							"The rest of the Reactive Resume API is reached through `api_search` (find an operation and its input schema by keywords) and `api_execute` (run it by name). Operations that involve passwords, API keys or AI provider keys return a link to finish in the app.",
+						]
+					: []),
 		].join(" "),
 	});
 
@@ -70,13 +81,16 @@ export function createMcpServer(
 	headers.delete("cookie");
 	registerResources(server, client);
 	registerTools(server, client, headers, authentication);
-	registerParityTools(server, client, headers, {
-		authentication,
-		resHeaders,
-		trustedClient,
-		locale: getRequestLocale(request),
-		signal: request.signal,
-	});
+	const registerApi = (target: McpServer) =>
+		registerParityTools(target, client, headers, {
+			authentication,
+			resHeaders,
+			trustedClient,
+			locale: getRequestLocale(request),
+			signal: request.signal,
+		});
+	if (apiTools === "all") registerApi(server);
+	else registerApiGateway(server, registerApi, { expose: apiTools === "search" });
 	registerPrompts(server, client);
 	registerToolDiscovery(server, { canWrite: authentication.permissions.includes("write") });
 

@@ -234,6 +234,8 @@ The last four tools send data to the AI provider you set up in Reactive Resume a
 
 Additional tools use `api_` followed by the API router path in snake case. Inputs come from the same validated contracts as the API. Existing tool names remain available.
 
+Listed one by one, these tools make up most of the server's `tools/list`. Self-hosted instances can set `MCP_API_TOOLS="search"` to replace them with two tools: `api_search` finds operations by keywords and returns their input schemas, and `api_execute` runs one by name with validated arguments. Every operation stays available. `MCP_API_TOOLS="none"` leaves them out entirely; the default, `"all"`, lists each one.
+
 | Area                       | Examples                                                                                       | Coverage                                                                                                                  |
 | -------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Resume history and sharing | `api_resume_list_versions`, `api_resume_restore_version`, `api_resume_set_password`            | List/read/create/rename/delete/restore versions; password removal, slug availability, public reads and daily statistics   |
