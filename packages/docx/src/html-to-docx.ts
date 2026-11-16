@@ -87,15 +87,19 @@ function mergeStyle(parent: InlineStyle, tag: string, element?: HTMLElement): In
 			break;
 		case "CODE":
 			next.font = "Courier New";
+			next.shading = { fill: "EEEEEE" };
 			break;
 		case "MARK": {
-			const bgColor = styleProperty(element, "background-color");
+			const bgColor = element?.getAttribute("data-color") ?? styleProperty(element, "background-color");
 			const fill = bgColor ? toDocxColorValue(bgColor) : null;
 			next.shading = { fill: fill ?? "FFFF00" };
 			if (bgColor && isDarkColor(bgColor)) next.color = "FFFFFF";
 			break;
 		}
 	}
+	const background = styleProperty(element, "background-color");
+	const fill = background ? toDocxColorValue(background) : null;
+	if (fill && tag !== "MARK") next.shading = { fill };
 
 	const colorValue = styleProperty(element, "color");
 	if (colorValue) {

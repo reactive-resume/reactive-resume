@@ -43,6 +43,11 @@ const bundledInteropPackages = new Set([
 	"launder",
 	"dayjs",
 	"wink-porter2-stemmer",
+	"pdf-lib",
+	"@pdf-lib/standard-fonts",
+	"@pdf-lib/upng",
+	"pako",
+	"tslib",
 ]);
 
 const packageNameOf = (id: string) =>

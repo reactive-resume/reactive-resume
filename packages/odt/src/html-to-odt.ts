@@ -48,6 +48,7 @@ function mergeStyle(parent: InlineStyle, tag: string, element?: HTMLElement): In
 			break;
 		case "CODE":
 			next.code = true;
+			next.highlight = "eeeeee";
 			break;
 	}
 
@@ -55,7 +56,8 @@ function mergeStyle(parent: InlineStyle, tag: string, element?: HTMLElement): In
 	const color = colorValue ? toHex(colorValue) : null;
 	if (color) next.color = color;
 
-	const backgroundValue = styleProperty(element, "background-color");
+	const backgroundValue =
+		(tag === "MARK" ? element?.getAttribute("data-color") : undefined) ?? styleProperty(element, "background-color");
 	const background = backgroundValue ? toHex(backgroundValue) : null;
 
 	if (tag === "MARK") {
