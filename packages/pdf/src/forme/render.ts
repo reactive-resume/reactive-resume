@@ -15,6 +15,7 @@ import { loadFonts } from "./fonts";
 import { loadRequestedIcons } from "./icons";
 import { imageSources, loadImages } from "./images";
 import { renderHostTree } from "./reconciler";
+import { paintTextBackgrounds } from "./text-backgrounds";
 import { FIXED_SOURCE, FREE_FORM_MEASURE_HEIGHT, LIST_ROLE, toFormeDocument } from "./to-forme";
 
 /** The Forme entry point for this runtime: `@formepdf/core` in Node, `@formepdf/core/worker` in browsers. */
@@ -406,6 +407,7 @@ export async function renderResumeElement(
 	const presenceAheadNodes = new Map<string, number>();
 	// Every pass draws the same text, so the fonts are prepared once, from the first pass's document.
 	let formeFonts: typeof fonts | undefined;
+	let renderedDocument: FormeDocument | undefined;
 	const missingGlyphs = new Set<string>();
 	const missingGlyphWarnings = new Set<string>();
 	const glyphSubstitutions = new Map<string, Set<string>>();
@@ -445,6 +447,7 @@ export async function renderResumeElement(
 				if (await substituteMissingGlyphs(document, missingGlyphs, draw, glyphSubstitutions))
 					result = await draw(document);
 			}
+			renderedDocument = { ...document, fonts: preparedFonts.map((font) => ({ ...font })) };
 			return result;
 		};
 		let converted = convert();
@@ -527,7 +530,7 @@ export async function renderResumeElement(
 		warnings.push("render defect: the engine couldn't place a box; a page may be laid out wrong");
 
 	return {
-		pdf: result.pdf,
+		pdf: renderedDocument ? await paintTextBackgrounds(engine, renderedDocument, result.pdf) : result.pdf,
 		pageMap: extractPageMap(result.layout),
 		missingFonts: [...new Set(missing)],
 		layout: result.layout,

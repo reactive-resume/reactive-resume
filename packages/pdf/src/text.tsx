@@ -62,6 +62,7 @@ const TAG_STYLES: Record<string, Style> = {
 	i: { fontStyle: "italic" },
 	em: { fontStyle: "italic" },
 	cite: { fontStyle: "italic" },
+	code: { fontFamily: "Courier", backgroundColor: "#eeeeee" },
 	s: { textDecoration: "line-through" },
 	strike: { textDecoration: "line-through" },
 	u: { textDecoration: "underline" },
