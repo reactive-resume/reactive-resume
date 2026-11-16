@@ -1276,7 +1276,9 @@ FROM application a JOIN "user" u ON u.id=a.user_id WHERE a.follow_up_at IS NOT N
 AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.application_id=a.id AND s.kind='follow-up');
 `;
 
-	it("forward correction repairs installations recorded with an earlier owner migration", async () => {
+	// Three full migration histories need the same 30s budget as schema setup under CI's eight-worker load.
+	// A 5s timeout lets unfinished work keep swapping fixture.db while the next test runs.
+	it("forward correction repairs earlier owner migrations", { timeout: 30_000 }, async () => {
 		const schemas: string[] = [];
 		const pools: Pool[] = [];
 		const normalized = async (pool: Pool) => {
