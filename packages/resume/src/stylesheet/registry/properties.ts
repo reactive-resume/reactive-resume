@@ -116,6 +116,7 @@ const textNodes = [
 
 const linkContainerNodes = [...containerNodes, "link"] as SemanticNodeKind[];
 const textAndLinkNodes = [...textNodes, "link"] as SemanticNodeKind[];
+const inheritableTextNodes = [...containerNodes, ...textAndLinkNodes] as SemanticNodeKind[];
 const colorNodes = [...containerNodes, ...textNodes, "link", "icon", "level"] as SemanticNodeKind[];
 const spacingNodes = [...containerNodes, ...textNodes, "link", "picture"] as SemanticNodeKind[];
 const structuralNodes = SEMANTIC_NODE_KINDS.filter((kind) => kind !== "resume") as SemanticNodeKind[];
@@ -244,27 +245,27 @@ const properties = {
 	...entries(["color"], { category: "color", inheritable: true, appliesTo: colorNodes }),
 	...entries(["background-color"], { category: "color", inheritable: false, appliesTo: linkContainerNodes }),
 	...entries(["opacity"], { category: "color", inheritable: false, appliesTo: colorNodes }),
-	...entries(["direction"], { category: "text", inheritable: true, appliesTo: textAndLinkNodes }),
+	...entries(["direction"], { category: "text", inheritable: true, appliesTo: inheritableTextNodes }),
 	...entries(["font-size"], {
 		category: "text",
 		inheritable: true,
-		appliesTo: [...textAndLinkNodes, "icon", "level"],
+		appliesTo: [...inheritableTextNodes, "icon", "level"],
 	}),
 	...entries(["font-style", "font-weight", "letter-spacing", "line-height"], {
 		category: "text",
 		inheritable: true,
-		appliesTo: textAndLinkNodes,
+		appliesTo: inheritableTextNodes,
 	}),
 	...entries(["max-lines"], { category: "text", inheritable: false, appliesTo: textAndLinkNodes }),
-	...entries(["text-align"], { category: "text", inheritable: true, appliesTo: textAndLinkNodes }),
+	...entries(["text-align"], { category: "text", inheritable: true, appliesTo: inheritableTextNodes }),
 	...entries(["text-decoration", "text-decoration-color", "text-decoration-style"], {
 		category: "text",
 		inheritable: false,
 		appliesTo: textAndLinkNodes,
 	}),
-	...entries(["text-indent"], { category: "text", inheritable: true, appliesTo: textAndLinkNodes }),
+	...entries(["text-indent"], { category: "text", inheritable: true, appliesTo: inheritableTextNodes }),
 	...entries(["text-overflow"], { category: "text", inheritable: false, appliesTo: textAndLinkNodes }),
-	...entries(["text-transform"], { category: "text", inheritable: true, appliesTo: textAndLinkNodes }),
+	...entries(["text-transform"], { category: "text", inheritable: true, appliesTo: inheritableTextNodes }),
 	...entries(["vertical-align"], { category: "text", inheritable: false, appliesTo: textAndLinkNodes }),
 	...entries(["object-fit", "object-position"], { category: "image", inheritable: false, appliesTo: ["picture"] }),
 	...entries(["-resume-shadow-color", "-resume-shadow-width"], {

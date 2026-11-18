@@ -425,6 +425,69 @@ describe("Semantic CSS cascade and structural resolution", () => {
 		expect(result.nodes["strong-1"]?.style["line-height"]).toBe("18pt");
 	});
 
+	it("resolves inheritable text properties set on container elements into descendant text", () => {
+		const awardsTree = node("resume", "resume", {
+			children: [
+				node("page-1", "page", {
+					attributes: { "page-number": "1" },
+					children: [
+						node("section-awards", "section", {
+							id: "awards",
+							attributes: { type: "awards" },
+							children: [
+								node("items-awards", "section-items", {
+									children: [
+										node("item-1", "item", {
+											children: [
+												node("item-header-1", "item-header", {
+													children: [
+														node("row-1", "template-part", {
+															attributes: { name: "item-header-row" },
+															children: [node("field-title", "field", { attributes: { name: "title" } })],
+														}),
+													],
+												}),
+											],
+										}),
+									],
+								}),
+							],
+						}),
+					],
+				}),
+			],
+		});
+		const result = resolveTree(
+			`section[id="awards"] item item-header { font-weight: bold; text-align: right; }
+			item { font-size: 20pt; line-height: 1.8; }`,
+			awardsTree,
+			{ ...context, baseStyles: {} },
+		);
+
+		expect(result.diagnostics).not.toContainEqual(expect.objectContaining({ code: "PROPERTY_NOT_APPLICABLE" }));
+		expect(result.nodes["item-header-1"]?.style).toMatchObject({
+			"font-weight": "bold",
+			"text-align": "right",
+			"font-size": 20,
+			"line-height": 1.8,
+		});
+		expect(result.nodes["field-title"]?.style).toMatchObject({
+			"font-weight": "bold",
+			"text-align": "right",
+			"font-size": 20,
+			"line-height": 1.8,
+		});
+	});
+
+	it("keeps non-inheritable text properties text-only on container elements", () => {
+		const result = resolve("item { text-decoration: underline; }");
+
+		expect(result.nodes["item-1"]?.style["text-decoration"]).toBeUndefined();
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "PROPERTY_NOT_APPLICABLE", severity: "warning" }),
+		);
+	});
+
 	it("matches positional selectors before applying display and stable order exactly once", () => {
 		const result = resolve(`
 			item:nth-child(2) { display: none; }
