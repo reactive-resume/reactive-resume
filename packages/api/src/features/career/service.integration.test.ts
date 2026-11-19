@@ -861,7 +861,7 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect((await service.context({ userId: "bob" })).facts.map((item) => item.id)).toEqual([bob.id]);
 	});
 
-	it.each(["corrected", "excluded", "forgotten"] as const)(
+	it.each(["corrected", "excluded"] as const)(
 		"imports sibling resume quotations without reviving a %s fact",
 		async (change) => {
 			const data = resumeData("Source resume");
@@ -890,12 +890,10 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			});
 			const [original] = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.userId, "alice"));
 			if (!original) throw new Error("Expected the imported summary.");
-			if (change === "forgotten") await service.forgetFact("alice", original.id);
-			else
-				await service.updateFact("alice", {
-					id: original.id,
-					...(change === "corrected" ? { text: "I contributed to Project Willow." } : { status: "excluded" }),
-				});
+			await service.updateFact("alice", {
+				id: original.id,
+				...(change === "corrected" ? { text: "I contributed to Project Willow." } : { status: "excluded" }),
+			});
 			const [retained] = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, original.id));
 			expect(await service.saveResumeFacts("alice", input)).toEqual({ saved: 1, skipped: 1 });
 			const rows = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.userId, "alice"));
@@ -910,6 +908,68 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			expect(await service.saveResumeFacts("alice", input)).toEqual({ saved: 0, skipped: 2 });
 		},
 	);
+
+	it("restores a forgotten fact when its reviewed resume import is selected again", async () => {
+		const data = resumeData("Source resume");
+		data.summary.content = "<p>I led Project Willow.</p>";
+		data.sections.skills.items = [
+			{
+				id: "skill",
+				hidden: false,
+				icon: "",
+				iconColor: "",
+				name: "TypeScript",
+				proficiency: "",
+				level: 0,
+				keywords: [],
+			},
+		];
+		await getDb().update(tables.resume).set({ data }).where(eq(tables.resume.id, "shared-resume"));
+		const review = await service.proposeResumeFacts("alice", "shared-resume");
+		expect(review.proposals).toHaveLength(2);
+		const first = review.proposals[0];
+		if (!first) throw new Error("Expected the summary proposal.");
+		const input = { resumeId: review.id, updatedAt: review.updatedAt, proposals: review.proposals };
+		expect(await service.saveResumeFacts("alice", { ...input, proposals: [first] })).toEqual({
+			saved: 1,
+			skipped: 0,
+		});
+		const [original] = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.userId, "alice"));
+		if (!original) throw new Error("Expected the imported summary.");
+		await service.forgetFact("alice", original.id);
+		// Every unreviewed path keeps the content-free tombstone: the same resume source stays suppressed.
+		expect(
+			await service.saveFact("alice", {
+				applicationId: null,
+				text: first.text,
+				category: first.category,
+				source: { kind: "resume", id: "shared-resume", quote: first.quote },
+			}),
+		).toBeNull();
+		expect(await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, original.id))).toMatchObject([
+			{ status: "forgotten", text: "", revisions: [], source: { quote: "" } },
+		]);
+		// The reviewed import revives the tombstone with the proposal's text, category and quotation.
+		expect(await service.saveResumeFacts("alice", input)).toEqual({ saved: 2, skipped: 0 });
+		const rows = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.userId, "alice"));
+		expect(rows).toHaveLength(2);
+		expect(rows.find((row) => row.id === original.id)).toMatchObject({
+			text: first.text,
+			category: first.category,
+			status: "active",
+			revisions: [],
+			applicationId: null,
+			source: { kind: "resume", id: "shared-resume", quote: first.quote },
+		});
+		expect(rows.find((row) => row.id !== original.id)).toMatchObject({
+			text: "TypeScript",
+			status: "active",
+			applicationId: null,
+			source: { kind: "resume", id: "shared-resume", quote: "- **TypeScript**" },
+		});
+		expect(await service.forgottenFacts("alice")).toEqual([]);
+		expect(await service.saveResumeFacts("alice", input)).toEqual({ saved: 0, skipped: 2 });
+	});
 
 	it("resolves each application's submitted versions and verifies quotations against that version", async () => {
 		const style = copyCoverLetterStyle(defaultResumeData);

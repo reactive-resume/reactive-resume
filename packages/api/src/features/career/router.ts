@@ -257,7 +257,7 @@ export const careerRouter = {
 			operationId: "saveResumeFacts",
 			summary: "Save reviewed resume facts",
 			description:
-				"Atomically saves only selected facts as shared Knowledge, retaining their exact resume quotations. Rejects a changed or trashed source. Existing, corrected and switched-off Knowledge is preserved.",
+				"Atomically saves only selected facts as shared Knowledge, retaining their exact resume quotations. Rejects a changed or trashed source. Existing, corrected and switched-off Knowledge is preserved; a selected forgotten fact is re-added.",
 		})
 		.input(resumeFactsReviewSchema)
 		.output(z.object({ saved: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() }))

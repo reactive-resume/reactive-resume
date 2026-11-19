@@ -510,12 +510,15 @@ async function submitAnswerSnapshot(
 	return { application: submitted, stages: [savedStageOf(submitted)] };
 }
 
-/** Called under the account lock; all fact entry points share suppression and deduplication. */
-async function storeFact(tx: DbOrTx, userId: string, fact: FactInput) {
+/**
+ * Called under the account lock; all fact entry points share suppression and deduplication. `restoreForgotten` is
+ * the reviewed resume import's privilege: it may revive its own tombstone where automatic paths never may.
+ */
+async function storeFact(tx: DbOrTx, userId: string, fact: FactInput, restoreForgotten = false) {
 	const { source } = fact;
 	const sourceKey = hash(`${source.kind}:${source.id}:${source.quote.trim().toLocaleLowerCase()}`);
 	const [suppressed] = await tx
-		.select({ id: tables.careerFact.id })
+		.select({ id: tables.careerFact.id, status: tables.careerFact.status })
 		.from(tables.careerFact)
 		.where(
 			and(
@@ -531,7 +534,15 @@ async function storeFact(tx: DbOrTx, userId: string, fact: FactInput) {
 			),
 		)
 		.limit(1);
-	if (suppressed) return null;
+	if (suppressed) {
+		if (!restoreForgotten || suppressed.status !== "forgotten") return null;
+		const [restored] = await tx
+			.update(tables.careerFact)
+			.set({ ...fact, status: "active", revisions: [], updatedAt: new Date() })
+			.where(and(eq(tables.careerFact.id, suppressed.id), eq(tables.careerFact.status, "forgotten")))
+			.returning();
+		return restored ?? null;
+	}
 	// A forgotten source key remains a content-free tombstone; retries cannot recreate the fact.
 	const [row] = await tx
 		.insert(tables.careerFact)
@@ -689,11 +700,16 @@ export const careerService = {
 				throw new ORPCError("BAD_REQUEST", { message: QUOTE_NOT_IN_SOURCE });
 			let saved = 0;
 			for (const { quote, ...fact } of input.proposals) {
-				const row = await storeFact(tx, userId, {
-					...fact,
-					applicationId: null,
-					source: { kind: "resume", id: resume.id, quote },
-				});
+				const row = await storeFact(
+					tx,
+					userId,
+					{
+						...fact,
+						applicationId: null,
+						source: { kind: "resume", id: resume.id, quote },
+					},
+					true,
+				);
 				if (row) saved++;
 			}
 			return { saved, skipped: input.proposals.length - saved };
