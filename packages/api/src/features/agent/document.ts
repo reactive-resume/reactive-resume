@@ -35,6 +35,7 @@ import { applyResumeStructureChange, resumeEntryTypeSchema } from "@reactive-res
 import { syncResumeDates, upgradeResumeDates } from "@reactive-resume/schema/resume/dates";
 import { generateId } from "@reactive-resume/utils/string";
 import { coverLetterService } from "../cover-letters/service";
+import { parseStoredResumeData } from "../resume/resume-data-validation";
 import { resumeService } from "../resume/service";
 import { assertResumeChangeProse } from "./prose";
 import { entryReview } from "./review";
@@ -138,9 +139,20 @@ export async function loadDocument(userId: string, document: AssistantDocument):
 
 	const letter = await coverLetterService.getById({ id: document.id, userId });
 	const passages = collectLetterPassages(letter.content, { ...LABELS, body: "Letter" });
-	// The letter's facts come from its resume.
+	// The letter's facts come from its resume. One in Trash, or one that can't be read, leaves the letter without it.
 	const resume = letter.sourceResumeId
-		? await resumeService.getById({ id: letter.sourceResumeId, userId }).catch(() => null)
+		? await db
+				.select({ id: schema.resume.id, data: schema.resume.data, updatedAt: schema.resume.updatedAt })
+				.from(schema.resume)
+				.where(
+					and(
+						eq(schema.resume.id, letter.sourceResumeId),
+						eq(schema.resume.userId, userId),
+						isNull(schema.resume.trashedAt),
+					),
+				)
+				.then(([row]) => (row ? { ...row, data: parseStoredResumeData(row.data) } : null))
+				.catch(() => null)
 		: null;
 
 	return {

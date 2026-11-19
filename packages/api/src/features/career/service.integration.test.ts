@@ -1072,6 +1072,29 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		).rejects.toMatchObject({ code: "NOT_FOUND" });
 	});
 
+	it("leaves linked documents in Trash out of an application's context", async () => {
+		// The coach rechecks every shared document before each step, and one in Trash failed every reply.
+		await getDb()
+			.insert(tables.coverLetter)
+			.values({
+				id: "alice-letter",
+				userId: "alice",
+				name: "Trashed letter",
+				content: "<p>TRASHED LETTER</p>",
+				style: copyCoverLetterStyle(defaultResumeData),
+				trashedAt: new Date(),
+			});
+		await getDb().update(tables.resume).set({ trashedAt: new Date() }).where(eq(tables.resume.id, "shared-resume"));
+		await getDb()
+			.update(tables.application)
+			.set({ coverLetterId: "alice-letter", sentResumeVersionId: null })
+			.where(eq(tables.application.id, "alice-app"));
+		expect(await service.context({ userId: "alice", applicationId: "alice-app" })).toMatchObject({
+			resume: null,
+			letter: null,
+		});
+	});
+
 	it("atomically corrects type and scope, invalidates earlier coaching and preserves legacy correction history", async () => {
 		const saved = await fact("alice", "Fictional mentoring result");
 		const supporting = await service.saveStory("alice", story([saved.id]));
