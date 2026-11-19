@@ -750,10 +750,6 @@ msgstr "ഫലം ചേർക്കുക"
 msgid "Add a result"
 msgstr "ഒരു ഫലം ചേർക്കുക"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "ആദ്യം ഒരു റെസ്യൂമെ ചേർക്കുക."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "\"Education\" എന്ന തലക്കെട്ടോടെ ഒരു വിഭാഗം ചേർക്കുക. പല സിസ്റ്റങ്ങൾക്കും വിദ്യാഭ്യാസം നിർബന്ധിത ഫീൽഡാണ്."
@@ -944,10 +940,6 @@ msgstr "{1}-ൽ {0} ചേർത്തു"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "നിങ്ങൾ ചേർത്തത്"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "നിങ്ങളുടെ റെസ്യൂമെയിൽ നിന്ന് വസ്തുതകൾ ചേർത്തു. അവയിൽ ഏതും തിരുത്തുകയോ നീക്കുകയോ ചെയ്യാം."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "മറ്റൊരു ഫയൽ തിരഞ്ഞെടുക്കു�
 msgid "Choose another PDF"
 msgstr "മറ്റൊരു PDF തിരഞ്ഞെടുക്കുക"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "2 MB വരെയുള്ള ഓഡിയോ തിരഞ്ഞെടുക്കുക."
@@ -2114,6 +2110,10 @@ msgstr "ഫയൽ ഇറക്കുമതി ആയില്ല. ഫയൽ സ�
 msgid "Couldn't load connected applications. Try again."
 msgstr "ബന്ധിപ്പിച്ച ആപ്പുകൾ ലോഡ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "റെസ്യൂമെ വസ്തുതകൾ ലോഡ് ചെയ്യാനോ സംരക്ഷിക്കാനോ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "രേഖ ലോഡായില്ല. വീണ്ടും ശ്രമിക്കുക."
@@ -2211,10 +2211,6 @@ msgstr "ഫയൽ വായിക്കാനായില്ല. ഫയൽ സ�
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "ഈ ജോലി പരസ്യം വായിക്കാനായില്ല. പരസ്യത്തിന്റെ വാചകം ഒട്ടിക്കുകയോ വിശദാംശങ്ങൾ നൽകുകയോ ചെയ്യുക."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "നിങ്ങളുടെ റെസ്യൂമെ വായിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "അക്കൗണ്ട് സൃഷ്ടിക്കുക"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "പ്രമാണങ്ങളും അപേക്ഷകളും നിങ്ങളുടെ പ്രൊഫൈലും ഉണ്ടാക്കാനും മാറ്റാനും."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "ആദ്യം രേഖകളിൽ ഒരു റെസ്യൂമെ സൃഷ്ടിക്കുകയോ ഇറക്കുമതി ചെയ്യുകയോ ചെയ്യുക."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "എക്സ്പോർട്ട് ചെയ്യുന്നു…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "വസ്തുത"
 
@@ -3329,6 +3330,10 @@ msgstr "ഫ്രീ-ഫോം"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "“{0} · {1}”, അറിവിലെ {2} വസ്തുതകൾ എന്നിവയിൽ നിന്ന് · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "എക്സ്പോർട്ട് ഇല്ല · ആദ്യം ചെയ്യുക"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "നിങ്ങളുടെ റെസ്യൂമെയിൽ വസ്തുതകളൊന്നും കണ്ടെത്തിയില്ല."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "പൊരുത്തപ്പെടുന്ന വസ്തുതകളില്ല. മറ്റൊരു വാക്കോ തരമോ പരീക്ഷിക്കുക."
 
@@ -4821,6 +4822,10 @@ msgstr "ഇതുവരെ കഥകളില്ല"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "അനുഭവകഥയില്ല · ചേർക്കുക"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "പിന്തുണയ്ക്കുന്ന ഉദ്ധരണികൾ കണ്ടെത്തിയില്ല. വസ്തുത സ്വയം ചേർക്കുക അല്ലെങ്കിൽ മറ്റൊരു റെസ്യൂമെ തിരഞ്ഞെടുക്കുക."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "മുൻ പേജ്"
 msgid "Previous week"
 msgstr "മുൻ ആഴ്ച"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "പ്രാഥമിക റെസ്യൂമെ"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "പ്രസാധകൻ"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "എന്റെ റെസ്യൂമെയിൽ നിന്ന് വസ്തുതകൾ എടുക്കുക"
 
@@ -5668,6 +5678,10 @@ msgstr "അവരോട് ചോദിക്കേണ്ട ചോദ്യങ�
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "അഭ്യർത്ഥനാ പരിധി എത്തി"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "പരിശോധിച്ച് തുടരുക"
 msgid "Review it"
 msgstr "പരിശോധിക്കുക"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "ആദ്യം ഓഫർ പരിശോധിക്കുക."
@@ -6313,6 +6331,10 @@ msgstr "അഭിമുഖം സേവ് ചെയ്യുക"
 msgid "Save job"
 msgstr "ജോലി സംരക്ഷിക്കുക"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "എല്ലാ പേജും നിവർന്ന നിലയിൽ ഫയൽ സേവ് ചെയ്യുക."
@@ -6320,6 +6342,10 @@ msgstr "എല്ലാ പേജും നിവർന്ന നിലയിൽ
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "താരതമ്യം ചെയ്യാൻ ഈ ഓഫർ നിബന്ധനകൾ സംരക്ഷിക്കുക. കരിയർ → ഓഫറുകളിൽ തുറക്കും."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "ഫയലുകളിൽ സംരക്ഷിച്ചു"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "ഒരു വസ്തുതയായി അറിവിലേക്ക് സേവ് ചെയ്തു"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "ചില ജോലി വിശദാംശങ്ങൾ വായിക
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "ചില വരികൾ വായനാ ക്രമത്തിന് പുറത്താണ് സംഭരിച്ചിരിക്കുന്നത്."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "റെസ്യൂമെയിലെ ചില ടെക്സ്റ്റ് ഒഴിവാക്കി; മറ്റ് വസ്തുതകൾ സ്വയം ചേർക്കുക."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "ഈ റെസ്യൂമെ ലോക്ക് ചെയ്തിരി
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "ഈ റിസ്യൂം നീണ്ടതാണ്."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

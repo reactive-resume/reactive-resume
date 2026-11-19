@@ -861,7 +861,7 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect((await service.context({ userId: "bob" })).facts.map((item) => item.id)).toEqual([bob.id]);
 	});
 
-	it.each(["corrected", "excluded", "forgotten"] as const)(
+	it.each(["corrected", "excluded"] as const)(
 		"imports sibling resume quotations without reviving a %s fact",
 		async (change) => {
 			const data = resumeData("Source resume");
@@ -890,12 +890,10 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			});
 			const [original] = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.userId, "alice"));
 			if (!original) throw new Error("Expected the imported summary.");
-			if (change === "forgotten") await service.forgetFact("alice", original.id);
-			else
-				await service.updateFact("alice", {
-					id: original.id,
-					...(change === "corrected" ? { text: "I contributed to Project Willow." } : { status: "excluded" }),
-				});
+			await service.updateFact("alice", {
+				id: original.id,
+				...(change === "corrected" ? { text: "I contributed to Project Willow." } : { status: "excluded" }),
+			});
 			const [retained] = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, original.id));
 			expect(await service.saveResumeFacts("alice", input)).toEqual({ saved: 1, skipped: 1 });
 			const rows = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.userId, "alice"));
@@ -910,6 +908,105 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			expect(await service.saveResumeFacts("alice", input)).toEqual({ saved: 0, skipped: 2 });
 		},
 	);
+
+	it("restores a forgotten fact when its reviewed resume import is selected again", async () => {
+		const data = resumeData("Source resume");
+		data.summary.content = "<p>I led Project Willow.</p>";
+		data.sections.skills.items = [
+			{
+				id: "skill",
+				hidden: false,
+				icon: "",
+				iconColor: "",
+				name: "TypeScript",
+				proficiency: "",
+				level: 0,
+				keywords: [],
+			},
+		];
+		await getDb().update(tables.resume).set({ data }).where(eq(tables.resume.id, "shared-resume"));
+		const review = await service.proposeResumeFacts("alice", "shared-resume");
+		expect(review.proposals).toHaveLength(2);
+		const first = review.proposals[0];
+		if (!first) throw new Error("Expected the summary proposal.");
+		const input = { resumeId: review.id, updatedAt: review.updatedAt, proposals: review.proposals };
+		expect(await service.saveResumeFacts("alice", { ...input, proposals: [first] })).toEqual({
+			saved: 1,
+			skipped: 0,
+		});
+		const [original] = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.userId, "alice"));
+		if (!original) throw new Error("Expected the imported summary.");
+		const savedStory = await service.saveStory("alice", story([original.id]));
+		const beforeForget = await service.memoryVersion("alice");
+		await service.forgetFact("alice", original.id);
+		const forgottenAt = await service.memoryCutoff("alice");
+		if (!forgottenAt) throw new Error("Expected a cutoff after forgetting.");
+		// Every unreviewed path keeps the content-free tombstone: the same resume source stays suppressed.
+		expect(
+			await service.saveFact("alice", {
+				applicationId: null,
+				text: first.text,
+				category: first.category,
+				source: { kind: "resume", id: "shared-resume", quote: first.quote },
+			}),
+		).toBeNull();
+		expect(await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.id, original.id))).toMatchObject([
+			{ status: "forgotten", text: "", revisions: [], source: { quote: "" } },
+		]);
+		// Older native clients forward all preview proposals without approving specific tombstones.
+		const refreshed = await service.proposeResumeFacts("alice", "shared-resume");
+		expect(refreshed.proposals).toEqual([{ ...first, forgottenFactId: original.id }, review.proposals[1]]);
+		expect(await service.saveResumeFacts("alice", { ...input, proposals: refreshed.proposals })).toEqual({
+			saved: 1,
+			skipped: 1,
+		});
+		const approval = { ...input, restoreForgottenFactIds: [original.id] };
+		expect(await service.saveResumeFacts("alice", approval)).toEqual({ saved: 1, skipped: 1 });
+		const rows = await getDb().select().from(tables.careerFact).where(eq(tables.careerFact.userId, "alice"));
+		expect(rows).toHaveLength(3);
+		expect(rows.some((row) => row.id === original.id)).toBe(false);
+		expect((await service.exportData("alice")).facts.find((row) => row.status === "forgotten")).toMatchObject({
+			text: "",
+			source: { kind: "resume", id: "", quote: "" },
+			revisions: [],
+			updatedAt: forgottenAt,
+		});
+		const restored = rows.find((row) => row.source.quote === first.quote);
+		if (!restored) throw new Error("Expected the reviewed fact to be re-added.");
+		expect(restored).toMatchObject({
+			text: first.text,
+			category: first.category,
+			status: "active",
+			revisions: [],
+			applicationId: null,
+			source: { kind: "resume", id: "shared-resume", quote: first.quote },
+		});
+		expect(rows.find((row) => row.status === "active" && row.id !== restored.id)).toMatchObject({
+			text: "TypeScript",
+			status: "active",
+			applicationId: null,
+			source: { kind: "resume", id: "shared-resume", quote: "- **TypeScript**" },
+		});
+		expect(await service.forgottenFacts("alice")).toEqual([]);
+		expect(await service.saveResumeFacts("alice", approval)).toEqual({ saved: 0, skipped: 2 });
+		expect(await service.memoryCutoff("alice")).toEqual(forgottenAt);
+		expect(await service.memoryVersion("alice")).not.toBe(beforeForget);
+		expect(await service.stories({ userId: "alice" })).toEqual([
+			expect.objectContaining({ id: savedStory.id, data: expect.objectContaining({ factIds: [] }) }),
+		]);
+		await expect(service.saveStory("alice", story([original.id]), undefined, beforeForget)).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		await expect(service.saveStory("alice", story([original.id]))).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		await expect(service.forgetFact("bob", original.id)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(service.forgetFact("alice", original.id)).resolves.toBeUndefined();
+		expect((await service.facts({ userId: "alice" })).map((row) => row.id)).toContain(restored.id);
+		await service.forgetFact("alice", restored.id);
+		expect(await service.saveResumeFacts("alice", approval)).toEqual({ saved: 0, skipped: 2 });
+		expect((await service.proposeResumeFacts("alice", "shared-resume")).proposals[0]?.forgottenFactId).toBe(
+			restored.id,
+		);
+	});
 
 	it("resolves each application's submitted versions and verifies quotations against that version", async () => {
 		const style = copyCoverLetterStyle(defaultResumeData);

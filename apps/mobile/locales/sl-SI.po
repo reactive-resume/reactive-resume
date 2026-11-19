@@ -750,10 +750,6 @@ msgstr "dodaj rezultat"
 msgid "Add a result"
 msgstr "Dodajte rezultat"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Najprej dodajte življenjepis."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Dodajte razdelek z naslovom „Education“. Mnogi sistemi imajo obvezno polje za izobrazbo."
@@ -944,10 +940,6 @@ msgstr "Dodan {0} na {1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Dodali ste vi"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "Dodana so dejstva iz vašega življenjepisa. Vsako lahko uredite ali odstranite."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Izberite drugo datoteko"
 msgid "Choose another PDF"
 msgstr "Izberi drug PDF"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "Izberite zvok do 2 MB."
@@ -2114,6 +2110,10 @@ msgstr "Datoteke ni bilo mogoče uvoziti. Datoteka se ohrani. Poskusite znova."
 msgid "Couldn't load connected applications. Try again."
 msgstr "Povezanih aplikacij ni bilo mogoče naložiti. Poskusite znova."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Dejstev iz življenjepisa ni bilo mogoče naložiti ali shraniti. Poskusite znova."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "Dokumenta ni bilo mogoče naložiti. Poskusite znova."
@@ -2211,10 +2211,6 @@ msgstr "Datoteke ni bilo mogoče prebrati. Datoteka se ohrani."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "Tega oglasa ni bilo mogoče prebrati. Prilepite besedilo oglasa ali izpolnite podrobnosti."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "Vašega življenjepisa ni bilo mogoče prebrati. Poskusite znova."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Ustvari račun"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Ustvarjanje in spreminjanje dokumentov, prijav in vašega profila."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Najprej ustvarite ali uvozite življenjepis v Dokumentih."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "Izvažanje…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Dejstvo"
 
@@ -3329,6 +3330,10 @@ msgstr "Prosta oblika"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "Iz »{0} · {1}« in {2} dejstev v Znanju · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Še brez izvoza · Najprej izvozite"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "V vašem življenjepisu ni najdenih dejstev."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "Nobeno dejstvo se ne ujema. Poskusite z drugo besedo ali vrsto."
 
@@ -4821,6 +4822,10 @@ msgstr "Še ni zgodb"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Še ni zgodbe · dodajte jo"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Podprti odlomki niso bili najdeni. Dodajte dejstvo ročno ali izberite drug življenjepis."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Prejšnja stran"
 msgid "Previous week"
 msgstr "Prejšnji teden"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "Glavni življenjepis"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Založnik"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "Pridobi dejstva iz mojega življenjepisa"
 
@@ -5668,6 +5678,10 @@ msgstr "Vprašanja za delodajalca"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "Omejitev zahtev dosežena"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Preglej in nadaljuj"
 msgid "Review it"
 msgstr "Preglej"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Najprej preglejte ponudbo."
@@ -6313,6 +6331,10 @@ msgstr "Shrani intervju"
 msgid "Save job"
 msgstr "Shrani delo"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Shranite datoteko tako, da so vse strani pokončne."
@@ -6320,6 +6342,10 @@ msgstr "Shranite datoteko tako, da so vse strani pokončne."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Shranite te pogoje ponudbe za primerjavo. Odpre se v Kariera → Ponudbe."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "Shranjeno v Datoteke"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "Shranjeno v Znanje kot dejstvo"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "Nekaterih podrobnosti o delovnem mestu ni bilo mogoče prebrati. Izpolni
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Nekatere vrstice so shranjene zunaj vrstnega reda branja."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "Nekaj besedila iz življenjepisa je bilo izpuščenega; druga dejstva dodajte sami."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "Ta življenjepis je zaklenjen. Odklenite ga, da ga lahko spreminjate."
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Ta življenjepis je dolg."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

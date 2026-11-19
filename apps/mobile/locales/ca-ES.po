@@ -750,10 +750,6 @@ msgstr "afegeix un resultat"
 msgid "Add a result"
 msgstr "Afegeix un resultat"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Afegiu primer un currículum."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Afegeix una secció titulada «Education». Molts sistemes tenen un camp d'educació obligatori."
@@ -944,10 +940,6 @@ msgstr "S'ha afegit {0} a {1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Afegit per vós"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "S'han afegit dades del vostre currículum. Podeu editar-les o oblidar-les."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Trieu un altre fitxer"
 msgid "Choose another PDF"
 msgstr "Tria un altre PDF"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "Tria un àudio de fins a 2 MB."
@@ -2114,6 +2110,10 @@ msgstr "No s'ha pogut importar el fitxer. Es conserva el fitxer. Torna-ho a prov
 msgid "Couldn't load connected applications. Try again."
 msgstr "No s'han pogut carregar les aplicacions connectades. Torneu-ho a provar."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "No s'han pogut carregar o desar els fets del currículum. Torna-ho a provar."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "No s'ha pogut carregar el document. Torna-ho a provar."
@@ -2211,10 +2211,6 @@ msgstr "No s'ha pogut llegir el fitxer. Es conserva el fitxer."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "No s'ha pogut llegir aquesta oferta de feina. Enganxeu-ne el text o ompliu les dades."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "No s'ha pogut llegir el vostre currículum. Torneu-ho a provar."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Crea un compte"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Crea i canvia documents, candidatures i el teu perfil."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Primer crea o importa un currículum a Documents."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "S'està exportant…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fet"
 
@@ -3329,6 +3330,10 @@ msgstr "Forma lliure"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "De «{0} · {1}» i {2} dades de Coneixement · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Encara no s'ha exportat · Exporta primer"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "No s'han trobat dades al vostre currículum."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "No hi ha dades coincidents. Proveu una altra paraula o un altre tipus."
 
@@ -4821,6 +4822,10 @@ msgstr "Encara no hi ha històries"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Encara no hi ha cap relat · afegeix-ne un"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "No s'han trobat fragments compatibles. Afegeix un fet manualment o tria un altre currículum."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Pàgina anterior"
 msgid "Previous week"
 msgstr "Setmana anterior"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "Currículum principal"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Editor"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "Extreu fets del meu currículum"
 
@@ -5668,6 +5678,10 @@ msgstr "Preguntes per fer-los"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "Límit de peticions assolit"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Revisa i reprèn"
 msgid "Review it"
 msgstr "Revisa-ho"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Revisa primer l'oferta."
@@ -6313,6 +6331,10 @@ msgstr "Desa l'entrevista"
 msgid "Save job"
 msgstr "Guarda feina"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Desa el fitxer amb totes les pàgines dretes."
@@ -6320,6 +6342,10 @@ msgstr "Desa el fitxer amb totes les pàgines dretes."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Deseu aquestes condicions de l'oferta per comparar-les. S'obre a Carrera → Ofertes."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "Desat a Fitxers"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "S'ha desat a Coneixements com a fet"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "No s'han pogut llegir alguns detalls de la feina. Ompliu el lloc i l'emp
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Algunes línies s'emmagatzemen fora de l'ordre de lectura."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "S'ha deixat fora part del text del currículum; afegeix tu mateix els altres fets."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "Aquest currículum està bloquejat. Desbloquegeu-lo per fer-hi canvis."
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Aquest currículum és llarg."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

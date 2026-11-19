@@ -127,6 +127,13 @@ export const resumeFactsReviewSchema = z.object({
 	resumeId: z.string().min(1),
 	updatedAt: z.coerce.date(),
 	proposals: z.array(resumeFactProposalSchema).min(1).max(50),
+	restoreForgottenFactIds: z
+		.array(z.string().min(1))
+		.max(50)
+		.optional()
+		.describe(
+			"Current forgotten fact IDs from the preview, for excerpts the user explicitly selected to re-add. Omitting this field keeps forgotten facts suppressed.",
+		),
 });
 
 export const careerStoryInputSchema = careerScopeSchema.extend({

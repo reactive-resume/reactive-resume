@@ -244,7 +244,7 @@ export const careerRouter = {
 				id: z.string(),
 				name: z.string(),
 				updatedAt: z.coerce.date(),
-				proposals: z.array(resumeFactProposalSchema).max(50),
+				proposals: z.array(resumeFactProposalSchema.extend({ forgottenFactId: z.string().optional() })).max(50),
 				omitted: z.number().int().nonnegative(),
 			}),
 		)
@@ -257,7 +257,7 @@ export const careerRouter = {
 			operationId: "saveResumeFacts",
 			summary: "Save reviewed resume facts",
 			description:
-				"Atomically saves only selected facts as shared Knowledge, retaining their exact resume quotations. Rejects a changed or trashed source. Existing, corrected and switched-off Knowledge is preserved.",
+				"Atomically saves only selected facts as shared Knowledge, retaining their exact resume quotations. Rejects a changed or trashed source. Existing, corrected and switched-off Knowledge is preserved. Pass the preview IDs for forgotten facts the user selected to re-add.",
 		})
 		.input(resumeFactsReviewSchema)
 		.output(z.object({ saved: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() }))

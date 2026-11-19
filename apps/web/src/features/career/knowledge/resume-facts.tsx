@@ -76,7 +76,7 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 		onSuccess: (result) => {
 			if (current()) {
 				setReview(result);
-				setDrafts(result.proposals.map((item) => ({ ...item, selected: true })));
+				setDrafts(result.proposals.map((item) => ({ ...item, selected: !item.forgottenFactId })));
 			}
 		},
 	});
@@ -87,7 +87,10 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 				{
 					resumeId: review.id,
 					updatedAt: review.updatedAt,
-					proposals: drafts.filter((item) => item.selected).map(({ selected: _selected, ...item }) => item),
+					proposals: selected.map(({ text, quote, category }) => ({ text, quote, category })),
+					restoreForgottenFactIds: selected.flatMap(({ forgottenFactId }) =>
+						forgottenFactId ? [forgottenFactId] : [],
+					),
 				},
 				{ context: { accountId: account.id } },
 			);
@@ -100,11 +103,14 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 					t`Saved: ${result.saved}. Skipped: ${result.skipped}. Existing, corrected or switched-off facts stay unchanged.`,
 				);
 				void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
+				void queryClient.invalidateQueries({ queryKey: orpc.career.forgottenFacts.key() });
 			}
 		},
 	});
 	const busy = preview.isPending || save.isPending;
 	const selected = drafts.filter((item) => item.selected);
+	const newDrafts = drafts.filter((item) => !item.forgottenFactId);
+	const allNewSelected = newDrafts.every((item) => item.selected);
 	const error = preview.error ?? save.error;
 	const change = (index: number, patch: Partial<Draft>) =>
 		setDrafts((items) => items.map((item, i) => (i === index ? { ...item, ...patch } : item)));
@@ -186,20 +192,23 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 					{drafts.length > 0 ? (
 						<div className="flex items-center justify-between gap-2 border-b border-line pb-2 t-small text-ink-2">
 							{plural(drafts.length, {
-								one: "Found # fact you don't have yet",
-								other: "Found # facts you don't have yet",
+								one: "Found # resume excerpt",
+								other: "Found # resume excerpts",
 							})}
-							<button
-								type="button"
-								disabled={save.isPending}
-								onClick={() => {
-									const all = selected.length === drafts.length;
-									setDrafts((items) => items.map((item) => ({ ...item, selected: !all })));
-								}}
-								className="rounded-xs font-medium text-accent-text hover:underline"
-							>
-								{selected.length === drafts.length ? <Trans>Select none</Trans> : <Trans>Select all</Trans>}
-							</button>
+							{newDrafts.length > 0 && (
+								<button
+									type="button"
+									disabled={save.isPending}
+									onClick={() =>
+										setDrafts((items) =>
+											items.map((item) => (item.forgottenFactId ? item : { ...item, selected: !allNewSelected })),
+										)
+									}
+									className="rounded-xs font-medium text-accent-text hover:underline"
+								>
+									{allNewSelected ? <Trans>Deselect new facts</Trans> : <Trans>Select new facts</Trans>}
+								</button>
+							)}
 						</div>
 					) : (
 						<p role="status" className="text-ink-2">
@@ -214,7 +223,9 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 						>
 							<Checkbox
 								checked={item.selected}
-								aria-label={t`Save this fact: ${item.text}`}
+								aria-label={
+									item.forgottenFactId ? t`Re-add this forgotten fact: ${item.text}` : t`Save this fact: ${item.text}`
+								}
 								onCheckedChange={(checked) => change(index, { selected: checked })}
 								className="mt-0.5"
 							/>
@@ -231,6 +242,11 @@ function ReviewResumeFacts({ onClose }: ReviewResumeFactsProps) {
 									}}
 									className="field-sizing-content w-full resize-none rounded-xs bg-transparent text-[15px]/[22px] font-medium text-ink outline-none focus:shadow-[0_1px_0_0_var(--accent)] focus-visible:outline-none"
 								/>
+								{item.forgottenFactId && (
+									<p className="t-small text-ink-2">
+										<Trans>Previously forgotten</Trans>
+									</p>
+								)}
 								<p className="line-clamp-2 t-small text-ink-3">
 									<select
 										aria-label={t`Type`}

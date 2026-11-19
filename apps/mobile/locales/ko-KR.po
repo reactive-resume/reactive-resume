@@ -750,10 +750,6 @@ msgstr "결과 추가"
 msgid "Add a result"
 msgstr "결과 추가"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "먼저 이력서를 추가하세요."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "\"Education\"이라는 제목의 섹션을 추가하세요. 많은 시스템에 학력 필드가 필수로 있습니다."
@@ -944,10 +940,6 @@ msgstr "{1}에 {0}를 추가했습니다."
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "직접 추가함"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "이력서에서 사실을 추가했습니다. 원하는 사실을 수정하거나 삭제할 수 있습니다."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "다른 파일을 선택하세요"
 msgid "Choose another PDF"
 msgstr "다른 PDF 선택"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "2 MB 이하 오디오를 선택하세요."
@@ -2114,6 +2110,10 @@ msgstr "파일을 가져올 수 없습니다. 원본 파일은 보관됩니다. 
 msgid "Couldn't load connected applications. Try again."
 msgstr "연결된 앱을 불러오지 못했습니다. 다시 시도하세요."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "이력서 사실을 불러오거나 저장하지 못했습니다. 다시 시도하세요."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "문서를 불러올 수 없습니다. 다시 시도하세요."
@@ -2211,10 +2211,6 @@ msgstr "파일을 읽을 수 없습니다. 원본 파일은 보관됩니다."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "이 채용 공고를 읽지 못했습니다. 공고 텍스트를 붙여넣거나 세부 정보를 입력하세요."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "이력서를 읽지 못했습니다. 다시 시도하세요."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "계정 만들기"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "서류, 지원, 프로필을 만들고 변경합니다."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "먼저 문서에서 이력서를 만들거나 가져오세요."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "내보내는 중…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "사실"
 
@@ -3329,6 +3330,10 @@ msgstr "자유 형식"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "“{0} · {1}” 및 지식 정보 {2}개에서 · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "아직 내보내기 없음 · 먼저 내보내세요"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "이력서에서 사실을 찾지 못했습니다."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "일치하는 사실이 없습니다. 다른 단어나 유형을 시도하세요."
 
@@ -4821,6 +4822,10 @@ msgstr "아직 스토리가 없습니다"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "아직 경험 없음 · 추가하세요"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "지원되는 발췌문이 없습니다. 사실을 직접 추가하거나 다른 이력서를 선택하세요."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "이전 페이지"
 msgid "Previous week"
 msgstr "지난주"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "대표 이력서"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "발행인"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "내 이력서에서 사실 가져오기"
 
@@ -5668,6 +5678,10 @@ msgstr "회사에 물어볼 질문"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "요청 한도 초과"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "검토 후 재개"
 msgid "Review it"
 msgstr "검토"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "먼저 제안을 검토하세요."
@@ -6313,6 +6331,10 @@ msgstr "면접 저장"
 msgid "Save job"
 msgstr "직업 저장"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "모든 페이지가 똑바로 보이도록 파일을 저장하세요."
@@ -6320,6 +6342,10 @@ msgstr "모든 페이지가 똑바로 보이도록 파일을 저장하세요."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "비교할 수 있도록 이 제안 조건을 저장하세요. 커리어 → 제안에서 열립니다."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "파일에 저장됨"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "사실로 지식에 저장됨"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "일부 채용 정보를 읽을 수 없습니다. 직무와 회사를 입
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "일부 줄이 읽는 순서와 다르게 저장되어 있습니다."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "일부 이력서 텍스트가 제외되었습니다. 다른 사실은 직접 추가하세요."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "이 이력서는 잠겨 있습니다. 변경하려면 잠금을 해제�
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "이 이력서는 길이가 깁니다."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

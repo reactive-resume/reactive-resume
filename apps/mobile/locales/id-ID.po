@@ -750,10 +750,6 @@ msgstr "tambahkan hasil"
 msgid "Add a result"
 msgstr "Tambahkan hasil"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Tambahkan CV terlebih dahulu."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Tambahkan bagian berjudul \"Education\". Banyak sistem memiliki kolom pendidikan yang wajib diisi."
@@ -944,10 +940,6 @@ msgstr "Menambahkan {0} di {1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Ditambahkan oleh Anda"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "Fakta dari CV Anda telah ditambahkan. Edit atau hapus fakta mana pun."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Pilih file lain"
 msgid "Choose another PDF"
 msgstr "Pilih PDF lain"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "Pilih audio berukuran maksimal 2 MB."
@@ -2114,6 +2110,10 @@ msgstr "File tidak dapat diimpor. File Anda tetap disimpan. Coba lagi."
 msgid "Couldn't load connected applications. Try again."
 msgstr "Tidak dapat memuat aplikasi terhubung. Coba lagi."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Tidak dapat memuat atau menyimpan fakta CV. Coba lagi."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "Dokumen tidak dapat dimuat. Coba lagi."
@@ -2211,10 +2211,6 @@ msgstr "File tidak dapat dibaca. File Anda tetap disimpan."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "Tidak dapat membaca lowongan ini. Tempel teks lowongan atau isi detailnya."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "Tidak dapat membaca CV Anda. Coba lagi."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Buat akun"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Membuat dan mengubah dokumen, lamaran, serta profil Anda."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Buat atau impor CV di Dokumen terlebih dahulu."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "Mengekspor…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fakta"
 
@@ -3329,6 +3330,10 @@ msgstr "Bentuk bebas"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "Dari “{0} · {1}” dan {2} fakta Pengetahuan · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Belum diekspor · Ekspor dahulu"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "Tidak ada fakta ditemukan dalam CV Anda."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "Tidak ada fakta yang cocok. Coba kata atau jenis lain."
 
@@ -4821,6 +4822,10 @@ msgstr "Belum ada cerita"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Belum ada cerita · tambahkan"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Tidak ditemukan kutipan yang didukung. Tambahkan fakta secara manual atau pilih CV lain."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Halaman sebelumnya"
 msgid "Previous week"
 msgstr "Minggu sebelumnya"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "CV utama"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Penerbit"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "Ambil fakta dari CV saya"
 
@@ -5668,6 +5678,10 @@ msgstr "Pertanyaan untuk mereka"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "Batas permintaan tercapai"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Tinjau dan lanjutkan"
 msgid "Review it"
 msgstr "Tinjau"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Tinjau tawaran terlebih dahulu."
@@ -6313,6 +6331,10 @@ msgstr "Simpan wawancara"
 msgid "Save job"
 msgstr "Simpan pekerjaan"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Simpan file dengan setiap halaman tegak."
@@ -6320,6 +6342,10 @@ msgstr "Simpan file dengan setiap halaman tegak."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Simpan ketentuan tawaran ini untuk dibandingkan. Terbuka di Karier → Tawaran."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "Disimpan ke File"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "Disimpan ke Pengetahuan sebagai fakta"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "Beberapa detail pekerjaan tidak dapat dibaca. Isi posisi dan perusahaan,
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Beberapa baris disimpan tidak sesuai urutan baca."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "Sebagian teks CV tidak disertakan; tambahkan fakta lain sendiri."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "CV ini terkunci. Buka kuncinya untuk melakukan perubahan."
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Resume ini panjang."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

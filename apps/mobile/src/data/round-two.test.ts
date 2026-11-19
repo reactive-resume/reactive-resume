@@ -15,8 +15,10 @@ jest.mock("expo-sqlite/kv-store", () => ({
 	__esModule: true,
 	default: { getItemSync: () => null, setItemSync: jest.fn(), removeItemSync: jest.fn(), getAllKeysSync: () => [] },
 }));
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { dataClient } from "./client";
 import { connectivityState } from "./connectivity";
+import { extendedSeed, fixtureWrite } from "./fixture-operations";
 import { seed, fakeBackend } from "./fixtures";
 import { moneyDifference } from "./offer-compare";
 import { validateWrites } from "./queue";
@@ -38,6 +40,34 @@ test("search normalizes history and matches all query words", () => {
 	expect(matching("senior lumen", ["Lumen Senior Designer", "Lumen"], (value) => value)).toEqual([
 		"Lumen Senior Designer",
 	]);
+});
+test("resume review fixture requires current explicit approval to re-add a forgotten excerpt", () => {
+	const data = structuredClone(defaultResumeData);
+	data.summary.content = "<p>Worked on the fictional engine.</p>";
+	const updatedAt = new Date();
+	const state = { ...extendedSeed(true), resumes: [{ id: "resume", updatedAt, data }], facts: [] as { id: string }[] };
+	const excerpt = "Worked on the fictional engine.";
+	const input = {
+		resumeId: "resume",
+		updatedAt,
+		proposals: [{ text: excerpt, quote: excerpt, category: "experience" }],
+	};
+	expect(fixtureWrite("career.saveResumeFacts", input, state)?.value).toEqual({ saved: 1, skipped: 0 });
+	const first = state.facts[0];
+	if (!first) throw new Error("Expected a saved fact.");
+	fixtureWrite("career.forgetFact", { id: first.id }, state);
+	expect(fixtureWrite("career.proposeResumeFacts", { resumeId: "resume" }, state)?.value).toMatchObject({
+		proposals: [expect.objectContaining({ forgottenFactId: first.id })],
+	});
+	expect(fixtureWrite("career.saveResumeFacts", input, state)?.value).toEqual({ saved: 0, skipped: 1 });
+	const approval = { ...input, restoreForgottenFactIds: [first.id] };
+	expect(fixtureWrite("career.saveResumeFacts", approval, state)?.value).toEqual({ saved: 1, skipped: 0 });
+	const readded = state.facts[0];
+	if (!readded) throw new Error("Expected a re-added fact.");
+	expect(readded.id).not.toBe(first.id);
+	expect(state.forgottenFacts).toEqual([]);
+	fixtureWrite("career.forgetFact", { id: readded.id }, state);
+	expect(fixtureWrite("career.saveResumeFacts", approval, state)?.value).toEqual({ saved: 0, skipped: 1 });
 });
 test("unknown connectivity is not online; lost reachability is offline", () => {
 	expect(connectivityState({})).toBe("unknown");

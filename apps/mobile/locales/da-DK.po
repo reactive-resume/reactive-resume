@@ -750,10 +750,6 @@ msgstr "tilføj et resultat"
 msgid "Add a result"
 msgstr "Tilføj et resultat"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Tilføj først et CV."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Tilføj et afsnit med overskriften \"Uddannelse\". Mange systemer har et påkrævet uddannelsesfelt."
@@ -944,10 +940,6 @@ msgstr "Tilføjet {0} ved {1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Tilføjet af dig"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "Fakta fra dit CV er tilføjet. Rediger eller glem dem enkeltvis."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Vælg en anden fil"
 msgid "Choose another PDF"
 msgstr "Vælg en anden PDF"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "Vælg lyd på højst 2 MB."
@@ -2114,6 +2110,10 @@ msgstr "Filen kunne ikke importeres. Din fil bevares. Prøv igen."
 msgid "Couldn't load connected applications. Try again."
 msgstr "Kunne ikke indlæse forbundne apps. Prøv igen."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Kunne ikke indlæse eller gemme CV-fakta. Prøv igen."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "Dokumentet kunne ikke indlæses. Prøv igen."
@@ -2211,10 +2211,6 @@ msgstr "Filen kunne ikke læses. Din fil bevares."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "Kunne ikke læse dette jobopslag. Indsæt opslagets tekst i stedet, eller udfyld oplysningerne."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "Kunne ikke læse dit CV. Prøv igen."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Opret en konto"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Opret og rediger dokumenter, ansøgninger og din profil."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Opret eller importér først et CV i Dokumenter."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "Eksporterer…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fakta"
 
@@ -3329,6 +3330,10 @@ msgstr "Frit format"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "Fra “{0} · {1}” og {2} oplysninger i Viden · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Ingen eksport endnu · Eksportér først"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "Ingen fakta fundet i dit CV."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "Ingen fakta matcher. Prøv et andet ord eller en anden type."
 
@@ -4821,6 +4822,10 @@ msgstr "Ingen historier endnu"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Ingen fortælling endnu · tilføj en"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Ingen understøttede uddrag fundet. Tilføj et faktum manuelt, eller vælg et andet CV."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Forrige side"
 msgid "Previous week"
 msgstr "Forrige uge"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "Primært CV"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Udgiver"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "Hent fakta fra mit CV"
 
@@ -5668,6 +5678,10 @@ msgstr "Spørgsmål, du kan stille dem"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "For mange anmodninger"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Gennemgå og genoptag"
 msgid "Review it"
 msgstr "Gennemgå det"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Gennemgå tilbuddet først."
@@ -6313,6 +6331,10 @@ msgstr "Gem interview"
 msgid "Save job"
 msgstr "Gem job"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Gem filen med alle sider rette op."
@@ -6320,6 +6342,10 @@ msgstr "Gem filen med alle sider rette op."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Gem disse tilbudsvilkår til sammenligning. Åbner i Karriere → Tilbud."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "Gemt i Arkiver"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "Gemt i Viden som et faktum"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "Nogle jobdetaljer kunne ikke læses. Udfyld stilling og virksomhed, elle
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Nogle linjer er gemt uden for læserækkefølgen."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "Noget af CV-teksten blev udeladt; tilføj selv andre fakta."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "Dette CV er låst. Lås det op for at foretage ændringer."
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Dette CV er langt."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

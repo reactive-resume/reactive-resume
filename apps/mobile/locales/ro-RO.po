@@ -750,10 +750,6 @@ msgstr "adaugă un rezultat"
 msgid "Add a result"
 msgstr "Adăugați un rezultat"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Adaugă mai întâi un CV."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Adăugați o secțiune intitulată „Educație”. Multe sisteme au un câmp de educație obligatoriu."
@@ -944,10 +940,6 @@ msgstr "S-a adăugat {0} la {1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Adăugat de dvs."
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "Am adăugat informații din CV-ul tău. Le poți modifica sau șterge pe oricare."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Alege alt fișier"
 msgid "Choose another PDF"
 msgstr "Alege alt PDF"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "Alege un fișier audio de cel mult 2 MB."
@@ -2114,6 +2110,10 @@ msgstr "Fișierul nu a putut fi importat. Fișierul se păstrează. Încearcă d
 msgid "Couldn't load connected applications. Try again."
 msgstr "Nu s-au putut încărca aplicațiile conectate. Încearcă din nou."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Nu s-au putut încărca sau salva faptele din CV. Încearcă din nou."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "Documentul nu a putut fi încărcat. Încearcă din nou."
@@ -2211,10 +2211,6 @@ msgstr "Fișierul nu a putut fi citit. Fișierul se păstrează."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "Nu s-a putut citi acest anunț. Lipește textul anunțului sau completează detaliile."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "Nu s-a putut citi CV-ul tău. Încearcă din nou."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Creează un cont"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Creează și modifică documente, candidaturi și profilul dvs."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Mai întâi creează sau importă un CV în Documente."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "Se exportă…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fapt"
 
@@ -3329,6 +3330,10 @@ msgstr "Formă liberă"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "Din „{0} · {1}” și {2} fapte din Cunoștințe · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Niciun export · Exportă mai întâi"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "Nu s-au găsit informații în CV-ul tău."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "Nicio informație nu corespunde. Încearcă alt cuvânt sau tip."
 
@@ -4821,6 +4822,10 @@ msgstr "Încă nu există povești"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Nicio poveste încă · adaugă una"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Nu s-au găsit fragmente compatibile. Adaugă un fapt manual sau alege alt CV."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Pagina anterioară"
 msgid "Previous week"
 msgstr "Săptămâna trecută"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "CV principal"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Editor"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "Preia fapte din CV-ul meu"
 
@@ -5668,6 +5678,10 @@ msgstr "Întrebări de adresat"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "Limită de cereri atinsă"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Verifică și continuă"
 msgid "Review it"
 msgstr "Verifică"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Verifică mai întâi oferta."
@@ -6313,6 +6331,10 @@ msgstr "Salvați interviul"
 msgid "Save job"
 msgstr "Salvați locul de muncă"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Salvați fișierul cu fiecare pagină în poziție normală."
@@ -6320,6 +6342,10 @@ msgstr "Salvați fișierul cu fiecare pagină în poziție normală."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Salvează aceste condiții ale ofertei pentru a le compara. Se deschide în Carieră → Oferte."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "Salvat în Fișiere"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "Salvat în Cunoștințe ca fapt"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "Unele detalii ale postului nu au putut fi citite. Completați postul și
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Unele rânduri sunt stocate în afara ordinii de citire."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "O parte din textul CV-ului a fost omisă; adăugați singur alte fapte."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "Acest CV este blocat. Deblochează-l pentru a face modificări."
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Acest CV este lung."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

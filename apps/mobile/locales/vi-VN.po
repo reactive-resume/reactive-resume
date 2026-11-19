@@ -750,10 +750,6 @@ msgstr "thêm kết quả"
 msgid "Add a result"
 msgstr "Thêm một kết quả"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Hãy thêm sơ yếu lý lịch trước."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Thêm một mục có tiêu đề \"Giáo dục\". Nhiều hệ thống có trường học vấn bắt buộc."
@@ -944,10 +940,6 @@ msgstr "Đã thêm {0} tại {1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Do bạn thêm"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "Đã thêm dữ kiện từ sơ yếu lý lịch của bạn. Bạn có thể sửa hoặc xóa bất kỳ dữ kiện nào."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Chọn một tập tin khác"
 msgid "Choose another PDF"
 msgstr "Chọn PDF khác"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "Chọn âm thanh không quá 2 MB."
@@ -2114,6 +2110,10 @@ msgstr "Không nhập được tệp. Tệp của bạn được giữ lại. H�
 msgid "Couldn't load connected applications. Try again."
 msgstr "Không thể tải các ứng dụng đã kết nối. Hãy thử lại."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Không thể tải hoặc lưu dữ kiện từ CV. Hãy thử lại."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "Không tải được tài liệu. Hãy thử lại."
@@ -2211,10 +2211,6 @@ msgstr "Không đọc được tệp. Tệp của bạn được giữ lại."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "Không thể đọc tin tuyển dụng này. Hãy dán nội dung tin hoặc điền thông tin chi tiết."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "Không thể đọc sơ yếu lý lịch của bạn. Hãy thử lại."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Tạo tài khoản"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Tạo và thay đổi tài liệu, hồ sơ ứng tuyển và hồ sơ của bạn."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Trước tiên, hãy tạo hoặc nhập CV trong Tài liệu."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "Đang xuất…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Sự thật"
 
@@ -3329,6 +3330,10 @@ msgstr "Hình thức tự do"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "Từ “{0} · {1}” và {2} thông tin Kiến thức · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Chưa xuất · Xuất trước"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "Không tìm thấy dữ kiện trong sơ yếu lý lịch của bạn."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "Không có dữ kiện phù hợp. Hãy thử từ hoặc loại khác."
 
@@ -4821,6 +4822,10 @@ msgstr "Chưa có câu chuyện nào"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Chưa có câu chuyện · thêm một"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Không tìm thấy đoạn trích phù hợp. Thêm dữ kiện thủ công hoặc chọn CV khác."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Trang trước"
 msgid "Previous week"
 msgstr "Tuần trước"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "Sơ yếu lý lịch chính"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Nhà xuất bản"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "Lấy dữ kiện từ CV của tôi"
 
@@ -5668,6 +5678,10 @@ msgstr "Câu hỏi dành cho họ"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "Đã đạt giới hạn yêu cầu"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Xem lại và tiếp tục"
 msgid "Review it"
 msgstr "Xem lại"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Xem đề nghị trước."
@@ -6313,6 +6331,10 @@ msgstr "Lưu buổi phỏng vấn"
 msgid "Save job"
 msgstr "Lưu công việc"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Lưu tệp với tất cả các trang ở chiều thẳng đứng."
@@ -6320,6 +6342,10 @@ msgstr "Lưu tệp với tất cả các trang ở chiều thẳng đứng."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Lưu các điều khoản của lời mời này để so sánh. Mở trong Sự nghiệp → Lời mời."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "Đã lưu vào Tệp"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "Đã lưu vào Kiến thức dưới dạng dữ kiện"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "Không đọc được một số chi tiết công việc. Hãy điền 
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Một số dòng được lưu trữ không theo thứ tự đọc."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "Một số nội dung sơ yếu lý lịch đã bị bỏ qua; hãy tự thêm các dữ kiện khác."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "Sơ yếu lý lịch này đã bị khóa. Hãy mở khóa để thực 
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Sơ yếu lý lịch này khá dài."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

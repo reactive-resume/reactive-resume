@@ -750,10 +750,6 @@ msgstr "添加结果"
 msgid "Add a result"
 msgstr "添加结果"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "请先添加一份简历。"
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "添加一个标题为“教育经历”的部分。许多系统都有必填的教育经历字段。"
@@ -944,10 +940,6 @@ msgstr "在 {1} 添加了 {0}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "由您添加"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "已从简历中添加事实。你可以编辑或删除其中任意一项。"
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "选择另一个文件"
 msgid "Choose another PDF"
 msgstr "选择其他 PDF"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "请选择不超过 2 MB 的音频。"
@@ -2114,6 +2110,10 @@ msgstr "无法导入文件。你的文件会保留。请重试。"
 msgid "Couldn't load connected applications. Try again."
 msgstr "无法加载已连接的应用。请重试。"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "无法加载或保存简历事实。请重试。"
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "无法加载文档。请重试。"
@@ -2211,10 +2211,6 @@ msgstr "无法读取文件。你的文件会保留。"
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "无法读取此职位信息。请粘贴职位描述文本，或填写详细信息。"
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "无法读取你的简历。请重试。"
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "创建账户"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "创建和更改文档、申请以及您的资料。"
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "请先在文档中创建或导入简历。"
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "正在导出…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "事实"
 
@@ -3329,6 +3330,10 @@ msgstr "自由形式"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "来自“{0} · {1}”及 {2} 条知识库事实 · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "尚未导出 · 请先导出"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "未在你的简历中找到事实。"
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "没有匹配的事实。请尝试其他词语或类型。"
 
@@ -4821,6 +4822,10 @@ msgstr "暂无故事"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "尚无经历 · 添加一条"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "未找到支持的摘录。请手动添加事实或选择另一份简历。"
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "上一页"
 msgid "Previous week"
 msgstr "上周"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "主简历"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "发布者"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "从我的简历中提取事实"
 
@@ -5668,6 +5678,10 @@ msgstr "要问对方的问题"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "请求频率已达上限"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "检查并继续"
 msgid "Review it"
 msgstr "检查"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "请先检查录用通知。"
@@ -6313,6 +6331,10 @@ msgstr "保存面试"
 msgid "Save job"
 msgstr "保存工作"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "保存文件时确保每一页都是正向的。"
@@ -6320,6 +6342,10 @@ msgstr "保存文件时确保每一页都是正向的。"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "保存这些录用条款以便比较。将在“职业 → 录用邀请”中打开。"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "已保存到文件"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "已作为事实保存到知识库"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "部分职位信息无法读取。请填写职位和公司，或粘贴单
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "有些行的存储顺序和阅读顺序不一致。"
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "部分简历文本未包含；请自行添加其他事实。"
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "这份简历已锁定。解锁后才能进行更改。"
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "这份简历比较长。"
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

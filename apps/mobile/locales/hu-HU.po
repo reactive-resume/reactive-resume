@@ -750,10 +750,6 @@ msgstr "eredmény hozzáadása"
 msgid "Add a result"
 msgstr "Adjon hozzá egy eredményt"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Először adj hozzá egy önéletrajzot."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Adj hozzá egy \"Tanulmányok\" című szakaszt. Sok rendszerben kötelező mező a tanulmányok."
@@ -944,10 +940,6 @@ msgstr "{0} hozzáadva a {1}-hoz"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Te adtad hozzá"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "Tények hozzáadva az önéletrajzodból. Bármelyiket módosíthatod vagy törölheted."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Válasszon másik fájlt"
 msgid "Choose another PDF"
 msgstr "Másik PDF kiválasztása"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "Válassz legfeljebb 2 MB-os hangfájlt."
@@ -2114,6 +2110,10 @@ msgstr "Nem sikerült importálni a fájlt. A fájlod megmarad. Próbáld újra.
 msgid "Couldn't load connected applications. Try again."
 msgstr "Nem sikerült betölteni a csatlakoztatott alkalmazásokat. Próbáld újra."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Nem sikerült betölteni vagy menteni az önéletrajz tényeit. Próbálja újra."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "Nem sikerült betölteni a dokumentumot. Próbáld újra."
@@ -2211,10 +2211,6 @@ msgstr "Nem sikerült beolvasni a fájlt. A fájlod megmarad."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "Nem sikerült beolvasni az álláshirdetést. Illeszd be a hirdetés szövegét, vagy töltsd ki az adatokat."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "Nem sikerült beolvasni az önéletrajzodat. Próbáld újra."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Fiók létrehozása"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Dokumentumok, jelentkezések és a saját profilod létrehozása és módosítása."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Először hozzon létre vagy importáljon önéletrajzot a Dokumentumok között."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "Exportálás…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Tény"
 
@@ -3329,6 +3330,10 @@ msgstr "Szabad formátumú"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "Forrás: „{0} · {1}” és {2} tudástári adat · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Még nincs export · Előbb exportálj"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "Nem találhatók tények az önéletrajzodban."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "Nincs egyező tény. Próbálj másik szót vagy típust."
 
@@ -4821,6 +4822,10 @@ msgstr "Még nincsenek történetek"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Még nincs történet · adj hozzá egyet"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Nem találhatók támogatott részletek. Adjon hozzá tényt kézzel, vagy válasszon másik önéletrajzot."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Előző oldal"
 msgid "Previous week"
 msgstr "Előző hét"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "Elsődleges önéletrajz"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Kiadó"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "Tények átvétele az önéletrajzomból"
 
@@ -5668,6 +5678,10 @@ msgstr "Kérdések, amelyeket feltehetsz nekik"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "Kéréskorlát elérve"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Áttekintés és folytatás"
 msgid "Review it"
 msgstr "Áttekintés"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Előbb nézd át az ajánlatot."
@@ -6313,6 +6331,10 @@ msgstr "Interjú mentése"
 msgid "Save job"
 msgstr "Munka mentése"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Mentsd el a fájlt úgy, hogy minden oldal álló helyzetű legyen."
@@ -6320,6 +6342,10 @@ msgstr "Mentsd el a fájlt úgy, hogy minden oldal álló helyzetű legyen."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Mentsd az ajánlat feltételeit az összehasonlításhoz. Megnyílik a Karrier → Ajánlatok oldalon."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "Mentve a Fájlokba"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "Tényként mentve a Tudástárba"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "Az állás néhány adatát nem sikerült beolvasni. Töltsd ki a pozíc
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Néhány sor nem az olvasási sorrendben van tárolva."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "Az önéletrajz szövegének egy része kimaradt; a többi tényt add hozzá magad."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "Ez az önéletrajz zárolva van. A módosításokhoz oldd fel a zárolá
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Ez az önéletrajz hosszú."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

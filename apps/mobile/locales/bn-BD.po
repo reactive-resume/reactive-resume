@@ -750,10 +750,6 @@ msgstr "ফলাফল যোগ করুন"
 msgid "Add a result"
 msgstr "একটি ফলাফল যোগ করুন"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "প্রথমে একটি জীবনবৃত্তান্ত যোগ করুন।"
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "যোগ করুন একটি সেকশন যার শিরোনাম \"Education\"। অনেক সিস্টেমে শিক্ষা ক্ষেত্রটি আবশ্যক থাকে।"
@@ -944,10 +940,6 @@ msgstr "{1} এ {0} যোগ করা হয়েছে"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "আপনার যোগ করা"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "আপনার জীবনবৃত্তান্ত থেকে তথ্য যোগ করা হয়েছে। যেকোনোটি সম্পাদনা করুন বা মুছে দিন।"
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "অন্য ফাইল নির্বাচন করুন"
 msgid "Choose another PDF"
 msgstr "অন্য PDF বেছে নিন"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "সর্বোচ্চ 2 MB-এর অডিও বেছে নিন।"
@@ -2114,6 +2110,10 @@ msgstr "ফাইল আমদানি করা যায়নি। আপ�
 msgid "Couldn't load connected applications. Try again."
 msgstr "সংযুক্ত অ্যাপগুলো লোড করা যায়নি। আবার চেষ্টা করুন।"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "জীবনবৃত্তান্তের তথ্য লোড বা সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।"
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "নথি লোড করা যায়নি। আবার চেষ্টা করুন।"
@@ -2211,10 +2211,6 @@ msgstr "ফাইল পড়া যায়নি। আপনার ফা�
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "এই চাকরির বিজ্ঞপ্তি পড়া যায়নি। পরিবর্তে বিজ্ঞপ্তির লেখা পেস্ট করুন অথবা বিস্তারিত পূরণ করুন।"
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "আপনার জীবনবৃত্তান্ত পড়া যায়নি। আবার চেষ্টা করুন।"
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "অ্যাকাউন্ট তৈরি করুন"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "নথিপত্র, আবেদন ও আপনার প্রোফাইল তৈরি ও পরিবর্তন করুন।"
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "আগে নথিতে একটি জীবনবৃত্তান্ত তৈরি বা আমদানি করুন।"
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "রপ্তানি হচ্ছে…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "ফ্যাক্ট"
 
@@ -3329,6 +3330,10 @@ msgstr "মুক্ত-ফর্ম"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "“{0} · {1}” ও জ্ঞানের {2}টি তথ্য থেকে · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "এখনো রপ্তানি হয়নি · আগে রপ্তানি করুন"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "আপনার জীবনবৃত্তান্তে কোনো তথ্য পাওয়া যায়নি।"
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "কোনো তথ্য মেলেনি। অন্য শব্দ বা ধরন দিয়ে চেষ্টা করুন।"
 
@@ -4821,6 +4822,10 @@ msgstr "এখনও কোনো গল্প নেই"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "এখনো অভিজ্ঞতার বিবরণ নেই · একটি যোগ করুন"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "সমর্থিত কোনো অংশ পাওয়া যায়নি। হাতে তথ্য যোগ করুন বা অন্য জীবনবৃত্তান্ত বেছে নিন।"
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "আগের পৃষ্ঠা"
 msgid "Previous week"
 msgstr "আগের সপ্তাহ"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "প্রধান জীবনবৃত্তান্ত"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "প্রকাশক"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "আমার জীবনবৃত্তান্ত থেকে তথ্য নিন"
 
@@ -5668,6 +5678,10 @@ msgstr "তাদের করার প্রশ্ন"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "অনুরোধের সীমা পূর্ণ"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "পর্যালোচনা করে চালিয়ে যান
 msgid "Review it"
 msgstr "পর্যালোচনা করুন"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "আগে প্রস্তাব পর্যালোচনা করুন।"
@@ -6313,6 +6331,10 @@ msgstr "ইন্টারভিউ সংরক্ষণ করুন"
 msgid "Save job"
 msgstr "চাকরি বাঁচান"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "প্রতিটি পৃষ্ঠা সোজা রেখে ফাইলটি সংরক্ষণ করুন।"
@@ -6320,6 +6342,10 @@ msgstr "প্রতিটি পৃষ্ঠা সোজা রেখে ফ�
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "তুলনা করতে এই অফারের শর্তগুলো সংরক্ষণ করুন। ক্যারিয়ার → অফার-এ খুলবে।"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "ফাইলে সংরক্ষিত"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "তথ্য হিসেবে জ্ঞানভান্ডারে সংরক্ষিত হয়েছে"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "চাকরির কিছু বিস্তারিত পড়া
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "কিছু লাইন পড়ার ক্রমের বাইরে সংরক্ষিত আছে।"
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "জীবনবৃত্তান্তের কিছু লেখা বাদ পড়েছে; অন্য তথ্যগুলো নিজে যোগ করুন।"
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "এই জীবনবৃত্তান্তটি লক করা �
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "এই জীবনবৃত্তান্তটি দীর্ঘ।"
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

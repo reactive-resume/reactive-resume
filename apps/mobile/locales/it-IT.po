@@ -750,10 +750,6 @@ msgstr "aggiungi un risultato"
 msgid "Add a result"
 msgstr "Aggiungi un risultato"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Aggiungi prima un curriculum."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Aggiungi una sezione intitolata \"Istruzione\". Molti sistemi hanno un campo istruzione obbligatorio."
@@ -944,10 +940,6 @@ msgstr "Aggiunto {0} a {1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Aggiunto da te"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "Aggiunti fatti dal tuo curriculum. Puoi modificarli o eliminarli."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Scegli un altro file"
 msgid "Choose another PDF"
 msgstr "Scegli un altro PDF"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "Scegliere un audio fino a 2 MB."
@@ -2114,6 +2110,10 @@ msgstr "Impossibile importare il file. Il file viene conservato. Riprovare."
 msgid "Couldn't load connected applications. Try again."
 msgstr "Impossibile caricare le applicazioni collegate. Riprova."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Impossibile caricare o salvare i fatti del curriculum. Riprova."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "Impossibile caricare il documento. Riprovare."
@@ -2211,10 +2211,6 @@ msgstr "Impossibile leggere il file. Il file viene conservato."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "Impossibile leggere questo annuncio. Incolla il testo dell'annuncio oppure inserisci i dettagli."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "Impossibile leggere il tuo curriculum. Riprova."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Crea un account"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Crea e modifica documenti, candidature e il tuo profilo."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Prima crea o importa un curriculum in Documenti."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "Esportazione…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fatto"
 
@@ -3329,6 +3330,10 @@ msgstr "Forma libera"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "Da «{0} · {1}» e {2} fatti delle conoscenze · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Nessuna esportazione · esporta prima"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "Nessun fatto trovato nel tuo curriculum."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "Nessun fatto corrispondente. Prova un'altra parola o tipo."
 
@@ -4821,6 +4822,10 @@ msgstr "Ancora nessuna storia"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Ancora nessun racconto · aggiungine uno"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Nessun estratto compatibile trovato. Aggiungi un fatto manualmente o scegli un altro curriculum."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Pagina precedente"
 msgid "Previous week"
 msgstr "Settimana precedente"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "Curriculum principale"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Editore"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "Estrai fatti dal mio curriculum"
 
@@ -5668,6 +5678,10 @@ msgstr "Domande da porre"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "Limite di richieste raggiunto"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Verifica e riprendi"
 msgid "Review it"
 msgstr "Verifica"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Verificare prima l’offerta."
@@ -6313,6 +6331,10 @@ msgstr "Salva il colloquio"
 msgid "Save job"
 msgstr "Salva lavoro"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Salva il file con ogni pagina orientata correttamente."
@@ -6320,6 +6342,10 @@ msgstr "Salva il file con ogni pagina orientata correttamente."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Salva queste condizioni dell'offerta per confrontarle. Si apre in Carriera → Offerte."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "Salvato in File"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "Salvato in Conoscenze come fatto"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "Alcuni dettagli dell'offerta non sono stati letti. Inserisci ruolo e azi
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Alcune righe sono memorizzate in un ordine diverso da quello di lettura."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "Parte del testo del curriculum è stata esclusa; aggiungi tu gli altri fatti."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "Questo curriculum è bloccato. Sbloccalo per apportare modifiche."
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Questo curriculum è lungo."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

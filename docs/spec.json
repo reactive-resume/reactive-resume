@@ -45116,6 +45116,7 @@
 														"he-IL",
 														"hi-IN",
 														"hu-HU",
+														"hy-AM",
 														"id-ID",
 														"it-IT",
 														"ja-JP",
@@ -45288,6 +45289,7 @@
 											"he-IL",
 											"hi-IN",
 											"hu-HU",
+											"hy-AM",
 											"id-ID",
 											"it-IT",
 											"ja-JP",
@@ -60648,6 +60650,9 @@
 														"maxLength": 2000,
 														"pattern": "\\S",
 														"description": "Non-blank source quotation. At most 2,000 characters including surrounding whitespace; trimmed before saving."
+													},
+													"forgottenFactId": {
+														"type": "string"
 													}
 												},
 												"required": [
@@ -60730,7 +60735,7 @@
 			"post": {
 				"operationId": "saveResumeFacts",
 				"summary": "Save reviewed resume facts",
-				"description": "Atomically saves only selected facts as shared Knowledge, retaining their exact resume quotations. Rejects a changed or trashed source. Existing, corrected and switched-off Knowledge is preserved.",
+				"description": "Atomically saves only selected facts as shared Knowledge, retaining their exact resume quotations. Rejects a changed or trashed source. Existing, corrected and switched-off Knowledge is preserved. Pass the preview IDs for forgotten facts the user selected to re-add.",
 				"tags": [
 					"Career"
 				],
@@ -60787,6 +60792,15 @@
 												"quote"
 											]
 										}
+									},
+									"restoreForgottenFactIds": {
+										"type": "array",
+										"maxItems": 50,
+										"items": {
+											"type": "string",
+											"minLength": 1
+										},
+										"description": "Current forgotten fact IDs from the preview, for excerpts the user explicitly selected to re-add. Omitting this field keeps forgotten facts suppressed."
 									}
 								},
 								"required": [
@@ -96413,6 +96427,7 @@
 											"he-IL",
 											"hi-IN",
 											"hu-HU",
+											"hy-AM",
 											"id-ID",
 											"it-IT",
 											"ja-JP",
@@ -134944,6 +134959,7 @@
 											"he-IL",
 											"hi-IN",
 											"hu-HU",
+											"hy-AM",
 											"id-ID",
 											"it-IT",
 											"ja-JP",
@@ -148643,6 +148659,7 @@
 											"he-IL",
 											"hi-IN",
 											"hu-HU",
+											"hy-AM",
 											"id-ID",
 											"it-IT",
 											"ja-JP",
@@ -158201,6 +158218,7 @@
 											"he-IL",
 											"hi-IN",
 											"hu-HU",
+											"hy-AM",
 											"id-ID",
 											"it-IT",
 											"ja-JP",
