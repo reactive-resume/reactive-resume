@@ -139,9 +139,8 @@ export async function loadDocument(userId: string, document: AssistantDocument):
 
 	const letter = await coverLetterService.getById({ id: document.id, userId });
 	const passages = collectLetterPassages(letter.content, { ...LABELS, body: "Letter" });
-	// The letter's facts come from its resume.
-	// A source resume in Trash isn't shared, as if the letter had none.
-	const [source] = letter.sourceResumeId
+	// The letter's facts come from its resume. One in Trash, or one that can't be read, leaves the letter without it.
+	const resume = letter.sourceResumeId
 		? await db
 				.select({ id: schema.resume.id, data: schema.resume.data, updatedAt: schema.resume.updatedAt })
 				.from(schema.resume)
@@ -152,8 +151,9 @@ export async function loadDocument(userId: string, document: AssistantDocument):
 						isNull(schema.resume.trashedAt),
 					),
 				)
-		: [];
-	const resume = source ? { ...source, data: parseStoredResumeData(source.data) } : null;
+				.then(([row]) => (row ? { ...row, data: parseStoredResumeData(row.data) } : null))
+				.catch(() => null)
+		: null;
 
 	return {
 		kind: "letter",
