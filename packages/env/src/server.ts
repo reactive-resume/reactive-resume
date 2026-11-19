@@ -226,6 +226,9 @@ export const env = createEnv({
 		AI_AGENT_STEP_TIMEOUT_MS: z.coerce.number().int().positive().max(300_000).default(120_000),
 		AI_AGENT_RUN_TIMEOUT_MS: z.coerce.number().int().positive().max(MAX_AGENT_RUN_TIMEOUT_MS).default(240_000),
 
+		// How MCP clients see the api_* tools: listed one by one, behind api_search + api_execute, or not at all.
+		MCP_API_TOOLS: z.enum(["all", "search", "none"]).default("all"),
+
 		// Feature Flags
 		FLAG_DISABLE_SIGNUPS: z.stringbool().default(false),
 		FLAG_DISABLE_EMAIL_AUTH: z.stringbool().default(false),
