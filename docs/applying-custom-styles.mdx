@@ -311,10 +311,11 @@ Use `pt` for predictable sizes in a PDF. Lengths also accept `px`, `in`, `mm`, `
 text elements. `display: none` hides an element that's already there; to remove content, hide it in **Write** instead,
 so it's also left out of exports.
 
-Inherited text properties — `color`, `direction`, `font-size`, `font-style`, `font-weight`, `letter-spacing`,
-`line-height`, `text-align`, `text-indent` and `text-transform` — also work on container elements: set one on a
-`section` or `item-header` and every text element inside it picks the value up. Non-inherited text properties such as
-`text-decoration` and `text-overflow` only apply to text elements.
+Inherited text properties such as `color`, `font-size`, `font-weight` and `text-align` apply to containers such as
+`section` and `item-header`. Text inside the container inherits the value unless a rule on a descendant overrides it.
+The stylesheet engine also resolves `text-indent` on containers. The PDF renderer ignores it as described in the
+[engine limits](#engine-limits). Non-inherited properties such as `text-decoration` and `text-overflow` apply only to
+text elements.
 
 Backgrounds must be flat colors. Gradients such as `linear-gradient(...)` aren't supported:
 
