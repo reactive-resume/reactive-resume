@@ -3,7 +3,7 @@ import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { toJsonSchemaCompat } from "@modelcontextprotocol/sdk/server/zod-json-schema-compat.js";
 import { ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { API_GATEWAY_TOOL_META, apiToolsMode, GATEWAY_TOOL_NAMES, isApiTool } from "./gateway";
-import { PARITY_TOOL_META, PARITY_WRITE_TOOLS } from "./parity";
+import { PARITY_TOOL_META, PARITY_TOOL_PERMISSIONS } from "./parity";
 import { TOOL_META } from "./tool-meta";
 
 function buildToolDefinitions() {
@@ -48,7 +48,7 @@ function prepareReadOnlyMcpDiscovery() {
 			// The gateway tools stay: they find and run only what a read-only credential may call.
 			(tool) =>
 				GATEWAY_TOOL_NAMES.has(tool.name) ||
-				(tool.annotations?.readOnlyHint === true && !PARITY_WRITE_TOOLS.has(tool.name)),
+				(tool.annotations?.readOnlyHint === true && (PARITY_TOOL_PERMISSIONS.get(tool.name) ?? "read") === "read"),
 		),
 	});
 }

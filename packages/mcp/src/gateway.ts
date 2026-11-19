@@ -1,10 +1,12 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { RequestAuthentication } from "@reactive-resume/api/context";
 import { toJsonSchemaCompat } from "@modelcontextprotocol/sdk/server/zod-json-schema-compat.js";
 import z from "zod";
+import { missingPermissionMessage } from "@reactive-resume/api/context";
 import { env } from "@reactive-resume/env/server";
 import { READ_IDEMPOTENT, WRITE_DESTRUCTIVE_EXTERNAL } from "./annotations";
-import { PARITY_TOOL_META, PARITY_WRITE_TOOLS } from "./parity";
+import { PARITY_TOOL_META, PARITY_TOOL_PERMISSIONS } from "./parity";
 import { json } from "./results";
 
 /**
@@ -51,10 +53,6 @@ export const API_GATEWAY_TOOL_META = {
 
 export const GATEWAY_TOOL_NAMES: ReadonlySet<string> = new Set(["api_search", "api_execute"]);
 
-/** Same rule as read-only discovery: read-only by annotation and by the permission its route needs. */
-const readableWithoutWrite = (name: string) =>
-	PARITY_TOOL_META[name]?.annotations.readOnlyHint === true && !PARITY_WRITE_TOOLS.has(name);
-
 function searchApiTools(callable: ReadonlySet<string>, query: string, limit = 8) {
 	const words = query
 		.toLowerCase()
@@ -77,7 +75,7 @@ function searchApiTools(callable: ReadonlySet<string>, query: string, limit = 8)
 		name,
 		title: meta.title,
 		description: meta.description,
-		inputSchema: toJsonSchemaCompat(meta.inputSchema as z.ZodType, { strictUnions: true, pipeStrategy: "input" }),
+		inputSchema: toJsonSchemaCompat(meta.inputSchema, { strictUnions: true, pipeStrategy: "input" }),
 	}));
 }
 
@@ -92,7 +90,7 @@ const toolError = (text: string): CallToolResult => ({ isError: true, content: [
 export function registerApiGateway(
 	server: McpServer,
 	register: (target: McpServer) => void,
-	{ expose, canWrite = true }: { expose: boolean; canWrite?: boolean },
+	{ expose, authentication }: { expose: boolean; authentication: RequestAuthentication },
 ) {
 	const handlers = new Map<string, ToolCallback>();
 	const capture = new Proxy(server, {
@@ -113,18 +111,39 @@ export function registerApiGateway(
 	register(capture);
 	if (!expose) return;
 
-	// A read-only credential only finds, and only runs, what it may call.
-	const callable = new Set([...handlers.keys()].filter((name) => canWrite || readableWithoutWrite(name)));
+	const { method, permissions } = authentication;
+	const readOnly = !permissions.includes("write") && !permissions.includes("delete");
+	const callable = new Set(
+		[...handlers.keys()].filter((name) => {
+			const permission = PARITY_TOOL_PERMISSIONS.get(name);
+			return (
+				(!permission || permissions.includes(permission)) &&
+				(!readOnly || PARITY_TOOL_META[name]?.annotations.readOnlyHint === true)
+			);
+		}),
+	);
 	server.registerTool("api_search", API_GATEWAY_TOOL_META.api_search, ({ query, limit }) =>
 		json({ tools: searchApiTools(callable, query, limit) }),
 	);
-	server.registerTool("api_execute", API_GATEWAY_TOOL_META.api_execute, ({ name, arguments: args }, extra) => {
+	server.registerTool("api_execute", API_GATEWAY_TOOL_META.api_execute, async ({ name, arguments: args }, extra) => {
 		const handler = handlers.get(name);
 		const meta = PARITY_TOOL_META[name];
 		if (!handler || !meta) return toolError(`Unknown operation ${name}. Find one with api_search.`);
-		if (!callable.has(name)) return toolError(`${name} needs write access; this credential is read-only.`);
-		const parsed = (meta.inputSchema as z.ZodType).safeParse(args ?? {});
+		if (!callable.has(name)) {
+			const permission = PARITY_TOOL_PERMISSIONS.get(name);
+			return toolError(
+				permission && !permissions.includes(permission)
+					? missingPermissionMessage(method, permission)
+					: `${name} is unavailable to read-only credentials.`,
+			);
+		}
+		const parsed = await meta.inputSchema.safeParseAsync(args ?? {});
 		if (!parsed.success) return toolError(`Invalid arguments for ${name}:\n${z.prettifyError(parsed.error)}`);
-		return handler(parsed.data, extra);
+		const result = await handler(parsed.data, extra);
+		// Direct tools get per-operation output validation from the SDK.
+		if (!result.isError && !(await meta.outputSchema.safeParseAsync(result.structuredContent)).success) {
+			return toolError(`Invalid structured content for ${name}.`);
+		}
+		return result;
 	});
 }

@@ -91,7 +91,7 @@ export function createMcpServer(
 			signal: request.signal,
 		});
 	if (apiTools === "all") registerApi(server);
-	else registerApiGateway(server, registerApi, { expose: apiTools === "search", canWrite });
+	else registerApiGateway(server, registerApi, { expose: apiTools === "search", authentication });
 	registerPrompts(server, client);
 	registerToolDiscovery(server, { canWrite });
 

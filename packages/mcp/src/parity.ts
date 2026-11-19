@@ -1,7 +1,7 @@
 import type { BehaviorAnnotations } from "./annotations";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { AnyProcedure, InferRouterInitialContext, RouterClient } from "@orpc/server";
-import type { RequestAuthentication } from "@reactive-resume/api/context";
+import type { RequestAuthentication, RequestPermission } from "@reactive-resume/api/context";
 import { call, ORPCError } from "@orpc/server";
 import z from "zod";
 import { missingPermissionMessage, requiredPermission } from "@reactive-resume/api/context";
@@ -279,17 +279,14 @@ function parityToolContract(path: string, procedure: AnyProcedure): ParityToolCo
 }
 
 const PARITY_CONTRACTS = new Map(
-	Object.entries(PARITY_PROCEDURES).map(([path, [procedure, annotations]]) => [
-		path,
-		{ procedure, annotations, ...parityToolContract(path, procedure) },
-	]),
+	Object.entries(PARITY_PROCEDURES).map(([path, [procedure, annotations]]) => {
+		const permission: RequestPermission = requiredPermission(procedure["~orpc"].route);
+		return [path, { procedure, annotations, permission, ...parityToolContract(path, procedure) }];
+	}),
 );
 
-/** Parity tools a read-only credential can't call: their route needs write or delete, whatever their annotations say. */
-export const PARITY_WRITE_TOOLS: ReadonlySet<string> = new Set(
-	[...PARITY_CONTRACTS]
-		.filter(([, { procedure }]) => requiredPermission(procedure["~orpc"].route) !== "read")
-		.map(([path]) => parityToolName(path)),
+export const PARITY_TOOL_PERMISSIONS: ReadonlyMap<string, RequestPermission> = new Map(
+	[...PARITY_CONTRACTS].map(([path, { permission }]) => [parityToolName(path), permission]),
 );
 
 export const PARITY_TOOL_META: Record<
@@ -403,8 +400,7 @@ export function registerParityTools(
 		signal?: AbortSignal;
 	},
 ) {
-	for (const [path, { procedure, inputJson }] of PARITY_CONTRACTS) {
-		const definition = procedure["~orpc"];
+	for (const [path, { permission, inputJson }] of PARITY_CONTRACTS) {
 		const name = parityToolName(path);
 		const meta = PARITY_TOOL_META[name];
 		if (!meta) throw new Error(`Missing MCP tool contract: ${path}`);
@@ -413,7 +409,6 @@ export function registerParityTools(
 			meta,
 			withErrorHandling(path, async (params) => {
 				const userId = context.authentication.user.id;
-				const permission = requiredPermission(definition.route);
 				if (!context.authentication.permissions.includes(permission))
 					throw new ORPCError("FORBIDDEN", {
 						message: missingPermissionMessage(context.authentication.method, permission),
