@@ -991,7 +991,14 @@ export const careerService = {
 			const [row] = await db
 				.select()
 				.from(tables.resume)
-				.where(and(eq(tables.resume.id, application.resumeId), eq(tables.resume.userId, input.userId)));
+				.where(
+					and(
+						eq(tables.resume.id, application.resumeId),
+						eq(tables.resume.userId, input.userId),
+						// A linked document in Trash isn't shared; the coach reads on as if none were linked.
+						isNull(tables.resume.trashedAt),
+					),
+				);
 			if (row)
 				resume = {
 					text: buildMarkdown(row.data),
@@ -1021,7 +1028,13 @@ export const careerService = {
 			const [row] = await db
 				.select()
 				.from(tables.coverLetter)
-				.where(and(eq(tables.coverLetter.id, application.coverLetterId), eq(tables.coverLetter.userId, input.userId)));
+				.where(
+					and(
+						eq(tables.coverLetter.id, application.coverLetterId),
+						eq(tables.coverLetter.userId, input.userId),
+						isNull(tables.coverLetter.trashedAt),
+					),
+				);
 			if (row)
 				letter = {
 					text: row.content,
