@@ -108,8 +108,7 @@ export function useCareerActions() {
 			actions.write("stories-and-facts", "career.correctFact", input),
 		proposeResumeFacts: (input: MutationInputs["career.proposeResumeFacts"]) =>
 			actions.run("career.proposeResumeFacts", input),
-		saveResumeFacts: (input: MutationInputs["career.saveResumeFacts"]) =>
-			actions.write("stories-and-facts", "career.saveResumeFacts", input),
+		saveResumeFacts: (input: MutationInputs["career.saveResumeFacts"]) => actions.run("career.saveResumeFacts", input),
 		suggestRoles: (input: MutationInputs["career.suggestTargetRoles"], signal?: AbortSignal) =>
 			actions.run("career.suggestTargetRoles", input, signal),
 		deleteOffer: (input: MutationInputs["career.deleteSavedItem"]) =>

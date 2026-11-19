@@ -2,7 +2,12 @@ import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
 import { resumeFactProposals } from "@reactive-resume/resume/markdown";
 import { applicationTimelineEntrySchema } from "@reactive-resume/schema/applications/data";
 import { applicationPipelineSchema } from "@reactive-resume/schema/applications/lanes";
-import { EMPTY_WORKSPACE, careerFactCorrectionSchema } from "@reactive-resume/schema/career";
+import {
+	EMPTY_WORKSPACE,
+	careerFactCorrectionSchema,
+	careerSourceSchema,
+	resumeFactsReviewSchema,
+} from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { visitorShape } from "./board-fixtures";
 import { now } from "./clock";
@@ -71,6 +76,7 @@ export function extendedSeed(empty: boolean) {
 			read: true,
 		},
 		forgottenFacts: [] as Row[],
+		forgottenResumeFacts: [] as Row[],
 		transcripts: [] as Row[],
 		apiKeys: { apiKeys: [], total: 0 },
 		connectedApps: { connections: [] },
@@ -257,46 +263,54 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 				aiOperationIds: [],
 			},
 		};
-	if (operation === "career.proposeResumeFacts") {
+	if (operation === "career.proposeResumeFacts" || operation === "career.saveResumeFacts") {
 		const resume = find(state, "resumes", input.resumeId);
-		return {
-			value: {
-				id: resume.id,
-				name: resume.name,
-				updatedAt: resume.updatedAt,
-				...resumeFactProposals(resume.data as typeof defaultResumeData),
-			},
-		};
-	}
-	if (operation === "career.saveResumeFacts") {
-		const resume = find(state, "resumes", input.resumeId);
-		if (new Date(input.updatedAt as Date | string).getTime() !== new Date(resume.updatedAt as Date).getTime())
+		const review = resumeFactProposals(resume.data as typeof defaultResumeData);
+		const tombstones = rows(state, "forgottenResumeFacts");
+		const byQuote = (quote: string) =>
+			tombstones.find((row) => row.resumeId === resume.id && row.quote === quote.trim().toLocaleLowerCase());
+		if (operation === "career.proposeResumeFacts")
+			return {
+				value: {
+					id: resume.id,
+					name: resume.name,
+					updatedAt: resume.updatedAt,
+					...review,
+					proposals: review.proposals.map((proposal) => ({
+						...proposal,
+						forgottenFactId: byQuote(proposal.quote)?.id,
+					})),
+				},
+			};
+		const { updatedAt, proposals, restoreForgottenFactIds } = resumeFactsReviewSchema.parse(input);
+		if (updatedAt.getTime() !== new Date(resume.updatedAt as Date).getTime())
 			throw Object.assign(new Error("Resume changed."), { code: "CONFLICT" });
-		const quotes = new Set(
-			resumeFactProposals(resume.data as typeof defaultResumeData).proposals.map((row) => row.quote),
-		);
-		if ((input.proposals as Row[]).some((row) => !quotes.has(String(row.quote))))
-			throw new Error("Source quotation changed.");
+		const quotes = new Set(review.proposals.map(({ quote }) => quote));
+		if (proposals.some(({ quote }) => !quotes.has(quote))) throw new Error("Source quotation changed.");
+		const facts = rows(state, "facts");
 		let saved = 0;
-		let skipped = 0;
-		for (const proposal of input.proposals as Row[]) {
-			if (rows(state, "facts").some((row) => row.text === proposal.text)) {
-				skipped++;
-				continue;
+		for (const { quote, ...proposal } of proposals) {
+			const forgotten = byQuote(quote);
+			if (forgotten && (typeof forgotten.id !== "string" || !restoreForgottenFactIds?.includes(forgotten.id))) continue;
+			if (facts.some((row) => row.text === proposal.text)) continue;
+			if (forgotten) {
+				tombstones.splice(tombstones.indexOf(forgotten), 1);
+				state.forgottenFacts = rows(state, "forgottenFacts").filter((entry) => entry !== forgotten.count);
 			}
-			rows(state, "facts").push({
-				...structuredClone(rows(state, "facts")[0]),
+			facts.push({
+				...structuredClone(facts[0]),
 				...proposal,
 				id: id(),
 				applicationId: null,
+				status: "active",
 				revisions: [],
-				source: { kind: "resume", id: resume.id, quote: proposal.quote },
+				source: { kind: "resume", id: resume.id, quote },
 				createdAt: now(),
 				updatedAt: now(),
 			});
 			saved++;
 		}
-		return { value: { saved, skipped } };
+		return { value: { saved, skipped: proposals.length - saved } };
 	}
 	if (operation === "career.suggestTargetRoles")
 		return {
@@ -600,7 +614,16 @@ export function fixtureWrite(operation: string, input: Row, state: FixtureState)
 	if (operation === "career.forgetFact") {
 		const fact = find(state, "facts", input.id);
 		rows(state, "facts").splice(rows(state, "facts").indexOf(fact), 1);
-		rows(state, "forgottenFacts").push({ count: 1, at: now() });
+		const count = { count: 1, at: now() };
+		rows(state, "forgottenFacts").push(count);
+		const { data: source } = careerSourceSchema.safeParse(fact.source);
+		if (source?.kind === "resume")
+			rows(state, "forgottenResumeFacts").push({
+				id: fact.id,
+				resumeId: source.id,
+				quote: source.quote.trim().toLocaleLowerCase(),
+				count,
+			});
 		return { value: undefined };
 	}
 	if (

@@ -750,10 +750,6 @@ msgstr "הוספת תוצאה"
 msgid "Add a result"
 msgstr "הוסף תוצאה"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "יש להוסיף תחילה קורות חיים."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "הוסף מקטע בכותרת ״Education״. במערכות רבות יש שדה השכלה שהוא שדה חובה."
@@ -944,10 +940,6 @@ msgstr "נוסף {0} ב-{1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "נוסף על ידך"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "נוספו עובדות מקורות החיים שלך. אפשר לערוך או להסיר כל אחת מהן."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "בחר קובץ אחר"
 msgid "Choose another PDF"
 msgstr "בחירת PDF אחר"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "יש לבחור קובץ שמע עד 2 מ״ב."
@@ -2114,6 +2110,10 @@ msgstr "לא ניתן לייבא את הקובץ. הקובץ שלך נשמר. י
 msgid "Couldn't load connected applications. Try again."
 msgstr "לא ניתן לטעון יישומים מחוברים. יש לנסות שוב."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "לא ניתן לטעון או לשמור עובדות מקורות החיים. נסו שוב."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "לא ניתן לטעון את המסמך. יש לנסות שוב."
@@ -2211,10 +2211,6 @@ msgstr "לא ניתן לקרוא את הקובץ. הקובץ שלך נשמר."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "לא ניתן לקרוא את מודעת הדרושים הזאת. אפשר להדביק את טקסט המודעה או למלא את הפרטים."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "לא ניתן לקרוא את קורות החיים שלך. יש לנסות שוב."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "יצירת חשבון"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "יצירה ושינוי של מסמכים, מועמדויות והפרופיל שלך."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "תחילה צרו או ייבאו קורות חיים במסמכים."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "ייצוא…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "עובדה"
 
@@ -3329,6 +3330,10 @@ msgstr "צורה חופשית"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "מתוך ״{0} · {1}״ ו־{2} עובדות ממאגר הידע · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "טרם יוצא · יש לייצא תחילה"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "לא נמצאו עובדות בקורות החיים שלך."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "אין עובדות תואמות. כדאי לנסות מילה או סוג אחר."
 
@@ -4821,6 +4822,10 @@ msgstr "אין עדיין סיפורים"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "אין סיפור עדיין · כדאי להוסיף"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "לא נמצאו קטעים נתמכים. הוסיפו עובדה ידנית או בחרו קורות חיים אחרים."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "העמוד הקודם"
 msgid "Previous week"
 msgstr "השבוע הקודם"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "קורות חיים ראשיים"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "מוציא לאור"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "שליפת עובדות מקורות החיים שלי"
 
@@ -5668,6 +5678,10 @@ msgstr "שאלות לשאול אותם"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "חריגה ממגבלת הבקשות"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "בדיקה והמשך"
 msgid "Review it"
 msgstr "בדיקה שלו"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "יש לבדוק תחילה את ההצעה."
@@ -6313,6 +6331,10 @@ msgstr "שמור ראיון"
 msgid "Save job"
 msgstr "שמור עבודה"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "שמור את הקובץ כשכל עמוד זקוף."
@@ -6320,6 +6342,10 @@ msgstr "שמור את הקובץ כשכל עמוד זקוף."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "יש לשמור את תנאי ההצעה להשוואה. נפתח במסך קריירה ← הצעות."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "נשמר בקבצים"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "נשמר במאגר הידע כעובדה"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "לא ניתן היה לקרוא חלק מפרטי המשרה. מלא א�
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "חלק מהשורות מאוחסנות שלא בסדר הקריאה."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "חלק מהטקסט של קורות החיים הושמט; הוסיפו עובדות אחרות בעצמכם."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "קורות החיים האלה נעולים. בטל את הנעילה כ
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "קורות החיים האלה ארוכים."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

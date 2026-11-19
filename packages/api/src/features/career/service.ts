@@ -4,7 +4,7 @@ import type z from "zod";
 import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import { ORPCError } from "@orpc/client";
-import { and, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, notLike, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as tables from "@reactive-resume/db/schema";
 import { buildMarkdown, resumeFactProposals } from "@reactive-resume/resume/markdown";
@@ -45,6 +45,8 @@ type Owned = { userId: string; applicationId?: string | null | undefined };
 type FactInput = z.infer<typeof careerFactInputSchema>;
 type StoryInput = z.infer<typeof careerStoryInputSchema>;
 const hash = (text: string) => createHash("sha256").update(text).digest("hex");
+const retiredFactKey = "readded:";
+const retiredFactSourceKey = (id: string) => `${retiredFactKey}${hash(id)}`;
 
 /** Older clients omit provenance; their content edits must preserve the recorded request sources. */
 function inheritAnswerUsage(answers: CareerWorkspace["answers"], current: CareerWorkspace["answers"]) {
@@ -215,6 +217,7 @@ async function ownedFactIds(reader: DbOrTx, userId: string, answers: { factIds: 
 			and(
 				and(eq(tables.careerFact.userId, userId), availableApplicationContext(userId, tables.careerFact.applicationId)),
 				inArray(tables.careerFact.id, ids),
+				notLike(tables.careerFact.sourceKey, `${retiredFactKey}%`),
 			),
 		);
 	const owned = new Set(rows.map((row) => row.id));
@@ -510,13 +513,13 @@ async function submitAnswerSnapshot(
 	return { application: submitted, stages: [savedStageOf(submitted)] };
 }
 
-/**
- * Called under the account lock; all fact entry points share suppression and deduplication. `restoreForgotten` is
- * the reviewed resume import's privilege: it may revive its own tombstone where automatic paths never may.
- */
-async function storeFact(tx: DbOrTx, userId: string, fact: FactInput, restoreForgotten = false) {
+const factSourceKey = (source: CareerSource) =>
+	hash(`${source.kind}:${source.id}:${source.quote.trim().toLocaleLowerCase()}`);
+
+/** Called under the account lock; only an explicit selection of the current tombstone can re-add it. */
+async function storeFact(tx: DbOrTx, userId: string, fact: FactInput, restorations?: ReadonlySet<string>) {
 	const { source } = fact;
-	const sourceKey = hash(`${source.kind}:${source.id}:${source.quote.trim().toLocaleLowerCase()}`);
+	const sourceKey = factSourceKey(source);
 	const [suppressed] = await tx
 		.select({ id: tables.careerFact.id, status: tables.careerFact.status })
 		.from(tables.careerFact)
@@ -535,20 +538,29 @@ async function storeFact(tx: DbOrTx, userId: string, fact: FactInput, restoreFor
 		)
 		.limit(1);
 	if (suppressed) {
-		if (!restoreForgotten || suppressed.status !== "forgotten") return null;
-		const [restored] = await tx
+		if (suppressed.status !== "forgotten" || !restorations?.has(suppressed.id)) return null;
+		const [history] = await tx
 			.update(tables.careerFact)
-			.set({ ...fact, status: "active", revisions: [], updatedAt: new Date() })
+			.set({
+				// Keep the privacy cutoff without retaining an old fact ID or source link.
+				id: generateId(),
+				applicationId: null,
+				text: "",
+				source: { kind: source.kind, id: "", quote: "" },
+				sourceKey: retiredFactSourceKey(suppressed.id),
+				revisions: [],
+				updatedAt: sql`${tables.careerFact.updatedAt}`,
+			})
 			.where(and(eq(tables.careerFact.id, suppressed.id), eq(tables.careerFact.status, "forgotten")))
-			.returning();
-		return restored ?? null;
+			.returning({ id: tables.careerFact.id });
+		if (!history) return null;
 	}
-	// A forgotten source key remains a content-free tombstone; retries cannot recreate the fact.
 	const [row] = await tx
 		.insert(tables.careerFact)
 		.values({ userId, ...fact, sourceKey })
 		.onConflictDoNothing()
 		.returning();
+	if (suppressed && !row) throw new ORPCError("CONFLICT", { message: "Knowledge changed. Review the resume again." });
 	return row ?? null;
 }
 
@@ -679,13 +691,36 @@ export const careerService = {
 					eq(tables.careerFact.userId, userId),
 					availableApplicationContext(userId, tables.careerFact.applicationId),
 					eq(tables.careerFact.status, "forgotten"),
+					notLike(tables.careerFact.sourceKey, `${retiredFactKey}%`),
 				),
 			)
 			.groupBy(tables.careerFact.updatedAt)
 			.orderBy(desc(tables.careerFact.updatedAt)),
 	proposeResumeFacts: async (userId: string, resumeId: string) => {
 		const { data: _data, ...review } = await resumeForFacts(userId, resumeId);
-		return review;
+		if (!review.proposals.length) return { ...review, proposals: [] };
+		const candidates = review.proposals.map((proposal) => ({
+			proposal,
+			key: factSourceKey({ kind: "resume", id: resumeId, quote: proposal.quote }),
+		}));
+		const forgotten = await db
+			.select({ id: tables.careerFact.id, key: tables.careerFact.sourceKey })
+			.from(tables.careerFact)
+			.where(
+				and(
+					eq(tables.careerFact.userId, userId),
+					eq(tables.careerFact.status, "forgotten"),
+					inArray(
+						tables.careerFact.sourceKey,
+						candidates.map(({ key }) => key),
+					),
+				),
+			);
+		const ids = new Map(forgotten.map(({ id, key }) => [key, id]));
+		return {
+			...review,
+			proposals: candidates.map(({ proposal, key }) => ({ ...proposal, forgottenFactId: ids.get(key) })),
+		};
 	},
 	saveResumeFacts: (userId: string, input: z.infer<typeof resumeFactsReviewSchema>) =>
 		db.transaction(async (tx) => {
@@ -698,6 +733,7 @@ export const careerService = {
 			const quotes = new Set(resume.proposals.map((proposal) => proposal.quote));
 			if (input.proposals.some((proposal) => !quotes.has(proposal.quote)))
 				throw new ORPCError("BAD_REQUEST", { message: QUOTE_NOT_IN_SOURCE });
+			const restorations = new Set(input.restoreForgottenFactIds);
 			let saved = 0;
 			for (const { quote, ...fact } of input.proposals) {
 				const row = await storeFact(
@@ -708,7 +744,7 @@ export const careerService = {
 						applicationId: null,
 						source: { kind: "resume", id: resume.id, quote },
 					},
-					true,
+					restorations,
 				);
 				if (row) saved++;
 			}
@@ -823,9 +859,17 @@ export const careerService = {
 					source: sql`jsonb_set(${tables.careerFact.source}, '{quote}', '""'::jsonb)`,
 					revisions: [],
 				})
-				.where(ownedFact(id, userId))
+				.where(and(ownedFact(id, userId), notLike(tables.careerFact.sourceKey, `${retiredFactKey}%`)))
 				.returning();
-			if (!row) throw new ORPCError("NOT_FOUND");
+			if (!row) {
+				// A queued retry against a re-added fact must not touch the new fact or block later changes.
+				const [retired] = await tx
+					.select({ id: tables.careerFact.id })
+					.from(tables.careerFact)
+					.where(and(eq(tables.careerFact.userId, userId), eq(tables.careerFact.sourceKey, retiredFactSourceKey(id))));
+				if (retired) return;
+				throw new ORPCError("NOT_FOUND");
+			}
 			await invalidateMemory(userId, id, tx, true);
 		});
 	},

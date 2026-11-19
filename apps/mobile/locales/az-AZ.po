@@ -750,10 +750,6 @@ msgstr "nəticə əlavə et"
 msgid "Add a result"
 msgstr "Nəticə əlavə edin"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Əvvəlcə CV əlavə edin."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "\"Təhsil\" başlıqlı bölmə əlavə edin. Bir çox sistemlərdə təhsil sahəsi məcburidir."
@@ -944,10 +940,6 @@ msgstr "{0}-da {1} əlavə edildi"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Siz əlavə etmisiniz"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "CV-nizdən faktlar əlavə edildi. İstənilənini redaktə edin və ya unudun."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Başqa fayl seçin"
 msgid "Choose another PDF"
 msgstr "Başqa PDF seç"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "2 MB-a qədər səs faylı seçin."
@@ -2114,6 +2110,10 @@ msgstr "Faylı idxal etmək mümkün olmadı. Faylınız saxlanılır. Yenidən 
 msgid "Couldn't load connected applications. Try again."
 msgstr "Qoşulmuş tətbiqləri yükləmək mümkün olmadı. Yenidən cəhd edin."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "CV faktlarını yükləmək və ya saxlamaq alınmadı. Yenidən cəhd edin."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "Sənədi yükləmək mümkün olmadı. Yenidən cəhd edin."
@@ -2211,10 +2211,6 @@ msgstr "Faylı oxumaq mümkün olmadı. Faylınız saxlanılır."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "Bu iş elanını oxumaq mümkün olmadı. Əvəzində elanın mətnini yapışdırın və ya məlumatları doldurun."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "CV-nizi oxumaq mümkün olmadı. Yenidən cəhd edin."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Hesab yarat"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Sənədlər, müraciətlər və profiliniz yaradın və dəyişdirin."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Əvvəlcə Sənədlərdə CV yaradın və ya idxal edin."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "İxrac edilir…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fakt"
 
@@ -3329,6 +3330,10 @@ msgstr "Sərbəst forma"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "“{0} · {1}” və {2} Bilik faktından · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Hələ ixrac edilməyib · Əvvəl ixrac edin"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "CV-nizdə fakt tapılmadı."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "Uyğun fakt yoxdur. Başqa söz və ya növ sınayın."
 
@@ -4821,6 +4822,10 @@ msgstr "Hələ hekayə yoxdur"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Hələ hekayə yoxdur · birini əlavə edin"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Uyğun çıxarış tapılmadı. Faktı əl ilə əlavə edin və ya başqa CV seçin."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Əvvəlki səhifə"
 msgid "Previous week"
 msgstr "Əvvəlki həftə"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "Əsas CV"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Nəşriyyatçı"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "CV-imdən faktları götür"
 
@@ -5668,6 +5678,10 @@ msgstr "Onlara verəcəyiniz suallar"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "Sorğu limiti aşılıb"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Nəzərdən keçir və davam et"
 msgid "Review it"
 msgstr "Nəzərdən keçir"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Əvvəl təklifi nəzərdən keçirin."
@@ -6313,6 +6331,10 @@ msgstr "Müsahibəni saxla"
 msgid "Save job"
 msgstr "İşə qənaət edin"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Faylı bütün səhifələri düz vəziyyətdə olacaq şəkildə saxlayın."
@@ -6320,6 +6342,10 @@ msgstr "Faylı bütün səhifələri düz vəziyyətdə olacaq şəkildə saxlay
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Müqayisə üçün bu təklif şərtlərini saxlayın. Karyera → Təkliflər bölməsində açılır."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "Fayllarda saxlanıldı"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "Biliklərə fakt kimi saxlanıldı"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "Bəzi iş təfərrüatlarını oxumaq mümkün olmadı. Vəzifəni və �
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Bəzi sətirlər oxunma ardıcıllığından kənar saxlanılıb."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "CV mətninin bir hissəsi buraxıldı; digər faktları özünüz əlavə edin."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "Bu CV kilidlənib. Dəyişiklik etmək üçün kilidini açın."
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Bu CV uzundur."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

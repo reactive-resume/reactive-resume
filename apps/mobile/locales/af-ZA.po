@@ -750,10 +750,6 @@ msgstr "voeg 'n resultaat by"
 msgid "Add a result"
 msgstr "Voeg 'n resultaat by"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "Voeg eers 'n CV by."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "Voeg 'n afdeling met die opskrif \"Opleiding\" by. Baie stelsels het 'n verpligte opleidingsveld."
@@ -944,10 +940,6 @@ msgstr "Bygevoeg {0} by {1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "Deur jou bygevoeg"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "Feite uit jou CV is bygevoeg. Wysig of vergeet enige daarvan."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "Kies 'n ander lêer"
 msgid "Choose another PDF"
 msgstr "Kies 'n ander PDF"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "Kies oudio van hoogstens 2 MB."
@@ -2114,6 +2110,10 @@ msgstr "Die lêer kon nie ingevoer word nie. Jou lêer word behou. Probeer weer.
 msgid "Couldn't load connected applications. Try again."
 msgstr "Kon nie gekoppelde toepassings laai nie. Probeer weer."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Kon nie CV-feite laai of stoor nie. Probeer weer."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "Die dokument kon nie gelaai word nie. Probeer weer."
@@ -2211,10 +2211,6 @@ msgstr "Die lêer kon nie gelees word nie. Jou lêer word behou."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "Kon nie hierdie posadvertensie lees nie. Plak eerder die advertensieteks of vul die besonderhede in."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "Kon nie jou CV lees nie. Probeer weer."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "Skep 'n rekening"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "Skep en verander dokumente, aansoeke en jou profiel."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Skep of voer eers ’n CV in Dokumente in."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "Word uitgevoer…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Feit"
 
@@ -3329,6 +3330,10 @@ msgstr "Vrye vorm"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "Uit “{0} · {1}” en {2} Kennisfeite · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "Nog geen uitvoer nie · Voer eers uit"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "Geen feite in jou CV gevind nie."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "Geen feite stem ooreen nie. Probeer 'n ander woord of tipe."
 
@@ -4821,6 +4822,10 @@ msgstr "Nog geen stories nie"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "Nog geen verhaal nie · voeg een by"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Geen geskikte uittreksels gevind nie. Voeg self ’n feit by of kies ’n ander CV."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "Vorige bladsy"
 msgid "Previous week"
 msgstr "Vorige week"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "Primêre CV"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "Uitgewer"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "Haal feite uit my CV"
 
@@ -5668,6 +5678,10 @@ msgstr "Vrae om hulle te vra"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "Versoeklimiet bereik"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "Hersien en hervat"
 msgid "Review it"
 msgstr "Hersien dit"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "Hersien eers die aanbod."
@@ -6313,6 +6331,10 @@ msgstr "Bewaar onderhoud"
 msgid "Save job"
 msgstr "Stoor werk"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "Stoor die lêer met elke bladsy regop."
@@ -6320,6 +6342,10 @@ msgstr "Stoor die lêer met elke bladsy regop."
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "Stoor hierdie aanbodsbepalings om te vergelyk. Maak oop in Loopbaan → Aanbiedinge."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "In Lêers gestoor"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "In Kennis bewaar as 'n feit"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "Sommige werkbesonderhede kon nie gelees word nie. Vul die pos en maatska
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Sommige reëls word buite leesorde gebêre."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "Sommige CV-teks is weggelaat; voeg self ander feite by."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "Hierdie CV is gesluit. Ontsluit dit om veranderinge te maak."
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "Hierdie CV is lank."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

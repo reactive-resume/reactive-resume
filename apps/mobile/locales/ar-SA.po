@@ -750,10 +750,6 @@ msgstr "إضافة نتيجة"
 msgid "Add a result"
 msgstr "أضف نتيجة"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "أضف سيرة ذاتية أولًا."
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "أضف قسمًا بعنوان \"Education\" (التعليم). تحتوي أنظمة كثيرة على حقل تعليم إلزامي."
@@ -944,10 +940,6 @@ msgstr "تمت إضافة {0} إلى {1}"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "أضفتها أنت"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "أُضيفت معلومات من سيرتك الذاتية. يمكنك تعديل أي منها أو حذفها."
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "اختر ملفًا آخر"
 msgid "Choose another PDF"
 msgstr "اختيار PDF آخر"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "اختر صوتًا بحجم لا يتجاوز 2 MB."
@@ -2114,6 +2110,10 @@ msgstr "تعذّر استيراد الملف. ملفك محفوظ. أعد الم
 msgid "Couldn't load connected applications. Try again."
 msgstr "تعذّر تحميل التطبيقات المتصلة. حاول مجددًا."
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "تعذّر تحميل حقائق السيرة الذاتية أو حفظها. حاول مجددًا."
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "تعذّر تحميل المستند. أعد المحاولة."
@@ -2211,10 +2211,6 @@ msgstr "تعذّر قراءة الملف. ملفك محفوظ."
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "تعذّرت قراءة إعلان الوظيفة هذا. الصق نص الإعلان بدلًا من ذلك، أو أدخل التفاصيل."
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "تعذّرت قراءة سيرتك الذاتية. حاول مجددًا."
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "إنشاء حساب"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "إنشاء المستندات والطلبات وملفك الشخصي وتغييرها."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "أنشئ سيرة ذاتية أو استوردها في المستندات أولًا."
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "جارٍ التصدير…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "حقيقة"
 
@@ -3329,6 +3330,10 @@ msgstr "حر الشكل"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "من «{0} · {1}» و{2} حقائق من المعرفة · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "لم يُصدّر بعد · صدّر أولًا"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "لم تُعثر على معلومات في سيرتك الذاتية."
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "لا توجد معلومات مطابقة. جرّب كلمة أو نوعًا آخر."
 
@@ -4821,6 +4822,10 @@ msgstr "لا توجد قصص بعد"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "لا قصة بعد · أضف واحدة"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "لم يُعثر على مقتطفات مدعومة. أضف حقيقة يدويًا أو اختر سيرة ذاتية أخرى."
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "الصفحة السابقة"
 msgid "Previous week"
 msgstr "الأسبوع السابق"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "السيرة الذاتية الأساسية"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "الناشر"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "استخراج حقائق من سيرتي الذاتية"
 
@@ -5668,6 +5678,10 @@ msgstr "أسئلة تطرحها عليهم"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "تم بلوغ حد الطلبات"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "المراجعة والمتابعة"
 msgid "Review it"
 msgstr "مراجعته"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "راجع العرض أولًا."
@@ -6313,6 +6331,10 @@ msgstr "احفظ المقابلة"
 msgid "Save job"
 msgstr "حفظ الوظيفة"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "احفظ الملف بحيث تكون كل صفحة في وضعها الصحيح."
@@ -6320,6 +6342,10 @@ msgstr "احفظ الملف بحيث تكون كل صفحة في وضعها ال
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "احفظ بنود هذا العرض للمقارنة. تُفتح في المسار المهني ← العروض."
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "حُفظ في الملفات"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "تم الحفظ في المعرفة كحقيقة"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "تعذّرت قراءة بعض تفاصيل الوظيفة. املأ ا�
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "بعض الأسطر مُخزَّنة خارج ترتيب القراءة."
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "تم استبعاد بعض نص السيرة الذاتية؛ أضِف حقائق أخرى بنفسك."
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "هذه السيرة الذاتية مقفلة. ألغِ قفلها لإ�
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "هذه السيرة الذاتية طويلة."
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."

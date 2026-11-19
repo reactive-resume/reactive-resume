@@ -277,6 +277,43 @@ it("discards cancelled and old-account resume reviews without saving or exposing
 	expect(api.saveResumeFacts).not.toHaveBeenCalled();
 });
 
+it("approves only an individually selected forgotten resume fact", async () => {
+	setAccountScope(api.userId);
+	api.data.documents = [{ id: "resume", type: "resume", name: "Fictional resume" }];
+	const forgotten = { text: "Old excerpt", quote: "Old excerpt", category: "experience" };
+	api.proposeResumeFacts.mockResolvedValue({
+		id: "resume",
+		name: "Fictional resume",
+		updatedAt: new Date(),
+		omitted: 0,
+		proposals: [
+			{ ...forgotten, forgottenFactId: "previous-fact" },
+			{ text: "New excerpt", quote: "New excerpt", category: "skill" },
+		],
+	});
+	api.saveResumeFacts.mockResolvedValue({ saved: 2, skipped: 0 });
+	mount(<ResumeFacts />);
+	fireEvent.click(screen.getByRole("button", { name: "Pull from my resume" }));
+	await waitFor(() => expect(screen.getByRole("combobox", { name: "Resume" })).toBeEnabled());
+	fireEvent.change(screen.getByRole("combobox", { name: "Resume" }), { target: { value: "resume" } });
+	const restore = await screen.findByRole("checkbox", { name: "Re-add this forgotten fact: Old excerpt" });
+	expect(restore).toHaveAttribute("aria-checked", "false");
+	fireEvent.click(screen.getByRole("button", { name: "Deselect new facts" }));
+	fireEvent.click(screen.getByRole("button", { name: "Select new facts" }));
+	expect(restore).toHaveAttribute("aria-checked", "false");
+	fireEvent.click(restore);
+	fireEvent.click(screen.getByRole("button", { name: "Save 2 facts" }));
+	await waitFor(() =>
+		expect(api.saveResumeFacts).toHaveBeenCalledWith(
+			expect.objectContaining({
+				proposals: [forgotten, { text: "New excerpt", quote: "New excerpt", category: "skill" }],
+				restoreForgottenFactIds: ["previous-fact"],
+			}),
+			expect.anything(),
+		),
+	);
+});
+
 it("retries failed application refreshes even when an empty result remains cached", async () => {
 	api.data.applications = [];
 	mount(<OfferEntry />);

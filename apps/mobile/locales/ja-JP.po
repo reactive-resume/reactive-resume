@@ -750,10 +750,6 @@ msgstr "結果を追加"
 msgid "Add a result"
 msgstr "結果を追加"
 
-#: src/features/career/facts.tsx
-msgid "Add a resume first."
-msgstr "まずレジュメを追加してください。"
-
 #: src/features/public/ats-messages.ts
 msgid "Add a section headed \"Education\". Many systems have a required education field."
 msgstr "「学歴」という見出しのセクションを追加してください。多くのシステムには必須の学歴欄があります。"
@@ -944,10 +940,6 @@ msgstr "{1} に {0} を追加しました"
 #: src/features/career/model.ts
 msgid "Added by you"
 msgstr "自分で追加"
-
-#: src/features/career/facts.tsx
-msgid "Added facts from your resume. Edit or forget any of them."
-msgstr "レジュメから事実を追加しました。どの事実も編集・削除できます。"
 
 #: src/features/builder/share/share-screen.tsx
 #: src/features/builder/share/web-page-screen.tsx
@@ -1680,6 +1672,10 @@ msgstr "別のファイルを選択してください"
 msgid "Choose another PDF"
 msgstr "別のPDFを選択"
 
+#: src/features/career/resume-facts.tsx
+msgid "Choose another resume"
+msgstr ""
+
 #: src/data/workspace.ts
 msgid "Choose audio up to 2 MB."
 msgstr "2 MB以下の音声を選択してください。"
@@ -2114,6 +2110,10 @@ msgstr "インポートできませんでした。元のファイルは保持さ
 msgid "Couldn't load connected applications. Try again."
 msgstr "接続済みアプリを読み込めませんでした。もう一度お試しください。"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "レジュメの事実を読み込みまたは保存できませんでした。もう一度お試しください。"
+
 #: src/features/documents/actions.tsx
 msgid "Couldn't load the document. Try again."
 msgstr "書類を読み込めませんでした。再度お試しください。"
@@ -2211,10 +2211,6 @@ msgstr "ファイルを読み取れませんでした。元のファイルは保
 #: src/features/applications/SaveJobScreen.tsx
 msgid "Couldn't read this posting. Paste the posting text instead, or fill in the details."
 msgstr "この求人を読み取れませんでした。求人のテキストを貼り付けるか、詳細を入力してください。"
-
-#: src/features/career/facts.tsx
-msgid "Couldn't read your resume. Try again."
-msgstr "レジュメを読み取れませんでした。もう一度お試しください。"
 
 #: src/features/applications/StageSheet.tsx
 msgid "Couldn't record submission. Try again."
@@ -2403,6 +2399,10 @@ msgstr "アカウントを作成"
 #: src/features/settings/AccessScreens.tsx
 msgid "Create and change documents, applications and your profile."
 msgstr "書類、応募、プロフィールの作成と変更。"
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "まず「ドキュメント」でレジュメを作成またはインポートしてください。"
 
 #: src/features/documents/import.tsx
 msgid "Create resume"
@@ -3099,6 +3099,7 @@ msgid "Exporting…"
 msgstr "書き出し中…"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "事実"
 
@@ -3329,6 +3330,10 @@ msgstr "自由形式"
 #: src/features/workspace/FitScreen.tsx
 msgid "From “{0} · {1}” and {2} Knowledge facts · {checkedLine}"
 msgstr "「{0} · {1}」とナレッジの{2}件の事実より · {checkedLine}"
+
+#: src/features/career/resume-facts.tsx
+msgid "from “{quote}”"
+msgstr ""
 
 #. placeholder {0}: new Intl.NumberFormat(i18n.locale, { style: "currency", currency: salary.currency, maximumFractionDigits: 0 }).format(salary.amount)
 #: src/features/settings/ProfileScreen.tsx
@@ -4719,10 +4724,6 @@ msgid "No export yet · Export first"
 msgstr "未書き出し · 先に書き出す"
 
 #: src/features/career/facts.tsx
-msgid "No facts found in your resume."
-msgstr "レジュメに事実が見つかりませんでした。"
-
-#: src/features/career/facts.tsx
 msgid "No facts match. Try another word or type."
 msgstr "一致する事実がありません。別の単語や種類をお試しください。"
 
@@ -4821,6 +4822,10 @@ msgstr "まだストーリーがありません"
 #: src/features/workspace/PrepScreen.tsx
 msgid "No story yet · add one"
 msgstr "エピソードなし · 追加する"
+
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "対応する抜粋がありません。事実を手動で追加するか、別のレジュメを選んでください。"
 
 #: src/features/builder/check/CheckScreen.tsx
 msgid "No terms stood out in this posting."
@@ -5559,6 +5564,10 @@ msgstr "前のページへ"
 msgid "Previous week"
 msgstr "先週"
 
+#: src/features/career/resume-facts.tsx
+msgid "Previously forgotten"
+msgstr ""
+
 #: src/features/builder/share/web-page-screen.tsx
 msgid "Primary resume"
 msgstr "プライマリレジュメ"
@@ -5646,6 +5655,7 @@ msgid "Publisher"
 msgstr "出版社"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Pull facts from my resume"
 msgstr "レジュメから事実を取り込む"
 
@@ -5668,6 +5678,10 @@ msgstr "相手に聞く質問"
 #: src/features/settings/providers.ts
 msgid "Rate limited"
 msgstr "リクエスト数の上限に達しました"
+
+#: src/features/career/resume-facts.tsx
+msgid "Re-add this forgotten fact: {text}"
+msgstr ""
 
 #: src/features/public/ats-messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6171,6 +6185,10 @@ msgstr "確認して再開"
 msgid "Review it"
 msgstr "確認する"
 
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr ""
+
 #: src/data/career-tools.ts
 msgid "Review the offer first."
 msgstr "先に内定を確認してください。"
@@ -6313,6 +6331,10 @@ msgstr "面接を保存"
 msgid "Save job"
 msgstr "ジョブの保存"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr ""
+
 #: src/features/public/ats-messages.ts
 msgid "Save the file with every page upright."
 msgstr "すべてのページが正しい向きになった状態でファイルを保存してください。"
@@ -6320,6 +6342,10 @@ msgstr "すべてのページが正しい向きになった状態でファイル
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Save these offer terms to compare. Opens in Career → Offers."
 msgstr "比較のためにこの内定条件を保存します。「キャリア → 内定」で開きます。"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact: {text}"
+msgstr ""
 
 #: src/features/builder/download/download-screen.tsx
 msgid "Save to Files"
@@ -6362,6 +6388,10 @@ msgstr "ファイルに保存しました"
 #: src/features/workspace/DebriefScreen.tsx
 msgid "Saved to Knowledge as a fact"
 msgstr "ナレッジに事実として保存しました"
+
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {saved}. Skipped: {skipped}. Existing, corrected or switched-off facts stay unchanged."
+msgstr ""
 
 #: src/features/builder/entry/EntryScreen.tsx
 #: src/features/builder/shared/document.tsx
@@ -6805,6 +6835,10 @@ msgstr "求人の詳細の一部を読み取れませんでした。職種と会
 #: src/features/public/ats-messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "一部の行が読み取り順とは異なる順序で保存されています。"
+
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out; add other facts yourself."
+msgstr "レジュメの一部のテキストは除外されました。その他の事実はご自身で追加してください。"
 
 #: src/features/builder/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
@@ -7533,6 +7567,10 @@ msgstr "このレジュメはロックされています。変更するにはロ
 #: src/features/public/ats-messages.ts
 msgid "This resume is long."
 msgstr "この履歴書は長くなっています。"
+
+#: src/features/career/resume-facts.tsx
+msgid "This resume is no longer current. Choose a resume and review it again."
+msgstr ""
 
 #: src/features/public/resume.tsx
 msgid "This resume is password protected. Open its public link in your browser to enter the password."
