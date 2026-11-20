@@ -17,6 +17,7 @@ import { pendingCommits } from "../pending-commits";
 import { ApplicationPacketPanel } from "./application-packet";
 import { ApplyTab } from "./apply";
 import { DebriefTab } from "./debrief";
+import { FitTab } from "./fit";
 import { MessagesTab } from "./messages";
 import { PractiseTab, StoryPractice } from "./practise";
 import { SavedTab } from "./saved";
@@ -28,6 +29,7 @@ const api = vi.hoisted(() => ({
 	updateOffer: vi.fn(),
 	exportPacket: vi.fn(),
 	save: vi.fn(),
+	saveFact: vi.fn(),
 	note: vi.fn(),
 	ai: true,
 	submit: vi.fn(),
@@ -77,13 +79,15 @@ vi.mock("@/libs/orpc/client", () => {
 				updateOffer: endpoint("updateOffer"),
 				schedules: endpoint("schedules"),
 				facts: endpoint("facts"),
+				fitEvidence: endpoint("fitEvidence"),
+				forgetFact: endpoint("forgetFact"),
 				saveWorkspace: endpoint("saveWorkspace", api.save),
 				submitApplication: endpoint("submit", api.submit),
 				applyReply: endpoint("applyReply", api.apply),
 				undoReply: endpoint("undoReply"),
 				generate: endpoint("generate", api.generate),
 				deleteSavedItem: endpoint("delete"),
-				saveFact: endpoint("saveFact"),
+				saveFact: endpoint("saveFact", api.saveFact),
 			},
 		},
 		client: {
@@ -380,6 +384,39 @@ it("re-keys stored answers without crypto.randomUUID (HTTP LAN origins)", async 
 			answers: [{ id: expect.any(String), question: "Why?", answer: "Because", factIds: [] }],
 		}),
 	);
+});
+
+it("saves Fit evidence without crypto.randomUUID (HTTP LAN origins)", async () => {
+	vi.stubGlobal("crypto", { getRandomValues: crypto.getRandomValues.bind(crypto) });
+	const requirement = "Mentor teammates";
+	const evidence = "I coached two new teammates through their first project.";
+	api.data.fitEvidence = { usable: true };
+	api.data.savedItems = [
+		item("Fit result", {
+			kind: "fit",
+			headline: "Fit check",
+			summary: "One requirement needs evidence.",
+			requirements: [{ text: requirement, origin: "posting", status: "missing", evidence: "", factIds: [] }],
+			checks: [],
+			ask: null,
+		}),
+	];
+	api.saveFact.mockResolvedValueOnce({ id: "saved-evidence" });
+	mount(<FitTab {...props} />);
+	fireEvent.click(await screen.findByRole("button", { name: "Add a fact" }));
+	fireEvent.change(screen.getByRole("textbox", { name: `What you did: ${requirement}` }), {
+		target: { value: evidence },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Save to Knowledge" }));
+	await waitFor(() =>
+		expect(api.save.mock.lastCall?.[0]).toMatchObject({ evidence: { [requirement]: "saved-evidence" } }),
+	);
+	expect(api.saveFact.mock.lastCall?.[0]).toEqual({
+		applicationId: null,
+		category: "experience",
+		text: evidence,
+		source: { kind: "manual", id: expect.any(String), quote: evidence },
+	});
 });
 
 it("does not automatically retry rejected text after rollback, but allows explicit retry", async () => {
