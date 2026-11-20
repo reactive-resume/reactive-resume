@@ -172,6 +172,7 @@ afterEach(() => {
 	cleanup();
 	clients.splice(0).forEach((client) => client.clear());
 	vi.useRealTimers();
+	vi.unstubAllGlobals();
 });
 
 // Preferences' minimum salary prefills EUR; opening the ~170-option list to pick it again only costs time.
@@ -514,6 +515,24 @@ it("saves only memory consent from Facts, preserving other cached preferences", 
 	fireEvent.click(await screen.findByRole("radio", { name: "Never" }));
 	await waitFor(() => expect(api.saveProfile).toHaveBeenCalledWith({ memoryMode: "off" }, expect.anything()));
 	expect(clients[0]?.getQueryData(["profile"])).toEqual({ ...profile(), memoryMode: "off" });
+});
+
+it("adds a manual fact without crypto.randomUUID (HTTP LAN origins)", async () => {
+	vi.stubGlobal("crypto", { getRandomValues: crypto.getRandomValues.bind(crypto) });
+	api.saveFact.mockResolvedValue({ id: "added-fact" });
+	mount(<FactsPage highlight={undefined} />);
+	fireEvent.click(await screen.findByRole("button", { name: "Add a fact" }));
+	fireEvent.change(await screen.findByLabelText(/New fact/), {
+		target: { value: "I mentored two associate PMs in 2025" },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Add" }));
+	await waitFor(() => expect(api.saveFact).toHaveBeenCalledTimes(1));
+	expect(api.saveFact.mock.lastCall?.[0]).toEqual({
+		applicationId: null,
+		text: "I mentored two associate PMs in 2025",
+		category: "accomplishment",
+		source: { kind: "manual", id: expect.any(String), quote: "I mentored two associate PMs in 2025" },
+	});
 });
 
 it.each([false, true])("serializes rapid memory choices, including an earlier failed save (%s)", async (fails) => {

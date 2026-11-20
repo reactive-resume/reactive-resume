@@ -26,6 +26,7 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
+import { generateId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError, CareerLoading } from "../load-state";
 import { CollapseRow, flash, useCareerTime, withQueryUndo } from "../shared";
@@ -468,7 +469,7 @@ function AddFact({ onAdded }: AddFactProps) {
 			applicationId: null,
 			text: value,
 			category,
-			source: { kind: "manual", id: crypto.randomUUID(), quote: value },
+			source: { kind: "manual", id: generateId(), quote: value },
 		});
 	};
 

@@ -2,7 +2,7 @@ import type { Application } from "@/features/applications/types";
 // @vitest-environment happy-dom
 import type { ApplicationReview } from "@reactive-resume/ai/application-review";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { expect, it, vi } from "vite-plus/test";
+import { afterEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
@@ -28,8 +28,13 @@ vi.mock("@tanstack/react-router", () => ({
 vi.mock("@/features/resume/editor/proposals/proposal-list", () => ({ ChangeSet: () => null }));
 vi.mock("@/libs/orpc/client", () => ({ client: {}, orpc: {} }));
 
+afterEach(() => {
+	vi.unstubAllGlobals();
+});
+
 // A prepared answer joins the ones already written; keeping it must never replace them.
-it("keeps a prepared answer beside the existing answers", async () => {
+it("keeps a prepared answer beside the existing answers without crypto.randomUUID (HTTP LAN origins)", async () => {
+	vi.stubGlobal("crypto", { getRandomValues: crypto.getRandomValues.bind(crypto) });
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 	const review: ApplicationReview = {
 		threadId: null,

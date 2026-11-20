@@ -14,6 +14,7 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { generateId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
@@ -643,7 +644,7 @@ function EvidenceEditor({ requirement, onCancel, onSaved, onPropose }: EvidenceE
 				applicationId: null,
 				category: "experience",
 				text: text.trim(),
-				source: { kind: "manual", id: crypto.randomUUID(), quote: text.trim() },
+				source: { kind: "manual", id: generateId(), quote: text.trim() },
 			});
 			if (account !== getAccountGeneration()) return;
 			if (!fact) throw new Error("not saved");

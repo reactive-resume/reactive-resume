@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
+import { generateId } from "@reactive-resume/utils/string";
 import { useDefaultProvider, useSessionDraft, useWorkspace } from "../hooks";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
 import { getAccountGeneration } from "@/libs/auth/account-scope";
@@ -212,7 +213,7 @@ function ReviewForm({ application, disabled, onClose }: PrepareReviewProps & { o
 			const item = review.answers[index];
 			if (!item) return;
 			const before = (await workspace.settled()).answers;
-			const answer = { id: crypto.randomUUID(), question: item.question, ...item.answer };
+			const answer = { id: generateId(), question: item.question, ...item.answer };
 			if (!(await workspace.save({ answers: [...before, answer] }, { answers: before }))) return;
 			if (!current()) return;
 			setReview({ ...review, answers: review.answers.filter((_, position) => position !== index) });
