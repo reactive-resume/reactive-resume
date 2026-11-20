@@ -28,7 +28,7 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/file";
-import { rewriteSummary, isolate } from "@reactive-resume/utils/string";
+import { generateId, isolate, rewriteSummary } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { DraftRecovery } from "../draft-recovery";
 import {
@@ -235,7 +235,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 			disabled={submitting || live.length >= 30}
 			onClick={() =>
 				workspace.save({
-					answers: [...workspace.current().answers, { id: crypto.randomUUID(), question: "", answer: "", factIds: [] }],
+					answers: [...workspace.current().answers, { id: generateId(), question: "", answer: "", factIds: [] }],
 				})
 			}
 			className="touch-target relative flex h-7 w-fit items-center justify-center gap-1.5 rounded-sm border border-dashed border-line-2 px-2.5 text-[13px]/[18px] font-medium text-ink-3 transition-colors duration-quick hover:bg-hover hover:text-ink"
@@ -337,7 +337,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 									workspace.save({
 										answers: stored.answers.map((answer) => ({
 											...answer,
-											id: crypto.randomUUID(),
+											id: generateId(),
 											factIds: [],
 										})),
 									})
@@ -361,7 +361,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 									disabled={submitting || live.length >= 30}
 									onUse={(answer) =>
 										workspace.save({
-											answers: [...workspace.current().answers, { ...answer, id: crypto.randomUUID() }],
+											answers: [...workspace.current().answers, { ...answer, id: generateId() }],
 										})
 									}
 								/>

@@ -343,6 +343,45 @@ it("waits for an existing answer save before submitting its current form state",
 	);
 });
 
+it("adds a question and a reviewed answer without crypto.randomUUID (HTTP LAN origins)", async () => {
+	vi.stubGlobal("crypto", { getRandomValues: crypto.getRandomValues.bind(crypto) });
+	api.save.mockImplementation(async (input: { answers: { id: string }[] }) => ({
+		...EMPTY_WORKSPACE,
+		answers: input.answers,
+	}));
+	mount(<ApplyTab {...props} />);
+	fireEvent.click(await screen.findByRole("button", { name: "Add a question" }));
+	await waitFor(() =>
+		expect(api.save.mock.lastCall?.[0]).toMatchObject({
+			answers: [{ id: expect.any(String), question: "", answer: "", factIds: [] }],
+		}),
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Use a saved answer for a new question" }));
+	await waitFor(() => expect(api.save).toHaveBeenCalledTimes(2));
+	expect(api.save.mock.lastCall?.[0]).toMatchObject({
+		answers: [
+			{ id: expect.any(String), question: "", answer: "", factIds: [] },
+			{ id: expect.any(String), question: "Describe your project", answer: "Reviewed answer", factIds: [] },
+		],
+	});
+});
+
+it("re-keys stored answers without crypto.randomUUID (HTTP LAN origins)", async () => {
+	vi.stubGlobal("crypto", { getRandomValues: crypto.getRandomValues.bind(crypto) });
+	api.data.savedItems = [item("Sent answers", { kind: "answers", answers: [{ question: "Why?", answer: "Because" }] })];
+	api.save.mockImplementation(async (input: { answers: unknown[] }) => ({
+		...EMPTY_WORKSPACE,
+		answers: input.answers,
+	}));
+	mount(<ApplyTab {...props} />);
+	fireEvent.click(await screen.findByRole("button", { name: "Use these answers" }));
+	await waitFor(() =>
+		expect(api.save.mock.lastCall?.[0]).toMatchObject({
+			answers: [{ id: expect.any(String), question: "Why?", answer: "Because", factIds: [] }],
+		}),
+	);
+});
+
 it("does not automatically retry rejected text after rollback, but allows explicit retry", async () => {
 	vi.useFakeTimers();
 	const save = vi.fn();
