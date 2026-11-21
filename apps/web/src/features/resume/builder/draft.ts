@@ -629,13 +629,16 @@ export const useResumeStore = create<ResumeStore>()(
 			const sameRevision = unsaved?.baseUpdatedAt === resume?.updatedAt.toISOString();
 			const hasSourceChanges =
 				unsaved?.aiOperationIds !== undefined && !isEqual(unsaved.aiOperationIds, resume?.aiOperationIds ?? []);
+			// Normalized first: an older recovery that only lacks the saved file name holds no changes.
+			const recoveredData = resume && unsaved ? withRecoveredFileName(unsaved, resume.data) : undefined;
 			const restored =
 				resume &&
 				unsaved &&
-				((!unsaved.clean && (!isEqual(unsaved.data, resume.data) || hasSourceChanges)) || hasPendingDecisions)
+				recoveredData &&
+				((!unsaved.clean && (!isEqual(recoveredData, resume.data) || hasSourceChanges)) || hasPendingDecisions)
 					? {
 							...resume,
-							data: withRecoveredFileName(unsaved, resume.data),
+							data: recoveredData,
 							...(unsaved.aiOperationIds !== undefined
 								? {
 										aiOperationIds: unsaved.aiOperationIds,

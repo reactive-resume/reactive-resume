@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { View } from "react-native";
 import { useBuilderDocument, useDocumentId, useLetterDocument, DocumentState } from "../share/document";
 import { deliverExport, deliverExports, prepareExport, type ExportFormat } from "./export-file";
-import { resumeExportName, savedResumeFileName } from "./export-model";
+import { differsOnlyInFileName, resumeExportName, savedResumeFileName } from "./export-model";
 import { useConnectivity, useLetterStore, useResumeStore, useResume } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
@@ -37,6 +37,8 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 	const query = letter ? coverLetter : resume;
 	const document = query.data;
 	const linkedResume = useResume(coverLetter.data?.sourceResumeId ?? "");
+	// The server's copy, without this device's unsaved edits.
+	const savedResume = useResume(letter ? "" : id);
 	const [pair, setPair] = useState(false);
 	const kind = letter ? "letter" : "resume";
 	const [format, setFormat] = useState<ExportFormat>("pdf");
@@ -79,15 +81,27 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 		setError("");
 		try {
 			const draft = letter ? letterDraft : resumeDraft;
+			// A file name edit alone doesn't change the page: while it waits to save, the saved copy makes the PDF.
+			let source: typeof document | null = null;
 			if (draft.document?.id === id) {
 				await draft.flush();
 				const state = letter ? useLetterStore.getState() : useResumeStore.getState();
-				if (state.status !== "saved" && format === "pdf")
+				const pending = useResumeStore.getState().document;
+				if (
+					!letter &&
+					state.status !== "saved" &&
+					format === "pdf" &&
+					pending?.id === id &&
+					savedResume.data &&
+					differsOnlyInFileName(pending.data, savedResume.data.data)
+				)
+					source = savedResume.data;
+				else if (state.status !== "saved" && format === "pdf")
 					throw new Error("Save your changes before exporting the page.");
 			}
 			const current = letter ? useLetterStore.getState().document : useResumeStore.getState().document;
 			const file = await prepareExport(
-				current?.id === id ? current : document,
+				source ?? (current?.id === id ? current : document),
 				kind,
 				format,
 				letter ? fileName : resumeExportName(fileName, generatedName),
@@ -210,6 +224,10 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 						value={fileName}
 						onChangeText={changeName}
 						onFocus={() => fileNameVisit.current++}
+						// A resume's name lives in its draft, so after editing the field follows it (and Undo) again.
+						onBlur={() => {
+							if (!letter) setName(undefined);
+						}}
 						suffix={`.${format}`}
 					/>
 				</Form>

@@ -1163,6 +1163,24 @@ describe("builder resume autosave", () => {
 		useResumeStore.getState().initialize(initial);
 		await flushMicrotasks();
 		expect(orpcMocks.updateResume.mock.calls[0]?.[0].data.metadata.fileName).toBe("");
+
+		// An older recovery that differs only by lacking the name holds no changes, even on an older revision.
+		clearResumeDrafts();
+		window.localStorage.clear();
+		orpcMocks.updateResume.mockClear();
+		const { fileName: _, ...metadata } = initial.data.metadata;
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: { ...initial.data, metadata },
+				storedAt: Date.now(),
+				baseUpdatedAt: new Date(initial.updatedAt.getTime() - 60_000),
+			}),
+		);
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
 	});
 
 	it("never vouches for what an older app kept: it goes out unchecked until the server takes it", async () => {
