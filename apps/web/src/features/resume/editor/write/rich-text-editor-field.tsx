@@ -26,6 +26,7 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { useKeyboardInset } from "@reactive-resume/ui/hooks/use-keyboard-inset";
+import { stripHtml } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { ImprovePanel, lineAtCaret } from "./improve";
 import { acceptImproveLine, improveSourceChanges } from "./improve-history";
@@ -195,7 +196,7 @@ export type RichTextEditorProps = {
 	className?: string;
 	/** The text area's id, so other controls can focus it. */
 	id?: string;
-	/** Replaces the text area's default height (44px to 360px). */
+	/** Replaces the text area's default height (200px to 540px). */
 	heightClassName?: string;
 	/** Improve's presets for a cover letter's body, instead of the resume ones. */
 	improve?: ImproveKind | undefined;
@@ -206,9 +207,15 @@ export type RichTextEditorProps = {
 const COMPACT_ACTIONS = ["text-b", "text-italic", "list-bullets", "link-simple-horizontal"] as const;
 
 /**
+ * Lets the text area be dragged taller or shorter. The browser writes the dragged height inline, which lifts the
+ * default max height so the field can grow past it; ProseMirror leaves the inline style alone.
+ */
+const resizableClassName = "resize-y [&[style*=height]]:max-h-none";
+
+/**
  * Loaded on demand by ./rich-text-editor.tsx, which keeps Tiptap out of the builder's first render.
  *
- * Rich text for descriptions: empty desktop fields keep formatting visible; otherwise focus shows it. The toolbar never
+ * Rich text for descriptions: desktop fields always show formatting above the text; phones dock it while editing. The toolbar never
  * takes focus from it, and Markdown shortcuts work ("- " starts a list, "**bold**").
  */
 export function RichTextEditor({
@@ -220,7 +227,7 @@ export function RichTextEditor({
 	disabled = false,
 	className,
 	id,
-	heightClassName = "max-h-[360px] min-h-11",
+	heightClassName = "max-h-[540px] min-h-50",
 	focusRequest,
 	improve,
 	compact = false,
@@ -228,6 +235,10 @@ export function RichTextEditor({
 	const [focused, setFocused] = useState(false);
 	const toolbar = useRef<HTMLDivElement>(null);
 	const [improving, setImproving] = useState<ImproveLine | null>(null);
+	// Kept in state, not read from editor.getText() during render: React Compiler caches reads on the stable editor
+	// object, and useEditorState only sees the editor after its first transaction. Seeded from the value so a filled
+	// field never flashes its placeholder before the editor reports its exact count.
+	const [characters, setCharacters] = useState(() => stripHtml(value).length);
 	const allActions = useToolbarActions();
 	const actions = compact
 		? COMPACT_ACTIONS.flatMap((icon) => allActions.filter((action) => action.icon === icon))
@@ -293,11 +304,14 @@ export function RichTextEditor({
 				class: cn(
 					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none [&_li]:my-1.5 [&_li]:ps-0 [&_li>p]:my-0 [&_ol]:ps-[14px] [&_ol]:pe-0 [&_ul]:ps-[14px] [&_ul]:pe-0",
 					heightClassName,
+					resizableClassName,
 					"[&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
 				),
 			},
 		},
+		onCreate: ({ editor }) => setCharacters(editor.getText().length),
 		onTransaction: ({ editor, transaction }) => {
+			setCharacters(editor.getText().length);
 			const sources = improveSourceChanges(transaction);
 			if (!sources || transaction.getMeta("preventUpdate") || !transaction.before.eq(editor.state.doc)) return;
 			acceptedReplacement.current = undefined;
@@ -315,14 +329,12 @@ export function RichTextEditor({
 		selector: ({ editor }) =>
 			editor
 				? {
-						characters: editor.getText().length,
 						active: actions.map((action) => action.isActive?.(editor) ?? false),
 						canImprove: lineAtCaret(editor) !== null,
 						formatting: readFormatting(editor),
 					}
-				: { characters: 0, active: [] as boolean[], canImprove: false, formatting: DEFAULT_FORMATTING },
+				: { active: [] as boolean[], canImprove: false, formatting: DEFAULT_FORMATTING },
 	});
-	const characters = editor?.getText().length ?? 0;
 	const menus = useToolbarMenus(editor, () => setFocused(false));
 	useEffect(() => {
 		const link = actions.find((action) => action.icon === "link-simple-horizontal");
@@ -481,14 +493,14 @@ export function RichTextEditor({
 
 				<div className="relative">
 					<EditorContent editor={editor} />
-					{placeholder && editor && editor.getText().length === 0 && (
+					{placeholder && editor && characters === 0 && (
 						<span aria-hidden="true" className="pointer-events-none absolute start-3 top-2 text-sm/5 text-ink-3">
 							{placeholder}
 						</span>
 					)}
 				</div>
-				{/* Formatting sits above the focused text; keyboard and menu actions keep its selection. */}
-				{(editing || (!disabled && characters === 0)) && !readOnlyTable && !mobile && (
+				{/* Formatting always sits above editable text on desktop; keyboard and menu actions keep its selection. */}
+				{(editing || !disabled) && !readOnlyTable && !mobile && (
 					<Toolbar.Root
 						ref={toolbar}
 						aria-label={t`Formatting`}
@@ -526,7 +538,7 @@ export function RichTextEditor({
 				{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
 				{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
 
-				{editing && !improving && !!characters && !compact && footer}
+				{(editing || (!mobile && !disabled)) && !improving && !compact && footer}
 			</div>
 			{!editing && !disabled && characters === 0 && !mobile && !compact && (
 				<p className="mt-2 text-xs/4 text-ink-3">
