@@ -1,7 +1,8 @@
 import type { OutlineRow, WriteSection } from "./model";
 import type { DndLabel } from "@/libs/dnd";
 import type { DragEndEvent } from "@dnd-kit/core";
-import type { CustomSectionType, SectionType } from "@reactive-resume/schema/resume/data";
+import type { CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { WritableDraft } from "immer";
 import type { ComponentProps, KeyboardEvent } from "react";
 import {
 	closestCenter,
@@ -38,6 +39,7 @@ import {
 	getSectionObject,
 	getSectionType,
 	moveSection,
+	moveSectionToGroup,
 	resolveSection,
 	summarizeSection,
 } from "./model";
@@ -127,10 +129,18 @@ export function Outline({ locked }: OutlineProps) {
 	const updateResumeData = useUpdateResumeData();
 	const sensors = useSortSensors();
 
-	const move = (id: string, target: OutlineRow | undefined, direction: "up" | "down", announced = false) => {
-		if (!target) return;
+	/**
+	 * Applies a move. A keyboard move (`announced`) then says where the section is: by `place` when it crossed a page or
+	 * sidebar line (its position in the list stays the same), else by position.
+	 */
+	const relocate = (
+		id: string,
+		edit: (draft: WritableDraft<ResumeData>) => void,
+		announced = false,
+		place?: string,
+	) => {
 		const before = useResumeStore.getState().resume?.data;
-		updateResumeData((draft) => moveSection(draft, id, target, direction), { newStep: true });
+		updateResumeData(edit, { newStep: true });
 		if (!announced) return;
 		// A keyboard move: say where the section is now (a drag has dnd-kit's own announcements). A move that didn't
 		// apply (a locked resume) leaves the data as it was, and says nothing.
@@ -143,9 +153,23 @@ export function Outline({ locked }: OutlineProps) {
 		const title =
 			getSectionObject(data, section)?.title.trim() ||
 			getSectionTitle(section.kind === "custom" ? section.type : (section.id as SectionType | "summary"));
-		if (position > 0)
+		if (place) announce(t`${title} moved to ${place}`);
+		else if (position > 0)
 			announce(t`${title} moved to position ${ph({ position: i18n.number(position) })} of ${i18n.number(rows.length)}`);
 	};
+
+	const move = (id: string, target: OutlineRow | undefined, direction: "up" | "down", announced = false) => {
+		if (target) relocate(id, (draft) => moveSection(draft, id, target, direction), announced);
+	};
+
+	/** Onto a page or sidebar line: first in the column below it from above, last in the one above it from below. */
+	const moveAcross = (id: string, line: Extract<OutlineItem, { kind: "divider" }>, down: boolean, announced = false) =>
+		relocate(
+			id,
+			(draft) => moveSectionToGroup(draft, id, down ? line.below : line.above, down ? "start" : "end"),
+			announced,
+			down ? line.start : line.end,
+		);
 
 	// The rows in print order, each after the lines that start its page or sidebar. The lines are drop targets too: a
 	// row dropped on one goes just past it, first under it when dragged down and last above it when dragged up.
@@ -153,21 +177,31 @@ export function Outline({ locked }: OutlineProps) {
 		const list: OutlineItem[] = [];
 		activeRows.forEach((row, index) => {
 			const previous = activeRows[index - 1];
-			const lines: { kind: "page" | "sidebar"; label: string }[] = [];
+			// Each line names the column that ends above it and the one that starts below it. A page line is followed by
+			// the page's main column, empty when the page starts with its sidebar; a sidebar line follows that main column.
+			const lines: Omit<Extract<OutlineItem, { kind: "divider" }>, "id" | "start" | "end">[] = [];
 			if (multiPage && row.page > 0 && row.page !== previous?.page)
-				lines.push({ kind: "page", label: t`Page ${i18n.number(row.page + 1)}` });
-			if (twoColumns && row.column === "sidebar" && (previous?.column !== "sidebar" || row.page !== previous.page))
-				lines.push({ kind: "sidebar", label: t`Sidebar` });
-			for (const line of lines)
-				list.push({
+				lines.push({
 					kind: "divider",
-					id: `divider:${line.kind}:${row.id}`,
-					label: line.label,
-					before: index,
-					start: t`the start of ${groupName(row, multiPage, twoColumns)}`,
-					end: previous ? t`the end of ${groupName(previous, multiPage, twoColumns)}` : line.label,
+					label: t`Page ${i18n.number(row.page + 1)}`,
+					above: previous ? { page: previous.page, column: previous.column } : { page: row.page - 1, column: "main" },
+					below: { page: row.page, column: "main" },
 				});
-			list.push({ kind: "row", id: row.id, row, index, crossesLine: lines.length > 0 });
+			if (twoColumns && row.column === "sidebar" && (previous?.column !== "sidebar" || row.page !== previous.page))
+				lines.push({
+					kind: "divider",
+					label: t`Sidebar`,
+					above: { page: row.page, column: "main" },
+					below: { page: row.page, column: "sidebar" },
+				});
+			for (const [n, line] of lines.entries())
+				list.push({
+					...line,
+					id: `divider:${n}:${row.id}`,
+					start: t`the start of ${groupName(line.below, multiPage, twoColumns)}`,
+					end: t`the end of ${groupName(line.above, multiPage, twoColumns)}`,
+				});
+			list.push({ kind: "row", id: row.id, row, index });
 		});
 		return list;
 	}, [activeRows, multiPage, twoColumns]);
@@ -179,11 +213,7 @@ export function Outline({ locked }: OutlineProps) {
 		const to = ids.indexOf(String(over.id));
 		const target = items[to];
 		if (!target) return;
-		if (target.kind === "divider") {
-			if (from < to) move(String(active.id), activeRows[target.before], "up");
-			else move(String(active.id), activeRows[target.before - 1], "down");
-			return;
-		}
+		if (target.kind === "divider") return moveAcross(String(active.id), target, from < to);
 		move(String(active.id), target.row, from < to ? "down" : "up");
 	};
 
@@ -197,9 +227,9 @@ export function Outline({ locked }: OutlineProps) {
 							return (
 								<Divider key={item.id} id={item.id} at={at} label={item.label} start={item.start} end={item.end} />
 							);
-						const { row, index, crossesLine } = item;
-						const next = activeRows[index + 1];
-						const nextCrossesLine = items[at + 1]?.kind === "divider";
+						const { row, index } = item;
+						const previousItem = items[at - 1];
+						const nextItem = items[at + 1];
 						return (
 							<SectionRow
 								key={row.id}
@@ -210,8 +240,9 @@ export function Outline({ locked }: OutlineProps) {
 								onMove={(direction) => {
 									// Across a page or sidebar line, one step lands just past it: last on the page above, first on
 									// the one below. The next step swaps with the row beyond.
-									if (direction === "up") move(row.id, activeRows[index - 1], crossesLine ? "down" : "up", true);
-									else move(row.id, next, nextCrossesLine ? "up" : "down", true);
+									const neighbour = direction === "up" ? previousItem : nextItem;
+									if (neighbour?.kind === "divider") moveAcross(row.id, neighbour, direction === "down", true);
+									else move(row.id, activeRows[direction === "up" ? index - 1 : index + 1], direction, true);
 								}}
 							/>
 						);
@@ -226,16 +257,28 @@ export function Outline({ locked }: OutlineProps) {
 }
 
 type OutlineItem =
-	| { kind: "row"; id: string; row: OutlineRow; index: number; crossesLine: boolean }
-	| { kind: "divider"; id: string; label: string; before: number; start: string; end: string };
+	| { kind: "row"; id: string; row: OutlineRow; index: number }
+	| {
+			kind: "divider";
+			id: string;
+			label: string;
+			/** The page and column that end just above the line, and the ones that start just below it. */
+			above: OutlineGroup;
+			below: OutlineGroup;
+			/** How a drop on it is read out: from above, `start` (of `below`); from below, `end` (of `above`). */
+			start: string;
+			end: string;
+	  };
 
-/** A row's page and column, named for "the start of …": the main column has no line of its own to name it. */
-function groupName(row: OutlineRow, multiPage: boolean, twoColumns: boolean) {
+type OutlineGroup = Pick<OutlineRow, "page" | "column">;
+
+/** A page and column, named for "the start of …": the main column has no line of its own to name it. */
+function groupName(row: OutlineGroup, multiPage: boolean, twoColumns: boolean) {
 	return dragGroup(row, multiPage, twoColumns) ?? t`the main column`;
 }
 
 /** The page and column a row prints in, as the dividers show it, for drag announcements. */
-function dragGroup(row: OutlineRow, multiPage: boolean, twoColumns: boolean) {
+function dragGroup(row: OutlineGroup, multiPage: boolean, twoColumns: boolean) {
 	if (twoColumns && row.column === "sidebar")
 		return multiPage ? t`Page ${i18n.number(row.page + 1)}, sidebar` : t`Sidebar`;
 	return multiPage ? t`Page ${i18n.number(row.page + 1)}` : undefined;

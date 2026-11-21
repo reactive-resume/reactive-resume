@@ -285,6 +285,24 @@ export function moveSection(
 	column.splice(insertAt, 0, id);
 }
 
+/**
+ * Moves a section to the start or end of a page's column: a drop on a page or sidebar line. The column may be empty
+ * (a page that starts with its sidebar), which no row could stand for. An unknown page leaves the layout as it was.
+ */
+export function moveSectionToGroup(
+	draft: WritableDraft<ResumeData>,
+	id: string,
+	group: Pick<OutlineRow, "page" | "column">,
+	at: "start" | "end",
+) {
+	if (!draft.metadata.layout.pages[group.page]) return;
+	removeFromLayout(draft, id);
+	const column = draft.metadata.layout.pages[group.page]?.[group.column];
+	if (!column) return;
+	if (at === "start") column.unshift(id);
+	else column.push(id);
+}
+
 /** Puts a section on the last page's main column unless a page already places it. */
 function ensurePlaced(draft: WritableDraft<ResumeData>, id: string) {
 	const pages = draft.metadata.layout.pages;
