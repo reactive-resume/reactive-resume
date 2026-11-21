@@ -1199,6 +1199,23 @@ describe("builder resume autosave", () => {
 		await flushMicrotasks();
 		expect(useResumeStore.getState().saveStatus).toBe("saved");
 		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
+
+		// And for this app's own recovery without the field, against a server copy holding the empty name it sent.
+		clearResumeDrafts();
+		window.localStorage.clear();
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: { ...initial.data, metadata },
+				storedAt: Date.now(),
+				baseUpdatedAt: new Date(initial.updatedAt.getTime() - 60_000),
+				fileNameSaved: true,
+			}),
+		);
+		useResumeStore.getState().initialize(emptyName);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
 	});
 
 	it("never vouches for what an older app kept: it goes out unchecked until the server takes it", async () => {
@@ -1480,17 +1497,27 @@ describe("builder resume undo/redo", () => {
 		expect(store().resume?.data).toBe(current.data);
 	});
 
-	it("preserves the undo stack when the echo only adds the empty file name and stylesheet this app sent", () => {
+	it("preserves the undo stack when the echo only adds the empty file name and stylesheet this app sent", async () => {
 		const store = useResumeStore.getState;
-		store().initialize(makeResume("rebase-echo-empty-fields"));
+		const initial = makeResume("rebase-echo-empty-fields");
+		let saved: Resume | undefined;
+		orpcMocks.updateResume.mockImplementation(async ({ data }: { data: ResumeData }) => {
+			saved = { ...initial, data, updatedAt: new Date(initial.updatedAt.getTime() + 1000) };
+			return saved;
+		});
+		store().initialize(initial);
 		store().updateResumeData((draft) => {
 			draft.basics.name = "Edited";
 		});
+		expect(await savePendingChanges(initial.id)).toBe(true);
+		expect(store().saveStatus).toBe("saved");
 		const current = store().resume;
-		if (!current) throw new Error("expected a current resume");
+		if (!current || !saved) throw new Error("expected a saved resume");
 		expect(current.data.metadata.fileName).toBeUndefined();
+		expect(saved.data.metadata.fileName).toBe("");
 
-		store().replaceResumeFromServer({ ...current, data: withSavedMetadata(cloneResumeData(current.data)) });
+		// The echo of the acknowledged revision holds the empty fields the save sent.
+		store().replaceResumeFromServer({ ...saved, data: cloneResumeData(saved.data) });
 
 		expect(store().undoStack.length).toBe(1);
 		expect(store().resume?.data).toBe(current.data);

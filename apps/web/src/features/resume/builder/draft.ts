@@ -646,7 +646,7 @@ export const useResumeStore = create<ResumeStore>()(
 				resume &&
 				unsaved &&
 				recoveredData &&
-				((!unsaved.clean && (!isEqual(recoveredData, resume.data) || hasSourceChanges)) || hasPendingDecisions)
+				((!unsaved.clean && (!isSameResumeData(recoveredData, resume.data) || hasSourceChanges)) || hasPendingDecisions)
 					? {
 							...resume,
 							data: recoveredData,
