@@ -1,6 +1,7 @@
 import type { FocusRequest, RichTextEditorProps } from "./rich-text-editor-field";
 import { Trans } from "@lingui/react/macro";
 import { lazy, Suspense, useMemo, useState } from "react";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { hasUnsupportedTableMarkup, toPreviewHtml } from "@/components/input/rich-text-markup";
 
@@ -34,9 +35,11 @@ function RichTextPreview({
 	disabled = false,
 	className,
 	id,
-	heightClassName = "max-h-[360px] min-h-11",
+	heightClassName = "max-h-[540px] min-h-50",
+	compact = false,
 	onFocusRequest,
 }: RichTextPreviewProps) {
+	const mobile = useBreakpoint() === "mobile";
 	const html = useMemo(() => toPreviewHtml(value), [value]);
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
 	const editable = !disabled && !readOnlyTable;
@@ -49,6 +52,10 @@ function RichTextPreview({
 						Original table formatting is preserved. This content is read-only because it cannot be edited safely.
 					</Trans>
 				</p>
+			)}
+			{/* Room for the desktop formatting toolbar the editor always shows, so the field does not jump when it loads. */}
+			{editable && !mobile && (
+				<div aria-hidden="true" className={cn("border-b border-line", compact ? "h-[35px]" : "h-[37px]")} />
 			)}
 			{/* Not a textbox yet: tests and assistive tech find the real one once it mounts. A click, or focus moved here
 			    by id, is handed to the editor. */}
@@ -67,6 +74,8 @@ function RichTextPreview({
 				// oxlint-disable-next-line react/no-danger -- toPreviewHtml keeps only the editor's own allowlisted markup.
 				dangerouslySetInnerHTML={{ __html: html }}
 			/>
+			{/* Room for the hint and character count the desktop editor always shows under the text. */}
+			{editable && !mobile && !compact && <div aria-hidden="true" className="h-[29px] border-t border-line" />}
 		</div>
 	);
 }

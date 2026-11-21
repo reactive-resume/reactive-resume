@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
@@ -49,11 +49,13 @@ it.each([false, true])(
 		expect(toolbar.contains(document.activeElement)).toBe(true);
 		await userEvent.tab();
 		expect(screen.getByRole("button", { name: "Outside" })).toHaveFocus();
-		expect(screen.queryByRole("toolbar")).toBeNull();
+		// Desktop keeps formatting above the text; phones dock it only while editing.
+		expect(screen.queryByRole("toolbar") !== null).toBe(!mobile);
 	},
 );
 
 it("shows the placeholder only for empty content before the field receives focus", async () => {
+	mocks.mobile = false;
 	i18n.load("en", {});
 	i18n.activate("en");
 	render(
@@ -68,7 +70,9 @@ it("shows the placeholder only for empty content before the field receives focus
 	);
 	await screen.findByRole("textbox", { name: "Description" });
 	expect(screen.queryByText("Describe your work")).toBeNull();
-	expect(screen.queryByRole("toolbar", { name: "Formatting" })).toBeNull();
+	// Desktop shows formatting and the footer around filled text before focus too.
+	expect(screen.getByRole("toolbar", { name: "Formatting" })).toBeVisible();
+	expect(screen.getByText("Markdown shortcuts on")).toBeVisible();
 	expect(screen.queryByText("Improve works on a line once you have written one.")).toBeNull();
 });
 
@@ -104,4 +108,24 @@ it("opens More formatting without writing content or losing the editor", async (
 	expect(screen.getByText("Text color")).toBeVisible();
 	expect(screen.getByRole("menuitemradio", { name: "Heading 1" })).toBeVisible();
 	expect(onChange).not.toHaveBeenCalled();
+});
+
+it("hides the placeholder and counts characters as soon as typing starts", async () => {
+	mocks.mobile = false;
+	i18n.load("en", {});
+	i18n.activate("en");
+	const { container } = render(
+		<I18nProvider i18n={i18n}>
+			<RichTextEditor label="Description" value="" placeholder="Describe your work" onChange={vi.fn()} />
+		</I18nProvider>,
+	);
+	const view = within(container);
+	const editor = await view.findByRole("textbox", { name: "Description" });
+	expect(view.getByText("Describe your work")).toBeVisible();
+	await userEvent.click(editor);
+	await userEvent.keyboard("Hello");
+	expect(editor.textContent).toBe("Hello");
+	expect(view.queryByText("Describe your work")).toBeNull();
+	// happy-dom's click leaves an extra empty paragraph, which Tiptap counts, so only check the count moved off 0.
+	expect(container.textContent).not.toMatch(/\b0 characters/);
 });
