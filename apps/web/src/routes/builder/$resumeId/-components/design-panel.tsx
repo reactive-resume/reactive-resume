@@ -30,6 +30,7 @@ import { DesignHeading, Help, Lede } from "@/features/resume/editor/design/field
 import { ACCENTS, matchDensity, matchMargins, rgbaToHex } from "@/features/resume/editor/design/presets";
 import { ColorGroup } from "@/features/resume/editor/design/style-groups";
 import { TemplateGroup } from "@/features/resume/editor/design/template-group";
+import { useEditorStore } from "@/features/resume/editor/store";
 import { LockedNote } from "@/features/resume/editor/write/write-panel";
 
 const ICONS: Record<DesignCategory, IconName> = {
@@ -54,17 +55,11 @@ export function DesignPanel() {
 			resetScroll: false,
 			search: (previous: Record<string, unknown>) => ({ ...previous, designCategory: designCategory ?? undefined }),
 		});
-	// The slot belongs to the frame; restore its width whenever this category leaves.
+	// The template gallery asks the frame for a wide panel; the frame owns the width and restores it when this leaves.
 	useEffect(() => {
 		if (category !== "template") return;
-		const parent = document.getElementById("editor-panel")?.parentElement;
-		if (!parent) return;
-		const before = parent.style.getPropertyValue("--editor-panel");
-		parent.style.setProperty("--editor-panel", "clamp(380px, 65vw, 936px)");
-		return () => {
-			if (before) parent.style.setProperty("--editor-panel", before);
-			else parent.style.removeProperty("--editor-panel");
-		};
+		useEditorStore.setState({ panelWide: true });
+		return () => useEditorStore.setState({ panelWide: false });
 	}, [category]);
 	if (!data) return null;
 	const { metadata } = data;

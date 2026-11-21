@@ -99,6 +99,8 @@ const MIN_PANEL_WIDTH = 360;
 /** The page keeps at least this much room beside a dragged panel. */
 const MIN_PAGE_WIDTH = 480;
 const PANEL_WIDTH_STEP = 24;
+/** The Design template gallery's width: room for a grid of template previews. */
+const WIDE_PANEL_CSS = "clamp(380px, 65vw, 936px)";
 
 const maxPanelWidth = () => Math.max(MIN_PANEL_WIDTH, window.innerWidth - MIN_PAGE_WIDTH);
 const clampPanelWidth = (width: number) => Math.round(Math.min(Math.max(width, MIN_PANEL_WIDTH), maxPanelWidth()));
@@ -291,7 +293,9 @@ function DesktopBody({ mode, panelLabel, panel, page, assistant, history, narrow
 	const hidden = useEditorStore((state) => state.panelHidden);
 	// Desktop only: a pinned tablet panel keeps its 380px.
 	const [panelWidth, setPanelWidth] = useState(readPanelWidth);
-	const panelCss = panelWidthCss(panelWidth);
+	// The Design template gallery takes a wide panel while it is open; the chosen width comes back when it closes.
+	const wide = useEditorStore((state) => state.panelWide) && !narrow;
+	const panelCss = wide ? WIDE_PANEL_CSS : panelWidthCss(panelWidth);
 	// Toasts live in a portal; anchor their viewport to the visible panel through the document root.
 	useEffect(() => {
 		if (hidden) return;
@@ -310,56 +314,54 @@ function DesktopBody({ mode, panelLabel, panel, page, assistant, history, narrow
 		: "transition-[opacity,translate] duration-standard ease-enter starting:translate-y-1 starting:opacity-0";
 
 	return (
-		// The dragged width sits on a wrapper so the Design panel's wide template view (set on the inner element) still
-		// takes over and hands the width back when it closes.
-		<div className="contents" style={narrow ? undefined : ({ "--editor-panel": panelCss } as CSSProperties)}>
-			<div className="relative flex min-h-0">
-				{!hidden && (
-					<aside
-						id="editor-panel"
-						data-design="epanel"
-						data-panel={takeover ?? mode}
-						aria-label={
-							takeover === "assistant" ? t`Assistant` : takeover === "history" ? t`Version history` : t`Editor`
-						}
-						className={cn(
-							"grid min-h-0 shrink-0 grid-rows-[minmax(0,1fr)] overflow-hidden border-e border-line bg-bg",
-							narrow ? "w-[380px]" : "w-(--editor-panel)",
-						)}
-					>
-						{takeover ? (
-							<div key={takeover} className={cn("flex min-h-0 min-w-0 flex-col", enter)}>
-								{takeover === "assistant" ? assistant : history}
-							</div>
-						) : (
-							<TabsContent
-								key={mode}
-								value={mode}
-								aria-label={panelLabel}
-								// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
-								// stretching the document, which would let scrollIntoView shift the whole editor. Keyed by mode so each
-								// mode starts at its top; no scroll anchoring, which yanked the Design panel back while scrolling it.
-								className={cn("relative flex min-h-0 flex-col overflow-y-auto [overflow-anchor:none]", enter)}
-							>
-								{panel}
-							</TabsContent>
-						)}
-					</aside>
-				)}
-				{!hidden && !narrow && (
-					<PanelResizer
-						width={panelWidth}
-						onResize={setPanelWidth}
-						onCommit={(width) => {
-							setPanelWidth(width);
-							savePanelWidth(width);
-						}}
-					/>
-				)}
-				<main id="main-content" className="min-h-0 min-w-0 flex-1">
-					{page}
-				</main>
-			</div>
+		<div
+			className="relative flex min-h-0"
+			style={narrow ? undefined : ({ "--editor-panel": panelCss } as CSSProperties)}
+		>
+			{!hidden && (
+				<aside
+					id="editor-panel"
+					data-design="epanel"
+					data-panel={takeover ?? mode}
+					aria-label={takeover === "assistant" ? t`Assistant` : takeover === "history" ? t`Version history` : t`Editor`}
+					className={cn(
+						"grid min-h-0 shrink-0 grid-rows-[minmax(0,1fr)] overflow-hidden border-e border-line bg-bg",
+						narrow ? "w-[380px]" : "w-(--editor-panel)",
+					)}
+				>
+					{takeover ? (
+						<div key={takeover} className={cn("flex min-h-0 min-w-0 flex-col", enter)}>
+							{takeover === "assistant" ? assistant : history}
+						</div>
+					) : (
+						<TabsContent
+							key={mode}
+							value={mode}
+							aria-label={panelLabel}
+							// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
+							// stretching the document, which would let scrollIntoView shift the whole editor. Keyed by mode so each
+							// mode starts at its top; no scroll anchoring, which yanked the Design panel back while scrolling it.
+							className={cn("relative flex min-h-0 flex-col overflow-y-auto [overflow-anchor:none]", enter)}
+						>
+							{panel}
+						</TabsContent>
+					)}
+				</aside>
+			)}
+			{/* Not while the gallery owns the width: the splitter would report and change a width nobody sees. */}
+			{!hidden && !narrow && !wide && (
+				<PanelResizer
+					width={panelWidth}
+					onResize={setPanelWidth}
+					onCommit={(width) => {
+						setPanelWidth(width);
+						savePanelWidth(width);
+					}}
+				/>
+			)}
+			<main id="main-content" className="min-h-0 min-w-0 flex-1">
+				{page}
+			</main>
 		</div>
 	);
 }
