@@ -3,6 +3,7 @@ import type { ReactElement, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useId, useRef, useState } from "react";
+import { EXPORT_FILE_NAME_MAX_LENGTH } from "@reactive-resume/schema/resume/data";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
@@ -12,6 +13,7 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { getExportFormats, useLinkedLetter } from "./download-tab";
+import { useResumeFileName } from "./file-name";
 import { IconTile, rowGroundClassName } from "@/components/calm/list-row";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useCurrentResume } from "@/features/resume/builder/draft";
@@ -19,7 +21,6 @@ import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
 import { useEditorStore } from "@/features/resume/editor/store";
 import {
 	createExportFile,
-	getDefaultFileName,
 	preloadDocumentExport,
 	sanitizeFileName,
 	useResumeExport,
@@ -34,6 +35,10 @@ type DownloadMenuProps<Id extends string> = {
 	formats: DownloadFormat<Id>[];
 	/** The default file name, without its ending. */
 	defaultFileName: string;
+	/** The name the author saved for this document, empty when the default applies. */
+	savedFileName?: string | undefined;
+	/** Keeps an edited name with the document. Without it, an edit lasts until the menu goes away. */
+	onFileNameChange?: ((fileName: string) => void) | undefined;
 	/** Makes and saves the file; throws what the export throws. The toast and the thanks are the menu's. */
 	download: (format: Id, fileName: string) => Promise<string>;
 	onPrint?: (() => void) | undefined;
@@ -51,6 +56,8 @@ export function DownloadMenu<Id extends string>({
 	trigger,
 	formats,
 	defaultFileName,
+	savedFileName,
+	onFileNameChange,
 	download,
 	onPrint,
 	companion,
@@ -65,7 +72,8 @@ export function DownloadMenu<Id extends string>({
 	const [failed, setFailed] = useState<DownloadFormat<Id> | null>(null);
 	const [done, setDone] = useState(false);
 	const [hovered, setHovered] = useState<Id | null>(null);
-	const name = fileName ?? defaultFileName;
+	// While typing the field shows what was typed, even when empty; otherwise the saved name, else the default.
+	const name = fileName ?? (savedFileName || defaultFileName);
 	const pdf = formats.find((format) => format.id === "pdf");
 	const ending = formats.find((format) => format.id === (hovered ?? "pdf"))?.extension ?? ".pdf";
 
@@ -112,7 +120,12 @@ export function DownloadMenu<Id extends string>({
 						value={name}
 						spellCheck={false}
 						aria-describedby={`${id}-hint`}
-						onChange={(event) => setFileName(sanitizeFileName(event.target.value))}
+						maxLength={EXPORT_FILE_NAME_MAX_LENGTH}
+						onChange={(event) => {
+							const next = sanitizeFileName(event.target.value);
+							setFileName(next);
+							onFileNameChange?.(next);
+						}}
 						className="h-full min-w-0 flex-1 bg-transparent ps-3 font-mono text-[13px] font-medium text-ink outline-none"
 					/>
 					<span className="font-mono text-[13px]/4 font-medium text-ink-3">{ending}</span>
@@ -293,6 +306,7 @@ export function ResumeDownloadMenu({ trigger, onReview }: ResumeDownloadMenuProp
 	const count = useOpenIssueCount();
 	const linkedLetter = useLinkedLetter(resume);
 	const { onPrint } = useResumeExport(resume);
+	const fileName = useResumeFileName(resume);
 	const [withLetter, setWithLetter] = useState(false);
 	const formats = getExportFormats();
 
@@ -300,7 +314,9 @@ export function ResumeDownloadMenu({ trigger, onReview }: ResumeDownloadMenuProp
 		<DownloadMenu
 			trigger={trigger}
 			formats={formats}
-			defaultFileName={getDefaultFileName(resume)}
+			defaultFileName={fileName.generated}
+			savedFileName={fileName.saved}
+			onFileNameChange={fileName.save}
 			onPrint={() => void onPrint()}
 			issues={{ count, onReview }}
 			companion={

@@ -15,6 +15,19 @@ export const withWebPageCss = (data: ResumeData): ResumeData => ({
 	metadata: { ...data.metadata, web: { showCredit: true, ...data.metadata.web, css: data.metadata.web?.css ?? "" } },
 });
 
+/** The longest download file name the author can save, without its ending. */
+export const EXPORT_FILE_NAME_MAX_LENGTH = 200;
+
+/**
+ * The data with the fields that apps built before them drop always present: `metadata.web.css` and
+ * `metadata.fileName`, empty when there is none. Current clients save through this, so the server can tell a save
+ * from an older app (field missing: keep the saved value) from one that clears it (empty string).
+ */
+export const withSavedMetadata = (data: ResumeData): ResumeData => {
+	const withCss = withWebPageCss(data);
+	return { ...withCss, metadata: { ...withCss.metadata, fileName: withCss.metadata.fileName ?? "" } };
+};
+
 const iconSchema = z
 	.string()
 	.describe(
@@ -816,6 +829,14 @@ export const metadataSchema = z.object({
 		.catch(undefined)
 		.describe(
 			"Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share.",
+		),
+	fileName: z
+		.string()
+		.max(EXPORT_FILE_NAME_MAX_LENGTH)
+		.optional()
+		.catch(undefined)
+		.describe(
+			"The file name the author chose for downloads of this resume, without its ending (such as .pdf). Empty or missing means the generated name (the author's name plus 'Resume'). A save without this field keeps the saved name; an empty string clears it.",
 		),
 	check: z
 		.object({

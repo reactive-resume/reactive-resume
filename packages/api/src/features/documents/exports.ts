@@ -8,7 +8,7 @@ import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { coverLetterContentSchema } from "@reactive-resume/schema/cover-letter/data";
 import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
-import { getDefaultFileName } from "@reactive-resume/utils/file";
+import { getExportFileName } from "@reactive-resume/utils/file";
 import { contentDisposition } from "@reactive-resume/utils/http";
 import { protectedProcedure } from "../../context";
 import { pdfExportRateLimit, pdfRenderRateLimit } from "../../middleware/rate-limit";
@@ -62,7 +62,7 @@ export async function fileResponse(
 	includeCoverLetterHeader = false,
 	target: "resume" | "cover-letter" = "resume",
 ) {
-	const filename = `${getDefaultFileName({ name, slug: "", data }, target)}.${format}`;
+	const filename = `${getExportFileName({ name, slug: "", data }, target)}.${format}`;
 	let body: File;
 	try {
 		if (format === "json") body = new File([JSON.stringify(json, null, 2)], filename, { type: "application/json" });

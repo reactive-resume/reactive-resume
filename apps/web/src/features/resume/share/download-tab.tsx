@@ -8,6 +8,7 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useId, useState } from "react";
+import { EXPORT_FILE_NAME_MAX_LENGTH } from "@reactive-resume/schema/resume/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -15,16 +16,12 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
+import { useResumeFileName } from "./file-name";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useCurrentResume } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
-import {
-	createExportFile,
-	getDefaultFileName,
-	preloadDocumentExport,
-	sanitizeFileName,
-} from "@/features/resume/export/use-resume-export";
+import { createExportFile, preloadDocumentExport, sanitizeFileName } from "@/features/resume/export/use-resume-export";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { client } from "@/libs/orpc/client";
@@ -145,6 +142,7 @@ export function FileNameField({ value, extension, hint, onChange }: FileNameFiel
 					value={value}
 					spellCheck={false}
 					aria-describedby={`${id}-hint`}
+					maxLength={EXPORT_FILE_NAME_MAX_LENGTH}
 					onChange={(event) => onChange(sanitizeFileName(event.target.value))}
 					className="h-full min-w-0 flex-1 bg-transparent ps-2.5 font-mono text-[13px] font-medium text-ink outline-none"
 				/>
@@ -267,11 +265,12 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 
 	const formats = getExportFormats();
 	const selected = formats.find((option) => option.id === format) ?? (formats[0] as DownloadFormat);
-	const name = fileName ?? getDefaultFileName(resume);
+	const savedName = useResumeFileName(resume);
+	const name = fileName ?? (savedName.saved || savedName.generated);
 
 	const download = async (as: ExportFormat) => {
 		const extension = formats.find((option) => option.id === as)?.extension ?? ".pdf";
-		const file = `${sanitizeFileName(name) || getDefaultFileName(resume)}${extension}`;
+		const file = `${sanitizeFileName(name) || savedName.generated}${extension}`;
 		const letterId = withLetter ? linkedLetter?.id : undefined;
 		setState("busy");
 		try {
@@ -306,7 +305,10 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 				value={name}
 				extension={selected.extension}
 				hint={<Trans>Recruiters see this name. Your name plus “Resume” works well.</Trans>}
-				onChange={setFileName}
+				onChange={(value) => {
+					setFileName(value);
+					savedName.save(value);
+				}}
 			/>
 
 			{linkedLetter && (

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { useBuilderDocument, useDocumentId, useLetterDocument, DocumentState } from "../share/document";
 import { deliverExport, deliverExports, prepareExport, type ExportFormat } from "./export-file";
+import { resumeExportName, savedResumeFileName } from "./export-model";
 import { useConnectivity, useLetterStore, useResumeStore, useResume } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
@@ -50,11 +51,26 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 	const needsServer = (id: string) => offline && id !== "pdf" && id !== "json";
 	const resumeDraft = useResumeStore();
 	const letterDraft = useLetterStore();
-	const fileName =
-		name ??
-		(document
-			? `${"data" in document ? document.data.basics.name : document.style.basics.name} ${letter ? "Cover Letter" : "Resume"}`
-			: "");
+	const generatedName = document
+		? `${"data" in document ? document.data.basics.name : document.style.basics.name} ${letter ? "Cover Letter" : "Resume"}`
+		: "";
+	// A resume keeps its file name with its data, so an edited one is there next time and on the web.
+	const resumeData = letter
+		? undefined
+		: resumeDraft.document?.id === id
+			? resumeDraft.document.data
+			: resume.data?.data;
+	const fileName = name ?? resumeExportName(resumeData?.metadata.fileName, generatedName);
+	const changeName = (next: string) => {
+		setName(next);
+		if (letter || resumeDraft.document?.id !== id) return;
+		resumeDraft.update(
+			(d) => {
+				d.metadata.fileName = savedResumeFileName(next, generatedName);
+			},
+			{ coalesceKey: "metadata.fileName" },
+		);
+	};
 	const exportFile = async (save: boolean) => {
 		if (!document || busy) return;
 		setBusy(true);
@@ -75,7 +91,7 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 					linkedResume.data,
 					"resume",
 					"pdf",
-					`${linkedResume.data.data.basics.name} Resume`,
+					resumeExportName(linkedResume.data.data.metadata.fileName, `${linkedResume.data.data.basics.name} Resume`),
 				);
 				await deliverExports([resumeFile, file], save);
 				if (save) showToast({ message: t`Downloaded your resume and this letter` });
@@ -182,7 +198,7 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 			{/* The file name sits 16 dp under More formats (B14), not a form's usual 24. */}
 			<View style={{ marginTop: -8 }}>
 				<Form>
-					<TextField label={t`File name`} value={fileName} onChangeText={setName} suffix={`.${format}`} />
+					<TextField label={t`File name`} value={fileName} onChangeText={changeName} suffix={`.${format}`} />
 				</Form>
 			</View>
 		</View>

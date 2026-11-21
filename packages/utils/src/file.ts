@@ -11,7 +11,7 @@ export type FileNameTarget = "resume" | "cover-letter";
 export type FileNameSource = {
 	name: string;
 	slug?: string | null;
-	data: { basics: { name: string }; metadata?: { page?: { locale?: string } } };
+	data: { basics: { name: string }; metadata?: { page?: { locale?: string }; fileName?: string | undefined } };
 };
 
 const words: Record<string, Record<string, string>> = fileNameWords;
@@ -49,6 +49,14 @@ export function getDefaultFileName(source: FileNameSource, target: FileNameTarge
 		...(target === "cover-letter" ? suffix : []),
 	];
 	return fallback.join("-") || suffix.join("-");
+}
+
+/**
+ * The name downloads get, without the ending: the one the author saved for this document, else the generated
+ * default.
+ */
+export function getExportFileName(source: FileNameSource, target: FileNameTarget = "resume") {
+	return sanitizeFileName(source.data.metadata?.fileName ?? "") || getDefaultFileName(source, target);
 }
 
 export function downloadWithAnchor(blob: Blob, filename: string) {

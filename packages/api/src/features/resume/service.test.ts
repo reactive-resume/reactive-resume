@@ -343,6 +343,31 @@ describe("update", () => {
 		);
 	});
 
+	it("keeps the saved download file name when an older app's save leaves it out, and clears it on an empty string", async () => {
+		const saved = { ...defaultResumeData, metadata: { ...defaultResumeData.metadata, fileName: "Jordan-Acme" } };
+		const fileNameOf = (set: ReturnType<typeof updateHarness>["update"]["set"]) =>
+			(set.mock.calls[0]?.[0] as { data?: ResumeData } | undefined)?.data?.metadata.fileName;
+
+		const kept = updateHarness({ slug: "resume", data: saved });
+		await resumeService.update({ id: "r1", userId: "u1", data: defaultResumeData });
+		expect(fileNameOf(kept.update.set)).toBe("Jordan-Acme");
+
+		const cleared = updateHarness({ slug: "resume", data: saved });
+		const clearing = { ...defaultResumeData, metadata: { ...defaultResumeData.metadata, fileName: "" } };
+		await resumeService.update({ id: "r1", userId: "u1", data: clearing });
+		expect(fileNameOf(cleared.update.set)).toBe("");
+	});
+
+	it("restores a version saved before the download file name without the current name", async () => {
+		const currentData = createSemanticResumeData();
+		currentData.metadata.fileName = "Jordan-Acme";
+		createRestoreHarness(currentData, createSemanticResumeData());
+
+		const restored = await resumeService.versions.restore({ resumeId: "r1", versionId: "v1", userId: "u1" });
+
+		expect(restored.data.metadata.fileName).toBe("");
+	});
+
 	it("keeps the old address as a redirect when the slug changes", async () => {
 		const { tx, update } = updateHarness({ slug: "old-address" });
 
