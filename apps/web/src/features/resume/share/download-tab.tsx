@@ -125,10 +125,16 @@ export function FormatRadioGroup<Id extends string>({ formats, value, onChange }
 	);
 }
 
-type FileNameFieldProps = { value: string; extension: string; hint: ReactNode; onChange: (value: string) => void };
+type FileNameFieldProps = {
+	value: string;
+	extension: string;
+	hint: ReactNode;
+	onChange: (value: string) => void;
+	onBlur?: (() => void) | undefined;
+};
 
 /** The file name recruiters see, with the extension shown after it. Characters file systems reject are dropped. */
-export function FileNameField({ value, extension, hint, onChange }: FileNameFieldProps) {
+export function FileNameField({ value, extension, hint, onChange, onBlur }: FileNameFieldProps) {
 	const id = useId();
 
 	return (
@@ -144,6 +150,7 @@ export function FileNameField({ value, extension, hint, onChange }: FileNameFiel
 					aria-describedby={`${id}-hint`}
 					maxLength={EXPORT_FILE_NAME_MAX_LENGTH}
 					onChange={(event) => onChange(sanitizeFileName(event.target.value))}
+					onBlur={onBlur}
 					className="h-full min-w-0 flex-1 bg-transparent ps-2.5 font-mono text-[13px] font-medium text-ink outline-none"
 				/>
 				<span className="px-2.5 font-mono text-[13px] font-medium text-ink-3">{extension}</span>
@@ -309,6 +316,8 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 					setFileName(value);
 					savedName.save(value);
 				}}
+				// The typed name is kept with the resume; after editing the field follows it (or the default) again.
+				onBlur={() => setFileName(null)}
 			/>
 
 			{linkedLetter && (

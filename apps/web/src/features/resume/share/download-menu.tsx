@@ -72,7 +72,8 @@ export function DownloadMenu<Id extends string>({
 	const [failed, setFailed] = useState<DownloadFormat<Id> | null>(null);
 	const [done, setDone] = useState(false);
 	const [hovered, setHovered] = useState<Id | null>(null);
-	// While typing the field shows what was typed, even when empty; otherwise the saved name, else the default.
+	// While the field has focus it shows what was typed, even when empty; otherwise the saved name, else the default,
+	// so a default name keeps following the author's name.
 	const name = fileName ?? (savedFileName || defaultFileName);
 	const pdf = formats.find((format) => format.id === "pdf");
 	const ending = formats.find((format) => format.id === (hovered ?? "pdf"))?.extension ?? ".pdf";
@@ -125,6 +126,9 @@ export function DownloadMenu<Id extends string>({
 							const next = sanitizeFileName(event.target.value);
 							setFileName(next);
 							onFileNameChange?.(next);
+						}}
+						onBlur={() => {
+							if (onFileNameChange) setFileName(null);
 						}}
 						className="h-full min-w-0 flex-1 bg-transparent ps-3 font-mono text-[13px] font-medium text-ink outline-none"
 					/>

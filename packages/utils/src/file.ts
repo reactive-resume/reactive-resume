@@ -52,11 +52,12 @@ export function getDefaultFileName(source: FileNameSource, target: FileNameTarge
 }
 
 /**
- * The name downloads get, without the ending: the one the author saved for this document, else the generated
- * default.
+ * The name downloads get, without the ending: the one the author saved for the resume, else the generated default.
+ * A cover letter copies its resume's metadata, so the resume's saved name never names a letter.
  */
 export function getExportFileName(source: FileNameSource, target: FileNameTarget = "resume") {
-	return sanitizeFileName(source.data.metadata?.fileName ?? "") || getDefaultFileName(source, target);
+	const saved = target === "resume" ? sanitizeFileName(source.data.metadata?.fileName ?? "") : "";
+	return saved || getDefaultFileName(source, target);
 }
 
 export function downloadWithAnchor(blob: Blob, filename: string) {

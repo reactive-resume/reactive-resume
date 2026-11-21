@@ -1133,6 +1133,38 @@ describe("builder resume autosave", () => {
 		);
 	});
 
+	it("keeps the saved file name when an older app's recovery has none, and honours this app's cleared one", async () => {
+		const initial = makeResume("resume-file-name");
+		initial.data = { ...initial.data, metadata: { ...initial.data.metadata, fileName: "Jordan-Acme" } };
+		const recovery = (extra: object) =>
+			window.localStorage.setItem(
+				`reactive-resume:unsaved:${initial.id}`,
+				JSON.stringify({
+					data: withBasicsName(makeResume(initial.id), "Kept locally").data,
+					storedAt: Date.now(),
+					baseUpdatedAt: initial.updatedAt,
+					...extra,
+				}),
+			);
+		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) =>
+			Promise.resolve({ ...initial, data: input.data }),
+		);
+
+		recovery({});
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().resume?.data.metadata.fileName).toBe("Jordan-Acme");
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0].data.metadata.fileName).toBe("Jordan-Acme");
+
+		clearResumeDrafts();
+		window.localStorage.clear();
+		orpcMocks.updateResume.mockClear();
+		recovery({ fileNameSaved: true });
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0].data.metadata.fileName).toBe("");
+	});
+
 	it("never vouches for what an older app kept: it goes out unchecked until the server takes it", async () => {
 		const initial = makeResume("resume-older-recovery");
 		// An older app's recovery record: no proposalSafety, and a decision it never sent.

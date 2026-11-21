@@ -206,6 +206,7 @@ function storeUnsavedResume(resume: Resume) {
 				proposalApplications: getRuntime(resume.id).proposalApplications,
 				pendingProposalApplications: getRuntime(resume.id).pendingProposalApplications,
 				proposalSafety: getRuntime(resume.id).proposalSafety,
+				fileNameSaved: true,
 			}),
 		);
 	} catch {
@@ -228,6 +229,7 @@ function clearUnsavedResume(resume: Resume) {
 					proposalApplications: runtime.proposalApplications,
 					pendingProposalApplications: runtime.pendingProposalApplications,
 					proposalSafety: runtime.proposalSafety,
+					fileNameSaved: true,
 				}),
 			);
 		} else window.localStorage.removeItem(recoveryKey(resume));
@@ -250,7 +252,19 @@ type UnsavedResume = {
 	proposalApplications?: ProposalApplications;
 	pendingProposalApplications?: ProposalApplications;
 	proposalSafety?: unknown;
+	/**
+	 * Set by apps that keep `metadata.fileName`: a missing name in their recovery means there is none. Recoveries
+	 * from older apps lack both, and keep the saved name instead of clearing it.
+	 */
+	fileNameSaved?: boolean;
 };
+
+/** An older app's recovery has no file name field; it keeps the name saved since rather than clearing it. */
+function withRecoveredFileName(unsaved: UnsavedResume, saved: ResumeData): ResumeData {
+	if (unsaved.fileNameSaved || unsaved.data.metadata.fileName !== undefined || !saved.metadata.fileName)
+		return unsaved.data;
+	return { ...unsaved.data, metadata: { ...unsaved.data.metadata, fileName: saved.metadata.fileName } };
+}
 
 function readUnsavedResume(id: string): UnsavedResume | undefined {
 	try {
@@ -621,7 +635,7 @@ export const useResumeStore = create<ResumeStore>()(
 				((!unsaved.clean && (!isEqual(unsaved.data, resume.data) || hasSourceChanges)) || hasPendingDecisions)
 					? {
 							...resume,
-							data: unsaved.data,
+							data: withRecoveredFileName(unsaved, resume.data),
 							...(unsaved.aiOperationIds !== undefined
 								? {
 										aiOperationIds: unsaved.aiOperationIds,

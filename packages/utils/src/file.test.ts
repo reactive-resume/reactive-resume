@@ -48,4 +48,5 @@ it("names downloads after the saved file name, falling back to the generated one
 	expect(getExportFileName(source(""))).toBe("Jordan-Lee-Resume");
 	expect(getExportFileName(source())).toBe("Jordan-Lee-Resume");
 	expect(getExportFileName(source("..."))).toBe("Jordan-Lee-Resume");
+	expect(getExportFileName(source("Jordan-Acme"), "cover-letter")).toBe("Jordan-Lee-Cover-Letter");
 });

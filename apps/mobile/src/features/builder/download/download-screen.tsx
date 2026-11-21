@@ -1,6 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { useIsFocused, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { View } from "react-native";
 import { useBuilderDocument, useDocumentId, useLetterDocument, DocumentState } from "../share/document";
 import { deliverExport, deliverExports, prepareExport, type ExportFormat } from "./export-file";
@@ -42,6 +42,8 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 	const [format, setFormat] = useState<ExportFormat>("pdf");
 	const [more, setMore] = useState(false);
 	const [name, setName] = useState<string>();
+	// Each visit to the file name field is one undo step.
+	const fileNameVisit = useRef(0);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState("");
 	const focused = useIsFocused();
@@ -68,7 +70,7 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 			(d) => {
 				d.metadata.fileName = savedResumeFileName(next, generatedName);
 			},
-			{ coalesceKey: "metadata.fileName" },
+			{ coalesceKey: `metadata.fileName:${fileNameVisit.current}`, sameStep: true },
 		);
 	};
 	const exportFile = async (save: boolean) => {
@@ -84,7 +86,12 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 					throw new Error("Save your changes before exporting the page.");
 			}
 			const current = letter ? useLetterStore.getState().document : useResumeStore.getState().document;
-			const file = await prepareExport(current?.id === id ? current : document, kind, format, fileName);
+			const file = await prepareExport(
+				current?.id === id ? current : document,
+				kind,
+				format,
+				letter ? fileName : resumeExportName(fileName, generatedName),
+			);
 			if (pair) {
 				if (!linkedResume.data) throw new Error("Choose a linked resume first.");
 				const resumeFile = await prepareExport(
@@ -198,7 +205,13 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 			{/* The file name sits 16 dp under More formats (B14), not a form's usual 24. */}
 			<View style={{ marginTop: -8 }}>
 				<Form>
-					<TextField label={t`File name`} value={fileName} onChangeText={changeName} suffix={`.${format}`} />
+					<TextField
+						label={t`File name`}
+						value={fileName}
+						onChangeText={changeName}
+						onFocus={() => fileNameVisit.current++}
+						suffix={`.${format}`}
+					/>
 				</Form>
 			</View>
 		</View>

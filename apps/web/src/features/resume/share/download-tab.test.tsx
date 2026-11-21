@@ -94,5 +94,8 @@ it("starts from the saved file name and keeps an edited one with the resume", as
 	// The generated name, typed back or cleared, isn't saved: the default applies again.
 	expect(save("resume")).toBe("");
 	expect(save("")).toBe("");
+	// After editing the field shows the resume's name again, so a default name keeps following the author's name.
+	fireEvent.blur(field);
+	expect(field.value).toBe("Saved-Name");
 	mocks.resume.data.metadata = {};
 });
