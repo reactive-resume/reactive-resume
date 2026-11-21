@@ -56,3 +56,19 @@ it("places an item in another column by that column, and within its own list by 
 		"Summary was dropped where it started. Nothing moved.",
 	);
 });
+
+it("says a target's own place when it gives one, and counts only the items it names", () => {
+	const announce = dndContextProps(true).accessibility?.announcements;
+	const sortable = (index: number) => ({ containerId: "outline", index, items: ["a", "line", "b", "c"] });
+	const summary = entry("summary", { label: "Summary", sortable: sortable(0) });
+	const line = entry("divider:page:b", { label: "Page 2", place: "the start of Page 2", sortable: sortable(1) });
+	const skills = entry("skills", {
+		label: "Skills",
+		group: "Page 2",
+		position: { index: 2, total: 3 },
+		sortable: sortable(2),
+	});
+
+	expect(announce?.onDragOver({ active: summary, over: line })).toBe("Summary is over the start of Page 2.");
+	expect(announce?.onDragOver({ active: summary, over: skills })).toBe("Summary is over position 2 of 3, Page 2.");
+});

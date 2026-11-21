@@ -2,8 +2,16 @@ import type { OutlineRow, WriteSection } from "./model";
 import type { DndLabel } from "@/libs/dnd";
 import type { DragEndEvent } from "@dnd-kit/core";
 import type { CustomSectionType, SectionType } from "@reactive-resume/schema/resume/data";
-import type { ComponentProps, KeyboardEvent, ReactNode } from "react";
-import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import type { ComponentProps, KeyboardEvent } from "react";
+import {
+	closestCenter,
+	DndContext,
+	KeyboardSensor,
+	PointerSensor,
+	useDndContext,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
 import {
 	SortableContext,
 	sortableKeyboardCoordinates,
@@ -14,7 +22,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { i18n } from "@lingui/core";
 import { ph, plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { Fragment, useMemo } from "react";
+import { useMemo } from "react";
 import { templateLayouts } from "@reactive-resume/schema/templates";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -139,36 +147,73 @@ export function Outline({ locked }: OutlineProps) {
 			announce(t`${title} moved to position ${ph({ position: i18n.number(position) })} of ${i18n.number(rows.length)}`);
 	};
 
+	// The rows in print order, each after the lines that start its page or sidebar. The lines are drop targets too: a
+	// row dropped on one goes just past it, first under it when dragged down and last above it when dragged up.
+	const items = useMemo(() => {
+		const list: OutlineItem[] = [];
+		activeRows.forEach((row, index) => {
+			const previous = activeRows[index - 1];
+			const lines: { kind: "page" | "sidebar"; label: string }[] = [];
+			if (multiPage && row.page > 0 && row.page !== previous?.page)
+				lines.push({ kind: "page", label: t`Page ${i18n.number(row.page + 1)}` });
+			if (twoColumns && row.column === "sidebar" && (previous?.column !== "sidebar" || row.page !== previous.page))
+				lines.push({ kind: "sidebar", label: t`Sidebar` });
+			for (const line of lines)
+				list.push({
+					kind: "divider",
+					id: `divider:${line.kind}:${row.id}`,
+					label: line.label,
+					before: index,
+					start: t`the start of ${groupName(row, multiPage, twoColumns)}`,
+					end: previous ? t`the end of ${groupName(previous, multiPage, twoColumns)}` : line.label,
+				});
+			list.push({ kind: "row", id: row.id, row, index, crossesLine: lines.length > 0 });
+		});
+		return list;
+	}, [activeRows, multiPage, twoColumns]);
+	const ids = useMemo(() => items.map((item) => item.id), [items]);
+
 	const onDragEnd = ({ active, over }: DragEndEvent) => {
 		if (!over || active.id === over.id) return;
-		const from = activeRows.findIndex((row) => row.id === active.id);
-		const to = activeRows.findIndex((row) => row.id === over.id);
-		move(String(active.id), activeRows[to], from < to ? "down" : "up");
+		const from = ids.indexOf(String(active.id));
+		const to = ids.indexOf(String(over.id));
+		const target = items[to];
+		if (!target) return;
+		if (target.kind === "divider") {
+			if (from < to) move(String(active.id), activeRows[target.before], "up");
+			else move(String(active.id), activeRows[target.before - 1], "down");
+			return;
+		}
+		move(String(active.id), target.row, from < to ? "down" : "up");
 	};
 
 	return (
 		<DndContext {...dndContextProps(true)} sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
 			<List className="mt-2" aria-label={t`Sections`}>
 				<BasicsRow locked={locked} />
-				<SortableContext items={activeRows.map((row) => row.id)} strategy={verticalListSortingStrategy}>
-					{activeRows.map((row, index) => {
-						const previous = activeRows[index - 1];
-						const newPage = multiPage && row.page !== previous?.page;
-						const sidebarStarts = twoColumns && row.column === "sidebar" && (previous?.column !== "sidebar" || newPage);
-
+				<SortableContext items={ids} strategy={verticalListSortingStrategy}>
+					{items.map((item, at) => {
+						if (item.kind === "divider")
+							return (
+								<Divider key={item.id} id={item.id} at={at} label={item.label} start={item.start} end={item.end} />
+							);
+						const { row, index, crossesLine } = item;
+						const next = activeRows[index + 1];
+						const nextCrossesLine = items[at + 1]?.kind === "divider";
 						return (
-							<Fragment key={row.id}>
-								{newPage && row.page > 0 && <Divider label={<Trans>Page {i18n.number(row.page + 1)}</Trans>} />}
-								{sidebarStarts && <Divider label={<Trans>Sidebar</Trans>} />}
-								<SectionRow
-									sectionId={row.id}
-									locked={locked}
-									dragGroup={dragGroup(row, multiPage, twoColumns)}
-									onMove={(direction) =>
-										move(row.id, activeRows[direction === "up" ? index - 1 : index + 1], direction, true)
-									}
-								/>
-							</Fragment>
+							<SectionRow
+								key={row.id}
+								sectionId={row.id}
+								locked={locked}
+								dragGroup={dragGroup(row, multiPage, twoColumns)}
+								position={{ index: index + 1, total: activeRows.length }}
+								onMove={(direction) => {
+									// Across a page or sidebar line, one step lands just past it: last on the page above, first on
+									// the one below. The next step swaps with the row beyond.
+									if (direction === "up") move(row.id, activeRows[index - 1], crossesLine ? "down" : "up", true);
+									else move(row.id, next, nextCrossesLine ? "up" : "down", true);
+								}}
+							/>
 						);
 					})}
 				</SortableContext>
@@ -180,6 +225,15 @@ export function Outline({ locked }: OutlineProps) {
 	);
 }
 
+type OutlineItem =
+	| { kind: "row"; id: string; row: OutlineRow; index: number; crossesLine: boolean }
+	| { kind: "divider"; id: string; label: string; before: number; start: string; end: string };
+
+/** A row's page and column, named for "the start of …": the main column has no line of its own to name it. */
+function groupName(row: OutlineRow, multiPage: boolean, twoColumns: boolean) {
+	return dragGroup(row, multiPage, twoColumns) ?? t`the main column`;
+}
+
 /** The page and column a row prints in, as the dividers show it, for drag announcements. */
 function dragGroup(row: OutlineRow, multiPage: boolean, twoColumns: boolean) {
 	if (twoColumns && row.column === "sidebar")
@@ -187,9 +241,41 @@ function dragGroup(row: OutlineRow, multiPage: boolean, twoColumns: boolean) {
 	return multiPage ? t`Page ${i18n.number(row.page + 1)}` : undefined;
 }
 
-/** Where a new page or the sidebar starts: a quiet line between rows, with the hairline of the row above it. */
-function Divider({ label }: { label: ReactNode }) {
-	return <div className="border-b border-line pt-4 pb-1.5 t-caption text-ink-3">{label}</div>;
+type SortableIndex = { sortable?: { index: number } } | undefined;
+
+type DividerProps = {
+	id: string;
+	/** Its place in the sortable list. */
+	at: number;
+	label: string;
+	/** Where a row dropped on it goes: from above, `start` (of the group below); from below, `end` (of the one above). */
+	start: string;
+	end: string;
+};
+
+/**
+ * Where a new page or the sidebar starts: a quiet line between rows, with the hairline of the row above it. It moves
+ * with the rows while one is dragged, and takes drops (never drags), so the slot just past it can be reached.
+ */
+function Divider({ id, at, label, start, end }: DividerProps) {
+	const { active } = useDndContext();
+	const from = (active?.data.current as SortableIndex)?.sortable?.index ?? -1;
+	const { setNodeRef, transform, transition } = useSortable({
+		id,
+		disabled: { draggable: true },
+		data: { label, place: from > at ? end : start } satisfies DndLabel,
+		transition: DRAG_SETTLE,
+	});
+
+	return (
+		<div
+			ref={setNodeRef}
+			style={{ transform: CSS.Translate.toString(transform), transition }}
+			className="border-b border-line pt-4 pb-1.5 t-caption text-ink-3"
+		>
+			{label}
+		</div>
+	);
 }
 
 /**
@@ -262,11 +348,13 @@ type SectionRowProps = {
 	hidden?: boolean;
 	/** The page and column the row prints in, read out while it's dragged. */
 	dragGroup?: string | undefined;
+	/** Its place among the rows that print, read out while one is dragged over it (the page lines aren't counted). */
+	position?: { index: number; total: number } | undefined;
 	/** ⌥↑ / ⌥↓ on the focused row. Hidden sections sit outside the print order, so they have none. */
 	onMove?: ((direction: "up" | "down") => void) | undefined;
 };
 
-function SectionRow({ sectionId, locked, hidden = false, dragGroup, onMove }: SectionRowProps) {
+function SectionRow({ sectionId, locked, hidden = false, dragGroup, position, onMove }: SectionRowProps) {
 	// Select the type (a string) rather than a new section object, so the row renders only when it changes.
 	const type = useCurrentBuilderResumeSelector((resume) => getSectionType(resume.data, sectionId) ?? null);
 	const section = useMemo<WriteSection | null>(
@@ -274,12 +362,21 @@ function SectionRow({ sectionId, locked, hidden = false, dragGroup, onMove }: Se
 		[sectionId, type],
 	);
 	if (!section) return null;
-	return <SectionRowBody section={section} locked={locked} hidden={hidden} dragGroup={dragGroup} onMove={onMove} />;
+	return (
+		<SectionRowBody
+			section={section}
+			locked={locked}
+			hidden={hidden}
+			dragGroup={dragGroup}
+			position={position}
+			onMove={onMove}
+		/>
+	);
 }
 
 type SectionRowBodyProps = Omit<SectionRowProps, "sectionId" | "hidden"> & { section: WriteSection; hidden: boolean };
 
-function SectionRowBody({ section, locked, hidden, dragGroup, onMove }: SectionRowBodyProps) {
+function SectionRowBody({ section, locked, hidden, dragGroup, position, onMove }: SectionRowBodyProps) {
 	const title = useSectionTitle(section);
 	// Joined so the selector returns a stable value.
 	const summary = useCurrentBuilderResumeSelector((resume) => {
@@ -293,7 +390,7 @@ function SectionRowBody({ section, locked, hidden, dragGroup, onMove }: SectionR
 	const updateResumeData = useUpdateResumeData();
 	const { setNodeRef, transform, transition, isDragging, attributes, listeners } = useSortable({
 		id: section.id,
-		data: { label: title, group: dragGroup } satisfies DndLabel,
+		data: { label: title, group: dragGroup, position } satisfies DndLabel,
 		disabled: locked || hidden,
 		transition: DRAG_SETTLE,
 	});
