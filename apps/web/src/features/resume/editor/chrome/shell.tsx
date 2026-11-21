@@ -2,8 +2,9 @@ import type { MobileView } from "@/features/resume/editor/store";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { CSSProperties, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
@@ -130,17 +131,55 @@ type PanelResizerProps = {
 	onCommit: (width: number) => void;
 };
 
+/** How long the share-of-screen badge stays up after the last arrow key. */
+const KEYBOARD_BADGE_MS = 1000;
+
+const subscribeToViewport = (onChange: () => void) => {
+	window.addEventListener("resize", onChange);
+	return () => window.removeEventListener("resize", onChange);
+};
+/** The window's width, kept in step with resizes (read through React, so React Compiler never caches a stale value). */
+const useViewportWidth = () =>
+	useSyncExternalStore(
+		subscribeToViewport,
+		() => window.innerWidth,
+		() => 0,
+	);
+
 /**
  * The panel's end edge: drag it, or focus it and use the arrow keys, to widen the panel. Double-click returns it to the
- * default width. In right-to-left layouts the panel sits on the right, so dragging left widens it.
+ * default width. In right-to-left layouts the panel sits on the right, so dragging left widens it. While it is being
+ * resized, a badge beside the edge shows the panel's share of the screen.
  */
-function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
+export function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
+	const { i18n } = useLingui();
 	const drag = useRef<{ x: number; width: number; rtl: boolean; last: number } | null>(null);
+	const keyboardTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	/** Where the badge shows: at the pointer's height while dragging, centred (null) for the keyboard. */
+	const [badge, setBadge] = useState<{ y: number | null } | null>(null);
+	const viewport = useViewportWidth();
+	const maxWidth = Math.max(MIN_PANEL_WIDTH, viewport - MIN_PAGE_WIDTH);
+	// The width the panel actually has: a saved width is clamped again by a narrower window.
+	const shownWidth = Math.min(Math.max(width, MIN_PANEL_WIDTH), maxWidth);
+	const share = viewport ? i18n.number(shownWidth / viewport, { style: "percent", maximumFractionDigits: 0 }) : null;
+	useEffect(
+		() => () => {
+			if (keyboardTimer.current) clearTimeout(keyboardTimer.current);
+		},
+		[],
+	);
 	const set = (next: number) => {
 		const clamped = clampPanelWidth(next);
 		onResize(clamped);
 		return clamped;
 	};
+	const showKeyboardBadge = () => {
+		if (keyboardTimer.current) clearTimeout(keyboardTimer.current);
+		setBadge({ y: null });
+		keyboardTimer.current = setTimeout(() => setBadge(null), KEYBOARD_BADGE_MS);
+	};
+	const pointerY = (event: { clientY: number; currentTarget: Element }) =>
+		event.clientY - event.currentTarget.getBoundingClientRect().top;
 
 	return (
 		// oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions -- a focusable separator is the ARIA window-splitter pattern.
@@ -150,8 +189,9 @@ function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
 			aria-controls="editor-panel"
 			aria-label={t`Resize panel`}
 			aria-valuemin={MIN_PANEL_WIDTH}
-			aria-valuemax={typeof window === "undefined" ? undefined : maxPanelWidth()}
-			aria-valuenow={width}
+			aria-valuemax={viewport ? maxWidth : undefined}
+			aria-valuenow={shownWidth}
+			aria-valuetext={share ? t`${share} of the screen` : undefined}
 			tabIndex={0}
 			title={t`Drag to resize. Double-click to reset.`}
 			onPointerDown={(event) => {
@@ -165,22 +205,26 @@ function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
 					rtl: getComputedStyle(event.currentTarget).direction === "rtl",
 					last: width,
 				};
+				setBadge({ y: pointerY(event) });
 			}}
 			onPointerMove={(event) => {
 				const start = drag.current;
 				if (!start) return;
 				const delta = (event.clientX - start.x) * (start.rtl ? -1 : 1);
 				start.last = set(start.width + delta);
+				setBadge({ y: pointerY(event) });
 			}}
 			onPointerUp={(event) => {
 				const start = drag.current;
 				if (!start) return;
 				drag.current = null;
+				setBadge(null);
 				event.currentTarget.releasePointerCapture(event.pointerId);
 				onCommit(start.last);
 			}}
 			onPointerCancel={() => {
 				drag.current = null;
+				setBadge(null);
 			}}
 			onDoubleClick={() => onCommit(set(DEFAULT_PANEL_WIDTH))}
 			onKeyDown={(event) => {
@@ -191,12 +235,13 @@ function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
 					ArrowLeft: rtl ? step : -step,
 				};
 				let next: number | null = null;
-				if (event.key in keys) next = width + (keys[event.key] ?? 0);
+				if (event.key in keys) next = shownWidth + (keys[event.key] ?? 0);
 				else if (event.key === "Home") next = MIN_PANEL_WIDTH;
 				else if (event.key === "End") next = maxPanelWidth();
 				if (next === null) return;
 				event.preventDefault();
 				onCommit(set(next));
+				showKeyboardBadge();
 			}}
 			className="group absolute inset-y-0 z-10 w-2 -translate-x-1/2 cursor-col-resize touch-none outline-none select-none rtl:translate-x-1/2"
 			style={{ insetInlineStart: `var(--editor-panel)` }}
@@ -205,6 +250,18 @@ function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
 				aria-hidden="true"
 				className="absolute inset-y-0 start-1/2 w-0.5 -translate-x-1/2 bg-transparent transition-colors duration-quick group-hover:bg-accent group-focus-visible:bg-accent group-active:bg-accent rtl:translate-x-1/2"
 			/>
+			{badge && share && (
+				<span
+					aria-hidden="true"
+					className={cn(
+						"pointer-events-none absolute start-full ms-2 rounded-sm bg-ink px-2 py-1 text-xs leading-4 font-medium whitespace-nowrap text-bg tabular-nums shadow-e2 transition-opacity duration-quick starting:opacity-0",
+						badge.y === null ? "top-1/2 -translate-y-1/2" : "-translate-y-1/2",
+					)}
+					style={badge.y === null ? undefined : { top: badge.y }}
+				>
+					{share}
+				</span>
+			)}
 		</div>
 	);
 }
