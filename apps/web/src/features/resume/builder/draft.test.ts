@@ -508,7 +508,8 @@ describe("builder resume autosave", () => {
 		await vi.advanceTimersByTimeAsync(10_000);
 		await rejected;
 		await event;
-		expect(store().resume?.data).toEqual(server.data);
+		// The same content: the local copy only lacks the empty stylesheet and file name the save sent.
+		expect(withSavedMetadata(store().resume?.data as ResumeData)).toEqual(server.data);
 		expect(store().undoStack).toEqual([]);
 		expect(store().redoStack).toEqual([]);
 		expect(store().proposalApplications).toEqual({});
@@ -1181,6 +1182,23 @@ describe("builder resume autosave", () => {
 		await flushMicrotasks();
 		expect(useResumeStore.getState().saveStatus).toBe("saved");
 		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
+
+		// The same when the saved name is empty.
+		clearResumeDrafts();
+		window.localStorage.clear();
+		const emptyName = { ...initial, data: { ...initial.data, metadata: { ...initial.data.metadata, fileName: "" } } };
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: { ...initial.data, metadata },
+				storedAt: Date.now(),
+				baseUpdatedAt: new Date(initial.updatedAt.getTime() - 60_000),
+			}),
+		);
+		useResumeStore.getState().initialize(emptyName);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
 	});
 
 	it("never vouches for what an older app kept: it goes out unchecked until the server takes it", async () => {
@@ -1459,6 +1477,22 @@ describe("builder resume undo/redo", () => {
 		expect(store().undoStack.length).toBe(1);
 		expect(store().undoStack.length > 0).toBe(true);
 		// The same object stays, so the preview doesn't render the identical document again.
+		expect(store().resume?.data).toBe(current.data);
+	});
+
+	it("preserves the undo stack when the echo only adds the empty file name and stylesheet this app sent", () => {
+		const store = useResumeStore.getState;
+		store().initialize(makeResume("rebase-echo-empty-fields"));
+		store().updateResumeData((draft) => {
+			draft.basics.name = "Edited";
+		});
+		const current = store().resume;
+		if (!current) throw new Error("expected a current resume");
+		expect(current.data.metadata.fileName).toBeUndefined();
+
+		store().replaceResumeFromServer({ ...current, data: withSavedMetadata(cloneResumeData(current.data)) });
+
+		expect(store().undoStack.length).toBe(1);
 		expect(store().resume?.data).toBe(current.data);
 	});
 

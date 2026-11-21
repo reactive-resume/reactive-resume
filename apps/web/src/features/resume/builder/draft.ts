@@ -259,11 +259,22 @@ type UnsavedResume = {
 	fileNameSaved?: boolean;
 };
 
-/** An older app's recovery has no file name field; it keeps the name saved since rather than clearing it. */
+/**
+ * An older app's recovery has no file name field; it takes the saved one (an empty one included) rather than clearing
+ * it, so a recovery that only lacks the field holds no changes.
+ */
 function withRecoveredFileName(unsaved: UnsavedResume, saved: ResumeData): ResumeData {
-	if (unsaved.fileNameSaved || unsaved.data.metadata.fileName !== undefined || !saved.metadata.fileName)
+	if (unsaved.fileNameSaved || unsaved.data.metadata.fileName !== undefined || saved.metadata.fileName === undefined)
 		return unsaved.data;
 	return { ...unsaved.data, metadata: { ...unsaved.data.metadata, fileName: saved.metadata.fileName } };
+}
+
+/**
+ * Whether two copies hold the same resume. A missing web page stylesheet or file name means the same as an empty
+ * one: this app sends them empty, so the server's echo has them where the local copy may not.
+ */
+function isSameResumeData(a: ResumeData, b: ResumeData) {
+	return isEqual(withSavedMetadata(a), withSavedMetadata(b));
 }
 
 function readUnsavedResume(id: string): UnsavedResume | undefined {
@@ -716,7 +727,7 @@ export const useResumeStore = create<ResumeStore>()(
 			const current = get().resume;
 			// An echo keeps the data object the store already holds: a new but identical one would make everything that
 			// renders from it run again, the preview's PDF render of every page included, after every save.
-			const keptData = current && isEqual(current.data, resume.data) ? current.data : undefined;
+			const keptData = current && isSameResumeData(current.data, resume.data) ? current.data : undefined;
 			const isRebase = keptData === undefined || externalRevision;
 			if (isRebase) resetHistoryRuntime();
 
@@ -1264,7 +1275,7 @@ export function useBuilderResumeUpdateSubscription() {
 			}
 
 			const current = useResumeStore.getState().resume;
-			const isExternalChange = current?.id === resume.id && !isEqual(current.data, resume.data);
+			const isExternalChange = current?.id === resume.id && !isSameResumeData(current.data, resume.data);
 
 			if (!isExternalChange) {
 				replaceResumeFromServer(resume);
