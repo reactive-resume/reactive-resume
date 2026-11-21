@@ -181,6 +181,8 @@ export function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
 	const pointerY = (event: { clientY: number; currentTarget: Element }) =>
 		event.clientY - event.currentTarget.getBoundingClientRect().top;
 
+	// A 24px target (44px on touch screens) that reaches 4px into the panel, so the panel's scrollbar stays usable; the
+	// visible 2px line sits on the panel's edge.
 	return (
 		// oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions -- a focusable separator is the ARIA window-splitter pattern.
 		<div
@@ -243,12 +245,12 @@ export function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
 				onCommit(set(next));
 				showKeyboardBadge();
 			}}
-			className="group absolute inset-y-0 z-10 w-2 -translate-x-1/2 cursor-col-resize touch-none outline-none select-none rtl:translate-x-1/2"
+			className="group absolute inset-y-0 z-10 w-6 -translate-x-1 cursor-col-resize touch-none outline-none select-none rtl:translate-x-1 pointer-coarse:w-11"
 			style={{ insetInlineStart: `var(--editor-panel)` }}
 		>
 			<span
 				aria-hidden="true"
-				className="absolute inset-y-0 start-1/2 w-0.5 -translate-x-1/2 bg-transparent transition-colors duration-quick group-hover:bg-accent group-focus-visible:bg-accent group-active:bg-accent rtl:translate-x-1/2"
+				className="absolute inset-y-0 start-1 w-0.5 -translate-x-1/2 bg-transparent transition-colors duration-quick group-hover:bg-accent group-focus-visible:bg-accent group-active:bg-accent rtl:translate-x-1/2"
 			/>
 			{badge && share && (
 				<span
