@@ -12,7 +12,7 @@ import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { DownloadSheetFrame } from "@/features/resume/editor/chrome/download-sheet";
 import { useEditorStore } from "@/features/resume/editor/store";
-import { createExportFile, getDefaultFileName, sanitizeFileName } from "@/features/resume/export/use-resume-export";
+import { createExportFile, getExportFileName, sanitizeFileName } from "@/features/resume/export/use-resume-export";
 import { DownloadMenu } from "@/features/resume/share/download-menu";
 import {
 	DownloadActions,
@@ -79,7 +79,7 @@ function useLetterFormats(letter: Letter | null): DownloadFormat<LetterFormat>[]
 async function downloadLetter(letter: Letter, as: LetterFormat, formats: DownloadFormat<LetterFormat>[], name: string) {
 	if (as === "both" && letter.sourceResumeId) {
 		const resume = await client.resume.getById({ id: letter.sourceResumeId });
-		downloadWithAnchor(await createExportFile(resume, "pdf"), `${getDefaultFileName(resume)}.pdf`);
+		downloadWithAnchor(await createExportFile(resume, "pdf"), `${getExportFileName(resume)}.pdf`);
 		// Two downloads in a row are more reliable a moment apart.
 		await new Promise((resolve) => window.setTimeout(resolve, PAUSE_BETWEEN_FILES_MS));
 		downloadWithAnchor(await createLetterFile(letter, "pdf"), `${letterFileName(letter)}.pdf`);

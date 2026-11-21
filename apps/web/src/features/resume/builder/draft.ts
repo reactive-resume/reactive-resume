@@ -20,7 +20,7 @@ import {
 	restoreProposalApplications,
 } from "@reactive-resume/resume/proposals";
 import { aiOperationIdsSchema } from "@reactive-resume/schema/ai-usage";
-import { parseResumeData, withWebPageCss } from "@reactive-resume/schema/resume/data";
+import { parseResumeData, withSavedMetadata } from "@reactive-resume/schema/resume/data";
 import { syncResumeDates } from "@reactive-resume/schema/resume/dates";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { generateId } from "@reactive-resume/utils/string";
@@ -206,6 +206,7 @@ function storeUnsavedResume(resume: Resume) {
 				proposalApplications: getRuntime(resume.id).proposalApplications,
 				pendingProposalApplications: getRuntime(resume.id).pendingProposalApplications,
 				proposalSafety: getRuntime(resume.id).proposalSafety,
+				fileNameSaved: true,
 			}),
 		);
 	} catch {
@@ -228,6 +229,7 @@ function clearUnsavedResume(resume: Resume) {
 					proposalApplications: runtime.proposalApplications,
 					pendingProposalApplications: runtime.pendingProposalApplications,
 					proposalSafety: runtime.proposalSafety,
+					fileNameSaved: true,
 				}),
 			);
 		} else window.localStorage.removeItem(recoveryKey(resume));
@@ -250,7 +252,30 @@ type UnsavedResume = {
 	proposalApplications?: ProposalApplications;
 	pendingProposalApplications?: ProposalApplications;
 	proposalSafety?: unknown;
+	/**
+	 * Set by apps that keep `metadata.fileName`: a missing name in their recovery means there is none. Recoveries
+	 * from older apps lack both, and keep the saved name instead of clearing it.
+	 */
+	fileNameSaved?: boolean;
 };
+
+/**
+ * An older app's recovery has no file name field; it takes the saved one (an empty one included) rather than clearing
+ * it, so a recovery that only lacks the field holds no changes.
+ */
+function withRecoveredFileName(unsaved: UnsavedResume, saved: ResumeData): ResumeData {
+	if (unsaved.fileNameSaved || unsaved.data.metadata.fileName !== undefined || saved.metadata.fileName === undefined)
+		return unsaved.data;
+	return { ...unsaved.data, metadata: { ...unsaved.data.metadata, fileName: saved.metadata.fileName } };
+}
+
+/**
+ * Whether two copies hold the same resume. A missing web page stylesheet or file name means the same as an empty
+ * one: this app sends them empty, so the server's echo has them where the local copy may not.
+ */
+function isSameResumeData(a: ResumeData, b: ResumeData) {
+	return isEqual(withSavedMetadata(a), withSavedMetadata(b));
+}
 
 function readUnsavedResume(id: string): UnsavedResume | undefined {
 	try {
@@ -415,7 +440,7 @@ async function flushResumeSave(id: string) {
 		const updated = (await orpc.resume.update.call(
 			{
 				id: submitted.id,
-				data: withWebPageCss(submittedData),
+				data: withSavedMetadata(submittedData),
 				...(submitted.aiOperationIds !== undefined ? { aiOperationIds: submitted.aiOperationIds } : {}),
 				sessionId: runtime.sessionId,
 				expectedUpdatedAt: runtime.baseUpdatedAt,
@@ -615,13 +640,16 @@ export const useResumeStore = create<ResumeStore>()(
 			const sameRevision = unsaved?.baseUpdatedAt === resume?.updatedAt.toISOString();
 			const hasSourceChanges =
 				unsaved?.aiOperationIds !== undefined && !isEqual(unsaved.aiOperationIds, resume?.aiOperationIds ?? []);
+			// Normalized first: an older recovery that only lacks the saved file name holds no changes.
+			const recoveredData = resume && unsaved ? withRecoveredFileName(unsaved, resume.data) : undefined;
 			const restored =
 				resume &&
 				unsaved &&
-				((!unsaved.clean && (!isEqual(unsaved.data, resume.data) || hasSourceChanges)) || hasPendingDecisions)
+				recoveredData &&
+				((!unsaved.clean && (!isSameResumeData(recoveredData, resume.data) || hasSourceChanges)) || hasPendingDecisions)
 					? {
 							...resume,
-							data: unsaved.data,
+							data: recoveredData,
 							...(unsaved.aiOperationIds !== undefined
 								? {
 										aiOperationIds: unsaved.aiOperationIds,
@@ -699,7 +727,7 @@ export const useResumeStore = create<ResumeStore>()(
 			const current = get().resume;
 			// An echo keeps the data object the store already holds: a new but identical one would make everything that
 			// renders from it run again, the preview's PDF render of every page included, after every save.
-			const keptData = current && isEqual(current.data, resume.data) ? current.data : undefined;
+			const keptData = current && isSameResumeData(current.data, resume.data) ? current.data : undefined;
 			const isRebase = keptData === undefined || externalRevision;
 			if (isRebase) resetHistoryRuntime();
 
@@ -1247,7 +1275,7 @@ export function useBuilderResumeUpdateSubscription() {
 			}
 
 			const current = useResumeStore.getState().resume;
-			const isExternalChange = current?.id === resume.id && !isEqual(current.data, resume.data);
+			const isExternalChange = current?.id === resume.id && !isSameResumeData(current.data, resume.data);
 
 			if (!isExternalChange) {
 				replaceResumeFromServer(resume);

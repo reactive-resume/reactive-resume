@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { getDefaultFileName, sanitizeFileName } from "./file";
+import { getDefaultFileName, getExportFileName, sanitizeFileName } from "./file";
 
 it.each([
 	["李明", "李明-Resume"],
@@ -36,4 +36,17 @@ it("names the file in the resume's own language", () => {
 	expect(getDefaultFileName({ name: "", data: data("en-US") })).toBe("Layla-Haddad-Resume");
 	// A locale without a translation keeps the English word.
 	expect(getDefaultFileName({ name: "", data: data("xx-XX") })).toBe("Layla-Haddad-Resume");
+});
+
+it("names downloads after the saved file name, falling back to the generated one", () => {
+	const source = (fileName?: string) => ({
+		name: "",
+		data: { basics: { name: "Jordan Lee" }, metadata: { fileName } },
+	});
+	expect(getExportFileName(source("Jordan-Acme"))).toBe("Jordan-Acme");
+	expect(getExportFileName(source(" Jordan/Acme? "))).toBe("JordanAcme");
+	expect(getExportFileName(source(""))).toBe("Jordan-Lee-Resume");
+	expect(getExportFileName(source())).toBe("Jordan-Lee-Resume");
+	expect(getExportFileName(source("..."))).toBe("Jordan-Lee-Resume");
+	expect(getExportFileName(source("Jordan-Acme"), "cover-letter")).toBe("Jordan-Lee-Cover-Letter");
 });
