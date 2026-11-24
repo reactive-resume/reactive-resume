@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { copySourceToClipboard } from "./editor-extensions";
 
@@ -58,7 +59,14 @@ export function StylesheetToolbar({
 			<ToolbarButton label={t`Redo resume change`} disabled={disabled || !canRedo} onClick={onRedo}>
 				<Icon name="arrow-u-up-right" size={16} />
 			</ToolbarButton>
-			<ToolbarButton label={t`Copy stylesheet`} onClick={() => void copySourceToClipboard(source)}>
+			<ToolbarButton
+				label={t`Copy stylesheet`}
+				onClick={() =>
+					void copySourceToClipboard(source).catch(() =>
+						toast.add({ type: "error", description: t`Couldn't copy to the clipboard. Try again.` }),
+					)
+				}
+			>
 				<Icon name="copy" size={16} />
 			</ToolbarButton>
 			<Button variant="ghost" size="sm" aria-label={t`Format stylesheet`} disabled={disabled} onClick={onFormat}>
