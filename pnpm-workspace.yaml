@@ -6,56 +6,56 @@ catalogMode: prefer
 catalog:
   "@babel/plugin-transform-parameters": ^8.0.5
   "@babel/plugin-transform-unicode-sets-regex": ^8.0.1
-  "@better-auth/api-key": "1.7.23"
-  "@better-auth/drizzle-adapter": "1.7.23"
-  "@better-auth/infra": ^0.4.30
-  "@better-auth/oauth-provider": "1.7.23"
-  "@better-auth/passkey": "1.7.23"
-  "@cloudflare/workers-types": ^5.20261113.1
-  "@formatjs/intl-displaynames": ^8.0.3
-  "@orpc/client": ^1.16.2
-  "@orpc/server": ^1.16.2
-  "@types/node": ^26.6.6
+  "@better-auth/api-key": "1.7.28"
+  "@better-auth/drizzle-adapter": "1.7.28"
+  "@better-auth/infra": ^0.4.31
+  "@better-auth/oauth-provider": "1.7.28"
+  "@better-auth/passkey": "1.7.28"
+  "@cloudflare/workers-types": ^5.20261125.1
+  "@formatjs/intl-displaynames": ^8.0.4
+  "@orpc/client": ^1.16.6
+  "@orpc/server": ^1.16.6
+  "@types/node": ^26.6.10
   "@types/pg": "^8.23.1"
-  "@types/react": "^19.3.0"
+  "@types/react": "^19.3.3"
   "@types/react-dom": "^19.3.0"
-  "@uiw/color-convert": "^2.10.3"
-  "ai": ^7.0.172
+  "@uiw/color-convert": "^2.10.4"
+  "ai": ^7.0.181
   "bcryptjs": "^3.0.3"
-  "better-auth": "1.7.23"
+  "better-auth": "1.7.28"
   "drizzle-orm": "1.0.0-rc.4"
   "es-toolkit": ^1.53.2
   esbuild: ^0.28.2
   expo-asset: ~58.0.21
   "fflate": "^0.8.3"
-  "ioredis": "^6.0.0"
+  "ioredis": "^6.1.0"
   "jsonrepair": "^3.15.0"
   "pg": "^8.23.1"
   # Expo 58 / React Native 0.88 uses React 19.3; keep shared packages on one copy.
   "react": "19.3.1"
   "ts-pattern": ^5.9.2
   "typescript": "^7.0.2"
-  "tsrs": "0.25.0-ts7.1.0-beta"
-  "vite-plus": 1.6.0
-  wrangler: ^4.162.0
+  "tsrs": "7.1.0-beta.tsrs5"
+  "vite-plus": 1.8.0
+  wrangler: ^4.168.0
   "zod": ^4.6.7
   "@fontsource-variable/figtree": ^5.3.0
   "@fontsource-variable/geist-mono": ^5.3.0
   "@fontsource/instrument-serif": ^5.3.0
   "@shadcn/react": ^0.3.1
-  isbot: ^5.2.3
+  isbot: ^5.2.4
   "@resvg/resvg-wasm": ^2.6.2
   htmlparser2: 12.0.0
   mdast-util-from-markdown: 2.1.0
   "@reactive-resume/utils": workspace:*
-  "@formatjs/intl-relativetimeformat": ^13.0.3
+  "@formatjs/intl-relativetimeformat": ^13.0.4
   expo-background-task: ~58.0.13
   expo-quick-actions: ^6.0.2
   expo-task-manager: ~58.0.14
   "@testing-library/react-native": ^14.1.0
-  vite: npm:@voidzero-dev/vite-plus-core@1.6.0
-  vitest: 5.1.0
-  "@vitest/coverage-v8": 5.1.0
+  vite: npm:@voidzero-dev/vite-plus-core@8.3.8001
+  vitest: 5.1.2
+  "@vitest/coverage-v8": 5.1.2
   pdf-lib: 1.17.1
 allowBuilds:
   # jest-expo (apps/mobile) pulls it through jest-haste-map; its prebuilt binary needs no build script.
@@ -104,7 +104,7 @@ overrides:
   vitest@*: "catalog:"
 patchedDependencies:
   deepmerge@4.3.1: patches/deepmerge@4.3.1.patch
-  expo-router@58.0.31: patches/expo-router@58.0.31.patch
+  expo-router@58.0.32: patches/expo-router@58.0.32.patch
   expo-sharing@58.0.23: patches/expo-sharing@58.0.23.patch
   react-native-screens@4.30.1: patches/react-native-screens@4.30.1.patch
 skills:
@@ -118,6 +118,8 @@ permissions:
   "@tanstack/react-router":
     skills: true
   "@tanstack/router-plugin":
+    skills: true
+  ai:
     skills: true
   drizzle-kit:
     skills: true
