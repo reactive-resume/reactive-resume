@@ -68,6 +68,19 @@ describe("harvestPdfDocument", () => {
 		expect(JSON.parse(JSON.stringify(raw))).toEqual(raw);
 	});
 
+	it("reads the tagged flag when getMarkInfo returns a Map", async () => {
+		const document = makeDocument([makePage(1)]);
+		document.getMarkInfo = async () =>
+			new Map<string, unknown>([
+				["Marked", true],
+				["UserProperties", false],
+			]);
+
+		const raw = await harvestPdfDocument(document, { file: FILE });
+
+		expect(raw.metadata.isTagged).toBe(true);
+	});
+
 	it("stops at the page ceiling and says so", async () => {
 		const pages = Array.from({ length: 5 }, (_, index) => makePage(index + 1));
 		const raw = await harvestPdfDocument(makeDocument(pages), { file: FILE, maxPages: 2 });
