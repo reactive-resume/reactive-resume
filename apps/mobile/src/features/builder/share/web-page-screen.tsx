@@ -153,7 +153,6 @@ export function WebPageScreen() {
 							{...primary}
 							trailing={<Switch value={document.isPrimary} interactive={false} />}
 							last
-							boxHidden
 						/>
 					</View>
 					<SectionHeading title={t`Privacy`} />
@@ -177,7 +176,6 @@ export function WebPageScreen() {
 						secondary={document.hasPassword ? t`On` : t`Off`}
 						trailing="caret"
 						last
-						boxHidden
 						onPress={() => router.push(`/builder/${id}/share/password`)}
 					/>
 					{css !== undefined && (

@@ -21,8 +21,8 @@ function termAsWritten(forms: readonly string[], posting: string): string | unde
 }
 
 /**
- * The fake backend's posting is a list of the board's terms, not a posting the engine can read, so storyboard captures
- * draw the board's match (B10: 9 of 14, three missing terms; two more are hidden as "Not true for me"). A term added
+ * The fake backend's posting is a list of the board's terms, not a posting the engine can read, so the storyboard
+ * variant draws the board's match (B10: 9 of 14, three missing terms; two more are hidden as "Not true for me"). A term added
  * to the resume moves to found.
  */
 const boardFound = [

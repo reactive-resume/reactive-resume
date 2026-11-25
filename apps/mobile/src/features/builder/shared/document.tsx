@@ -1,5 +1,5 @@
 // The open document every builder screen shares: one draft owner and one history per document visit, the save
-// status words and the status line with Undo · Redo (BUILD.md §3.3). Agent D's builder screens import from here.
+// status words and the status line with Undo · Redo. Agent D's builder screens import from here.
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
 import { t } from "@lingui/core/macro";
@@ -8,8 +8,7 @@ import { createContext, useContext, useEffect, useState, useSyncExternalStore } 
 import { View } from "react-native";
 import { create } from "zustand";
 import { useDocumentHistory, useLetterDraftOwner, useResumeDraftOwner, useResumeStore } from "@/data";
-import { useDesignTag } from "@/dev/storyboard/harness";
-import { PushScreen, type PushScreenProps, Text, Touch, hitSlopFor, type as typeScale } from "@/ui";
+import { PushScreen, type PushScreenProps, Text, Touch, hitSlopFor } from "@/ui";
 
 type History = ReturnType<typeof useDocumentHistory>;
 type DraftState = ReturnType<typeof useResumeStore.getState>;
@@ -141,7 +140,7 @@ export function useSaveWord() {
 }
 
 /**
- * The document status line (BUILD.md §3.3): the status words, then Undo once there is something to undo and Redo
+ * The document status line: the status words, then Undo once there is something to undo and Redo
  * after an Undo, each a 48 dp tall text button in `accent-text`.
  */
 export function DocumentStatusLine({ text }: { text: string }) {
@@ -163,12 +162,8 @@ export function DocumentStatusLine({ text }: { text: string }) {
 	);
 	const both = history.canUndo && history.canRedo;
 	const words = history.canUndo || history.canRedo ? `${text} · ` : text;
-	// The boards' status line is one paragraph with Undo · Redo inline (B3): its text box spans the whole line.
-	const ref = useDesignTag({ kind: "text", text: words, style: typeScale.body, color: "ink3" });
 	return (
 		<View
-			ref={ref}
-			collapsable={false}
 			style={{
 				marginTop: 6,
 				marginHorizontal: 24,
@@ -178,7 +173,7 @@ export function DocumentStatusLine({ text }: { text: string }) {
 				alignItems: "center",
 			}}
 		>
-			<Text variant="body" color="ink3" tag={false}>
+			<Text variant="body" color="ink3">
 				{words}
 			</Text>
 			{history.canUndo ? action(t`Undo`, history.undo) : null}

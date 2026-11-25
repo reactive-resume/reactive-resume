@@ -1,4 +1,4 @@
-// Pull to refresh (MOTION.md §6.7): Today, Documents, Applications, Career. The same custom indicator on both
+// Pull to refresh: Today, Documents, Applications, Career. The same custom indicator on both
 // platforms: a 14 dp spinner with "Refreshing" under the header that turns with the pull, arms at 64 dp (`soft`),
 // and holds the content 44 dp down while refreshing; when done the content returns in d2 `ease`. A Gesture Handler
 // pan runs only while the list is at its top, simultaneously with the list's own scroll. Screen readers get a
@@ -136,7 +136,7 @@ export function PullToRefresh({
 				accessibilityElementsHidden={!refreshing}
 			>
 				{refreshing ? <Spinner /> : <Spinner turns={turns} />}
-				<Text variant="ui" color="ink3" tag={refreshing}>
+				<Text variant="ui" color="ink3">
 					{t`Refreshing`}
 				</Text>
 			</Animated.View>

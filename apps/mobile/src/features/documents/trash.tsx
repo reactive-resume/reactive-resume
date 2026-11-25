@@ -145,7 +145,6 @@ function ScopedTrashScreen() {
 					onLongPress={() => setConfirmation([item])}
 					longPressHaptic={null}
 					last={last}
-					boxHidden={last}
 					testID={`trash-${item.ref.id}`}
 				/>
 			</SwipeRow>

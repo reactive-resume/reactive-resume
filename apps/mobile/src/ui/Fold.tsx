@@ -6,7 +6,7 @@ import type {
 	LayoutAnimationFunction,
 	LayoutAnimationsValues,
 } from "react-native-reanimated";
-// Rows that leave and return (MOTION.md §7). Prefer <FoldRow>: its clip folds the height while the row's content
+// Rows that leave and return. Prefer <FoldRow>: its clip folds the height while the row's content
 // fades (two nested exiting animations, both d2 `ease`), which looks the same as fading the whole row for rows drawn
 // on the screen's background and keeps a row's own fill (a lab marker, a card group's surface) solid while it folds.
 // The single-view configs below remain for views that should fade as a whole:

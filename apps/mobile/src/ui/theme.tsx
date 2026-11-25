@@ -6,7 +6,7 @@ export type ThemePreference = "system" | "light" | "dark";
 
 type ThemeState = {
 	preference: ThemePreference;
-	/** Storyboard captures and the motion lab pin a theme regardless of the preference. */
+	/** Storyboard scenarios pin a theme regardless of the preference. */
 	override: ThemeName | null;
 	setPreference: (preference: ThemePreference) => void;
 	setOverride: (override: ThemeName | null) => void;

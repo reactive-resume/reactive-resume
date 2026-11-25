@@ -1,4 +1,4 @@
-// Buttons and icon buttons (COMPONENTS.md §6).
+// Buttons and icon buttons.
 import type { StyleProp, ViewStyle } from "react-native";
 import { View } from "react-native";
 import { Box, Ring, Touch } from "./base";
@@ -8,7 +8,6 @@ import { hitSlopFor } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { type ColorToken, radius, type as typeScale, type TypeToken } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 export type ButtonTone = "primary" | "secondary" | "ghost" | "accentGhost" | "dangerGhost" | "danger" | "soft";
 export type ButtonSize = "sm" | "md" | "lg";
@@ -35,7 +34,7 @@ export type ButtonProps = {
 	tone?: ButtonTone;
 	size?: ButtonSize;
 	icon?: IconName | undefined;
-	/** Replaces the leading icon with the spinner while work runs (MOTION.md §8). */
+	/** Replaces the leading icon with the spinner while work runs. */
 	leading?: React.ReactNode | undefined;
 	/** Fill the available width (hero, footer and dialog buttons). */
 	block?: boolean | undefined;
@@ -84,7 +83,6 @@ export function Button({
 			]}
 		>
 			<Box
-				component="Button"
 				radius={s.radius}
 				{...(t.bg ? { bg: t.bg } : {})}
 				style={{
@@ -159,7 +157,6 @@ export function IconButton({
 			style={[disabled ? { opacity: 0.45 } : null, style]}
 		>
 			<Box
-				component="IconButton"
 				radius={radius.md}
 				{...(on ? { bg: "accentSoft" as const } : {})}
 				style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
@@ -220,8 +217,7 @@ export function TextLink({
 
 /**
  * A quiet line that ends in an accent link ("Server: rxresu.me · Change", "New here? Create an account"), or a link
- * alone inside running text or a row. The whole line is the target, with a 48 dp tall hit area. The line registers
- * as one text in the layout dump (the boards measure the lead and the link separately), the link as its own.
+ * alone inside running text or a row. The whole line is the target, with a 48 dp tall hit area.
  */
 export function InlineLink({
 	lead,
@@ -244,16 +240,6 @@ export function InlineLink({
 	paddingVertical?: number | undefined;
 	testID?: string | undefined;
 }) {
-	const style = typeScale.ui;
-	const ref = useDesignTag(
-		{
-			kind: "text",
-			text: lead ?? "",
-			style: { fontFamily: style.fontFamily, fontSize: style.fontSize, lineHeight: style.lineHeight },
-			color: "ink3",
-		},
-		{ hidden: !lead },
-	);
 	return (
 		<Touch
 			onPress={onPress}
@@ -265,9 +251,9 @@ export function InlineLink({
 			hitSlop={hitSlopFor(48, typeScale[variant].lineHeight + paddingVertical * 2)}
 			style={{ alignSelf: align === "center" ? "center" : "flex-start", paddingVertical }}
 		>
-			<View ref={ref} collapsable={false} style={{ flexDirection: "row", flexWrap: "wrap" }}>
+			<View style={{ flexDirection: "row", flexWrap: "wrap" }}>
 				{lead ? (
-					<Text variant="ui" color="ink3" tag={false}>
+					<Text variant="ui" color="ink3">
 						{`${lead} `}
 					</Text>
 				) : null}

@@ -1,5 +1,5 @@
-// One entry per storyboard screen (screens/manifest.json): the hrefs to replay, the fixture to seed, and anything to
-// prepare before measuring. Each screen agent owns one file under scenarios/.
+// One entry per storyboard screen: the hrefs to replay, the fixture to seed, and anything to prepare before the
+// screen counts as ready. Each screen agent owns one file under scenarios/.
 import type { Scenario } from "./harness";
 import { scenarios as a } from "./scenarios/a";
 import { scenarios as b } from "./scenarios/b";

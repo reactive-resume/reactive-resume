@@ -157,7 +157,7 @@ function ScopedSearchScreen() {
 								onChangeText={setQuery}
 								placeholder={t`Search everything`}
 								leadingIcon="magnifying-glass"
-								// Storyboard captures arrive with a query and draw the field focused without a keyboard.
+								// Storyboard scenarios arrive with a query and draw the field focused without a keyboard.
 								autoFocus={!STORYBOARD || params.q === undefined}
 								forceFocus
 								returnKeyType="search"

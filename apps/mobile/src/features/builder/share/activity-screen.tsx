@@ -6,7 +6,6 @@ import { Share, View } from "react-native";
 import { feedbackLinkLine, storyboardBars, type FeedbackLinkRow } from "./activity-model";
 import { useDocumentId } from "./document";
 import { useFeedbackLink, useFeedbackLinks, useSharingActions, useVisitorStatistics } from "@/data";
-import { useCaptureStore } from "@/dev/storyboard/capture";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	PushScreen,
@@ -40,8 +39,6 @@ export function ActivityScreen() {
 	const { totals, daily } = useVisitorStatistics(id);
 	const links = useFeedbackLinks(id);
 	const sharing = useSharingActions();
-	// The board draws no "By day" link; storyboard captures leave it out.
-	const capturing = useCaptureStore((s) => STORYBOARD && s.request !== null && s.ready !== s.request.nonce);
 	const [byDay, setByDay] = useState(false);
 	const [making, setMaking] = useState(false);
 	const [label, setLabel] = useState("");
@@ -167,15 +164,13 @@ export function ActivityScreen() {
 					<View style={{ paddingTop: 10 }}>
 						<Text color="ink3">{t`Only you see these.`}</Text>
 					</View>
-					{capturing ? null : (
-						<View style={{ height: 44, justifyContent: "center" }}>
-							<TextLink
-								label={byDay ? t`Hide days` : t`By day`}
-								icon={byDay ? "caret-up" : "caret-down"}
-								onPress={() => setByDay(!byDay)}
-							/>
-						</View>
-					)}
+					<View style={{ height: 44, justifyContent: "center" }}>
+						<TextLink
+							label={byDay ? t`Hide days` : t`By day`}
+							icon={byDay ? "caret-up" : "caret-down"}
+							onPress={() => setByDay(!byDay)}
+						/>
+					</View>
 				</View>
 			)}
 			{byDay
@@ -203,7 +198,6 @@ export function ActivityScreen() {
 					secondary={feedbackLinkLine(link)}
 					trailing="caret"
 					last={index === active.length - 1}
-					boxHidden={index === active.length - 1}
 					onPress={() => setOpen(link.id)}
 				/>
 			))}

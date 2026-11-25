@@ -99,7 +99,6 @@ export function InsightsScreen() {
 								secondary={t`${row.applied} applied`}
 								value={t`${row.replied} of ${row.applied}`}
 								last={i === data.sources.length - 1}
-								boxHidden={i === data.sources.length - 1}
 							/>
 						))
 					)}

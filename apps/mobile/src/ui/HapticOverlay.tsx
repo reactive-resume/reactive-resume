@@ -1,4 +1,4 @@
-// "Show haptics" (MOTION.md §4.3, dev and storyboard builds): a pill under the status bar with the last eight haptic
+// "Show haptics" (dev and storyboard builds): a pill under the status bar with the last eight haptic
 // tokens, space-separated, newest last (`testID="haptic-log"`, read by the Maestro haptic flows). Each new token is
 // highlighted for 1 s. Mount once at the root; it renders only while the dev switch is on.
 import { useEffect, useState } from "react";

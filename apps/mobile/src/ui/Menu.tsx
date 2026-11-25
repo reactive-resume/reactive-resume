@@ -1,4 +1,4 @@
-// Menu / popover (MOTION.md §6.5): opens 8 dp from its trigger, starting 4 dp toward it at 98% scale and settling
+// Menu / popover: opens 8 dp from its trigger, starting 4 dp toward it at 98% scale and settling
 // outward with a fade, d2 `ease`; exit fade 140 ms. Reduced motion: a d1 fade in place. Tapping outside closes it.
 // It opens below the trigger when it fits, above it when only that side fits, and otherwise takes the larger side
 // and scrolls, always inside the safe area and clear of the dock and the keyboard.
@@ -15,7 +15,6 @@ import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { useCoveredBottom } from "./Toast";
 import { motion, radius, space } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 export type Rect = { x: number; y: number; width: number; height: number };
 
@@ -73,7 +72,6 @@ function MenuView({
 }: MenuProps & { onExited: () => void }) {
 	const { colors, shadows } = useTheme();
 	const { reduced, overlayFade } = useMotionPolicy();
-	const ref = useDesignTag({ kind: "component", component: "Menu", radius: radius.lg, bg: "raised" });
 	const win = useWindowDimensions();
 	const insets = useSafeAreaInsets();
 	const covered = useCoveredBottom();
@@ -132,7 +130,6 @@ function MenuView({
 				importantForAccessibility="no"
 			/>
 			<Animated.View
-				ref={ref as never}
 				accessibilityViewIsModal
 				accessibilityRole="menu"
 				testID="menu"

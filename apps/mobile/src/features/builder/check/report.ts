@@ -1,4 +1,4 @@
-// The Check report the screen draws. On the fake backend (storyboard captures) the boards' values replace what the
+// The Check report the screen draws. On the fake backend (the storyboard variant) the boards' values replace what the
 // local lint computes for the fixture, where the two disagree (B9: score 86 "Mostly readable", 4 checks passed and a
 // 1.2 line height, against the lint's 91 "Reads cleanly", 21 and 1.15). Nothing is written to the draft.
 import type { ResumeData } from "@reactive-resume/schema/resume/data";

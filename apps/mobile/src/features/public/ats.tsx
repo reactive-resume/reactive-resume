@@ -152,7 +152,6 @@ export function ATSCheckerScreen() {
 				title={t`Contact details come through`}
 				secondary={t`Email, phone, links`}
 				last
-				boxHidden
 			/>
 		</PushScreen>
 	);

@@ -1,4 +1,4 @@
-// Carousels and pagers (MOTION.md §7): B7 templates (180 dp cards, the next one peeks), J2 board columns (300 dp,
+// Carousels and pagers: B7 templates (180 dp cards, the next one peeks), J2 board columns (300 dp,
 // 16 dp apart, from 24 dp), J3 weeks (full width), C6 columns. The row pans 1:1 with the finger; on release it snaps
 // to the nearest item, or to the next one in the fling's direction when flung faster than 500 dp/s, in d3
 // `ease-out-strong`, with `selection` when the snapped item changes. Not pagingEnabled/snapToInterval (platform

@@ -1,4 +1,4 @@
-// Screen options for the JS stacks (MOTION.md §6.1). Layouts use these; nothing else sets transition options.
+// Screen options for the JS stacks. Layouts use these; nothing else sets transition options.
 import type { StackNavigationOptions } from "expo-router/js-stack";
 import { useStackOptions } from "./motion";
 import { useThemeName } from "./theme";
@@ -12,7 +12,7 @@ export function useScreenOptions() {
 	const push = useStackOptions(theme, "push");
 	const modal = useStackOptions(theme, "modal");
 	const fade = useStackOptions(theme, "fade");
-	// Storyboard captures land every transition at once through `timeScale`; overriding `animation` to none for them
+	// Storyboard scenarios land every transition at once through `timeScale`; overriding `animation` to none for them
 	// left the stack's cards inert for the first touch once motion came back.
 	const sheet: StackNavigationOptions = {
 		headerShown: false,

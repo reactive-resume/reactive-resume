@@ -127,7 +127,6 @@ export function ApplyScreen() {
 					leading={<IconTile icon="globe-simple" />}
 					trailing="external"
 					last
-					boxHidden
 					onPress={where ? () => void openBrowserAsync(where) : undefined}
 				/>
 				{sent && followUp ? (

@@ -11,14 +11,10 @@
 		"typecheck": "tsrs --noEmit",
 		"lingui:extract": "lingui extract --clean && node scripts/seed-locales.mjs",
 		"test": "jest",
-		"test:ci": "jest --ci --testPathIgnorePatterns src/dev/storyboard/edges.test.ts",
+		"test:ci": "jest --ci",
 		"check:motion": "sh scripts/check-motion.sh",
 		"check:bundle": "dir=$(mktemp -d) && trap 'rm -rf \"$dir\"' EXIT && TMPDIR=\"$dir\" expo export --output-dir \"$dir/dist\"",
-		"icons": "node scripts/icons.mjs",
-		"fidelity:ios": "node ../../.agents/handoff/mobile-final/tools/rn_capture.mjs screens --platform ios --scheme me.rxresu.storyboard --bundle-id me.rxresu.storyboard --out build/fidelity/ios && python3 ../../.agents/handoff/mobile-final/tools/fidelity.py build/fidelity/ios build/fidelity-report/ios --system-bars",
-		"fidelity:android": "node ../../.agents/handoff/mobile-final/tools/rn_capture.mjs screens --platform android --scheme me.rxresu.storyboard --package me.rxresu.storyboard --out build/fidelity/android && python3 ../../.agents/handoff/mobile-final/tools/fidelity.py build/fidelity/android build/fidelity-report/android --system-bars",
-		"motion:ios": "node ../../.agents/handoff/mobile-final/tools/rn_capture.mjs record --platform ios --scheme me.rxresu.storyboard --bundle-id me.rxresu.storyboard --probes all --out build/motion/ios && python3 ../../.agents/handoff/mobile-final/tools/motion_probe.py suite build/motion/ios build/motion/ios-report",
-		"motion:android": "node ../../.agents/handoff/mobile-final/tools/rn_capture.mjs record --platform android --scheme me.rxresu.storyboard --package me.rxresu.storyboard --probes all --out build/motion/android && python3 ../../.agents/handoff/mobile-final/tools/motion_probe.py suite build/motion/android build/motion/android-report"
+		"icons": "node scripts/icons.mjs"
 	},
 	"dependencies": {
 		"@formatjs/intl-displaynames": "catalog:",

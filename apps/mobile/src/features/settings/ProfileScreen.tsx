@@ -155,7 +155,6 @@ export function ProfileScreen() {
 							value={pay}
 							trailing="caret"
 							last
-							boxHidden
 							onPress={() => router.push("/career/knowledge/preferences")}
 						/>
 					</View>

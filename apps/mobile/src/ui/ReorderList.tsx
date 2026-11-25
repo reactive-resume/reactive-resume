@@ -1,4 +1,4 @@
-// Reorder (MOTION.md §7): B2 entries, B8 sections, C5 priorities. Lift on long-press (500 ms) or at once from a drag
+// Reorder: B2 entries, B8 sections, C5 priorities. Lift on long-press (500 ms) or at once from a drag
 // handle: scale 1.02 and `sh2` fade in, d1 `ease`, `medium`. The item follows the finger 1:1; neighbours slide out of
 // the way with d2 `ease-in-out-strong` as its centre crosses their midpoint, `selection` per slot. The list
 // auto-scrolls only while the finger is in the outer 8% of the scroll view (faster deeper in). Drop: settles with

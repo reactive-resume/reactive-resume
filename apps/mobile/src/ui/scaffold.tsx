@@ -3,8 +3,8 @@
 //   PushScreen   pushed screens and full-screen modals: bare 56 dp bar, 28/34 title, one line, optional footer
 //   SheetScreen  a route presented as the design-system bottom sheet
 import { t } from "@lingui/core/macro";
-import { useFocusEffect, useIsFocused, useRouter, useScrollToTop } from "expo-router";
-import { type ReactNode, useCallback, useRef } from "react";
+import { useIsFocused, useRouter, useScrollToTop } from "expo-router";
+import { type ReactNode, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
@@ -20,22 +20,9 @@ import { PullToRefresh } from "./PullToRefresh";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { type ColorToken, layout } from "./tokens";
-import { registerMainScroll } from "@/dev/storyboard/capture";
-import { DesignClip, STORYBOARD } from "@/dev/storyboard/harness";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 
 type ScrollHandle = { scrollToEnd: (o?: { animated?: boolean }) => void };
-
-/** Registers the focused screen's main scroll view with the capture harness (`--scroll end`). */
-function useMainScroll() {
-	const ref = useRef<ScrollHandle | null>(null);
-	useFocusEffect(
-		useCallback(() => {
-			registerMainScroll(() => ref.current?.scrollToEnd({ animated: false }));
-			return () => registerMainScroll(null);
-		}, []),
-	);
-	return ref;
-}
 
 export function TabScreen({
 	title,
@@ -64,7 +51,7 @@ export function TabScreen({
 	bottomPadding?: number;
 }) {
 	const collapse = useTitleCollapse();
-	const scroll = useMainScroll();
+	const scroll = useRef<ScrollHandle | null>(null);
 	// Re-tapping the selected tab in the dock scrolls back to the top.
 	useScrollToTop(scroll as never);
 	return (
@@ -105,7 +92,7 @@ export type PushScreenProps = {
 	title?: string | undefined;
 	titleEditCue?: boolean;
 	onTitlePress?: (() => void) | undefined;
-	/** The title is the landing place of a shared-element flight (J1's company name → J6, MOTION.md §6.2). */
+	/** The title is the landing place of a shared-element flight (J1's company name → J6). */
 	titleHeroId?: string | undefined;
 	/** One 15/24 line under the title. */
 	subtitle?: ReactNode;
@@ -120,7 +107,7 @@ export type PushScreenProps = {
 		  }
 		| undefined;
 	back?: "back" | "close" | "none";
-	/** The back button's label: "Back to <the screen under this one>" (the builder dumps). Default Back or Close. */
+	/** The back button's label: "Back to <the screen under this one>". Default Back or Close. */
 	backLabel?: string | undefined;
 	onBack?: (() => void) | undefined;
 	/** At most two icon buttons, one small ghost button or a quiet note. */
@@ -138,13 +125,7 @@ export type PushScreenProps = {
 	chat?: ChatFollow | undefined;
 	/** Wrap in a dock scene (builder and letter modes). */
 	docked?: boolean;
-	presentation?: "screen" | "modal";
 	bottomPadding?: number;
-	/**
-	 * Storyboard dump only: leave out elements laid out entirely below the scroll view (under the footer), for the
-	 * boards that end their content there (W1, W3). Other boards list what sits behind the footer or dock (B1, D4, B17).
-	 */
-	clipDump?: boolean;
 	/** Storyboard backdrops only: the boards draw the body (title down) of a screen under a sheet at 50% opacity. */
 	bodyOpacity?: number;
 	children: ReactNode;
@@ -168,9 +149,7 @@ export function PushScreen({
 	scroll = true,
 	chat,
 	docked = false,
-	presentation = "screen",
 	bottomPadding = 24,
-	clipDump = false,
 	bodyOpacity,
 	children,
 }: PushScreenProps) {
@@ -178,7 +157,7 @@ export function PushScreen({
 	const insets = useSafeAreaInsets();
 	const { colors } = useTheme();
 	const collapse = useTitleCollapse();
-	const ref = useMainScroll();
+	const ref = useRef<ScrollHandle | null>(null);
 	const focused = useIsFocused();
 	const goBack =
 		onBack ??
@@ -210,7 +189,7 @@ export function PushScreen({
 		</>
 	);
 	const body = (
-		<Screen bg={bg} presentation={presentation}>
+		<Screen bg={bg}>
 			<View style={{ paddingTop: insets.top, backgroundColor: colors[bg], zIndex: 1 }}>
 				<View
 					style={{ height: layout.topBar, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 4 }}
@@ -229,7 +208,7 @@ export function PushScreen({
 						{barCenter ??
 							(title ? (
 								<Animated.View style={barTitle} accessibilityElementsHidden={!collapse.collapsed}>
-									<Text variant="topBarTitle" numberOfLines={1} tag={collapse.collapsed}>
+									<Text variant="topBarTitle" numberOfLines={1}>
 										{title}
 									</Text>
 								</Animated.View>
@@ -250,11 +229,7 @@ export function PushScreen({
 				/>
 			</View>
 			{scroll ? (
-				<DesignClip
-					enabled={clipDump}
-					bottomInset={footer || docked ? 0 : insets.bottom}
-					style={{ flex: 1, opacity: bodyOpacity }}
-				>
+				<View style={{ flex: 1, opacity: bodyOpacity }}>
 					<KeyboardAwareScrollView
 						{...chat?.scrollProps}
 						ref={
@@ -284,7 +259,7 @@ export function PushScreen({
 						{children}
 					</KeyboardAwareScrollView>
 					{chat?.latest}
-				</DesignClip>
+				</View>
 			) : (
 				<View style={{ flex: 1, opacity: bodyOpacity }}>
 					{heading}
@@ -311,7 +286,7 @@ export function SheetScreen({
 }: Omit<BottomSheetProps, "onClose"> & { onClose?: (() => void) | undefined }) {
 	const router = useRouter();
 	return (
-		<Screen bg="transparent" presentation="sheet">
+		<Screen bg="transparent">
 			<BottomSheet {...sheet} onClose={onClose ?? (() => (router.canGoBack() ? router.back() : router.replace("/")))}>
 				{children}
 			</BottomSheet>

@@ -1,5 +1,5 @@
 // The signed-in app: one JS stack. Pushes by default; full-screen modals, sheets and hero pushes are named here
-// (BUILD.md §6.3). Docked areas (tabs, builder, letter) and Settings bring their own layouts.
+//. Docked areas (tabs, builder, letter) and Settings bring their own layouts.
 import { Redirect, useGlobalSearchParams, usePathname } from "expo-router";
 import { Stack } from "expo-router/js-stack";
 import { useSession } from "@/auth/session";

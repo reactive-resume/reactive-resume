@@ -210,7 +210,7 @@ export function PracticeScreen() {
 						<View style={{ paddingBottom: 8 }}>
 							<Recorder
 								recorded={attempts.length > 0}
-								// Only W4's capture draws the take mid-recording; flows use the real recorder.
+								// Only the W4 scenario draws the take mid-recording; flows use the real recorder.
 								seeded={take === "storyboard" ? storyboard?.recording : undefined}
 								onFinish={send}
 								onTypeInstead={() => setTyping(true)}

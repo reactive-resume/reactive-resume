@@ -1,4 +1,4 @@
-// Checkbox (COMPONENTS.md §11, MOTION.md §5): 20 × 20, 6 dp corners, `raised` with a 1 dp `control-border` ring;
+// Checkbox: 20 × 20, 6 dp corners, `raised` with a 1 dp `control-border` ring;
 // on: `accent` fill and a 14 dp `check`, fading in while scaling 0.6 → 1 in d1. `toggleOn` / `toggleOff` when the
 // value saves at once (`saves`, the default).
 import { useEffect } from "react";
@@ -9,7 +9,6 @@ import { Icon } from "./Icon";
 import { enter, haptic, hitSlopFor } from "./motion";
 import { useTheme } from "./theme";
 import { motion, radius } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 const SIZE = 20;
 
@@ -35,12 +34,6 @@ export function Checkbox({
 	testID,
 }: CheckboxProps) {
 	const { colors } = useTheme();
-	const ref = useDesignTag({
-		kind: "component",
-		component: "Checkbox",
-		radius: radius.xs,
-		bg: value ? "accent" : "raised",
-	});
 	const p = useSharedValue(value ? 1 : 0);
 	useEffect(() => {
 		p.set(withTiming(value ? 1 : 0, enter(motion.d1)));
@@ -52,8 +45,6 @@ export function Checkbox({
 
 	const drawing = (
 		<View
-			ref={ref}
-			collapsable={false}
 			style={[
 				styles.box,
 				{
@@ -64,8 +55,7 @@ export function Checkbox({
 			]}
 		>
 			<Animated.View style={[styles.fill, { backgroundColor: colors.accent }, fill]}>
-				{/* S7, the only Checkbox in the dumps, lists no icon of its own. */}
-				<Icon name="check" size={14} color="onAccent" tag={false} />
+				<Icon name="check" size={14} color="onAccent" />
 			</Animated.View>
 		</View>
 	);

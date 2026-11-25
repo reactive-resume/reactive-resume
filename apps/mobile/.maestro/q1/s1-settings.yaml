@@ -37,7 +37,7 @@ appId: me.rxresu.storyboard
 - tapOn: Preferences
 - waitForAnimationToEnd
 - assertVisible: Notify me about
-# iOS closes the whole modal by swiping it down; Android has no such gesture (MOTION.md §6.1): back pops
+# iOS closes the whole modal by swiping it down; Android has no such gesture: back pops
 # Preferences, back again closes Settings.
 - runFlow:
     when:

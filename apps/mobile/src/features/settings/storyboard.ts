@@ -1,9 +1,9 @@
-// Storyboard captures of S8 and its undrawn variants: S1 opens with `?signout=<variant>` and three queued changes.
+// Storyboard scenarios of S8 and its undrawn variants: S1 opens with `?signout=<variant>` and three queued changes.
 import type { PendingCounts, SignOutStep, SyncFailure } from "./sign-out";
 
 const counts: PendingCounts = { documents: 2, letters: 0, profile: 1, "stories-and-facts": 0, applications: 0 };
 
-/** MOTION.md §12's S1 row: two queued changes, offline. */
+/** S1 with two queued changes, offline. */
 const two: PendingCounts = { documents: 1, letters: 0, profile: 1, "stories-and-facts": 0, applications: 0 };
 
 export function storyboardSignOut(variant: string): { counts: PendingCounts; offline: boolean; initial: SignOutStep } {

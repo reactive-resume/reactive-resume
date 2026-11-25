@@ -1,9 +1,7 @@
 // Reactive Resume mobile tokens, final storyboard (v4, 9 Nov 2026). Generated from the design system (oklch converted to sRGB).
 // Units: React Native points/dp (1 CSS px on the boards = 1 dp). Font sizes in sp/pt.
-// Token names in design/layout/*.json and design/COMPONENTS.md are the kebab-case CSS names (ink-3, line-2,
-// control-border, st-saved...). cssName() converts these camelCase keys to them.
 // dangerFill (filled danger buttons, swipe actions; white text) and warnMark (indicator dots) are the v3 contrast tokens.
-// Pure data, no imports: reference/motion.tsx turns the curves into Reanimated and React Navigation easings.
+// Pure data, no imports: motion.tsx turns the curves into Reanimated and React Navigation easings.
 
 export type ThemeName = "light" | "dark";
 
@@ -90,13 +88,6 @@ const darkColors = {
 export const colors = { light: lightColors, dark: darkColors };
 export type ColorToken = keyof typeof lightColors;
 
-/** camelCase key → the CSS token name used in the layout dumps ("ink3" → "ink-3", "stSaved" → "st-saved"). */
-export const cssName = (key: string) =>
-	key
-		.replace(/([A-Z])/g, "-$1")
-		.replace(/([a-z])(\d)/g, "$1-$2")
-		.toLowerCase();
-
 /** CSS box-shadow strings for React Native's `boxShadow` style (New Architecture, RN 0.76+). */
 export const shadows = {
 	light: {
@@ -140,7 +131,7 @@ const serif = (size: number, lh: number, ls = 0): TextToken => ({
 const mono = (size: number, lh: number): TextToken => ({ fontFamily: fonts.mono, fontSize: size, lineHeight: lh });
 
 /**
- * Text styles. Design-system names match design/COMPONENTS.md §1. The primitive Text component must also apply
+ * Text styles. The primitive Text component must also apply
  * textDefaults so line boxes match the boards' CSS line boxes (text centred in its line height, no font padding).
  */
 export const type = {
@@ -162,7 +153,7 @@ export const type = {
 	// mobile storyboard
 	rootTitle: serif(34, 40, -0.17),
 	pageTitle: serif(28, 34),
-	bigNumber: serif(40, 44, -0.4), // every 40/44 serif number in the dumps: A1, B9, B10, B13, W1
+	bigNumber: serif(40, 44, -0.4), // every 40/44 serif number: A1, B9, B10, B13, W1
 	statNumber: serif(36, 40),
 	rowTitle: ui(500, 16, 24),
 	formLabel: ui(500, 13, 18),
@@ -220,12 +211,12 @@ export const layout = {
 } as const;
 
 /**
- * Hit areas (Reach board, COMPONENTS.md §0.1). Every control answers to at least this square; a smaller drawing
+ * Hit areas (Reach board). Every control answers to at least this square; a smaller drawing
  * extends its hit area evenly (hitSlop) and never overlaps a neighbour's. Use hit() rather than these numbers.
  */
 export const hitTarget = { ios: 44, android: 48 } as const;
 
-/** Motion tokens (boards/Motion.png, design/MOTION.md). Durations in ms; exits take 70% of the entry. */
+/** Motion tokens. Durations in ms; exits take 70% of the entry. */
 export const motion = {
 	d1: 120,
 	d2: 200,
@@ -263,10 +254,10 @@ export const motion = {
 export const exit = (ms: number) => Math.round(ms * motion.exitFactor);
 
 /**
- * Haptic vocabulary (boards/Motion.png). iOS: expo-haptics selection/impact/notification. Android:
+ * Haptic vocabulary. iOS: expo-haptics selection/impact/notification. Android:
  * Haptics.performAndroidHapticsAsync(AndroidHaptics.<name>) (the haptic engine, no VIBRATE permission), never
  * impactAsync (that one is a Vibrator simulation on Android). `minApi` is the Android API level the constant needs;
- * below it use `fallback`. Implemented in reference/motion.tsx → the app's src/ui/motion.tsx.
+ * below it use `fallback`. Implemented in src/ui/motion.tsx.
  */
 export const haptics = {
 	selection: { ios: "selection", android: "Segment_Tick", minApi: 34, fallback: "Clock_Tick" },

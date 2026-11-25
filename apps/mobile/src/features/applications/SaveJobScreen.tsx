@@ -145,7 +145,6 @@ export function SaveJobScreen() {
 		<PushScreen
 			title={t`Save a job`}
 			back="close"
-			presentation="modal"
 			barEnd={<Button label={t`Search postings`} tone="accentGhost" size="sm" icon="magnifying-glass" />}
 			footer={
 				<FooterBar stacked gap={4}>
@@ -270,7 +269,6 @@ export function SaveJobScreen() {
 					leading={<IconTile icon="plus" />}
 					trailing={more ? "up" : "caret"}
 					last={!more}
-					boxHidden={!more}
 					onPress={() => setMore((m) => !m)}
 				/>
 				{more ? (

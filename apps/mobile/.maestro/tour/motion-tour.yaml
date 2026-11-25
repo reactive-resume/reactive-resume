@@ -8,7 +8,7 @@ appId: me.rxresu.storyboard
     visible:
       id: storyboard-ready
     timeout: 90000
-# Storyboard capture temporarily sets timeScale=0; lead must wait for capture completion + 4 s before measurements.
+# A storyboard scenario sets timeScale=0 while it loads; wait for storyboard-ready before measuring.
 - repeat:
     times: 5
     commands:

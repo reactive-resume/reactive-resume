@@ -1,6 +1,6 @@
 import type { CLOSED_REASONS } from "./model";
 // Stage moves, Close, Reopen and Move to Trash, shared by J1, J2, J6, J7 and J9. Applied means sent: every route to
-// Applied opens J7's "What did you send?" step (BUILD.md §3.5); nothing changes until it is confirmed.
+// Applied opens J7's "What did you send?" step; nothing changes until it is confirmed.
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useQueryClient } from "@tanstack/react-query";

@@ -6,7 +6,6 @@ import { splitBlocks, replaceBlockText } from "@reactive-resume/resume/proposals
 import { useDocumentId, useLetterDocument, DocumentState } from "../builder/share/document";
 import { LetterDocument } from "../builder/shared/document";
 import { useLetterStore, letterFieldFocus, useApplication, useApplications, useDocuments, useResume } from "@/data";
-import { useCaptureStore } from "@/dev/storyboard/capture";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
 	PushScreen,
@@ -33,8 +32,6 @@ export function LetterScreen() {
 	const query = useLetterDocument(id);
 	const document = query.data;
 	const store = useLetterStore();
-	// The board draws no "Draft from the posting" link; storyboard captures leave it out.
-	const capturing = useCaptureStore((s) => STORYBOARD && s.request !== null && s.ready !== s.request.nonce);
 	const { colors } = useTheme();
 	const visit = useRef(0);
 	const [editing, setEditing] = useState<number>();
@@ -48,8 +45,6 @@ export function LetterScreen() {
 	const resumes = useDocuments();
 	const applications = useApplications();
 	const sent = !!application.data?.sentCoverLetterVersionId;
-	// The board draws L1 without the sent line; storyboard captures leave it out.
-	const sentLine = sent && !capturing;
 	const pick = (field: "sourceResumeId" | "sourceApplicationId", value: string) => {
 		setPicker(null);
 		if (!ready || store.locked) {
@@ -248,17 +243,17 @@ export function LetterScreen() {
 							// A letter recorded as sent keeps its application link.
 							onPress={sent ? undefined : () => setPicker("application")}
 						/>
-						{document.sourceApplicationId && document.sourceResumeId && !capturing ? (
+						{document.sourceApplicationId && document.sourceResumeId ? (
 							<View style={{ paddingHorizontal: 24, height: 44, justifyContent: "center" }}>
 								<TextLink label={t`Draft from the posting`} icon="sparkle" onPress={draftFromPosting} />
 							</View>
 						) : null}
-						{sentLine ? (
+						{sent ? (
 							<Text color="ink3" style={{ marginHorizontal: 24, marginTop: 4 }}>
 								{t`This letter is recorded as sent.`}
 							</Text>
 						) : null}
-						<ListRow title={t`Recipient`} secondary={document.recipient ?? undefined} trailing="caret" last boxHidden />
+						<ListRow title={t`Recipient`} secondary={document.recipient ?? undefined} trailing="caret" last />
 					</>
 				)}
 			</PushScreen>

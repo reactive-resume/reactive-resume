@@ -1,4 +1,4 @@
-// Screen chrome: root header, top bar, page title, section heading, footer bar (COMPONENTS.md §2–§4, §14).
+// Screen chrome: root header, top bar, page title, section heading, footer bar.
 import type { ReactNode } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -37,7 +37,6 @@ export function AvatarButton({
 export function Avatar({ initials, size = 32 }: { initials: string; size?: 32 | 56 }) {
 	return (
 		<Box
-			component="Avatar"
 			bg="accentSoft"
 			radius={size === 56 ? radius.xl : radius.sm}
 			style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
@@ -240,9 +239,9 @@ export function PageSubtitle({ children, status = false }: { children: ReactNode
 }
 
 /**
- * The document's status line with Undo · Redo (BUILD.md §3.3): "Saved · 1 page · Public" then the two text
+ * The document's status line with Undo · Redo: "Saved · 1 page · Public" then the two text
  * buttons in `accent-text`, each with a 48 dp tall hit area. They appear once there is something to undo or redo
- * (SCREENS.md, builder rules); at rest the line is the status alone, as B1 and L1 draw it.
+ * (builder rules); at rest the line is the status alone, as B1 and L1 draw it.
  */
 export function StatusLine({
 	status,
@@ -362,7 +361,7 @@ export function SectionHeading({
 
 /**
  * One or two Large buttons in thumb reach. `stacked` puts the primary above the others (J5, dialogs); buttons also
- * stack above 130% system text (COMPONENTS.md §20).
+ * stack above 130% system text.
  * Sits above the bottom safe area; `raised` inside sheets.
  */
 export function FooterBar({
@@ -394,7 +393,6 @@ export function FooterBar({
 		>
 			<Stacked.Provider value={column}>
 				<Box
-					component="FooterBar"
 					style={{
 						backgroundColor: colors[bg],
 						paddingVertical: 12,

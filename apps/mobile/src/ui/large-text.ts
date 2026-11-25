@@ -1,4 +1,4 @@
-// The large-text stacking rule (COMPONENTS.md §20): above 130% system text, side-by-side fields and two-button
+// The large-text stacking rule: above 130% system text, side-by-side fields and two-button
 // footers stack. A stacking parent provides `Stacked`, so `grow` children stretch across instead of sharing a row
 // (flex: 1 in an auto-height column would collapse them).
 import { createContext, useContext } from "react";

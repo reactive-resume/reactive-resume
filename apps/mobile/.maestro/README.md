@@ -2,7 +2,7 @@
 
 Run on iOS (iPhone 14 simulator, Release storyboard build) in Pass 8; the scoreboard and the bullet coverage are in `build/behaviour-coverage.md`, written by that run (not committed).
 
-Every flow starts with `launchApp: clearState: true` and waits for `storyboard-ready` after each storyboard link: the capture harness holds motion at time scale 0 for about 4 s after a scenario loads, and toasts would run out instantly. Maestro waits for the screen to settle after each command, and a toast's running fuse keeps it busy, so taps that raise a 5 s toast use `waitToSettleTimeoutMs`. `dev/haptics` links switch the haptic log in place (`app/+native-intent.tsx`) and never move the screen.
+Every flow starts with `launchApp: clearState: true` and waits for `storyboard-ready` after each storyboard link: the storyboard controller holds motion at time scale 0 while a scenario loads, and toasts would run out instantly. Maestro waits for the screen to settle after each command, and a toast's running fuse keeps it busy, so taps that raise a 5 s toast use `waitToSettleTimeoutMs`. `dev/haptics` links switch the haptic log in place (`app/+native-intent.tsx`) and never move the screen.
 
 Run from `apps/mobile` with a storyboard development build (`APP_VARIANT=storyboard`, `EXPO_PUBLIC_STORYBOARD=1`, app ID and scheme `me.rxresu.storyboard`). Metro and the native app must already be available. Never point these flows at a production account. S7 flows clear the storyboard sandbox with `launchApp.clearState`; install a dedicated test variant.
 
@@ -16,7 +16,7 @@ The picker flows (`q1/d4-import`, `q1/p2-ats`, `behaviour/s7-file`) choose nonpe
 
 Each haptic flow clears the visible `haptic-log` pill and asserts an exact sequence, including an empty string for silent actions. The four former motion-lab placeholders now use actual screens. Existing screen flows were relocated without removing their assertions. `settings?queued=offline-two` supplies the specification row’s two queued changes; `queued=offline` keeps S8's drawn three.
 
-Storyboard capture temporarily sets `timeScale=0`, restoring 1 four seconds after capture completion. Wait for that restoration before measuring motion. `waitForAnimationToEnd` alone does not prove the scale has reset. The tour contains no frame-pacing instrumentation; the lead records gfxinfo/xctrace, real pinch and busy-JS evidence separately. No supported pinch syntax was established by the fetched Maestro documentation, so no invented command is included.
+A storyboard scenario sets `timeScale=0` while it loads and restores 1 when `storyboard-ready` appears. Wait for that marker before measuring motion. The tour contains no frame-pacing instrumentation; the lead records gfxinfo/xctrace, real pinch and busy-JS evidence separately. No supported pinch syntax was established by the fetched Maestro documentation, so no invented command is included.
 
 `j8-repeated-hour.yaml` and `s8-export.yaml` are explicitly incomplete drafts: their comments identify native interactions the lead must author before they can pass. No fake app selector substitutes for a native picker. Board gestures and row swipes use inherited/calibrated coordinates only as authoring starting points; remeasure on both platforms before relying on them. Board drags hold still long enough to lift only in a slow swipe (about 18 dp/s), so the board flows use 11 s swipes from fixed points measured on the iPhone 14; remeasure on another device. Maestro's double tap reaches PageZoom only some of the time: the double-tap snap is proved in `src/ui/page-zoom.test.tsx`. J5 intentionally expects success and the Applied gate even though SaveJobScreen currently cannot save.
 
@@ -25,14 +25,14 @@ Storyboard capture temporarily sets `timeScale=0`, restoring 1 four seconds afte
 The same flows run on the `Pixel_10_Pro` emulator at 390 × 844 dp (`adb shell wm size 1170x2532 && adb shell wm density 480`) with a Release storyboard build; pass `--device emulator-5554`.
 
 - `q1/lib/files.sh emulator-5554` pushes the picker fixtures to Downloads and creates Documents (the folder picker's destination; Android refuses the storage root). `pick-file.yaml` and `pick-folder.yaml` branch by platform; Android callers pass the file name as `NAME`.
-- Set Android's "Time to take action" before each flow: `adb shell settings put secure accessibility_interactive_ui_timeout_ms 30000` and the same for `accessibility_non_interactive_ui_timeout_ms`. Maestro on the software-rendered emulator needs 7–9 s for a tap and the next check, longer than a 5 s toast; the app lengthens toasts by that setting (MOTION.md: "Android's accessibility timeout can only lengthen it"). `behaviour/toast-touch` and `behaviour/c3-forget-finalises` prove the 8 s lifetime itself, so run them with the setting deleted (`adb shell settings delete secure …`).
+- Set Android's "Time to take action" before each flow: `adb shell settings put secure accessibility_interactive_ui_timeout_ms 30000` and the same for `accessibility_non_interactive_ui_timeout_ms`. Maestro on the software-rendered emulator needs 7–9 s for a tap and the next check, longer than a 5 s toast; the app lengthens toasts by that setting ("Android's accessibility timeout can only lengthen it"). `behaviour/toast-touch` and `behaviour/c3-forget-finalises` prove the 8 s lifetime itself, so run them with the setting deleted (`adb shell settings delete secure …`).
 - Absolute coordinates are points on iOS and pixels on Android, and Maestro takes only whole percentages. Steps with absolute coordinates are split into `when: platform:` branches: iOS keeps its points, Android uses the same points × 3.
 - Android reports only what is on screen; iOS also reports elements below the fold. Scroll (`scrollUntilVisible`) before asserting anything that can sit under a footer or the fold.
 - The screen under a sheet, dialog or menu stays in Android's hierarchy, so a label that appears in both (Restore, Applied) can match the wrong one. Scope such taps with `childOf: { id: sheet | dialog | menu }`.
 - Board drags on Android go at about 10 dp/s (`applied-board`, `board-drop`): the card lifts after a 500 ms hold, and a faster finger passes the touch slop first and scrolls the board. How long the swipe dwells in the edge zone varies with load, so `board-drop` on Android proves the lift and the drop, not the page count.
 - Cold-launched flows wait up to 90 s for `storyboard-ready`: on a loaded emulator the fixture pages behind builder screens can take that long to print before the harness settles.
 - Run the suite with the emulator settled (guest load under 5 after a cold boot) and the host quiet; at host load above about 15 flows start timing out.
-- iOS-only gestures and system UI get platform branches: modals close by swiping down on iOS and with back on Android (MOTION.md §6.1); the interview time uses the system date then time dialogs (OK, OK) on Android.
+- iOS-only gestures and system UI get platform branches: modals close by swiping down on iOS and with back on Android; the interview time uses the system date then time dialogs (OK, OK) on Android.
 
 ## Flow inventory
 
@@ -77,13 +77,13 @@ The same flows run on the `Pixel_10_Pro` emulator at 390 × 844 dp (`adb shell w
 | [haptics/reorder.yaml](haptics/reorder.yaml)                               | B8: drag a section down two slots by its handle → "medium selection selection rigid".                            |
 | [haptics/root-tab.yaml](haptics/root-tab.yaml)                             | haptics · root tab                                                                                               |
 | [haptics/save-job.yaml](haptics/save-job.yaml)                             | Expected failure: saving is unimplemented.                                                                       |
-| [haptics/segment.yaml](haptics/segment.yaml)                               | J1 List → Board: the view switch plays `selection` (MOTION.md §12, J1).                                          |
+| [haptics/segment.yaml](haptics/segment.yaml)                               | J1 List → Board: the view switch plays `selection` (J1).                                                         |
 | [haptics/sign-out-offline.yaml](haptics/sign-out-offline.yaml)             | S1 → S8: Sign out with three queued changes while offline opens S8 and plays `warning`; Keep working closes it.  |
 | [haptics/swipe-cancel.yaml](haptics/swipe-cancel.yaml)                     | haptics · swipe cancel                                                                                           |
 | [haptics/swipe-trash.yaml](haptics/swipe-trash.yaml)                       | haptics · swipe trash                                                                                            |
 | [haptics/switch-on.yaml](haptics/switch-on.yaml)                           | haptics · switch on                                                                                              |
-| [haptics/typing.yaml](haptics/typing.yaml)                                 | B3: typing plays no haptic (MOTION.md §4.2).                                                                     |
-| [haptics/wrong-code.yaml](haptics/wrong-code.yaml)                         | A3: a wrong two-step code clears the boxes, says so and plays `error` (MOTION.md §5, §12).                       |
+| [haptics/typing.yaml](haptics/typing.yaml)                                 | B3: typing plays no haptic.                                                                                      |
+| [haptics/wrong-code.yaml](haptics/wrong-code.yaml)                         | A3: a wrong two-step code clears the boxes, says so and plays `error`.                                           |
 | [haptics/zoom-fit.yaml](haptics/zoom-fit.yaml)                             | haptics · zoom fit                                                                                               |
 | [tour/motion-tour.yaml](tour/motion-tour.yaml)                             | Partial tour: manual pinch, calibrated gestures and real end-of-list confirmation required.                      |
 

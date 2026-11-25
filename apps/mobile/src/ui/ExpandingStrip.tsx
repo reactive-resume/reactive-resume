@@ -1,4 +1,4 @@
-// J3's week strip that expands to a month grid (MOTION.md §7, J3 notes): its height grows d3 `ease-drawer` when
+// J3's week strip that expands to a month grid (J3 notes): its height grows d3 `ease-drawer` when
 // Month is tapped (ref.expand / toggle, or the `expanded` prop), and follows a downward pull 1:1 (an upward pull
 // on the open grid), releasing with release(): open past half way or on a downward fling faster than 500 dp/s,
 // closed past half way up or on an upward one. No haptic (J3's `selection` belongs to day changes and week snaps).

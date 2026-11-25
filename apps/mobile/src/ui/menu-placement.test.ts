@@ -1,4 +1,4 @@
-// MOTION.md §6.5 menus: below the trigger when it fits, above when only that side fits, else the larger side scrolls.
+// Menus open below the trigger when it fits, above when only that side fits, else the larger side scrolls.
 import { placeMenu } from "./Menu";
 
 const bounds = { top: 59, bottom: 700 };

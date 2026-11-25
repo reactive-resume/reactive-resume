@@ -1,5 +1,5 @@
 import type { StackNavigationOptions } from "expo-router/js-stack";
-// Bottom sheet (COMPONENTS.md §17, MOTION.md §6.4). Mount it where it should appear (usually as the whole screen of
+// Bottom sheet. Mount it where it should appear (usually as the whole screen of
 // a transparent modal route, `sheetRouteOptions`); it rises on mount and calls onClose after it has left.
 //   Open: rises from below d3 `ease`; the `scrim-sheet` scrim fades in d2.
 //   Drag: grabber, header and the sheet body follow the finger 1:1 down; up it resists (rubber band, ~24 dp).
@@ -61,7 +61,6 @@ import {
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { motion, radius } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 /** Options for a route that presents a BottomSheet or Dialog: the route is transparent and the overlay animates itself. */
 export const sheetRouteOptions: StackNavigationOptions = {
@@ -101,7 +100,7 @@ export type BottomSheetProps = {
 	step?: string;
 	returnFocusTo?: RefObject<HostInstance | null>;
 	ref?: Ref<BottomSheetHandle>;
-	/** The close icon: 20 dp (B14, D2, D3) or 24 dp (B19, B21, C7, J7–J9, S7), as each sheet's dump draws it. */
+	/** The close icon: 20 dp (B14, D2, D3) or 24 dp (B19, B21, C7, J7–J9, S7). */
 	closeIconSize?: 20 | 24;
 	/**
 	 * Start open, held at this drag translation (dp, 0 = fully open), with no rise: a sheet restored on screen, and
@@ -115,7 +114,7 @@ export type BottomSheetProps = {
 	labMarker?: { scrim?: string; top?: string };
 	/** A leading back button for a second step (J9 "Back to Move"): 16 dp from the edge, the title 8 dp after it. */
 	back?: { label: string; onPress: () => void } | undefined;
-	/** Space under the content and footer; the bottom safe area unless a dump draws otherwise (J8: 3). */
+	/** Space under the content and footer; the bottom safe area unless a sheet sets otherwise (J8: 3). */
 	bottomPadding?: number | undefined;
 };
 
@@ -142,14 +141,11 @@ export function BottomSheet({
 	const { colors, shadows } = useTheme();
 	const { reduced, overlayFade } = useMotionPolicy();
 	const insets = useSafeAreaInsets();
-	const sheetRef = useDesignTag({ kind: "component", component: "BottomSheet", radius: radius.sheetTop, bg: "raised" });
-	const scrimRef = useDesignTag({ kind: "component", component: "Scrim", bg: "scrimSheet" });
-	const grabRef = useDesignTag({ kind: "component", component: "SheetGrabber", radius: 2, bg: "line2" });
 	const titleRef = useRef<HostInstance>(null);
 	const [asking, setAsking] = useState(false);
 
 	const h = useSharedValue(height);
-	// startOpenAt: open from the first frame. (timeScale 0, storyboard captures: the open below lands at once.)
+	// startOpenAt: open from the first frame. (timeScale 0, storyboard scenarios: the open below lands at once.)
 	const instant = startOpenAt !== undefined;
 	const ty = useSharedValue(startOpenAt ?? (reduced ? 0 : height)); // 0 = open, h = below the screen
 	const fade = useSharedValue(reduced && !instant ? 0 : 1); // the sheet's own opacity (reduced motion, fadeAway)
@@ -295,7 +291,6 @@ export function BottomSheet({
 		<View style={StyleSheet.absoluteFill}>
 			{keyboard && <KeyboardFollower into={kb} bottomInset={insets.bottom} />}
 			<Animated.View
-				ref={scrimRef as never}
 				style={[StyleSheet.absoluteFill, { backgroundColor: colors.scrimSheet }, scrimStyle]}
 				accessibilityElementsHidden
 				importantForAccessibility="no"
@@ -316,7 +311,6 @@ export function BottomSheet({
 			</Animated.View>
 			<GestureDetector gesture={pan}>
 				<Animated.View
-					ref={sheetRef as never}
 					accessibilityViewIsModal
 					testID="sheet"
 					style={[
@@ -325,14 +319,14 @@ export function BottomSheet({
 						sheetStyle,
 					]}
 				>
-					<View ref={grabRef} collapsable={false} style={[styles.grabber, { backgroundColor: colors.line2 }]} />
+					<View style={[styles.grabber, { backgroundColor: colors.line2 }]} />
 					<View style={[styles.header, back ? styles.headerBack : null]}>
 						{back ? <IconButton icon="caret-left" label={back.label} onPress={back.onPress} /> : null}
 						<View ref={titleRef} accessible accessibilityRole="header" style={styles.title}>
 							<Text variant="sheetTitle">{title}</Text>
 						</View>
 						<Touch feedback="scale" onPress={requestClose} accessibilityLabel={t`Close`} hitSlop={hitSlopFor(44, 44)}>
-							<Box component="IconButton" radius={radius.md} style={styles.close}>
+							<Box radius={radius.md} style={styles.close}>
 								<Icon name="x" size={closeIconSize} color="ink2" />
 							</Box>
 						</Touch>
@@ -435,7 +429,7 @@ const styles = StyleSheet.create({
 		paddingEnd: 12,
 		paddingBottom: 4,
 		paddingStart: 24,
-		// 8 dp before the close button: every sheet dump measures the title slot 302 dp wide.
+		// 8 dp before the close button: the title slot is 302 dp wide.
 		gap: 8,
 	},
 	headerBack: { paddingStart: 16 },

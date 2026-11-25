@@ -1,4 +1,4 @@
-// Field focus and error rings (COMPONENTS.md §10, MOTION.md §5) as an overlay the TextField draws over its input:
+// Field focus and error rings as an overlay the TextField draws over its input:
 // focus = 1 dp inner `accent` ring plus a 3 dp outer `accent-soft` ring; error = `danger` / `danger-soft`. Rings fade
 // in d1; the error state swaps colour in d1. The resting 1 dp `control-border` ring is the field's own.
 import { useEffect } from "react";

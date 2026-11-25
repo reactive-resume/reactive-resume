@@ -292,7 +292,6 @@ export function TodayScreen() {
 								leading={<Monogram letters="3" numeral />}
 								onPress={applications.length ? () => router.push("/applications") : undefined}
 								last
-								boxHidden
 							/>
 						</FirstRunPart>
 					</>

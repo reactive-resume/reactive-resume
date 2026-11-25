@@ -152,7 +152,7 @@ export function MessagesScreen() {
 						accessibilityLabel={`${t`To`}, ${contact ? [contact.name, contact.type || contact.role].filter(Boolean).join(" · ") : t`Add a contact`}`}
 						onPress={contact ? undefined : () => router.push(`/applications/${app.id}`)}
 					/>
-					<ListRow title={t`Subject`} secondary={subject} last boxHidden />
+					<ListRow title={t`Subject`} secondary={subject} last />
 				</View>
 				{ai.running ? <Working steps={STEPS.draft()} onStop={ai.stop} /> : null}
 				{ai.failed ? (

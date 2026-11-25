@@ -1,4 +1,4 @@
-// Chat follow rules (MOTION.md §8 AI work, B16, C2): a streaming reply is followed only while the reader is at the
+// Chat follow rules (B16, C2): a streaming reply is followed only while the reader is at the
 // bottom; once they scroll away the list holds still and "Latest" shows. Pure, so the decisions are tested without a
 // device; `ChatFollow.tsx` wires them to a scroll view.
 
@@ -6,7 +6,7 @@ export type ScrollMetrics = { offset: number; viewport: number; content: number 
 
 /** Within this many dp of the end counts as at the bottom (a fling's bounce, a line of rounding). */
 export const AT_BOTTOM = 24;
-/** A settled question sits this far below the top of the view (the conversation column's top padding, COMPONENTS §13). */
+/** A settled question sits this far below the top of the view (the conversation column's top padding). */
 export const SETTLE_GAP = 16;
 
 export const atBottom = ({ offset, viewport, content }: ScrollMetrics) => content - viewport - offset <= AT_BOTTOM;

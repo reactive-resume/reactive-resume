@@ -1,4 +1,4 @@
-// Hero card, cards, question card, board card, chips, badges and small markers (COMPONENTS.md §7, §8, §12).
+// Hero card, cards, question card, board card, chips, badges and small markers.
 import type { StyleProp, ViewStyle } from "react-native";
 import { type ReactNode, useState } from "react";
 import { Platform, Text as RNText, View } from "react-native";
@@ -9,7 +9,6 @@ import { type Stage, StageDot } from "./rows";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { type ColorToken, fonts, layout, radius, textDefaults, type as typeScale } from "./tokens";
-import { STORYBOARD, useDesignTag } from "@/dev/storyboard/harness";
 
 /** The one hero card of a root tab: key line, title, paragraph, a Large primary button. */
 export function HeroCard({
@@ -45,7 +44,6 @@ export function HeroCard({
 	const { colors, shadows } = useTheme();
 	return (
 		<Box
-			component="HeroCard"
 			bg={bg}
 			radius={radius.xl}
 			style={[
@@ -114,7 +112,6 @@ export function Card({
 	const { colors } = useTheme();
 	return (
 		<Box
-			component="Card"
 			bg={tone}
 			radius={radius.xl}
 			style={[
@@ -141,7 +138,7 @@ export function QuestionCard({
 	gap?: number | undefined;
 }) {
 	return (
-		<Box component="Card" bg="infoSoft" radius={radius.xl} style={{ padding, gap }}>
+		<Box bg="infoSoft" radius={radius.xl} style={{ padding, gap }}>
 			<Text variant="label" style={{ fontSize: 16, lineHeight: 24 }}>
 				{question}
 			</Text>
@@ -163,7 +160,6 @@ export function ChoiceButton({
 	return (
 		<Touch onPress={onPress} accessibilityLabel={label} accessibilityState={{ selected }}>
 			<Box
-				component="ChoiceButton"
 				bg="raised"
 				radius={radius.md}
 				style={{ height: 48, paddingStart: 14, paddingEnd: 14, justifyContent: "center" }}
@@ -198,12 +194,7 @@ export function BoardCard({
 			{...(onLongPress ? { onLongPress, longPressHaptic: null } : {})}
 			accessibilityLabel={`${company}, ${role}`}
 		>
-			<Box
-				component="BoardCard"
-				bg="surface"
-				radius={radius.xl}
-				style={{ borderWidth: 1, borderColor: colors.line, padding: 16, gap: 4 }}
-			>
+			<Box bg="surface" radius={radius.xl} style={{ borderWidth: 1, borderColor: colors.line, padding: 16, gap: 4 }}>
 				<Text variant="rowTitle" weight={600} numberOfLines={1}>
 					{company}
 				</Text>
@@ -252,8 +243,6 @@ export function Chip({
 			{...(testID ? { testID } : {})}
 		>
 			<Box
-				component="Chip"
-				ownsText
 				radius={radius.sm}
 				{...(on ? { bg: "accentSoft" as const } : {})}
 				style={{ height: 32, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 6 }}
@@ -282,12 +271,11 @@ export function ContextChip({
 	return (
 		<Touch onPress={onRemove} accessibilityLabel={`Remove ${label}`} hitSlop={hitSlopFor(48, 32)}>
 			<Box
-				component="Chip"
 				bg="sunken"
 				radius={radius.sm}
 				style={{ height: 32, paddingStart: 10, paddingEnd: 6, flexDirection: "row", alignItems: "center", gap: 6 }}
 			>
-				{/* B16 and C2 dumps: tagged Chip, 16 dp icons, 12/18 text. */}
+				{/* B16 and C2: 16 dp icons, 12/18 text. */}
 				{icon ? <Icon name={icon} size={16} color="ink2" /> : null}
 				<Text variant="caption" color="ink2" numberOfLines={1} style={{ lineHeight: 18 }}>
 					{label}
@@ -302,7 +290,6 @@ export function ContextChip({
 export function UsedChip({ label, icon }: { label: string; icon?: IconName | undefined }) {
 	return (
 		<Box
-			component="UsedChip"
 			radius={radius.xs}
 			style={{
 				height: 24,
@@ -346,7 +333,6 @@ export function Badge({
 	const t = badgeTones[tone];
 	return (
 		<Box
-			component="Badge"
 			radius={radius.xs}
 			{...(t.bg ? { bg: t.bg } : {})}
 			style={{
@@ -371,7 +357,6 @@ export function Badge({
 export function NumberTag({ n, decided = false }: { n: number; decided?: boolean | undefined }) {
 	return (
 		<Box
-			component="NumberTag"
 			bg={decided ? "sunken" : "accent"}
 			radius={radius.xs}
 			style={{ width: 20, height: 20, alignItems: "center", justifyContent: "center" }}
@@ -393,28 +378,14 @@ export function IssueMarker({
 	n,
 	onPress,
 	label,
-	numberTagged = true,
 }: {
 	n: number;
 	onPress?: (() => void) | undefined;
 	label?: string | undefined;
-	/** False where the page's own text already reports the number (B18's storyboard page). */
-	numberTagged?: boolean | undefined;
 }) {
 	const body = (
-		<Box
-			component="IssueMarker"
-			bg="warn"
-			radius={radius.xs}
-			style={{ width: 24, height: 24, alignItems: "center", justifyContent: "center" }}
-		>
-			<Text
-				variant="mono"
-				color="warnInk"
-				style={{ lineHeight: 24, fontWeight: "600" }}
-				maxFontSizeMultiplier={1.3}
-				tag={numberTagged}
-			>
+		<Box bg="warn" radius={radius.xs} style={{ width: 24, height: 24, alignItems: "center", justifyContent: "center" }}>
+			<Text variant="mono" color="warnInk" style={{ lineHeight: 24, fontWeight: "600" }} maxFontSizeMultiplier={1.3}>
 				{n}
 			</Text>
 		</Box>
@@ -427,7 +398,7 @@ export function IssueMarker({
 	);
 }
 
-/** Still placeholder at the final size (MOTION.md §8): sunken, no shimmer. */
+/** Still placeholder at the final size: sunken, no shimmer. */
 export function Skeleton({
 	width,
 	height,
@@ -451,29 +422,16 @@ export function Skeleton({
 
 /**
  * Proposal text: removed words struck through in ink-2, added words on accent-soft with 2 dp padding at each end
- * (`.add`, COMPONENTS.md §13). The layout dump lists the unchanged words as the paragraph's text and each removed or
- * added run as its own text, with the run's line box (one line: its glyphs; several: the full lines it covers).
+ * (`.add`).
  */
 export function ProposalText({ parts }: { parts: ProposalPart[] }) {
-	const plain = parts
-		.filter((p) => !p.kind || p.kind === "same")
-		.map((p) => p.text)
-		.join("");
-	const ref = useDesignTag({ kind: "text", text: plain, style: typeScale.body, color: "ink" });
 	return (
-		<View ref={ref} collapsable={false}>
-			<Text variant="body" tag={false}>
+		<View>
+			<Text variant="body">
 				<Runs parts={parts} />
 			</Text>
 			{Platform.OS === "android"
 				? parts.map((p, i) => (p.kind === "removed" ? <StrikeLines key={i} parts={parts} index={i} /> : null))
-				: null}
-			{STORYBOARD
-				? parts.map((p, i) =>
-						p.kind === "removed" || p.kind === "added" ? (
-							<RunTag key={i} parts={parts} index={i} color={p.kind === "removed" ? "ink2" : "ink"} />
-						) : null,
-					)
 				: null}
 		</View>
 	);
@@ -570,35 +528,6 @@ function useRunExtent(parts: ProposalPart[], index: number) {
 		</>
 	);
 	return { start, end, lines, probes };
-}
-
-/** Storyboard only: tags a run's box (one line: its glyphs; several: the full lines it covers). */
-function RunTag({ parts, index, color }: { parts: ProposalPart[]; index: number; color: ColorToken }) {
-	const body = typeScale.body;
-	const { start, end, probes } = useRunExtent(parts, index);
-	const box =
-		start && end
-			? start.line === end.line
-				? { left: start.x, top: start.line * body.lineHeight, width: end.x - start.x, height: body.lineHeight }
-				: {
-						left: 0,
-						right: 0,
-						top: start.line * body.lineHeight,
-						height: (end.line - start.line + 1) * body.lineHeight,
-					}
-			: null;
-	const ref = useDesignTag({ kind: "text", text: parts[index]?.text ?? "", style: body, color }, { hidden: !box });
-	return (
-		<>
-			{probes}
-			<View
-				ref={ref}
-				collapsable={false}
-				pointerEvents="none"
-				style={[{ position: "absolute" }, box ?? { width: 0 }]}
-			/>
-		</>
-	);
 }
 
 /**

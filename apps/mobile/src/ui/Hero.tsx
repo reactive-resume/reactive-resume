@@ -1,4 +1,4 @@
-// Shared elements (MOTION.md §6.2): D1 thumbnail → B1 page band; B1, B6, L2 page → B18; J1 company → J6 title.
+// Shared elements: D1 thumbnail → B1 page band; B1, B6, L2 page → B18; J1 company → J6 title.
 // The destination screen fades in (stackOptions 'fade', d3 `ease`) while the element travels from its source rect to
 // its destination rect in <HeroOverlay /> (mounted at the root, above the navigator), d3 `ease-drawer`, translate and
 // scale only. Source and destination are hidden while it flies; on landing the destination shows in the same frame.

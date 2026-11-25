@@ -4,10 +4,9 @@ import { setUpTests } from "react-native-reanimated";
 import { follow, initialFollow, settleRoom } from "./chat-follow";
 import { useChatFollow } from "./ChatFollow";
 
-// B16 and C2 (MOTION.md §8): follow a streaming reply only at the bottom, "Latest" after scrolling away, and C2's
+// B16 and C2: follow a streaming reply only at the bottom, "Latest" after scrolling away, and C2's
 // question settles near the top. The device can't be driven here; the hook is, through its scroll view's events.
 jest.unmock("react-native-reanimated");
-jest.mock("@/dev/storyboard/harness", () => ({ useDesignTag: () => null }));
 setUpTests();
 
 const at = (offset: number) => ({ offset, viewport: 600, content: 2000 });

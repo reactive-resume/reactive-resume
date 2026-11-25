@@ -144,7 +144,6 @@ export function SettingsScreen() {
 				title={t`Version`}
 				value={`${view?.version ?? Constants.expoConfig?.version ?? ""} · ${hostOf(session.server)}`}
 				last
-				boxHidden
 			/>
 			{guest ? null : (
 				<Touch

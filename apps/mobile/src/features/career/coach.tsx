@@ -446,17 +446,17 @@ export function ConversationsScreen() {
 	);
 }
 
-/** A numbered reply item with its bold lead word. The bold run is drawn on top so the dump can measure it. */
+/** A numbered reply item with its bold lead word. */
 function ReplyItem({ number, lead, rest }: { number: string; lead: string; rest: string }) {
 	return (
 		<View style={{ flexDirection: "row" }}>
 			{/* An outside list marker, right-aligned against the text as the board draws it; a marker is no element. */}
-			<Text variant="body" align="right" tag={false} style={{ width: 20, paddingEnd: 5 }}>
+			<Text variant="body" align="right" style={{ width: 20, paddingEnd: 5 }}>
 				{number}
 			</Text>
 			<View style={{ flex: 1 }}>
 				<Text variant="body">
-					<Text variant="body" weight={600} tag={false} style={{ color: "transparent" }}>
+					<Text variant="body" weight={600} style={{ color: "transparent" }}>
 						{lead}
 					</Text>
 					{rest}

@@ -181,7 +181,6 @@ function ScopedFactsScreen() {
 										trailing="caret"
 										wrapTitle
 										last={index === items.length - 1}
-										boxHidden={index === items.length - 1}
 										onPress={() => open(fact.id)}
 									/>
 								))}

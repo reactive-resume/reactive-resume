@@ -1,4 +1,4 @@
-// Toasts (COMPONENTS.md §17, MOTION.md §6.6). Mount <ToastHost /> once at the root, above the navigator; call
+// Toasts. Mount <ToastHost /> once at the root, above the navigator; call
 // showToast() from anywhere. 12 dp from the sides, above the dock or footer (they register their height with
 // useToastOffset). Enter: rise 8 dp with a fade, d3 `ease`. A 2 dp `accent` fuse runs linearly for the lifetime
 // (toastLifetime: 5 s, 8 s with an action; null with a screen reader and an action) and pauses while touched.
@@ -24,7 +24,6 @@ import { enter, startFuse, toastLifetime, useMotionPolicy } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { motion, radius, space } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 export type ToastSpec = {
 	message: string;
@@ -161,7 +160,6 @@ function ToastView({
 }) {
 	const { colors, shadows } = useTheme();
 	const { distance, overlayFade } = useMotionPolicy();
-	const ref = useDesignTag({ kind: "component", component: "Toast", radius: radius.lg, bg: "ink" });
 	const shown = useSharedValue(0);
 	const fuse = useSharedValue(1);
 	const held = useToasts((s) => s.held);
@@ -227,7 +225,6 @@ function ToastView({
 	return (
 		<>
 			<Animated.View
-				ref={ref as never}
 				accessibilityLiveRegion="polite"
 				onTouchStart={() => setTouched(true)}
 				onTouchEnd={() => setTouched(false)}

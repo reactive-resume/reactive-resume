@@ -1,4 +1,4 @@
-// Segmented control (COMPONENTS.md §9, MOTION.md §5): `sunken` 12 dp track, 40 dp items, the selected `raised`
+// Segmented control: `sunken` 12 dp track, 40 dp items, the selected `raised`
 // thumb with a 1 dp `control-border` inner ring and `sh1` slides d2 `ease-in-out-strong`; labels crossfade d2;
 // `selection` when the person picks another option. At most three options.
 import { type ReactNode, useEffect, useState } from "react";
@@ -9,7 +9,6 @@ import { curve, enter, haptic, hitSlopFor } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { motion, radius } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 const PAD = 2;
 const GAP = 2;
@@ -41,7 +40,6 @@ export function Segmented<K extends string>({
 	labMarker,
 }: SegmentedProps<K>) {
 	const { colors, shadows } = useTheme();
-	const ref = useDesignTag({ kind: "component", component: "Segmented", radius: radius.lg, bg: "sunken" });
 	const [width, setWidth] = useState(0);
 	const n = options.length;
 	const itemW = width > 0 ? (width - PAD * 2 - GAP * (n - 1)) / n : 0;
@@ -59,8 +57,6 @@ export function Segmented<K extends string>({
 
 	return (
 		<View
-			ref={ref}
-			collapsable={false}
 			accessibilityRole="tablist"
 			accessibilityLabel={accessibilityLabel}
 			onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
@@ -106,12 +102,12 @@ function Label({ label, selected }: { label: string; selected: boolean }) {
 	return (
 		<>
 			<Layer s={s} on={false}>
-				<Text variant="segment" color="ink2" numberOfLines={1} tag={!selected}>
+				<Text variant="segment" color="ink2" numberOfLines={1}>
 					{label}
 				</Text>
 			</Layer>
 			<Layer s={s} on>
-				<Text variant="segment" color="ink" weight={600} numberOfLines={1} tag={selected}>
+				<Text variant="segment" color="ink" weight={600} numberOfLines={1}>
 					{label}
 				</Text>
 			</Layer>

@@ -14,7 +14,6 @@ import { dismissToast, pauseToast, resumeToast, showToast, ToastHost } from "./T
 
 // Use the resolver-backed implementation: reactions and completion callbacks must actually run.
 jest.unmock("react-native-reanimated");
-jest.mock("@/dev/storyboard/harness", () => ({ useDesignTag: () => null }));
 jest.mock("react-native-safe-area-context", () => ({
 	useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
 }));

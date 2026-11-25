@@ -38,7 +38,7 @@ async function patch(extra?: (data: ResumeData) => void, document?: Record<strin
 		Object.assign(draft, document ?? {});
 		draft.data = data as never;
 	});
-	// The patch is saved like any edit: wait for it, so a capture never reads "Saving…" in the status line.
+	// The patch is saved like any edit: wait for it, so the ready screen never reads "Saving…" in the status line.
 	await s.flush();
 }
 

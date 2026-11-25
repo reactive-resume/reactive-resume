@@ -52,7 +52,7 @@ export function SignInScreen({ mode }: { mode: SignInMode }) {
 	const { backend } = useDataBackend();
 	const options = useAuthOptions();
 	const params = useLocalSearchParams<{ email?: string; filled?: string }>();
-	// Storyboard captures draw the form as filled in (A2-SignIn).
+	// Storyboard scenarios draw the form as filled in (A2-SignIn).
 	const filled = STORYBOARD && params.filled === "1";
 	const [name, setName] = useState("");
 	const [username, setUsername] = useState("");

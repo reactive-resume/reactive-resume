@@ -111,13 +111,7 @@ export function PreferencesScreen() {
 				accessibilityLabel={t`Timezone, ${zoneLabel}`}
 				onPress={() => router.push("/settings/timezone")}
 			/>
-			<ListRow
-				title={t`Haptics`}
-				trailing={<Switch value={haptics} interactive={false} />}
-				last
-				boxHidden
-				{...hapticsRow}
-			/>
+			<ListRow title={t`Haptics`} trailing={<Switch value={haptics} interactive={false} />} last {...hapticsRow} />
 			<SectionHeading title={t`Notify me about`} />
 			{channels.map((channel, i) => (
 				<ChannelRow
@@ -144,13 +138,5 @@ function ChannelRow({
 	last: boolean;
 }) {
 	const row = useSwitchRow(value, onChange);
-	return (
-		<ListRow
-			title={label}
-			trailing={<Switch value={value} interactive={false} />}
-			last={last}
-			boxHidden={last}
-			{...row}
-		/>
-	);
+	return <ListRow title={label} trailing={<Switch value={value} interactive={false} />} last={last} {...row} />;
 }

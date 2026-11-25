@@ -1,6 +1,6 @@
 import type { Scenario } from "../harness";
 // Storyboard scenarios owned by screen agent A (see PLAN.md): sign-in A1–A4 and Settings S1–S8, then the states no
-// board draws (captured by hand with `<scheme>://storyboard/<ID>`).
+// board draws (opened by hand with `<scheme>://storyboard/<ID>`).
 import { overBackdrop } from "../backdrop";
 
 const settings = ["/", "/settings"];
@@ -30,7 +30,7 @@ export const scenarios: Record<string, Scenario> = {
 	// S8, three queued changes offline, as a dialog over what the board draws of S1 (its bar and title).
 	"S8-SignOut": s8("offline"),
 
-	// Undrawn states (BUILD.md §6.5).
+	// Undrawn states.
 	"A1-Server": { hrefs: ["/welcome", "/server"] },
 	"A2-Register": { hrefs: ["/welcome", "/register"] },
 	"A2-Reset": { hrefs: ["/welcome", "/sign-in", "/forgot-password"] },

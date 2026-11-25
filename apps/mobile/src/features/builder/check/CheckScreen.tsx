@@ -228,7 +228,6 @@ export function CheckScreen() {
 					leading={<Icon name="check-circle" size={24} color="ink2" />}
 					trailing={passing ? "up" : "caret"}
 					// B9 draws this row as a plain line, not a list row.
-					boxHidden
 					last={!passing}
 					onPress={() => setPassing((p) => !p)}
 				/>
@@ -338,7 +337,6 @@ export function CheckScreen() {
 									key={term.term}
 									title={term.label}
 									last={i === result.missing.length - 1}
-									boxHidden={i === result.missing.length - 1}
 									trailing={locked ? undefined : <RowLink label={t`Add`} onPress={() => setTermSheet(term)} />}
 								/>
 							))}
@@ -380,7 +378,6 @@ export function CheckScreen() {
 	return (
 		<BuilderScreen
 			docked
-			clipDump
 			title={t`Check`}
 			status={word}
 			subtitle={null}

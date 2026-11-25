@@ -1,4 +1,4 @@
-// Radio (COMPONENTS.md §11, MOTION.md §5): 20 dp circle, `raised` with a 1 dp `control-border` ring; on: a 1 dp
+// Radio: 20 dp circle, `raised` with a 1 dp `control-border` ring; on: a 1 dp
 // `accent` ring and a 10 dp `accent` dot that scales 0 → 1 in d1. `selection` when the person picks it (J7).
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
@@ -7,7 +7,6 @@ import { Touch } from "./base";
 import { enter, haptic, hitSlopFor } from "./motion";
 import { useTheme } from "./theme";
 import { motion, radius } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 const SIZE = 20;
 const DOT = 10;
@@ -38,7 +37,6 @@ export function Radio({
 	testID,
 }: RadioProps) {
 	const { colors } = useTheme();
-	const ref = useDesignTag({ kind: "component", component: "Radio", radius: radius.full, bg: "raised" });
 	const p = useSharedValue(selected ? 1 : 0);
 	useEffect(() => {
 		p.set(withTiming(selected ? 1 : 0, enter(motion.d1)));
@@ -48,8 +46,6 @@ export function Radio({
 
 	const drawing = (
 		<View
-			ref={ref}
-			collapsable={false}
 			style={[
 				styles.circle,
 				{

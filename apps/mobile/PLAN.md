@@ -1,8 +1,7 @@
 # Mobile app: build plan
 
-The new Reactive Resume phone app (Expo / React Native), built from the final storyboard (v4, 9 Nov 2026). The
-specification is the handoff bundle at `/Users/amruth/Projects/reactive-resume/.agents/handoff/mobile-final`
-(`BUILD.md` first). It replaced the first Expo app, which was removed in `814aebe44` (read it from git history).
+The new Reactive Resume phone app (Expo / React Native), built from the final storyboard (v4, 9 Nov 2026). It
+replaced the first Expo app, which was removed in `814aebe44` (read it from git history).
 
 ## Decisions
 
@@ -11,13 +10,13 @@ specification is the handoff bundle at `/Users/amruth/Projects/reactive-resume/.
 | Expo SDK        | 58 (React Native 0.88.1, Reanimated 4.7.1, Gesture Handler 3.5, worklets 0.13.1)                                                                    | The repo's current SDK; the bundle's reference code is type-checked against exactly these                                                                                           |
 | Stack navigator | `Stack` from `expo-router/js-stack` with `stackOptions()` from `src/ui/motion.tsx`                                                                  | Expo Router 58 vendors React Navigation and ships its own JS stack; the external `@react-navigation/stack` package no longer shares its contexts. Same JS stack, same interpolators |
 | Docks           | `Tabs` from `expo-router/js-tabs` with the design-system `Dock` as `tabBar`                                                                         | Custom dock, fade-through owned by `FadeThroughProvider`                                                                                                                            |
-| API client      | The typed oRPC client (`@orpc/client` + `@orpc/tanstack-query`, router types from `@reactive-resume/api`)                                           | BUILD.md §4: follow the repo's client where one exists. The first app's `src/api/client.ts` already solved 401 handling and SSE with it                                             |
+| API client      | The typed oRPC client (`@orpc/client` + `@orpc/tanstack-query`, router types from `@reactive-resume/api`)                                           | Follow the repo's client where one exists. The first app's `src/api/client.ts` already solved 401 handling and SSE with it                                                          |
 | Server state    | TanStack Query; offline queue and drafts in `expo-sqlite`                                                                                           | As the first app's `src/draft`                                                                                                                                                      |
 | Preferences     | `expo-sqlite/kv-store`                                                                                                                              | Already in the dependency set; no MMKV                                                                                                                                              |
-| Identifiers     | Production: `me.rxresu` (same as the first app). Development: `me.rxresu.dev`. Storyboard: `me.rxresu.storyboard`. The scheme equals the identifier | BUILD.md §4; suffixed variants install beside the production app                                                                                                                    |
-| Unit tests      | Jest (`jest-expo`) under `src/**/*.test.ts(x)`                                                                                                      | BUILD.md §4                                                                                                                                                                         |
-| UI flows        | Maestro flows in `.maestro/`                                                                                                                        | BUILD.md §4                                                                                                                                                                         |
-| Devices         | One simulator or emulator at a time, machine-wide                                                                                                   | The build machine's memory; captures are serialised through a lock (below)                                                                                                          |
+| Identifiers     | Production: `me.rxresu` (same as the first app). Development: `me.rxresu.dev`. Storyboard: `me.rxresu.storyboard`. The scheme equals the identifier | Suffixed variants install beside the production app                                                                                                                                 |
+| Unit tests      | Jest (`jest-expo`) under `src/**/*.test.ts(x)`                                                                                                      |                                                                                                                                                                                     |
+| UI flows        | Maestro flows in `.maestro/`                                                                                                                        |                                                                                                                                                                                     |
+| Devices         | One simulator or emulator at a time, machine-wide                                                                                                   | The build machine's memory; device runs are serialised through a lock (below)                                                                                                       |
 
 ## Structure
 
@@ -36,7 +35,7 @@ scripts/                 check-motion.sh, icons codegen
 
 ## Route map
 
-The tree in BUILD.md §5 is the map; deviations are recorded here as they are made.
+Deviations from the storyboard's route tree are recorded here.
 
 | Route file                                                                                                                                                                                                                             | Screens                                                          |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
@@ -76,21 +75,19 @@ The tree in BUILD.md §5 is the map; deviations are recorded here as they are ma
 | P (platform, data) | `src/api`, `src/auth`, `src/data`, `src/render`, `src/i18n`, `modules/`                                                                         |
 | A–F (screens)      | their routes and `src/features/<area>`; never `src/ui` or another agent's files                                                                 |
 
-Merge order: foundation → navigation → screens A–F in parallel on disjoint folders in one checkout → fidelity rounds.
+Merge order: foundation → navigation → screens A–F in parallel on disjoint folders in one checkout.
 
 ## Rules for every sub-agent
 
 1. Work in `/Users/amruth/Projects/reactive-resume/apps/mobile` on branch `feat/mobile-next`. Never commit, stash,
-   switch branches or run `pnpm install`; the lead does those. Never edit the handoff bundle or files
-   another agent owns. A missing component, motion primitive, data hook or dependency is a request to the lead in your
+   switch branches or run `pnpm install`; the lead does those. Never edit files another agent owns. A missing component, motion primitive, data hook or dependency is a request to the lead in your
    report, never a local look-alike.
 2. Node 26: prefix commands with `mise exec node@26 --`. Typecheck: `mise exec node@26 -- pnpm typecheck` in the app
    folder. It must pass before you report.
 3. Tokens only (`src/ui/tokens.ts`): no hex colours, font names, durations or curves outside `src/ui`. Text goes
    through `Text`, icons through `Icon`, touches through `Touchable` or a design-system control.
-4. One simulator or emulator runs at a time on this machine. Before any `xcrun simctl`, `adb`, `rn_capture.mjs` or
-   emulator use, take the lock `mkdir /tmp/rr-device.lock` (retry every 20 s while it exists), and `rmdir` it as soon
-   as your capture finishes. Hold it for minutes, not for a whole task. The lock file `owner` inside says who has it.
+4. One simulator or emulator runs at a time on this machine. Before any `xcrun simctl`, `adb` or emulator use, take the lock `mkdir /tmp/rr-device.lock` (retry every 20 s while it exists), and `rmdir` it as soon
+   as your device run finishes. Hold it for minutes, not for a whole task. The lock file `owner` inside says who has it.
    Metro for the storyboard variant runs on port 8081 from the lead's shell; reuse it, never start a second one.
 5. Repo rules (`/Users/amruth/Projects/reactive-resume/CLAUDE.md`): no AI attribution, no credentials or personal
    data in source, user-facing strings through Lingui macros with copy from the web app and `GLOSSARY.md`.
@@ -250,59 +247,38 @@ on your port: `APP_VARIANT=storyboard EXPO_PUBLIC_STORYBOARD=1 mise exec node@26
 - `src/ui/index.ts` exports every component, scaffold and motion primitive; read `src/ui/scaffold.tsx` first. Root tabs
   use `TabScreen`; pushed screens and full-screen modals use `PushScreen` (`back="close"` for modals, `docked` for builder
   and letter modes, `footer`, `barEnd`, `status` for the document status line with Undo · Redo); sheets use `SheetScreen`
-  with the `height` from the screen's `BottomSheet` box in its layout dump; dialogs use `Dialog`. Rows are `ListRow`,
-  headings `SectionHeading`, and so on, as named by `component` in the layout dumps and in `design/COMPONENTS.md`.
-- Data: only the hooks exported from `src/data/index.ts` (table above). In storyboard captures they return the fakes,
+  with the screen's sheet height; dialogs use `Dialog`. Rows are `ListRow`,
+  headings `SectionHeading`, and so on.
+- Data: only the hooks exported from `src/data/index.ts` (table above). In the storyboard variant they return the fakes,
   seeded with the storyboard's data; `screenTexts("<ID>")` lists a screen's exact strings. If the fake lacks something
   a screen draws, add a typed view-model in your feature folder that derives it from the hooks, and report the gap.
-- Strings: Lingui macros (`t` from `@lingui/core/macro`, `Trans` from `@lingui/react/macro`), copy exactly as the layout
-  dump has it (· – ’ included). Never run `lingui extract`; the lead does.
-- Navigation: `useRouter()` from `expo-router`; every `navigatesTo` in your dumps must work. Route files and their
+- Strings: Lingui macros (`t` from `@lingui/core/macro`, `Trans` from `@lingui/react/macro`), copy exactly as the storyboard
+  has it (· – ’ included). Never run `lingui extract`; the lead does.
+- Navigation: `useRouter()` from `expo-router`; every link the storyboard draws must work. Route files and their
   presentation (push, modal, sheet, hero) already exist in `app/`; replace the placeholder body, keep the file path.
   Layout files (`_layout.tsx`) belong to the lead.
 - Scenarios: add yours to `src/dev/storyboard/scenarios/<your letter>.ts` (hrefs to replay so the real stack, sheets and
   docks are on screen, fixture, `prepare`).
 - Never edit `src/ui`, `src/data`, `src/api`, `src/auth`, `src/render`, layouts, `package.json` or another agent's
   folder. A missing component, variant, prop, motion primitive or data hook goes in your report as an exact request
-  (name, props, measurements from the dump); until the lead adds it, leave that element out rather than drawing a
+  (name, props, measurements); until the lead adds it, leave that element out rather than drawing a
   local look-alike. Tokens only: no hex colours, font names, durations or curves in your files.
 
-**Capture and measure (iOS; the lead runs Android).** One simulator serves everyone: take the lock
-(`mkdir /tmp/rr-device.lock && echo <letter> > /tmp/rr-device.lock/owner`; retry every 20 s while it exists), then:
-
-```sh
-U=CD4BE437-2AEC-4FB8-8CB6-5D00E08188AE
-B=/Users/amruth/Projects/reactive-resume/.agents/handoff/mobile-final
-xcrun simctl terminate $U me.rxresu.storyboard
-xcrun simctl openurl $U "me.rxresu.storyboard://expo-development-client/?url=http%3A%2F%2Flocalhost%3A<port>"
-sleep 30   # first bundle; check build/metro.log for "Bundled"
-node $B/tools/rn_capture.mjs screens --platform ios --scheme me.rxresu.storyboard --bundle-id me.rxresu.storyboard \
-  --udid $U --warm --only <ID,ID,…> --out build/fidelity/ios
-rmdir /tmp/rr-device.lock 2>/dev/null || rm -rf /tmp/rr-device.lock
-python3 $B/tools/fidelity.py build/fidelity/ios build/fidelity-report/ios --only <ID,ID,…> --system-bars
-```
-
-Release the lock right after the capture and before analysing; batch your screens into one capture run; never hold it
-longer than five minutes. Read `build/fidelity-report/ios/<ID>-layout.txt` and open `<ID>-light-compare.png` and
-`<ID>-dark-compare.png` (storyboard | app | difference). Fix causes, never the tools, dumps, baselines or tolerances.
-A screen passes with 0 layout failures, at most 3.0% differing pixels in each theme and no solid band. The debug build
-draws a floating gear button at the top end; differences from it alone are expected until the lead's Release run, so
-say so in your report instead of working around it.
+**Device lock.** One simulator serves everyone: take the lock
+(`mkdir /tmp/rr-device.lock && echo <letter> > /tmp/rr-device.lock/owner`; retry every 20 s while it exists), release
+it right after the run (`rmdir /tmp/rr-device.lock`), and never hold it longer than five minutes.
 
 **Finish.** `mise exec node@26 -- pnpm typecheck`, `mise exec node@26 -- pnpm test` and `sh scripts/check-motion.sh`
 (prints nothing) pass; `mise exec node@26 -- pnpm exec vp lint --fix <your paths>` and `pnpm exec vp fmt <your paths>`
 from the worktree's repo root. Commit your work in your worktree with a Conventional Commit message
-(`feat(mobile): …`, no AI attribution, no trailers). Report: your branch name and commit; one scoreboard line per
-screen; each remaining difference with its cause; every request to the lead; behaviour bullets from `SCREENS.md` you
-did not implement and why; questions about direction.
+(`feat(mobile): …`, no AI attribution, no trailers). Report: your branch name and commit; every request to the lead;
+questions about direction.
 
 ### Simulator (from 2026-11-11)
 
-Exactly one simulator runs at a time, machine-wide: iPhone 14 slot 3, `2497804D-9672-425A-935E-083CC064C6DC`. Use that
-UDID wherever the guide says `U=…`. Never boot another simulator, and never run the Android emulator while it is
-booted. Every agent that touches the device takes `/tmp/rr-device.lock` first and runs one install, Maestro flow or
-capture at a time. One Metro only (port 8081) and one shared build directory; no per-agent builds. Captures use the
-default port 8799.
+Exactly one simulator runs at a time, machine-wide: iPhone 14 slot 3, `2497804D-9672-425A-935E-083CC064C6DC`. Never boot another simulator, and never run the Android emulator while it is
+booted. Every agent that touches the device takes `/tmp/rr-device.lock` first and runs one install or Maestro flow
+at a time. One Metro only (port 8081) and one shared build directory; no per-agent builds.
 
 ### Android
 

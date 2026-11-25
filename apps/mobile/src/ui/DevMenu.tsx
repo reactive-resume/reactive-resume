@@ -1,4 +1,4 @@
-// Dev menu (dev and storyboard builds; BUILD.md §6.1, MOTION.md §3, §4.3, §10.5): Show hit areas, Show haptics,
+// Dev menu (dev and storyboard builds): Show hit areas, Show haptics,
 // Slow animations ×5, Stress JS. Present <DevMenu> as a sheet from a dev route or gesture; mount <DevHost /> once at
 // the root (the haptic pill and the JS stress loop).
 import { t } from "@lingui/core/macro";

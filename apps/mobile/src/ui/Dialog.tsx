@@ -1,7 +1,7 @@
-// Dialog (COMPONENTS.md §17, MOTION.md §6.5): S8, D6, S2 Delete account, Discard changes?. The `scrim` fades in d2;
+// Dialog: S8, D6, S2 Delete account, Discard changes?. The `scrim` fades in d2;
 // the dialog fades in while scaling 0.98 → 1, d2 `ease`; exit: fade 140 ms. 20 dp from the sides, vertically centred,
 // `raised`, 20 dp corners, `sh3`, padding 24, gap 12. Buttons are Large design-system Buttons, full width, stacked
-// in the order given (order of safety, primary on top) with 8 dp gaps and 8 dp extra top margin (COMPONENTS.md §17).
+// in the order given (order of safety, primary on top) with 8 dp gaps and 8 dp extra top margin.
 // Plays no haptic: Delete permanently plays `warning` when the delete lands, S8 plays it when it opens (its screen).
 import { t } from "@lingui/core/macro";
 import { type ReactNode, useEffect, useRef, useState } from "react";
@@ -13,7 +13,6 @@ import { enter, leave, useMotionPolicy } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { motion, radius } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 export type DialogAction = {
 	label: string;
@@ -74,8 +73,6 @@ function DialogView({
 }: DialogProps & { onExited: () => void }) {
 	const { colors, shadows } = useTheme();
 	const { reduced, overlayFade } = useMotionPolicy();
-	const scrimRef = useDesignTag({ kind: "component", component: "Scrim", bg: "scrim" });
-	const ref = useDesignTag({ kind: "component", component: "Dialog", radius: radius.dialog, bg: "raised" });
 	const titleRef = useRef<HostInstance>(null);
 	const p = useSharedValue(0);
 
@@ -114,7 +111,6 @@ function DialogView({
 	return (
 		<View style={StyleSheet.absoluteFill} pointerEvents={open ? "auto" : "none"}>
 			<Animated.View
-				ref={scrimRef as never}
 				style={[StyleSheet.absoluteFill, { backgroundColor: colors.scrim }, scrim]}
 				importantForAccessibility="no"
 				accessibilityElementsHidden
@@ -122,7 +118,6 @@ function DialogView({
 			/>
 			<View style={styles.center} pointerEvents="box-none">
 				<Animated.View
-					ref={ref as never}
 					role="alertdialog"
 					accessibilityViewIsModal
 					testID="dialog"
@@ -168,7 +163,7 @@ const buttonTone: Record<DialogAction["tone"], ButtonTone> = {
 	ghost: "ghost",
 };
 
-/** "Discard changes?" for dirty sheets and forms (MOTION.md §6.1, §6.4). */
+/** "Discard changes?" for dirty sheets and forms. */
 export function DiscardDialog({
 	open,
 	onKeep,

@@ -1,12 +1,10 @@
 import type { ColorToken } from "./tokens";
-// Shared building blocks: the themed Touchable, rings, the screen root and the design-tagged box.
+// Shared building blocks: the themed Touchable, rings, the screen root and the token box.
 import type { ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
-import { useRoute } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Touchable, type TouchableProps } from "./motion";
 import { useTheme, useThemeName } from "./theme";
-import { DesignScreen, FrameOwnerContext, useDesignTag } from "@/dev/storyboard/harness";
 
 /** `Touchable` with the theme filled in. Every tap in the app goes through this or a design-system control. */
 export function Touch(props: Omit<TouchableProps, "theme">) {
@@ -15,7 +13,7 @@ export function Touch(props: Omit<TouchableProps, "theme">) {
 }
 
 /**
- * An inner ring drawn inside the shape without moving its content (COMPONENTS.md intro): an overlay with the same
+ * An inner ring drawn inside the shape without moving its content: an overlay with the same
  * radius, never a border on the box itself.
  */
 export function Ring({
@@ -46,77 +44,49 @@ export function Ring({
 	);
 }
 
-/** A view that registers itself in the layout dump under a design-system component name. */
+/** A view with a background and corner radius from the tokens. */
 export function Box({
-	component,
 	radius,
 	bg,
-	hidden = false,
-	ownsText = false,
 	style,
 	children,
 	...rest
 }: {
-	component: string;
 	radius?: number;
 	bg?: ColorToken;
-	/**
-	 * Left out of the layout dump, as the boards leave it out: it draws nothing of its own (a borderless last row), or
-	 * the boards draw it without a component name (A3's code boxes are plain spans).
-	 */
-	hidden?: boolean;
-	/** Its texts count as on screen while this box is (FrameOwnerContext): the boards dump them as the component. */
-	ownsText?: boolean;
 	style?: StyleProp<ViewStyle>;
 	children?: ReactNode;
 	pointerEvents?: "none" | "auto" | "box-none" | "box-only";
 	testID?: string;
 }) {
 	const { colors } = useTheme();
-	const ref = useDesignTag(
-		{
-			kind: "component",
-			component,
-			...(radius != null ? { radius } : {}),
-			...(bg ? { bg } : {}),
-		},
-		{ hidden },
-	);
 	return (
 		<View
-			ref={ref}
-			collapsable={false}
 			{...rest}
 			style={[bg ? { backgroundColor: colors[bg] } : null, radius != null ? { borderRadius: radius } : null, style]}
 		>
-			{ownsText ? <FrameOwnerContext.Provider value={ref}>{children}</FrameOwnerContext.Provider> : children}
+			{children}
 		</View>
 	);
 }
 
 /**
- * The root of every screen. It fills the frame with the background token and registers the route with the
- * storyboard harness; headers, docks and footers read the safe-area insets themselves.
+ * The root of every screen. It fills the frame with the background token; headers, docks and footers read the
+ * safe-area insets themselves.
  */
 export function Screen({
 	bg = "bg",
-	presentation = "screen",
 	style,
 	children,
 }: {
 	bg?: ColorToken | "transparent";
-	/** "sheet": the screen underneath stays visible (bottom sheets and dialogs presented as routes). */
-	presentation?: "screen" | "sheet" | "modal";
 	style?: StyleProp<ViewStyle>;
 	children?: ReactNode;
 }) {
 	const { colors } = useTheme();
-	const route = useRoute();
 	return (
-		<DesignScreen routeKey={route.key} presentation={presentation}>
-			<View style={[{ flex: 1, backgroundColor: bg === "transparent" ? "transparent" : colors[bg] }, style]}>
-				{children}
-			</View>
-		</DesignScreen>
+		<View style={[{ flex: 1, backgroundColor: bg === "transparent" ? "transparent" : colors[bg] }, style]}>
+			{children}
+		</View>
 	);
 }

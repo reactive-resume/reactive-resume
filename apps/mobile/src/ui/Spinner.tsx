@@ -1,5 +1,5 @@
-// Spinner (MOTION.md §2, §5, §8): 14 dp, one turn per second, linear, always beside words. With timeScale 0
-// (storyboard captures) it stays on its first frame. Reduced motion keeps it turning.
+// Spinner: 14 dp, one turn per second, linear, always beside words. With timeScale 0
+// (storyboard scenarios) it stays on its first frame. Reduced motion keeps it turning.
 // ponytail: the icon set has no Phosphor `circle-notch`, so the notch is drawn here; swap to <Icon> once it is added.
 import { useEffect } from "react";
 import Animated, {

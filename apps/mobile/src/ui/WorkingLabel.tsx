@@ -1,4 +1,4 @@
-// Working label (MOTION.md §5, §8): AI work in progress. Steps every 2200 ms with a d2 crossfade and stays on the
+// Working label: AI work in progress. Steps every 2200 ms with a d2 crossfade and stays on the
 // last step ("Still working"). The spinner sits beside the words; Stop belongs to the screen.
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -19,7 +19,7 @@ export function WorkingLabel({ steps }: { steps: readonly string[] }) {
 	useEffect(() => {
 		if (i >= steps.length - 1) return;
 		const ms = dur(motion.workingLabelStep);
-		if (ms === 0) return; // storyboard captures hold the first step
+		if (ms === 0) return; // storyboard scenarios hold the first step
 		let swap: ReturnType<typeof setTimeout> | undefined;
 		const id = setTimeout(() => {
 			opacity.set(withSequence(withTiming(0, leave(motion.d2)), withTiming(1, enter(motion.d2))));

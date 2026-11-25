@@ -1,4 +1,4 @@
-// Pinch zoom of a page (MOTION.md §7, B18 and P1). Follows both fingers around their focal point; past 0.6× and 3×
+// Pinch zoom of a page (B18 and P1). Follows both fingers around their focal point; past 0.6× and 3×
 // it rubber-bands and returns to the limit on release with `release()`. Double-tap toggles fit and 2× about the tap
 // point in d2; `selection` when zoom snaps to fit or 2×. At fit a downward swipe dismisses (25% or a fling, as a
 // sheet). The ZoomBar (−, Fit, +) and the accessibility actions animate the same way, through the handle.

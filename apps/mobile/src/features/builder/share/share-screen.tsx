@@ -141,7 +141,6 @@ export function ShareScreen() {
 		<PushScreen
 			title={t`Share`}
 			docked
-			clipDump
 			barEnd={<BuilderActions id={id} />}
 			overlay={
 				<>

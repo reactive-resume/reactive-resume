@@ -27,7 +27,7 @@ export function SignOutDialog({
 	conflicts?: number;
 	onClose: () => void;
 	onSignedOut: () => void;
-	/** Storyboard captures of the failure variants. */
+	/** Storyboard scenarios of the failure variants. */
 	initial?: SignOutStep;
 }) {
 	const { server } = useSession();

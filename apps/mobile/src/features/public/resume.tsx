@@ -7,7 +7,6 @@ import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { getServer } from "@/auth/session";
 import { usePublicResume, useDataBackend, useAccount } from "@/data";
-import { paperText } from "@/dev/storyboard/paper-text.gen";
 import { pageRenderer, type PageRenderResult } from "@/render/page-renderer";
 import {
 	Button,
@@ -101,7 +100,7 @@ export function PublicResumeScreen() {
 				</>
 			}
 			overlay={
-				// COMPONENTS.md §16: P1's zoom bar sits 122 dp above the bottom.
+				// P1's zoom bar sits 122 dp above the bottom.
 				<View pointerEvents="box-none" style={{ position: "absolute", left: 0, right: 0, bottom: 122 }}>
 					<ZoomBar
 						compact
@@ -150,12 +149,7 @@ export function PublicResumeScreen() {
 				<PageZoom ref={zoom}>
 					<View style={{ paddingTop: 8, alignItems: "center" }}>
 						{fake ? (
-							<Page
-								source={require("../../../assets/fixtures/page-public-full.png")}
-								fixtureText={paperText["P1-Public"]}
-								width={pageWidth}
-								height={506}
-							/>
+							<Page source={require("../../../assets/fixtures/page-public-full.png")} width={pageWidth} height={506} />
 						) : (
 							(rendered?.pages.map((page) => (
 								<Page

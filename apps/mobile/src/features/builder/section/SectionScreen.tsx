@@ -75,7 +75,7 @@ function EntryRow({
 	section: BuilderSection;
 	entry: Entry;
 	locked: boolean;
-	/** The list's last entry: no rule under it, and nothing of its own in the dump (the boards' borderless rows). */
+	/** The list's last entry: no rule under it. */
 	last: boolean;
 	onOpen: () => void;
 }) {
@@ -91,7 +91,6 @@ function EntryRow({
 				secondary={empty ? t`Empty · not on the page` : entry.hidden ? t`Not on the page` : details || undefined}
 				trailing="caret"
 				last={last}
-				boxHidden={last}
 				onPress={onOpen}
 			/>
 		</View>

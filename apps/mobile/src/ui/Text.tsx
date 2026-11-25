@@ -1,9 +1,8 @@
-import type { HostInstance, TextProps as RNTextProps, TextStyle } from "react-native";
-import { type ReactNode, useRef, useState } from "react";
+import type { TextProps as RNTextProps, TextStyle } from "react-native";
+import { type ReactNode, useState } from "react";
 import { Platform, StyleSheet, Text as RNText, View } from "react-native";
 import { useTheme } from "./theme";
 import { type ColorToken, fonts, textDefaults, type as typeScale, type TypeToken } from "./tokens";
-import { runsBox, untranslatedBox, useDesignTag } from "@/dev/storyboard/harness";
 
 const uiFamily = { 400: fonts.ui400, 500: fonts.ui500, 600: fonts.ui600, 700: fonts.ui700 } as const;
 
@@ -12,8 +11,8 @@ const maxScale = (family: string) => (family === fonts.display ? 1.5 : 2);
 
 /**
  * Measured glyph offsets inside the line box, in dp per platform and text style, so glyphs sit where the storyboard's
- * CSS line boxes put them (BUILD.md §6.1.3). Applied as a vertical translate that leaves the layout box untouched.
- * Measured with scripts/text-metrics.py against the storyboard PNGs; the numbers are logged in FIDELITY-LOG.md.
+ * CSS line boxes put them. Applied as a vertical translate that leaves the layout box untouched.
+ * Measured with scripts/text-metrics.py against the storyboard PNGs.
  */
 const glyphShift: Partial<Record<TypeToken, number>> =
 	Platform.select<Partial<Record<TypeToken, number>>>({
@@ -27,15 +26,15 @@ const glyphShift: Partial<Record<TypeToken, number>> =
 /**
  * iOS rounds a text's measured height up to the next device pixel, and an exact line height measures a hair over, so
  * every Text laid out one device pixel taller than lines × line height (24.33 at 3x) and stacked rows drifted. A line
- * height a hundredth under the token measures exactly lines × line height (onLayout, every style, one and two lines;
- * FIDELITY-LOG.md); the glyphs don't move.
+ * height a hundredth under the token measures exactly lines × line height (onLayout, every style, one and two lines);
+ * the glyphs don't move.
  */
 const iosLineBox = (lineHeight: number) => (Platform.OS === "ios" ? { lineHeight: lineHeight - 0.01 } : null);
 
 /**
  * iOS rootTitle: Instrument Serif's ink sits higher in the line box than in the storyboard's CSS. The box is measured
  * with any transform, so a translate moves box and ink together; this moves the ink only (padding inside the box, the
- * same amount taken back below so the layout flow is unchanged). FIDELITY-LOG.md has the measurements.
+ * same amount taken back below so the layout flow is unchanged).
  */
 const inkOffset: Partial<Record<TypeToken, number>> = Platform.OS === "ios" ? { rootTitle: 2 / 3 } : {};
 
@@ -61,16 +60,11 @@ export type TextProps = Omit<RNTextProps, "style"> & {
 	weight?: 400 | 500 | 600 | 700;
 	align?: TextStyle["textAlign"];
 	style?: RNTextProps["style"];
-	/** False for text nested inside another Text (the outer one carries the tag). */
-	tag?: boolean;
-	/**
-	 * A run drawn right after this text on the same line and reported on its own, as the boards nest a span in a
-	 * label (J3's "9–15 Nov · Berlin time"): this text's tag keeps its own words and takes the box of both.
-	 */
+	/** A run drawn right after this text on the same line (J3's "9–15 Nov · Berlin time"). */
 	after?: ReactNode;
 	/**
 	 * With `numberOfLines`: a cut text ends at a whole word and "…" (a preview, as B3's description card), measured by
-	 * a hidden copy. What is drawn is the shortened string, so the layout dump reports exactly that.
+	 * a hidden copy.
 	 */
 	wordEllipsis?: boolean;
 	/** A measured glyph offset for a one-off style (dp, down), moved like the per-style `glyphShift`. */
@@ -83,7 +77,6 @@ export function Text({
 	weight,
 	align,
 	style,
-	tag = true,
 	after,
 	wordEllipsis = false,
 	inkShift,
@@ -94,7 +87,6 @@ export function Text({
 	const full = flatten(children);
 	const clamp = useWordClamp(full, wordEllipsis ? (rest.numberOfLines ?? 0) : 0);
 	const base = typeScale[variant];
-	// The tag reports the style actually drawn, overrides included.
 	const own = StyleSheet.flatten(style) ?? {};
 	const fontFamily =
 		own.fontFamily ??
@@ -102,21 +94,6 @@ export function Text({
 			? uiFamily[weight]
 			: base.fontFamily);
 	const shift = inkShift ?? glyphShift[variant];
-	const ref = useDesignTag(
-		{
-			kind: "text",
-			text: clamp.shown,
-			style: {
-				fontFamily,
-				fontSize: own.fontSize ?? base.fontSize,
-				lineHeight: own.lineHeight ?? base.lineHeight,
-				fontWeight: own.fontWeight,
-			},
-			color,
-		},
-		// The glyph shift moves ink only; the line box stays where layout put it.
-		{ hidden: !tag, box: shift ? () => untranslatedBox(ref, shift)() : undefined },
-	);
 	const ink = inkOffset[variant];
 	const textStyle = [
 		textDefaults,
@@ -131,7 +108,6 @@ export function Text({
 	];
 	const text = (
 		<RNText
-			ref={after ? undefined : ref}
 			maxFontSizeMultiplier={maxScale(fontFamily)}
 			// Android balances paragraph lines by default ("highQuality"); CSS breaks greedily, as "simple" does (L1's
 			// letter wrapped "grow" a line early). Serif titles keep the default: "simple" split Instrument Serif words
@@ -163,7 +139,7 @@ export function Text({
 		);
 	if (!after) return text;
 	return (
-		<View ref={ref} collapsable={false} style={styles.runs}>
+		<View style={styles.runs}>
 			{text}
 			{after}
 		</View>
@@ -230,31 +206,15 @@ export function TextBlock({
 	gap?: number;
 	children: ReactNode;
 }) {
-	const first = useRef<HostInstance>(null);
-	const last = useRef<HostInstance>(null);
-	const base = typeScale[variant];
-	const ref = useDesignTag(
-		{
-			kind: "text",
-			text: before + after,
-			style: { fontFamily: base.fontFamily, fontSize: base.fontSize, lineHeight: base.lineHeight },
-			color,
-		},
-		{ box: () => runsBox(ref, [first, last])() },
-	);
 	return (
-		<View ref={ref} accessible style={{ gap }}>
-			<View ref={first}>
-				<Text variant={variant} color={color} tag={false}>
-					{before}
-				</Text>
-			</View>
+		<View accessible style={{ gap }}>
+			<Text variant={variant} color={color}>
+				{before}
+			</Text>
 			{children}
-			<View ref={last}>
-				<Text variant={variant} color={color} tag={false}>
-					{after}
-				</Text>
-			</View>
+			<Text variant={variant} color={color}>
+				{after}
+			</Text>
 		</View>
 	);
 }

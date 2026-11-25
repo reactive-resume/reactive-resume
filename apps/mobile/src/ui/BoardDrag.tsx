@@ -1,5 +1,5 @@
 import type { SnapCarouselHandle } from "./SnapCarousel";
-// J2 board drag (MOTION.md §7). Wrap the board's SnapCarousel in <BoardDrag> and each card in <BoardDragCard>.
+// J2 board drag. Wrap the board's SnapCarousel in <BoardDrag> and each card in <BoardDragCard>.
 //   Lift (long-press 500 ms): the card rises into an overlay above the columns, scales to 1.02, rotates −2°, gains
 //   `sh3` and a 2 dp `accent` ring, d1 `ease`, `medium`. It follows the finger 1:1.
 //   Held near the board's start or end edge, the board pages one column (SnapCarousel: d3 `ease-out-strong`,

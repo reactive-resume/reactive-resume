@@ -1,6 +1,5 @@
-import type { PaperText } from "@/dev/storyboard/paper-text.gen";
 import type { ImageSourcePropType, StyleProp, ViewStyle } from "react-native";
-// The page band, pages and thumbnails (COMPONENTS.md §16), and the small data pieces of §18.
+// The page band, pages and thumbnails, and small data pieces.
 import { type ReactNode, useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import { runOnJS, useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
@@ -11,26 +10,7 @@ import { type Stage, StageDot } from "./rows";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { layout, motion, radius } from "./tokens";
-import { STORYBOARD, trackImage, useDesignTag } from "@/dev/storyboard/harness";
-
-/** One text of a page fixture, reported to the layout dump at the place the image shows it (storyboard captures only). */
-function PaperTag({ item }: { item: PaperText }) {
-	const ref = useDesignTag({ kind: "paper", text: item.text });
-	return (
-		<View
-			ref={ref}
-			collapsable={false}
-			pointerEvents="none"
-			style={{
-				position: "absolute",
-				left: `${item.x * 100}%`,
-				top: `${item.y * 100}%`,
-				width: `${item.w * 100}%`,
-				height: `${item.h * 100}%`,
-			}}
-		/>
-	);
-}
+import { trackImage } from "@/dev/storyboard/harness";
 
 /** White paper with the page render. Paper never inverts; corners stay square. */
 export function Page({
@@ -40,9 +20,7 @@ export function Page({
 	children,
 	shadow = true,
 	style,
-	fixtureText,
 }: {
-	fixtureText?: PaperText[] | undefined;
 	source?: ImageSourcePropType | undefined;
 	width: number;
 	height: number;
@@ -52,10 +30,7 @@ export function Page({
 }) {
 	const { shadows } = useTheme();
 	return (
-		<Box
-			component="Page"
-			style={[{ width, height, backgroundColor: "#FFFFFF" }, shadow ? { boxShadow: shadows.shp } : null, style]}
-		>
+		<Box style={[{ width, height, backgroundColor: "#FFFFFF" }, shadow ? { boxShadow: shadows.shp } : null, style]}>
 			{source ? (
 				<Image
 					source={source}
@@ -65,7 +40,6 @@ export function Page({
 					accessibilityIgnoresInvertColors
 				/>
 			) : null}
-			{STORYBOARD && fixtureText ? fixtureText.map((item, i) => <PaperTag key={i} item={item} />) : null}
 			{children}
 		</Box>
 	);
@@ -84,7 +58,6 @@ export function PageBand({
 	const { colors } = useTheme();
 	const band = (
 		<Box
-			component="PageBand"
 			bg="sunken"
 			style={{
 				marginTop: 20,
@@ -129,7 +102,6 @@ export function PageThumbnail({
 	const height = Math.round(((width * 297) / 210) * 2) / 2;
 	return (
 		<Box
-			component="PageThumbnail"
 			radius={radius.paper}
 			style={{
 				width,
@@ -295,7 +267,6 @@ export function RecordButton({ recording, onPress }: { recording: boolean; onPre
 			testID="record-button"
 		>
 			<Box
-				component="RecordButton"
 				bg={recording ? "danger" : "accent"}
 				radius={radius.dialog}
 				style={{ width: 72, height: 72, alignItems: "center", justifyContent: "center" }}
@@ -365,10 +336,7 @@ export function ColourSwatch({
 	const { colors } = useTheme();
 	return (
 		<Touch onPress={onPress} accessibilityLabel={label} accessibilityState={{ selected }} hitSlop={hitSlopFor(40, 40)}>
-			{/* Hidden from the dump: B7 draws swatches as plain boxes, without a component name. */}
 			<Box
-				component="ColourSwatch"
-				hidden
 				radius={radius.md}
 				style={[
 					{

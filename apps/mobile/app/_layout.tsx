@@ -11,7 +11,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { restoreSession } from "@/auth/session";
 import { DataProvider, isBusy, seed } from "@/data";
 import { setNow } from "@/data/clock";
-import { registerStoryboardDeps, StoryboardController } from "@/dev/storyboard/capture";
+import { registerStoryboardDeps, StoryboardController } from "@/dev/storyboard/controller";
 import { StoryboardInsets } from "@/dev/storyboard/harness";
 import { registerFirstSend } from "@/features/settings/first-send";
 import { TodayNotifications } from "@/features/system/notifications";
@@ -69,7 +69,7 @@ export default function RootLayout() {
 							<DataProvider>
 								<ThemeProvider value={navigationTheme}>
 									<Stack screenOptions={options.push}>
-										{/* The storyboard link only hands its request to the capture controller, which replaces this route
+										{/* The storyboard link only hands its request to the storyboard controller, which replaces this route
 										at once. Animating it in left the stack mid-transition when a link opened it in a running app, and
 										every touch after that was ignored. */}
 										<Stack.Screen name="(dev)/storyboard/[id]" options={{ animation: "none" }} />

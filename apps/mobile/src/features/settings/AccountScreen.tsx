@@ -107,7 +107,6 @@ export function AccountScreen() {
 					secondary={security.connectedApps}
 					trailing="caret"
 					last
-					boxHidden
 					onPress={() => router.push("/settings/connections")}
 				/>
 			</View>
@@ -122,7 +121,6 @@ export function AccountScreen() {
 				title={t`Delete account`}
 				danger
 				last
-				boxHidden
 				onPress={fake ? () => setDeleting(true) : () => void actions.openSecurity("delete-account")}
 			/>
 		</PushScreen>

@@ -1,4 +1,4 @@
-// Text fields and forms (COMPONENTS.md §10), the composer and chat pieces (§13), the formatting toolbar (§6).
+// Text fields and forms, the composer and chat pieces, the formatting toolbar.
 import type { ComponentRef, ReactNode, Ref } from "react";
 import type { TextInputProps } from "react-native";
 import { useState } from "react";
@@ -12,7 +12,7 @@ import { hitSlopFor } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { fonts, layout, radius, type as typeScale } from "./tokens";
-import { STORYBOARD, useDesignTag } from "@/dev/storyboard/harness";
+import { STORYBOARD } from "@/dev/storyboard/harness";
 
 /** A 24 dp form column: 20 dp between fields. */
 export function Form({ children }: { children: ReactNode }) {
@@ -62,7 +62,7 @@ export type TextFieldProps = Omit<TextInputProps, "style"> & {
 	prefix?: string | undefined;
 	/** Picker fields: the field is a button showing its value (dates, zones, choices). */
 	onPress?: (() => void) | undefined;
-	/** Draw the focus rings without focus (storyboard captures of a focused field). */
+	/** Draw the focus rings without focus (storyboard scenarios of a focused field). */
 	forceFocus?: boolean | undefined;
 	/** In a FieldRow: share the width. */
 	grow?: boolean | undefined;
@@ -108,32 +108,15 @@ export function TextField({
 	const [focused, setFocused] = useState(false);
 	const stacked = useStacked();
 	const active = focused || forceFocus;
-	// The dumps list the drawn value (masked for passwords) across the input's width, or a placeholder hugging its
-	// words (S6 "Optional"), in its line box.
 	const textStyle = mono
 		? prefix
 			? { ...monoInput, lineHeight: 20 }
 			: monoInput
 		: { ...typeScale.input, ...(multiline ? { lineHeight: 24 } : null) };
 	const hint = savedValue ?? placeholder;
-	const shown = value
-		? input.secureTextEntry
-			? "\u2022".repeat(value.length)
-			: value
-		: (savedValue ?? (inputPlaceholder ? (placeholder ?? "") : ""));
-	const textRef = useDesignTag(
-		{
-			kind: "text",
-			text: shown,
-			style: textStyle,
-			color: "ink",
-		},
-		{ hidden: !shown || !!onPress },
-	);
 	const placeholderTag = !value && !savedValue && placeholder && !onPress && !inputPlaceholder;
 	const field = (
 		<Box
-			component="TextField"
 			bg="raised"
 			radius={radius.md}
 			style={{
@@ -163,11 +146,7 @@ export function TextField({
 					{value || placeholder || ""}
 				</Text>
 			) : (
-				<View
-					ref={textRef}
-					collapsable={false}
-					style={{ flex: 1, minWidth: 0, minHeight: textStyle.lineHeight, justifyContent: "center" }}
-				>
+				<View style={{ flex: 1, minWidth: 0, minHeight: textStyle.lineHeight, justifyContent: "center" }}>
 					<TextInput
 						{...input}
 						ref={ref}
@@ -281,8 +260,6 @@ export function CodeBoxes({
 				return (
 					<Box
 						key={i}
-						component="CodeBox"
-						hidden
 						bg="raised"
 						radius={radius.md}
 						style={{ flex: 1, height: 56, alignItems: "center", justifyContent: "center" }}
@@ -325,7 +302,6 @@ export function SendButton({
 			testID="composer-send"
 		>
 			<Box
-				component="IconButton"
 				bg="accent"
 				radius={radius.md}
 				style={{ width: 40, height: 40, alignItems: "center", justifyContent: "center" }}
@@ -338,7 +314,7 @@ export function SendButton({
 
 /**
  * The AI composer: the input, then context chips, a spacer and the send button. A status line under it appears only
- * while sending is blocked (BUILD.md §3.6).
+ * while sending is blocked.
  */
 export function Composer({
 	value,
@@ -362,21 +338,15 @@ export function Composer({
 	autoFocus?: boolean | undefined;
 }) {
 	const { colors } = useTheme();
-	// Like TextField: the dump lists the drawn value or the placeholder, in its line box.
-	const textRef = useDesignTag(
-		{ kind: "text", text: value || placeholder, style: typeScale.body, color: value ? "ink" : "ink3" },
-		{ hidden: !(value || placeholder) },
-	);
 	return (
 		<View style={{ paddingTop: 12, paddingBottom: 8, paddingHorizontal: layout.screenMargin, gap: 8 }}>
 			<Box
-				component="Composer"
 				bg="raised"
 				radius={radius.xl}
 				style={{ paddingTop: 10, paddingEnd: 8, paddingBottom: 8, paddingStart: 12, gap: 8 }}
 			>
 				<Ring color="controlBorder" radius={radius.xl} />
-				<View ref={textRef} collapsable={false}>
+				<View>
 					{/* The placeholder is drawn here, not by the input: iOS appends an input's placeholder to its label, which
 					    named the composer "Ask about this resume… Ask about this resume…" and nothing could find it. */}
 					{value ? null : (
@@ -386,7 +356,7 @@ export function Composer({
 							importantForAccessibility="no-hide-descendants"
 							accessibilityElementsHidden
 						>
-							<Text variant="body" color="ink3" tag={false} accessible={false}>
+							<Text variant="body" color="ink3" accessible={false}>
 								{placeholder}
 							</Text>
 						</View>
@@ -442,7 +412,6 @@ export function Composer({
 export function Bubble({ children }: { children: string }) {
 	return (
 		<Box
-			component="Bubble"
 			bg="sunken"
 			style={{
 				alignSelf: "flex-end",
@@ -470,7 +439,6 @@ export function ConnectionChip({ label, onPress }: { label: string; onPress?: ((
 			hitSlop={hitSlopFor(48, 32)}
 		>
 			<Box
-				component="Chip"
 				bg="sunken"
 				radius={radius.sm}
 				style={{ height: 32, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", gap: 6 }}

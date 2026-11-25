@@ -1,4 +1,4 @@
-// Switch (COMPONENTS.md §11, MOTION.md §5): 40 × 24, thumb slides 16 dp in d1 `ease`, track crossfades
+// Switch: 40 × 24, thumb slides 16 dp in d1 `ease`, track crossfades
 // control-border ↔ accent, `toggleOn` / `toggleOff` on a user change. A whole switch row toggles: give the row
 // `useSwitchRow()` and draw the switch with `interactive={false}`.
 import { useCallback, useEffect } from "react";
@@ -8,7 +8,6 @@ import { Touch } from "./base";
 import { enter, haptic, hitSlopFor } from "./motion";
 import { useTheme } from "./theme";
 import { motion, radius } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 const W = 40;
 const H = 24;
@@ -56,12 +55,6 @@ export function Switch({
 }: SwitchProps) {
 	const { colors, shadows } = useTheme();
 	const p = useSharedValue(value ? 1 : 0);
-	const ref = useDesignTag({
-		kind: "component",
-		component: "Switch",
-		radius: radius.full,
-		bg: value ? "accent" : "sunken",
-	});
 
 	useEffect(() => {
 		p.set(withTiming(value ? 1 : 0, enter(motion.d1)));
@@ -79,11 +72,7 @@ export function Switch({
 	}));
 
 	const drawing = (
-		<View
-			ref={ref}
-			collapsable={false}
-			style={[styles.track, { backgroundColor: colors.sunken, opacity: disabled ? 0.45 : 1 }]}
-		>
+		<View style={[styles.track, { backgroundColor: colors.sunken, opacity: disabled ? 0.45 : 1 }]}>
 			<Animated.View
 				style={[StyleSheet.absoluteFill, { backgroundColor: colors.accent, borderRadius: radius.full }, on]}
 			/>

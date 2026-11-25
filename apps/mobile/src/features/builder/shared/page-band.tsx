@@ -8,7 +8,6 @@ import { Image } from "react-native";
 import { useSettled } from "../share/document";
 import { useResumeData, useResumeDocument } from "./document";
 import { STORYBOARD } from "@/dev/storyboard/harness";
-import { paperText } from "@/dev/storyboard/paper-text.gen";
 import { pageRenderer } from "@/render/page-renderer";
 import { Crossfade, HeroSource, HeroTarget, Page, PageBand, prepareHero } from "@/ui";
 
@@ -17,7 +16,6 @@ const fixtures = {
 	design: require("../../../../assets/fixtures/page-resume-B6.png"),
 };
 const sizes = { overview: { width: 170, height: 240 }, design: { width: 150, height: 212 } } as const;
-const fixtureIds = { overview: "B1-Overview", design: "B6-Design" } as const;
 
 /** The page render of the open resume: a file URI, refreshed when the draft changes. */
 export function usePageImage(id: string): { source: ImageSourcePropType | undefined; pageCount: number } {
@@ -52,14 +50,7 @@ export function BuilderPageBand({ id, variant }: { id: string; variant: "overvie
 	const { source } = usePageImage(id);
 	const size = sizes[variant];
 	const image: ImageSourcePropType | undefined = STORYBOARD ? fixtures[variant] : source;
-	const page = (
-		<Page
-			width={size.width}
-			height={size.height}
-			source={image}
-			{...(STORYBOARD ? { fixtureText: paperText[fixtureIds[variant]] } : {})}
-		/>
-	);
+	const page = <Page width={size.width} height={size.height} source={image} />;
 	const open = async () => {
 		if (image) {
 			const ratio = 297 / 210;

@@ -44,7 +44,7 @@ function SectionRow({
 	data: ResumeData;
 	id: string;
 	locked: boolean;
-	/** The column's last row: no rule under it, and nothing of its own in the dump (the boards' borderless rows). */
+	/** The column's last row: no rule under it. */
 	last: boolean;
 	handle: (children: React.ReactNode) => React.ReactNode;
 	onMenu: (ref: ReturnType<typeof useAnchorRef>) => void;
@@ -70,7 +70,6 @@ function SectionRow({
 					}
 					onPress={locked ? undefined : () => onMenu(ref)}
 					last={last}
-					boxHidden={last}
 				/>
 			</View>
 		</Anchor>

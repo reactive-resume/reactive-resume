@@ -1,4 +1,4 @@
-// Title collapse (MOTION.md §6.7, COMPONENTS.md §2–3): the 28/34 or 34/40 title scrolls away with the content; once
+// Title collapse: the 28/34 or 34/40 title scrolls away with the content; once
 // the scroll passes 40 dp a 56 dp bar fades in with its 15/20 600 title and a 1 dp `line` divider, d2 `ease`, and
 // fades out when scrolled back. Triggered by crossing the threshold, not scrubbed.
 //   const collapse = useTitleCollapse();
@@ -20,7 +20,6 @@ import { enter } from "./motion";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { layout, motion } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 export type TitleCollapse = {
 	onScroll: ReturnType<typeof useAnimatedScrollHandler>;
@@ -67,12 +66,10 @@ export function CollapsedBar({
 }) {
 	const { colors } = useTheme();
 	const insets = useSafeAreaInsets();
-	const ref = useDesignTag({ kind: "component", component: "CollapsedBar", bg: "bg" }, { hidden: !collapse.collapsed });
 	const { shown } = collapse;
 	const style = useAnimatedStyle(() => ({ opacity: shown.value }));
 	return (
 		<Animated.View
-			ref={ref as never}
 			pointerEvents={collapse.collapsed ? "box-none" : "none"}
 			accessibilityElementsHidden={!collapse.collapsed}
 			style={[
@@ -83,7 +80,7 @@ export function CollapsedBar({
 		>
 			<View style={styles.slot}>{start}</View>
 			<View style={styles.title}>
-				<Text variant="topBarTitle" numberOfLines={1} align="center" tag={collapse.collapsed}>
+				<Text variant="topBarTitle" numberOfLines={1} align="center">
 					{title}
 				</Text>
 			</View>

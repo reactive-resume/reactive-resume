@@ -125,7 +125,7 @@ export function useChatFollow({
 function LatestButton({ shown, onPress }: { shown: boolean; onPress: () => void }) {
 	const { overlayFade } = useMotionPolicy();
 	const opacity = useSharedValue(0);
-	// Nothing is drawn until the first time it shows: a conversation at rest has no Latest (the storyboard captures).
+	// Nothing is drawn until the first time it shows: a conversation at rest has no Latest (the storyboard scenarios).
 	const [drawn, setDrawn] = useState(shown);
 	if (shown && !drawn) setDrawn(true);
 	useEffect(() => {

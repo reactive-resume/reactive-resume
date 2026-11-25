@@ -1,4 +1,4 @@
-// MOTION.md §5, §7 and §10.2: gesture thresholds, through the same functions the components call. Switch,
+// Gesture thresholds, through the same functions the components call. Switch,
 // Segmented and Radio haptics are covered through the components in interactions.test.tsx.
 import { edgeZone } from "./BoardDrag";
 import { stripShouldOpen } from "./ExpandingStrip";

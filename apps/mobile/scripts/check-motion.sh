@@ -1,5 +1,5 @@
 #!/bin/sh
-# Static motion checks (design/MOTION.md §10.1). Run from anywhere; prints nothing and exits 0 when clean.
+# Static motion checks. Run from anywhere; prints nothing and exits 0 when clean.
 # Uses ripgrep when installed, else find + grep with the same patterns and exclusions.
 cd "$(dirname "$0")/.." || exit 2
 

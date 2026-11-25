@@ -149,7 +149,6 @@ function ResumeMenu() {
 			danger={!!extra.danger}
 			disabled={disabled}
 			last={!!extra.last}
-			boxHidden={!!extra.last}
 		/>
 	);
 	return (
@@ -415,7 +414,6 @@ function LetterMenu() {
 								disabled={locked}
 								danger
 								last
-								boxHidden
 							/>
 						</View>
 					</SheetScrollView>

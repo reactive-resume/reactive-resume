@@ -54,7 +54,7 @@ export function ApplicationsActions() {
 	);
 }
 
-/** Still placeholders at the final size of 64 dp rows (MOTION.md §8). */
+/** Still placeholders at the final size of 64 dp rows. */
 export function RowPlaceholders({ count = 3 }: { count?: number }) {
 	return (
 		<View style={{ paddingHorizontal: layout.screenMargin }}>

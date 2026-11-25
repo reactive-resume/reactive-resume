@@ -2,8 +2,7 @@
 
 The Reactive Resume phone app for iOS and Android: Expo SDK 58, React Native 0.88, Expo Router. Production installs
 as `me.rxresu`, the same identifiers as the first Expo app it replaced. The root `AGENTS.md` still applies; this guide
-covers mobile-only work. `PLAN.md` holds the build decisions, route map and data hooks; `REVIEW.md`, `FIDELITY-LOG.md`
-and the `MOTION-*.md` files are the build's review records.
+covers mobile-only work. `PLAN.md` holds the build decisions, route map and data hooks; `REVIEW.md` is the build's review record.
 
 ## Layout
 
@@ -28,7 +27,7 @@ Run from the repository root with Node 26 (`mise exec node@26 -- …`). None nee
 ```sh
 pnpm --filter mobile typecheck
 pnpm --filter mobile test            # Jest (jest-expo), src/**/*.test.ts(x)
-pnpm --filter mobile test:ci         # CI's run; skips the storyboard edge test, which needs the local handoff bundle
+pnpm --filter mobile test:ci         # CI's run (jest --ci)
 sh apps/mobile/scripts/check-motion.sh   # prints nothing when clean
 pnpm --filter mobile check:bundle    # Metro + Hermes export for both platforms, about 1.5 minutes
 ```
@@ -41,12 +40,10 @@ CI runs typecheck and `test:ci` through Turbo, and the motion check and bundle e
 
 `APP_VARIANT` picks the build: `production` (`me.rxresu`), `development` (`me.rxresu.dev`, the default) or
 `storyboard` (`me.rxresu.storyboard`, fake data from `src/data`). The dev and storyboard variants install beside the
-store app. Start the storyboard with `pnpm --filter mobile start:storyboard`. The spec for screens, layout and motion
-is the handoff bundle in the git-ignored .agents/handoff/mobile-final folder (BUILD.md first); it exists only on the
-maintainer's machine.
+store app. Start the storyboard with `pnpm --filter mobile start:storyboard`.
 
 Simulators and emulators: one at a time on this machine, machine-wide, never in parallel. Take the device lock that
-`PLAN.md` describes before any `xcrun simctl`, `adb`, capture or Maestro run, release it as soon as the capture ends,
+`PLAN.md` describes before any `xcrun simctl`, `adb` or Maestro run, release it as soon as the run ends,
 and reuse the running Metro instead of starting another. `.maestro/` holds the storyboard UI flows; never point them at
 a production account.
 

@@ -1,4 +1,4 @@
-// The month picker (BUILD.md §3.1): month-only dates with "Present", which neither platform's picker offers. A bottom
+// The month picker: month-only dates with "Present", which neither platform's picker offers. A bottom
 // sheet with a month column and a year column; every pick applies at once with `selection`.
 import type { YearMonth } from "@reactive-resume/schema/resume/dates";
 import { t } from "@lingui/core/macro";

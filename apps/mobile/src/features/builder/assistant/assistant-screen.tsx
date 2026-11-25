@@ -160,7 +160,6 @@ export function AssistantScreen() {
 	return (
 		<PushScreen
 			back="close"
-			presentation="modal"
 			chat={chat}
 			barCenter={
 				<ConnectionChip
@@ -217,7 +216,7 @@ export function AssistantScreen() {
 			<View style={{ paddingTop: 16, paddingHorizontal: 24, gap: 16 }}>
 				{/* No connection yet: setup comes first, before anything else on the screen. */}
 				{!provider && providers.isSuccess ? (
-					<Box component="Card" bg="raised" style={{ padding: 20, gap: 12 }}>
+					<Box bg="raised" style={{ padding: 20, gap: 12 }}>
 						<Text variant="body">{t`Connect an AI provider first. Nothing is sent until you choose a connection.`}</Text>
 						<Button
 							label={t`Add AI provider`}
@@ -287,7 +286,7 @@ export function AssistantScreen() {
 					</View>
 				) : null}
 				{failed && (
-					<Box component="Card" bg="dangerSoft" style={{ padding: 20, gap: 12 }}>
+					<Box bg="dangerSoft" style={{ padding: 20, gap: 12 }}>
 						<Text color="dangerText">{t`Couldn't send your message. Your message is kept.`}</Text>
 						<Button label={t`Retry`} onPress={() => void send()} />
 						<Button label={t`Switch model`} onPress={() => router.push("/settings/ai")} />

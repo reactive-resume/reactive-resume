@@ -123,7 +123,6 @@ export function ConsentScreen() {
 					wrapTitle
 					leading={<IconTile icon={row.icon} />}
 					last={i === rows.length - 1}
-					boxHidden={i === rows.length - 1}
 				/>
 			))}
 			<View style={{ paddingTop: 16, paddingHorizontal: 24 }}>

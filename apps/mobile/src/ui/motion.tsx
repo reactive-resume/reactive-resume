@@ -1,7 +1,6 @@
-// Reference implementation of the motion, haptics, hit-area and micro-interaction layer (design/MOTION.md), final
-// storyboard (v4). Copy into the new app's src/ui/motion.tsx and adapt names. Rule: screens never call
+// The motion, haptics, hit-area and micro-interaction layer (final storyboard, v4). Rule: screens never call
 // withTiming/withSpring/LayoutAnimation/Animated.timing or expo-haptics directly; they use the primitives below, so every
-// duration, curve, haptic and hit area comes from reference/tokens.ts.
+// duration, curve, haptic and hit area comes from src/ui/tokens.ts.
 // Written against react-native-reanimated 4, react-native-gesture-handler 2 and 3 (the Gesture builder API, type-checked with
 // both), @react-navigation/stack 7 and expo-haptics with performAndroidHapticsAsync. Check the installed versions.
 
@@ -52,7 +51,7 @@ import { colors, haptics, hitTarget, motion, type HapticToken, type ThemeName } 
 const STORYBOARD = process.env.EXPO_PUBLIC_STORYBOARD === "1";
 
 /**
- * Multiplies every duration. 0 = instant (storyboard captures), 1 = normal, 5 = "Slow animations" in the dev menu.
+ * Multiplies every duration. 0 = instant (storyboard scenarios), 1 = normal, 5 = "Slow animations" in the dev menu.
  * A shared value so worklets read the live value. Release builds never change it.
  */
 export const timeScale: SharedValue<number> = makeMutable(1);
@@ -91,7 +90,7 @@ export const navCurve = {
 type Curve = (typeof curve)[keyof typeof curve];
 
 /**
- * Timing for something entering or changing state. We apply our own reduced-motion policy (§5 of MOTION.md),
+ * Timing for something entering or changing state. We apply our own reduced-motion policy,
  * so Reanimated's own reduce-motion handling is switched off on every animation.
  */
 export function enter(ms: number, easing: Curve = curve.ease): WithTimingConfig {
@@ -179,7 +178,7 @@ export function onHaptic(listener: (e: HapticEvent) => void) {
 }
 
 /**
- * Play one haptic from the vocabulary. One per gesture, at the moment the state changes (MOTION.md §3).
+ * Play one haptic from the vocabulary. One per gesture, at the moment the state changes.
  * Android uses the haptic engine (performAndroidHapticsAsync), never impactAsync (a Vibrator simulation there).
  */
 export function haptic(token: HapticToken): void {
@@ -300,7 +299,7 @@ export function pressUp(pressed: SharedValue<number>, washDelay = 0) {
 /**
  * Feedback starts on touch-down in the same frame (worklet), never waits for the JS thread, and is cancelled when a
  * scroll or another gesture takes over. The action runs on release (onPress) or after 500 ms (onLongPress).
- * No haptic on press-down of an ordinary button (MOTION.md §3).
+ * No haptic on press-down of an ordinary button.
  */
 export function Touchable({
 	onPress,
@@ -476,7 +475,7 @@ export function forModal({ current, layouts: { screen } }: StackCardInterpolatio
 	};
 }
 
-/** Shared-element destination (§6.2): fades in without sliding while the Hero overlay travels. */
+/** Shared-element destination: fades in without sliding while the Hero overlay travels. */
 export function forFade({ current }: StackCardInterpolationProps): StackCardInterpolatedStyle {
 	return { cardStyle: { opacity: current.progress } };
 }
@@ -494,7 +493,7 @@ function timingSpec(ms: number, easing: (t: number) => number): TransitionSpec {
 		animation: "timing",
 		config: {
 			get duration() {
-				// At least one frame: a 0 ms stack transition (storyboard captures run at time scale 0) left the pushed
+				// At least one frame: a 0 ms stack transition (storyboard scenarios run at time scale 0) left the pushed
 				// card's gestures dead for its first touch.
 				return Math.max(16, Math.round(ms * timeScale.value));
 			},

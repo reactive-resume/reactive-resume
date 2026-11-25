@@ -1,4 +1,4 @@
-// MOTION.md §10.2: the motion module's behaviour: sheet dismissal, the haptics switch, toast lifetime, hit slop
+// The motion module's behaviour: sheet dismissal, the haptics switch, toast lifetime, hit slop
 // and fade-through.
 import * as Haptics from "expo-haptics";
 import { AccessibilityInfo, Platform } from "react-native";

@@ -87,7 +87,7 @@ export function ApplicationsScreen() {
 	const params = useLocalSearchParams<{ view?: string; day?: string; stage?: string }>();
 	const requested =
 		params.view === "board" || params.view === "calendar" || params.view === "list" ? params.view : null;
-	// A link may ask for a view (J4's funnel, captures); the tab otherwise keeps the one last chosen. The param stays as
+	// A link may ask for a view (J4's funnel, storyboard scenarios); the tab otherwise keeps the one last chosen. The param stays as
 	// the link set it, so coming back to the tab doesn't undo a later choice.
 	const [view, setView] = useState<ApplicationsView>(requested ?? rememberedView);
 	const [linked, setLinked] = useState(requested);
@@ -344,12 +344,12 @@ function ListView({
 			</HeroCard>
 		);
 
-	// The company name travels into J6's title: both styles, crossfading (MOTION.md §6.2).
+	// The company name travels into J6's title: both styles, crossfading.
 	const open = async (app: ApplicationRow, rowTitle: string) => {
 		await prepareHero(
 			applicationHeroId(app.id),
 			() => (
-				<Text variant="pageTitle" numberOfLines={1} tag={false}>
+				<Text variant="pageTitle" numberOfLines={1}>
 					{app.company}
 				</Text>
 			),
@@ -358,7 +358,6 @@ function ListView({
 				<Text
 					variant="rowTitle"
 					numberOfLines={1}
-					tag={false}
 					style={{
 						fontSize: (typeScale.rowTitle.fontSize * typeScale.pageTitle.lineHeight) / typeScale.rowTitle.lineHeight,
 						lineHeight: typeScale.pageTitle.lineHeight,
@@ -720,7 +719,7 @@ function BoardView({
 									// The boards start at the current column: an empty one before it would peek 8 dp at
 									// the edge, so its placeholder appears once it is reached.
 									at < index ? null : (
-										<Box component="BoardCard" radius={radius.xl} style={{ padding: 16, alignItems: "center" }}>
+										<Box radius={radius.xl} style={{ padding: 16, alignItems: "center" }}>
 											<Ring color="line2" radius={radius.xl} dashed />
 											<Text variant="ui" color="ink3">
 												{t`Drag an application here`}
@@ -860,14 +859,7 @@ function CalendarView({
 									) : (
 										<View style={{ flexDirection: "row" }}>
 											{weekOf(addDays(anchor, (offset - WEEK_SPAN) * 7)).map((d) => (
-												<DayCell
-													key={d}
-													day={d}
-													selected={d === day}
-													marked={marked.has(d)}
-													onPress={() => pick(d)}
-													offscreen={offset !== weekIndex}
-												/>
+												<DayCell key={d} day={d} selected={d === day} marked={marked.has(d)} onPress={() => pick(d)} />
 											))}
 										</View>
 									)
@@ -933,14 +925,11 @@ function DayCell({
 	selected,
 	marked,
 	onPress,
-	offscreen = false,
 }: {
 	day: string;
 	selected: boolean;
 	marked: boolean;
 	onPress: () => void;
-	/** A neighbouring week's cell, off screen until paged: not in the layout dump. */
-	offscreen?: boolean;
 }) {
 	const { colors } = useTheme();
 	const date = dayDate(day);
@@ -963,15 +952,10 @@ function DayCell({
 					backgroundColor: selected ? colors.accent : undefined,
 				}}
 			>
-				<Text variant="caption" color={selected ? "onAccent" : "ink3"} tag={!offscreen}>
+				<Text variant="caption" color={selected ? "onAccent" : "ink3"}>
 					{label}
 				</Text>
-				<Text
-					variant="sheetTitle"
-					color={selected ? "onAccent" : "ink"}
-					style={{ lineHeight: 26, marginTop: 4 }}
-					tag={!offscreen}
-				>
+				<Text variant="sheetTitle" color={selected ? "onAccent" : "ink"} style={{ lineHeight: 26, marginTop: 4 }}>
 					{String(date.getUTCDate())}
 				</Text>
 				{marked ? (

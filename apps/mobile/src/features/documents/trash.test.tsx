@@ -11,12 +11,6 @@ jest.mock("react-native-safe-area-context", () => ({
 	...jest.requireActual("react-native-safe-area-context"),
 	useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
 }));
-jest.mock("@/dev/storyboard/harness", () => ({
-	useDesignTag: () => null,
-	DesignScreen: ({ children }: { children: React.ReactNode }) => children,
-	DesignClip: ({ children }: { children: React.ReactNode }) => children,
-}));
-jest.mock("@/dev/storyboard/capture", () => ({ registerMainScroll: jest.fn() }));
 jest.mock("@/auth/session", () => ({ getAccountScope: () => "test" }));
 jest.mock("@/data", () => ({
 	useDataBackend: () => ({ scope: "test" }),

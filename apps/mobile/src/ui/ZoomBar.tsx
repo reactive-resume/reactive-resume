@@ -1,8 +1,7 @@
-// Zoom bar (COMPONENTS.md §16): the visible alternative to pinch and double-tap. Centred, `raised`, 12 dp corners,
+// Zoom bar: the visible alternative to pinch and double-tap. Centred, `raised`, 12 dp corners,
 // `sh2`, padding 2 × 6, gap 2; items 48 × 48 (− and + icon buttons, Fit as a 48 dp tall small button with 12 dp
 // padding). An optional trailing action (B18 and P1's "Read as text") follows a 1 × 24 `line` separator with 4 dp
-// margins, inside the bar, as both layout dumps draw it. The bar itself is no design-system component in the dumps
-// (`.zbar`); its buttons are. Drive a PageZoom through its handle.
+// margins, inside the bar. Drive a PageZoom through its handle.
 import type { IconName } from "./Icon";
 import { t } from "@lingui/core/macro";
 import { StyleSheet, View } from "react-native";
@@ -33,19 +32,19 @@ export function ZoomBar({
 			style={[styles.bar, compact ? styles.compact : null, { backgroundColor: colors.raised, boxShadow: shadows.sh2 }]}
 		>
 			<Touch feedback="scale" onPress={onZoomOut} accessibilityLabel={t`Zoom out`} radius={radius.md}>
-				<Box component="IconButton" radius={radius.md} style={styles.icon}>
+				<Box radius={radius.md} style={styles.icon}>
 					<Icon name="minus" size={24} color="ink2" />
 				</Box>
 			</Touch>
 			<Touch feedback="scale" onPress={onFit} accessibilityLabel={t`Fit`}>
-				<Box component="Button" radius={radius.sm} style={styles.text}>
+				<Box radius={radius.sm} style={styles.text}>
 					<Text variant="buttonSm" color="ink2">
 						{t`Fit`}
 					</Text>
 				</Box>
 			</Touch>
 			<Touch feedback="scale" onPress={onZoomIn} accessibilityLabel={t`Zoom in`} radius={radius.md}>
-				<Box component="IconButton" radius={radius.md} style={styles.icon}>
+				<Box radius={radius.md} style={styles.icon}>
 					<Icon name="plus" size={24} color="ink2" />
 				</Box>
 			</Touch>
@@ -53,7 +52,7 @@ export function ZoomBar({
 				<>
 					<View style={[styles.sep, { backgroundColor: colors.line }]} />
 					<Touch feedback="scale" onPress={trailing.onPress} accessibilityLabel={trailing.label}>
-						<Box component="Button" radius={radius.sm} style={styles.text}>
+						<Box radius={radius.sm} style={styles.text}>
 							{trailing.icon ? <Icon name={trailing.icon} size={16} color="ink2" /> : null}
 							<Text variant="buttonSm" color="ink2">
 								{trailing.label}

@@ -10,7 +10,6 @@ import { prepareExport, deliverExport } from "../download/export-file";
 import { useBuilderDocument, useDocumentId, useRenderedPage, DocumentState } from "../share/document";
 import { useResumeStore, useVersionActions, useVersionPreview } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
-import { paperText } from "@/dev/storyboard/paper-text.gen";
 import {
 	PushScreen,
 	HeroTarget,
@@ -186,12 +185,7 @@ export function PreviewScreen({ version = false }: { version?: boolean }) {
 					<View style={{ alignItems: "center", paddingTop: 16 }}>
 						{current ? (
 							<HeroTarget id={`resume-page-${id}`}>
-								<Page
-									source={{ uri: current.uri }}
-									width={pageWidth}
-									height={pageHeight}
-									fixtureText={paperText["B18-Preview"]}
-								/>
+								<Page source={{ uri: current.uri }} width={pageWidth} height={pageHeight} />
 							</HeroTarget>
 						) : (
 							<DocumentState

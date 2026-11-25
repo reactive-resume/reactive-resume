@@ -139,7 +139,6 @@ export function AIScreen() {
 				secondary={t`Requests by feature, last 30 days`}
 				trailing="caret"
 				last
-				boxHidden
 				onPress={web("/ai")}
 			/>
 			<SectionHeading title={t`Developer`} />
@@ -160,7 +159,6 @@ export function AIScreen() {
 				secondary={developer.connectedApplications}
 				trailing="caret"
 				last
-				boxHidden
 				onPress={() => router.push("/settings/connections")}
 			/>
 			{sent.length > 0 ? (

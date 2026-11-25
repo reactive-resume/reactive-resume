@@ -1,6 +1,5 @@
-// The Kit: every design-system component in the order of boards/Kit.png, for comparing with the board in both
-// themes (<scheme>://kit?theme=light|dark&scroll=<dp>; `scroll` opens it scrolled, for captures). Development and
-// storyboard builds only.
+// The Kit: every design-system component in one scrolling page, in both themes (<scheme>://kit?theme=light|dark).
+// Development and storyboard builds only.
 import { useLocalSearchParams } from "expo-router";
 import { type ReactNode, useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
@@ -108,7 +107,7 @@ const kitIcons: IconName[] = [
 ];
 
 export default function Kit() {
-	const { theme, scroll } = useLocalSearchParams<{ theme?: string; scroll?: string }>();
+	const { theme } = useLocalSearchParams<{ theme?: string }>();
 	const { colors, name } = useTheme();
 	const insets = useSafeAreaInsets();
 	const [segment, setSegment] = useState<"list" | "board" | "calendar">("list");
@@ -120,10 +119,7 @@ export default function Kit() {
 	const tile = { borderWidth: 1, borderColor: colors.line, borderRadius: 12, overflow: "hidden" as const };
 	return (
 		<Screen>
-			<ScrollView
-				contentOffset={{ x: 0, y: Number(scroll) || 0 }}
-				contentContainerStyle={{ paddingTop: insets.top, paddingBottom: insets.bottom + 24 }}
-			>
+			<ScrollView contentContainerStyle={{ paddingTop: insets.top, paddingBottom: insets.bottom + 24 }}>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 24, paddingTop: 16 }}>
 					<Icon name={name === "dark" ? "moon" : "sun"} />
 					<Text variant="sheetTitle">{name === "dark" ? "Dark theme" : "Light theme"}</Text>

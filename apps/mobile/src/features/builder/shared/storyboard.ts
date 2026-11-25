@@ -1,5 +1,5 @@
-// What storyboard scenarios set before a capture (scenarios/c.ts `prepare`): the field drawn focused, a ready
-// Improve proposal. Always empty outside captures.
+// What storyboard scenarios set before they count as ready (scenarios/c.ts `prepare`): the field drawn focused, a
+// ready Improve proposal. Always empty outside the storyboard variant.
 import { create } from "zustand";
 
 export type StoryboardProposal = { lineIndex: number; action: string; parts: { text: string; added?: boolean }[] };

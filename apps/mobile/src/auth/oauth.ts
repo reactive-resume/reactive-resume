@@ -209,7 +209,7 @@ export function forgetClient(origin: string): Promise<void> {
 	return SecureStore.deleteItemAsync(storeKey("client", origin));
 }
 
-/** The cached `client_id`, or a new one from dynamic client registration (body: reports/S3.md §1). */
+/** The cached `client_id`, or a new one from dynamic client registration. */
 export async function registerClient(origin: string, discovery: Discovery): Promise<string> {
 	const cached = await getClientId(origin);
 	if (cached) return cached;

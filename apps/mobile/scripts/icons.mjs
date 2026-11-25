@@ -1,9 +1,10 @@
 // Generates src/ui/icons.gen.ts from the storyboard's Phosphor 2.1.1 SVGs (one path each, 256 x 256 view box).
-// Usage: node scripts/icons.mjs <dir with regular/ and fill/>   (default: the handoff bundle's icons/svg)
+// Usage: node scripts/icons.mjs <dir with regular/ and fill/>
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-const root = resolve(process.argv[2] ?? "../../.agents/handoff/mobile-final/icons/svg");
+if (!process.argv[2]) throw new Error("Usage: node scripts/icons.mjs <dir with regular/ and fill/>");
+const root = resolve(process.argv[2]);
 const icons = {};
 for (const weight of ["regular", "fill"]) {
 	for (const file of readdirSync(join(root, weight)).sort()) {

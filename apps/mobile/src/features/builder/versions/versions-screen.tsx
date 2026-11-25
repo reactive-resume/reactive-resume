@@ -201,7 +201,6 @@ export function VersionsScreen() {
 							? { onLongPress: () => setActions({ id: version.id, name: version.name ?? "" }) }
 							: {})}
 						last={!sameDay(index, index + 1)}
-						boxHidden={!sameDay(index, index + 1)}
 						onPress={() =>
 							router.push({
 								pathname: "/builder/[id]/versions/[version]",

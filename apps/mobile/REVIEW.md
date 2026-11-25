@@ -1,6 +1,6 @@
 # Visual review: Pass 5, iOS
 
-Reviewer: independent (wrote none of the UI). Sources: board `screens/<ID>-<theme>.png` against the Release iOS captures,
+Reviewer: independent (wrote none of the UI). Sources: the storyboard screens against the Release iOS app,
 both at 390 × 844 pt. Fixed findings have been deleted; what is left is below. Coordinates are points from the top-left
 of the screen.
 
@@ -22,7 +22,7 @@ of the screen.
   (160,68,42); Wine (125,42,57) / (138,44,63); Ochre (154,107,22) / (122,90,18); Graphite (74,74,74) / (59,63,69). Ink
   blue matches. The code follows the web app's accent palette on purpose. · **should-fix** if the board wins.
 - **B3-Entry** · below the Description card, x 24–120, y 717–737 · Board: empty space between the card and the footer
-  actions. App: a "More fields" row with a caret-down icon. SCREENS.md puts rare fields under "More fields" at the end;
+  actions. App: a "More fields" row with a caret-down icon. The spec puts rare fields under "More fields" at the end;
   the board does not draw the row. · **should-fix** if the board wins.
 
 ## Open: needs a native change
@@ -38,5 +38,5 @@ of the screen.
   needs `UIViewControllerBasedStatusBarAppearance` set to NO in the iOS config (`expo-status-bar` has no effect with
   view-controller-based appearance), which changes status-bar handling for every screen. · **should-fix**
 - **Kit** · AI composer · Board: the send button in full accent while the "Knowledge couldn't load" status line shows.
-  App: the send button at 45% while sending is blocked (COMPONENTS.md §13: the line appears "while sending is
+  App: the send button at 45% while sending is blocked (the line appears "while sending is
   blocked"). The Kit draws the same Composer as B16 and C2; decide which state the Kit sample should show. · **nit**

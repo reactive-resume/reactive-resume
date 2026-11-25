@@ -1,4 +1,4 @@
-// Swipe actions on a row (MOTION.md §7). `start`: the row moves toward the start (Move to Trash, Delete, Done,
+// Swipe actions on a row. `start`: the row moves toward the start (Move to Trash, Delete, Done,
 // Delete permanently); `end`: toward the end (Move to the next stage). The row follows the finger; the action shows
 // underneath (`danger-fill` for removals, `accent` otherwise). At 40% of the width it arms: the action fills, d1,
 // and `light` plays (again only after going back under). Release while armed commits: the row slides out d2 `ease`

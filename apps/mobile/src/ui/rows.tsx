@@ -1,5 +1,5 @@
 import type { HapticToken } from "./tokens";
-// Lists and rows (COMPONENTS.md §5) with their leading and trailing pieces.
+// Lists and rows with their leading and trailing pieces.
 import type { ReactNode } from "react";
 import { View } from "react-native";
 import { Box, Ring, Touch } from "./base";
@@ -8,7 +8,6 @@ import { Icon, type IconName } from "./Icon";
 import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { type ColorToken, fonts, layout, radius, type TypeToken } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 /**
  * 40 × 40 icon tile; `accent` uses accent-soft with an accent-text icon. A4's 56 dp tiles keep the 10 dp corners and
@@ -29,7 +28,6 @@ export function IconTile({
 }) {
 	return (
 		<Box
-			component="IconTile"
 			bg={accent ? "accentSoft" : "sunken"}
 			radius={radius.md}
 			style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
@@ -43,7 +41,6 @@ export function IconTile({
 export function Monogram({ letters, numeral = false }: { letters: string; numeral?: boolean | undefined }) {
 	return (
 		<Box
-			component="Monogram"
 			bg="sunken"
 			radius={radius.md}
 			style={{ width: 40, height: 40, alignItems: "center", justifyContent: "center" }}
@@ -65,13 +62,11 @@ export function Monogram({ letters, numeral = false }: { letters: string; numera
  */
 const numeralStyle = { fontFamily: fonts.display, fontSize: 18, lineHeight: 16 };
 function Numeral({ children }: { children: string }) {
-	const ref = useDesignTag({ kind: "text", text: children, style: numeralStyle, color: "ink2" });
 	return (
-		<View ref={ref} collapsable={false} style={{ height: numeralStyle.lineHeight, justifyContent: "center" }}>
+		<View style={{ height: numeralStyle.lineHeight, justifyContent: "center" }}>
 			<Text
 				variant="sheetTitle"
 				color="ink2"
-				tag={false}
 				style={{ fontSize: 18, lineHeight: 22, marginVertical: -3 }}
 				maxFontSizeMultiplier={1.3}
 			>
@@ -88,7 +83,6 @@ export function DocThumb({ letter = false }: { letter?: boolean | undefined }) {
 	);
 	return (
 		<Box
-			component="DocThumb"
 			radius={3}
 			style={{
 				width: layout.listThumbWidth,
@@ -206,12 +200,7 @@ export type ListRowProps = {
 	washDelay?: number | undefined;
 	/** Extra content under the text block, inside the row. */
 	children?: ReactNode | undefined;
-	/**
-	 * A last row with no top divider that isn't a link draws no box of its own, and the boards never register one
-	 * (no borderless `div.li` in any layout dump): true leaves the row's box out of the dump, its contents stay.
-	 */
-	boxHidden?: boolean | undefined;
-	/** The title alone is the source of a shared-element flight (J1's company name → J6, MOTION.md §6.2). */
+	/** The title alone is the source of a shared-element flight (J1's company name → J6). */
 	titleHeroId?: string | undefined;
 	/**
 	 * The trailing slot holds its own control (a RowLink): the row stops grouping its content into one accessibility
@@ -249,7 +238,6 @@ export function ListRow({
 	testID,
 	washDelay = 50,
 	children,
-	boxHidden = false,
 	titleHeroId,
 	trailingAction = false,
 }: ListRowProps) {
@@ -275,8 +263,6 @@ export function ListRow({
 	);
 	const body = (
 		<Box
-			component="ListRow"
-			hidden={boxHidden}
 			style={{
 				minHeight: layout.listRowMin,
 				paddingVertical: 12,

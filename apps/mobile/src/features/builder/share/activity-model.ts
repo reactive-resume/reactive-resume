@@ -32,7 +32,7 @@ export function feedbackLinkLine(link: FeedbackLinkRow, at: Date = now()): strin
 
 /**
  * The storyboard draws 24 bars (heights in dp of a 64 dp chart); the fixture's daily views are flat, so the
- * storyboard capture uses the drawn shape. Gap: the fake's `dailyVisitors` lacks the storyboard's series.
+ * storyboard variant uses the drawn shape. Gap: the fake's `dailyVisitors` lacks the storyboard's series.
  */
 export const storyboardBars = [
 	13, 9.5, 19, 16, 6.5, 22.5, 29, 19, 13, 16, 35, 64, 45, 25.5, 19, 13, 9.5, 22.5, 16, 29, 19, 9.5, 13, 25.5,

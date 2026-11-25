@@ -1,4 +1,4 @@
-// Content swap crossfade (MOTION.md §2, §12): when `contentKey` changes, the new content fades in over `d2`
+// Content swap crossfade: when `contentKey` changes, the new content fades in over `d2`
 // (renders, lists, results, labels) or `d3` (hero cards) while the old content fades out on top of it. Opacity
 // only, so the layout takes the new content's size at once (content never jumps). Reduced motion keeps a `d1` fade
 // in place, like the overlays.

@@ -1,4 +1,4 @@
-// Dev deep link for the haptic contract flows (MOTION.md §4.3, §10.3):
+// Dev deep link for the haptic contract flows:
 //   <scheme>://dev/haptics?overlay=1&clear=1   turns the haptic pill on and clears the log, then goes back.
 // Storyboard and dev builds only.
 import { Redirect, router, useLocalSearchParams } from "expo-router";

@@ -1,5 +1,5 @@
 import type { BottomTabBarProps } from "expo-router/js-tabs";
-// Dock (COMPONENTS.md §15, MOTION.md §5, §6.3): root tabs, builder modes, letter modes. 1 dp `line` on top, `bg`,
+// Dock: root tabs, builder modes, letter modes. 1 dp `line` on top, `bg`,
 // 64 dp plus the bottom safe area, 8 dp sides, items share the width. The selection changes at once on tap (fill
 // icon swap, ink-2 → accent-text crossfade d1); content switches by fade-through (FadeThroughProvider). Builder and
 // letter docks play `selection`; root tabs play none. Re-tapping the selected item scrolls its list to the top.
@@ -18,7 +18,6 @@ import { Text } from "./Text";
 import { useTheme } from "./theme";
 import { useToastOffset } from "./Toast";
 import { layout, motion, radius } from "./tokens";
-import { useDesignTag } from "@/dev/storyboard/harness";
 
 export type DockVariant = "tabs" | "builder" | "letter";
 
@@ -56,7 +55,6 @@ export function Dock({ variant, items, selected, onNavigate, onReselect, onWillS
 	const large = fontScale >= 1.5;
 	const short = fontScale > 1.5;
 	const height = large ? layout.dockLargeText : layout.dock;
-	const ref = useDesignTag({ kind: "component", component: "Dock", bg: "bg" });
 	// The dock shows the tapped item at once, before the content has switched.
 	const [shown, setShown] = useState(selected);
 	const [lastSelected, setLastSelected] = useState(selected);
@@ -83,8 +81,6 @@ export function Dock({ variant, items, selected, onNavigate, onReselect, onWillS
 
 	return (
 		<View
-			ref={ref}
-			collapsable={false}
 			accessibilityRole="tablist"
 			style={[styles.dock, { backgroundColor: colors.bg, borderTopColor: colors.line, paddingBottom: insets.bottom }]}
 		>
@@ -119,7 +115,6 @@ function DockItem({
 	onPress: () => void;
 }) {
 	const { colors } = useTheme();
-	const ref = useDesignTag({ kind: "component", component: "DockItem" });
 	const s = useSharedValue(selected ? 1 : 0);
 	useEffect(() => {
 		s.set(withTiming(selected ? 1 : 0, enter(motion.d1)));
@@ -132,7 +127,7 @@ function DockItem({
 			feedback="none"
 			onPress={onPress}
 			accessibilityRole="tab"
-			// The warn dot in words (BUILD.md §3.7): "Check, issues to review".
+			// The warn dot in words: "Check, issues to review".
 			accessibilityLabel={
 				item.count
 					? `${item.label}, ${item.count}`
@@ -143,38 +138,23 @@ function DockItem({
 			accessibilityState={{ selected }}
 			style={[styles.item, { height }]}
 		>
-			<View ref={ref} collapsable={false} style={StyleSheet.absoluteFill} pointerEvents="none" />
 			<View style={{ width: iconSize, height: iconSize }}>
 				{/* Regular → fill swaps at once; the colour crossfades d1. */}
 				<Fade s={s} on={false} absolute>
-					<Icon name={item.icon} size={iconSize} color={selected ? "accentText" : "ink2"} tag={!selected} />
+					<Icon name={item.icon} size={iconSize} color={selected ? "accentText" : "ink2"} />
 				</Fade>
 				<Fade s={s} on absolute>
-					<Icon name={item.icon} size={iconSize} color="accentText" fill tag={selected} />
+					<Icon name={item.icon} size={iconSize} color="accentText" fill />
 				</Fade>
 			</View>
 			<View>
 				<Fade s={s} on={false}>
-					<Text
-						variant="dockLabel"
-						color="ink2"
-						maxFontSizeMultiplier={1}
-						style={labelStyle}
-						numberOfLines={1}
-						tag={!selected}
-					>
+					<Text variant="dockLabel" color="ink2" maxFontSizeMultiplier={1} style={labelStyle} numberOfLines={1}>
 						{label}
 					</Text>
 				</Fade>
 				<Fade s={s} on absolute>
-					<Text
-						variant="dockLabel"
-						color="accentText"
-						maxFontSizeMultiplier={1}
-						style={labelStyle}
-						numberOfLines={1}
-						tag={selected}
-					>
+					<Text variant="dockLabel" color="accentText" maxFontSizeMultiplier={1} style={labelStyle} numberOfLines={1}>
 						{label}
 					</Text>
 				</Fade>

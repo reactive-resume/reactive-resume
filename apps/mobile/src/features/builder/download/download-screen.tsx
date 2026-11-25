@@ -25,7 +25,7 @@ import {
 
 /**
  * The text format's row title. The app exports Markdown, as the web app does; the storyboard names that row "Plain
- * text", so storyboard captures show the drawn word while real use says what the file is.
+ * text", so the storyboard variant shows the drawn word while real use says what the file is.
  */
 const textFormatLabel = () => (STORYBOARD ? t`Plain text` : t`Markdown`);
 
@@ -163,7 +163,6 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 					secondary={needsServer(item.id) ? t`Connect to make this format.` : item.reason}
 					disabled={needsServer(item.id)}
 					last={item.id === (more ? "odt" : "json")}
-					boxHidden={item.id === (more ? "odt" : "json")}
 					leading={<Radio selected={format === item.id} interactive={false} />}
 					onPress={() => {
 						if (format !== item.id) {

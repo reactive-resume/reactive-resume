@@ -88,7 +88,6 @@ export function PrepScreen() {
 
 	return (
 		<PushScreen
-			clipDump
 			title={round ? interviewTitle(round.kind) : t`Interview prep`}
 			subtitle={
 				when ? (
@@ -220,7 +219,6 @@ export function PrepScreen() {
 							secondary={t`Tap to copy`}
 							trailing="caret"
 							last={i === questionsToAsk.length - 1}
-							boxHidden={i === questionsToAsk.length - 1}
 							onPress={() => void Clipboard.setStringAsync(q.text).then(() => showToast({ message: t`Copied` }))}
 						/>
 					))}

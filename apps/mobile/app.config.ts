@@ -30,7 +30,7 @@ const config: ExpoConfig = {
 		supportsTablet: true,
 		infoPlist: {
 			CADisableMinimumFrameDurationOnPhone: true,
-			// The storyboard build posts layout dumps to the capture script on localhost.
+			// The storyboard build may reach services on localhost.
 			...(storyboard ? { NSAppTransportSecurity: { NSAllowsLocalNetworking: true } } : {}),
 		},
 		config: { usesNonExemptEncryption: false },

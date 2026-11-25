@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-// Storyboard backdrops (lead's decision, FIDELITY-LOG.md): the boards draw a simplified stub of the screen under a
+// Storyboard backdrops (lead's decision): the boards draw a simplified stub of the screen under a
 // sheet or dialog (bar and title only, or the list shifted by a couple of dp), not the real screen. In storyboard
-// captures only, the scenario presents the sheet over this route instead, which draws exactly what that screen's
-// layout dump lists outside the sheet, with the design system's components at the dump's positions. The real app
+// scenarios only, the sheet is presented over this route instead, which draws that stub with the design system's
+// components. The real app
 // always shows the real screen underneath. Inert without EXPO_PUBLIC_STORYBOARD=1.
 import { useLocalSearchParams } from "expo-router";
 import { View } from "react-native";
@@ -60,7 +60,7 @@ const sectionStub = () => (
 	>
 		<View style={{ paddingTop: 20 }}>
 			<ListRow top title="Northwind Labs" secondary="Senior product designer · 2022 – now" trailing="caret" />
-			<ListRow last boxHidden title="Harbour Studio" secondary="Product designer · 2019 – 2022" trailing="caret" />
+			<ListRow last title="Harbour Studio" secondary="Product designer · 2019 – 2022" trailing="caret" />
 		</View>
 	</PushScreen>
 );
