@@ -268,9 +268,15 @@ export async function harvestPdfDocument(document: PdfDocumentLike, options: Har
 	]);
 
 	const metadata = readMetadata(metadataRaw);
+	// pdf.js 6 builds MarkInfo as a Map, while older releases used a plain
+	// object. Read both shapes so tagged PDFs are not always reported untagged.
 	const markInfo =
-		typeof markInfoRaw === "object" && markInfoRaw !== null ? (markInfoRaw as { Marked?: unknown }) : null;
-	metadata.isTagged = asBoolean(markInfo?.Marked);
+		markInfoRaw instanceof Map
+			? markInfoRaw.get("Marked")
+			: typeof markInfoRaw === "object" && markInfoRaw !== null
+				? (markInfoRaw as { Marked?: unknown }).Marked
+				: undefined;
+	metadata.isTagged = asBoolean(markInfo);
 
 	const pages: RawPage[] = [];
 	const links: RawLinkAnnotation[] = [];
