@@ -11,6 +11,7 @@ import {
 	getOutlineRows,
 	isSectionHidden,
 	moveSection,
+	moveSectionToGroup,
 } from "./model";
 
 const resume = (edit?: (data: ResumeData) => void) => {
@@ -62,6 +63,37 @@ describe("outline", () => {
 			main: ["summary", "skills", "experience", "education"],
 			sidebar: [],
 		});
+	});
+});
+
+describe("moveSectionToGroup", () => {
+	const twoPages = () =>
+		resume((draft) => {
+			withEntries(draft, "experience", "education", "skills");
+			draft.metadata.layout.pages = [
+				{ fullWidth: false, main: ["summary", "experience"], sidebar: [] },
+				{ fullWidth: false, main: [], sidebar: ["education", "skills"] },
+			];
+		});
+
+	it("puts a section first in a column, or last, including a column with nothing in it", () => {
+		const data = twoPages();
+		const first = produce(data, (draft) =>
+			moveSectionToGroup(draft, "summary", { page: 1, column: "sidebar" }, "start"),
+		);
+		expect(first.metadata.layout.pages).toMatchObject([
+			{ main: ["experience"], sidebar: [] },
+			{ main: [], sidebar: ["summary", "education", "skills"] },
+		]);
+
+		const empty = produce(data, (draft) => moveSectionToGroup(draft, "skills", { page: 1, column: "main" }, "end"));
+		expect(empty.metadata.layout.pages[1]).toMatchObject({ main: ["skills"], sidebar: ["education"] });
+	});
+
+	it("leaves the layout as it was for a page that doesn't exist", () => {
+		const data = twoPages();
+		const moved = produce(data, (draft) => moveSectionToGroup(draft, "summary", { page: 5, column: "main" }, "end"));
+		expect(moved).toBe(data);
 	});
 });
 

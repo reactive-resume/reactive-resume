@@ -7,7 +7,14 @@ import { DRAG_AUTO_SCROLL } from "./motion";
  * What a draggable or droppable tells screen readers about itself, passed as dnd-kit `data`: its visible name, and
  * for an item the group it sits in where that matters (a page, a column). Ids are never read out.
  */
-export type DndLabel = { label: string; group?: string | undefined };
+export type DndLabel = {
+	label: string;
+	group?: string | undefined;
+	/** Where an item over this target is, said in place of a position: "the start of Page 2". */
+	place?: string | undefined;
+	/** Its 1-based position and the list's length, when the list holds targets that aren't items (a page line). */
+	position?: { index: number; total: number } | undefined;
+};
 
 type SortableData = { containerId: string | number; index: number; items: unknown[] };
 type Entry = { id: Active["id"]; data: Active["data"] | Over["data"] };
@@ -19,10 +26,11 @@ const nameOf = (entry: Entry) => dataOf(entry)?.label?.trim() || t`Untitled item
 /** Where `over` is for `active`: a position in the same list, else the group or the target's own name. */
 function placeOf(active: Active, over: Over) {
 	const target = dataOf(over);
+	if (target?.place) return target.place;
 	const sortable = target?.sortable;
 	if (sortable && sortable.containerId === dataOf(active)?.sortable?.containerId) {
-		const position = sortable.index + 1;
-		const total = sortable.items.length;
+		const position = target.position?.index ?? sortable.index + 1;
+		const total = target.position?.total ?? sortable.items.length;
 		const group = target.group;
 		return group
 			? t({
