@@ -20,11 +20,11 @@ type SkillFixture = {
 };
 
 /**
- * Issue #4010: with the skills "One line per skill" option (`layout: "inline"`), rows misaligned —
- * the name shrank when the fields after it overflowed the row, wrapping a multi-word name onto two
- * lines and leaving a dead gap before the remaining fields, while single-line rows centered the name
- * against the smaller keywords instead of sharing its baseline. The row must keep the name on one
- * line and put the first detail line on the name's baseline.
+ * Issue #4010: with the skills "One line per skill" option (`layout: "inline"`), rows misaligned. A name shrank when
+ * the fields after it overflowed the row, wrapping onto two lines while keeping its wide box, so every row's details
+ * started at a different x; single-line rows centered the name against the smaller keywords instead of sharing its
+ * baseline. Names now sit in a fixed-width column: every row's details start at the same x, on the name's baseline,
+ * and a long name wraps inside its column instead of squeezing the details, in the sidebar too.
  */
 
 const skill = ({ id, name, proficiency = "", level = 0, keywords = [] }: SkillFixture) => ({
@@ -83,6 +83,18 @@ const TEXT_DETAIL_ITEMS: SkillFixture[] = [
 const LEVEL_ONLY_ITEM: SkillFixture = { id: "s10", name: "LevelOnly", level: 4 };
 const NAME_ONLY_ITEM: SkillFixture = { id: "s11", name: "NameOnly" };
 
+/** Names too wide for a sidebar row; every first word is unique so a wrapped name's first line names its row. */
+const SIDEBAR_ITEMS: SkillFixture[] = [
+	{ id: "t0", name: "Frontend", keywords: ["HTML", "CSS", "JavaScript", "Responsive Design", "React"] },
+	{ id: "t1", name: "Cloud & DevOps", keywords: ["Oracle Cloud VPS", "Docker", "Nginx", "CI/CD", "Docker Compose"] },
+	{ id: "t2", name: "Tools & Version Control", keywords: ["Git", "GitHub"] },
+	{ id: "t3", name: "Programming Languages & Frameworks", keywords: ["TypeScript", "Python", "React"] },
+	{ id: "t4", name: "Infrastructure & Cloud Platforms", keywords: ["Kubernetes", "Terraform"] },
+	{ id: "t5", name: "Rated Keywords", level: 3, keywords: ["Delta", "Epsilon", "Zeta"] },
+	{ id: "t6", name: "Seniority", proficiency: "Experienced", level: 4 },
+	{ id: "t7", name: "LevelOnly", level: 4 },
+];
+
 const fixture = (items: SkillFixture[], placement: "main" | "sidebar" = "main"): ResumeData => {
 	const data = structuredClone(defaultResumeData);
 	data.metadata.typography.body.fontFamily = "Helvetica";
@@ -109,12 +121,13 @@ const fixture = (items: SkillFixture[], placement: "main" | "sidebar" = "main"):
 };
 
 type TextItem = { str: string; x: number; y: number; w: number };
+type RenderedPage = { width: number; items: TextItem[] };
 
-const extractTextItems = async (bytes: Uint8Array): Promise<TextItem[][]> => {
+const extractTextItems = async (bytes: Uint8Array): Promise<RenderedPage[]> => {
 	const loading = getDocument({ data: bytes.slice(), useSystemFonts: true });
 	try {
 		const pdf = await loading.promise;
-		const pages: TextItem[][] = [];
+		const pages: RenderedPage[] = [];
 		for (let index = 1; index <= pdf.numPages; index++) {
 			const page = await pdf.getPage(index);
 			const items = (await page.getTextContent()).items.flatMap((item) =>
@@ -122,7 +135,7 @@ const extractTextItems = async (bytes: Uint8Array): Promise<TextItem[][]> => {
 					? [{ str: item.str, x: item.transform[4], y: item.transform[5], w: item.width }]
 					: [],
 			);
-			pages.push(items);
+			pages.push({ width: page.view[2] ?? 0, items });
 		}
 		return pages;
 	} finally {
@@ -140,10 +153,12 @@ const required = <T,>(value: T | undefined, label: string): T => {
 	return value;
 };
 
-/** The name item and the first detail item sharing its baseline (smallest x right of the name). */
+const firstWord = (text: string) => text.trim().split(/\s+/)[0] ?? "";
+
+/** The first line of a (possibly wrapped) name, and the first detail item sharing its baseline. */
 const rowPair = (items: TextItem[], name: string) => {
 	const nameItem = required(
-		items.find((item) => item.str === name),
+		items.find((item) => name.startsWith(item.str.trim()) && firstWord(item.str) === firstWord(name)),
 		`name item ${name}`,
 	);
 	const detail = items
@@ -152,38 +167,119 @@ const rowPair = (items: TextItem[], name: string) => {
 	return { name: nameItem, detail };
 };
 
+/**
+ * Text pieces that are a fragment of a fixture word: a word broken mid-way because its box got too narrow. Breaks
+ * after a hyphen or slash ("Server-" / "side") are ordinary line breaks and don't count.
+ */
+const brokenWords = (pages: RenderedPage[], items: SkillFixture[]) => {
+	const text = items.flatMap((item) => [item.name, item.proficiency ?? "", ...(item.keywords ?? [])]).join(" ");
+	const words = new Set(text.split(/[\s,]+/).filter(Boolean));
+	const isWord = (token: string) =>
+		words.has(token) ||
+		[...words].some(
+			(word) =>
+				(/[-/]$/.test(token) && word.startsWith(token)) || word.endsWith(`-${token}`) || word.endsWith(`/${token}`),
+		);
+	return pages
+		.flatMap((page) => page.items.flatMap((item) => item.str.split(/[\s,]+/)))
+		.filter((token) => token !== "" && !isWord(token) && text.includes(token));
+};
+
+/** Every text item lies inside its page horizontally. */
+const expectInsidePages = (pages: RenderedPage[]) => {
+	for (const page of pages) {
+		for (const item of page.items) {
+			expect(item.x, `${item.str} left`).toBeGreaterThanOrEqual(-0.5);
+			expect(item.x + item.w, `${item.str} right`).toBeLessThanOrEqual(page.width + 0.5);
+		}
+	}
+};
+
+/** Every text-detail row puts its first detail on the name's baseline, and all of them start at one shared x. */
+const expectAlignedDetails = (pages: RenderedPage[], items: SkillFixture[]) => {
+	const text = pages.flatMap((page) => page.items);
+	const starts: number[] = [];
+	for (const item of items) {
+		if ((item.keywords?.length ?? 0) === 0 && !item.proficiency) continue;
+		const { name, detail } = rowPair(text, item.name);
+		const first = required(detail, `${item.name} first detail line`);
+		expect(Math.abs(first.y - name.y), `${item.name} baseline`).toBeLessThan(0.1);
+		starts.push(first.x);
+	}
+	expect(starts.length).toBeGreaterThan(1);
+	expect(Math.max(...starts) - Math.min(...starts), "detail column start").toBeLessThan(0.5);
+};
+
 const flatten = (node: ElementInfo): ElementInfo[] => [node, ...node.children.flatMap(flatten)];
+
+const ratingSquares = (elements: ElementInfo[]) =>
+	elements.filter(
+		(element) => element.nodeType === "View" && element.children.length === 0 && Math.abs(element.height - 8) < 0.5,
+	);
 
 describe("inline skills row alignment (#4010)", () => {
 	it.each(["onyx", "gengar"] as const)(
-		"keeps every name on one line and shares its baseline with the first detail in %s",
+		"keeps every name on one line and lines the details up on its baseline in %s",
 		async (template) => {
-			const data = fixture([...TEXT_DETAIL_ITEMS, LEVEL_ONLY_ITEM, NAME_ONLY_ITEM]);
-			const pages = await renderPages(data, template);
+			const items = [...TEXT_DETAIL_ITEMS, LEVEL_ONLY_ITEM, NAME_ONLY_ITEM];
+			const pages = await renderPages(fixture(items), template);
 
-			for (const item of [...TEXT_DETAIL_ITEMS, LEVEL_ONLY_ITEM, NAME_ONLY_ITEM]) {
-				// The name never wraps onto a second line.
+			for (const item of items) {
+				// The name fits its column and never wraps onto a second line.
 				expect(
-					pages.flat().filter((text) => text.str === item.name),
+					pages.flatMap((page) => page.items).filter((text) => text.str === item.name),
 					`${item.name} must appear as a single text item`,
 				).toHaveLength(1);
 			}
 
-			for (const item of TEXT_DETAIL_ITEMS) {
-				const { name, detail } = rowPair(pages.flat(), item.name);
-				expect(detail, `${item.name} first detail line`).toBeDefined();
-				// First detail line sits on the name's baseline, not centered against a smaller box.
-				expect(Math.abs((detail?.y ?? 0) - name.y), `${item.name} baseline`).toBeLessThan(0.1);
-				if (template === "onyx") {
-					// The detail column starts one columnGap after the name ends — no dead gap.
-					expect(detail && Math.abs(detail.x - (name.x + name.w + 4)), `${item.name} detail x`).toBeLessThan(1);
-				}
-			}
-
-			// The trailing name-only and name+level rows keep their names on single lines too.
-			expect(pages.flat().some((text) => text.str === "NameOnly")).toBe(true);
+			expectAlignedDetails(pages, TEXT_DETAIL_ITEMS);
+			expect(brokenWords(pages, items)).toEqual([]);
+			expectInsidePages(pages);
 		},
 	);
+
+	it.each(["azurill", "leafish", "gengar"] as const)(
+		"wraps long names inside their column without squeezing the details in the %s sidebar",
+		async (template) => {
+			const pages = await renderPages(fixture(SIDEBAR_ITEMS, "sidebar"), template);
+
+			expectAlignedDetails(pages, SIDEBAR_ITEMS);
+			expect(brokenWords(pages, SIDEBAR_ITEMS)).toEqual([]);
+			expectInsidePages(pages);
+			// The details keep their width: the longest keyword run stays on a single line.
+			expect(pages.flatMap((page) => page.items).map((text) => text.str)).toContain("TypeScript, Python, React");
+		},
+	);
+
+	it("puts gengar's rating under the name so the rated row's details stay readable and aligned", async () => {
+		const items: SkillFixture[] = [
+			{ id: "s0", name: "Frontend", keywords: ["HTML", "CSS"] },
+			{ id: "s1", name: "Rated Keywords", level: 3, keywords: ["Delta", "Epsilon", "Zeta"] },
+		];
+		const data = fixture(items);
+		const pages = await renderPages(data, "gengar");
+		expectAlignedDetails(pages, items);
+		expect(pages.flatMap((page) => page.items).map((text) => text.str)).toContain("Delta, Epsilon, Zeta");
+
+		const { layout } = await act(() => renderResume(forme, { data, template: "gengar" }));
+		const elements = layout.pages.flatMap((page) => page.elements.flatMap(flatten));
+		const nameLine = required(
+			elements.find((element) => element.nodeType === "TextLine" && element.textContent === "Rated Keywords"),
+			"Rated Keywords text line",
+		);
+		const keywordLine = required(
+			elements.find((element) => element.nodeType === "TextLine" && element.textContent?.includes("Delta")),
+			"keyword text line",
+		);
+		const squares = ratingSquares(elements);
+		expect(squares).toHaveLength(5);
+		for (const square of squares) {
+			// Under the name, inside the name column, at full size.
+			expect(square.y).toBeGreaterThanOrEqual(nameLine.y + nameLine.height - 0.5);
+			expect(square.x + square.width).toBeLessThanOrEqual(keywordLine.x);
+			expect(square.width).toBeCloseTo(square.height, 0);
+		}
+	});
 
 	it("centers the rating band on name+level-only rows", async () => {
 		const data = fixture([LEVEL_ONLY_ITEM]);
@@ -194,9 +290,7 @@ describe("inline skills row alignment (#4010)", () => {
 			elements.find((element) => element.nodeType === "TextLine" && element.textContent === "LevelOnly"),
 			"LevelOnly text line",
 		);
-		const squares = elements.filter(
-			(element) => element.nodeType === "View" && element.children.length === 0 && Math.abs(element.height - 8) < 0.5,
-		);
+		const squares = ratingSquares(elements);
 		expect(squares).toHaveLength(5);
 
 		const nameCenter = nameLine.y + nameLine.height / 2;
@@ -218,9 +312,7 @@ describe("inline skills row alignment (#4010)", () => {
 			elements.find((element) => element.nodeType === "TextLine" && element.textContent?.includes("Delta")),
 			"keyword text line",
 		);
-		const squares = elements.filter(
-			(element) => element.nodeType === "View" && element.children.length === 0 && Math.abs(element.height - 8) < 0.5,
-		);
+		const squares = ratingSquares(elements);
 		expect(squares).toHaveLength(5);
 		// Name, keywords, then rating (#2611 ordering): the rating band starts right of the keyword text.
 		expect(keywordLine.x).toBeGreaterThan(nameLine.x + nameLine.width);
@@ -239,33 +331,34 @@ describe("inline skills row alignment (#4010)", () => {
 		const { layout } = await act(() => renderResume(forme, { data, template: "onyx" }));
 		expect(layout.pages.length).toBeGreaterThan(1);
 
-		const bytes = new Uint8Array(await act(() => renderToBuffer(<ResumeDocument data={data} template="onyx" />)));
-		const pages = await extractTextItems(bytes);
+		const pages = await renderPages(data, "onyx");
 		expect(pages.length).toBeGreaterThan(1);
+		const all = pages.flatMap((page) => page.items);
 
 		// Every skill still renders its name exactly once and, inside its own page, its details keep
 		// the name's baseline. A row landing exactly on the break fragments into bare text boxes
 		// upstream; that pre-existing engine quirk drops the pairing, so the boundary row only has to
 		// keep all of its text.
 		for (const [index, item] of items.entries()) {
-			expect(pages.flat().filter((text) => text.str === item.name)).toHaveLength(1);
+			expect(all.filter((text) => text.str === item.name)).toHaveLength(1);
 			const page = required(
-				pages.find((pageItems) => pageItems.some((text) => text.str === item.name)),
+				pages.find((candidate) => candidate.items.some((text) => text.str === item.name)),
 				`page for ${item.name}`,
 			);
-			const { name, detail } = rowPair(page, item.name);
+			const { name, detail } = rowPair(page.items, item.name);
 			if (detail) expect(Math.abs(detail.y - name.y), `${item.name} baseline`).toBeLessThan(0.1);
 			else {
 				// Fragmented boundary row: only the topmost row on a page may land here, and its
 				// keywords still render, just outside a shared baseline.
-				const topmost = Math.max(...page.map((text) => text.y));
+				const topmost = Math.max(...page.items.map((text) => text.y));
 				expect(topmost - name.y, `${item.name} may only fragment at a page top`).toBeLessThan(3);
 				expect(
-					pages.flat().filter((text) => text.str === `Keyword${index}A, Keyword${index}B`),
+					all.filter((text) => text.str === `Keyword${index}A, Keyword${index}B`),
 					`${item.name} keywords`,
 				).not.toHaveLength(0);
 			}
 		}
+		expectInsidePages(pages);
 
 		// Page map click targets track the laid-out item boxes and stay inside every page.
 		const map = extractPageMap(layout);

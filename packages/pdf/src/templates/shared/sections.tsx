@@ -1504,6 +1504,21 @@ const inlineSkillsItemStyle = {
 	columnGap: 4,
 } satisfies Style;
 
+/**
+ * One line per skill puts every name in a column of the same width, so each row's details start at the same x and
+ * a long name wraps inside its column instead of squeezing the details. Forme keeps a wrapped text box at its
+ * unwrapped width, so the column needs a fixed width; the narrower sidebar gives the name a larger share.
+ */
+const inlineSkillsNameColumnStyle = {
+	main: { width: "35%", flexShrink: 0 },
+	sidebar: { width: "40%", flexShrink: 0 },
+} satisfies Record<TemplatePlacement, Style>;
+
+/** A rating placed after the name sits under it, at its own width rather than the template's share of the row. */
+const inlineSkillsLevelStyle = { width: "auto", alignSelf: "flex-start" } satisfies Style;
+
+const inlineSkillsDetailsStyle = { flexGrow: 1, flexShrink: 1, flexBasis: 0 } satisfies Style;
+
 const getSkillsItemStyle = (isInline: boolean, item: SkillItem, metrics: ReturnType<typeof getTemplateMetrics>) => {
 	if (isInline) {
 		return composeStyles(
@@ -1521,40 +1536,55 @@ const SkillsSection = ({ sectionId = "skills", sectionData }: ItemSectionProps<S
 	const inlineStyle = useTemplateStyle("inline");
 	const metrics = getTemplateMetrics(data.metadata.page);
 	const skillLevelAfterName = useTemplateFeature("skillLevelAfterName");
+	const placement = useTemplatePlacement();
 
 	if (items.length === 0) return null;
 
 	const isInlineSkillsItem = "layout" in skills && skills.layout === "inline";
+	const nameColumnStyle = isInlineSkillsItem ? inlineSkillsNameColumnStyle[placement] : undefined;
 
 	return (
 		<SectionShell sectionId={sectionId} title={skills.title}>
 			<SectionItems columns={skills.columns}>
-				{items.map((item) => (
-					<SectionItem key={item.id} itemId={item.id} style={getSkillsItemStyle(isInlineSkillsItem, item, metrics)}>
+				{items.map((item) => {
+					const header = (
 						<SectionItemHeader>
 							<View style={composeStyles(inlineStyle)}>
 								<Icon name={item.icon as IconName} />
-								<Bold semanticField="name" style={composeStyles(isInlineSkillsItem ? undefined : { flex: 1 })}>
+								<Bold semanticField="name" style={composeStyles(isInlineSkillsItem ? { flexShrink: 1 } : { flex: 1 })}>
 									{item.name}
 								</Bold>
 							</View>
 						</SectionItemHeader>
+					);
 
-						{skillLevelAfterName && <LevelDisplay level={item.level} />}
-						<View style={isInlineSkillsItem ? { flexGrow: 1, flexBasis: 0 } : { flexGrow: skills.columns > 1 ? 1 : 0 }}>
-							{hasSplitRowText(item.proficiency) && <Text semanticField="proficiency">{item.proficiency}</Text>}
-							{"keywordLayout" in skills && skills.keywordLayout === "list" ? (
-								item.keywords.map((keyword, index) => (
-									<Small key={index} semanticField="keywords">{`• ${keyword}`}</Small>
-								))
+					return (
+						<SectionItem key={item.id} itemId={item.id} style={getSkillsItemStyle(isInlineSkillsItem, item, metrics)}>
+							{nameColumnStyle ? (
+								<View style={nameColumnStyle}>
+									{header}
+									{skillLevelAfterName && <LevelDisplay level={item.level} style={inlineSkillsLevelStyle} />}
+								</View>
 							) : (
-								<Small semanticField="keywords">{item.keywords.join(", ")}</Small>
+								header
 							)}
-							{!skillLevelAfterName && isInlineSkillsItem && <LevelDisplay level={item.level} />}
-						</View>
-						{!skillLevelAfterName && !isInlineSkillsItem && <LevelDisplay level={item.level} />}
-					</SectionItem>
-				))}
+
+							{skillLevelAfterName && !nameColumnStyle && <LevelDisplay level={item.level} />}
+							<View style={isInlineSkillsItem ? inlineSkillsDetailsStyle : { flexGrow: skills.columns > 1 ? 1 : 0 }}>
+								{hasSplitRowText(item.proficiency) && <Text semanticField="proficiency">{item.proficiency}</Text>}
+								{"keywordLayout" in skills && skills.keywordLayout === "list" ? (
+									item.keywords.map((keyword, index) => (
+										<Small key={index} semanticField="keywords">{`• ${keyword}`}</Small>
+									))
+								) : (
+									<Small semanticField="keywords">{item.keywords.join(", ")}</Small>
+								)}
+								{!skillLevelAfterName && isInlineSkillsItem && <LevelDisplay level={item.level} />}
+							</View>
+							{!skillLevelAfterName && !isInlineSkillsItem && <LevelDisplay level={item.level} />}
+						</SectionItem>
+					);
+				})}
 			</SectionItems>
 		</SectionShell>
 	);
