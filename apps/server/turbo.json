@@ -2,9 +2,6 @@
 	"extends": ["//"],
 	"tags": ["app:server", "runtime:server", "role:adapter"],
 	"tasks": {
-		"build": {
-			"inputs": ["$TURBO_EXTENDS$", "$TURBO_ROOT$/plugins/reactive-resume/skills/**"]
-		},
 		"test": {
 			"env": ["$TURBO_EXTENDS$", "OAUTH_TEST_DATABASE_URL"]
 		},

@@ -2,7 +2,6 @@ import { env } from "@reactive-resume/env/server";
 import { publicResumeUrl } from "@reactive-resume/resume/sharing";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { getLocaleAlternates } from "@reactive-resume/utils/locale";
-import { countAgentSkills } from "./agent-skills";
 
 const DOCS_URL = "https://docs.rxresu.me";
 export const CONTEXT7_ASK_URL = "https://context7.com/api/v2/ask?siteKey=ask_b3fd9335a63f1b21b1a814ac";
@@ -33,7 +32,6 @@ export function handleRobots() {
 		"Allow: /.well-known/integrations.json",
 		"Allow: /.well-known/api-catalog",
 		"Allow: /.well-known/mcp/server-card.json",
-		"Allow: /.well-known/agent-skills/",
 		"",
 		`Sitemap: ${baseUrl}/sitemap.xml`,
 		`Sitemap: ${DOCS_URL}/sitemap.xml`,
@@ -110,7 +108,6 @@ export async function handleResumesSitemap(page: number) {
 
 export function handleLlms() {
 	const baseUrl = appUrl();
-	const skillCount = countAgentSkills();
 	const body = [
 		"# Reactive Resume",
 		"",
@@ -147,7 +144,7 @@ export function handleLlms() {
 		`- [OpenAPI specification](${baseUrl}/openapi.json)`,
 		`- [Resume JSON schema](${baseUrl}/schema.json)`,
 		`- [MCP server guide](${DOCS_URL}/guides/using-the-mcp-server): connect any MCP client to ${baseUrl}/mcp with OAuth or an API key.`,
-		`- [Agent skills](${DOCS_URL}/guides/using-agent-skills): ${skillCount ? `${skillCount} resume and job-search skills` : "resume and job-search skills"}, also listed at ${baseUrl}/.well-known/agent-skills/index.json.`,
+		`- [Agent skills](${DOCS_URL}/guides/using-agent-skills): resume and job-search skills for Claude, Codex and other agents, published at https://github.com/reactive-resume/skills.`,
 		`- [Integrations](${baseUrl}/.well-known/integrations.json): every API and MCP surface with its authentication.`,
 		"",
 		"## Community",

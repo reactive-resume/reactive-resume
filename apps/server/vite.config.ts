@@ -1,7 +1,7 @@
 import type { TsdownPlugin } from "vite-plus/pack";
 import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite-plus";
 
@@ -86,25 +86,6 @@ const promptAssetsPlugin: TsdownPlugin = {
 	},
 };
 
-const agentSkillsDir = resolve(dirname(fileURLToPath(import.meta.url)), "../../plugins/reactive-resume/skills");
-
-// Copies the published agent skills beside the bundle; src/static/agent-skills.ts archives them for discovery.
-const agentSkillAssetsPlugin: TsdownPlugin = {
-	name: "agent-skill-assets",
-	buildStart() {
-		for (const entry of readdirSync(agentSkillsDir, { recursive: true, withFileTypes: true })) {
-			if (!entry.isFile()) continue;
-			const path = join(entry.parentPath, entry.name);
-
-			this.emitFile({
-				type: "asset",
-				fileName: `agent-skills/${relative(agentSkillsDir, path).split("\\").join("/")}`,
-				source: readFileSync(path),
-			});
-		}
-	},
-};
-
 const requireFromServer = createRequire(import.meta.url);
 
 // Files the server reads at runtime but never imports. A Vercel Function only contains traced imports, so these are
@@ -153,6 +134,6 @@ export default defineConfig({
 			alwaysBundle: shouldBundle,
 			neverBundle: shouldExternalizeThirdParty,
 		},
-		plugins: [promptAssetsPlugin, agentSkillAssetsPlugin, wasmAssetsPlugin],
+		plugins: [promptAssetsPlugin, wasmAssetsPlugin],
 	},
 });

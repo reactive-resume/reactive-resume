@@ -283,7 +283,7 @@ The full documentation lives at [docs.rxresu.me](https://docs.rxresu.me):
 | [What's new in v6](https://docs.rxresu.me/guides/whats-new-in-v6)                                                | Changes and where familiar features moved                       |
 | [Checking your resume](https://docs.rxresu.me/guides/checking-your-resume)                                       | Readability, job match, and writing reviews                     |
 | [Using the assistant](https://docs.rxresu.me/guides/using-the-assistant)                                         | Ask for changes and review proposed edits                       |
-| [Resume and career agent skills](plugins/reactive-resume/README.md)                                              | 32 skills for resume writing, specific roles and the job search |
+| [Resume and career agent skills](https://github.com/reactive-resume/skills)                                      | 32 skills for resume writing, specific roles and the job search |
 | [Writing a cover letter](https://docs.rxresu.me/guides/writing-a-cover-letter)                                   | Create a letter and link it to a resume                         |
 | [Tracking job applications](https://docs.rxresu.me/guides/tracking-job-applications)                             | Saved jobs, stages, interviews, and insights                    |
 | [Exporting your resume](https://docs.rxresu.me/guides/exporting-your-resume)                                     | PDF, Word, Markdown, and JSON downloads                         |

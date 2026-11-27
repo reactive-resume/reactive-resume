@@ -52,7 +52,7 @@ Skills work on their own: paste your resume or a job posting and you get text, a
 
 ## Install the skills
 
-The skills live in the [`plugins/reactive-resume/skills` folder](https://github.com/reactive-resume/reactive-resume/tree/main/plugins/reactive-resume/skills) of the Reactive Resume repository, one folder per skill. Install the collection or choose the skills you need. Each works independently; related skills can help with the next task when installed.
+The skills live in the [`skills` folder](https://github.com/reactive-resume/skills/tree/main/skills) of the [reactive-resume/skills](https://github.com/reactive-resume/skills) repository, one folder per skill. Install the collection or choose the skills you need. Each works independently; related skills can help with the next task when installed.
 
 <Note>Keep each skill's folder whole. The `references` folder inside it holds detail the skill reads on demand.</Note>
 
@@ -63,15 +63,15 @@ The Reactive Resume plugin installs all 32 skills and connects the [MCP server](
 <Tabs>
   <Tab title="Claude Code">
     ```sh
-    claude plugin install reactive-resume --marketplace reactive-resume/reactive-resume
+    claude plugin install reactive-resume --marketplace reactive-resume/skills
     ```
 
-    Or, inside a session, run `/plugin marketplace add reactive-resume/reactive-resume`, then `/plugin install reactive-resume@reactive-resume`. Plugin skills are namespaced, so you call one directly as `/reactive-resume:resume-tailor`. Run `/mcp` to sign in to the server.
+    Or, inside a session, run `/plugin marketplace add reactive-resume/skills`, then `/plugin install reactive-resume@reactive-resume`. Plugin skills are namespaced, so you call one directly as `/reactive-resume:resume-tailor`. Run `/mcp` to sign in to the server.
 
   </Tab>
   <Tab title="Codex">
     ```sh
-    codex plugin marketplace add reactive-resume/reactive-resume
+    codex plugin marketplace add reactive-resume/skills
     codex plugin add reactive-resume@reactive-resume
     codex mcp login reactive-resume
     ```
@@ -89,16 +89,16 @@ The open-source [`skills` CLI](https://github.com/vercel-labs/skills) installs s
 
 ```sh
 # See the skills without installing anything
-npx skills add reactive-resume/reactive-resume --list
+npx skills add reactive-resume/skills --list
 
 # Choose skills and agents interactively
-npx skills add reactive-resume/reactive-resume
+npx skills add reactive-resume/skills
 
 # Install one skill
-npx skills add reactive-resume/reactive-resume --skill resume-tailor
+npx skills add reactive-resume/skills --skill resume-tailor
 
 # Install the collection for one agent, for your user account, without prompts
-npx skills add reactive-resume/reactive-resume --skill '*' -a claude-code -g -y
+npx skills add reactive-resume/skills --skill '*' -a claude-code -g -y
 ```
 
 - `--skill` (or `-s`) picks skills by name; `'*'` means all of them.
@@ -113,24 +113,23 @@ npx skills add reactive-resume/reactive-resume --skill '*' -a claude-code -g -y
 
 ### Download the files yourself
 
-For the Claude apps, or to copy skills by hand, fetch only the skills folder. The repository is large, so use a sparse clone:
+For the Claude apps, or to copy skills by hand, clone the skills repository:
 
 ```sh
-git clone --depth 1 --filter=blob:none --sparse https://github.com/reactive-resume/reactive-resume.git rr
-git -C rr sparse-checkout set plugins/reactive-resume/skills
+git clone --depth 1 https://github.com/reactive-resume/skills.git rr-skills
 ```
 
-The skills are now in `rr/plugins/reactive-resume/skills`.
+The skills are now in `rr-skills/skills`.
 
 ### Claude Code
 
 Use the skills CLI with `-a claude-code`, or copy the folders yourself:
 
 ```sh
-mkdir -p ~/.claude/skills && cp -R rr/plugins/reactive-resume/skills/* ~/.claude/skills/
+mkdir -p ~/.claude/skills && cp -R rr-skills/skills/* ~/.claude/skills/
 ```
 
-To update later, run `git -C rr pull` and copy the folders again.
+To update later, run `git -C rr-skills pull` and copy the folders again.
 
 `~/.claude/skills` makes the skills available in every project. To share them with a team through a repository, put them in that repository's `.claude/skills` folder instead.
 
@@ -149,13 +148,13 @@ Claude uses a skill automatically when your request matches its description. To 
     skill's name:
 
     ```sh
-    cd rr/plugins/reactive-resume/skills && zip -r resume-tailor.zip resume-tailor
+    cd rr-skills/skills && zip -r resume-tailor.zip resume-tailor
     ```
 
     To zip all of them:
 
     ```sh
-    cd rr/plugins/reactive-resume/skills && for s in */; do zip -r "${s%/}.zip" "$s"; done
+    cd rr-skills/skills && for s in */; do zip -r "${s%/}.zip" "$s"; done
     ```
 
   </Step>
@@ -185,7 +184,7 @@ Copy the skill folders into one of these folders, or use the skills CLI with the
 Gemini CLI can also install one skill straight from the repository:
 
 ```sh
-gemini skills install https://github.com/reactive-resume/reactive-resume.git --path plugins/reactive-resume/skills/resume-tailor
+gemini skills install https://github.com/reactive-resume/skills.git --path skills/resume-tailor
 ```
 
 ### Connect the MCP server (optional)

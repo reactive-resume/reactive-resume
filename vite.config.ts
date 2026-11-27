@@ -180,7 +180,6 @@ export default defineConfig({
 			"migrations/**",
 			"docs/spec.json",
 			"docs/guides/json-resume-schema.mdx",
-			"plugins/reactive-resume/skills/resume-builder/references/schema.md",
 		],
 		overrides: [
 			{
