@@ -157,6 +157,18 @@ describe("createPublicResumePdf", () => {
 		expect(result.body).toBeInstanceOf(File);
 	});
 
+	it("names the public PDF with the generated name, never the author's private download name", async () => {
+		const resume = buildResume();
+		resume.data.basics.name = "Ada Lovelace";
+		resume.data.metadata.fileName = "Ada-Acme-final";
+		found(resume);
+
+		const result = await createPublicResumePdf(input);
+
+		expect(result.filename).toBe("Ada-Lovelace-Resume.pdf");
+		expect(mocks.renderPdf).toHaveBeenCalledWith(expect.objectContaining({ filename: "Ada-Lovelace-Resume.pdf" }));
+	});
+
 	it("names the public PDF from the resume's full name instead of its public slug", async () => {
 		const resume = buildResume();
 		resume.data.basics.name = "李明";

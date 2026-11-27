@@ -65,9 +65,12 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 			? resumeDraft.document.data
 			: resume.data?.data;
 	const fileName = name ?? resumeExportName(resumeData?.metadata.fileName, generatedName);
+	// A locked resume can't be edited: like a letter's, its typed name lasts only for this export.
+	const locked = !letter && (resumeDraft.document?.id === id ? resumeDraft.locked : (resume.data?.isLocked ?? false));
+	const keepsName = !letter && !locked;
 	const changeName = (next: string) => {
 		setName(next);
-		if (letter || resumeDraft.document?.id !== id) return;
+		if (!keepsName || resumeDraft.document?.id !== id) return;
 		resumeDraft.update(
 			(d) => {
 				d.metadata.fileName = savedResumeFileName(next, generatedName);
@@ -226,7 +229,7 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 						onFocus={() => fileNameVisit.current++}
 						// A resume's name lives in its draft, so after editing the field follows it (and Undo) again.
 						onBlur={() => {
-							if (!letter) setName(undefined);
+							if (keepsName) setName(undefined);
 						}}
 						suffix={`.${format}`}
 					/>

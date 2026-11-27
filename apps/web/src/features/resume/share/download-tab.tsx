@@ -314,10 +314,13 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 				hint={<Trans>Recruiters see this name. Your name plus “Resume” works well.</Trans>}
 				onChange={(value) => {
 					setFileName(value);
-					savedName.save(value);
+					savedName.save?.(value);
 				}}
 				// The typed name is kept with the resume; after editing the field follows it (or the default) again.
-				onBlur={() => setFileName(null)}
+				// A locked resume keeps the typed name for this download only.
+				onBlur={() => {
+					if (savedName.save) setFileName(null);
+				}}
 			/>
 
 			{linkedLetter && (

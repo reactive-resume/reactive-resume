@@ -6,7 +6,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
-import { getExportFileName } from "@reactive-resume/utils/file";
+import { getDefaultFileName } from "@reactive-resume/utils/file";
 import { matchesIfNoneMatch } from "@reactive-resume/utils/http";
 import { lockUser } from "../documents/ownership";
 import { publicResumeData } from "./access-policy";
@@ -33,7 +33,8 @@ export async function createPublicResumePdf(input: CreatePublicResumePdfInput): 
 
 	// Every visitor gets the anonymous view, so one cached file serves them all (hidden content never prints anyway).
 	const data = publicResumeData(resume);
-	const filename = `${getExportFileName({ name: "", slug: "", data })}.pdf`;
+	// The author's saved download name is private (see redactResumeForViewer), so visitors get the generated one.
+	const filename = `${getDefaultFileName({ name: "", slug: "", data })}.pdf`;
 	const hash = createHash("sha256").update(JSON.stringify(data)).digest("hex").slice(0, 32);
 	// Under the resume's pdfs/ folder: deleted with the resume or account, and /uploads serves it only to the owner.
 	const folder = `uploads/${resume.userId}/pdfs/${resume.id}`;

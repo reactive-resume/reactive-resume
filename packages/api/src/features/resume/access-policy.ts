@@ -79,6 +79,9 @@ export function requiresPassword(resume: PasswordProtectedResume, viewer: Viewer
  *     to the author when editing" in the resume schema.
  *   - `resume.data.metadata.check` — the author's Check choices (ignored
  *     issues, job-posting terms hidden as "not true for me").
+ *   - `resume.data.metadata.fileName` — the download name the author chose,
+ *     which often names the employer it was made for ("Jordan-Acme-final").
+ *     Public downloads use the generated name instead.
  *   - Everything the author hid: hidden sections, summary, picture and items
  *     "aren't printed or shared". Hidden custom sections are dropped; built-in
  *     ones keep their (now empty, untitled) slot because the schema requires it.
@@ -99,6 +102,7 @@ export function redactResumeForViewer<T extends { name: string; data: ResumeData
 	if (resume.hideContactDetails) removeContactDetails(data);
 	data.metadata.notes = "";
 	data.metadata.check = undefined;
+	data.metadata.fileName = undefined;
 	if (data.picture.hidden) data.picture.url = "";
 	if (data.summary.hidden) Object.assign(data.summary, { title: "", content: "" });
 	data.customSections = data.customSections.filter((section) => !section.hidden);

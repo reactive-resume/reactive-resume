@@ -6,7 +6,8 @@ import { getDefaultFileName, sanitizeFileName } from "@/features/resume/export/u
 /**
  * The resume's download file name, kept with the resume so it's there next time and on every device. `saved` is
  * empty while the generated name applies; typing the generated name back (or clearing the field) returns to it,
- * so it keeps following the author's name.
+ * so it keeps following the author's name. A locked resume can't be edited, so `save` is undefined and a typed
+ * name lasts only for this download.
  */
 export function useResumeFileName(resume: Resume) {
 	const updateResumeData = useUpdateResumeData();
@@ -26,5 +27,5 @@ export function useResumeFileName(resume: Resume) {
 		[generated, updateResumeData],
 	);
 
-	return { generated, saved, save };
+	return { generated, saved, save: resume.isLocked ? undefined : save };
 }
