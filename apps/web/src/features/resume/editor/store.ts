@@ -52,6 +52,8 @@ type EditorStore = {
 	historyOpen: boolean;
 	/** The panel is hidden and the pages have the whole canvas, side by side when they fit. */
 	panelHidden: boolean;
+	/** The Design template gallery wants a wide panel (65% of the window); the panel can't be resized meanwhile. */
+	panelWide: boolean;
 	assistantOpen: boolean;
 	/** ⌘J toggled the assistant: its column, drawer or screen switches without a transition. */
 	assistantInstant: boolean;
@@ -143,6 +145,7 @@ const initialState = {
 	historyVersionId: null,
 	historyOpen: false,
 	panelHidden: false,
+	panelWide: false,
 	assistantOpen: false,
 	assistantInstant: false,
 	assistantThread: null,
