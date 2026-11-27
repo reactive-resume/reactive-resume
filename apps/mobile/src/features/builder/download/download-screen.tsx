@@ -1,9 +1,10 @@
 import { t } from "@lingui/core/macro";
 import { useIsFocused, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { View } from "react-native";
 import { useBuilderDocument, useDocumentId, useLetterDocument, DocumentState } from "../share/document";
 import { deliverExport, deliverExports, prepareExport, type ExportFormat } from "./export-file";
+import { differsOnlyInFileName, resumeExportName, savedResumeFileName } from "./export-model";
 import { useConnectivity, useLetterStore, useResumeStore, useResume } from "@/data";
 import { STORYBOARD } from "@/dev/storyboard/harness";
 import {
@@ -36,11 +37,15 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 	const query = letter ? coverLetter : resume;
 	const document = query.data;
 	const linkedResume = useResume(coverLetter.data?.sourceResumeId ?? "");
+	// The server's copy, without this device's unsaved edits.
+	const savedResume = useResume(letter ? "" : id);
 	const [pair, setPair] = useState(false);
 	const kind = letter ? "letter" : "resume";
 	const [format, setFormat] = useState<ExportFormat>("pdf");
 	const [more, setMore] = useState(false);
 	const [name, setName] = useState<string>();
+	// Each visit to the file name field is one undo step.
+	const fileNameVisit = useRef(0);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState("");
 	const focused = useIsFocused();
@@ -50,32 +55,67 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 	const needsServer = (id: string) => offline && id !== "pdf" && id !== "json";
 	const resumeDraft = useResumeStore();
 	const letterDraft = useLetterStore();
-	const fileName =
-		name ??
-		(document
-			? `${"data" in document ? document.data.basics.name : document.style.basics.name} ${letter ? "Cover Letter" : "Resume"}`
-			: "");
+	const generatedName = document
+		? `${"data" in document ? document.data.basics.name : document.style.basics.name} ${letter ? "Cover Letter" : "Resume"}`
+		: "";
+	// A resume keeps its file name with its data, so an edited one is there next time and on the web.
+	const resumeData = letter
+		? undefined
+		: resumeDraft.document?.id === id
+			? resumeDraft.document.data
+			: resume.data?.data;
+	const fileName = name ?? resumeExportName(resumeData?.metadata.fileName, generatedName);
+	// A locked resume can't be edited: like a letter's, its typed name lasts only for this export.
+	const locked = !letter && (resumeDraft.document?.id === id ? resumeDraft.locked : (resume.data?.isLocked ?? false));
+	const keepsName = !letter && !locked;
+	const changeName = (next: string) => {
+		setName(next);
+		if (!keepsName || resumeDraft.document?.id !== id) return;
+		resumeDraft.update(
+			(d) => {
+				d.metadata.fileName = savedResumeFileName(next, generatedName);
+			},
+			{ coalesceKey: `metadata.fileName:${fileNameVisit.current}`, sameStep: true },
+		);
+	};
 	const exportFile = async (save: boolean) => {
 		if (!document || busy) return;
 		setBusy(true);
 		setError("");
 		try {
 			const draft = letter ? letterDraft : resumeDraft;
+			// A file name edit alone doesn't change the page: while it waits to save, the saved copy makes the PDF.
+			let source: typeof document | null = null;
 			if (draft.document?.id === id) {
 				await draft.flush();
 				const state = letter ? useLetterStore.getState() : useResumeStore.getState();
-				if (state.status !== "saved" && format === "pdf")
+				const pending = useResumeStore.getState().document;
+				if (
+					!letter &&
+					state.status !== "saved" &&
+					format === "pdf" &&
+					pending?.id === id &&
+					savedResume.data &&
+					differsOnlyInFileName(pending.data, savedResume.data.data)
+				)
+					source = savedResume.data;
+				else if (state.status !== "saved" && format === "pdf")
 					throw new Error("Save your changes before exporting the page.");
 			}
 			const current = letter ? useLetterStore.getState().document : useResumeStore.getState().document;
-			const file = await prepareExport(current?.id === id ? current : document, kind, format, fileName);
+			const file = await prepareExport(
+				source ?? (current?.id === id ? current : document),
+				kind,
+				format,
+				letter ? fileName : resumeExportName(fileName, generatedName),
+			);
 			if (pair) {
 				if (!linkedResume.data) throw new Error("Choose a linked resume first.");
 				const resumeFile = await prepareExport(
 					linkedResume.data,
 					"resume",
 					"pdf",
-					`${linkedResume.data.data.basics.name} Resume`,
+					resumeExportName(linkedResume.data.data.metadata.fileName, `${linkedResume.data.data.basics.name} Resume`),
 				);
 				await deliverExports([resumeFile, file], save);
 				if (save) showToast({ message: t`Downloaded your resume and this letter` });
@@ -181,7 +221,17 @@ function ExportContent({ letter = false }: { letter?: boolean }) {
 			{/* The file name sits 16 dp under More formats (B14), not a form's usual 24. */}
 			<View style={{ marginTop: -8 }}>
 				<Form>
-					<TextField label={t`File name`} value={fileName} onChangeText={setName} suffix={`.${format}`} />
+					<TextField
+						label={t`File name`}
+						value={fileName}
+						onChangeText={changeName}
+						onFocus={() => fileNameVisit.current++}
+						// A resume's name lives in its draft, so after editing the field follows it (and Undo) again.
+						onBlur={() => {
+							if (keepsName) setName(undefined);
+						}}
+						suffix={`.${format}`}
+					/>
 				</Form>
 			</View>
 		</View>

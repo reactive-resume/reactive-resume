@@ -11,7 +11,7 @@ export type FileNameTarget = "resume" | "cover-letter";
 export type FileNameSource = {
 	name: string;
 	slug?: string | null;
-	data: { basics: { name: string }; metadata?: { page?: { locale?: string } } };
+	data: { basics: { name: string }; metadata?: { page?: { locale?: string }; fileName?: string | undefined } };
 };
 
 const words: Record<string, Record<string, string>> = fileNameWords;
@@ -49,6 +49,15 @@ export function getDefaultFileName(source: FileNameSource, target: FileNameTarge
 		...(target === "cover-letter" ? suffix : []),
 	];
 	return fallback.join("-") || suffix.join("-");
+}
+
+/**
+ * The name downloads get, without the ending: the one the author saved for the resume, else the generated default.
+ * A cover letter copies its resume's metadata, so the resume's saved name never names a letter.
+ */
+export function getExportFileName(source: FileNameSource, target: FileNameTarget = "resume") {
+	const saved = target === "resume" ? sanitizeFileName(source.data.metadata?.fileName ?? "") : "";
+	return saved || getDefaultFileName(source, target);
 }
 
 export function downloadWithAnchor(blob: Blob, filename: string) {

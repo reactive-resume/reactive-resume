@@ -5,7 +5,12 @@ import { useState } from "react";
 import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { downloadWithAnchor, getDefaultFileName, sanitizeFileName } from "@reactive-resume/utils/file";
+import {
+	downloadWithAnchor,
+	getDefaultFileName,
+	getExportFileName,
+	sanitizeFileName,
+} from "@reactive-resume/utils/file";
 import { createResumePdfBlob } from "./pdf-document";
 import { getLostCharactersMessage, getReadableErrorMessage } from "@/libs/error-message";
 
@@ -32,7 +37,7 @@ type ExportOptions = {
 
 export type ExportFormat = "pdf" | "docx" | "odt" | "md" | "json";
 
-export { getDefaultFileName, sanitizeFileName };
+export { getDefaultFileName, getExportFileName, sanitizeFileName };
 
 // The file still downloads, with "?" for each character no font can draw.
 const warnLostCharacters = (characters: string[]) =>
@@ -100,7 +105,7 @@ export function useResumeExport(resume: ExportableResume) {
 		setIsExporting(true);
 		try {
 			const blob = await createExportFile(resume, "pdf");
-			downloadWithAnchor(blob, `${getDefaultFileName(resume)}.pdf`);
+			downloadWithAnchor(blob, `${getExportFileName(resume)}.pdf`);
 		} catch (error) {
 			toast.add({
 				type: "error",

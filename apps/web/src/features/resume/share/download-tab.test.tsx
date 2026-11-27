@@ -5,8 +5,17 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { DownloadTab } from "./download-tab";
 
-const mocks = vi.hoisted(() => ({ generate: vi.fn(), download: vi.fn(), toast: vi.fn() }));
-vi.mock("@/features/resume/builder/draft", () => ({ useCurrentResume: () => ({ id: "resume" }) }));
+const mocks = vi.hoisted(() => ({
+	generate: vi.fn(),
+	download: vi.fn(),
+	toast: vi.fn(),
+	update: vi.fn(),
+	resume: { id: "resume", isLocked: false, data: { metadata: {} as { fileName?: string } } },
+}));
+vi.mock("@/features/resume/builder/draft", () => ({
+	useCurrentResume: () => mocks.resume,
+	useUpdateResumeData: () => mocks.update,
+}));
 vi.mock("@/features/resume/editor/check/use-check", () => ({ useOpenIssueCount: () => 0 }));
 vi.mock("@tanstack/react-query", () => ({ useQuery: () => ({ data: [] }) }));
 vi.mock("@/features/applications/queries", () => ({ applicationsListQueryOptions: () => ({}) }));
@@ -56,4 +65,61 @@ it("offers peer feedback only after a successful export and clears it for a new 
 	mocks.generate.mockResolvedValueOnce(file);
 	fireEvent.click(screen.getByRole("button", { name: "Download PDF instead" }));
 	expect(await screen.findByRole("link", { name: "Get resume feedback on Discord" })).toBeTruthy();
+});
+
+it("starts from the saved file name and keeps an edited one with the resume", async () => {
+	i18n.load("en", {});
+	i18n.activate("en");
+	mocks.resume.data.metadata.fileName = "Saved-Name";
+	mocks.generate.mockResolvedValue(new Blob(["fictional resume"]));
+	render(
+		<I18nProvider i18n={i18n}>
+			<DownloadTab onReview={() => undefined} />
+		</I18nProvider>,
+	);
+	const field = screen.getByLabelText("File name") as HTMLInputElement;
+	expect(field.value).toBe("Saved-Name");
+
+	const save = (value: string) => {
+		fireEvent.change(field, { target: { value } });
+		const draft = { metadata: {} as { fileName?: string } };
+		const [recipe, options] = mocks.update.mock.lastCall as [(draft: object) => void, object];
+		recipe(draft);
+		expect(options).toEqual({ coalesceKey: "metadata.fileName" });
+		return draft.metadata.fileName;
+	};
+	expect(save("Jordan-Acme")).toBe("Jordan-Acme");
+	fireEvent.click(screen.getByRole("button", { name: "Download PDF" }));
+	await vi.waitFor(() => expect(mocks.download).toHaveBeenLastCalledWith(expect.any(Blob), "Jordan-Acme.pdf"));
+	// The generated name, typed back or cleared, isn't saved: the default applies again.
+	expect(save("resume")).toBe("");
+	expect(save("")).toBe("");
+	// After editing the field shows the resume's name again, so a default name keeps following the author's name.
+	fireEvent.blur(field);
+	expect(field.value).toBe("Saved-Name");
+	mocks.resume.data.metadata = {};
+});
+
+it("keeps a typed name for this download only when the resume is locked", async () => {
+	i18n.load("en", {});
+	i18n.activate("en");
+	mocks.update.mockClear();
+	mocks.resume.isLocked = true;
+	mocks.resume.data.metadata.fileName = "Saved-Name";
+	mocks.generate.mockResolvedValue(new Blob(["fictional resume"]));
+	render(
+		<I18nProvider i18n={i18n}>
+			<DownloadTab onReview={() => undefined} />
+		</I18nProvider>,
+	);
+	const field = screen.getByLabelText("File name") as HTMLInputElement;
+	fireEvent.change(field, { target: { value: "Jordan-Acme" } });
+	fireEvent.blur(field);
+	// Nothing is written to the locked resume, and the typed name stays for this download.
+	expect(mocks.update).not.toHaveBeenCalled();
+	expect(field.value).toBe("Jordan-Acme");
+	fireEvent.click(screen.getByRole("button", { name: "Download PDF" }));
+	await vi.waitFor(() => expect(mocks.download).toHaveBeenLastCalledWith(expect.any(Blob), "Jordan-Acme.pdf"));
+	mocks.resume.isLocked = false;
+	mocks.resume.data.metadata = {};
 });

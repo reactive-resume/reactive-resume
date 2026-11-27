@@ -45,7 +45,7 @@ describe("redactResumeForViewer", () => {
 		expect(result.name).toBe("Resume");
 	});
 
-	it("strips metadata.notes and the author's Check choices for non-owner", () => {
+	it("strips metadata.notes, the author's Check choices and the saved download file name for non-owner", () => {
 		const resume = {
 			name: "Title",
 			data: {
@@ -54,12 +54,15 @@ describe("redactResumeForViewer", () => {
 					...defaultResumeData.metadata,
 					notes: "Private notes",
 					check: { ignored: ["MISSING_PHONE:/basics/phone"], hiddenTerms: ["HIPAA"] },
+					fileName: "Jordan-Acme-final",
 				},
 			},
 		};
 		const result = redactResumeForViewer(resume, false);
 		expect(result.data.metadata.notes).toBe("");
 		expect(result.data.metadata.check).toBeUndefined();
+		expect(result.data.metadata.fileName).toBeUndefined();
+		expect(redactResumeForViewer(resume, true).data.metadata.fileName).toBe("Jordan-Acme-final");
 	});
 
 	it("strips what the author hid for non-owner and keeps what prints", () => {

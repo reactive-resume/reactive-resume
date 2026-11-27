@@ -8,7 +8,7 @@ import { afterEach, assert, beforeEach, describe, expect, it, vi } from "vite-pl
 import { i18n } from "@lingui/core";
 import { ORPCError } from "@orpc/client";
 import { applyResumeProposals } from "@reactive-resume/resume/proposals";
-import { parseResumeData, withWebPageCss } from "@reactive-resume/schema/resume/data";
+import { parseResumeData, withSavedMetadata } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import {
 	clearResumeDrafts,
@@ -508,7 +508,8 @@ describe("builder resume autosave", () => {
 		await vi.advanceTimersByTimeAsync(10_000);
 		await rejected;
 		await event;
-		expect(store().resume?.data).toEqual(server.data);
+		// The same content: the local copy only lacks the empty stylesheet and file name the save sent.
+		expect(withSavedMetadata(store().resume?.data as ResumeData)).toEqual(server.data);
 		expect(store().undoStack).toEqual([]);
 		expect(store().redoStack).toEqual([]);
 		expect(store().proposalApplications).toEqual({});
@@ -841,7 +842,7 @@ describe("builder resume autosave", () => {
 		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
 			{
 				id: initial.id,
-				data: withWebPageCss(updated.data),
+				data: withSavedMetadata(updated.data),
 				expectedUpdatedAt: initial.updatedAt,
 				sessionId: expect.any(String),
 				proposalSafety: "v1",
@@ -888,14 +889,14 @@ describe("builder resume autosave", () => {
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(2);
 		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).toEqual({
 			id: initial.id,
-			data: withWebPageCss(first.data),
+			data: withSavedMetadata(first.data),
 			expectedUpdatedAt: initial.updatedAt,
 			sessionId: expect.any(String),
 			proposalSafety: "v1",
 		});
 		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({
 			id: initial.id,
-			data: withWebPageCss(latest.data),
+			data: withSavedMetadata(latest.data),
 			expectedUpdatedAt: first.updatedAt,
 			sessionId: expect.any(String),
 			proposalSafety: "v1",
@@ -1131,6 +1132,90 @@ describe("builder resume autosave", () => {
 		expect(toastMocks.add).toHaveBeenCalledWith(
 			expect.objectContaining({ description: "Restored changes that hadn't been saved yet." }),
 		);
+	});
+
+	it("keeps the saved file name when an older app's recovery has none, and honours this app's cleared one", async () => {
+		const initial = makeResume("resume-file-name");
+		initial.data = { ...initial.data, metadata: { ...initial.data.metadata, fileName: "Jordan-Acme" } };
+		const recovery = (extra: object) =>
+			window.localStorage.setItem(
+				`reactive-resume:unsaved:${initial.id}`,
+				JSON.stringify({
+					data: withBasicsName(makeResume(initial.id), "Kept locally").data,
+					storedAt: Date.now(),
+					baseUpdatedAt: initial.updatedAt,
+					...extra,
+				}),
+			);
+		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) =>
+			Promise.resolve({ ...initial, data: input.data }),
+		);
+
+		recovery({});
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().resume?.data.metadata.fileName).toBe("Jordan-Acme");
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0].data.metadata.fileName).toBe("Jordan-Acme");
+
+		clearResumeDrafts();
+		window.localStorage.clear();
+		orpcMocks.updateResume.mockClear();
+		recovery({ fileNameSaved: true });
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0].data.metadata.fileName).toBe("");
+
+		// An older recovery that differs only by lacking the name holds no changes, even on an older revision.
+		clearResumeDrafts();
+		window.localStorage.clear();
+		orpcMocks.updateResume.mockClear();
+		const { fileName: _, ...metadata } = initial.data.metadata;
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: { ...initial.data, metadata },
+				storedAt: Date.now(),
+				baseUpdatedAt: new Date(initial.updatedAt.getTime() - 60_000),
+			}),
+		);
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
+
+		// The same when the saved name is empty.
+		clearResumeDrafts();
+		window.localStorage.clear();
+		const emptyName = { ...initial, data: { ...initial.data, metadata: { ...initial.data.metadata, fileName: "" } } };
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: { ...initial.data, metadata },
+				storedAt: Date.now(),
+				baseUpdatedAt: new Date(initial.updatedAt.getTime() - 60_000),
+			}),
+		);
+		useResumeStore.getState().initialize(emptyName);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
+
+		// And for this app's own recovery without the field, against a server copy holding the empty name it sent.
+		clearResumeDrafts();
+		window.localStorage.clear();
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: { ...initial.data, metadata },
+				storedAt: Date.now(),
+				baseUpdatedAt: new Date(initial.updatedAt.getTime() - 60_000),
+				fileNameSaved: true,
+			}),
+		);
+		useResumeStore.getState().initialize(emptyName);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
 	});
 
 	it("never vouches for what an older app kept: it goes out unchecked until the server takes it", async () => {
@@ -1409,6 +1494,32 @@ describe("builder resume undo/redo", () => {
 		expect(store().undoStack.length).toBe(1);
 		expect(store().undoStack.length > 0).toBe(true);
 		// The same object stays, so the preview doesn't render the identical document again.
+		expect(store().resume?.data).toBe(current.data);
+	});
+
+	it("preserves the undo stack when the echo only adds the empty file name and stylesheet this app sent", async () => {
+		const store = useResumeStore.getState;
+		const initial = makeResume("rebase-echo-empty-fields");
+		let saved: Resume | undefined;
+		orpcMocks.updateResume.mockImplementation(async ({ data }: { data: ResumeData }) => {
+			saved = { ...initial, data, updatedAt: new Date(initial.updatedAt.getTime() + 1000) };
+			return saved;
+		});
+		store().initialize(initial);
+		store().updateResumeData((draft) => {
+			draft.basics.name = "Edited";
+		});
+		expect(await savePendingChanges(initial.id)).toBe(true);
+		expect(store().saveStatus).toBe("saved");
+		const current = store().resume;
+		if (!current || !saved) throw new Error("expected a saved resume");
+		expect(current.data.metadata.fileName).toBeUndefined();
+		expect(saved.data.metadata.fileName).toBe("");
+
+		// The echo of the acknowledged revision holds the empty fields the save sent.
+		store().replaceResumeFromServer({ ...saved, data: cloneResumeData(saved.data) });
+
+		expect(store().undoStack.length).toBe(1);
 		expect(store().resume?.data).toBe(current.data);
 	});
 

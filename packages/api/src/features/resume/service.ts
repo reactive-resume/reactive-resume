@@ -27,7 +27,7 @@ import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { detachEmbeddedLetters } from "@reactive-resume/resume/cover-letter";
 import { applyResumePatches, describeResumePatchError, ResumePatchError } from "@reactive-resume/resume/patch";
-import { withWebPageCss } from "@reactive-resume/schema/resume/data";
+import { withSavedMetadata } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { isValidSlug } from "@reactive-resume/schema/resume/slug";
 import { generateId } from "@reactive-resume/utils/string";
@@ -609,8 +609,8 @@ export const resumeService = {
 			const updated = await resumeService.update({
 				id: input.resumeId,
 				userId: input.userId,
-				// A version saved without the web page's custom CSS is restored without it.
-				data: withWebPageCss(version.data),
+				// A version saved without the web page's custom CSS or a file name is restored without them.
+				data: withSavedMetadata(version.data),
 				aiOperationIds: version.aiOperationIds,
 				expectedUpdatedAt: current.updatedAt,
 				skipAutoSnapshot: true,
@@ -884,6 +884,10 @@ export const resumeService = {
 				const savedCss = (existing.data as ResumeData | null)?.metadata?.web?.css;
 				if (normalizedData && savedCss && normalizedData.metadata.web?.css === undefined)
 					normalizedData.metadata.web = { showCredit: true, ...normalizedData.metadata.web, css: savedCss };
+				// The same for the download file name: apps built before it drop `metadata.fileName`.
+				const savedFileName = (existing.data as ResumeData | null)?.metadata?.fileName;
+				if (normalizedData && savedFileName && normalizedData.metadata.fileName === undefined)
+					normalizedData.metadata.fileName = savedFileName;
 				if (normalizedData)
 					await adoptEmbeddedLetters(tx, {
 						userId: input.userId,
