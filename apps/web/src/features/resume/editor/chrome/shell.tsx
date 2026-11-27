@@ -5,6 +5,13 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+	ContextMenu,
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuSeparator,
+	ContextMenuTrigger,
+} from "@reactive-resume/ui/components/context-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
@@ -99,6 +106,8 @@ const MIN_PANEL_WIDTH = 360;
 /** The page keeps at least this much room beside a dragged panel. */
 const MIN_PAGE_WIDTH = 480;
 const PANEL_WIDTH_STEP = 24;
+/** Shift+arrow and the Narrower/Wider menu items move the edge this far. */
+const PANEL_WIDTH_BIG_STEP = PANEL_WIDTH_STEP * 4;
 /** The Design template gallery's width: room for a grid of template previews. */
 const WIDE_PANEL_CSS = "clamp(380px, 65vw, 936px)";
 
@@ -133,8 +142,8 @@ type PanelResizerProps = {
 	onCommit: (width: number) => void;
 };
 
-/** How long the share-of-screen badge stays up after the last arrow key. */
-const KEYBOARD_BADGE_MS = 1000;
+/** How long the share-of-screen badge stays up after the last arrow key or menu choice. */
+const BRIEF_BADGE_MS = 1000;
 
 const subscribeToViewport = (onChange: () => void) => {
 	window.addEventListener("resize", onChange);
@@ -150,13 +159,14 @@ const useViewportWidth = () =>
 
 /**
  * The panel's end edge: drag it, or focus it and use the arrow keys, to widen the panel. Double-click returns it to the
- * default width. In right-to-left layouts the panel sits on the right, so dragging left widens it. While it is being
- * resized, a badge beside the edge shows the panel's share of the screen.
+ * default width; right-click or a long press opens Narrower, Wider and Reset width, for anyone who can't drag. In
+ * right-to-left layouts the panel sits on the right, so dragging left widens it. While it is being resized, a badge
+ * beside the edge shows the panel's share of the screen.
  */
 export function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
 	const { i18n } = useLingui();
 	const drag = useRef<{ x: number; width: number; rtl: boolean; last: number } | null>(null);
-	const keyboardTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const badgeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	/** Where the badge shows: at the pointer's height while dragging, centred (null) for the keyboard. */
 	const [badge, setBadge] = useState<{ y: number | null } | null>(null);
 	const viewport = useViewportWidth();
@@ -166,7 +176,7 @@ export function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
 	const share = viewport ? i18n.number(shownWidth / viewport, { style: "percent", maximumFractionDigits: 0 }) : null;
 	useEffect(
 		() => () => {
-			if (keyboardTimer.current) clearTimeout(keyboardTimer.current);
+			if (badgeTimer.current) clearTimeout(badgeTimer.current);
 		},
 		[],
 	);
@@ -175,98 +185,126 @@ export function PanelResizer({ width, onResize, onCommit }: PanelResizerProps) {
 		onResize(clamped);
 		return clamped;
 	};
-	const showKeyboardBadge = () => {
-		if (keyboardTimer.current) clearTimeout(keyboardTimer.current);
+	/** Shows the badge, centred, for a moment: after an arrow key or a menu choice. */
+	const flashBadge = () => {
+		if (badgeTimer.current) clearTimeout(badgeTimer.current);
 		setBadge({ y: null });
-		keyboardTimer.current = setTimeout(() => setBadge(null), KEYBOARD_BADGE_MS);
+		badgeTimer.current = setTimeout(() => setBadge(null), BRIEF_BADGE_MS);
+	};
+	/** Moves the edge without a drag (keys and menu): from the width the panel actually has, then saves it. */
+	const step = (next: number) => {
+		onCommit(set(next));
+		flashBadge();
+	};
+	// Release, cancel or lost capture all end a drag the same way: the width it reached is kept and saved.
+	const endDrag = () => {
+		const start = drag.current;
+		if (!start) return;
+		drag.current = null;
+		setBadge(null);
+		onCommit(start.last);
 	};
 	const pointerY = (event: { clientY: number; currentTarget: Element }) =>
 		event.clientY - event.currentTarget.getBoundingClientRect().top;
 
 	// A 24px target (44px on touch screens) that reaches 4px into the panel, so the panel's scrollbar stays usable; the
-	// visible 2px line sits on the panel's edge.
+	// visible 2px line sits on the panel's edge. A long press that opens the menu ends any drag it started.
 	return (
-		// oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions -- a focusable separator is the ARIA window-splitter pattern.
-		<div
-			role="separator"
-			aria-orientation="vertical"
-			aria-controls="editor-panel"
-			aria-label={t`Resize panel`}
-			aria-valuemin={MIN_PANEL_WIDTH}
-			aria-valuemax={viewport ? maxWidth : undefined}
-			aria-valuenow={shownWidth}
-			aria-valuetext={share ? t`${share} of the screen` : undefined}
-			tabIndex={0}
-			title={t`Drag to resize. Double-click to reset.`}
-			onPointerDown={(event) => {
-				if (event.button !== 0) return;
-				event.preventDefault();
-				event.currentTarget.setPointerCapture(event.pointerId);
-				const panel = document.getElementById("editor-panel");
-				drag.current = {
-					x: event.clientX,
-					width: panel?.getBoundingClientRect().width ?? width,
-					rtl: getComputedStyle(event.currentTarget).direction === "rtl",
-					last: width,
-				};
-				setBadge({ y: pointerY(event) });
+		<ContextMenu
+			onOpenChange={(open) => {
+				if (open) endDrag();
 			}}
-			onPointerMove={(event) => {
-				const start = drag.current;
-				if (!start) return;
-				const delta = (event.clientX - start.x) * (start.rtl ? -1 : 1);
-				start.last = set(start.width + delta);
-				setBadge({ y: pointerY(event) });
-			}}
-			onPointerUp={(event) => {
-				const start = drag.current;
-				if (!start) return;
-				drag.current = null;
-				setBadge(null);
-				event.currentTarget.releasePointerCapture(event.pointerId);
-				onCommit(start.last);
-			}}
-			onPointerCancel={() => {
-				drag.current = null;
-				setBadge(null);
-			}}
-			onDoubleClick={() => onCommit(set(DEFAULT_PANEL_WIDTH))}
-			onKeyDown={(event) => {
-				const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
-				const step = event.shiftKey ? PANEL_WIDTH_STEP * 4 : PANEL_WIDTH_STEP;
-				const keys: Record<string, number> = {
-					ArrowRight: rtl ? -step : step,
-					ArrowLeft: rtl ? step : -step,
-				};
-				let next: number | null = null;
-				if (event.key in keys) next = shownWidth + (keys[event.key] ?? 0);
-				else if (event.key === "Home") next = MIN_PANEL_WIDTH;
-				else if (event.key === "End") next = maxPanelWidth();
-				if (next === null) return;
-				event.preventDefault();
-				onCommit(set(next));
-				showKeyboardBadge();
-			}}
-			className="group absolute inset-y-0 z-10 w-6 -translate-x-1 cursor-col-resize touch-none outline-none select-none rtl:translate-x-1 pointer-coarse:w-11"
-			style={{ insetInlineStart: `var(--editor-panel)` }}
 		>
-			<span
-				aria-hidden="true"
-				className="absolute inset-y-0 start-1 w-0.5 -translate-x-1/2 bg-transparent transition-colors duration-quick group-hover:bg-accent group-focus-visible:bg-accent group-active:bg-accent rtl:translate-x-1/2"
-			/>
-			{badge && share && (
+			<ContextMenuTrigger
+				role="separator"
+				aria-orientation="vertical"
+				aria-controls="editor-panel"
+				aria-label={t`Resize panel`}
+				aria-valuemin={MIN_PANEL_WIDTH}
+				aria-valuemax={viewport ? maxWidth : undefined}
+				aria-valuenow={shownWidth}
+				aria-valuetext={share ? t`${share} of the screen` : undefined}
+				tabIndex={0}
+				title={t`Drag to resize. Double-click to reset.`}
+				onPointerDown={(event) => {
+					if (event.button !== 0) return;
+					event.preventDefault();
+					event.currentTarget.setPointerCapture(event.pointerId);
+					const panel = document.getElementById("editor-panel");
+					drag.current = {
+						x: event.clientX,
+						width: panel?.getBoundingClientRect().width ?? width,
+						rtl: getComputedStyle(event.currentTarget).direction === "rtl",
+						last: width,
+					};
+					setBadge({ y: pointerY(event) });
+				}}
+				onPointerMove={(event) => {
+					const start = drag.current;
+					if (!start) return;
+					const delta = (event.clientX - start.x) * (start.rtl ? -1 : 1);
+					start.last = set(start.width + delta);
+					setBadge({ y: pointerY(event) });
+				}}
+				onPointerUp={endDrag}
+				onPointerCancel={endDrag}
+				onLostPointerCapture={endDrag}
+				onDoubleClick={() => onCommit(set(DEFAULT_PANEL_WIDTH))}
+				onKeyDown={(event) => {
+					const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
+					const by = event.shiftKey ? PANEL_WIDTH_BIG_STEP : PANEL_WIDTH_STEP;
+					const keys: Record<string, number> = {
+						ArrowRight: rtl ? -by : by,
+						ArrowLeft: rtl ? by : -by,
+					};
+					let next: number | null = null;
+					if (event.key in keys) next = shownWidth + (keys[event.key] ?? 0);
+					else if (event.key === "Home") next = MIN_PANEL_WIDTH;
+					else if (event.key === "End") next = maxPanelWidth();
+					if (next === null) return;
+					event.preventDefault();
+					step(next);
+				}}
+				// The global focus ring (2px accent outline, 2px gap) shows while navigating by keyboard.
+				className="group absolute inset-y-0 z-10 w-6 -translate-x-1 cursor-col-resize touch-none select-none rtl:translate-x-1 pointer-coarse:w-11"
+				style={{ insetInlineStart: `var(--editor-panel)` }}
+			>
 				<span
 					aria-hidden="true"
-					className={cn(
-						"pointer-events-none absolute start-full ms-2 rounded-sm bg-ink px-2 py-1 text-xs leading-4 font-medium whitespace-nowrap text-bg tabular-nums shadow-e2 transition-opacity duration-quick starting:opacity-0",
-						badge.y === null ? "top-1/2 -translate-y-1/2" : "-translate-y-1/2",
-					)}
-					style={badge.y === null ? undefined : { top: badge.y }}
+					className="absolute inset-y-0 start-1 w-0.5 -translate-x-1/2 bg-transparent transition-colors duration-quick group-hover:bg-accent group-focus-visible:bg-accent group-active:bg-accent rtl:translate-x-1/2"
+				/>
+				{badge && share && (
+					<span
+						aria-hidden="true"
+						className={cn(
+							"pointer-events-none absolute start-full ms-2 rounded-sm bg-ink px-2 py-1 text-xs leading-4 font-medium whitespace-nowrap text-bg tabular-nums shadow-e2 transition-opacity duration-quick starting:opacity-0",
+							badge.y === null ? "top-1/2 -translate-y-1/2" : "-translate-y-1/2",
+						)}
+						style={badge.y === null ? undefined : { top: badge.y }}
+					>
+						{share}
+					</span>
+				)}
+			</ContextMenuTrigger>
+			<ContextMenuContent>
+				<ContextMenuItem
+					disabled={shownWidth <= MIN_PANEL_WIDTH}
+					onClick={() => step(shownWidth - PANEL_WIDTH_BIG_STEP)}
 				>
-					{share}
-				</span>
-			)}
-		</div>
+					<Icon name="arrows-in-simple" size={18} />
+					<Trans>Narrower</Trans>
+				</ContextMenuItem>
+				<ContextMenuItem disabled={shownWidth >= maxWidth} onClick={() => step(shownWidth + PANEL_WIDTH_BIG_STEP)}>
+					<Icon name="arrows-out-simple" size={18} />
+					<Trans>Wider</Trans>
+				</ContextMenuItem>
+				<ContextMenuSeparator />
+				<ContextMenuItem disabled={shownWidth === DEFAULT_PANEL_WIDTH} onClick={() => step(DEFAULT_PANEL_WIDTH)}>
+					<Icon name="arrow-counter-clockwise" size={18} />
+					<Trans>Reset width</Trans>
+				</ContextMenuItem>
+			</ContextMenuContent>
+		</ContextMenu>
 	);
 }
 

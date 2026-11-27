@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
@@ -12,17 +12,26 @@ import { useEditorStore } from "@/features/resume/editor/store";
 vi.mock("@/features/assistant/dock", () => ({ AssistantOverlay: () => null }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => "desktop" }));
 
-function Harness({ initial }: { initial: number }) {
+function Harness({ initial, onCommit }: { initial: number; onCommit?: ((width: number) => void) | undefined }) {
 	const [width, setWidth] = useState(initial);
-	return <PanelResizer width={width} onResize={setWidth} onCommit={setWidth} />;
+	return (
+		<PanelResizer
+			width={width}
+			onResize={setWidth}
+			onCommit={(next) => {
+				setWidth(next);
+				onCommit?.(next);
+			}}
+		/>
+	);
 }
 
-const renderResizer = (initial: number) => {
+const renderResizer = (initial: number, onCommit?: (width: number) => void) => {
 	i18n.load("en", {});
 	i18n.activate("en");
 	return render(
 		<I18nProvider i18n={i18n}>
-			<Harness initial={initial} />
+			<Harness initial={initial} onCommit={onCommit} />
 		</I18nProvider>,
 	);
 };
@@ -99,4 +108,59 @@ it("hides the splitter while the template gallery owns the panel's width, and re
 	});
 	expect(slot?.style.getPropertyValue("--editor-panel")).toContain("400px");
 	expect(screen.queryByRole("separator", { name: "Resize panel" })).not.toBeNull();
+});
+
+it("offers Narrower, Wider and Reset width from the separator's menu, for anyone who can't drag", async () => {
+	window.innerWidth = 1200;
+	const onCommit = vi.fn();
+	renderResizer(400, onCommit);
+	const separator = screen.getAllByRole("separator", { name: "Resize panel" }).at(-1);
+	if (!separator) throw new Error("No separator");
+
+	fireEvent.contextMenu(separator, { clientX: 400, clientY: 100 });
+	expect(await screen.findByRole("menuitem", { name: "Reset width" })).toHaveAttribute("aria-disabled", "true");
+	await userEvent.click(screen.getByRole("menuitem", { name: "Wider" }));
+	// 400 + 96 = 496px, saved through the same path as a drag.
+	expect(separator).toHaveAttribute("aria-valuenow", "496");
+	expect(onCommit).toHaveBeenLastCalledWith(496);
+
+	fireEvent.contextMenu(separator, { clientX: 400, clientY: 100 });
+	await userEvent.click(await screen.findByRole("menuitem", { name: "Reset width" }));
+	expect(separator).toHaveAttribute("aria-valuenow", "400");
+	expect(onCommit).toHaveBeenLastCalledWith(400);
+
+	fireEvent.contextMenu(separator, { clientX: 400, clientY: 100 });
+	await userEvent.click(await screen.findByRole("menuitem", { name: "Narrower" }));
+	// 400 - 96 is under the 360px minimum.
+	expect(separator).toHaveAttribute("aria-valuenow", "360");
+	expect(onCommit).toHaveBeenLastCalledWith(360);
+});
+
+it("keeps and saves the width a drag reached when the browser cancels it", () => {
+	window.innerWidth = 1200;
+	const onCommit = vi.fn();
+	renderResizer(400, onCommit);
+	const separator = screen.getAllByRole("separator", { name: "Resize panel" }).at(-1);
+	if (!separator) throw new Error("No separator");
+
+	fireEvent.pointerDown(separator, { button: 0, pointerId: 1, clientX: 400, clientY: 100 });
+	fireEvent.pointerMove(separator, { pointerId: 1, clientX: 500, clientY: 100 });
+	expect(separator).toHaveAttribute("aria-valuenow", "500");
+	expect(onCommit).not.toHaveBeenCalled();
+
+	fireEvent.pointerCancel(separator, { pointerId: 1 });
+	expect(onCommit).toHaveBeenCalledExactlyOnceWith(500);
+	// The drag is over: later moves and a lost capture change nothing.
+	fireEvent.lostPointerCapture(separator, { pointerId: 1 });
+	fireEvent.pointerMove(separator, { pointerId: 1, clientX: 700, clientY: 100 });
+	expect(separator).toHaveAttribute("aria-valuenow", "500");
+	expect(onCommit).toHaveBeenCalledOnce();
+
+	// Losing the pointer capture without a release ends the drag too.
+	fireEvent.pointerDown(separator, { button: 0, pointerId: 2, clientX: 500, clientY: 100 });
+	fireEvent.pointerMove(separator, { pointerId: 2, clientX: 548, clientY: 100 });
+	fireEvent.lostPointerCapture(separator, { pointerId: 2 });
+	expect(onCommit).toHaveBeenLastCalledWith(548);
+	fireEvent.pointerMove(separator, { pointerId: 2, clientX: 700, clientY: 100 });
+	expect(separator).toHaveAttribute("aria-valuenow", "548");
 });
