@@ -1,5 +1,6 @@
 import type { IconName } from "../../forme/icons";
 import type { Style } from "../../forme/style-types";
+import type { StyleInput } from "./styles";
 import { resolveLevelDisplaySizes } from "@reactive-resume/schema/resume/level-display-sizes";
 import { View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
@@ -21,9 +22,11 @@ const LEVEL_ITEM_KEYS = ["level-1", "level-2", "level-3", "level-4", "level-5"] 
 
 type LevelDisplayProps = {
 	level: number;
+	/** Layout overrides from the row that holds the rating; Semantic CSS still wins over them. */
+	style?: StyleInput;
 };
 
-export const LevelDisplay = ({ level }: LevelDisplayProps) => {
+export const LevelDisplay = ({ level, style }: LevelDisplayProps) => {
 	const data = useRender();
 	const itemNodeKey = useSemanticNodeKey();
 	const levelNodeKey = itemNodeKey ? semanticNodeKeys.level(itemNodeKey) : undefined;
@@ -63,6 +66,7 @@ export const LevelDisplay = ({ level }: LevelDisplayProps) => {
 			style={composeStyles(
 				{ flexDirection: "row", alignItems: "center", marginTop: 2, columnGap: gap },
 				levelContainerStyle,
+				style,
 				resolved.style,
 			)}
 		>
