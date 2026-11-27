@@ -6,6 +6,11 @@ Xcode compile them, and Fastlane (`tooling/mobile/fastlane/Fastfile`) signs and 
 EAS Submit or EAS Update, no `eas.json` and no `EXPO_TOKEN`. How a change reaches users:
 [mobile releases](./mobile-releases.md).
 
+iOS jobs pin the macOS image (`blacksmith-12vcpu-macos-27`), because that image's default Xcode sets the iOS SDK the
+build links against. `macos-latest` trails a major Xcode release and drew App Store Connect warning ITMS-90725 (built
+with the iOS 26.5 SDK; iOS 27 SDK required from April 2027). Move the pin when Apple raises the minimum SDK, and check
+the release manifest's `xcode` field (or the `iPhoneOS<version>.sdk` paths in the build log) after the first run.
+
 ## Triggers and jobs
 
 - **Push to `main`** touching `apps/mobile/**`, `packages/**`, `patches/**`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`,
