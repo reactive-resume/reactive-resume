@@ -35,11 +35,13 @@ function RichTextPreview({
 	disabled = false,
 	className,
 	id,
-	heightClassName = "max-h-[540px] min-h-50",
+	heightClassName,
 	compact = false,
 	onFocusRequest,
 }: RichTextPreviewProps) {
 	const mobile = useBreakpoint() === "mobile";
+	// The editor's default height on each breakpoint (./rich-text-editor-field.tsx).
+	const height = heightClassName ?? (mobile ? "max-h-[360px] min-h-11" : "max-h-[540px] min-h-50");
 	const html = useMemo(() => toPreviewHtml(value), [value]);
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
 	const editable = !disabled && !readOnlyTable;
@@ -68,7 +70,7 @@ function RichTextPreview({
 				onFocus={() => editable && onFocusRequest((current) => current ?? "end")}
 				className={cn(
 					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none [&_li]:my-1.5 [&_li]:ps-0 [&_li>p]:my-0 [&_ol]:ps-[14px] [&_ol]:pe-0 [&_ul]:ps-[14px] [&_ul]:pe-0",
-					heightClassName,
+					height,
 					"[&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
 				)}
 				// oxlint-disable-next-line react/no-danger -- toPreviewHtml keeps only the editor's own allowlisted markup.

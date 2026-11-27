@@ -129,3 +129,39 @@ it("hides the placeholder and counts characters as soon as typing starts", async
 	// happy-dom's click leaves an extra empty paragraph, which Tiptap counts, so only check the count moved off 0.
 	expect(container.textContent).not.toMatch(/\b0 characters/);
 });
+
+it.each([
+	[false, ["max-h-[540px]", "min-h-50"]],
+	[true, ["max-h-[360px]", "min-h-11"]],
+])("keeps phone fields compact and desktop fields taller by default (mobile=%s)", async (mobile, height) => {
+	mocks.mobile = mobile;
+	i18n.load("en", {});
+	i18n.activate("en");
+	render(
+		<I18nProvider i18n={i18n}>
+			<RichTextEditor label="Description" value="<p>Existing line</p>" onChange={vi.fn()} />
+		</I18nProvider>,
+	);
+	const editor = await screen.findByRole("textbox", { name: "Description" });
+	// The loading preview uses the same classes (rich-text-editor-preview.test.tsx).
+	expect(Array.from(editor.classList).filter((name) => /^(max|min)-h-/.test(name))).toEqual(height);
+});
+
+it("leaves out the hint and character count for read-only table content", async () => {
+	mocks.mobile = false;
+	i18n.load("en", {});
+	i18n.activate("en");
+	render(
+		<I18nProvider i18n={i18n}>
+			<RichTextEditor
+				label="Description"
+				value="<table><thead><tr><th>Year</th></tr></thead><tbody><tr><td>2024</td></tr></tbody></table>"
+				onChange={vi.fn()}
+			/>
+		</I18nProvider>,
+	);
+	await screen.findByRole("textbox", { name: "Description" });
+	expect(screen.getByRole("status")).toHaveTextContent("Original table formatting is preserved.");
+	expect(screen.queryByRole("toolbar", { name: "Formatting" })).toBeNull();
+	expect(screen.queryByText("Markdown shortcuts on")).toBeNull();
+});

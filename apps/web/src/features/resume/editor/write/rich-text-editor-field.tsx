@@ -196,7 +196,7 @@ export type RichTextEditorProps = {
 	className?: string;
 	/** The text area's id, so other controls can focus it. */
 	id?: string;
-	/** Replaces the text area's default height (200px to 540px). */
+	/** Replaces the text area's default height (200px to 540px on larger screens, 44px to 360px on phones). */
 	heightClassName?: string;
 	/** Improve's presets for a cover letter's body, instead of the resume ones. */
 	improve?: ImproveKind | undefined;
@@ -207,8 +207,8 @@ export type RichTextEditorProps = {
 const COMPACT_ACTIONS = ["text-b", "text-italic", "list-bullets", "link-simple-horizontal"] as const;
 
 /**
- * Lets the text area be dragged taller or shorter. The browser writes the dragged height inline, which lifts the
- * default max height so the field can grow past it; ProseMirror leaves the inline style alone.
+ * Lets the text area be dragged taller, or back down to its minimum height. The browser writes the dragged height
+ * inline, which lifts the default max height so the field can grow past it; ProseMirror leaves the inline style alone.
  */
 const resizableClassName = "resize-y [&[style*=height]]:max-h-none";
 
@@ -227,7 +227,7 @@ export function RichTextEditor({
 	disabled = false,
 	className,
 	id,
-	heightClassName = "max-h-[540px] min-h-50",
+	heightClassName,
 	focusRequest,
 	improve,
 	compact = false,
@@ -245,6 +245,8 @@ export function RichTextEditor({
 		: allActions;
 	const ai = useHasUsableAiProvider();
 	const mobile = useBreakpoint() === "mobile";
+	// Matches the loading preview in ./rich-text-editor.tsx, so the field keeps its size when the editor mounts.
+	const height = heightClassName ?? (mobile ? "max-h-[360px] min-h-11" : "max-h-[540px] min-h-50");
 	const keyboardInset = useKeyboardInset();
 	const acceptedReplacement = useRef<Parameters<RichTextEditorProps["onChange"]>[1]>(undefined);
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
@@ -303,7 +305,7 @@ export function RichTextEditor({
 				spellcheck: "true",
 				class: cn(
 					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none [&_li]:my-1.5 [&_li]:ps-0 [&_li>p]:my-0 [&_ol]:ps-[14px] [&_ol]:pe-0 [&_ul]:ps-[14px] [&_ul]:pe-0",
-					heightClassName,
+					height,
 					resizableClassName,
 					"[&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
 				),
@@ -538,7 +540,7 @@ export function RichTextEditor({
 				{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
 				{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
 
-				{(editing || (!mobile && !disabled)) && !improving && !compact && footer}
+				{(editing || (!mobile && !disabled)) && !readOnlyTable && !improving && !compact && footer}
 			</div>
 			{!editing && !disabled && characters === 0 && !mobile && !compact && (
 				<p className="mt-2 text-xs/4 text-ink-3">
