@@ -1500,7 +1500,7 @@ const ProjectsSection = ({ sectionId = "projects", sectionData }: ItemSectionPro
 
 const inlineSkillsItemStyle = {
 	flexDirection: "row",
-	alignItems: "flex-start",
+	alignItems: "baseline",
 	columnGap: 4,
 } satisfies Style;
 
@@ -1508,9 +1508,7 @@ const getSkillsItemStyle = (isInline: boolean, item: SkillItem, metrics: ReturnT
 	if (isInline) {
 		return composeStyles(
 			inlineSkillsItemStyle,
-			[hasSplitRowText(item.proficiency), Boolean(item.level), item.keywords.length > 0].filter(Boolean).length === 1
-				? { alignItems: "center" }
-				: undefined,
+			hasSplitRowText(item.proficiency) || item.keywords.length > 0 ? undefined : { alignItems: "center" },
 		);
 	}
 	return { rowGap: metrics.gapY(0.25) };
@@ -1543,7 +1541,7 @@ const SkillsSection = ({ sectionId = "skills", sectionData }: ItemSectionProps<S
 						</SectionItemHeader>
 
 						{skillLevelAfterName && <LevelDisplay level={item.level} />}
-						<View style={{ flexGrow: skills.columns > 1 ? 1 : 0 }}>
+						<View style={isInlineSkillsItem ? { flexGrow: 1, flexBasis: 0 } : { flexGrow: skills.columns > 1 ? 1 : 0 }}>
 							{hasSplitRowText(item.proficiency) && <Text semanticField="proficiency">{item.proficiency}</Text>}
 							{"keywordLayout" in skills && skills.keywordLayout === "list" ? (
 								item.keywords.map((keyword, index) => (
