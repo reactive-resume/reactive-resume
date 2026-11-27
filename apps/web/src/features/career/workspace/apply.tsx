@@ -204,8 +204,12 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 
 	const copy = async () => {
 		const written = currentAnswers().filter((answer) => answer.answer.trim());
-		await navigator.clipboard.writeText(written.map((answer) => `${answer.question}\n${answer.answer}`).join("\n\n"));
-		toast.add({ description: t`Answers copied` });
+		try {
+			await navigator.clipboard.writeText(written.map((answer) => `${answer.question}\n${answer.answer}`).join("\n\n"));
+			toast.add({ description: t`Answers copied` });
+		} catch {
+			toast.add({ type: "error", description: t`Couldn't copy to the clipboard. Try again.` });
+		}
 	};
 
 	const download = (format: "md" | "txt") => {

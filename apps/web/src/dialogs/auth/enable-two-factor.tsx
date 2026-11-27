@@ -167,14 +167,22 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 		if (!totpUri) return;
 		const secret = extractSecretFromTotpUri(totpUri);
 		if (!secret) return;
-		await navigator.clipboard.writeText(secret);
-		toast.add({ type: "success", description: t`Secret copied` });
+		try {
+			await navigator.clipboard.writeText(secret);
+			toast.add({ type: "success", description: t`Secret copied` });
+		} catch {
+			toast.add({ type: "error", description: t`Couldn't copy to the clipboard. Try again.` });
+		}
 	};
 
 	const handleCopyBackupCodes = async () => {
 		if (!backupCodes) return;
-		await navigator.clipboard.writeText(backupCodes.join("\n"));
-		toast.add({ type: "success", description: t`Backup codes copied` });
+		try {
+			await navigator.clipboard.writeText(backupCodes.join("\n"));
+			toast.add({ type: "success", description: t`Backup codes copied` });
+		} catch {
+			toast.add({ type: "error", description: t`Couldn't copy to the clipboard. Try again.` });
+		}
 	};
 
 	const handleDownloadBackupCodes = () => {

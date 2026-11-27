@@ -121,8 +121,12 @@ function BackupCodesDialog({ open, onOpenChange }: BackupCodesDialogProps) {
 								variant="ghost"
 								className="flex-1"
 								onClick={async () => {
-									await navigator.clipboard.writeText(codes.join("\n"));
-									toast.add({ type: "success", description: t`Backup codes copied` });
+									try {
+										await navigator.clipboard.writeText(codes.join("\n"));
+										toast.add({ type: "success", description: t`Backup codes copied` });
+									} catch {
+										toast.add({ type: "error", description: t`Couldn't copy to the clipboard. Try again.` });
+									}
 								}}
 							>
 								<Icon name="copy" />
