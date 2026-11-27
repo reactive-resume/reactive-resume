@@ -1,6 +1,7 @@
 import type { FocusRequest, RichTextEditorProps } from "./rich-text-editor-field";
 import { Trans } from "@lingui/react/macro";
 import { lazy, Suspense, useMemo, useState } from "react";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { hasUnsupportedTableMarkup, toPreviewHtml } from "@/components/input/rich-text-markup";
 
@@ -34,9 +35,13 @@ function RichTextPreview({
 	disabled = false,
 	className,
 	id,
-	heightClassName = "max-h-[360px] min-h-11",
+	heightClassName,
+	compact = false,
 	onFocusRequest,
 }: RichTextPreviewProps) {
+	const mobile = useBreakpoint() === "mobile";
+	// The editor's default height on each breakpoint (./rich-text-editor-field.tsx).
+	const height = heightClassName ?? (mobile ? "max-h-[360px] min-h-11" : "max-h-[540px] min-h-50");
 	const html = useMemo(() => toPreviewHtml(value), [value]);
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
 	const editable = !disabled && !readOnlyTable;
@@ -50,6 +55,10 @@ function RichTextPreview({
 					</Trans>
 				</p>
 			)}
+			{/* Room for the desktop formatting toolbar the editor always shows, so the field does not jump when it loads. */}
+			{editable && !mobile && (
+				<div aria-hidden="true" className={cn("border-b border-line", compact ? "h-[35px]" : "h-[37px]")} />
+			)}
 			{/* Not a textbox yet: tests and assistive tech find the real one once it mounts. A click, or focus moved here
 			    by id, is handed to the editor. */}
 			{/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- forwards to the editor, see above. */}
@@ -61,12 +70,14 @@ function RichTextPreview({
 				onFocus={() => editable && onFocusRequest((current) => current ?? "end")}
 				className={cn(
 					"typeset typeset-field overflow-y-auto px-3 py-2 text-sm outline-none [&_li]:my-1.5 [&_li]:ps-0 [&_li>p]:my-0 [&_ol]:ps-[14px] [&_ol]:pe-0 [&_ul]:ps-[14px] [&_ul]:pe-0",
-					heightClassName,
+					height,
 					"[&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
 				)}
 				// oxlint-disable-next-line react/no-danger -- toPreviewHtml keeps only the editor's own allowlisted markup.
 				dangerouslySetInnerHTML={{ __html: html }}
 			/>
+			{/* Room for the hint and character count the desktop editor always shows under the text. */}
+			{editable && !mobile && !compact && <div aria-hidden="true" className="h-[29px] border-t border-line" />}
 		</div>
 	);
 }
